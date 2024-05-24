@@ -1,267 +1,223 @@
-Return-Path: <linux-kernel+bounces-188691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9918CE55E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED778CE564
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B9D1F21231
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073481F212C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B65312881E;
-	Fri, 24 May 2024 12:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE48E86253;
+	Fri, 24 May 2024 12:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="y6KxUw8a"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GwS2kyDT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662EC128807
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E511E49E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716553611; cv=none; b=qHIJH/Z0fkRRqS0bHsD/aTsFNviukqjhKpNVp0tdn/89S0LG7d81LdFOfCsMu5QfuqvROaowyQQUpD5yzk2x1PBISdsFvlkyEssFDuLqXXJ3vTJSNe0cuaxE6JoBt7FtxTJwihoU04C14HANtL1C9fp8kOQ9HtZoIQJ2FYJoTaw=
+	t=1716554013; cv=none; b=jLsKeNf6qLqEXvR8szUehY5rjQPl6QpnLucgUciWP19OfFFZYxf+I7VTrBQfFcMuwutUEDuKE35ou2h09PQUrxws9cGWcG3JexrNWu5yJ796TKTCl0y5yI9UFJMLCF85huvo91SVfPrEcNC6Wu6sxn9pXsjNeuZD0B05IsnUTc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716553611; c=relaxed/simple;
-	bh=xuhMGFKrZLaP3kgQexbQhHlxBwz6KojWZq7D8mXC75w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MRqUfLTc5LfGeymbniyLAZgbMHaqCkCGHAFpuErxYJ3cWnnwI2j74KIRVqlYjpUhT34TXC4fLeRqsJgdEDsTsAha2XpUxCyEWmI1ZGMWdfmm7RJ0uzWaZ22C3HZBGaeX4zO/QuC8Uy3NKXCC+q9+0ZhskPAHKOz8+t0u2qIO/6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y6KxUw8a; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so13032a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:26:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716553608; x=1717158408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+5TB7ZrFRYN94Y3lNzCPIJpQbVDBgEGdR2gSSTMYVE=;
-        b=y6KxUw8acR1qNFn2UUIfldIUfLFE6UANfPMdSJ6UON9gsBF07iQPo6Y+TS64tojUZQ
-         jFXOXXozKGkyHVMIaRe+CQHkbNLxKZCGKogLZUU0dsKouvySyWpzFrQB5S87yO/uIV3P
-         k1ahZqLQ58OQ6RqJecoPw2/8r/aKQIp+ZruliOXPd88r5ZopZKoI5RmfzePrPq4nsdCJ
-         LCPZKfZda71LkTaubtk0nXRiW5PLRDV2xdP1YU8BlOni1uc9NfdHoqxCd+YrybCld6iK
-         NjSaJDuSr8W3bnQi6lZZ1Wl91mzwwPYYZDu77KYphik/FrnJuOFQvbIk3mf0q5FwFbl0
-         uR2g==
+	s=arc-20240116; t=1716554013; c=relaxed/simple;
+	bh=VCpzmu/uQpvZqx8rPcVdmguYmBeksK6kt7jSS1WlJUc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oiOW54Yr+o/PfaGyBQZYb/wwjdq5yE9ydCPSQ27VMk0rJwCojDPDyOU1cZIKLF1qgWh2Mj788COLkmsvYmI4ShVh/aevlC99u2v/gL8XbDeos6jcGtNhs65Lt+go1Ultp2x0a1b4mo4K7W5kS6dUDr4uoOG/hERywxqKDvLeC6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GwS2kyDT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716554010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TLsBKhDgR7+GRQQdmpyxH/q5JezC37lhhqw8XLyE/3Q=;
+	b=GwS2kyDTeqP2dzcf5HtZOeWGJynTY03J8Xy+UWxmKxVtNNrXG1SFkx6GZcuQ/QS0O7NNrc
+	sKwHadYFkdlQy5in8KLtq8NODr8iOZ2uH8dB0ICsPJrz7vtHXzRHFo6Q3wfiJKEMmzIOgK
+	flQLXYXzqYqHJxsjGeTtTmPPT4PCoVw=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-340-rm12_HntMp2MjHtavemGSA-1; Fri, 24 May 2024 08:33:22 -0400
+X-MC-Unique: rm12_HntMp2MjHtavemGSA-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52395bc1813so1880539e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:33:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716553608; x=1717158408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716554001; x=1717158801;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0+5TB7ZrFRYN94Y3lNzCPIJpQbVDBgEGdR2gSSTMYVE=;
-        b=q6o1Ykt+qpVFSgH9IJx9brK1pMG77vS1qFTOIBEfABvbOQLUlORDpO05R/uBs3oM0C
-         FKi/9ScheUpw2uLNSyXvnxtZI2f5GIBFE6rMgLS7OeFZ4gKBTujkpVeiANlkqPAZG8Dd
-         tjE5oG/3h5eBC5pQC6CgD+Ic/NWg7EYANBgfBhdOGgmlwR/5KbrmIjUkd2EQbpIHyGDK
-         ie73Cj/GcfQpSXw7RY3Ogd8DK0vHxyXiq9B4bLsMxQE7EjfdUhzOHq4hWEFb41wNNSIl
-         DKqmKmDOW321KbOIqHY7kQQrHHDGS2tiwWYdahk8rYHVR3BNUKrAh/nYCcD2S7l/4EmK
-         221A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKrDlsuwvOytFaO30q+XX6YfmoPmPTico9BQ9H9DPJaxPkaWx4HnYNzx7vpmXCCUtBIHip12hLTB9zGp8qFtYpixxsmmJ46dFTAeew
-X-Gm-Message-State: AOJu0YzZ4X2cZZNbXRApJbVIfESJc7F8iqs7xlN3llzodatHkZwZOJA/
-	HK+OjRcIm7SE4SVErbsBYFakvMVx7GA5+IwLNcdUTGy1Pjj5rcHG9gQOnhsQjN62mHEUdCEKtuS
-	tzxweTbZixsFIL02vtwb8GpWnV5C/7cPYtToq
-X-Google-Smtp-Source: AGHT+IGHn5L1uycYhffe8JVxue6IwpHJSjos4Cxhy9NA8pouewer/Odr/+VsiRSafqS5Qj4i8HLUs/dTUGZSrFhAgkU=
-X-Received: by 2002:a05:6402:5207:b0:573:8b4:a0a6 with SMTP id
- 4fb4d7f45d1cf-57855302f23mr137068a12.5.1716553605970; Fri, 24 May 2024
- 05:26:45 -0700 (PDT)
+        bh=TLsBKhDgR7+GRQQdmpyxH/q5JezC37lhhqw8XLyE/3Q=;
+        b=El/wd8xOawLDig2emhabejFa3ZHHTf05NJVripsWoFNJAS3zj4Nf0gXPzAzmx4ZkJ/
+         WbR7wcIszVAZBP8lsjLjlApkA/byyY5IQjtRVVa+zfbGc0n7ncEWhq7DjkZsmDvOyoJA
+         09zpz/lrSZDa36o79tUdJ92pH+4YRaWL+44ATktNnGs6WZ1xSPKm68Qzn4b66q78gQr4
+         ycdTgsBBXDSAg/luydY0rthl6oINUe3tlxilf5rpCFqDGYOzESHnBXYAdzV1wo7b+JD6
+         1Tr+Y3uRoZzOwsmkxTgnoPYWBactRS78EsJ+9EHBFgXxv05nyuTdZbPmH/P3kpoICXMO
+         nSDA==
+X-Gm-Message-State: AOJu0Yy6xGG8q5co3uIiQNxM07BGowZs2LMe3f1Ii6VYAODpIDkMYbDn
+	Y6Sta14J5N/Eh5ahBV7nX6D71NN3KlRJUfqfJtGa/nK+5BDvZVamAuwkunXGyT+6JUXx3PkGYYI
+	sQ8a8N0m1JWa74eN12HqI3aP/JLcJ27IiH9N9/5DHFZsVEUmat21z9W3WsZOMiQ==
+X-Received: by 2002:ac2:54b6:0:b0:51d:9818:33fa with SMTP id 2adb3069b0e04-529666db5e1mr1076627e87.68.1716554001265;
+        Fri, 24 May 2024 05:33:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2f6uJGmPK/gLkyLPTh+/XiG0TwnVJIUsu9/We2ht/WPboPsWbOgOEfhDCqwQalAPdH+Ni+g==
+X-Received: by 2002:ac2:54b6:0:b0:51d:9818:33fa with SMTP id 2adb3069b0e04-529666db5e1mr1076609e87.68.1716554000577;
+        Fri, 24 May 2024 05:33:20 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210897c089sm19650655e9.24.2024.05.24.05.33.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 05:33:20 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, "Eric W . Biederman" <ebiederm@xmission.com>,
+ javier@dowhile0.org, Andrew Morton <akpm@linux-foundation.org>, "Gustavo
+ A. R. Silva" <gustavoars@kernel.org>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Petr Mladek
+ <pmladek@suse.com>, Randy Dunlap <rdunlap@infradead.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Yoann Congal <yoann.congal@smile.fr>
+Subject: Re: [PATCH] userns: Default to 'yes' when CONFIG_MEMCG option is
+ enabled
+In-Reply-To: <20240524-beurkunden-kantig-101649d6b5cf@brauner>
+References: <20240524082434.657573-1-javierm@redhat.com>
+ <20240524-beurkunden-kantig-101649d6b5cf@brauner>
+Date: Fri, 24 May 2024 14:33:19 +0200
+Message-ID: <874jangzjk.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524085108.1430317-1-yuehaibing@huawei.com>
- <CANn89iL5-w3NzupmR4LgskvW2yw1jgnhdFg1HRg+k+JY38G6+w@mail.gmail.com> <5d001e22-c9fe-60d2-a775-40e1c44a1c56@huawei.com>
-In-Reply-To: <5d001e22-c9fe-60d2-a775-40e1c44a1c56@huawei.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 24 May 2024 14:26:31 +0200
-Message-ID: <CANn89iKbVU074xq6vi6d3HCUrX+kh=_=0xo4C4aepjCOD5YMCA@mail.gmail.com>
-Subject: Re: [PATCH net] net/sched: Add xmit_recursion level in sch_direct_xmit()
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, jhs@mojatatu.com, 
-	xiyou.wangcong@gmail.com, jiri@resnulli.us, hannes@stressinduktion.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mahesh Bandewar <maheshb@google.com>, David Ahern <dsahern@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 12:40=E2=80=AFPM Yue Haibing <yuehaibing@huawei.com=
-> wrote:
+Christian Brauner <brauner@kernel.org> writes:
+
+Hello Christian,
+
+Thanks a lot for your feedback.
+
+> On Fri, May 24, 2024 at 10:24:16AM +0200, Javier Martinez Canillas wrote:
+>> The default value for the CONFIG_USER_NS Kconfig symbol changed over tim=
+e.
+>>=20
+>> When first was introduced by commit acce292c82d4 ("user namespace: add t=
+he
+>> framework"), the default was 'no'. But then it was changed to 'yes' if t=
+he
+>> CONFIG_NAMESPACES option was enabled, by commit 17a6d4411a4d ("namespace=
+s:
+>> default all the namespaces to 'yes' when CONFIG_NAMESPACES is selected").
+>>=20
+>> Then, commit 5673a94c1457 ("userns: Add a Kconfig option to enforce stri=
+ct
+>> kuid and kgid type checks") changed the default to 'no' again and select=
+ed
+>> the (now defunct) UIDGID_STRICT_TYPE_CHECKS option.
+>>=20
+>> This selected option was removed by commit 261000a56b63 ("userns: Remove
+>> UIDGID_STRICT_TYPE_CHECKS"), but CONFIG_USER_NS default was left to 'no'.
+>>=20
+>> Finally, the commit e11f0ae388f2 ("userns: Recommend use of memory contr=
+ol
+>> groups") added to the Kconfig symbol's help text a recommendation that t=
+he
+>> memory control groups should be used, to limit the amount of memory that=
+ a
+>> user who can create user namespaces can consume.
+>>=20
+>> Looking at the changes' history, a default to 'yes' when the CONFIG_MEMCG
+>> option is enabled seems like a sane thing to do. Specially since systemd
+>> requires user namespaces support for services that use the PrivateUsers=
+=3D
+>> property in their unit files (e.g: the UPower daemon).
 >
-> On 2024/5/24 17:24, Eric Dumazet wrote:
-> > On Fri, May 24, 2024 at 10:49=E2=80=AFAM Yue Haibing <yuehaibing@huawei=
-com> wrote:
-> >>
-> >> packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device wil=
-l hit
-> >> WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path while ip=
-vlan
-> >> device has qdisc queue.
-> >>
-> >> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
-> >> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg =
-drm_kms_helper
-> >> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
-> >> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 0=
-4/01/2014
-> >> RIP: 0010:sk_mc_loop+0x2d/0x70
-> >> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 4=
-8 85 ff 74 1c
-> >> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
-> >> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
-> >> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
-> >> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
-> >> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
-> >> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
-> >> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000=
-000000
-> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
-> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >> Call Trace:
-> >>  <IRQ>
-> >>  ? __warn+0x83/0x130
-> >>  ? sk_mc_loop+0x2d/0x70
-> >>  ? report_bug+0x18e/0x1a0
-> >>  ? handle_bug+0x3c/0x70
-> >>  ? exc_invalid_op+0x18/0x70
-> >>  ? asm_exc_invalid_op+0x1a/0x20
-> >>  ? sk_mc_loop+0x2d/0x70
-> >>  ip6_finish_output2+0x31e/0x590
-> >>  ? nf_hook_slow+0x43/0xf0
-> >>  ip6_finish_output+0x1f8/0x320
-> >>  ? __pfx_ip6_finish_output+0x10/0x10
-> >>  ipvlan_xmit_mode_l3+0x22a/0x2a0 [ipvlan]
-> >>  ipvlan_start_xmit+0x17/0x50 [ipvlan]
-> >>  dev_hard_start_xmit+0x8c/0x1d0
-> >>  sch_direct_xmit+0xa2/0x390
-> >>  __qdisc_run+0x66/0xd0
-> >>  net_tx_action+0x1ca/0x270
-> >>  handle_softirqs+0xd6/0x2b0
-> >>  __irq_exit_rcu+0x9b/0xc0
-> >>  sysvec_apic_timer_interrupt+0x75/0x90
-> >
-> > Please provide full symbols in stack traces.
+> Fyi, user namespaces are an entirely optional feature in systemd and it
+> gracefully falls back if they are not available with PrivateUsers=3D set.
+> If that isn't the case then it's a bug in systemd with PrivateUsers=3D
+> handling and should be reported.
 >
-> Call Trace:
-> <IRQ>
-> ? __warn (kernel/panic.c:693)
-> ? sk_mc_loop (net/core/sock.c:775 net/core/sock.c:760)
-> ? report_bug (lib/bug.c:201 lib/bug.c:219)
-> ? handle_bug (arch/x86/kernel/traps.c:239)
-> ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
-> ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
-> ? sk_mc_loop (net/core/sock.c:775 net/core/sock.c:760)
-> ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
-> ? nf_hook_slow (./include/linux/netfilter.h:154 net/netfilter/core.c:626)
-> ip6_finish_output (net/ipv6/ip6_output.c:211 net/ipv6/ip6_output.c:222)
-> ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
-> ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:498 drivers/net/ipv=
-lan/ipvlan_core.c:538 drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
-> ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
-> dev_hard_start_xmit (./include/linux/netdevice.h:4882 ./include/linux/net=
-device.h:4896 net/core/dev.c:3578 net/core/dev.c:3594)
-> sch_direct_xmit (net/sched/sch_generic.c:343)
-> __qdisc_run (net/sched/sch_generic.c:416)
-> net_tx_action (./include/net/sch_generic.h:219 ./include/net/pkt_sched.h:=
-128 ./include/net/pkt_sched.h:124 net/core/dev.c:5286)
-> handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/j=
-ump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555)
-> __irq_exit_rcu (kernel/softirq.c:589 kernel/softirq.c:428 kernel/softirq.=
-c:637)
-> sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 arch/x86/ke=
-rnel/apic/apic.c:1043)
+
+Interesting, it definitely failed for me:
+
+$ systemctl status upower
+=E2=97=8F upower.service - Daemon for power management
+     Loaded: loaded (/lib/systemd/system/upower.service; disabled; vendor p=
+reset: enabled)
+     Active: failed (Result: exit-code) since Fri 2024-05-24 12:23:49 UTC; =
+34s ago
+       Docs: man:upowerd(8)
+    Process: 390 ExecStart=3D/usr/libexec/upowerd (code=3Dexited, status=3D=
+217/USER)
+   Main PID: 390 (code=3Dexited, status=3D217/USER)
+        CPU: 122ms
+
+May 24 12:23:49 igep systemd[1]: upower.service: Scheduled restart job, res=
+tart counter is at 5.
+May 24 12:23:49 igep systemd[1]: Stopped Daemon for power management.
+May 24 12:23:49 igep systemd[1]: upower.service: Start request repeated too=
+ quickly.
+May 24 12:23:49 igep systemd[1]: upower.service: Failed with result 'exit-c=
+ode'.
+May 24 12:23:49 igep systemd[1]: Failed to start Daemon for power managemen=
+t.
+
+$ journalctl -u upower
+May 24 12:23:49 igep systemd[1]: Starting Daemon for power management...
+May 24 12:23:49 igep systemd[404]: upower.service: Failed to set up user na=
+mespacing: Invalid argument
+May 24 12:23:49 igep systemd[404]: upower.service: Failed at step USER spaw=
+ning /usr/libexec/upowerd: Invalid argument
+May 24 12:23:49 igep systemd[1]: upower.service: Main process exited, code=
+=3Dexited, status=3D217/USER
+May 24 12:23:49 igep systemd[1]: upower.service: Failed with result 'exit-c=
+ode'.
+May 24 12:23:49 igep systemd[1]: Failed to start Daemon for power managemen=
+t.
+May 24 12:23:49 igep systemd[1]: upower.service: Scheduled restart job, res=
+tart counter is at 1.
+May 24 12:23:49 igep systemd[1]: Stopped Daemon for power management.
+
+That lead me to https://gitlab.freedesktop.org/upower/upower/-/issues/104
+and finally to systemd's README:
+
+https://github.com/systemd/systemd/blob/main/README#L89C22-L89C34=20
+
+But I'll investigate more if is upower or systemd to be blamed here...
+
+> But specifically to you change, afair CONFIG_MEMCG and userns are
+> unrelated so tying them together like this in the kconfig seems
+> misguided.
 >
-> >
-> >>  </IRQ>
-> >>
-> >> Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive de=
-reference inside the stack")
-> >> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> >> ---
-> >>  include/linux/netdevice.h | 17 +++++++++++++++++
-> >>  net/core/dev.h            | 17 -----------------
-> >>  net/sched/sch_generic.c   |  8 +++++---
-> >>  3 files changed, 22 insertions(+), 20 deletions(-)
-> >
-> > This patch seems unrelated to the WARN_ON_ONCE(1) met in sk_mc_loop()
-> >
-> > If sk_mc_loop() is called with a socket which is not inet, we are in tr=
-ouble.
-> >
-> > Please fix the root cause instead of trying to shortcut sk_mc_loop() as=
- you did.
-> First setup like this:
-> ip netns add ns0
-> ip netns add ns1
-> ip link add ip0 link eth0 type ipvlan mode l3 vepa
-> ip link add ip1 link eth0 type ipvlan mode l3 vepa
-> ip link set ip0 netns ns0
-> ip link exec ip link set ip0 up
-> ip link set ip1 netns ns1
-> ip link exec ip link set ip1 up
-> ip link exec tc qdisc add dev ip1 root netem delay 10ms
->
-> Second, build and send a raw ipv6 multicast packet as attached repro in n=
-s1
->
-> packet_sendmsg
->    packet_snd //skb->sk is packet sk
->       __dev_queue_xmit
->          __dev_xmit_skb //q->enqueue is not NULL
->              __qdisc_run
->                  qdisc_restart
->                     sch_direct_xmit
->                        dev_hard_start_xmit
->                           netdev_start_xmit
->                             ipvlan_start_xmit
->                               ipvlan_xmit_mode_l3 //l3 mode
->                                  ipvlan_process_outbound //vepa flag
->                                    ipvlan_process_v6_outbound //skb->prot=
-ocol is ETH_P_IPV6
->                                       ip6_local_out
->                                        ...
->                                          __ip6_finish_output
->                                             ip6_finish_output2 //multicas=
-t packet
->                                                sk_mc_loop //dev_recursion=
-_level is 0
->                                                   WARN_ON_ONCE //sk->sk_f=
-amily is AF_PACKET
->
-> > .
 
-I would say ipvlan code should not use skb->sk when calling
-ip6_local_out() , like other tunnels.
+Yes, but the config USER_NS help text already tieds them toghether:
 
-Untested patch :
+	help
+	  This allows containers, i.e. vservers, to use user namespaces
+	  to provide different user info for different servers.
 
-diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_c=
-ore.c
-index 2d5b021b4ea6053eeb055a76fa4c7d9380cd2a53..fef4eff7753a7acb1e11d9712ab=
-d669de7740df6
-100644
---- a/drivers/net/ipvlan/ipvlan_core.c
-+++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -439,7 +439,7 @@ static noinline_for_stack int
-ipvlan_process_v4_outbound(struct sk_buff *skb)
+	  When user namespaces are enabled in the kernel it is
+	  recommended that the MEMCG option also be enabled and that
+	  user-space use the memory control groups to limit the amount
+	  of memory a memory unprivileged users can use.
 
-        memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
+And as mentioned in the commit message, it seems to be the reason why the
+default for this Kconfig symbol is no. Maybe I misunderstood though or do
+you think that could be switched unconditionally to 'default y' ?
 
--       err =3D ip_local_out(net, skb->sk, skb);
-+       err =3D ip_local_out(net, NULL, skb);
-        if (unlikely(net_xmit_eval(err)))
-                DEV_STATS_INC(dev, tx_errors);
-        else
-@@ -494,7 +494,7 @@ static int ipvlan_process_v6_outbound(struct sk_buff *s=
-kb)
+Or is there a reason to be the only namespace to be default to no instead
+of yes? Specially since important system services are trying to use it.
 
-        memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
+--=20
+Best regards,
 
--       err =3D ip6_local_out(dev_net(dev), skb->sk, skb);
-+       err =3D ip6_local_out(dev_net(dev), NULL, skb);
-        if (unlikely(net_xmit_eval(err)))
-                DEV_STATS_INC(dev, tx_errors);
-        else
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
