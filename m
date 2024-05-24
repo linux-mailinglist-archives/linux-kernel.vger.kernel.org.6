@@ -1,126 +1,183 @@
-Return-Path: <linux-kernel+bounces-188766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF1A8CE6A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:05:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF788CE6A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55AF0B2196F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E6C1F226F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3A712C482;
-	Fri, 24 May 2024 14:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16C112C476;
+	Fri, 24 May 2024 14:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLwA1ko5"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdW6F8IB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F6E12BF38;
-	Fri, 24 May 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050D12BF38;
+	Fri, 24 May 2024 14:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559516; cv=none; b=cRulPINJRzXl62WvcoSgEmNsZyw4yfmGG64pIyw7h52wtwlnBw+yRqxxUPtHxNlG9qeKOyTa+WaQuKnvubNkbxqw44YL94vqLXN1vAAOqDW7GorohLFAqU9lsl/zCOKiCOcfDGUF538OOjssyecIOjC7X2bD8ofi1kvkRucZORI=
+	t=1716559528; cv=none; b=pgT5aO6K8/7i5DW/5CHibBwj2iiZBNdPog67fGmRtQZQzD948IuTAETb0OkfZjOGC1XjsRwaUzWZ7ImWseUJ2wZsfMmmbAISJUJaKNwljnst8Qt9Qw8Sz5JeplT5wclE9hFcPcGTuqTKV2A9nLOuwwNKSls+gC9wO/+9tGKRoPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559516; c=relaxed/simple;
-	bh=DCCBpwajUaHHrXRMmBxroBKg0DeNFPrf5Xbzu6XBIiY=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Xk4hYNTY00swDuo2uIAalVjCCu1+WEwLMgwsZ7RpRskT0AsSdjLlQu7ep7j/rv2O4SFrhMJNgJ4OOWj5IiaYJalZiA23Usjb/6fvfZinWV89v/SpbTpWKDxc/Js03kjKUKzPuiMWsj6yS12ycHraUpTNmUdeJQ2ie3rgmRARUwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLwA1ko5; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so4226985e9.1;
-        Fri, 24 May 2024 07:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716559513; x=1717164313; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=202i6Q3HfmZI4lv+uYm0BvyUdBZ8rn9ftqmt4YhUNng=;
-        b=NLwA1ko5RUayGbcZ4NgzNwRA2HpwuD12+YXhs0NYxKlQswSPOq/aUwxih+aGQzM7NL
-         O4JRydJlmm6bJPjKti1BUL1Eu1ZY7fgxQogmvPs+N69myXtF1ux/T9hWOV+9ao5sRk0f
-         C9EHOiOj4K20DVrFfSAlwPMzwA+72n6q4B55R2UKgxCJXheGrTEmKqulM2J3vzL+WBYK
-         sdF2EhOgzFQemlxfjlb2GuKxcQnz8t7R5y+mHL8t8a4LnsT54pyBgL8SXxyqUuxVVz0M
-         QylMHRaerQ2XVgIspeeNOsUic5wqhS4sli+yXqiitrGp11Yr48RuEfPiBa5vuaUL+Z4H
-         prYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716559513; x=1717164313;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=202i6Q3HfmZI4lv+uYm0BvyUdBZ8rn9ftqmt4YhUNng=;
-        b=odfVQHnPlLDG+dMcnoJH16hpNgtTvonG2CEskBYoZxNJKXXif2ksmhcaSCz+hCSXam
-         tho2lzmzUjf0C2EjtfOWLwLU9IzL6JfPre10MXB6KDvbRtsviWPM2GLBUrwtuUTx+roM
-         gdo/+ZY4HhCoi8pMs95xa806VQgThgOKbmi8VKpySubwPnXYmlaB11HaWE5U3U8VJHX4
-         YBCSzUfGZaZBIki9VqVxGeKJPZTIR4U+66vT73YJ9qs6cKHSGwS/lhYPe749fz41dmne
-         2dle2M1kS+fkAC5/3O7oqRVfFEBM/yL3UzyHw/VObp99HzEVHEsxYT98NYRXUsKUF3yW
-         IxUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXk6GzVxhEnFkIbRuMBzhvIM3a5cnKa77Q6mS3RNqzkGBoOzjIO0Qao917fKtN/V8AQAwaJgWmVRJMZM9TyHWTY3x2sx7EuuaTB+3+0wypwYD3+Fe8TkGD6/nwCTyDHy4eqURfesjwe6rXNk6D7/hAYiX3FIZ6jy4MXyyZ5
-X-Gm-Message-State: AOJu0YwLNcMfyVK9wkAa96pZSVjbVaaTy8giZ4b5Cq1Hepy8XNynjMGO
-	wj5YW0Pb52T2BEz2n8mg3jaJqf+TmMwtuiPc+mlmOsqTMenxoZMb
-X-Google-Smtp-Source: AGHT+IHookBXCob4FhjQkQ0u0NJchDyk7V1pnwWjKmR8kw1/QDJd+XKHFWKc9Vg9F0+aXp5mgdhDFA==
-X-Received: by 2002:a05:600c:3506:b0:418:4841:162a with SMTP id 5b1f17b1804b1-421089d85b4mr19597135e9.15.1716559513089;
-        Fri, 24 May 2024 07:05:13 -0700 (PDT)
-Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f598d7sm53564005e9.23.2024.05.24.07.05.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 07:05:12 -0700 (PDT)
-From: Paul Durrant <xadimgnik@gmail.com>
-X-Google-Original-From: Paul Durrant <paul@xen.org>
-Message-ID: <03b1a60c-59a3-4a5a-ae3d-56819d1b8e66@xen.org>
-Date: Fri, 24 May 2024 15:05:10 +0100
+	s=arc-20240116; t=1716559528; c=relaxed/simple;
+	bh=lEpDUMndEWxswvmAvM++8Gc2QtrqlIBZpwvAiQ7Z65E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m5IBdjOHq2auq0wWCwEsTrHpYb7TGWMZnlUWbZ6EvLRT/S3pYbF3A8nz4XOce4arZLLBoT/PH3ZoNVhHlGSS4pWn/39cILuTYv0APPs1b5YUf1miAw4OUUda//mfFIrYTRVZOuutnDBnLmjgmRX1Kprs1qjD8IDKyFheIolRtXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdW6F8IB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29CB7C2BBFC;
+	Fri, 24 May 2024 14:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716559527;
+	bh=lEpDUMndEWxswvmAvM++8Gc2QtrqlIBZpwvAiQ7Z65E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JdW6F8IB+hgDYDynBhunl/81pomaGV4o1g5U1Nyx0UXvTk897yltvSF0JZK+5j9h3
+	 GyOE0gTKFJ/YeffUGVHujVSngeoLHAvuDIv7LMiqfnGRliBrv67lIif0Jji45wady0
+	 EG5LWbvzYN12+7v/xnI+6OWMQPqe/vOfytq/hnIJLMUkopOpN17X5PhThfn1c3zdx9
+	 ke95NeTj2HqrYxYaGCpMykccpcV7j6uss03m5uyHAGMIPsttqemy/GB50nFfh75Rwd
+	 3UI7e2bqYB5LiBWW5VN+Ou8AppaoK1Mj3ifhHjFvRtLk+NRSv08glVmH853ReS1C0M
+	 jG8n3PEgeMsTg==
+Date: Fri, 24 May 2024 16:05:24 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: [PATCH] rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU invocation
+Message-ID: <ZlCepOslDQz4cOIM@lothringen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: paul@xen.org
-Subject: Re: [RFC PATCH v3 14/21] KVM: x86: Kill cur_tsc_{nsec,offset,write}
- fields
-To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
- zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>
-References: <20240522001817.619072-1-dwmw2@infradead.org>
- <20240522001817.619072-15-dwmw2@infradead.org>
-Content-Language: en-US
-Organization: Xen Project
-In-Reply-To: <20240522001817.619072-15-dwmw2@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 22/05/2024 01:17, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> These pointlessly duplicate the last_tsc_{nsec,offset,write} values.
-> 
-> The only place they were used was where the TSC is stable and a new vCPU
-> is being synchronized to the previous setting, in which case the 'last_'
-> value is definitely identical.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->   arch/x86/include/asm/kvm_host.h |  3 ---
->   arch/x86/kvm/x86.c              | 19 ++++++++-----------
->   2 files changed, 8 insertions(+), 14 deletions(-)
-> 
+Hi,
 
-Reviewed-by: Paul Durrant <paul@xen.org>
+I have found a potential race, but I might have missed something on the
+way that makes it actually impossible... Please double check.
+
+Thanks.
+
+---
+Subject: [PATCH] rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU invocation
+
+When rcu_barrier() calls rcu_rdp_cpu_online() and observes a CPU off
+rnp->qsmaskinitnext, it means that all accesses from the offline CPU
+preceding the CPUHP_TEARDOWN_CPU are visible to RCU barrier, including
+callbacks expiration and counter updates.
+
+However interrupts can still fire after stop_machine() re-enables
+interrupts and before rcutree_report_cpu_dead(). The related accesses
+happening between CPUHP_TEARDOWN_CPU and rnp->qsmaskinitnext clearing
+are _NOT_ guaranteed to be seen by rcu_barrier() without proper
+ordering, especially when callbacks are invoked there to the end, making
+rcutree_migrate_callback() bypass barrier_lock.
+
+The following theoretical race example can make rcu_barrier() hang:
+
+CPU 0                                               CPU 1
+-----                                               -----
+//cpu_down()
+smpboot_park_threads()
+//ksoftirqd is parked now
+<IRQ>
+rcu_sched_clock_irq()
+   invoke_rcu_core()
+do_softirq()
+   rcu_core()
+      rcu_do_batch()
+         // callback storm
+         // rcu_do_batch() returns
+         // before completing all
+         // of them
+   // do_softirq also returns early because of
+   // timeout. It defers to ksoftirqd but
+   // it's parked
+</IRQ>
+stop_machine()
+   take_cpu_down()
+                                                    rcu_barrier()
+                                                        spin_lock(barrier_lock)
+                                                        // observes rcu_segcblist_n_cbs(&rdp->cblist) != 0
+<IRQ>
+do_softirq()
+   rcu_core()
+      rcu_do_batch()
+         //completes all pending callbacks
+         //smp_mb() implied _after_ callback number dec
+</IRQ>
+
+rcutree_report_cpu_dead()
+   rnp->qsmaskinitnext &= ~rdp->grpmask;
+
+rcutree_migrate_callback()
+   // no callback, early return without locking
+   // barrier_lock
+                                                        //observes !rcu_rdp_cpu_online(rdp)
+                                                        rcu_barrier_entrain()
+                                                           rcu_segcblist_entrain()
+                                                              // Observe rcu_segcblist_n_cbs(rsclp) == 0
+                                                              // because no barrier between reading
+                                                              // rnp->qsmaskinitnext and rsclp->len
+                                                              rcu_segcblist_add_len()
+                                                                 smp_mb__before_atomic()
+                                                                 // will now observe the 0 count and empty
+                                                                 // list, but too late, we enqueue regardless
+                                                                 WRITE_ONCE(rsclp->len, rsclp->len + v);
+                                                        // ignored barrier callback
+                                                        // rcu barrier stall...
+
+This could be solved with a read memory barrier, enforcing the message
+passing between rnp->qsmaskinitnext and rsclp->len, matching the full
+memory barrier after rsclp->len addition in rcu_segcblist_add_len()
+performed at the end of rcu_do_batch().
+
+However the rcu_barrier() is complicated enough and probably doesn't
+need too many more subtleties. CPU down is a slowpath and the
+barrier_lock seldom contended. Solve the issue with unconditionally
+locking the barrier_lock on rcutree_migrate_callbacks(). This makes sure
+that either rcu_barrier() sees the empty queue or its entrained
+callback will be migrated.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/rcu/tree.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 944e55085262..925e006b64f9 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -4736,11 +4736,15 @@ void rcutree_migrate_callbacks(int cpu)
+ 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+ 	bool needwake;
+ 
+-	if (rcu_rdp_is_offloaded(rdp) ||
+-	    rcu_segcblist_empty(&rdp->cblist))
+-		return;  /* No callbacks to migrate. */
++	if (rcu_rdp_is_offloaded(rdp))
++		return;
+ 
+ 	raw_spin_lock_irqsave(&rcu_state.barrier_lock, flags);
++	if (rcu_segcblist_empty(&rdp->cblist)) {
++		raw_spin_unlock_irqrestore(&rcu_state.barrier_lock, flags);
++		return;  /* No callbacks to migrate. */
++	}
++
+ 	WARN_ON_ONCE(rcu_rdp_cpu_online(rdp));
+ 	rcu_barrier_entrain(rdp);
+ 	my_rdp = this_cpu_ptr(&rcu_data);
+-- 
+2.34.1
 
 
