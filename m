@@ -1,168 +1,112 @@
-Return-Path: <linux-kernel+bounces-188936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AF98CE8C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:35:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D818CE8CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4001F219D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA983283CF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C2912EBDC;
-	Fri, 24 May 2024 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3712EBD7;
+	Fri, 24 May 2024 16:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.com header.i=@suse.com header.b="FCHcLXt4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.com header.i=@suse.com header.b="RyF2DcAg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lSjyQV7C"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01218626E;
-	Fri, 24 May 2024 16:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8407A12E1C9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716568522; cv=none; b=VfcBAKUI06hpbAARKc+ZMMqds3FvT237Y2jb5bKPwwRpuTbiTx9PfXJWejjcRk1ib+n8M5tZ3gn7wevLVNVElsnouFKc+4sFIctlhSB8eTnemb2UthFU063vhOD1EdsHPH2EyALPLmO6ivMOsRub9HSlJCCEjAUsPFzl003hZr4=
+	t=1716568822; cv=none; b=GDR/BL7QnccGCKy45osk3uJ5DQOU4ZDVDbDzkCiRlb1EO4adSvbvuOzQFwPAt2WjB0zBqtAMSV2ju3rzcKuo6c8WzYCOCcS4V2Cdmmh8a8hwTLsii69rCpY1PBG1l9jPovI+mQa1FD6oUNtmmrdLwx3qTH7UZ3r1ErYDLGLiFi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716568522; c=relaxed/simple;
-	bh=5/h1AdkQCn+nFHKEW9DSnbpp0ir6DIALkgSxnxwkY3w=;
+	s=arc-20240116; t=1716568822; c=relaxed/simple;
+	bh=9mvpBAnKzNAyjIz4AaURNG6HUDlSprKVfsup9+Rsh3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twRIbQRN5lLWacup8h0PU/08/kPiLWKWeeacZ3390JaJGIfBLn7NeJoZB/N7pRX3ILI2p6jBTfV91aE94kPoE2FmZ/SWhsRw7HfkX0EwmFCBizu2uYI6bmN3E+SgvSSTaxq7p4PK6jg/yE+ZWctMAIakBSqR8nN4jlDHQbtc0Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=FCHcLXt4; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=RyF2DcAg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrncZLqQCThTvuQZyxcBVKDTxkQp+l/QVWdHfVtiaBaCRdpX8xtX4Xm+qXc7Gg/GFrCsSDv7IwseALsohXXxFwJdsObo3pLrtbGCW3fyEIZUxDcVbn9jcZtOFuMDg0yhy8yzcuYEFr+UZlhyf3rPtVLiFqZ2z6Lt56N4FC0zXYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lSjyQV7C; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 18F2240E02A8;
+	Fri, 24 May 2024 16:40:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id tm43LEE-mE5d; Fri, 24 May 2024 16:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716568813; bh=jiaxkAzz/Wg3+OBprXDh1+W9WaBImj/HoQGusdn/co4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lSjyQV7CoZXTb+RQFBdfy8SZiBa5FhP58xrEVOvOq5su45eeCbtV8uc8W5t0yGCE0
+	 GtcIJtgF3SWdypNdkTxX6o9IqvGoTE6F1eYoOYdiTHSRxBEJlBBWh15Kxzv8wXQPZE
+	 rlBOAEJZke50zWDCQEjDmsBwYm66EQBdooJEqoEnHCfJqmrDHgShcXAFIvcPiJ6Ucm
+	 ZievW5F/CVIfrDmVsWZyT985vBV8KaP01FZ0FEVCoD9Kq96WVm2Ku8ZublztRRToX+
+	 hq2ElrwRehd8uejyTPLYe+LBiW1fiWOcXWEsAbPSbcrCtpYvdjTtmILg+7GyNiA6iZ
+	 85Wy1/sSAUmNdfCiz+swD8hC3btor5aPpF5TlVhLMsqtP4htLUAW2fbDxaZ/zYLQIP
+	 Nxtzf4EZrCrQyE3JnoxHRMC7klma0PVLb27CIQKjJYBHwm0OxdJPiczv7P3bVdmyCV
+	 1NHG8f8h0Vb5T0q/U6irqgQrlQQGMZ6iey9aCIA0Cu4shRWUZPywyiy6jyLuy+g+Qm
+	 Wb5wySme+TjQ6VbR6bGpyYIeE4ZSyWv6IXYPlm+nycKRUnsQJxcsJoA/TrRkBME/5z
+	 CX71Fv5nuHWqxw/zvo0zZBu8hDRrn/0ZWkVIbAK/OL7CL7pePffHTwD46RO5Y+ZjvG
+	 bd0u23XM4fIc5GEqCVXkvcYo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DD9C233A20;
-	Fri, 24 May 2024 16:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716568518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Trx8PEqK2lg/z39VeQSPx/0n4M09a/yG2ngOoEZyV+A=;
-	b=FCHcLXt4oB/EFC/3PJvScbh19/TE5UhSyLDyB91sSOtq2UoY3Wl2niwCmZincfvN3l2MtA
-	TQUaXxu6fnWW9Y4tYPDCJWi/J81XzOCeBhvcRmFcYDjJcw7+9PcMEH3H/NvHW2WYdCt63A
-	/lKNLRZt1FuB3sdaenTCyUX8NHFpXdg=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=RyF2DcAg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716568517; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Trx8PEqK2lg/z39VeQSPx/0n4M09a/yG2ngOoEZyV+A=;
-	b=RyF2DcAg6s8CsXHYliBPaAryIMl/dtqY/lF/URJVRey+W2dltoQesWIM4TcZUck/Algr57
-	a+h9UefvO8gSoYI0uwu8mF/gyo07sFAMZXHCbIr2EZITNYsyWM2NLW9q+B6bAJWOlXa1il
-	L5kDgBn8VJ645ouXxqoFqM1nV47cBiA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF77213A6B;
-	Fri, 24 May 2024 16:35:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zWh+MsXBUGZsPgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Fri, 24 May 2024 16:35:17 +0000
-Date: Fri, 24 May 2024 18:35:16 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] mm: vmscan: restore incremental cgroup iteration
-Message-ID: <lgfq42xzqihzrz2hy32ktfdofhoub6pzvphjgwocpma55m5t3l@t6ckdxlk7wlw>
-References: <20240514202641.2821494-1-hannes@cmpxchg.org>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9C4BD40E016A;
+	Fri, 24 May 2024 16:40:01 +0000 (UTC)
+Date: Fri, 24 May 2024 18:39:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kees Cook <keescook@chromium.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] x86/boot: Address clang -Wimplicit-fallthrough in
+ vsprintf()
+Message-ID: <20240524163956.GBZlDC3DH_OqvAjSBC@fat_crate.local>
+References: <20240516-x86-boot-fix-clang-implicit-fallthrough-v1-1-04dc320ca07c@kernel.org>
+ <20240517095110.GAZkcojmJQoY_zU-OT@fat_crate.local>
+ <20240517151833.GB3660288@thelio-3990X>
+ <20240523115734.GAZk8vLgzOzD8Tv9pq@fat_crate.local>
+ <202405231603.2E810E3FC@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k4bf6d4mqghjgxbc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240514202641.2821494-1-hannes@cmpxchg.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.07 / 50.00];
-	BAYES_HAM(-2.96)[99.84%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: DD9C233A20
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -6.07
+In-Reply-To: <202405231603.2E810E3FC@keescook>
 
+On Thu, May 23, 2024 at 04:12:25PM -0700, Kees Cook wrote:
+> There isn't a bug _here_, but this is about making the code unambiguous
+> everywhere in the kernel. We've already done the work to get rid of
+> all these warnings; this one is newly introduced, so let's get it fixed.
 
---k4bf6d4mqghjgxbc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Nah, it has been there since forever (forever == 2007 in this case). It
+fires because I enabled the warning in the decompressor.
 
-Hello.
+> We don't want to have the same flow-control statement reachable from two
+> different "case"s where the resulting behaviors are different. Otherwise
+> we can't determine if a "fallthrough" is missing or intentional.
 
-On Tue, May 14, 2024 at 04:26:41PM GMT, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> The shared iterator state is maintaned inside the target cgroup, so
-> fair and incremental walks are performed during both global reclaim
-> and cgroup limit reclaim of complex subtrees.
+I'd agree if this warning wasn't enabled by default but were a W=123...
+diagnostic thing which does the additional checks. But right now clang
+is warning for a perfectly valid, albeit a bit confusing C.
 
-Here it sounds like same fairness is maintained...
+-- 
+Regards/Gruss,
+    Boris.
 
->  static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
-..
-> +	 * persists across invocations. This strikes a balance between
-> +	 * fairness and allocation latency.
-
-..but here you write about balance between fairness and allocation.
-
-IIUC, this spreads reclaim (of whole subtree) over longer time when more
-events may affect the state of memory (e.g. more allocations), so
-fairness would be "different". So the statement from code comment is
-correct, right?
-
-(I was also wondering how does this affect determinism of reclaim and
-whether some chaotic or oscillatory patterns aren't possible but I guess
-that needn't to be considered given it used to work before
-1ba6fc9af35b.)
-
-Thanks,
-Michal
-
---k4bf6d4mqghjgxbc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZlDBwgAKCRAGvrMr/1gc
-jhe/AQDeuUp02+73sDIL5zqyPUXNV1J4tLh52NWJ4CJkOBS7fgEA8xyeMuWDv/nm
-f8A0QEu/w2m5znd1sLbI3LdmB+334Q4=
-=7NM5
------END PGP SIGNATURE-----
-
---k4bf6d4mqghjgxbc--
+https://people.kernel.org/tglx/notes-about-netiquette
 
