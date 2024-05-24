@@ -1,128 +1,182 @@
-Return-Path: <linux-kernel+bounces-189165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADC88CEC4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D50698CEC4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453882828D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8984B2829EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352EA86251;
-	Fri, 24 May 2024 22:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC47B84DFD;
+	Fri, 24 May 2024 22:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlOi1fHi"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PPSpcjLm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4As9FsQ9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233DD3C2F;
-	Fri, 24 May 2024 22:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737EE85C65
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 22:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716588354; cv=none; b=LxV6ZDyv8wFlRBM1tAR1q7k2pfj8kiyCiiGOeODnno4pV5LGgj5I0EX0fE9CKn+PzeSDguHoGmlnzf/XSu0GJNpYrUGGAGSJcItmPVz9mSo+ndV/c/LmfbXliTn23Fr5kRzn8tKZa/351INApLtdpK9HDRjOaiMtxi7JWrQaDjQ=
+	t=1716588376; cv=none; b=GrJZpjAyUPIJcH7azTq66bJ8n3xtxCKl+Kzz/tNjxBjjBDNTOuf0kEVkcQUz+/yV0n3OZoDteNajUaLfTtDHeEfKq6+zsSQdl4ov0KOMOoPJ8yM2cg8h4TnfFM+H9WqEsY6mdNcoIT/gLdplNNNbvuwKINrcGYKf1jYrBhCnXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716588354; c=relaxed/simple;
-	bh=IU+Cm98Qx7XtdyHvTjcm673l8WTlTvYwT6HIrJvEhQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nneg2edJALNf9r3ATJEmlnNwjFI7BrSGQpzVl4JKi3BfsQVlhI5yfgepodm5SekBMaGEdiZzW6/LzX2+kmyE82YLC3oTiTvNcewIolWrEcSZkaSMxhtKYMATCNVJFsaxGm6YGs4i05325Yx5IkADSW4Uy6GhFIvHwBxxtuSwShE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlOi1fHi; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43fb155fc69so6640421cf.2;
-        Fri, 24 May 2024 15:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716588352; x=1717193152; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IAYxZszWXfq4NbDhTEbpXy+KJA6nuz0wbn+BTig+3kw=;
-        b=RlOi1fHi3MIJpJdMEruhjBK2TciifDd0jlA0LTjAR30TZjbKNzcLZEoeku/dhG9nf5
-         LpNSQVzSZb0sJo490XvrbDRgbqRYZQn9cP/qTfR5qFOsZPgIa1v1dIa3X9CQ0zMC4fCU
-         4D4qXnfncvSWsoGSvK6uKWUn/otmq5WNaXs6IQllRWvo4+H9OBJYFK8ruOFZgkuPOLab
-         0QNnNWhZgZZOC9jO33dRhSQCVPrGK8PVpHszYPKT8mdJ+fx6besctsK9/4CQjTekIbzK
-         fGBqXfWZTeO3NKwoGhztN1iKIKfrUHszBaGC2rSm/nyUpineiLG9eDIWgK8cSH0oTXJP
-         q+qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716588352; x=1717193152;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAYxZszWXfq4NbDhTEbpXy+KJA6nuz0wbn+BTig+3kw=;
-        b=ufGTKCyS+RcvcVABfNelTXeIA8pjRQNDtFIPqi4oK+3nXIqIhUG9I0XkyojMOcE8At
-         XuJcy2AdcgrjsMH9nqRmp/sp9+0JMdOgWOsfVHSZKZWeVSS6S2aiSdCK+9bettLjckfc
-         8X24xB65OD3cyN75bEWSZ0OfY2Hdk0SkemsNVymNdzGvAPqzMVf8fp4YDwZ9pbTttoZT
-         pQLIkqmm1NHMkZqMwAhUZLZrA4MZkyBhfhUf7McLuGDDGd0aPquQFR7d1ZTtCKa7oJwN
-         ByxO8oTcLBaDBqezFgk4fhhso2XPiVxmDaiP5qfTNvpohz/MjnjVXN6Vh4ZR1Z9wPYuR
-         vmIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkFCPqjXYRdBf0nIj9CbMIwCtCfQrMNyn2WFW6qWoBfI9ioDW5hPnv+Wix/sNKgM5YVahVvp2RUn2lvUxIiPVETlR/5T9Z
-X-Gm-Message-State: AOJu0YwfUu2hj9Z3D9dJy8/MDPU2xpwloJkVV/tFan9m33w57SiQlP5m
-	TuF93FUveiFE35k5W2RAAlU6oVTpxLLpWoKONoQzzSah75VdEJIl
-X-Google-Smtp-Source: AGHT+IHNwfc8ckj1uYGJ1lgzjeovsJV+OEtRwme4FaeKLQXaKC6ePocu6wxTZUQNaDM5vziKicHBKQ==
-X-Received: by 2002:ac8:7c4d:0:b0:43a:1377:60f2 with SMTP id d75a77b69052e-43fb0e98e21mr35610701cf.36.1716588352016;
-        Fri, 24 May 2024 15:05:52 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-43fb18b027fsm11892321cf.76.2024.05.24.15.05.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 15:05:51 -0700 (PDT)
-Message-ID: <bf1f7e35-45f9-4129-a41e-d255ad00c917@gmail.com>
-Date: Fri, 24 May 2024 15:05:47 -0700
+	s=arc-20240116; t=1716588376; c=relaxed/simple;
+	bh=TYt9nrydYmUMqF5njWFjHLzMlIrRXGBto4lv/tuqtv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uxF7MAmZ/gpRv0ZwyVKXD93A3K+RRsAkI0901lKPKGsZyEwfUXM4JEe0fUXu/sqWJt3DGiTeD812TbkHMujQtD+jiR2xNtqG5elobbwkRaF8o68KyXFKGARUd2PZtjJ3iiwlxFGd6Iz2k3E1V+4oOGVJBGCuVpeF4uISsL/CYc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PPSpcjLm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4As9FsQ9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716588367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZQLzUoQnFHlZCD1+3wpQeCvcfOJThYM5hzRmJfPud8=;
+	b=PPSpcjLmg5P/HxzqYVLqRlwgLsO0CnhSPmV5NAE7J72CPvy4m+OKslZydxkDUfv5n8jxe8
+	V7VAbaS5sjJWv+Z1eJn6StddhMBkIIM6ADsIgdrZDogH4VJKKrRKOUgS1caU6d8b4nrMiZ
+	qE9V2F6XHzSZanM/fmGOK9bOFOpRXTrCimhDU2wNouw5xaTgZgNKtTWPnHQg1rKA+TYCJV
+	53iq5z7LdWyV3PXw4BxmqvPLcaf+LBo/SFutLmC6ampqcDCINf+Xc9HJUi1Tj43i+++h5g
+	pws7hgEM5xF/IU//4aiWpqFyBQkkWnPW1h2RmK2akPVQRN4VAOn86Ms2ZATgww==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716588367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZQLzUoQnFHlZCD1+3wpQeCvcfOJThYM5hzRmJfPud8=;
+	b=4As9FsQ9b8XPgCRvRnoqiWLybOKaL0oNRKfQIawIGnIlDJ59/i4xJAhjYvueSf47m/tV+v
+	Xf86oTMWixL2uOCw==
+To: Oleg Nesterov <oleg@redhat.com>, Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>, Chris
+ von Recklinghausen <crecklin@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+In-Reply-To: <20240524183700.GA17065@redhat.com>
+References: <20240522151742.GA10400@redhat.com>
+ <20240523132358.GA1965@redhat.com> <87h6eneeu7.ffs@tglx>
+ <ZlCwKk65-eL0FrKX@pavilion.home> <20240524183700.GA17065@redhat.com>
+Date: Sat, 25 May 2024 00:06:06 +0200
+Message-ID: <87v832dfw1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix start counter for ft1
- filter
-To: MD Danish Anwar <danishanwar@ti.com>, Andrew Lunn <andrew@lunn.ch>,
- Diogo Ivo <diogo.ivo@siemens.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>
-References: <20240524093719.68353-1-danishanwar@ti.com>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240524093719.68353-1-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 5/24/24 02:37, MD Danish Anwar wrote:
-> The start counter for FT1 filter is wrongly set to 0 in the driver.
-> FT1 is used for source address violation (SAV) check and source address
-> starts at Byte 6 not Byte 0. Fix this by changing start counter to 6 in
-> icssg_ft1_set_mac_addr().
-> 
-> Fixes: e9b4ece7d74b ("net: ti: icssg-prueth: Add Firmware config and classification APIs.")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+On Fri, May 24 2024 at 20:37, Oleg Nesterov wrote:
 
-Would using ETH_ALEN not be a bit clearer here?
+> I've already had a few beers today, I know I'll regret about this
+> email tomorrow, but I can't resist ;)
 
-> ---
->   drivers/net/ethernet/ti/icssg/icssg_classifier.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_classifier.c b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-> index 79ba47bb3602..8dee737639b6 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-> @@ -455,7 +455,7 @@ void icssg_ft1_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac_addr)
->   {
->   	const u8 mask_addr[] = { 0, 0, 0, 0, 0, 0, };
->   
-> -	rx_class_ft1_set_start_len(miig_rt, slice, 0, 6);
-> +	rx_class_ft1_set_start_len(miig_rt, slice, 6, 6);
->   	rx_class_ft1_set_da(miig_rt, slice, 0, mac_addr);
->   	rx_class_ft1_set_da_mask(miig_rt, slice, 0, mask_addr);
->   	rx_class_ft1_cfg_set_type(miig_rt, slice, 0, FT1_CFG_TYPE_EQ);
-> 
-> base-commit: 66ad4829ddd0b5540dc0b076ef2818e89c8f720e
+You won't regret it. :)
 
--- 
-Florian
+> On 05/24, Frederic Weisbecker wrote:
+> But again, again. tick_sched_do_timer() says
+>
+> 	* If nohz_full is enabled, this should not happen because the
+> 	* 'tick_do_timer_cpu' CPU never relinquishes.
+>
+> so I guess it is not supposed to happen?
 
+Right. It does not happen because the kernel starts with jiffies as
+clocksource except on S390. The jiffies clocksource is not qualified to
+switch over to NOHZ mode for obvious reasons. But even on S390 which has
+a truly usable and useful clocksource the tick stays periodic to begin
+with. Why?
+
+The NOHZ ready notification happens late in the boot process via:
+fs_initcall(clocksource_done_booting)
+
+So by the time that happens, the secondary CPUs are up and have taken
+over the do timer duty.
+
+[    0.600381] smp: Bringing up secondary CPUs ...
+
+...
+
+[    1.917842] clocksource: Switched to clocksource kvm-clock
+[    1.918548] clocksource_done_booting: Switched to NOHZ // debug printk
+
+This is the point where tick_nohz_activate() is called first time and
+that does:
+
+  tick_sched_flag_set(ts, TS_FLAG_NOHZ);
+
+So up to this point the tick is never stopped neither on housekeeping
+nor on NOHZ FULL CPUs:
+
+tick_nohz_full_update_tick()
+  if (!tick_sched_flag_test(ts, TS_FLAG_NOHZ))
+    return;
+
+> And. My main question was: how can smp_call_function_single() help???
+
+It's useless.
+
+> Why do we actually need it?
+
+We do not.
+
+As explained above there is also nothing extra to fix contrary to
+Frederics fears.
+
+Even in the case that a command line limitation restricts the number of
+CPUs such that there is no housekeeping CPU onlined during
+smp_init(). That is checked in the isolation init code which clears
+nohz_full_running in that case. Nothing to see there either.
+
+So all this needs is the simple:
+
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index d88b13076b79..dab17d756fd8 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -229,11 +209,9 @@ static void tick_setup_device(struct tick_device *td,
+ 			if (tick_nohz_full_cpu(cpu))
+ 				tick_do_timer_boot_cpu = cpu;
+ 
+-		} else if (tick_do_timer_boot_cpu != -1 &&
+-						!tick_nohz_full_cpu(cpu)) {
+-			tick_take_do_timer_from_boot();
++		} else if (tick_do_timer_boot_cpu != -1 && !tick_nohz_full_cpu(cpu)) {
++			WRITE_ONCE(tick_do_timer_cpu, cpu);
+ 			tick_do_timer_boot_cpu = -1;
+-			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
+ #endif
+ 		}
+
+along with the removal of the SMP function call voodoo programming gunk,
+a lengthy changelog and a bunch of useful comments.
+
+Changing the horribly lazy and incomprehensible '-1' to an actual
+meaningful define, e.g. TICK_DO_TIMER_NONE, would definitely help along
+with renaming the variable to tick_do_timer_nohz_full_boot_cpu.
+
+There is no race other than the boot CPU reading tick_do_timer_cpu
+concurrently to the update, but that's completely harmless whatever it
+sees there. If it's the boot CPU, i.e. 0, or the secondary does not
+matter. The secondary immediately schedules the tick unconditionally so
+timekeeping and jiffies will just work.
+
+If the secondary CPU fails to come up after it installed the clock event
+device then the missing tick is the least of the problems.
+
+That has absolutely nothing to do with the issue at hand. If the CPU
+which owns tick_do_timer_cpu dies or gets stuck then all bets are off
+independent of NOHZ FULL. See the changes which went in during the merge
+window to handle the case where the hypervisor fails to inject the timer
+interrupts or keeps the time keeper duty CPU scheduled out for a long
+period of time....
+
+Thanks,
+
+        tglx
 
