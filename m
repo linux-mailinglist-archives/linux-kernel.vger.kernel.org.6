@@ -1,154 +1,101 @@
-Return-Path: <linux-kernel+bounces-189023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579978CE9FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067878CEA00
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCB41F230E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB02281C63
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8ED23FE5D;
-	Fri, 24 May 2024 18:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5423FB2C;
+	Fri, 24 May 2024 18:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBMOwUP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="ocYoPQaO"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD63A268;
-	Fri, 24 May 2024 18:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352571CFB2
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 18:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716576060; cv=none; b=tMQju/d62efw9/Gxhl6UOO2YT17cv4/LPC/2pT0GuTAAq61d4oa54cf+UCA5WPVyKnsFfKikmoo1TJaEovic0/DTryjogWK5s2LRAhoiaOsPPtMVk0wm2avHACosT79kwOqowgI6WCoVJLOCxf7TWrBjX3ltMieON60t3W4UU6Q=
+	t=1716576349; cv=none; b=YihQ4pmaM5OipNt+MAow95gXta7pt3Z2h1CfccPn+F9aRhcRvBYXcKd3SYvVeaED4lRZjfTDMPaLh2OMDjKI3ttJ2WAjQwXIeembuFFhXDpAJdWWf6WXOnxQMCzxSOXR7mrC/vANxLiaAmopKKLEa2JeF1Z6EK4Gbg7w4pr9LYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716576060; c=relaxed/simple;
-	bh=40gtA562p+lzTr+9s5RdmfFpwV562RCDBYLHPKo0nKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2haJPqmN9DBVOUcThMtIh/hGVyjqaTdQv1Qrivie5o5uoXKesN2yu0ALMZuVJE20gazeSAvfbRU9RguI03swVh0Y5TziPfNykOV/lR6adEBcQiU1lghVdA0wS/ZlzKwTpfExxftay1l/ywiU1mgoKbQhnMZ+22bLYg4WYCdDew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBMOwUP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8F1C2BBFC;
-	Fri, 24 May 2024 18:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716576059;
-	bh=40gtA562p+lzTr+9s5RdmfFpwV562RCDBYLHPKo0nKo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MBMOwUP7AP/4PR0PLfby9X4PcyO0ur/nKESPtUBj36LbsywxT1CwIj7RwKXXKvHJe
-	 T4tEznwZi/jrasixDIEhX+yxPRuLzmXqj0Rj7VjJa4I+30ujLIbRreH1i5G5zG9Gwl
-	 3qPybTC0hq5PMPkL3afqj3yZV697FG7ItUR7aBM8yobAV6J/nyqRV0JU3cmnLA8cWo
-	 JKLYfmWLXN7MZKNp6i9C0snt/vYDx3eLKtJGNns3FajyvtQF8LeOiywgDqhrLLT3HI
-	 0rlphCLLguX/4ZUmn7hdVyG3x/QPuWPITU/TIV9NYIRO53i18Mo/jzmS3feyrQVCV3
-	 2gpKV6fZ1eXrw==
-Date: Fri, 24 May 2024 19:40:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
-Message-ID: <20240524-cavalier-outthink-51805f49c8fb@spud>
-References: <20240522215043.3747651-1-tharvey@gateworks.com>
- <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org>
- <20240523-vividly-sequester-d85ac7bccbbd@spud>
- <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
+	s=arc-20240116; t=1716576349; c=relaxed/simple;
+	bh=rsOPZ72Of/AX5AiLQAAdRGqcGHzkGYM86yMIsD5ORcU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AoR8WVY2Q9DgKrtqokPH1ypUDJxs5zFGwiJKA1SXaVt2Dzx09VKL5/InkfiSBAr1kfk8Ak1qf3RnljpX1kuSMz3NEosLTYdHBckogpD6sZolD0NWXbeLWcPxueCCYj3JTd2o7kCgFmfpaw46DujHlH/sxvM7OvhBp5BKl2kiJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=ocYoPQaO; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VmDWX2Js8z9srt;
+	Fri, 24 May 2024 20:45:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1716576344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rsOPZ72Of/AX5AiLQAAdRGqcGHzkGYM86yMIsD5ORcU=;
+	b=ocYoPQaOk5lfpB7UZDTIul2WxLYHpQdttxNbbm/rVBZMJYQu5iODZUIzdtiyQ0YrsgHpi7
+	eD8PJSud+RTg/rHvXlhQyajK7t+vdHxstfmcRoiOc/6JtuDXVLfAG1/k5oPqnPPYdypinS
+	1OIA/UvdCYjyhnoTAHBRAO6MChqTSyv+DmUJnREPS1KmUSqmNUqYtfarmMB+Ezy2Qg3tbe
+	5JZVbnMiIMrzXDz2/hGbt1a4CTEA9qYL61iB+s0O1UE0+OKS2U6G7d/y6ChkXrJvjaOl0n
+	fw0jU//d7CMctREsvi9ODx2I3LrP07XAbQqUacq7X/fxCqtjagZKJJ75oMsQZg==
+From: Ben Walsh <ben@jubnut.com>
+To: Dustin Howett <dustin@howett.net>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>,
+ Guenter Roeck <groeck@chromium.org>, Kieran Levin <ktl@frame.work>, Thomas
+ =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Mario Limonciello
+ <mario.limonciello@amd.com>, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] platform/chrome: cros_ec_lpc: Correct ACPI name for
+ Framework Laptop
+In-Reply-To: <CA+BfgNL7RGWuFK-M=Cpt8nLfroK+Xpqtzs4nQ1Bwnv6iiVd5nQ@mail.gmail.com>
+References: <20240515055631.5775-1-ben@jubnut.com>
+ <20240515055631.5775-6-ben@jubnut.com> <ZkscFnmHeWWma7Nb@google.com>
+ <87jzjk1ibr.fsf@jubnut.com> <Zk_63rrDJFhN1Y1q@google.com>
+ <87cypb12j9.fsf@jubnut.com>
+ <CA+BfgNL7RGWuFK-M=Cpt8nLfroK+Xpqtzs4nQ1Bwnv6iiVd5nQ@mail.gmail.com>
+Date: Fri, 24 May 2024 19:45:41 +0100
+Message-ID: <878qzz1222.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pCaot/fJN4+FoIrV"
-Content-Disposition: inline
-In-Reply-To: <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
-
-
---pCaot/fJN4+FoIrV
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4VmDWX2Js8z9srt
 
-On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
-> On Thu, May 23, 2024 at 7:47=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wrote:
-> > > On 22/05/2024 23:50, Tim Harvey wrote:
-> > > > The GW7905 was renamed to GW7500 before production release.
-> > > >
-> > > > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Docum=
-entation/devicetree/bindings/arm/fsl.yaml
-> > > > index 0027201e19f8..d8bc295079e3 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > @@ -920,8 +920,8 @@ properties:
-> > > >                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
-> > > >                - fsl,imx8mm-evk            # i.MX8MM EVK Board
-> > > >                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
-> > > > +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Boa=
-rd
-> > >
-> > > That's not even equivalent. You 7500 !=3D 75xx.
-> > >
-> >
-> > > >                - gateworks,imx8mm-gw7904
-> > > > -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Boa=
-rd
-> > >
-> > > Compatibles do not change. It's just a string. Fixed string.
-> >
-> > I think there's justification here for removing it, per the commit
-> > message, the rename happened before the device was available to
-> > customers.
-> > Additionally, I think we can give people that upstream things before th=
-ey're
-> > publicly available a bit of slack, otherwise we're just discouraging
-> > people from upstreaming early.
->=20
-> Hi Conor,
->=20
-> Thanks for understanding - that's exactly what happened. I'm in the
-> habit of submitting patches early and often and it's no fun when
-> something like a silly product name gets changed and breaks all the
-> hard work.
->=20
-> The board model number is stored in an EEPROM at manufacturing time
-> and that EEPROM model is used to build a dt name. So instead of GW7905
-> which would be a one-off custom design it was decided to change the
-> product to a GW75xx. The difference between GW7500 and GW75xx is
-> because we subload components on boards between GW7500/GW7501/GW7502
-> etc but the dt is the same.
->=20
-> If there is resistance to a patch that renames it then I guess I'll
-> have to submit a patch that removes the obsolete board, then adds back
-> the same board under a different name. Shall I do that?
+Dustin Howett <dustin@howett.net> writes:
 
-I think this patch is fine - other than the inconsistency that Krzysztof
-pointed out between the "renamed to gw7500" and the "gw75xx" in the new
-compatible.
+> On Fri, May 24, 2024 at 1:35=E2=80=AFPM Ben Walsh <ben@jubnut.com> wrote:
+>>
+>> I could add a new quirk which provides an alternative ACPI match table
+>> to be used instead of the default. In the default case the match_table
+>> will contain only "GOOG0004" as before. But in the Framework EC case the
+>> match table will be "PNP0C09".
+>
+> My biggest concern with putting PNP0C09 in the direct match table is
+> that it would cause cros_ec_lpcs to be loaded for *all* devices with
+> an ACPI-compatible embedded controller; it would likely print an error
+> and bail out early on, but it would still be unnecessary on 99% of
+> platforms.
 
---pCaot/fJN4+FoIrV
-Content-Type: application/pgp-signature; name="signature.asc"
+That's exactly what we're talking about: how to *avoid* putting PNP0C09
+in the match table.
 
------BEGIN PGP SIGNATURE-----
+My original idea was to put it in the match table, but only allow a
+match to proceed if Framework EC is detected by DMI.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDfNgAKCRB4tDGHoIJi
-0uWsAP9dzrZ3+eiCFu2YQvK3J+Zew8rK3KOAEeLUpnNiZQre7QEAzAhNADZZS5/6
-Y98YUIYEF8yRhwinZqc/RiVXus5T0gY=
-=BFLi
------END PGP SIGNATURE-----
-
---pCaot/fJN4+FoIrV--
+My new idea is to not to put it in the match table *at all*, but to
+provide a new match table if Framework EC is detected by DMI.
 
