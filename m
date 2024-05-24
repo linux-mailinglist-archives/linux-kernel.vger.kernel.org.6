@@ -1,183 +1,161 @@
-Return-Path: <linux-kernel+bounces-188767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF788CE6A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:05:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DF98CE6A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E6C1F226F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:05:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEA06B21578
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16C112C476;
-	Fri, 24 May 2024 14:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B012C486;
+	Fri, 24 May 2024 14:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdW6F8IB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b="odr2+K57"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050D12BF38;
-	Fri, 24 May 2024 14:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412E012BF38
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559528; cv=none; b=pgT5aO6K8/7i5DW/5CHibBwj2iiZBNdPog67fGmRtQZQzD948IuTAETb0OkfZjOGC1XjsRwaUzWZ7ImWseUJ2wZsfMmmbAISJUJaKNwljnst8Qt9Qw8Sz5JeplT5wclE9hFcPcGTuqTKV2A9nLOuwwNKSls+gC9wO/+9tGKRoPc=
+	t=1716559701; cv=none; b=H++tkBpJguGlqqJ2IqbNNKCHR2HLtVSA7jWgH6JxZ5oMmWwYSypk14caWGyl6zkiAIsvByAmNm4NBs1hTUffqLMQ3dydMVGA4Cb2OWlSvE3muvyxAD30xaBJhHsNP9BdPd0ribNagNwrIq1pjF7ErUv+cy2P/6pcbFJioKQmVlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559528; c=relaxed/simple;
-	bh=lEpDUMndEWxswvmAvM++8Gc2QtrqlIBZpwvAiQ7Z65E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m5IBdjOHq2auq0wWCwEsTrHpYb7TGWMZnlUWbZ6EvLRT/S3pYbF3A8nz4XOce4arZLLBoT/PH3ZoNVhHlGSS4pWn/39cILuTYv0APPs1b5YUf1miAw4OUUda//mfFIrYTRVZOuutnDBnLmjgmRX1Kprs1qjD8IDKyFheIolRtXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdW6F8IB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29CB7C2BBFC;
-	Fri, 24 May 2024 14:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716559527;
-	bh=lEpDUMndEWxswvmAvM++8Gc2QtrqlIBZpwvAiQ7Z65E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JdW6F8IB+hgDYDynBhunl/81pomaGV4o1g5U1Nyx0UXvTk897yltvSF0JZK+5j9h3
-	 GyOE0gTKFJ/YeffUGVHujVSngeoLHAvuDIv7LMiqfnGRliBrv67lIif0Jji45wady0
-	 EG5LWbvzYN12+7v/xnI+6OWMQPqe/vOfytq/hnIJLMUkopOpN17X5PhThfn1c3zdx9
-	 ke95NeTj2HqrYxYaGCpMykccpcV7j6uss03m5uyHAGMIPsttqemy/GB50nFfh75Rwd
-	 3UI7e2bqYB5LiBWW5VN+Ou8AppaoK1Mj3ifhHjFvRtLk+NRSv08glVmH853ReS1C0M
-	 jG8n3PEgeMsTg==
-Date: Fri, 24 May 2024 16:05:24 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: [PATCH] rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU invocation
-Message-ID: <ZlCepOslDQz4cOIM@lothringen>
+	s=arc-20240116; t=1716559701; c=relaxed/simple;
+	bh=KmSHqkLEACdJA5JkR30IvcQRznw1fQacuNaMNWW7CGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fKkNZLuaco8fRr6ae1QO4V/dGDjhUwyb6N7Wh7MQu+Dd9ej+0tk0KiCcxc8ttoFwAvlrICJVpajuBfYzKnwAAduK6uW0N1EqRuPN4nRn6/IEulNC4riSn+JTiLEJa7nii0lWA8KYxzUyegAeA/Ub/NTSynwaVAGsDqTSOT0mG38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se; spf=fail smtp.mailfrom=ferroamp.se; dkim=pass (2048-bit key) header.d=ferroamp-se.20230601.gappssmtp.com header.i=@ferroamp-se.20230601.gappssmtp.com header.b=odr2+K57; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ferroamp.se
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=ferroamp.se
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5295eb47b48so991014e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ferroamp-se.20230601.gappssmtp.com; s=20230601; t=1716559695; x=1717164495; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uw+x2I02cfRHY66/tRD0BbH08xb2ysdRK1VqCkSSMhk=;
+        b=odr2+K5794KfAlnHQfv3jmJprvLU5Ldl2F9XkrNTBKpUXH1kX/S1IYvICFpuvUc5ww
+         qNF0hJXVdV+DArSgY0DJK17bMPzkjZxqP0TR0k3Vgi4RnQ8KC/47trDn3HlTv9DOfWDR
+         WK70Yd1chGEX6XoS+5jxleiE2Nn3r0pW+ry/HHHkdsG8wqtkmtNaqnkHkWadvTGFLrq+
+         6xqruHT/1h3nA6pB70+34tV/LrxaPImm5+k2PFUSujN3gA9TghcDB34thG5tiWM2+3l/
+         ugawdQLHMBUYSpf+emCoSuocm0nSgI6lNwUZo7DwrxjSQSnc//YV4Y9xF8cxcrCAjwyi
+         ed6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716559695; x=1717164495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uw+x2I02cfRHY66/tRD0BbH08xb2ysdRK1VqCkSSMhk=;
+        b=chgPWMXhGyLwu8njeUpBu6hkS6vRuXMhAY2azldjSWLljswJeJZaBKGlGBXwpecN5v
+         nz5OZuwcbbxmimPJZSPQ6wbl8p81yHLt2tpKfGxcKZZtXvyh3sVGx8ORqJAghU1GJDcA
+         MCPi/14BS9rhhui1ValRw9zsrfiZVxEzZp7txDGb9HefcaBo9VutagtG4xq4unCT9T37
+         CARqOMT6u6aQmRV4pelXa9ItMt27QwJwMWubMDj/z3N8MmIXvnMdVjIbz7GPTnaPaCz/
+         AFYx00rNgSZm1MCCXxaNhtOqd/Ya5/I/04kQZzdJ5mNXQo2YqYUtJ1bqm6vpR9euy8Mj
+         hwjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW24AhuXxU0wUXGgmMFV8Yz/RFL3xo7AYjm8wxLk8+Gm45U1MKTUqWzCWRPYYO+ueq69abD2XW5JVHSR6bS1a/ndYCixnDyIrvm7MFh
+X-Gm-Message-State: AOJu0YyRnHFwsFgVyJs1U1J/ql1QNODyXBMOr4+Hw7MoRIAKVIIFYcLu
+	QNb+mw/a/xCBsvA8VC80lCp/RSfvZxcKXpjuJLzFt4rffVUp72o1bXBz7cIZ4ZY=
+X-Google-Smtp-Source: AGHT+IHikd5bcFxVugcTWkXTYj6tWsPERSNIKCxhLOzj5DEmZPLVfbyUeeIG0OEv6qkAYQxT9EkvLg==
+X-Received: by 2002:a05:6512:238d:b0:51e:7fa6:d59f with SMTP id 2adb3069b0e04-52966bb200fmr2244010e87.53.1716559695152;
+        Fri, 24 May 2024 07:08:15 -0700 (PDT)
+Received: from localhost.localdomain ([185.117.107.42])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-5296ee4a9cfsm185474e87.75.2024.05.24.07.08.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 07:08:14 -0700 (PDT)
+From: =?UTF-8?q?Ram=C3=B3n=20Nordin=20Rodriguez?= <ramon.nordin.rodriguez@ferroamp.se>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: parthiban.veerasooran@microchip.com,
+	=?UTF-8?q?Ram=C3=B3n=20Nordin=20Rodriguez?= <ramon.nordin.rodriguez@ferroamp.se>
+Subject: [PATCH net 0/1] phy: microchip_t1s: lan865x rev.b1 support
+Date: Fri, 24 May 2024 16:07:05 +0200
+Message-ID: <20240524140706.359537-1-ramon.nordin.rodriguez@ferroamp.se>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Hi,
+Let me first prepend this submission with 4 points:
 
-I have found a potential race, but I might have missed something on the
-way that makes it actually impossible... Please double check.
+* this is not in a merge-ready state
+* some code has been copied from the ongoing oa_tc6 work by Parthiban
+* this has to interop with code not yet merged (oa_tc6)
+* Microchip is looking into if rev.b0 can use the rev.b1 init procedure
 
-Thanks.
+The ongoing work by Parthiban Veerasooran is probably gonna get at least
+one more revision
+(https://lore.kernel.org/netdev/20240418125648.372526-1-Parthiban.Veerasooran@microchip.com/)
 
----
-Subject: [PATCH] rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU invocation
+I'm publishing this early as it could benefit some of the discussions in
+the oa_tc6 threads, as well as giving other devs the possibility
+massaging things to a state where they can use the rev.b1 chip (rev.b0
+is eol).
+And I need feedback on how to wrap this up.
 
-When rcu_barrier() calls rcu_rdp_cpu_online() and observes a CPU off
-rnp->qsmaskinitnext, it means that all accesses from the offline CPU
-preceding the CPUHP_TEARDOWN_CPU are visible to RCU barrier, including
-callbacks expiration and counter updates.
+Far as I can tell the phy-driver cannot access some of the regs necessary
+for probing the hardware and performing the init/fixup without going
+over the spi interface.
+The MMDCTRL register (used with indirect access) can address
 
-However interrupts can still fire after stop_machine() re-enables
-interrupts and before rcutree_report_cpu_dead(). The related accesses
-happening between CPUHP_TEARDOWN_CPU and rnp->qsmaskinitnext clearing
-are _NOT_ guaranteed to be seen by rcu_barrier() without proper
-ordering, especially when callbacks are invoked there to the end, making
-rcutree_migrate_callback() bypass barrier_lock.
+* PMA - mms 3
+* PCS - mms 2
+* Vendor specific / PLCA - mms 4
 
-The following theoretical race example can make rcu_barrier() hang:
+This driver needs to access mms (memory map seleector)
+* mac registers - mms 1,
+* vendor specific / PLCA - mms 4
+* vencor specific - mms 10
 
-CPU 0                                               CPU 1
------                                               -----
-//cpu_down()
-smpboot_park_threads()
-//ksoftirqd is parked now
-<IRQ>
-rcu_sched_clock_irq()
-   invoke_rcu_core()
-do_softirq()
-   rcu_core()
-      rcu_do_batch()
-         // callback storm
-         // rcu_do_batch() returns
-         // before completing all
-         // of them
-   // do_softirq also returns early because of
-   // timeout. It defers to ksoftirqd but
-   // it's parked
-</IRQ>
-stop_machine()
-   take_cpu_down()
-                                                    rcu_barrier()
-                                                        spin_lock(barrier_lock)
-                                                        // observes rcu_segcblist_n_cbs(&rdp->cblist) != 0
-<IRQ>
-do_softirq()
-   rcu_core()
-      rcu_do_batch()
-         //completes all pending callbacks
-         //smp_mb() implied _after_ callback number dec
-</IRQ>
+Far as I can tell, mms 1 and 10 are only accessible via spi. In the
+oa_tc6 patches this is enabled by the oa_tc6 framework by populating the
+mdiobus->read/write_c45 funcs.
 
-rcutree_report_cpu_dead()
-   rnp->qsmaskinitnext &= ~rdp->grpmask;
+In order to access any mms I needed I added the following change in the
+oa_tc6.c module
 
-rcutree_migrate_callback()
-   // no callback, early return without locking
-   // barrier_lock
-                                                        //observes !rcu_rdp_cpu_online(rdp)
-                                                        rcu_barrier_entrain()
-                                                           rcu_segcblist_entrain()
-                                                              // Observe rcu_segcblist_n_cbs(rsclp) == 0
-                                                              // because no barrier between reading
-                                                              // rnp->qsmaskinitnext and rsclp->len
-                                                              rcu_segcblist_add_len()
-                                                                 smp_mb__before_atomic()
-                                                                 // will now observe the 0 count and empty
-                                                                 // list, but too late, we enqueue regardless
-                                                                 WRITE_ONCE(rsclp->len, rsclp->len + v);
-                                                        // ignored barrier callback
-                                                        // rcu barrier stall...
+static int oa_tc6_get_phy_c45_mms(int devnum)
+ {
++       if(devnum & BIT(31))
++               return devnum & GENMASK(30, 0);
 
-This could be solved with a read memory barrier, enforcing the message
-passing between rnp->qsmaskinitnext and rsclp->len, matching the full
-memory barrier after rsclp->len addition in rcu_segcblist_add_len()
-performed at the end of rcu_do_batch().
+Which corresponds to the 'mms | BIT(31)' snippets in this commit, this
+is really not how things should be handled, and I need input on how to
+proceed here.
 
-However the rcu_barrier() is complicated enough and probably doesn't
-need too many more subtleties. CPU down is a slowpath and the
-barrier_lock seldom contended. Solve the issue with unconditionally
-locking the barrier_lock on rcutree_migrate_callbacks(). This makes sure
-that either rcu_barrier() sees the empty queue or its entrained
-callback will be migrated.
+Here we get into a weird spot, this driver will need changes in the
+oa_tc6 submission, but it's weird to submit support for yet another phy
+with that patchset (in my opinion).
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+This has been tested with a lan8650 rev.b1 chip on one end and a lan8670
+usb eval board on the other end. Performance is rather lacking, the
+rev.b0 reaches close to the 10Mbit/s limit, but b.1 only gets about
+~4Mbit/s, with the same results when PLCA enabled or disabled.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 944e55085262..925e006b64f9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4736,11 +4736,15 @@ void rcutree_migrate_callbacks(int cpu)
- 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
- 	bool needwake;
- 
--	if (rcu_rdp_is_offloaded(rdp) ||
--	    rcu_segcblist_empty(&rdp->cblist))
--		return;  /* No callbacks to migrate. */
-+	if (rcu_rdp_is_offloaded(rdp))
-+		return;
- 
- 	raw_spin_lock_irqsave(&rcu_state.barrier_lock, flags);
-+	if (rcu_segcblist_empty(&rdp->cblist)) {
-+		raw_spin_unlock_irqrestore(&rcu_state.barrier_lock, flags);
-+		return;  /* No callbacks to migrate. */
-+	}
-+
- 	WARN_ON_ONCE(rcu_rdp_cpu_online(rdp));
- 	rcu_barrier_entrain(rdp);
- 	my_rdp = this_cpu_ptr(&rcu_data);
+I suggest that this patch is left to brew until the oa_tc6 changes are
+accepted, at which time this is fixed up.
+
+Ramón Nordin Rodriguez (1):
+  net: phy: microchip_t1s: enable lan865x revb1
+
+ drivers/net/phy/microchip_t1s.c | 189 ++++++++++++++++++++++++++++----
+ 1 file changed, 166 insertions(+), 23 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
