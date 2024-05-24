@@ -1,234 +1,197 @@
-Return-Path: <linux-kernel+bounces-188912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10EB8CE86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:03:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB03C8CE86E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490AE1F21ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027C51C20BDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66A12E1EE;
-	Fri, 24 May 2024 16:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9BD12E1EB;
+	Fri, 24 May 2024 16:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q14CfsNl";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="sSNN+UXq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BJ7hrmY5"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B2912C7FA;
-	Fri, 24 May 2024 16:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB07012CD8E;
+	Fri, 24 May 2024 16:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566604; cv=none; b=psf88jGNomL0mhXmPa8h6DnC18o8Akn/nvZBzFtqkRlI3CGhvPsrFVz67Es4nuuDc1OspSC7AXnYKfcHdbhsCAbBr+VvYoI3vAxgfR1KQUYkoZ66UE9tEdBomvFr6aL6lLEKBKVPKhvDIuhfUwRfAOsHbenbi7MPSx5Q72EOrIc=
+	t=1716566617; cv=none; b=OoBfrQPl1HPwzpNODdw6y4F9plLRZML5n4mi3+6h9maL3ZMd9DEwxQbUafDIm3iDml6gK36sUKDemWZ9QturopKk0ZWz3OuWzcfuHxfDZ1XvkUXePgGUMianLdwVEeZcio+L4skBP5yM3/D1Mh2DaM9ESGEm19F2RCl4FPVJJoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566604; c=relaxed/simple;
-	bh=JqKS4wpPgXqZOf3iMQQ8ii+Ilnkc19O7nq7rAofjl6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDJkX4aXvNkS9jrcoUMl56ZftHvP18LfM7w3SJ7baLEyao+L2wyxjlrxqye1jPksMjjgOMBkdEYsC879hu0a1We52NE4cI6V/L0Y/mbC5cP1rWGhojJ69Vc7hGK4ioAk6u95S6nFk/SiaKXnyEdImHYbt90/MlWnK43xIlaQhI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q14CfsNl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=sSNN+UXq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4EED520B60;
-	Fri, 24 May 2024 16:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716566598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6lUxk/Tjt7m/ohntKkHsSv/2LsIygylGYaEnvovT1G4=;
-	b=Q14CfsNlKWPRsawRA1UJAYqnKI+SK51ujfeyWWXYvpqR7Dwlap1rStX5b1rPD2scnO8H0Q
-	QcmxsFKTD6Dj8MHQeRYxLQPQN/aqF/s4EkefKZoAxqZXyckUrPlq6WWeT8paZrQC2gE6+x
-	AwoAhNRCebcLT/47Uer3O3QLVztze4E=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716566597; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6lUxk/Tjt7m/ohntKkHsSv/2LsIygylGYaEnvovT1G4=;
-	b=sSNN+UXqk6PzJE5+gQ07B+a+eAyOLOl9++Jho5njILKRbhaKSOwVx+7QsvM5RkbVjpU9nT
-	w/GMmcvTI8bohYMflafNS2OGZHqUycV6P7OiT3DsnraDuLPS/efeluoDLmSbHwtM/BQn8k
-	P9SrJmfoZYRo/8tU+xCHhogh41dKn8U=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B07313A3D;
-	Fri, 24 May 2024 16:03:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TYn9DUW6UGajZwAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Fri, 24 May 2024 16:03:17 +0000
-Date: Fri, 24 May 2024 18:03:16 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Sam Sun <samsun1006219@gmail.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, tj@kernel.org, 
-	syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com, 
-	Chengming Zhou <zhouchengming@bytedance.com>
-Subject: Re: [Linux kernel bug] KASAN: slab-use-after-free Read in
- pressure_write
-Message-ID: <q7lfvwrjrs3smyoyt5pyduv5c7hmmgv2mgo6ns3agbjaxawoso@24dbbmumc7ou>
-References: <CAEkJfYMMobwnoULvM8SyfGtbuaWzqfvZ_5BGjj0APv+=1rtkbA@mail.gmail.com>
+	s=arc-20240116; t=1716566617; c=relaxed/simple;
+	bh=jcYfrQux9RRufLBucVlaKQB/uSKaLAyTFQ1XBs3s/18=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XfdMyN5zPYjg/Ff2gP78JOOSdW1y/lM6jq1dCd2Ptt9lmsG6OHXGSwjSjBYqoFoeoG2noQRYG07udU2ry9DVagiWKAsi2CMz0gdEgLey+mKZw/GTF1p7dlo/y5kD7hvF47bZNVMldl7uJ3udzvblb++LlmsWXyugzcZZePQHG/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BJ7hrmY5; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1716566614;
+	bh=jcYfrQux9RRufLBucVlaKQB/uSKaLAyTFQ1XBs3s/18=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=BJ7hrmY59qdh4O56NrMB5x+iWZR9T0WcUGf+f5D2Qo1Qw19wz6478UWqyrAGio8DP
+	 mQEU+sP+FBbdlnJAfRATwFkavyzQCgs35Yp21eb6Jsim6U9ChpnTWW8+GP19t6R6kj
+	 rtFeaNirDP+bY9EklkVzOlx0zHqwzMIJP+oTRLgY/2XuXebBeXM339WxVjmFYrcJ4H
+	 JxaTU7wOyqq5fVqRuCarRi1DRem1L3MIPCVA7dFFyd22m+FHHEx9eyLHNV3SSr5Bi2
+	 L+kBaonsDvKf+zzG2nB/eISphTs8fAQByHO4wCW7LvT7eAB6H12SXlxd3i5ZoWoPgr
+	 1Yl7mbE5VnmFg==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vm8wQ4q9Dz11J8;
+	Fri, 24 May 2024 12:03:34 -0400 (EDT)
+Message-ID: <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
+Date: Fri, 24 May 2024 12:04:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wtqa4dzpqfs5my2o"
-Content-Disposition: inline
-In-Reply-To: <CAEkJfYMMobwnoULvM8SyfGtbuaWzqfvZ_5BGjj0APv+=1rtkbA@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -5.90
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.90 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,cmpxchg.org,bytedance.com,kernel.org,googlegroups.com,gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-
-
---wtqa4dzpqfs5my2o
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 17, 2024 at 03:14:23PM GMT, Sam Sun <samsun1006219@gmail.com> w=
-rote:
-> ...
-> We analyzed the root cause of this problem. It happens when
-> concurrently accessing
-> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/irq.pressure" and
-> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/cgroup.pressure". If we
-> echo 0 to cgroup.pressure, kernel will invoke cgroup_pressure_write(),
-> and call kernfs_show(). It will set kn->flags to KERNFS_HIDDEN and
-> call kernfs_drain(), in which it frees kernfs_open_file *of. On the
-> other side, when accessing irq.pressure, kernel calls
-> pressure_write(), which will access of->priv. So that it triggers a
-> use-after-free.
-
-Thanks for the nice breakdown.
-
-What would you tell to something like below (not tested).
-
-Regards,
-Michal
-
--- >8 --
-=46rom f159b20051a921bcf990a4488ca6d49382b61a01 Mon Sep 17 00:00:00 2001
-=46rom: =3D?UTF-8?q?Michal=3D20Koutn=3DC3=3DBD?=3D <mkoutny@suse.com>
-Date: Fri, 24 May 2024 16:50:24 +0200
-Subject: [PATCH] cgroup: Pin appropriate resources when creating PSI pressu=
-re
- trigger
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ llvm@lists.linux.dev
+References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
+ <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+ <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
+Content-Language: en-US
+In-Reply-To: <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Wrongly synchronized access to kernfs_open_file was detected by
-syzkaller when there is a race between trigger creation and disabling of
-pressure measurements for a cgroup (echo 0 >cgroup.pressure).
+On 2024-05-24 11:35, Mathieu Desnoyers wrote:
+> [ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
+> 
+> On 2024-05-24 11:28, Kent Overstreet wrote:
+>> On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
+>>> Hi Kent,
+>>>
+>>> Looking around in the bcachefs code for possible causes of this KMSAN
+>>> bug report:
+>>>
+>>> https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.com/
+>>>
+>>> I notice the following pattern in the bcachefs structures: zero-length
+>>> arrays members are inserted in structures (not always at the end),
+>>> seemingly to achieve a result similar to what could be done with a
+>>> union:
+>>>
+>>> fs/bcachefs/bcachefs_format.h:
+>>>
+>>> struct bkey_packed {
+>>>          __u64           _data[0];
+>>>
+>>>          /* Size of combined key and value, in u64s */
+>>>          __u8            u64s;
+>>> [...]
+>>> };
+>>>
+>>> likewise:
+>>>
+>>> struct bkey_i {
+>>>          __u64                   _data[0];
+>>>
+>>>          struct bkey     k;
+>>>          struct bch_val  v;
+>>> };
+>>>
+>>> (and there are many more examples of this pattern in bcachefs)
+>>>
+>>> AFAIK, the C11 standard states that array declarator constant expression
+>>>
+>>> Effectively, we can verify that this code triggers an undefined behavior
+>>> with:
+>>>
+>>> #include <stdio.h>
+>>>
+>>> struct z {
+>>>          int x[0];
+>>>          int y;
+>>>          int z;
+>>> } __attribute__((packed));
+>>>
+>>> int main(void)
+>>> {
+>>>          struct z a;
+>>>
+>>>          a.y = 1;
+>>>          printf("%d\n", a.x[0]);
+>>> }
+>>> delimited by [ ] shall have a value greater than zero.
+>>
+>> Yet another example of the C people going absolutely nutty with
+>> everything being undefined. Look, this isn't ok, we need to get work
+>> done, and I've already wasted entirely too much time on ZLA vs. flex
+>> array member nonsense.
+>>
+>> There's a bunch of legit uses for zero length arrays, and your example,
+>> where we're not even _assigning_ to x, is just batshit. Someone needs to
+>> get his head examined.
 
-Use cgroup_mutex to synchronize whole duration of pressure_write() to
-prevent working with a free'd kernfs_open_file by excluding concurrent
-cgroup_pressure_write() (uses cgroup_mutex already).
+Notice how a.y is first set to 1, then a.x[0] is loaded, expecting to
+alias with a.y.
 
-Fixes: 0e94682b73bf ("psi: introduce psi monitor")
-Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enabl=
-e interface")
-Reported-by: Yue Sun <samsun1006219@gmail.com>
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Signed-off-by: Michal Koutn=FD <mkoutny@suse.com>
----
- kernel/cgroup/cgroup.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+This is the same aliasing pattern found in bcachefs, for instance here:
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index e32b6972c478..e16ebd0c4977 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3777,31 +3777,30 @@ static ssize_t pressure_write(struct kernfs_open_fi=
-le *of, char *buf,
- 	struct psi_trigger *new;
- 	struct cgroup *cgrp;
- 	struct psi_group *psi;
-+	ssize_t ret =3D nbytes;
-=20
- 	cgrp =3D cgroup_kn_lock_live(of->kn, false);
- 	if (!cgrp)
- 		return -ENODEV;
-=20
--	cgroup_get(cgrp);
--	cgroup_kn_unlock(of->kn);
--
- 	/* Allow only one trigger per file descriptor */
- 	if (ctx->psi.trigger) {
--		cgroup_put(cgrp);
--		return -EBUSY;
-+		ret =3D -EBUSY;
-+		goto out;
- 	}
-=20
- 	psi =3D cgroup_psi(cgrp);
- 	new =3D psi_trigger_create(psi, buf, res, of->file, of);
- 	if (IS_ERR(new)) {
--		cgroup_put(cgrp);
--		return PTR_ERR(new);
-+		ret =3D PTR_ERR(new);
-+		goto out;
- 	}
-=20
- 	smp_store_release(&ctx->psi.trigger, new);
--	cgroup_put(cgrp);
-=20
--	return nbytes;
-+out:
-+	cgroup_kn_unlock(of->kn);
-+	return ret;
- }
-=20
- static ssize_t cgroup_io_pressure_write(struct kernfs_open_file *of,
---=20
-2.44.0
+bcachefs_format.h:
+
+struct jset {
+[...]
+         __u8                    encrypted_start[0];
+
+         __le16                  _read_clock; /* no longer used */
+         __le16                  _write_clock;
+
+         /* Sequence number of oldest dirty journal entry */
+         __le64                  last_seq;
 
 
---wtqa4dzpqfs5my2o
-Content-Type: application/pgp-signature; name="signature.asc"
+         struct jset_entry       start[0];
+         __u64                   _data[];
+} __packed __aligned(8);
 
------BEGIN PGP SIGNATURE-----
+where struct jset last_seq field is set by jset_validate():
 
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZlC6QQAKCRAGvrMr/1gc
-jvnJAP0VHPulkTLjdFvEPehO3a5hlZoKLC2RYbz1+2pc/oQoxgD9Hr2sNyZnb5kR
-TkRvrrDg6Xazb53v7L69DAUQz/mA+gg=
-=25o2
------END PGP SIGNATURE-----
+		jset->last_seq = jset->seq;
 
---wtqa4dzpqfs5my2o--
+and where journal_read_bucket() uses the encrypted_start member as input:
+
+                 ret = bch2_encrypt(c, JSET_CSUM_TYPE(j), journal_nonce(j),
+                              j->encrypted_start,
+                              vstruct_end(j) - (void *) j->encrypted_start);
+
+Regards,
+
+Mathieu
+
+
+>>
+>>> So I wonder if the issue reported by KMSAN could be caused by this
+>>> pattern ?
+>>
+>> Possibly; the KMSAN errors I've been looking at do look suspicious. But
+>> it sounds like we need a real fix that involves defining proper
+>> semantics, not compiler folks giving up and saying 'aiee!'.
+>>
+>> IOW, clang/KMSAN are broken if they simply choke on a zero length array
+>> being present.
+> 
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
