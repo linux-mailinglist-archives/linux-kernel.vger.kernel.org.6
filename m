@@ -1,115 +1,215 @@
-Return-Path: <linux-kernel+bounces-189127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE73E8CEB8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D1E8CEB8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 636A6281FD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6DD1F212CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1E5130ADD;
-	Fri, 24 May 2024 20:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D767130E33;
+	Fri, 24 May 2024 20:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="namQGzio"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVXT5RPU"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0718130A66;
-	Fri, 24 May 2024 20:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC634130E26;
+	Fri, 24 May 2024 20:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716583980; cv=none; b=GcGrSIyfzhdbeE4fOfnFdjRG84BBM75/C7RorRmNKzCJWrgLLeMKyR/XEKA0zZTnt1mCWSHMczU7qGACByAYl2Xls8qB+p4XiwAWCuLD/NJdH5KRm2FChK0PNnKa9pQw2o5zYGmtItG6ebQnvuwn1louVIXMmVKtowiRP6/a63g=
+	t=1716584055; cv=none; b=fM1+00+/IXv+Ha+rQJgIf97G3oYnkzEazUIN7KD68SwdTi7kjlSur96As22Q7e/SJH0Nvs7h+BuZtw/OANC6QBG95m5hs6zJpxl2SKKjxr4njMLvn6b2n6gmzzQA+0EAo2D24IayrkpC0PcXQ4xDg2yNlou5NRixN8ZU39MOp9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716583980; c=relaxed/simple;
-	bh=aAPEA8YiMWVDh0kdSQzZM6OYsr5S8UATZ4K88DTAx70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eENJwCaWv7Bfs/36tnOZHaPaDPOrMNN74HheONuCTRhmSPq9FGoFZAL8twR1RqOjhgDVBSwZU/49ite3cy7SbKcQXUTGGwHhW56xzfUqjvF6OJG3sSoWlg13SqJHsp7UG1QztHqCILZ7E2Fbfb9GDKCwsdoVgXIEq7AXbbAlv4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=namQGzio; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44OA2742017979;
-	Fri, 24 May 2024 20:52:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=RIwBwqSDskgBfkqWitmbuX
-	hVYh3yX8eUMqWJY+s6DdM=; b=namQGzio6teguoWqMDdwyoJbO5Rho8o8t8Qxp+
-	KiHuZ6JfanGAyhY3DRDYiy+HkwmlYij9zL+pvCp6AXqXQauWHJ51hsqWPN8R7iou
-	ByMR0Z7sUGr95Cz62HuTtdg/YM1o5CdBgUC+k+xDqEeJmMz01oAY99cy8NCzybGE
-	/RESVhoM3feW86nlcqMFL0q3WbRnNF64D+VXVe6gqgj0EDPJQyf51l5Q3NsihWFp
-	IBFnNTRXgPqXAJ/zF8wzoAsgSt73w8jgaHJWsNYHfdyOAQdkNq39SQ8TaaDyxKXc
-	8kyoXJxSqMZOYiHoaEOszqo+Fm9H3BHuQ/4e8mxwKUk/6Sug==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8hue9q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 20:52:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44OKqqC8016869
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 20:52:52 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
- 2024 13:52:52 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 24 May 2024 13:52:52 -0700
-Subject: [PATCH] qnx6: add MODULE_DESCRIPTION()
+	s=arc-20240116; t=1716584055; c=relaxed/simple;
+	bh=Ve7X6dyEMERtZnZM16/JR6dn1SwSIRT0GeLiibot1wM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=oI5eXd5lTO4DXMo8qq5U33LPn4dgm2PsTguZgZT0aFYvnxTotDq4saiJHZl4Uuh19HaFJUKIyVvlnJ9RYyLrEQMD/6xsD+mwooYPtn7VHEznWwChAO7Porj6I9uLdZZFsyMNu1QCi4NU+ZGiKidjdmDituEdHVMi4gdG37bso4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVXT5RPU; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-420180b5897so33375365e9.3;
+        Fri, 24 May 2024 13:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716584052; x=1717188852; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XWRTTdI4Emy4KPvUWY+g9XFXaK4zGbMUIGkTkuZ3J94=;
+        b=mVXT5RPUR18cihQ+SnrHsMynZDqQV+rozHmTjb9YYjmVEis6/sS9kt7mvb8DpzDDDQ
+         uMcr7mnsS7oKCeJUuw0MyzpxW+BOQ/t4k5EbJd0kaVlXh9T3onaualkGCGLAaVUVHVbj
+         5kYeb5IgtiSoCwZ7o3ADqrCoTdDaBD/Zgb/k3qlRNezCtOatptkkxMGMjzSpp+dZPoBn
+         fL2gncjv+BuoL+Zs6XPFleiyPL3LWkz2bCCZEhEHJqqcypYSZH9bYesyIMWGmaWNt+6N
+         wA27PI3WOi0gYT0xp9JiCku5MAYJAW3rzPCXL+emJzxB2/nYP7CnPoP02SE2hmEswrFn
+         4Q/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716584052; x=1717188852;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XWRTTdI4Emy4KPvUWY+g9XFXaK4zGbMUIGkTkuZ3J94=;
+        b=BdXlJCaJQW+s0QNFOmtaEPDp5cOqMcdhbrZc2MLwAJAOdULGc7b7WthkhpmDhAu67W
+         zN4inmQ6g5LwgyFxGt40t00Xg19cNPyNO2dElIP/rAkdbie/dhUMW4aF/kflYRpOYBWR
+         lNzw0SFjIzsz6GMx7Gpd07RHytl0cA9UXIFnQaU86GR1ZAIxCGwxhwtPWDNMfzkEDKGC
+         MxlIHvl9MHWKjzV8KSJo9xZEqK0O1I6vq5+rgEDuieXAdpwsnNu7oo2dG2h/pK8mN3mF
+         pw8DV9uIOMFyn8NnBLfhDMvp1VgEMq9spzyG8bwPn4W3fUVNhZsOl/mWbQwZIBQH/w75
+         fJHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYwZYi/ApRU6BqU5cyIMOoozUNdtry2fH/0ieV0HtB1zzYjOVKih7iTTZIzpM7uinh2aCOOw5lKdhJMbmtPSNhqSE9NJb/fkH3KcC+/jK91LZEqLK6dEcV142PKNbB4DWdceWs
+X-Gm-Message-State: AOJu0Ywh4HP9NdlN5vfdn71mIsjeZhxNt5yzsIenKRl4P5/trpiv++86
+	QO3QYRxt2hJ4j8jWbcdtsrAuRJFKmC/YaQ+2AWoO7vrlbuRaRW0Y
+X-Google-Smtp-Source: AGHT+IHz67D/PKHB/qAFQ99/xKvzocO2qTCa9eD8A9d7Zruwfd5cyIbJUgCkkDN+xzgZAGtdfdkibQ==
+X-Received: by 2002:a05:600c:19cf:b0:416:88f9:f5ea with SMTP id 5b1f17b1804b1-42108a0b891mr28044335e9.34.1716584051785;
+        Fri, 24 May 2024 13:54:11 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-420fc82eeb4sm44332315e9.0.2024.05.24.13.54.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 13:54:11 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Robert Marko <robimarko@gmail.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	=?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [RFC PATCH net-next 1/2] net: phy: aquantia: move priv and hw stat to header
+Date: Fri, 24 May 2024 22:53:43 +0200
+Message-ID: <20240524205346.20960-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240524-qnx6-v1-1-cf3b9de68347@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACP+UGYC/x3MQQrCQAyF4auUrA1khjpVryJdTGu0AR1rojJSe
- nejyw/+9xYwVmGDQ7OA8ltM7sURNg2MUy4XRjm5IVJsaRtbfJSaMHW0p9ClXaIAns7KZ6n/m2P
- vHrIxDprLOP3GVymvirdsT1acP57Cun4BuKetNXsAAAA=
-To: Anders Larsen <al@alarsen.net>, Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bCmUXlFEUvw7rI3_lltKYvgqp7ji787T
-X-Proofpoint-ORIG-GUID: bCmUXlFEUvw7rI3_lltKYvgqp7ji787T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_07,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
- phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=897 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405240149
+Content-Transfer-Encoding: 8bit
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx6/qnx6.o
+In preparation for LEDs support, move priv and hw stat to header to
+reference priv struct also in other .c outside aquantia.main
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- fs/qnx6/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/aquantia/aquantia.h      | 38 ++++++++++++++++++++++++
+ drivers/net/phy/aquantia/aquantia_main.c | 37 -----------------------
+ 2 files changed, 38 insertions(+), 37 deletions(-)
 
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index d62fbef838b6..4f1735b882b1 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -694,4 +694,5 @@ static void __exit exit_qnx6_fs(void)
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index 1c19ae74ad2b..c79b33d95628 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -87,6 +87,18 @@
+ #define VEND1_GLOBAL_RSVD_STAT9_MODE		GENMASK(7, 0)
+ #define VEND1_GLOBAL_RSVD_STAT9_1000BT2		0x23
  
- module_init(init_qnx6_fs)
- module_exit(exit_qnx6_fs)
-+MODULE_DESCRIPTION("QNX6 file system");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-change-id: 20240524-qnx6-670901768601
++/* MDIO_MMD_C22EXT */
++#define MDIO_C22EXT_STAT_SGMII_RX_GOOD_FRAMES		0xd292
++#define MDIO_C22EXT_STAT_SGMII_RX_BAD_FRAMES		0xd294
++#define MDIO_C22EXT_STAT_SGMII_RX_FALSE_CARRIER		0xd297
++#define MDIO_C22EXT_STAT_SGMII_TX_GOOD_FRAMES		0xd313
++#define MDIO_C22EXT_STAT_SGMII_TX_BAD_FRAMES		0xd315
++#define MDIO_C22EXT_STAT_SGMII_TX_FALSE_CARRIER		0xd317
++#define MDIO_C22EXT_STAT_SGMII_TX_COLLISIONS		0xd318
++#define MDIO_C22EXT_STAT_SGMII_TX_LINE_COLLISIONS	0xd319
++#define MDIO_C22EXT_STAT_SGMII_TX_FRAME_ALIGN_ERR	0xd31a
++#define MDIO_C22EXT_STAT_SGMII_TX_RUNT_FRAMES		0xd31b
++
+ #define VEND1_GLOBAL_INT_STD_STATUS		0xfc00
+ #define VEND1_GLOBAL_INT_VEND_STATUS		0xfc01
+ 
+@@ -113,6 +125,32 @@
+ #define VEND1_GLOBAL_INT_VEND_MASK_GLOBAL2	BIT(1)
+ #define VEND1_GLOBAL_INT_VEND_MASK_GLOBAL3	BIT(0)
+ 
++struct aqr107_hw_stat {
++	const char *name;
++	int reg;
++	int size;
++};
++
++#define SGMII_STAT(n, r, s) { n, MDIO_C22EXT_STAT_SGMII_ ## r, s }
++static const struct aqr107_hw_stat aqr107_hw_stats[] = {
++	SGMII_STAT("sgmii_rx_good_frames",	    RX_GOOD_FRAMES,	26),
++	SGMII_STAT("sgmii_rx_bad_frames",	    RX_BAD_FRAMES,	26),
++	SGMII_STAT("sgmii_rx_false_carrier_events", RX_FALSE_CARRIER,	 8),
++	SGMII_STAT("sgmii_tx_good_frames",	    TX_GOOD_FRAMES,	26),
++	SGMII_STAT("sgmii_tx_bad_frames",	    TX_BAD_FRAMES,	26),
++	SGMII_STAT("sgmii_tx_false_carrier_events", TX_FALSE_CARRIER,	 8),
++	SGMII_STAT("sgmii_tx_collisions",	    TX_COLLISIONS,	 8),
++	SGMII_STAT("sgmii_tx_line_collisions",	    TX_LINE_COLLISIONS,	 8),
++	SGMII_STAT("sgmii_tx_frame_alignment_err",  TX_FRAME_ALIGN_ERR,	16),
++	SGMII_STAT("sgmii_tx_runt_frames",	    TX_RUNT_FRAMES,	22),
++};
++
++#define AQR107_SGMII_STAT_SZ ARRAY_SIZE(aqr107_hw_stats)
++
++struct aqr107_priv {
++	u64 sgmii_stats[AQR107_SGMII_STAT_SZ];
++};
++
+ #if IS_REACHABLE(CONFIG_HWMON)
+ int aqr_hwmon_probe(struct phy_device *phydev);
+ #else
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index d34cdec47636..252123d12efb 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -84,49 +84,12 @@
+ #define MDIO_AN_RX_VEND_STAT3			0xe832
+ #define MDIO_AN_RX_VEND_STAT3_AFR		BIT(0)
+ 
+-/* MDIO_MMD_C22EXT */
+-#define MDIO_C22EXT_STAT_SGMII_RX_GOOD_FRAMES		0xd292
+-#define MDIO_C22EXT_STAT_SGMII_RX_BAD_FRAMES		0xd294
+-#define MDIO_C22EXT_STAT_SGMII_RX_FALSE_CARRIER		0xd297
+-#define MDIO_C22EXT_STAT_SGMII_TX_GOOD_FRAMES		0xd313
+-#define MDIO_C22EXT_STAT_SGMII_TX_BAD_FRAMES		0xd315
+-#define MDIO_C22EXT_STAT_SGMII_TX_FALSE_CARRIER		0xd317
+-#define MDIO_C22EXT_STAT_SGMII_TX_COLLISIONS		0xd318
+-#define MDIO_C22EXT_STAT_SGMII_TX_LINE_COLLISIONS	0xd319
+-#define MDIO_C22EXT_STAT_SGMII_TX_FRAME_ALIGN_ERR	0xd31a
+-#define MDIO_C22EXT_STAT_SGMII_TX_RUNT_FRAMES		0xd31b
+-
+ /* Sleep and timeout for checking if the Processor-Intensive
+  * MDIO operation is finished
+  */
+ #define AQR107_OP_IN_PROG_SLEEP		1000
+ #define AQR107_OP_IN_PROG_TIMEOUT	100000
+ 
+-struct aqr107_hw_stat {
+-	const char *name;
+-	int reg;
+-	int size;
+-};
+-
+-#define SGMII_STAT(n, r, s) { n, MDIO_C22EXT_STAT_SGMII_ ## r, s }
+-static const struct aqr107_hw_stat aqr107_hw_stats[] = {
+-	SGMII_STAT("sgmii_rx_good_frames",	    RX_GOOD_FRAMES,	26),
+-	SGMII_STAT("sgmii_rx_bad_frames",	    RX_BAD_FRAMES,	26),
+-	SGMII_STAT("sgmii_rx_false_carrier_events", RX_FALSE_CARRIER,	 8),
+-	SGMII_STAT("sgmii_tx_good_frames",	    TX_GOOD_FRAMES,	26),
+-	SGMII_STAT("sgmii_tx_bad_frames",	    TX_BAD_FRAMES,	26),
+-	SGMII_STAT("sgmii_tx_false_carrier_events", TX_FALSE_CARRIER,	 8),
+-	SGMII_STAT("sgmii_tx_collisions",	    TX_COLLISIONS,	 8),
+-	SGMII_STAT("sgmii_tx_line_collisions",	    TX_LINE_COLLISIONS,	 8),
+-	SGMII_STAT("sgmii_tx_frame_alignment_err",  TX_FRAME_ALIGN_ERR,	16),
+-	SGMII_STAT("sgmii_tx_runt_frames",	    TX_RUNT_FRAMES,	22),
+-};
+-#define AQR107_SGMII_STAT_SZ ARRAY_SIZE(aqr107_hw_stats)
+-
+-struct aqr107_priv {
+-	u64 sgmii_stats[AQR107_SGMII_STAT_SZ];
+-};
+-
+ static int aqr107_get_sset_count(struct phy_device *phydev)
+ {
+ 	return AQR107_SGMII_STAT_SZ;
+-- 
+2.43.0
 
 
