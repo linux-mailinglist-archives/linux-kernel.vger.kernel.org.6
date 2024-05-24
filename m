@@ -1,563 +1,262 @@
-Return-Path: <linux-kernel+bounces-188880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF1A8CE81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:36:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7528CE7FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52EFEB22892
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9B31C224B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7588F1332B1;
-	Fri, 24 May 2024 15:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CAE12E1FA;
+	Fri, 24 May 2024 15:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXBorRCB"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PuRFQ7QS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D51C12F381;
-	Fri, 24 May 2024 15:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564689; cv=none; b=ROMYmHj2V3olwIbhE6dVa3wZ7kOXpnQ+lkUzCHEgxeamraWVGVAUdI2xhbe+DHt0WKuf5J+urLYfCV/CqSoIyzNrn1eVBsl2oyN5CoB4PnV/RyhaHKNAxuQJH6nQU40xQqg8spzL+B43PXLVNyeibhI8hSQOSIzPKA2WixQiiY4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564689; c=relaxed/simple;
-	bh=A6nkXhDo3vRgC0ouJzd/jrZPACR0P+/9713U0Tn3QY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GIQL49sSm94Slv76nDpWhuzUBCbUv3dZtlgb9E2mPSyEexoojey9diQwNAuiAQwJrc931Csp8WE9cbWuGYfFb9tQYncUVsd/Tu/j1Bfv4ZstXjsKah+L9Nirl9A77qU3hrk/WOJYFQMqfEDqZfjTkEpUFN1et2yxNwpuZSZ0TVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXBorRCB; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2bf5baa5b76so103453a91.0;
-        Fri, 24 May 2024 08:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716564687; x=1717169487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5uL7niTDxIwgtvT483XQdSOjcKJiY9fkFNHM4CoL7As=;
-        b=MXBorRCB8HdkiB+c7iTIlj1BHW2VeMCxoCQQRNaCL6+Jyz2XOm4RdxFUFthEtOwCVe
-         cArT/puBgdO36T1ytiD/wbafihoVb4uwwEC7muEh+SQeN/1pRa/eF5yR3z1ZZgdppkvg
-         LmnC0i+r1Wx9RDdhNNnuFnJZnwcNroIPJIB/ZqBijn7zQd/1QGHNVDjiADbEqVuvCd3r
-         RlqT8mDl7YXJcxn3BJBzKCVAfmkQxhO0DRqZn48HCzwiySlYBJGrdglHmQ+GXffdJsUi
-         ieHVKQLCGING4d+5cDdj/g9rUJhH5e+mnEkKTTdIGxanT8OUsPfQXJ4bXW2sOsa7cl6q
-         7NJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716564687; x=1717169487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5uL7niTDxIwgtvT483XQdSOjcKJiY9fkFNHM4CoL7As=;
-        b=oyi0D1Z+xaaeB8Khn/4WRvakzy/r3IRhlGw5WXPl5rfupaOcVWx/hOkONnNEZR3TnF
-         UgfinEZkiQ1eryzRATbFKdGh51wUw0kI9bwGjAY/aA2W2mSh7y4KCSjaSQDQKIsnv9uf
-         0RYfMX10uOslvpIbuvBSVFaz2fsZRIYk43T0zQZ+0Ha6euYDiGayfQF36HkD0qTy1az9
-         P1MeiCWAWK0v+xPOCQVvUhzzL8AB7blkwN/OsnahmdKX3Or2B/JQk+CXuT/uWxi+gtjj
-         MeWOxwE/klrXlKrpsPhZVVRJMRDEMRiaw4sBchOV/BW2pakga6dOipBX7PTj9fnCGIta
-         obyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKfwqzZS7Qs4H7KufUxq2oqdB34iQ5Jpcgvxj1UMVnSZEQSIoYMf+3KyX1IKyhZqdXKKX4JzH7jJMSadbHfygcXqCS1XbtykYJayGaGCpSosLeTj7w3uxjdy3bVlPyQ1OfYBcjpAydrJuq7AtMYUM956blK/TeCglwxardzeQ9AvwFGAI+gIPeTExnNFq778AKRlLkW/tnzy/y4alRQ8BCD6LNAlkQ/RQvQORz
-X-Gm-Message-State: AOJu0YxT6eG0RzaLuAql9iRio2Liivi3KnBMmYhVYB+Yaw+Cq1P+KNlR
-	K4auQV100wFtQFG1TBLkegd/BUoeopZx2u7whRAZCMZhgwtbC7wf4YidAA==
-X-Google-Smtp-Source: AGHT+IGHGxs6xYS1pxOoTReksRT5lb2eG9Sec99+HTPhjDOGe5bGI7HQWqGqKuRY3Cvudglt4fu64g==
-X-Received: by 2002:a17:90b:3110:b0:2bd:8b85:d7ca with SMTP id 98e67ed59e1d1-2bf5e0a753emr2553910a91.0.1716564686682;
-        Fri, 24 May 2024 08:31:26 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f50d294sm1525556a91.20.2024.05.24.08.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 08:31:24 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: colyli@suse.de,
-	kent.overstreet@linux.dev,
-	msakai@redhat.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	akpm@linux-foundation.org
-Cc: bfoster@redhat.com,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	bagasdotme@gmail.com,
-	jserv@ccns.ncku.edu.tw,
-	linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH v6 16/16] bcachefs: Remove heap-related macros and switch to generic min_heap
-Date: Fri, 24 May 2024 23:29:58 +0800
-Message-Id: <20240524152958.919343-17-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240524152958.919343-1-visitorckw@gmail.com>
-References: <20240524152958.919343-1-visitorckw@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBA212E1EE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716564640; cv=fail; b=m2wxByyIAjLyGSO2wsbrs1pMWPLOPmAkihwq2h7hLry4lRqMIK7zGBQ+ZCGBTVivXbEZCU/6YCKLZ8CjkT9BhIdjqSJxpNGxkigs7vgRzBEmBJWp9bH9fEllWZ3vzfEG72VYhDPWMgq9Rh/W29P61D1lZaWAyWFY9H2LVzuIrqE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716564640; c=relaxed/simple;
+	bh=B5WIPrbbk4/j7XLDmOCpEzbd70i8hGyD4LrfnqIUUyw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KFmaso3toWe6CS0u5zcE1YRgCbeHGL1gnHpz07+YuOuVM1hsN3SUX9hOUbOQtwUEhbPDUeT/H49j+pWqBokGnPu3KD7IF1o3jp3dIoaTattYX0I1aekiQ3Pal2X1ALze3mAoEU/JbVM9S4gs6OMXtCv1DJitrVAmK8nH9d3DV14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PuRFQ7QS; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716564638; x=1748100638;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=B5WIPrbbk4/j7XLDmOCpEzbd70i8hGyD4LrfnqIUUyw=;
+  b=PuRFQ7QSts5bq2ZrbtqN5c047lZYomCaSeLaBt+rckVWv+btMUobthXY
+   YI/joDqOHCf30E5LCzAu21NcPWidQczZ3eNcerKfo31HnYhjkG0fyiBh9
+   6KUOMiW/IQOumcqfrrsZgpIImrZN8bVgxKZVhqRMY+22wVi9pRBp9btSE
+   2MYMUnkbf2X5GenCOxKAvYjMvP3dARBkHyJ/qLqKybCJ8AeJg009f7GbH
+   da49WCnKyyFKtmImqjALWd/4ZP1+RXPC3qcmvzTDTCYdgelPgKwhkGqfR
+   YLwkKeL/thwwmMp5yzsSLl5vIRUAz5z6R500kl1l5y9M7cAdteVanP2YU
+   A==;
+X-CSE-ConnectionGUID: NWnawtHjRkiDjLDsUobPgw==
+X-CSE-MsgGUID: X8AZfLtiQ2+jXSuDgUyzOQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11082"; a="24360088"
+X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
+   d="scan'208";a="24360088"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 08:30:30 -0700
+X-CSE-ConnectionGUID: aFR44GLERPKYcnnIomARIA==
+X-CSE-MsgGUID: ugIAnHdNRoWYE/5367NoAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
+   d="scan'208";a="34162512"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 May 2024 08:30:29 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 24 May 2024 08:30:28 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 24 May 2024 08:30:28 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 24 May 2024 08:30:28 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 24 May 2024 08:30:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FRQvbISvI5gp+BVB9ZwaNzbJsm0+KyVAUYHFeG/s1EHuPTDY2Oo2Qc7PyyfXWeV7hC7BxciiMH7GJInt4SoShaqwF7MMuP6RscMck84+HFosC8ikz9hiqDTYgkJr0haobs97C7fyA6JV6pczYaxYQnpF6kvXn3rTO/lm/bFvgtwWYu0WgenkeVPQ3+h+Ok4A64vo7T0rfeCZMNBrk3XDf+Z/JIWD9Jb4uqCW1gmvGDwjr5yDPfC1IRY3E5wzD1lJoNe8rOmIlynC4Q1z7zwhqJw0NJPSSDs3/p1+4eCkCWbG7ptCroW0cDrkNKoBVE9L/ZZnNdtlWaYGDrDUSvihEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=74EbaUsP5PMeAQgw48MWEGqfDSF+OwCt1Hzj54tezgg=;
+ b=kr/1PvEH37CBx8/TyYIhmAt+e3SOrugDb0BGySAYPmoqObczX2mWmbxsoHAyYsEywgSeyzMboTKcO2B2fFNnPg/gNwOY7qY9uULYXa+o4C5nfKAlXh+vQc7viN4sLhI0hFhMGvTTzM02Z/D8htxUmgo0cc7MsFTRj+rozzxOoYApeSVZ/XfuQHazrUjw3M4op9MyDS+W8L6HQVDnB0bLp6S+JY5jzqg4bXaDyvNKKTcpfjH/PQSNGBf85TYudLhPsFQ5u4YhcuNdNE9yzbXqJ6IRYlP+xJK9vdRxQ6EwBF5DGHA47ZP3N5/u6xho9FueezDVOdocApWaX/TjtSg0cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ SN7PR11MB7420.namprd11.prod.outlook.com (2603:10b6:806:328::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
+ 2024 15:30:25 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%5]) with mapi id 15.20.7611.025; Fri, 24 May 2024
+ 15:30:25 +0000
+Date: Fri, 24 May 2024 23:30:12 +0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: Chunxin Zang <spring.cxz@gmail.com>
+CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<yangchen11@lixiang.com>, <zhouchunhua@lixiang.com>,
+	<zangchunxin@lixiang.com>, <kprateek.nayak@amd.com>
+Subject: Re: [PATCH] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+Message-ID: <ZlCyhDspcZQhxlNk@chenyu5-mobl2>
+References: <20240524134011.270861-1-spring.cxz@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240524134011.270861-1-spring.cxz@gmail.com>
+X-ClientProxiedBy: TY2PR02CA0064.apcprd02.prod.outlook.com
+ (2603:1096:404:e2::28) To DM4PR11MB6020.namprd11.prod.outlook.com
+ (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|SN7PR11MB7420:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f905488-e51a-4f4f-69a9-08dc7c066ef4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7ZJ4nJrzUHXGAn8Jm76BaoL5t/Lr67BDYA8RqJNypVydTjY/S5hNTcRINS0E?=
+ =?us-ascii?Q?48AOXaqI4MdoricIaVhak+JBhlXWWN03tfF1WU7mD8F4pI/FzmKzAuaAnrJk?=
+ =?us-ascii?Q?9QCaoB2NEb32suUqtK/s1J8fWJ7d1XBAhA5WEa04XPzF25Z4YEeSkFPH6b5l?=
+ =?us-ascii?Q?TBh6OcTYMMTmJTU5Nzdc4E+3dOxLTeKVtKzy66odwLyJcSwN2h7wzyafDnSB?=
+ =?us-ascii?Q?Z/Vp0Xg3i/XkpMX0eBPK/dytk41WR9VjhHZduCwKD3vqSzLpvIHciZDF5WLP?=
+ =?us-ascii?Q?I12u6AZlqTNlyGoNcVaSRMdIbPTKi7uPcIFWxEpJhy7dkWmNVky4pWZmEr1y?=
+ =?us-ascii?Q?q0aSn/2TvfNPI5iVKZFNNQ1zgcRKFeu5JnJ3gXMDMDavUTJ2Iqdm6dse7hmL?=
+ =?us-ascii?Q?FRDZ2h8hkKGIMJ8owU528lF8EdRS64dSN42QK/kWGuem2FWUFUW4uN5nRF5a?=
+ =?us-ascii?Q?EuVSSnzFGpKnMfulq9vskXZri2lF5zx/UNJu+Tgzh0OR1aydC7mSIS/+wp6z?=
+ =?us-ascii?Q?e7mlxDzVFBlxBGlTOeKYAx5qJVwDXcoIvomcldrnY8vuTZ7GtIP4pTfJzMzp?=
+ =?us-ascii?Q?7tPYsdoBUVFyAoUPO4yxfIzlFuM9gs375SMK64DEiU8P8ZUwnzvce6YReQIb?=
+ =?us-ascii?Q?0sWGRGhsgVgUMhrZ5QvYecBtRNicJ/PhpKaWWWjDgjQYLmEu53a1ANc3GUQc?=
+ =?us-ascii?Q?4HTY/eNnoL84uKdsgqMF8Fz9z6fKYYscSRU0usg3biWDqGyyBJNt+xi9tz+9?=
+ =?us-ascii?Q?lmby1iknpaKskv/qYQxNSnbx4USQNb7gpKYymRhWVRoPsERNNjnj/16bq/KA?=
+ =?us-ascii?Q?MaxyPKCTfWtATw1VI559ksdWJJhN4g7RXtN0oRXlE/sP03+3+OKwwqByUaMU?=
+ =?us-ascii?Q?N0+is0w0mlDr1ZQgHEt82PmUJmTujdp8exP7lnfpnDmxH+hZL4KPcPD2Rg1h?=
+ =?us-ascii?Q?yR7HHvF7gsJeih7Fy5NLYhMv+M4PbHxnXY+WDLj4OJDx90JpAkCN3DYD+A2n?=
+ =?us-ascii?Q?dJcOMkNE+hbSsAlLJdQE1hNmm9WIlFRIWWGUj7jVn24HsE2mwNqek//ie2k1?=
+ =?us-ascii?Q?zbzDbbyTVEeVXfOsGrfdTXD0Jrb103U2RVPDM/AWvxP6f4KyQ5GFIGnFXNyA?=
+ =?us-ascii?Q?vNwz+iPa6PPr7FL1+BVE2iiy2Fuc9pWcHiYaAVk7kv/PxAGFQdG5wQlYqAA2?=
+ =?us-ascii?Q?L0UqNyW9NXpPq5RcQDyooU+a+EswkiE7KFdxO/kP8uNQfswDQCN71oLMrHk?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SkZI9xJOU3MH07Ak6MIdP9K7F2bQCHFnVT3SM4sAEbKkkSzxx/PQMJ9OOEXM?=
+ =?us-ascii?Q?TWtGX0jTaVDEnsafdKlyhkITPuc8soaqvseoBQP0eCsc7c4xUz00w1i4Syic?=
+ =?us-ascii?Q?FNfka1AjEhf1PHBvaT65t4Oo2GHer98ve2GDb4H3LnEB9kRFHssS26oNsiFe?=
+ =?us-ascii?Q?9dvPNGnvB4POfa7PxR73Y4nzRckH7fT3yc7r66ADSB2OHG3IocKmdYPcYW4N?=
+ =?us-ascii?Q?JOb+Z7lr+dzLTZSu3bMRjCbS4Kl1EOhtssvMaNBHm5YbMzZgg+TuGWyZeqKE?=
+ =?us-ascii?Q?MhKF5NotIAi67AuFurzgovdGemqwmi6Y1QJO3FKTUAd1y1nLHdVB6RrUbTPr?=
+ =?us-ascii?Q?Vc4Bas3rGqEEadIF+x/f9nZgye+doa5AsZC/i2F1oyLDwmknWow1/dAv0zWW?=
+ =?us-ascii?Q?RIaSPhoIpTDf1ETjgmMPQpRCisIKRVlnhcsGiANQT7NWLMxq252kCzCpJbS7?=
+ =?us-ascii?Q?bniGlAeYoZYw3fqZDHN3L/oUsprTEn7/M01WXTJF84nOzc/1JwVrLikQREpx?=
+ =?us-ascii?Q?mRH3+SDtvZAq9ZCIDNRNvZYPjimz08PilyJOgyfObzHI44Ta/9wWVwMjvKNi?=
+ =?us-ascii?Q?si0naVSEZU18P9tQT4uBe5LbW0rapZs3aPp+lI9VHNqCH7E+jlRAhZY61rGm?=
+ =?us-ascii?Q?FUtZETvUdQ3haF3j3X+XGOcrbcGXJOCqkDiXCjlBdkHtXhgKsvmwB0lfm9ED?=
+ =?us-ascii?Q?xci8OuLAcHQ2o7gLrZfwrjOrQVV9uRIxVPjr784KB1VgFqt51LHdvPv2pfg9?=
+ =?us-ascii?Q?N6CgsNb3Umlo+VzZBpd6wk1UEybYzD2Q/BAlkYXGqCpfcH+ytT8wOmSfK7pz?=
+ =?us-ascii?Q?pEHLda3ZvUFsrytc5COrnqtRanbDwBV18dtT10rdc7OwaJhKYvW4JyJzWkWd?=
+ =?us-ascii?Q?3hu99zLZ0WBSl4kfYbjI9qhTq3dkLgFvlqYXnD2csomkkBZSOZ5aZL6iykl9?=
+ =?us-ascii?Q?oNdACfuVV/FDwSDE/hvdMqWh/H9gZGYwcgxU4k9A9ZZM59/zWohDNGXJMhYw?=
+ =?us-ascii?Q?BNnqsaOvFFfQhVYx1zl4GMQTMAkVUIuub2OXQrvnsu82GEp1CyUFwB4ClyVP?=
+ =?us-ascii?Q?AIWopTfUwkYkU7SUrpi85gAaOM9nD3monhI6Wix0E6lWY4lB1IeBmtWmtUJ2?=
+ =?us-ascii?Q?eRX+wptm1jdsUCOMu+/UoObait6atnultQnS4hRNS/GTjhFQVtsiyl71mVjN?=
+ =?us-ascii?Q?3sxmU6frY6NBQlRd5zU5iGrPGuexNMU8WjMPIRfJZ8GKOk+FcrphD7uillCr?=
+ =?us-ascii?Q?wJj/1Xq7k17LM2QrsMqcU+zugAckSaTNv+l9ejR7/kUvGo700nmgVQARw4Mw?=
+ =?us-ascii?Q?5zFxOt3a9Eybr0WJIQHA4uFw9kKqCid1m5ezoGOP94w4KMkNM2f8Tp+jjmNj?=
+ =?us-ascii?Q?Zh7WxEmkYlFd4shm5Jr/2Y/U0HEy6zK2Yn6b22OUtJjEfhKlNsxqythhWwgZ?=
+ =?us-ascii?Q?7dw8cfpu+UXQQVaI9AWvj7USl5UC13woMqKx3YwLhwpTLRJD2L5aZ7CwGKeC?=
+ =?us-ascii?Q?iFPHiWeUtuhdX5BXEgZReNg5ijA9Nfe8TmD37Il+NJ7PW+J4mX9ReTyHPFa5?=
+ =?us-ascii?Q?oPXHIPBIe0+v0vWMs0oZoM/yw6oZB2zabf5Ggf+m?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f905488-e51a-4f4f-69a9-08dc7c066ef4
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 15:30:25.5131
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oxXhp8rthQTS1zwRBMmrtmkHEC913Xs510AVR3kwPa7YFnw7tRahiR58UGvEmfyTz4+48N1f6BqJxAE5OS8Z9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7420
+X-OriginatorOrg: intel.com
 
-Drop the heap-related macros from bcachefs and replacing them with the
-generic min_heap implementation from include/linux. By doing so, code
-readability is improved by using functions instead of macros. Moreover,
-the min_heap implementation in include/linux adopts a bottom-up
-variation compared to the textbook version currently used in bcachefs.
-This bottom-up variation allows for approximately 50% reduction in the
-number of comparison operations during heap siftdown, without changing
-the number of swaps, thus making it more efficient.
+On 2024-05-24 at 21:40:11 +0800, Chunxin Zang wrote:
+> I found that some tasks have been running for a long enough time and
+> have become illegal, but they are still not releasing the CPU. This
+> will increase the scheduling delay of other processes. Therefore, I
+> tried checking the current process in wakeup_preempt and entity_tick,
+> and if it is illegal, reschedule that cfs queue.
+>
+> The modification can reduce the scheduling delay by about 30% when
+> RUN_TO_PARITY is enabled.
+> So far, it has been running well in my test environment, and I have
+> pasted some test results below.
+> 
 
-Link: https://lkml.kernel.org/ioyfizrzq7w7mjrqcadtzsfgpuntowtjdw5pgn4qhvsdp4mqqg@nrlek5vmisbu
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Acked-by: Kent Overstreet <kent.overstreet@linux.dev>
----
-Changes in v6:
-- Rename the MIN_HEAP() macro to DEFINE_MIN_HEAP().
+Interesting, besides hackbench, I assume that you have workload in
+real production environment that is sensitive to wakeup latency?
 
- fs/bcachefs/clock.c       |  43 ++++++++++----
- fs/bcachefs/clock_types.h |   2 +-
- fs/bcachefs/ec.c          |  76 ++++++++++++++++--------
- fs/bcachefs/ec_types.h    |   2 +-
- fs/bcachefs/util.h        | 118 +-------------------------------------
- 5 files changed, 87 insertions(+), 154 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 03be0d1330a6..a0005d240db5 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5523,6 +5523,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+>  			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>  		return;
+>  #endif
+> +
+> +	if (!entity_eligible(cfs_rq, curr))
+> +		resched_curr(rq_of(cfs_rq));
+>  }
+>
 
-diff --git a/fs/bcachefs/clock.c b/fs/bcachefs/clock.c
-index 363644451106..3ec64fe6a064 100644
---- a/fs/bcachefs/clock.c
-+++ b/fs/bcachefs/clock.c
-@@ -6,16 +6,29 @@
- #include <linux/kthread.h>
- #include <linux/preempt.h>
- 
--static inline long io_timer_cmp(io_timer_heap *h,
--				struct io_timer *l,
--				struct io_timer *r)
-+static inline bool io_timer_cmp(const void *l, const void *r, void __always_unused *args)
- {
--	return l->expire - r->expire;
-+	struct io_timer **_l = (struct io_timer **)l;
-+	struct io_timer **_r = (struct io_timer **)r;
-+
-+	return (*_l)->expire < (*_r)->expire;
-+}
-+
-+static inline void io_timer_swp(void *l, void *r, void __always_unused *args)
-+{
-+	struct io_timer **_l = (struct io_timer **)l;
-+	struct io_timer **_r = (struct io_timer **)r;
-+
-+	swap(*_l, *_r);
- }
- 
- void bch2_io_timer_add(struct io_clock *clock, struct io_timer *timer)
- {
- 	size_t i;
-+	const struct min_heap_callbacks callbacks = {
-+		.less = io_timer_cmp,
-+		.swp = io_timer_swp,
-+	};
- 
- 	spin_lock(&clock->timer_lock);
- 
-@@ -26,11 +39,11 @@ void bch2_io_timer_add(struct io_clock *clock, struct io_timer *timer)
- 		return;
- 	}
- 
--	for (i = 0; i < clock->timers.used; i++)
-+	for (i = 0; i < clock->timers.nr; i++)
- 		if (clock->timers.data[i] == timer)
- 			goto out;
- 
--	BUG_ON(!heap_add(&clock->timers, timer, io_timer_cmp, NULL));
-+	BUG_ON(!min_heap_push(&clock->timers, &timer, &callbacks, NULL));
- out:
- 	spin_unlock(&clock->timer_lock);
- }
-@@ -38,12 +51,16 @@ void bch2_io_timer_add(struct io_clock *clock, struct io_timer *timer)
- void bch2_io_timer_del(struct io_clock *clock, struct io_timer *timer)
- {
- 	size_t i;
-+	const struct min_heap_callbacks callbacks = {
-+		.less = io_timer_cmp,
-+		.swp = io_timer_swp,
-+	};
- 
- 	spin_lock(&clock->timer_lock);
- 
--	for (i = 0; i < clock->timers.used; i++)
-+	for (i = 0; i < clock->timers.nr; i++)
- 		if (clock->timers.data[i] == timer) {
--			heap_del(&clock->timers, i, io_timer_cmp, NULL);
-+			min_heap_del(&clock->timers, i, &callbacks, NULL);
- 			break;
- 		}
- 
-@@ -131,12 +148,16 @@ static struct io_timer *get_expired_timer(struct io_clock *clock,
- 					  unsigned long now)
- {
- 	struct io_timer *ret = NULL;
-+	const struct min_heap_callbacks callbacks = {
-+		.less = io_timer_cmp,
-+		.swp = io_timer_swp,
-+	};
- 
- 	spin_lock(&clock->timer_lock);
- 
--	if (clock->timers.used &&
-+	if (clock->timers.nr &&
- 	    time_after_eq(now, clock->timers.data[0]->expire))
--		heap_pop(&clock->timers, ret, io_timer_cmp, NULL);
-+		min_heap_pop(&clock->timers, &callbacks, NULL);
- 
- 	spin_unlock(&clock->timer_lock);
- 
-@@ -161,7 +182,7 @@ void bch2_io_timers_to_text(struct printbuf *out, struct io_clock *clock)
- 	spin_lock(&clock->timer_lock);
- 	now = atomic64_read(&clock->now);
- 
--	for (i = 0; i < clock->timers.used; i++)
-+	for (i = 0; i < clock->timers.nr; i++)
- 		prt_printf(out, "%ps:\t%li\n",
- 		       clock->timers.data[i]->fn,
- 		       clock->timers.data[i]->expire - now);
-diff --git a/fs/bcachefs/clock_types.h b/fs/bcachefs/clock_types.h
-index 5fae0012d808..f2c8a25b7079 100644
---- a/fs/bcachefs/clock_types.h
-+++ b/fs/bcachefs/clock_types.h
-@@ -23,7 +23,7 @@ struct io_timer {
- /* Amount to buffer up on a percpu counter */
- #define IO_CLOCK_PCPU_SECTORS	128
- 
--typedef HEAP(struct io_timer *)	io_timer_heap;
-+typedef DEFINE_MIN_HEAP(struct io_timer *, io_timer_heap)	io_timer_heap;
- 
- struct io_clock {
- 	atomic64_t		now;
-diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-index b26dc7424662..797cb389cf3f 100644
---- a/fs/bcachefs/ec.c
-+++ b/fs/bcachefs/ec.c
-@@ -896,8 +896,8 @@ static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx, gfp_t gfp)
- 
- 		mutex_lock(&c->ec_stripes_heap_lock);
- 		if (n.size > h->size) {
--			memcpy(n.data, h->data, h->used * sizeof(h->data[0]));
--			n.used = h->used;
-+			memcpy(n.data, h->data, h->nr * sizeof(h->data[0]));
-+			n.nr = h->nr;
- 			swap(*h, n);
- 		}
- 		mutex_unlock(&c->ec_stripes_heap_lock);
-@@ -988,7 +988,7 @@ static u64 stripe_idx_to_delete(struct bch_fs *c)
- 
- 	lockdep_assert_held(&c->ec_stripes_heap_lock);
- 
--	if (h->used &&
-+	if (h->nr &&
- 	    h->data[0].blocks_nonempty == 0 &&
- 	    !bch2_stripe_is_open(c, h->data[0].idx))
- 		return h->data[0].idx;
-@@ -996,14 +996,6 @@ static u64 stripe_idx_to_delete(struct bch_fs *c)
- 	return 0;
- }
- 
--static inline int ec_stripes_heap_cmp(ec_stripes_heap *h,
--				      struct ec_stripe_heap_entry l,
--				      struct ec_stripe_heap_entry r)
--{
--	return ((l.blocks_nonempty > r.blocks_nonempty) -
--		(l.blocks_nonempty < r.blocks_nonempty));
--}
--
- static inline void ec_stripes_heap_set_backpointer(ec_stripes_heap *h,
- 						   size_t i)
- {
-@@ -1012,39 +1004,71 @@ static inline void ec_stripes_heap_set_backpointer(ec_stripes_heap *h,
- 	genradix_ptr(&c->stripes, h->data[i].idx)->heap_idx = i;
- }
- 
-+static inline bool ec_stripes_heap_cmp(const void *l, const void *r, void __always_unused *args)
-+{
-+	struct ec_stripe_heap_entry *_l = (struct ec_stripe_heap_entry *)l;
-+	struct ec_stripe_heap_entry *_r = (struct ec_stripe_heap_entry *)r;
-+
-+	return ((_l->blocks_nonempty > _r->blocks_nonempty) <
-+		(_l->blocks_nonempty < _r->blocks_nonempty));
-+}
-+
-+static inline void ec_stripes_heap_swap(void *l, void *r, void *h)
-+{
-+	struct ec_stripe_heap_entry *_l = (struct ec_stripe_heap_entry *)l;
-+	struct ec_stripe_heap_entry *_r = (struct ec_stripe_heap_entry *)r;
-+	ec_stripes_heap *_h = (ec_stripes_heap *)h;
-+	size_t i = _l - _h->data;
-+	size_t j = _r - _h->data;
-+
-+	swap(*_l, *_r);
-+
-+	ec_stripes_heap_set_backpointer(_h, i);
-+	ec_stripes_heap_set_backpointer(_h, j);
-+}
-+
- static void heap_verify_backpointer(struct bch_fs *c, size_t idx)
- {
- 	ec_stripes_heap *h = &c->ec_stripes_heap;
- 	struct stripe *m = genradix_ptr(&c->stripes, idx);
- 
--	BUG_ON(m->heap_idx >= h->used);
-+	BUG_ON(m->heap_idx >= h->nr);
- 	BUG_ON(h->data[m->heap_idx].idx != idx);
- }
- 
- void bch2_stripes_heap_del(struct bch_fs *c,
- 			   struct stripe *m, size_t idx)
- {
-+	const struct min_heap_callbacks callbacks = {
-+		.less = ec_stripes_heap_cmp,
-+		.swp = ec_stripes_heap_swap,
-+	};
-+
- 	mutex_lock(&c->ec_stripes_heap_lock);
- 	heap_verify_backpointer(c, idx);
- 
--	heap_del(&c->ec_stripes_heap, m->heap_idx,
--		 ec_stripes_heap_cmp,
--		 ec_stripes_heap_set_backpointer);
-+	min_heap_del(&c->ec_stripes_heap, m->heap_idx, &callbacks, &c->ec_stripes_heap);
- 	mutex_unlock(&c->ec_stripes_heap_lock);
- }
- 
- void bch2_stripes_heap_insert(struct bch_fs *c,
- 			      struct stripe *m, size_t idx)
- {
-+	const struct min_heap_callbacks callbacks = {
-+		.less = ec_stripes_heap_cmp,
-+		.swp = ec_stripes_heap_swap,
-+	};
-+
- 	mutex_lock(&c->ec_stripes_heap_lock);
--	BUG_ON(heap_full(&c->ec_stripes_heap));
-+	BUG_ON(min_heap_full(&c->ec_stripes_heap));
- 
--	heap_add(&c->ec_stripes_heap, ((struct ec_stripe_heap_entry) {
-+	genradix_ptr(&c->stripes, idx)->heap_idx = c->ec_stripes_heap.nr;
-+	min_heap_push(&c->ec_stripes_heap, &((struct ec_stripe_heap_entry) {
- 			.idx = idx,
- 			.blocks_nonempty = m->blocks_nonempty,
- 		}),
--		 ec_stripes_heap_cmp,
--		 ec_stripes_heap_set_backpointer);
-+		&callbacks,
-+		&c->ec_stripes_heap);
- 
- 	heap_verify_backpointer(c, idx);
- 	mutex_unlock(&c->ec_stripes_heap_lock);
-@@ -1053,6 +1077,10 @@ void bch2_stripes_heap_insert(struct bch_fs *c,
- void bch2_stripes_heap_update(struct bch_fs *c,
- 			      struct stripe *m, size_t idx)
- {
-+	const struct min_heap_callbacks callbacks = {
-+		.less = ec_stripes_heap_cmp,
-+		.swp = ec_stripes_heap_swap,
-+	};
- 	ec_stripes_heap *h = &c->ec_stripes_heap;
- 	bool do_deletes;
- 	size_t i;
-@@ -1063,10 +1091,8 @@ void bch2_stripes_heap_update(struct bch_fs *c,
- 	h->data[m->heap_idx].blocks_nonempty = m->blocks_nonempty;
- 
- 	i = m->heap_idx;
--	heap_sift_up(h,	  i, ec_stripes_heap_cmp,
--		     ec_stripes_heap_set_backpointer);
--	heap_sift_down(h, i, ec_stripes_heap_cmp,
--		       ec_stripes_heap_set_backpointer);
-+	min_heap_sift_up(h,	i, &callbacks, &c->ec_stripes_heap);
-+	min_heap_sift_down(h, i, &callbacks, &c->ec_stripes_heap);
- 
- 	heap_verify_backpointer(c, idx);
- 
-@@ -1859,7 +1885,7 @@ static s64 get_existing_stripe(struct bch_fs *c,
- 		return -1;
- 
- 	mutex_lock(&c->ec_stripes_heap_lock);
--	for (heap_idx = 0; heap_idx < h->used; heap_idx++) {
-+	for (heap_idx = 0; heap_idx < h->nr; heap_idx++) {
- 		/* No blocks worth reusing, stripe will just be deleted: */
- 		if (!h->data[heap_idx].blocks_nonempty)
- 			continue;
-@@ -2190,7 +2216,7 @@ void bch2_stripes_heap_to_text(struct printbuf *out, struct bch_fs *c)
- 	size_t i;
- 
- 	mutex_lock(&c->ec_stripes_heap_lock);
--	for (i = 0; i < min_t(size_t, h->used, 50); i++) {
-+	for (i = 0; i < min_t(size_t, h->nr, 50); i++) {
- 		m = genradix_ptr(&c->stripes, h->data[i].idx);
- 
- 		prt_printf(out, "%zu %u/%u+%u", h->data[i].idx,
-diff --git a/fs/bcachefs/ec_types.h b/fs/bcachefs/ec_types.h
-index 976426da3a12..1df03dccfc72 100644
---- a/fs/bcachefs/ec_types.h
-+++ b/fs/bcachefs/ec_types.h
-@@ -36,6 +36,6 @@ struct ec_stripe_heap_entry {
- 	unsigned		blocks_nonempty;
- };
- 
--typedef HEAP(struct ec_stripe_heap_entry) ec_stripes_heap;
-+typedef DEFINE_MIN_HEAP(struct ec_stripe_heap_entry, ec_stripes_heap) ec_stripes_heap;
- 
- #endif /* _BCACHEFS_EC_TYPES_H */
-diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
-index 5d2c470a49ac..d0d99400f986 100644
---- a/fs/bcachefs/util.h
-+++ b/fs/bcachefs/util.h
-@@ -8,6 +8,7 @@
- #include <linux/errno.h>
- #include <linux/freezer.h>
- #include <linux/kernel.h>
-+#include <linux/min_heap.h>
- #include <linux/sched/clock.h>
- #include <linux/llist.h>
- #include <linux/log2.h>
-@@ -54,17 +55,9 @@ static inline size_t buf_pages(void *p, size_t len)
- 			    PAGE_SIZE);
- }
- 
--#define HEAP(type)							\
--struct {								\
--	size_t size, used;						\
--	type *data;							\
--}
--
--#define DECLARE_HEAP(type, name) HEAP(type) name
--
- #define init_heap(heap, _size, gfp)					\
- ({									\
--	(heap)->used = 0;						\
-+	(heap)->nr = 0;						\
- 	(heap)->size = (_size);						\
- 	(heap)->data = kvmalloc((heap)->size * sizeof((heap)->data[0]),\
- 				 (gfp));				\
-@@ -76,113 +69,6 @@ do {									\
- 	(heap)->data = NULL;						\
- } while (0)
- 
--#define heap_set_backpointer(h, i, _fn)					\
--do {									\
--	void (*fn)(typeof(h), size_t) = _fn;				\
--	if (fn)								\
--		fn(h, i);						\
--} while (0)
--
--#define heap_swap(h, i, j, set_backpointer)				\
--do {									\
--	swap((h)->data[i], (h)->data[j]);				\
--	heap_set_backpointer(h, i, set_backpointer);			\
--	heap_set_backpointer(h, j, set_backpointer);			\
--} while (0)
--
--#define heap_peek(h)							\
--({									\
--	EBUG_ON(!(h)->used);						\
--	(h)->data[0];							\
--})
--
--#define heap_full(h)	((h)->used == (h)->size)
--
--#define heap_sift_down(h, i, cmp, set_backpointer)			\
--do {									\
--	size_t _c, _j = i;						\
--									\
--	for (; _j * 2 + 1 < (h)->used; _j = _c) {			\
--		_c = _j * 2 + 1;					\
--		if (_c + 1 < (h)->used &&				\
--		    cmp(h, (h)->data[_c], (h)->data[_c + 1]) >= 0)	\
--			_c++;						\
--									\
--		if (cmp(h, (h)->data[_c], (h)->data[_j]) >= 0)		\
--			break;						\
--		heap_swap(h, _c, _j, set_backpointer);			\
--	}								\
--} while (0)
--
--#define heap_sift_up(h, i, cmp, set_backpointer)			\
--do {									\
--	while (i) {							\
--		size_t p = (i - 1) / 2;					\
--		if (cmp(h, (h)->data[i], (h)->data[p]) >= 0)		\
--			break;						\
--		heap_swap(h, i, p, set_backpointer);			\
--		i = p;							\
--	}								\
--} while (0)
--
--#define __heap_add(h, d, cmp, set_backpointer)				\
--({									\
--	size_t _i = (h)->used++;					\
--	(h)->data[_i] = d;						\
--	heap_set_backpointer(h, _i, set_backpointer);			\
--									\
--	heap_sift_up(h, _i, cmp, set_backpointer);			\
--	_i;								\
--})
--
--#define heap_add(h, d, cmp, set_backpointer)				\
--({									\
--	bool _r = !heap_full(h);					\
--	if (_r)								\
--		__heap_add(h, d, cmp, set_backpointer);			\
--	_r;								\
--})
--
--#define heap_add_or_replace(h, new, cmp, set_backpointer)		\
--do {									\
--	if (!heap_add(h, new, cmp, set_backpointer) &&			\
--	    cmp(h, new, heap_peek(h)) >= 0) {				\
--		(h)->data[0] = new;					\
--		heap_set_backpointer(h, 0, set_backpointer);		\
--		heap_sift_down(h, 0, cmp, set_backpointer);		\
--	}								\
--} while (0)
--
--#define heap_del(h, i, cmp, set_backpointer)				\
--do {									\
--	size_t _i = (i);						\
--									\
--	BUG_ON(_i >= (h)->used);					\
--	(h)->used--;							\
--	if ((_i) < (h)->used) {						\
--		heap_swap(h, _i, (h)->used, set_backpointer);		\
--		heap_sift_up(h, _i, cmp, set_backpointer);		\
--		heap_sift_down(h, _i, cmp, set_backpointer);		\
--	}								\
--} while (0)
--
--#define heap_pop(h, d, cmp, set_backpointer)				\
--({									\
--	bool _r = (h)->used;						\
--	if (_r) {							\
--		(d) = (h)->data[0];					\
--		heap_del(h, 0, cmp, set_backpointer);			\
--	}								\
--	_r;								\
--})
--
--#define heap_resort(heap, cmp, set_backpointer)				\
--do {									\
--	ssize_t _i;							\
--	for (_i = (ssize_t) (heap)->used / 2 -  1; _i >= 0; --_i)	\
--		heap_sift_down(heap, _i, cmp, set_backpointer);		\
--} while (0)
--
- #define ANYSINT_MAX(t)							\
- 	((((t) 1 << (sizeof(t) * 8 - 2)) - (t) 1) * (t) 2 + (t) 1)
- 
--- 
-2.34.1
+entity_tick() -> update_curr() -> update_deadline():
+se->vruntime >= se->deadline ? resched_curr()
+only current has expired its slice will it be scheduled out.
 
+So here you want to schedule current out if its lag becomes 0.
+
+In lastest sched/eevdf branch, it is controlled by two sched features:
+RESPECT_SLICE: Inhibit preemption until the current task has exhausted it's slice.
+RUN_TO_PARITY: Relax RESPECT_SLICE and only protect current until 0-lag.
+https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=sched/eevdf&id=e04f5454d68590a239092a700e9bbaf84270397c
+
+Maybe something like this can achieve your goal
+	if (sched_feat(RUN_TOPARITY) && !entity_eligible(cfs_rq, curr))
+		resched_curr
+
+>  
+> @@ -8325,6 +8328,9 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>  	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+>  		return;
+>  
+> +	if (!entity_eligible(cfs_rq, se))
+> +		goto preempt;
+> +
+
+Not sure if this is applicable, later in this function, pick_eevdf() checks
+if the current is eligible, !entity_eligible(cfs_rq, curr), if not, curr will
+be evicted. And this change does not consider the cgroup hierarchy.
+
+Besides, the check of current eligiblity can get false negative result,
+if the enqueued entity has a positive lag. Prateek proposed to
+remove the check of current's eligibility in pick_eevdf():
+https://lore.kernel.org/lkml/20240325060226.1540-2-kprateek.nayak@amd.com/
+
+If I understand your requirement correctly, you want to reduce the wakeup
+latency. There are some codes under developed by Peter, which could
+customized task's wakeup latency via setting its slice:
+https://lore.kernel.org/lkml/20240405110010.934104715@infradead.org/
+
+thanks,
+Chenyu
 
