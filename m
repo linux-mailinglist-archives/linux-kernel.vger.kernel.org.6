@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-188437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999E78CE201
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFDD8CE203
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5547B282EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25448282EBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C49128832;
-	Fri, 24 May 2024 08:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0E512883C;
+	Fri, 24 May 2024 08:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vkNSMJbO"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ih6yKeUp"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFAA17578
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABAD17578;
+	Fri, 24 May 2024 08:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716538188; cv=none; b=ZAzPa6rKClqoM8g9F64yVHOfo+4mV7sDxSETfUlo+CnLwGTEaVOUgUjc9LOV+6x58LGKrywbgEmDYbvnKuzTgQS/uA5FhkdMhrQHAcRknK36+QJ6LCALDxHwnFM71rIpb0ONZ+/UbhMCHJ/eQA3y5Su5JeaN9y4s82E1h8MB4h4=
+	t=1716538194; cv=none; b=oJyqApwQyuIQrorMdnxc4iryETqlvYjpgFZAx+Jcq/l+6AlIC6ZwWk5vWsGEMqmFwrXEpfI71LgFNMsljgiUqyUFIYG8JILCWlqe69sbVrZpT8ojIXXBHPc9OCD2j+4e1MPHYuKfpzYo3Fm5tKoyGb14hJjCmHtdLw3Kp7mmbgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716538188; c=relaxed/simple;
-	bh=M9VBoq6dREqgaOs5ZCoiH/xJnCr8Qi/PvPkkfAnMqT8=;
+	s=arc-20240116; t=1716538194; c=relaxed/simple;
+	bh=IYoee1FMSOG0vcSBxpfqmaB1YmFYngFTvOE+LzRYYrs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SuNDqXBR1ya8PlCrvERDN0dYuxdpJZZVeqIBBTmwObFZ92ShLGcj6pRHahLvX/yTzeVkVfiAZAm5fAAbsaCjKJ++Xrd5N8QVonPV2HkwRD0jDLQA+v44fo7u0/n1kKRf0Ew5x07C1DLSPhyQG5hiFAodIrvSgnGDAEwVvSAmeT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vkNSMJbO; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e576057c2bso126042651fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:09:46 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUXie78zLjqAwstWhq2g2wPo1Xp0L32AD5TbnLpQMTW8jBrokCwD1F9hFuZK60+v3EU/H/4Ne1LbwwQ8pDnCRZPUGcMqlXy8+zQ0QOWEtGj7gNvi4gTIjnMZqKf5DSDRQ9JzkT5vSyZdC6PV5dLTu4YOjIRcYqfx5nXaB7mUj3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ih6yKeUp; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a61b70394c0so627730366b.1;
+        Fri, 24 May 2024 01:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716538184; x=1717142984; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716538191; x=1717142991; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2lSidCsB9ehXoWQ8boWr3QTXV4fjcTGdt04EwooGBA=;
-        b=vkNSMJbO7R2aGdYyZ8SCmG6zzEE6aDMrcgZAeCx3fGDh+Pz5olsDQNpoAjCbOq2xwI
-         ABgQI3+SYZwBg2EM+2JlI3CTexuAWKJ3UORTDdDoHpuY3/SmEgOwJVStmWfq+HN++ZGS
-         QZL1yOpATt81sV/zm/QmsUA7tmOaNcVU+JlQ+hMJf5AuJwcB3U5ymR1NfpnZLTohFjJk
-         xm6O0GNlRO35TStBNwNMmljAwy2XmPAF8i7rdyfscal19BhCzzkOEk5h7QHfa3R0p/48
-         H9eM6xTnXgSwjd8U5Q/xw4ybeyaiBPmHS2C4sz4W+/TwG1/A8x1SahzNvcPP4uFh2Lag
-         /b5Q==
+        bh=4yIHQCHYwlijZ4SpXyonBPl2dHneQaT20En64+i282k=;
+        b=ih6yKeUpPupE+dey+V0DtDmEDYzmZdLlftyuS3m8NWnQmaSLFaJo3QgnUv0By6Anv/
+         bawpQq0Jvm1qlVmLFLcI2M374WU8z+Vl+erLS1KUbyCxe6EjSBIlsEwU/gFRwu5qSyce
+         HHgrU0ihvWsaYFRX8n46br4MzZU4TsbJ13QkfCtxiWpNtD/OvVBMkIR4VHyGybay62XL
+         g8oFE2s1wc6vNH6IIKHu7NDXR7rXt0wabZf10A+Dhm4/sP8b9N50YtCC2YegOA1wRw0x
+         8abKkBa5E7zNF5n0bCMhlXphJLc/F/qn+KkNK71p8A/h+CLDyZyff6nz5d8PHWp3s69L
+         hrcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716538184; x=1717142984;
+        d=1e100.net; s=20230601; t=1716538191; x=1717142991;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W2lSidCsB9ehXoWQ8boWr3QTXV4fjcTGdt04EwooGBA=;
-        b=bqh8+54eT8qT/pZIh6GvFO15QpHTEuGQ/Ry/4ehlxriDVtM/PBrwfaDjYwXdi/g0dP
-         wt9thAdChW0AHPZngBfUqfSaD8xI6nXppOGsyjwGpC7eOruybHBe6eCVlTFzcltYUTw9
-         l87nxopM/eeCBZl1oAQXDdE7D4luYzhBuDEt30YPV7+VTr7kgMN+4fk8/2hF9lPSaPVh
-         bF/px1YDYW3KgByYGn4TSFFGLX3z3E1kP5AMBL8rIOMx/rdKElMLIqthdErvyGD6C4GZ
-         Le8giVBHn/99BpPDfqF4Xdm5SnU6kNygmqv1GKc7t/JyVQGcC2hKIJAlfzS2kLPHEYDE
-         XtcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXea54zAb6Kkb6ORJLxIrBDDiud3qvfivRt+n6uPVJDOlsI/wWydYGPoGn0A30rMiYiSkZb3KFgtyCHsyta9TLOJu6lwIL3TiKB+apk
-X-Gm-Message-State: AOJu0YxfpAg07ekgTwM9QrdgHY59wvqvCBUIcPJCl+KLWqIAh8jIgb4f
-	m4HKDrVCa/O9QsyBDObkGt6Mh1ZEG12ULpGLZeaCKaRVJGXfhhn/owhgSQ7lKw==
-X-Google-Smtp-Source: AGHT+IGzgQlRJ5ug3LTivhVUY93cMPG5I4SOe6hVc5ZOXCHlEHuiL4z22/IDhTQdsTn2j4oV9P3KDA==
-X-Received: by 2002:a2e:a1d0:0:b0:2e2:a99a:4c4 with SMTP id 38308e7fff4ca-2e95b27b113mr11582591fa.47.1716538184250;
-        Fri, 24 May 2024 01:09:44 -0700 (PDT)
-Received: from google.com ([2a00:79e0:18:10:7092:8288:69bc:29e5])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc487fsm963351fa.24.2024.05.24.01.09.43
+        bh=4yIHQCHYwlijZ4SpXyonBPl2dHneQaT20En64+i282k=;
+        b=lzcqOY6liDaUVodxGzh5PvG5j9Gzo5sMlkw60/gviDzecKMBACSnUWLOuRsRvMoJkm
+         4u77Poo+tYspqVAWq0XKy0l3qKLVy7RqoCfWPejvECXMivWLwkoxUumkBF1MLCm6Hm5O
+         5M1H4k38f5P4eth415Lv1a+7lHAca5SG7dka5qd4qT2fXmVWSENGJ5E+yjImLSz0R1uo
+         lXOaxGsbkOdIazlTXa3aO/VisqDMZFD5Gva8/lUyx1m2NIYxaMamXTcnZPx2OhH91G27
+         aRa7qpKtpVM8VrQgl1huWuuFAHQNbZyF3ufG+5hi5Lo1QrfhUXWzjYP86xOhh6P06QCU
+         Lcjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9cV2F77/TOQ1jcuuDH4HBJSJbVrChghv5X3RELoVJOsXch5+U/Owqcqc2rzLe5s7zlq/61NJ78ilPYc27381Vxl4CEjBXEd1X3RJFraSY/6Z7K4qnrXSQjARt2PuVe1eCTyOCqjet
+X-Gm-Message-State: AOJu0YynA6ZJsdkGaUgszbDRvVAM5wafzPJuIJZmkUumt5WeA+MwQOyK
+	nv3SJAOMK68vPft4mtq0hOjNh2XepzqUiZ35GGXnXior6WRqEYFf
+X-Google-Smtp-Source: AGHT+IEgFSaePBsGjk079z7djjCvU1PWaX4waBvA+zagqtvTUKbIzVsiwpBD6ooLXwpMQBQhRUBVSw==
+X-Received: by 2002:a17:906:605:b0:a5a:8b64:df00 with SMTP id a640c23a62f3a-a62641dfde4mr93034666b.28.1716538191130;
+        Fri, 24 May 2024 01:09:51 -0700 (PDT)
+Received: from debian ([93.184.186.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817b15sm91382266b.40.2024.05.24.01.09.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 01:09:43 -0700 (PDT)
-Date: Fri, 24 May 2024 10:09:39 +0200
-From: "Steinar H. Gunderson" <sesse@google.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	irogers@google.com, Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v5 1/3] perf report: Support LLVM for addr2line()
-Message-ID: <ZlBLQ87edfIHiGRt@google.com>
-References: <20240523092920.3355004-1-sesse@google.com>
- <Zk-MpqzRlAecrWA6@x1>
+        Fri, 24 May 2024 01:09:50 -0700 (PDT)
+Date: Fri, 24 May 2024 10:09:48 +0200
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: humidity: hdc3020: fix hysteresis representation
+Message-ID: <20240524080948.GA560140@debian>
+References: <20240523114336.532428-1-dima.fedrau@gmail.com>
+ <cef810ee-bb2c-4588-baec-7edfc74daeea@gmail.com>
+ <20240523142849.GA558466@debian>
+ <17adc0d0-55c1-4608-a4c0-93f9911296f8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,70 +85,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zk-MpqzRlAecrWA6@x1>
+In-Reply-To: <17adc0d0-55c1-4608-a4c0-93f9911296f8@gmail.com>
 
-On Thu, May 23, 2024 at 03:36:22PM -0300, Arnaldo Carvalho de Melo wrote:
-> Makefile.config:982: No libllvm found, slower source file resolution, please install llvm-devel/llvm-dev
+Am Thu, May 23, 2024 at 05:45:34PM +0200 schrieb Javier Carrasco:
+> On 23/05/2024 16:28, Dimitri Fedrau wrote:
+> > Am Thu, May 23, 2024 at 04:12:37PM +0200 schrieb Javier Carrasco:
+> >> Hi Dimitri, a few comments inline.
+> >>
+> >> On 23/05/2024 13:43, Dimitri Fedrau wrote:
+> >>> According to the ABI docs hysteresis values are represented as offsets to
+> >>> threshold values. Current implementation represents hysteresis values as
+> >>> absolute values which is wrong. Nevertheless the device stores them as
+> >>> absolute values and the datasheet refers to them as clear thresholds. Fix
+> >>> the reading and writing of hysteresis values by including thresholds into
+> >>> calculations.
+> >>>
+> >>> Fixes: 3ad0e7e5f0cb ("iio: humidity: hdc3020: add threshold events support")
+> >>> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> >>> ---
+> >>>
+> >>> Since absolute values are used on the device, the hysteresis values are
+> >>> influenced by setting thresholds. Is this behavior in line with the ABI docs ?
+> >>> It can be fixed by readjusting the threshold clear value whenever setting
+> >>> thresholds to have the same hysteresis value as before. See some example below:
+> >>>
+> >>> # echo 25 > /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_value
+> >>> # cat /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_value
+> >>> 24.727626459
+> >>> # echo 5 > /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_hysteresis
+> >>> # cat /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_hysteresis
+> >>> 5.127031357
+> >>> # echo 35 > /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_value
+> >>> # cat /sys/bus/iio/devices/iio\:device0/events/in_temp_thresh_rising_hysteresis
+> >>> 15.381094071
+> >>>
 > 
-> ...                                    llvm: [ OFF ]
+> > Hi Javier,
+> > 
+> > thanks for reviewing so quickly. Do you think I should correct the clear
+> > threshold values once I changed the threshold. I have an example
+> > provided where I set the threshold and hysteresis. After setting the
+> > threshold again the hysteresis value also changes.
+> > 
+> > Dimitri
 > 
-> But maybe use "libllvm"?
+> I am not sure if I got that right. Did the rising hysteresis change its
+> value automatically from ~5 to ~15 by just adding 10 to the threshold?
+> If we are treating the hysteresis as an offset, then it should not
+> change its value i.e. it should keep the configured value.
+>
+> Best regards,
+> Javier Carrasco
 
-I think I was trying to be consistent with the previous patch using LLVM
-(something with Clang and eBPF, I think?), which used llvm and not
-libllvm for the name here :-) And I don't think upstream actually uses
-the libllvm name much (e.g. as you can see, it's llvm-devel, not
-libllvm-devel). But I can change it if you think it's a better name;
-I don't mind much either way.
+You got it right and I also think that the hysteresis value should keep
+the configured value. The doc states that the hysteresis is represented
+as offset to the threshold, but I didn't find anything related to the
+changing hysteresis value. Propably because most devices implement the
+hysteresis value as offset !? Would change this behavior in the next
+version of the patch if Jonathan agrees.
 
-> So mostly the above, and:
-> 
-> root@x1:~# perf probe -x /usr/bin/find -L find | grep fts_read
->      44        while ( (errno=0, ent=fts_read (p)) != NULL )
->                /* fts_read returned NULL; distinguish between "finished" and "error". */
-> root@x1:~#
+Thanks again for taking time to review.
 
-This part went a bit over my head, I'll just assume it's good. :-)
-
-> So the libllvm is even producing a better result, showing those inlines
-> not seen in the BFD based output.
-
-I think maybe you need to give --inlines to BFD objdump to get it to
-show inlines. (It can be useful in perf annotate sometimes.)
-But annoyingly enough, LLVM objdump does not understand the flag.
-
-> 100x speedup, looks like a win! 8-)
-
-Great, thanks for testing. :-)
-
-> Thanks a lot, the comments I made on the patch are mostly coding style,
-> please consider them, but I wouldn't get in the way for this patch to
-> get merged because of that albeit would be nice to try to fit in more
-> nicely with the existing source code base.
-
-Sure, I'll make a v6 with the requested changes. Just some
-questions/comments below.
-
->> +		*inline_frames = (llvm_a2l_frame*)malloc(
->> +			sizeof(**inline_frames) * num_frames);
-> Do we really need to cast here (my C++ is super rusty), and why not
-> calloc()?
-
-Yes, C++ does not have implicit cast-from-void*. The C++ way would be
-new[] or use std::vector, but, that would make it impossible for the
-caller to free(). I can use calloc, it won't change much either way.
-
-> > +			dst.funcname = strdup(src.FunctionName.c_str());
-> If strdup fails, users will cope?
-
-Yes, same as dst.filename. new_inline_sym() (which is where we give this
-data to) has an explicit check for if (!funcname).
-
-> > +		Expected<DILineInfo> res_or_err =
-> > +			symbolizer->symbolizeCode(dso_name, sectioned_addr);
-> same line?
-
-That takes it way over 80 characters, is that OK?
-
-/* Steinar */
+Dimitri
 
