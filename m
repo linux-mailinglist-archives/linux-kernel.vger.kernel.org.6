@@ -1,140 +1,228 @@
-Return-Path: <linux-kernel+bounces-188651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924228CE4EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0BC8CE4F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F441C20EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 253631C2162E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABCF8625F;
-	Fri, 24 May 2024 11:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08DA8625B;
+	Fri, 24 May 2024 11:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbGQhBWE"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iblX/ADw"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7A8615E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 11:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A919A8615E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 11:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550929; cv=none; b=n8rgTGveGpOrqLQtfrtYOScDRzCS0pCYhgwkMeIIWTE+mCVZYsgAAwvvKobEmLpzhD8kKDMxi6MTa0QySM1mx4Av+Pfv1YS5xkA0t9DEys2XPLOr1cMI+bM31LGBoAUMpZqI5QYJyBgpT3JIoP50lphqGYddySQgUGPrMi0IOi8=
+	t=1716550948; cv=none; b=UREJaoBOzDp4EC6yR9wQ1Ty6syW+eaQ7mpKv2T3CEpy+Yo3O2bmcAwnLn+qqPjH+K9L3C8SuPhhjeFUgfGizwFWXTdCgsHIpqbj0pift3BIEKEhBcC0jdXPzRi+Qc7uNQDMRIPVGyb/RPNH5eje0ixTfMA6x2aHv93Tonpp3rAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550929; c=relaxed/simple;
-	bh=um20z/0h51TyiN3ed0lhaWcGjCmT5HIqNWJUIu2xitM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=td0lYlRnPVcMYiVXge/0tDpGpVvNNx0S614zoI6YwzR0NhVNOsQRougWsLQIyu07eB/U4TPIf6rQzaOGHUkg+axoQ6iLqiBbPKCN6CxMth9jW405WoB8OUJpiEV/5Q2MrHc4c4/fYCCEgk8CjouE77VZRPhZP1S12af91cipC08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbGQhBWE; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1716550948; c=relaxed/simple;
+	bh=+mkcUxMgjHTJE7LSoGXd+4Je2IxfRW+Y9Nwx0ewwowA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WAAtpcXdPBXQjgmYRkYpoCuBKyYYtfkOTOi4bRHMr8oDVRKXt794gfmn5tb47ympfpUYVzckocPkmEF0hEM2I/d2JLGNyu64aRGm0kOo3aMOh4A5xpMVMrliYuoYM+rOzuJM0XgCKLBttBUBk7+dYyp5Kc6uk418t/ln4Xp/130=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iblX/ADw; arc=none smtp.client-ip=209.85.219.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5295d509178so792188e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 04:42:07 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ab975abb24so8335246d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 04:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716550926; x=1717155726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8ucJzSqULWl8fDGLbjGQazBi2zanFjR2g3fW7V53pQ=;
-        b=nbGQhBWECshYUvssH8kdkKMJeXQoDXhESKvUMLK/5dTBvhLQ8bAj713dT7BGNKytps
-         2GZuxeKUSizKl8S/3EADc0GKArT50M59/wprvpuuJRglZyhCXTlKyUqONm6lRYclmHNU
-         zc8lYj5dQHMthMBcGJUqXPtFoCS2qxpcRf4uqTZsji24+bLCb5WtycaX6Vc9atYuN6/j
-         8hqPDc8jgBZJ+8fUXBzctuDnSbGHRHVol7IkiLvpPkgUzuq6PMEFoaia3lwabLbaxhMl
-         XROn6YliHopMOs0FCUIZ6ejEVjdpKtg+UjTN5aeK5GNsYGLmYsP7AqSU/eH/PrEttgp8
-         s7hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716550926; x=1717155726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1716550946; x=1717155746; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U8ucJzSqULWl8fDGLbjGQazBi2zanFjR2g3fW7V53pQ=;
-        b=m1Tte/RBwRtn0jS+KV59P4fzJ+GShI7NRwyvNpdne0Fk4X7+sPVsYS4Hlkaol/pKGV
-         f5klZ/H4gC58wWdMD6hH6E+0tsnaT2SeqE1jdCkQyC+TjsHPNZSIv1Yne4A1mW1jzSBs
-         XB4KDRSGybaOtBJ/J1JxEU0KjXX/kBRmfa++ebv6lJ7FUObgRm3wugQoDkZIqPkEC2iv
-         i5sQG84huh6uqI2vVyH9m9hGTnx68aDvOGaQZmvxoe7iaVrV3KJ5noV1rcGnTRYnZXrR
-         8Wor+fLwZc5/SVTRyyI+dWCR9TwB5y9J26i1I18aLtqnajSpJ7DxLyrZQVK4eANaRs9e
-         0XlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMPGPo+DQUTQdWFC0ffNDMjNG7Bcpq5JXPA/DV8cQVvZzSgr2C7Yzi1dEYwAQM71cpHsEBgu6zMdbtLD7gCdyG9C3dNaXVrztbmZJ4
-X-Gm-Message-State: AOJu0YzPbLYhFd3HjyuMtGa9TC3nddNStLaOqa8V7b+dJHR6+RR7+zVI
-	9+dqCPpbJRf/uGkubUzdqnQYXqZnk0BvDk2RChJeZ8vTa6j76Qs1rnSIbHUhqnE=
-X-Google-Smtp-Source: AGHT+IHr7B3y1pvIPOhoBlsH5vP7fnRdRGNFoCQomY9uiTVTvzbuXki3VUxBhl97FiRxuDdtZV7Hng==
-X-Received: by 2002:a05:6512:224c:b0:518:c69b:3a04 with SMTP id 2adb3069b0e04-529612c0598mr2635953e87.0.1716550925998;
-        Fri, 24 May 2024 04:42:05 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970d2a1f6sm160369e87.220.2024.05.24.04.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 04:42:05 -0700 (PDT)
-Date: Fri, 24 May 2024 14:42:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v1 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
- optional
-Message-ID: <3z3gi2s2dxlflmfpcirutvesnj6gsxyriijl2jrc2udaqucoyb@6scxw5hb2nv7>
-References: <20240524071034.4441-1-francesco@dolcini.it>
- <20240524071034.4441-3-francesco@dolcini.it>
- <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
- <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
+        bh=yUBz/X7v2h9KLktMkCURYwLf7bZdYcqIIXCNuLisKAg=;
+        b=iblX/ADwDaIswB11C6CRL+bSCjJUupp9y3uGtBzcoizy0LepNI6p70jJB7fwUZlQAK
+         OoHZBPYrUz4pWutt1LdQ+ZOXjFHHEjutGSkU3CU10xaXmzPds3TRXedQJGlCErb5MvC0
+         JPlqXz8lmsspe+/2VEShCqT+3DEYpP7ezafiXkhhnZrOeIWZAhkMunuqDAwufBKLqFzz
+         EcLvR4N1iJ51E1jRqEBLJV4yweP3YHFfXo3mwoFE3QeM5Wk5Z8YwvAeSwLVduVbU/S/H
+         KFU1F6cHuuMGFr6urjt8woHgVB46lHlePNYlpixBBJ2/VnXW+qnBPA7aOk/EK4Lp+a5P
+         zmQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716550946; x=1717155746;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yUBz/X7v2h9KLktMkCURYwLf7bZdYcqIIXCNuLisKAg=;
+        b=HPNUh+gr/go5N9mMqsOaKNxK7cABNEsGZRCMlbpUqconAim6jhfKenNQhmXA/JfRB/
+         orYgam+xy4G/sqA0uTEUeLIUfj7J64Roy/yo9T6e0IIeuZd/NxNPyWVhscgeWQZHJtsb
+         DLgVrYopzgXN8nwr2fMSWNefVmqfXxSv6tPPhcifBLLtKrVm0kZTV4TeEIjEFKtBuR5u
+         Ek/G2xzz+HpxL+CxUS3v3MRr1aJV4kEl1zu9qGfRyAg4vx5EUU+YwrhpfFZE58sf1bfT
+         y2gUzKc6DFUUzZvofU0pTAppAGQhfln36gayA6d2CSfkm1IxPSeWxp/kMzoqiMDfoir8
+         7a/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW2TyE52TAtoX9avzTx3rPHsVao9Ao/g2mD3A41PS3unLk9613OLVrlbV0VTWDAMoUDVncyvdlc9FOOT2+cPSU9Qnzm8oRIeoYrWhuL
+X-Gm-Message-State: AOJu0Yyv+85pDJZJt5aRXzz65nuE95OFtQmSGFJuTuZd458V1t8ZmFHM
+	VKv38AYFHAJGfTY7XUoIv526NSXOHevv+uPDRqfvFplaVwTavHpJHDiawPRJ90omJthJsggSz1D
+	F3JRDgAPZnbbKaUCN4X8XLYPwQ9cAK8Z+vUjgTg==
+X-Google-Smtp-Source: AGHT+IHV7skJSpbmWm1CldNH/dEGLgQ0x0cx+ALY8NjMdQP0Uua1/gEx/s0+aDv4VPVhdjQGxLFULonAEOrcN6GN1uc=
+X-Received: by 2002:a05:6214:31a1:b0:6a0:a98a:4846 with SMTP id
+ 6a1803df08f44-6abbbc3de5dmr17095236d6.17.1716550945617; Fri, 24 May 2024
+ 04:42:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
+References: <20240523130326.451548488@linuxfoundation.org>
+In-Reply-To: <20240523130326.451548488@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Fri, 24 May 2024 13:42:14 +0200
+Message-ID: <CADYN=9KS5gCW+C8V+bEtHDUUmuApv7Nq9xgHf-LTp887N-VLsg@mail.gmail.com>
+Subject: Re: [PATCH 5.10 00/15] 5.10.218-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 01:31:58PM +0200, Francesco Dolcini wrote:
-> Hello Dmitry,
-> thanks for the review.
-> 
-> On Fri, May 24, 2024 at 12:56:15PM +0300, Dmitry Baryshkov wrote:
-> > On Fri, May 24, 2024 at 09:10:34AM +0200, Francesco Dolcini wrote:
-> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > 
-> > > The enable gpio is not required when the SBU mux is used only for
-> > > orientation, make it optional.
-> > > 
-> > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > ---
-> > >  drivers/usb/typec/mux/gpio-sbu-mux.c | 11 ++++++++---
-> > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > > index 374168482d36..cf44259980a1 100644
-> > > --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > > +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
-> ...
-> > > @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
-> > >  {
-> > >  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
-> > >  
-> > > +	if (!sbu_mux->enable_gpio)
-> > > +		return -EOPNOTSUPP;
-> > 
-> > Can we skip registering the mux if there is no enable_gpio? This can
-> > save users from the unexpected errors during runtime.
-> 
-> Yes, I considered this option.
-> 
-> The rationale for the current implementation is that if the device tree is
-> correct (no mode-switch property, when enable-gpios is not present), nobody
-> will call gpio_sbu_mux_set() so no runtime error is possible. If the
-> configuration in the DT is not correct you get this runtime error.
-> 
-> With your proposal in case the DT configuration is not correct there will be no
-> errors from the kernel, but the functionality will not work.
+On Thu, 23 May 2024 at 15:17, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.218 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.218-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
 
-I'm slightly biased maybe, but I prefer an error from probe (or
-dependent devices being deferred). On the other hand, current motto is
-that 'the kernel should not duplicate dt-validate's work'.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
--- 
-With best wishes
-Dmitry
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 104 total, 104 passed, 0 failed
+* arm64: 31 total, 31 passed, 0 failed
+* i386: 25 total, 25 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 23 total, 23 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 9 total, 9 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 27 total, 27 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* log-parser-boot
+* log-parser-test
+* ltp-cap_bounds
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-io
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-securebits
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
