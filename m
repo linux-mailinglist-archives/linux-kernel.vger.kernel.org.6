@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-188893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192E78CE840
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD858CE844
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7251C225EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17651F2165A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682E912E1D4;
-	Fri, 24 May 2024 15:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609A12E1D9;
+	Fri, 24 May 2024 15:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeE5LjSm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3KWp1OI"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D26E5ED;
-	Fri, 24 May 2024 15:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE4912C55D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716565829; cv=none; b=LHVpBC/RwUeXoY4uduHp5EJuqxv25xl26T6gJWYk/IGps7kNLsqAZs4MggpBC4poGP/i3mOSZ2VoiC2Mqwo8ZKcn5R5atQKqL/O98qpZ10jw3KnyIUJY4Xu3+OwnSbuS014eUlzGRIp4vNUA9aF61If6JEqfEJTHghloTlsUWNo=
+	t=1716565867; cv=none; b=S252bIaLG40DmkyBSypXRddwbyYUh+Cmz85KYq1wJ4RWatFn2ENKMH33LdUVazTFqyGgFaq2ef7bCAUhilf07K8DOvmDhjlR8/euNTf4BrNmbS2cx6nZoJnRYMcPxsjBk9DjSHO6XLq9UuycSQSVRigEturuDQnAMnEPMHVr8x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716565829; c=relaxed/simple;
-	bh=4jIIEb6/gXnMNCg0cderAh9wEIoOYtF0udZJb/wrl+E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qHIhV37leXIpUSNY+rnbq8RHG2t6NaknLLHszVziMehE6DQKmBpF0s7RbJbd4v1+gMiK8E8AviRP0UPCSemC/ZJQAUzHbfyzgA9nSdZ+f4iM+70+wE/QKCKxdA/LLQYAPEUbQ7ZfLhHCjuRD2Jczhp2VpFmsKRw5J6O0N8mEDBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeE5LjSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F08FC32782;
-	Fri, 24 May 2024 15:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716565829;
-	bh=4jIIEb6/gXnMNCg0cderAh9wEIoOYtF0udZJb/wrl+E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jeE5LjSmmqOHVFQZidJJzaINJGj4SkgBwTUUkJ/px4uTN/JxeS6Xz0Sx/iUKO4dIu
-	 DEh+zeP+4CheqspYZGnoqJOGl4LPVdKWsA1A7n5vuTFpGyjNtOKdaDxvBXZsTyhIA6
-	 HLYUOev/CYKAadJxJGm1tY4tAGdQCJd3Cuitj8psNJkHSHh35fkkX/32OtExMZSGQZ
-	 fQx0GtjhIHOHQ9gjFpBUyf48LgYiMBtNONrTi7XV9JlivuUkwYtJFUZjLXGQIYVd6g
-	 AXxCPXNx9B5Cp/SV9BL6nHAQIuARL8a6VzHyNSIMfygyyjm+PKeFJQmKw4CNnNgi0Y
-	 iOqdEhIh81Ejw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EFC6FC4332E;
-	Fri, 24 May 2024 15:50:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716565867; c=relaxed/simple;
+	bh=/bhGs8TaMtT7d/LejTEFgkcPCME7r6RjadWpObMjiK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uj41+nC887BtPBIBwkdac8jCUO+41XJq4w3KuouK2YcLtZ++qNKoXkEM1E81EQMovNOimeeV9VECHFCPJdKU08lC4x29U6g/vTzwD6o0YZvF3ZS5tu9p2u5IlyC4nt6lCGGPfQQQNAsI/Sy4gjjH1V7YB06Y56tODfTdC44GVeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E3KWp1OI; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a5a5cb0e6b7so1311831766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716565865; x=1717170665; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mqIFx2QvP5nWtciX6RDCcaOwo6gKu7U8WxVWcGHheMg=;
+        b=E3KWp1OIJlbapnqqCeMYNnuc11f40ILzlVv8LPi4qJCZGpgiW6yUaN7JuG8/y7ogJ+
+         RGyJXnCkw1QIu9gzHRn8GxirLhGbirgNYWLFERlYBJGvTJWxr7rBlLm25x1a2Buc/Lfh
+         ZTqvZVvFYE/1EBHodb978e0gQaly+vTmPEOlXsUjhAcsrw6ivgSrQLfardN2FM3Y0n++
+         zcahVOwaUBmEe++MBBAKwtlKy3RO0cz+3l6yQZaTSmpxDBG9DnDWprxoItXeshKdiAvX
+         +ZjGbyfiMJDJwKLhrRugC8a99aiE/Ru3ow6ZCJNcjN/fMxIhVh2Yrfe9G7LqARmAi3KG
+         3ooQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716565865; x=1717170665;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mqIFx2QvP5nWtciX6RDCcaOwo6gKu7U8WxVWcGHheMg=;
+        b=xQu06LNJs85aTdduQjJy82KlBPPnOiR7QAGo7omQSt63featOvYYlHF4zTvsHadSjF
+         yDn38HtkUQiSZnbUki5ZD/fBjFwyEU6x56VviORKRNVIGYedka88rNVuVTM4cLySkxyS
+         5cQODSNd5bvfVmxrJVOTLUH/mRPZGoFClD48BO3QxwhpxfhMk3kky5/o86YVtj5T0DVS
+         /3JW6mqKDUfW+n/++bH4NMHCaNiQYkGEIA4mxyDL3Ibma0SKPiKVWrv+V7QBJ05ZC9vH
+         9fch/CAK44Nb1EW0+jIkjD6ZIxGIpDJOQzlq1CLPmoAZ1DSpcRpB9Eo/2NROEAVPHym8
+         oKkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgIAPn77gyOQUtMzl34j/xfG/yer+pW9fGhcejzEQgCqP5YyVKF7L/Dd96Qs5zLjbn1BplTBb9ifZWbb75FdPFHZ5+gGNISnG76bIJ
+X-Gm-Message-State: AOJu0Yw43y7H43HV7BsIHJ8V5w8HMScMeUgoIgMhbP/Pf+hTPmLDfIZy
+	CjznI/Gju+U5HxqhhRaoH33GVy2JILMJqKQ/1JKYZrrtXp4JabGi/faHMnVFxsc=
+X-Google-Smtp-Source: AGHT+IGR1yljmtNI1fn5a1qBNZfISAtYpYshZd6awCcjMwSwhcZ7g3R8sgO//b1CeE3duDF8TKbdcA==
+X-Received: by 2002:a17:906:fcb7:b0:a59:c209:3e33 with SMTP id a640c23a62f3a-a62642daa9emr185962366b.15.1716565864675;
+        Fri, 24 May 2024 08:51:04 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8179a5sm150538666b.17.2024.05.24.08.51.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 08:51:04 -0700 (PDT)
+Message-ID: <c875cd34-d09f-401a-8c57-45deddf65c9a@linaro.org>
+Date: Fri, 24 May 2024 17:51:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv, bpf: try RVC for reg move within BPF_CMPXCHG JIT
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171656582897.29053.8717064385202136071.git-patchwork-notify@kernel.org>
-Date: Fri, 24 May 2024 15:50:28 +0000
-References: <20240519050507.2217791-1-xiao.w.wang@intel.com>
-In-Reply-To: <20240519050507.2217791-1-xiao.w.wang@intel.com>
-To: Wang@codeaurora.org, Xiao W <xiao.w.wang@intel.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- luke.r.nels@gmail.com, xi.wang@gmail.com, bjorn@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, pulehui@huawei.com,
- haicheng.li@intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Elliot Berman <quic_eberman@quicinc.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Amrit Anand <quic_amrianan@quicinc.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Caleb Connolly <caleb.connolly@linaro.org>, Andy Gross <agross@kernel.org>,
+ Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>,
+ Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
+ "Humphreys, Jonathan" <j-humphreys@ti.com>,
+ Sumit Garg <sumit.garg@linaro.org>, Jon Hunter <jonathanh@nvidia.org>,
+ Michal Simek <michal.simek@amd.com>, boot-architecture@lists.linaro.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <CAA8EJppYmVMmhgLSiSEGA_r4hFbQYriOLjNK9b6VXUYEYiZ6Zg@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJppYmVMmhgLSiSEGA_r4hFbQYriOLjNK9b6VXUYEYiZ6Zg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Sun, 19 May 2024 13:05:07 +0800 you wrote:
-> We could try to emit compressed insn for reg move operation during CMPXCHG
-> JIT, the instruction compression has no impact on the jump offsets of
-> following forward and backward jump instructions.
+On 21.05.2024 9:00 PM, Dmitry Baryshkov wrote:
+> Hi Elliot,
 > 
-> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> ---
->  arch/riscv/net/bpf_jit_comp64.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> On Tue, 21 May 2024 at 21:41, Elliot Berman <quic_eberman@quicinc.com> wrote:
+>>
+>> Device manufacturers frequently ship multiple boards or SKUs under a
+>> single software package. These software packages will ship multiple
+>> devicetree blobs and require some mechanism to pick the correct DTB for
+>> the board the software package was deployed. Introduce a common
+>> definition for adding board identifiers to device trees. board-id
+>> provides a mechanism for bootloaders to select the appropriate DTB which
+>> is vendor/OEM-agnostic.
+> 
+> This is a v3 of the RFC, however it is still a qcom-only series. Might
+> I suggest gaining an actual interest from any other hardware vendor
+> (in the form of the patches) before posting v4? Otherwise it might
+> still end up being a Qualcomm solution which is not supported and/or
+> used by other hardware vendors.
 
-Here is the summary with links:
-  - riscv, bpf: try RVC for reg move within BPF_CMPXCHG JIT
-    https://git.kernel.org/bpf/bpf-next/c/99fa63d9ca60
+AMD should be onboard [1].
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Konrad
 
-
+[1] https://resources.linaro.org/en/resource/q7U3Rr7m3ZbZmXzYK7A9u3
 
