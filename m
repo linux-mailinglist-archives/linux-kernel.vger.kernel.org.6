@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-188192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6DC8CDF08
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:56:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160528CDF09
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17741F2254E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C519128261F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BBE79C8;
-	Fri, 24 May 2024 00:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54CC6FBF;
+	Fri, 24 May 2024 00:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="b63FHAbG"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF7D81F;
-	Fri, 24 May 2024 00:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gQ/xR/h4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8141181F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716512188; cv=none; b=iJ1i72895D/bpzpw9HVxMZCxhIGRUN61VJGhaKqlBCYLYnziVCf42oS8BroQ/ZT7/Zh9ZA/RkvNo7qtcsRjqpy+sHTYCLB8xu/6Gkz7WycyPSIoLy1wxOp0mLSRzR8jGzIrZexant4waB9rLQKsTtvfs5u+KJIHHTmfnrpPqAC0=
+	t=1716512280; cv=none; b=bhM5TPXsMYP7mKIeYV56FqHRMbzf5KEQHkzKuHj7327m0Gu/zPkGSckXTa5LylT+kJr/V4sq4bU5USb68cGGCSc3VQvAy5mQckuIutS1d83Gfo83eBMEbMMfmFx+Zc8VBXuKm2IP/vfh0zLFpVov8EO13oTPH/c2BN8EzL9/wSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716512188; c=relaxed/simple;
-	bh=5F1z1Woqll497cd46zyP+J5EAcA55tR8OXSbU/KNAac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AafcBfypai8cC9PblTQ522h29OlvIFPhO4Gq5aXh/e2u2dlllof7YO8sHn6icCXJBuhCqqIIH/I9O6rPKwj9Yg/IeOrlq1Egq68cYOoK73UNGoA3b8WieEli6KrKlixvk81vlAAVbv8EUkw202VI2KhtDhZX41WmicA4P0TrfIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=b63FHAbG; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 4875B14C2DB;
-	Fri, 24 May 2024 02:56:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1716512183;
+	s=arc-20240116; t=1716512280; c=relaxed/simple;
+	bh=B09WagMSQYqu2y6WcNLAL8j1PdOhiUvl64ijy52FX74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EOtrMLAu046YeJj0fa9oaCiFJLOBG5VlexNMuVYayJEpKxg9VHrjpdQtdXqn+eC2Eu3VHjz6IJNjRFiv5AWNb5tdIcVLUvxwVpVv8Y+VgONfeKSeEv0+vYR95nljF9vNqd41f6GUYze0Aavm0b969xMtNa9iJ1LXNONlvRH/EDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gQ/xR/h4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716512277;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=10Rzt42s+HPACNX7hQ0Sh+1c1eQ91GOfo9jACwkRnOA=;
-	b=b63FHAbGiS5pCrH8hcTwp0IyhAL3RM6UxNRm5LyOPkpaZ7+6TBjip82FKAnZZPDCvyWvtW
-	ZSflcHDFZFPPv33AmFPdQe8rebTJnJNXUsOxCu0dpk+B7BBsIT6NUeGTcI48enDoOIrOoc
-	EH2NhZjP0jkpmP7HzXgawVumenld1Z4FKcjfyHBnnVzBOQj8OfL8kZ0cord+NauvP2Qd3p
-	iNJp6SqUoG58yTIDy9pOBfYL9d6aYRM8EonBqKY8yD56EyATI+1gaAcu/1/C5UxEwKAYkR
-	JnPcVdNjrqW3s6ysz6pUZvlDwJrYY7Hn2lCm5jxg36n9K/wNInDJx83EiT13WQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 2d469f13;
-	Fri, 24 May 2024 00:56:14 +0000 (UTC)
-Date: Fri, 24 May 2024 09:55:59 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 00/15] 5.10.218-rc1 review
-Message-ID: <Zk_lnyn3IAmRtP2X@codewreck.org>
-References: <20240523130326.451548488@linuxfoundation.org>
+	bh=3nW6ItyXHWrOBbIXTrs/WnWz6xyA/F9n+0mCPhSlCMk=;
+	b=gQ/xR/h4N0XWH5X1vQjkK57d7QeFF16ASqUTQ771xQ/7yquXFGxFCWU4q/+Yr6LOOd13Ac
+	2sjomchnxoSklDYS5CtsXniHLwA0cdJAfi+/CfkVZ8+HUIcmLH1lMEdHtFbjd1Vs1ADt7O
+	lAIe+f472kjIX2noqTaq2gFdFTsKeXM=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-145-vGc9NEQVOg6IbAAl5u1Xcw-1; Thu, 23 May 2024 20:57:55 -0400
+X-MC-Unique: vGc9NEQVOg6IbAAl5u1Xcw-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6a8d4b98157so8147716d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:57:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716512275; x=1717117075;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nW6ItyXHWrOBbIXTrs/WnWz6xyA/F9n+0mCPhSlCMk=;
+        b=Ax+gxbJWNAqSLVkJvt4ATMl5ysaBi6owJ6kIZHe5FEkhduAK6EuRYWNC4hhr9ZwlxC
+         xJW5vcQaBbawOlE5ToKp/dVa/8TB8cPEJov2s4whXAB7qlwAkgV44GVxNbFCPoxY5mqI
+         jLNdlJZo8EXQQLfAwoPALv4WklAOfwZQV9DBbmdU3v+SSK3lS7hV8Ix9K+UpoCDx7359
+         NXzuJ8NEYlrtDZeIG2ZNOFxpWyS4IuLWy9Er9i0CtNbrOL95Ok+oLJ+pApTmAeU/HYll
+         1qOnCWaP4HdZnBM3U6idsYi9OqnolgzEQyGlXehdN/cb43xi/elvDG0ii2tu+0Juqzpv
+         cLFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhGJVrOCD2m6D1I6wDTFoAJX2CS8P8q8fHy1eTDttXs+nTugpOlDZ296t089S2V6/lcPPPLBm77vxW9ewdExJ8sf8p7djgxsqUA6AP
+X-Gm-Message-State: AOJu0YyAFhjSEZd3kD90b+aHPbgLEuc2vwnWiEeuoEU7yQq+/it1tbsV
+	ZPggbywA7yS0kyS8I3CoS+Q+Ntla6dv3wO2fQvIC7K99QqgFERi6MWemqgMPoUxLEbX9S9P/vk+
+	SR7NnpZ7NSd6+Vx/NeKlYZ3UPwjFQT+fBu1GI2ptlZf7HpWOpR+wrRxj8hmAnf9AebKD3Pw==
+X-Received: by 2002:a05:6214:5d11:b0:6ab:891c:54e9 with SMTP id 6a1803df08f44-6abcd0fadaamr6119306d6.35.1716512275069;
+        Thu, 23 May 2024 17:57:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHr9OA8GjcLWPDgYxGn3TRIwyBJob8LLed2gjUw9dHtXvVxRa+eApiMcnlNbmzT0L542FUa/A==
+X-Received: by 2002:a05:6214:5d11:b0:6ab:891c:54e9 with SMTP id 6a1803df08f44-6abcd0fadaamr6119246d6.35.1716512274609;
+        Thu, 23 May 2024 17:57:54 -0700 (PDT)
+Received: from [192.168.1.175] ([70.22.187.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac16308ecasm2009026d6.121.2024.05.23.17.57.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 17:57:54 -0700 (PDT)
+Message-ID: <5c063045-4bce-14e4-9930-77cc0ed2edad@redhat.com>
+Date: Thu, 23 May 2024 20:57:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240523130326.451548488@linuxfoundation.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] dm vdo: remove unused struct 'uds_attribute'
+Content-Language: en-US
+To: linux@treblig.org
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523210716.309324-1-linux@treblig.org>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <20240523210716.309324-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Greg Kroah-Hartman wrote on Thu, May 23, 2024 at 03:12:42PM +0200:
-> This is the start of the stable review cycle for the 5.10.218 release.
-> There are 15 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 5/23/24 17:07, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
+> 'uds_attribute' is unused since
+> commit a9da0fb6d8c6 ("dm vdo: remove all sysfs interfaces").
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Tested bc8c5267b8b7 ("Linux 5.10.218-rc1") on:
-- arm i.MX6ULL (Armadillo 640)
-- arm64 i.MX8MP (Armadillo G4)
+Yes, this was clearly an oversight on our part. Feel free to add:
+Reviewed-by: Matthew Sakai <msakai@redhat.com>
 
-No obvious regression in dmesg or basic tests:
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> ---
+>   drivers/md/dm-vdo/dedupe.c | 5 -----
+>   1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/md/dm-vdo/dedupe.c b/drivers/md/dm-vdo/dedupe.c
+> index 117266e1b3ae..39ac68614419 100644
+> --- a/drivers/md/dm-vdo/dedupe.c
+> +++ b/drivers/md/dm-vdo/dedupe.c
+> @@ -148,11 +148,6 @@
+>   #include "vdo.h"
+>   #include "wait-queue.h"
+>   
+> -struct uds_attribute {
+> -	struct attribute attr;
+> -	const char *(*show_string)(struct hash_zones *hash_zones);
+> -};
+> -
+>   #define DEDUPE_QUERY_TIMER_IDLE 0
+>   #define DEDUPE_QUERY_TIMER_RUNNING 1
+>   #define DEDUPE_QUERY_TIMER_FIRED 2
 
---
-Dominique Martinet | Asmadeus
 
