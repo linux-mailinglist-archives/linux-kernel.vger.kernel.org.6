@@ -1,274 +1,238 @@
-Return-Path: <linux-kernel+bounces-188370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23A88CE133
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B098CE138
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973471C2104F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA1528243F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A4E127E12;
-	Fri, 24 May 2024 06:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE85127E12;
+	Fri, 24 May 2024 06:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnowmz/M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N3JJEhDq";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Kuy5LEs2"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0646A749C;
-	Fri, 24 May 2024 06:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716533701; cv=none; b=m97yEqjxqTVmj3rRa5NUFCs+FeY7ZkFTtjyHLYSoRJM6dRsYHL2ohkl57/yP+jb+QJC5UO7ZoDSxyhIHZkJwbGGYHvWNQve2ZKcl7Rzenz9/JgLHRUlCtsjjazz9HSSnvie1yf7JUwP9Eyh/CCtDSjLnz8+u35FZAedtl42p5S0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716533701; c=relaxed/simple;
-	bh=A04reydJ1QqXaU1zeHcdF/QX1OZS7oGEypnM8LgcdY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WXX0acMT8VRqFOFzjuwuj+BYFXeMJpOdiv8gZRCo4TRRt9fYXBVyvt3Q7X6htnYB3fAgxDoDwyb+5I10ni9f45vdbvbRXEJsFXjNCRkDitCKFqM9YJTl3+89z/8mybSIVC0UsyLRMOPlQGCDBT14pzSKx6Ng+GNhD4hKBQypBos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnowmz/M; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716533699; x=1748069699;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=A04reydJ1QqXaU1zeHcdF/QX1OZS7oGEypnM8LgcdY0=;
-  b=jnowmz/MdWNjL5WniRDkFU5UtZGairEjadLEiRgWPIGmrT48qlbAkx7u
-   KVstOKwylNTZv9ZbCC5q8yQ8kOZ/KQq0WbPUiPCI0YYC0YGV4YMOEjnyw
-   gG3X79ZFRHhEh7EVzglKAF74u9WZ0n23AslMBOcb74ygiI1aT9NkYO5Ze
-   934uPpGk1EQ1T7Vekd3UsPC2QPMm3Z8mHEb6H4e/4YWL2kwEsrinwUeWo
-   wMBUIhnP4RG3ta96TenU844DP/8qEKxodiwD9CUs9CLHXbKDGAQTL90XL
-   arU8E4+jpQQQ8wlNJKJDkghVKX95OO3zId6xutyiBen6VU0ISbzpirLWy
-   g==;
-X-CSE-ConnectionGUID: FOyDXE+HQSW0fFku2yANWA==
-X-CSE-MsgGUID: zo8YLWnQTJGdqWJwErM8AA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12746320"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="12746320"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 23:54:59 -0700
-X-CSE-ConnectionGUID: FvRgV3crR7yhu6p25nhFuQ==
-X-CSE-MsgGUID: VE7mwNuSQM2/X6Z54El0aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="33850395"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 23:54:55 -0700
-Message-ID: <4354636c-24dd-4145-a551-75dc5c69910b@intel.com>
-Date: Fri, 24 May 2024 09:54:50 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE328749C;
+	Fri, 24 May 2024 06:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716533743; cv=fail; b=Z5R/licKYapFykR46QJDnR/gXqyxHcU9TlnisJjmr4dXQhco4ARVjOFE2JwHdKfarpbJ23/JAIJONJN0yHgwJ4qQb80Ktd4yrrvejUJ8BpIyHA892tsVuKtQnRpI2PEFTIPyAORlrKBFkkYrNfB6fS3aWj36pMU8fJw2RoKqXAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716533743; c=relaxed/simple;
+	bh=Dc0XpfTgIg/VKxnBbua3fYI7uVCdcjECJWt9UQimka0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=s/e/AghMEYndhXfOmd0CYJcNY+C87DYG0efaY6QsyQgyuv0mOg831IT4IhR58mhZVTpN+AEsJpjjHUnD+mThdA2d1xIVf0I8+sYCl93ezPDYIHLrKjDZ9DM1pi5TzeVDN8IVor30yGCBZsazIzwkuphQDN1rVaYdga3G53AeP4Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=N3JJEhDq; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Kuy5LEs2; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44O11k7U032567;
+	Fri, 24 May 2024 06:55:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=qX38yITX5DyHdPDE6E/ECUAbrUqjrraF+3qghSICfFI=;
+ b=N3JJEhDqc6EsmbQvOm5oKgkn/+5JnD7/qqxV2gZlWDvXa6XmPFWlz09QVx8pjJ3SD7FS
+ yxWSrbt/eaJjLAuzMGXiwt1Yo7MMmHjTnjHBGThM2hJtchC/UdTjUxB3B0AVfMfgG9dn
+ JVdfIyjNbv8zY1DVkbPXfCWInKD0VFPM7hvikTgcwkVZzJ9ueyXIMhogQOfB9fsCcG2/
+ S1xyvgsj+gaK5UzVF9b0P6/hIAHf6MOMTmYf9d3xI4H6sfO4JRZfqTzDH80n4HzJmJEx
+ 3AVlDqYVQYpyoTB91NATVfoEcZ6a+KHxt7NAN5K5ZvRov70yxyH6CGFLqH02MmOUS97h PA== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6jx2kpvr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 May 2024 06:55:14 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44O6SSIG013757;
+	Fri, 24 May 2024 06:55:13 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y6jsaydhd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 May 2024 06:55:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T3uI7UHUP3QkZ1+hRz3axjQMMUOw+e4xMAWdXxkXAnPWOXxmxW6mtEgiChoT3knxpNdA+XH0huVKF4fRUfZLaNbxC5bOFGgkXyQdujOufSM19JFBs495MFd7OFR/CJLf8WCKN4sOmaaWhfv31VyB6RTwho7LsQFAMHtm2n9F5pHGVfBdrVea4zogCI3OnmO6ZB70EkKSuxjkXfCWxbhaVeRMME05XnsKe8RStR/eREkEsegjkWLtYvqtjSTjqt+nTGIiNEp7ZkvGKxAKhoHpHhYTEsSj/zZZGW6clHInzLVG6MCvU3Dotl35TBPChieZvJ/9eXQ7jWMCao6/VxSO5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qX38yITX5DyHdPDE6E/ECUAbrUqjrraF+3qghSICfFI=;
+ b=TQ2gwMDZdmKOmxvbCkZnSCxSszyC2xOQJaY7wf4TX07Y0izb5WaZmsLCgx4XoGpuQ+Mnslr/W9cS63Feo/QCvrFRlVIQU1IpXQ8p0DyzZWGfiXNINSmnG3iJp6SAseYz+7ieYDuTE9yMc7cPhu6jCyfPvkto9Bd8D19gus5EnGpTsF/ZTumFGVaS3cJSc0v7J5r8cu4qwsS6Jm3R5cEJyy1MX8o3DBS3zligvtfYYieQRofOgeRafvkgZp8CnLzr1BDk1rVcc/Fv5id9PEcTF04a8fmU9CwoaY5CPjCDWF/SJ1aBOMRzMp5dSo7v4L7eM9Bne5ZggbUA8k4XUR46tQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qX38yITX5DyHdPDE6E/ECUAbrUqjrraF+3qghSICfFI=;
+ b=Kuy5LEs2SdcJNTRkXikUnIz0/WrAnv9KG/PBZvt6hver/tZ9Cry9rIEMIR6E/xCgKSayPhoJ/Lu5Fl3T+0LkYvAuyc5xxw68d0+PAclwWeiY7JMzM66NBsYTdmJMFGTjRLDNyrRvt7z6x0BpMWE4YnGkZnfhXCxVuRphhvNHqu4=
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
+ by PH7PR10MB6201.namprd10.prod.outlook.com (2603:10b6:510:1f3::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
+ 2024 06:55:11 +0000
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76%7]) with mapi id 15.20.7587.035; Fri, 24 May 2024
+ 06:55:11 +0000
+Message-ID: <611ff164-4133-4a3b-8f57-3dd1430c6a06@oracle.com>
+Date: Fri, 24 May 2024 12:24:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 00/16] 5.4.277-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+        rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
+        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Darren Kenny <darren.kenny@oracle.com>
+References: <20240523130325.743454852@linuxfoundation.org>
+Content-Language: en-US
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20240523130325.743454852@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2P153CA0030.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::15) To PH8PR10MB6290.namprd10.prod.outlook.com
+ (2603:10b6:510:1c1::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V16 08/23] mmc: core: Support UHS-II Auto Command Error
- Recovery
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
- Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org,
- dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
- <20240522110909.10060-9-victorshihgli@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240522110909.10060-9-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|PH7PR10MB6201:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1761c31d-ee84-4393-5f55-08dc7bbe74da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007|7416005;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?VVU2azBpR0FhbzZtUmxnTXMxQnRPL2ZtcEh1R1BWbmtFWVlWTXpkc2UyVzlk?=
+ =?utf-8?B?d1pJL2ZCVWNWbk43eFdUSUNqVjQxcG11UFlXQ3pwb2hVOEZ2MG1qdEMxV0xl?=
+ =?utf-8?B?ZUN5WGhZRXg5VUQzaGRreUxXWkczaHBUcXlTOGI0UFI2NmpudDRlWE45OXhw?=
+ =?utf-8?B?eWpBNkZTK3NHY3dNaUo2K1RlS2t1Vm90QUoyZjJzb0I5QkNFTnZmc1FXN3J0?=
+ =?utf-8?B?UDY0L2FNQ0ZMaUZnNEx3VzQxZUJSNWtndHoxNHp0QkJrYnlVRUhlYTlZMkJK?=
+ =?utf-8?B?Rmc3RzJ0Z0ZpYzJUR2dPS0Z2RkNqaERIWHFHb0YzQ3ZNSlVRc0NpZDJvS1V3?=
+ =?utf-8?B?eng0R0U4L05ENHppZ3Vhejd6Qm9URzRWUDZ1L2wyOEhBUzlXSGRyRC9GYUwz?=
+ =?utf-8?B?akRjUXhBbU1ueVpERjJCOTcyQTREUWU2eUZ3OUtMczNqeXNiNGJFdWIyWDVp?=
+ =?utf-8?B?Z3gydWtXODcrMHc2Z1N5WmEzalVHU3YxWnhCNU5LS1V6Sk1iZi8renp2ek9C?=
+ =?utf-8?B?aE1FdHIzekhWNUJhbTJsQVBiZTdWaW1lbnQ0YWJ0Q1lLMlhpZFNHenBTTmF2?=
+ =?utf-8?B?WDRxTDh1MzBpZUgwOEFpR2lKUE5PbEkrVS9OeEJWK1VRRVNXWHNBRkptRlNp?=
+ =?utf-8?B?a29tRkowemVlcTUrYUp6STkvcmwvOWNUcm8ycTg1UFJuYTBXaGlwdm9PR0Zi?=
+ =?utf-8?B?dEJndlFkdG9hYnMzUkdPcnA2TzRSRlE1WFVhREhsRnlWelhCa3VXOU5hZi9U?=
+ =?utf-8?B?S3NHRmVOMFowODFaSVU0SnBFVGlkUHgvUGZaK3lFQzZsNTFERCs4SnUxc0th?=
+ =?utf-8?B?aTcwMVVVYWlOQmdIbmFUNzdVSVpoTHpCMC96ZzluSmNNVDBsNjBEMG5IWDF3?=
+ =?utf-8?B?U1lEekdPcDMwTWVnWEovY3d6WHJKVjd0NkdqeHVZbVJnejVvYWF5SHVDL1Bx?=
+ =?utf-8?B?WVNDZnliUTNRWnB1VGE1eG1nV3A0U3ZrM3YvaVA5V2thbkh0U0xFSHpJMi95?=
+ =?utf-8?B?bjYyYmMwak9Tc2NEYVIxYktZcjVFMXRDNVFXK2lRQitrek5qRmFqSm4zSkJ5?=
+ =?utf-8?B?TytPVklwQzdhMDBGYjI0WFN6WWdiM0cyZXVHUVJOQ0FkUFMyU1ZkdU5zV0hj?=
+ =?utf-8?B?bUpCSjBtS1k3WkJYVDlLdTBGcEY5WDBVMllWZlp1VEsvdW5RSWJGeWswY0tz?=
+ =?utf-8?B?Z0dNeU9RR0I4bkd6OGV0N2Q2VUx2c0VDUDc1a0I5MkxlNGp3NDh1dGZGZ2xO?=
+ =?utf-8?B?ckRCekwrTGpkdS92NXRJdEhPU2EvRkFvNDV6OEFDcWcySm50aVBDdDZ5dUk4?=
+ =?utf-8?B?eGZrYXBOaUpDUURKd0pnL2J4STExQmY3WGM3L1ovOVZuWDAxUHpjZUNNTDhT?=
+ =?utf-8?B?bVBZZEFnK0pmOEplYWt2MEVzWHdCV0E3Slk0QktNeFpVYWhiVllMYjZDZ0Nu?=
+ =?utf-8?B?VSt3NGpwSmdwbnVtcjdXWVEzOXhIRy9EbDZrZ2UwVDhhUHZIS0pzVDFaUGdU?=
+ =?utf-8?B?eURtc0w5RU9UT0Z6T3hza3pOTG02Z0ZqOUM4WDFKT013QzF3ejJkVEplNkNx?=
+ =?utf-8?B?bFhubWNJWDFaam5NRUYxTDU4VTFCTTlRc3NHVlF0SlR1OVNGbDF4TmQzSzZt?=
+ =?utf-8?Q?vLUzYs3lEi7XsTBsu6GndZ296blfUtZs0XFi5bnY8iV4=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(7416005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?bmtOR0ZSYzRsSGw5V09KbEhUVlFzem5mTnZ3bjhHZ1VsVTJERUhuL2crRWFo?=
+ =?utf-8?B?K3UyWFlkajJvL3pPbm9Dd204Z2NRS0lGRHVrU1IwQ0JNK2E1c0RucjBiZkxC?=
+ =?utf-8?B?RXZWVDlyZ01FcHNod1RnUEFQQXNDUk96eGNJSWgzZFB6ZVN6Q0grdlRLa1Bk?=
+ =?utf-8?B?MEdVQ3Z6TnhwWHBVK3FGNXhTaUpFMFRiN0tHNE5CcDJZM1BqTitLMGZ3c2NP?=
+ =?utf-8?B?ak5SejgxeXNqT05rV2l5bTVkWUJUczhZQVhPQU90OHZlYnhlalcxYmN3ZjNy?=
+ =?utf-8?B?VWZwYjE1TVlWU0ZhSW96T3JyOXBvZHppMnppWmtKaW5wa2NLTHRvMFlVMTdk?=
+ =?utf-8?B?eHRXb0xBTjljdkNMM0pwODFwK1NvVEdNZGdIc0Y4L013c0ZzcFg1V01BTVZH?=
+ =?utf-8?B?NjFLL3FyYWFZK0xnR1g1aDNKWStGSi9HNDlvaWsxVUNPTzVzUlBja0p6d3k2?=
+ =?utf-8?B?cUVtaGJlNnBpelRFejlUUHYzMUVUQWVidGZjM05SalphRTdVaUpjbWpYRXN6?=
+ =?utf-8?B?KzNhNFVZWW5Xb0tLUmNHdnZOQVZSaDdqeUJXMENaOXkrbEpvTkpHUExvTEJG?=
+ =?utf-8?B?UFh6eWZxZU5qelZJN0dQdHEyZ2FwVnVxMkpXVXBBemtTWkNmeCszenhMR1ds?=
+ =?utf-8?B?cE9oKzd4OG55RGVXV1I0cUt5WWxYZTFJVTVIWTc2WDlob0owYmE5dTFyMUhi?=
+ =?utf-8?B?RzVXc1RwcXBZdzhmMHJZVnlFRldlZFFON0FDZW1BYmliMXNxYWQrWUJiOEFN?=
+ =?utf-8?B?UHljcU1GYTJmV2dZM0JOMEc2dWtYTnFUMkZrdit6allWQVRCbHBlUUtDTk4y?=
+ =?utf-8?B?Z1gzcXFqS3JOUmdMMDhhcnFGdDczZ0hrVzFiR1piaWRFbTBDRFZpWkYydnBS?=
+ =?utf-8?B?WVlCL2FEZDZZQnpzbnlRK0ZMZG1WVWhUS0k1NEJmb09ScmxEZzRpdElxU3Fz?=
+ =?utf-8?B?L0FQTVFITEtDeWVoY3NHaldqc1M2OHRpcVdJanB2R2h6NjVqcE9laFBDNUZH?=
+ =?utf-8?B?VGNZWDhCa0g5OGRKUUpSNDNnNUZ5TmhPdGRqYnJ3UXhQMEorT1J5ZHVScXlQ?=
+ =?utf-8?B?YW4vUGMxL2V2OEVadDdGc2dWNy9XNU9NRlluZU5lVVJlWS9YRHlYYk5sRHQy?=
+ =?utf-8?B?N3I5YmlVZnFZNHI4U0lGT1NvY3ZkNE16aGpiOS9Ja3FPUi90WnhDY1I0SlYx?=
+ =?utf-8?B?NytGemZCdlNjaWxGTkhQNTQ1SG1YaHNZSC9PMGdJbmNxNFdHS21YeGh6RjVn?=
+ =?utf-8?B?dFZyOHBUTFBBUVRmMUJQcXU4KzdJRWNHMnl2TG9QSEU0OXQ1ZWJJY3BBbkFn?=
+ =?utf-8?B?M1RvNzJwRzI5VWtqdHl5OHlpOWJSRWw5alRadFg0cE1uQWRTQTFkWkw0SnFu?=
+ =?utf-8?B?cCtHR3g3aUhlZEJlSFN6WXc3WmFLL2xiQmNjUERROUdFaUxuUGtzMVRPOUd2?=
+ =?utf-8?B?dU9NSFNDdUJucEpEK0UrZ0Fta0ZGeGJMU0JhamxsQ2JkbkRoeVIzVzhoZmkr?=
+ =?utf-8?B?RTdyQXp4M3FaeExOZGtPUnVMZmNaUkVIU01sVFFVWDhiRmw3NHJQRm00eGky?=
+ =?utf-8?B?dkhLVEg5THdwQVFrM2FDRnNqTmNEanRqOGdZV3BiV28yUlhJN1plYXVULy9J?=
+ =?utf-8?B?SU9jSGVhNHFQNEU3QnZBcFdoZWllYmxyVE5RMTFudWRXT3NoOVB2THVOdkdw?=
+ =?utf-8?B?L1h4cUZCclFEbnJ1QXZKQm5tQm1aUDFkWlE4c0NiRFZNaW8yRzAyaFkrSmVJ?=
+ =?utf-8?B?VDR3K2dKTjBIOVhKd2dLM25DMVVCOWVFcFZZZ25VVXdFWlhZOFJzbndjU1o0?=
+ =?utf-8?B?MG94TnAvWURyMHpteEM3a0R4d3pzTUNwQnBjUElvTjJ3YkNyVW5qNTlkU1FQ?=
+ =?utf-8?B?VkZzTDlsZmc3WlhWWS9QUnZ2a1A4dzBTYnhiUWgycHl2aUJTRmVnN01QVnVm?=
+ =?utf-8?B?eW54TjJYenVkRDREY1NFS1B2UUxRTG91NmlkY1BJRGZVQzEvYnhldmE0RXBF?=
+ =?utf-8?B?KzhCa1E3bWhtNEM0ZG1SM1FMcU8rUjlUNElsbm0zZ0VBd09DaE1UbzBYeXR4?=
+ =?utf-8?B?T3B5ZkVUV1lTTUpLenE2ZUx2Y056REFmRVdtRHBYMmZ0WGpHUWRDT1AzNXl5?=
+ =?utf-8?B?L296cGZYRW9HZDZIZHR6RFY4dkg2WU94SU5PaFIrWU1PaDlNNFhtQ0x2NUFU?=
+ =?utf-8?Q?1jyp0H5TkLHik17brMNi9BU=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	wSQvedYlatEMUaVV2OyGo28W3AchUucWqEZZELggYUBzbhc9yBqmkAjuAcFmLjEVwGO1b3qDq1X2HuDLKES0egu+6tgq0Za6xBbwPFqrHGx8P54/AJFFPfKIb8m5U0FWRPM77tn5O9LgMb09jRui5/UQMYemWHV5z2uUcc5at60M7e9WHqepgTRQ7EYuLzo5iK3Evbon/9nSBB5YwLDxTTET28wzFRRrFRPh2awtRMANV8zvW2n2UUfFC0LN3xpMtNdNEHInWOuZJ7/ChQjqhB3cH63lhLiGzFR6g1JyjFc+ExvClGlt8DnRFE+LxlVxeRLBxtOQcyFcrzZAnC6MSkHcwMB+T/ORC9q34bpKgOyUUy4GTS53GrsguXjW4K4u563Mfu/50iRgZuxdn/PA9nuhauU38HhyMeKsPu2kAasXr/oOTlFCwKtDjawKi0lGdkyMycvq5fBpAvLgrNonUqPmCKX0ClDro5g2ym4lTJLCJCKDP3y45IiKpnhw5F/P3n8EWCxF1xW9fEGWMXU3SodZ27vHJhEF/ttHP5Jblp2NdM4L+uUlFqsMfxGmRhVL+d1NgdSKdeZVQte7SWGguI/+BCCeEmOq5uaZqpb09mc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1761c31d-ee84-4393-5f55-08dc7bbe74da
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 06:55:11.6855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qfTOCBNDRElDFrZgH3BmqBW2EvwcNdmhBFfwoab6fFipsJFfEfoA98Ptm3SV12mWrpZ3gp/77OWiLTtNQQSa1xLfkrf6D8aw2YcpYeZbTiSrjIT61UtYdM9BqwDGV7Ng
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6201
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_02,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405240047
+X-Proofpoint-GUID: 9okHw0Gnucbyv1EinR7rznO7Jdfcrtz6
+X-Proofpoint-ORIG-GUID: 9okHw0Gnucbyv1EinR7rznO7Jdfcrtz6
 
-On 22/05/24 14:08, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+Hi Greg,
+
+On 23/05/24 18:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.277 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Add UHS-II Auto Command Error Recovery functionality
-> into the MMC request processing flow.
-
-Not sure what "auto" means here, but the commit message
-should outline what the spec. requires for error recovery.
-
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> ---
+
+No problems seen on x86_64 and aarch64 with our testing.
+
+Tested-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+
+Thanks,
+Harshit
+
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.277-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Updates in V16:
->  - Separate the Error Recovery mechanism from patch#7 to patch#8.
+> thanks,
 > 
-> ---
+> greg k-h
 > 
->  drivers/mmc/core/core.c    |  4 ++
->  drivers/mmc/core/core.h    |  1 +
->  drivers/mmc/core/sd_uhs2.c | 80 ++++++++++++++++++++++++++++++++++++++
->  include/linux/mmc/host.h   |  6 +++
->  4 files changed, 91 insertions(+)
-> 
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 68496c51a521..18642afc405f 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -403,6 +403,10 @@ void mmc_wait_for_req_done(struct mmc_host *host, struct mmc_request *mrq)
->  	while (1) {
->  		wait_for_completion(&mrq->completion);
->  
-> +		if (host->ops->get_cd(host))
-> +			if (mrq->cmd->error || (mrq->data && mrq->data->error))
-> +				mmc_sd_uhs2_error_recovery(host, mrq);
-
-There are several issues with this:
-
-1. It is not OK to start a request from within the request path
-because it is recursive:
-
-   mmc_wait_for_req_done()			<--
-      mmc_sd_uhs2_error_recovery()
-         sd_uhs2_abort_trans()
-            mmc_wait_for_cmd()
-               mmc_wait_for_req()
-                  mmc_wait_for_req_done()	<--
-
-2. The mmc block driver does not use this path
-
-3. No need to always call ->get_cd() if there is no error
-
-It is worth considering whether the host controller could
-send the abort command as part of the original request, as
-is done with the stop command.
-
-> +
->  		cmd = mrq->cmd;
->  
->  		if (!cmd->error || !cmd->retries ||
-> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-> index 920323faa834..259d47c8bb19 100644
-> --- a/drivers/mmc/core/core.h
-> +++ b/drivers/mmc/core/core.h
-> @@ -82,6 +82,7 @@ int mmc_attach_mmc(struct mmc_host *host);
->  int mmc_attach_sd(struct mmc_host *host);
->  int mmc_attach_sdio(struct mmc_host *host);
->  int mmc_attach_sd_uhs2(struct mmc_host *host);
-> +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_request *mrq);
->  
->  /* Module parameters */
->  extern bool use_spi_crc;
-> diff --git a/drivers/mmc/core/sd_uhs2.c b/drivers/mmc/core/sd_uhs2.c
-> index 85939a2582dc..d5acb4e6ccac 100644
-> --- a/drivers/mmc/core/sd_uhs2.c
-> +++ b/drivers/mmc/core/sd_uhs2.c
-> @@ -1324,3 +1324,83 @@ int mmc_attach_sd_uhs2(struct mmc_host *host)
->  
->  	return err;
->  }
-> +
-> +static void sd_uhs2_abort_trans(struct mmc_host *mmc)
-> +{
-> +	struct mmc_request mrq = {};
-> +	struct mmc_command cmd = {0};
-> +	struct uhs2_command uhs2_cmd = {};
-> +	int err;
-> +
-> +	mrq.cmd = &cmd;
-> +	mmc->ongoing_mrq = &mrq;
-> +
-> +	uhs2_cmd.header = UHS2_NATIVE_PACKET | UHS2_PACKET_TYPE_CCMD |
-> +			  mmc->card->uhs2_config.node_id;
-> +	uhs2_cmd.arg = ((UHS2_DEV_CMD_TRANS_ABORT & 0xFF) << 8) |
-> +			UHS2_NATIVE_CMD_WRITE |
-> +			(UHS2_DEV_CMD_TRANS_ABORT >> 8);
-> +
-> +	sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
-> +	err = mmc_wait_for_cmd(mmc, &cmd, 0);
-> +
-> +	if (err)
-> +		pr_err("%s: %s: UHS2 CMD send fail, err= 0x%x!\n",
-> +		       mmc_hostname(mmc), __func__, err);
-> +}
-> +
-> +static void sd_uhs2_abort_status_read(struct mmc_host *mmc)
-> +{
-> +	struct mmc_request mrq = {};
-> +	struct mmc_command cmd = {0};
-> +	struct uhs2_command uhs2_cmd = {};
-> +	int err;
-> +
-> +	mrq.cmd = &cmd;
-> +	mmc->ongoing_mrq = &mrq;
-> +
-> +	uhs2_cmd.header = UHS2_NATIVE_PACKET |
-> +			  UHS2_PACKET_TYPE_CCMD |
-> +			  mmc->card->uhs2_config.node_id;
-> +	uhs2_cmd.arg = ((UHS2_DEV_STATUS_REG & 0xFF) << 8) |
-> +			UHS2_NATIVE_CMD_READ |
-> +			UHS2_NATIVE_CMD_PLEN_4B |
-> +			(UHS2_DEV_STATUS_REG >> 8);
-> +
-> +	sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
-> +	err = mmc_wait_for_cmd(mmc, &cmd, 0);
-> +
-> +	if (err)
-> +		pr_err("%s: %s: UHS2 CMD send fail, err= 0x%x!\n",
-> +		       mmc_hostname(mmc), __func__, err);
-> +}
-> +
-> +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-> +	mmc->ops->uhs2_reset_cmd_data(mmc);
-
-The host controller should already have done any resets needed.
-sdhci already has support for doing that - see host->pending_reset
-
-> +
-> +	if (mrq->data) {
-> +		if (mrq->data->error && mmc_card_uhs2(mmc)) {
-> +			if (mrq->cmd) {
-> +				switch (mrq->cmd->error) {
-> +				case ETIMEDOUT:
-> +				case EILSEQ:
-> +				case EIO:
-> +					sd_uhs2_abort_trans(mmc);
-> +					sd_uhs2_abort_status_read(mmc);
-
-What is the purpose of sd_uhs2_abort_status_read() here?
-It is not obvious it does anything.
-
-> +					break;
-> +				default:
-> +					break;
-> +				}
-> +			}
-> +		}
-> +	} else {
-> +		if (mrq->cmd) {
-> +			switch (mrq->cmd->error) {
-> +			case ETIMEDOUT:
-> +				sd_uhs2_abort_trans(mmc);
-> +				break;
-> +			}
-> +		}
-> +	}
-> +}
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index fc9520b3bfa4..c914a58f7e1e 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -271,6 +271,12 @@ struct mmc_host_ops {
->  	 * negative errno in case of a failure or zero for success.
->  	 */
->  	int	(*uhs2_control)(struct mmc_host *host, enum sd_uhs2_operation op);
-> +
-> +	/*
-> +	 * The uhs2_reset_cmd_data callback is used to excute reset
-> +	 * when a auto command error occurs.
-> +	 */
-> +	void 	(*uhs2_reset_cmd_data)(struct mmc_host *host);
->  };
->  
->  struct mmc_cqe_ops {
-
 
