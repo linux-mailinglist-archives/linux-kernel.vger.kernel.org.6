@@ -1,128 +1,144 @@
-Return-Path: <linux-kernel+bounces-188737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79528CE61D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:23:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FF08CE626
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D979F1C2197D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5C61F2181F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A431D12BEAC;
-	Fri, 24 May 2024 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC6912BF38;
+	Fri, 24 May 2024 13:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aL5TcvMd"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6ciXNQ+"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8857126F3A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427883FBB7;
+	Fri, 24 May 2024 13:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716557029; cv=none; b=oQ6z++9da/z9zhauwDPkNsgy9VnjLT87A/wfKKmkzZ24bhk3wlNERG3POXC526L4Yme4G4MeBB84de3LliSKkiulqD1BfavCdzagqQCVh63UViYxVdyw/fGvzi4u7MQ7BaqafsqV8C0Q1/1819HA5hkR+xGhDU8j9wW3jj/HsLA=
+	t=1716557172; cv=none; b=YOL3903mIk1AMdJxbspSlnLl9BUe6+4rQUtc1XGK8yeEIJBEPGQdMMkaCYwi9sSdSrxjBoBV4hjS0M/ynejp3r1xpX9delT/PT4caQVxzJpZoBT5i4PBpZNsy86zI7BICOnxo6D/ClWdM7pEV7osdEUoB4fy/biuoPHAUxLs1fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716557029; c=relaxed/simple;
-	bh=9M+Jfutkj+3xFQXRZrdiDpsrzCMNEVrBpKHHCVV94K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qs0pinT4bAtgKgZSCDuyVYroQNeM2Rg7ji/I3Mx6UTC+Nn1dP+eODLTw36dlkBCjHNOxsHkDSCtvY9mzPKIKJ8IHu2k5MC/fHDq1qdExekjzyKMVuZ68B9zTxQf2d6mLkSLEvIpBiWCifzVyTd8ETSwAO1LDUuE6PWK53DWqFfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aL5TcvMd; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716557024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=yawCa/zMhfVB+WtgnLQ25RsWeDGEuNkEkDSE1kcE66E=;
-	b=aL5TcvMd3lk5CCclv+OGux6AYuDyhaKI02HIqsrrBlyd/bdEwwPLhrCAA4Aab0bq8KUcPD
-	FZSjyQqBDEKX3WvJ2HDTOdEulj9D3eBd/IDUoaf6nfM6rOSeiLmNRVxPNUzwRsggVIwFV5
-	MoWfoglS2UxtpTrEdfyjAgXzQvQhK5Q=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Fri, 24 May 2024 09:23:41 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10-rc1
-Message-ID: <34o5tkmaecep7kccwzgwe4yzbkayhb5wkqukthj5may75yvqgn@43rljzrmlmmn>
+	s=arc-20240116; t=1716557172; c=relaxed/simple;
+	bh=j5xm6XpzuOK09zeyH58U/GJ0F/Rrq7mRKYGfu5Vr8sU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QfGXFWYd7voIZBBeYpUcBI5iN0QoVmznmR7GSsPhvR8aftfXAHxI6gHCAeNYKZtdiLRfEGvZ5I+zpO1zWsWy0CQdu/7AknIa9QdO0XuI3tDqSjMt5+ZcNvHOEkUdccepKsB2Dn8YLX9KLMJnHVlDT2xpNMfSl1rlX93R9pZaSWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6ciXNQ+; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-523b20e2615so10190541e87.1;
+        Fri, 24 May 2024 06:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716557169; x=1717161969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SolOo+u07aKBHiQy8wdX4zOZwYE5CwLfUJ/MrBrsu9A=;
+        b=C6ciXNQ+ozV+RbxvAm+P3kraqt9qGdz5v5oCaahZCLtnda1KTk69ea08wyHLziCJIO
+         FBgQUuvKgwHvUvKV3dwm0VfwIAba2EZuLYRFZYHds0FbZAN86LIlbAc77QEw5+Q4wO4i
+         uuK35b1pu3Ws0N2AdTCj9MeFEHs1xw9InU8eoe0ztsDwbmQB2krJk5LJ2aXhSYtNnkzK
+         qp7KKlxXEY0kEYpKNNGkldolz+1KFTH/aPmnJ+7GLI6MG2WHuXhUN0TVtnWcKozcMtcN
+         HFNMVax+ZqIw3U+VaE/R9e5KLf88n+umttjKEQvDS7v7lr9R5syWmhEUUEPu46hr8ErK
+         7AeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716557169; x=1717161969;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SolOo+u07aKBHiQy8wdX4zOZwYE5CwLfUJ/MrBrsu9A=;
+        b=i5uV6AdgUO+48yhFs6S+XvjAvRADICy4++CZycD0rKZQ96XiyjOf4mLDXFyvaygB9d
+         KjVo8gN2pq1KsFxS1Gir/dr//zAqHhkJAi+hW+u151nTa9uDMS46O1Q7et81CyCAHYbn
+         zldhG5jSpT833ymno7pxh63gnss638i+wMwEg6YUin3ILq8KsSCymskh2CkCRUsxLVPK
+         HsjnAVNv0ut5/oka2+dtLFQnOw1M2GugoaEGIaGlRB2J6PBw3JqZ4FIs1XBEzUJeiyll
+         ROXB+ou5/eCg7AJ4nnLD3jiy8Ei+8sbvZDyTriopLyUnR/5Zb7uvNN6SDijNtURdyK4c
+         B+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOkQiD4htE5L5+0TSmtpZ+PRkWwHs8e7IzWxuWHlsxqaGBphGk4R+Y0zTFhEwD+VUtCxbsumFRa6Z1ck/5sJrL/exMVB95OnTbuGRRochF+sdw0DQL+I0sEyi865ZFY8FEKslp/WC7Y5dDHEIdgSUpsIu92mw4uA91HkO3
+X-Gm-Message-State: AOJu0Yzx2YZzkGAaq1xVy78Pnc8oVRDaQCH2wPr4ftMLHa/fnT2v6ZAK
+	iQUl1qZnh8ibZ9kv7FlSGWNOTQ/TVy6hsxdhuSFD1pW+0KjYBZsx
+X-Google-Smtp-Source: AGHT+IFGh7TCiQVYt9mnW0TnwytSQeuz6H7Wje6MGjSHup+2uqOwzNsF+g21tmM03dC6ido3Tttubg==
+X-Received: by 2002:a19:f506:0:b0:524:34ad:ba7c with SMTP id 2adb3069b0e04-52966d9d996mr1260613e87.66.1716557168974;
+        Fri, 24 May 2024 06:26:08 -0700 (PDT)
+Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e887a33sm181182e87.45.2024.05.24.06.26.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 06:26:08 -0700 (PDT)
+From: Paul Durrant <xadimgnik@gmail.com>
+X-Google-Original-From: Paul Durrant <paul@xen.org>
+Message-ID: <04a1543d-4156-4048-b4ec-99240a43d4c4@xen.org>
+Date: Fri, 24 May 2024 14:26:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Reply-To: paul@xen.org
+Subject: Re: [RFC PATCH v3 10/21] KVM: x86: Fix software TSC upscaling in
+ kvm_update_guest_time()
+To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
+ zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>
+References: <20240522001817.619072-1-dwmw2@infradead.org>
+ <20240522001817.619072-11-dwmw2@infradead.org>
+Content-Language: en-US
+Organization: Xen Project
+In-Reply-To: <20240522001817.619072-11-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Nothing exciting, just syzbot fixes (except for the one
-FMODE_CAN_ODIRECT patch).
+On 22/05/2024 01:17, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> There was some confusion in kvm_update_guest_time() when software needs
+> to advance the guest TSC.
+> 
+> In master clock mode, there are two points of time which need to be taken
+> into account. First there is the master clock reference point, stored in
+> kvm->arch.master_kernel_ns (and associated host TSC ->master_cycle_now).
+> Secondly, there is the time *now*, at the point kvm_update_guest_time()
+> is being called.
+> 
+> With software TSC upscaling, the guest TSC is getting further and further
+> ahead of the host TSC as time elapses. So at time "now", the guest TSC
+> should be further ahead of the host, than it was at master_kernel_ns.
+> 
+> The adjustment in kvm_update_guest_time() was not taking that into
+> account, and was only advancing the guest TSC by the appropriate amount
+> for master_kernel_ns, *not* the current time.
+> 
+> Fix it to calculate them both correctly.
+> 
+> Since the KVM clock reference point in master_kernel_ns might actually
+> be *earlier* than the reference point used for the guest TSC
+> (vcpu->last_tsc_nsec), this might lead to a negative delta. Fix the
+> compute_guest_tsc() function to cope with negative numbers, which
+> then means there is no need to force a master clock update when the
+> guest TSC is written.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk > ---
+>   arch/x86/kvm/x86.c | 73 +++++++++++++++++++++++++++++++++++-----------
+>   1 file changed, 56 insertions(+), 17 deletions(-)
+> 
 
-Looks like syzbot reports have slowed down; this is all catch up from
-two weeks of conferences.
+Reviewed-by: Paul Durrant <paul@xen.org>
 
-Next hardening project is using Thomas's error injection tooling to
-torture test repair.
-
-The following changes since commit eb6a9339efeb6f3d2b5c86fdf2382cdc293eca2c:
-
-  Merge tag 'mm-nonmm-stable-2024-05-19-11-56' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-05-19 14:02:03 -0700)
-
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-24
-
-for you to fetch changes up to d93ff5fa40b9db5f505d508336bc171f54db862e:
-
-  bcachefs: Fix race path in bch2_inode_insert() (2024-05-22 20:37:47 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10-rc1
-
-Just a few syzbot fixes
-
-----------------------------------------------------------------
-Kent Overstreet (17):
-      bcachefs: Fix rcu splat in check_fix_ptrs()
-      bcachefs: Fix ref in trans_mark_dev_sbs() error path
-      bcachefs: Fix shift overflow in btree_lost_data()
-      bcachefs: Fix shift overflows in replicas.c
-      bcachefs: Improve bch2_assert_pos_locked()
-      bcachefs: Fix missing parens in drop_locks_do()
-      bcachefs: Add missing guard in bch2_snapshot_has_children()
-      bcachefs: Fix bch2_alloc_ciphers()
-      bcachefs: bch2_checksum() returns 0 for unknown checksum type
-      bcachefs: Check for subvolues with bogus snapshot/inode fields
-      bcachefs: Fix bogus verify_replicas_entry() assert
-      bcachefs: Fix btree_trans leak in bch2_readahead()
-      bcachefs: Fix stack oob in __bch2_encrypt_bio()
-      bcachefs: Fix unsafety in bch2_dirent_name_bytes()
-      bcachefs: Fix shutdown ordering
-      bcachefs: Ensure we're RW before journalling
-      bcachefs: Fix race path in bch2_inode_insert()
-
-Youling Tang (1):
-      bcachefs: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
-
- fs/bcachefs/bcachefs_format.h |  6 ++++++
- fs/bcachefs/btree_iter.c      |  2 ++
- fs/bcachefs/btree_iter.h      |  2 +-
- fs/bcachefs/buckets.c         | 13 +++++++------
- fs/bcachefs/checksum.c        | 37 ++++++++++++++++++++----------------
- fs/bcachefs/dirent.c          |  3 +++
- fs/bcachefs/fs-io-buffered.c  |  4 ++--
- fs/bcachefs/fs.c              |  6 +++---
- fs/bcachefs/printbuf.c        |  7 +++++++
- fs/bcachefs/recovery.c        |  7 ++++++-
- fs/bcachefs/replicas.c        | 44 ++++++++++++++++++++++---------------------
- fs/bcachefs/sb-errors_types.h |  4 +++-
- fs/bcachefs/snapshot.h        |  7 ++-----
- fs/bcachefs/subvolume.c       |  9 +++++++++
- fs/bcachefs/super.c           |  2 +-
- 15 files changed, 96 insertions(+), 57 deletions(-)
 
