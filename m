@@ -1,241 +1,230 @@
-Return-Path: <linux-kernel+bounces-188443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDA98CE222
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A23B8CE224
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7265E1C21721
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C351C1F228DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8B3127E32;
-	Fri, 24 May 2024 08:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30056127E12;
+	Fri, 24 May 2024 08:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T47Vq0D+"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QJ0G3Tme"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA0D29AB;
-	Fri, 24 May 2024 08:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18580749C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716538552; cv=none; b=f91CNIGvtIRUdNiweLKkRLOD0mqEOZ/MJJP8qblI7eN+4YJub/NoaiDr6fyp3/1AaTQDyrsCjilGEcjB/eNgLKjiQY9dwj34FN3OlD+oKT3fvhPBAjOekKxo7Q9kDd7UEOUSg9Ls/YFBuAX8XSpaPJL2mdBlpe0lUYWq5zYGn0g=
+	t=1716538579; cv=none; b=LGUeJOg2OLc8HUo/wnmsi1ac+H/LiSh90TfEreK10ZZc6ZC7lWM0Q2qP5XPJbTo24wGOyXm9uNbWhpKwYMJMmkEyAzZ4tButllshQJnKPw4cnDwsh5Vt3JRX5yIif7pkxB+aNJ9Yp+c9F01MNOgafgLVjlAOOGAq12RQbabrwmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716538552; c=relaxed/simple;
-	bh=NVSdw291mmLiAJ6bqsz7gnq3KvYeo461sEBmywJrYdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PRjRjtMLlG+WOqrxqhttZ2jX1OXfvzMWzGmoDiX4zIiE+CyAl/9XB41buVFcidVBoXePzsADmJ/rtedTmiqD/TNJXEJQrF5A7bprKTKfIxaibYmROEGu3MuQ/AK656q/Wzhafso76RojoWqRUbb7ApV7qfAF8IuKPWu2szn4Vuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T47Vq0D+; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e73359b900so50718641fa.2;
-        Fri, 24 May 2024 01:15:49 -0700 (PDT)
+	s=arc-20240116; t=1716538579; c=relaxed/simple;
+	bh=MeDCK6s7G5RsTgbi4LteZN2smIgjP9qayVNhnv6zszo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c7g6wGHAAUpiuGTnalmEGLmZzdpkWm77wIMrdZadQH74DCy3SYOrHjlRSey8YMsEI28cv6LQBuVVJO5uqDHEKhfOr6es1pY2X+/fKYAKc+Qmq52whVdFipX0WKsyS6aH6feoL94fdMX6GJfpH61flSeyeRUwjTkMLOPPdDv8snM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QJ0G3Tme; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ab9e011f62so4782386d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716538548; x=1717143348; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OdTxeepdz5HuPjWU/JId/HUujX/N+5d6QRhICs0mfVg=;
-        b=T47Vq0D+TboActaDzk2+5+X1/P1bcJDcVvPlMypzJpayOpcG8zY7LbthRuNmkPoYGm
-         UMDY+d3cMoOGD/xt8h3rL0WrjV04TNE7Piz64ExL2bznIQMl84qbZgZxUoXdjvyXgPkR
-         gNTfFr+L74YhxebpcMJjbjiiigiyZAVi9TJxqPQ5/z7E3SbSDCfBLJp0aztHVROCs9Xy
-         m7ZV24PwJb7BFpF2daIUP8Gwu8ZkjF9+CHhWRnPs2VRyAgHHZ4MDJ39T3HyPH0cnVfsL
-         nKsDoTurVsiVjanVsut1Kwflw2CAa2wRX0+TZXNVadybjZjafO6HoSg8qgubr5PIVHWB
-         Kkkg==
+        d=linaro.org; s=google; t=1716538576; x=1717143376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=491QL7gImWzySEIO+B+aisicLu9ctm3NseoNLbGUbCE=;
+        b=QJ0G3Tmegx1NVnC+euRmG7VOtqWBCF3mCzDCaCx1afQxq3ArvPEPO98U/ufRbHCUtq
+         UZqU0qNBkDQywJ+uXIBZJ4L1YBDFICQND0044SOdJsqwKnw8W74nsQGhFt9iD+jnKGN9
+         22Geb5T6EF9bTJUj4mFcGgilaZcFycuNUYWCABSfmvCmL8vyLiyVd4KTNpH0HSbLgjaR
+         ci54t9aTLxb6IXo1D3O9DTKFuA3MV/X3+lAiy2hJlef4og9F7ESSY/2dxnUV5joTpl6W
+         xAhnnjS6ixtD+7S4E0PftaV204sMhGHhjznvDJkPWfMILbLr4P+PZYyF1I0JSRNXQmux
+         +mYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716538548; x=1717143348;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OdTxeepdz5HuPjWU/JId/HUujX/N+5d6QRhICs0mfVg=;
-        b=KEitoQDKMBXnuOGx4iD/Y8HsDTKcg1e3IFbDnsu+fk9O224euGS8Aj1DLYkb1BNiry
-         KvcsNhMNcir1vrR4m3W2u9Bv/eRvcDFkMntwhwiPF3PXhStyoHBNjChCe9aVxhfw58g1
-         ioT3YAsalc2IHrm5lheVvm0BEqjbncv06zIoNfYGgDCMRyyHl9H27geuXg663ZBhRel/
-         7i3p/+ngfRCWyXE7gfFfiaKmr4ctqGoGw4TsIgIkeiPjpPb/UzKgu3k1OzvoeiVVHffP
-         IXAjXfmaLprt3g0PAzLBLBSGROUgEeDAW1PGTN5uUXqqVCHQzpHbkjgov0zMDRd7bLsR
-         abvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2fF7lTSlzenog2XBTrk7aWm4wXNjNHSMP5vwUxALSVVEHWGk4ZCg+rtPmiiszTq7Gd/Cg3lIm8jnHeeN1RIvhNQWeddGsCDIoClVxBSTwAI+FyOwtQ2NedCSwFtN+EDnXNfdByJ0eqXiQqGsQ6ZH2k6E42UHrxQYWJRTwabSEZ7wKfHpqLcVo
-X-Gm-Message-State: AOJu0Yx4vyhOBg3tmZRjYv0PCNMgoo2pqSko6k58B7My8/FnBUq6Jb1D
-	JibNNZch7XToyZpFzWan8AHcHiaViLqB5yZ1xGc/oyCgkB8yIJj/
-X-Google-Smtp-Source: AGHT+IFCwUHpHwtf59Vh83JgyLD3Of4whADOZ6bb0zdSaxaNJPJpELuy4HH3O1V0cZaluxb7Ml9ETw==
-X-Received: by 2002:a2e:86c5:0:b0:2e0:5b76:9acd with SMTP id 38308e7fff4ca-2e95b1dbf9fmr8659831fa.27.1716538547892;
-        Fri, 24 May 2024 01:15:47 -0700 (PDT)
-Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcd7bbcsm996851fa.32.2024.05.24.01.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 01:15:46 -0700 (PDT)
-Date: Fri, 24 May 2024 11:15:34 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	linux-watchdog@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 00/10] Support ROHM BD96801 Scalable PMIC
-Message-ID: <cover.1716533790.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1716538576; x=1717143376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=491QL7gImWzySEIO+B+aisicLu9ctm3NseoNLbGUbCE=;
+        b=q9x48BqwvnUguHjcKnwmXYY5kLb1W6G/rfN5DP/KuT9Cv/t/1fv6QdzCcip+FP4HQp
+         CZuETv8IGZROh7zjrZhKAwZM8ao430N9dgaYea3sDQjo3MOIvpX/TdiuE0pxn4THclwS
+         MqFvcpb4AOxRkkq+F1DaqANZTXpur7vd2rkpRoY3uxSWyXffQivcOnBs4ArF1ngEhgYx
+         JmZocPOFL+h8+gxziu1PRyujHjITevUSdahwL9CvqrdTbB+Bl16Uu+dfs7glQNEqBZeG
+         wkT+Dsn+Z2vIxN1WxPw3bZucehMCEyNPk5XeIVBrmUkjTQUZXM3CWm+5J4zJLNXzER6c
+         6yFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqWKCntaZKzRJhiWAfugDIC2wPr5uzqaMpNlgfRFJx7X8eY752exQmgZkyV5gSuGJgw+cTjgZA0+1DI6LP4QVTKiE7rRBsk1xiaDNm
+X-Gm-Message-State: AOJu0YzILXSxhuzW733dwxAs2cXbJxatUJafLWidwbYYevgQo+T3hT6+
+	zh29ZW9Zl1GO3D0VWlunqG89/ZOqMNOUozquO8F5cHXS8Z0vIBpzWTUoIQNyoYP2QIO6ORrKxWO
+	0rvtAiFPC576cxP5sc5pJgozZrA+KyC4SWRgiqg==
+X-Google-Smtp-Source: AGHT+IHVC62oQsNW/g0hVpJaQDzdwuRDElUhhtZkj6aidknrRT+NitYEiySNd2XcLR6KDYk8m7OTHul1EJZ9fqd9uiM=
+X-Received: by 2002:a05:6214:76b:b0:6ab:7ab4:f309 with SMTP id
+ 6a1803df08f44-6ab8f327f9fmr65300386d6.1.1716538575594; Fri, 24 May 2024
+ 01:16:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vbVyE5NooxoCxztE"
-Content-Disposition: inline
-
-
---vbVyE5NooxoCxztE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240523130327.956341021@linuxfoundation.org>
+In-Reply-To: <20240523130327.956341021@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Fri, 24 May 2024 10:16:04 +0200
+Message-ID: <CADYN=9K12_SjTAp+URCPfsgJB+cm_mJhK_5KSnN-9W3278Wk9g@mail.gmail.com>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Support ROHM BD96801 Scalable PMIC
+On Thu, 23 May 2024 at 15:19, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.160 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.160-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
 
-The ROHM BD96801 is automotive grade PMIC, intended to be usable in
-multiple solutions. The BD96801 can be used as a stand-alone, or together
-with separate 'companion PMICs'. This modular approach aims to make this
-PMIC suitable for various use-cases.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-This series brings only limited support. The more complete set of
-features was sent in the RFC:
-https://lore.kernel.org/lkml/cover.1712058690.git.mazziesaccount@gmail.com/
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-The BD96801 provides two physical IRQ lines called "intb" and "errb" in
-the data-sheet. These are handled using own regmap-IRQ controller for
-both of the IRQ lines. This causes a debugFS naming conflict for IRQ
-domains created by the regmap-IRQ. This series adds support for setting
-a name suffix to IRQ domains. Some prior discussion can be seen here:
-https://lore.kernel.org/all/Zjzt8mOW6dO_7XNV@finisterre.sirena.org.uk/
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 31 total, 31 passed, 0 failed
+* i386: 25 total, 25 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 24 total, 24 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 27 total, 27 passed, 0 failed
 
-As writing of this there is no known system doing configurations which
-require the PMIC to be in STBY state using Linux driver. Furthermore,
-ensuring the PMIC is and stays in the STBY state when configurations
-are done may not be trivial. Especially, not in a generic way in a
-regulator driver. This is likely to be system specific.
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* log-parser-boot
+* log-parser-test
+* ltp-cap_bounds
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-io
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-securebits
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
 
-Hence it felt natural to upstream only partial support for
-now, while leaving a note about the RFC series with more complete
-support for those who may need it later.
-
-The patches from 1 to 6 are just typical "add support for device X"
-stuff. They should provide very much usable driver for BD96801 and I
-hope they don't cause too many questions and can be merged when
-quality seems high enough :)
-
-Supporting the ERRB IRQ (patches 9 and 10) requires the regmap IRQ change
-(patch 8) which further requires the IRQ domain change (patch 7).
-
-Patches 7 and 8 may need more careful thinking. Thus, the ERRB IRQ
-support is added as a separate step, which can be merged later or even
-dropped if the irqdomain changes prove to be unacceptable.
-
-Revision history still tries to summarize changes from the RFC for the
-reviewers.
-
-Revision history:
-v1 =3D> v2:
-	- Add support for setting a name suffix for fwnode backed IRQ domains.
-	- Add support for setting a domain name suffix for regmap-IRQ.
-	- Add handling of ERRB IRQs.
-	- Small fixes based on feedback.
-
-RFCv2 =3D> v1:
-	- Drop ERRB IRQ from drivers (but not DT bindings).
-	- Drop configuration which requires STBY - state.
-	- Fix the register lock race by moving it from the regulator
-	  driver to the MFD driver.
-
-RFCv1 =3D> RFCv2:
-	- Tidying code based on feedback form Krzysztof Kozlowski and
-	  Lee Jones.
-	- Documented undocumented watchdog related DT properties.
-	- Added usage of the watchdog IRQ.
-	- Use irq_domain_update_bus_token() to work-around debugFS name
-	  collision for IRQ domains.
-
----
-
-Matti Vaittinen (10):
-  dt-bindings: ROHM BD96801 PMIC regulators
-  dt-bindings: mfd: bd96801 PMIC core
-  mfd: support ROHM BD96801 PMIC core
-  regulator: bd96801: ROHM BD96801 PMIC regulators
-  watchdog: ROHM BD96801 PMIC WDG driver
-  MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries
-  irqdomain: Allow giving name suffix for domain
-  regmap: Allow setting IRQ domain name suffix
-  mfd: bd96801: Add ERRB IRQ
-  regulator: bd96801: Add ERRB IRQ
-
- .../bindings/mfd/rohm,bd96801-pmic.yaml       |  173 +++
- .../regulator/rohm,bd96801-regulator.yaml     |   63 ++
- MAINTAINERS                                   |    4 +
- drivers/base/regmap/regmap-irq.c              |   13 +-
- drivers/mfd/Kconfig                           |   13 +
- drivers/mfd/Makefile                          |    1 +
- drivers/mfd/rohm-bd96801.c                    |  488 ++++++++
- drivers/regulator/Kconfig                     |   12 +
- drivers/regulator/Makefile                    |    2 +
- drivers/regulator/bd96801-regulator.c         | 1008 +++++++++++++++++
- drivers/watchdog/Kconfig                      |   13 +
- drivers/watchdog/Makefile                     |    1 +
- drivers/watchdog/bd96801_wdt.c                |  416 +++++++
- include/linux/irqdomain.h                     |   28 +-
- include/linux/mfd/rohm-bd96801.h              |  215 ++++
- include/linux/mfd/rohm-generic.h              |    1 +
- include/linux/regmap.h                        |    4 +
- kernel/irq/irqdomain.c                        |   53 +-
- 18 files changed, 2487 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic=
-=2Eyaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd9680=
-1-regulator.yaml
- create mode 100644 drivers/mfd/rohm-bd96801.c
- create mode 100644 drivers/regulator/bd96801-regulator.c
- create mode 100644 drivers/watchdog/bd96801_wdt.c
- create mode 100644 include/linux/mfd/rohm-bd96801.h
-
-
-base-commit: 4cece764965020c22cff7665b18a012006359095
---=20
-2.45.1
-
-
---=20
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =3D]=20
-
---vbVyE5NooxoCxztE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmZQTKEACgkQeFA3/03a
-ocU7XggAwrpTEUU/Gnn9g9kh8YV0w2RPpn66LCK1/U+q3bwkrOQ91oy+ns5R1ydB
-nJxUIl5JX8LZjpc92Rp5qOdssWwApPOMHc2QHdmTyzOHObEfvb1zNBh32cypNnSQ
-pQ/eTO3RPxLLTBDZdICXKmiZlsaBclpyNysrvgFu8X3TKaneMUAVPAm8GkagulHx
-0je1+m+frhmTrjO804YVLtnSolg1eLedyWdhB5GcrOR4vgXfAh55XmasGX6Jk9UO
-/My9JoWZ7fsVTRLFErXouJfZ9GDdSDs9s0PV93nfTu9Htr12i9hZJCWIlkuB07Fp
-nqwDTo4y+++12WtMm3GNuYRWYjv4Og==
-=J9T+
------END PGP SIGNATURE-----
-
---vbVyE5NooxoCxztE--
+--
+Linaro LKFT
+https://lkft.linaro.org
 
