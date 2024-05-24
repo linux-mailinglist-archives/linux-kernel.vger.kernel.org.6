@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-188172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0038CDED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:24:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9F48CDDDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7812A2879DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB671C21B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2215A5;
-	Fri, 24 May 2024 00:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5DE816;
+	Fri, 24 May 2024 00:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="UU7k9q7j"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="MK7XtREY"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78883EDF;
-	Fri, 24 May 2024 00:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B79C18E;
+	Fri, 24 May 2024 00:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716509780; cv=none; b=bQE7LtQ4QHt904vhWb3DS+jIgMwQURDbTidJxREScEWIQp3gHwdXLBm6o8GCBErUmJuruebCzliEJdcd1cPo436Ho64EKjKZZ8rsneyft41EOe73DYDCbjzMrkrFxV3sBt+qPv6Cqcz7B51WAh+ct79c1Ckhvo1Ey5IYSPJeGW0=
+	t=1716509323; cv=none; b=WVhauX5EEPoQiC4rNof+BKss+Vz8czb5nyJfq6zGhfa+NJNdmV/0OjphTxZ8o/FzmY3KraZGrsFWfQhb7frmwh71FvkEQ1OySAIOD5vUUlMCC8Cl2GY/VhweJqwSvvd3EbWbyHjudPh2QrMb5cEJR3CPFdc8t07GqSn69do19vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716509780; c=relaxed/simple;
-	bh=An7QDABjUyeXMgQPlCNFAn0hOnKqKCWC8bpn8L7lUmc=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=X5dhUfCinmUJ5tPYh8ty0TjGVJ5tifXR3PIK6PbLmD/psIu1ulxs9yMPBLDMv8OeCoPiM7kqy0//81mUYYg9D9NPvMWliPUpeio9XQh3WdeeqdnL4PTa5Nl/W9adGbVOdNki56Skm/kwzcpUQpdDaP7cAFOdxvCcmgWjNOJQwvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=UU7k9q7j; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=bsNx66CWNPzOVgmvYU9g1FX7pZwySMGx2SwEOaCqt18=; b=UU7k9q7jSmaQO8GSp3Mn4dAN7M
-	ewoGgkcMukvFbu9FfUURLiQmeDOrlLsy/PjXUB71FI/+AcXQtwLMqxTawoLTs0ShmkSVj9CZblR9J
-	H5iJaeQoztwlFxbMiCkVNKXBITVm0tviDm7Hn02FXtVdlHSvSO4WlQo7wzQFZ9VBR4GE=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:40780 helo=debian-acer)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1sAIIM-00054Q-1x; Thu, 23 May 2024 19:56:26 -0400
-Date: Thu, 23 May 2024 19:56:25 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, peterz@infradead.org, mingo@kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20240523195625.fa40049802a43a76dbc2a96d@hugovil.com>
-In-Reply-To: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
-References: <20240409154253.3043822-1-hugo@hugovil.com>
-	<20240409154253.3043822-4-hugo@hugovil.com>
-	<CAMuHMdVq=rf-6o485KiA+zcwJPHMe5STKUtSWtFPs2nmvshu-A@mail.gmail.com>
-	<CAHp75Vfi2YjE0wzwABURxXhcWLozAf9Cdj_pT+DL_tm8E_zm4Q@mail.gmail.com>
-	<CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
-	<CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716509323; c=relaxed/simple;
+	bh=elye7Mqyzlzrwtk6rVKfxywi06mObxlfiV8YLIMW/Nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sg1Ef/2+3R35pNQ/akEn74tFiLFQvvKZ+uZQJD/1NqyCULEp3MbQ7s7ssFza/8NDHHIXYRU+WoA86tCcsy7kGD+nixSBFQQKnXa7iDHjl4DQS6CwCPjGEGxfRlRv0VxSzXDnrGhiwlBUqHLG9ZebS/LPU5j/XtLLe45kTiS32a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=MK7XtREY; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vllkc2tT9z6Cnk97;
+	Fri, 24 May 2024 00:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716509316; x=1719101317; bh=xAsi/F2lKW2JGFc+IyQvDa4s
+	f6l5yJjKpz0kswxD7TA=; b=MK7XtREYbGWcKDT4/oYg2yQK4lBJWAG3WT7OPxRG
+	7d5rFBkC61Y20toXxime6gUogwXKf0nlhPE2eF9xs3USRTWEDwCVu+hztB/mCgTr
+	4o0UaesUZfvBXsGZ/EI1VWRKsfvNvIZdzK0ju4+Odb3uTap7z0Lsq3GwUU48LESv
+	RmJ9zLSGfWYSm+MmLk0wkON+dH1pbv9cvJwJmTPNxouQg7Vo0r3PA+Vke6V5y1f+
+	43/yGIEZnq6a1k0712cHgyLsayQ71oMK5gISNBhlQj312j42QQvcix68alAc3nFG
+	md4eMH6xaTmqEVn0mKrIpLyFOMuO/+5JgdURvBGoJUU0zA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id d6a8P5AhrePd; Fri, 24 May 2024 00:08:36 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VllkV1HgDz6Cnk95;
+	Fri, 24 May 2024 00:08:33 +0000 (UTC)
+Message-ID: <fb116abc-1ee6-42d0-879f-e11cdeab3cc5@acm.org>
+Date: Thu, 23 May 2024 17:08:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.2 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v4 3/5] serial: sc16is7xx: split into core and I2C/SPI
- parts (core)
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ufs:mcq:Fixing Error Output for ufshcd_try_to_abort_task
+ in ufshcd_mcq_abort
+To: Chanwoo Lee <cw9316.lee@samsung.com>
+Cc: James.Bottomley@HansenPartnership.com, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
+ powen.kao@mediatek.com, quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+ stanley.chu@mediatek.com, yang.lee@linux.alibaba.com
+References: <20240523002257.1068373-1-cw9316.lee@samsung.com>
+ <CGME20240523235615epcas1p282b2405bed41b94ef8a40633066f1d4c@epcas1p2.samsung.com>
+ <20240523235613.1103161-1-cw9316.lee@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240523235613.1103161-1-cw9316.lee@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 May 2024 09:33:36 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 5/23/24 16:56, Chanwoo Lee wrote:
+> I thought this patch would be appropriate to "fix" the following log.
+>    * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+> If "Fixing" is not appropriate, could you suggest another word?
 
-> On Tue, Apr 23, 2024 at 3:11 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Apr 23, 2024 at 12:37 PM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Tue, Apr 23, 2024 at 1:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Tue, Apr 9, 2024 at 5:48 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
-> >
-> > > > > -config SERIAL_SC16IS7XX
-> > > > > -       tristate "SC16IS7xx serial support"
-> > > > > +       tristate "NXP SC16IS7xx UART support"
-> > > >
-> > > > Hence this replaces SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX,
-> > > > so arch/mips/configs/cu1??0-neo_defconfig needs to updated.
-> > >
-> > >         select SERIAL_CORE
-> > > -       depends on (SPI_MASTER && !I2C) || I2C
-> > > +       select SERIAL_SC16IS7XX_SPI if SPI_MASTER
-> > > +       select SERIAL_SC16IS7XX_I2C if I2C
-> > >
-> > > > So if SPI_MASTER or I2C is enabled, the corresponding SERIAL_SC16IS7XX_*
-> > > > subdriver can no longer be disabled?  According to
-> > > > https://lore.kernel.org/all/20240403123501.8ef5c99f65a40ca2c10f635a@hugovil.com/
-> > > > you did want to support that?
-> > >
-> > > I believe it has been taken from one of the IIO drivers as an example.
-> >
-> > Looks like a bad example to follow:
-> >   1. The driver question now pops up if both I2C and SPI_MASTER
-> >      are disabled,
-> >   2. What if SERIAL_SC16IS7XX_CORE is builtin, but I2C and/or
-> >      SPI_MASTER are modular?
-> >
-> > I believe the only way to fix that is by letting the sub-drivers select the
-> > core driver, like before.
-> 
-> FTR, this issue is now upstream.
+That's something I had not noticed. This is indeed a bug fix. Please add
+a "Fixes:" tag as is expected for bug fixes.
 
-Hi Geert,
-I replied to you and Andy a few weeks ago about this (multiple emails with suggestions/explanations), and I even asked if you were satisfied with what I proposed, but never got anything from you, so I am still waiting on feedback to send a patch to fix this:
+BTW, I think that ufshcd_mcq_abort() can be improved significantly. How
+about reworking that function as follows before the bug reported in this
+patch is fixed?
+- Remove the local variable 'err' (and reintroduce that variable in your
+   patch).
+- Change all 'goto out' statements into 'return FAILED'.
+- Add 'return SUCCESS' at the end.
 
-https://lore.kernel.org/all/20240430090333.5c5f029553cabcdf699310cb@hugovil.com/
+I expect that this change will make that function easier to read and to
+maintain.
 
-Hugo.
+Thanks,
+
+Bart.
+
 
