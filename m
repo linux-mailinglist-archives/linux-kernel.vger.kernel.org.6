@@ -1,208 +1,156 @@
-Return-Path: <linux-kernel+bounces-188553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162438CE352
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:29:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5860E8CE380
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355B81C2157B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8251F221D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7C84FCE;
-	Fri, 24 May 2024 09:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F320E86658;
+	Fri, 24 May 2024 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgfcu2z1"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ge8bqQJF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQJgCp3A"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6C26E615
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB58562C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716542970; cv=none; b=fUuAMCIvRF6dc5EMkhMz+dZ7yPrhegn7xiGjpiwgSaO2p/nlkvRHiJOM/40mtRic2DcxgNYtce5uY8cwku8LbEGEU0d+0ysNbNMlS/gjtdn+DSIG/ncyRdXJUHqNP1JSr0ryR3k+FD38gLY4KMC+QueGXg1GESO5/zAffpw6C/E=
+	t=1716543077; cv=none; b=PMnEnu3+nkaE621CKas/P9f0LMf5Bl1RF3J+5pHGZzyG7EHchbc8tVBlDVcA9Q1zJDdjkmpyyasE8lqDCXQEP3JFARvduBr18KkpVxufMlJbkjZujXs4CarqYTuOInd7NCfVwkMdrXObCAf9MIJfgkhvtgwPqsNxaVTzuFR/NQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716542970; c=relaxed/simple;
-	bh=IBAnQ9CMDXIKWvV3wLZ+swiAC1EyC37vO4/qOtqoCMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BtP6IWMrOnSU7o7HJjLSBB6sc/5ZbCjDJTu8tZDmGHTWoZmuvaqUa8CxdcfF6R+Gsma9Na7Cmt5hRsvxOgQZYhkHT5rf8csEBRgPutDGi1h4ZdVE2Le0FxN7Hm4IGco70vvD1Cqaalq4HBSkRMlpc9ivMhfkdc9Yh+ZGsY0hBgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgfcu2z1; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-df475159042so6361406276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 02:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716542967; x=1717147767; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P22112kFA90ysUyH7aovtgsokvUOX3eAoJT9LIJl3U0=;
-        b=bgfcu2z1QZ6L3HdKDCAYPMoL9pFCBtI1g7qWpfB1rveE2HjnM9yZOD0uq+uLoJi6NF
-         p6CN7nsMEdmwRQzuTYf35A4zNpwnf0CrngOjZHC8F2X28In1HiNH8hKNFIFcHvTmOyde
-         aSiKTFqH1JvosHvNo5RZ/ihFLhmKAOvMZhDoZHFoZ5ZkQYHb9/4Z8Ktn9bzoeJHZS/Ce
-         L6bf3OsNaVdZgiT/2kJiahpJiLMZNYpy9HP/6rMO5kh0RFkWqHJ1/lntYPMuHCK/RLf4
-         WoonNVsxZrVzVouWLycGTCSquKPgpVwyZ9Xi6duYsNs4MWsB/yxysC3+htvqfKajZCnj
-         MUhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716542967; x=1717147767;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P22112kFA90ysUyH7aovtgsokvUOX3eAoJT9LIJl3U0=;
-        b=ATmg5fHTcEPByrarBPfrPjlyDBWPRBQ7qoGRlSm9XpxNNgV7StudwP2JVm1vFzhrV+
-         mgWxZLjIP2hS5vnw2VYUsGbG98lZbkgLDreBwbi/5xhV8u0TLmbMYx6Q3rknHgJHBCTg
-         pj6JCbhICn+wsNDHD6ixK2e03qwmyurVOr+FfS8yM0m4zOu0ca3+TUNLtqLW9ypdofkN
-         BdPTmTufVwxonROSbmnsdfLP3IkpL8cVy9Csxq6FkqbmHx15ZkzF6n6d2kzcS+/VbnPk
-         jwKrriwyCkI+aoj6bZP0uNGg7RSZ17PlcYJMbBib+d2RAm3dN6HKybMzrLON/T3RQkJF
-         CatA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQC+rqWba4KJMi/JDDf0iR0Oso7LxViF5ELFpwqZKd3+zHrssWGFszWGrwxSjwJ1xhajXXpmsp78+73CCj6KVe6YMkS/ltx5/aZQ52
-X-Gm-Message-State: AOJu0YzsKTV8nrzombtc/HWDzTRKyWUXBPZ3LvCU+IFUYuFGry+/H+7v
-	i2pgoxs0xUAPDQ/DeUhngf3zoWUYLE5S0d1H5TYUj8ylod2fu2OExwhcgLN9vLRf4sMpoxEcLuX
-	gAiDRB2HQlVFtE2oBlbPlJJ9KfD12unxEtwE34g==
-X-Google-Smtp-Source: AGHT+IH5kMYZ/J9vZ252zm8A3SdbGG9Q4CU9lCHy4KU17bWRixODcdgT+jPb7hSuOZsaT0YhwZFPjRji7j89YbQD+8E=
-X-Received: by 2002:a25:add9:0:b0:de5:f0ef:788e with SMTP id
- 3f1490d57ef6-df77219deb4mr1663549276.20.1716542967414; Fri, 24 May 2024
- 02:29:27 -0700 (PDT)
+	s=arc-20240116; t=1716543077; c=relaxed/simple;
+	bh=+P2e3s0y0C4Pks7attKusPI8h+dAOs18zDHPleld+qU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IDxx+qc3zDYdcrNcuP+Lz0vnLrXFDQcZIT3UKX+Uerh9DdcnlxV71EsS0KtQAS5UpPDssoJkDsWNA6PtOS96XPN3WerQDz/kAT+J7ygRFU46OYxKB1sLa9NU9FNA3j4u1pVNhtvDPgXlyHzA1TaEh3e2cgLkQFBz3DBrN1HUQ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ge8bqQJF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQJgCp3A; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716543073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfwf84QV1XuABUHDoQRVCBsT26HgLUpQTAb2wWaPWXc=;
+	b=Ge8bqQJFsHco1DUeGW1jqENBhPHDwLkCcvI4EDCYddP2noQYogzwJJy/FrAyBA2OR+H3sl
+	4YdlOk0GDCvj6IZX2az1TZJFTTkFwWqY+UqXi1O+KlmPnVRHdeThLg7Za7hXqP0B2ONWuc
+	HfNsT0HrsbBOL9svGy1sETLhuMs51ugfAVrKelLIPOftY9ce2w01SUzYSbJm9VEQwFkiKF
+	4SYaYduqhJjrdw9ZgP/IKkmi4wbpYZkVcdxdn2/l9adjiSEeVRmrPqcgSr5fdHEtUNJd3i
+	VKWz+lNk0IygcwsCYP6Y8VRAeWfSDGaY/UUH8K38sQKVPEKLm/H4Z70vOBhEJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716543073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfwf84QV1XuABUHDoQRVCBsT26HgLUpQTAb2wWaPWXc=;
+	b=GQJgCp3A+qXgOUx1r08ieKza558Kquo6Y+psxMd9IW3B6sRcN7PSX5dFz0ctRt1xynB3kk
+	r5r17/sRL7edEoBg==
+To: Oleg Nesterov <oleg@redhat.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Nicholas Piggin
+ <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Phil Auld
+ <pauld@redhat.com>
+Cc: Chris von Recklinghausen <crecklin@redhat.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+In-Reply-To: <20240523132358.GA1965@redhat.com>
+References: <20240522151742.GA10400@redhat.com>
+ <20240523132358.GA1965@redhat.com>
+Date: Fri, 24 May 2024 11:31:12 +0200
+Message-ID: <87h6eneeu7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082236.24112-1-quic_kbajaj@quicinc.com>
-In-Reply-To: <20240524082236.24112-1-quic_kbajaj@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 24 May 2024 12:29:16 +0300
-Message-ID: <CAA8EJpp9U-ucMAiNmVvWDuupd=OR_fLK9fQ+n21SVmktWMxhmA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: qdu/qru1000-idp: Fix the voltage setting
-To: Komal Bajaj <quic_kbajaj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Melody Olvera <quic_molvera@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Fri, 24 May 2024 at 11:23, Komal Bajaj <quic_kbajaj@quicinc.com> wrote:
->
-> While adding the USB support, it was found that the configuration
-> for regulator smps5 was incorrectly set. Upon cross verifying for
-> all the regulators, found that smps4, smps6 and smps8 are also
-> incorrectly configured. This patch fixes the same.
+Oleg!
 
-Nit: see Documentation/process/submitting-patches.rst, "This patch..."
+On Thu, May 23 2024 at 15:23, Oleg Nesterov wrote:
+> On 05/22, Oleg Nesterov wrote:
+>>
+>> After the recent comment 5097cbcb38e6 ("sched/isolation: Prevent boot crash
+>> when the boot CPU is nohz_full") the kernel no longer crashes, but there is
+>> another problem.
+>>
+>> In this case tick_setup_device() does tick_take_do_timer_from_boot() to
+>> update tick_do_timer_cpu and this triggers WARN_ON_ONCE(irqs_disabled())
+>> in smp_call_function_single().
+>>
+>> I don't understand this code even remotely, I failed to find the fix.
+>>
+>> Perhaps we can use smp_call_function_single_async() as a workaround ?
+>>
+>> But I don't even understand why exactly we need smp_call_function()...
 
-> In particular -
-> - smps4 is 1.574V min and 2.04V max
-> - smps5 is 1.2V min and 1.4V max
-> - smps6 is 0.382V min and 1.12V max
+It's not required at all.
 
-Just for my understanding, will anything further constraint these values?
+>> Race with tick_nohz_stop_tick() on boot CPU which can set
+>> tick_do_timer_cpu = TICK_DO_TIMER_NONE? Is it really bad?
 
-> - smps8 is fixed at 0.752V
->
-> Fixes: d1f2cfe2f669 ("arm64: dts: qcom: Add base QDU1000/QRU1000 IDP DTs")
-> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> ---
-> Changes in v2-
-> * Updated the commit message as suggested by Krzysztof
-> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240514131038.28036-1-quic_kbajaj@quicinc.com/
-> ---
->
->  arch/arm64/boot/dts/qcom/qdu1000-idp.dts | 16 ++++++++--------
->  arch/arm64/boot/dts/qcom/qru1000-idp.dts | 16 ++++++++--------
->  2 files changed, 16 insertions(+), 16 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
-> index 6e129dc123ed..89b84fb0f70a 100644
-> --- a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
-> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
->
->                 vreg_s4a_1p8: smps4 {
->                         regulator-name = "vreg_s4a_1p8";
-> -                       regulator-min-microvolt = <1800000>;
-> -                       regulator-max-microvolt = <1800000>;
-> +                       regulator-min-microvolt = <1574000>;
-> +                       regulator-max-microvolt = <2040000>;
->                 };
->
->                 vreg_s5a_2p0: smps5 {
->                         regulator-name = "vreg_s5a_2p0";
-> -                       regulator-min-microvolt = <1904000>;
-> -                       regulator-max-microvolt = <2000000>;
-> +                       regulator-min-microvolt = <1200000>;
-> +                       regulator-max-microvolt = <1400000>;
->                 };
->
->                 vreg_s6a_0p9: smps6 {
->                         regulator-name = "vreg_s6a_0p9";
-> -                       regulator-min-microvolt = <920000>;
-> -                       regulator-max-microvolt = <1128000>;
-> +                       regulator-min-microvolt = <382000>;
-> +                       regulator-max-microvolt = <1120000>;
->                 };
->
->                 vreg_s7a_1p2: smps7 {
-> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
->
->                 vreg_s8a_1p3: smps8 {
->                         regulator-name = "vreg_s8a_1p3";
-> -                       regulator-min-microvolt = <1352000>;
-> -                       regulator-max-microvolt = <1352000>;
-> +                       regulator-min-microvolt = <752000>;
-> +                       regulator-max-microvolt = <752000>;
->                 };
->
->                 vreg_l1a_0p91: ldo1 {
-> diff --git a/arch/arm64/boot/dts/qcom/qru1000-idp.dts b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
-> index 2a862c83309e..258483af065b 100644
-> --- a/arch/arm64/boot/dts/qcom/qru1000-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
-> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
->
->                 vreg_s4a_1p8: smps4 {
->                         regulator-name = "vreg_s4a_1p8";
-> -                       regulator-min-microvolt = <1800000>;
-> -                       regulator-max-microvolt = <1800000>;
-> +                       regulator-min-microvolt = <1574000>;
-> +                       regulator-max-microvolt = <2040000>;
->                 };
->
->                 vreg_s5a_2p0: smps5 {
->                         regulator-name = "vreg_s5a_2p0";
-> -                       regulator-min-microvolt = <1904000>;
-> -                       regulator-max-microvolt = <2000000>;
-> +                       regulator-min-microvolt = <1200000>;
-> +                       regulator-max-microvolt = <1400000>;
->                 };
->
->                 vreg_s6a_0p9: smps6 {
->                         regulator-name = "vreg_s6a_0p9";
-> -                       regulator-min-microvolt = <920000>;
-> -                       regulator-max-microvolt = <1128000>;
-> +                       regulator-min-microvolt = <382000>;
-> +                       regulator-max-microvolt = <1120000>;
->                 };
->
->                 vreg_s7a_1p2: smps7 {
-> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
->
->                 vreg_s8a_1p3: smps8 {
->                         regulator-name = "vreg_s8a_1p3";
-> -                       regulator-min-microvolt = <1352000>;
-> -                       regulator-max-microvolt = <1352000>;
-> +                       regulator-min-microvolt = <752000>;
-> +                       regulator-max-microvolt = <752000>;
->                 };
->
->                 vreg_l1a_0p91: ldo1 {
-> --
-> 2.42.0
->
->
+This can't happen.
 
+> And is it supposed to happen if tick_nohz_full_running ?
+>
+> tick_sched_do_timer() and can_stop_idle_tick() claim that
+> TICK_DO_TIMER_NONE is not possible in this case...
 
--- 
-With best wishes
-Dmitry
+What happens during boot is:
+
+  1) The boot CPU takes the do_timer duty when it installs its
+     clockevent device
+
+  2) The boot CPU does not give up the duty because of this
+     condition in can_stop_idle_tick():
+
+     if (tick_nohz_full_enabled()) {
+     	if (tick_cpu == cpu)
+           return false;
+        ...
+
+So there is no race because the boot CPU _cannot_ reach
+tick_nohz_stop_tick() as long as no secondary has taken over.
+
+It's far from obvious. What a horrible maze...
+
+> So, once again, could you explain why the patch below is wrong?
+
+> -			tick_take_do_timer_from_boot();
+>  			tick_do_timer_boot_cpu = -1;
+> -			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
+> +			WRITE_ONCE(tick_do_timer_cpu, cpu);
+
+This part is perfectly fine.
+
+> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> index 71a792cd8936..3b1d011d45e1 100644
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -1014,6 +1014,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+>  	 */
+>  	tick_cpu = READ_ONCE(tick_do_timer_cpu);
+>  	if (tick_cpu == cpu) {
+> +#ifdef CONFIG_NO_HZ_FULL
+> +		WARN_ON_ONCE(tick_nohz_full_running);
+> +#endif
+
+                WARN_ON_ONCE(tick_nohz_full_enabled());
+
+which spares the ugly #ifdef?
+
+>  		WRITE_ONCE(tick_do_timer_cpu, TICK_DO_TIMER_NONE);
+>  		tick_sched_flag_set(ts, TS_FLAG_DO_TIMER_LAST);
+>  	} else if (tick_cpu != TICK_DO_TIMER_NONE) {
+
+Thanks,
+
+        tglx
 
