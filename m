@@ -1,212 +1,153 @@
-Return-Path: <linux-kernel+bounces-188556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E2A8CE389
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9EB8CE38B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207F11C22007
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:32:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69771C22172
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174B985636;
-	Fri, 24 May 2024 09:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878EE85284;
+	Fri, 24 May 2024 09:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GREKJUnN"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXa5hjJ4"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB14385633
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D3785266;
+	Fri, 24 May 2024 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716543147; cv=none; b=Lsdk80l3DfuEa3EzeE1AudxgXqYhc5na2TKbEP3tf2PjvWSeYvKHAAVXbxaB4Uyl32YiEPa2MY7zpll0fuWT9fyZdScfBqUDGjygq7qLduNMv9Mzg1z8rCPLMQK2+30fXnvSsNcA9fTFZNPR/Z7rCqgT2C+JUrM7bk1Rh30KoIM=
+	t=1716543181; cv=none; b=oByPVDjrhrvhbQiUk9E7Tb80eF8RkCt4ZC7OeeZsWRKfE4AeuUcntbDecQlLrgXk9x9MMH6CU4M8ruCF+LX1QKnS9HwgUiL33pTvM6x/acarT1tD+DMX9ceR69eAtQK6T6QuMLzrXjLRrSrP2bxBN5qI+oQX/xi0H7vfMRlea8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716543147; c=relaxed/simple;
-	bh=+r+3JkdoTS2WhVcXvGMz1cSz9823Vhc8c1KI2ioY+Gk=;
+	s=arc-20240116; t=1716543181; c=relaxed/simple;
+	bh=2RrLOS91XoKFHAFTx+37jUWVutB0E1TVUDdeeyeIG+o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IMMpMUP0Omq+9flIXHI3pgx6Jg++m+6uYg1t9VkYliI8FUYw8xKEbailo3k0fciEgKtthZJLjwg4qALnm6rY3IelRDe0AMh/67ZzOQkH8RQdAmxTDrYNcwzB3ELGYN+jorPT4yOEwNEN2KiS/0ma2e/rAnlbDCD8pCenr/Hfbvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GREKJUnN; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ab9d3de222so4512246d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 02:32:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=E4iS/+QZHofND7L8WbfiEdb3/kyC+5PTr3D2Y00hrUVvdM+X066hkFZZz/g3JQx05tniMqZbEzNj+uia4bewfm1X4JlXT8mx8ne9cpDWOVgZyS6RkzreE2pfkBqLIk/rUEc0C83Y+9xTGJW8iaavi4xHkHQkulgwV6rWM3wjUiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXa5hjJ4; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-354b722fe81so2868349f8f.3;
+        Fri, 24 May 2024 02:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716543144; x=1717147944; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716543178; x=1717147978; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QobU3V4M9zLBH4ceWs5naausHLldCyE6Lvje0EpDn/I=;
-        b=GREKJUnNYJ9C4fagsN9CZ7OxJmbLPKBwOtjfGUBe13BSolz9NO6OYvQxuCRGwh38r+
-         IuglzW4vlpPTKsPX8fV5k7WocYNcDpiXhvOte1vPf0CWFjGfcyH+XKbZuNIKAINf9xXH
-         YRt6U08zrQDA8A2SgjRyxXa2mAcuJEpWHpNIxqhjem6quvyUx4/qphNKjDsFwdvAEvW0
-         L2/cvQOytRIzCe4ym2DE62nJOysWJV4AugM9pS/RiBj9Xx55qZ3WBB+nVvcLfbNHSaYI
-         jIVTyPhXRGOYP4cBwCtB72kY2IO0RPjTFnaIjX9/XU3B7XP/KrSdNdnAKfGt863ZL2kd
-         tlOg==
+        bh=/N78wdGhHYwk+WAeb4KOPaNgXTFF+oTiWHimI1zWv+w=;
+        b=PXa5hjJ4VjtXOoGgCwLJsPS7JST1LDz/u/O6lVprqdn0FvY34tX0Qm1vvvzyR0CWku
+         IDfheT6oKWL5/DI60/ibcZZ18atZuBQvtC9fyZIUr8mKCki4F2drjc7Iethf6aQcwsZ8
+         RDMUo8WgyP6Gv+pMPUHCHtKXUgVFygFQ2oDyvBa7NZLxFW9oI4HsKZhKDIGJVWVMtQoM
+         dNX7ipU2nLDrfNrZYUnoOA2lPPly3JQsGoSBkKJ5HrHf3kSM0ef1O2UiOdXvZ7BO+eSe
+         G3D+fYgMb0C3K7m7wSp+tnFtZOSh2PSZuy0ZHH9zc6PzKUh4SNYitL+YSGrTAvs5DxZJ
+         uzQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716543144; x=1717147944;
+        d=1e100.net; s=20230601; t=1716543178; x=1717147978;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QobU3V4M9zLBH4ceWs5naausHLldCyE6Lvje0EpDn/I=;
-        b=Zfi4bQRDKfSRx7WZ6vO+JXhiLFnuLrfi5YXzJ07vz2+Mc6mN5MaUPPsLxBMuyZPhzN
-         75L8H8C74lOj7QOKr2XvBoG6z3AU6z09dldEvoMgJAr/o+zzTdQWnFrHytDcNnv5dmjx
-         0awHq3aBtM1V35lY9fHAb2V99jmoDsacrPkmqJCVeNdFG0sOr2nHbtJOUkhxOvAHCCw5
-         8PjUzjKm5J3yBkwFW3xikgnF3nVkG7PYvLObboVkWQ6pTKTi/7fioNaOZjtp9WTVS1Ig
-         CC0jttzO+tFg0GFGOAtkGuOVcKDsXetTDIZqR82wekTN569pcNvwQiy9X8jqRp8uJpRo
-         VVDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZoICuFdz7roXd4acic0cf9oz19VQFUuxuTpOgLf/GjkPEvlNGWM5SK8y1aUphLzU3iVa9iIUdLP4FbQ6XF9jK0XNkzHMaSLhliVwe
-X-Gm-Message-State: AOJu0YyCcyiEjHAEAWMxbsyJKfcIf2c6YwmabBkk3pHTp/7V2/xOiP32
-	e1zAiTsiEE1ozbtQ4D602mvIIe+3ecT2s5L41AIyvR4k7c0yJgcAV+mIQ4xTFHmzkAxReqCRNJ0
-	te4LWCrqKt5Y4YKQuUmNEFnDzU3Ey/IQ+vRFIRQ==
-X-Google-Smtp-Source: AGHT+IFjoTKXgMDlyDzfnWuX3M1jKwtPOvvc+KZ+MYplITOHlLZg+z2dEWqjtafHvad6W6+WbomyBD93D2MSib0JiRY=
-X-Received: by 2002:a05:6214:4903:b0:6ab:8e5c:e17b with SMTP id
- 6a1803df08f44-6abbbc194eamr17864306d6.9.1716543144576; Fri, 24 May 2024
- 02:32:24 -0700 (PDT)
+        bh=/N78wdGhHYwk+WAeb4KOPaNgXTFF+oTiWHimI1zWv+w=;
+        b=m2lCVhGKYGThFmyhQZr0pT/yHSA9wZ/pIuXgUkLyD/El3YxYwqhBvoPmWxhGHD0Zby
+         +92XoJyKTSlOOKpUdovxIY01sMwYO1dZ3pRlLL4iRQTWuUVx31lL/gr6oy1+dNmt+IFn
+         XmugtJrymPWSSYN+jU5yUBFgPMud/8RpBEWvIkeeNYNJukBI43609tK/AZSaSPLlJPNu
+         RE2iu/tEYcmMpOKA23RjDkZ/rrRPFRWEzjM9S1KmdGWGXzk14qVPPZRXsIYiKWUO7FJx
+         bgYCll29RvetQ3O38ehs3Oo9R8BBBZ/ihLlmTChoqrv9Qr9AwbT0pbd2FZWYg8JEE7Mb
+         IRNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrkq47UdZtstFoTN6VAT29MEYHhMnobhM5sgCheWk7KvcbS2jS9KyDHwGfB6jY9942K54ly0R9jf7cJt0RE8V4VeZQd+e5Rcwk5lBHQZELJVCkUYL57DaDE3sUthSXZogZBme7Zq2bZQ==
+X-Gm-Message-State: AOJu0YywrgATUyd6K6kwirFTuwlemovGSRvwt4Ngy4d8ne/UPAsZ39e4
+	Uce6Qu15+m4ee5X0ES9kZyNdgx8dlMQ1WiSBLaUaP3IjvcItynGDPK4vLh2bkvqzYhNPH0+YSE6
+	b8YHDg4fD62Z4H5SawQmAzhm/ygYzdi3Z
+X-Google-Smtp-Source: AGHT+IG85r6fzf+Rn3oq43J6zk37pMjCk/MUQ1CH01rTPdQh47I++Z/WHoEVeJOT8Si3w4cgr4HsmuiiPelOESdHSTI=
+X-Received: by 2002:a5d:6983:0:b0:354:fb81:19d7 with SMTP id
+ ffacd0b85a97d-3552fdc86e4mr1000287f8f.44.1716543178271; Fri, 24 May 2024
+ 02:32:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523130330.386580714@linuxfoundation.org>
-In-Reply-To: <20240523130330.386580714@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 24 May 2024 11:32:13 +0200
-Message-ID: <CADYN=9+OCBJ0qkoB-t7ECCS=c4rHf0YKNZmmYkvu1F9dfkq1Zw@mail.gmail.com>
-Subject: Re: [PATCH 6.9 00/25] 6.9.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <202405011208.qsZQwChO-lkp@intel.com> <20240501132359.488616-1-skseofh@gmail.com>
+ <20240522143129.GA3244910-robh@kernel.org>
+In-Reply-To: <20240522143129.GA3244910-robh@kernel.org>
+From: DaeRo Lee <skseofh@gmail.com>
+Date: Fri, 24 May 2024 18:32:46 +0900
+Message-ID: <CAATEi5=pe+A8bUp=JqoMUcqQWp9uZ+4b0A92QxVRmsNj0H0ayw@mail.gmail.com>
+Subject: Re: [PATCH v2] of: of_reserved_mem: clean-up reserved memory with no-map
+To: Rob Herring <robh@kernel.org>
+Cc: lkp@intel.com, daero_le.lee@samsung.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, rppt@kernel.org, saravanak@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 May 2024 at 15:17, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+2024=EB=85=84 5=EC=9B=94 22=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 11:31, =
+Rob Herring <robh@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> This is the start of the stable review cycle for the 6.9.2 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Wed, May 01, 2024 at 10:23:59PM +0900, skseofh@gmail.com wrote:
+> > From: Daero Lee <daero_le.lee@samsung.com>
+> >
+> > In early_init_dt_reserve_memory we only add memory w/o no-map flag to
+> > memblock.reserved. But we need to add memory w/ no-map flag to
+> > memblock.reserved, because NOMAP and memblock.reserved are semantically
+> > different.
+> >
+> > Signed-off-by: Daero Lee <daero_le.lee@samsung.com>
+> > ---
+> >  drivers/of/of_reserved_mem.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.=
+c
+> > index 8236ecae2953..d00a17a9cebc 100644
+> > --- a/drivers/of/of_reserved_mem.c
+> > +++ b/drivers/of/of_reserved_mem.c
+> > @@ -81,6 +81,7 @@ static void __init fdt_reserved_mem_save_node(unsigne=
+d long node, const char *un
+> >  static int __init early_init_dt_reserve_memory(phys_addr_t base,
+> >                                              phys_addr_t size, bool nom=
+ap)
+> >  {
+> > +     int err =3D 0;
+> >       if (nomap) {
+> >               /*
+> >                * If the memory is already reserved (by another region),=
+ we
+> > @@ -91,7 +92,10 @@ static int __init early_init_dt_reserve_memory(phys_=
+addr_t base,
+> >                   memblock_is_region_reserved(base, size))
+> >                       return -EBUSY;
+> >
+> > -             return memblock_mark_nomap(base, size);
+> > +
+> > +             err =3D memblock_mark_nomap(base, size);
 >
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
+> The last time this was touched, it was to make the handling aligned with
+> EFI memory map handling. Is that still going to be the case with this
+> change? Or does EFI memory map handling have the same issue?
+Can I get more information about EFI memory map handling that you're saying=
+?
+
+1) Are you talking about uefi_mem in the reserved-memory node like below?
+ ex) arm64/boot/dts/qcom/qcs404.dtsi
+                uefi_mem: memory@9f800000 {
+                        reg =3D <0 0x9f800000 0 0x800000>;
+                        no-map;
+                };
+
+2) Or, about handling EFI memory map function efi_init() -> reserve_regions=
+()?
+
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.9.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.9.y
-> and the diffstat can be found below.
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 126 total, 126 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 23 total, 23 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-cap_bounds
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-io
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-securebits
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> > +             if (err)
+> > +                     return err;
+> >       }
+> >       return memblock_reserve(base, size);
+> >  }
+> > --
+> > 2.25.1
+> >
 
