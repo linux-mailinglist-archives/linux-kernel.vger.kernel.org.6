@@ -1,77 +1,191 @@
-Return-Path: <linux-kernel+bounces-188973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F114A8CE92D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E368CE933
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F3C1F22359
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE70282392
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687A12F59D;
-	Fri, 24 May 2024 17:19:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391391BF3F;
+	Fri, 24 May 2024 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KI0C2HNR"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C912C460;
-	Fri, 24 May 2024 17:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B831173F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 17:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716571162; cv=none; b=VzKe6//uP2MCTM4MEYpQK/d34iKSHbliN/R9Ynr4UC11w9SIBC6KEEZODHHv68a5SRHbGjvP1W2OYpuJpMf1m14ul+VQF8EMetQ9261wi0aUL2GhL6HNV3LcN3l6K8JITxPs3rlE7+PPoD+YnU7nhfT6QEmG2eSfQ9MPCiqIkGo=
+	t=1716571817; cv=none; b=TFJdytdc7Xr3zqzQA3ObZRsNWuIgeAUTQwZIh7Szr5NWXvaKUDCGh06vTMYyb3HUXHUcELXIiSy9am5dGflVAEOAozWemcMUeUtaiI0t5FuLXepCIj95XwWYQpYGrEItcIpNaVe1l/vDNSz74SDzWbXMt/vAzwjpCAAKZTkjG2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716571162; c=relaxed/simple;
-	bh=IZ2zzLaazPjUEgY1Kiy4qXvXPdNG/1tZB3yjNXOZ1dE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLkRALSdU0ozrXQK4KbOaHSvaPb/pXQQb/O6UAn3/BzzFWHaaJXASzOvnmqHwnxhvCWwbqv6IjCIpB+sOoV48+aY7/aM9blcmcmibsuBS9Z0P2oXWVDC0Ua0bESvlzQ9OBdjuRvEpiDnPdNVrkO5k4LoZuqPV9B2PQhgZOLzIIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 565ABC32782;
-	Fri, 24 May 2024 17:19:21 +0000 (UTC)
-Date: Fri, 24 May 2024 13:20:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Ilkka
- =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-Message-ID: <20240524132008.6b6f69f6@gandalf.local.home>
-In-Reply-To: <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
-	<5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716571817; c=relaxed/simple;
+	bh=8o+itX2K4X+tuNJsVLYSRal6B5j2GbNfwMKJzwHCszU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gktP2MSomhdPmADEUhMxAYV0f4XunZYESwMFgsDUTmIi22F/7hWnuiF8M2cRRk3j9c4MOZb++/LXWUPvEBl71aVJLp157nKa0TCyC4/oDPdy21dBU7xwdnlJGiuda9Gk6eGRHdmrTkGWSsKOAKWV8ieQsC8FlE+e2g+KME43UeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KI0C2HNR; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: mathieu.desnoyers@efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716571813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4Nq0eB//d4i3EFi6pEowHgt0pasM4PkRAR32O+xErA=;
+	b=KI0C2HNRPc/3Bd2vfC42vI7mc+saav3UaeVAVul/9/tbke+Nd45V7NHjG48qyNeSO3OQGO
+	oAXo3KdJTpKtHqNdIIzuutkXLKlB0GwM7Czsc+0Z0RN+FPny8BEyXJ7ts4cegOLA+jNk4z
+	5so3BsHTLQsUhJ/hPTFPjaoBHqF47D8=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: keescook@chromium.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: glider@google.com
+X-Envelope-To: elver@google.com
+X-Envelope-To: dvyukov@google.com
+X-Envelope-To: kasan-dev@googlegroups.com
+X-Envelope-To: nathan@kernel.org
+X-Envelope-To: ndesaulniers@google.com
+X-Envelope-To: morbo@google.com
+X-Envelope-To: justinstitt@google.com
+X-Envelope-To: llvm@lists.linux.dev
+Date: Fri, 24 May 2024 13:30:09 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev
+Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
+Message-ID: <jqj6do7lodrrvpjmk6vlhasdigs23jkyvznniudhebcizstsn7@6cetkluh4ehl>
+References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
+ <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+ <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
+ <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 24 May 2024 12:50:08 +0200
-"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info> wrote:
+On Fri, May 24, 2024 at 12:04:11PM -0400, Mathieu Desnoyers wrote:
+> On 2024-05-24 11:35, Mathieu Desnoyers wrote:
+> > [ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
+> > 
+> > On 2024-05-24 11:28, Kent Overstreet wrote:
+> > > On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
+> > > > Hi Kent,
+> > > > 
+> > > > Looking around in the bcachefs code for possible causes of this KMSAN
+> > > > bug report:
+> > > > 
+> > > > https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.com/
+> > > > 
+> > > > I notice the following pattern in the bcachefs structures: zero-length
+> > > > arrays members are inserted in structures (not always at the end),
+> > > > seemingly to achieve a result similar to what could be done with a
+> > > > union:
+> > > > 
+> > > > fs/bcachefs/bcachefs_format.h:
+> > > > 
+> > > > struct bkey_packed {
+> > > >          __u64           _data[0];
+> > > > 
+> > > >          /* Size of combined key and value, in u64s */
+> > > >          __u8            u64s;
+> > > > [...]
+> > > > };
+> > > > 
+> > > > likewise:
+> > > > 
+> > > > struct bkey_i {
+> > > >          __u64                   _data[0];
+> > > > 
+> > > >          struct bkey     k;
+> > > >          struct bch_val  v;
+> > > > };
+> > > > 
+> > > > (and there are many more examples of this pattern in bcachefs)
+> > > > 
+> > > > AFAIK, the C11 standard states that array declarator constant expression
+> > > > 
+> > > > Effectively, we can verify that this code triggers an undefined behavior
+> > > > with:
+> > > > 
+> > > > #include <stdio.h>
+> > > > 
+> > > > struct z {
+> > > >          int x[0];
+> > > >          int y;
+> > > >          int z;
+> > > > } __attribute__((packed));
+> > > > 
+> > > > int main(void)
+> > > > {
+> > > >          struct z a;
+> > > > 
+> > > >          a.y = 1;
+> > > >          printf("%d\n", a.x[0]);
+> > > > }
+> > > > delimited by [ ] shall have a value greater than zero.
+> > > 
+> > > Yet another example of the C people going absolutely nutty with
+> > > everything being undefined. Look, this isn't ok, we need to get work
+> > > done, and I've already wasted entirely too much time on ZLA vs. flex
+> > > array member nonsense.
+> > > 
+> > > There's a bunch of legit uses for zero length arrays, and your example,
+> > > where we're not even _assigning_ to x, is just batshit. Someone needs to
+> > > get his head examined.
+> 
+> Notice how a.y is first set to 1, then a.x[0] is loaded, expecting to
+> alias with a.y.
+> 
+> This is the same aliasing pattern found in bcachefs, for instance here:
+> 
+> bcachefs_format.h:
+> 
+> struct jset {
+> [...]
+>         __u8                    encrypted_start[0];
+> 
+>         __le16                  _read_clock; /* no longer used */
+>         __le16                  _write_clock;
+> 
+>         /* Sequence number of oldest dirty journal entry */
+>         __le64                  last_seq;
+> 
+> 
+>         struct jset_entry       start[0];
+>         __u64                   _data[];
+> } __packed __aligned(8);
+> 
+> where struct jset last_seq field is set by jset_validate():
+> 
+> 		jset->last_seq = jset->seq;
+> 
+> and where journal_read_bucket() uses the encrypted_start member as input:
+> 
+>                 ret = bch2_encrypt(c, JSET_CSUM_TYPE(j), journal_nonce(j),
+>                              j->encrypted_start,
+>                              vstruct_end(j) - (void *) j->encrypted_start);
 
-> > - Affected Versions: Before kernel version 6.8.10, the bug caused a
-> > quick display of a kernel trace dump before the shutdown/reboot
-> > completed. Starting from version 6.8.10 and continuing into version
-> > 6.9.0 and 6.9.1, this issue has escalated to a kernel panic,
-> > preventing the shutdown or reboot from completing and leaving the
-> > machine stuck.
+Except we're just using it as a marker for an offset into the struct,
+the same "aliasing" issue would apply if we were just using offsetof()
+to calculate the offsets directly.
 
-Ah, I bet it was this commit: baa23a8d4360d ("tracefs: Reset permissions on
-remount if permissions are options"), which added a "iput" callback to the
-dentry without calling iput, leaving stale inodes around.
-
-This is fixed with:
-
-  0bcfd9aa4dafa ("tracefs: Clear EVENT_INODE flag in tracefs_drop_inode()")
-
-Try adding just that patch. It will at least make it go back to what was
-happening before 6.8.10 (I hope!).
-
--- Steve
 
