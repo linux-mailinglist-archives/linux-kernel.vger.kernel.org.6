@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-188589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2AC8CE3FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:03:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49088CE3FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9651C21981
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:03:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08247B2207B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EC884A54;
-	Fri, 24 May 2024 10:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39B685937;
+	Fri, 24 May 2024 10:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P/YqjomP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bzti4vSF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE6884E09
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1007185631
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716544973; cv=none; b=QzE9VLHH2xNGW2EFHOejjILGplyco3mcEyzpDMDiP5ApIqMUY5DSEydfIrep+W85Do+mKNzd/V6UYPEzeyI9B9sBWPBwg1xwGO2PiAIbjHahZuLXitNXRH+Bn9kh9YhkrV6VhEDw+NC7E4zxzFCsA3mHzDGZ52ylGaKhkAzwZaY=
+	t=1716545105; cv=none; b=AgrlpAVS+G6AOY4gsapvcHHf1u/tVzShINR548NBDJqyVk/Jbtij6oCCi6tjYxt7tcUAPOx1VUXkB3qxLvtN8adCQcIcOfoJizp6StZB0Dw0a3/emFGsm3YTMT4AuYzwawvITsntpQt+1bTj1eF1bj7DPwSlT8/qFuJV6ERJg2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716544973; c=relaxed/simple;
-	bh=VUu5Pay3EO3zPdwqRprm8VMWydnN34K4Iz8Y0oqkzmk=;
+	s=arc-20240116; t=1716545105; c=relaxed/simple;
+	bh=bgbmxdThfo3OyAMsYkFF5vKnqyMuTR5MnlYqB4DWkwM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tiX2aWieJO6QZPRgv/RRECcQ4p81DhwGubSVc6iO5T1IpNzhvLTWAQGk21ge5aPkuIPadmsmVDIi70cdges9tnmPDIttvroxsw59ULGpZZFN/XcpXIApS9SdXiFr1hoyoObkFEHHBQde/ul79dtsA0lwupIRD8xZkPb/PLv7IqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P/YqjomP; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716544970; x=1748080970;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VUu5Pay3EO3zPdwqRprm8VMWydnN34K4Iz8Y0oqkzmk=;
-  b=P/YqjomPTL6Rr4gHUe4lvKp4OTCa+THG3D+i5lmqACmAzSi8UkmSQbl4
-   ehZFUXpAZOiytTnZ2Eh7XJrWOK7I5N35WWfPVn3bQvp+mO9Bvnfu3TW9g
-   DhLi1KgWvZQfJVxow/jgx16LfmB82IUoxBEEKqf+9AivbpzzpHTDLt1s6
-   /QShxeiEtMvpwvoH7N9AVm02vdp+YWiEa4qKcI8TmOuerkW6rLgN70ugP
-   d2Lgpat98/rYNRnK5/fRyXf16qSROFId+MGxXgeS933vry0DFPFTC4TMy
-   4vmEznJOYHtGgry/OFnK7XZH2TlMfZDqRFzej8veRyyqu8c0pD8kjI3D3
-   Q==;
-X-CSE-ConnectionGUID: vjIWjvRkRmmb4JMt0rgf5A==
-X-CSE-MsgGUID: 6UgexX2NTH+wVicYRN+Hiw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="23523255"
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="23523255"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 03:02:50 -0700
-X-CSE-ConnectionGUID: 9aLuoKRSQAGD6ECmK24pqA==
-X-CSE-MsgGUID: Syj9UzUwTkGRyAopLCNsMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="38769660"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 03:02:48 -0700
-Message-ID: <85229f77-e5d1-498f-900a-e10b4de5f358@intel.com>
-Date: Fri, 24 May 2024 13:02:42 +0300
+	 In-Reply-To:Content-Type; b=G5O3VQVGHesI7Ii7EUj2GrJiAkDhzOi2CCoI1BO6aq9F4QpctY4mXBq4Z/eoxhlnoCXwwenvp8uue9JTUeit8XoSgYEBZYpHNi/6crCSg9v5H4Ht/fu1NzYVryokQ/9fdu8hs5UcOG/VyUkA5geR6axCVjBZTg3nhsTVdu02dzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bzti4vSF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716545103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0tqPEqXzpdrWLSDfzE9+RYZErKg7lcDK/U8gukkaq3Q=;
+	b=Bzti4vSFJzqb/0BUbkbziML94X1Xlv3CfUNp/C2D7lcDckRtSCnm1d7Mw1A0r2lHqP4s2Y
+	A1DKVjv81a1+Ww/F4HqwiFl1FvaIvzBWYsvE/mgwEzAFGBnvZHG4so3vLJOw9LuUXANKuu
+	5Jaf37dYmYWinkWy6gDY04K/VmVrAfk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-677-eBZOudeiO9GXpJBbWayCbg-1; Fri, 24 May 2024 06:05:01 -0400
+X-MC-Unique: eBZOudeiO9GXpJBbWayCbg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4201248bcd4so452525e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:05:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716545100; x=1717149900;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0tqPEqXzpdrWLSDfzE9+RYZErKg7lcDK/U8gukkaq3Q=;
+        b=w0EVqjOksWlg8CqG0hJzkJbRSICKkAlZ/CHyp0AcxmVWOGz7iGKrq0rhxmiuyo/Nsu
+         8m8FF9Eh+7aK5A2yLmivzRmX05gLWzEg+zrmT1oxF2U4+vjupv4bmm6xZWgcu8A3S69s
+         8uR43P10dNxXe7L6O0r0/cKDTQ/iUtoUAQH89mJPjzW/0VkCV5RxXKjMBOqYE6z2OhwV
+         hMyIe/YLhkwUwm6VVm9zguyTaj6TreiP9NuqieJmLCnotK6aCN9hLq7LQQc3ap5TmlpV
+         cSyFVRUBKt6i7zmwpE0z26G/i6IOq2M3RFaCw+lDOPUBLr0Qh+vbsrSSP+vXToYx80FP
+         f1Gw==
+X-Gm-Message-State: AOJu0YxBTDazy2JS+/xNgsjxqLm5dZLbh+Lmp23UtWF8N7BZtyU2gjuX
+	cIlctBbc7b7PcFRAygdFB32hNSzO822gaHmq+BjzLDD0L5JGeF4ct4n/EoXn9tyrXMd0+eKf9ri
+	bpyUOpU+9okM7LR8lDtm8ED4ON1BaOWa5/Ph0KWXWMjo8XvrAk97dw/gxpNK9AXPhi39QEOSaxf
+	1ZnQO6D1ui6BUWMUfi3w0zKc5e+qfl+RpbL2QFy9rt0g==
+X-Received: by 2002:a05:600c:3552:b0:41b:e406:5ae6 with SMTP id 5b1f17b1804b1-421089f816fmr13306095e9.9.1716545100566;
+        Fri, 24 May 2024 03:05:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJnxxG5qQ6YaT7VBUS6F2j0w0cnfRCjEd+/YfQzE2Xare2Yg22u6sGQVGwlJjKwOKWN8YSJA==
+X-Received: by 2002:a05:600c:3552:b0:41b:e406:5ae6 with SMTP id 5b1f17b1804b1-421089f816fmr13305875e9.9.1716545100026;
+        Fri, 24 May 2024 03:05:00 -0700 (PDT)
+Received: from ?IPV6:2a01:599:31a:f535:61b2:4e2f:ddce:8bf? ([2a01:599:31a:f535:61b2:4e2f:ddce:8bf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-420fd37d5c0sm32948985e9.1.2024.05.24.03.04.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 03:04:59 -0700 (PDT)
+Message-ID: <ade04ce0-91fe-4773-b10d-f9bb77f4edb2@redhat.com>
+Date: Fri, 24 May 2024 12:04:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,298 +82,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [timekeeping] e84f43e34f:
- BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-References: <202405241607.d3fd7eb0-lkp@intel.com>
+Subject: Re: [PATCH RFC 2/6] mm: allow reuse of the lower 16bit of the page
+ type with an actual type
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+References: <20240522210341.1030552-1-david@redhat.com>
+ <20240522210341.1030552-3-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <202405241607.d3fd7eb0-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240522210341.1030552-3-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 24/05/24 11:36, kernel test robot wrote:
+On 22.05.24 23:03, David Hildenbrand wrote:
+> As long as the owner sets a page type first, we can allow reuse of the
+> lower 16bit! Restrict it to the head page.
 > 
-> hi Adrian Hunter,
+> We'll use that for zsmalloc next, to set a proper type while still
+> reusing that field to store information that cannot go elsewhere for
+> now.
 > 
-> we sent the similar report
->   "[tip:timers/core] [timekeeping]  e84f43e34f: BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns"
-> when this commit is in tip:timers/core [1]
+> Fear of running out of bits for storing the actual type? Actually, we
+> don't need one bit per type, we could store a single value instead.
 > 
-> we noticed you made some comments, but we don't have enough knowledge it there
-> will be or need some fix.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-AFAICT, it is a false positive.
+Likely the following might be better if we want to go down that path:
 
-KCSAN requires annotation to know where a seqlock critical section
-is.  This annotation does not work if a seqlock is nested within
-another seqlock because KCSAN considers that the critical section
-finishes after the inner seqlock.
 
-Marco Elver was cc'ed because they introduced the annotations:
 
-	commit 88ecd153be9519f259b87a9f6f4c8383a8b3bbf1
-	Author: Marco Elver <elver@google.com>
-	Date:   Thu Nov 14 19:02:59 2019 +0100
+ From 39f198589039451d94166f3893dc939a919f74c7 Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 22 May 2024 21:57:43 +0200
+Subject: [PATCH] mm: allow reuse of the lower 18 bit of the page type with an
+  actual type
 
-	    seqlock, kcsan: Add annotations for KCSAN
+As long as the owner sets a page type first, we can allow reuse of the
+lower 18 bit: sufficient to store an offset into a 256 KiB page, which
+is the maximum base page size we support. Restrict it to the head page.
 
-But neither they nor Dmitry Vyukov <dvyukov@google.com> nor anyone
-on the kasan-dev@googlegroups.com, seem to have taken an interest.
+We'll use that for zsmalloc next, to set a proper type while still
+reusing that field to store information (offset into a base page) that
+cannot go elsewhere for now.
 
-They should be the ones to know best how to fix the annotation.
+Fear of running out of bits for storing the actual type? Actually, we
+don't need one bit per type, we could store a single value instead.
+Further, we could likely limit PAGE_TYPE_BASE to a single (highest) bit.
 
-Would you be willing to follow this up?  Perhaps reply to
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  include/linux/mm_types.h   |  5 +++++
+  include/linux/page-flags.h | 20 ++++++++++++--------
+  2 files changed, 17 insertions(+), 8 deletions(-)
 
-	https://lore.kernel.org/all/cb8ae96c-12a6-4945-96ed-7f68f01d69aa@intel.com/
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 532a3030405d..437a62bed277 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -168,6 +168,11 @@ struct page {
+  		 *
+  		 * See page-flags.h for a list of page types which are currently
+  		 * stored here.
++		 *
++		 * Owners of typed folios may reuse the lower 18 bit of the
++		 * head page page_type field after setting the page type,
++		 * but must reset these 18 bit to -1 before clearing the
++		 * page type.
+  		 */
+  		unsigned int page_type;
+  	};
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 104078afe0b1..2f49c8b2f411 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -945,14 +945,18 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
+   */
+  
+  #define PAGE_TYPE_BASE	0xf0000000
+-/* Reserve		0x0000007f to catch underflows of _mapcount */
+-#define PAGE_MAPCOUNT_RESERVE	-128
+-#define PG_buddy	0x00000080
+-#define PG_offline	0x00000100
+-#define PG_table	0x00000200
+-#define PG_guard	0x00000400
+-#define PG_hugetlb	0x00000800
+-#define PG_slab		0x00001000
++/*
++ * Reserve		0x0003ffff to catch underflows of _mapcount and
++ * allow owners that set a type to reuse the lower 18 bit for their own
++ * purposes.
++ */
++#define PAGE_MAPCOUNT_RESERVE	-262144
++#define PG_buddy	0x00040000
++#define PG_offline	0x00080000
++#define PG_table	0x00100000
++#define PG_guard	0x00200000
++#define PG_hugetlb	0x00400800
++#define PG_slab		0x00800000
+  
+  #define PageType(page, flag)						\
+  	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+-- 
+2.45.0
 
-and ask explicitly if they can help.
 
-> 
-> now the commit is in mainline now, we just report again FYI.
-> 
-> similar as mentioned in [1], we only observed the
->   dmesg.BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns
-> upon e84f43e34f at the ~50% rate.
-> 
-> but parent has other KCSAN issues (also ~50% rate) which doesn't happen on
-> e84f43e34f.
-> 
-> e8e9d21a5df655a6 e84f43e34faf85816587f805945
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->           9:20         -45%            :20    dmesg.BUG:KCSAN:data-race_in_ktime_get/timekeeping_advance
->           9:20         -45%            :20    dmesg.BUG:KCSAN:data-race_in_ktime_get_update_offsets_now/timekeeping_advance
->            :20          55%          11:20    dmesg.BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns
-> 
-> 
-> [1] https://lore.kernel.org/all/202404161050.38f1c92e-lkp@intel.com/
-> 
-> 
-> below is the full report.
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:KCSAN:data-race_in_timekeeping_advance/timekeeping_debug_get_ns" on:
-> 
-> commit: e84f43e34faf85816587f80594541ec978449d6e ("timekeeping: Consolidate timekeeping helpers")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/master      0450d2083be6bdcd18c9535ac50c55266499b2df]
-> [test failed on linux-next/master c75962170e49f24399141276ae119e6a879f36dc]
-> 
-> in testcase: boot
-> 
-> compiler: gcc-13
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202405241607.d3fd7eb0-lkp@intel.com
-> 
-> 
-> [  106.344081][    C0] BUG: KCSAN: data-race in timekeeping_advance / timekeeping_debug_get_ns
-> [  106.345565][    C0]
-> [  106.346110][    C0] write to 0xffffffff83dfe578 of 296 bytes by interrupt on cpu 1:
-> [ 106.347495][ C0] timekeeping_advance (kernel/time/timekeeping.c:2207 (discriminator 1)) 
-> [ 106.348455][ C0] update_wall_time (kernel/time/timekeeping.c:2222 (discriminator 1)) 
-> [ 106.349310][ C0] tick_do_update_jiffies64 (kernel/time/tick-sched.c:149) 
-> [ 106.350321][ C0] tick_nohz_lowres_handler (kernel/time/tick-sched.c:229 kernel/time/tick-sched.c:287 kernel/time/tick-sched.c:1492) 
-> [ 106.351343][ C0] __sysvec_apic_timer_interrupt (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1050) 
-> [ 106.352397][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 (discriminator 47) arch/x86/kernel/apic/apic.c:1043 (discriminator 47)) 
-> [ 106.353427][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-> [ 106.354479][ C0] _raw_spin_unlock_irqrestore (arch/x86/include/asm/preempt.h:94 (discriminator 1) include/linux/spinlock_api_smp.h:152 (discriminator 1) kernel/locking/spinlock.c:194 (discriminator 1)) 
-> [ 106.355503][ C0] get_partial_node+0xaf/0x300 
-> [ 106.356480][ C0] get_partial (mm/slub.c:2702) 
-> [ 106.357291][ C0] ___slab_alloc (mm/slub.c:3506) 
-> [ 106.358162][ C0] kmem_cache_alloc (mm/slub.c:3610 mm/slub.c:3663 mm/slub.c:3835 mm/slub.c:3852) 
-> [ 106.359084][ C0] getname_flags (fs/namei.c:140 (discriminator 1)) 
-> [ 106.359916][ C0] getname (fs/namei.c:219) 
-> [ 106.360669][ C0] do_sys_openat2 (fs/open.c:1400) 
-> [ 106.361540][ C0] __ia32_compat_sys_openat (fs/open.c:1479) 
-> [ 106.362526][ C0] __do_fast_syscall_32 (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:321 (discriminator 1)) 
-> [ 106.363487][ C0] do_fast_syscall_32 (arch/x86/entry/common.c:346 (discriminator 1)) 
-> [ 106.364392][ C0] do_SYSENTER_32 (arch/x86/entry/common.c:385) 
-> [ 106.365229][ C0] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:121) 
-> [  106.366347][    C0]
-> [  106.366895][    C0] read to 0xffffffff83dfe598 of 8 bytes by interrupt on cpu 0:
-> [ 106.368257][ C0] timekeeping_debug_get_ns (kernel/time/timekeeping.c:373 kernel/time/timekeeping.c:383 kernel/time/timekeeping.c:280) 
-> [ 106.369256][ C0] ktime_get (kernel/time/timekeeping.c:394 kernel/time/timekeeping.c:838) 
-> [ 106.370061][ C0] tick_nohz_lowres_handler (kernel/time/tick-sched.c:220 kernel/time/tick-sched.c:287 kernel/time/tick-sched.c:1492) 
-> [ 106.371062][ C0] __sysvec_apic_timer_interrupt (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1050) 
-> [ 106.372099][ C0] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 (discriminator 47) arch/x86/kernel/apic/apic.c:1043 (discriminator 47)) 
-> [ 106.373091][ C0] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-> [ 106.374155][ C0] __tsan_read8 (kernel/kcsan/core.c:787 (discriminator 1) kernel/kcsan/core.c:1025 (discriminator 1)) 
-> [ 106.375033][ C0] __d_lookup_rcu (fs/dcache.c:2172) 
-> [ 106.375897][ C0] d_alloc_parallel (fs/dcache.c:2473) 
-> [ 106.376807][ C0] lookup_open+0x5f1/0x8a0 
-> [ 106.377759][ C0] open_last_lookups (fs/namei.c:3566) 
-> [ 106.378687][ C0] path_openat (fs/namei.c:3796) 
-> [ 106.379520][ C0] do_filp_open (fs/namei.c:3826) 
-> [ 106.380375][ C0] do_sys_openat2 (fs/open.c:1406) 
-> [ 106.381236][ C0] __ia32_compat_sys_openat (fs/open.c:1479) 
-> [ 106.382243][ C0] __do_fast_syscall_32 (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:321 (discriminator 1)) 
-> [ 106.388006][ C0] do_fast_syscall_32 (arch/x86/entry/common.c:346 (discriminator 1)) 
-> [ 106.388925][ C0] do_SYSENTER_32 (arch/x86/entry/common.c:385) 
-> [ 106.389787][ C0] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:121) 
-> [  106.391298][    C0]
-> [  106.392364][    C0] value changed: 0x0014811664800000 -> 0x00149f9ae4800000
-> [  106.394806][    C0]
-> [  106.396026][    C0] Reported by Kernel Concurrency Sanitizer on:
-> [  106.398293][    C0] CPU: 0 PID: 126 Comm: (mount) Tainted: G            E    N 6.9.0-rc3-00015-ge84f43e34faf #1
-> [  106.401465][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [  106.404332][    C0] ==================================================================
-> Mounting Kernel Configuration File System...
-> Starting Load/Save Random Seed...
-> Starting Apply Kernel Variables...
-> Starting Create System Users...
-> [  OK  ] Started Journal Service.
-> [  OK  ] Mounted FUSE Control File System.
-> [  OK  ] Mounted Kernel Configuration File System.
-> [  OK  ] Finished Load/Save Random Seed.
-> [  OK  ] Finished Apply Kernel Variables.
-> Starting Flush Journal to Persistent Storage...
-> [  OK  ] Finished Create System Users.
-> Starting Create Static Device Nodes in /dev...
-> [  OK  ] Finished Flush Journal to Persistent Storage.
-> [  OK  ] Finished Create Static Device Nodes in /dev.
-> [  OK  ] Reached target Local File Systems (Pre).
-> [  OK  ] Reached target Local File Systems.
-> Starting Preprocess NFS configuration...
-> Starting Create Volatile Files and Directories...
-> [  OK  ] Finished Preprocess NFS configuration.
-> [  OK  ] Started Rule-based Manager for Device Events and Files.
-> [  OK  ] Finished Create Volatile Files and Directories.
-> Starting RPC bind portmap service...
-> Starting Update UTMP about System Boot/Shutdown...
-> [  OK  ] Started RPC bind portmap service.
-> [  OK  ] Finished Update UTMP about System Boot/Shutdown.
-> [  OK  ] Reached target Remote File Systems (Pre).
-> [  OK  ] Reached target Remote File Systems.
-> [  OK  ] Reached target RPC Port Mapper.
-> [*     ] A start job is running for Coldplug All udev Devices (6s / no limit)
-> [  113.764048][  T153] parport_pc 00:03: reported by Plug and Play ACPI
-> [  113.776436][  T153] parport0: PC-style at 0x378, irq 7 [PCSPP(,...)]
-> [  113.952514][  T139] Linux agpgart interface v0.103
-> [  114.090513][    C1] ==================================================================
-> [  114.091583][    C1] BUG: KCSAN: data-race in timekeeping_advance / timekeeping_debug_get_ns
-> [  114.092597][    C1]
-> [  114.092970][    C1] write to 0xffffffff83dfe578 of 296 bytes by interrupt on cpu 0:
-> [ 114.093933][ C1] timekeeping_advance (kernel/time/timekeeping.c:2207 (discriminator 1)) 
-> [ 114.094583][ C1] update_wall_time (kernel/time/timekeeping.c:2222 (discriminator 1)) 
-> [ 114.095166][ C1] tick_do_update_jiffies64 (kernel/time/tick-sched.c:149) 
-> [ 114.095849][ C1] tick_nohz_lowres_handler (kernel/time/tick-sched.c:229 kernel/time/tick-sched.c:287 kernel/time/tick-sched.c:1492) 
-> [ 114.096537][ C1] __sysvec_apic_timer_interrupt (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1050) 
-> [ 114.097280][ C1] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 (discriminator 47) arch/x86/kernel/apic/apic.c:1043 (discriminator 47)) 
-> [ 114.097994][ C1] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-> [ 114.098736][ C1] __orc_find (arch/x86/kernel/unwind_orc.c:100 (discriminator 3)) 
-> [ 114.099285][ C1] unwind_next_frame (arch/x86/kernel/unwind_orc.c:494 (discriminator 4)) 
-> [ 114.099925][ C1] arch_stack_walk (arch/x86/kernel/stacktrace.c:24 (discriminator 1)) 
-> [ 114.100549][ C1] stack_trace_save (kernel/stacktrace.c:123) 
-> [ 114.101154][ C1] set_track_prepare (mm/slub.c:886) 
-> [ 114.101768][ C1] __alloc_object (mm/kmemleak.c:681 (discriminator 1)) 
-> [ 114.102377][ C1] __create_object (mm/kmemleak.c:750) 
-> [ 114.102967][ C1] __kmalloc_node (include/linux/kmemleak.h:42 mm/slub.c:3802 mm/slub.c:3845 mm/slub.c:3965 mm/slub.c:3973) 
-> [ 114.103566][ C1] kvmalloc_node (mm/util.c:662) 
-> [ 114.104150][ C1] seq_read_iter (fs/seq_file.c:210 (discriminator 1)) 
-> [ 114.104748][ C1] kernfs_fop_read_iter (fs/kernfs/file.c:281) 
-> [ 114.105388][ C1] vfs_read (include/linux/fs.h:2104 fs/read_write.c:395 fs/read_write.c:476) 
-> [ 114.105938][ C1] ksys_read (fs/read_write.c:619) 
-> [ 114.106485][ C1] __ia32_sys_read (fs/read_write.c:627) 
-> [ 114.107082][ C1] __do_fast_syscall_32 (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:321 (discriminator 1)) 
-> [ 114.107729][ C1] do_fast_syscall_32 (arch/x86/entry/common.c:346 (discriminator 1)) 
-> [ 114.108364][ C1] do_SYSENTER_32 (arch/x86/entry/common.c:385) 
-> [ 114.108943][ C1] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:121) 
-> [  114.109697][    C1]
-> [  114.110062][    C1] read to 0xffffffff83dfe588 of 8 bytes by interrupt on cpu 1:
-> [ 114.110988][ C1] timekeeping_debug_get_ns (kernel/time/timekeeping_internal.h:21 kernel/time/timekeeping.c:381 kernel/time/timekeeping.c:280) 
-> [ 114.111685][ C1] ktime_get (kernel/time/timekeeping.c:394 kernel/time/timekeeping.c:838) 
-> [ 114.112236][ C1] tick_nohz_lowres_handler (kernel/time/tick-sched.c:220 kernel/time/tick-sched.c:287 kernel/time/tick-sched.c:1492) 
-> [ 114.112924][ C1] __sysvec_apic_timer_interrupt (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1050) 
-> [ 114.113647][ C1] sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 (discriminator 47) arch/x86/kernel/apic/apic.c:1043 (discriminator 47)) 
-> [ 114.114332][ C1] asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:702) 
-> [ 114.115063][ C1] _raw_spin_unlock_irqrestore (arch/x86/include/asm/preempt.h:94 (discriminator 1) include/linux/spinlock_api_smp.h:152 (discriminator 1) kernel/locking/spinlock.c:194 (discriminator 1)) 
-> [ 114.115753][ C1] __create_object (mm/kmemleak.c:756) 
-> [ 114.116355][ C1] kmem_cache_alloc (include/linux/kmemleak.h:42 mm/slub.c:3802 mm/slub.c:3845 mm/slub.c:3852) 
-> [ 114.116993][ C1] skb_clone (net/core/skbuff.c:2063) 
-> [ 114.117535][ C1] do_one_broadcast (net/netlink/af_netlink.c:1466 (discriminator 1)) 
-> [ 114.118170][ C1] netlink_broadcast_filtered (net/netlink/af_netlink.c:1543 (discriminator 11)) 
-> [ 114.118883][ C1] netlink_broadcast (net/netlink/af_netlink.c:1568 (discriminator 1)) 
-> [ 114.119493][ C1] kobject_uevent_net_broadcast (lib/kobject_uevent.c:331 (discriminator 1) lib/kobject_uevent.c:410 (discriminator 1)) 
-> [ 114.120211][ C1] kobject_uevent_env (lib/kobject_uevent.c:593) 
-> [ 114.120844][ C1] kobject_uevent (lib/kobject_uevent.c:642) 
-> [ 114.121414][ C1] driver_register (drivers/base/driver.c:255) 
-> [ 114.122024][ C1] __parport_register_driver (drivers/parport/share.c:289) parport
-> [ 114.122833][ C1] ppdev_init (drivers/char/ppdev.c:811) ppdev
-> [ 114.123470][ C1] do_one_initcall (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:260 include/linux/jump_label.h:270 include/trace/events/initcall.h:48 init/main.c:1239) 
-> [ 114.124079][ C1] do_init_module (kernel/module/main.c:2538) 
-> [ 114.124700][ C1] load_module (kernel/module/main.c:3001) 
-> [ 114.125281][ C1] init_module_from_file (kernel/module/main.c:3169) 
-> [ 114.125945][ C1] idempotent_init_module (kernel/module/main.c:3185) 
-> [ 114.126610][ C1] __ia32_sys_finit_module (include/linux/file.h:47 kernel/module/main.c:3207 kernel/module/main.c:3189 kernel/module/main.c:3189) 
-> [ 114.127271][ C1] __do_fast_syscall_32 (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:321 (discriminator 1)) 
-> [ 114.127912][ C1] do_fast_syscall_32 (arch/x86/entry/common.c:346 (discriminator 1)) 
-> [ 114.128530][ C1] do_SYSENTER_32 (arch/x86/entry/common.c:385) 
-> [ 114.129117][ C1] entry_SYSENTER_compat_after_hwframe (arch/x86/entry/entry_64_compat.S:121) 
-> [  114.129880][    C1]
-> [  114.130247][    C1] value changed: 0x0000001ac6927aaf -> 0x0000001ac6cf83af
-> [  114.131074][    C1]
-> [  114.131445][    C1] Reported by Kernel Concurrency Sanitizer on:
-> [  114.132179][    C1] CPU: 1 PID: 144 Comm: systemd-udevd Tainted: G            E    N 6.9.0-rc3-00015-ge84f43e34faf #1
-> [  114.133442][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [  114.134654][    C1] ==================================================================
-> [  114.141741][  T144] ppdev: user-space parallel port driver
-> [  114.556211][  T153] RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
-> [  114.791100][   T95] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input4
-> [  114.842626][  T139] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
-> [  114.849602][  T139] Console: switching to colour dummy device 80x25
-> [  114.934666][  T139] [drm] Found bochs VGA, ID 0xb0c5.
-> [  114.934674][  T139] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
-> [  115.023240][  T139] [drm] Found EDID data blob.
-> [  115.104489][  T139] [drm] Initialized bochs-drm 1.0.0 20130925 for 0000:00:02.0 on minor 0
-> [  115.223445][  T158] mousedev: PS/2 mouse device common for all mice
-> [K[  OK  ] Reached target System Initialization.
-> [  OK  ] Started Daily apt download activities.
-> [  OK  ] Started Daily apt upgrade and clean activities.
-> [  OK  ] Started Discard unused blocks once a week.
-> [  OK  ] Started Daily rotation of log files.
-> [  OK  ] Started Daily Cleanup of Temporary Directories.
-> [  OK  ] Reached target Timers.
-> [  OK  ] Listening on D-Bus System Message Bus Socket.
-> [  OK  ] Reached target Sockets.
-> [  OK  ] Reached target Basic System.
-> [  OK  ] Started Regular background program processing daemon.
-> [  OK  ] Started D-Bus System Message Bus.
-> Starting Helper to synchronize boot up for ifupdown...
-> Starting LSB: OpenIPMI Driver init script...
-> Starting System Logging Service...
-> Starting User Login Management...
-> [  OK  ] Finished Helper to synchronize boot up for ifupdown.
-> Starting Raise network interfaces...
-> Starting LSB: Load kernel image with kexec...
-> [  120.559025][  T225] IPMI message handler: version 39.2
-> [  OK  ] Started LSB: Load kernel image with kexec.
-> [  120.991196][  T239] ipmi_si: IPMI System Interface driver
-> [  121.000344][  T239] ipmi_si: Unable to find any System Interface(s)
-> [  OK  ] Finished Raise network interfaces.
-> [  OK  ] Started User Login Management.
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240524/202405241607.d3fd7eb0-lkp@intel.com
-> 
-> 
-> 
+-- 
+Cheers,
+
+David / dhildenb
 
 
