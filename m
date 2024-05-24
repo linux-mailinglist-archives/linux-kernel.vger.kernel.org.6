@@ -1,179 +1,186 @@
-Return-Path: <linux-kernel+bounces-188682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F338CE54B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45998CE555
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95631C217A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A47628174A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ABF12A15B;
-	Fri, 24 May 2024 12:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkW0tr5R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C24B86655;
+	Fri, 24 May 2024 12:26:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D37E129E8C;
-	Fri, 24 May 2024 12:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF368127E0B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716553535; cv=none; b=In3o9OG/IpI0hIV2LNanjiZzJKgIloC9+GuCdVl+/rKcMfS8g6ZbAkIbK8XG1GlaRxVUWONxnYgmTjFLQp9jDlVV45B/+cBEsjCPmhnhUpjxO/FLlTwnF2Vfi3fBT1RkFEJ5kQi8RZM46VjeoWPTR5/U3oMK2xluc0NTc9lihlU=
+	t=1716553571; cv=none; b=qfHcgKJ3Gq4CI3LNLNyDt9izMmrQJ8V9SazntBdU5c4DUXf5/URzfpaCMTWv2mUKIlTcUpK5ow5B7qEdGBHAen3DhIuhzqnA0g9oRFwRsOhy692h3nuePgfbI5lt9f1rLkZ81mYO22xocww3tFqpJQScSeqxNd90tURtRBD+GJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716553535; c=relaxed/simple;
-	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
+	s=arc-20240116; t=1716553571; c=relaxed/simple;
+	bh=BR6wg9i/0mbzIcyzWHdONHm37dg16V5vztgEDpsM3jY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i09h36bHNBK+/EZcV0BhKHjTYp7vAP7KABdgm5CpaR1Lwf4GiLtPbZjiwFDvzLwY/J1HVbmj+N+8zI3L/mrR0INoq6/58h2lBoR2JDYsjyOryAKFOdVPcb91ZaFwWtYJD6yfKc0988wh5L4Zb1qUqVnETkpw9ImScsAeOUGO9uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkW0tr5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D97DC3277B;
-	Fri, 24 May 2024 12:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716553535;
-	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CkW0tr5R8netKj3H1R0ye6wSoxVxKRlZiTiwB5ukR9z1c7TP8OAWTNPe+H9EmVF22
-	 iKkCl70NzB7uaY8AfBcCaRKbTyGTfdFg1jHihFJZ5Uoy8R+aVDuz0tNO8q75mlh7us
-	 Xy8VhegHlVFdHiVLAf9zzcRCH1bsnEs7SXkm37EWKHiVieSVPSCoghLYqr24+y78kR
-	 38s1l2TmBykYbhZ+4vsqtYBw2j6ggNFV733hpo7KUxTw41ziOyxLOi2+wHF+Xw4hRh
-	 mTzxV/l6+7NC5VCV6V/NgIBNtmyoV/WvvdqAmM9xUOaFZhSEqiakJdZ+TbeZxHQOKe
-	 M1jgxSlGK77Ng==
-Date: Fri, 24 May 2024 14:25:30 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-Message-ID: <20240524-ahnden-danken-02a2e9b87190@brauner>
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
- <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
- <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3q+kKQkEtGnP/ovGRwmOxOZUMtSCfErqDxGR4huV4aM+cFUjyFbxASgGvXW39c53kK/3rZUb0uAeWeBvexhBBd1OnVcOHoykORcPJvxHVCZVMmgqPkh3oVngahCT2dl1fGZNVN77nPfroSNMgDM/nhowBDI7l5A6oKrhWYO2f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sATzb-0001Lx-DC; Fri, 24 May 2024 14:25:51 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sATza-002nB5-Jm; Fri, 24 May 2024 14:25:50 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sATza-00BiEV-1d;
+	Fri, 24 May 2024 14:25:50 +0200
+Date: Fri, 24 May 2024 14:25:50 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP
+ EdgeLock Enclave
+Message-ID: <ZlCHTqJ0Umgh3LCw@pengutronix.de>
+References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
+ <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+ <ZlBtNSeh2VyZsVxq@pengutronix.de>
+ <AM9PR04MB860424A71753DBB56D2CEF5895F52@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
+In-Reply-To: <AM9PR04MB860424A71753DBB56D2CEF5895F52@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2024 at 09:52:20AM -0600, Aleksa Sarai wrote:
-> On 2024-05-21, Christian Brauner <brauner@kernel.org> wrote:
-> > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
-> > > Now that we have stabilised the unique 64-bit mount ID interface in
-> > > statx, we can now provide a race-free way for name_to_handle_at(2) to
-> > > provide a file handle and corresponding mount without needing to worry
-> > > about racing with /proc/mountinfo parsing.
-> > > 
-> > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
-> > > that doesn't make sense for name_to_handle_at(2).
-> > > 
-> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+On Fri, May 24, 2024 at 12:08:14PM +0000, Pankaj Gupta wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Friday, May 24, 2024 4:04 PM
+> > To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh+dt@kernel.org>;
+> > Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley
+> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Pengutronix
+> > Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> > <festevam@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> > <krzk+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
+> > linux-arm-kernel@lists.infradead.org
+> > Subject: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock
+> > Enclave
+> >
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> >
+> >
+> > On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
+> > > NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE), are
+> > > embedded in the SoC to support the features like HSM, SHE & V2X, using
+> > > message based communication interface.
+> > >
+> > > The secure enclave FW communicates on a dedicated messaging unit(MU)
+> > > based interface(s) with application core, where kernel is running.
+> > > It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
+> > >
+> > > This patch adds the driver for communication interface to
+> > > secure-enclave, for exchanging messages with NXP secure enclave HW
+> > > IP(s) like EdgeLock Enclave (ELE) from Kernel-space, used by kernel
+> > > management layers like
+> > > - DM-Crypt.
+> > >
+> > > Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
 > > > ---
-> > 
-> > So I think overall this is probably fine (famous last words). If it's
-> > just about being able to retrieve the new mount id without having to
-> > take the hit of another statx system call it's indeed a bit much to
-> > add a revised system call for this. Althoug I did say earlier that I
-> > wouldn't rule that out.
-> > 
-> > But if we'd that then it'll be a long discussion on the form of the new
-> > system call and the information it exposes.
-> > 
-> > For example, I lack the grey hair needed to understand why
-> > name_to_handle_at() returns a mount id at all. The pitch in commit
-> > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is that
-> > the (old) mount id can be used to "lookup file system specific
-> > information [...] in /proc/<pid>/mountinfo".
+> > >  drivers/firmware/imx/Kconfig        |  12 +
+> > >  drivers/firmware/imx/Makefile       |   2 +
+> > >  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
+> > > drivers/firmware/imx/ele_base_msg.h |  92 +++++++
+> > >  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
+> > >  drivers/firmware/imx/ele_common.h   |  43 +++
+> > >  drivers/firmware/imx/se_ctrl.c      | 531
+> > ++++++++++++++++++++++++++++++++++++
+> > >  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
+> > >  include/linux/firmware/imx/se_api.h |  14 +
+> > >  9 files changed, 1318 insertions(+)
+> > >
+> >
+> > > +static int se_probe_if_cleanup(struct platform_device *pdev) {
+> > > +     struct device *dev = &pdev->dev;
+> > > +     struct se_if_priv *priv;
+> > > +     int ret = 0;
+> > > +
+> > > +     priv = dev_get_drvdata(dev);
+> > > +     if (!priv) {
+> > > +             ret = 0;
+> > > +             dev_dbg(dev, "SE-MU Priv data is NULL;");
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     if (priv->tx_chan)
+> > > +             mbox_free_channel(priv->tx_chan);
+> > > +     if (priv->rx_chan)
+> > > +             mbox_free_channel(priv->rx_chan);
+> > > +
+> > > +     /* free the buffer in se remove, previously allocated
+> > > +      * in se probe to store encrypted IMEM
+> > > +      */
+> > > +     if (priv->imem.buf) {
+> > > +             dmam_free_coherent(dev,
+> > > +                                ELE_IMEM_SIZE,
+> > > +                                priv->imem.buf,
+> > > +                                priv->imem.phyaddr);
+> > > +             priv->imem.buf = NULL;
+> > > +     }
+> > > +
+> > > +     if (priv->flags & RESERVED_DMA_POOL) {
+> > > +             of_reserved_mem_device_release(dev);
+> >
+> > You can call this unconditionally, no need to keep track if you called
+> > of_reserved_mem_device_init() successfully.
 > 
-> The logic was presumably to allow you to know what mount the resolved
-> file handle came from. If you use AT_EMPTY_PATH this is not needed
-> because you could just fstatfs (and now statx(AT_EMPTY_PATH)), but if
-> you just give name_to_handle_at() almost any path, there is no race-free
-> way to make sure that you know which filesystem the file handle came
-> from.
-> 
-> I don't know if that could lead to security issues (I guess an attacker
-> could find a way to try to manipulate the file handle you get back, and
-> then try to trick you into operating on the wrong filesystem with
-> open_by_handle_at()) but it is definitely something you'd want to avoid.
+> But it will not be called for each SoC.
+> The memory is not reserved for i.MX95 platforms.
+> This is required.
 
-So the following paragraphs are prefaced with: I'm not an expert on file
-handle encoding and so might be totally wrong.
+Again: You can call this unconditionally. Look at the code,
+of_reserved_mem_device_release() won't do anything if you haven't called
+of_reserved_mem_device_init() before.
 
-Afaiu, the uniqueness guarantee of the file handle mostly depends on:
+Sascha
 
-(1) the filesystem
-(2) the actual file handling encoding
-
-Looking at file handle encoding to me it looks like it's fairly easy to
-fake them in userspace (I guess that's ok if you think about them like a
-path but with a weird permission model built around them.) for quite a
-few filesystems.
-
-For example, for anything that uses fs/libfs.c:generic_encode_ino32_fh()
-it's easy to construct a file handle by retrieving the inode number via
-stat and the generation number via FS_IOC_GETVERSION.
-
-Encoding using the inode number and the inode generation number is
-probably not very strong so it's not impossible to generate a file
-handle that is not unique without knowing in which filesystem to
-interpret it in.
-
-The problem is with what name_to_handle_at() returns imho. A mnt_id
-doesn't pin the filesystem and the old mnt_id isn't unique. That means
-the filesystem can be unmounted and go away and the mnt_id can be
-recycled almost immediately for another mount but the file handle is
-still there.
-
-So to guarantee that a (weakly encoded) file handle is interpreted in
-the right filesystem the file handle must either be accompanied by a
-file descriptor that pins the relevant mount or have any other guarantee
-that the filesystem doesn't go away (Or of course, the file handle
-encodes the uuid of the filesystem or something or uses some sort of
-hashing scheme.).
-
-One of the features of file handles is that they're globally usable so
-they're interesting to use as handles that can be shared. IOW, one can
-send around a file handle to another process without having to pin
-anything or have a file descriptor open that needs to be sent via
-AF_UNIX.
-
-But as stated above that's potentially risky so one might still have to
-send around an fd together with the file handle if sender and receiver
-don't share the filesystem for the handle.
-
-However, with the unique mount id things improve quite a bit. Because
-now it's possible to send around the unique mount id and the file
-handle. Then one can use statmount() to figure out which filesystem this
-file handle needs to be interpreted in.
-
-> 
-> > Granted, that's doable but it'll mean a lot of careful checking to avoid
-> > races for mount id recycling because they're not even allocated
-> > cyclically. With lots of containers it becomes even more of an issue. So
-> > it's doubtful whether exposing the mount id through name_to_handle_at()
-> > would be something that we'd still do.
-> > 
-> > So really, if this is just about a use-case where you want to spare the
-> > additional system call for statx() and you need the mnt_id then
-> > overloading is probably ok.
-> > 
-> > But it remains an unpleasant thing to look at.
-> > 
-> 
-> Yeah, I agree it's ugly.
-> 
-> -- 
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
