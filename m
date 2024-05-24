@@ -1,404 +1,241 @@
-Return-Path: <linux-kernel+bounces-189057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFE08CEA6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:38:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DDA8CE95A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DA3284311
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30ED31F21BE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8356EB67;
-	Fri, 24 May 2024 19:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdxtvORL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D8E3BBC0;
+	Fri, 24 May 2024 18:10:00 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E615CDFA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43223B1A3;
+	Fri, 24 May 2024 18:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579486; cv=none; b=nroOM+YNh1DoG8nZkk9qxMHWb+CrRv8tQSRFDp/A613YY9nPBEs6pskpaew3lzUGoWSZOQ4wnIUB7DoCh+zP3evDMl7vlhLARiJbzKu6wKh/B2WrXkgh+1lzfSY47Y+kgVd9GBaWBUoYfCuxdeotaWLSBfMDSOJqxXE0yasfDWE=
+	t=1716574200; cv=none; b=h7JVcpu1e3hj/oxaPzf4WC3TGfa8U2+FfeFh9PspF7Y2Ee71ch1ZMoV+WSvoc0Pk+w5CaMMtfhpoG72WixHVmg1iNz8yq3+tVsxLtrNljPZ+lK7LXQRzW/d15XdAYA3t3NUsRQbhYZ8NMfJJZFdGVZyP0ueLII92NVvdyaqQdNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579486; c=relaxed/simple;
-	bh=Nje5AUtd9IY2WJYMza26m2MExgUp6NbXLoSEMw2ry7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXUFchRY36qN9arJElEtIORnsjo3f/tQJ1qm3zqjoSCUqpaQI3skMCo0q1xNkH1Ck0kd6eKNQ1W35Yuxe4Ece0Y6ofVZU5hit063TTpQI6hOe33oP3cxP0rY2F8pvNRK0lyWXPw8sWBIGF8mJ60my7uBiZxxMk1LTNy9ZYNM1LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdxtvORL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716579481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pumjuenvowhyna00Y5Js10n3w6sXpvoIPeOENPSQN/w=;
-	b=ZdxtvORLEOGy0lcJtJHjZPyEr7iNkT7TccFpGoAyEWj+0VTkF3FiZUNV5eEFa9fdv1xcVS
-	Ef6WeF5fQeF2lr9dMiLnRuRwZAPr+lki5jwIaaHVccKQVxiXpo3Je4Po/p9sBpuCO7b9V/
-	WiNcL9iETpEehX+D2tN5mIX9Oqdqkoc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-416-PhZSMxhoPSCkj9UUkiZiGw-1; Fri, 24 May 2024 15:37:56 -0400
-X-MC-Unique: PhZSMxhoPSCkj9UUkiZiGw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BAB3885A58C;
-	Fri, 24 May 2024 19:37:55 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.3])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2495C2026D33;
-	Fri, 24 May 2024 19:37:55 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id EE221400DE5FF; Thu, 23 May 2024 17:19:03 -0300 (-03)
-Date: Thu, 23 May 2024 17:19:03 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Shuling Zhou <zhoushuling@huawei.com>
-Subject: Re: [PATCH] KVM: x86: Drop support for hand tuning APIC timer
- advancement from userspace
-Message-ID: <Zk+kt8TExnuz/2Se@tpad>
-References: <20240522010304.1650603-1-seanjc@google.com>
+	s=arc-20240116; t=1716574200; c=relaxed/simple;
+	bh=OpEg4tnxAfumgql19ci41Ux2BVE1kkAJMz9U8MpGbOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfO07I6ZinYUD6UjwkT8gyP9ovPGCgCsrYAsxybhBp64Fh3DyyvkKN3C61XAwULohCdx5f0EjSIIRe1Joj7smZFwjM3p4ulkXEHRZsxl1t1RHHTg7o/NK/VGCYrQBI5/s0pWiz9uwuJKSs9+51s5dT/fg2bb0oE0jO+Cij8Bqnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VmCL815Fvz9v7Hm;
+	Sat, 25 May 2024 01:52:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id C0124140794;
+	Sat, 25 May 2024 02:09:41 +0800 (CST)
+Received: from [10.45.153.18] (unknown [10.45.153.18])
+	by APP2 (Coremail) with SMTP id GxC2BwBXkSXb11BmqTLTCA--.35053S2;
+	Fri, 24 May 2024 19:09:41 +0100 (CET)
+Message-ID: <99cc68a9-477a-4ebe-b769-465a4016bdf6@huaweicloud.com>
+Date: Fri, 24 May 2024 20:09:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522010304.1650603-1-seanjc@google.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: LKMM: Making RMW barriers explicit
+To: Alan Stern <stern@rowland.harvard.edu>, Boqun Feng <boqun.feng@gmail.com>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+ j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+ <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+ <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+ <Zk9dXj-f4rANxPep@Boquns-Mac-mini.home>
+ <da5241f5-0ae3-40dd-a2fb-8f5307d31dba@rowland.harvard.edu>
+ <ZlAAY-BuXSs9xU0m@Boquns-Mac-mini.home>
+ <9256f95a-858b-435f-b40a-a4508a1096c9@rowland.harvard.edu>
+ <ZlClXpjGga-6cv00@Boquns-Mac-mini.home>
+ <a3c10533-1d86-4945-8bda-c0bdf4b14935@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <a3c10533-1d86-4945-8bda-c0bdf4b14935@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBXkSXb11BmqTLTCA--.35053S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GryxGry3Kw4rAF18CrWDCFg_yoWxJw17pF
+	W3Ga4DKw4kJF47u39Yvr4UZa4FyrWrJF43Xrn5K34UZwn8Ka4qqFW2y3Wa9FW7Ars7Za1j
+	q3yFya47C3WDZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+	7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7IUUXdbUUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Tue, May 21, 2024 at 06:03:04PM -0700, Sean Christopherson wrote:
-> Remove support for specifying a static local APIC timer advancement value,
-> and instead present a read-only boolean parameter to let userspace enable
-> or disable KVM's dynamic APIC timer advancement.  Realistically, it's all
-> but impossible for userspace to specify an advancement that is more
-> precise than what KVM's adaptive tuning can provide.  E.g. a static value
-> needs to be tuned for the exact hardware and kernel, and if KVM is using
-> hrtimers, likely requires additional tuning for the exact configuration of
-> the entire system.
-
-Hi Sean,
-
-LAPIC timer advancement was dropped from tuned due to the improvement
-being minimal, and the measurement causing problems in some scenarios
-(those could be fixed, though).
-
-Therefore, OK with the removal of this interface.
-
-commit 51c50a3a1885d13026cb0ad9ea72aca845c342d2
-Author: Marcelo Tosatti <mtosatti@redhat.com>
-Date:   Tue Jul 21 14:20:48 2020 -0300
-
-    realtime-virtual-host profile: remove lapic advancement calculation
-
-    The LAPIC advancement improvement is minimal (3 or 4 us) and its
-    calculation has shown to be problematic under certain
-    scenarios (for example if qemu-kvm is not installed).
-
-    Remove it.
-
-    Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
 
 
+Am 5/24/2024 um 4:53 PM schrieb Alan Stern:
+> On Fri, May 24, 2024 at 07:34:06AM -0700, Boqun Feng wrote:
+>> On Fri, May 24, 2024 at 10:14:25AM -0400, Alan Stern wrote:
+>> [...]
+>>>> Not really, RMW events contains all events generated from
+>>>> read-modify-write primitives, if there is an R event without a rmw
+>>>> relation (i.e there is no corresponding write event), it's a failed RWM
+>>>> by definition: it cannot be anything else.
+>>>
+>>> Not true.  An R event without an rmw relation could be a READ_ONCE().
+>>
+>> No, the R event is already in the RWM events, it has come from a rwm
+>> atomic.
+> 
+> Oh, right.  For some reason I was thinking that an instruction could
+> belong to only one set, R or RMW.  But that doesn't make sense.
 
-diff --git a/profiles/realtime-virtual-host/find-lapictscdeadline-optimal.sh b/profiles/realtime-virtual-host/find-lapictscdeadline-optimal.sh
-deleted file mode 100755
-index 539c47e..0000000
---- a/profiles/realtime-virtual-host/find-lapictscdeadline-optimal.sh
-+++ /dev/null
-@@ -1,30 +0,0 @@
--#!/bin/bash
--
--: ${1?"Usage: $0 latency-file"}
--
--lines=`wc -l $1 | cut -f 1 -d " "`
--in_range=0
--prev_value=1
--for i in `seq 1 $lines`; do
--       a=`awk "NR==$i" $1 | cut -f 2 -d ":"`
--       value=$(($a*100/$prev_value))
--       if [ $value -ge 98 -a $value -le 102 ]; then
--               in_range=$(($in_range + 1))
--       else
--               in_range=0
--       fi
--       if [ $in_range -ge 2 ]; then
--               echo -n "optimal value for lapic_timer_advance_ns is: "
--               awk "NR==$(($i - 1))" $1 | cut -f 1 -d ":"
--               exit 0
--       fi
--       prev_value=$a
--done
--# if still decreasing, then use highest ns value
--if [ $value -le 99 ]; then
--       echo -n "optimal value for lapic_timer_advance_ns is: "
--       awk "NR==$(($i - 1))" $1 | cut -f 1 -d ":"
--       exit 0
--fi
--echo optimal not found
--exit 1
-diff --git a/profiles/realtime-virtual-host/script.sh b/profiles/realtime-virtual-host/script.sh
-index edae6c5..a11dac7 100755
---- a/profiles/realtime-virtual-host/script.sh
-+++ b/profiles/realtime-virtual-host/script.sh
-@@ -2,102 +2,13 @@
-
- . /usr/lib/tuned/functions
-
--CACHE_VALUE_FILE=./lapic_timer_adv_ns
--CACHE_CPU_FILE=./lapic_timer_adv_ns.cpumodel
--KVM_LAPIC_FILE=/sys/module/kvm/parameters/lapic_timer_advance_ns
- KTIMER_LOCKLESS_FILE=/sys/kernel/ktimer_lockless_check
--QEMU=$(type -P qemu-kvm || echo /usr/libexec/qemu-kvm)
--TSCDEADLINE_LATENCY="/usr/share/qemu-kvm/tscdeadline_latency.flat"
--[ -f "$TSCDEADLINE_LATENCY" ] || TSCDEADLINE_LATENCY="/usr/share/tuned-profiles-nfv-host-bin/tscdeadline_latency.flat"
--[ -f "$TSCDEADLINE_LATENCY" ] || TSCDEADLINE_LATENCY="/usr/share/tuned/tscdeadline_latency.flat"
--
--run_tsc_deadline_latency()
--{
--    dir=`mktemp -d`
--
--    for i in `seq 1000 500 7000`; do
--        echo $i > $KVM_LAPIC_FILE
--
--        unixpath=`mktemp`
--
--        chrt -f 1 $QEMU -S -enable-kvm -device pc-testdev \
--            -device isa-debug-exit,iobase=0xf4,iosize=0x4 \
--            -display none -serial stdio -device pci-testdev \
--            -kernel "$TSCDEADLINE_LATENCY"  \
--            -cpu host,tsc-deadline=on \
--            -mon chardev=char0,mode=readline \
--            -chardev socket,id=char0,nowait,path=$unixpath,server | grep latency | cut -f 2 -d ":" > $dir/out &
--
--        sleep 1s
--        pidofvcpu=`echo "info cpus" | ncat -U $unixpath | grep thread_id | cut -f 3 -d "=" | tr -d "\r"`
--        taskset -p -c $1 $pidofvcpu >/dev/null
--        echo "cont" | ncat -U $unixpath >/dev/null
--        wait
--
--        if [ ! -f $dir/out ]; then
--             die running $TSCDEADLINE_LATENCY failed
--        fi
--
--        tmp=$(wc -l $dir/out | awk '{ print $1 }')
--        if [ $tmp -eq 0 ]; then
--            die running $TSCDEADLINE_LATENCY failed
--        fi
--
--        A=0
--        while read l; do
--            A=$(($A+$l))
--        done < $dir/out
--
--        lines=`wc -l $dir/out | cut -f 1 -d " "`
--        ans=$(($A/$lines))
--        echo $i: $ans
--    done
--}
-
- start() {
-     setup_kvm_mod_low_latency
-
-     disable_ksm
-
--    # If CPU model has changed, clean the cache
--    if [ -f $CACHE_CPU_FILE ]; then
--        curmodel=`cat /proc/cpuinfo | grep "model name" | cut -f 2 -d ":" | uniq`
--        if [ -z "$curmodel" ]; then
--            die failed to read CPU model
--        fi
--
--        genmodel=`cat $CACHE_CPU_FILE`
--
--        if [ "$curmodel" != "$genmodel" ]; then
--            rm -f $CACHE_VALUE_FILE
--            rm -f $CACHE_CPU_FILE
--        fi
--    fi
--
--    # If the cache is empty, find the best lapic_timer_advance_ns value
--    # and cache it
--
--    if [ ! -f $KVM_LAPIC_FILE ]; then
--        die $KVM_LAPIC_FILE not found
--    fi
--
--    if [ ! -f $CACHE_VALUE_FILE ]; then
--        if [ -f "$TSCDEADLINE_LATENCY" ]; then
--             tempdir=`mktemp -d`
--             isolatedcpu=`echo "$TUNED_isolated_cores_expanded" | cut -f 1 -d ","`
--             run_tsc_deadline_latency $isolatedcpu > $tempdir/lat.out
--             if ! ./find-lapictscdeadline-optimal.sh $tempdir/lat.out > $tempdir/opt.out; then
--                die could not find optimal latency
--             fi
--             echo `cat $tempdir/opt.out | cut -f 2 -d ":"` > $CACHE_VALUE_FILE
--             curmodel=`cat /proc/cpuinfo | grep "model name" | cut -f 2 -d ":" | uniq`
--             echo "$curmodel" > $CACHE_CPU_FILE
--        fi
--    fi
--
--    if [ -f $CACHE_VALUE_FILE ]; then
--        echo `cat $CACHE_VALUE_FILE` > $KVM_LAPIC_FILE
--    fi
-     systemctl start rt-entsk
-
-     if [ -f $KTIMER_LOCKLESS_FILE ]; then
-
+I thought the same, so I perhaps contributed to that confusion.
 
 > 
-> Dropping support for a userspace provided value also fixes several flaws
-> in the interface.  E.g. KVM interprets a negative value other than -1 as a
-> large advancement, toggling between a negative and positive value yields
-> unpredictable behavior as vCPUs will switch from dynamic to static
-> advancement, changing the advancement in the middle of VM creation can
-> result in different values for vCPUs within a VM, etc.  Those flaws are
-> mostly fixable, but there's almost no justification for taking on yet more
-> complexity (it's minimal complexity, but still non-zero).
+>>> Or a plain read.  The memory model uses the tag to distinguish these
+>>> cases.
+>>>
+>>>>> that it would work is merely an artifact of herd7's internal actions.  I
+>>>>> think it would be much cleaner if herd7 represented these events in some
+>>>>> other way, particularly if we can tell it how.
+>>>>>
+>>>>> After all, herd7 already does generate different sets of events for
+>>>>> successful (both R and W) and failed (only R) RMWs.  It's not such a big
+>>>>> stretch to make the R events it generates different in the two cases.
+>>>>>
+>>>>
+>>>> I thought we want to simplify the herd internal processing by avoid
+>>>> adding mb events in cmpxchg() cases, in the same spirit, if syntactic
+>>>> tagging is already good enough, why do we want to make herd complicate?
+>>>
+>>> Herd7 already is complicated by the fact that it needs to handle
+>>> cmpxchg() instructions in two ways: success and failure.  This
+>>> complication is unavoidable.  Adding one extra layer (different tags for
+>>> the different ways) is an insignificant increase in the complication,
+>>> IMO. And it's a net reduction when you compare it to the amount of
+>>> complication currently in the herd7 code.
+>>>
+>>> Also what about cmpxchg_acquire()?  If it fails, it will generate an R
+>>> event with an acquire tag not in the rmw relation.
+
+I would like that, but that is not the current implementation, a failed 
+atomic_compare_exchange always produces a R*[once]; this behavior is 
+currently hardcoded in herd7.
+
+>>>  There is no way to
+>>> tell such events apart from a normal smp_load_acquire(), and so the .cat
+>>> file would have no way to know that the event should not have acquire
+>>> semantics.  I guess we would have to rename this tag, as well.
+>>
+>> No,
+>>
+>> 	let read_of_rmw = (RMW & R)
+>> 	let fail_read_of_rmw = read_of_rmw / dom(rmw)
+>> 	let fail_cmpxchg_acquire = fail_read_of_rmw & [Acquire]
+>>
+>> gives you all the failed cmpxchg_acquire() apart from a normal
+>> smp_load_acquire().
 > 
-> The only arguments against using KVM's adaptive tuning is if a setup needs
-> a higher maximum, or if the adjustments are too reactive, but those are
-> arguments for letting userspace control the absolute max advancement and
-> the granularity of each adjustment, e.g. similar to how KVM provides knobs
-> for halt polling.
+> Yes, I see.  Using this approach, no further changes to herd7 or the
+> def file would be needed.  We would just have to add 'mb to the
+> Accesses enumeration and to the list of tags allowed for an RMW
+> instruction.
 > 
-> Link: https://lore.kernel.org/all/20240520115334.852510-1-zhoushuling@huawei.com
-> Cc: Shuling Zhou <zhoushuling@huawei.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/lapic.c | 39 +++++++++++++++++++++------------------
->  arch/x86/kvm/lapic.h |  2 +-
->  arch/x86/kvm/x86.c   | 11 +----------
->  3 files changed, 23 insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index ebf41023be38..acd7d48100a1 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -59,7 +59,17 @@
->  #define MAX_APIC_VECTOR			256
->  #define APIC_VECTORS_PER_REG		32
->  
-> -static bool lapic_timer_advance_dynamic __read_mostly;
-> +/*
-> + * Enable local APIC timer advancement (tscdeadline mode only) with adaptive
-> + * tuning.  When enabled, KVM programs the host timer event to fire early, i.e.
-> + * before the deadline expires, to account for the delay between taking the
-> + * VM-Exit (to inject the guest event) and the subsequent VM-Enter to resume
-> + * the guest, i.e. so that the interrupt arrives in the guest with minimal
-> + * latency relative to the deadline programmed by the guest.
-> + */
-> +static bool lapic_timer_advance __read_mostly = true;
-> +module_param(lapic_timer_advance, bool, 0444);
-> +
->  #define LAPIC_TIMER_ADVANCE_ADJUST_MIN	100	/* clock cycles */
->  #define LAPIC_TIMER_ADVANCE_ADJUST_MAX	10000	/* clock cycles */
->  #define LAPIC_TIMER_ADVANCE_NS_INIT	1000
-> @@ -1854,16 +1864,14 @@ static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
->  	guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
->  	trace_kvm_wait_lapic_expire(vcpu->vcpu_id, guest_tsc - tsc_deadline);
->  
-> -	if (lapic_timer_advance_dynamic) {
-> -		adjust_lapic_timer_advance(vcpu, guest_tsc - tsc_deadline);
-> -		/*
-> -		 * If the timer fired early, reread the TSC to account for the
-> -		 * overhead of the above adjustment to avoid waiting longer
-> -		 * than is necessary.
-> -		 */
-> -		if (guest_tsc < tsc_deadline)
-> -			guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
-> -	}
-> +	adjust_lapic_timer_advance(vcpu, guest_tsc - tsc_deadline);
-> +
-> +	/*
-> +	 * If the timer fired early, reread the TSC to account for the overhead
-> +	 * of the above adjustment to avoid waiting longer than is necessary.
-> +	 */
-> +	if (guest_tsc < tsc_deadline)
-> +		guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
->  
->  	if (guest_tsc < tsc_deadline)
->  		__wait_lapic_expire(vcpu, tsc_deadline - guest_tsc);
-> @@ -2812,7 +2820,7 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
->  		return HRTIMER_NORESTART;
->  }
->  
-> -int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
-> +int kvm_create_lapic(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_lapic *apic;
->  
-> @@ -2845,13 +2853,8 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
->  	hrtimer_init(&apic->lapic_timer.timer, CLOCK_MONOTONIC,
->  		     HRTIMER_MODE_ABS_HARD);
->  	apic->lapic_timer.timer.function = apic_timer_fn;
-> -	if (timer_advance_ns == -1) {
-> +	if (lapic_timer_advance)
->  		apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_NS_INIT;
-> -		lapic_timer_advance_dynamic = true;
-> -	} else {
-> -		apic->lapic_timer.timer_advance_ns = timer_advance_ns;
-> -		lapic_timer_advance_dynamic = false;
-> -	}
->  
->  	/*
->  	 * Stuff the APIC ENABLE bit in lieu of temporarily incrementing
-> diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-> index 0a0ea4b5dd8c..a69e706b9080 100644
-> --- a/arch/x86/kvm/lapic.h
-> +++ b/arch/x86/kvm/lapic.h
-> @@ -85,7 +85,7 @@ struct kvm_lapic {
->  
->  struct dest_map;
->  
-> -int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns);
-> +int kvm_create_lapic(struct kvm_vcpu *vcpu);
->  void kvm_free_lapic(struct kvm_vcpu *vcpu);
->  
->  int kvm_apic_has_interrupt(struct kvm_vcpu *vcpu);
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index d750546ec934..fa064864ad2c 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -164,15 +164,6 @@ module_param(kvmclock_periodic_sync, bool, 0444);
->  static u32 __read_mostly tsc_tolerance_ppm = 250;
->  module_param(tsc_tolerance_ppm, uint, 0644);
->  
-> -/*
-> - * lapic timer advance (tscdeadline mode only) in nanoseconds.  '-1' enables
-> - * adaptive tuning starting from default advancement of 1000ns.  '0' disables
-> - * advancement entirely.  Any other value is used as-is and disables adaptive
-> - * tuning, i.e. allows privileged userspace to set an exact advancement time.
-> - */
-> -static int __read_mostly lapic_timer_advance_ns = -1;
-> -module_param(lapic_timer_advance_ns, int, 0644);
-> -
->  static bool __read_mostly vector_hashing = true;
->  module_param(vector_hashing, bool, 0444);
->  
-> @@ -12177,7 +12168,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->  	if (r < 0)
->  		return r;
->  
-> -	r = kvm_create_lapic(vcpu, lapic_timer_advance_ns);
-> +	r = kvm_create_lapic(vcpu);
->  	if (r < 0)
->  		goto fail_mmu_destroy;
->  
-> 
-> base-commit: 4aad0b1893a141f114ba40ed509066f3c9bc24b0
-> -- 
-> 2.45.0.215.g3402c0e53f-goog
-> 
-> 
+> Question: Since R and RMW have different lists of allowable tags, how
+> does herd7 decide which tags are allowed for an event that is in both
+> the R and RMW sets?
+
+After looking over the patch draft for herd7 written by Hernan [1], my 
+best guess is: it doen't. It seems that after herd7 detects you are 
+using LKMM it simply drops all tags except 'acquire on read and 'release 
+on store. Everything else becomes 'once (and 'mb adds some F[mb] sometimes).
+
+That means that if one were to go through with the earlier suggestion to 
+distinguish between the smp_mb() Mb and the cmpxchg() Mb, e.g. by 
+calling the latter RmwMb, current herd7 would always erase the RmwMb tag 
+because it is not called "acquire" or "release".
+The same would happen of course if you introduced an RmwAcquire tag.
+
+So there are several options:
+
+- treat the tags as a syntactic thing which is always present, and
+  specify their meaning purely in the cat file, analogous to what you
+  have defined above. This is personally my favorite solution. To
+  implement this in herd7 we would simply remove all the current special
+  cases for the LKMM barriers, which I like.
+
+  However then we need to actually define the behavior of herd if
+  an inappropriate tag (like release on a load) is provided. Since the
+  restriction is actually mostly enforced by the .def file - by simply
+  not  providing a smp_store_acquire() etc. -, that only concerns RMWs,
+  where xchg_acquire() would apply the Acquire tag to the write also.
+
+  The easiest solution is to simply remove the syntax for specifying
+  restrictions - it seems it is not doing much right now anyways - and
+  do the filtering inside .bell, with things like
+
+     (* only writes can have Release tags *)
+     let Release = Release & W \ (RMW \ rng(rmw))
+
+  One good thing about this way is that it would work even without
+  modifying herd, since it is in a sense idempotent with the
+  transformations done by herd.
+
+  FWIW, in our internal weak memory model in Dresden we did exactly this,
+  and use REL for the syntax and Rel for the semantic release ordering to
+  make the distinction more clear, with things like:
+
+     let Acq = (ACQ | SC) & (R | F)
+     let Rel = (REL | SC) & (W | F)
+
+  (SC is our equivalent to LKMM's Mb)
+
+- treat the tags as semantic markers that are only present or not under
+  some circumstances, and define the semantics fully based on the present
+  tags. The circumstances are currently hardcoded in herd7, but we should
+  move them out with some syntax like __cmpxchg{acquire}{once}.
+
+  This requires touching the parser and of course still has the issue
+  with the acquire tag appearing on the store as well.
+
+- provide a full syntax for defining the event sequence that is
+  expected. For example, for a cmpxchg we could do
+
+     cmpxchg = { F[success-cmpxchg]; c = R&RMW[once]; if (c==v) { 
+W&RMW[once]; } F[success-cmpxchg] }
+
+  and then define in .bell that a success-cmpxchg is an mb if it is
+  directly next to a cmpxchg that succeeds.
+
+  The advantage is that you can customize the representation to whatever
+  kernel devs thing is the most intuitive. The downside is that it
+  requires major rewrites to herd7, someone to think about a reasonable
+  language for specifying this etc.
+
+
+
+Best wishes,
+   jonas
+
+
+
+[1] https://github.com/herd/herdtools7/pull/865
 
 
