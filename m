@@ -1,275 +1,473 @@
-Return-Path: <linux-kernel+bounces-188235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D564D8CDF8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A9A8CDF8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F6B1F21A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE281C20F17
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCD53839C;
-	Fri, 24 May 2024 02:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09DE28DC1;
+	Fri, 24 May 2024 02:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fG9APhFs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTnx1dpT"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496D4381AA;
-	Fri, 24 May 2024 02:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716518354; cv=fail; b=K04XR0nb8rDnHeU8gA3UsRDMPL9A26yxlD6qKabFFVZSZJvNWah+MI7Q6tQ717PaHW1FOVIKKOqSZ3SFixYv18zsN8DoBSExfjI9izPW22UcMdOs5ACiPcXV0NfK2V5nyTI1mePT5DGy0TilumeN3+B18vR9QT1TuQhrf6adO4M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716518354; c=relaxed/simple;
-	bh=wxm2TxSKfKeMMqfV/n5IEHKBgnJwV/yDEzD5J2RsuEQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lP7e1jfGWtLF24o7JsDmX3kiKbl9+8o8qA5VNCB7DdUQ9ATmFU9jq350CP06KpLuwYwPq9UdTkm5lVhPpfbQQ3nMZ1N8rLsZDVTaOkSwQ2RnDlPbc4bmgigyYMSf3nEQ7pgytCHqE7WP47IkLvsj1qoqeX96izoVEShghrT4Ipk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fG9APhFs; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716518352; x=1748054352;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=wxm2TxSKfKeMMqfV/n5IEHKBgnJwV/yDEzD5J2RsuEQ=;
-  b=fG9APhFsnnrjJDFkwVF31tKURo28ezF03D4mG1nTevepn+y9G3gvhDFF
-   6cRGu2ToOiC57SZeGSqhJj9PPr1B0NAK6YFO6TirkKPaIkgMTum/o1e6/
-   Sn1jOuoVVt0oHnYAqoKWDU5WoiG+hKnFcV1bLIaIkVTwNcmwWJkU/3I9C
-   bgOARbJvTuImpWQdM79EWCWCowZWt5bZ69M4KGMGSsXRN67fBY99Be/gO
-   aP6pXPYRgh5p9a9jYOGYsX3E8yNbVG0HZzIcr4RdhJVfsSWh1FWlOH83S
-   RxBeisr6P48xB5hC82D5V7j2GSY6y8d7OkEy3wKNOvyB368HRvZVCTPWX
-   w==;
-X-CSE-ConnectionGUID: l7uP1QsURFmXC/Cz8A+0Ow==
-X-CSE-MsgGUID: v+8VRW/RRIWWveeVdeB1Kw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="13110029"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="13110029"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 19:39:12 -0700
-X-CSE-ConnectionGUID: ngDyY6wcRrSLMiSCOoIBeg==
-X-CSE-MsgGUID: SCNDT0IZR4WsSq9GwQKKqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="33988302"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 May 2024 19:39:11 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 19:39:11 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 19:39:10 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 23 May 2024 19:39:10 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 23 May 2024 19:39:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R2+yYWtcfQl+Dc78IqfaY/mAKhCS7ti3OcHTuBmx+HfuBKeLEld+f17RZ2zypo3ijXhIHsOyj5t8OF+J5u8qqyMgkk+SymEJPfE8SYTSajOgoPybqG8VPvcM1gnePEtzrOVbkT+BUCX+ahjzh1otNajvDY/03iXm9KpCrpORrDkhU66ss7tXV41XYYAKEu4Cp5swCJMz9NNWbAJtkMgfbWbigKWaEIxjymrr9BT+wUHIJ1rPwBRTIeMS2jfWmeZUPw7K0bzNiFwpV2/eTuC4qztQK7jV57lFSyLs4H+Lba4usjIl5/ij+uzLGETnoysyRKjTJ1U3Un5ipT+TxW43bQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r6IxzXUlzE/a03SEoewZeaUMgaV/bvQhJlUepBF1+hk=;
- b=GdpDr3byPsrV8AMiBtD9Vhq01s/sfdMZ4roWgI1fQFQ9p5uu2x/NOxsXBgmTzzfBQs7shs8I3cy4n3F3v4TaGY2KoTsXmDA8Rgdz0KfiRh9RaH4oVQdeq3BgEtsT/9ICygnDF+48o/XQkp4x2P1/JQxCvix5Kom4gL1fdcV68LVfTkKieP3XCkMTAM/CQoOCzZz7LN0QCszHzQxCH7nFFsSOkHBRmZW76nCfBaIcvKJwhC1jBSNGPEvUs4wTYQbBtYRhSoYNE8IbSAoEx7NA79OgvP4aQvrKnRQzVpT2HLDeuVCw/pAifA3We1LsmBqxX1Ou5lpF0DCeZBBk32OtsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by PH7PR11MB7124.namprd11.prod.outlook.com (2603:10b6:510:20f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
- 2024 02:39:09 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e%4]) with mapi id 15.20.7587.035; Fri, 24 May 2024
- 02:39:09 +0000
-Date: Fri, 24 May 2024 10:39:00 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/6] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-Message-ID: <Zk/9xMepBqAXEItK@chao-email>
-References: <20240522022827.1690416-1-seanjc@google.com>
- <20240522022827.1690416-4-seanjc@google.com>
- <8b344a16-b28a-4f75-9c1a-a4edf2aa4a11@intel.com>
- <Zk7Eu0WS0j6/mmZT@chao-email>
- <c4fa17ca-d361-4cb7-a897-9812571aa75f@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c4fa17ca-d361-4cb7-a897-9812571aa75f@intel.com>
-X-ClientProxiedBy: SI1PR02CA0059.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::19) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFCB374FE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 02:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716518516; cv=none; b=P3O7l2aClsEHddaH5At63YgafR1XcFXV86gaDA4swHw9NcL0Az0O8w3tOztfcCe649tvjKjLi+G8LjT+5NjYUnYpVpbIRe6zM+aAHqM4WjiNvGFmM8kiH0K6NKz2LgIOj4Ts1OxgNG6Z873olTUS7TxjTkYf4ZfjLs2wDLSG65I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716518516; c=relaxed/simple;
+	bh=Muh0sPUC/Lk4gJvxjKCTctk1m1G8krloPm0JSKYOW88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NF9FrfFel0raXOw0OB88UOWz+x+XpJuhiZqTjeRGQxupiujZBa66XTFlVrgNlKTa7fj6cQvKiaRnxwDSfBafpcbDu/vAdOhpwg0iDKWo9mNfOl4Afp90KeMbqDpGaETZS+JyRCj93Cwsm1IYzpYzWhV5BzctnCFZucOsd6kPg6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTnx1dpT; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57824fa0a8fso4288453a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716518513; x=1717123313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FWYitP/mKok0KulkRpR08gHkHosJXhe6t/yNEPgAOq4=;
+        b=lTnx1dpT/QaitVdr20gdBT+6oZgYp2EQEQJcywlMz1jk02wBvu8udHIQ+USzuYV+EI
+         yb4nwaQUxMi3xhfnY4O9EKwEgdcF/ny4YjyBjfPOs9lKuvkjsB3Q3g+HkhJsS0wCbwrd
+         o7BQApt/7Ck4B1mZWt1MW0pnOtQlYoCO4gs8NGKfv3YwcG3BFjKVskZ+mTsFqqLWzw3k
+         Cm8VIaeOq4mkGw2YEhdt0dyvOu+/YtrsMCCxhLmG73x17SuxjnI30K+P9Lvc9LGubkPP
+         jIAdAqXMMQzILztxTKV4DbWmZEST03XX9BJoi3L/7fos8M95bqyy+T2/I0FyiS3w/qQk
+         LLUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716518513; x=1717123313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FWYitP/mKok0KulkRpR08gHkHosJXhe6t/yNEPgAOq4=;
+        b=I1eAW5PkooIp0lzd83QdLkDFBSDx2JHDHiMO54Pn4K+uCvXiadGInGHTBJ0qKXK3rp
+         /sKNBCmZMMEYdwwKcIZxu+uVvjKxf8eUxxfs5Dp4xIxaqR9wYAZPc/6f2JxC2Q9lqXU9
+         Lk1xJzXUwn4gNO0kSDYdBJZmymCNlu1/SB0B61RuHmilahz32NSfgvPa+34d0BS6dNMz
+         BAJ1EIfvXCYTWNo3SsNfgacgzcqE/bbtKeSIKXXGYTtN3P14soyzeInkyTS1ZkYw61Ln
+         rcRIJvfJ4d4U03E30LpBK5z9rWNXYvb0yOuo59OWUyamQhQ37baX5D+/iOqKbEDMsfIL
+         6XkA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0NOAyWQAwXexYDYxLOjstEiCosCFAPZ23S9+m+XRaICndLmrdyZiNDr/sY+FWmj1zGinP0Jql6MhgTjK3AAQbNEWxgQ1kbxR2kSOv
+X-Gm-Message-State: AOJu0Yw1zBXxQAimh5rhO/8lNBEuA1NKYRIxidXUHdDQsH7D4ZnYkQia
+	+9BCcswjB04y7+aNKYs9llBx8ZJiZVohW7N3k0pb0A3Ozi6Kz9LR/75fv5Rdlcos+lZ+DWJOIBE
+	vOhrzyGD7gHkEd/E2krDFxIX06IE=
+X-Google-Smtp-Source: AGHT+IGxhUTktEkdPHHzD30YF7TkOm9Uh9zE6iPqyXCGxtrc7t2gCZb9swNURxyMBZ9Q9BZEbJhiJn7ShMYmSwlo4Rk=
+X-Received: by 2002:a50:8e17:0:b0:572:7b08:d497 with SMTP id
+ 4fb4d7f45d1cf-5785199cf06mr564442a12.17.1716518512599; Thu, 23 May 2024
+ 19:41:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH7PR11MB7124:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1c53587-7bc5-4914-6ae1-08dc7b9aafc7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7FDd2Yf2oKL28IHc6Kov9q4UoH9Dd1TaJnfgIUwOA8LCn9ZEqc8H8UjAMu3h?=
- =?us-ascii?Q?VkLoWSGrsPz2PtF0yoGCzwtOytsFYPXrPC07HuoQJO/1K7BN1g6TGhVk53LP?=
- =?us-ascii?Q?UQKB5jkOk1gF1UTtz9ktnufuTKYXa247f6qXC34YDNDiTcwLEo1vTw5sSdhW?=
- =?us-ascii?Q?Hf1XCRoXy/jNYc35VGnpJXo2s0S8QoTwnxkl7JNXtv2P/RURgqO+4DNQvaUc?=
- =?us-ascii?Q?2rZMorOeqYHgBOQxldQQBcrsWPV0CPWnRAVdrVAU72VMVjBY+/PZiPLAoL+u?=
- =?us-ascii?Q?hEQaHmpomT1mRVueNTL3QK5zuoLlnNSjvELVu7/92s565e4sGNu4FycGQBhM?=
- =?us-ascii?Q?rrvhyWmQWkaDhdFRn2AGBLWcbTpFaRAh06qYIJsEJJOsvFKujRHBsg3GQEA6?=
- =?us-ascii?Q?1qB6J5/8/TiJ9pNHHL9piiYSumQNsxP9I/S3kKzJBgCHs9xdM+LM8cxvz8P/?=
- =?us-ascii?Q?R4pAT86sJUflNh53h/3cAhc716zTEMvxZjbcfLqUjWUPwp2x/k8OfnmRaWnO?=
- =?us-ascii?Q?oA6B+pfUDvDtkJ/Fjui8aRQFa1NmMqrpz+vnJx6qfXBzsVConcol+oX7yhvs?=
- =?us-ascii?Q?jBj4rg7OiSBKL7g/UAhWbYGOuJ2YYYP6jVi8Sn/JkWNmZvrUzwv/IhfFgFqJ?=
- =?us-ascii?Q?UqQOZJdohKLjDaOC/3xhMKWKpDbSNCLFc+dLclfHK/fXZ3Cf5+bE/Ixf1rYf?=
- =?us-ascii?Q?yl2PCbSvjIL9rbKHhBJUwqQQPG+uBEaVhvlDKZCFJqR+ldJ/wvbhZZhoOdnx?=
- =?us-ascii?Q?dTby+QBSxK8YA/fHRyM8Y77vnbgz+0m0CsBSubJPHKe3gbWcMZt2s/qx1WAm?=
- =?us-ascii?Q?tJhV+x/WnFqUXafjZEIoMAsjBHWuLhEeRdc48sqmHJeyN8wy1yyS5BhPC3/P?=
- =?us-ascii?Q?v+FOSU7OQ5XMcsns+Dypsk0ZUqNHr5Gd33Zoqfjd7LVL9OmzFbsLqQZ6LaH0?=
- =?us-ascii?Q?MfVpxYzK8e7BLQWYjgZFswRs9VXrprRJ+AnUhBsNf0P/fBOQJOYBvpnzgBka?=
- =?us-ascii?Q?7iIMPl0Ru7EunyG92K5h+yqRmvWN5/Joq3rZXW6KL2EwntHkzAu0PrLKxAql?=
- =?us-ascii?Q?swWImAUqbztz4XXafNk+kUgVLGGzNCeFnhK7O3eoYFXhd3cxMwFqTMPGCB3k?=
- =?us-ascii?Q?vqOTTqGOJA6x3uRW3Cx9Vsando482RZiXXDhIkb/c0H2b8fgKpD9wZQWvQUK?=
- =?us-ascii?Q?/kXa4r6pY/uRXvNLg/MAVOxmVVcJVv9XL5INfBijVKWDcuGyzigMhwdUmr4Q?=
- =?us-ascii?Q?/nQjG0OpTiIdLyEQd8OPNAT4t3OaGSm83M0yCOq3zA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ftMkiGnTENVqcGyiZJU3fp6Tp3xt05oJ9mWBmuU42LuOqBktrbEDbRWoCorf?=
- =?us-ascii?Q?yPdBANisCxQfyU0fDAjuG7K/5wqdgBOmXA+LmNUgvi6MXpqUHhxRUZFQuvA5?=
- =?us-ascii?Q?AJzq3QbRqa4DV7uqButrA3ui1/MhG4fhz5eM22Q2cfLaRpyhfieGewYdBaGI?=
- =?us-ascii?Q?8EvVR9zpHBh++dNAHdficOI0V9gaW1oNNvcfRpi4z3MAIEWJG7KPQ9lJ9brA?=
- =?us-ascii?Q?NrLA9YPben5aui9xQp/K5igrFjvGeN6AYmFg0w1t/GzshGtUBZmMSYKKoVqF?=
- =?us-ascii?Q?p22JlUauj1FVfg6LnFWME4oVDL/u2TyvSvCkqZ1JZKzVdtguvQJFpI6gPTqW?=
- =?us-ascii?Q?qDut36/5QHPi0TJ7GijEdYkgMhKka9+ZtQfPQ2lcUSZaf4losaNRxv+h6bC3?=
- =?us-ascii?Q?6gEWSw2miLEXBGmiv544cFqbNtlXiicWOXP71EgHxsnopwGvosxiPMyYvMCF?=
- =?us-ascii?Q?ba1hk23paNuzITo2rosE1uT9lpOmhIVtBRLdEBu11CaqCl+np5OLH/KayFC1?=
- =?us-ascii?Q?HkyGhMDZ7B/WWKBKNoFhISvYDX4vONGv2V34KpcBkVR/CXbnPH2ZWqH59E+9?=
- =?us-ascii?Q?7MCvCqMa4DD8V9nuTuUzK5GK15nZsa6/gBEth2gEvLognIFsnGVUPq5BGwkJ?=
- =?us-ascii?Q?5wxFFmyVdwqJH07bGRz8XksRvDrchc3LDcdlJ+mILDQ2f3CImFzTOZyJ+xcG?=
- =?us-ascii?Q?chh+s5Z4FQCTt+E5h3ylq8sU1pTmqfpmv3Axbb2KJ7Yh7VnkOjCfxs1zU3qx?=
- =?us-ascii?Q?+0G0dK4lmddS4k7gWFqCapbrY+bop2BxTc6aEwcsqvFOpz79ntnfH5IcK6ZW?=
- =?us-ascii?Q?CN38triR91jArwJ+QZs41fZSDyp6bOu+BYLTX+DSOztH6O9GMWwIoGWyXpIa?=
- =?us-ascii?Q?jJUqe0vTiwAD1TcOgouLIAfF1RIqwyGax17o8LW2TXbSG2WSPrw8iRq5is1A?=
- =?us-ascii?Q?6neshkV71Tf80Mb/WZu/9UzKT5Ce+VvwM3TD61RJ+mBOMJyHXqWvkiEbz2xW?=
- =?us-ascii?Q?Svtm4bHrFT+0A436aVF5+GfftvvZvPAvPrK2dVNCFim1Ocm3U2nV+Ua2USqC?=
- =?us-ascii?Q?ToYEJ8QFsLrZf/j7E74o8NmKXjnPxLvxeVOXvO6pKMAW/ZJoaU+eJwbJsDQk?=
- =?us-ascii?Q?nDROnIac+L/lD2rOQOZxcHfrJ6btb3kngHmKNXxWrjFHkrJmrBsg/SKXV/9L?=
- =?us-ascii?Q?m86THca/mAaNVs3XcUBET5yjPe64RIaXhjdp+q/a1O2P0gA4RMky0Q4/AjZz?=
- =?us-ascii?Q?leRY1WMTdgSkvOcehlAOv+SVCqxWNoacDwoHNe+1hNs6YT7zwLkUaSdbkeIV?=
- =?us-ascii?Q?gQ2FvYdFZ23QFuPYCPeGr67iUAkH9NvZGHBFqXhxGF4IWpA7idasBj6rqqQZ?=
- =?us-ascii?Q?wyMtIMH8wvA0+L1lwg3C6eQ2/MZVc8Acp4QCVXx2pOG//21fEFTtrV/gZmPX?=
- =?us-ascii?Q?D4QdwH5g1pH1pP65wJ1yqRs8iHlWpKdOGhebH362zO9RwAtrnRHn+ZeSZDQj?=
- =?us-ascii?Q?QxAGtPYSofsjlq0oCHRDU+CrHyo60HWdoVDJftdnfC9k4YBuDILNkD/rxTWp?=
- =?us-ascii?Q?F/QFOCIHKyHXpL9Pq+yymVxE/J8mREsDMVeC4uui?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1c53587-7bc5-4914-6ae1-08dc7b9aafc7
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 02:39:08.7619
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n+pYbtP3vzzH8G7pNB7k8AEh3Iz12rcBItr55mUxZ0qLrlrcfSkpNxgeRZOT4i9igxGtKwV1tyC31qjnHYSdtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7124
-X-OriginatorOrg: intel.com
+References: <20240418134435.6092-1-ioworker0@gmail.com> <20240418134435.6092-5-ioworker0@gmail.com>
+ <CAGsJ_4zjV31JvUyzoiKibYDjg+gQMvuBA3bDE1a1K_APcHozkg@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zjV31JvUyzoiKibYDjg+gQMvuBA3bDE1a1K_APcHozkg@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Fri, 24 May 2024 10:41:41 +0800
+Message-ID: <CAK1f24kX551pfJvbfkxOrraiNp1OqzTpOjCfhTAap+mgiPfgOg@mail.gmail.com>
+Subject: Re: [PATCH v10 4/4] mm/madvise: optimize lazyfreeing with mTHP in madvise_free
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com, 
+	mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
+	shy828301@gmail.com, xiehuan09@gmail.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 11:11:37AM +1200, Huang, Kai wrote:
+Hi Barry,
+
+Thanks a lot for reporting!
+
+On Fri, May 24, 2024 at 6:20=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
 >
+> On Fri, Apr 19, 2024 at 1:44=E2=80=AFAM Lance Yang <ioworker0@gmail.com> =
+wrote:
+> >
+> > This patch optimizes lazyfreeing with PTE-mapped mTHP[1]
+> > (Inspired by David Hildenbrand[2]). We aim to avoid unnecessary folio
+> > splitting if the large folio is fully mapped within the target range.
+> >
+> > If a large folio is locked or shared, or if we fail to split it, we jus=
+t
+> > leave it in place and advance to the next PTE in the range. But note th=
+at
+> > the behavior is changed; previously, any failure of this sort would cau=
+se
+> > the entire operation to give up. As large folios become more common,
+> > sticking to the old way could result in wasted opportunities.
+> >
+> > On an Intel I5 CPU, lazyfreeing a 1GiB VMA backed by PTE-mapped folios =
+of
+> > the same size results in the following runtimes for madvise(MADV_FREE) =
+in
+> > seconds (shorter is better):
+> >
+> > Folio Size |   Old    |   New    | Change
+> > ------------------------------------------
+> >       4KiB | 0.590251 | 0.590259 |    0%
+> >      16KiB | 2.990447 | 0.185655 |  -94%
+> >      32KiB | 2.547831 | 0.104870 |  -95%
+> >      64KiB | 2.457796 | 0.052812 |  -97%
+> >     128KiB | 2.281034 | 0.032777 |  -99%
+> >     256KiB | 2.230387 | 0.017496 |  -99%
+> >     512KiB | 2.189106 | 0.010781 |  -99%
+> >    1024KiB | 2.183949 | 0.007753 |  -99%
+> >    2048KiB | 0.002799 | 0.002804 |    0%
+> >
+> > [1] https://lkml.kernel.org/r/20231207161211.2374093-5-ryan.roberts@arm=
+com
+> > [2] https://lore.kernel.org/linux-mm/20240214204435.167852-1-david@redh=
+at.com
+> >
+> > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
 >
->On 23/05/2024 4:23 pm, Chao Gao wrote:
->> On Thu, May 23, 2024 at 10:27:53AM +1200, Huang, Kai wrote:
->> > 
->> > 
->> > On 22/05/2024 2:28 pm, Sean Christopherson wrote:
->> > > Add an off-by-default module param, enable_virt_at_load, to let userspace
->> > > force virtualization to be enabled in hardware when KVM is initialized,
->> > > i.e. just before /dev/kvm is exposed to userspace.  Enabling virtualization
->> > > during KVM initialization allows userspace to avoid the additional latency
->> > > when creating/destroying the first/last VM.  Now that KVM uses the cpuhp
->> > > framework to do per-CPU enabling, the latency could be non-trivial as the
->> > > cpuhup bringup/teardown is serialized across CPUs, e.g. the latency could
->> > > be problematic for use case that need to spin up VMs quickly.
->> > 
->> > How about we defer this until there's a real complain that this isn't
->> > acceptable?  To me it doesn't sound "latency of creating the first VM"
->> > matters a lot in the real CSP deployments.
->> 
->> I suspect kselftest and kvm-unit-tests will be impacted a lot because
->> hundreds of tests are run serially. And it looks clumsy to reload KVM
->> module to set enable_virt_at_load to make tests run faster. I think the
->> test slowdown is a more realistic problem than running an off-tree
->> hypervisor, so I vote to make enabling virtualization at load time the
->> default behavior and if we really want to support an off-tree hypervisor,
->> we can add a new module param to opt in enabling virtualization at runtime.
->
->I am not following why off-tree hypervisor is ever related to this.
+> Hi Lance,
+> I am getting kernel panic with this patch,
 
-Enabling virtualization at runtime was added to support an off-tree hypervisor
-(see the commit below).  To me, supporting an off-tree hypervisor while KVM is
-autoloaded is a niche usage. so, my preference is to make enabling
-virtualization at runtime opt-in rather than the default.
+Good spot!
 
-commit 10474ae8945ce08622fd1f3464e55bd817bf2376
-Author: Alexander Graf <agraf@suse.de>
-Date:   Tue Sep 15 11:37:46 2009 +0200
+I just noticed that you posted a patch[1] to fix the bug introduced by the
+commit 89e86854fb0a (mm/arm64: override clear_young_dirty_ptes() batch help=
+er).
 
-    KVM: Activate Virtualization On Demand
+Could you please try your patch and see if the kernel panic issue still occ=
+urs?
 
-    X86 CPUs need to have some magic happening to enable the virtualization
-    extensions on them. This magic can result in unpleasant results for
-    users, like blocking other VMMs from working (vmx) or using invalid TLB
-    entries (svm).
-
-    Currently KVM activates virtualization when the respective kernel module
-    is loaded. This blocks us from autoloading KVM modules without breaking
-    other VMMs.
-
-    To circumvent this problem at least a bit, this patch introduces on
-    demand activation of virtualization. This means, that instead
-    virtualization is enabled on creation of the first virtual machine
-    and disabled on destruction of the last one.
-
-    So using this, KVM can be easily autoloaded, while keeping other
-    hypervisors usable.
+[1] https://lore.kernel.org/all/20240524005444.135417-1-21cnbao@gmail.com/
 
 >
->Could you elaborate?
+> / # /home/barry/develop/linux/madvfree
+> [   78.345305] watchdog: BUG: soft lockup - CPU#3 stuck for 22s! [madvfre=
+e:101]
+> [   78.345992] Modules linked in:
+> [   78.346942] irq event stamp: 0
+> [   78.347311] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+> [   78.348407] hardirqs last disabled at (0): [<ffff8000800add04>]
+> copy_process+0x654/0x19a8
+> [   78.349291] softirqs last  enabled at (0): [<ffff8000800add04>]
+> copy_process+0x654/0x19a8
+> [   78.349851] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [   78.350544] CPU: 3 PID: 101 Comm: madvfree Not tainted
+> 6.9.0-ge51ae633c861 #253
+> [   78.351200] Hardware name: linux,dummy-virt (DT)
+> [   78.351747] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYP=
+E=3D--)
+> [   78.352314] pc : queued_spin_lock_slowpath+0x5c/0x528
+> [   78.352772] lr : do_raw_spin_lock+0xc8/0x120
+> [   78.353245] sp : ffff8000863d3720
+> [   78.353657] x29: ffff8000863d3720 x28: ffff0000c45a8ff8 x27: 080000010=
+3b24003
+> [   78.354632] x26: ffff0000c3b26080 x25: fffffdffc0000000 x24: ffff80008=
+22c2d10
+> [   78.355446] x23: ffff80008403018f x22: ffff8000863d38e0 x21: 0000ffff7=
+f000000
+> [   78.356259] x20: ffff800082fbe008 x19: ffff0000c3b26080 x18: 000000000=
+0000000
+> [   78.357120] x17: 0000000000000000 x16: 0000000000000000 x15: 000000000=
+0000000
+> [   78.357967] x14: 0000000000000000 x13: 0000000000000000 x12: 000000000=
+0000000
+> [   78.358878] x11: ff7ffffffffffbff x10: 0040000000000041 x9 : ffff80008=
+0143750
+> [   78.359818] x8 : ffff8000863d3708 x7 : 0000000000000000 x6 : ffff80008=
+03b34e8
+> [   78.360688] x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008=
+2fbe008
+> [   78.361602] x2 : ffff80012ac1f000 x1 : 0000000000000000 x0 : 000000000=
+0000080
+> [   78.362755] Call trace:
+> [   78.363132]  queued_spin_lock_slowpath+0x5c/0x528
+> [   78.363614]  do_raw_spin_lock+0xc8/0x120
+> [   78.364041]  _raw_spin_lock+0x58/0x70
+> [   78.364455]  __pte_offset_map_lock+0x98/0x210
+> [   78.364891]  madvise_free_pte_range+0x88/0xa58
+> [   78.365406]  walk_pgd_range+0x390/0x808
+> [   78.365829]  __walk_page_range+0x1e0/0x1f0
+> [   78.366256]  walk_page_range+0x1f0/0x2c8
+> [   78.366676]  madvise_free_single_vma+0x16c/0x308
+> [   78.367115]  madvise_vma_behavior+0x504/0xa20
+> [   78.367549]  madvise_walk_vmas+0xc0/0x128
+> [   78.367972]  do_madvise.part.0+0x110/0x558
+> [   78.368398]  __arm64_sys_madvise+0x68/0x88
+> [   78.368826]  invoke_syscall+0x50/0x128
+> [   78.369332]  el0_svc_common.constprop.0+0x48/0xf8
+> [   78.369778]  do_el0_svc+0x28/0x40
+> [   78.370184]  el0_svc+0x50/0x150
+> [   78.370583]  el0t_64_sync_handler+0x13c/0x158
+> [   78.371017]  el0t_64_sync+0x1a4/0x1a8
+> [  102.345217] watchdog: BUG: soft lockup - CPU#3 stuck for 45s! [madvfre=
+e:101]
+> [  102.345835] Modules linked in:
+> [  102.346290] irq event stamp: 0
+> [  102.346715] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+> [  102.347252] hardirqs last disabled at (0): [<ffff8000800add04>]
+> copy_process+0x654/0x19a8
+> [  102.347796] softirqs last  enabled at (0): [<ffff8000800add04>]
+> copy_process+0x654/0x19a8
+> [  102.348333] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [  102.348925] CPU: 3 PID: 101 Comm: madvfree Tainted: G             L
+>     6.9.0-ge51ae633c861 #253
+> [  102.349549] Hardware name: linux,dummy-virt (DT)
+> [  102.349988] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYP=
+E=3D--)
+> [  102.350535] pc : queued_spin_lock_slowpath+0x5c/0x528
+> [  102.351010] lr : do_raw_spin_lock+0xc8/0x120
+> [  102.351508] sp : ffff8000863d3720
+> [  102.351939] x29: ffff8000863d3720 x28: ffff0000c45a8ff8 x27: 080000010=
+3b24003
+> [  102.352811] x26: ffff0000c3b26080 x25: fffffdffc0000000 x24: ffff80008=
+22c2d10
+> [  102.353772] x23: ffff80008403018f x22: ffff8000863d38e0 x21: 0000ffff7=
+f000000
+> [  102.354625] x20: ffff800082fbe008 x19: ffff0000c3b26080 x18: 000000000=
+0000000
+> [  102.355495] x17: 0000000000000000 x16: 0000000000000000 x15: 000000000=
+0000000
+> [  102.356370] x14: 0000000000000000 x13: 0000000000000000 x12: 000000000=
+0000000
+> [  102.357333] x11: ff7ffffffffffbff x10: 0040000000000041 x9 : ffff80008=
+0143750
+> [  102.358273] x8 : ffff8000863d3708 x7 : 0000000000000000 x6 : ffff80008=
+03b34e8
+> [  102.359112] x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008=
+2fbe008
+> [  102.360001] x2 : ffff80012ac1f000 x1 : 0000000000000000 x0 : 000000000=
+0000080
+> [  102.360887] Call trace:
+> [  102.361289]  queued_spin_lock_slowpath+0x5c/0x528
+> [  102.361768]  do_raw_spin_lock+0xc8/0x120
+> [  102.362294]  _raw_spin_lock+0x58/0x70
+> [  102.362825]  __pte_offset_map_lock+0x98/0x210
+> [  102.363299]  madvise_free_pte_range+0x88/0xa58
+> [  102.363771]  walk_pgd_range+0x390/0x808
+> [  102.364268]  __walk_page_range+0x1e0/0x1f0
+> [  102.364729]  walk_page_range+0x1f0/0x2c8
+> [  102.365263]  madvise_free_single_vma+0x16c/0x308
+> [  102.365786]  madvise_vma_behavior+0x504/0xa20
+> [  102.366315]  madvise_walk_vmas+0xc0/0x128
+> [  102.366779]  do_madvise.part.0+0x110/0x558
+> [  102.367269]  __arm64_sys_madvise+0x68/0x88
+> [  102.367714]  invoke_syscall+0x50/0x128
+> [  102.368110]  el0_svc_common.constprop.0+0x48/0xf8
+> [  102.368574]  do_el0_svc+0x28/0x40
+> [  102.369001]  el0_svc+0x50/0x150
+> [  102.369464]  el0t_64_sync_handler+0x13c/0x158
+> [  102.369916]  el0t_64_sync+0x1a4/0x1a8
+> [  126.345236] watchdog: BUG: soft lockup - CPU#3 stuck for 67s! [madvfre=
+e:101]
 >
->The problem of enabling virt during module loading by default is it impacts
->all ARCHs. Given this performance downgrade (if we care) can be resolved by
->explicitly doing on_each_cpu() below, I am not sure why we want to choose
->this radical approach.
+> the test code is as belows,
+>
+> #define MADV_PAGEOUT    21      /* reclaim these pages */
+>
+> #define DATA_SIZE (128UL * 1024 * 1024)
+> #define PAGE_SIZE (4UL * 1024)
+> #define LARGE_FOLIO_SIZE (64UL * 1024)
+>
+> static void *read_data(void *addr)
+> {
+>         unsigned long i;
+>
+>         for (i =3D 0; i < DATA_SIZE * 2; i +=3D PAGE_SIZE) {
+>                 if (*((char *)addr + i) !=3D (char)i) {
+>                 }
+>         }
+> }
+>
+> static void *lazyfree(void *addr)
+> {
+>         unsigned long i;
+>
+>         madvise(addr, DATA_SIZE * 2, MADV_FREE);
+> }
+>
+> int main(int argc, char **argv)
+> {
+>         void *addr =3D mmap(NULL, DATA_SIZE * 2, PROT_READ | PROT_WRITE,
+>                         MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
-IIUC, we plan to set up TDX module at KVM load time; we need to enable virt
-at load time at least for TDX. Definitely, on_each_cpu() can solve the perf
-concern. But a solution which can also satisfy TDX's need is better to me.
+Could you please check the /sys/kernel/mm/transparent_hugepage/enabled?
 
+Is it set to 'always'?
+
+Also, what size of mTHP are you using here?
+
+>         memset(addr, 0x11, DATA_SIZE * 2);
+>         lazyfree(addr);
 >
+>         while(1) {
+>                 sleep(1);
+>                 read_data(addr);
+>         }
+>         return 0;
+> }
+
+Thanks again for reaching out!
+Lance
 >
->> > Or we just still do:
->> > 
->> > 	cpus_read_lock();
->> > 	on_each_cpu(hardware_enable_nolock, ...);
->> > 	cpuhp_setup_state_nocalls_cpuslocked(...);
->> > 	cpus_read_unlock();
->> > 
->> > I think the main benefit of series is to put all virtualization enabling
->> > related things into one single function.  Whether using cpuhp_setup_state()
->> > or using on_each_cpu() shouldn't be the main point.
->> > 
+> >  mm/madvise.c | 85 +++++++++++++++++++++++++++-------------------------
+> >  1 file changed, 44 insertions(+), 41 deletions(-)
+> >
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index 4597a3568e7e..ed125ad8a21e 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -643,6 +643,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsig=
+ned long addr,
+> >                                 unsigned long end, struct mm_walk *walk=
+)
+> >
+> >  {
+> > +       const cydp_t cydp_flags =3D CYDP_CLEAR_YOUNG | CYDP_CLEAR_DIRTY=
+;
+> >         struct mmu_gather *tlb =3D walk->private;
+> >         struct mm_struct *mm =3D tlb->mm;
+> >         struct vm_area_struct *vma =3D walk->vma;
+> > @@ -697,44 +698,57 @@ static int madvise_free_pte_range(pmd_t *pmd, uns=
+igned long addr,
+> >                         continue;
+> >
+> >                 /*
+> > -                * If pmd isn't transhuge but the folio is large and
+> > -                * is owned by only this process, split it and
+> > -                * deactivate all pages.
+> > +                * If we encounter a large folio, only split it if it i=
+s not
+> > +                * fully mapped within the range we are operating on. O=
+therwise
+> > +                * leave it as is so that it can be marked as lazyfree.=
+ If we
+> > +                * fail to split a folio, leave it in place and advance=
+ to the
+> > +                * next pte in the range.
+> >                  */
+> >                 if (folio_test_large(folio)) {
+> > -                       int err;
+> > +                       bool any_young, any_dirty;
+> >
+> > -                       if (folio_likely_mapped_shared(folio))
+> > -                               break;
+> > -                       if (!folio_trylock(folio))
+> > -                               break;
+> > -                       folio_get(folio);
+> > -                       arch_leave_lazy_mmu_mode();
+> > -                       pte_unmap_unlock(start_pte, ptl);
+> > -                       start_pte =3D NULL;
+> > -                       err =3D split_folio(folio);
+> > -                       folio_unlock(folio);
+> > -                       folio_put(folio);
+> > -                       if (err)
+> > -                               break;
+> > -                       start_pte =3D pte =3D
+> > -                               pte_offset_map_lock(mm, pmd, addr, &ptl=
+);
+> > -                       if (!start_pte)
+> > -                               break;
+> > -                       arch_enter_lazy_mmu_mode();
+> > -                       pte--;
+> > -                       addr -=3D PAGE_SIZE;
+> > -                       continue;
+> > +                       nr =3D madvise_folio_pte_batch(addr, end, folio=
+, pte,
+> > +                                                    ptent, &any_young,=
+ &any_dirty);
+> > +
+> > +                       if (nr < folio_nr_pages(folio)) {
+> > +                               int err;
+> > +
+> > +                               if (folio_likely_mapped_shared(folio))
+> > +                                       continue;
+> > +                               if (!folio_trylock(folio))
+> > +                                       continue;
+> > +                               folio_get(folio);
+> > +                               arch_leave_lazy_mmu_mode();
+> > +                               pte_unmap_unlock(start_pte, ptl);
+> > +                               start_pte =3D NULL;
+> > +                               err =3D split_folio(folio);
+> > +                               folio_unlock(folio);
+> > +                               folio_put(folio);
+> > +                               pte =3D pte_offset_map_lock(mm, pmd, ad=
+dr, &ptl);
+> > +                               start_pte =3D pte;
+> > +                               if (!start_pte)
+> > +                                       break;
+> > +                               arch_enter_lazy_mmu_mode();
+> > +                               if (!err)
+> > +                                       nr =3D 0;
+> > +                               continue;
+> > +                       }
+> > +
+> > +                       if (any_young)
+> > +                               ptent =3D pte_mkyoung(ptent);
+> > +                       if (any_dirty)
+> > +                               ptent =3D pte_mkdirty(ptent);
+> >                 }
+> >
+> >                 if (folio_test_swapcache(folio) || folio_test_dirty(fol=
+io)) {
+> >                         if (!folio_trylock(folio))
+> >                                 continue;
+> >                         /*
+> > -                        * If folio is shared with others, we mustn't c=
+lear
+> > -                        * the folio's dirty flag.
+> > +                        * If we have a large folio at this point, we k=
+now it is
+> > +                        * fully mapped so if its mapcount is the same =
+as its
+> > +                        * number of pages, it must be exclusive.
+> >                          */
+> > -                       if (folio_mapcount(folio) !=3D 1) {
+> > +                       if (folio_mapcount(folio) !=3D folio_nr_pages(f=
+olio)) {
+> >                                 folio_unlock(folio);
+> >                                 continue;
+> >                         }
+> > @@ -750,19 +764,8 @@ static int madvise_free_pte_range(pmd_t *pmd, unsi=
+gned long addr,
+> >                 }
+> >
+> >                 if (pte_young(ptent) || pte_dirty(ptent)) {
+> > -                       /*
+> > -                        * Some of architecture(ex, PPC) don't update T=
+LB
+> > -                        * with set_pte_at and tlb_remove_tlb_entry so =
+for
+> > -                        * the portability, remap the pte with old|clea=
+n
+> > -                        * after pte clearing.
+> > -                        */
+> > -                       ptent =3D ptep_get_and_clear_full(mm, addr, pte=
+,
+> > -                                                       tlb->fullmm);
+> > -
+> > -                       ptent =3D pte_mkold(ptent);
+> > -                       ptent =3D pte_mkclean(ptent);
+> > -                       set_pte_at(mm, addr, pte, ptent);
+> > -                       tlb_remove_tlb_entry(tlb, pte, addr);
+> > +                       clear_young_dirty_ptes(vma, addr, pte, nr, cydp=
+_flags);
+> > +                       tlb_remove_tlb_entries(tlb, pte, nr, addr);
+> >                 }
+> >                 folio_mark_lazyfree(folio);
+> >         }
+> > --
+> > 2.33.1
+> >
 
