@@ -1,225 +1,138 @@
-Return-Path: <linux-kernel+bounces-188763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BA28CE699
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:02:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28B38CE69B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273A71C20B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:02:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53975B21899
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0009612BF38;
-	Fri, 24 May 2024 14:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D7312C47F;
+	Fri, 24 May 2024 14:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hA1Ya6qN";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hA1Ya6qN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRLeeLgx"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AA686255;
-	Fri, 24 May 2024 14:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BF339ACC;
+	Fri, 24 May 2024 14:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559343; cv=none; b=hmBkFxiBH3D7iMtXeHpYq+uC3ByMr5J5p4BSvweUipuEcvTjI7QOztAuo8aURAwjbSwwZCTsB/nO+y5I91sFt1o05DK6UK11d8jft+T/HbLDGnVZ1uyLzunLltxzjo5v0fLUaLUk1Dkux52e+9oGu1Hir0gGSAx1PLDq9tpKGKs=
+	t=1716559422; cv=none; b=rn0eCUWGJYqVeptutU9HPPrpwo58AXqUQ1HCadeLRsPmTpXrmW1GS6IgnH+0K2Vgb1P17E1jbBJeXWcNADziXLZCEabz1x6/KK2OE+V6VbR4+G4cTX5EPkUWiKwM2SKcNw+T5NpOqzNm8q+0JKSxG28xBNEaiSwFcrXm9wqXVuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559343; c=relaxed/simple;
-	bh=hUnQZvh1OeWX8YEpNoZSomA44bla0dHoyGnqIqhTFrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuDg3GIH4v0bIkuFXJPilOA5Ys4OA+QLjhmxjqksP4XGGdztIIBwVfE4XwnsGw90nte9Zr1pP+Bz5+GO+galou5kX8zQl2640/1DwLEVqmQLIRViYIekFklKBn6EKl8zevf/3T7bQh41ZFWAbnCC5vw1dPPpr4EOKdgMJXlPcXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hA1Ya6qN; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hA1Ya6qN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4AC4A33B4C;
-	Fri, 24 May 2024 14:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716559339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LMNjuXW0YTCBOxUjnc2jkU2tEh+hEHW9XCcd6JROZNk=;
-	b=hA1Ya6qNdSQBUavvKiUNORHOym71k5veHqOr+WcN+gHZhSPXkCkx5m5ZcZ7rIbXgSsqPv4
-	bG9p4oov+FHMP3J/7H8weoib2IkYGeVuwj0vSVmfTQgsueJWSeqoEOxN8HBxDFvhzy6MSx
-	IxHEXTLTNOq8IyGyA9COeRIu49Unxw0=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716559339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LMNjuXW0YTCBOxUjnc2jkU2tEh+hEHW9XCcd6JROZNk=;
-	b=hA1Ya6qNdSQBUavvKiUNORHOym71k5veHqOr+WcN+gHZhSPXkCkx5m5ZcZ7rIbXgSsqPv4
-	bG9p4oov+FHMP3J/7H8weoib2IkYGeVuwj0vSVmfTQgsueJWSeqoEOxN8HBxDFvhzy6MSx
-	IxHEXTLTNOq8IyGyA9COeRIu49Unxw0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3168F13A3D;
-	Fri, 24 May 2024 14:02:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fXAbCeudUGbrBAAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 24 May 2024 14:02:19 +0000
-Date: Fri, 24 May 2024 16:02:18 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
- first commit
-Message-ID: <ZlCd6kD4w2mezWBj@tiehlicka>
-References: <ZkxbObACcnUMZ3LA@tiehlicka>
- <2024052136-cubbyhole-ecologist-5b68@gregkh>
- <ZkzREEA5_N_xfqED@tiehlicka>
- <2024052110-grasp-liking-22c0@gregkh>
- <ZkzgZoxF_RD50PdW@tiehlicka>
- <2024052243-napping-coastal-3306@gregkh>
- <Zk790Afi1sfwgrZi@tiehlicka>
- <2024052309-scabby-favored-0973@gregkh>
- <ZlBnsEsr66mR-frf@tiehlicka>
- <2024052458-matrimony-making-b7f1@gregkh>
+	s=arc-20240116; t=1716559422; c=relaxed/simple;
+	bh=r24Qga0ed7HOag24vEjlFAJ6R/BjnaRDrz7HKRoHTFs=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sBsgUIIiKEk+3DCJiN1Bnlf03QmIrdlj7lkD6u+Jhwdmmep3HLd5mNuroW29USrcAQBAD12XHevo1IziA3AgqoVbns9wVp/1XHoA+4Y5E+c6aEuBdDTJtjp+75lKnbF2Ey7zRuwTCPabBfVqDsPutSZomZyWToMwfwnde2VA4lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRLeeLgx; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a883101so11073951fa.3;
+        Fri, 24 May 2024 07:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716559419; x=1717164219; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gK/kt0+G1Gu5Dj3cp1xqTKPcVZ4x2Lbeq9ePii2LIz4=;
+        b=QRLeeLgxVCQMe62VhQiwOnXgyn38Is5I7KDRY/fxdhs8vgXwhGpGAQMUrBSy0Jee+R
+         nQV7+Shnx4Pl8Vn0NRS/b8rKTaSV1bOEehuEnbOI60j1iYDgBqqEHjcl5TRgLr/9VjLO
+         OKl9MvxWz/pLX5AgkSEPV1cM8ci9t9HniWFOpKEVcp7IHWXSSD0InhIUyBOfY0L6BdQK
+         E5O5Tuiju6g6jAP8dbNP+OGFgskNUsTSKPgQKuBE5nFJO5axDgy/zIAqlAvPsnycx89L
+         b2cA6fDtxdt3Sjt8Efw0sxn4CbxayLdLd+1opgtgTThieltouR37Dno0rq52xUhVe9wi
+         YdyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716559419; x=1717164219;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gK/kt0+G1Gu5Dj3cp1xqTKPcVZ4x2Lbeq9ePii2LIz4=;
+        b=l0i94828RU2pv043XJECrkVlfy2wm2+V77cl7gw+2haLqxv6CuYDVpF48juKeRtLIu
+         mNhDZgIQ+xE6kVXKey/IPECAOGY42oeCxUxGybeVuH9J1Ydu+8tej4VZqy3iyk4GgzQF
+         OErU/krDpDBB/QnayoNhZee05Je5QQB2QLi3vHX8Ped/MS8UMla2eJ1W92qw/EPQ3zJA
+         dpgaeGuNwIb8s609EUR2AwCUmqzsVCOU8xj1+XnZ8K7bXkynvkEEcYVchaPAjfNQ/NSU
+         FRqvZf3w5dGjV3QDaaiboixQZH+UWC2PkzsxRGdGd/17mJf8IrjVl3nh4oTK26PWgi7r
+         fedg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlg1pEnVOdVkC4HD21jBndJJh8xRpdSpminYQLZX6+Iu/KQB4/PG5Z6mwUe7gstFwxl+DGcJexsduMs1k8o/PdQshV4Q0lxqWcBZIPzNBLJpJJQzYv3J/gjULXnmhRPh35bc7jtn9FbmdM5PzKDuspLpD07E2BjOOizLYk
+X-Gm-Message-State: AOJu0YwoVfu4gTbXOtDm76Wch6H726m3sDOqPU3bmfP2UX/3sqOSk62q
+	zWqXsues7rCZjeqSzjLznk6Zix03oP6LLD1aiuNuQzyVt2NU/QDn
+X-Google-Smtp-Source: AGHT+IHGurczt6IqfWzkF2qKuyA2yqPccpX12/gbuVBEgw864yeetZeX5cJUgG/EqRUsCkCHBBVSCg==
+X-Received: by 2002:a2e:a315:0:b0:2e0:a39b:2b25 with SMTP id 38308e7fff4ca-2e95b27f5cbmr16925081fa.48.1716559418969;
+        Fri, 24 May 2024 07:03:38 -0700 (PDT)
+Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee806esm54025705e9.3.2024.05.24.07.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 07:03:37 -0700 (PDT)
+From: Paul Durrant <xadimgnik@gmail.com>
+X-Google-Original-From: Paul Durrant <paul@xen.org>
+Message-ID: <04ec9d6c-e761-4cfc-a2fe-a2d7d398c334@xen.org>
+Date: Fri, 24 May 2024 15:03:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024052458-matrimony-making-b7f1@gregkh>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Reply-To: paul@xen.org
+Subject: Re: [RFC PATCH v3 13/21] KVM: x86: Improve synchronization in
+ kvm_synchronize_tsc()
+To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
+ zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>
+References: <20240522001817.619072-1-dwmw2@infradead.org>
+ <20240522001817.619072-14-dwmw2@infradead.org>
+Content-Language: en-US
+Organization: Xen Project
+In-Reply-To: <20240522001817.619072-14-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 24-05-24 13:47:00, Greg KH wrote:
-> On Fri, May 24, 2024 at 12:10:56PM +0200, Michal Hocko wrote:
-> > On Thu 23-05-24 15:49:59, Greg KH wrote:
-> > > On Thu, May 23, 2024 at 10:26:56AM +0200, Michal Hocko wrote:
-> > > > On Wed 22-05-24 05:57:38, Greg KH wrote:
-> > [...]
-> > > Because of asking, many others are starting to help out, you can too,
-> > > just submit patches against the cve/review/proposed/ directory with a
-> > > list of commits that you feel should have CVEs assigned for, or annotate
-> > > why you feel specific ones we have reviewed should NOT have a CVE
-> > > assigned, and our tools can handle them quite well as part of the
-> > > assignment process (see scripts/cve_review for a tool that some of us
-> > > use to create these files, that's not required, as not all of us use it,
-> > > but the output format is the key, and that's a simple list of commit
-> > > ids, personally I generate that from mboxes.)
-> > 
-> > Do I get it right that proposals shouldn't be sent via email to
-> > cve@kernel.org as suggested by the in tree documentation?
+On 22/05/2024 01:17, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> The documentation should say that you _SHOULD_ send proposals to
-> cve@kernel.org, did we get it wrong somehow?
+> When synchronizing to an existing TSC (either by explicitly writing zero,
+> or the legacy hack where the TSC is written within one second's worth of
+> the previously written TSC), the last_tsc_write and last_tsc_nsec values
+> were being misrecorded by __kvm_synchronize_tsc(). The *unsynchronized*
+> value of the TSC (perhaps even zero) was bring recorded, along with the
+> current time at which kvm_synchronize_tsc() was called. This could cause
+> *subsequent* writes to fail to synchronize correctly.
 > 
-> > I do not mind
-> > the specific workflow but until now I have followed Documentation/process/cve.rst
-> > as authoritative source of the process. It would be really great if that
-> > matched the workflow.
+> Fix that by resetting {data, ns} to the previous values before passing
+> them to __kvm_synchronize_tsc() when synchronization is detected. Except
+> in the case where the TSC is unstable and *has* to be synthesised from
+> the host clock, in which case attempt to create a nsec/tsc pair which is
+> on the correct line.
 > 
-> I'm confused as to what in that document is incorrect, care to point it
-> out?
-
-Maybe I've just misunderstood the part about sending patches against
-cve/review/proposed/. I was thinking about sending pull requests against
-vulns.git.
- 
-> > > > If you really want to build a trust around the CVE process then make it
-> > > > more transparent. I would start by adding reason why something has been
-> > > > marked CVE. You are saying there is peer review process going on then
-> > > > why not add Reviewed-by: to make it explicit and visible.
-> > > 
-> > > We have that, see the git log of the cve/review/ directory for the files
-> > > and where most all of the cves come from.  Some come directly from
-> > > requests by others to us, and a few other places (i.e. security
-> > > reports), so we of course can't document the source of everything for
-> > > obvious reasons.
-> > 
-> > Thanks for pointing me there but I do not think this is what I've had in
-> > mind. I do understand that there is some pattern matching happening to
-> > select most of the candidates, but as you've said this is then reviewed
-> > and during that review you likely need to read through that changelog
-> > and build some sort of statement why this is considered a security
-> > threat.
+> Furthermore, there were *three* different TSC reads used for calculating
+> the "current" time, all slightly different from each other. Fix that by
+> using kvm_get_time_and_clockread() where possible and using the same
+> host_tsc value in all cases.
 > 
-> Right now for the 3 people doing all of the reviews, 1 is using pattern
-> matching of a sort (see the cve_review tool for the big regex and
-> workflow used there), one is reading each patch/header in mbox format,
-> and one is using some other tool.  Then for the ones that we disagree on
-> (i.e. not a score of 2 out of 3), we comment as to why we feel they
-> should, or should not, be accepted.
-
-Thanks for the clarification.
-
-> As this process is evolving, we
-> haven't really documented it, except here and in talks with others as we
-> travel.  We're working on making that more public over time.
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>   arch/x86/kvm/x86.c | 32 ++++++++++++++++++++++++++++----
+>   1 file changed, 28 insertions(+), 4 deletions(-)
 > 
-> Note, I do not know of any other CNA that does this in public as much as
-> we are already, we are pushing the boundry of what CNAs are doing pretty
-> hard here by putting almost all of our reviews in public _before_ a CVE
-> is assigned.  That's not normal, and hopefully we don't get told to stop
-> that (sshhh, don't tell anyone...)
 
-I really like and appreciate this part! That is a huge improvement
-comparing to the previous process.
+Reviewed-by: Paul Durrant <paul@xen.org>
 
-> > I believe exactly _this_ would be a much more valuable information in
-> > the CVE announcement than a copy&past of the changelog which on its own
-> > can be trially referenced by a link. Also if there is a peer review
-> > happening then Reviewed-by would be really nice. Not to mention
-> > Reported-by if this was externally reported (the report could be a part
-> > of the announcement as well).
-> 
-> We can't do a "Reported-by:" for CVEs as we aren't allowed to add
-> personal information like that to the records as per cve.org's rules.
-
-OK, understood. Although I do remember CVEs crediting parties
-discovering/reporting the issue.
-
-> And people want to word-smith the text all the time already, so we just
-> default to using the changelog text as that's the most "neutral" and
-> public information out there (i.e. we don't have to worry about any sort
-> of data-retention or classification laws as the information is already
-> public in kernel changelog text.)
-
-This part I do not understand. What is wrong about a reasoning why
-something has been considered a CVE? E.g. something like 
-CVE assigned because a potential WARN_ON is fixed and that could panic
-with panic_on_warn. Fixed by <URL_TO_LINUS_TREE>
-
-or
-CVE assigned because UAF is fixed and those can be generally used to
-construct more complex attacks. Fixed by <URL_TO_LINUS_TREE>
-
-etc.
--- 
-Michal Hocko
-SUSE Labs
 
