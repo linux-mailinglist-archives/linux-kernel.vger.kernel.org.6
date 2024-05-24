@@ -1,183 +1,182 @@
-Return-Path: <linux-kernel+bounces-188743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541138CE641
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEAB8CE646
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B2A1B2100C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EE1281B90
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C17786AD6;
-	Fri, 24 May 2024 13:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5E812BF3E;
+	Fri, 24 May 2024 13:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BibtKiKF"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iL5bOfkH"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A6A48CCC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86448CCC;
+	Fri, 24 May 2024 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716558086; cv=none; b=NIXtk9MSxqk7xqhTVGAg944yDIt9HY43+sUvG53ufIbpDLahACfSxHtlzC7SFCcHqqunthDzUrLPKAPK76nyiNxcdFyZBjqvXhAwgidHuX77GXnYuVViZUZpCiQNFdnx9Tbe1VAlmmruk3W2CTcXpR+7vgvV/DssfPiDtddtuhU=
+	t=1716558205; cv=none; b=JJIi8cF7zREKp/tR9OTnIyxqcMn+POXAkJ56XGN8SnC3rByXFdKMHzlZOJg8t4chdaYDVkKg8yGx5r9ugenSWqsuhPEArVUwiI0H4vobI70WSNPr0chtwW59Mh1Zkn3kaWPsziGgKdqnxmA5TOT49frVr+iL0w3obDaedfMI4Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716558086; c=relaxed/simple;
-	bh=pXmgjP8kQqhZKTvZCbXx51GgOKIOYJ0kK34P7Nvg0ns=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FBVn+1Unmx8eQGgh/B/kihxZTVhdEXOMrpUlavwiU51UXbQjjXp6QaAxiRFfPJJ2IIkHRlRugLKQziRBNre0z1VycW93/G7+XofLzFKtObRulZUxtwNDyTFQ7XPftE0ItjDOHTX+Tno9oxf0h88bGN2AA1oqAiFrDd5Ar4XlyQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BibtKiKF; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1716558205; c=relaxed/simple;
+	bh=4fg+g+15lUvITv1DL7MxCA+mRiWs9ZIVv1H2yv35hJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nwaF0CpQi7QdNvvUIs5/LGmMBDg7+3Ey9YUD5UxQnXtpo/77euzx2XSzq0hsBP7v0lrSs6sMPgBsplnrx1hWwSeSoqnT/pjhR0MOOR8/pr+3NxjqY/ZNtqIW0h/ZwxdPwRZs/ton5hEOXGchiklgBWwzhgezsSsa20byYUxZJI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iL5bOfkH; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f3406f225bso13601915ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 06:41:24 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-681ad081695so634246a12.3;
+        Fri, 24 May 2024 06:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716558084; x=1717162884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gB+Z6iISz7dIslM1QhewgRyF/lRbbJhi6qwW8Tf0+m0=;
-        b=BibtKiKFuWOWv7PxixB1R63RrRvlQphuV96x5q9PnZe5D38S73Y2ORGpFvJv5qqnj5
-         +qLsdrB4mm4gguZzDqRVrK+FAakfHXPaopHeVQ9khkY0+o3CoQOwNGsbve5/R1qEP968
-         AFSsAO/jtjLCj/v+evbLH73GqbPcngofpslNTnmAoZH/I9v9EPgORuCqNiS2MlILsCD5
-         NJEyviT4R0ZqYwf93z9mbli4pBc0WbTOYKQR3fSymUBpHMR/5amkWqjN1721SrUGHu8W
-         VPQBHe9cLfASPlvvu2gLFaXptY2kuUNWLdWL7R2xlmsdK4u97vwhsc2TAH+FC7FDZPsg
-         rcnQ==
+        d=gmail.com; s=20230601; t=1716558203; x=1717163003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=0yupO8dUYCF+0G9tTYKlxkVq1DaGE31KehgEMMUSJG4=;
+        b=iL5bOfkHSt2O9OW4xVNRmJ2C0fv1sO+3gXZaejRHfONgHfRMfqzuj70Cuo1LOd9ojJ
+         Dc/GijKBp+J5jOlq2IO9XUK4cjOi/ChG6v+lC/eyJDTcZfWwmdOFVry3ZoJZqh0ZSLmF
+         7OfJ7UiD1R7dgjbo7UmjCpUHnk5Hce5+jK4PdJ6jYQzLRgQRK9J12apkngKLJmAXHbd4
+         Hreg5bd5lmUJXYlM7AhaQZgEUdyqTlpPazCM3AgXRce4iG9Ree475FosKOwy3j4BPuDe
+         cokV2nHV7z6KFeLKpJntbTbYfyPkEtLVW/6wgoZ73mZiykldPJ+hMYIVmhv4MbkdVDEn
+         E8Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716558084; x=1717162884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gB+Z6iISz7dIslM1QhewgRyF/lRbbJhi6qwW8Tf0+m0=;
-        b=o4oEw8yQzMS1zuzu+0P1CuXNsLSgW1+axwMEpkbQ8V4sgfnK9fd5OX3l/x9HWEw5vA
-         kzV0QyS/rdCkXL5FfeewEot8pSpb7Li8YNMWgxWOXfRgXNVesLDZA0CZHxdgRkPPq5zR
-         LP0Lnj7eJHyFCO8/PkA/ipwWDbGhVsK8+1WDT7UCCnjLVZy95MKyoNWPkgtssotBzCvq
-         jGiOVHyOMF9r+eB2wX6M1rmuT5szOh0WIVOKWKOeuSqjfY3cvf/q6Ne1TPpsHpphMvVc
-         JG9yOIGrRmidEqIbZw8jZD0S6J5CPl/oP9UF5L7ggI6YWL8yFaikwDbY0PqXcj/sqWXe
-         O+Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLQ3qG0ZZNe77CukrJvqi9bZ6IBONUJvaTLr6wshk4yE0jE0yXgrvBVd8RA5vD9vHXp2b3rDQ5AVom4/yneyaX+6U/esWwGjuKBQO
-X-Gm-Message-State: AOJu0YwS5aV60oYDW2bayICHX30E6aYqsNlAe7zx7Mm90MtrfwMb5tyv
-	4Tb8ml9GHIzPWPZ49ZxGek4wsP1j//7D5ZWrE3zVh4Bkccw3sb/a
-X-Google-Smtp-Source: AGHT+IEdwZENfXHIedWRgCTX2HmRayT2IRetf5qjW52gmljF9o4LIwOTKfZypqCrVl5pHfCFnEK9cw==
-X-Received: by 2002:a17:902:eccb:b0:1f0:99fc:6402 with SMTP id d9443c01a7336-1f4486fd403mr23778155ad.10.1716558084060;
-        Fri, 24 May 2024 06:41:24 -0700 (PDT)
-Received: from PC-YLX4GJ2P.company.local (014136220210.static.ctinets.com. [14.136.220.210])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9e3106sm13881865ad.300.2024.05.24.06.41.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 06:41:23 -0700 (PDT)
-From: Chunxin Zang <spring.cxz@gmail.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	bristot@redhat.com,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	yu.c.chen@intel.com,
-	yangchen11@lixiang.com,
-	zhouchunhua@lixiang.com,
-	zangchunxin@lixiang.com,
-	Chunxin Zang <spring.cxz@gmail.com>
-Subject: [PATCH] sched/fair: Reschedule the cfs_rq when current is ineligible
-Date: Fri, 24 May 2024 21:40:11 +0800
-Message-Id: <20240524134011.270861-1-spring.cxz@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1716558203; x=1717163003;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0yupO8dUYCF+0G9tTYKlxkVq1DaGE31KehgEMMUSJG4=;
+        b=iK06TGs8TDGrAiYhSo9MXpVJHAvaBzw1TSnawG1PHX4g8RyUmK2get8z4mR6POn9hp
+         K+Bzz10VFD7v3oHm5icfRcsgUn9cSrIbjUs7NcQah9Snpgxv+Jhs7dJ15kReeWuWhFYO
+         sGe+UwYF2P+ZAPpu9DfG+muCtYxkksUrT7PHgbgNcbslGIqD7CeC/N/gKGETx+oGal6w
+         AI3gAan+EgvXRT7SwrPUGDhfbkwWw3qaPOk6DYg8a9WsGZsXAhhObwRSB4Iu1/WwlB54
+         Df83Jgj7hSZvJg9oknJT9orFJSz7uSiv7gaQ4D65gMkURemuHZLQDUZVlaR9odRq23DN
+         PbtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV55VqwF6nh6BcCklEXRrG59WfnRGdjfi7YDwLSp6F9vW8TvUK4XPkLVPEefKdtOtO5gDHjkBINUW3l95Zs6bCeI/RAZ6KOYfSlPKi7FnItnO6wgummAHjx7GjP/z0J0o9r0H3qM8hmAQ==
+X-Gm-Message-State: AOJu0Yzig+jdojDVHsAYfZ0pBrxUpIc0mtTZ4Pk/QngWoLBC++e2GMQO
+	UzEoistIWfHpIrmQLcg8xQ7rqYrSZUkXc3gUZhUsSjzxNWzQnQ/O
+X-Google-Smtp-Source: AGHT+IFP+60RswKtT3v6VqYC0kcSrnoN8GHpqIEwAiQOpkJYbmvZ32zTc+S4LaqCEySlMq+zyLYErA==
+X-Received: by 2002:a17:90a:43c5:b0:2be:b2:c7fa with SMTP id 98e67ed59e1d1-2bf5e94444cmr2298605a91.6.1716558203317;
+        Fri, 24 May 2024 06:43:23 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9ef08b5sm3278876a91.14.2024.05.24.06.43.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 06:43:22 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <1e088782-418d-41e2-843f-b3d6cd3ab4f7@roeck-us.net>
+Date: Fri, 24 May 2024 06:43:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 13/15] drm/amd/display: Use ARCH_HAS_KERNEL_FPU_SUPPORT
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ Christoph Hellwig <hch@lst.de>, loongarch@lists.linux.dev,
+ amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>
+References: <20240329072441.591471-1-samuel.holland@sifive.com>
+ <20240329072441.591471-14-samuel.holland@sifive.com>
+ <eeffaec3-df63-4e55-ab7a-064a65c00efa@roeck-us.net>
+ <CADnq5_NmKyTBbE6=V+XdEKStnjcyYSHyHqdkgBen4UhPnVKimQ@mail.gmail.com>
+ <CADnq5_Ndzw5Gre=yyPKyFNX5yFWjTCMg2xqrn6tEj6h8t-nAYg@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CADnq5_Ndzw5Gre=yyPKyFNX5yFWjTCMg2xqrn6tEj6h8t-nAYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-I found that some tasks have been running for a long enough time and
-have become illegal, but they are still not releasing the CPU. This
-will increase the scheduling delay of other processes. Therefore, I
-tried checking the current process in wakeup_preempt and entity_tick,
-and if it is illegal, reschedule that cfs queue.
+On 5/24/24 06:18, Alex Deucher wrote:
+> On Fri, May 24, 2024 at 9:17 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+>>
+>> On Fri, May 24, 2024 at 5:16 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>
+>>> Hi,
+>>>
+>>> On Fri, Mar 29, 2024 at 12:18:28AM -0700, Samuel Holland wrote:
+>>>> Now that all previously-supported architectures select
+>>>> ARCH_HAS_KERNEL_FPU_SUPPORT, this code can depend on that symbol instead
+>>>> of the existing list of architectures. It can also take advantage of the
+>>>> common kernel-mode FPU API and method of adjusting CFLAGS.
+>>>>
+>>>> Acked-by: Alex Deucher <alexander.deucher@amd.com>
+>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+>>>
+>>> With this patch in the mainline kernel, I get the following build error
+>>> when trying to build powerpc:ppc32_allmodconfig.
+>>>
+>>> powerpc64-linux-ld: drivers/gpu/drm/amd/amdgpu/../display/dc/dml/display_mode_lib.o uses hard float, drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_helpers.o uses soft float
+>>> powerpc64-linux-ld: failed to merge target specific data of file drivers/gpu/drm/amd/amdgpu/../display/dc/dml/display_mode_lib.o
+>>>
+>>> [ repeated many times ]
+>>>
+>>> The problem is no longer seen after reverting this patch.
+>>
+>> Should be fixed with this patch:
+>> https://gitlab.freedesktop.org/agd5f/linux/-/commit/5f56be33f33dd1d50b9433f842c879a20dc00f5b
+>> Will pull it into my -fixes branch.
+>>
+> 
+> Nevermind, this is something else.
+> 
 
-The modification can reduce the scheduling delay by about 30% when
-RUN_TO_PARITY is enabled.
-So far, it has been running well in my test environment, and I have
-pasted some test results below.
+Yes, CONFIG_DRM_AMD_DC_FP is enabled in that configuration.
 
-I isolated four cores for testing. I ran Hackbench in the background
-and observed the test results of cyclictest.
-
-hackbench -g 4 -l 100000000 &
-cyclictest --mlockall -D 5m -q
-
-                                 EEVDF      PATCH  EEVDF-NO_PARITY  PATCH-NO_PARITY
-
-                # Min Latencies: 00006      00006      00006      00006
-  LNICE(-19)    # Avg Latencies: 00191      00122      00089      00066
-                # Max Latencies: 15442      07648      14133      07713
-
-                # Min Latencies: 00006      00010      00006      00006
-  LNICE(0)      # Avg Latencies: 00466      00277      00289      00257
-                # Max Latencies: 38917      32391      32665      17710
-
-                # Min Latencies: 00019      00053      00010      00013
-  LNICE(19)     # Avg Latencies: 37151      31045      18293      23035
-                # Max Latencies: 2688299    7031295    426196     425708
-
-I'm actually a bit hesitant about placing this modification under the
-NO_PARITY feature. This is because the modification conflicts with the
-semantics of RUN_TO_PARITY. So, I captured and compared the number of
-resched occurrences in wakeup_preempt to see if it introduced any
-additional overhead.
-
-Similarly, hackbench is used to stress the utilization of four cores to
-100%, and the method for capturing the number of PREEMPT occurrences is
-referenced from [1].
-
-schedstats                          EEVDF       PATCH   EEVDF-NO_PARITY  PATCH-NO_PARITY  CFS(6.5)
-stats.check_preempt_count          5053054     5057286    5003806    5018589    5031908
-stats.patch_cause_preempt_count    -------     858044     -------    765726     -------
-stats.need_preempt_count           570520      858684     3380513    3426977    1140821
-
-From the above test results, there is a slight increase in the number of
-resched occurrences in wakeup_preempt. However, the results vary with each
-test, and sometimes the difference is not that significant. But overall,
-the count of reschedules remains lower than that of CFS and is much less
-than that of NO_PARITY.
-
-[1]: https://lore.kernel.org/all/20230816134059.GC982867@hirez.programming.kicks-ass.net/T/#m52057282ceb6203318be1ce9f835363de3bef5cb
-
-Signed-off-by: Chunxin Zang <zangchunxin@lixiang.com>
-Reviewed-by: Chen Yang <yangchen11@lixiang.com>
----
- kernel/sched/fair.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 03be0d1330a6..a0005d240db5 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5523,6 +5523,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
- 			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
- 		return;
- #endif
-+
-+	if (!entity_eligible(cfs_rq, curr))
-+		resched_curr(rq_of(cfs_rq));
- }
- 
- 
-@@ -8325,6 +8328,9 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
- 	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
- 		return;
- 
-+	if (!entity_eligible(cfs_rq, se))
-+		goto preempt;
-+
- 	find_matching_se(&se, &pse);
- 	WARN_ON_ONCE(!pse);
- 
--- 
-2.34.1
+Guenter
 
 
