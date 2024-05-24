@@ -1,201 +1,98 @@
-Return-Path: <linux-kernel+bounces-188664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4F38CE515
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6758CE518
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607F9282305
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:12:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5E21C20C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFBB86266;
-	Fri, 24 May 2024 12:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37F785C58;
+	Fri, 24 May 2024 12:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="FTgMsFpF"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KD0bA4JL"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8028563E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55318061F;
+	Fri, 24 May 2024 12:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716552774; cv=none; b=dAOCpu7uPup4Ktt/Nrpd2fAWmk0MEYjLYLQRUbd38eat4sIQtlzkzOD68mUnvtzKtqSY+RkKlzxu8dwS9c3gSxQkhvl16IEes8VGjIeHueByKIECPCnYHn6FNNXGCvh51a4eqH/GdGTIdiWaSmUPdxL7zQnmDdHtMfbMpFXThf8=
+	t=1716552986; cv=none; b=G8efN2nMRfYWjztRBlD32rM+k5VRDrzl6r4N33vs85YddUx50bqfAdkFwRaSOGQvxwQm49vjbt4gFCLk59OWqYwzyRE6yDGJ5Ak2B+SHdQfvtFMB0xxIEQdz0wO5yMFPUoGGR0A1FFV+8twxP37vJV2hgVFwG3CWMxVxuLczvHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716552774; c=relaxed/simple;
-	bh=NLkcXVJfxaNj+x/ym/nlC1R/VqgX2dj3Yj+vQmBzw2Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B1/jRaVJEzI/dVID/92Kj/O/ExHqKLkgHQrODz9HxuMAAJJ1qQIdCWPXKtfpGzBfOkPGRtQWbkmRium81E6Ls92vUcQUHjQUxc8QcINDzG1JkXLDy4iZ2dsM3fJPnR1Om0btYVzwxfnzs4q2/fW1nzUQkdX6xKJAMvpC0ocdIjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=FTgMsFpF; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5296232e00bso852322e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1716552770; x=1717157570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/kQluXbrS5/xKa378gCLMmIP4qg7U9JjmWwPqCAy5U=;
-        b=FTgMsFpF1DvO/gln29tbOWPTW5g9uqQBYj3XWJ2iJ7ZaeobKWoPGjoTMJUurG+OAvz
-         HuoI4sjXMW+1DCuP0H4mu7mUlJPtflF+UYQWwWbj61ae/UUYn62SwlqXYwn4me4mBjd+
-         CSqIeSIr9tp8OaANb96atjx75+zmwF06f7Cvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716552770; x=1717157570;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z/kQluXbrS5/xKa378gCLMmIP4qg7U9JjmWwPqCAy5U=;
-        b=HAgzoauJdRY1Xtm50D6uykrh1o/RQSHm/RqOyTyv3cjqzFGqppHbDlelrKHpfOFGo8
-         3MVi590+HC0pXwbTIcgbcDGeCVV1gBkRkv9zMU2VWZrXT7QVhk5tX85BvIJohltvp9xx
-         znLL3O969cxjNNgltOE+bpY18n/oq0aEv2xzrg/ukrPpSRl7QK6loaekw7IgFOMWK/zE
-         5htdQ00B1gG5yDkoM0D4CLc0BtU5U7nstVSvzgiN16if/g+4ymmtwhx827MQvp3qsgr3
-         5oVdiZDdNAe+pgmkDv8Eroo2zbvbY9TFSU3/Ah1/722QCVSOl728lLMnWDzzkou22SBO
-         c/zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz4qgy0w6Mx83aKzE3Rou4pInqWzEmDGZmOq3if1RX5oPpvM6chFLqis6qXZhVowtTFDyTcN4VIucLmgxo5lHtnBvyZOWc8cQC7LFx
-X-Gm-Message-State: AOJu0Yzsu0cMDy1z+/EddQRMURIdMPXDEiPjw3alvGe+NLQ55Oauu2tG
-	1hRk6KsgvH9ljxhkXS6QmAiGtmwmErWbmIZ1NYTD5+7jp+U1sQdTwBPyzqtflFs=
-X-Google-Smtp-Source: AGHT+IFDzskSYUTxKkoP6SCgQgAYltT2X4VJOr36ZAkA0ExwWVFTGCSdWPvOlsTH+ENT8Hvd6LU7KA==
-X-Received: by 2002:a05:6512:10ca:b0:51c:b73f:950 with SMTP id 2adb3069b0e04-529661f315emr1807735e87.43.1716552769459;
-        Fri, 24 May 2024 05:12:49 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970c3313fsm164559e87.200.2024.05.24.05.12.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 05:12:49 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] serial: imx: ensure RTS signal is not left active after shutdown
-Date: Fri, 24 May 2024 14:12:45 +0200
-Message-Id: <20240524121246.1896651-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.40.1.1.g1c60b9335d
+	s=arc-20240116; t=1716552986; c=relaxed/simple;
+	bh=783e2VG1vsU3Plu/mHMYKOLDlL3eD29yilL+kq6F6Oc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=h8R/BeXaDg11a1DHrRNHe68d0cHcZKsoHGSwueICXJi3bo/FDGIl+CXTGBz10B5KBp8rWs8A1j04D/C8kU9oHS9xM9YuFS6rOCSUALsXlorp9AU7PFdmyEz76yT95a292BisEVXrT4Po9LbCv+X4pH3PG6xq00Ax3x6xisMs1OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KD0bA4JL; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716552937; x=1717157737; i=markus.elfring@web.de;
+	bh=2oxL4haj3cSIhrDqG5f5FY2ZS3HnP0RlB6rXmHfev2o=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KD0bA4JLFNk+jBdCvbBup59pAZL3DT9yJAeUc2GSSApob0ZclOT4ZArtj/DhNyV/
+	 RpRBYj8cUFsuG2Xgbyl5rKNmBi0uAksmvDIYjRNmHpmjG70M5zHl8IgFkvfP0fZlm
+	 50WBITuXU538syBr1L2HuNLxtUPoPeMAzldOZ/SZUJPiA99Hn8Cpu+qJa8n9vqTmz
+	 gUD8m+wn5X0iNJ+EDubJ08g+qQfPr8Ja6/Co6m+pk33qX6guW3Oz0nAx1r6m47OTL
+	 oI88SrMeMmG0rv5slMdsbYgXVMLkk3pCPvxLee4urFF+FCqpcC2APahEFRcip1NMb
+	 aWaI94ZYgfERPApCNg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3oz4-1saqL30mjw-00zrAk; Fri, 24
+ May 2024 14:15:37 +0200
+Message-ID: <48e4d18b-cef8-444e-8638-25b9c6fcaa40@web.de>
+Date: Fri, 24 May 2024 14:15:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Nikita Shubin <n.shubin@yadro.com>, dmaengine@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>, Logan Gunthorpe <logang@deltatee.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20240524-ioatdma-fixes-v1-2-b785f1f7accc@yadro.com>
+Subject: Re: [PATCH 2/3] dmaengine: ioatdma: Fix error path in
+ ioat3_dma_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240524-ioatdma-fixes-v1-2-b785f1f7accc@yadro.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wOFWpGqF7uD0/ANGC5tGcR14IIBXwbZ56a74jK+DUz35Y6US6jw
+ 6fEIEtM+POWnEs6Rdx6h0dqm/aiBj9nbZn/IbGvYJ3ncHpwN+4lrKu5nuyUKuQAFUk/PhgM
+ ZExpeQhfhepOdoS0R79+1ya3v/7OcZx377r/+f7xWvezyzK5JdzJPLJ+jdkxpgnAktb6Z3r
+ gLgpCMIujpJ7yRAEv6xZA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:tOeCAp+CB1M=;0G/vCOWf6HajPQeOr0lRD0H5Fud
+ 55M65QpwSB2t6OiRrzrqtqsS9Km0nvjAZb6ih/mL0adSG2sa8spMung97IHXKhfC54KbhYNds
+ wDN8El18ZA/3SDz0X8nezQuqmzZZBAAImdbPlowHmedaRTtI4Rz59ibkChsboaKcL4b1+k9oU
+ 7jDJsdvxNxLkTRYiL3fWmX0zijMZeAC89R+uX+a733qWCPpIo8drphYsRGTqIkRcQCJeE3+eB
+ I5UHCrvc+b8GNh2P+Uo+w1eNNsWQUHAsTUHzpZyWv0a6vOzgUttuUHUV9PoDFQjGFXzRRQsGX
+ 1Xe0Wh0LGs66sGe917KXJwZLds21H6yQrlR6+SmSQ00DGb5qzBCoDh/yCBLYiFQCUZbUrg87w
+ Wlupv+62TCXqGqGkx1EiubEtgpTtUkqIEactB7IsUeR/fx/bYBQSKslZNNXKpkz4ruj/b1Up1
+ pFMbU2VDHbhakw3JBYR8bega2OVNxijYlQgWXP2XQj9AXllvjLf6M6kmixuTs+07ovydBIyC4
+ 4Q0+uChVyhLZVbOupu/CbJRtUKCb4A9pQwE67boFWSscRXTfdWOFaID9Ia1e8o0eR0OlNYmrQ
+ Pi6AOesN73wtzxQUzKHf9U/FAVGtVlfKCPhVsYzc9Ztj6Ayr+6uDA+koJvGudS19ILlf7JfQr
+ u31DzhkyLKFlC+JR/64HLP88M54VfPc3pMq3is+o28P2EbQ/5Mgdq66bg/NuiQyM3Wy1rXT//
+ 83BIlQi898yZN301u+FKxrE2KCALXo8d9OdHnuPr1NpiaNxajgzilXEtbUycX5mONb7suh/Rw
+ vuP7yx9IEPtk0LPyZVoKs6yt8w+ZCc0HOucNdRZQnq1oA=
 
-If a process is killed while writing to a /dev/ttymxc* device in RS485
-mode, we observe that the RTS signal is left high, thus making it
-impossible for other devices to transmit anything.
+=E2=80=A6
+> pcie_capability_read/write_word() failes.
 
-Moreover, the ->tx_state variable is left in state SEND, which means
-that when one next opens the device and configures baud rate etc., the
-initialization code in imx_uart_set_termios dutifully ensures the RTS
-pin is pulled down, but since ->tx_state is already SEND, the logic in
-imx_uart_start_tx() does not in fact pull the pin high before
-transmitting, so nothing actually gets on the wire on the other side
-of the transceiver. Only when that transmission is allowed to complete
-is the state machine then back in a consistent state.
+                                    call failed?
 
-This is completely reproducible by doing something as simple as
-
-  seq 10000 > /dev/ttymxc0
-
-and hitting ctrl-C, and watching with a logic analyzer.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-
-A screen dump from a logic analyzer can be seen at:
-
-  https://ibb.co/xCcP7Jy
-
-This is on an imx8mp board, with /dev/ttymxc0 and /dev/ttymxc2 both
-configured for rs485 and connected to each other. I'm writing to
-/dev/ttymxc2. This demonstrates both bugs; that RTS is left high when
-a write is interrupted, and that a subsequent write actually fails to
-have RTS high while TX'ing.
-
-I'm not sure what commit to name as a Fixes:. This certainly happens
-on 6.6 and onwards, but I assume the problem exists since the tx_state
-machine was introduced in cb1a60923609 (serial: imx: implement rts
-delaying for rs485), and possibly even before that.
-
-
- drivers/tty/serial/imx.c | 50 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 2eb22594960f..35a47f4ab6ed 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1551,6 +1551,7 @@ static void imx_uart_shutdown(struct uart_port *port)
- 	struct imx_port *sport = (struct imx_port *)port;
- 	unsigned long flags;
- 	u32 ucr1, ucr2, ucr4, uts;
-+	int loops;
- 
- 	if (sport->dma_is_enabled) {
- 		dmaengine_terminate_sync(sport->dma_chan_tx);
-@@ -1613,6 +1614,55 @@ static void imx_uart_shutdown(struct uart_port *port)
- 	ucr4 &= ~UCR4_TCEN;
- 	imx_uart_writel(sport, ucr4, UCR4);
- 
-+	/*
-+	 * We have to ensure the tx state machine ends up in OFF. This
-+	 * is especially important for rs485 where we must not leave
-+	 * the RTS signal high, blocking the bus indefinitely.
-+	 *
-+	 * All interrupts are now disabled, so imx_uart_stop_tx() will
-+	 * no longer be called from imx_uart_transmit_buffer(). It may
-+	 * still be called via the hrtimers, and if those are in play,
-+	 * we have to honour the delays.
-+	 */
-+	if (sport->tx_state == WAIT_AFTER_RTS || sport->tx_state == SEND)
-+		imx_uart_stop_tx(port);
-+
-+	/*
-+	 * In many cases (rs232 mode, or if tx_state was
-+	 * WAIT_AFTER_RTS, or if tx_state was SEND and there is no
-+	 * delay_rts_after_send), this will have moved directly to
-+	 * OFF. In rs485 mode, tx_state might already have been
-+	 * WAIT_AFTER_SEND and the hrtimer thus already started, or
-+	 * the above imx_uart_stop_tx() call could have started it. In
-+	 * those cases, we have to wait for the hrtimer to fire and
-+	 * complete the transition to OFF.
-+	 */
-+	loops = port->rs485.flags & SER_RS485_ENABLED ?
-+		port->rs485.delay_rts_after_send : 0;
-+	while (sport->tx_state != OFF && loops--) {
-+		uart_port_unlock_irqrestore(&sport->port, flags);
-+		msleep(1);
-+		uart_port_lock_irqsave(&sport->port, &flags);
-+	}
-+
-+	if (dev_WARN_ONCE(sport->port.dev, sport->tx_state != OFF,
-+			  "unexpected tx_state %d\n", sport->tx_state)) {
-+		/*
-+		 * This machine may be busted, but ensure the RTS
-+		 * signal is inactive in order not to block other
-+		 * devices.
-+		 */
-+		if (port->rs485.flags & SER_RS485_ENABLED) {
-+			ucr2 = imx_uart_readl(sport, UCR2);
-+			if (port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
-+				imx_uart_rts_active(sport, &ucr2);
-+			else
-+				imx_uart_rts_inactive(sport, &ucr2);
-+			imx_uart_writel(sport, ucr2, UCR2);
-+		}
-+		sport->tx_state = OFF;
-+	}
-+
- 	uart_port_unlock_irqrestore(&sport->port, flags);
- 
- 	clk_disable_unprepare(sport->clk_per);
--- 
-2.40.1.1.g1c60b9335d
-
+Regards,
+Markus
 
