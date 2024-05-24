@@ -1,99 +1,114 @@
-Return-Path: <linux-kernel+bounces-189200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356AE8CED13
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:58:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21188CED16
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669531C20FE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:58:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D524B21CB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDAD158A00;
-	Fri, 24 May 2024 23:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66C158A05;
+	Fri, 24 May 2024 23:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p+y8mWU8"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RXcHG6r8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047D4127E34
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 23:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C578B127E34;
+	Fri, 24 May 2024 23:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716595089; cv=none; b=msXm5X1G5iwKR1I8ZWjYRnmcoC944ASPaeblKHMx6IcLk0EFdIgYEDBDQ+aGZ1p4rU1Is6fljBkxU9Fdws5N1mwmJE7mZy6qbcbGQOCtQNJypvNm1Ib4KbFDkKrox7mDaTwefl8gTIr7F5rzAj3T3bC+oPoBhslcg0zUVAwVHbc=
+	t=1716595114; cv=none; b=Q2n97Sxr4YQ9cYkoqL2n23nyjrvmVkwk4vmn7UEMHPIqwgwXIU4DedtOlkQCUg/VygjNgktwBQw5f8I0fM0L3EDYeElwbJGQ2NFbtpGCzZQKQO2wvnkdIoZVbs1NUwmHWobhATyGFxgQ+JZ0WXeeuU7+7c4YNHIlbZq4cjuYrOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716595089; c=relaxed/simple;
-	bh=5HWALiAhaCDCuhggJpKqNMVshgA5pqPi/lZqDpUtKEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQu0+NWA2ZCbesBtl/mfQfMhLFf1DQ1Y9/W+dNolpHtQ3Mc2mLf9fWgPihAacnvHik6SNfin/aASggm4gybdA7dT2O6S8pyHYh02Fu32T4GtyKKOOtPMjDKR6eYHGCmkQXyQWXAv1pai3BYjr3bEkgkTRDB/IXJwjoBuE36pFMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p+y8mWU8; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df481bf6680so3433574276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716595086; x=1717199886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYOz+vokpIWadzXcAS8j7jOefrZIjKXgl4pHBz5Rm8k=;
-        b=p+y8mWU8AyG4rdpCWOemQz8S3S3hdJuKLR258P9hW1DoLEeFUCfXpkgFpDZ9WcqNTA
-         DWWMJishvuyDURpsIU12CQfkhGuD5pPbsJUqJsfYk0M2d9wLynwquIJLc14QQvu+GQbJ
-         MYWlDdaRixJ8egmkW9vhIaDBG0gU1dcKmjkNli0QP+OdYszyethxSF6WiyWt9q5Ics0n
-         a7UB0fe2S74YgcNMpTAMfenn7BMH6cNjVvgFd0kU3jFQt0RjImo8kY43m117ZrcFPjnh
-         KrPNujEHcqd7itPGahBDN00BhRvqWKFrpnnamFiHicouN2txLhDdsyDARyByIjqm3xK7
-         8Mgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716595086; x=1717199886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lYOz+vokpIWadzXcAS8j7jOefrZIjKXgl4pHBz5Rm8k=;
-        b=CwKmcTWQC5qILUOVdbxCsOy9/qc3uEM57DXXIHfbp++GaNbLxHegtT+6loncsqZYgb
-         9Pnq6jGtDXObs5hqMPLhG2THSmbDTB3K1yVFghc+An22DMR4rezKLuQeHr19JC2EGzpf
-         Cj/VdZulRkCZTLSbiF5FFn2DlrhZU4AssrcfQiKeS1IfEoeGd13sPQXAmbzoIPS8JkOn
-         jaS8BQ2pSnRvsA4/zDo+pULt5xyG94X0fmbQyQ8yuwziq6a3jcG7ZCAYbi9ufDb6yLdO
-         k2K2XrN5rxGtdgAg+AR9UEseYKZhvKIrUlufw+tI+TrnPtYxx+ysDgLIuH+c/YDcw1jT
-         x4nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkTTzpbuBXZmgfMVB/2JZ8ZYiyQEIooD3IEf5ue62kXzZrmiTGG72yTAfeZezRJncJbJl6s1sXehGHANlujltT0P4hi9vTbCTNnelC
-X-Gm-Message-State: AOJu0Ywa2y7WMQMz2Ub4xrbEvoc7zzKvgWadAdxahJn+xxv1+SoQqpOj
-	3PbpEi1TVyZDlRnU93WulnLUUdtEId5Mb4FBDhUxE2uYqjWZnn6DIzDRfG9QVBEex97kHl2rEXk
-	+AaftapHLnJEjcEtrwr7XwVGD4qfhOKvihbhxBjplPRisaeGy
-X-Google-Smtp-Source: AGHT+IEJt5x0q5D99PlS3haolbnYsTanUnYvkV1dN3ctg99GZL50AMveqq1Zym0GFXzBiMKrzHfIb1NU2+LbiK/QvE0=
-X-Received: by 2002:a25:8244:0:b0:df1:cd00:b176 with SMTP id
- 3f1490d57ef6-df7721e223fmr3820423276.39.1716595086043; Fri, 24 May 2024
- 16:58:06 -0700 (PDT)
+	s=arc-20240116; t=1716595114; c=relaxed/simple;
+	bh=A9S99suvDW0R8aU5hwzhr13BhdpMOBd28EOUGOBruDA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=T3DE+siS+QkBT5m9TrLaqWaP9kkSQtq2HQuBx/1UzBygChkCd28vSbyECo5pfaeg//FvoeILHAHk9PzvDnSCxpIPDv2OXiF/KkSFAa61K1ThQ2PGleYV8B8bMCpN/GeRCNNS9qeVo2H6bp8I8W0NF4wLhiK2akU34nYg6pHVCv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RXcHG6r8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ONkshW020356;
+	Fri, 24 May 2024 23:58:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LBjmT3Coiwjm3+7PqgzsAT
+	POUy8Vih/jxyPy1KSkQ/g=; b=RXcHG6r88m4vsTLx6u0B6EjiIY8UVz5I2jjd1m
+	QFo/xhmjdcItoRU6Wd+0oXHZtX239rbTAreREcOVWwhR1HVuCc1m5aHHZr4jmM6n
+	PvEMT0k1B7BXippHhajlgWmYHp14CGaPCHFVQ9BSpnRYssoItMYB3CCHf7OW5aJb
+	eyo08owag/fiCCOrdlWOHct+RMWRdDjXn7h6+eU0TJRhbWwPW5AqIYWWTzktlcA/
+	9lFDqTwrZ/WaDWXlEOT6OoUBG0zZPwSmff4J8ybDdlJIfgRxif+kvSfDs0BQkiPM
+	eDmayIm2DU5y4TpXcjSdKyOHy8PLpKilrTpdzNCioxu8y5Kg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa97bqrw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 23:58:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44ONwQS4002080
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 23:58:27 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 16:58:26 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 24 May 2024 16:58:26 -0700
+Subject: [PATCH] of: of_test: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525-topic-pmc8380_gpio-v2-0-2de50cb28ac1@linaro.org> <20240525-topic-pmc8380_gpio-v2-2-2de50cb28ac1@linaro.org>
-In-Reply-To: <20240525-topic-pmc8380_gpio-v2-2-2de50cb28ac1@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 25 May 2024 02:57:55 +0300
-Message-ID: <CAA8EJpqm3O-2ErRRuPpc-g1o9uPkWz2vBxXtVBUhHb2k_X6jww@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: spmi: Add PMC8380
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240524-md-of-of_test-v1-1-6ebd078d620f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKEpUWYC/x2MUQqDMBAFryL73QWTpq30KkVKYta6UKNk06KId
+ 3dbeD8Db2YDocwkcK82yPRl4SkpmFMF3eDTi5CjMtjauvpiHY4Rp173LCQF6RpdczaNCzcD6sy
+ Zel7+vUerHLwQhuxTN/wqb06fBUcvhTLOq15h3w/YJadmhAAAAA==
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ruv2Ko0zEDrRL_eoJY74MkB15Lhb0hjI
+X-Proofpoint-GUID: ruv2Ko0zEDrRL_eoJY74MkB15Lhb0hjI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=997 lowpriorityscore=0
+ mlxscore=0 clxscore=1011 spamscore=0 phishscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240174
 
-On Sat, 25 May 2024 at 02:38, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> PMC8380 is a new chip, featuring 10 GPIOs. Describe it.
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
->  1 file changed, 1 insertion(+)
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/of/of_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-With best wishes
-Dmitry
+diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+index a9301d293f01..c85a258bc6ae 100644
+--- a/drivers/of/of_test.c
++++ b/drivers/of/of_test.c
+@@ -54,4 +54,5 @@ static struct kunit_suite of_dtb_suite = {
+ kunit_test_suites(
+ 	&of_dtb_suite,
+ );
++MODULE_DESCRIPTION("KUnit tests for OF APIs");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240524-md-of-of_test-e6d483184b71
+
 
