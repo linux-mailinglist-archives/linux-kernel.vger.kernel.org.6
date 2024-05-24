@@ -1,167 +1,227 @@
-Return-Path: <linux-kernel+bounces-188388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0E38CE166
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0468CE16C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F9A1F225DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA111F2206C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30051128807;
-	Fri, 24 May 2024 07:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38C6328DB;
+	Fri, 24 May 2024 07:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YRLipYsQ"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="y2ijOrSi"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5412E128375
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280866EB51
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716534858; cv=none; b=VgmkbEI1Djjg2aOZHm34E/wY6NGD26yk3ggVNaEq9Y0nBUn8deZcvr4kpEL9/ecQr35IY1/aT2uqK46CilWLFCIfnD05lwfe7bleZEzP7CV66OoU/LiuB5VHBunVdNvBB8kecnv0r9nK84fdEGNZHDSKbpNzASjTmWG6JkmNb54=
+	t=1716534994; cv=none; b=hudWMmLSsD4jmbT2oUEBst0alo/KxEHFKcEJlPqEnKGdtgANWZhhvxHRK4/LS9EKUEVD/5/CSfAvz0HwAmizuBgOS7Sc/8T/ujY+oBIE99jEfEkpY1xHy5ReT5w8M2PO57J7bkccIOwUDc5oHEM6e90Q7grd/C6e22ZQiofFl/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716534858; c=relaxed/simple;
-	bh=0JI5BU/swsWQORzJL1lmBAL79oZiu624rx4K6hFjWpQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fptHp1dmxGgQeU3azUB2GakTgSoeNEn2mf2D7W+LkjcyP2KxYvcAKTFRiQa1ul8KUmz3xTnZBBPCE4q7kB1Q4YnlBdkuGGU7JrDkusvqGqVNFCkBTcpDGTgTk8oVi/cHHlXRaWoWWw0xY43JyDQF+nFQKMEJw+4yM42huKtztgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YRLipYsQ; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O7Dox9038123;
-	Fri, 24 May 2024 02:13:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716534830;
-	bh=8oHVJyl8ghpLM7G3pdOUpqrr8DkSSfn80M8q5wk4pqk=;
-	h=From:To:CC:Subject:Date;
-	b=YRLipYsQ5DlNWe23I3s8/QqQSexeNUnX4Esle/lvtNZukNtySi1aCLRZpe44NzcVS
-	 pTA3Nle0vPLxO4jEk1740JP9wZD/Pra8IWFINU6MYCRsWGbtQgGGuym49sYVZAxf+q
-	 KV20Ah8/oRdOHf358bdzk45wZaXtIsYO8vFMkKvg=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O7DoNj086309
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 02:13:50 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 02:13:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 02:13:49 -0500
-Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O7DnPu076318;
-	Fri, 24 May 2024 02:13:49 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <linux-kernel@vger.kernel.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <j-choudhary@ti.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <u.kleine-koenig@pengutronix.de>, <a-bhatia1@ti.com>,
-        <javierm@redhat.com>, <nikhil.nd@ti.com>, <jani.nikula@intel.com>,
-        <amishin@t-argos.ru>
-Subject: [PATCH] drm: bridge: cdns-mhdp8546: Add mode_valid hook for the drm_bridge_funcs
-Date: Fri, 24 May 2024 12:43:48 +0530
-Message-ID: <20240524071348.106210-1-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716534994; c=relaxed/simple;
+	bh=L5dtxTCrzKCyV3a12hQ+4vBbPtIXGLsw+Pi3J3zri8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+ufz3CzT4yR2awseneWRVTmo4h5W5eoqE2GrK9i9xD606gG1HpW+DZ+TObiBXidD2SpcGMC60PcllM9rQbp3ynqt7cOl5X/QtiBnfs2WfOPTQp62Kpxnh9i4HRjTbK8RRngQFFDewjvSXj6u+MruvQxhuH6L9Vr0f7HhyZAkqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=y2ijOrSi; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6818811ef2dso399147a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:16:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716534992; x=1717139792; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G5b7QgiVlAzfw1l+FA1jhqowDIFfn6XCF4+Yt8iGQO0=;
+        b=y2ijOrSiwn8kujMA0869ALapDPpI42dWw9fvOBWqX8Y8XIpcqYXkUkkubl7IuDmmgr
+         UXgs/FYwWQ6cMuIo093RxaHWEmjtTlpcPKupttpXoO4fgnH95uo/yaxP5aiTe2K0XTK6
+         OB8Hf49CztFRHosI56opMlAGwTeRKeLa7jDUtXNV3n1p1lK8CwTzFsc2CcTBhW2OQl9c
+         y5qGjjAYEsJqZqRGr4HQu2IUQ11hKqzITyzCBxl3gLhHVB9p4BNs9O6j/HB/qLxm07aS
+         +zTKlMC5xlJAWs8LHA+/ivB1Cb7gpZt6kBbkLyaNpACXt8lTMYOy0j5JSg5MfxhV1IOJ
+         uvgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716534992; x=1717139792;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5b7QgiVlAzfw1l+FA1jhqowDIFfn6XCF4+Yt8iGQO0=;
+        b=j2yBvu6uB6LyUIo4V6Baub2Xsj0EfP7MN1zXPAtw1AxOcnADreru1a7hXjzCpCzoOl
+         T6lQ4cou2i7WH5UlNdh9GABhUvNRUoqFxzkvEKp3jGLLRCg2V817/oy5wPCn1Hphc2zj
+         8Od0z5ogg8kjeT79KEVMvJhcsdf7uqxR23nZTmI+M8KfjvbXFRl8c692nt+BPL41WGua
+         nfOPG4p2anmUNqeEIl1DiFThX796ZIAIRLw4fh5LRjJG3e8jGXjnL2xAtHFjdbtTnMkg
+         OBMmDQgnq7q9bnSAtuNZSvOPtLC5JC2AJQWXcOwn1XnsdZDlmRwo0Y19aQP+kbtSBkl4
+         Vmtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHdkLixMuhs2zGEsamJQueXzhDlJKjWRpgXuOyQcMYqCNv3POrq4lgXdsmIP2+NntF6SUZ45/1hA4Uq8vclsyrOtER0MjLE+hGrGPO
+X-Gm-Message-State: AOJu0Yx4UF5iExsqDs8yK43dCkYI7wrf4hq3JtoHCjXGnbtU5rgqzKGY
+	KkgPQbAgFTut+NN3URlJtIFpn4oM2TUxJ4LN+So8ByReESJz/ilBp1x6EdiOtM8=
+X-Google-Smtp-Source: AGHT+IEDTqTA76mWXJ68mdGF74fNSFi0v4c+GSsV/TK7Kq0h+0BnWlexLZoWy2cb8clnmvmHxGdpVw==
+X-Received: by 2002:a17:90a:ec12:b0:2bf:5992:31ae with SMTP id 98e67ed59e1d1-2bf5ee1cb71mr1385379a91.20.1716534992281;
+        Fri, 24 May 2024 00:16:32 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f9b28dcsm742083a91.52.2024.05.24.00.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 00:16:31 -0700 (PDT)
+Date: Fri, 24 May 2024 00:16:27 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, paul.walmsley@sifive.com,
+	rick.p.edgecombe@intel.com, broonie@kernel.org,
+	Szabolcs.Nagy@arm.com, kito.cheng@sifive.com, keescook@chromium.org,
+	ajones@ventanamicro.com, conor.dooley@microchip.com,
+	cleger@rivosinc.com, atishp@atishpatra.org, bjorn@rivosinc.com,
+	samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	charlie@rivosinc.com, apatel@ventanamicro.com,
+	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
+	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 13/29] riscv mmu: write protect and shadow stack
+Message-ID: <ZlA+yxsiHtyUJ/5/@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-14-debug@rivosinc.com>
+ <276fa17b-cd62-433d-b0ec-fa98c65a46ca@ghiti.fr>
+ <ZkJOs6ENmDHFsq/U@debug.ba.rivosinc.com>
+ <CAHVXubhS3CJ87DxC+9+8z6CiWDV1bQ8nK+iOZUDvMiT7vszFLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAHVXubhS3CJ87DxC+9+8z6CiWDV1bQ8nK+iOZUDvMiT7vszFLA@mail.gmail.com>
 
-With the support for the 'DRM_BRIDGE_ATTACH_NO_CONNECTOR' case,
-the connector_helper funcs are not initialized if the encoder has this
-flag in its bridge_attach call. Till now we had mode_valid hook only in
-the drm_connector_helper_funcs. Add this hook in drm_bridge_funcs to
-validate the modes in this case as well.
+On Thu, May 23, 2024 at 04:59:30PM +0200, Alexandre Ghiti wrote:
+>Hi Deepak,
+>
+>On Mon, May 13, 2024 at 7:32 PM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> On Sun, May 12, 2024 at 06:31:24PM +0200, Alexandre Ghiti wrote:
+>> >On 04/04/2024 01:35, Deepak Gupta wrote:
+>> >>`fork` implements copy on write (COW) by making pages readonly in child
+>> >>and parent both.
+>> >>
+>> >>ptep_set_wrprotect and pte_wrprotect clears _PAGE_WRITE in PTE.
+>> >>Assumption is that page is readable and on fault copy on write happens.
+>> >>
+>> >>To implement COW on such pages,
+>> >
+>> >
+>> >I guess you mean "shadow stack pages" here.
+>>
+>> Yes I meant shadow stack pages. Will fix the message.
+>>
+>> >
+>> >
+>> >>  clearing up W bit makes them XWR = 000.
+>> >>This will result in wrong PTE setting which says no perms but V=1 and PFN
+>> >>field pointing to final page. Instead desired behavior is to turn it into
+>> >>a readable page, take an access (load/store) fault on sspush/sspop
+>> >>(shadow stack) and then perform COW on such pages.
+>> >>This way regular reads
+>> >>would still be allowed and not lead to COW maintaining current behavior
+>> >>of COW on non-shadow stack but writeable memory.
+>> >>
+>> >>On the other hand it doesn't interfere with existing COW for read-write
+>> >>memory. Assumption is always that _PAGE_READ must have been set and thus
+>> >>setting _PAGE_READ is harmless.
+>> >>
+>> >>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> >>---
+>> >>  arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
+>> >>  1 file changed, 10 insertions(+), 2 deletions(-)
+>> >>
+>> >>diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> >>index 9b837239d3e8..7a1c2a98d272 100644
+>> >>--- a/arch/riscv/include/asm/pgtable.h
+>> >>+++ b/arch/riscv/include/asm/pgtable.h
+>> >>@@ -398,7 +398,7 @@ static inline int pte_special(pte_t pte)
+>> >>  static inline pte_t pte_wrprotect(pte_t pte)
+>> >>  {
+>> >>-     return __pte(pte_val(pte) & ~(_PAGE_WRITE));
+>> >>+     return __pte((pte_val(pte) & ~(_PAGE_WRITE)) | (_PAGE_READ));
+>> >>  }
+>> >>  /* static inline pte_t pte_mkread(pte_t pte) */
+>> >>@@ -581,7 +581,15 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
+>> >>  static inline void ptep_set_wrprotect(struct mm_struct *mm,
+>> >>                                    unsigned long address, pte_t *ptep)
+>> >>  {
+>> >>-     atomic_long_and(~(unsigned long)_PAGE_WRITE, (atomic_long_t *)ptep);
+>> >>+     volatile pte_t read_pte = *ptep;
+>
+>Sorry I missed this ^. You need to use ptep_get() to get the value of
+>a pte. 
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
- .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 31 +++++++++++++++----
- 1 file changed, 25 insertions(+), 6 deletions(-)
+Noted. will fix it.
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 8a91ef0ae065..0aee038f5db7 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -1617,12 +1617,10 @@ bool cdns_mhdp_bandwidth_ok(struct cdns_mhdp_device *mhdp,
- 	return true;
- }
- 
--static
--enum drm_mode_status cdns_mhdp_mode_valid(struct drm_connector *conn,
--					  struct drm_display_mode *mode)
-+static enum
-+drm_mode_status cdns_mhdp_mode_valid(struct cdns_mhdp_device *mhdp,
-+				     const struct drm_display_mode *mode)
- {
--	struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
--
- 	mutex_lock(&mhdp->link_mutex);
- 
- 	if (!cdns_mhdp_bandwidth_ok(mhdp, mode, mhdp->link.num_lanes,
-@@ -1635,6 +1633,16 @@ enum drm_mode_status cdns_mhdp_mode_valid(struct drm_connector *conn,
- 	return MODE_OK;
- }
- 
-+static enum drm_mode_status
-+cdns_mhdp_connector_mode_valid(struct drm_connector *conn,
-+			       struct drm_display_mode *mode)
-+{
-+	struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
-+	const struct drm_display_mode *mod = mode;
-+
-+	return cdns_mhdp_mode_valid(mhdp, mod);
-+}
-+
- static int cdns_mhdp_connector_atomic_check(struct drm_connector *conn,
- 					    struct drm_atomic_state *state)
- {
-@@ -1678,7 +1686,7 @@ static int cdns_mhdp_connector_atomic_check(struct drm_connector *conn,
- static const struct drm_connector_helper_funcs cdns_mhdp_conn_helper_funcs = {
- 	.detect_ctx = cdns_mhdp_connector_detect,
- 	.get_modes = cdns_mhdp_get_modes,
--	.mode_valid = cdns_mhdp_mode_valid,
-+	.mode_valid = cdns_mhdp_connector_mode_valid,
- 	.atomic_check = cdns_mhdp_connector_atomic_check,
- };
- 
-@@ -2233,6 +2241,16 @@ static const struct drm_edid *cdns_mhdp_bridge_edid_read(struct drm_bridge *brid
- 	return cdns_mhdp_edid_read(mhdp, connector);
- }
- 
-+static enum drm_mode_status
-+cdns_mhdp_bridge_mode_valid(struct drm_bridge *bridge,
-+			    const struct drm_display_info *info,
-+			    const struct drm_display_mode *mode)
-+{
-+	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
-+
-+	return cdns_mhdp_mode_valid(mhdp, mode);
-+}
-+
- static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
- 	.atomic_enable = cdns_mhdp_atomic_enable,
- 	.atomic_disable = cdns_mhdp_atomic_disable,
-@@ -2247,6 +2265,7 @@ static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
- 	.edid_read = cdns_mhdp_bridge_edid_read,
- 	.hpd_enable = cdns_mhdp_bridge_hpd_enable,
- 	.hpd_disable = cdns_mhdp_bridge_hpd_disable,
-+	.mode_valid = cdns_mhdp_bridge_mode_valid,
- };
- 
- static bool cdns_mhdp_detect_hpd(struct cdns_mhdp_device *mhdp, bool *hpd_pulse)
--- 
-2.25.1
+>And why do you need the volatile here?
 
+I don't remember the reason. It's probably not needed here.
+But I am sure I was debugging something and trying everything.
+And this probably slipped sanitization before sending patches.
+
+Will fix it.
+>
+>> >>+     /*
+>> >>+      * ptep_set_wrprotect can be called for shadow stack ranges too.
+>> >>+      * shadow stack memory is XWR = 010 and thus clearing _PAGE_WRITE will lead to
+>> >>+      * encoding 000b which is wrong encoding with V = 1. This should lead to page fault
+>> >>+      * but we dont want this wrong configuration to be set in page tables.
+>> >>+      */
+>> >>+     atomic_long_set((atomic_long_t *)ptep,
+>> >>+                     ((pte_val(read_pte) & ~(unsigned long)_PAGE_WRITE) | _PAGE_READ));
+>> >>  }
+>> >>  #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+>> >
+>> >
+>> >Doesn't making the shadow stack page readable allow "normal" loads to
+>> >access the page? If it does, isn't that an issue (security-wise)?
+>>
+>> When shadow stack permissions are there (i.e. R=0, W=1, X=0), then also shadow stack is
+>> readable through "normal" loads. So nothing changes when it converts into a readonly page
+>> from page permissions perspective.
+>>
+>> Security-wise it's not a concern because from threat modeling perspective, if attacker had
+>> read-write primitives (via some bug in program) available to read and write address space
+>> of process/task; then they would have availiblity of return addresses on normal stack. It's
+>> the write primitive that is concerning and to be protected against. And that's why shadow stack
+>> is not writeable using "normal" stores.
+>>
+>> >
+>
+>Thanks for the explanation!
+>
+>With the use of ptep_get(), you can add:
+>
+>Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>
+>Thanks,
+>
+>Alex
 
