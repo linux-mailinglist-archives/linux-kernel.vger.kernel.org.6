@@ -1,143 +1,104 @@
-Return-Path: <linux-kernel+bounces-188368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4CC8CE12F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:53:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D79C8CE11C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CEC2825F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:53:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14162B20D0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1D185636;
-	Fri, 24 May 2024 06:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62598128382;
+	Fri, 24 May 2024 06:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUhZv0o6"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V3ENFQBG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="79zbjKzi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4AC749C;
-	Fri, 24 May 2024 06:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C646984D23
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 06:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716533577; cv=none; b=Pi/nnfP+fB/fw1npfSFeEveahTsj7J6045P71fI/ZpMzEyuHGqT0lW3bJrwpkJ8doGD65apxfssaUHww+ZsQx73OtMzAF4vYiyi+gCgj1bcGgaUyassI6YIBB466EYt8T0fkJMJSznjDJHyTm3681W6kqgmHq0qyJJwyAbmvYGs=
+	t=1716532992; cv=none; b=gG6O+N+UReQ1uoul5jM6SBey+EZU/RsUxqurfgUgPoogpG8SeTUX+MWFGt5Nt2R7bSKdtXrWIkL3Bj43f2md8r2KfwjdlsWsdLhipFFp2ug0H0qMHgBBLcgQ+tNCpdTGWmrekWdn+mVpq7ns0hmaHJIvptUlxMyfuXvxIB8QOHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716533577; c=relaxed/simple;
-	bh=IcA8areGBmtYySpKsN1vV7VjabAeCliqI9BnabnxYUw=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Kr9XpFB8k+ek9S/yFC07R282KsgYBlLPKr9C9Z8Hcrw5N360txGZSXuwx7BubjAs1SmlCO4TKS2TdoqLuXZoMu/SaF+ajO72QbdICfW3o1d/H4iqFtj5tstes4dxAvVyyc/vth6qqPpF1ptlbmZZsd/Ss9tGUeRr3QdZaUpLIuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUhZv0o6; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f8edff35a0so467509b3a.2;
-        Thu, 23 May 2024 23:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716533575; x=1717138375; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ykVoCzYAXxgYfsHCRKZ4/jVPW0FI1w87SrBVTf97eqM=;
-        b=nUhZv0o6ncGQOriNb3/F9yu/80UgAqCL+KA625jf6q2izZyg8nYAgnfLMkoEpHnnda
-         RpEw8AlfkLzP/bLTG9jhaRaZmpgesUhG7Nf8PUMcEeOJ3yWJNce/kRSONrX1gt1SKdNF
-         fQ/3ZmTNl0OyLT8irj9tUsfYiCOQwmRqjxCW5vl3EgShfbXsyMDMntjE4lENm3owSqWV
-         fxsvArUPX9a4uoCTMOEauryrhRfeVchS/zLajs5xIw+v2qUdB3gtveG0K5aZCSNDhOjs
-         73QsbA7JB/RfZU3gi4GmbVMuUj/QVi+CfvXqHIFdQcxPB6pgillNbWaQgmsjTyBblwdc
-         rGOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716533575; x=1717138375;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ykVoCzYAXxgYfsHCRKZ4/jVPW0FI1w87SrBVTf97eqM=;
-        b=cnv4sfnH89PDtAxdZxiCO7MzvXPrnjX/v1ReGmY/tlukb911hhETdL0KokUswhTeZG
-         QMeCpQyYWH2WaoHxzfZFMFgL+2087us07Ns6rlH2vxvxOVh0qJu02dOvPVY2fFUrpuRu
-         pE094i7IEYkiZZXgjnr4cXOsnz+iNxv757Lk8GQOSjTkRSumCnzdzNXf1Q5TSfHSpbhy
-         KT9fDv2lkHvcFFPzEjUiX+ZPuiM2lIjHptYG0+65UU03u3gF+cEHEgC/tDwgTStbbx1f
-         fynUsvbnqB+61JfDnhjGmaLqXOZPe9eQR4+X35oDejTx51wPkXcwzj7O24OGkygIpzbE
-         XQ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFOIr1ZocP9CA/OYGCtfrMllj00sSXwrGYeuT+aFQJqqz4IT+eb+95XrLUUYznm26z3lYzJf6bD+/LgOsvqCWiYoA/SU/BLrr7f8b1W3k1yVVNPEG+utGkYHe6B0cfiI/bU7nRwbrEJCDXE4TU
-X-Gm-Message-State: AOJu0YwqDyhqTM0dhxsi6eN62Z9D6Y10Z4OMe4WYirf1yoNS95SSDKsF
-	f3TjT5w04QdaKA4MmC8PHizuKTDzNWYMpy/cKDK9oJqeVQU0AKC4
-X-Google-Smtp-Source: AGHT+IFeHmKmJv50+uxoFGpkU0wNY7hJ3X7HEEhI+59tWnSNxwwR2DeReAt6XXA5R0PCcd9vrR99RA==
-X-Received: by 2002:a05:6a00:418a:b0:6ea:df6a:39e7 with SMTP id d2e1a72fcca58-6f8f2d7247cmr1513112b3a.13.1716533575418;
-        Thu, 23 May 2024 23:52:55 -0700 (PDT)
-Received: from dw-tp ([129.41.58.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc053bd6sm582396b3a.45.2024.05.23.23.52.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 23:52:54 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Donet Tom <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>, Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during __bio_release_pages()
-In-Reply-To: <7792c8ba-39e6-47ee-9b43-108270325c15@redhat.com>
-Date: Fri, 24 May 2024 12:13:04 +0530
-Message-ID: <87o78vsoav.fsf@gmail.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com> <20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org> <d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com> <20240523195734.bc03a8822a34b1a97880fb65@linux-foundation.org> <7792c8ba-39e6-47ee-9b43-108270325c15@redhat.com>
+	s=arc-20240116; t=1716532992; c=relaxed/simple;
+	bh=wEp7i5jwsZ84dHnzXTDUybMukSNpwTvEfoSfQnplscY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GreTK8dntc5mDlNTZO/R9sd82Klsp2W9qwI+iox45H+v2q6FFYU41dprLJKVKT2qqkBNHfhhtPP61QaY6bzlL+1AL5FV4ee863b53E41RW9N95FzPOalAcoMn8yg9Q4aGuXXIp2iWwFPuEJqGbCLI7uvjtmJtHb8NZe+ZPb6VWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V3ENFQBG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=79zbjKzi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 May 2024 08:43:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716532988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JpRyuuJJeXMepCuk4dxVJkRfLtOIeOpXAxCVzCQEjRo=;
+	b=V3ENFQBGOdFQEaBx8Zl/xtMFcug3VA8Hc66H4GDlrAWGh9SLu1eMKzb+/avBgI2pzB0Erc
+	9ogjb2lJrvyDSsC3Qr5znDmfNNYG+1Vuiu1JuC3O/FoNG+aqnYZFlfE/FxjWAaUY+93pzW
+	Ou6zF1VBQEU7RnpQ89rQuUzp02EXNHiUQFoBr9410wK2cu3xZIH7jA9i0enxRXkKYjyy46
+	Lo6JOWOxkH9KUChbf3p7jce8aKPagO4Rj4abKynFXKNoJKhftL4UPU7T7JGvw+I4jNJoSD
+	F5b7f3hSap9XTZ+KcVrmndko5hzPdqWpEf2Ul5N+uBCJBP2NA5p7lYGm13ekfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716532988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JpRyuuJJeXMepCuk4dxVJkRfLtOIeOpXAxCVzCQEjRo=;
+	b=79zbjKzijYSkmmeKFFiga6ihntljixAbKVzEYcXHAgJQcL50JnXhzAUvWfOyZAGb6zz7Oc
+	rmes18ee96w6L5Ag==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	syzbot <syzbot+50e25cfa4f917d41749f@syzkaller.appspotmail.com>,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-kernel@vger.kernel.org, mingo@redhat.com,
+	syzkaller-bugs@googlegroups.com, x86@kernel.org, linux-mm@kvack.org,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [syzbot] [kernel?] WARNING in flush_cpu_slab
+Message-ID: <20240524064306.b98TP1nU@linutronix.de>
+References: <0000000000008c9d27061915ca9c@google.com>
+ <87v834g6hn.ffs@tglx>
+ <2149ee23-5321-4422-808f-e6a9046662fc@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2149ee23-5321-4422-808f-e6a9046662fc@suse.cz>
 
-David Hildenbrand <david@redhat.com> writes:
+On 2024-05-23 23:03:52 [+0200], Vlastimil Babka wrote:
+> I'm puzzled by this. We use local_lock_irqsave() on !PREEMPT_RT everywhere.
+> IIUC this warning says we did the irqsave() and then found out somebody else
+> already set the owner? But that means they also did that irqsave() and set
+> themselves as l->owner. Does that mey there would be a spurious irq enable
+> that didn't go through local_unlock_irqrestore()?
 
-dropping stable@vger.kernel.org
+correct.
 
-> On 24.05.24 04:57, Andrew Morton wrote:
->> On Thu, 23 May 2024 22:40:25 +0200 David Hildenbrand <david@redhat.com> wrote:
->> 
->>>> You have stable@vger.kernel.org in the mail headers, so I assume you're
->>>> proposing this for backporting.  When doing this, please include
->>>>
->>>> Cc: <stable@vger.kernel.org>
->>>>
->>>> in the changelog footers and also include a Fixes: target.  I'm
->>>> assuming the suitable Fixes: target for this patch is 38b43539d64b?
->>>
->>> This adds a new selfest to make sure what was fixed (and backported to
->>> stable) remains fixed.
->> 
->> Sure.  But we should provide -stable maintainers guidance for "how far
->> back to go".  There isn't much point in backporting this into kernels
->> where it's known to fail!
->
-> I'm probably missing something important.
->
-> 1) It's a test that does not fall into the common stable kernels 
-> categories (see Documentation/process/stable-kernel-rules.rst).
->
-> 2) If it fails in a kernel *it achieved its goal* of highlighting that 
-> something serious is broken.
->
->> 
->> I'm still thinking that we want this in kernels which have 38b43539d64b?
->
-> To hide that the other kernels are seriously broken and miss that fix?
->
-> Really (1) this shouldn't be backported. I'm not even sure it should be 
-> a selftest (sounds more like a reproducer that we usually attach to 
-> commits, but that's too late). And if people care about backporting it, 
-> (2) you really want this test to succeed everywhere. Especially also to 
-> find kernels *without* 38b43539d64b
+> 
+> Also this particular stack is from the work, which is scheduled by
+> queue_work_on() in flush_all_cpus_locked(), which also has a
+> lockdep_assert_cpus_held() so it should fullfill the "the caller must ensure
+> the cpu doesn't go away" property. But I think even if this ended up on the
+> wrong cpu (for the full duration or migrated while processing the work item)
+> somehow, it wouldn't be able to cause such warning, but rather corrupt
+> something else
 
+Based on
 
-Sorry about the noise and cc'd to stable. I believe we don't need to
-backport this test. The idea of adding a selftests was "also" to catch any
-future bugs like this. 
+> >> CPU: 3 PID: 5221 Comm: kworker/3:3 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
 
-I am unaware of any functional test suite where we could add such tests
-like how filesystems have fstests. Hence the ideas was to add this in
-selftests. 
+the code was invoked on CPU3 and the kworker was made for CPU3. This is
+all fine. All access for the lock in question is within a few lines so
+there is no unbalance lock/ unlock or IRQ-unlock which could explain it.
 
-So this begs the question which I also asked few people at LSFMM,
-Does mm has any mmfvt (mm functional verification tests)? Should we have
-something like this? Was it tried in past?
-
-(Sorry, mmtests name is already taken - "MMTests is a configurable test suite that runs performance tests against arbitrary workloads.")
-
--ritesh
-
->
-> -- 
-> Cheers,
->
-> David / dhildenb
+Sebastian
 
