@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-189172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1798CEC71
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0F98CEC76
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9411F219CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97D411C20DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8E7126F2A;
-	Fri, 24 May 2024 22:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsgKbfBp"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1D61292EC;
+	Fri, 24 May 2024 22:41:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879EB3D3B8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 22:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5038562E;
+	Fri, 24 May 2024 22:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716590158; cv=none; b=B/nagVeBfxjnCmFGZbhvHWVqicWPrIYqE0lNMqECvFueyy8guvbmwRndAkMvyQ7MfKqEebBYaXVQWgc6L23KewG0DTbSRNMbBr4wBElcUcaGAnGsuSALwHBCsZzMgydz6WBkj1hJIKFS/XS2Qhfx01gLM2A6ClwZXhkVl1dQxDE=
+	t=1716590473; cv=none; b=OX1bAPvEcV1j989YLE0nSD7qk5aFip9b7I8rWI4IWWuVe5NwtlguQ1Pk+9pObGvsaGp/YDo8XDMucEPq1Vkg0XZe2DMMLDcNo8bpuLgsL9M6DkjeBZEx3xNguOu33l2XYxJr2UINvUY+Gp055Jnp+qgOlrdrwlbWrwUnFKOKGTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716590158; c=relaxed/simple;
-	bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqJ+9iQl6WNZzzxylpSBEwUlfra9sXXM7+UOqPIlWVjaAxT1oxqNTx3sCdSFooMsMvorWCI0zwjGRSLYi3Pq37aZzjr4cODxYNFLtwE3iIxOChOA97ZPlOjnGNV4/e52YVLKV6LM8eu4ZdllJLyb1AxjgnWZbqqoh4QBkhDlEu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hsgKbfBp; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so10944095a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:35:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716590155; x=1717194955; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
-        b=hsgKbfBpBqlkg//YouyxPSeFqOrOzjruprQy72rsJSWsIY2a3M1XDrgEBtWTMpsIwV
-         CINY5EJh3JTDA1h8XgYVoVktDK3qoZCiIsrTPg82aiW3988GejA+hzs+re+JTwXezv/N
-         Og52YFlxonbfJHQLdVEMQudHdlL826iJAIEjhMqigkRrJIW/sQN/cvz3k7I6o0tZr8zM
-         CzbEFI/5Tr3M6ClWKA4oFkvS/kcmi1VIXi1B8QP0/ebrPgxBId2daJdxR1to1/FmrtP3
-         vXrZ84eRqoTuWUrdqejhy+zPPcEjfG5V6vsqiezajnwkyAqBTx83gSljIBfm2r9OkJz9
-         7swA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716590155; x=1717194955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
-        b=vwfk1QwpFRh9NP5rrwfGb/nFM+roK/L+69sempdQSVfn8VMR/eXHiFIQt3riNrSUp+
-         SSbMTqAoBRgw5eZbrHTm9v+m92M6H7fhXRft2LfohifDuPkjdVbLcYaFOt5fg5vi8iMJ
-         nt6bNmyNlhKr8Ky19kf0nKyClf+bm28dOvnjAs4hdnWigcm8q3r+q8rbpt8pbrInNt7q
-         W3dEQIHdYtbRnM17GyA1iR9Ofgv07FQZIWx+AxIsQfvIX0aN+u0IvsaFVdtkH7xFbfN4
-         1YpA516S9pObVpXg3pXUXLWVPjJHQrqgRg3pDCeqsZqaTiucD6nPQNLVIYwFScBidGXd
-         jUMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ9M9zwPbHv6jcBPXVkrds7Lmxacitp8Z8SVzySyfcSkeDgcGggpCuy1dzZJdRpDev/zh/OG3MeEJJ0Igxx12VmYhhrZPwZgqHa6Vb
-X-Gm-Message-State: AOJu0YzbzHoQblS1zfKC9J5rei1cmAJ38dn5ak6KXkktg9S3gRNmIZ/f
-	lLMDNWCWA4G79kmgT6lxHLaHcX4ssYOnStOQd7iI9MLhKpIddSXD9Qcz9felKQs=
-X-Google-Smtp-Source: AGHT+IEoYoC3w04Q3y7BbD8fhPpPjz42RdyGJ8vVvhkiIz2RtEdt+0Vsq4dRJDybkSCXYA7IU2Fjwg==
-X-Received: by 2002:a50:ab13:0:b0:578:5d83:bae2 with SMTP id 4fb4d7f45d1cf-5785d83bf4dmr1949090a12.15.1716590154619;
-        Fri, 24 May 2024 15:35:54 -0700 (PDT)
-Received: from rex (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57872da9dfbsm23821a12.2.2024.05.24.15.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 15:35:54 -0700 (PDT)
-Date: Sat, 25 May 2024 00:35:52 +0200
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: kmsan: Fix hook for unaligned accesses
-Message-ID: <ZlEWSIcHXnh/BqbW@rex>
-References: <20240523215029.4160518-1-bjohannesmeyer@gmail.com>
- <CAG_fn=XR6KVQ=DbKZW3kNXsCHgULm2J7i6GCm8CZUjpjuk-d2A@mail.gmail.com>
+	s=arc-20240116; t=1716590473; c=relaxed/simple;
+	bh=+M+H9EDpt9M62BF9//BYA/DAxOwyZ70sO84XieW/I5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dVdf8CgfYSeSAV/7Y0E0K7RSPbhYy9GPHX1jI71649YPDmhJ1Xxakmq14Jc6oPDVX0RiuVeaypXYcP2io0el7QTPdc41O7gigsROxAU5eE08l1k/GkhE87uea9KukMfYycPZnu0ep2LWuqcPRiVYw4a9z77GU/PaDZhZTyY9990=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261E8C2BBFC;
+	Fri, 24 May 2024 22:41:11 +0000 (UTC)
+Date: Fri, 24 May 2024 18:41:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v10 00/36] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-ID: <20240524184156.2d9704c2@gandalf.local.home>
+In-Reply-To: <171509088006.162236.7227326999861366050.stgit@devnote2>
+References: <171509088006.162236.7227326999861366050.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG_fn=XR6KVQ=DbKZW3kNXsCHgULm2J7i6GCm8CZUjpjuk-d2A@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 10:28:05AM +0200, Alexander Potapenko wrote:
-> Nice catch! Does it fix any known bugs?
+On Tue,  7 May 2024 23:08:00 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Not that I know of. Based on my cursory testing, it seems that
-string_memcpy_fromio() is rarely called with an unaligned `from`, so
-this is a bit of an edge case.
+> Steven Rostedt (VMware) (15):
+>       function_graph: Convert ret_stack to a series of longs
+>       fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
+>       function_graph: Add an array structure that will allow multiple callbacks
+>       function_graph: Allow multiple users to attach to function graph
+>       function_graph: Remove logic around ftrace_graph_entry and return
+>       ftrace/function_graph: Pass fgraph_ops to function graph callbacks
+>       ftrace: Allow function_graph tracer to be enabled in instances
+>       ftrace: Allow ftrace startup flags exist without dynamic ftrace
+>       function_graph: Have the instances use their own ftrace_ops for filtering
+>       function_graph: Add "task variables" per task for fgraph_ops
+>       function_graph: Move set_graph_function tests to shadow stack global var
+>       function_graph: Move graph depth stored data to shadow stack global var
+>       function_graph: Move graph notrace bit to shadow stack global var
+>       function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
+>       function_graph: Add selftest for passing local variables
 
-On that note: I tried creating a unit test for this, to verify that
-an unaligned memcpy_fromio() would yield uninitialized data without the
-patch, and would yield initialized data with the patch. However, what I
-found is that kmsan_unpoison_memory() seems to always unpoison an entire
-4-byte word, even if called with a `size` of less than 4. However, this
-issue is somewhat unrelated to the patch at hand, so I'll create a
-separate patch to demonstrate what I mean.
+Hi Masami,
 
-Thanks,
-Brian
+While reviewing these patches, I realized there's several things I dislike
+about the patches I wrote. So I took these patches and started cleaning
+them up a little. Mostly renaming functions and adding comments.
+
+As this is a major change to the function graph tracer, and I feel nervous
+about building something on top of this, how about I take over these
+patches and push them out for the next merge window. I'm hoping to get them
+into linux-next by v6.10-rc2 (I spent the day working on them, and it's
+mostly minor tweaks).
+
+Then I can push it out to 6.11 and get some good testing against it. Then
+we can add your stuff on top and get that merged in 6.12.
+
+If all goes well, I'm hoping to get a series on just these patches (and
+your selftest addition) by tonight.
+
+Thoughts?
+
+-- Steve
 
