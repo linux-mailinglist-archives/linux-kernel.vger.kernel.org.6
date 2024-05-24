@@ -1,214 +1,231 @@
-Return-Path: <linux-kernel+bounces-188591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5768CE406
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22B48CE40B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A141F217CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567E2281AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1ED85267;
-	Fri, 24 May 2024 10:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3E58562C;
+	Fri, 24 May 2024 10:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nx/O++w0";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nx/O++w0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="USoDXd6t"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588BD55E73;
-	Fri, 24 May 2024 10:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F5E55E73;
+	Fri, 24 May 2024 10:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716545471; cv=none; b=oEMGnHiAElYJrPCaQVOCmXA/64VYa1oeThddg1GcLyCARDp6eifazYyh9oZIFpk7vrKPQ9CB2Q6z4dCD7rIO0V8WT4j3UEwVi924eIAOGBeUjflKiKijGTxYCUP+OZSzeHnylmJpWJQVawiNTPCLgqw9rFwAfoNyTlQfFJWwMg0=
+	t=1716545598; cv=none; b=L5D6kvmt4x216n8YkdExl40dQrxYLyEqQRhNQgWIWXRNXgWhMCUJDNP8fgy+kkCpuapTAplXhwK7C3IKna0S5JJPv91f4rOMVcWrs672NP/hJE9ecPr3rJg6QDWmOFut/OrgPvtS68EbbYgcOiLWif+pbM/6FLuTSjHmPESGEpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716545471; c=relaxed/simple;
-	bh=9kgNx994pKzolw9CWmdc7IWCOws4XyHz5c9lpBZfYMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOBj77EInICtyXG3sQAqzGsG+5D1Fheh4URC3Kjlro6klTyyt2s5L09051QEDmXhyi8diPHixFLnB3H63spz6ffzlkOORGkaojIkqToXzHnGQcqkrJqbrt6WWE0KoeiTshFy2ZOvGw9PpENG03Za6uSJjFh4zp9yNLRLCtRUsHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nx/O++w0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nx/O++w0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 64FD633A12;
-	Fri, 24 May 2024 10:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716545465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2TZ0stl9BSXah0gGxoM3/BYyBtq0boaJRO/ho9ciTAA=;
-	b=nx/O++w02PfP4uWEl/hgiUBFnypdKjevWeKbl+Dd3To80TPnib0s1MtbuTDKZ/MtIsrU8w
-	CLL7gUs2XMnm9hjg824MN4sw8gXGsBQxsARfvRzrPgOWbmYb76Ki3KB4T2GXi9jwv+kDWZ
-	43VUve0mTMKXRarWESqSe+oFfAZptq4=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="nx/O++w0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716545465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2TZ0stl9BSXah0gGxoM3/BYyBtq0boaJRO/ho9ciTAA=;
-	b=nx/O++w02PfP4uWEl/hgiUBFnypdKjevWeKbl+Dd3To80TPnib0s1MtbuTDKZ/MtIsrU8w
-	CLL7gUs2XMnm9hjg824MN4sw8gXGsBQxsARfvRzrPgOWbmYb76Ki3KB4T2GXi9jwv+kDWZ
-	43VUve0mTMKXRarWESqSe+oFfAZptq4=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C3E613A6B;
-	Fri, 24 May 2024 10:11:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id omPKELlnUGZuZgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 24 May 2024 10:11:05 +0000
-Date: Fri, 24 May 2024 12:10:56 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
- first commit
-Message-ID: <ZlBnsEsr66mR-frf@tiehlicka>
-References: <2024051954-CVE-2024-35906-1c6f@gregkh>
- <ZkxbObACcnUMZ3LA@tiehlicka>
- <2024052136-cubbyhole-ecologist-5b68@gregkh>
- <ZkzREEA5_N_xfqED@tiehlicka>
- <2024052110-grasp-liking-22c0@gregkh>
- <ZkzgZoxF_RD50PdW@tiehlicka>
- <2024052243-napping-coastal-3306@gregkh>
- <Zk790Afi1sfwgrZi@tiehlicka>
- <2024052309-scabby-favored-0973@gregkh>
+	s=arc-20240116; t=1716545598; c=relaxed/simple;
+	bh=c6TDcv5JxC0r9PYfwCFcLyrh3UD3cztzug9U0akFypY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LGtgaSSilzMoJJ3+qRHG9b+QbIlwak+fLdfC/dDIUcCRK0P1ej84oDNdu0J6c6+rrUCwBkSe9p8BJoinkShcPBnU5X0gsTgxMorviVYD0UCIA21cqyqs6iY3qU2EeN9hFxnkaQI0GR9oPRmNm7Quv2owhY7VhDdqhv+5/1oQ24Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=USoDXd6t; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O6CEeh020201;
+	Fri, 24 May 2024 06:13:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=TweYl9Z6tYTIKENAzoHuQerH0ps
+	os/upZIovCsAyM+M=; b=USoDXd6tJK3rw+aTWEvrKSO0LQfQ7LnLj2TzPBQSr0R
+	31hWTw/EViA8NMLX07FCZIYA7Nf1JlPkXKoc4AfW7X4gbqHewSlLpGyyECg0kx0R
+	D5syJDOSVptKJy6/yg3cNQl1mI6kAE3EGCiI7AP0erxywSt8M8Oo8wQx6Wx16WXw
+	GqceZNfZfNDGQP4tFn+uNChyAGgt6aNiMgLEGL/zLtAjpG+tglG2HWcLCub6mvTb
+	4wj/hpVul/1fY1xYasEddhhIbthsKLpI27RWlxse28qDRWXaCnyyryFSnHbz+vT4
+	Jq8hjAbRowaq45x5hFsW/Xfc7KxNk/bdUwr2BarIXSw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yaaaqb1j1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 06:13:02 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44OAD13T038773
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 May 2024 06:13:01 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 24 May
+ 2024 06:13:00 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 24 May 2024 06:13:00 -0400
+Received: from radu.ad.analog.com ([10.48.65.189])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44OACjBH011026;
+	Fri, 24 May 2024 06:12:48 -0400
+From: Radu Sabau <radu.sabau@analog.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Radu Sabau <radu.sabau@analog.com>
+Subject: [PATCH v3] drivers: hwmon: max31827: Add PEC support
+Date: Fri, 24 May 2024 13:12:31 +0300
+Message-ID: <20240524101232.6295-1-radu.sabau@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024052309-scabby-favored-0973@gregkh>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 64FD633A12
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
-	DKIM_TRACE(0.00)[suse.com:+]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: PD8aSPPWRgVFpKvxXWAV_6LJJjpHzDoI
+X-Proofpoint-ORIG-GUID: PD8aSPPWRgVFpKvxXWAV_6LJJjpHzDoI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_03,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ clxscore=1015 spamscore=0 suspectscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240070
 
-On Thu 23-05-24 15:49:59, Greg KH wrote:
-> On Thu, May 23, 2024 at 10:26:56AM +0200, Michal Hocko wrote:
-> > On Wed 22-05-24 05:57:38, Greg KH wrote:
-> > [...]
-> > > > I completely do get why you do not care about that downstream
-> > > > engineering cost but generating bogus CVEs on top of a huge pile of
-> > > > dubious ones is less than useful, don't you think?
-> > > 
-> > > How is this a "bogus" CVE on their own?
-> > 
-> > I suspect you haven't looked at those commits. This is a boot time
-> > suboptimal HW configuration. There is no way any user can exploit that I
-> > can see. Not to mention it cases system boot hangs!
-> 
-> Yes, you are correct, the original should not have had a CVE assigned to
-> it, that was wrong, and I have rejected it now.  Same for the revert, it
-> too is now rejected.  Thanks for the review, it is much appreciated.
+Add support for PEC by attaching PEC attribute to the i2c device.
+Add pec_store and pec_show function for accessing the "pec" file.
 
-Thanks for considering the feedback!
+Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+---
+Change log:
+v2:
+ *Rebase on top of v6.9
+ *Attach pec attribute only to i2c device
+ *Fix bug to attach pec attribute to i2c device if the device supports it.
+v3:
+ *Use only one variable to write PEC_EN bit in configuration register
+ *Use regmap_set_bits to set PEC_EN bit when requested instead of
+  regmap_update_bits.
+ *Fix typo in commit message.
+---
+ Documentation/hwmon/max31827.rst | 13 +++++--
+ drivers/hwmon/max31827.c         | 63 ++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+), 3 deletions(-)
 
-> Also, the reason the original had a cve assigned to it was a fault on my
-> side, that shouldn't have happened, and I've re-reviewed to make sure
-> that I didn't mark anything else that way as well (so far I have not
-> found anything, the 'revert' caused problems in our tools, not to blame
-> them, but me, the author of that tool...)
-
-Good to hear this has an explanation.
-
-[...]
-> Because of asking, many others are starting to help out, you can too,
-> just submit patches against the cve/review/proposed/ directory with a
-> list of commits that you feel should have CVEs assigned for, or annotate
-> why you feel specific ones we have reviewed should NOT have a CVE
-> assigned, and our tools can handle them quite well as part of the
-> assignment process (see scripts/cve_review for a tool that some of us
-> use to create these files, that's not required, as not all of us use it,
-> but the output format is the key, and that's a simple list of commit
-> ids, personally I generate that from mboxes.)
-
-Do I get it right that proposals shouldn't be sent via email to
-cve@kernel.org as suggested by the in tree documentation? I do not mind
-the specific workflow but until now I have followed Documentation/process/cve.rst
-as authoritative source of the process. It would be really great if that
-matched the workflow.
-
-> > > Also, this is work ostensibly that you are also already doing for your
-> > > day-job, right?
-> > 
-> > We, like stable trees, rely on Fixes tag and those (including other
-> > commits that might be this tag) are reviewed by domain experts.
-> 
-> Great, so you already have reviewed all of these, so it should be a
-> simple match up on your end.
-
-Not at all. Every incoming CVE has to go through CVSS assessment at
-least. This on its own is a very non-trivial and time consuming task
-that obviously scales with the number of CVEs. There is more going
-on besides that. 
-
-[...]
-
-> > If you really want to build a trust around the CVE process then make it
-> > more transparent. I would start by adding reason why something has been
-> > marked CVE. You are saying there is peer review process going on then
-> > why not add Reviewed-by: to make it explicit and visible.
-> 
-> We have that, see the git log of the cve/review/ directory for the files
-> and where most all of the cves come from.  Some come directly from
-> requests by others to us, and a few other places (i.e. security
-> reports), so we of course can't document the source of everything for
-> obvious reasons.
-
-Thanks for pointing me there but I do not think this is what I've had in
-mind. I do understand that there is some pattern matching happening to
-select most of the candidates, but as you've said this is then reviewed
-and during that review you likely need to read through that changelog
-and build some sort of statement why this is considered a security
-threat.
-
-I believe exactly _this_ would be a much more valuable information in
-the CVE announcement than a copy&past of the changelog which on its own
-can be trially referenced by a link. Also if there is a peer review
-happening then Reviewed-by would be really nice. Not to mention
-Reported-by if this was externally reported (the report could be a part
-of the announcement as well).
-
-Thanks!
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 44ab9dc064cb..9c11a9518c67 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
+ before overtemperature or undertemperature faults are indicated in the
+ corresponding status bits.
+ 
+-Notes
+------
++PEC Support
++-----------
++
++When reading a register value, the PEC byte is computed and sent by the chip.
++
++PEC on word data transaction respresents a signifcant increase in bandwitdh
++usage (+33% for both write and reads) in normal conditions.
+ 
+-PEC is not implemented.
++Since this operation implies there will be an extra delay to each
++transaction, PEC can be disabled or enabled through sysfs.
++Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index f8a13b30f100..46ddd5f8ee1c 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -24,6 +24,7 @@
+ 
+ #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+ #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
++#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+ #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+ #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+ #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+@@ -475,6 +476,53 @@ static ssize_t temp1_resolution_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(temp1_resolution);
+ 
++static ssize_t pec_show(struct device *dev, struct device_attribute *devattr,
++			char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
++}
++
++static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
++			 const char *buf, size_t count)
++{
++	struct max31827_state *st = dev_get_drvdata(dev);
++	struct i2c_client *client = to_i2c_client(dev);
++	unsigned int val;
++	int err;
++
++	err = kstrtouint(buf, 10, &val);
++	if (err < 0)
++		return err;
++
++	switch (val) {
++	case 0:
++		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++					 MAX31827_CONFIGURATION_PEC_EN_MASK,
++					 0);
++		if (err)
++			return err;
++
++		client->flags &= ~I2C_CLIENT_PEC;
++		break;
++	case 1:
++		err = regmap_set_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++				      MAX31827_CONFIGURATION_PEC_EN_MASK);
++		if (err)
++			return err;
++
++		client->flags |= I2C_CLIENT_PEC;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(pec);
++
+ static struct attribute *max31827_attrs[] = {
+ 	&dev_attr_temp1_resolution.attr,
+ 	NULL
+@@ -578,6 +626,11 @@ static int max31827_init_client(struct max31827_state *st,
+ 	return regmap_write(st->regmap, MAX31827_CONFIGURATION_REG, res);
+ }
+ 
++static void max31827_remove_pec(void *dev)
++{
++	device_remove_file(dev, &dev_attr_pec);
++}
++
+ static const struct hwmon_channel_info *max31827_info[] = {
+ 	HWMON_CHANNEL_INFO(temp, HWMON_T_ENABLE | HWMON_T_INPUT | HWMON_T_MIN |
+ 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
+@@ -627,6 +680,16 @@ static int max31827_probe(struct i2c_client *client)
+ 	if (err)
+ 		return err;
+ 
++	if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC)) {
++		err = device_create_file(dev, &dev_attr_pec);
++		if (err)
++			return err;
++
++		err = devm_add_action_or_reset(dev, max31827_remove_pec, dev);
++		if (err)
++			return err;
++	}
++
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, st,
+ 							 &max31827_chip_info,
+ 							 max31827_groups);
 -- 
-Michal Hocko
-SUSE Labs
+2.34.1
+
 
