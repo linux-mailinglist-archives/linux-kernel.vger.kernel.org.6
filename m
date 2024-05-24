@@ -1,188 +1,395 @@
-Return-Path: <linux-kernel+bounces-188212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5698CDF42
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:38:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72FE8CDF44
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F17283251
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1660D1C21683
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB6F376EB;
-	Fri, 24 May 2024 01:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b7382p2n"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2057.outbound.protection.outlook.com [40.107.101.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353982BAE3;
+	Fri, 24 May 2024 01:38:31 +0000 (UTC)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B04D8488;
-	Fri, 24 May 2024 01:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716514703; cv=fail; b=X7NZKvPc+0uN9tNbMtmJRpnieT77iAfwt2Mh3faeXWpvYi8DtRL5UBfUBo6VnnVvvXxnm0Jaj0nERUCVMS4UXxNOnuIystP0j8tpwFFUoKK4htN78nmR/9thC1NRAxc+mt9aYvY2+jag+f6p6MAHyCG9Ng6bv6uQ473LxCWqYMg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716514703; c=relaxed/simple;
-	bh=RsqeBLEgmTkZnUko3AFVUFeXNLx4MLMlNE0ssLqD2l8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I/Uw5OeMifuvJzc/2icEk8FCmUrHWhi0CAlz0pWBZCJaRR5Zukh62Xzi6+rq/IuIu/gKwt468Qg6YsUTVPiDNqW52prB6P1OZsRb4T6Hb2bNatJDxgAPenISWFp1Xkrq1BO4z8x5iUOBPQ/Ex4GGV6BCMycSSUDAQkRmT3CtaJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b7382p2n; arc=fail smtp.client-ip=40.107.101.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gK/TMKxJefwojV0lhY+orlGPe4pgZ83KytuzoMG5nABWif+kngWOEKGlVsHM86gPnOlmVLSjo4QJDlRc6T6weTgL9Bd7/m1uyg4ftBIMHwv2q9Rz8BQTmQa5UF8ij90k9RpqYz/9fBkSRfGw5cy77UTc9noStKAh0EP8gef2yby4HACiyd5CoqZr9wR0lvttd9pjUI91b4FXErqAAwDMOGt5u+a3lzhuMuhL8cKpUWe3yOURDW/vsnzZLhZqD8TL6HOuxgcQIyojaIEctdKBxSFmPD6k0b8r7g/PyOlYdv/R6q+vXxRxPDEGQbUGgNS2RQpa8AVM7LFqKSZbEXsbYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z/wmM8h3O3strYTXMvIHfoUjDzyD/wqwy9KmWhOL5Rk=;
- b=nusc8VE6M1UEoCfq7nsLg8Yzu0JIegBab4TLw0vumjloljEuCAEfD28z0aVPBgEzhk03SIARvo+xBtnuTN0VrnMPkgWmCdbOgNvLAULX68ngCP8g9FN+zACeXVWGgHK9RC+SNYczusGOCz+pXCPI7QQsAPQU8G/8nDonmSzWpNLKI+QqgiH6Mftf5hhkO7xgtWapPPHERHwadIqUM3wwo0iFK5m9wL1UsenusMScW1Cre7u9/i34XcBEUZ+DCA/MiwJ4KcJIwui7E0l30jxOn7cZCAVF22XOMsyrMFW8aGriHYDCo+9sYCjadhpOFFvIyIJN8WLZAbTtlo8qmuAjxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z/wmM8h3O3strYTXMvIHfoUjDzyD/wqwy9KmWhOL5Rk=;
- b=b7382p2nB5wS9WIH2JFObAqZ4MTxFoWDoYxmT9/vlNfM5tfHXWlzIrH8Kz2I0fJ7LJ95KOrhl49ykFE3TX8YfD10WhiyRhVsX0ko0oKflt0OT8NBPJlMtGP1BL16UhvRlCzTbEVkvip8sSP1Dci3fAXYyQXxqWvcufUx2Cs3srGfSh5VbK5M7LaDzMB+6s+YxuEWzEzeB1qniiKujUfhxtTfHa4ZJeuHQDA7hih4aPnQ0f/kccz5Mr20NOfC4BZ3eVll3bV1DpEm0CXas5/dDaDs10otZThptwGfvMUshqXbShOwIdvXoJYu3VfBOmVLIM3ROEnjKctHBMk4CX/cUg==
-Received: from MW2PR2101CA0017.namprd21.prod.outlook.com (2603:10b6:302:1::30)
- by BY5PR12MB4225.namprd12.prod.outlook.com (2603:10b6:a03:211::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
- 2024 01:38:18 +0000
-Received: from CO1PEPF000075EF.namprd03.prod.outlook.com
- (2603:10b6:302:1:cafe::16) by MW2PR2101CA0017.outlook.office365.com
- (2603:10b6:302:1::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.9 via Frontend
- Transport; Fri, 24 May 2024 01:38:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000075EF.mail.protection.outlook.com (10.167.249.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.14 via Frontend Transport; Fri, 24 May 2024 01:38:18 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 23 May
- 2024 18:38:11 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 23 May
- 2024 18:38:10 -0700
-Received: from jjang.nvidia.com (10.127.8.12) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Thu, 23 May
- 2024 18:38:10 -0700
-From: Joseph Jang <jjang@nvidia.com>
-To: <shuah@kernel.org>, <alexandre.belloni@bootlin.com>, <avagin@google.com>,
-	<jjang@nvidia.com>, <amir73il@gmail.com>, <brauner@kernel.org>,
-	<mochs@nvidia.com>, <kobak@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>
-Subject: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before testing
-Date: Thu, 23 May 2024 18:38:07 -0700
-Message-ID: <20240524013807.154338-3-jjang@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240524013807.154338-1-jjang@nvidia.com>
-References: <20240524013807.154338-1-jjang@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDF46116;
+	Fri, 24 May 2024 01:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716514710; cv=none; b=bu0El1MXXP9zRpjTY8VJFpI1g3hvI7RnZGLAaMmJf0q5gy6+kHzXOY7DrltbOMYinbpWRvSxpvC5K/UAaqbQ7lSyTXh1DILLEDAJYtDMT8xHw7lPSZ/e2/4OuXcXaXpK7G2jB2vePNUkKTX1iJi5G117BvolZguAu/VF+n9NBYc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716514710; c=relaxed/simple;
+	bh=9+sxS94GMIIcyWc9owzePTjceCMRi2Qhi4bWvQEGpAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y9PyyqWhU/qDqv97wrxZqD2jNZ/qScQD6VHiTBbSwKDmyMOdf5qCWc72MzfsEc8Nqo4g9oFCYO5cyborlMFlvl4oD5hovT7H2WfoSIGyQUJboizBkM6QIsI6/zz15RKC1buR0PmtSCaw0ZZlax4V5xmu12hBb/qJkAWYCdAsRVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2bdf11888a5so869671a91.0;
+        Thu, 23 May 2024 18:38:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716514708; x=1717119508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cm0wyLN6ZzdaTX6nZptBzZW0mt9IjUaev3nT664fKWI=;
+        b=KQfK2cl02JXprfaG74JGxZxHAvvG12XrilRLczKjhHeDOZJkfU+mTb8kgQmPEzl6Q5
+         OLhrGbgsngk7Md7DxFSmHHVc8ZOH/tjoR3Ah0kpIyXgBHvdn0SGEUvmh154XVzJHQn9X
+         AuVXLPy92bH3YJDVz6lU0GrSL7rE5PMaXHEDdtMeajcqaPoFbVC3de9P3aMAJVkhwpbm
+         O0EBK0MoMhL3eKeDnqigdbeWA2tuDlr6UxS1dhkTWN2yJQro6+cenYj3VBsnP9MihJ3P
+         DtzpWu61BU8YXlrzg84SN8IjGCOlf2XT42VUj1hzo59yNXifyIoZLFRNBBRUXpIl6aUE
+         Ivww==
+X-Forwarded-Encrypted: i=1; AJvYcCU650Ud9U9nT6yOAVJaPu424F96hWnPhk+nIkWVCmJUxeGJ0Wzw5uD609/OflHPYLh0LNQ8P4S5pF6Emk2tSQKsiMyK6ktohntUotek2IPuOJjaffHn8Cuv3ZGGki14VsUmfL7nz8XXF4fV8Kek1g==
+X-Gm-Message-State: AOJu0Yx+IO0XgikhSl+OWdEYteAUXaxVyg7rVAqLKFWCoLAGCrg3/POQ
+	kGWVEMA9J7kyjgPXHhNimg2zetsWLyYMwXdiN1rhLDSVZyJt0ldqFG+WAUY4FlMdOttwWByVdOQ
+	YVsPsRWk5hwERjXtti5Qk4hdoi3U=
+X-Google-Smtp-Source: AGHT+IE0G0PLQwFv4g0JqXxdnAyoNEm6ndomA5N3EIC+NW/HSipjBJsMSgH3SekFFVIa0yavzQ4w5VwggPWgTlkuUKU=
+X-Received: by 2002:a17:90b:30c:b0:2b3:28df:92bb with SMTP id
+ 98e67ed59e1d1-2bf5e16cee1mr898443a91.13.1716514707327; Thu, 23 May 2024
+ 18:38:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075EF:EE_|BY5PR12MB4225:EE_
-X-MS-Office365-Filtering-Correlation-Id: 357240a9-580d-4395-0f86-08dc7b92303a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|376005|82310400017|36860700004|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?enreto6JqO9tInWb20GxpAg2bJVvL441BNuOae15dxiwlYeHvHWvGTkbtoZG?=
- =?us-ascii?Q?lQdf7zAlMJQD5FsmT5KQT/05a4Bxjvam/e6koRKNE3FrfgpZEt3jnHY53uWG?=
- =?us-ascii?Q?61gFxiIblsgx9Ngl0C7de/H04h8BZ2hk+XuKQWk3KBB00VAm9LbSIvRG/2WU?=
- =?us-ascii?Q?gVuEf5ZajfVvzaqx20mr2X2bpfsZtiPV3DmxNQ+f+0N3Bj9sSY4QgEcaNCqc?=
- =?us-ascii?Q?fhtGF8X3P3VLHZoaQMhe5zz54KqzBD7Bj1INOy29YzUOzSNGc+NwFfKPZqam?=
- =?us-ascii?Q?ycvZ8t1M1iot6AOpiAQAemyi3tlDoX/Ug3dxmDDos7xNm4cT6gFPUjfufRd4?=
- =?us-ascii?Q?eOT6SGAOQ9Js9bA+TwIEGo+SHXiate26SMbOxX/5YjNr9otIHr1/j/fiT/kj?=
- =?us-ascii?Q?Ana9/ZIzPBCyMw/B3GmiIH45+54NIliyq8QbZODP1tw6aoVeEsK5X31IUjcm?=
- =?us-ascii?Q?ytEpfIrTiXCNHyLlD4A3/OKcE9GiCTcsQ1XZAWMmfQEXyBFHyz92V4u0Xj83?=
- =?us-ascii?Q?rMzrrUjEmnlLqIm8POtvXXoK6SKCwDQHIDmdp/Jg9iAy3BaS7np0nrDK2RWm?=
- =?us-ascii?Q?9sj1svTpmZeDjxsae69L4pl9QGMNwdxvafjOOp3UPfQ/VqJejm2OzNv9SRbT?=
- =?us-ascii?Q?/UjWq3cpGnXV3xsLUmkGUy2DnMQldH0X3xs0K7+2Uk367smdS2WegJxbvN/F?=
- =?us-ascii?Q?8cA5gcDQ/UtL/O8dmLbJhtPTS6ihCQaEb8EshmCNPn9tQCbdXBpqTPTYjN+R?=
- =?us-ascii?Q?R6XdC4O+EGjtwPVm/PB49dL2NBBcwvJhqrKl3d+g62VlkKcUd/8ecaLc7UYP?=
- =?us-ascii?Q?vlshcPmIZg2aoRcGGd+B/leUuYlyrJ3xP6I/cLXv78LGBuZirHNiBr80L1IM?=
- =?us-ascii?Q?MX9OXHyEFVZkThnFVq6Zsyn0ps5oUyE9wpQfYCaKSvkc9m3aZqu0fEzIEQqT?=
- =?us-ascii?Q?Uvfjqh9XitLjfyIb8gQgSxJIC91IM1k8ZG9gcBucciXvuacQzI60e7KjZDnx?=
- =?us-ascii?Q?H9Dly7o8h/Un/A9jqpMPpr2oqgto/SeFNMNiShZQr06bb1WmIMijLxTA4S4n?=
- =?us-ascii?Q?vuCk3QQdf3m5BefrjMYWugk1z5nNq1N+SIejLF3kKlc8pXkrj7MUKe0R/b7V?=
- =?us-ascii?Q?MjntYIBqukQoZKuL+5QJoySXbGyvqbMZHgbd5MzVF8m7RiRsygwEnIHJL7If?=
- =?us-ascii?Q?sN7/+UqCh/fL5Kw4JlJHxO4e5AwYPksA+Xu8oIIapANOJbXspIib3hmYRYvc?=
- =?us-ascii?Q?JUqKjhhU+SLkg1/rMY6g0si3TtIkyA081eu4TEjLcA/XzqI1SeHRruXDdEfb?=
- =?us-ascii?Q?2axdVklXXkfBw6y7MZuGW45b52Q1Zi1kUh/Pea19yvC3daPZsYmWHbmbKAfZ?=
- =?us-ascii?Q?RhyEWd6F3/A2KDUiHClcMX0BFBOa?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(376005)(82310400017)(36860700004)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 01:38:18.3383
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 357240a9-580d-4395-0f86-08dc7b92303a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075EF.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4225
+References: <20240521133029.83654-1-ben.gainey@arm.com> <20240521133029.83654-2-ben.gainey@arm.com>
+In-Reply-To: <20240521133029.83654-2-ben.gainey@arm.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 23 May 2024 18:38:15 -0700
+Message-ID: <CAM9d7cjBzEKZuGXTgA6CW7Tf7LcjdvwfJa+HCR2EE87DcA78BA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] perf: Support PERF_SAMPLE_READ with inherit
+To: Ben Gainey <ben.gainey@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	james.clark@arm.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The rtctest requires the read permission on /dev/rtc0. The rtctest will
-be skipped if the /dev/rtc0 is not readable.
+Hello,
 
-Reviewed-by: Koba Ko <kobak@nvidia.com>
-Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-Signed-off-by: Joseph Jang <jjang@nvidia.com>
----
- tools/testing/selftests/rtc/rtctest.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+On Tue, May 21, 2024 at 6:30=E2=80=AFAM Ben Gainey <ben.gainey@arm.com> wro=
+te:
+>
+> This change allows events to use PERF_SAMPLE READ with inherit
+> so long as PERF_SAMPLE_TID is also set.
+>
+> In this configuration, an event will be inherited into any
+> child processes / threads, allowing convenient profiling of a
+> multiprocess or multithreaded application, whilst allowing
+> profiling tools to collect per-thread samples, in particular
+> of groups of counters.
+>
+> The read_format field of both PERF_RECORD_READ and PERF_RECORD_SAMPLE
+> are changed by this new configuration, but calls to `read()` on the same
+> event file descriptor are unaffected and continue to return the
+> cumulative total.
+>
+> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
 
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index 2b12497eb30d..d104f5326cf4 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -483,6 +483,8 @@ __constructor_order_last(void)
- 
- int main(int argc, char **argv)
- {
-+	int ret = -1;
-+
- 	switch (argc) {
- 	case 2:
- 		rtc_file = argv[1];
-@@ -494,5 +496,12 @@ int main(int argc, char **argv)
- 		return 1;
- 	}
- 
--	return test_harness_run(argc, argv);
-+	/* Run the test if rtc_file is accessible */
-+	if (access(rtc_file, R_OK) == 0)
-+		ret = test_harness_run(argc, argv);
-+	else
-+		ksft_exit_skip("[SKIP]: Cannot access rtc file %s - Exiting\n",
-+						rtc_file);
-+
-+	return ret;
- }
--- 
-2.34.1
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
+Thanks,
+Namhyung
+
+> ---
+>  include/linux/perf_event.h |  1 +
+>  kernel/events/core.c       | 78 ++++++++++++++++++++++++++++----------
+>  2 files changed, 58 insertions(+), 21 deletions(-)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index d2a15c0c6f8a9..e7eed33c50f16 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -932,6 +932,7 @@ struct perf_event_context {
+>
+>         int                             nr_task_data;
+>         int                             nr_stat;
+> +       int                             nr_inherit_read;
+>         int                             nr_freq;
+>         int                             rotate_disable;
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 724e6d7e128f3..e7c847956ebff 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -1767,6 +1767,14 @@ perf_event_groups_next(struct perf_event *event, s=
+truct pmu *pmu)
+>                 event =3D rb_entry_safe(rb_next(&event->group_node),     =
+ \
+>                                 typeof(*event), group_node))
+>
+> +/*
+> + * Does the event attribute request inherit with PERF_SAMPLE_READ
+> + */
+> +static inline bool has_inherit_and_sample_read(struct perf_event_attr *a=
+ttr)
+> +{
+> +       return attr->inherit && (attr->sample_type & PERF_SAMPLE_READ);
+> +}
+> +
+>  /*
+>   * Add an event from the lists for its context.
+>   * Must be called with ctx->mutex and ctx->lock held.
+> @@ -1797,6 +1805,8 @@ list_add_event(struct perf_event *event, struct per=
+f_event_context *ctx)
+>                 ctx->nr_user++;
+>         if (event->attr.inherit_stat)
+>                 ctx->nr_stat++;
+> +       if (has_inherit_and_sample_read(&event->attr))
+> +               ctx->nr_inherit_read++;
+>
+>         if (event->state > PERF_EVENT_STATE_OFF)
+>                 perf_cgroup_event_enable(event, ctx);
+> @@ -2021,6 +2031,8 @@ list_del_event(struct perf_event *event, struct per=
+f_event_context *ctx)
+>                 ctx->nr_user--;
+>         if (event->attr.inherit_stat)
+>                 ctx->nr_stat--;
+> +       if (has_inherit_and_sample_read(&event->attr))
+> +               ctx->nr_inherit_read--;
+>
+>         list_del_rcu(&event->event_entry);
+>
+> @@ -3529,11 +3541,18 @@ perf_event_context_sched_out(struct task_struct *=
+task, struct task_struct *next)
+>                         perf_ctx_disable(ctx, false);
+>
+>                         /* PMIs are disabled; ctx->nr_pending is stable. =
+*/
+> -                       if (local_read(&ctx->nr_pending) ||
+> +                       if (ctx->nr_inherit_read ||
+> +                           next_ctx->nr_inherit_read ||
+> +                           local_read(&ctx->nr_pending) ||
+>                             local_read(&next_ctx->nr_pending)) {
+>                                 /*
+>                                  * Must not swap out ctx when there's pen=
+ding
+>                                  * events that rely on the ctx->task rela=
+tion.
+> +                                *
+> +                                * Likewise, when a context contains inhe=
+rit +
+> +                                * SAMPLE_READ events they should be swit=
+ched
+> +                                * out using the slow path so that they a=
+re
+> +                                * treated as if they were distinct conte=
+xts.
+>                                  */
+>                                 raw_spin_unlock(&next_ctx->lock);
+>                                 rcu_read_unlock();
+> @@ -4533,11 +4552,19 @@ static void __perf_event_read(void *info)
+>         raw_spin_unlock(&ctx->lock);
+>  }
+>
+> -static inline u64 perf_event_count(struct perf_event *event)
+> +static inline u64 perf_event_count_cumulative(struct perf_event *event)
+>  {
+>         return local64_read(&event->count) + atomic64_read(&event->child_=
+count);
+>  }
+>
+> +static inline u64 perf_event_count(struct perf_event *event, bool self_v=
+alue_only)
+> +{
+> +       if (self_value_only && has_inherit_and_sample_read(&event->attr))
+> +               return local64_read(&event->count);
+> +
+> +       return perf_event_count_cumulative(event);
+> +}
+> +
+>  static void calc_timer_values(struct perf_event *event,
+>                                 u64 *now,
+>                                 u64 *enabled,
+> @@ -5454,7 +5481,7 @@ static u64 __perf_event_read_value(struct perf_even=
+t *event, u64 *enabled, u64 *
+>         mutex_lock(&event->child_mutex);
+>
+>         (void)perf_event_read(event, false);
+> -       total +=3D perf_event_count(event);
+> +       total +=3D perf_event_count_cumulative(event);
+>
+>         *enabled +=3D event->total_time_enabled +
+>                         atomic64_read(&event->child_total_time_enabled);
+> @@ -5463,7 +5490,7 @@ static u64 __perf_event_read_value(struct perf_even=
+t *event, u64 *enabled, u64 *
+>
+>         list_for_each_entry(child, &event->child_list, child_list) {
+>                 (void)perf_event_read(child, false);
+> -               total +=3D perf_event_count(child);
+> +               total +=3D perf_event_count_cumulative(child);
+>                 *enabled +=3D child->total_time_enabled;
+>                 *running +=3D child->total_time_running;
+>         }
+> @@ -5545,14 +5572,14 @@ static int __perf_read_group_add(struct perf_even=
+t *leader,
+>         /*
+>          * Write {count,id} tuples for every sibling.
+>          */
+> -       values[n++] +=3D perf_event_count(leader);
+> +       values[n++] +=3D perf_event_count_cumulative(leader);
+>         if (read_format & PERF_FORMAT_ID)
+>                 values[n++] =3D primary_event_id(leader);
+>         if (read_format & PERF_FORMAT_LOST)
+>                 values[n++] =3D atomic64_read(&leader->lost_samples);
+>
+>         for_each_sibling_event(sub, leader) {
+> -               values[n++] +=3D perf_event_count(sub);
+> +               values[n++] +=3D perf_event_count_cumulative(sub);
+>                 if (read_format & PERF_FORMAT_ID)
+>                         values[n++] =3D primary_event_id(sub);
+>                 if (read_format & PERF_FORMAT_LOST)
+> @@ -6132,7 +6159,7 @@ void perf_event_update_userpage(struct perf_event *=
+event)
+>         ++userpg->lock;
+>         barrier();
+>         userpg->index =3D perf_event_index(event);
+> -       userpg->offset =3D perf_event_count(event);
+> +       userpg->offset =3D perf_event_count_cumulative(event);
+>         if (userpg->index)
+>                 userpg->offset -=3D local64_read(&event->hw.prev_count);
+>
+> @@ -7194,13 +7221,14 @@ void perf_event__output_id_sample(struct perf_eve=
+nt *event,
+>
+>  static void perf_output_read_one(struct perf_output_handle *handle,
+>                                  struct perf_event *event,
+> -                                u64 enabled, u64 running)
+> +                                u64 enabled, u64 running,
+> +                                bool from_sample)
+>  {
+>         u64 read_format =3D event->attr.read_format;
+>         u64 values[5];
+>         int n =3D 0;
+>
+> -       values[n++] =3D perf_event_count(event);
+> +       values[n++] =3D perf_event_count(event, from_sample);
+>         if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED) {
+>                 values[n++] =3D enabled +
+>                         atomic64_read(&event->child_total_time_enabled);
+> @@ -7218,8 +7246,9 @@ static void perf_output_read_one(struct perf_output=
+_handle *handle,
+>  }
+>
+>  static void perf_output_read_group(struct perf_output_handle *handle,
+> -                           struct perf_event *event,
+> -                           u64 enabled, u64 running)
+> +                                  struct perf_event *event,
+> +                                  u64 enabled, u64 running,
+> +                                  bool from_sample)
+>  {
+>         struct perf_event *leader =3D event->group_leader, *sub;
+>         u64 read_format =3D event->attr.read_format;
+> @@ -7245,7 +7274,7 @@ static void perf_output_read_group(struct perf_outp=
+ut_handle *handle,
+>             (leader->state =3D=3D PERF_EVENT_STATE_ACTIVE))
+>                 leader->pmu->read(leader);
+>
+> -       values[n++] =3D perf_event_count(leader);
+> +       values[n++] =3D perf_event_count(leader, from_sample);
+>         if (read_format & PERF_FORMAT_ID)
+>                 values[n++] =3D primary_event_id(leader);
+>         if (read_format & PERF_FORMAT_LOST)
+> @@ -7260,7 +7289,7 @@ static void perf_output_read_group(struct perf_outp=
+ut_handle *handle,
+>                     (sub->state =3D=3D PERF_EVENT_STATE_ACTIVE))
+>                         sub->pmu->read(sub);
+>
+> -               values[n++] =3D perf_event_count(sub);
+> +               values[n++] =3D perf_event_count(sub, from_sample);
+>                 if (read_format & PERF_FORMAT_ID)
+>                         values[n++] =3D primary_event_id(sub);
+>                 if (read_format & PERF_FORMAT_LOST)
+> @@ -7281,9 +7310,14 @@ static void perf_output_read_group(struct perf_out=
+put_handle *handle,
+>   * The problem is that its both hard and excessively expensive to iterat=
+e the
+>   * child list, not to mention that its impossible to IPI the children ru=
+nning
+>   * on another CPU, from interrupt/NMI context.
+> + *
+> + * Instead the combination of PERF_SAMPLE_READ and inherit will track pe=
+r-thread
+> + * counts rather than attempting to accumulate some value across all chi=
+ldren on
+> + * all cores.
+>   */
+>  static void perf_output_read(struct perf_output_handle *handle,
+> -                            struct perf_event *event)
+> +                            struct perf_event *event,
+> +                            bool from_sample)
+>  {
+>         u64 enabled =3D 0, running =3D 0, now;
+>         u64 read_format =3D event->attr.read_format;
+> @@ -7301,9 +7335,9 @@ static void perf_output_read(struct perf_output_han=
+dle *handle,
+>                 calc_timer_values(event, &now, &enabled, &running);
+>
+>         if (event->attr.read_format & PERF_FORMAT_GROUP)
+> -               perf_output_read_group(handle, event, enabled, running);
+> +               perf_output_read_group(handle, event, enabled, running, f=
+rom_sample);
+>         else
+> -               perf_output_read_one(handle, event, enabled, running);
+> +               perf_output_read_one(handle, event, enabled, running, fro=
+m_sample);
+>  }
+>
+>  void perf_output_sample(struct perf_output_handle *handle,
+> @@ -7343,7 +7377,7 @@ void perf_output_sample(struct perf_output_handle *=
+handle,
+>                 perf_output_put(handle, data->period);
+>
+>         if (sample_type & PERF_SAMPLE_READ)
+> -               perf_output_read(handle, event);
+> +               perf_output_read(handle, event, true);
+>
+>         if (sample_type & PERF_SAMPLE_CALLCHAIN) {
+>                 int size =3D 1;
+> @@ -7944,7 +7978,7 @@ perf_event_read_event(struct perf_event *event,
+>                 return;
+>
+>         perf_output_put(&handle, read_event);
+> -       perf_output_read(&handle, event);
+> +       perf_output_read(&handle, event, false);
+>         perf_event__output_id_sample(event, &handle, &sample);
+>
+>         perf_output_end(&handle);
+> @@ -12006,10 +12040,12 @@ perf_event_alloc(struct perf_event_attr *attr, =
+int cpu,
+>         local64_set(&hwc->period_left, hwc->sample_period);
+>
+>         /*
+> -        * We currently do not support PERF_SAMPLE_READ on inherited even=
+ts.
+> +        * We do not support PERF_SAMPLE_READ on inherited events unless
+> +        * PERF_SAMPLE_TID is also selected, which allows inherited event=
+s to
+> +        * collect per-thread samples.
+>          * See perf_output_read().
+>          */
+> -       if (attr->inherit && (attr->sample_type & PERF_SAMPLE_READ))
+> +       if (has_inherit_and_sample_read(attr) && !(attr->sample_type & PE=
+RF_SAMPLE_TID))
+>                 goto err_ns;
+>
+>         if (!has_branch_stack(event))
+> @@ -13033,7 +13069,7 @@ static void sync_child_event(struct perf_event *c=
+hild_event)
+>                         perf_event_read_event(child_event, task);
+>         }
+>
+> -       child_val =3D perf_event_count(child_event);
+> +       child_val =3D perf_event_count_cumulative(child_event);
+>
+>         /*
+>          * Add back the child's count to the parent's count:
+> --
+> 2.45.1
+>
 
