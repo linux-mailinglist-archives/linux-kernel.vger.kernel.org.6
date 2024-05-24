@@ -1,155 +1,204 @@
-Return-Path: <linux-kernel+bounces-188980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD858CE93D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:37:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9CA8CE941
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32CC2823BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E52D1F2213F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8977029401;
-	Fri, 24 May 2024 17:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167729429;
+	Fri, 24 May 2024 17:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yxWdXENZ"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W5/1qAQ7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB126179B7
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 17:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E641BF3F;
+	Fri, 24 May 2024 17:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716572220; cv=none; b=OXQwpDsY6H5IdxGc4APiQUL7Vc/mzARFAWUnH7ibD9P8WOlB6KtvSFAKzz3DH2NSf7zQQJyNeAMdarmffi8ci26aTgbYUuAU9w7zjojSyAV0+9d9QSAKBzFLv+331hVs4DXcE8vXPceonaKpj3t2QywI7IssumalVDlfc4SLW00=
+	t=1716572575; cv=none; b=A+UWL1n9rZrlfVK4VOpi8XfTXzZGjtovV9H2hunTqoUvQosj/23S8Y6m/38Q06GUmgJhl76IhAPCKaDDnq5GUxCpAn3ycpKoPCGGRBn+3xMT2FHm85efIfLVjcdWftK9iLkRY4vfd4SsWN6ri3ZO5x02qoNoVipcWCn2uYe3JWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716572220; c=relaxed/simple;
-	bh=ibcYNZiSaxk9EBTq4JLd0V3zMQ/xYLqk8gCrm4L9wgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=smDrZE1SvsLGq4tr43vvho98Q29RSy3qYD1JxvhZuMfTuN8haBzLtrQzK+qrAmiKfMTOUQQTJS4BkLrLMa9dHUSOqYV0IzSZ3X+cFcJczGs/4YaHnmjQI7GgEpHcTeI+mDnWbeoGg2z0NHdNXTYI+uSi+QBEygGiBpmuALXEcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yxWdXENZ; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4df150f29so3204627276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716572218; x=1717177018; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUyEyvPVhRUH4S+rRRLUtExiOqqOJDk147Gd3ruQKmU=;
-        b=yxWdXENZBQUAb7eCw7tEuGoiUNWDM/XpTgAl0uOxI42E9faLZFDuRUD18AXmyi4SJQ
-         Dnbroej4fqJ+78HTSJSkhPKvyFL5B7hmpv6I9Mf7XgXrOCrTiuLUp3P+HGavYmA7mZD/
-         jA/pEjmJauBnCDEsaUjA3EG30ZVWwVzvvTEYsIs5oC0fOR09bRRpJBNJcAOcjK4+7j4X
-         QU34xYIv1laWqn0tFslRR0tE5GNC0Hy8Ied3Lfj7tmL7dRpkbAUAF7aN0FyQTMMi2pMG
-         FGDfUIneELF0tv1pMaxLROl3tVSuLupCjfz+SrGMcm2zulAqckK+jQVoDTs0xoHeh0Da
-         3+YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716572218; x=1717177018;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wUyEyvPVhRUH4S+rRRLUtExiOqqOJDk147Gd3ruQKmU=;
-        b=AgICoNyftvZQOpB2lXpiB7ae0moi+5sJQxjaFOhSamv00PWxAK8YmhVkbQUA8D43lp
-         7P7Gaf9nErFRrz0R+62lqHNWazrsuF+Dt3CfFRxotQehAi5pHHB0vbM3J+cv2yfexPcs
-         EK1QkdbyT4umLOPmgEq2ofSqi5bo9AW2ltt9lV7NeHv/k10M6aoo3N+prVf2Xt7OYNGT
-         XRAmoZAT528EiSEkHPRC9zeqd6LiMCNkCZCFdmHXe1nJ/FBHn+OXro3//CPjz3czIVOD
-         oeXjyC/EWsVFQRDbH2P87TEB/+2dORtXqS3Yh8xkPyFejNMLfHFM5O1ay7i8BGu/lBCF
-         YtMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXeKC/Mry8GOyNzhYhHXASeLUDlJq8toqurzhgyqtf4seJjR5BslUkAZJzCaHzvkQ6RuJpemfIRTM1nVkVpxtYNNZHx2hO3kWzOXA6r
-X-Gm-Message-State: AOJu0YyYh/xCjydZoJp7aDxW8/1+27Y/5JdkUA2F/PDtH7SaH8baOi8Y
-	iHFKBgfOihGVWDAvCA1CfID/uDjfyaPbRLyDmUqeyzFzt4CJkbzLUfmcHvj4mFBelYv70cwsyTF
-	ehIkkSeBEXbtrwGDQUcE8KdncGwfJpAJQZU5L
-X-Google-Smtp-Source: AGHT+IFatYprpN2Za2quSkeGQqvvQgPAgx65FQ0QEqjzcX9e6NullPqgV+zJ3Og0iSrW+IzIAN6KhKXpiE3QPe4WRxA=
-X-Received: by 2002:a25:b845:0:b0:de6:1057:c85f with SMTP id
- 3f1490d57ef6-df7721890b4mr2711368276.22.1716572217394; Fri, 24 May 2024
- 10:36:57 -0700 (PDT)
+	s=arc-20240116; t=1716572575; c=relaxed/simple;
+	bh=Vt9WG4RjE0QI+CxeJSDF2lyAEOIQRCKue7JYBLqohNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prjEbBoZtP9NqpquIqzQeI+1eXTugx9YffwNcDrQpJfOWzKf/im5qWNdjesfo9aQ4FexxmZYN4UlGYoErNB5Qyksz67n0jlNqDM+bEU+I5+Zf8ToOynvPc2y/mYc0VZSxtELb7QvDiZrmdeuPbEvAV+C50dkLnNn3Su4aQlsD5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W5/1qAQ7; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716572574; x=1748108574;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Vt9WG4RjE0QI+CxeJSDF2lyAEOIQRCKue7JYBLqohNw=;
+  b=W5/1qAQ7xlFxBzE5+chl03eHZJUFVS7R6sfcD99G6XE21Xb+FfiZVFt5
+   vUVlhaFwh06ZAAmu3Joew6itQwu6XPq0zX7Mz29PQcbjtBQYrskdsistW
+   8IoxjZLiJhnNXExdNWvia8iMP1/s6AAyOfRJ/izCccHNL5fqBwS86ETLl
+   uqz7mXOqUjyDhpISlZNCQYVljONRUuj9sCiVFVW8KQHxBo3XIzWFdZ4GG
+   5i2QcOGtwKBo0YKSH8VdON6jvh/2sZ5VOs6JBV9KXEpdSFC6rtbXQm51G
+   YCrYYq2Ed5EReRP86rIw4bX1AqS5SxyhTD+FM+Tax0FR1GtGOA0tVa7v7
+   A==;
+X-CSE-ConnectionGUID: 2fVxxrVOR7m56D1FKwslkA==
+X-CSE-MsgGUID: 1IwMxMvgQmaRnoHSh1ASTA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11082"; a="12835629"
+X-IronPort-AV: E=Sophos;i="6.08,186,1712646000"; 
+   d="scan'208";a="12835629"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 10:42:53 -0700
+X-CSE-ConnectionGUID: rz0wayrjT4GP7CdlUOtxUg==
+X-CSE-MsgGUID: YIefQKfHS9WX4xXL9mHsqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,186,1712646000"; 
+   d="scan'208";a="34613828"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 24 May 2024 10:42:50 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sAYwJ-0005kf-2O;
+	Fri, 24 May 2024 17:42:47 +0000
+Date: Sat, 25 May 2024 01:42:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charles Wang <charles.goodix@gmail.com>, jikos@kernel.org,
+	bentiss@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	jingliang@chromium.org, hbarnor@chromium.org, dianders@chromium.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Charles Wang <charles.goodix@gmail.com>
+Subject: Re: [PATCH] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Message-ID: <202405250142.ZtT610HW-lkp@intel.com>
+References: <20240524103407.36861-1-charles.goodix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240519174650.559538-1-tjmercier@google.com> <h5xdtfh7dc4rjh74b4cwkpjszro73hfbxzdobwtivyx4hl4hyn@p5lp5h5gzjuj>
-In-Reply-To: <h5xdtfh7dc4rjh74b4cwkpjszro73hfbxzdobwtivyx4hl4hyn@p5lp5h5gzjuj>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Fri, 24 May 2024 10:36:45 -0700
-Message-ID: <CABdmKX149mbOkjo6fwZdx1LKX+xXH1TicUx+92Ud99RS9hSy7A@mail.gmail.com>
-Subject: Re: [RFC] cgroup: Fix /proc/cgroups count for v2
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524103407.36861-1-charles.goodix@gmail.com>
 
-On Fri, May 24, 2024 at 7:23=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> Hello.
-Hi Michal, thanks for taking a look.
+Hi Charles,
 
-> On Sun, May 19, 2024 at 05:46:48PM GMT, "T.J. Mercier" <tjmercier@google.=
-com> wrote:
-> > The number of cgroups using a controller is an important metric since
-> > kernel memory is used for each cgroup, and some kernel operations scale
-> > with the number of cgroups for some controllers (memory, io). So users
-> > have an interest in minimizing/tracking the number of them.
->
-> I agree this is good for debugging or quick checks of unified hierarchy
-> enablement status.
->
-> > To deal with num_cgroups being reported as 1 for those utility
-> > controllers regardless of the number of cgroups that exist and support
-> > their use,
->
-> But '1' is correct number no? Those utility controllers are v1-only and
-> their single group only exists on (default) root.
+kernel test robot noticed the following build warnings:
 
-Sometimes? Take freezer as an example. If you don't mount it on v1
-then /proc/cgroups currently advertises the total number of v2
-cgroups. I thought that was reasonable since there exists a
-cgroup.freeze in every cgroup, but does freezer really count as a
-controller in this case? There's no freezer css for each cgroup so I
-guess the better answer is just to report 1 like you suggest.
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on linus/master v6.9 next-20240523]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> > @@ -675,11 +699,19 @@ int proc_cgroupstats_show(struct seq_file *m, voi=
-d *v)
-> >        * cgroup_mutex contention.
-> >        */
-> >
-> > -     for_each_subsys(ss, i)
-> > +     for_each_subsys(ss, i) {
-> > +             int count;
-> > +
-> > +             if (!cgroup_on_dfl(&ss->root->cgrp) || is_v2_utility_cont=
-roller(i))
-> > +                     count =3D atomic_read(&ss->root->nr_cgrps);
->
-> I think is_v2_utility_controller(ssid) implies
-> !cgroup_on_dfl(&ss->root->cgrp). I'd only decide based on the
-> cgroup_on_dfl() predicate.
->
-> > --- a/kernel/cgroup/cgroup.c
-> > +++ b/kernel/cgroup/cgroup.c
-> > @@ -2047,6 +2047,8 @@ void init_cgroup_root(struct cgroup_fs_context *c=
-tx)
-> >
-> >       INIT_LIST_HEAD_RCU(&root->root_list);
-> >       atomic_set(&root->nr_cgrps, 1);
-> > +     for (int i =3D 0; i < CGROUP_SUBSYS_COUNT; ++i)
-> > +             atomic_set(&root->nr_css[i], 0);
->
-> Strictly not needed, non-dfl roots are kzalloc'd and dfl root is global
-> variable (zeroed).
->
-> HTH,
-> Michal
+url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Wang/HID-hid-goodix-Add-Goodix-HID-over-SPI-driver/20240524-183743
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240524103407.36861-1-charles.goodix%40gmail.com
+patch subject: [PATCH] HID: hid-goodix: Add Goodix HID-over-SPI driver
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240525/202405250142.ZtT610HW-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 7aa382fd7257d9bd4f7fc50bb7078a3c26a1628c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240525/202405250142.ZtT610HW-lkp@intel.com/reproduce)
 
-Thanks, removed. I'll resend this with these changes as a PATCH with my SoB=
-.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405250142.ZtT610HW-lkp@intel.com/
 
-Best,
-T.J.
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/hid/hid-goodix.c:9:
+   In file included from include/linux/hid.h:29:
+   In file included from include/linux/hid_bpf.h:6:
+   In file included from include/linux/bpf.h:21:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/hid/hid-goodix.c:9:
+   In file included from include/linux/hid.h:29:
+   In file included from include/linux/hid_bpf.h:6:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/hid/hid-goodix.c:9:
+   In file included from include/linux/hid.h:29:
+   In file included from include/linux/hid_bpf.h:6:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/hid/hid-goodix.c:9:
+   In file included from include/linux/hid.h:29:
+   In file included from include/linux/hid_bpf.h:6:
+   In file included from include/linux/bpf.h:31:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/hid/hid-goodix.c:627:36: warning: unused variable 'goodix_spi_acpi_match' [-Wunused-const-variable]
+     627 | static const struct acpi_device_id goodix_spi_acpi_match[] = {
+         |                                    ^~~~~~~~~~~~~~~~~~~~~
+   8 warnings generated.
+
+
+vim +/goodix_spi_acpi_match +627 drivers/hid/hid-goodix.c
+
+   626	
+ > 627	static const struct acpi_device_id goodix_spi_acpi_match[] = {
+   628		{ "GXTS7986" },
+   629		{ },
+   630	};
+   631	MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
+   632	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
