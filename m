@@ -1,159 +1,130 @@
-Return-Path: <linux-kernel+bounces-188498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CDC8CE2B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:00:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074068CE2B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8686D1C211B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF2A1F2217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD05F127E3C;
-	Fri, 24 May 2024 09:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0FD1292E1;
+	Fri, 24 May 2024 08:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCWHgvdc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="ui3u4wwD"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD611D54D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245829475
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541232; cv=none; b=OtumWDVKT9nbne5icr9k6yxPLNyFqSCsnCusDdPO5dbP10ibYfHVAoOVk2F6UHiPwFjiBjbCrtza29a6LUjFTiGpgiNcP0QdKpzzJVjSpotr2zfaWW7Y68QVm7Ml99E4s5NoupSUbQHycihJeaNmToCHs1LW8iVS57ZgMHsQIqQ=
+	t=1716541176; cv=none; b=huAsla8E77RPnOXD5u6nXPEio1XfmwwO3JQc1cEgKGLjbSoSqe8vPETvPhWsDE4NsN+5fkz4sL78cN+UXMjz89AFPD5AkT3qxkuj8vjd1EYEPbH68EGN4qm1WhKC8KNfWRyqGaOjiZfyIsvBiGsOeYo6NJQIDjHvFC0HieQNQ00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541232; c=relaxed/simple;
-	bh=8Q+zLE+3ZGqzpxPIL0MDPn9+ya9ASYFZxQPUwCQYsuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9r1FbnFrd9n7XasUiONZVxVAJbwhRkUKAkpSnZ1kB+/pRlCszKPDDmYueKyHFTirPAW8TBFLYy7wvInYCy12GJsOmgzlMv4DEgo40Qttaup199t+eevkTMXsjilWv5mv38yEEUujza2801/N9LcaUUx/mar9QlCd19IEJEnqDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCWHgvdc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363D1C32786;
-	Fri, 24 May 2024 09:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716541230;
-	bh=8Q+zLE+3ZGqzpxPIL0MDPn9+ya9ASYFZxQPUwCQYsuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCWHgvdc6YG5HjI3oW+GtrM7KsHZ1JZSco7P5xT0291wv934HLrNOnuOU10OjkhUh
-	 cetPaPo4DRZCMdIU4ZvXa1zqAqs2Gck87Ve6KU1FASOib1KQwdYIPonle3pqIeh9FF
-	 raLyF2gTVHGw9N2tBKsxgq5d+EZsOcl2MVuMvj90hOrgzd9lmzReEMFSJqVedQlhC1
-	 T0kF5gY0aOWs+e2tZ35e2ptQZtVIHOVxOEH1hOQA5lc703e1L+NYd+I3Awe7gtAC/F
-	 Uh+0CgouUViYhGuxIIAi9YgkFGMyeeBE8jrp4Xm1behpZsS3uXDpMr7OD34lzcLb8r
-	 k37hJgolXUiWA==
-Date: Fri, 24 May 2024 11:58:39 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: Re: [PATCH RFC 1/6] mm: update _mapcount and page_type documentation
-Message-ID: <ZlBWv3nrN_U_5QJQ@kernel.org>
-References: <20240522210341.1030552-1-david@redhat.com>
- <20240522210341.1030552-2-david@redhat.com>
+	s=arc-20240116; t=1716541176; c=relaxed/simple;
+	bh=zHpc+qxtONUw0wwUJ4wmIXG/NriOH96j4U6RN6GB8pg=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=HatRHhVblXwRAgDUjZJLOA09hYWjuZ7XPQy4LStTWUaICVQGyrniQphSoFs2gs0rPjeV6pqRxibu11C3+Kk6HL/m0W7JkT7QdA/gyUtMkmvSCVe6RCGXFCBDyT4UX1NIlDSPWDaVflX2hhjv5MT+OIZqPHb3IgUbvyi7GEnYdlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=ui3u4wwD; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id ALqes9BpDJXoqAQlxszg07; Fri, 24 May 2024 08:59:33 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id AQlwsWWzVuv6XAQlxs0t7F; Fri, 24 May 2024 08:59:33 +0000
+X-Authority-Analysis: v=2.4 cv=YbZ25BRf c=1 sm=1 tr=0 ts=665056f5
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=BXyYjBD0cXuZo9oD7aYA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0gf7r2/eflWxCGXjTMWMn16pfPrcTB0I/nO5t6cKk1s=; b=ui3u4wwDMELcZU85CWdsumJw39
+	hHmap6xOrfkWgfBore+rZ+nh0AwNEVkfOiN+JjxIXEgkHryqVmdvTUzuPHYQvF44Rd6yKEMr4mOz9
+	PaZ+n7tShDcUa9Wbm2JjfN+ZJgmYIJKmM1FqnmHdURpYKEWzdTjtEjGHEb3U1PWn99CT3dk/F77GA
+	QHlhq/73zQJX8ZXzNxoZ9LXCXHU8qLNr1NMf/D1Y1rRSy6hQ5MnzwkJy5eC0BmpJdJ+hly4JCguDz
+	6NBZOC3QD7q9b3Qklqpv8DVcHptHufGiB27v6d7G8KnbpshCaLzA4bi7qIHLkHrR0edCCPmrWDHii
+	gAnMmoHQ==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:39716 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sAQlu-002uOz-2m;
+	Fri, 24 May 2024 02:59:30 -0600
+Subject: Re: [PATCH 6.8 00/23] 6.8.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240523130329.745905823@linuxfoundation.org>
+In-Reply-To: <20240523130329.745905823@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <bb0d45ed-9195-0d5b-2068-71a772042d7d@w6rz.net>
+Date: Fri, 24 May 2024 01:59:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522210341.1030552-2-david@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1sAQlu-002uOz-2m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:39716
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 23
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNsueqSPlAcx1SZ42/0a0LdQTUCgVY+uhFUE+s2VLFQc23+6D+QKDyIp4q4vRaiF9nsrGaqRZnKrj8I01YnWb+4a9eN8wrQefg/6Dzd5ng4XbUjtusVo
+ sPUL4ZxA1zNByeaUaFVFCX3IQgoAiMTv3/QqV9LcRdrufMCWqNP/e+VU4XQbM4eShpC0eDsVHnI7+3Bitj7ifNJ27y+LTTtAtro=
 
-On Wed, May 22, 2024 at 11:03:36PM +0200, David Hildenbrand wrote:
-> Let's make it clearer that _mapcount must no longer be used for own
-> purposes, and how _mapcount and page_type behaves nowadays (also in the
-> context of hugetlb folios, which are typed folios that will be mapped
-> to user space).
-> 
-> Move the documentation regarding "-1" over from page_mapcount_reset(),
-> which we will remove next.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  include/linux/mm.h       |  5 -----
->  include/linux/mm_types.h | 24 +++++++++++++++---------
->  2 files changed, 15 insertions(+), 14 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 9849dfda44d4..018e7c0265ca 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1206,11 +1206,6 @@ static inline int folio_entire_mapcount(const struct folio *folio)
->  	return atomic_read(&folio->_entire_mapcount) + 1;
->  }
->  
-> -/*
-> - * The atomic page->_mapcount, starts from -1: so that transitions
-> - * both from it and to it can be tracked, using atomic_inc_and_test
-> - * and atomic_add_negative(-1).
-> - */
->  static inline void page_mapcount_reset(struct page *page)
->  {
->  	atomic_set(&(page)->_mapcount, -1);
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 24323c7d0bd4..532a3030405d 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -46,9 +46,7 @@ struct mem_cgroup;
->   * which is guaranteed to be aligned.  If you use the same storage as
->   * page->mapping, you must restore it to NULL before freeing the page.
->   *
-> - * If your page will not be mapped to userspace, you can also use the four
-> - * bytes in the mapcount union, but you must call page_mapcount_reset()
-> - * before freeing it.
-> + * The mapcount field must not be used for own purposes.
->   *
->   * If you want to use the refcount field, it must be used in such a way
->   * that other CPUs temporarily incrementing and then decrementing the
-> @@ -152,16 +150,24 @@ struct page {
->  
->  	union {		/* This union is 4 bytes in size. */
->  		/*
-> -		 * If the page can be mapped to userspace, encodes the number
-> -		 * of times this page is referenced by a page table.
-> +		 * For pages part of non-typed folios for which mappings are
+On 5/23/24 6:13 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.8.11 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Maybe
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-For pages that are part ...
+Tested-by: Ron Economos <re@w6rz.net>
 
-> +		 * tracked via the RMAP, encodes the number of times this page
-> +		 * is directly referenced by a page table.
-> +		 *
-> +		 * Note that the mapcount is always initialized to -1, so that
-> +		 * transitions both from it and to it can be tracked, using
-> +		 * atomic_inc_and_test() and atomic_add_negative(-1).
->  		 */
->  		atomic_t _mapcount;
->  
->  		/*
-> -		 * If the page is neither PageSlab nor mappable to userspace,
-> -		 * the value stored here may help determine what this page
-> -		 * is used for.  See page-flags.h for a list of page types
-> -		 * which are currently stored here.
-> +		 * For head pages of typed folios, the value stored here
-> +		 * allows for determining what this page is used for. The
-> +		 * tail pages of typed folios will not store a type
-> +		 * (mapcount == -1).
-> +		 *
-> +		 * See page-flags.h for a list of page types which are currently
-> +		 * stored here.
->  		 */
->  		unsigned int page_type;
-
-and maybe move page_type before _mapcount, so that it will be a bit clearer
-what are "typed" pages and folios are.
-
->  	};
-> -- 
-> 2.45.0
-> 
-
--- 
-Sincerely yours,
-Mike.
 
