@@ -1,161 +1,264 @@
-Return-Path: <linux-kernel+bounces-188395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785718CE17F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:26:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816B38CE17C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3873728259F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:26:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C6AB21464
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB91128396;
-	Fri, 24 May 2024 07:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5080212881C;
+	Fri, 24 May 2024 07:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dP+TaCAX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4Yi3z3f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B21208A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A6208A1;
+	Fri, 24 May 2024 07:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716535553; cv=none; b=rAHOlbxv7122Cf0HNQPHMQFNSknqqjY6pRCP6+ISV0mehMUTu5iVHtbWB4PLF75DzR3ENrN4v8fMisZL3rsdJW0xAS4/7BeNHUyiLJTWE7L0sYCooE09C8cgbyxtEEwL4q5NneBrEnkmJpGbtYRraqVY53l2ewg8pJJTJWNl0ws=
+	t=1716535393; cv=none; b=t9NbSVnsKJdX4QtX7zgVkjTf6k3HEOpxbxMGnhdk+VVPtbH45qXwGlNHqt3fGnv4ZYVY4BahARhfP7P/42jK2ooR4yY/QeBsdFGhLnKw3nrCOsOYvavkYxf2r+A5qXdBtnQEeBWG9m/Ua0NKwM/E36T9ZM/R0SKCwHBN5TiGYg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716535553; c=relaxed/simple;
-	bh=DrrjnXApjK+HxHK4YGZUVCcRJ9u8TFMUw+Sedw3rW20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPa/R3rRFS7Z2ylVDNnxpBFb1Xi/a0XBRlrw+AZGK1WzezZx4+7mjWvOn/ndwoiI/m6hw7dxCtomo50WTZPEYNWnz+IYHT26Lt+zVesZnvdJlVtcfNbKEuUeGMT34cjV6IcJnnz6vtTiowHNd7h86383noN/yC9Qu5WWnIfNepc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dP+TaCAX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716535550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PzoNctDwu2m6AmJa5cOCmGwkuh/QFbymJSnZ7SGPShc=;
-	b=dP+TaCAXYvkgKM4vntFC7f3Qzpxy/PvvE/sMppFZzzQraptPijRLjoi8YN0bKPHrI5bXyT
-	Cp20/fEZpqtV1vdX2gY9+cRaMddQbmWc9YT6wI7blC0PO8kBDxtV8hSda2fp8R15e76I+3
-	8agjuYei7Vpyvqxf2OAtuzC4pnh4vxE=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-5lzUPSedPhG3FRcZpRpd4g-1; Fri, 24 May 2024 03:25:49 -0400
-X-MC-Unique: 5lzUPSedPhG3FRcZpRpd4g-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2bf5ba94169so792820a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:25:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716535548; x=1717140348;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PzoNctDwu2m6AmJa5cOCmGwkuh/QFbymJSnZ7SGPShc=;
-        b=OghvGuPClEegolNH0d8nMvIzUrdJiWOY8PxMVSz4N393ShLiGXXASucSc3CMiZB5oi
-         6PjfNJUZ00yCAf3C1d9mChOep4/SL+8DysXGwVxaP0FemptmuqQftSm02oaA75923OjJ
-         lRCqMdUocY+Iy+A4kTFTtEbQ96tX4Imojc+xUjA1hPl1PDYsYItMO57JnE2MEZdSK5BF
-         ORnm4CF9r6r06RmoGLPOT2aE/aorB8aVaPS+kLUQ3GXcL+0W2G8EJVYp/n1Yhcp7Rf8b
-         ZixRFXtzvqSZthglWxCLFry/teO/kG56yJd0IXZiTPNEfKRivh/Ea3qYZz50xzmW5Hql
-         +7Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUV2US3W8r0YPdVKMarb3+pFyA1vmH7EzRrSY9GOdlvpqqihF6pjDMaoVTLynz8WmkzreZqzi27/ZjCK/Dhj6+95EtPI5CVshAPZjIt
-X-Gm-Message-State: AOJu0YzrmmltFtdz5BzovVMFeQ4jQGoLNUvzve84uGcnfF0CNwV0BD6N
-	Rv5hazy0FpECuDIsG2KGD2tbTF3l+Axgzareian5cMvozV++yDoqqFVh/52ekirhpr3TPlITYXf
-	x7stOwWTFflLCFaJkp+M59KfhMcymIir3i7vrOfFR6jpZVXB/ysNrvlQMjOpMpQ==
-X-Received: by 2002:a17:90b:3110:b0:2bd:d680:3c8a with SMTP id 98e67ed59e1d1-2bf5e139562mr1478934a91.5.1716535547504;
-        Fri, 24 May 2024 00:25:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0Oel1WZj5nAuJTGDSIq3qNp4/LOi5MgmRKqKyhKbREm4bXAiRorKX9Z+oY2dV58dic8Rx4w==
-X-Received: by 2002:a17:90b:3110:b0:2bd:d680:3c8a with SMTP id 98e67ed59e1d1-2bf5e139562mr1478897a91.5.1716535546660;
-        Fri, 24 May 2024 00:25:46 -0700 (PDT)
-Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdda14e538sm2655538a91.49.2024.05.24.00.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 00:25:45 -0700 (PDT)
-Date: Fri, 24 May 2024 15:22:17 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
-	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
-	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
-	Jan Pazdziora <jpazdziora@redhat.com>, Pingfan Liu <kernelfans@gmail.com>, 
-	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Dave Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v3 1/7] kexec_file: allow to place kexec_buf randomly
-Message-ID: <nfe3elcoihbt2g55upa3y5r3bfapngh6yudicyhjqcjczzgswo@cb6h4fl5vi6p>
-References: <20240425100434.198925-1-coxu@redhat.com>
- <20240425100434.198925-2-coxu@redhat.com>
- <ZkrqkzJlW2RZkmH9@MiWiFi-R3L-srv>
- <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
- <ZkwRZxGw2dWStd1C@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1716535393; c=relaxed/simple;
+	bh=wPTC8uCMIdwu51FSlfnw6NJaV8UQD91oFTZuzE6L3lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3ELUoEIJgdNYbpsMMeMRPSE8iqpetyk+AhOUcD2vOhn7ClWIeGSWF2pN9dgwdAjnibEkfPOWCl7iVSzD61EYSpdm21OSBj396wSbIit0fTRcBV7HNqwOZcYHvuGSKUsfgGOVhzYuwoQMYZyYBHQLp4bMkkt/TQte5GNXHKB4z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4Yi3z3f; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716535392; x=1748071392;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wPTC8uCMIdwu51FSlfnw6NJaV8UQD91oFTZuzE6L3lI=;
+  b=n4Yi3z3fWTY3zi4dZFAJjs/EtX+R9PlOB7U9HMaRVGnAseGZLEkO4kFl
+   1b01aVotcETUL3XinN+UfuUsgJoUtlNhERc+3/wQ7+Z9oTn1eZCzz4g+1
+   aOmRfmXDQ3Q0VvC1x8AIi6H1ULR+tHm0NexX48necjJ07TytYfcN+ufPQ
+   q81OxTnX7ijZsf3CUPDpc5DgTgWj02SX3MsxEnndaYqbm7dfUQmvxIgqy
+   sQj3LBfWLIG970dNbDxDvNC/ubuc67iVQ8SptoBISwibg0yNdGZwv9Mzg
+   V3vecKB3/AqA5LNGt7dEqPmSCdRoOM/8Tqox7k43Zo8vmcJZO/zyv7hBu
+   Q==;
+X-CSE-ConnectionGUID: l5ykJYS0RuWPKP53c+DAvA==
+X-CSE-MsgGUID: d30gxJj+QJW7rL6Qpui7Ow==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="35415830"
+X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
+   d="scan'208";a="35415830"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:23:11 -0700
+X-CSE-ConnectionGUID: kV91wCo1RraN24KLUBbpEg==
+X-CSE-MsgGUID: hVyiAtHAQ1S1w+i+RpfTLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
+   d="scan'208";a="65147483"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:23:08 -0700
+Message-ID: <42f2b1d4-e6c2-4860-956d-4f10c3b05529@intel.com>
+Date: Fri, 24 May 2024 10:23:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <ZkwRZxGw2dWStd1C@MiWiFi-R3L-srv>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V16 12/23] mmc: sdhci-uhs2: add reset function function
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org,
+ dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
+References: <20240522110909.10060-1-victorshihgli@gmail.com>
+ <20240522110909.10060-13-victorshihgli@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240522110909.10060-13-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 11:13:43AM +0800, Baoquan He wrote:
->On 05/21/24 at 09:58am, Coiby Xu wrote:
->> On Mon, May 20, 2024 at 02:16:43PM +0800, Baoquan He wrote:
->> > On 04/25/24 at 06:04pm, Coiby Xu wrote:
->> > > Currently, kexec_buf is placed in order which means for the same
->> > > machine, the info in the kexec_buf is always located at the same
->> > > position each time the machine is booted. This may cause a risk for
->> > > sensitive information like LUKS volume key. Now struct kexec_buf has a
->> > > new field random which indicates it's supposed to be placed in a random
->> > > position.
->> >
->> > Do you want to randomize the key's position for both kdump and kexec
->> > rebooting? Assume you only want to do that for kdump. If so, we may need
->> > to make that more specific in code.
->>
->> Thanks for the suggestion! Currently, no one has requested this feature
->> for kexec reboot so yes, I only have kdump in mind. But kdump depends
->> on kexec thus I'm not sure how we can make it kdump specfic. Do you have
->> a further suggestion?
->
->I remember you said kexec reboot doesn't need the key passed from 1st
->kernel to 2nd kernel because the 2nd kernel will calculate one during
->boot.
->
->kbuf has the information, the similar handling has been in
->kernel/kexec_file.c:
->
->#ifdef CONFIG_CRASH_DUMP
->        if (kbuf->image->type == KEXEC_TYPE_CRASH)
->                ....;
->#endif
+On 22/05/24 14:08, Victor Shih wrote:
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> 
+> Sdhci_uhs2_reset() does a UHS-II specific reset operation.
+> 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> ---
+> 
+> Updates in V15:
+>  - Refer the SD Host Controller Standard Specification Section 3.10
+>    to add reset command data mechanism.
+> 
+> Updates in V14:
+>  - Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(), so drop
+>    sdhci_uhs2_mode() and use mmc_card_uhs2() instead of sdhci_uhs2_mode().
+> 
+> Updates in V13:
+>  - Use ios timing to stead MMC_UHS2_SUPPORT for indicate the UHS2 mode.
+> 
+> Updates in V8:
+>  - Adjust the position of matching brackets.
+> 
+> Updates in V6:
+>  - Remove unnecessary functions and simplify code.
+> 
+> ---
+> 
+>  drivers/mmc/host/sdhci-uhs2.c | 57 +++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci-uhs2.h |  1 +
+>  drivers/mmc/host/sdhci.c      |  3 +-
+>  drivers/mmc/host/sdhci.h      |  1 +
+>  4 files changed, 61 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+> index 9cb0f1b2a37d..7652158ea151 100644
+> --- a/drivers/mmc/host/sdhci-uhs2.c
+> +++ b/drivers/mmc/host/sdhci-uhs2.c
+> @@ -10,7 +10,9 @@
+>   *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>   */
+>  
+> +#include <linux/delay.h>
+>  #include <linux/module.h>
+> +#include <linux/iopoll.h>
+>  
+>  #include "sdhci.h"
+>  #include "sdhci-uhs2.h"
+> @@ -21,6 +23,8 @@
+>  #define SDHCI_UHS2_DUMP(f, x...) \
+>  	pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
+>  
+> +#define UHS2_RESET_TIMEOUT_100MS		100000
+> +
+>  void sdhci_uhs2_dump_regs(struct sdhci_host *host)
+>  {
+>  	if (!(mmc_card_uhs2(host->mmc)))
+> @@ -49,6 +53,57 @@ void sdhci_uhs2_dump_regs(struct sdhci_host *host)
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
+>  
+> +/*****************************************************************************\
+> + *                                                                           *
+> + * Low level functions                                                       *
+> + *                                                                           *
+> +\*****************************************************************************/
+> +
+> +/**
+> + * sdhci_uhs2_reset - invoke SW reset
+> + * @host: SDHCI host
+> + * @mask: Control mask
+> + *
+> + * Invoke SW reset, depending on a bit in @mask and wait for completion.
+> + */
+> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask)
+> +{
+> +	u32 val;
+> +
+> +	sdhci_writew(host, mask, SDHCI_UHS2_SW_RESET);
+> +
+> +	if (mask & SDHCI_UHS2_SW_RESET_FULL)
+> +		host->clock = 0;
+> +
+> +	/* hw clears the bit when it's done */
+> +	if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask), 10,
+> +				     UHS2_RESET_TIMEOUT_100MS, true, host, SDHCI_UHS2_SW_RESET)) {
+> +		pr_warn("%s: %s: Reset 0x%x never completed. %s: clean reset bit.\n", __func__,
+> +			mmc_hostname(host->mmc), (int)mask, mmc_hostname(host->mmc));
+> +		sdhci_writeb(host, 0, SDHCI_UHS2_SW_RESET);
+> +		return;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_uhs2_reset);
+> +
+> +static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +
+> +	sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+> +
+> +	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
 
-Thanks for the suggestion! I'll wrap related code inside
-CONFIG_CRASH_DUMP.
+Please use mmc_card_uhs2()
 
->
->> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
->> > index 060835bb82d5..fc1e20d565d5 100644
->> > --- a/include/linux/kexec.h
->> > +++ b/include/linux/kexec.h
->> > @@ -171,6 +171,7 @@ int kexec_image_post_load_cleanup_default(struct kimage *image);
->> >  * @buf_min:	The buffer can't be placed below this address.
->> >  * @buf_max:	The buffer can't be placed above this address.
->> >  * @top_down:	Allocate from top of memory.
->> > + * @random:	Place the buffer at a random position.
->>
->> How about a comment here saying this is currently only used by kdump.
->
->No, it's not good. Please don't do this, let code tell it.
->
->By the way, can you rebase this series on the latest v6.9 and resend? I
->rebase my code and can't apply your patchset.
+> +		sdhci_uhs2_reset(host, SDHCI_UHS2_SW_RESET_SD);
+> +
+> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +		sdhci_uhs2_clear_set_irqs(host, SDHCI_INT_ALL_MASK, SDHCI_UHS2_INT_ERROR_MASK);
+> +	}
+> +}
+> +
+>  /*****************************************************************************\
+>   *                                                                           *
+>   * Driver init/exit                                                          *
+> @@ -57,6 +112,8 @@ EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
+>  
+>  static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
+>  {
+> +	host->mmc_host_ops.uhs2_reset_cmd_data = sdhci_uhs2_reset_cmd_data;
 
-Sure, v4 was sent.
+As noted for patch 8, any host controller resets needed
+should be done before completing the request, so a call
+back function should not be needed.
 
-
--- 
-Best regards,
-Coiby
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
+> index 2bfe18d29bca..caaf9fba4975 100644
+> --- a/drivers/mmc/host/sdhci-uhs2.h
+> +++ b/drivers/mmc/host/sdhci-uhs2.h
+> @@ -177,5 +177,6 @@
+>  struct sdhci_host;
+>  
+>  void sdhci_uhs2_dump_regs(struct sdhci_host *host);
+> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask);
+>  
+>  #endif /* __SDHCI_UHS2_H */
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 8fc3e001db74..f212da6dc2aa 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -236,7 +236,7 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_reset);
+>  
+> -static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+>  {
+>  	if (host->quirks & SDHCI_QUIRK_NO_CARD_NO_RESET) {
+>  		struct mmc_host *mmc = host->mmc;
+> @@ -249,6 +249,7 @@ static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+>  
+>  	return true;
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_do_reset);
+>  
+>  static void sdhci_reset_for_all(struct sdhci_host *host)
+>  {
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 13703f1a3710..83d994c8d89e 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -845,6 +845,7 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
+>  int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
+>  void sdhci_set_bus_width(struct sdhci_host *host, int width);
+>  void sdhci_reset(struct sdhci_host *host, u8 mask);
+> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask);
+>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+>  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+>  int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode);
 
 
