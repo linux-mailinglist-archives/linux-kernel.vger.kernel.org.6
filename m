@@ -1,240 +1,85 @@
-Return-Path: <linux-kernel+bounces-188218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA39C8CDF4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396008CDF4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617F51F22A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FEC1C20DA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309F623776;
-	Fri, 24 May 2024 01:51:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BDD79C8;
-	Fri, 24 May 2024 01:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1448A376F4;
+	Fri, 24 May 2024 01:51:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1D32E3E9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716515461; cv=none; b=Tb5YjTiVbiyI3gOaHmzmfwoYYAyeW+nFkkbPSwU3ED5CZlh6zbyaf7/HA0E9JSzof5nDHYBYoQhNkTPasy+w1N+KpD35K7XiyCzZXVbevrwnx/MTV9lbut9b1Oq24wma1btuzDgPRs8r2+NWcKArekAh/8Yhj5eBKNSA8cjeius=
+	t=1716515464; cv=none; b=I5RjafKAZWUJrGAR2vJSsvZbOaWZfuExve6XEbwkxVQIMSLKPuApE8L4uyn2rRvqTKT/wiWoam/ZkN6PKSTef601GX1yVWw0SqpW/PxyVzkWG3wpYN3Udc8187Gz9tZBVxjTdvndfzl6GfyXOtn8parnvDQH5GkhVBS6i6ALfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716515461; c=relaxed/simple;
-	bh=N/NewkKbyUb7UrI1/SHjF9zkPikBTE9MYNulI6nPEq0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MUiGxpIMvxqrg740UTWeTIPbf8iKAO5o74BClnNyh+BCr2lnQt9fCgP1bLehTGEwniCuAnbjxgbMRKnpvJM8vSWrfm4icajEUwHwx7eiDOWiE6Fizg13O/uuP+lrb4qNHuuKNEa/7fItd+zcLMLjmoGHtrlABg481jotn/lwMN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8Cxaep_8k9mTTkDAA--.3876S3;
-	Fri, 24 May 2024 09:50:55 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxHMd78k9mJHEHAA--.20507S3;
-	Fri, 24 May 2024 09:50:53 +0800 (CST)
-Subject: Re: [PATCH v2 4/6] KVM: Delete the now unused kvm_arch_sched_in()
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240522014013.1672962-1-seanjc@google.com>
- <20240522014013.1672962-5-seanjc@google.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <d2810a82-3111-36f0-c27d-fb7c4c7efe58@loongson.cn>
-Date: Fri, 24 May 2024 09:50:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1716515464; c=relaxed/simple;
+	bh=R3XCXcSsBOl2M298bAhwCCMRYqrzOyrxEWd1KqFoitQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=t3Dl1zThfyr3LM04j5GmmE3o6W3f2ijY2iqqLHum1OSay8/R/uRzpRWmrnmQfFiPYRUTm0H2oV5oabrGUJHnQTlev7TT7RDaBl7LFGZlRc3ARCPszdZd2LiPyAOv7wbWlgI717lI/TEaVTF/DSyXbLBGKrmrCOHDncnvJvSVJUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1ac2fbcb7so236189039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:51:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716515462; x=1717120262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=opQdkjpIV5NXY+geIDrDv0tIxAlatzfbFMBcjfHzpeI=;
+        b=MkSynrX5evIPl+to4LdPTcQqGwrtMnnRwhPFRChlxIrImRABRk/KdrwXKzcOzqo53J
+         np2GpIFiNtEYx6TsK/Ecqv79dqM+doMmG351MwX9H2fJ1A9VJY2wsSEbXJJ97uZRZY1c
+         0BPdc0ZQFJM8mNCT6ACAo+Z+hdDXRMopKNWDI6onmfhvFHi0PhR+RMtrGozywV+PqCPc
+         ZoDEOKZRMQTgF7xwUZ8S++oGrufk+a/DcR29WtR8UyqHGmz5wUWT7zxM/iNhhDBg8Cua
+         /luRqJCrFYjtx4xbNkicBHsqYsheGZFu1oP4hH1iYVfxTJuRDqNCM537pXBP6W3RnvJ+
+         0ghQ==
+X-Gm-Message-State: AOJu0YwUzWa3csWRRsjGLniuP5wMobaijMW9siaKyyhNRltjbqAkcNZM
+	VyLO8D0xPV7BNAu0KEXJ2yKjkNVRzaW5HbbdW3OV168Z8qJavwoSpgX3AEWGWsEP4qOEdLP1pR8
+	3tfREwUGnsVIem0tVS83Sxls1i0dsMxpidpBQS7Sj8kaVCO7IXeJAmFY=
+X-Google-Smtp-Source: AGHT+IEEgeo1PfMLpeMlU5zRxPgU5naQibdkxucNdn9DTpxKtnp89xQuVA5hAKHaLojPPTr6Hw+5UYuP5mnPRj8I2Sdfflqii3oV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240522014013.1672962-5-seanjc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxHMd78k9mJHEHAA--.20507S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtF47GFW5Jry5Jr4DGw45Arc_yoWxtF4Upa
-	s3uFs5Wa1fKryrKa4DJr4q93y5Zws5Kw1av34UKrW5JFn8trn8JF4kKr9rJr98JrW093WS
-	kFy3KF1ruF4jywcCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDUUUU
+X-Received: by 2002:a05:6e02:1fc1:b0:36d:92b9:8f30 with SMTP id
+ e9e14a558f8ab-3737b295443mr694195ab.1.1716515462130; Thu, 23 May 2024
+ 18:51:02 -0700 (PDT)
+Date: Thu, 23 May 2024 18:51:02 -0700
+In-Reply-To: <20240524012956.3069071-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005f3fa606192966f7@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2024/5/22 上午9:40, Sean Christopherson wrote:
-> Delete kvm_arch_sched_in() now that all implementations are nops.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/arm64/include/asm/kvm_host.h     | 1 -
->   arch/loongarch/include/asm/kvm_host.h | 1 -
->   arch/mips/include/asm/kvm_host.h      | 1 -
->   arch/powerpc/include/asm/kvm_host.h   | 1 -
->   arch/riscv/include/asm/kvm_host.h     | 1 -
->   arch/s390/include/asm/kvm_host.h      | 1 -
->   arch/x86/kvm/pmu.c                    | 6 +++---
->   arch/x86/kvm/x86.c                    | 5 -----
->   include/linux/kvm_host.h              | 2 --
->   virt/kvm/kvm_main.c                   | 1 -
->   10 files changed, 3 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 8170c04fde91..615e7a2e5590 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -1225,7 +1225,6 @@ static inline bool kvm_system_needs_idmapped_vectors(void)
->   }
->   
->   static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   
->   void kvm_arm_init_debug(void);
->   void kvm_arm_vcpu_init_debug(struct kvm_vcpu *vcpu);
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-> index c87b6ea0ec47..4162a252cdf6 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -261,7 +261,6 @@ static inline bool kvm_is_ifetch_fault(struct kvm_vcpu_arch *arch)
->   static inline void kvm_arch_hardware_unsetup(void) {}
->   static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
->   static inline void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu) {}
->   static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
-> diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-> index 179f320cc231..6743a57c1ab4 100644
-> --- a/arch/mips/include/asm/kvm_host.h
-> +++ b/arch/mips/include/asm/kvm_host.h
-> @@ -890,7 +890,6 @@ static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_free_memslot(struct kvm *kvm,
->   					 struct kvm_memory_slot *slot) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
->   static inline void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu) {}
->   
-> diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-> index 8abac532146e..c4fb6a27fb92 100644
-> --- a/arch/powerpc/include/asm/kvm_host.h
-> +++ b/arch/powerpc/include/asm/kvm_host.h
-> @@ -897,7 +897,6 @@ struct kvm_vcpu_arch {
->   static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
->   static inline void kvm_arch_flush_shadow_all(struct kvm *kvm) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
->   static inline void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu) {}
->   
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index d96281278586..dd77c2db6819 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -286,7 +286,6 @@ struct kvm_vcpu_arch {
->   };
->   
->   static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   
->   #define KVM_RISCV_GSTAGE_TLB_MIN_ORDER		12
->   
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 95990461888f..e9fcaf4607a6 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -1045,7 +1045,6 @@ extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
->   extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
->   
->   static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
->   static inline void kvm_arch_free_memslot(struct kvm *kvm,
->   					 struct kvm_memory_slot *slot) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index a593b03c9aed..f9149c9fc275 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -521,9 +521,9 @@ void kvm_pmu_handle_event(struct kvm_vcpu *vcpu)
->   	}
->   
->   	/*
-> -	 * Unused perf_events are only released if the corresponding MSRs
-> -	 * weren't accessed during the last vCPU time slice. kvm_arch_sched_in
-> -	 * triggers KVM_REQ_PMU if cleanup is needed.
-> +	 * Release unused perf_events if the corresponding guest MSRs weren't
-> +	 * accessed during the last vCPU time slice (need_cleanup is set when
-> +	 * the vCPU is scheduled back in).
->   	 */
->   	if (unlikely(pmu->need_cleanup))
->   		kvm_pmu_cleanup(vcpu);
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index e924d1c51e31..59aa772af755 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12586,11 +12586,6 @@ bool kvm_vcpu_is_bsp(struct kvm_vcpu *vcpu)
->   	return (vcpu->arch.apic_base & MSR_IA32_APICBASE_BSP) != 0;
->   }
->   
-> -void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
-> -{
-> -
-> -}
-> -
->   void kvm_arch_free_vm(struct kvm *kvm)
->   {
->   #if IS_ENABLED(CONFIG_HYPERV)
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index bde69f74b031..c404c428a866 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1495,8 +1495,6 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(struct kvm_vcpu *vcpu,
->   					struct kvm_guest_debug *dbg);
->   int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu);
->   
-> -void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu);
-> -
->   void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
->   void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu);
->   int kvm_arch_vcpu_precreate(struct kvm *kvm, unsigned int id);
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 7ecea573d121..b312d0cbe60b 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -6286,7 +6286,6 @@ static void kvm_sched_in(struct preempt_notifier *pn, int cpu)
->   	WRITE_ONCE(vcpu->ready, false);
->   
->   	__this_cpu_write(kvm_running_vcpu, vcpu);
-> -	kvm_arch_sched_in(vcpu, cpu);
->   	kvm_arch_vcpu_load(vcpu, cpu);
->   
->   	WRITE_ONCE(vcpu->scheduled_out, false);
-> 
+Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Tested on:
 
+commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17bad634980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17736ab2980000
+
+Note: testing is done by a robot and is best-effort only.
 
