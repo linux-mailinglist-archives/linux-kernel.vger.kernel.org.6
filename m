@@ -1,109 +1,191 @@
-Return-Path: <linux-kernel+bounces-188479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8AE8CE27F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C378CE2A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BD51C20B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8121C21A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E887E84E03;
-	Fri, 24 May 2024 08:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="hMyYGSxi"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0E4129A7C;
+	Fri, 24 May 2024 08:49:51 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB622331
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2115A84E03;
+	Fri, 24 May 2024 08:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716540476; cv=none; b=c/Fz0vYpyAzrCdrCCGkmmTdkXlX+EpEjCcUz0lZP31vbJO79WMunK5fPiAWbSfm5J7QskiDO3ppsjSlN4R0DXVtBAskB6WtCuWfDlk8unY+Of26/KhLVGGaLcaJOpD2YaW/b859avbYnjLJNd75FmwH33bRbKm9VBJRv//5vzys=
+	t=1716540591; cv=none; b=aTxsanzdwqxyv47YmoMTR2Wz88b0yWzQEV9mKWgwrU+rgQQ9nmcm2MCMV4AMRDUOqD/Xor5Iu40W8yI130p0cqQ8+8UwaVsEJTH/n4toDNh/v9BR5bEw8HctUtQHp0lUmw9GGlnVBeEk6S+LjjSNKVUqCvH/6bpdgNVtjGvJwTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716540476; c=relaxed/simple;
-	bh=NtnvrfQrnbChckPUpoJEclyqdwNU/EzDkgssCHBUtAg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hhihiqdvb9ue2D2t2IR7x/D0OFF1WWVTsOHIJLFvp1eb9HNeXfHa2pNMkm3jMVsq2yXot9qznalvmQKIXp186DhsvoEPWRm7DwgAWuXL7pwTZsuWmhAWdYXe+rap7d8dA2eVei5a7ypjAorUYK6G5bjQoTbR6voMo9zTrj6EOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=hMyYGSxi; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=+37b90Lx/brt8rw4v1F6llZaQY8yfFwNx63kKufwdlE=; b=hMyYGSxi0p2F+gDPEhOi/EfhDT
-	s3Kii6AQ8H54ZZjgdQgtE8OS8NrHwl69Q6Yhwp73bUOgDKRzBX2RFzYGN0jLSXNwwXCn6y1sZ8pLD
-	PweQGkRqZix293wWYhSG8NdvfyO83188dNO+PY38VCoqEePIbNF9bNlBeYKNgMEbfuspT9s4wvCJj
-	qJlDiC+3nZGL51jOLskf2W7EpEmQvQJWVbOGxRjUsbGKGWCEvbQw0AWKwzldbz8ILP12v+7cJOlIP
-	hl5+0ZMsm7a+cHp55dcAQZ1r1YEDchuMDPyUO9aqSTYQm8a7YlnIfDdFRqQl6M0PawfNgjjHqfmf8
-	6w9Amslw==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sAQac-00028n-3a; Fri, 24 May 2024 10:47:50 +0200
-Received: from [80.62.117.110] (helo=localhost)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sAQab-000IJR-2z;
-	Fri, 24 May 2024 10:47:49 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
-In-Reply-To: <9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org> (Krzysztof
-	Kozlowski's message of "Thu, 23 May 2024 16:36:17 +0200")
-References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
-	<979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org>
-	<87cypc38gu.fsf@geanix.com>
-	<9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org>
-Date: Fri, 24 May 2024 10:47:48 +0200
-Message-ID: <87le3zoatn.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716540591; c=relaxed/simple;
+	bh=+fyQmmBghd4ru55U3wBh/VC//Mi2k+SSW6qveTaC+5s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XBlValNcdrq3p+/OTmyB216es0IEYYjfuCKZuMYSVGmmypWFoO5fAEvbjCVg/1pUFF7Y1pm6bXVHujPM0oFyWwxQXlfDBzW8A6ve8eQdDOXMV5lb3p11rmlN82SwdFfci2pzlEHFWpVYbFeIdjzUu8NXrpKqhrajWKMPvhufqn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VlzCh4RbFz2Cj36;
+	Fri, 24 May 2024 16:46:08 +0800 (CST)
+Received: from canpemm500007.china.huawei.com (unknown [7.192.104.62])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FB891A0188;
+	Fri, 24 May 2024 16:49:39 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by canpemm500007.china.huawei.com
+ (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 24 May
+ 2024 16:49:38 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>,
+	<jiri@resnulli.us>, <yuehaibing@huawei.com>, <hannes@stressinduktion.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net] net/sched: Add xmit_recursion level in sch_direct_xmit()
+Date: Fri, 24 May 2024 16:51:08 +0800
+Message-ID: <20240524085108.1430317-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27284/Thu May 23 10:32:30 2024)
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ canpemm500007.china.huawei.com (7.192.104.62)
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device will hit
+WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path while ipvlan
+device has qdisc queue.
 
-> On 23/05/2024 16:32, Esben Haabendal wrote:
->> Krzysztof Kozlowski <krzk@kernel.org> writes:
->> 
->>> On 23/05/2024 15:58, Esben Haabendal wrote:
->>>> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
->>>> driver selects FSL_IFC automatically, we need the option to be selectable
->>>> for platforms using fsl_ifc with NOR flash.
->>>
->>> Which driver is that?
->> 
->> This is drivers/memory/fsl_ifc.o driver. It is for Integrated Flash
->> Controller (IFC) from NXP. It is used in various Layerscape socs.
->
-> ? I know that, I mean the NOR flash working here.
+WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
+Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm_kms_helper
+CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:sk_mc_loop+0x2d/0x70
+Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 85 ff 74 1c
+RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
+RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
+RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
+R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
+R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
+FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ ? __warn+0x83/0x130
+ ? sk_mc_loop+0x2d/0x70
+ ? report_bug+0x18e/0x1a0
+ ? handle_bug+0x3c/0x70
+ ? exc_invalid_op+0x18/0x70
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? sk_mc_loop+0x2d/0x70
+ ip6_finish_output2+0x31e/0x590
+ ? nf_hook_slow+0x43/0xf0
+ ip6_finish_output+0x1f8/0x320
+ ? __pfx_ip6_finish_output+0x10/0x10
+ ipvlan_xmit_mode_l3+0x22a/0x2a0 [ipvlan]
+ ipvlan_start_xmit+0x17/0x50 [ipvlan]
+ dev_hard_start_xmit+0x8c/0x1d0
+ sch_direct_xmit+0xa2/0x390
+ __qdisc_run+0x66/0xd0
+ net_tx_action+0x1ca/0x270
+ handle_softirqs+0xd6/0x2b0
+ __irq_exit_rcu+0x9b/0xc0
+ sysvec_apic_timer_interrupt+0x75/0x90
+ </IRQ>
 
-Ah, sorry. The NOR flash I am using here is a Spansion S29AL016J.
+Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive dereference inside the stack")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ include/linux/netdevice.h | 17 +++++++++++++++++
+ net/core/dev.h            | 17 -----------------
+ net/sched/sch_generic.c   |  8 +++++---
+ 3 files changed, 22 insertions(+), 20 deletions(-)
 
->>> Which DTS?
->> 
->> It is for "fsl,ifc" compatible devices.
->
-> That's not a NOR flash.
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index d20c6c99eb88..7c0c9e9b045e 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3261,6 +3261,23 @@ static inline int dev_recursion_level(void)
+ 	return this_cpu_read(softnet_data.xmit.recursion);
+ }
+ 
++#define XMIT_RECURSION_LIMIT	8
++static inline bool dev_xmit_recursion(void)
++{
++	return unlikely(__this_cpu_read(softnet_data.xmit.recursion) >
++			XMIT_RECURSION_LIMIT);
++}
++
++static inline void dev_xmit_recursion_inc(void)
++{
++	__this_cpu_inc(softnet_data.xmit.recursion);
++}
++
++static inline void dev_xmit_recursion_dec(void)
++{
++	__this_cpu_dec(softnet_data.xmit.recursion);
++}
++
+ void __netif_schedule(struct Qdisc *q);
+ void netif_schedule_queue(struct netdev_queue *txq);
+ 
+diff --git a/net/core/dev.h b/net/core/dev.h
+index b7b518bc2be5..49345ad7350b 100644
+--- a/net/core/dev.h
++++ b/net/core/dev.h
+@@ -149,21 +149,4 @@ static inline void xdp_do_check_flushed(struct napi_struct *napi) { }
+ struct napi_struct *napi_by_id(unsigned int napi_id);
+ void kick_defer_list_purge(struct softnet_data *sd, unsigned int cpu);
+ 
+-#define XMIT_RECURSION_LIMIT	8
+-static inline bool dev_xmit_recursion(void)
+-{
+-	return unlikely(__this_cpu_read(softnet_data.xmit.recursion) >
+-			XMIT_RECURSION_LIMIT);
+-}
+-
+-static inline void dev_xmit_recursion_inc(void)
+-{
+-	__this_cpu_inc(softnet_data.xmit.recursion);
+-}
+-
+-static inline void dev_xmit_recursion_dec(void)
+-{
+-	__this_cpu_dec(softnet_data.xmit.recursion);
+-}
+-
+ #endif
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index 2a637a17061b..74d9b43b7767 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -339,11 +339,13 @@ bool sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
+ 
+ 	if (likely(skb)) {
+ 		HARD_TX_LOCK(dev, txq, smp_processor_id());
+-		if (!netif_xmit_frozen_or_stopped(txq))
++		if (!netif_xmit_frozen_or_stopped(txq)) {
++			dev_xmit_recursion_inc();
+ 			skb = dev_hard_start_xmit(skb, dev, txq, &ret);
+-		else
++			dev_xmit_recursion_dec();
++		} else {
+ 			qdisc_maybe_clear_missed(q, txq);
+-
++		}
+ 		HARD_TX_UNLOCK(dev, txq);
+ 	} else {
+ 		if (root_lock)
+-- 
+2.34.1
 
-Nope.  The binding used for the NOR flash is "cfi-flash".
-
-/Esben
 
