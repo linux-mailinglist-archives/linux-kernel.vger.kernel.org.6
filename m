@@ -1,252 +1,1095 @@
-Return-Path: <linux-kernel+bounces-188509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BFA8CE2D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4425D8CE2DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749661C20F74
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667CC1C21949
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD14129E8F;
-	Fri, 24 May 2024 09:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B78129A83;
+	Fri, 24 May 2024 09:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qTDtnbAE";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="n9WwgqDY"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEQtD1Ft"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB60129A93;
-	Fri, 24 May 2024 09:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541355; cv=fail; b=f8OJA5wjvj3oTg7Jz+sBuBbPXQrBshmsFJccnB9WF+V1vvDT2MUnqI9r0+xVPd9O7DjOddMNHU07IoP5xsTknJp1KbM/WeFijEmhXrCxA9f14htblxGOiZNO8Z/Dlwrjk1YDCFkrt4F1KazndjlZgzKDglk3aVw7CBI2nevCihM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541355; c=relaxed/simple;
-	bh=/HdSAjTj8prAQkdxDjV55wU2g9z8tXr33eIQwQpac5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c4MyY8wj/1k3pEXyrgcz4j9uiAk3BfWLTnjd/YJy6u/pUlC01uY462dzdBAt9RcDf3A6ee7SNEZ6SfyM3oUBrNV0KUJmT75jPvh9hu6VoRDkZRE3uGTj+VCjEvtFaDsMCAqbt6k2sj3EPTPDz1iXlaRhcrc5237/8uBVZ4bOC4w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qTDtnbAE; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=n9WwgqDY; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5786414819ac11efbfff99f2466cf0b4-20240524
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=/HdSAjTj8prAQkdxDjV55wU2g9z8tXr33eIQwQpac5Q=;
-	b=qTDtnbAEoR5iIZawnUYlutISQMjMTfaSUJeKuP4Oxb2e0D/xqm3PgdN62JDg5Yd8HwU2GaHIRwuEhrexY5Bd/MZpRrKONhaEQh/VaviKmgTk9GHJRVflAkiujuP3ow/1qy9eOU4rc+dEN+iehFtaN3fIBdXN20QLT2S5kAL/goE=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ca24190a-e3b7-46fb-8f19-9dddfd7a0da3,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:ef774484-4f93-4875-95e7-8c66ea833d57,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 5786414819ac11efbfff99f2466cf0b4-20240524
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 30735448; Fri, 24 May 2024 17:02:26 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 24 May 2024 17:02:24 +0800
-Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 24 May 2024 17:02:24 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ggQBlzWh5DI9w6fi6KybLyMTMLXFrcStch1UOpM2yzVA6vyKv2MEuPwB3PUHK01R6rdRPd+f6biyokX4YBsl5xJmvIC7cJ+s3ZS2rIpAcPimmIUnNy5Pn/Afp1Uap3PVfxqBzUd3+GPE+6zzAZZQAyCg8IppefL9ZMLu9VcRbRQLgBz+tyD0aOKpqKBPqLzO/8lp4hY9Kf7Ap/KAP5HHNCcL66I/qsge3tj55Rdlf8Uyrl+uMxOOZmolcWmjmXiWRjyMIH2JMP65Z2EOUbfgaO8Xnug2QRe+hfjKOevJSQDjEUgwvpwF5Vq159HJXF3DJB8uTA2dBDoqaSphjKnqMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/HdSAjTj8prAQkdxDjV55wU2g9z8tXr33eIQwQpac5Q=;
- b=U6G8vttUMxDbCUNO1mAazudKjt8kP6wI+oPP5PNlWHFs5t6Fu5gIfWeDsA9+WSl7AvZ+CFG0zN79+CUbdVDLzths0/b3pXW640gjlg9V1nZFZebdWpscOKltKp64sfSU0FHPyQ0ljKcJmLBJHpcbOstnGaGoZfmNNNDx3BrCDc53AYaodxYJC/d7dheMIF5dqANxqR9txCDVgQkSEA553TzqhQV8BQ+lfP+RB3u60cSmNH17f4033JUv5lhZ6ZFzk6C84ZbK+5dCVXNwAwoOuqQNSWtd/XVL1VH/Xp2VRZQaUqGmpndRFvsvZM61cGxIQbjmFadZviKWOPpJbwTN2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939F86258;
+	Fri, 24 May 2024 09:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716541419; cv=none; b=p50QhCaEyV9zpUz8P1T5W05RBQKo/NdgMed0tVA418TqJXCHZignQ3SmbPt4WO8EstV/7c7iLWauFqvSAzPUSymgp+oUUnA8OD4xxw2jMkQF1FAQsHyPYfxU8AEcTIaH408kUH1fcRYS3KMNxzmIWW4JhpKb4ertT5Sc16EdZgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716541419; c=relaxed/simple;
+	bh=H4fr8FZkPT1Qt51E/Cae4FaRADKjSmXO3M6WqS0BuCE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KpQh/7/3OrjCFQwblwTa7Uq8B0RmpyFtqwvpxqwFbmrEvMNDA7swSjMC4/amJQkNT3DQR+Wa28wxTZZUvWJNRo2Q+SPliWU0N/qK/Dv7TikWa1CCl8iFtiBcNAkOBNZV7NrwHjxHSE9lqINTgMg4xuOL1E8VUjswJin/YnT1wM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEQtD1Ft; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5a7d28555bso1279837166b.1;
+        Fri, 24 May 2024 02:03:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/HdSAjTj8prAQkdxDjV55wU2g9z8tXr33eIQwQpac5Q=;
- b=n9WwgqDYmbLTvY3qrivhZ1jEEApGWzCpsbV7zybdAbYgv2T8mQzUGvC0jJUUCx9wQQv0B6IHFksaCLQOTMgRPOXccBIekDOgO7NCRpCpmiu3EFta0atnyAVGsTWxiDmTVzJ1tG3RK1GH6vPX0OYVHGQVEuKZwhEmY7AZ7NVVCFI=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by JH0PR03MB7610.apcprd03.prod.outlook.com (2603:1096:990:18::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 24 May
- 2024 09:02:22 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 09:02:22 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "mripard@kernel.org" <mripard@kernel.org>,
-	=?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "amergnat@baylibre.com" <amergnat@baylibre.com>,
-	"robh@kernel.org" <robh@kernel.org>, "airlied@gmail.com" <airlied@gmail.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>, "will@kernel.org"
-	<will@kernel.org>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 07/15] dt-bindings: display: mediatek: dpi: add
- compatible for MT8365
-Thread-Topic: [PATCH v4 07/15] dt-bindings: display: mediatek: dpi: add
- compatible for MT8365
-Thread-Index: AQHarQ/IYNDozH0Rm0a6uOkzB4InUbGmGA0A
-Date: Fri, 24 May 2024 09:02:22 +0000
-Message-ID: <4348c01cdf3737d1dabdc22263aaee9f30469fab.camel@mediatek.com>
-References: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
-	 <20231023-display-support-v4-7-ed82eb168fb1@baylibre.com>
-In-Reply-To: <20231023-display-support-v4-7-ed82eb168fb1@baylibre.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|JH0PR03MB7610:EE_
-x-ms-office365-filtering-correlation-id: fa9933e5-6ae6-44de-9ca4-08dc7bd0395c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|7416005|376005|1800799015|366007|921011|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?YmMxTzR4eTFmZERRUGFsblkxeUsraExNMjVCY0xmd3dobGMrUUVVNE9sbWtN?=
- =?utf-8?B?Z3QxUW5YanpmdjRhamJ5MGxESXlNYXNGR0w4WFJkWlUwdS9tZDRXMW5GaXdS?=
- =?utf-8?B?ZHJZMFdCQmM0TW1LM0pYWUM3MURMK0lQR2dyempoNEdhdVozdERObDk1OW5K?=
- =?utf-8?B?cFdSR3FQbVFaTnZUbTBlLy9HemNCd2dGSjhHa3ZrQUJFMlZpeW9hQTlXWTB4?=
- =?utf-8?B?M3gralFVY3FXcXRDY1h2OUJWOEZWME1rN1VwbXlnaklTTDVRdVZhSmhYSW1D?=
- =?utf-8?B?ZkhyUGY0blViL1kzZXJtUWpNUis0cEZXKzZtZitpOHBreVp1d2dMTGlsZGQz?=
- =?utf-8?B?QTF2bDZhbWZZVm4vVWg5MlZpK01ML0F4eW9WOHJORGlWT3FvZkNsMnBIV0Fr?=
- =?utf-8?B?NkpydnNsWnhHb2k3bjgxVlVMa0daQUhnMU4xV2pybUlxbmkvMThISWhMcXpw?=
- =?utf-8?B?YXJOM0Frd3ZXeHZoYWNtME8yOFV4c3pLUWJJajA1d2VrSlVyYkJhTzhFdmJX?=
- =?utf-8?B?R1ZPanN3T1pIbHpxSVozV0p0TlErdmxZV1NzWFJaQXZRaDNUU0hraTNDSFhP?=
- =?utf-8?B?YVFjM2kxbnIwdXlJUXhXRDcvUWFDQXMxNnJOeFp3Mkd3VGl1SkhmNUhrVmpq?=
- =?utf-8?B?TW9LSEZDVGxRMGxhS3U3dFNzeFdxSHZpK0xHZjFWQmJzalg4VDJCekNPK29P?=
- =?utf-8?B?K0M0b25WWHUwU1RIV0RvWTB4SXJMbitXMVB2Q21yTHR1QWpLNnFEcEhVZWI2?=
- =?utf-8?B?VUZwV0tGME42RTkrZ0VoR2JqTGNNZGNPbmpWMUNWdkdDTTBuMkRQbnpPcXhK?=
- =?utf-8?B?RytGS050VFdwcVdCRCt1eW14ckd3YUZBZEZQTS9RdDVhQ0p0d01mQ1A3S2lE?=
- =?utf-8?B?WHlJWDM1QUh0QjhYYkk0U1NmRTh3bTBMUWdnSmNjRXY5WnNTd29NcUdHTVds?=
- =?utf-8?B?UlVMM29GWkNxeHYyL2JyeU9OQ1ZjNEF0WXdpb1QrSk5BeERYc0lhaU1CVXFF?=
- =?utf-8?B?bGs3WmFDbnlDUmRmSWl5ZDd1UG40WUNhTUM5VVZzTzRqUndqNy9GRnVBNmRa?=
- =?utf-8?B?SjVrTE5OMU1kL2ZrTGIxL0xUYlF5YVVsUlEzVXNtTC9WYVBxZFhJUkZ0amow?=
- =?utf-8?B?REU3aWVxNXZGUlUxWDUySmZrdFZlS3ZBbWovaVdMRHVwenZTejlZQlJzay9G?=
- =?utf-8?B?R2t2VlhEL0IzbzU5QVJ3K3R5SE1uejB0RERNM3NXVXpUUTJvY21xd2JYeldk?=
- =?utf-8?B?VENjalhKWXpVUEFvN1JmM2lkR2NmRGdTb3hzalovVXVEK2xDZU1tMGlwTlly?=
- =?utf-8?B?Y3pRQTg0OEkzaHJFUWR4TEY1TWFud005amVFYXV1WGpvTkphVlkvWGE3TU5K?=
- =?utf-8?B?MUdpN2thYW1GR2x3L2g0TkxzV2ZQMDhMNVcvb2l2RnR3WCtwQ1A3T3ZKRk93?=
- =?utf-8?B?OG0rdmYrNmNWaEpPYWpHSlN2QVF1Q1JKUnBVL3BvZlZmNGJwSHJlTkVmeEFG?=
- =?utf-8?B?dCtPbksrU1JobGlUZG0rdzFGamtiUnlvUjlqZHZlTFFtV0pmOStCSzlVRlVt?=
- =?utf-8?B?d010TCtZMEE4TjZTK0NBQlVZTzhiM2E5MVdMRUNKcXA0ZERCNVFGSTJ1TXlP?=
- =?utf-8?B?d0hzQldvcXBEMVlEYWdNclhmSG9FSHFhUHB5aTlZUnJob1BNblBoVlNQTVgx?=
- =?utf-8?B?NUNWN0N6ZVNqSkpXd1J4S1EzMGE2dE1jRm9UZktEbnFZRjBKWUo4emJxd3dM?=
- =?utf-8?B?L1p0cnNOUS9jM2d3TDRML1JnMUtNbjBBNUFzS2l5MWljUWRhWjJySFNJbVlW?=
- =?utf-8?Q?fP3ciU3lkXriNPammHuZcE89GBwvcezXZ8Dcs=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007)(921011)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MU9STnJWN3k2WkhKSmlNakZRYkVEa01YUHA4aGx0R2pZT3d6TXI0R0dVTVI4?=
- =?utf-8?B?M1RUQ01FNzhmRVVqOVpsMDhkbXpERURKZ0Z4Q3lmb2puOFVjalEvRWdhWDJz?=
- =?utf-8?B?UzRBSHBkeWFlVitGSFZ6L2tNTXNyaWQyaHhpcHJEbDBXSHJzMkJCRk9JM0FJ?=
- =?utf-8?B?Zzg1eVh5cXFKN1VsYkFteEFkZEtvMUQwZzFWb09XM2xRNHZxaVZwelAwMGJk?=
- =?utf-8?B?UFBjS09NSFYyemhMeXEyYmthU3N2VkxZMzh4T2UvWkRENkhITzF3VkovZUxh?=
- =?utf-8?B?MkdQci9YdUZIM1dpNk9kNnN5YTNKKzVHN2NJT0c4WHI3VW5ETW5BeUlQSUZY?=
- =?utf-8?B?VWFSbDA0blMybHRRUEtjMjVuM0xPa0RNRDhvWEo5bms2aHRYWkt2ZmgzRDlm?=
- =?utf-8?B?dEVqQi9DaDBzdytrRFhQcDNueWEyS3VMVnNwbVRlSDh5UWpHRThwWjhpSlY3?=
- =?utf-8?B?clRIZG5pdW5KZ0tBOUZ6VFJVb25HOUR0V0xORUN4Y0YzSVpsamIweFBuZEla?=
- =?utf-8?B?MHVHQ0MvQzNjUG83dS93RkZxNHVKb0NnR1BJdFdSdmptM242TXhVR1hQS0Jx?=
- =?utf-8?B?bk5ZL0ZSN2dETnFJN28rWHlTWDZBZ0dSVHRFVnJXOHdxNlUxbnUxaUl5bm5I?=
- =?utf-8?B?RzVEa2RxV0UyK3dyVnA4ZC9DS1MvWEFZR21NOGdBZXFPVnl5T09tZTF0ZFh0?=
- =?utf-8?B?ekhuZE9KUGUvbk9OcnF3Mk9DMGNCcWFPdkUwYWxST0J3RWJlWFFNTy9qcXlt?=
- =?utf-8?B?T1gveEV5S2ZEVjErR09vWG1uODFUa0NwU1Rxc0hleXQwNUxicUd4ckNCTFNY?=
- =?utf-8?B?dHJHMmt1cUtLb2Q2aUlZUUZMV0NzUGVWaGZVckNWT3pqU0h4b0FQZGFiT3hQ?=
- =?utf-8?B?V2J2bVQvUFVaVk5Rd09SZ1NkNEVXcTBOTUFZTXo3OUVYcHdmUk44azBoRlZ3?=
- =?utf-8?B?L2oySGtxYnovM2NEa0YvTFVhaDNSRzUvWXltdFpMTWFvbGJqYlhtQlJUeTBZ?=
- =?utf-8?B?TUhrNmo2M3FIT1F4RzN5RFBnL3drcGVhOVNHWVowalFEWFB2SjJtZmg5TVdx?=
- =?utf-8?B?OHVMcjh1Y0lIbnNpdXQ4bG54VWNvejNMZnJYZUU0VXZvTUpHbS9hWklWbFBa?=
- =?utf-8?B?eW8xU1pGSmU2ZVdwenBTTmpBZlBHZDJUbHdPZS9JdUd4WnZFeFJJUGdLcCt0?=
- =?utf-8?B?U0VYandGdlAzaklFTVo2NFNrZkZ4TE02UWlGRDRnNTlrZ3A0eXcxL2RvUExs?=
- =?utf-8?B?dUw2Z3F1VlRDY21YdENkNEdnK0tsV0V4TXlRSFVnaDc0Y1FEMHo2VERDUGll?=
- =?utf-8?B?VG5SNldQTkdVU0djWEZkVng4K0dIWklIcGVERkU3WFM3dTl3OGhNdk9TRkhM?=
- =?utf-8?B?UEcxVUxvVW1yNml0dkhaTmtGQXhvRWlKVHc1TFpSYVY1c0dQR3NZakg4Q3JK?=
- =?utf-8?B?L3c3RWwwWDNvUDBsK1dFZHB5SEVxSzFQV2dBTmlnK0g3dThnTGg0RXVBd0lP?=
- =?utf-8?B?a0FrUWhuc2FyU1pmY0lKZDl4bCt1Wk9pOW1hZUJUODUyRXZmU2tEeGVrVUdx?=
- =?utf-8?B?eFM3SFh2N2JVeitMd1czRTZyRytOZWZwaXIySVFrcUlVd054WGdMS1Frc24r?=
- =?utf-8?B?SUxRRmcwWk54bUFZOHd1OER4NlJoUGFpeU1ZQXVnN2VrY0N4Zkc2Y2wxZ29R?=
- =?utf-8?B?K0tmZ3A1NnJ1eEJ0L3NpcTQ5YUJ5YW5YRURsRzdKLzBQbEZOdTdLYXZsejEw?=
- =?utf-8?B?dzRBOUU0V29TZW11U1RpSjNBZDA5blU5SDI2KzJ1YXBGS1RiT2d5WEV2YjN6?=
- =?utf-8?B?ek9naGhxNm56bnJvaUJzYm1YckdtY3NzZ2ZxaGViT1ZsOGRTaDB5bHJuTXZR?=
- =?utf-8?B?ZWhJTjNMcWliK3FPUkYrelV2b1hXMGZvVkdsS2dZV2hkdzl2MzBkSEpWaENl?=
- =?utf-8?B?eWc2NjFLdnBEME1WcTFOVWdoMk11eGNqaUxKNEtYY3FublBuUDE2ZjlpSG9o?=
- =?utf-8?B?WEpxUUhtUEpaUHg0VlpZcGlGTE8vSVhXN25xdzJuSlFRRDdDNkxGUTZ6Q293?=
- =?utf-8?B?TXBla3M2NjNLOXY3dlRKcmxPSyt3cEhDTGhxa3VlVm1aM3NVZjc2akk4Y0N5?=
- =?utf-8?Q?asvnjBkQWzLNA5NTCGoJN2LU9?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6EC841F2571942428A3001D12213515A@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1716541415; x=1717146215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1nexVopxlraJXNGXP7AVvmaKXoYwkbRCjy1Bq0G0Qek=;
+        b=MEQtD1Ft0NwY3JGXTmQwro+A/TiRsfVcWI/YKE4PpqYeR/wnWouL7z9wDJUfv/wwma
+         pN3dCTA7kON+c4wf2lBKA7MoLBqpHQ6B/VOwLG+g6I98KO/YirSa3JFs6sMlOsZfLVI5
+         M9lehxmiVF0RbE8BlsyZhex1BcvDfe9CyRwLn/O9k7CPGSn+T0bvdhOLZGnqnuuvImXu
+         G1Yh1WlqdC+ypUreSh7yxoH2OmPVuMdPmz0SSl0VYpfxA1mHqHo3xo0eidi+EtBwED0D
+         FR3BRoTzFWI1FQ0Xk9OImFm/Ra6eIlj8HgYdNdfBU8/h0dFjUp8OCHvNlVI85E9Yx+CL
+         eftQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716541415; x=1717146215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1nexVopxlraJXNGXP7AVvmaKXoYwkbRCjy1Bq0G0Qek=;
+        b=ojqex3x+DpoED9yZUztDjxz8Y37JlsNnn2+tITJlg19RCeqO+HJzoxUvQFU5ODV29Z
+         3ewSvDB1mjSI+2WS7HWN9PXFQRA4Lgrw304FL2dM3X9wgd2RLd+EfvNJTTSQe2ORX34s
+         zFIHnjwo4/cEMKmwAdFvWgu3fM22eAHu6Epqm70JhIXHiPnVrQw0jYejGTJDo73hpF5e
+         5uxl6GKk9gvy/CWr+yMmUJlMbtpSfjivfuD9ufj0il/fFEUy9Y4sKluZgA5xbSxsxw2W
+         JUO7vzK9lybaKU+/5IRVo7ye1ELZE1jrbybHK9UtcydPjj0P91W1Yc/IfW36ZcWD8ay1
+         vQMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFlpGnisVUTjzCapjtx623z6s4FOk4MQks+PwbSHjFP3dLTZCiHjovXaaBQLpsrlE8/4zNgExRY0rHJPBxcgujdC/yjis/i7tMWyk7HrNHzDBJO1/K8EkrSHGDqfzfLPhit4DJYw==
+X-Gm-Message-State: AOJu0YzBaefisir9MUd37MC4+7FlfURZI0s+0l160DTZasJvGjHT4fga
+	822i0vWkclEl02gAoUTCzZHuKRNbupOxDThwlGF6DvtJ1dUCKdv7zPgl0fHtb0M=
+X-Google-Smtp-Source: AGHT+IGKdxfIH7Cw3HRFULNjBF+tj75rdu43BoBvXqGMlyiB7azAGPTqm1nxS/6g6EgJ6GXBRTN77A==
+X-Received: by 2002:a17:907:6d07:b0:a58:c80e:edd9 with SMTP id a640c23a62f3a-a626525da3bmr103350966b.77.1716541414738;
+        Fri, 24 May 2024 02:03:34 -0700 (PDT)
+Received: from rbolboac.. ([2a02:2f0e:350b:4500:dac3:9bb:ed7a:184b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c860sm96641866b.168.2024.05.24.02.03.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 02:03:33 -0700 (PDT)
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org,
+	nuno.sa@analog.com
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Subject: [PATCH v4 10/10] drivers: iio: imu: Add support for adis1657x family
+Date: Fri, 24 May 2024 12:03:29 +0300
+Message-Id: <20240524090329.340810-1-ramona.bolboaca13@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa9933e5-6ae6-44de-9ca4-08dc7bd0395c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 09:02:22.5221
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v500EteHcpTj3ulgKK09nbMBbdvTNQiGBvBKofQGbwoZAsrK8L5rHMJ2mCUo1LnjXBtWkN9//pZPDnA5ZtL6WA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7610
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--12.378200-8.000000
-X-TMASE-MatchedRID: pBwXUM+nCwsOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0qbqzDH9G7eTMcIKE0FtlOFY1bQMCMvmn5h59nsX2QuC1iPAfsxl1xU6BX
-	hOTEsTTHi8zVgXoAltj2Xsf5MVCB1t7DW3B48kkHdB/CxWTRRu25FeHtsUoHutV89kSreZKOfFo
-	U1WwfdOTgIiIYZ2hfGl5AgUYVE601fCOKFKuVYGg==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--12.378200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	33B948889D532D65F0B92AFEDA682F8BC9E4DBD55855210E15B329A282D3954B2000:8
+Content-Transfer-Encoding: 8bit
 
-SGksIEFsZXhhbmRyZToNCg0KT24gVGh1LCAyMDI0LTA1LTIzIGF0IDE0OjQ5ICswMjAwLCBBbGV4
-YW5kcmUgTWVyZ25hdCB3cm90ZToNCj4gIAkgDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRv
-IG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVudGlsIHlvdSBoYXZlIHZlcmlm
-aWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+ICBBZGQgZHQtYmluZGluZyBkb2N1bWVu
-dGF0aW9uIG9mIGRwaSBmb3IgTWVkaWFUZWsgTVQ4MzY1IFNvQy4NCg0KUmV2aWV3ZWQtYnk6IENL
-IEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gDQo+IFJldmlld2VkLWJ5OiBBbmdlbG9HaW9h
-Y2NoaW5vIERlbCBSZWdubyA8YW5nZWxvZ2lvYWNjaGluby5kZWxyZWdub0Bjb2xsYWJvcmEuY29t
-Pg0KPiBBY2tlZC1ieTogUm9iIEhlcnJpbmcgKEFybSkgPHJvYmhAa2VybmVsLm9yZz4NCj4gU2ln
-bmVkLW9mZi1ieTogQWxleGFuZHJlIE1lcmduYXQgPGFtZXJnbmF0QGJheWxpYnJlLmNvbT4NCj4g
-LS0tDQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRl
-ay9tZWRpYXRlayxkcGkueWFtbCB8IDQgKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0
-aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS55YW1sIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnlhbWwNCj4g
-aW5kZXggMTY5ZDA1NGQ4MWZmLi4yMWI5M2YzNTY5MDEgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS55
-YW1sDQo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21l
-ZGlhdGVrL21lZGlhdGVrLGRwaS55YW1sDQo+IEBAIC0zMSw2ICszMSwxMCBAQCBwcm9wZXJ0aWVz
-Og0KPiAgICAgICAgICAgIC0gZW51bToNCj4gICAgICAgICAgICAgICAgLSBtZWRpYXRlayxtdDY3
-OTUtZHBpDQo+ICAgICAgICAgICAgLSBjb25zdDogbWVkaWF0ZWssbXQ4MTgzLWRwaQ0KPiArICAg
-ICAgLSBpdGVtczoNCj4gKyAgICAgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgICAgIC0gbWVk
-aWF0ZWssbXQ4MzY1LWRwaQ0KPiArICAgICAgICAgIC0gY29uc3Q6IG1lZGlhdGVrLG10ODE5Mi1k
-cGkNCj4gIA0KPiAgICByZWc6DQo+ICAgICAgbWF4SXRlbXM6IDENCj4gDQo+IC0tIA0KPiAyLjI1
-LjENCj4gDQo=
+Add support for ADIS1657X family devices in already exiting ADIS16475
+driver.
+
+Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+---
+changes in v4:
+ - removed AIDS16575_HAS_FIFO flag and instead used has_fifo flag from adis_data
+ - removed timestamp channel for devices which support FIFO readings (adis1657x)
+ - dropped the dev_attr.attr. from adis16475_fifo_attributes
+ - reworked if (ret) as advised
+ drivers/iio/imu/adis16475.c | 649 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 579 insertions(+), 70 deletions(-)
+
+diff --git a/drivers/iio/imu/adis16475.c b/drivers/iio/imu/adis16475.c
+index 3bbf3e181e1a..f0eed75c4fb2 100644
+--- a/drivers/iio/imu/adis16475.c
++++ b/drivers/iio/imu/adis16475.c
+@@ -14,6 +14,7 @@
+ #include <linux/iio/buffer.h>
+ #include <linux/iio/iio.h>
+ #include <linux/iio/imu/adis.h>
++#include <linux/iio/sysfs.h>
+ #include <linux/iio/trigger_consumer.h>
+ #include <linux/irq.h>
+ #include <linux/lcm.h>
+@@ -52,6 +53,8 @@
+ 				FIELD_PREP(ADIS16475_MSG_CTRL_DR_POL_MASK, x)
+ #define ADIS16475_SYNC_MODE_MASK	GENMASK(4, 2)
+ #define ADIS16475_SYNC_MODE(x)		FIELD_PREP(ADIS16475_SYNC_MODE_MASK, x)
++#define ADIS16575_SYNC_4KHZ_MASK	BIT(11)
++#define ADIS16575_SYNC_4KHZ(x)		FIELD_PREP(ADIS16575_SYNC_4KHZ_MASK, x)
+ #define ADIS16475_REG_UP_SCALE		0x62
+ #define ADIS16475_REG_DEC_RATE		0x64
+ #define ADIS16475_REG_GLOB_CMD		0x68
+@@ -65,15 +68,32 @@
+ #define ADIS16500_BURST32_MASK		BIT(9)
+ #define ADIS16500_BURST32(x)		FIELD_PREP(ADIS16500_BURST32_MASK, x)
+ /* number of data elements in burst mode */
+-#define ADIS16475_BURST32_MAX_DATA	32
++#define ADIS16475_BURST32_MAX_DATA_NO_TS32	32
++#define ADIS16575_BURST32_DATA_TS32		34
+ #define ADIS16475_BURST_MAX_DATA	20
+ #define ADIS16475_MAX_SCAN_DATA		20
+ /* spi max speed in brust mode */
+ #define ADIS16475_BURST_MAX_SPEED	1000000
++#define ADIS16575_BURST_MAX_SPEED	8000000
+ #define ADIS16475_LSB_DEC_MASK		0
+ #define ADIS16475_LSB_FIR_MASK		1
+ #define ADIS16500_BURST_DATA_SEL_0_CHN_MASK	GENMASK(5, 0)
+ #define ADIS16500_BURST_DATA_SEL_1_CHN_MASK	GENMASK(12, 7)
++#define ADIS16575_MAX_FIFO_WM		511UL
++#define ADIS16475_REG_FIFO_CTRL		0x5A
++#define ADIS16575_WM_LVL_MASK		GENMASK(15, 4)
++#define ADIS16575_WM_LVL(x)		FIELD_PREP(ADIS16575_WM_LVL_MASK, x)
++#define ADIS16575_WM_POL_MASK		BIT(3)
++#define ADIS16575_WM_POL(x)		FIELD_PREP(ADIS16575_WM_POL_MASK, x)
++#define ADIS16575_WM_EN_MASK		BIT(2)
++#define ADIS16575_WM_EN(x)		FIELD_PREP(ADIS16575_WM_EN_MASK, x)
++#define ADIS16575_OVERFLOW_MASK		BIT(1)
++#define ADIS16575_STOP_ENQUEUE		FIELD_PREP(ADIS16575_OVERFLOW_MASK, 0)
++#define ADIS16575_OVERWRITE_OLDEST	FIELD_PREP(ADIS16575_OVERFLOW_MASK, 1)
++#define ADIS16575_FIFO_EN_MASK		BIT(0)
++#define ADIS16575_FIFO_EN(x)		FIELD_PREP(ADIS16575_FIFO_EN_MASK, x)
++#define ADIS16575_FIFO_FLUSH_CMD	BIT(5)
++#define ADIS16575_REG_FIFO_CNT		0x3C
+
+ enum {
+ 	ADIS16475_SYNC_DIRECT = 1,
+@@ -95,6 +115,8 @@ struct adis16475_chip_info {
+ 	const char *name;
+ #define ADIS16475_HAS_BURST32		BIT(0)
+ #define ADIS16475_HAS_BURST_DELTA_DATA	BIT(1)
++#define ADIS16475_HAS_TIMESTAMP32	BIT(2)
++#define ADIS16475_NEEDS_BURST_REQUEST	BIT(3)
+ 	const long flags;
+ 	u32 num_channels;
+ 	u32 gyro_max_val;
+@@ -116,6 +138,7 @@ struct adis16475 {
+ 	bool burst32;
+ 	unsigned long lsb_flag;
+ 	u16 sync_mode;
++	u16 fifo_watermark;
+ 	/* Alignment needed for the timestamp */
+ 	__be16 data[ADIS16475_MAX_SCAN_DATA] __aligned(8);
+ };
+@@ -442,6 +465,124 @@ static int adis16475_set_filter(struct adis16475 *st, const u32 filter)
+ 	return 0;
+ }
+
++static ssize_t adis16475_get_fifo_enabled(struct device *dev,
++					  struct device_attribute *attr,
++					  char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct adis16475 *st = iio_priv(indio_dev);
++	int ret;
++	u16 val;
++
++	ret = adis_read_reg_16(&st->adis, ADIS16475_REG_FIFO_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%lu\n", FIELD_GET(ADIS16575_FIFO_EN_MASK, val));
++}
++
++static ssize_t adis16475_get_fifo_watermark(struct device *dev,
++					    struct device_attribute *attr,
++					    char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct adis16475 *st = iio_priv(indio_dev);
++	int ret;
++	u16 val;
++
++	ret = adis_read_reg_16(&st->adis, ADIS16475_REG_FIFO_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%lu\n", FIELD_GET(ADIS16575_WM_LVL_MASK, val) + 1);
++}
++
++static ssize_t hwfifo_watermark_min_show(struct device *dev,
++					 struct device_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "1\n");
++}
++
++static ssize_t hwfifo_watermark_max_show(struct device *dev,
++					 struct device_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%lu\n", ADIS16575_MAX_FIFO_WM);
++}
++
++static IIO_DEVICE_ATTR_RO(hwfifo_watermark_min, 0);
++static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
++static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
++		       adis16475_get_fifo_watermark, NULL, 0);
++static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
++		       adis16475_get_fifo_enabled, NULL, 0);
++
++static const struct iio_dev_attr *adis16475_fifo_attributes[] = {
++	&iio_dev_attr_hwfifo_watermark_min,
++	&iio_dev_attr_hwfifo_watermark_max,
++	&iio_dev_attr_hwfifo_watermark,
++	&iio_dev_attr_hwfifo_enabled,
++	NULL
++};
++
++static int adis16475_buffer_postenable(struct iio_dev *indio_dev)
++{
++	struct adis16475 *st = iio_priv(indio_dev);
++	struct adis *adis = &st->adis;
++
++	return adis_update_bits(adis, ADIS16475_REG_FIFO_CTRL,
++				ADIS16575_FIFO_EN_MASK, (u16)ADIS16575_FIFO_EN(1));
++}
++
++static int adis16475_buffer_postdisable(struct iio_dev *indio_dev)
++{
++	struct adis16475 *st = iio_priv(indio_dev);
++	struct adis *adis = &st->adis;
++	int ret;
++
++	adis_dev_lock(&st->adis);
++
++	ret = __adis_update_bits(adis, ADIS16475_REG_FIFO_CTRL,
++				 ADIS16575_FIFO_EN_MASK, (u16)ADIS16575_FIFO_EN(0));
++	if (ret)
++		goto unlock;
++
++	ret = __adis_write_reg_16(adis, ADIS16475_REG_GLOB_CMD,
++				  ADIS16575_FIFO_FLUSH_CMD);
++
++unlock:
++	adis_dev_unlock(&st->adis);
++	return ret;
++}
++
++static const struct iio_buffer_setup_ops adis16475_buffer_ops = {
++	.postenable = adis16475_buffer_postenable,
++	.postdisable = adis16475_buffer_postdisable,
++};
++
++static int adis16475_set_watermark(struct iio_dev *indio_dev, unsigned int val)
++{
++	struct adis16475 *st  = iio_priv(indio_dev);
++	int ret;
++	u16 wm_lvl;
++
++	adis_dev_lock(&st->adis);
++
++	val = min_t(unsigned int, val, ADIS16575_MAX_FIFO_WM);
++
++	wm_lvl = ADIS16575_WM_LVL(val - 1);
++	ret = __adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL, ADIS16575_WM_LVL_MASK, wm_lvl);
++	if (ret)
++		goto unlock;
++
++	st->fifo_watermark = val;
++
++unlock:
++	adis_dev_unlock(&st->adis);
++	return ret;
++}
++
+ static const u32 adis16475_calib_regs[] = {
+ 	[ADIS16475_SCAN_GYRO_X] = ADIS16475_REG_X_GYRO_BIAS_L,
+ 	[ADIS16475_SCAN_GYRO_Y] = ADIS16475_REG_Y_GYRO_BIAS_L,
+@@ -651,6 +792,22 @@ static const struct iio_chan_spec adis16475_channels[] = {
+ 	IIO_CHAN_SOFT_TIMESTAMP(7)
+ };
+
++static const struct iio_chan_spec adis16575_channels[] = {
++	ADIS16475_GYRO_CHANNEL(X),
++	ADIS16475_GYRO_CHANNEL(Y),
++	ADIS16475_GYRO_CHANNEL(Z),
++	ADIS16475_ACCEL_CHANNEL(X),
++	ADIS16475_ACCEL_CHANNEL(Y),
++	ADIS16475_ACCEL_CHANNEL(Z),
++	ADIS16475_TEMP_CHANNEL(),
++	ADIS16475_DELTANG_CHAN(X),
++	ADIS16475_DELTANG_CHAN(Y),
++	ADIS16475_DELTANG_CHAN(Z),
++	ADIS16475_DELTVEL_CHAN(X),
++	ADIS16475_DELTVEL_CHAN(Y),
++	ADIS16475_DELTVEL_CHAN(Z),
++};
++
+ enum adis16475_variant {
+ 	ADIS16470,
+ 	ADIS16475_1,
+@@ -673,6 +830,12 @@ enum adis16475_variant {
+ 	ADIS16507_1,
+ 	ADIS16507_2,
+ 	ADIS16507_3,
++	ADIS16575_2,
++	ADIS16575_3,
++	ADIS16576_2,
++	ADIS16576_3,
++	ADIS16577_2,
++	ADIS16577_3,
+ };
+
+ enum {
+@@ -731,6 +894,12 @@ static const struct adis16475_sync adis16475_sync_mode[] = {
+ 	{ ADIS16475_SYNC_PULSE, 1000, 2100 },
+ };
+
++static const struct adis16475_sync adis16575_sync_mode[] = {
++	{ ADIS16475_SYNC_OUTPUT },
++	{ ADIS16475_SYNC_DIRECT, 1900, 4100 },
++	{ ADIS16475_SYNC_SCALED, 1, 400 },
++};
++
+ static const struct adis_timeout adis16475_timeouts = {
+ 	.reset_ms = 200,
+ 	.sw_reset_ms = 200,
+@@ -760,7 +929,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16470, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16475_1] = {
+@@ -779,7 +948,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16475, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16475_2] = {
+@@ -798,7 +967,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16475, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16475_3] = {
+@@ -817,7 +986,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16475, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16477_1] = {
+@@ -837,7 +1006,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16477, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16477_2] = {
+@@ -857,7 +1026,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16477, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16477_3] = {
+@@ -877,7 +1046,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16477, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16465_1] = {
+@@ -896,7 +1065,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16465, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16465_2] = {
+@@ -915,7 +1084,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16465, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16465_3] = {
+@@ -934,7 +1103,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16465, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16467_1] = {
+@@ -953,7 +1122,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16467, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16467_2] = {
+@@ -972,7 +1141,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16467, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16467_3] = {
+@@ -991,7 +1160,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.sync = adis16475_sync_mode,
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+ 		.adis_data = ADIS16475_DATA(16467, &adis16475_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16500] = {
+@@ -1012,7 +1181,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16500, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16501] = {
+@@ -1033,7 +1202,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16501, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16505_1] = {
+@@ -1054,7 +1223,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16505, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16505_2] = {
+@@ -1075,7 +1244,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16505, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16505_3] = {
+@@ -1096,7 +1265,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16505, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16507_1] = {
+@@ -1117,7 +1286,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16507, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16507_2] = {
+@@ -1138,7 +1307,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16507, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
+ 	[ADIS16507_3] = {
+@@ -1159,9 +1328,147 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+ 		.num_sync = ARRAY_SIZE(adis16475_sync_mode) - 1,
+ 		.flags = ADIS16475_HAS_BURST32 | ADIS16475_HAS_BURST_DELTA_DATA,
+ 		.adis_data = ADIS16475_DATA(16507, &adis1650x_timeouts,
+-					    ADIS16475_BURST32_MAX_DATA,
++					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+ 					    ADIS16475_BURST_MAX_SPEED, false),
+ 	},
++	[ADIS16575_2] = {
++		.name = "adis16575-2",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(40 << 16),
++		.accel_max_val = 8,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(450),
++		.deltvel_max_val = 100,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16575, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
++	[ADIS16575_3] = {
++		.name = "adis16575-3",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(10 << 16),
++		.accel_max_val = 8,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(2000),
++		.deltvel_max_val = 100,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16575, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
++	[ADIS16576_2] = {
++		.name = "adis16576-2",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(40 << 16),
++		.accel_max_val = 40,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(450),
++		.deltvel_max_val = 125,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16576, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
++	[ADIS16576_3] = {
++		.name = "adis16576-3",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(10 << 16),
++		.accel_max_val = 40,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(2000),
++		.deltvel_max_val = 125,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16576, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
++	[ADIS16577_2] = {
++		.name = "adis16577-2",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(40 << 16),
++		.accel_max_val = 40,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(450),
++		.deltvel_max_val = 400,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16577, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
++	[ADIS16577_3] = {
++		.name = "adis16577-3",
++		.num_channels = ARRAY_SIZE(adis16575_channels),
++		.channels = adis16575_channels,
++		.gyro_max_val = 1,
++		.gyro_max_scale = IIO_RAD_TO_DEGREE(10 << 16),
++		.accel_max_val = 40,
++		.accel_max_scale = IIO_M_S_2_TO_G(32000 << 16),
++		.temp_scale = 100,
++		.deltang_max_val = IIO_DEGREE_TO_RAD(2000),
++		.deltvel_max_val = 400,
++		.int_clk = 4000,
++		.max_dec = 3999,
++		.sync = adis16575_sync_mode,
++		.num_sync = ARRAY_SIZE(adis16575_sync_mode),
++		.flags = ADIS16475_HAS_BURST32 |
++			 ADIS16475_HAS_BURST_DELTA_DATA |
++			 ADIS16475_NEEDS_BURST_REQUEST |
++			 ADIS16475_HAS_TIMESTAMP32,
++		.adis_data = ADIS16475_DATA(16577, &adis16475_timeouts,
++					    ADIS16575_BURST32_DATA_TS32,
++					    ADIS16575_BURST_MAX_SPEED, true),
++	},
+ };
+
+ static int adis16475_update_scan_mode(struct iio_dev *indio_dev,
+@@ -1196,15 +1503,19 @@ static const struct iio_info adis16475_info = {
+ 	.debugfs_reg_access = adis_debugfs_reg_access,
+ };
+
++static const struct iio_info adis16575_info = {
++	.read_raw = &adis16475_read_raw,
++	.write_raw = &adis16475_write_raw,
++	.update_scan_mode = adis16475_update_scan_mode,
++	.debugfs_reg_access = adis_debugfs_reg_access,
++	.hwfifo_set_watermark = adis16475_set_watermark,
++};
++
+ static bool adis16475_validate_crc(const u8 *buffer, u16 crc,
+-				   const bool burst32)
++				   u16 burst_size, u16 start_idx)
+ {
+ 	int i;
+-	/* extra 6 elements for low gyro and accel */
+-	const u16 sz = burst32 ? ADIS16475_BURST32_MAX_DATA :
+-		ADIS16475_BURST_MAX_DATA;
+-
+-	for (i = 0; i < sz - 2; i++)
++	for (i = start_idx; i < burst_size - 2; i++)
+ 		crc -= buffer[i];
+
+ 	return crc == 0;
+@@ -1214,10 +1525,14 @@ static void adis16475_burst32_check(struct adis16475 *st)
+ {
+ 	int ret;
+ 	struct adis *adis = &st->adis;
++	u8 timestamp32 = 0;
+
+ 	if (!(st->info->flags & ADIS16475_HAS_BURST32))
+ 		return;
+
++	if (st->info->flags & ADIS16475_HAS_TIMESTAMP32)
++		timestamp32 = 1;
++
+ 	if (st->lsb_flag && !st->burst32) {
+ 		const u16 en = ADIS16500_BURST32(1);
+
+@@ -1231,9 +1546,12 @@ static void adis16475_burst32_check(struct adis16475 *st)
+ 		/*
+ 		 * In 32-bit mode we need extra 2 bytes for all gyro
+ 		 * and accel channels.
++		 * If the device has 32-bit timestamp value we need 2 extra
++		 * bytes for it.
+ 		 */
+-		adis->burst_extra_len = 6 * sizeof(u16);
+-		adis->xfer[1].len += 6 * sizeof(u16);
++		adis->burst_extra_len = (6 + timestamp32) * sizeof(u16);
++		adis->xfer[1].len += (6 + timestamp32) * sizeof(u16);
++
+ 		dev_dbg(&adis->spi->dev, "Enable burst32 mode, xfer:%d",
+ 			adis->xfer[1].len);
+
+@@ -1249,7 +1567,7 @@ static void adis16475_burst32_check(struct adis16475 *st)
+
+ 		/* Remove the extra bits */
+ 		adis->burst_extra_len = 0;
+-		adis->xfer[1].len -= 6 * sizeof(u16);
++		adis->xfer[1].len -= (6 + timestamp32) * sizeof(u16);
+ 		dev_dbg(&adis->spi->dev, "Disable burst32 mode, xfer:%d\n",
+ 			adis->xfer[1].len);
+ 	}
+@@ -1264,20 +1582,30 @@ static int adis16475_push_single_sample(struct iio_poll_func *pf)
+ 	__be16 *buffer;
+ 	u16 crc;
+ 	bool valid;
++	u8 crc_offset = 9;
++	u16 burst_size = ADIS16475_BURST_MAX_DATA;
++	u16 start_idx = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 2 : 0;
++
+ 	/* offset until the first element after gyro and accel */
+ 	const u8 offset = st->burst32 ? 13 : 7;
+
++	if (st->burst32) {
++		crc_offset = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 16 : 15;
++		burst_size = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ?
++			     ADIS16575_BURST32_DATA_TS32 : ADIS16475_BURST32_MAX_DATA_NO_TS32;
++	}
++
+ 	ret = spi_sync(adis->spi, &adis->msg);
+ 	if (ret)
+-		goto check_burst32;
++		return ret;
+
+ 	buffer = adis->buffer;
+
+-	crc = be16_to_cpu(buffer[offset + 2]);
+-	valid = adis16475_validate_crc(adis->buffer, crc, st->burst32);
++	crc = be16_to_cpu(buffer[crc_offset]);
++	valid = adis16475_validate_crc(adis->buffer, crc, burst_size, start_idx);
+ 	if (!valid) {
+ 		dev_err(&adis->spi->dev, "Invalid crc\n");
+-		goto check_burst32;
++		return ret;
+ 	}
+
+ 	for_each_set_bit(bit, indio_dev->active_scan_mask,
+@@ -1337,23 +1665,127 @@ static int adis16475_push_single_sample(struct iio_poll_func *pf)
+ 		}
+ 	}
+
+-	iio_push_to_buffers_with_timestamp(indio_dev, st->data, pf->timestamp);
+-check_burst32:
++	if (adis->data->has_fifo)
++		iio_push_to_buffers(indio_dev, st->data);
++	else
++		iio_push_to_buffers_with_timestamp(indio_dev, st->data, pf->timestamp);
++
++	return 0;
++}
++
++static irqreturn_t adis16475_trigger_handler(int irq, void *p)
++{
++	struct iio_poll_func *pf = p;
++	struct iio_dev *indio_dev = pf->indio_dev;
++	struct adis16475 *st = iio_priv(indio_dev);
++
++	adis16475_push_single_sample(pf);
+ 	/*
+ 	 * We only check the burst mode at the end of the current capture since
+ 	 * it takes a full data ready cycle for the device to update the burst
+ 	 * array.
+ 	 */
+ 	adis16475_burst32_check(st);
+-	return ret;
++
++	iio_trigger_notify_done(indio_dev->trig);
++
++	return IRQ_HANDLED;
+ }
+
+-static irqreturn_t adis16475_trigger_handler(int irq, void *p)
++/*
++ * This function updates the first tx byte from the adis message based on the
++ * given burst request.
++ */
++static void adis16575_update_msg_for_burst(struct adis *adis, u8 burst_req)
++{
++	unsigned int burst_max_length;
++	u8 *tx;
++
++	if (adis->data->burst_max_len)
++		burst_max_length = adis->data->burst_max_len;
++	else
++		burst_max_length = adis->data->burst_len + adis->burst_extra_len;
++
++	tx = adis->buffer + burst_max_length;
++	tx[0] = ADIS_READ_REG(burst_req);
++}
++
++static int adis16575_custom_burst_read(struct iio_poll_func *pf, u8 burst_req)
++{
++	struct iio_dev *indio_dev = pf->indio_dev;
++	struct adis16475 *st = iio_priv(indio_dev);
++	struct adis *adis = &st->adis;
++
++	adis16575_update_msg_for_burst(adis, burst_req);
++
++	if (burst_req)
++		return spi_sync(adis->spi, &adis->msg);
++
++	return adis16475_push_single_sample(pf);
++}
++
++/*
++ * This handler is meant to be used for devices which support burst readings
++ * from FIFO (namely devices from adis1657x family).
++ * In order to pop the FIFO the 0x68 0x00 FIFO pop burst request has to be sent.
++ * If the previous device command was not a FIFO pop burst request, the FIFO pop
++ * burst request will simply pop the FIFO without returning valid data.
++ * For the nth consecutive burst request, thedevice will send the data popped
++ * with the (n-1)th consecutive burst request.
++ * In order to read the data which was popped previously, without popping the
++ * FIFO, the 0x00 0x00 burst request has to be sent.
++ * If after a 0x68 0x00 FIFO pop burst request, there is any other device access
++ * different from a 0x68 0x00 or a 0x00 0x00 burst request, the FIFO data popped
++ * previously will be lost.
++ */
++static irqreturn_t adis16475_trigger_handler_with_fifo(int irq, void *p)
+ {
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
++	struct adis16475 *st = iio_priv(indio_dev);
++	struct adis *adis = &st->adis;
++	int ret;
++	u16 fifo_cnt, i;
+
+-	adis16475_push_single_sample(pf);
++	adis_dev_lock(&st->adis);
++
++	ret = __adis_read_reg_16(adis, ADIS16575_REG_FIFO_CNT, &fifo_cnt);
++	if (ret)
++		goto unlock;
++
++	/*
++	 * If no sample is available, nothing can be read. This can happen if
++	 * a the used trigger has a higher frequency than the selected sample rate.
++	 */
++	if (!fifo_cnt)
++		goto unlock;
++
++	/*
++	 * First burst request - FIFO pop: popped data will be returned in the
++	 * next burst request.
++	 */
++	ret = adis16575_custom_burst_read(pf, adis->data->burst_reg_cmd);
++	if (ret)
++		goto unlock;
++
++	for (i = 0; i < fifo_cnt - 1; i++) {
++		ret = adis16475_push_single_sample(pf);
++		if (ret)
++			goto unlock;
++	}
++
++	/* FIFO read without popping */
++	ret = adis16575_custom_burst_read(pf, 0);
++	if (ret)
++		goto unlock;
++
++unlock:
++	/*
++	 * We only check the burst mode at the end of the current capture since
++	 * reading data from registers will impact the FIFO reading.
++	 */
++	adis16475_burst32_check(st);
++	adis_dev_unlock(&st->adis);
+ 	iio_trigger_notify_done(indio_dev->trig);
+
+ 	return IRQ_HANDLED;
+@@ -1367,6 +1799,14 @@ static int adis16475_config_sync_mode(struct adis16475 *st)
+ 	u32 sync_mode;
+ 	u16 max_sample_rate = st->info->int_clk + 100;
+
++	/* if available, enable 4khz internal clock */
++	if (st->info->int_clk == 4000) {
++		ret = __adis_update_bits(&st->adis, ADIS16475_REG_MSG_CTRL,
++					 ADIS16575_SYNC_4KHZ_MASK, (u16)ADIS16575_SYNC_4KHZ(1));
++		if (ret)
++			return ret;
++	}
++
+ 	/* default to internal clk */
+ 	st->clk_freq = st->info->int_clk * 1000;
+
+@@ -1444,34 +1884,67 @@ static int adis16475_config_irq_pin(struct adis16475 *st)
+ 	u8 polarity;
+ 	struct spi_device *spi = st->adis.spi;
+
+-	/*
+-	 * It is possible to configure the data ready polarity. Furthermore, we
+-	 * need to update the adis struct if we want data ready as active low.
+-	 */
+ 	irq_type = irq_get_trigger_type(spi->irq);
+-	if (irq_type == IRQ_TYPE_EDGE_RISING) {
+-		polarity = 1;
+-		st->adis.irq_flag = IRQF_TRIGGER_RISING;
+-	} else if (irq_type == IRQ_TYPE_EDGE_FALLING) {
+-		polarity = 0;
+-		st->adis.irq_flag = IRQF_TRIGGER_FALLING;
++
++	if (st->adis.data->has_fifo) {
++		/*
++		 * It is possible to configure the fifo watermark pin polarity.
++		 * Furthermore, we need to update the adis struct if we want the
++		 * watermark pin active low.
++		 */
++		if (irq_type == IRQ_TYPE_LEVEL_HIGH) {
++			polarity = 1;
++			st->adis.irq_flag = IRQF_TRIGGER_HIGH;
++		} else if (irq_type == IRQ_TYPE_LEVEL_LOW) {
++			polarity = 0;
++			st->adis.irq_flag = IRQF_TRIGGER_LOW;
++		} else {
++			dev_err(&spi->dev, "Invalid interrupt type 0x%x specified\n",
++				irq_type);
++			return -EINVAL;
++		}
++
++		/* Configure the watermark pin polarity. */
++		ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
++				       ADIS16575_WM_POL_MASK, (u16)ADIS16575_WM_POL(polarity));
++		if (ret)
++			return ret;
++
++		/* Enable watermark interrupt pin. */
++		ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
++				       ADIS16575_WM_EN_MASK, (u16)ADIS16575_WM_EN(1));
++		if (ret)
++			return ret;
++
+ 	} else {
+-		dev_err(&spi->dev, "Invalid interrupt type 0x%x specified\n",
+-			irq_type);
+-		return -EINVAL;
+-	}
++		/*
++		 * It is possible to configure the data ready polarity. Furthermore, we
++		 * need to update the adis struct if we want data ready as active low.
++		 */
++		if (irq_type == IRQ_TYPE_EDGE_RISING) {
++			polarity = 1;
++			st->adis.irq_flag = IRQF_TRIGGER_RISING;
++		} else if (irq_type == IRQ_TYPE_EDGE_FALLING) {
++			polarity = 0;
++			st->adis.irq_flag = IRQF_TRIGGER_FALLING;
++		} else {
++			dev_err(&spi->dev, "Invalid interrupt type 0x%x specified\n",
++				irq_type);
++			return -EINVAL;
++		}
+
+-	val = ADIS16475_MSG_CTRL_DR_POL(polarity);
+-	ret = __adis_update_bits(&st->adis, ADIS16475_REG_MSG_CTRL,
+-				 ADIS16475_MSG_CTRL_DR_POL_MASK, val);
+-	if (ret)
+-		return ret;
+-	/*
+-	 * There is a delay writing to any bits written to the MSC_CTRL
+-	 * register. It should not be bigger than 200us, so 250 should be more
+-	 * than enough!
+-	 */
+-	usleep_range(250, 260);
++		val = ADIS16475_MSG_CTRL_DR_POL(polarity);
++		ret = __adis_update_bits(&st->adis, ADIS16475_REG_MSG_CTRL,
++					 ADIS16475_MSG_CTRL_DR_POL_MASK, val);
++		if (ret)
++			return ret;
++		/*
++		 * There is a delay writing to any bits written to the MSC_CTRL
++		 * register. It should not be bigger than 200us, so 250 should be more
++		 * than enough!
++		 */
++		usleep_range(250, 260);
++	}
+
+ 	return 0;
+ }
+@@ -1500,7 +1973,10 @@ static int adis16475_probe(struct spi_device *spi)
+ 	indio_dev->name = st->info->name;
+ 	indio_dev->channels = st->info->channels;
+ 	indio_dev->num_channels = st->info->num_channels;
+-	indio_dev->info = &adis16475_info;
++	if (st->adis.data->has_fifo)
++		indio_dev->info = &adis16575_info;
++	else
++		indio_dev->info = &adis16475_info;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+
+ 	ret = __adis_initial_startup(&st->adis);
+@@ -1515,10 +1991,25 @@ static int adis16475_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+
+-	ret = devm_adis_setup_buffer_and_trigger(&st->adis, indio_dev,
+-						 adis16475_trigger_handler);
+-	if (ret)
+-		return ret;
++	if (st->adis.data->has_fifo) {
++		ret = devm_adis_setup_buffer_and_trigger_with_attrs(&st->adis, indio_dev,
++								    adis16475_trigger_handler_with_fifo,
++								    &adis16475_buffer_ops,
++								    adis16475_fifo_attributes);
++		if (ret)
++			return ret;
++
++		/* Update overflow behavior to always overwrite the oldest sample. */
++		ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
++				       ADIS16575_OVERFLOW_MASK, (u16)ADIS16575_OVERWRITE_OLDEST);
++		if (ret)
++			return ret;
++	} else {
++		ret = devm_adis_setup_buffer_and_trigger(&st->adis, indio_dev,
++							 adis16475_trigger_handler);
++		if (ret)
++			return ret;
++	}
+
+ 	ret = devm_iio_device_register(&spi->dev, indio_dev);
+ 	if (ret)
+@@ -1572,6 +2063,18 @@ static const struct of_device_id adis16475_of_match[] = {
+ 		.data = &adis16475_chip_info[ADIS16507_2] },
+ 	{ .compatible = "adi,adis16507-3",
+ 		.data = &adis16475_chip_info[ADIS16507_3] },
++	{ .compatible = "adi,adis16575-2",
++		.data = &adis16475_chip_info[ADIS16575_2] },
++	{ .compatible = "adi,adis16575-3",
++		.data = &adis16475_chip_info[ADIS16575_3] },
++	{ .compatible = "adi,adis16576-2",
++		.data = &adis16475_chip_info[ADIS16576_2] },
++	{ .compatible = "adi,adis16576-3",
++		.data = &adis16475_chip_info[ADIS16576_3] },
++	{ .compatible = "adi,adis16577-2",
++		.data = &adis16475_chip_info[ADIS16577_2] },
++	{ .compatible = "adi,adis16577-3",
++		.data = &adis16475_chip_info[ADIS16577_3] },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adis16475_of_match);
+@@ -1598,6 +2101,12 @@ static const struct spi_device_id adis16475_ids[] = {
+ 	{ "adis16507-1", (kernel_ulong_t)&adis16475_chip_info[ADIS16507_1] },
+ 	{ "adis16507-2", (kernel_ulong_t)&adis16475_chip_info[ADIS16507_2] },
+ 	{ "adis16507-3", (kernel_ulong_t)&adis16475_chip_info[ADIS16507_3] },
++	{ "adis16575-2", (kernel_ulong_t)&adis16475_chip_info[ADIS16575_2] },
++	{ "adis16575-3", (kernel_ulong_t)&adis16475_chip_info[ADIS16575_3] },
++	{ "adis16576-2", (kernel_ulong_t)&adis16475_chip_info[ADIS16576_2] },
++	{ "adis16576-3", (kernel_ulong_t)&adis16475_chip_info[ADIS16576_3] },
++	{ "adis16577-2", (kernel_ulong_t)&adis16475_chip_info[ADIS16577_2] },
++	{ "adis16577-3", (kernel_ulong_t)&adis16475_chip_info[ADIS16577_3] },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, adis16475_ids);
+--
+2.34.1
+
 
