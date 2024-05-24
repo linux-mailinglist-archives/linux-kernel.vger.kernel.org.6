@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-188784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA038CE6D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:18:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA368CE6E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A7D1C21F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C321F21EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826412C48E;
-	Fri, 24 May 2024 14:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A3412C495;
+	Fri, 24 May 2024 14:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3ncpc2z"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs0lSSQI"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB7439FF4;
-	Fri, 24 May 2024 14:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4878624F;
+	Fri, 24 May 2024 14:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560296; cv=none; b=LSoYR8Fj95H2BMbxszNACJI54tqOk4CHIC/D4uS9tOzKY/aT6RuyWUz52XVkdev9WvcJ6VwajDJvEkUqM03mb7j6+M0VjZcS9vFxBG1IEoLOWbCjU5EwQBt7vors1j83t5wB7Ca257ICRMIe74ql/svryylIjsjHo6iLBm7b9SI=
+	t=1716560513; cv=none; b=S6/VCEpAfqWUShQw+c16pQI1s71+VBFw5eDpCUPZsb5VS5N7QT0JLAYE2t0J1OVlkBKv95NA8VG+WNZIoqJxxVNUO+16rx/UQI5RLVXqSi/zZrEvFEnksVODs1E7J4D0iqdaiTMZKQFOujbE3V74n5YKbXyV3hJML9e/aEpX5Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560296; c=relaxed/simple;
-	bh=NY8YdGL7ms66sxZ2wcs4Q4KtZZk9+ISmVct2OPO9gnQ=;
+	s=arc-20240116; t=1716560513; c=relaxed/simple;
+	bh=I1fVQ8aruzVXFejrnCOpq85Ssr3vo69cTffIdP7BZpc=;
 	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hEU//DcskWy1RrqN2/tniTMmuEAdrfPGdOp/WXhVJlbp+0Txeu0tnsh9Gat12gdBjC+E+M0V5HExAHH/6RebD+/nKWaWqGnSUaiG5hesnD3kjZYT9pEKvxOg/WQGBQS8VRKJTpzQH6/YSbtgnuIDfgoD5AEak7TeA84MXwvwt/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3ncpc2z; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:Content-Type; b=p3RLFEb+pqg4W4SvYECC+ftts/lxL0IrisrokQXh2NPnjXtLBkkKYSyqYduQu6bn/KCWAdQ97Xk/K6ZuHuZ/s0jBv3/kUqkqdK4ytY07E23/D/d5eV3UbaBZdCY0AcgG/Bcze0TGVaWtu/8gh8DZqwdRinFDSAdyXteuDF1pA/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs0lSSQI; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42016c8db2aso31336895e9.0;
-        Fri, 24 May 2024 07:18:14 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e95a7545bdso10951111fa.2;
+        Fri, 24 May 2024 07:21:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716560293; x=1717165093; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716560510; x=1717165310; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:content-language
          :references:cc:to:subject:reply-to:user-agent:mime-version:date
          :message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bOhN+K4MQEPHmraxcKoGfFFGKaOrlPJMqWUZiK5bPS8=;
-        b=R3ncpc2zgsR3mxNkGFvXuemhjPVU5I97ajc8uQR4Dmj9GhYS+ek6YiSqHkBTD7jmIY
-         Wl3G2UIzDMOZsPMQw5crIyGLSnbnl33a5oOEQwUcVL1uzO34CW5bzGCB/NaIaprq5c3R
-         5C7d7b+qUkaUXc8JYnEkhP1x1kBgSx+dEisOF+7kdCpUnYL4KPTcfzSLaRp6ykZScNnW
-         1SwIF7jzMljKcQp08zOeZNCx0qHTmOwm2xdINB82nhSRakXEjchpqXGPY7mkrhooeBsh
-         uU6uU/zkwsdrL4XwosED6Ws9LW1Hqtg/CSD8lAPWdXc4A66XnHxw4QZAmr6btZIYNGd4
-         Iegw==
+        bh=EO6JyY37GyM7MbMeX101SjHOud1jj3bTq3LVAy1mWdM=;
+        b=Gs0lSSQInsS9FCmkM1tvp1o0bo7sz/lHlcDykFQ5R/J6gb0aQqmv45T518rsdIVUa8
+         vs1kN9n8S57Wmax8Nvs62rZByToKCHxTdXOqxHtH7mWid2aQD9XF6TY5wIsueIOf7caE
+         FT47DY0i9bx2qa5yWHdQQRSpHqD0wo76TyGXkkFqqYuxjN1ndd8TYAyd9KgjRYcXPy3a
+         M8KgvCex2LmCoUyY4F8SUna9xWFYrAomZ/KO+vHs/g1AhAT8eKlH7QcqLZulsvlii93a
+         fWrBi8MNjB+0Q8AfxcRXCEMXxfgUYG0N6Z5NPYRIEwx0lssR5DS2bwq29brqzzAQa3ni
+         sTKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716560293; x=1717165093;
+        d=1e100.net; s=20230601; t=1716560510; x=1717165310;
         h=content-transfer-encoding:in-reply-to:organization:content-language
          :references:cc:to:subject:reply-to:user-agent:mime-version:date
          :message-id:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bOhN+K4MQEPHmraxcKoGfFFGKaOrlPJMqWUZiK5bPS8=;
-        b=ap0tI8f7DPxjC7j+1Ct/XXixNaOYoTqs3Hu7yepWHDyQh60k6mBjkH7TMXv9EEuXnE
-         /y5F9ppfExMUWLE7/r+1e8z/NxqG0I+FgVOuRtpuAC773IG4urJcvxsF6mPaSIWxtMgV
-         YOBPpFL4/b8ZohEudy0G8FgCa5SiWhfQR5QA3iCioElCI+aIZ3kOKHdRbR0HPxJsbMNl
-         tkssJkx/5kOg5+w6HXQKjqWrvTnp0gw3FGV5a7WHBT1ewz6xHMvWp9lXA+HfFmwRaUI4
-         GLQ1VKN+ZqPSIJqiWrNCFk8XIKyrelWYyVWeYnSI5O/9SThPT4gJ/clEiwj8hMtqv7iS
-         Cizw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxClvNN+jL4tE/8Z8GoEDEmDlrmvVMZEy6Au0JIOUy2vA4QW8u4HiicRma5v9TjgYRdW2Xub/nQ7Ctd0KnAS0wHul3AOmdyTQFyopjCKeEOYXl4XrQtJZagR+L89iChbgor9zB3SXdrQt79db5t71P6vkN2M6jiW8wFRrZ
-X-Gm-Message-State: AOJu0YzCumaz3ETImTlSbKjWch2RMj+Ha7TTymdtR1063dm1MlGjbq8W
-	KbajXNgW9h/pQ6O5LXq86SV4HBVWhWsWp2qauD4xB7CLDxYkTyu3
-X-Google-Smtp-Source: AGHT+IENmGtjYoWphFB7uTohfBjfa6/lyQohW/GvX3LNtGQLqfFkv/9Y5j5qgcHoHjhWIAOiaJXDDQ==
-X-Received: by 2002:a7b:cc97:0:b0:420:66e:f5c with SMTP id 5b1f17b1804b1-421089f874bmr17983875e9.14.1716560293301;
-        Fri, 24 May 2024 07:18:13 -0700 (PDT)
+        bh=EO6JyY37GyM7MbMeX101SjHOud1jj3bTq3LVAy1mWdM=;
+        b=O3zeqhCA36RuTPxAvCb3q2ttKexu+N1vMVf/9eT9Puu9PpHzKk2afb4u6wcVAy5gQ2
+         YfaaEQ+dAOUFBncwG6ZBtlRKL93b1YMYCJ9W1n0wSH460uFHl/nOrXaf8b5icSyiceWt
+         VAPvuxImG1fFyTHGEFS489s7NwPWPw08I8uvoTJyUEgikwuLi263Jqb8qfenEfzoXSK4
+         tKroSQPEKdA3addU1QggnUbN2GYxTtq2r7SpQQ5T4+x/RNqzfkKB9/gTJBf6QkJ4gh22
+         IgXmOTTCjd7/kSse0eF3U5wKcYn4x08WVgPVsKgPrySvBf9HJs24DRmN7cyag+3LFd/2
+         v7Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsz/6XNC968+e1gBW+MwNDD1WkX5Mbpu4LoRA8MKw+42kYglJOoBAe9Lo0egtNKPmxxDpAWGxGbqOaDbjXS+1Etc7/GzUCr8Y1yoqpJcb+p1cLe/fFzP4Wu9XisimJgodStZ7yGZIDccDmTc/hyFKrEMAoMDnH+VQNDfzh
+X-Gm-Message-State: AOJu0YxKH/kh3UJL+SpOws1/98tAUPxMUWTb6I1sB5+My3AI/DnRWyvP
+	axvgz4vSV9/NVFrMS0afP8fbqewrrpM+M+LGSAHlfbJ7vw3aMwFF
+X-Google-Smtp-Source: AGHT+IFaM5cCCStOymrSMk1BCIm0WOr58TUeWH/uU5BPxIKAbgFTc7roakKxooYtc8e5UIaxLJNLfQ==
+X-Received: by 2002:a2e:7e12:0:b0:2e9:53fc:4434 with SMTP id 38308e7fff4ca-2e95b256643mr14752221fa.42.1716560510085;
+        Fri, 24 May 2024 07:21:50 -0700 (PDT)
 Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421088f9d3csm22238855e9.0.2024.05.24.07.18.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089b0410sm21761915e9.29.2024.05.24.07.21.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 07:18:12 -0700 (PDT)
+        Fri, 24 May 2024 07:21:49 -0700 (PDT)
 From: Paul Durrant <xadimgnik@gmail.com>
 X-Google-Original-From: Paul Durrant <paul@xen.org>
-Message-ID: <b1b02044-761b-48e3-b58f-b9c31b64ccfa@xen.org>
-Date: Fri, 24 May 2024 15:18:10 +0100
+Message-ID: <7d318473-a16f-455f-9ea0-0c0b2d919ff2@xen.org>
+Date: Fri, 24 May 2024 15:21:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,8 +79,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Reply-To: paul@xen.org
-Subject: Re: [RFC PATCH v3 19/21] KVM: x86: Avoid periodic KVM clock updates
- in master clock mode
+Subject: Re: [RFC PATCH v3 20/21] KVM: x86/xen: Prevent runstate times from
+ becoming negative
 To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
 Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
  Sean Christopherson <seanjc@google.com>, Thomas Gleixner
@@ -98,25 +98,38 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
  zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
  Chenyi Qiang <chenyi.qiang@intel.com>
 References: <20240522001817.619072-1-dwmw2@infradead.org>
- <20240522001817.619072-20-dwmw2@infradead.org>
+ <20240522001817.619072-21-dwmw2@infradead.org>
 Content-Language: en-US
 Organization: Xen Project
-In-Reply-To: <20240522001817.619072-20-dwmw2@infradead.org>
+In-Reply-To: <20240522001817.619072-21-dwmw2@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 22/05/2024 01:17, David Woodhouse wrote:
 > From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> When the KVM clock is in master clock mode, updating the KVM clock is
-> pointless. Let the periodic work 'expire', and start it running again
-> from kvm_end_pvclock_update() if the master clock mode is ever turned
-> off again.
+> When kvm_xen_update_runstate() is invoked to set a vCPU's runstate, the
+> time spent in the previous runstate is accounted. This is based on the
+> delta between the current KVM clock time, and the previous value stored
+> in vcpu->arch.xen.runstate_entry_time.
+> 
+> If the KVM clock goes backwards, that delta will be negative. Or, since
+> it's an unsigned 64-bit integer, very *large*. Linux guests deal with
+> that particularly badly, reporting 100% steal time for ever more (well,
+> for *centuries* at least, until the delta has been consumed).
+> 
+> So when a negative delta is detected, just refrain from updating the
+> runstates until the KVM clock catches up with runstate_entry_time again.
+> 
+> The userspace APIs for setting the runstate times do not allow them to
+> be set past the current KVM clock, but userspace can still adjust the
+> KVM clock *after* setting the runstate times, which would cause this
+> situation to occur.
 > 
 > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 > ---
->   arch/x86/kvm/x86.c | 14 +++++++++++---
->   1 file changed, 11 insertions(+), 3 deletions(-)
+>   arch/x86/kvm/xen.c | 18 ++++++++++++++----
+>   1 file changed, 14 insertions(+), 4 deletions(-)
 > 
 
 Reviewed-by: Paul Durrant <paul@xen.org>
