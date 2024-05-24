@@ -1,549 +1,225 @@
-Return-Path: <linux-kernel+bounces-189183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287108CEC9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:13:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18C08CECA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450B31C21773
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75398282BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA860129A8E;
-	Fri, 24 May 2024 23:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B386128803;
+	Fri, 24 May 2024 23:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=OUTLOOK.COM.AU header.i=@OUTLOOK.COM.AU header.b="W0Mu7I7q"
-Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2168.outbound.protection.outlook.com [40.92.63.168])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VhFfytIg"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2040.outbound.protection.outlook.com [40.107.223.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BBC2CA5;
-	Fri, 24 May 2024 23:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5B1129A8E;
+	Fri, 24 May 2024 23:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716592402; cv=fail; b=D/Jxs+rD1OYE/X80ckdhycX+FjWqq04lnbGqgH9pJwjvNk4IuHrVNQsaHDAyDpvijPbtI4ryHzuLNiJgfRRwqcKXhaZaVN29W+ovK4Dnf8cQufAXJ6KsSXzPSMwz3EBH0kepLrypYHyjDquf07US12fP52WScX3joZLtiVoW2PY=
+	t=1716592419; cv=fail; b=l1SeRoBnuUfmsAjnsGaS415F56LvjJagKyoNX3guEqAFcZYRelvBAoQPXM5WL81OZpR08YmpUjnm04tNAxPa4Eh3m03ElT2MrYRnL+HbzzHBQRAr7k2+iAX+Q6ak1rzlGaMJbdVeRZUUhbqmO/HpTY2GiuRWYo4+EEf9ciugpIo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716592402; c=relaxed/simple;
-	bh=csAaxym4dNDNsm+zpSMT65bZPhZn7UXFByfyGDKWvZY=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JdPkPvi5Jb/uj2cjVbGC40C35HNI4HaDtrZXlj+Swu8x4tyfXU9LJs69NNmKTTMzuARmr2/ijglqGrinJCPQyl1KhIq601+VGfmgpOBicwjoX9shmS1A3J3htmw2a47TXMcJsC57OCwc7bCqPCuKudC40TXUkn1Z/sxZteoRR18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com.au; spf=pass smtp.mailfrom=outlook.com.au; dkim=pass (2048-bit key) header.d=OUTLOOK.COM.AU header.i=@OUTLOOK.COM.AU header.b=W0Mu7I7q; arc=fail smtp.client-ip=40.92.63.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com.au
+	s=arc-20240116; t=1716592419; c=relaxed/simple;
+	bh=zJvQYBhMcFrYtzmoi+L4zZZUq8Dy4NapMATkhAsR6DA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TEw7ad8yudO0ThKk2ZKG61HtppRsfs17Nl0ldb3KzabP1IcgPYMQaG5TsQN80jYDEfEo4pxfyIkTzz1HHk3sfzM7XEyd1hJXPqAKS9WBUnMqoNby3QvcJXgHErvEvTqAi8uLhcdgsPcF5Isg1W+JmRaHbfZRgAgWLi5vJhT/IQQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VhFfytIg; arc=fail smtp.client-ip=40.107.223.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZZ57MgKTdkfeKrx0RlOwuCUkrpHcqGvbsynYbd/M+nVlhjxw4vKSyzwU50dRFNQJnpzJc5+ACWgMHjx03Owvooekb8ZOMtm2IXeVHsR+zfVKb4BI9us3eInZm9d4OKX7sXy2zSjRQ3Ar1RD/F7YvPrD4YS/Gr5OAxhPP09axezXU7NJnHN6RB1c7oC0zg57X5HmGR2X6kd8exx2YvlkmydSdwu32YMptZk1WRApfH6ad4gJCnIkmmlUnQKV+i5r9cag37nBgAzyLjZnVKBIWAoO8e+KmiKliem4PqlTaE8lJP2WISgpSwhNTfAkanyFAOUNuDPuId3JvuyOtx3xpjQ==
+ b=fC+JC/BsZRaBEnilDqqQ40uN2s14E9YMgURUTdUbY30m0hsLXtF0E0bM5N89drJxMzwH33cmNAgycDBu/lAURCPiAh5znSdSzLNGpAlWu5CFJvXP9eswI5e5M6i96dKNnXvRmFvc2z29oIJGNOmaB+al5M1x5lPsYw1bWQMUpJmGVsU/AorS8KjVcC55bRxFMRo9+2UfDOlQ/M71FNeG+S8Eb+BJ3BqGPJ92qjKrcv4cLbG7MFL+MGZdiliEt3ebqoMVRhbyNYuh4qMuoWUnyjKttskxXoH8c1Pv/9Uicel8XBneFuUoPEETxhK9N2gPOtuqI9nkc69+cXxXkDskjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6nyWITULXFAt4VCapvHEJp1UqO+1KOy0c/EFJlPx29o=;
- b=F3HTPz2UNxZ46hXXZzvRVeRDyNxvqSgtSiFygXfbRtrsifZrTGIMObRDALwLRASISXM+DB8Jh0uC6IFH3/q4F46HQPtmPjKJ5QExGFd1T67NnU1TL9/rJOXltY4dZWvPzGJU71CAgIhyblV6JyIPv/hSsC5XRKbMbt7CL6UuYl3wajbdbTum6DiJyWcbGqq75RobAXtz+20jK5ikdEtlBOYL0vDIN5K136i5eVd/DKQDss9YPN7pO4tNcE97I3WYmzD0W1a5bzHxqy+CRuHEYh/X4j63w9i5Jy3TwkUrO+lfnnphf517eYJKIsy1Xsjw0npko1bCfI86F3XUI4MkrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=OUTLOOK.COM.AU;
- s=selector1;
+ bh=QmqGrYkmB1Q9r0JxO0s2+xh20UtjgIcwuN93OEkRWdQ=;
+ b=TXGioaS8O6XHL9MG+xebdd8PVMXwm2iTLvdzoItsj4ERfHagOMpdfhFvCrY7SCFCyuoy7xuj2cdvH6row3udNXI6vdHwjYlKPu7B3j/jXIZxCw85CZFoWXCyktKGf+2E1zrRsRk9CmcMdGEh5kttCNZU6GudzV0niaeCGplhh9OIiiaOX7zoYCFatCz2/NQNAx9YyPfHZOYZvTi++7fdwZxLzfVvjdNtbYzRPOJuhGpCjNS1jJweRcORLwuUtpyZ8TxaAVVHNwvtw+fU53ErhNpEcxB9vp/zQ4vef8qheQszZutxL6IvztsLZHTRW37ObFHqpSb79AePyq6vI8Gs7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6nyWITULXFAt4VCapvHEJp1UqO+1KOy0c/EFJlPx29o=;
- b=W0Mu7I7qep7PmwOFQxP9zDPaMcknxiC4A3at6oMbegUyzE7hq2cS2IO0QWQekEApRFu9uCfnxvLELtXiiqfPmlcWbuP6E6wh8pSY0oq7WEvC0sXNzO+gZrpiwhWANG/vsYwLSBogdKLfn71xoa0wGx0F2p5dpMkWk+Ct0aaiCIlRGu8qnb0vjNCTm5C4YAKqPeD8vKgmBCtLRjok6lJMuT5T1GcZafAvAjlReCJczGRokp/iS8oM5x9iVpX9QxhUQs/v+Gty+2bTCdO0mvfFV7xFduUy82Ll0MN4tXLdW89hE5mYN6NbU9VE83R2PoqdmW5Y/eexMZuEqt+/INzfuA==
-Received: from SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:159::9) by
- SYYP282MB1534.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:dd::14) with Microsoft
+ bh=QmqGrYkmB1Q9r0JxO0s2+xh20UtjgIcwuN93OEkRWdQ=;
+ b=VhFfytIgTaY1E0HoO0Yr1msUWFINJ9o5DfpxnBzWNEXlRpgPZFoMI9sc+tAk4r6MNc1luqXGQRB5ZdUUOvJ1jg880TVJscfGdo+i129ZKWJiI4pjM7aHl/9Vwk74Q7d/al2F9rZSBuRHcXYTE2jNrR87RiCfdLW76QxYljdkAuITEpiyiECU/Nn8KJfgrJQtHMyrZ5w4YRmXWb66OEK5eJL1t+U52ZNX6ZbrhBcqICZ0tltl6RO1PadTMXptEC4EiESDaTKkLWhlgsCZgi5vyn4teBDEQyrfr1W/SkfxkzWGIQZBgc8Ohzvqai2hSuFW7jdQI8Pr096FwrRB2nCvMg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CYXPR12MB9387.namprd12.prod.outlook.com (2603:10b6:930:e6::19) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.22; Fri, 24 May 2024 23:13:13 +0000
-Received: from SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- ([fe80::37cc:3733:d1e9:d8e4]) by SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- ([fe80::37cc:3733:d1e9:d8e4%3]) with mapi id 15.20.7611.025; Fri, 24 May 2024
- 23:13:13 +0000
-Message-ID:
- <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
-Date: Sat, 25 May 2024 09:13:09 +1000
+ 15.20.7611.19; Fri, 24 May 2024 23:13:35 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%5]) with mapi id 15.20.7587.035; Fri, 24 May 2024
+ 23:13:35 +0000
+Message-ID: <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
+Date: Sat, 25 May 2024 00:13:28 +0100
 User-Agent: Mozilla Thunderbird
-From: Stephen Horvath <s.horvath@outlook.com.au>
-Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>
-Cc: Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev,
- Dustin Howett <dustin@howett.net>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Moritz Fischer <mdf@kernel.org>
-References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
- <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
-Content-Language: en-AU, en-US, en-GB
-In-Reply-To: <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20240523130327.956341021@linuxfoundation.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20240523130327.956341021@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN:
- [8dmodNvU81XLQ/SOLpCp2nXX4mS/WQaOxdqEJhN9vpjUJfb1ZV1qcbVD/alxJRPXxUCUwsSHV7Y=]
-X-ClientProxiedBy: SY6PR01CA0079.ausprd01.prod.outlook.com
- (2603:10c6:10:110::12) To SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:159::9)
-X-Microsoft-Original-Message-ID:
- <5286705f-8e96-40de-8b2b-3cab25895fc4@outlook.com.au>
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0016.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:313::6) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SY4P282MB3063:EE_|SYYP282MB1534:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f1cfc11-6b4d-4c83-6ad8-08dc7c47160c
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199019|440099019|3412199016;
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CYXPR12MB9387:EE_
+X-MS-Office365-Filtering-Correlation-Id: 312ad54a-fa9e-4789-9f1f-08dc7c4722fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|366007|376005;
 X-Microsoft-Antispam-Message-Info:
-	QWYXT31o5S0Q04w+GbLvdvOPRmjLJUSNStCxawqc9v6d9cEsheJRKiVKeBVCQYKI89oLvruQmOL+T01diL4QBvp7c9Fv2WpOaKXx7jMg9gfP11EW5kGq4XjfM5e7TR5/28U9wPi0nlJBixuWtxY9xZtHhaF854hLzLbF6oL0xxDLmKH7MoL6rPjCmnAv2den7HNerd3xfgohEC4VwtVLrPmjM/jTmcV7MTAP2eDOjrZAGvWerZXh4uIn7UeeKArK6QEdNHnkHOxG7g/sAvZ+eqZNVOyPp7nEfhDQflNPeGWjfcd+OcNeCYjYoe85HDJo8yJC523QbjapNaa/tga/OCMxuCdb/CUh0yZHQOy51hb3pxOtkzhoTsVTdWnTRgqQQTGEvDvToweq3OXHbuWE1yncGIImMY2d7ZTO5NXmckDbds3faNA+0Uh3t3VX0Fuq4bcbxXGBNOzM5fVeIPDTQLOVQXIvOYi5nDWf9GCl3cR1HxU1X2BwBcjd7xuz801iPA3dnKogm5jMsEQmzpNqNXOjhvrWPKFTr1b+r4Nz3ZWR0P6xMDcusdI24y7FRM71
+	=?utf-8?B?YXBaRjNGYWxRUlVQS2lIdlBNdE5JZGo2RVlUcFN5bkp5ODhzOGMzVjdCWmgx?=
+ =?utf-8?B?YzE4emNBYTF3S3RZQUpzLzBsaStPOGFzdTFjL1Nqd293QVczRFVncUZkR2ky?=
+ =?utf-8?B?MXdCeVJzVEc2WC96dEYySDlZZU84VXhnUTQvV3Q2WHFmdXlHK0Q4RTZ6SDJC?=
+ =?utf-8?B?MzJrODA4TTlraFRHYnNqUFdGV2JXcW1aeU5xT1RYVzFxMXhxTFFKVCt5akhR?=
+ =?utf-8?B?akNUMHhUOEhRdXhLc2VRakhwWTZIblFkTit4K0E1QkNtTDVtZjlkUWl4TnhG?=
+ =?utf-8?B?VTJLc3Z0OUJMZEZZUnAwZ0ovOGNQamJ3Zm11SzdMZ01VbGFEYjV5WlY5RDRW?=
+ =?utf-8?B?dTdvalZyNG85RUwzcFNuY2VQd1dVVGtNL1ozc0JhYXV0UW1GWWVhSncya1hG?=
+ =?utf-8?B?YjZmVm9ML2hJYThKQUozN0RiT09KTjFRRE9nL1NWOUY5RnR5V3A1MU55RVNO?=
+ =?utf-8?B?djRKNVVFbzNxT2VxSWd5UE0zTCt3ZnFCMkJxeVdCNW55dm5nQXB3V1hjdGZQ?=
+ =?utf-8?B?MFVoVDZ5My9ZTUFHUFNYN2hoRnVKSFFJdDdqNXl0bitaRUxEZlNadnJUMnNs?=
+ =?utf-8?B?ckVBL3hubXZhZ0VFdldHRG1XOHMrR29rM0FyYVpkbDM2RVp3bjVmbmRQZ2pY?=
+ =?utf-8?B?MTlmQ3pwL1dnYXZ6RmFZeGZ5U1NSME9Fb0pTL0Jwd0VjSXU3ZVIvYlBjMXRD?=
+ =?utf-8?B?cXE2RnlvYmFxYlRTelpCMXAySmkxUjY3U0F6M1NsZXVJUm50NWFjejVQTVpq?=
+ =?utf-8?B?K3VsVXZwT3E0aHA1OXZENm9mMytMek16aU85b0MwM1hKVk5kNDdyZ0U0cUoy?=
+ =?utf-8?B?VFJKemN5MzkyZUhiRzhucWpUd2xUQlNFQWZJUkpNbGE4VjZaaXNBNlVKbERT?=
+ =?utf-8?B?RWhDWXZKZFVkTktNaTJTWVlwcC9ab3FndnFEMElmL0UxYTlhODArWVo2bEtN?=
+ =?utf-8?B?eSs2djVjR1VVQStNZW16bUJxWHA5SzZoUjVXd3ZQV2xIeEZ4MjFLTHREdWFF?=
+ =?utf-8?B?SDFZR3JUTTZTNFhVQ3d2MmgvUkxyUlRpaFJEUXR5cFdLMjI0VjRBZE5PVXBi?=
+ =?utf-8?B?NE52ZXBUWmZKWkN0bXBacDBMaFQ0U29sMVdaamxMUWNCQ2JYUHVuZWNpNm5U?=
+ =?utf-8?B?bldTSWdxbTM3aEx4NjNNTDZVSUc1OERWSFRGYitwYkgzTWkycG9POTBCcito?=
+ =?utf-8?B?a2dTVlRCUENTcnVWVm5xdVNlSGJZY1hZMDVEemM4d05waWIyZ1dZdEVyS29i?=
+ =?utf-8?B?UnJCOWJ4b1hXVVEvLzlsZXZZYTNRaFpoNlNIeUNZRkNPaHZ4aDZRaDI4MnAr?=
+ =?utf-8?B?U1hwTVJDdytTTFhmR01RQjRaY2V0U1RraStiRE5iOGhqL3hmMjNpNUg2L29H?=
+ =?utf-8?B?cFFqaExQM1YvZExMRkJxb0RSV3h6VzZFN3FvcEVXK2FaaHNmYWs5czU1d0FJ?=
+ =?utf-8?B?S0FKMnBjbmxhOXNmcXFDRjVzQkJPZEgrKzVQQkJjS1NwUTc0NnZQbG8va3Jo?=
+ =?utf-8?B?REU1RlpDYUxBMmFvb09MVnRhUHdQQ29YUko4ODdlUE5vWU9ram9yZGJLWVJv?=
+ =?utf-8?B?N0JiL2RydlJRMlJBSFRzY016S3lrYzNFUWNtbERFajI3eXlzMFYwUm9sTnkx?=
+ =?utf-8?B?MStFUmJlQUJLd05FUE1HVS8zaElCYWwvUzY2SHJaRml5cXZMR0FvcU12RzBH?=
+ =?utf-8?B?bDFmbnJ3RjNyODJVVThhOVhoSzhZL1UyRTVmY2gyUkRoRUN1YnJSWDFRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dFpjeTdRNy9nS0pUWllyNWVBam9zMDVHVXB0WSs4QThiZEhtWHI5aHYwdHlF?=
- =?utf-8?B?dVlWSE9jektwR21rVjNNbjAxRjVpSHMyaU5vbkFyY0dFQW5hN216b3dvVFkv?=
- =?utf-8?B?SURkT0M3WTg1MGQyc21ZTjJZM00xTm40RkFJQ2ZPV1ZCL0pnYmpMa0p2N21z?=
- =?utf-8?B?aENydE1XaTdKQ3g4ODEzTFpEcmpwZTVUdCtGZWs1cUt0Q3pCK0Y3TU5ER292?=
- =?utf-8?B?M3cwNHlMYjlia3Q0Q1NndlFXTEx1YlpyY2dIbGJPenJmKzd4WnVjRHIxL09z?=
- =?utf-8?B?VVc1TjNKcUkxR3Q3cnUyN1hRdjg4WjdMWE9HTytQRkdjWGxmY0xlTVlVYjJJ?=
- =?utf-8?B?dUFuVFkwUnVQNHcvU1N0aTRDMlArTitGSnk1eGdRWFFPdFZZS2w3Tml5V0Ru?=
- =?utf-8?B?Y2I3c3A5OUhhS25nWG9VOGxvZ09LSTNKYldJYU40b0dRbXZpdzJwMFA3SzAz?=
- =?utf-8?B?VGRnOEVBekJRd2tzVVkyWVlMT1hGKzB3MFFPZDZhT1BhSmNIWWlLSVdvd0Vo?=
- =?utf-8?B?K0ZFcFMzQ1dCSzNWNWNESlJnZjQzTHhqc1ZzcmhSeFpRTDhrV0RxSVdKckFo?=
- =?utf-8?B?QU1IekVKMjNIOHZJRWVRaUpRNHFYN1NlMEpHVDJZSXZzMmFJaXNsZGI0dFNk?=
- =?utf-8?B?K1VTYnBvenkzWFRONjRaWDVCWVB6SkpKKzZqd1F0VGZteXBsUGUxTGc1dGlD?=
- =?utf-8?B?VjFXMGx2ZGZoYk1MTG42aGhGMldkWitiRDJUbFBDb1Z6cUdSZzdYbjhzQ01r?=
- =?utf-8?B?Wm9XdVh5VENyUlo3Zk0xZXFxNXdycmpZb29vMGh1K0IwRCtoNXJlazNaVzRl?=
- =?utf-8?B?K2NpS2FtVmRKSUpqaXNra3JIU1hSWkJCMHBNaCtrQlVXN2gvQWgyK2RDUW01?=
- =?utf-8?B?Z2tNQ1h3M2R1VG00YXh3QlYrU2pBdmxrdmZpZW1CRVdqUVZKemo0MXRnRUZJ?=
- =?utf-8?B?K1hwVFVIL3NXQVp0cmdNeVZubkdhY21VMmVxc25jckZWVDd5b0ZyVW1uYzRO?=
- =?utf-8?B?ZVBuUjFURDlZQWZjQjY1QzIvUlZHZ2Y5UU1aUElINkVIUGxPRzNVQUtLQVZw?=
- =?utf-8?B?RmErUkZRRU1NYUZuTUtGd2Y4dmI3NUVYNWwwazhnZUlBQ2NId1dLUGt0Q3px?=
- =?utf-8?B?RmdRWUx1ZUNvRVRoblJBOHhjZlJqbjBZcWNNakd0Z1NJN1ZCZE5ucmVnWjVp?=
- =?utf-8?B?QS9iMjVKOUlkTUE3Q0E5U3NYTzFIUlFRbHNmOEluOGEyWFdueHBEM2tqK3Q5?=
- =?utf-8?B?eWowanJPMml4bTVHRlBhSGh2U0FzamZMSlFLWDBtOXF5b25tM09Yd0dIWkdu?=
- =?utf-8?B?NytwVFpUVXdFRUptR3FwVkR3NDFweWgzTnB1UGJPNHI0TmR6RVVIbTVKbUFs?=
- =?utf-8?B?WVM4Si9UNUVGeTJRN2FSb2lDRVA0ZDNpSUl2bVBrUVk3RWFRbmRRczdmODYz?=
- =?utf-8?B?eHVNVlZRMWhDK1ZyY0MxR05rMGVocjlsR2lHalpZS2JIUzZxRHV2STljZjVD?=
- =?utf-8?B?MmhPK2o4ZEd4U0hhMnRvdVV5eWNtaFpkMGxzMjFucm4wM2lPUW9DblFnZjN0?=
- =?utf-8?B?KzdMTEo0WWt1S2RjamV5T3lQWFdQYUJocnlJZFh3b3lvQ1BYSmRpYjFWUVNm?=
- =?utf-8?B?RmJWM29zbWtRcWdXNFkvS2VKM0ZsWkxLUk1oVGZka21OSjdqOWVIckFNeTBp?=
- =?utf-8?B?NXE4QW9jUzJ6QnZiZHVpUGQxczZMSFNUUU1jd2dZS0JzZnQ3Qm90QXdsdGN0?=
- =?utf-8?Q?7GJbX9Dq/I1pyBhZvo+49S7r0bdGSPj+Lnc5vH0?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f1cfc11-6b4d-4c83-6ad8-08dc7c47160c
-X-MS-Exchange-CrossTenant-AuthSource: SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
+	=?utf-8?B?NEEzblJKRFd1NXAzdTF1aHErMkZKL0k3UGdWbXRkSzhlcFJYYWtld3JQOVJI?=
+ =?utf-8?B?VG8xYlU0djF1MFd6SURsRVZWOU91ZlVobUdXbmpCUm01VXRuc0hpQWY4VTRD?=
+ =?utf-8?B?R2NxNHQrK1lVQ1k5K3lMZHVlcFpuMDd2RmVveGZycTdBQmZvQ0l2V05LMnJa?=
+ =?utf-8?B?cm9OQkJmZzVaZEdaY0lZaFFTZU5CNEZQTEFHN3dYdW1VTHc3Q1U4NkFFUFZ4?=
+ =?utf-8?B?cmRBbkpWSmFrL0dmTVZoNGpJR0V2OGdXc2Y5WXBHaEZyQlNwVVZBcm9pelly?=
+ =?utf-8?B?Q3JPZndsNEEzWXhZUDBTSVliTEtTZmNOSjdoSnlGNTZjSGhhNnlWR2RaMWpt?=
+ =?utf-8?B?QVNtVUdqaTdUT0ZnMlN0QktaTE8vRTVLMGlYa2RiMkNwckVhK0E5NTdveVVy?=
+ =?utf-8?B?NmxkSytXdnZVVkxXZVZ4Qzlnc0o2SDlYYVdBNkJodXVNRzhmRGwrbk84Vm8x?=
+ =?utf-8?B?RHNiUTZIVU5wdSszM1dRYjBxMjZ0V3J4N1YrN0lWb2VoeGF0MFN6VkZ0YUFI?=
+ =?utf-8?B?TVNma3pFN3lnQ3dxdVY1R0NxMjRyZzloaW5nckg5T3RWMExlV2F6VGRuNDBh?=
+ =?utf-8?B?TDB1SEVUQWdUTTRGK3JWUElBRFcydTJlaUUyOHhsb0hCRENzOVFJRXdKMldp?=
+ =?utf-8?B?V3dhNXNoYXpnMVFvSWx5VXZtSkYxVEN1RFpXYkVYRHBaVkgvblNqWm9zSENS?=
+ =?utf-8?B?aThrdFVOa3pESFhHNmdpS05yc3NlQlJyVHp0YVBjUE8zRmRpekpWcVFpNW5D?=
+ =?utf-8?B?YVhVcWEzalhRMDZtaDY5R3o1cFpyazRhRU1IUi91SjJwcDhoM0haQkZJMkd6?=
+ =?utf-8?B?dzFrV2VlSzVxdnMxS1REZEtzalNMOGRWeHZCV0xlSTA1L1dNT1VzSGhOalBy?=
+ =?utf-8?B?aUF1OEV2eTVyUTdyUE1sWjFFb2treS96NjkxZnAyQ0NRRWlCU1loV1U0NHFY?=
+ =?utf-8?B?bTFmYUJ0bGs5bS9TbFc0YW9zQjhPMWtKUHdlT1RKQm1Ld3JxWGkwNUNiR1FU?=
+ =?utf-8?B?UmZ3ZUg3bFBkWmVpODM5Sm5hbUMxTjVXdGxGazZaOU1McGNKMHoxdkRldUpq?=
+ =?utf-8?B?Nkx5SEtZdWxwN2Z5Y25XTGFjQXRqMGZsd2YxS0FYRENyMEZoZ2lPa2FmSUVI?=
+ =?utf-8?B?WTdZMDl5Tko0ZW5lM1A4aHdmTU1YNDNhVGQ5LzlhNnpiOHIxOVdJS3BENVpa?=
+ =?utf-8?B?THIwOGg0aEVmUFh4N01XcFR6Y1lPb3YxYUZLa1hHdWZ5ZEFJTHlBcnFBZUlz?=
+ =?utf-8?B?OFZndnV2VndvcWxQcmUzdURORHdoV2JxNGdpazhBenRxcldTR1dRcFJvZmI2?=
+ =?utf-8?B?N0tmZEh4dm0rRzlZQVFteDB1MFZOdXJSS2lVL1NrY3BjWmNTL1dmMHhab2g5?=
+ =?utf-8?B?QTk0SitIQmp5azM2M1E1LzJTZGtLbjk1RTNyLzJOWWhjNzg3YVJzZWF5SGZ4?=
+ =?utf-8?B?YXh1bGRqWmdBcnpkblJSU25yQ3NkclZPeW1LQy9RZ2Z3bFZrSjYyZlpiSlBk?=
+ =?utf-8?B?MC9ucmljVUFyMGR6RkRWa09TT1k2L2NGdHh0WVd2TGNUOVlSY1ByNFFOMFpL?=
+ =?utf-8?B?cEVhM0psSXJtZFY1bzlWcmFXZjdvTit3WjhDUjIxd2g4clJ5c3NQblU5U0hl?=
+ =?utf-8?B?WjYxZ0NhaS9UV1pMUHhrUS9mN0p6M2VFdlFWeUdrbWc4NlR1bzIwZUxlcE5h?=
+ =?utf-8?B?T0FQdGFjdmhQYWtISGM1NkxCaG1wZWJkM1RybkU3SU5zVm1TRnhXVDI0YjNL?=
+ =?utf-8?B?UmRPUUU1ekdiVFdHQmlNM25KcDZKWS9BY2NORXkwQytxU2c4TkNqVDJOYVFt?=
+ =?utf-8?B?Z0tjUmY2ZnZmenMzQm1YRmxRYllRcEZNcjVzMUJlUXQ1VnM5Z3pPWTBMN1lT?=
+ =?utf-8?B?VDUzUm8rTmtGbjUvMUdYQk1hVTJlb0FoU1kybGsrRUpDOERGSWNEWkpUdElW?=
+ =?utf-8?B?SFhFNHoxdzBpanBKaExLcjM3SUFSUWc4eXd5dCtrK2gzZmJvWDlvZUNVWjFy?=
+ =?utf-8?B?Nk1jT0ZZcTJxOE4xUDZxSm4rOGpMVEpRL3EzdG51SkNsbU84SkRUa0NiTjJQ?=
+ =?utf-8?B?SEU4cE5mNG1xQVdVVGl1QmVvTlVvK2VhenBhWllkZjZKT21LWW1CMUJ1RTN3?=
+ =?utf-8?B?TmdwbFZNakRyclNyRDRIRTRrVEUxbStSb2h4U0xRcDdnV053TE9qVEZyZTVk?=
+ =?utf-8?Q?U4D4utrcWdxycPrriSP7O8K9a4/tZSDtS5txDb0PYiiP?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 312ad54a-fa9e-4789-9f1f-08dc7c4722fc
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 23:13:13.7276
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 23:13:35.3905
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SYYP282MB1534
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Iv+NQ6yGHm9BV6DGtYfdPyIT7TMyU9aPI6V+knYET81cmIxPQi/mQw31nXezhnL0PUct7GlZJNyj3Y9LJkvlww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9387
 
-Hi Thomas,
+Hi Greg,
 
-I was the one to implement fan monitoring/control into Dustin's driver, 
-and just had a quick comment for your driver:
-
-On 8/5/24 02:29, Thomas Weißschuh wrote:
-> The ChromeOS Embedded Controller exposes fan speed and temperature
-> readings.
-> Expose this data through the hwmon subsystem.
+On 23/05/2024 14:12, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.160 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The driver is designed to be probed via the cros_ec mfd device.
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->   Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
->   Documentation/hwmon/index.rst         |   1 +
->   MAINTAINERS                           |   8 +
->   drivers/hwmon/Kconfig                 |  11 ++
->   drivers/hwmon/Makefile                |   1 +
->   drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
->   6 files changed, 316 insertions(+)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
-> diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-> new file mode 100644
-> index 000000000000..aeb88c79d11b
-> --- /dev/null
-> +++ b/Documentation/hwmon/cros_ec_hwmon.rst
-> @@ -0,0 +1,26 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +Kernel driver cros_ec_hwmon
-> +===========================
-> +
-> +Supported chips:
-> +
-> +  * ChromeOS embedded controllers connected via LPC
-> +
-> +    Prefix: 'cros_ec'
-> +
-> +    Addresses scanned: -
-> +
-> +Author:
-> +
-> +  - Thomas Weißschuh <linux@weissschuh.net>
-> +
-> +Description
-> +-----------
-> +
-> +This driver implements support for hardware monitoring commands exposed by the
-> +ChromeOS embedded controller used in Chromebooks and other devices.
-> +
-> +The channel labels exposed via hwmon are retrieved from the EC itself.
-> +
-> +Fan and temperature readings are supported.
-> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> index 1ca7a4fe1f8f..355a83e66928 100644
-> --- a/Documentation/hwmon/index.rst
-> +++ b/Documentation/hwmon/index.rst
-> @@ -57,6 +57,7 @@ Hardware Monitoring Kernel Drivers
->      coretemp
->      corsair-cpro
->      corsair-psu
-> +   cros_ec_hwmon
->      da9052
->      da9055
->      dell-smm-hwmon
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c23fda1aa1f0..aa5689169eca 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4988,6 +4988,14 @@ S:	Maintained
->   F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
->   F:	sound/soc/codecs/cros_ec_codec.*
->   
-> +CHROMEOS EC HARDWARE MONITORING
-> +M:	Thomas Weißschuh <thomas@weissschuh.net>
-> +L:	chrome-platform@lists.linux.dev
-> +L:	linux-hwmon@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/hwmon/chros_ec_hwmon.rst
-> +F:	drivers/hwmon/cros_ec_hwmon.c
-> +
->   CHROMEOS EC SUBDRIVERS
->   M:	Benson Leung <bleung@chromium.org>
->   R:	Guenter Roeck <groeck@chromium.org>
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 83945397b6eb..c1284d42697f 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -506,6 +506,17 @@ config SENSORS_CORSAIR_PSU
->   	  This driver can also be built as a module. If so, the module
->   	  will be called corsair-psu.
->   
-> +config SENSORS_CROS_EC
-> +	tristate "ChromeOS Embedded Controller sensors"
-> +	depends on MFD_CROS_EC_DEV
-> +	default MFD_CROS_EC_DEV
-> +	help
-> +	  If you say yes here you get support for ChromeOS Embedded Controller
-> +	  sensors.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called cros_ec_hwmon.
-> +
->   config SENSORS_DRIVETEMP
->   	tristate "Hard disk drives with temperature sensors"
->   	depends on SCSI && ATA
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index 5c31808f6378..8519a6b36c00 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -64,6 +64,7 @@ obj-$(CONFIG_SENSORS_CHIPCAP2) += chipcap2.o
->   obj-$(CONFIG_SENSORS_CORETEMP)	+= coretemp.o
->   obj-$(CONFIG_SENSORS_CORSAIR_CPRO) += corsair-cpro.o
->   obj-$(CONFIG_SENSORS_CORSAIR_PSU) += corsair-psu.o
-> +obj-$(CONFIG_SENSORS_CROS_EC)	+= cros_ec_hwmon.o
->   obj-$(CONFIG_SENSORS_DA9052_ADC)+= da9052-hwmon.o
->   obj-$(CONFIG_SENSORS_DA9055)+= da9055-hwmon.o
->   obj-$(CONFIG_SENSORS_DELL_SMM)	+= dell-smm-hwmon.o
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> new file mode 100644
-> index 000000000000..d59d39df2ac4
-> --- /dev/null
-> +++ b/drivers/hwmon/cros_ec_hwmon.c
-> @@ -0,0 +1,269 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  ChromesOS EC driver for hwmon
-> + *
-> + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/platform_data/cros_ec_commands.h>
-> +#include <linux/platform_data/cros_ec_proto.h>
-> +#include <linux/units.h>
-> +
-> +#define DRV_NAME	"cros-ec-hwmon"
-> +
-> +struct cros_ec_hwmon_priv {
-> +	struct cros_ec_device *cros_ec;
-> +	u8 thermal_version;
-> +	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
-> +};
-> +
-> +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
-> +{
-> +	u16 data;
-> +	int ret;
-> +
-> +	ret = cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	data = le16_to_cpu(data);
-> +
-> +	if (data == EC_FAN_SPEED_NOT_PRESENT)
-> +		return -ENODEV;
-> +
-
-Don't forget it can also return `EC_FAN_SPEED_STALLED`.
-Like Guenter, I also don't like returning `-ENODEV`, but I don't have a 
-problem with checking for `EC_FAN_SPEED_NOT_PRESENT` in case it was 
-removed since init or something.
-My approach was to return the speed as `0`, since the fan probably isn't 
-spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` and 
-HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
-No idea if this is correct though.
-
-> +	*speed = data;
-> +	return 0;
-> +}
-> +
-> +static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 thermal_version,
-> +				   u8 index, u8 *data)
-> +{
-> +	unsigned int offset;
-> +	int ret;
-> +
-> +	if (index < EC_TEMP_SENSOR_ENTRIES)
-> +		offset = EC_MEMMAP_TEMP_SENSOR + index;
-> +	else
-> +		offset = EC_MEMMAP_TEMP_SENSOR_B + index - EC_TEMP_SENSOR_ENTRIES;
-> +
-> +	ret = cros_ec->cmd_readmem(cros_ec, offset, 1, data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (*data == EC_TEMP_SENSOR_NOT_PRESENT ||
-> +	    *data == EC_TEMP_SENSOR_ERROR ||
-> +	    *data == EC_TEMP_SENSOR_NOT_POWERED ||
-> +	    *data == EC_TEMP_SENSOR_NOT_CALIBRATED)
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-> +			      u32 attr, int channel, long *val)
-> +{
-> +	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
-> +	int ret = -ENODATA;
-> +	u16 speed;
-> +	u8 temp;
-> +
-> +	if (type == hwmon_fan) {
-> +		ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
-> +		if (ret == 0)
-> +			*val = speed;
-> +	} else if (type == hwmon_temp) {
-> +		ret = cros_ec_hwmon_read_temp(priv->cros_ec, priv->thermal_version, channel, &temp);
-> +		if (ret == 0)
-> +			*val = kelvin_to_millicelsius((((long)temp) + EC_TEMP_SENSOR_OFFSET));
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int cros_ec_hwmon_get_temp_sensor_info(struct cros_ec_device *cros_ec, u8 id,
-> +					      struct ec_response_temp_sensor_get_info *resp)
-> +{
-> +	int ret;
-> +	struct {
-> +		struct cros_ec_command msg;
-> +		union {
-> +			struct ec_params_temp_sensor_get_info req;
-> +			struct ec_response_temp_sensor_get_info resp;
-> +		} __packed data;
-> +	} __packed buf = {
-> +		.msg = {
-> +			.version = 0,
-> +			.command = EC_CMD_TEMP_SENSOR_GET_INFO,
-> +			.insize  = sizeof(buf.data.resp),
-> +			.outsize = sizeof(buf.data.req),
-> +		},
-> +		.data.req.id = id,
-> +	};
-> +
-> +	ret = cros_ec_cmd_xfer_status(cros_ec, &buf.msg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*resp = buf.data.resp;
-> +	return 0;
-> +}
-> +
-> +static int cros_ec_hwmon_read_string(struct device *dev, enum hwmon_sensor_types type,
-> +				     u32 attr, int channel, const char **str)
-> +{
-> +	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
-> +
-> +	if (type == hwmon_temp && attr == hwmon_temp_label) {
-> +		*str = priv->temp_sensor_names[channel];
-> +		return 0;
-> +	}
-> +
-> +	return -ENODATA;
-> +}
-> +
-> +static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_types type,
-> +					u32 attr, int channel)
-> +{
-> +	const struct cros_ec_hwmon_priv *priv = data;
-> +	u16 speed;
-> +
-> +	if (type == hwmon_fan) {
-> +		if (cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed) == 0)
-> +			return 0444;
-> +	} else if (type == hwmon_temp) {
-> +		if (priv->temp_sensor_names[channel])
-> +			return 0444;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
-> +	HWMON_CHANNEL_INFO(fan,
-> +			   HWMON_F_INPUT,
-> +			   HWMON_F_INPUT,
-> +			   HWMON_F_INPUT,
-> +			   HWMON_F_INPUT),
-> +	HWMON_CHANNEL_INFO(temp,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL),
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops cros_ec_hwmon_ops = {
-> +	.read = cros_ec_hwmon_read,
-> +	.read_string = cros_ec_hwmon_read_string,
-> +	.is_visible = cros_ec_hwmon_is_visible,
-> +};
-> +
-> +static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
-> +	.ops = &cros_ec_hwmon_ops,
-> +	.info = cros_ec_hwmon_info,
-> +};
-> +
-> +static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_hwmon_priv *priv)
-> +{
-> +	struct ec_response_temp_sensor_get_info info;
-> +	size_t candidates, i;
-> +	int ret;
-> +	u8 temp;
-> +
-> +	if (priv->thermal_version < 2)
-> +		candidates = EC_TEMP_SENSOR_ENTRIES;
-> +	else
-> +		candidates = ARRAY_SIZE(priv->temp_sensor_names);
-> +
-> +	for (i = 0; i < candidates; i++) {
-> +		if (cros_ec_hwmon_read_temp(priv->cros_ec, priv->thermal_version, i, &temp) != 0)
-> +			continue;
-> +
-> +		ret = cros_ec_hwmon_get_temp_sensor_info(priv->cros_ec, i, &info);
-> +		if (ret < 0)
-> +			continue;
-> +
-> +		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%*s",
-> +							    (int)sizeof(info.sensor_name),
-> +							    info.sensor_name);
-> +	}
-> +}
-> +
-> +static int cros_ec_hwmon_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
-> +	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
-> +	struct cros_ec_hwmon_priv *priv;
-> +	struct device *hwmon_dev;
-> +	int ret;
-> +
-> +	/* Not every platform supports direct reads */
-> +	if (!cros_ec->cmd_readmem)
-> +		return -ENODEV;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->cros_ec = cros_ec;
-> +
-> +	ret = priv->cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_THERMAL_VERSION,
-> +					 1, &priv->thermal_version);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Covers both fan and temp sensors */
-> +	if (!priv->thermal_version)
-> +		return -ENODEV;
-> +
-> +	cros_ec_hwmon_probe_temp_sensors(dev, priv);
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
-> +							 &cros_ec_hwmon_chip_info, NULL);
-> +
-> +	return PTR_ERR_OR_ZERO(hwmon_dev);
-> +}
-> +
-> +static const struct platform_device_id cros_ec_hwmon_id[] = {
-> +	{ DRV_NAME, 0 },
-> +	{ }
-> +};
-> +
-> +static struct platform_driver cros_ec_hwmon_driver = {
-> +	.driver.name	= DRV_NAME,
-> +	.probe		= cros_ec_hwmon_probe,
-> +	.id_table	= cros_ec_hwmon_id,
-> +};
-> +module_platform_driver(cros_ec_hwmon_driver);
-> +
-> +MODULE_DEVICE_TABLE(platform, cros_ec_hwmon_id);
-> +MODULE_DESCRIPTION("ChromeOS EC Hardware Monitoring Driver");
-> +MODULE_AUTHOR("Thomas Weißschuh <linux@weissschuh.net");
-> +MODULE_LICENSE("GPL");
+> thanks,
 > 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
 
-But feel free to ignore me if I'm completly wrong about this, since I 
-really don't have much experience with kernel dev.
+..
 
-Thanks,
-Steve
+> NeilBrown <neilb@suse.de>
+>      nfsd: don't allow nfsd threads to be signalled.
+
+
+I am seeing a suspend regression on a couple boards and bisect is 
+pointing to the above commit. Reverting this commit does fix the issue.
+
+Test results for stable-v5.15:
+     10 builds:	10 pass, 0 fail
+     26 boots:	26 pass, 0 fail
+     102 tests:	100 pass, 2 fail
+
+Linux version:	5.15.160-rc1-g7c7f29d3b2af
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                 tegra20-ventana, tegra210-p2371-2180,
+                 tegra210-p3450-0000, tegra30-cardhu-a04
+
+Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
+                 tegra194-p2972-0000: pm-system-suspend.sh
+
+Jon
+
+-- 
+nvpublic
 
