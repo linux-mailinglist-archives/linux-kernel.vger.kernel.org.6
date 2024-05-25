@@ -1,42 +1,57 @@
-Return-Path: <linux-kernel+bounces-189378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D338CEF43
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0360C8CEF47
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB8F1C20926
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C828158E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D8F4EB2C;
-	Sat, 25 May 2024 14:18:28 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 2CB874F1E5
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E334F1F8;
+	Sat, 25 May 2024 14:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2kh15BzI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C572A1D3;
+	Sat, 25 May 2024 14:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716646708; cv=none; b=MMCmqPswU7dhJBBLyuPAJm9YEE2lOCNvX9r+cBbZyp8+CZUBqzEmLzNvGMiYMWFg/krwd581IS8RryPBd8vm6SfMhmRwoyZVzyY0eQ9gZaDaZ6XWcscCqmnJfrvi7/ZgE9wj+VvzpH/Va/A3civbv1SKwMlil40i4dG4kTnvvtE=
+	t=1716646809; cv=none; b=sJo7TtRsJqkfui0v/DjA/Amug5vnIZdI8I3dKzeYNmu92nl+9pIDGwQM21tR+hhx54+tOYicwXeVEl9px0Ua10qBiO3FlSp6I/2+siwJ3nRgzPlg7Nm7eeJoIZwel/7rMNINuB1auvDczZ3U6Cisg/xTpNrXMeMXyCA8Qf8yEoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716646708; c=relaxed/simple;
-	bh=wbrXg/b1lNy7sgScKy9Bm4Ynn5Glx/YJGDrRYEX3l7Q=;
+	s=arc-20240116; t=1716646809; c=relaxed/simple;
+	bh=LELYlH2TsI85qd++YmKvIhQ9XuKF1OIKFsdx17FkjiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPiQVSd8qUHNsB2OqVTbP0lRdAPNQvueRYj5yzODFjkjU75asDX5UixIFv+aZ5k2K0G0qDuHZdw8FmAflDXem8jz3VE+V1vqnNY6DMNj1z45dOcR81BpVoo/PnfZaC80nUzWC19/GZF8fldHVSZGN7YfsypkuuVteQqGYHbMnH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 607144 invoked by uid 1000); 25 May 2024 10:18:25 -0400
-Date: Sat, 25 May 2024 10:18:25 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Shichao Lai <shichaorai@gmail.com>
-Cc: gregkh@linuxfoundation.org, oneukum@suse.com, linux-usb@vger.kernel.org,
-  usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-  xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCH v5] usb-storage: Check whether the media is initialized
- successfully
-Message-ID: <a32fb17f-aa58-4975-9f67-3509928ca249@rowland.harvard.edu>
-References: <20240525141020.2520942-1-shichaorai@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phoDsoAliUYOVZ7Blec92rQVeOqIPu8VZCVFldmQpm5s9RShprg8xHSOiCoChuf1PGT5fL2H4o92lWjBoj8zGevGbgq8df6fhpx6hsEwEN1O66P/vs8PVbiwingTpW/ob6vKlLgKoU7hVIEgj9rK2XrCJK2cEinJSs1vdz1Ajgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2kh15BzI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84B7C2BD11;
+	Sat, 25 May 2024 14:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716646808;
+	bh=LELYlH2TsI85qd++YmKvIhQ9XuKF1OIKFsdx17FkjiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2kh15BzIPBuLlRPBXaHB4Dy1/gmVoFQXxljXDgarBPk0lKUElf75IWsdAOOodu69m
+	 qX2BNqodLPpQPN5gaKo/H6lZIWHvXkn/G5ur7kq1a8PXqtbNpH9ZFOp1kCcVlX8YS2
+	 vJBcqs0o1KvfMmSHGOkBlqz3ZxMPWU+xTtDX2/uo=
+Date: Sat, 25 May 2024 16:20:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+Message-ID: <2024052541-likeness-banjo-e147@gregkh>
+References: <20240523130327.956341021@linuxfoundation.org>
+ <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,63 +60,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240525141020.2520942-1-shichaorai@gmail.com>
+In-Reply-To: <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
 
-On Sat, May 25, 2024 at 10:10:20PM +0800, Shichao Lai wrote:
-> The member "uzonesize" of struct alauda_info will remain 0
-> if alauda_init_media() fails, potentially causing divide errors
-> in alauda_read_data() and alauda_write_lba().
-> - Add a member "media_initialized" to struct alauda_info.
-> - Change a condition in alauda_check_media() to ensure the
->   first initialization.
-> - Add an error check for the return value of alauda_init_media().
+On Sat, May 25, 2024 at 12:13:28AM +0100, Jon Hunter wrote:
+> Hi Greg,
 > 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
-> Changes since v1:
+> On 23/05/2024 14:12, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.160 release.
+> > There are 23 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> 
+> ...
+> 
+> > NeilBrown <neilb@suse.de>
+> >      nfsd: don't allow nfsd threads to be signalled.
+> 
+> 
+> I am seeing a suspend regression on a couple boards and bisect is pointing
+> to the above commit. Reverting this commit does fix the issue.
 
-You mean changes since v4.  Regardless:
+Ugh, that fixes the report from others.  Can you cc: everyone on that
+and figure out what is going on, as this keeps going back and forth...
 
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+thanks,
 
-> - Check the initialization of alauda_check_media()
->   which is the root cause.
-> 
->  drivers/usb/storage/alauda.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 115f05a6201a..40d34cc28344 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -105,6 +105,8 @@ struct alauda_info {
->  	unsigned char sense_key;
->  	unsigned long sense_asc;	/* additional sense code */
->  	unsigned long sense_ascq;	/* additional sense code qualifier */
-> +
-> +	bool media_initialized;
->  };
->  
->  #define short_pack(lsb,msb) ( ((u16)(lsb)) | ( ((u16)(msb))<<8 ) )
-> @@ -476,11 +478,12 @@ static int alauda_check_media(struct us_data *us)
->  	}
->  
->  	/* Check for media change */
-> -	if (status[0] & 0x08) {
-> +	if (status[0] & 0x08 || !info->media_initialized) {
->  		usb_stor_dbg(us, "Media change detected\n");
->  		alauda_free_maps(&MEDIA_INFO(us));
-> -		alauda_init_media(us);
-> -
-> +		rc = alauda_init_media(us);
-> +		if (rc == USB_STOR_TRANSPORT_GOOD)
-> +			info->media_initialized = true;
->  		info->sense_key = UNIT_ATTENTION;
->  		info->sense_asc = 0x28;
->  		info->sense_ascq = 0x00;
-> -- 
-> 2.34.1
-> 
+greg k-h
 
