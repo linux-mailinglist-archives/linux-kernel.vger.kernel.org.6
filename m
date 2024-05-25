@@ -1,166 +1,113 @@
-Return-Path: <linux-kernel+bounces-189434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B338CEFFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:02:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1609C8CF000
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07769B20FF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:02:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84697B20FB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480088595C;
-	Sat, 25 May 2024 16:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2000685940;
+	Sat, 25 May 2024 16:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oKBfEsCO"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDgz2TPD"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048EB1DFFC;
-	Sat, 25 May 2024 16:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD70B7F7FB
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716652935; cv=none; b=iIhXh6diJwCv+AgRsoXnl5w/MRqGKZIaxKV6jI25mWyKnsu5bnHh47WjYCX3jRYIMN9o+UxwooGVN22lID5zpkbptrh/+q9rpdwtJm1ipyruSaDScfp5zWD1Y8pZaR3oaZIVp84+1na9uZA50EgeSmnmktzlobUInSfYXAU6iwU=
+	t=1716652972; cv=none; b=mFsNNgoGLl6iWWyb9UhPY4drHztZoYJxFL8Hy3whE0KFM+PU4DkeC51F2vK9ezj7guoMeJ60WYLqj/J/p5VCyr2AT0FB++rusZZV1DNkJ26+e/pWI0PYzY7xdPLCihzREn7sBiqZZLnM+YTlRSoaeSTZRgvjIypLQ9JjM/dgC7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716652935; c=relaxed/simple;
-	bh=wA/DZCGQBGXvbLeOSNQtjnT7YRvsCmmXA2f4Xq7qKyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UE/+hfVJiafb20wHz9JPVBj9oJojbH6c2Y6WhfZStFSfk6DthTlyUf9w8bOx9Tyk0g71uhcwK2a/AgO0MmGbT/k6XDp2Yu9QGIWAG1FSN3PmpdnyRcd5+bBLvFRF0LN64G2ASyU5k1rcLrAnsSoPPyLwO4FqAY3gEqF6NHxMH9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oKBfEsCO; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id AtpGslhQJ3tO6AtpGsclcT; Sat, 25 May 2024 18:00:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716652856;
-	bh=WNut/xtqmEtO3vfRepBElQ9DP3GCge0U4oTsojKf0dA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=oKBfEsCODhjYN3BuoeE7mxdjrfivsP7ev1oxVxunkS7Xyq8NjX3IACLpQA8aaF4dV
-	 IXUvuoWfI/e8POQL1UsoAbm9jAiUgP6m1hH7CPgcIpomq6iP4RetU5U3bx0C56vhVz
-	 K2fD8tOA5/zPwuLwZvLn94m9V465MwTg+1Bn2FgM3qpS7epANCO3SJ6qrbBlLz1vGv
-	 vVIq8CDs0USJrTHwiVQa7U/05dsyTG4uw7cttnaOkpEIVYKP0RSwJZjSmiTuZnxOl/
-	 FMxIy6hi60srtYd527d8I+WX7MW7jI4w0gybwSUwO2vMSwyDcfK8/fFkz36bP3kgD6
-	 +NYA7E3F3le5Q==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 25 May 2024 18:00:56 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] dma-buf/fence-array: Add flex array to struct dma_fence_array
-Date: Sat, 25 May 2024 18:00:31 +0200
-Message-ID: <8b4e556e07b5dd78bb8a39b67ea0a43b199083c8.1716652811.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716652972; c=relaxed/simple;
+	bh=2PocUIctJT1LGB/9mzIa0giFi5RIO4kYRtnrssDuAGU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pL6w/UkJEkyn3iwA457C6X7Ce+cRqFLDbhja1mm48K5d98BkuCs5ipmpQwoVynil57pUX/+cLcn5V1XjF6GzSxSAgcxeUukuXb+YlQPAhqXcJryU8FyKYdcElKP8EL5mBqJqZ/FoONt672cN8LtQJDIXD4twYzjZjgo7QYPrAvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDgz2TPD; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f47eb21f0aso1119905ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 09:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716652969; x=1717257769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AViMprnRZDg8WlLNdCeKLRe1EXgWkFqK17wBJRWM63I=;
+        b=GDgz2TPD4ctOZpiEZ1QVAhpKH1NbMQxCqj2Cydk5/GMNCT78N9gyASbVczLW/0cZhM
+         cyDKcJlKTEXhsC5PLyp2u33aCaLH844VTU16OzP59rnUIuLNt7VBN4DnGfja4QIpNWLb
+         59QxA5r5Xl9qByLPE0BD2e12uIZTtqtdB7hFvkPfEYmz5D3XOLbGxeXq2S0FyVGDBuZf
+         zVnIHCCySRamiFv5OIwlC603XlMmSecCCJvlHhDO31XPJVRK9pcyWsgEd55G5EOdE1NB
+         F96mc3Hl1ux/ju/Ngz5Y/Osz2c6n7FVBmBbSk+nq73J+Ol3gOPFwxK0xlwmmwO961UdN
+         ZDyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716652969; x=1717257769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AViMprnRZDg8WlLNdCeKLRe1EXgWkFqK17wBJRWM63I=;
+        b=eSJxGDVk59kSnPfqGpENInpBQqlYaKaEJvt4fx1O9toP77l7V84WQeIs0p3TJSkePo
+         EuHBq53oh3mSCrvfwEVN1bRKGo2WY1eowqEFsJr/gopsRGxmiJX9G7kJrZb35sPOD109
+         XVqC+ZbLYZBzHD/IvdUSzGWMLPL/AqeDtJhjAAQW8UPaZD3ebfIvtBh8zeWo52m9pHbj
+         mk9wYvX4CqoIjYBaJ8o8ds+NGTTk8GMkSv5uBdF/0MZmJCk05LHmFnZ7wfmt6yQu1466
+         yHOgvKCP6vj6Lyd3ks3Nj5DDbkaXYhGJBvmbzHkyiTweW5r7svG0RGhps04cij+M8GXa
+         KYGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQRuckXbqN76zCOhMRXAA283Pi44hx0d4d893LBKPGZ+9IDzEDKefXNgTumR+n6eYjgkM6my+Ws0AAQD02McLvzu6n4eLsLNz3bOep
+X-Gm-Message-State: AOJu0YzY7zmIW8tbPbHlarci7EKY+PDitKK0cb+S/RiUDz86TU0+HfyM
+	7wr5utaOrEP0vv+DdqzK6ovlNdElQtzMsuI4QlWGXDwbhKtX1iLM
+X-Google-Smtp-Source: AGHT+IH8F+iMmwX9YKpALznoihMfYEKPSO49DL5/qynDmNyFDsPcSgr0VzrN329gKNRZCvIhdxRbew==
+X-Received: by 2002:a17:902:7808:b0:1f2:f854:f59 with SMTP id d9443c01a7336-1f4486efeeamr39861045ad.15.1716652969053;
+        Sat, 25 May 2024 09:02:49 -0700 (PDT)
+Received: from ubuntukernelserver.. ([110.44.116.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9b0787sm31668435ad.242.2024.05.25.09.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 09:02:48 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: Larry.Finger@lwfinger.net,
+	florian.c.schilhabel@googlemail.com,
+	gregkh@linuxfoundation.org,
+	ayushtiw0110@gmail.com,
+	namcaov@gmail.com,
+	dan.carpenter@linaro.org
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: Fix spelling mistake in rtl871x_io.h
+Date: Sat, 25 May 2024 21:47:29 +0545
+Message-Id: <20240525160230.66365-1-topofeverest8848@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is an effort to get rid of all multiplications from allocation
-functions in order to prevent integer overflows [1][2].
+This patch corrects misspelled word to increase code readability and
+searching.
 
-The "struct dma_fence_array" can be refactored to add a flex array in order
-to have the "callback structures allocated behind the array" be more
-explicit.
-
-Do so:
-   - makes the code more readable and safer.
-   - allows using __counted_by() for additional checks
-   - avoids some pointer arithmetic in dma_fence_array_enable_signaling()
-
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-Link: https://github.com/KSPP/linux/issues/160 [2]
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
 ---
-Compile tested only.
+ drivers/staging/rtl8712/rtl871x_io.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-  - Name the new field 'callbacks' instead of 'cb'   [Christian König]
-
-v1: https://lore.kernel.org/all/d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr/
----
- drivers/dma-buf/dma-fence-array.c | 10 ++++------
- include/linux/dma-fence-array.h   |  3 +++
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/dma-buf/dma-fence-array.c b/drivers/dma-buf/dma-fence-array.c
-index 9b3ce8948351..c74ac197d5fe 100644
---- a/drivers/dma-buf/dma-fence-array.c
-+++ b/drivers/dma-buf/dma-fence-array.c
-@@ -70,7 +70,7 @@ static void dma_fence_array_cb_func(struct dma_fence *f,
- static bool dma_fence_array_enable_signaling(struct dma_fence *fence)
- {
- 	struct dma_fence_array *array = to_dma_fence_array(fence);
--	struct dma_fence_array_cb *cb = (void *)(&array[1]);
-+	struct dma_fence_array_cb *cb = array->callbacks;
- 	unsigned i;
- 
- 	for (i = 0; i < array->num_fences; ++i) {
-@@ -168,22 +168,20 @@ struct dma_fence_array *dma_fence_array_create(int num_fences,
- 					       bool signal_on_any)
- {
- 	struct dma_fence_array *array;
--	size_t size = sizeof(*array);
- 
- 	WARN_ON(!num_fences || !fences);
- 
--	/* Allocate the callback structures behind the array. */
--	size += num_fences * sizeof(struct dma_fence_array_cb);
--	array = kzalloc(size, GFP_KERNEL);
-+	array = kzalloc(struct_size(array, callbacks, num_fences), GFP_KERNEL);
- 	if (!array)
- 		return NULL;
- 
-+	array->num_fences = num_fences;
-+
- 	spin_lock_init(&array->lock);
- 	dma_fence_init(&array->base, &dma_fence_array_ops, &array->lock,
- 		       context, seqno);
- 	init_irq_work(&array->work, irq_dma_fence_array_work);
- 
--	array->num_fences = num_fences;
- 	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
- 	array->fences = fences;
- 
-diff --git a/include/linux/dma-fence-array.h b/include/linux/dma-fence-array.h
-index ec7f25def392..29c5650c1038 100644
---- a/include/linux/dma-fence-array.h
-+++ b/include/linux/dma-fence-array.h
-@@ -33,6 +33,7 @@ struct dma_fence_array_cb {
-  * @num_pending: fences in the array still pending
-  * @fences: array of the fences
-  * @work: internal irq_work function
-+ * @callbacks: array of callback helpers
-  */
- struct dma_fence_array {
- 	struct dma_fence base;
-@@ -43,6 +44,8 @@ struct dma_fence_array {
- 	struct dma_fence **fences;
- 
- 	struct irq_work work;
-+
-+	struct dma_fence_array_cb callbacks[] __counted_by(num_fences);
- };
- 
- /**
+diff --git a/drivers/staging/rtl8712/rtl871x_io.h b/drivers/staging/rtl8712/rtl871x_io.h
+index c5b12f74ebf8..f09d50a29b82 100644
+--- a/drivers/staging/rtl8712/rtl871x_io.h
++++ b/drivers/staging/rtl8712/rtl871x_io.h
+@@ -62,7 +62,7 @@
+ #define IO_WR_BURST(x)		(IO_WRITE_ | _IO_SYNC_ | _IO_BURST_ | \
+ 				((x) & _IOSZ_MASK_))
+ #define IO_RD_BURST(x)		(_IO_SYNC_ | _IO_BURST_ | ((x) & _IOSZ_MASK_))
+-/*below is for the intf_option bit defition...*/
++/*below is for the intf_option bit definition...*/
+ #define _INTF_ASYNC_	BIT(0)	/*support async io*/
+ struct intf_priv;
+ struct	intf_hdl;
 -- 
-2.45.1
+2.34.1
 
 
