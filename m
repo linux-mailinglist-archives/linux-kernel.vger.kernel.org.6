@@ -1,186 +1,204 @@
-Return-Path: <linux-kernel+bounces-189504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1704A8CF0F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9C68CF0F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D11C208F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91DF1C2092B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D17127B4B;
-	Sat, 25 May 2024 18:13:26 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7134086653;
+	Sat, 25 May 2024 18:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GXPFa/9o";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oXTGqGAC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GXPFa/9o";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oXTGqGAC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525C179B7
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673099473;
+	Sat, 25 May 2024 18:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716660806; cv=none; b=Fj1UN/MOQfJ34RPRB1Qsf9CiCTh6Ph7iCDdXhLL0pnGohratcztsKJgBq2r8DKjua7zBcm+w6d2ZnEme2Wu6f1Pw+OScJTJKLksxXpiJGeoXWmQzCo//UeFwi7oJRT7Tno9lXz2grDEotU4uvHdD7Wr0UZKmE1coNRE+wkzPKaQ=
+	t=1716660935; cv=none; b=uQRCEoufSaIdIg5QQiYH5hDQ5+o1Ev9m6eIxW7atYoKuFW0MCVK9K/yZxY1WK/846TMSXdQQNdYCpnvmenTwrd8GIl4Fu1q6Vx9I8kR+41ocFUAEcAifDHqGQdqrVZDBWkO6t1GzH/lqSuhrU/KnkPZwysRdI4Pq26vnoK7gHTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716660806; c=relaxed/simple;
-	bh=E7yg1jo1ugTYXdCsqnyGkXutUYOxpqIWT1O7iAc9fxg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Nm/VtXYoKLcGZRow/C09dZigIuxyZIHU4gZtuQlkK5KqgN1I4NaGvfp0kINAiWG9FVWMq1zCnOSAIde3GGvtGAZs+4sonTeObxoubwZAJsGBdf2SrgaSzrD6xpRh4dlrwwy0713UfexTGwOud0BybU6N6Ex9CyfGLzfVABAXFiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7ea27057813so89891739f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:13:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716660804; x=1717265604;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHk/zeMEFPra7B+OBp8VDhWRW437hyoA2QKN8GIJ7rA=;
-        b=bvlXx4o+yIEe/vJ6IXqDEd/0wD0dhzRThifgeFsi0i5PF80Fd0MNCN9Q1dEEpSiUoF
-         Rbj0OcQcKX31F4TtYdwq+WY+c2ug43MM1HaDzZD55sHtUYPEmkklNb/a0cVt/k6NZVk+
-         gHPuaYAO+j1ZTw7sv7n30CH05KeSMLwqM+RBFg2aCb3VxZCqf++tVjbzccVDJBzwK2wP
-         cB9s6sljqke3XhCRv8mSk2LwcMQkBHkbyJqXjwbN90yCLDETeyLTSGQxugyRda8OIyZ5
-         21q3pdA1JTok/ngQBd8TTbXL3llCAx5uRI/NMxeAH/npb5mIs46ffTChC1gn/PwbG5Fh
-         WCnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZm9XIV/VPBcxkuadPTfHZ2eEse5gU3YZr7l8oX4+eWBuH1Xye8fTPiVMOV4d5k+lH/A8ue4fPVMKrf3UrBo0GnQ3FVMKbwgZnxRWW
-X-Gm-Message-State: AOJu0YxTqgjB7VCaP19ZVvp9L2l8nGh86AkYN2YeLINjtvjwWeun3KN9
-	71kuGiSoVxdfYYAI5bQX/NYoxwOa0mJIehznr/h1UFPsJJaWx2gaVCGOvfrDS+JHNGlPRqszSyX
-	lugdLhXKAIg5jvmF85u+6SD/Eo1RfRqsn3lQPBoByweSRjT3AsYXFiy0=
-X-Google-Smtp-Source: AGHT+IGwleP/xZ8NyYVvSZOqNxY4RqQGqH0/5WcKJzRUGWW3GuXe9sbzjf/VnqI6SkLAjH7FnbsiB/3ZK5v3stJ9+gDirkPTmthZ
+	s=arc-20240116; t=1716660935; c=relaxed/simple;
+	bh=h9JgLrbRZjPLaX3q5EmomeHwEIM+TyOAhWwJVd8yMG4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WHR+3Kp/kJsxVvsRj8vLvxspjKVcPKsnMLDxeyLNOFsZLCTPbkSPFfE5wDVLGdb0/cwsZBavoTdWmAgLs3RPz1pj1pJYJoBHzvU6PLcjzsYfuV8Z80xPzOFjTz/5B0162E1MtY4AENWlYMm3IHwUmSR9oScrMgeRpIdPFN5fU9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GXPFa/9o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oXTGqGAC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GXPFa/9o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oXTGqGAC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 95C9D5C269;
+	Sat, 25 May 2024 18:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716660925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
+	b=GXPFa/9oIyPkQvQFpWFuL4d796QLUSF71OVsOCoTpjm2vZL+qXWr2ZqC0vgsmavi0fS9Vf
+	SteUz6k/qBZnj9tyTlOOFlvLmjH/vY1trJHPt1QSWrhdXjkyylkyJ0mRcFWqKFK5axcRR/
+	CH1mCIeNksIhazpal6pW4NORHiMcUHw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716660925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
+	b=oXTGqGAC7Fqz/1A35U6koQPZWll0Qthqa4cZdmkakHUhHPGh3efJl30/OPiyWVPgwHKoBH
+	7uYkaxLbjDEB/+Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="GXPFa/9o";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oXTGqGAC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716660925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
+	b=GXPFa/9oIyPkQvQFpWFuL4d796QLUSF71OVsOCoTpjm2vZL+qXWr2ZqC0vgsmavi0fS9Vf
+	SteUz6k/qBZnj9tyTlOOFlvLmjH/vY1trJHPt1QSWrhdXjkyylkyJ0mRcFWqKFK5axcRR/
+	CH1mCIeNksIhazpal6pW4NORHiMcUHw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716660925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
+	b=oXTGqGAC7Fqz/1A35U6koQPZWll0Qthqa4cZdmkakHUhHPGh3efJl30/OPiyWVPgwHKoBH
+	7uYkaxLbjDEB/+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5265313A6C;
+	Sat, 25 May 2024 18:15:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a8kYDr0qUmazTwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Sat, 25 May 2024 18:15:25 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: "Eduardo Vela <Nava>" <evn@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Jens Axboe
+ <axboe@kernel.dk>,  linux-cve-announce@vger.kernel.org,  cve@kernel.org,
+  linux-kernel@vger.kernel.org,  =?utf-8?Q?Tam=C3=A1s?= Koczka
+ <poprdi@google.com>
+Subject: Re: CVE-2023-52656: io_uring: drop any code related to SCM_RIGHTS
+In-Reply-To: <CAFswPa9jR6mKAsCrdmspCARe-evk16s1t0SG9LrRLCze_f6Ydw@mail.gmail.com>
+	(Eduardo' Vela's message of "Sat, 25 May 2024 17:09:45 +0200")
+Organization: SUSE
+References: <2024051338-CVE-2023-52656-6545@gregkh>
+	<871q5rqhuc.fsf@mailhost.krisman.be>
+	<d1cb0cd3-0826-48fc-8713-8648d6eb9fd7@kernel.dk>
+	<2024052542-diner-snare-a618@gregkh>
+	<CAFswPa9jR6mKAsCrdmspCARe-evk16s1t0SG9LrRLCze_f6Ydw@mail.gmail.com>
+Date: Sat, 25 May 2024 14:15:19 -0400
+Message-ID: <87fru5pxl4.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156f:b0:36d:e026:88f9 with SMTP id
- e9e14a558f8ab-3737b358795mr4609405ab.4.1716660804280; Sat, 25 May 2024
- 11:13:24 -0700 (PDT)
-Date: Sat, 25 May 2024 11:13:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000070775206194b3dd0@google.com>
-Subject: [syzbot] [xfs?] WARNING in mod_delayed_work_on
-From: syzbot <syzbot+d9c37490b32d66c6bc78@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 95C9D5C269
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
 
-Hello,
+"Eduardo' Vela\" <Nava>" <evn@google.com> writes:
 
-syzbot found the following issue on:
+> So, either I'm completely lost or CVE-2023-52656 shouldn't have been
+> rejected. Forgive me for mudding the problem even more.
+>
+> I think we need to unreject this CVE (CVE-2023-52656) or CVE-2023-52654
+> should be amended to include the dead code removal commit.. that said,
+> that'll be weirder than just unrejecting this commit.
+>
+> The reason is that the commit "io_uring/af_unix: disable sending io_uring
+> over sockets" is not enough to fix the vulnerability in stable branches,
+> because e.g. bcedd497b3b4a0be56f3adf7c7542720eced0792 on 5.15 only fixes
+> one path (io_sqe_file_register) to reach unix_inflight(), but it is still
+> reachable via another path (io_sqe_fileS_register) which is only removed by
+> d909d381c3152393421403be4b6435f17a2378b4 ("io_uring: drop any code related
+> to SCM_RIGHTS").
 
-HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=157a2844980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cec8dc951d3cca13
-dashboard link: https://syzkaller.appspot.com/bug?extid=d9c37490b32d66c6bc78
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Hm, right.  this is real for some really old stable tree.  thanks for
+the clarification.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+But lets agree, the above write up is literally the *only* relevant,
+public information on the issue (that I could find).  And it only
+appeared because we almost wrongfully rejected it.  The CVE description,
+the list of affected trees and everything else in the CVE report are
+absolute non-sense.  Still, the CVE report is all downstream developers
+have to work on the issue.  Of course, the original commit message could
+not have tracked the new information, but the analysis MUST be appended
+to the CVE description.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-8f6a15f0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e76220459de3/vmlinux-8f6a15f0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/584cb4587029/bzImage-8f6a15f0.xz
+FWIW,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d9c37490b32d66c6bc78@syzkaller.appspotmail.com
+	Fixed in 6.1.83 with commit a3812a47a320
+	Fixed in 6.7.11 with commit 88c49d9c8961
+	Fixed in 6.8 with commit 6e5e6d274956
 
-XFS (loop0): Quotacheck needed: Please wait.
-XFS (loop0): Quotacheck: Done.
-netlink: 'syz-executor.0': attribute type 1 has an invalid length.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5436 at kernel/workqueue.c:2518 __queue_delayed_work+0x268/0x2e0 kernel/workqueue.c:2518
-Modules linked in:
-CPU: 0 PID: 5436 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-10323-g8f6a15f095a6 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__queue_delayed_work+0x268/0x2e0 kernel/workqueue.c:2518
-Code: 0f 0b 90 e9 dc fd ff ff e8 05 dd 34 00 90 0f 0b 90 e9 00 fe ff ff e8 f7 dc 34 00 90 0f 0b 90 e9 23 fe ff ff e8 e9 dc 34 00 90 <0f> 0b 90 e9 46 fe ff ff e8 6b 17 92 00 e9 ae fe ff ff e8 d1 dc 34
-RSP: 0018:ffffc90007a9fc28 EFLAGS: 00010083
-RAX: 00000000000284b9 RBX: ffffe8ffad067510 RCX: ffffc90002d89000
-RDX: 0000000000040000 RSI: ffffffff8159a7b7 RDI: ffffe8ffad067560
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888058dd0400
-R13: 0000000000000000 R14: ffffe8ffad067518 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f5f1db40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000032040000 CR3: 000000004ae12000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- mod_delayed_work_on+0x19a/0x1d0 kernel/workqueue.c:2608
- xfs_inodegc_queue fs/xfs/xfs_icache.c:2113 [inline]
- xfs_inode_mark_reclaimable+0x5c3/0xf60 fs/xfs/xfs_icache.c:2149
- destroy_inode+0xc4/0x1b0 fs/inode.c:311
- iput_final fs/inode.c:1741 [inline]
- iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
- iput+0x5c/0x80 fs/inode.c:1757
- dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
- __dentry_kill+0x1d0/0x600 fs/dcache.c:603
- dput.part.0+0x4b1/0x9b0 fs/dcache.c:845
- dput+0x1f/0x30 fs/dcache.c:835
- __fput+0x54e/0xbb0 fs/file_table.c:430
- __fput_sync+0x47/0x50 fs/file_table.c:507
- __do_sys_close fs/open.c:1556 [inline]
- __se_sys_close fs/open.c:1541 [inline]
- __ia32_sys_close+0x86/0x100 fs/open.c:1541
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf732b579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5f1d5ac EFLAGS: 00000292 ORIG_RAX: 0000000000000006
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+Is nonsense, then.  We check for io_is_uring_fops(file) right before it.
 
+Greg,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I understand we have multiple streams for security issues, including
+some that might be automated through Fixes tag. But for cases like this,
+where a discussion apparently happened and a human did the excellent
+work of properly analyzing it, can we get a real CVE description
+beyond the original commit message?  Even publishing the archives of the
+original report (minus, whatever, the exploit) alongside the CVE would
+improve the situation.  The old CVE process was notoriously bad with
+descriptions, but this is somehow worse.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Although that patch claims "it is dead code", this claim was only true on
+> upstream, but not on stable branches (or at least on 5.15 where the
+> vulnerability was proven to be reachable).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Yet, there no information about this "small" detail anywhere I can find.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> My colleague poprdi@google.com sent this analysis to the CNA list, so maybe
+> we can continue the discussion there
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+No. this *really* needs to be discussed on an *open* list.  The CVE is
+out already.
 
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Gabriel Krisman Bertazi
 
