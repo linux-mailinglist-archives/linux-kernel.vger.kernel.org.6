@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-189304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797F28CEE2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:52:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9910A8CEE33
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A56B21BE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:52:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31804B21C80
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C54BFBF0;
-	Sat, 25 May 2024 07:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EA0182DA;
+	Sat, 25 May 2024 07:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I8l3VtoP"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XQIGJ2wW"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A929C3C28
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804A529A1;
+	Sat, 25 May 2024 07:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716623548; cv=none; b=kuCQmcnGajcgyqmSAq8Bp5gW2nLtS2LGxTn8SEuNeWSnU1xEDTAWbc3qp9DB4teZ0Uz7shCmoFxMn/pnqlSrZEKT9ypq3Q4qO1MhuVNhz5BmeTKG8zowv/72ZRP+/eYCU8VnGv8y96uEdZSdcDiLRY6dmtiVz2VWBCJmzAPsKgU=
+	t=1716623761; cv=none; b=MNeTgCRY8ISL6eCQ4HVwETclA76/Jo1w7RksgxC94KdFyoUx4zj56QKwvCBXmU0xAUIfbz2WBJzpFSuZVX7NJjla9/rE/eW1OW1p0QId0QfytvQJ5p/iJCUtzQaV/v3QP61Kht9hHjn+FfvZ56jYXzqRkxGBqbudBBIbQ1AfHWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716623548; c=relaxed/simple;
-	bh=NTE4aLUV/Me23bZw+dIv2vN6dOmlWJuGwpgYhYXpJxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CYu/wKCuqCM2s/3+4MneAbWTBzGWsFULu2dUQFKa3fyKrwJhcn0cft3QdvHtYibM6UmuBCmIjamBPosiF6Bcd/UVQaWc3hBTOh4LYHV5Sq/XKMOeNHu0MN4a+y3S+AdHSyFSBQCbBvE/3nQLP0IxEbUfSwxgJlvBU9Il7LH4pq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I8l3VtoP; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D24C240005;
-	Sat, 25 May 2024 07:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716623538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=hvYNI3hFtOWF93OT5lxSxIBWa6XcTcllEzru2wGd970=;
-	b=I8l3VtoPj9ZtgN8UEtVxy1qJwEB7bIeRB418wizQS5AWI5SgCmTxUYtzVu9BuvOAEaOJxj
-	oku/L1Y+pHzQgWxRgEffFFy6KuJ63AQxMhYDyOt3/C4MOyVzp4bx8xHbs4qCoxpvo2r9qW
-	0kLPVgA/t8X5HL0Ua1qoY3ddd7M1vPmCyRiSFNcATJZvOnXWNn6xeXTWxBWrwU9tf1GfVH
-	pn5bbpcMUqJYbBwXwjujMVzH974w7HfEn+UDSoOsRa8JQYgrm37y5jjKtg53jhcD1Vn2VN
-	77gWLie5DidppbVv/6x7DXJqRzjaM1P7AyrFm7AkoWPd+nykZkVPq48bwU/OPw==
-Date: Sat, 25 May 2024 09:52:17 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] I3C changes for 6.10
-Message-ID: <20240525075217d90cc066@mail.local>
+	s=arc-20240116; t=1716623761; c=relaxed/simple;
+	bh=zNvagCiFQlEBJ2V2WaqD1hNPPhtIuYBADiTXOIv4iXo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kzIc2X9FT23GNms4VH/2zzg6XNVKUftrR1kiEUEBoDuE5c0EqGq5h5m9wf3+dg5mN/VXPGmNcLxn+SUCyT4rNjApBFRnCCu8HLmS6vcNI8rAmgW+U6gLJPIDpsLpf8QDvkvyUOxEt4Ib41Omf6YlGDg/W3q/rX5DzT6xI9F1vtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XQIGJ2wW; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716623731; x=1717228531; i=markus.elfring@web.de;
+	bh=zNvagCiFQlEBJ2V2WaqD1hNPPhtIuYBADiTXOIv4iXo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XQIGJ2wWNkooZLiH9ykL+s9D1Jp/h7XyOyIqB4B/ZF4156HUTr6t5/QoSOnPUP+i
+	 69tO954AV7XBmj8M1iIrJo3/G+KObqUk4qHrIxOXjWS8NE/c0ZMTkDwstITEVnPtk
+	 hZ3Bp6kzAnAE2aohz4iOJQiZdBPqpDpaTJagrTdKjgMIYXOSV2XO8P4/gQ1QzbYeL
+	 9Fvf0Plrka8SJfuG+1YWHYJSokJMR2qgA1PQ/DiwVHjW21mQckHdKtAzmPaFPhEI7
+	 3HOZT1XxVuhieJzGX9hPwsEJ718TLCrnoPHzmEmMzUjvQwth85u+rHPfBCXg2mnh9
+	 WpK/nE7TBQE8U6Iqwg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5CQT-1sbyAY01zR-01166w; Sat, 25
+ May 2024 09:55:31 +0200
+Message-ID: <9fe12ecc-c4c2-4adb-a62c-4c8fe91b6613@web.de>
+Date: Sat, 25 May 2024 09:55:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, imx@lists.linux.dev,
+ Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de,
+ Shengjiu Wang <shengjiu.wang@gmail.com>
+References: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
+ earc_phy and audpll
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+Y8RZ2euW0PVsjjmirk2PPULrmxZDg8ex4ooenqfMi/uUTvAPbJ
+ 97nEDosbWPobp6ainbMMsYAxR/DSRSHyRVrqNoPpiPQ8W7nJDlC7hNa+O2dD3Yxx+SfZYI2
+ WaZIj2Z1bIO8c5T5GIaqtSw7g27d+0I5sQyS6ADMV/tuRHY5UI2iDweRETxL8KMVflWICpc
+ YGJznrb9DtsaDJOmL20oA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1d1X/haDOVk=;YgC1d6or9qyXrEPVXDekffAk5nE
+ xj2NyIa/QqjwbTI3z3wyAWSGSbiKebbbVBTiDB+2ysc7F00bHcnrX+WVY810vkXgVMrp1Iivx
+ l0dH480jOgsK1EeSJp0jV5PBB7YlxfGz4jtZW2uQopt2yc7v1YA7I8TtG2CfF8Z2p3oiKChno
+ jT++5rfnI4Nqfr41ekSXGap39/lxRUnDGqdP2fD6a3l8Ca/oIW2yBbD3qkSjCvnOu3eTkNMM8
+ m2gdjSpTf7PK0enARfGhaUT+nEmlwbNPFqpGxBwhR1yvbqmdaWN+Hjf51ns8QE3XxRXswYW0X
+ 0HbzcgcZOsK20+XFB6VwP+N2tbEZB8nX8HsKPm9mpDpc4rznXzoDH2gSZenIWVGpiRsPEl2o8
+ OTir4qDjYAvmTsZZZGrXGyBZfmyw3i0w3K6aVvNFNdDtFghNHtP2tQkzoqPVVp4vHnXdQdLUK
+ 0qTPq/Lqk7a56PlJsZkAAK02//pBCY/G+kNyW1FTrVn231BmJ+VKYgzY1IH0EB/J41ocBQanw
+ VjyutO7nEb+UiKJocyYq2N+oZ3DI0NRb7o7EN3sKfcQpPLR/OJg3nYa2d/mKUSfbltwZ9gUkQ
+ lG1TW33UZTMC7FlXxR6PObEsOpHP5QyJKVVDP6HAa8a00E8rpKlQtAjHPtlj6C7/QLzk4cpPS
+ OPXgI8VDfaMZBwNjWGXRJFmhtR4DGt9wW1zKtoitjkD0t8y0vfwXZBIslugoJDYE9CsAKjh6i
+ i5XwRrK2AupGJG8s/UuuCibG4YZVc5prnsRhE/3tE9zjkLk/NQanaFzX5b3IRQccZQrhafcul
+ 2y/T9RH4Yh0h5j+hMvkwnTd6cAHqiJnvndHsi/p8SDnxA=
 
-iHello Linus,
+> According to Reference Manual of i.MX8MP
+> The parent clock of "earc_phy" is "sai_pll_out_div2",
+> The parent clock of "audpll" is "osc_24m".
+=E2=80=A6
+> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
 
-Here is the i3c subsytem pull request for 6.10. Runtime PM (power
-management) is improved and hot-join support has been added to the dw
-controller driver.
+Does such information indicate that the word =E2=80=9CCorrect=E2=80=9D wou=
+ld be more appropriate
+(instead of =E2=80=9CCorrent=E2=80=9D) in the summary phrase?
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/for-6.10
-
-for you to fetch changes up to 1d08326020fba690cbb7b8f1b38ab4eab6745969:
-
-  i3c: dw: Add hot-join support. (2024-05-23 00:29:19 +0200)
-
-----------------------------------------------------------------
-I3C for 6.10
-
-Core:
- - Allow device driver to trigger controller runtime PM
-
-Drivers:
- - dw: hot-join support
- - svc: better IBI handling
-
-----------------------------------------------------------------
-Billy Tsai (1):
-      i3c: dw: Add hot-join support.
-
-Frank Li (3):
-      i3c: Add comment for -EAGAIN in i3c_device_do_priv_xfers()
-      i3c: master: svc: change ENXIO to EAGAIN when IBI occurs during start frame
-      i3c: master: svc: fix invalidate IBI type and miss call client IBI handler
-
-Mukesh Kumar Savaliya (1):
-      i3c: master: Enable runtime PM for master controller
-
- drivers/i3c/device.c                |  4 +++
- drivers/i3c/master.c                |  6 ++++
- drivers/i3c/master/dw-i3c-master.c  | 65 ++++++++++++++++++++++++++++++-------
- drivers/i3c/master/dw-i3c-master.h  |  2 ++
- drivers/i3c/master/svc-i3c-master.c | 18 +++++++---
- 5 files changed, 79 insertions(+), 16 deletions(-)
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards,
+Markus
 
