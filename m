@@ -1,200 +1,140 @@
-Return-Path: <linux-kernel+bounces-189375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BBF8CEF3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1538CEF3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560E71C20926
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B771F21527
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E881F4DA13;
-	Sat, 25 May 2024 14:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F7C4DA13;
+	Sat, 25 May 2024 14:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JfeJQdVa"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egCEt90k"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC2C55C1A
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1793BBD9;
+	Sat, 25 May 2024 14:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716646174; cv=none; b=ItyZju6gtdQhJaQVV3SLldBp3IdTI4UP9LcBF+nT6IoDfdCC/U1mUNhFsediVNv+Bmu81ApRYi2ASDRtZlDfmFQQTZ+R/DjdfAxOHpyVoaOHZL4gNMSnJIe+H89aYiQePzxn4mc6Inj3TR9Y/i5otOqYhHtaLqF8K3sqaU1mJjk=
+	t=1716646246; cv=none; b=Onui221HXjbbKaP/7ResDAf5D/MxjvB8IROAK0jC8hiTvPqew+Y2ruGk27LX93Zp9SIp/ejZq1VubrapPrSOmU5znKav9YSjNlLNdfLGEKN4qu13qJlXz/mt2iDeNw3iMNNX8bTiurHAzeDFdAjFRB3T+gcpqaxGk5OFc6BNYEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716646174; c=relaxed/simple;
-	bh=9AB3F+ERpeNgpHuSA/LmQ68qrAHdgCH0rbQPc3A19C4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X16JwDxoN5jiWhfRhEb6SwHhCY9JvKztffkfbtlEgB340aeGfVpMKHRuepvvVnUQvjqe+wyOzSoJxQjQfmWstsZ3CdF6VeJ03h263ElfM1bm06CXzgivXNNomBVVUUniERNOrLWs+gaTFx/Hv1G6NQfO+rWd+/Khhj1w36LkK50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JfeJQdVa; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-36db863679bso92545ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:09:31 -0700 (PDT)
+	s=arc-20240116; t=1716646246; c=relaxed/simple;
+	bh=5tPLxvC76dR1u+c6dlH6TKfwLycW990n5KJ1pd7w9Dk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=olkJJBKYzSGQ+SV+2H5h1Zes3s6uJex7UkMxZXQ3fn5DpwhgwYMWDv55g0gJhNvYEZr2Pc78AGhb0n912lsK2tieAaqCvMi/wEU/AqL/cw//hGXVMrMHmiKGKcPz2jmIYAB+c7LXkL70IBgB4bJQeF1wkcnAs6mghV0jfFd5D2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egCEt90k; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6818e31e5baso1484195a12.1;
+        Sat, 25 May 2024 07:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716646170; x=1717250970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZhqZJUOejfkCvi+8WQ97T+9L3dgb+ZhC9CuNx3x7Y5k=;
-        b=JfeJQdVaPDDRqaDFp3aHqgbnq8m99oxcwMxmHy7tJCmDS4DlQfrDwoxZkmoHed/qFs
-         EW+R/yKEAQc6TarD+FlhY27iNnMVccZiFzb3blO2N1CWKa3/0tyhR6MrfflNIKM0bVkj
-         FVTZm+ArCySxiOoZ6MAl93adqkfJv7ItSNaqjnT3zDR0tQsH28fJZc/++oSEdeX3C5PF
-         Htc5MSpzflpPjX9opP5sYWS1EhjRBNfatQM8myrCcRU20CQK1wZDOQAdd+VbuEyADlLc
-         fTTQc97IUrdsb//wuqECF60Os9GI3d9SHp5NRN27gULOzvVT4wS9rONhYg3Wvo8+xh1c
-         qDqg==
+        d=gmail.com; s=20230601; t=1716646244; x=1717251044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wldvmv7DWJTk5N8y48gKwHLB5rZ3GSfo3AcMZE5/l5w=;
+        b=egCEt90kkAjJELLhaejDK1OslC4XLYMhrTPDA5wOD3YxZ1AarZzuFQdOgUF+gy/qNV
+         XPiIWpz2vJ55k3uMGB4NwIxooVZ0AwWjBXI1Pe6p6ER27yVdVPvLcD3hH/EhdcvUBuL1
+         wwjxqK23peBaN+RQaiVViYfBtKHH54leQWtdPyHwNS1as0R7N2+EaA/qeZWa9MBj3hOU
+         nT/Hwf3aj/rRWFZh1BFEisrPILI8hYJKGCp/XdM2glEi33E1R1cvBDxXZcqbNbaKpmxc
+         EGPTrCFMqIxrPH+RaRUfZ67yoati7knnrkxiHoHl4R407knNZ8FEtzF7jG31WZJQ1X/9
+         iqYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716646170; x=1717250970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZhqZJUOejfkCvi+8WQ97T+9L3dgb+ZhC9CuNx3x7Y5k=;
-        b=ou0N2iuPCZAH7HzA+qfTcpTjggKIzH3jla2ZfQ1C/sT6uRwg8NWhgdJAp3jqJLl47B
-         BTwbYYQyBKZxqVvY6e/f27mokr433F2Y4WMx8ul56fOC+9FNhgFep7mwCojnk92TPodG
-         WHLg2q4aV7St/rSxobZ9d05T0ZzRsyAQ7akKbFObDNIPNK5VLW5y30h8KauggPNX5df3
-         9+pmsKehDfXkdAU5nzrc8uVA4tz3GUMauPz/8YkodKRUF4DfaZSOifOg01+Jn3VHqhbJ
-         03gpWvS/KUvLAI+y6B1CQ7nh9dVrNItEpDY1EWPLpvYO11BE9ZH7pejICLuxhoAedRFa
-         EFVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiujlMA+v6z/Wpqu+WNomFVZ7dUAmbtoK7mkRFDBAzz3oScjg+QehgWUs6LfPTYOdmskIn4OBRN7/vkduJUFIFsOWQ1grUmnMjzdxn
-X-Gm-Message-State: AOJu0YxKmR7KMAbxSe9eFa/y7CjNcAbCMn9LOGqYztvgb1yj51v90BpB
-	IKXPaHsxaHHF8MDmtqgLtSYo15nrvCazOKDL/kGGCft57aaeIdUTi2UbBd7NpA18xT+7+yiTc/N
-	43F/O7gspNJ6QMGGrMpJoA9kfm53aKc2gUcgS
-X-Google-Smtp-Source: AGHT+IHF3UOqk63Ap5kc83idT/QbuIH4w9EjhqgctPC+S356f6TJ3LRsJ5FLjAdwUyQtn+68L2808l5lIeQhsirgkGk=
-X-Received: by 2002:a92:c991:0:b0:36c:7fe9:333f with SMTP id
- e9e14a558f8ab-3738a749048mr1820085ab.14.1716646170263; Sat, 25 May 2024
- 07:09:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716646244; x=1717251044;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wldvmv7DWJTk5N8y48gKwHLB5rZ3GSfo3AcMZE5/l5w=;
+        b=p75J9nc/EDk/5ssd0O4YWj3DKOYu4CbBhDQMb7Eci5QDGBfcAX71de2yWZTSsJr8Hl
+         PNhDXyLiCE4/pdk4OxIHgmhNbMeQ8hJbwep7CRIGnsvNiwMzfSD2exbnxQBPOwAWEoge
+         3iPCpXtTHiy4DR6wQZW/LCOGfLVe2ugs1Exxgo1QKcgrXsLvVPJ/UfBaF8hH6a0G1BWz
+         rn15vWM/H6wxqilng6R/z+F8LJ6e10r9V3yJGilbiWn/nGW8vmO6gCZ2QEKbkmUN4CSn
+         f/oFxIhykyEwGX2psB1bnvSDW4IFL3W3bvp9RLXG4zpzqxNZJAImjRyMDjxNQp30x3Ol
+         mzIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjO/QZrN0hIC6Hea/ojE2/Qfv8XPwVtKmsLdTS8zFZRUUf/0/cMnyTvxu12X22qhYjo5QmAkp22R29vrYKZXentyksV8NPEJgToKTdNm7tapYGnyUNKWHRSMrCLpvxRUE4hC4YYrWo
+X-Gm-Message-State: AOJu0Yxcfq9KZvD2vmrxUdPAXMBHr24NDT6Ya04dGjQ7z2dibWCiWU+e
+	ClScGZOyJYIAVfFXfEP9Z9p3ghBym8g9nPOt2EIKMXZv0CBJJhwuBOklZCvd
+X-Google-Smtp-Source: AGHT+IEg8rMeGLzZKcheJdBT8ESn2j0S+pLTTLWZAi0/jjq6B3TRoOdqPmTap5IKJupvkhMftX4INg==
+X-Received: by 2002:a17:90b:4393:b0:2bf:7ccb:b8c0 with SMTP id 98e67ed59e1d1-2bf7ccbbec5mr3416578a91.26.1716646244073;
+        Sat, 25 May 2024 07:10:44 -0700 (PDT)
+Received: from velvet.. ([111.42.148.111])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bde078426bsm3404256a91.0.2024.05.25.07.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 07:10:43 -0700 (PDT)
+From: Shichao Lai <shichaorai@gmail.com>
+To: stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org
+Cc: oneukum@suse.com,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Shichao Lai <shichaorai@gmail.com>,
+	xingwei lee <xrivendell7@gmail.com>,
+	yue sun <samsun1006219@gmail.com>
+Subject: [PATCH v5] usb-storage: Check whether the media is initialized successfully
+Date: Sat, 25 May 2024 22:10:20 +0800
+Message-Id: <20240525141020.2520942-1-shichaorai@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
- <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 25 May 2024 07:09:18 -0700
-Message-ID: <CAP-5=fVFJNqYaQNekrWNVRg8=_2K0T-WKZ=8-iafU4CCfUCXSA@mail.gmail.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Clark Williams <williams@redhat.com>, Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
-	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
-	Yang Jihong <yangjihong@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 9:20=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, 24 May 2024 at 20:48, Ian Rogers <irogers@google.com> wrote:
-> >
-> > Thanks for the report. TL;DR try putting the PMU name with the event
-> > name, so "cycles:pp" becomes "armv8_pmuv3_0/cycles/pp", where
-> > armv8_pmuv3_0 is the name of the PMU from /sys/devices.
->
-> What? No.
->
-> If that is the new rule, then I'm just going to revert. I'm not going
-> to use some random different PMU names across architectures when all I
-> want is just "cycles".
+The member "uzonesize" of struct alauda_info will remain 0
+if alauda_init_media() fails, potentially causing divide errors
+in alauda_read_data() and alauda_write_lba().
+- Add a member "media_initialized" to struct alauda_info.
+- Change a condition in alauda_check_media() to ensure the
+  first initialization.
+- Add an error check for the return value of alauda_init_media().
 
-The issue is that perf previously would do two things, if you asked
-for a 'cycles' event then as the name was a legacy one it would encode
-the type in the perf_event_attr as PERF_TYPE_HARDWARE and the config
-as PERF_COUNT_HW_CPU_CYCLES job done. With BIG.little/hybrid/.. those
-events now need opening on multiple PMUs otherwise you end up only
-sampling on either the big or the little core. On Intel with hybrid,
-cycles had to become cpu_core/cycles/ and cpu_atom/cycles/.
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yue sun <samsun1006219@gmail.com>
+Signed-off-by: Shichao Lai <shichaorai@gmail.com>
+---
+Changes since v1:
+- Check the initialization of alauda_check_media()
+  which is the root cause.
 
-If we look at an event name that isn't a legacy one, like
-inst_retired.any, then when no PMU is specified perf's behavior is to
-try to open this event on every PMU it can. On Intel this event will
-be found on the 'cpu' PMU, or on a hybrid Intel on cpu_core and
-cpu_atom. Were the event 'data_read' then it could be found on the
-uncore_imc_free_running_0 and uncore_imc_free_running_1 PMUs. My point
-here is that wildcarding an event to every PMU that supports it is
-arguably a feature as it avoids users needing to remember a specific
-PMU name. PMU names are often duplicated and it would be laborious to
-name them all.
+ drivers/usb/storage/alauda.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> In fact, the "cycles:pp" is a complete red herring. Just doing a simple
->
->  $ perf record sleep 1
->
-> with no explicit expression at all, results in that same
->
->   Error:
->   cycles:P: PMU Hardware doesn't support sampling/overflow-interrupts.
-> Try 'perf stat'
->
-> because perf *ITSELF* uses the sane format by default.
->
-> So ABSOLUTELY NO. We're not changing the rules to "You have to know
-> some idiotic per-architecture JSON magic".
->
-> I don't want any excuses like this. No "You are holding it wrong".
-> This is a BUG. Treat it as such.
->
-> And yes, "perf record -vv" shows that it apparently picked some insane
-> arm_dsu_0 event. Which just shows that trying to parse the JSON rules
-> instead of just having sane defaults is clearly not working.
->
-> So here's the deal: I will revert your commit tomorrow unless you show
-> that you are taking it seriously and have a sane fix.
->
-> Because no, "You are holding it wrong" is not the answer. Never was,
-> never will be. Things used to work, they don't work any more. That
-> shit is not acceptable.
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index 115f05a6201a..40d34cc28344 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -105,6 +105,8 @@ struct alauda_info {
+ 	unsigned char sense_key;
+ 	unsigned long sense_asc;	/* additional sense code */
+ 	unsigned long sense_ascq;	/* additional sense code qualifier */
++
++	bool media_initialized;
+ };
+ 
+ #define short_pack(lsb,msb) ( ((u16)(lsb)) | ( ((u16)(msb))<<8 ) )
+@@ -476,11 +478,12 @@ static int alauda_check_media(struct us_data *us)
+ 	}
+ 
+ 	/* Check for media change */
+-	if (status[0] & 0x08) {
++	if (status[0] & 0x08 || !info->media_initialized) {
+ 		usb_stor_dbg(us, "Media change detected\n");
+ 		alauda_free_maps(&MEDIA_INFO(us));
+-		alauda_init_media(us);
+-
++		rc = alauda_init_media(us);
++		if (rc == USB_STOR_TRANSPORT_GOOD)
++			info->media_initialized = true;
+ 		info->sense_key = UNIT_ATTENTION;
+ 		info->sense_asc = 0x28;
+ 		info->sense_ascq = 0x00;
+-- 
+2.34.1
 
-I wasn't trying to say you were holding it wrong, I was trying to give
-you practical advice that would solve your problem whilst we determine
-what the right fix is.
-
-The question is what to do about events when no PMU is specified, here
-are the alternatives I see:
-
-1) make legacy event names special and only open them on core PMUs,
-2) make sure PMUs, like arm_dsu_0 in your case, don't advertise events
-matching legacy names like cycles,
-3) make perf record only scan PMUs that support sampling,
-4) in the case that we're using cycles:P as a default event, only open
-that on core PMUs (on Intel make cycles:P ->
-cpu_core/cycles/P,cpu_atom/cycles/P).
-
-A revert achieves (1) and I consider it a regression as now the
-behavior of 'cycles' doesn't match 'inst_retired.any' and the user
-somehow needs to know that certain event names are special.
-Changing the driver (2) is a workaround, but it feels like a burden on
-the driver writers.
-In order to determine whether a PMU supports sampling (3) we'd need to
-try probe using perf_event_open. The perf_event_open may fail due to
-things like host/guest permissions, etc. so we need fallbacks. We do
-something similar here:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
-ls/perf/util/print-events.c#n242
-(4) is the simplest change and I think it lowers the surprise from the
-behavior change in the patch. It means that were you to do "perf
-record -e cycles ..." you would still need to specify a PMU on Linus'
-special ARM box. We may lack permissions to read sysfs and so then it
-is hard to determine the PMU name, but the code was likely to fail
-then anyway.
-
-I'll write a patch to do (4), hopefully this qualifies as being
-serious, but it would be useful if the interested parties could work
-out what they think the behavior should be.
-
-Thanks,
-Ian
-
->                    Linus
->
 
