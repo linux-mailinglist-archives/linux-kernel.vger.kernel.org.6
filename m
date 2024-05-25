@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-189349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F23D8CEEE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:25:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F91A8CEEE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D81F21766
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 12:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72727B21411
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 12:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6D244C8B;
-	Sat, 25 May 2024 12:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514AD47F63;
+	Sat, 25 May 2024 12:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBZou4/4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubWj447c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381C025601;
-	Sat, 25 May 2024 12:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836AFDF62;
+	Sat, 25 May 2024 12:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716639950; cv=none; b=DmHhK5ZQTMpkckk3Bq7jCkzhbmiNLPwyXAcpdnLzIDayQffb2IG9nWEC3bbIuO2cLgdaRwHKdp5o8DySD20TZVnRltZnvhh97B/vkNRSzJDyrHzxenBFrNfdTIdZXBhey5q4ofXN2vccZEFqApWt9+GHhRVIBPeQ6S1hMTzOjD8=
+	t=1716640606; cv=none; b=d37LBzim/SfW1RCHSb2+IdEWlhPvK9W5QLRRghE+UW812n72ch17Cany4NdNmYHZDSeUowFhx2J+/Jg6M61Gk4Zcq61DzljbL7XZxxOrXY24vCSNS4ioR7Cbht5K1VZ2BOROmz/46qmAqyAEY/OqaPjwe32rtOVX1BZuI/TAl+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716639950; c=relaxed/simple;
-	bh=uuutn1siWRfLN8VrmLQsvkar1/xh4in+lXCkVh75NNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8S78Bfkexd8zBcod05S2XIJR5O+YZZz/SRcPX0LydaTub9mjCQXCTzdt8KGRcZeJK5Zl1j5dcNfVmlGU8QSwKuuo1TgxP5Pj9T3Ph0cgqFbR/NI2jP8UNq4XF0/eaqG3s2RM4OoQMkQcTpFkXYVWvJnxPMoapYc6XsbvSwfCqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBZou4/4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51AFEC2BD11;
-	Sat, 25 May 2024 12:25:47 +0000 (UTC)
+	s=arc-20240116; t=1716640606; c=relaxed/simple;
+	bh=iYJiwZkq202sbFOQmZ/InspF352DafABToYi4GRr+ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S87TlXO1XQ3xCG/hsTEV+JKWy5iOONh6wARkAexl33yRIJV5K9gOYmoRbG9G68xqYBhRPxP8sWjYsIus7sc2QxeNn/jCFQSSzOlJzWBQkg6N6B8iPb011E3P28My1EdqJUgjLkX1dDRAGj4WKSfLZvsUgw6SFElKW4Fvy9tSM6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubWj447c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CC4C2BD11;
+	Sat, 25 May 2024 12:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716639949;
-	bh=uuutn1siWRfLN8VrmLQsvkar1/xh4in+lXCkVh75NNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WBZou4/4P5uSEv7MlskTVJ8tOAnh1CurHxktslMywg/aVBTxLd0yHQnlopmMJOQZP
-	 9zMUwcSPMfzhxw6XXGAdYuT3N+3jKIkfkckiDqEYN08hCCdm+3Z1z80IA4ejMcy4Mn
-	 nFwy8nVkYRGJRhILFK4300UaJXoaOJnYYHRr+guvJKWFp1FSgP3coKXGkcM8ozRczF
-	 KqJCWak29MjcrIDHjWsLkrXhlN8xwmMXWKDi17wVEp2Mz/uRFlp5i7nyU5GuAW0A4A
-	 JQq2N9wY49GWimQQsKpgs5zVK7pwCryLU3ixytCWpc4w0NMJUntuT5C09cEfyBSG6J
-	 h14wh0R4pNsKw==
-Date: Sat, 25 May 2024 13:25:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Henry Bell <dmoo_dv@protonmail.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RISC-V: add Star64 board devicetree
-Message-ID: <20240525-shirt-scratch-6708b2a4f63b@spud>
-References: <IPHlm5mOKUzYfwGy0auyufx-oPkSrtQjUjiQLbtvspD69UPX9O98iB8P2mqM8ahNaerz0yUa009f4XABRniq7aj2PUp83hbRVVhhKmqT0Ss=@protonmail.com>
- <1b55aad1-1442-41a5-acc6-16baab90c021@web.de>
- <caCBlFpvjmhO9G1A1_2qHImmuoGai2NoPYonB5RCVftq4zIrSxlP8Msh9z_FX9GwQXzfSrB40dRxy1zfxZesOJENeebWQsERa03sDvArzec=@protonmail.com>
- <20240525-dumpster-bootlace-10123081a6f2@spud>
- <b52685a3-127a-4367-b11a-54ab88467dcf@web.de>
+	s=k20201202; t=1716640605;
+	bh=iYJiwZkq202sbFOQmZ/InspF352DafABToYi4GRr+ps=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ubWj447cpnppasdvMyvq08tvBeJD4k495DIDLj5VpV7XZXppojROdM94TAKzujuvb
+	 bIhwbPJ2BQHa9TSWAFMNaEW0xOimICXZ6i0aWHc62jNFw+T3l9b4IWTsnwREX3H81J
+	 aKLyPMBhXF6VZQSoTr+5xkl8ia+6YaWMmCiF/6WXIDjPX2J7ByQG+FNxmdTCI3dQCe
+	 NU38ASVM37vlftlIWZr1BAgsNNJKy0v1VVr4F6Ei4/s1P5XQeCugJBX5ndJGNFfzW/
+	 S2tryxDtyKrrlL8pmyBbPireptWqei0qzSC79MnxmTOcN/vYcJzsWa5c41osn2gq8d
+	 SfT+ONdUOof9w==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KEYS: trusted_tpm2: Only check options->keyhandle for ASN.1
+Date: Sat, 25 May 2024 15:36:33 +0300
+Message-ID: <20240525123634.3396-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6WI4GTcOugy2KI8b"
-Content-Disposition: inline
-In-Reply-To: <b52685a3-127a-4367-b11a-54ab88467dcf@web.de>
+Content-Transfer-Encoding: 8bit
 
+tpm2_load_cmd incorrectly checks options->keyhandle also for the legacy
+format, as also implied by the inline comment. Check options->keyhandle
+when ASN.1 is loaded.
 
---6WI4GTcOugy2KI8b
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: James Bottomey <James.Bottomley@HansenPartnership.com>
+Cc: stable@vger.kernel.org # v5.13+
+Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-On Sat, May 25, 2024 at 02:11:05PM +0200, Markus Elfring wrote:
-> >>> Would you like to add an imperative wording for an improved change de=
-scription?
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/Documentation/process/submitting-patches.rst?h=3Dv6.9#n94
-> =E2=80=A6
-> >> I'm happy to change it, but was going off the format used in Conor's  =
-Milkv Mars commit
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit=
-/?id=3D04a228aadb84d894721b13197649ca741f3018bc
-> >
-> > Don't worry about Markus, most maintainers (myself included) ignore his
-> > comments on patches. The commit message here is fine.
->=20
-> Would such a response mean also that you are occasionally ignoring requir=
-ements
-> from a referenced Linux development guideline?
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 8b7dd73d94c1..4f8207bf52a7 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -400,12 +400,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		/* old form */
+ 		blob = payload->blob;
+ 		payload->old_format = 1;
++	} else {
++		if (!options->keyhandle)
++			return -EINVAL;
+ 	}
+ 
+-	/* new format carries keyhandle but old format doesn't */
+-	if (!options->keyhandle)
+-		return -EINVAL;
+-
+ 	/* must be big enough for at least the two be16 size counts */
+ 	if (payload->blob_len < 4)
+ 		return -EINVAL;
+-- 
+2.45.1
 
-I do ignore it from time to time, yes. Being a stickler to the
-guidelines wastes everybody's time (just like this discussion).
-That said, the tense used in this patch is perfectly in-line with the
-guideline you reference. "Add Star64 board devicetree" is in the
-imperative and the commit message body contains additional information
-about the board's configuration.
-
-Thanks,
-Conor.
-
---6WI4GTcOugy2KI8b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlHYyQAKCRB4tDGHoIJi
-0oTUAP94LrOxy2p8XfaXuefNL2Vk1HswZhmUTF28/ERnU2emAQD+I1g497DfVS6G
-WaJk05M15ZqUswocaw+gXzJOKt7XjAs=
-=LQw1
------END PGP SIGNATURE-----
-
---6WI4GTcOugy2KI8b--
 
