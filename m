@@ -1,64 +1,101 @@
-Return-Path: <linux-kernel+bounces-189271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEF48CEDCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:11:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEF98CEDCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059521C20DFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2A91F219E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E18BF9;
-	Sat, 25 May 2024 04:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBD23C28;
+	Sat, 25 May 2024 04:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="B1R3j0Pt"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A5CjUT33";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+oVJuGwR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VnjQaARY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1sJLPbvA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B343C28
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 04:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A721AE54D
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 04:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716610303; cv=none; b=Ri9ff+NXyRu47PxgxRiP6F1kTwQLCnjvqToEnCqpFIoWS5YSHZX76UtJTSExB1OkyyjAo/sYNRNV1CqIeCMOFyX5A9LPeGQVtiQM/7xAhl7yZ5LbWYvFSIfbp+Qj4B+tyxAHxHSNHV9R9oFpExbzithPSqLM9tD4OXsNKyvVhhI=
+	t=1716610384; cv=none; b=Z9SxYgJwqbwledRiVinLq/2CPGM5nY9WE7VjqzhI5XRXyJvm9rnAKspvXJp3W0jnwmt0M/xhuulwKFXYsjRHBD+0dZ9lpB2FlWq4uyKKQKyVxQgg3e5ZV5+LHVIBxERpYOFhA1eWY/luzs2s3J4BhA4hFCaaM46mfpbOEPNetQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716610303; c=relaxed/simple;
-	bh=i/8bPKTHQepSw/PtXN54/xFyaQLHX5/Ic1/k3GfFdm0=;
+	s=arc-20240116; t=1716610384; c=relaxed/simple;
+	bh=nyyaEc7g8Qp0Wa/CW/xqMXHJA2h2HVAeep66uoUQKbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5k8fkso/SycIdEEgI/FKRL5y2DUou0Zg3fOqojyWINTQd/R4Yh/5RCDX5HhMPE4RsDcCTBHBo/WRp86W4fv3wZqAJ9SzkfbHQrvlqn8fvFa24CHQSrEADkStjqGHcrWJLZO2zq5ptbriYlnx8r4LLv9AS6UGMYUaFAGy5TPDdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=B1R3j0Pt; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-128-134.bstnma.fios.verizon.net [173.48.128.134])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44P4BJ0v016606
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 25 May 2024 00:11:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1716610282; bh=3oV+IctIQAXy0pIwXkAp3Hfhz/d4vXvllmxaqFVFWew=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=B1R3j0PtzOdAxET9gbHYXeU9ZKKvZRFgyQ+kKi0uFXe+hYdqh8t9mrTQxHGrwV9Yn
-	 +/ajaGSJ6RHA2njb+Tsj1AEWEQOq9rdiaIKh+fBm80yw5bSyo1GJ9Mn9S8Lu/5aYkD
-	 PUiFOFWSYLvdZagZ13sYsE1YPnjSsdX5m5AE+1pdC5xdzYbXAFOSGAxZwnWbRRiwLI
-	 u3vzEKuVYqClO0WXTBsWMv0iYhk+18WVdFo50ZSB9CmghkWuzJ+LBZxspV5fY/KLvg
-	 K1f5JUK6+aL5FE9fBFbTUQHZQzP+EVqaewUYqrCg850xZqgcXM3OadYBUAO5j0bVV8
-	 bkLi622X0YNXw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 3E21B15C0225; Sat, 25 May 2024 00:11:19 -0400 (EDT)
-Date: Sat, 25 May 2024 00:11:19 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kees Cook <keescook@chromium.org>
-Cc: syzbot <syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Justin Stitt <justinstitt@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in __fortify_report
-Message-ID: <20240525041119.GA981794@mit.edu>
-References: <00000000000019f4c00619192c05@google.com>
- <20240523130456.GH65648@mit.edu>
- <202405231540.84B3DBE841@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSE3ghBqi386K1UaVXFYvV9zVcS4qj0CQb+cz7X32321qPYatEnZ2cX3EH4uGP2clyez5CQTPa/4+HodVyU9XkRGjH7y8sLNaZAgQYHWSeZbpkFp0A+dJdk4LLpvCTeEVhZdwmbdVRDtHxXVlEj7fqCO3iQrvwhvPRpue1kS9xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A5CjUT33; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+oVJuGwR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VnjQaARY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1sJLPbvA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CDD123408E;
+	Sat, 25 May 2024 04:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716610381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rdi7hlA9h9Co0a/ynH1F9A1yZigACenw5JizREvilf0=;
+	b=A5CjUT33XB5GQRJTtT+Z3EX+niUwuq2kjx/fWhi5RLf3FxMYgrZRmFWdDQ3JX6mpKTtfWi
+	ZSIw5bxOk18Eg/NnvYFgXO+etgxf8rpPkOXzjf3quPBP9s3d9badkvFv5XdowyXzhRByHF
+	SUsmfrlRQ1UoaocDyoX5FWs59Y2owGY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716610381;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rdi7hlA9h9Co0a/ynH1F9A1yZigACenw5JizREvilf0=;
+	b=+oVJuGwRSjw4vmjCEjdO+J9kmtVZoNZbsUKPGIGeTGGpKEHFDhq+c+GRTjxCtc436P4Nl/
+	96up70AHOW2XHwBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716610380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rdi7hlA9h9Co0a/ynH1F9A1yZigACenw5JizREvilf0=;
+	b=VnjQaARYlkBAJNqfEFPaJryFW44XnmAe1VkotDNmZowF3WP6baaFzjCYyi7vbIoML10hH2
+	3YUwnKBSHvjwK5tXJ2FyAs2nBgoClyxhxGDrLKqsyC0Y1tEmNLHISI29TjKMQYfe52luA5
+	HUT6ClfHOQPd1rdCcaFSMdAWyRQWOeA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716610380;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rdi7hlA9h9Co0a/ynH1F9A1yZigACenw5JizREvilf0=;
+	b=1sJLPbvAtnBRNsclzks5oIwJlKVIulF0vwObA4tlla2lUfaMiP/hpnM19gHTTREWiNbtV4
+	2HwvEB8foC1AZLBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F1DB13A1E;
+	Sat, 25 May 2024 04:13:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id o9+tEExlUWZ8BQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Sat, 25 May 2024 04:13:00 +0000
+Date: Sat, 25 May 2024 06:12:54 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 10/20] powerpc/mm: Fix __find_linux_pte() on 32
+ bits with PMD leaf entries
+Message-ID: <ZlFlRr26AvS6n7p8@localhost.localdomain>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <41bf05806501c0091a7d52e118b187416d24a76f.1715971869.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,82 +104,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202405231540.84B3DBE841@keescook>
+In-Reply-To: <41bf05806501c0091a7d52e118b187416d24a76f.1715971869.git.christophe.leroy@csgroup.eu>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Thu, May 23, 2024 at 03:48:01PM -0700, Kees Cook wrote:
-> It looks like this is another case of a non-terminated string being made
-> terminated by strncpy into a string with 1 extra byte at the end:
+On Fri, May 17, 2024 at 09:00:04PM +0200, Christophe Leroy wrote:
+> Building on 32 bits with pmd_leaf() not returning always false leads
+> to the following error:
+
+I am curious though.
+pmd_leaf is only defined in include/linux/pgtable.h for 32bits, and is hardcoded
+to false.
+I do not see where we change it in previous patches, so is this artificial?
+
 > 
->         char label[EXT4_LABEL_MAX + 1];
-> 	...
-> -       memset(label, 0, sizeof(label));
->         lock_buffer(sbi->s_sbh);
-> -       strncpy(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
-> +       strscpy_pad(label, sbi->s_es->s_volume_name);
->         unlock_buffer(sbi->s_sbh);
+>   CC      arch/powerpc/mm/pgtable.o
+> arch/powerpc/mm/pgtable.c: In function '__find_linux_pte':
+> arch/powerpc/mm/pgtable.c:506:1: error: function may return address of local variable [-Werror=return-local-addr]
+>   506 | }
+>       | ^
+> arch/powerpc/mm/pgtable.c:394:15: note: declared here
+>   394 |         pud_t pud, *pudp;
+>       |               ^~~
+> arch/powerpc/mm/pgtable.c:394:15: note: declared here
 > 
-> This should be using memtostr_pad() as:
+> This is due to pmd_offset() being a no-op in that case.
+
+This is because 32bits powerpc include pgtable-nopmd.h?
+
+> So rework it for powerpc/32 so that pXd_offset() are used on real
+> pointers and not on on-stack copies.
 > 
-> 	memtostr_pad(label, sbi->s_es->s_volume_name);
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  arch/powerpc/mm/pgtable.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 > 
+> diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+> index 59f0d7706d2f..51ee508eeb5b 100644
+> --- a/arch/powerpc/mm/pgtable.c
+> +++ b/arch/powerpc/mm/pgtable.c
+> @@ -390,8 +390,12 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+>  			bool *is_thp, unsigned *hpage_shift)
+>  {
+>  	pgd_t *pgdp;
+> -	p4d_t p4d, *p4dp;
+> -	pud_t pud, *pudp;
+> +	p4d_t *p4dp;
+> +	pud_t *pudp;
+> +#ifdef CONFIG_PPC64
+> +	p4d_t p4d;
+> +	pud_t pud;
+> +#endif
+>  	pmd_t pmd, *pmdp;
+>  	pte_t *ret_pte;
+>  	hugepd_t *hpdp = NULL;
+> @@ -412,6 +416,7 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+>  	 */
+>  	pgdp = pgdir + pgd_index(ea);
+>  	p4dp = p4d_offset(pgdp, ea);
+> +#ifdef CONFIG_PPC64
+>  	p4d  = READ_ONCE(*p4dp);
+>  	pdshift = P4D_SHIFT;
+>  
+> @@ -452,6 +457,11 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+>  
+>  	pdshift = PMD_SHIFT;
+>  	pmdp = pmd_offset(&pud, ea);
+> +#else
+> +	p4dp = p4d_offset(pgdp, ea);
+> +	pudp = pud_offset(p4dp, ea);
+> +	pmdp = pmd_offset(pudp, ea);
 
-Ah... I see what is going on.  The two argument variants of
-memtostr_pad() and strscpy_pad() are confusing and dangerous.  These
-don't exist in the original OpenBSD strscpy() function, because the
-size in the third argument is explicit, while with strscpy_pad(), the
-automagic size is intuited from the first argument (the destination),
-while with memtostr_pad(), the size is automagically intuited from the
-second argument (the source).
+I would drop a comment on top explaining that these are no-op for 32bits,
+otherwise it might not be obvious to people as why this distiction between 64 and
+32bits.
 
-This confused me, and I couldn't figure out the bug even when I was
-given the stack trace from syzkaller.  So it's an accident waiting to
-happen, I clearly I was not smart enough not to fall into the trap,
+Other than that looks good to me
 
-So perhaps it might be nice if the descriptions of strscpy() is moved
-out of process/deprecated.rst (and BTW, memstrtopad isn't mentioned at
-all), and moved inta separate doumentation which safe string handling
-in C --- so instead of talking about what functions *shouldn't* used,
-such as strncpy(), it talks about how the various functions *should*
-be used instead.  
+ 
 
-I'll also note that figuring out what was going on from looking at
-include/linu/string.h was confusing, because there is so much #define
-magic to provide the magic multiple argument handling.  Personally, I
-was never a fan of C++'s function overloading where different function
-signatures could result in different implementations being called, and
-doing with C preprocessor magic makes it even worse.  To be fair,
-there is the kernel-doc inline documentation, but my eyes were drawn
-to the C++ implementation, and the kernel-doc documentation is more of
-a reference and not a tutorial style "this is how you should do
-things".
-
-Anyway, thanks for sending the patch.  I spent a good 30 minutes
-trying to figure out the bug, and was half-tempted to just revert the
-patch and go back to strncpy(), which at least I could obviously see
-was correct, unlike the strscpy_pad() transmogrification.
-
-> It looks like __nonstring markings from commit 072ebb3bffe6 ("ext4:
-> add nonstring annotations to ext4.h") were incomplete.
-
-Yes, I'll patch ext4.h to add a __nonstring annotation to
-s_volume_name.  As I recall, the reason why we had added the
-__nonstring markings was to shut up gcc's -Wstringpop-truncation
-warnings, and apparently it was needed for s_volume_name, which is why
-it was never annotated.
-
-Out of curiosity, though, would this have caused some analysis tool to
-trigger a warning when the strscpy_pad() commit was added?  I've
-tried, and it doesn't seem to have triggered any kind of warning with
-either gcc, clang, or sparse.
-
-Anyway, since I'm an old fart, it was pretty obvious to *me* that the
-how strcnpy() was used was obviouly correct, whereas I actually have
-to do more careful thinking and analysis with strscpy() and
-memtostr().  So it would be nice if there were some automated tools
-that warn if those new functions aren't used correctly, because this
-bug shows that these functions are definitely not fool proof --- both
-by the original patch submitter, and the fool who reviewed the patch
-and missed the problem.  :-)
-
-     	     	       		 	     - Ted
+-- 
+Oscar Salvador
+SUSE Labs
 
