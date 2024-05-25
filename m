@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-189536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF878CF161
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 22:57:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A1A8CF162
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD061C2090C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533C42814F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077741292DE;
-	Sat, 25 May 2024 20:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8412127E05;
+	Sat, 25 May 2024 21:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orange.com header.i=@orange.com header.b="fQPuZEg/"
-Received: from smtp-out.orange.com (smtp-out.orange.com [80.12.126.237])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4jfikW6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DFF4E1C3;
-	Sat, 25 May 2024 20:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.126.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCA82F2F
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 21:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716670640; cv=none; b=OaN2DV91nx4n5mecMNPtQKcu3QW5ChJt5iYDt+e2+GyejzOaZ+zD+9Y9B77Xh9WDwbMdtu7XjwuO5FdhnxVKGtp59SS301KyJw0icc83Mg0dEbYZhsn8cnq8/xWUGWnxsoQDXSeToezHqb9MTwxldC78mkv7uuR6u0sAOkOb/rs=
+	t=1716671301; cv=none; b=TNluyooKqssw7Psrk5tjdTAxjPVHzhbSumGVhBxOMEmTQBghv9dHIauGPbuQ5ii8fgVf0nWtO+UQNrbgMpBXO5k19sx+747Px5PeOZgsluoB9AlnSegnZedD5UzPy+Dw6VVP68ewC6xklj3ba0JzmW4+q0huQZqFW551dba8YBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716670640; c=relaxed/simple;
-	bh=vXs1xsSuDvhbu9fGviw/sbbEK2nBU38gIw01lU2p3ks=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=mnbfB8PNoNtSWWRqAPHFsNC6Fah+DLNFD6IXBTpLYPAU+enOBbhEZr1UDIq6WaaXJMpFVX770kTH04E0S1sDQqeC2Gm1RqqIF5wJI/E38nVsVzCKGZSnWVn+8K9b52PCNZ5cfZImOGYaXwqtRwUFOtzFRi/2GSWZvRonlAPbKz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=orange.com; spf=pass smtp.mailfrom=orange.com; dkim=pass (2048-bit key) header.d=orange.com header.i=@orange.com header.b=fQPuZEg/; arc=none smtp.client-ip=80.12.126.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=orange.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=orange.com; i=@orange.com; q=dns/txt; s=orange002;
-  t=1716670638; x=1748206638;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   in-reply-to:content-transfer-encoding:from;
-  bh=vXs1xsSuDvhbu9fGviw/sbbEK2nBU38gIw01lU2p3ks=;
-  b=fQPuZEg/tXxN3Red9f49NWZ7xglhI5VJuyoaba8gJlY4qcLd5BcNifiJ
-   Y0uJLwhP8KHrVxjXttpI2b3BPz9vXqTs8mwLfwmg6TV2bYvlSS50HR3Ge
-   1a8rcN/FOkNfebhEpxvMdisw+/tX3fwrDb+gP9VhC8T8KxWPJxaWrUDed
-   440TyXWOaZbpFIMjm9M+C3K16co/hAEwka9nW68kUg8rq6JlvDXyL3LVc
-   3MPgwDVSPli34TsYjZ2BtxxgXydPmejqyFFz8ml1AzFqXcar1gQIl1Cfw
-   SoxLoJTZDvlOd4hmcJgBeoMGMtk0QQ/a2oGP+4jNxia9qQUFubJBtgcq1
-   A==;
-Received: from unknown (HELO opfedv1rlp0c.nor.fr.ftgroup) ([x.x.x.x]) by
- smtp-out.orange.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 May 2024 22:56:07 +0200
-Received: from unknown (HELO OPE16NORMBX104.corporate.adroot.infra.ftgroup)
- ([x.x.x.x]) by opfedv1rlp0c.nor.fr.ftgroup with
- ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2024 22:56:06 +0200
-Received: from [x.x.x.x] [x.x.x.x] by OPE16NORMBX104.corporate.adroot.infra.ftgroup
- [x.x.x.x] with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37;
- Sat, 25 May 2024 22:56:06 +0200
-From: alexandre.ferrieux@orange.com
-X-IronPort-AV: E=Sophos;i="6.08,189,1712613600"; 
-   d="scan'208";a="147185672"
-Message-ID: <3acef339-cdeb-407c-b643-0481bfbe3c80@orange.com>
-Date: Sat, 25 May 2024 22:55:59 +0200
+	s=arc-20240116; t=1716671301; c=relaxed/simple;
+	bh=nEqzW9oyU97phZK7uKMU6F+19PuFaeFngjJCCflqxZQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZoesbVGOTEH1J9yGhsDQE8YpNsDXghs6eYpV2LqNbiGvH7MuOgv9egeEzyWgoHTu858gL+9H9MTbk3d6y25JviWdIjV/BFyGsuXRw/8CdDsp6exvhgEYsLRZ5UpWApTWIlw2y3zKZV2hHT5p0H7gJfN8urIAOY3ZPKQ0jflJE7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4jfikW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B3E1BC2BD11;
+	Sat, 25 May 2024 21:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716671300;
+	bh=nEqzW9oyU97phZK7uKMU6F+19PuFaeFngjJCCflqxZQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=a4jfikW636doLx2EGDH1HbLcxJr7Z6z/6pjy7lAkZkppcwxHwdN33XKfwH/6Xnxtb
+	 WSe4kmvEomGswDc1YgcCtAgEGy06mNzMbC/jZC3ervetVlQfEkkkwig2r9t7TzLZt3
+	 env1annT0VxaT15IFemG9lwekH1XBTldoByFGvvaAdSYVfX5ihDTAgnI2bpeq63vxh
+	 Xc8cXiZrhCZI0OEqRBWHh89tjerg9aH1py0winOBxgR+qNVBMDDLL4OZFIfV0JL42K
+	 RmGxKvRYiGIF/EodAp7bS/14JGTR2NVEEL0Wxf/7dT0Drbd1rCm0/D/md0JYe3gn49
+	 xq/NheNJDHrVw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ACF8AC43333;
+	Sat, 25 May 2024 21:08:20 +0000 (UTC)
+Subject: Re: [GIT PULL] JFFS2 changes for v6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <1964508139.144819.1716585977753.JavaMail.zimbra@nod.at>
+References: <1964508139.144819.1716585977753.JavaMail.zimbra@nod.at>
+X-PR-Tracked-List-Id: Linux MTD discussion mailing list <linux-mtd.lists.infradead.org>
+X-PR-Tracked-Message-Id: <1964508139.144819.1716585977753.JavaMail.zimbra@nod.at>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/jffs2-for-linus-6.10-rc1
+X-PR-Tracked-Commit-Id: af9a8730ddb6a4b2edd779ccc0aceb994d616830
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6951abe8f37b1f4f9a0e7c036873f0ab4f56abf1
+Message-Id: <171667130070.10959.173856068914692305.pr-tracker-bot@kernel.org>
+Date: Sat, 25 May 2024 21:08:20 +0000
+To: Richard Weinberger <richard@nod.at>
+Cc: torvalds <torvalds@linux-foundation.org>, linux-mtd <linux-mtd@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH] af_packet: Handle outgoing VLAN packets without hardware
- offloading
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Chengen Du
-	<chengen.du@canonical.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240520070348.26725-1-chengen.du@canonical.com>
- <664f5938d2bef_1b5d2429467@willemb.c.googlers.com.notmuch>
- <CAPza5qc+m6aK0hOn8m1OxnmNVibJQn-VFXBAnjrca+UrcmEW4g@mail.gmail.com>
- <66520906120ae_215a8029466@willemb.c.googlers.com.notmuch>
-Content-Language: fr, en-US
-In-Reply-To: <66520906120ae_215a8029466@willemb.c.googlers.com.notmuch>
-X-ClientProxiedBy: OPE16NORMBX204.corporate.adroot.infra.ftgroup (10.115.26.9)
- To OPE16NORMBX104.corporate.adroot.infra.ftgroup (10.115.26.5)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
 
-T24gMjUvMDUvMjAyNCAxNzo1MSwgV2lsbGVtIGRlIEJydWlqbiB3cm90ZToKPiAKPiBGaXJzdCwg
-d2UgbmVlZCB0byBldmVuIHVuZGVyc3RhbmQgYmV0dGVyIHdoeSBhbnl0aGluZyBpcyB1c2luZwo+
-IFNPQ0tfREdSQU0gd2hlbiBhY2Nlc3MgdG8gTDIuNSBoZWFkZXJzIGlzIGltcG9ydGFudCwgYW5k
-IHdoZXRoZXIgdGhlCj4gcHJvY2VzcyBjYW4gY29udmVydCB0byB1c2luZyBTT0NLX1JBVyBpbnN0
-ZWFkLgoKRm9yIGxpYnBjYXAsIGl0IHNlZW1zIHRvIGJlIGxpbmtlZCB0byB0aGUgZmFjdCB0aGF0
-IHRoZSAiYW55IiBkZXZpY2UgY2FuIAphZ2dyZWdhdGUgbGlua3Mgd2l0aCB2YXJpZWQgTDIgaGVh
-ZGVyIHNpemVzLCB3aGljaCBpbiB0dXJuIGNvbXBsaWNhdGVzIGZpbHRlcmluZyAKKHNlZSBHdXkg
-SGFycmlzJyBjb21tZW50IG9uIHRoaXMgWzFdKS4KCkdpdmVuIHRoYXQgOTklIG9mIHVzZWZ1bCB0
-cmFmZmljIGlzIEV0aGVybmV0LCBzdWNoIGNvbnNpZGVyYXRpb25zIGxvb2sgYXdrd2FyZCAKbm93
-LiBJIGZvciBvbmUgd291bGQgbG92ZSB0byBzZWUgYW4gImFueTIiIGJhc2VkIG9uIFNPQ0tfUkFX
-LiBBbmQgd2hpbGUgeW91J3JlIAphdCBpdCwgcGxlYXNlIGxldCB0aGUgbmV3IHZhcmlhbnQgb2Yg
-U0xMIGNvbnRhaW4gdGhlIGZ1bGwgRXRoZXJuZXQgaGVhZGVyIGF0IHRoZSAKZW5kLCBzbyB0aGF0
-IGEgc2ltcGxlIG9mZnNldCBnaXZlcyBhY2Nlc3MgdG8gdGhlIHdob2xlIGxpbmVhciB3aXJlIGlt
-YWdlLi4uCgotQWxleAoKWzFdIGh0dHBzOi8vZ2l0aHViLmNvbS90aGUtdGNwZHVtcC1ncm91cC9s
-aWJwY2FwL2lzc3Vlcy8xMTA1I2lzc3VlY29tbWVudC0xMDkyMjIxNzg1Cl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KQ2UgbWVzc2FnZSBldCBzZXMg
-cGllY2VzIGpvaW50ZXMgcGV1dmVudCBjb250ZW5pciBkZXMgaW5mb3JtYXRpb25zIGNvbmZpZGVu
-dGllbGxlcyBvdSBwcml2aWxlZ2llZXMgZXQgbmUgZG9pdmVudCBkb25jDQpwYXMgZXRyZSBkaWZm
-dXNlcywgZXhwbG9pdGVzIG91IGNvcGllcyBzYW5zIGF1dG9yaXNhdGlvbi4gU2kgdm91cyBhdmV6
-IHJlY3UgY2UgbWVzc2FnZSBwYXIgZXJyZXVyLCB2ZXVpbGxleiBsZSBzaWduYWxlcg0KYSBsJ2V4
-cGVkaXRldXIgZXQgbGUgZGV0cnVpcmUgYWluc2kgcXVlIGxlcyBwaWVjZXMgam9pbnRlcy4gTGVz
-IG1lc3NhZ2VzIGVsZWN0cm9uaXF1ZXMgZXRhbnQgc3VzY2VwdGlibGVzIGQnYWx0ZXJhdGlvbiwN
-Ck9yYW5nZSBkZWNsaW5lIHRvdXRlIHJlc3BvbnNhYmlsaXRlIHNpIGNlIG1lc3NhZ2UgYSBldGUg
-YWx0ZXJlLCBkZWZvcm1lIG91IGZhbHNpZmllLiBNZXJjaS4NCg0KVGhpcyBtZXNzYWdlIGFuZCBp
-dHMgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG9yIHByaXZpbGVnZWQgaW5m
-b3JtYXRpb24gdGhhdCBtYXkgYmUgcHJvdGVjdGVkIGJ5IGxhdzsNCnRoZXkgc2hvdWxkIG5vdCBi
-ZSBkaXN0cmlidXRlZCwgdXNlZCBvciBjb3BpZWQgd2l0aG91dCBhdXRob3Jpc2F0aW9uLg0KSWYg
-eW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUg
-c2VuZGVyIGFuZCBkZWxldGUgdGhpcyBtZXNzYWdlIGFuZCBpdHMgYXR0YWNobWVudHMuDQpBcyBl
-bWFpbHMgbWF5IGJlIGFsdGVyZWQsIE9yYW5nZSBpcyBub3QgbGlhYmxlIGZvciBtZXNzYWdlcyB0
-aGF0IGhhdmUgYmVlbiBtb2RpZmllZCwgY2hhbmdlZCBvciBmYWxzaWZpZWQuDQpUaGFuayB5b3Uu
-Cg==
+The pull request you sent on Fri, 24 May 2024 23:26:17 +0200 (CEST):
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/jffs2-for-linus-6.10-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6951abe8f37b1f4f9a0e7c036873f0ab4f56abf1
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
