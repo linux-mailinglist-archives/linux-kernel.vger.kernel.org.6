@@ -1,119 +1,186 @@
-Return-Path: <linux-kernel+bounces-189503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072858CF0F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:04:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1704A8CF0F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04751F21D99
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:04:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D11C208F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30689129E9E;
-	Sat, 25 May 2024 18:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgwovX5F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D17127B4B;
+	Sat, 25 May 2024 18:13:26 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F190F9F8;
-	Sat, 25 May 2024 18:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525C179B7
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716660137; cv=none; b=m25dAtH3UNgsv8z/MYWx9wvY99whCM6nFtiSI4lVOG/fLLSmeSIGfdZQQAdINYK6V5cVqIyWvgW5++MwwEPqhkyUC7VqzL9eVBthpWywv+qjm9QUVImSh/4gTh9WNGW9edfBGCa4VdfA/3DQZaYU7fDIgkRlZp97KJDCNEC7gnY=
+	t=1716660806; cv=none; b=Fj1UN/MOQfJ34RPRB1Qsf9CiCTh6Ph7iCDdXhLL0pnGohratcztsKJgBq2r8DKjua7zBcm+w6d2ZnEme2Wu6f1Pw+OScJTJKLksxXpiJGeoXWmQzCo//UeFwi7oJRT7Tno9lXz2grDEotU4uvHdD7Wr0UZKmE1coNRE+wkzPKaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716660137; c=relaxed/simple;
-	bh=4M17/UuBqlQLLBcYxcVFcVbZ+mfrwei8UC03mE9Scq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BvAyNU07FrJu0VLdHcX8rORLnMEKVO4y7fTGeyok7WbIp+UqSLgMZ1qEW5BfBPtdCNdaUFqTTwZcF/vc79LZT6kjSbwX8DtrKA5oD93yRPgfhP3Bf1sO5ej4Ss/Z1CbgylRnFsnAl175fQMIHkDwrHdn0WvEpCKyjJfhZBnnKGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgwovX5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B86CC2BD11;
-	Sat, 25 May 2024 18:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716660137;
-	bh=4M17/UuBqlQLLBcYxcVFcVbZ+mfrwei8UC03mE9Scq8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=MgwovX5FI/eKmKWoOWcIyWvTu59yWBlCwKI5hHHocdev++n9kHBjSf706+IFTyl99
-	 2mO88F/5htZvCdAkN5xZNoueUSwTI7WcdSFLJfpEQ0hglAHHwfH5wgYY/QSCQTcLKr
-	 TBr3JNJFmxy46IwKs+E1WMwy1GiAkjsYslPKPHk/oBECYX59SbNU0nK7sI9lI9wybO
-	 fB/MRVPv6GrSWUoDyAIHzkjPbEfsqW1lrcSGDOMdD5mVIB0k+xgMX8RnqfFnG5wJrM
-	 qibKCcJSsrFkY83wZRbVOg9Hyjj1RMP5mW277uu5SrEMUaMyhAZuQg6tIDbNFA/B9v
-	 qWsdtnbTNsJuA==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 11:07:05 -0700
-Subject: [PATCH] arm64: dts: qcom: sc8180x: Drop ipa-virt interconnect
+	s=arc-20240116; t=1716660806; c=relaxed/simple;
+	bh=E7yg1jo1ugTYXdCsqnyGkXutUYOxpqIWT1O7iAc9fxg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Nm/VtXYoKLcGZRow/C09dZigIuxyZIHU4gZtuQlkK5KqgN1I4NaGvfp0kINAiWG9FVWMq1zCnOSAIde3GGvtGAZs+4sonTeObxoubwZAJsGBdf2SrgaSzrD6xpRh4dlrwwy0713UfexTGwOud0BybU6N6Ex9CyfGLzfVABAXFiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7ea27057813so89891739f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:13:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716660804; x=1717265604;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sHk/zeMEFPra7B+OBp8VDhWRW437hyoA2QKN8GIJ7rA=;
+        b=bvlXx4o+yIEe/vJ6IXqDEd/0wD0dhzRThifgeFsi0i5PF80Fd0MNCN9Q1dEEpSiUoF
+         Rbj0OcQcKX31F4TtYdwq+WY+c2ug43MM1HaDzZD55sHtUYPEmkklNb/a0cVt/k6NZVk+
+         gHPuaYAO+j1ZTw7sv7n30CH05KeSMLwqM+RBFg2aCb3VxZCqf++tVjbzccVDJBzwK2wP
+         cB9s6sljqke3XhCRv8mSk2LwcMQkBHkbyJqXjwbN90yCLDETeyLTSGQxugyRda8OIyZ5
+         21q3pdA1JTok/ngQBd8TTbXL3llCAx5uRI/NMxeAH/npb5mIs46ffTChC1gn/PwbG5Fh
+         WCnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZm9XIV/VPBcxkuadPTfHZ2eEse5gU3YZr7l8oX4+eWBuH1Xye8fTPiVMOV4d5k+lH/A8ue4fPVMKrf3UrBo0GnQ3FVMKbwgZnxRWW
+X-Gm-Message-State: AOJu0YxTqgjB7VCaP19ZVvp9L2l8nGh86AkYN2YeLINjtvjwWeun3KN9
+	71kuGiSoVxdfYYAI5bQX/NYoxwOa0mJIehznr/h1UFPsJJaWx2gaVCGOvfrDS+JHNGlPRqszSyX
+	lugdLhXKAIg5jvmF85u+6SD/Eo1RfRqsn3lQPBoByweSRjT3AsYXFiy0=
+X-Google-Smtp-Source: AGHT+IGwleP/xZ8NyYVvSZOqNxY4RqQGqH0/5WcKJzRUGWW3GuXe9sbzjf/VnqI6SkLAjH7FnbsiB/3ZK5v3stJ9+gDirkPTmthZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-drop-ipa-icc-v1-1-84ac4cf08fe3@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMgoUmYC/x3MQQqAIBBA0avErBvQyUi6SrQQHWs2KQoRhHdPW
- r7F/y9ULsIV1uGFwrdUSVeHHgfwp7sORgndQIqMmmnG6q226sFQUkbJDsV7JHZRWVomZxh6mgt
- Hef7ttrf2AUuqS3JmAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1056;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=CsEqn+n+Eza70hGJCXG87FvFxmm9W6wEylukMsBMkJ0=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUijJpCOxSYulkA+DyZmMvwG6XaCKPAKa1ajSB
- 0RfpArzLPGJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIoyRUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWAeA//YOriADOVYlqnT2GTtcSfranK31ON1AbTdLpaIZE
- pJp6oAGuhFFmf5kcw6d7wD3i+fkJAoMhjx2/G5ztZeFOwSBttOJXWCynpFLNYDYysegFAfsdl5r
- Utm9GXOH2lvxcqVRZyJiH9rkqG/5O6+lu4GXu/OZpQsOwL1PAbC676kGJd6tEzj6YunPA9APqpo
- HRz4c9mCTieq2U6NTPi7ztUsXligWDqMpTVHIl5xnQEn6r2NsIq+BZ1auteExU3sLYTJ2YR0nLb
- Ldar5GF1OrAhPCasMZxZeN+wiag2hC3Rjqrv5qfPC/HJDOsD72pljDk8BcSmJRjQW8KPz72m9Wu
- g+Vc/KEuvPbq1WU6r9r1t8ylvs6B2WC1ptWxJkKGylZUGOdwN5n5OpWvB2k4A6rb+lYsXjIG12k
- sff1fW1XsbUGvIOtiFFABX2rTLkpjZCU4Ie/r3UeihIR9rTyZBU2bBzgeBF2y3rW9ftFo504XRq
- dI37uI7JtkjJmgM2IBOeuf799dn+2fxmEE+pMBkqOsY7TkI/mKwdmUeRBQfBGy5ENYZP/5nfNdN
- DbdIIEAxW0/9O744k0T45CYqG3W73i7Fnry6I5J3NWeamTwEmnGBygFGdwOrvxY3na1cCj0ypMC
- 5WGtBn1qJ6ltaQG2sb0L+GkgnB2g6izz4QumnIhvNiwI=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+X-Received: by 2002:a05:6e02:156f:b0:36d:e026:88f9 with SMTP id
+ e9e14a558f8ab-3737b358795mr4609405ab.4.1716660804280; Sat, 25 May 2024
+ 11:13:24 -0700 (PDT)
+Date: Sat, 25 May 2024 11:13:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000070775206194b3dd0@google.com>
+Subject: [syzbot] [xfs?] WARNING in mod_delayed_work_on
+From: syzbot <syzbot+d9c37490b32d66c6bc78@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+Hello,
 
-The IPA BCM is already exposed by clk-rpmh, remove the interconnect
-node for the same.
+syzbot found the following issue on:
 
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157a2844980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cec8dc951d3cca13
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9c37490b32d66c6bc78
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-8f6a15f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e76220459de3/vmlinux-8f6a15f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/584cb4587029/bzImage-8f6a15f0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d9c37490b32d66c6bc78@syzkaller.appspotmail.com
+
+XFS (loop0): Quotacheck needed: Please wait.
+XFS (loop0): Quotacheck: Done.
+netlink: 'syz-executor.0': attribute type 1 has an invalid length.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5436 at kernel/workqueue.c:2518 __queue_delayed_work+0x268/0x2e0 kernel/workqueue.c:2518
+Modules linked in:
+CPU: 0 PID: 5436 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-10323-g8f6a15f095a6 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__queue_delayed_work+0x268/0x2e0 kernel/workqueue.c:2518
+Code: 0f 0b 90 e9 dc fd ff ff e8 05 dd 34 00 90 0f 0b 90 e9 00 fe ff ff e8 f7 dc 34 00 90 0f 0b 90 e9 23 fe ff ff e8 e9 dc 34 00 90 <0f> 0b 90 e9 46 fe ff ff e8 6b 17 92 00 e9 ae fe ff ff e8 d1 dc 34
+RSP: 0018:ffffc90007a9fc28 EFLAGS: 00010083
+RAX: 00000000000284b9 RBX: ffffe8ffad067510 RCX: ffffc90002d89000
+RDX: 0000000000040000 RSI: ffffffff8159a7b7 RDI: ffffe8ffad067560
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888058dd0400
+R13: 0000000000000000 R14: ffffe8ffad067518 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f5f1db40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000032040000 CR3: 000000004ae12000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ mod_delayed_work_on+0x19a/0x1d0 kernel/workqueue.c:2608
+ xfs_inodegc_queue fs/xfs/xfs_icache.c:2113 [inline]
+ xfs_inode_mark_reclaimable+0x5c3/0xf60 fs/xfs/xfs_icache.c:2149
+ destroy_inode+0xc4/0x1b0 fs/inode.c:311
+ iput_final fs/inode.c:1741 [inline]
+ iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+ iput+0x5c/0x80 fs/inode.c:1757
+ dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+ __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+ dput.part.0+0x4b1/0x9b0 fs/dcache.c:845
+ dput+0x1f/0x30 fs/dcache.c:835
+ __fput+0x54e/0xbb0 fs/file_table.c:430
+ __fput_sync+0x47/0x50 fs/file_table.c:507
+ __do_sys_close fs/open.c:1556 [inline]
+ __se_sys_close fs/open.c:1541 [inline]
+ __ia32_sys_close+0x86/0x100 fs/open.c:1541
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf732b579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5f1d5ac EFLAGS: 00000292 ORIG_RAX: 0000000000000006
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
 ---
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 7 -------
- 1 file changed, 7 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 067712310560..2be1a5ab0e60 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -2250,13 +2250,6 @@ ufs_mem_phy: phy-wrapper@1d87000 {
- 			status = "disabled";
- 		};
- 
--		ipa_virt: interconnect@1e00000 {
--			compatible = "qcom,sc8180x-ipa-virt";
--			reg = <0 0x01e00000 0 0x1000>;
--			#interconnect-cells = <2>;
--			qcom,bcm-voters = <&apps_bcm_voter>;
--		};
--
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
- 			reg = <0x0 0x01f40000 0x0 0x40000>;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
-change-id: 20240525-sc8180x-drop-ipa-icc-2eaf08273a4e
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Bjorn Andersson <quic_bjorande@quicinc.com>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
