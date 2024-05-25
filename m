@@ -1,148 +1,158 @@
-Return-Path: <linux-kernel+bounces-189518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2148CF124
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F878CF126
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E253E1C209CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE061C208DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FD6127B6A;
-	Sat, 25 May 2024 19:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D2128382;
+	Sat, 25 May 2024 19:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alcVc9AR"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="h5VjKQYf"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2053.outbound.protection.outlook.com [40.92.47.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4F29CE5
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 19:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716666804; cv=none; b=P/QYtb4ZqAh0NihLW+DmyY5EYn05blN70hgsS0eD4/0dvWy5+V//ZvSIEShs/iTrcrDcJyrgqzhBw3hO/kIipoDrJkZeKYHHF6zfmsWNs88vWCzW6Lhk2t7NMraaKpuog5aIzaVPr1HcWzgeKw+hBPSOIDOCvlvVICAbTX1AQl0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716666804; c=relaxed/simple;
-	bh=M/3s1GxCdbe10Q+Ris65wPXVXEe1DMs6c1mNw58Yb4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHrau3BQ7ROAroaEEeHFIjBaf+PRmesRSpb8sdlfz3tSwqRkPzBkEkVet/WPWu283thuyXRJrIjlrE8B3Y6TyUcSYuWDm/8GfsAECCqRkNN35W0HU5VyJ16vZ6hFwvQEP6j1BzyGDNF4fIAMFUCcnTO63wc+F2Tm1/D7FR3yPSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alcVc9AR; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35834c76cffso7641f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 12:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716666801; x=1717271601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oPqPzXoshwO3X5GrkiASssYjgVLQm4/xRukqmuyA2Sg=;
-        b=alcVc9ARYRLN/dZHezGHKFAF8ck/PwMxlKXMbOo6lmaiZ6tbgfk4qlVWVKRqiAdtE+
-         ECxpCtydqQabaCZs8M32birfK/76Yn3b0o/2WSZRc4QhpFzXrCmk6GMoRda9FQUKebRg
-         6lreLOQZEI+nswt9ttNOuP3IIuLr9AqZpcuaASX8vzwOq7RINaA+02AoHN56a3WA8bwv
-         Ey/UD1fVBKpFDWOO91SRbWNyC/vM45/Jf3opEV65RU4K/+2YsnCpYKpoSK8/Fgo4pKZI
-         E7zbSLrhHEesenvd713ZEJxJa47bAt1UWhkdvfSwA9mSPlMQ1QQ8KcQYZAprI/3S+txd
-         TkOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716666801; x=1717271601;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oPqPzXoshwO3X5GrkiASssYjgVLQm4/xRukqmuyA2Sg=;
-        b=qLZoh/2pj98PXCgFSy2INadLD1wmmIhw2YAST5OzRFqcFekOKHmVGaREHdeNwEiq44
-         OQmeWkfXsHL5fOYRvbhwpXaQAbm8fDeBRHSuIEnL0x2WmsUfF9xmHaTRuSDarcT5IC22
-         LihW0Bv47GjEbYPn5Hi2keYuhVC3XcShsGtH45UMnDTIf5MeMsjlwogTVn7Dsogz3I6k
-         /8ys8INz3atBUS9oocbc5C01fI2J/EWeCW3fTQlhy3Ly/da6pFwlB6OdRWRJwGesgi0V
-         n44k5gHuHFNe63bCFbfU0P+LU0pMbGzxAOkKJskjSq2QFkBoz6b0PbHmTSqfJXidY0wi
-         OkLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHGIjAl3d2bP9XOdjS1sYhXTev22DEIYTXHHwH37mR5Pw+8HPJdOp/Ole1lWk4AZIeslLaYX0ORtvJiypJZjlrI3J0/RayRaGDJRi7
-X-Gm-Message-State: AOJu0YxWzQ10Yc8ZN9+31JO2Iwl1F1EpiR1+S+odwA8MutBpJZC+MUju
-	kWXRUz0FgUZsl5w75Cp4KvRJm8jcZqVCYx27g0qk1a1IjxEFAn1z
-X-Google-Smtp-Source: AGHT+IFe6BKMaPWpLr6rOrgLIvvYyuPJtLKEx/wU3Add+KxVCLzTLbbpch0b4hOOGRd2/PyWAZJeBw==
-X-Received: by 2002:a05:600c:3b88:b0:418:ef65:4b11 with SMTP id 5b1f17b1804b1-421099b03e5mr40154515e9.2.1716666801145;
-        Sat, 25 May 2024 12:53:21 -0700 (PDT)
-Received: from [192.168.44.127] ([185.238.218.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee7e1fsm90288625e9.6.2024.05.25.12.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 May 2024 12:53:20 -0700 (PDT)
-Message-ID: <5f591c67-235c-4afa-bf87-8fd01dc0e5af@gmail.com>
-Date: Sat, 25 May 2024 21:53:16 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B94171AF;
+	Sat, 25 May 2024 19:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716666970; cv=fail; b=PNCsbFxq1wfhjkoRqr9olBIRze2g208FFNrKtVxGO3BEp+7lbbyaFTM8ukI+5i/i3aUjHYrLlomstpUUm3B9ynMLfM7izfkzpLFMydcxcf4er8c6YONs71EX0nqHKYhuYcDeDXJhzpvLe8JOmn6x549bEpN7RtE6POFnUH1gbHs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716666970; c=relaxed/simple;
+	bh=ctgyF2VcEvsTxaxhfcYBangfvhE8tgP+7LFgA4eoazc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RsAelUmZaeSV0Jr5lDlF3DYYlUJhAu3zYlUQbqMG1cp8RD5SwtcXrk4Y1JzLnoxZdczYlfDc/3PAyaLwI6nXwr1phwNRupxO1wzc6p6P6fly7CUwc2T3SuXpMRrNfS7+U6cCUkx1TQbYDRxKkRNyq+G9r7jZByQ3M1IFn+9knOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=h5VjKQYf; arc=fail smtp.client-ip=40.92.47.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QHX1FkfxaitylIqPYuColA0rgzlM3yb6KEyfPMSzESmgUx+8aLAYJXbbDHXDpzr9mQGFR3hRuoiSowDNwphzwHfPfJdtHVZgZQJx4fibzu/68JqEIhiXuG1Ioki1nTPRuotsd9NDQiaVQy+HfdtNAOiIyScus+6k0OXmO1pLdC+sraXHw24kfA+8uo2TYoLx2HjPwWPsfeIEzZBnDUEM1xlJeJduHDq4d7qV105fUhUFlfDPyEp2OJB9Ei3bPTX+STbw93OKaLR8Rsnu3J6cocN354ysYjxI/C6x/A0ONcxSXBP7eGx2zD9PpLc+UQo0aK4nBERkmmnpmCPbwlzRww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
+ b=Lh0uxCwFS9xBZJ1eAB5+Zph0KgKyAskxOqSeddF4iSmXJ++28nWHOZ/bRDcmp7tW0TAgCITamrTq5zlq73VacwgLeVaKmghZL86yRJ3/iPMMJWe8fH3tfMLeGV+i5P79f2BF2BHBqdB1xoqdgwoNe139rCqZTG//9yLbCUGMd5JGe+0MZnBv/BG4ien/76UTbvey/hQgoUXJKXcfWFCghHrds7yydgrRMOX7VsxW2Bb6yWGxlNgwAMrxrqRSFJXJV/U5oY3tmK/w/Q+luj3zb7Gwrxrvw2Jke3tg1IM5TIIpjJPngM/BWap5M9Zp0bcNEsPNA9kH7buxd7o1zGxTHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
+ b=h5VjKQYfeJXaL7ur7afPmz5MbIy83crOq1krA9iqbUX2GtKxc9HppdSEno0mM+AUUe0XlgO0CWc9ox+RLyP5vYqSxsEe1lLdClMWw9hn7hrqUwyfW5cxycuufCvoMfPvjDJURZ8RIffKE+e4Dd4sJ3izs4SHGM/tc249nqO5rmuPH6fcfU0GUGz1t+cHiOT80iqhMdwtr1/uDoLA+FIH2c8C6EoL93YGN/aoV8SZiF5WkkRggYQ2ha8c7AldATFRZT+VW1f10DqsaexyrqeawrhubEVEyRxtNdOGpneyxO90YM7SrpZYDFf76q1fcjk6IpoRPrcU5VI0541794N/1A==
+Received: from BL0PR03MB4161.namprd03.prod.outlook.com (2603:10b6:208:6e::27)
+ by MN2PR03MB5295.namprd03.prod.outlook.com (2603:10b6:208:1e7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28; Sat, 25 May
+ 2024 19:56:04 +0000
+Received: from BL0PR03MB4161.namprd03.prod.outlook.com
+ ([fe80::c5d3:dd2:eb42:c5d7]) by BL0PR03MB4161.namprd03.prod.outlook.com
+ ([fe80::c5d3:dd2:eb42:c5d7%6]) with mapi id 15.20.7611.025; Sat, 25 May 2024
+ 19:56:04 +0000
+From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	arnd@arndb.de,
+	gregkh@suse.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Subject: Re: [PATCH] libfs: fix implicitly cast in simple_attr_write_xsigned()
+Date: Sat, 25 May 2024 19:55:52 +0000
+Message-ID:
+ <BL0PR03MB41610A9302ADA6A5022A306BADF62@BL0PR03MB4161.namprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [ve1WjD7VnkK03IAOTDzKeXdaYxLFSL7J]
+X-ClientProxiedBy: CH0PR03CA0036.namprd03.prod.outlook.com
+ (2603:10b6:610:b3::11) To BL0PR03MB4161.namprd03.prod.outlook.com
+ (2603:10b6:208:6e::27)
+X-Microsoft-Original-Message-ID:
+ <20240525195552.8750-1-jiashengjiangcool@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] staging: rtl8192e: Fix spelling mistakes in
- rtllib_softmac.c
-To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org,
- tdavies@darkphysics.net, garyrookard@fastmail.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240524041235.61184-1-topofeverest8848@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240524041235.61184-1-topofeverest8848@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL0PR03MB4161:EE_|MN2PR03MB5295:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|4295299012|3420499023|3430499023|440099019|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	tY0ucaV94BG6iio5V/Hc6VqoU20f4lJdEekWRdvy8XdA+lsrlKP2t0+Q27vPQl6MaxLJDHpp/pENhYI+ywINzIiksvgAtA+OrWPQHbhad7gsMEdU84IlmxHjndq3bNP4/QSSOZpiInCYyEqXvfnJIASpMvONbwDbep61hRqYCWopNIj091NnzTpIcKVjamahsaQFo4UOX7l5MJdZr5HF8cmbiDMajNCoe/KqnApXxlxrkRGDvROJSicbobnYkzji4yn9+dJDfs+dRiThzhQELo11/muEMvw3/z3W3f5rNiesV/EAFCzIA1XQ3g9iFUWiCP1ioqsgMZXFmv+EYLSEIQW9E+fMaOONHJplqEaQWrTQZ5Fzj+yanQRoVYDIIoBMHzroIRl/BTQReuxjQ97jeCsY+8yznJrgkGodCjlZyo7CM/u2y1Y7nj4HGndtqwTTmxWG2nwVoTltkhRzVPu11NxKorBhAxtTyGbx22OeqnYmVi8dFCcVYkufoo/UERvb6xI2VSB9/O310AqxtohC83fy+3hl5Cne0eeVxnq+FwXPXWI5L4NWUjHDF6QAWwrAEE5hAhTeZARHuLQDVvv7TdWcyKkvEoit5H8Uz9NOnAQsbC6VNQDa3WWNecI8rJcT
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4Vy9FI1VGFkEJewJA4aRy/ifcirjw+QxM557Z5Fli2g1rTY59tYn83g/JJie?=
+ =?us-ascii?Q?SvGq9yLbynv7n7ZGPo3JOcVc0mLAIrNDS3Kcp6SX0Ad85wz0zm9RuNDtxY/Q?=
+ =?us-ascii?Q?IQll+UyYAUqZKHARYvNWkewZIVB1U4grWfpQD/hYzqBUn+ExS2SfTaM7KEel?=
+ =?us-ascii?Q?dHanXklum1ewQ5041VRDfWFcDez8BB/KTIzM90yDajZVH8VC3UrmcnKRL1+1?=
+ =?us-ascii?Q?8CVnadv33M50YXFdeO986hGTTTip+0xTWt/S8ZDTcsvOK3WRPldXYGG//Byk?=
+ =?us-ascii?Q?uY5hftnd4KXgvUfxuD8DOBUHDv2I1pTucJTkYs+FtGzf30Zh9Wa55qbeMAgK?=
+ =?us-ascii?Q?PhxBulyUqYZl53O4milT3vsP+AaEmk3GauHLWUkvnVE2qb4Ijkzorh1hV1Kx?=
+ =?us-ascii?Q?KRP0MMp//9i+7TdwwZa6KJwooQFgbfpNKkY30zTrg8OTQ6El8zI0RuMIgbpU?=
+ =?us-ascii?Q?20yoX4g9ntZv4tQvC4+0dhjrVjFM8RXr6Py6sEmtFvaeSFYns2t/1fVMyTHS?=
+ =?us-ascii?Q?+Bu6xpvAkVFDcHBqf8tY72YQso0PqfiBmUrJ3qw2/3hCFuhGIrO4DDfX6KHk?=
+ =?us-ascii?Q?lkqrUUtkrnM0hzdm4z74958WnWVZpX4RI7az2gRZYmborQIGBOkYulQJyQxp?=
+ =?us-ascii?Q?bl3P6dXtNS0YjpBrfq9Y3s/s/Lw5i1sFmPgxxpyV/SdzXTbBlyKXLiz5cyLs?=
+ =?us-ascii?Q?vyX9k/woYv0TObuyIMGQkkl52R4S9JR0jRrdINJQbixZYjsHM8V5NfzVx4iR?=
+ =?us-ascii?Q?emPPhxZiLsF7cfPp1sd/l1/QEnMatxvBa1uwPWSi0eSWymotPbRE4mP1ufLp?=
+ =?us-ascii?Q?9ZGnG80Wa0BKH5g3dFQULIQ2SzIHdVcgAEYPXRI4OLFW5lqBwlCIcPfvehNc?=
+ =?us-ascii?Q?uy1hRZWXWhfc0rgge5LrZ39WY5DjuCzYdB2yJPt7TfbVBICz+6c8wjAYHCmo?=
+ =?us-ascii?Q?oO96RsA17WXRG8fEfJ6lGoIue0TpSk95ou9zQ5YEHXo03mqcRfyjYPFmiIEv?=
+ =?us-ascii?Q?FnrJWjn91UgbUcQYSdOPxxMk+0ZWvC+OIsg5mCKvkcB+fRYbx6saYC8dk2cb?=
+ =?us-ascii?Q?WY3yCCwZQwEckw9G9/+fklllYZtsb0mEIqQCdSr4mkSfqi7St8lLO3PElB8X?=
+ =?us-ascii?Q?WCwnqIOKeGs7bYzBlGbdIbIuMSLEsEeDF4ponu9jDNKusBYAmdrtZo+x/jMb?=
+ =?us-ascii?Q?/PzQTP+v4YLnoiJMfdRGCh2gjyuf2DVjyMYkay23Z7OVlN8EfEK1ihKg/2P1?=
+ =?us-ascii?Q?Mn2Kumr+O7NlktjhW8qS?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR03MB4161.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2024 19:56:04.8225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB5295
 
-On 24.05.24 06:12, Roshan Khatri wrote:
-> This patch corrects some misspellings to increase code readability and
-> searching.
+> On Wed, May 15, 2024 at 03:17:25PM +0000, Jiasheng Jiang wrote:
+>> Return 0 to indicate failure and return "len" to indicate success.
+>> It was hard to distinguish success or failure if "len" equals the error
+>> code after the implicit cast.
+>> Moreover, eliminating implicit cast is a better practice.
 > 
-> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
-> ---
-> v3:
->   - Added the missing patch history on v2 patch
-> v2:
->   - Updated the patch description as suggested by Phillips
->   - https://lore.kernel.org/all/1aefa708-b1fe-4246-bb67-36f25919c766@gmail.com/
-> v1: https://lore.kernel.org/all/20240523035952.59724-1-topofeverest8848@gmail.com/
+> According to whom?
 > 
->   drivers/staging/rtl8192e/rtllib_softmac.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
-> index 97fdca828da7..0fc97c868f81 100644
-> --- a/drivers/staging/rtl8192e/rtllib_softmac.c
-> +++ b/drivers/staging/rtl8192e/rtllib_softmac.c
-> @@ -421,7 +421,7 @@ static void rtllib_softmac_scan_syncro(struct rtllib_device *ieee)
->   		 *    So we switch to MAC80211_LINKED_SCANNING to remember
->   		 *    that we are still logically linked (not interested in
->   		 *    new network events, despite for updating the net list,
-> -		 *    but we are temporarly 'unlinked' as the driver shall
-> +		 *    but we are temporarily 'unlinked' as the driver shall
->   		 *    not filter RX frames and the channel is changing.
->   		 * So the only situation in which are interested is to check
->   		 * if the state become LINKED because of the #1 situation
-> @@ -934,7 +934,7 @@ static void rtllib_associate_abort(struct rtllib_device *ieee)
->   
->   	ieee->associate_seq++;
->   
-> -	/* don't scan, and avoid to have the RX path possibily
-> +	/* don't scan, and avoid to have the RX path possibly
->   	 * try again to associate. Even do not react to AUTH or
->   	 * ASSOC response. Just wait for the retry wq to be scheduled.
->   	 * Here we will check if there are good nets to associate
-> @@ -1359,7 +1359,7 @@ static short rtllib_sta_ps_sleep(struct rtllib_device *ieee, u64 *time)
->   		return 0;
->   	timeout = ieee->current_network.beacon_interval;
->   	ieee->current_network.dtim_data = RTLLIB_DTIM_INVALID;
-> -	/* there's no need to nofity AP that I find you buffered
-> +	/* there's no need to notify AP that I find you buffered
->   	 * with broadcast packet
->   	 */
->   	if (dtim & (RTLLIB_DTIM_UCAST & ieee->ps))
-> @@ -1806,7 +1806,7 @@ void rtllib_softmac_xmit(struct rtllib_txb *txb, struct rtllib_device *ieee)
->   
->   	spin_lock_irqsave(&ieee->lock, flags);
->   
-> -	/* called with 2nd parm 0, no tx mgmt lock required */
-> +	/* called with 2nd param 0, no tx mgmt lock required */
->   	rtllib_sta_wakeup(ieee, 0);
->   
->   	/* update the tx status */
 
-Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Programmers can easily overlook implicit casts, leading to unknown
+behavior (e.g., this bug).
+Converting implicit casts to explicit casts can help prevent future
+errors.
+
+> Merits of your ex cathedra claims aside, you do realize that functions
+> have calling conventions because they are, well, called, right?
+> And changing the value returned in such and such case should be
+> accompanied with the corresponding change in the _callers_.
+> 
+> Al, wondering if somebody had decided to play with LLM...
+
+As the comment shows that "ret = len; /* on success, claim we got the
+whole input */", the return value should be checked to determine whether
+it equals "len".
+
+Moreover, if "len" is 0, the previous copy_from_user() will fail and
+return an error.
+Therefore, 0 is an illegal value for "len". Besides, in the linux kernel,
+all the callers of simple_attr_write_xsigned() return the return value of
+simple_attr_write_xsigned().
+
+-Jiasheng
 
