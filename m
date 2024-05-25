@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-189473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC97F8CF079
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0218CF08C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F5E1C20CC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5471F2120A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F07126F1D;
-	Sat, 25 May 2024 17:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173D3127B5C;
+	Sat, 25 May 2024 17:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoVOqVz7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jsJpCN/O"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E19A3A29F;
-	Sat, 25 May 2024 17:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4198625D
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 17:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716658764; cv=none; b=gc60ABSZulKKwxdbhmNug4SKKNuzIZwxFcnv8ZhMTpF/3HlSBUso2oBEO7kA2OEuqgcu0+6eS7tjvToMW5vTPG+2H/+CcU7OY67nz21WZVUM8cvkiwFqDobj/KbNKsNH+z2rPrl+QC1KN3BiJYpjyPxJyU4Trpc+/sUsbOr7w6I=
+	t=1716659135; cv=none; b=p9h5O9wOkuZqInqhLDv4/USiz/KIJcF29WCVSwz0hotHgg0fs0UOHAMnnHV4blJRSmiQHA5xVPbG0X3R9zhsuhntlc5Ertkgivdhw3G6cFkwRicQL+CasXvmitIHtnWl8frivDYGxiwL0PaBJnFzWaVyCO55Uan3p+hjzYg92tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716658764; c=relaxed/simple;
-	bh=cOJAS+lSpANLmIdlcOUWxK83GUMKgG5eurzHyM54Noo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HCA0WRKPrUJjaSc2qx4IvMnf4uBe8rnwlu327QRkhq6mgLyjUkuNVbvhfRdpMDr4jVtjavdIK/UKmPVGyp6cVpsoVkAjANzcsw3HDiwxxRh+jh2KV1iBSyVLILuiQ3qtXp4zHXyrb1MPDGN6TjSgNbhktIJ6YxzaOvk1rh0WxTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoVOqVz7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D67AC2BD11;
-	Sat, 25 May 2024 17:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716658763;
-	bh=cOJAS+lSpANLmIdlcOUWxK83GUMKgG5eurzHyM54Noo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eoVOqVz7E9v+5euKLm8T2htWuV/1JYuZf7IhDIobQohTWvFnTxYUkxiNGi1vELNbm
-	 foJj0E2eiRu4eNlx6L8QTspp78IzDOx6upfAqBW6DBsFWiydGBdnheI0TYMSx/evk8
-	 7TC5DbN6iQk9NEsGY9aXTOwIdH//uP6aHfvYFo9YgoKtN6KSzsvF3WJ6NtzcMSD4H9
-	 /zFhRMaEwDmwx583ZLJ4IKb0YySBuSOVyaflGdEQG4zcbicGA7+FlPkxNrYaEUONLB
-	 2VWccQ2QYZTUwX4Gl1K5hSyLO201S/T+ctp4HBXjns8pt0wVWqbZvLbZl6HGzoefWC
-	 dqJEaOYA4mRLg==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 10:44:11 -0700
-Subject: [PATCH] arm64: dts: qcom: sc8180x: Fix LLCC reg property again
+	s=arc-20240116; t=1716659135; c=relaxed/simple;
+	bh=ifCbnpwwdLSR1ptlXaG3gY9JdMDdGLFeG2/bnUDNc1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ijGgQ/SQ/1qaLtLTi+8Jz1AtG17rzYDRSbTFHjZCaAZjSe3qoas0PcW/pfG1pg1hlnFcfXkDDezABZJbKAovrYcRhX0XOh4Rrbfsb2hxaYmenKR1wR53jnMhpU1s2pNbtobEcRp2cen3KAfPNNdzm+lRUv8zDcwDobSlYGrTKmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jsJpCN/O; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso179278066b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 10:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716659132; x=1717263932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hoa0fhHT1L3lcNO0gKeqVH235WRYgvKVzPvZxHoujA=;
+        b=jsJpCN/OKg2jcDzRWLpmOEv9afCWlAQ4U5CtjFj8V6SnpGsJkdmz5N2/kuf0fzfVsr
+         t2gDrKtB48DU/GYiDfU23jVg4vC2goCv9Io5iZKVspBe/PQ0sh0liEch3LBt9KaJowaC
+         5gTQk6QZdLE8lDI6YzkSXFkALuHv3OnIX8hI9eYnXLa9MIEFZ5egUOsBNQcCOjuPnusW
+         e9yhTiAvk9dbTRTLqMc3NC9x7h3ISrPFHiAQf8FVvEuAu9IEullq3c3VJrusrfwALGmP
+         ITrr4B8jHF3SRwSKGgpzvwvkVjU4w/698vGZ8nA/85CgwZdX8bh/7d6JrH2LXg6+uhTo
+         QYMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716659132; x=1717263932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8hoa0fhHT1L3lcNO0gKeqVH235WRYgvKVzPvZxHoujA=;
+        b=mtOA/x5vwHfBMhUoMW12TZOFrPAGYb07KRp22xM35hTc90q12UCuQgBKeZbdBOXlA9
+         oVuAhZvsuzsIbAlBaKiBhr0wA+s8V7OITIxg5Fq97dTxdNJDzbmjYjb000pwTwNBHc2X
+         Ieaxkp1OyqmsoyMjkeJ8fTnrd/MXBE7O1xWzCHlzEDgSv3qm4KvyhIc5FHfJXEMeuam1
+         rifilee5nbSi3oFHGGy4Pm3YuWr9f21pUEknLiR+uF4l6zPgZ1QUKqSCMfFTJgYPIY6g
+         BwDWuZOXsodzU/ImoX4dHfOlqqylCKiYblyWvtr9+Ev+MRv+u+sHur8NMxgy6wcr9kVk
+         qTmw==
+X-Gm-Message-State: AOJu0YxJ5ss8oUnrSaB4cWCj0ABFRkeHjCb1Ht4pKufRcnUA7QnnBqlZ
+	KoXDDNrQJhPxx8u6AjLUJeIkEXFUgaFjCFTtag9yH6Rlag4+Egy9MgYrzNu3DpI=
+X-Google-Smtp-Source: AGHT+IFJ1lA0pYeo9NJ3OUxER0GYcBDF8kinUR/EIazcpobsxpnx+ZeFukAxV40so5Rro3/ZzP2TFw==
+X-Received: by 2002:a17:906:488c:b0:a59:c62c:212d with SMTP id a640c23a62f3a-a62641aa355mr355593466b.14.1716659131770;
+        Sat, 25 May 2024 10:45:31 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817c5esm272090866b.43.2024.05.25.10.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 10:45:31 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] x86/asm/bitops: Change function return types from long to int
+Date: Sat, 25 May 2024 19:44:49 +0200
+Message-ID: <20240525174448.174824-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-llcc-reg-fixup-v1-1-0c13d4ea94f2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGojUmYC/x2M0QpAQBQFf0X32a11s2x+RR60Dm4J7UZb8u82j
- 9M081BEUETqiocCbo167BmqsiC/jvsC1ikziZHaWLEcvaucSbxt3nPAwrOm6+S2bURsAwcLyvE
- ZkMU/7of3/QBsI+QuaAAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1900;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=pdAiPkmwix16zBI9UBTkevZJH1zCUnPSJHmIYiTo5OM=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUiNsKYEK5V8wbmb/GOzthe5vzq8ZIVFtkPEc0
- wyedNNY5wKJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIjbBUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcUIdhAA3xcTTXugYl5wVFwaGp8MskzlLIc/mfIOgxIVAOS
- z/MnBL1GMsM2x6h5XYErpwVu/fv1GYDz6YiBHwWm45NjjYo48OzUPtDfNhvELs+egs6yNcWj7e4
- a6zn4WZQY9Vb989s0Zug4jJGHBjQ06kWyBiJD6Qdl5SpdnsSpoG73EnmRB31gfEtYlZwCKarNYl
- y4QYaXFt/jDra9ar0wFqRnqrCzuucRBayUVK0Bc39e05dTDe/W5lui2FkztV63f5N3fW2BfU4fU
- eSQClCnRsaRJ/50F0rmH6UgSIqDJLy2Vu54giR9iCakaGt8ytscCVZx9Ol9MUMYmXTxWtxtTPFC
- 6kysrgEZTMy2p32gyfCvMEglexQglmz+Tm2ojcpp4WxX/0wtqrp5D4UiCWy8Arew5+Qb0tOpivE
- 3vQu7nydYD+XkhNvpFJsmTlVS+5pc357M9bEtz+CKTGd3O/k2N7iM4brrA+bdY3e/7HLH6CGZzx
- 0c/5J94Rh7kq2BsJXicQhqfPgaZJJXL8ngG+arvmRIB17RbQ0Dxi0ogp3/+bjhSKbIjthj39Q4+
- bHnSvnEjY8docaXkPhQZdm5w2hSr2wQPIaY8vyuaLmh0duyD8UhmKcn9UaKvfICu9EdMbLq1mvU
- lH3bYtuB7hE1vw/smAvFgMwOAQNiyOpAVJHKVJK4+DZ0=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+Content-Transfer-Encoding: 8bit
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+Change the return types of bitops functions (ffs, ffz, and fls) from
+long to int. The expected return values are in the range [0, 64], for
+which int is sufficient.
 
-Commit '74cf6675c35e ("arm64: dts: qcom: sc8180x: Fix LLCC reg
-property")' transitioned the SC8180X LLCC node to describe each memory
-region individually, but did not include all the regions.
+Additionally, int aligns well with the return types of the corresponding
+__builtin_* functions, potentially reducing overall type conversions.
 
-The result is that Linux fails to find the last regions, so extend the
-definition to cover all the blocks.
+Many of the existing bitops functions already return an int and don't
+need to be changed.
 
-This also corrects the related DeviceTree validation error.
+With GCC 14 and defconfig, these changes reduced the number of x86-64
+instructions by 342 (using objdump -d and compared to 0b32d436c015).
 
-Fixes: 74cf6675c35e ("arm64: dts: qcom: sc8180x: Fix LLCC reg property")
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+Summary of the most significant changes in instruction counts:
+
+	insn	before	after	diff
+	----------------------------
+	ja	16044	15166	-878
+	cmp	171197	170583	-614
+	movsxd	16796	16271	-525
+	add	94692	94454	-238
+	jbe	9053	8815	-238
+	xor	97499	97478	 -21
+	...
+	and	47291	47312	 +21
+	nop	1036207	1036233	 +26
+	cs	5622	5656	 +34
+	int3	2815714	2815842	+128
+	lea	118250	118488	+238
+	je	190859	191132	+273
+	test	204887	205484	+597
+	jne	134316	135161	+845
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/bitops.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 067712310560..581a70c34fd2 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -2647,11 +2647,14 @@ usb_sec_dpphy: dp-phy@88ef200 {
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index b96d45944c59..4d91517a395d 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -246,7 +246,7 @@ arch_test_bit_acquire(unsigned long nr, const volatile unsigned long *addr)
+ 					  variable_test_bit(nr, addr);
+ }
  
- 		system-cache-controller@9200000 {
- 			compatible = "qcom,sc8180x-llcc";
--			reg = <0 0x09200000 0 0x50000>, <0 0x09280000 0 0x50000>,
--			      <0 0x09300000 0 0x50000>, <0 0x09380000 0 0x50000>,
--			      <0 0x09600000 0 0x50000>;
-+			reg = <0 0x09200000 0 0x58000>, <0 0x09280000 0 0x58000>,
-+			      <0 0x09300000 0 0x58000>, <0 0x09380000 0 0x58000>,
-+			      <0 0x09400000 0 0x58000>, <0 0x09480000 0 0x58000>,
-+			      <0 0x09500000 0 0x58000>, <0 0x09580000 0 0x58000>,
-+			      <0 0x09600000 0 0x58000>;
- 			reg-names = "llcc0_base", "llcc1_base", "llcc2_base",
--				    "llcc3_base", "llcc_broadcast_base";
-+				    "llcc3_base", "llcc4_base", "llcc5_base",
-+				    "llcc6_base", "llcc7_base",  "llcc_broadcast_base";
- 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+-static __always_inline unsigned long variable__ffs(unsigned long word)
++static __always_inline unsigned int variable__ffs(unsigned long word)
+ {
+ 	asm("rep; bsf %1,%0"
+ 		: "=r" (word)
+@@ -262,10 +262,10 @@ static __always_inline unsigned long variable__ffs(unsigned long word)
+  */
+ #define __ffs(word)				\
+ 	(__builtin_constant_p(word) ?		\
+-	 (unsigned long)__builtin_ctzl(word) :	\
++	 (unsigned int)__builtin_ctzl(word) :	\
+ 	 variable__ffs(word))
  
+-static __always_inline unsigned long variable_ffz(unsigned long word)
++static __always_inline unsigned int variable_ffz(unsigned long word)
+ {
+ 	asm("rep; bsf %1,%0"
+ 		: "=r" (word)
+@@ -281,7 +281,7 @@ static __always_inline unsigned long variable_ffz(unsigned long word)
+  */
+ #define ffz(word)				\
+ 	(__builtin_constant_p(word) ?		\
+-	 (unsigned long)__builtin_ctzl(~word) :	\
++	 (unsigned int)__builtin_ctzl(~word) :	\
+ 	 variable_ffz(word))
+ 
+ /*
+@@ -290,7 +290,7 @@ static __always_inline unsigned long variable_ffz(unsigned long word)
+  *
+  * Undefined if no set bit exists, so code should check against 0 first.
+  */
+-static __always_inline unsigned long __fls(unsigned long word)
++static __always_inline unsigned int __fls(unsigned long word)
+ {
+ 	if (__builtin_constant_p(word))
+ 		return BITS_PER_LONG - 1 - __builtin_clzl(word);
 
----
-base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
-change-id: 20240525-sc8180x-llcc-reg-fixup-7762256e8e5e
-
-Best regards,
+base-commit: 0b32d436c015d5a88b3368405e3d8fe82f195a54
 -- 
-Bjorn Andersson <quic_bjorande@quicinc.com>
+2.45.1
 
 
