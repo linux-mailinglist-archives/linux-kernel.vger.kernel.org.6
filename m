@@ -1,158 +1,198 @@
-Return-Path: <linux-kernel+bounces-189516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07ED8CF11A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:24:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140418CF11D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635981F218FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D571C20D0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D3512836A;
-	Sat, 25 May 2024 19:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuD8TY5b"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9543F9F8;
-	Sat, 25 May 2024 19:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8317D127E2B;
+	Sat, 25 May 2024 19:37:23 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 0C2C98664A
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 19:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716665069; cv=none; b=hkznR8KqLlXhfzN7ZdRB9/RPT7lP2JOZFJj2oCdyVV+Iz1W2IRrpONIPDHJCMeFPhjQPxB62vBYvvDv7TqbBgLweMvGMwsGdB78DaOxs7OZjiB5MiFTSEjpRevZOq64riNx69DNTMaqs+cqyK20jDRGN6JxpVy+UeUuygFc1fvI=
+	t=1716665843; cv=none; b=TYOcn1vixsVqIKQGcewzLlRNPls06RAwd2s0Nzmev0/ZmNpmbzogeMSlZ7tek14pz2LbO0sq+18xWUtmPiRiWMo2EkDO35sX7z/PmRPdEy7n/K5nZhHCx2rvueWp0NUPrQBJEWF7xq3d6+pGqN7MXoW+ryH1/ifJu9V7/+LCT78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716665069; c=relaxed/simple;
-	bh=+kizM5lnYMs/tn9mhyuETjoPV0xSyPntJIHtU75whkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z4DBmmFPLd0L42BAJDr8f3f2jMlm6yoNTt+f0QChi6sq53c5ZbgFbljLoh7IuSOYYvX1gu2WnQ6VTo9SGKhruzoSKv9yW/piLUatUhYs2OOXVUbN/Ocnz3TzWt2jIJcXAvtCwbHoYVnqweCoG66zI0T6AfFA9iDDmCji+Fk55mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuD8TY5b; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-62a2424ec39so2877547b3.1;
-        Sat, 25 May 2024 12:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716665067; x=1717269867; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+kizM5lnYMs/tn9mhyuETjoPV0xSyPntJIHtU75whkw=;
-        b=QuD8TY5byoAdfnvDG9eXUeCwiP/Lb0+AC9Vl0VJ9qyn6hRyHizV9crwZJzqzGfBLAo
-         7RJDa/ZBDVYNPfMzR1jTK2pQNl8NYnDOxoLfE0Xqy5ttu1ta0QHMMPcPbrPtOXyUNYj1
-         n3Z6odHagI1wxajqTXy58dCYDvPBIeAZftqVSCgqMp8rQz02mpzx77QuNCZfx48SmVb2
-         gxuPJxMeLvSgTrLcra92jBbBIStUbV1Cpakbud5IHwK1DfNGand8dooTjLbIcCgU+HDa
-         EM4KLNT/O4R4a9boeszoN6ocRkW8oGa/PbMfDCmFpgVs7VuVH6C0N+MHzgx1/WsxIxos
-         7BOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716665067; x=1717269867;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+kizM5lnYMs/tn9mhyuETjoPV0xSyPntJIHtU75whkw=;
-        b=fWxHFOpCNmRPZwkw0fUOdY8mUo9ccp5WeJMueJUq8VeyCIj9feI2aV+XVWG5PxApMt
-         eArAnd3XkpgKfHfM52ZI9FWmDUHXjntFgzgnDKIa6fAfdAwUwo9NGJKcnXWwDfT50i8U
-         cDJcH3qHMGHEUmyHhbsgJ2KZmKq2obFNlQKcnueM7Gf48y8cy+D9RQCLZ+01x2k8XRhU
-         pXiqbg39XAZcPUJp/1yNpF1mdW9Q2vHuxCeK5i2tR2XEdvd3jLhktBFFrbPEIwIW3e3o
-         fcMAkKXx1GxargxDe8DXhWqEZTLf94Jg+aqqHpfRZ3YTF9GWBxYjlzLWufiMfPjPBV8I
-         8GSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPFjTfgBNtLqrCK9q7xJbd4p/TVaW90UO0CJpHDRJqCyBiiCr0kLdq0pBgqHrPtJdUU4M8PAh6AEyU53vNlrhVKG4Zl4hDXI2E9VdJySB2I+Li9MhChemL/ghHJWtYUJWzaRWGBHlYQgnhlpg4X5xSUETQoxIMLO25dyLKyXnpgcFjCZgpkCE=
-X-Gm-Message-State: AOJu0YxdGPTcdOGgOX2lL3/x7faLnN2a+GpWm+aULRvn6LemPTm6qULm
-	xo+IILdwQ85nDa6pVFXCn9X0mONh2K6YfROGDWINEySX/rA9LH+7y3Fn4KHWgi364uDiuEIX+bh
-	p12BD2t/QY7yI4txJrMmt7w/kDeg=
-X-Google-Smtp-Source: AGHT+IHCdpyV3KxmP7sGntNXImivmdG6WMeeujjPbe1bccBlcrbU9AdpiYvRbyyH9n6/nm/QpNZ/+APhIVz8K8AisOA=
-X-Received: by 2002:a81:4ece:0:b0:627:ddf1:1497 with SMTP id
- 00721157ae682-62a08f3a28fmr51030727b3.45.1716665066545; Sat, 25 May 2024
- 12:24:26 -0700 (PDT)
+	s=arc-20240116; t=1716665843; c=relaxed/simple;
+	bh=RiQOK8BJS10Xc4xLKZaufd84Et5CSNC4fnnN9TgwzZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HM/DbGGNnGoiSlo2+tNH8NfRhqVp3U98cyHWDZyNU9F8CHtBpfHTd//4dd1ESHbQVnOeKZ2u2oXCpprTElTqSdOVmIvkFAESXGalob1CIx0kXwV0gB0QNXHPQSGCs5n9wQtNkz7IfxQiEV25puEaZKtmtaSIZUkOXU+iB/OiStI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 613412 invoked by uid 1000); 25 May 2024 15:37:19 -0400
+Date: Sat, 25 May 2024 15:37:19 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+  npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+  luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+  dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+  linux-arch@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
+  jonas.oberhauser@huaweicloud.com
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <cf81a3c2-9754-4130-a67e-67d475678829@rowland.harvard.edu>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <ZlC0IkzpQdeGj+a3@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520172554.182094-1-dakr@redhat.com> <20240520172554.182094-11-dakr@redhat.com>
- <CANiq72kHrgOVrdw7rB9KpHvOMy244TgmEzAcL=v5O9rchs8T1g@mail.gmail.com>
- <CAPM=9txb5STBo05xiTy9+wF7=mMO=X2==BP4JVORPFAtX=nS0g@mail.gmail.com>
- <CANeycqpNeHFUu-RwSc6Ewa3r5TMhYYFDC6bO+sj3OZ398JfJ1A@mail.gmail.com> <1c8bb8044bc1943ad8d19cd6fc84a2d886004163.camel@redhat.com>
-In-Reply-To: <1c8bb8044bc1943ad8d19cd6fc84a2d886004163.camel@redhat.com>
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-Date: Sat, 25 May 2024 16:24:18 -0300
-Message-ID: <CANeycqoWVygXBO_Kzq6QaLDjp3W+66YrOi7_dK8zRVpDONJ=AA@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/11] rust: add basic abstractions for iomem operations
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Dave Airlie <airlied@gmail.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Danilo Krummrich <dakr@redhat.com>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, ajanulgu@redhat.com, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlC0IkzpQdeGj+a3@andrea>
 
-On Tue, 21 May 2024 at 05:03, Philipp Stanner <pstanner@redhat.com> wrote:
->
-> On Tue, 2024-05-21 at 00:01 -0300, Wedson Almeida Filho wrote:
-> > On Mon, 20 May 2024 at 23:07, Dave Airlie <airlied@gmail.com> wrote:
-> > >
-> > > >
-> > > > Wedson wrote a similar abstraction in the past
-> > > > (`rust/kernel/io_mem.rs` in the old `rust` branch), with a
-> > > > compile-time `SIZE` -- it is probably worth taking a look.
-> > > >
-> > >
-> > > Just on this point, we can't know in advance what size the IO BARs
-> > > are
-> > > at compile time.
-> > >
-> > > The old method just isn't useful for real devices with runtime IO
-> > > BAR sizes.
-> >
-> > The compile-time `SIZE` in my implementation is a minimum size.
-> >
-> > Attempts to read/write with constants within that size (offset +
-> > size)
-> > were checked at compile time, that is, they would have zero
-> > additional
-> > runtime cost when compared to C. Reads/writes beyond the minimum
-> > would
-> > have to be checked at runtime.
-> >
->
-> We looked at this implementation
->
-> Its disadvantage is that it moves the responsibility for setting that
-> minimum size to the driver programmer. Andreas Hindborg is using that
-> currently for rnvme [1].
->
-> I believe that the driver programmer in Rust should not be responsible
-> for controlling such sensitive parameters (one could far more easily
-> provide invalid values), but the subsystem (e.g. PCI) should do it,
-> because it knows about the exact resource lengths.
+On Fri, May 24, 2024 at 05:37:06PM +0200, Andrea Parri wrote:
+> > - While checking the information below using herd7, I've observed some
+> >   "strange" behavior with spin_is_locked() (perhaps, unsurprisingly...);
+> >   IAC, that's also excluded from this table/submission.
+> 
+> For completeness, the behavior in question:
+> 
+> $ cat T.litmus 
+> C T
+> 
+> {}
+> 
+> P0(spinlock_t *x)
+> {
+> 	int r0;
+> 
+> 	spin_lock(x);
+> 	spin_unlock(x);
+> 	r0 = spin_is_locked(x);
+> }
+> 
+> $ herd7 -conf linux-kernel.cfg T.litmus
+> Test T Required
+> States 0
+> Ok
+> Witnesses
+> Positive: 0 Negative: 0
+> Condition forall (true)
+> Observation T Never 0 0
+> Time T 0.00
+> Hash=6fa204e139ddddf2cb6fa963bad117c0
+> 
+> Haven't been using spin_is_locked for a while...  perhaps I'm doing
+> something wrong?  (IAC, will have a closer look next week...)
 
-There is no responsibility being moved. The bus is still that one that
-knows about the resources attached to the device.
+It turns out the problem lies in the way lock.cat tries to calculate the 
+rf relation for RU events (a spin_is_locked() that returns False).  The 
+method it uses amounts to requiring that such events must read from the 
+lock's initial value or an LU event (a spin_unlock()) in a different 
+thread.  This clearly is wrong, and glaringly so in this litmus test 
+since there are no other threads!
 
-The driver, however, can say for example: I need at least 4 registers
-of 32 bits starting at offset X, which results in a minimum size of X
-+ 16. If at runtime a device compatible with this driver appears and
-has an io mem of at least that size, then the driver can drive it
-without any additional runtime checks. I did this in the gpio driver
-here: https://lwn.net/Articles/863459/
+A patch to fix the problem and reorganize the code a bit for greater 
+readability is below.  I'd appreciate it if people could try it out on 
+various locking litmus tests in our archives.
 
-Note that in addition to not having to check offset at runtime, the
-reads/writes are also infallible because all failures are caught at
-compile time.
+Alan
 
-Obviously not all drivers can benefit from this, but it is
-considerable simplification for the ones that can.
 
-> The only way to set the actual, real value is through subsystem code.
-> But when we (i.e., currently, the driver programmer) have to use that
-> anyways, we can just use it from the very beginning and have the exact
-> valid parameters.
+---
+ tools/memory-model/lock.cat |   61 +++++++++++++++++++++++++-------------------
+ 1 file changed, 36 insertions(+), 25 deletions(-)
 
-Yes, only the bus knows. But to reiterate: if the driver declares and
-checks a minimum size at attach time, it obviates the needs to check
-again throughout the lifetime of the driver, which is more performant
-and eliminates error paths.
+Index: usb-devel/tools/memory-model/lock.cat
+===================================================================
+--- usb-devel.orig/tools/memory-model/lock.cat
++++ usb-devel/tools/memory-model/lock.cat
+@@ -54,6 +54,12 @@ flag ~empty LKR \ domain(lk-rmw) as unpa
+  *)
+ empty ([LKW] ; po-loc ; [LKR]) \ (po-loc ; [UL] ; po-loc) as lock-nest
+ 
++(*
++ * In the same way, spin_is_locked() inside a critical section must always
++ * return True (no RU events can be in a critical section for the same lock).
++ *)
++empty ([LKW] ; po-loc ; [RU]) \ (po-loc ; [UL] ; po-loc) as nested-is-locked
++
+ (* The final value of a spinlock should not be tested *)
+ flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
+ 
+@@ -79,42 +85,47 @@ empty ([UNMATCHED-LKW] ; loc ; [UNMATCHE
+ (* rfi for LF events: link each LKW to the LF events in its critical section *)
+ let rfi-lf = ([LKW] ; po-loc ; [LF]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
+ 
+-(* rfe for LF events *)
++(* Utility macro to convert a single pair to a single-edge relation *)
++let pair-to-relation p = p ++ 0
++
++(*
++ * Given an LF event r outside a critical section, r cannot read
++ * internally but it may read from an LKW event in another thread.
++ * Compute the relation containing these possible edges.
++ *)
++let possible-rfe-noncrit-lf r = (LKW * {r}) & loc & ext
++
++(* Compute set of sets of possible rfe edges for LF events *)
+ let all-possible-rfe-lf =
+-	(*
+-	 * Given an LF event r, compute the possible rfe edges for that event
+-	 * (all those starting from LKW events in other threads),
+-	 * and then convert that relation to a set of single-edge relations.
+-	 *)
+-	let possible-rfe-lf r =
+-		let pair-to-relation p = p ++ 0
+-		in map pair-to-relation ((LKW * {r}) & loc & ext)
++	(* Convert the possible-rfe relation for r to a set of single edges *)
++	let set-of-singleton-rfe-lf r =
++		map pair-to-relation (possible-rfe-noncrit-lf r)
+ 	(* Do this for each LF event r that isn't in rfi-lf *)
+-	in map possible-rfe-lf (LF \ range(rfi-lf))
++	in map set-of-singleton-rfe-lf (LF \ range(rfi-lf))
+ 
+ (* Generate all rf relations for LF events *)
+ with rfe-lf from cross(all-possible-rfe-lf)
+ let rf-lf = rfe-lf | rfi-lf
+ 
+ (*
+- * RU, i.e., spin_is_locked() returning False, is slightly different.
+- * We rely on the memory model to rule out cases where spin_is_locked()
+- * within one of the lock's critical sections returns False.
++ * Given an RU event r, r may read internally from the last po-previous UL,
++ * or it may read from a UL event in another thread or the initial write.
++ * Compute the relation containing these possible edges.
+  *)
+-
+-(* rfi for RU events: an RU may read from the last po-previous UL *)
+-let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
+-
+-(* rfe for RU events: an RU may read from an external UL or the initial write *)
+-let all-possible-rfe-ru =
+-	let possible-rfe-ru r =
+-		let pair-to-relation p = p ++ 0
+-		in map pair-to-relation (((UL | IW) * {r}) & loc & ext)
+-	in map possible-rfe-ru RU
++let possible-rf-ru r = (((UL * {r}) & po-loc) \
++			([UL] ; po-loc ; [UL] ; po-loc)) |
++		(((UL | IW) * {r}) & loc & ext)
++
++(* Compute set of sets of possible rf edges for RU events *)
++let all-possible-rf-ru =
++	(* Convert the possible-rf relation for r to a set of single edges *)
++	let set-of-singleton-rf-ru r =
++		map pair-to-relation (possible-rf-ru r)
++	(* Do this for each RU event r *)
++	in map set-of-singleton-rf-ru RU
+ 
+ (* Generate all rf relations for RU events *)
+-with rfe-ru from cross(all-possible-rfe-ru)
+-let rf-ru = rfe-ru | rfi-ru
++with rf-ru from cross(all-possible-rf-ru)
+ 
+ (* Final rf relation *)
+ let rf = rf | rf-lf | rf-ru
+
 
