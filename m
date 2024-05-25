@@ -1,146 +1,112 @@
-Return-Path: <linux-kernel+bounces-189303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0FB8CEE2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797F28CEE2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E947281F59
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A56B21BE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01B012B83;
-	Sat, 25 May 2024 07:38:11 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C54BFBF0;
+	Sat, 25 May 2024 07:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I8l3VtoP"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF9ABE6F;
-	Sat, 25 May 2024 07:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A929C3C28
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716622691; cv=none; b=RjpNEOnBPrK9llNxp7i+gn9KK5RKstmtgLbF6cL2DerCrSZpdhqyMvIJlC3r8VHVlboOwlBlwj4VeNLzL3sp0nkxdc9TD9KS/asevhKuQbEbKS7CUXy0JXGRronGp/hvQX93y3N82RkOjCC4nuyrEwDqhSzwRKrAktEhyW9Waxg=
+	t=1716623548; cv=none; b=kuCQmcnGajcgyqmSAq8Bp5gW2nLtS2LGxTn8SEuNeWSnU1xEDTAWbc3qp9DB4teZ0Uz7shCmoFxMn/pnqlSrZEKT9ypq3Q4qO1MhuVNhz5BmeTKG8zowv/72ZRP+/eYCU8VnGv8y96uEdZSdcDiLRY6dmtiVz2VWBCJmzAPsKgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716622691; c=relaxed/simple;
-	bh=hjnFQGsTJPR8cRFI+tzxhz1tkZh4lBxpR3/xX+fvjJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W48pQZumYGfPJV0Hlh5X5uU769l2W63u6NZR2T08nGKkh/A5QBr2wXrFcErZY2ygOm2XnoYwXIa7WPdhDDJeVpQOPzBaS8r4RreDEKl/c+OXLLKZthk/jzwU1QIxmYXMziQ0P5ijjvQlVKFqigWktIWM4eiPUbpmoDmYbhCJNdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-656d8b346d2so4131609a12.2;
-        Sat, 25 May 2024 00:38:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716622689; x=1717227489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VjSDPJ3ndkcl6uhv0oiHbgYv63rSd+FyYBnXbtqOYhg=;
-        b=manLXTVNhGBqJV3TNl4vkqHosGzzf3H9fmYpKpk8sBJiS9mYZofQ8Lh0iaP7mZhXRF
-         0c/R3DQdmM9it0pjDpVrbuFpuImUNQtNtIz6ARfArxdq0mzYNqZDLTAImgPsZshqzpa1
-         /LgKcYYgR4cFfdnQXxZT1UfRVLItnQjwPMc16OHRwhGkIPjthEZlUfckUGf1BS51CpD1
-         ygOgPlZKoSTSgO4AR7gbDY0s0EawPO8dA5xK42MZNMAFVIKkzzRRPaH12XZAC7h7159b
-         divceGNCiumoYVs3KlIykPhdXXDlVRQhS46MbYmNONaicVSu/rQz0zSlq1CO0w/Z6dWQ
-         Ne/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXgiUDUykQcBCr0GMviewfNHz/HoX2jukHYO9LaAfNtJve1eDqu2qFbLD9YbWcjTe+x1Lev9gW7wEmntDNZ1MNxaxXRMigC0PRT1ICbzWv3Lk1DM1o76o7sL/LeY6vb5N3ENzz+ei4hq4pvBHaZmA==
-X-Gm-Message-State: AOJu0YzFNnwFuRtuXAvqVymnKQL97Wko6U2l87Q6LcEL9HkoJcrxozrL
-	UNmHH3O3W2T+So86pBGI/Q36zBI7N7LWgTajCKd7azud8DO2tdC3CwlFZsuRqsjO0ElwnHfwvI7
-	N4z2RjmF/NFeFdL2ZnJIeva2NeN4=
-X-Google-Smtp-Source: AGHT+IHye6O0IdalgUS2IBMSDJiqTD6MjEHp+CyiIXyHMvmWb3eLtGiSu5COu7sJMX/b2rFNmcx7d6BsqIVlCA1j2tY=
-X-Received: by 2002:a05:6a20:3cac:b0:1af:d1b2:4c21 with SMTP id
- adf61e73a8af0-1b212dee2dcmr5320981637.41.1716622689230; Sat, 25 May 2024
- 00:38:09 -0700 (PDT)
+	s=arc-20240116; t=1716623548; c=relaxed/simple;
+	bh=NTE4aLUV/Me23bZw+dIv2vN6dOmlWJuGwpgYhYXpJxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CYu/wKCuqCM2s/3+4MneAbWTBzGWsFULu2dUQFKa3fyKrwJhcn0cft3QdvHtYibM6UmuBCmIjamBPosiF6Bcd/UVQaWc3hBTOh4LYHV5Sq/XKMOeNHu0MN4a+y3S+AdHSyFSBQCbBvE/3nQLP0IxEbUfSwxgJlvBU9Il7LH4pq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I8l3VtoP; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D24C240005;
+	Sat, 25 May 2024 07:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716623538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=hvYNI3hFtOWF93OT5lxSxIBWa6XcTcllEzru2wGd970=;
+	b=I8l3VtoPj9ZtgN8UEtVxy1qJwEB7bIeRB418wizQS5AWI5SgCmTxUYtzVu9BuvOAEaOJxj
+	oku/L1Y+pHzQgWxRgEffFFy6KuJ63AQxMhYDyOt3/C4MOyVzp4bx8xHbs4qCoxpvo2r9qW
+	0kLPVgA/t8X5HL0Ua1qoY3ddd7M1vPmCyRiSFNcATJZvOnXWNn6xeXTWxBWrwU9tf1GfVH
+	pn5bbpcMUqJYbBwXwjujMVzH974w7HfEn+UDSoOsRa8JQYgrm37y5jjKtg53jhcD1Vn2VN
+	77gWLie5DidppbVv/6x7DXJqRzjaM1P7AyrFm7AkoWPd+nykZkVPq48bwU/OPw==
+Date: Sat, 25 May 2024 09:52:17 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] I3C changes for 6.10
+Message-ID: <20240525075217d90cc066@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
- <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Sat, 25 May 2024 00:37:57 -0700
-Message-ID: <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-To: Ian Rogers <irogers@google.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
-	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
-	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
-	Yang Jihong <yangjihong@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi guys,
+iHello Linus,
 
-On Fri, May 24, 2024 at 9:20=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, 24 May 2024 at 20:48, Ian Rogers <irogers@google.com> wrote:
-> >
-> > Thanks for the report. TL;DR try putting the PMU name with the event
-> > name, so "cycles:pp" becomes "armv8_pmuv3_0/cycles/pp", where
-> > armv8_pmuv3_0 is the name of the PMU from /sys/devices.
->
-> What? No.
->
-> If that is the new rule, then I'm just going to revert. I'm not going
-> to use some random different PMU names across architectures when all I
-> want is just "cycles".
->
-> In fact, the "cycles:pp" is a complete red herring. Just doing a simple
->
->  $ perf record sleep 1
->
-> with no explicit expression at all, results in that same
->
->   Error:
->   cycles:P: PMU Hardware doesn't support sampling/overflow-interrupts.
-> Try 'perf stat'
->
-> because perf *ITSELF* uses the sane format by default.
+Here is the i3c subsytem pull request for 6.10. Runtime PM (power
+management) is improved and hot-join support has been added to the dw
+controller driver.
 
-Yep, so I'm curious what makes it fail.  IIUC the commit in question
-would convert "cycles" event to "${whatever_pmu}/cycles/" if the pmu
-has "events/cycles" alias in sysfs or in JSON.  But it should work after
-that too. :(
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-It seems my system doesn't have the alias (both in x86_64 and arm64)
-at least in sysfs.  I think that's why I don't see the failure and maybe
-there's a specific hardware issue - like a M1 macbook issue?  IIRC it
-required the exclude_guest bit to be set, but I think we handled it already
-so this must be a different issue.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-The error message is for EOPNOTSUPP, and I don't think it will set any
-special attributes for the default event.  So I have no clue yet..
+are available in the Git repository at:
 
-Thanks,
-Namhyung
+  git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/for-6.10
 
->
-> So ABSOLUTELY NO. We're not changing the rules to "You have to know
-> some idiotic per-architecture JSON magic".
->
-> I don't want any excuses like this. No "You are holding it wrong".
-> This is a BUG. Treat it as such.
->
-> And yes, "perf record -vv" shows that it apparently picked some insane
-> arm_dsu_0 event. Which just shows that trying to parse the JSON rules
-> instead of just having sane defaults is clearly not working.
->
-> So here's the deal: I will revert your commit tomorrow unless you show
-> that you are taking it seriously and have a sane fix.
->
-> Because no, "You are holding it wrong" is not the answer. Never was,
-> never will be. Things used to work, they don't work any more. That
-> shit is not acceptable.
->
->                    Linus
+for you to fetch changes up to 1d08326020fba690cbb7b8f1b38ab4eab6745969:
+
+  i3c: dw: Add hot-join support. (2024-05-23 00:29:19 +0200)
+
+----------------------------------------------------------------
+I3C for 6.10
+
+Core:
+ - Allow device driver to trigger controller runtime PM
+
+Drivers:
+ - dw: hot-join support
+ - svc: better IBI handling
+
+----------------------------------------------------------------
+Billy Tsai (1):
+      i3c: dw: Add hot-join support.
+
+Frank Li (3):
+      i3c: Add comment for -EAGAIN in i3c_device_do_priv_xfers()
+      i3c: master: svc: change ENXIO to EAGAIN when IBI occurs during start frame
+      i3c: master: svc: fix invalidate IBI type and miss call client IBI handler
+
+Mukesh Kumar Savaliya (1):
+      i3c: master: Enable runtime PM for master controller
+
+ drivers/i3c/device.c                |  4 +++
+ drivers/i3c/master.c                |  6 ++++
+ drivers/i3c/master/dw-i3c-master.c  | 65 ++++++++++++++++++++++++++++++-------
+ drivers/i3c/master/dw-i3c-master.h  |  2 ++
+ drivers/i3c/master/svc-i3c-master.c | 18 +++++++---
+ 5 files changed, 79 insertions(+), 16 deletions(-)
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
