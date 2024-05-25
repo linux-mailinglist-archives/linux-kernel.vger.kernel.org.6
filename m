@@ -1,118 +1,231 @@
-Return-Path: <linux-kernel+bounces-189263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B51B8CEDB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:56:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B2E8CEDB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00861F221BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:56:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6DDB212F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DE03C39;
-	Sat, 25 May 2024 02:56:25 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5814691;
+	Sat, 25 May 2024 03:08:35 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E892139F
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 02:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA5B10F1;
+	Sat, 25 May 2024 03:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716605784; cv=none; b=NF2/DGaYCqtTuAkZHVsrm9rOLcTcMukneWDZgvXe35L/VKkEFNgjOFdlehzRmwEUUYofMFooeNQxO5ZQVs0djeDeoRU9iEPs1YxbMw6Ao/JdQNZpKlo4jwUhEwgqMwHWV4GJlPeHHxpmqWV8ZJoUirtKHkzAoomsPjHgT/CyoeQ=
+	t=1716606515; cv=none; b=YJ2c6ADo6nf/CBEI+WRiTxmiSe4Yo1LnNc2YEp5RooI1wlEqLnrKr1DrNzhq0XgHiHyovWTmG4WvoBG6alI0/i2CfyOiq0n09qpVeKXs9eT+BZbg1JNK/AqH26o/p/yxAdk6TbvgL0YGZSnxLu24Nr7RguNwKofQG4999mP2+cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716605784; c=relaxed/simple;
-	bh=Ks3KmzwMbRsannbXAsBY5Mpb/8YYOiPHCfk/qKRpZZ8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QoZNzchh01FU20bFHhbWJfOEv985dt0t+LJgfx4HxOEJ+tIlgX9SiJNWWY7hRF3dOqkunlwib2C7wuBy+9Bj+xc95Dhjzq8nRN1L7FtdRv05MAK68lXNhiqyBwCYRq3+LhbH/ZocJArrDdnYs+/BcARLL1yzs+bfcYpBrVRE+KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3705289d46fso37992165ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:56:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716605783; x=1717210583;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ExZtektDIQPH03325dsSn5zzOZ7zTFNhg8HxEcmp2pY=;
-        b=nmaVwtB/Qz9uEIzBkehkgJhFHX9BcB3SJsdorT9c0MBFpD6Z9BPoMeVKmAR76QER43
-         e/QCP3GEKHt5196HDrJ/ubobYOY1mVrOxXhS1LPcPwADHLkpkYNiBgNACIEsDdpwEdPX
-         m4DWkXrHDwrcBP7T6DrXieNnXBfw54k0zwLZh8w7S6lXzkLL0Qnx6N28o6Gk5G2kgNRH
-         UkrqhQc5urYnTlbL9YB1n+yJJDkqHTgzLrA6IWtK7Bz8SauKKmIz1mXE/6e6Zsv/FGoC
-         E/Xh3i2xwZ59BHVtVkY7vOazpUrJnU8Lilg4Cf9IQsz3YsJaJxBFC5pO1osJy3gxYSCh
-         8lzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDMkWUA/gtebUe3NoFRKBmXIu3dLNR4/iAQWfU6j5jezhKivH7haqHVEUk3PIK0FaZ7bM1DmS0aws9ZXb+Wyg9f50fS865+zXmdK+e
-X-Gm-Message-State: AOJu0YwgBv5UHrUfekSlwpTi3f3wvvt5eTrRUlmUjneWpD5RrZmupW92
-	pyu7VP/0ncd8nPupNp/6VcrtLdziDGlzEq/SvZtjpurvshsHyESnA9s42lW3Im9LVD6p7OnfNnn
-	+Z6vDf8TmbLPKnKnZaPMuH+8nnp6HvCQRY0k+i8BkY1nbCb7Z6oTifIo=
-X-Google-Smtp-Source: AGHT+IHSvRTiPokUE/70fZDTdslc+f038Gctibu7OR86v/OeWMvaJzlipA+ZcFINQ4y9b22ZNVZQjCUPPTqhv8pdYQnNEkbykyQr
+	s=arc-20240116; t=1716606515; c=relaxed/simple;
+	bh=xJsj13ODp3PFGuvTZwtq0KTiYS6c5OhYbGxjEeI8Imc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aiM4ItavZtE48zf+vl0/A3ddahYta4oMksKiH9tPuiU+1bHhB5NNuK5TpIOPYWwop970R68ogdSyDH/42wSln2jkwgDaD5uFdd7SkL66CimPbLReOnv5te+TeTlhWvBOkHYWsZFDW4OI+ilCziaPyyNsbP4wv6RPoCPVgN+MRBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VmRfB0gBxz1wwKy;
+	Sat, 25 May 2024 11:07:14 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id 46D3E1A0188;
+	Sat, 25 May 2024 11:08:29 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 25 May 2024 11:08:28 +0800
+Message-ID: <12ea14e9-5821-b2b5-16c1-ac48985927d7@huawei.com>
+Date: Sat, 25 May 2024 11:08:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c743:0:b0:373:874e:93be with SMTP id
- e9e14a558f8ab-373874e977emr865105ab.3.1716605782818; Fri, 24 May 2024
- 19:56:22 -0700 (PDT)
-Date: Fri, 24 May 2024 19:56:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e7924806193e6dcc@google.com>
-Subject: [syzbot] [net?] [virt?] upstream boot error: KMSAN: uninit-value in corrupted
-From: syzbot <syzbot+f8f2e9a62c70487ab828@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jasowang@redhat.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240424080807.8469-1-yangxingui@huawei.com>
+ <824c34aa-7c4c-4edd-b41c-f9b5ff5aff03@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <824c34aa-7c4c-4edd-b41c-f9b5ff5aff03@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpemm100018.china.huawei.com (7.185.36.206) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-Hello,
+Hi John,
 
-syzbot found the following issue on:
+Thank you for your reply
 
-HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=119aa5cc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d66c5ffb962c9d5b
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8f2e9a62c70487ab828
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+On 2024/5/24 16:36, John Garry wrote:
+> On 24/04/2024 09:08, Xingui Yang wrote:
+>> We found that it is judged as broadcast flutter when the exp-attached end
+>> device reconnects after probe failed, as follows:
+>>
+>> [78779.654026] sas: broadcast received: 0
+>> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+>> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+>> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>> ...
+>> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 
+>> tries: 1
+>> [78835.171344] sas: sas_probe_sata: for exp-attached device 
+>> 500e004aaaaaaa05 returned -19
+>> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+>> [78835.187487] sas: broadcast received: 0
+>> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+>> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+>> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>>
+>> The cause of the problem is that the related ex_phy's 
+>> attached_sas_addr was
+>> not cleared after the end device probe failed. In order to solve the 
+>> above
+>> problem, a function sas_ex_unregister_end_dev() is defined to clear the
+>> ex_phy information and unregister the end device after the 
+>> exp-attached end
+>> device probe failed.
+>>
+>> As the sata device is an asynchronous probe, the sata device may probe
+>> failed after done REVALIDATING DOMAIN. Then after its port is added to 
+>> the
+>> sas_port_del_list, the port will not be deleted until the end of the next
+>> REVALIDATING DOMAIN and sas_destruct_ports() is called. A warning about
+>> creating a duplicate port will occur in the new REVALIDATING DOMAIN when
+>> the end device reconnects. Therefore, the previous destroy_list and
+>> sas_port_del_list should be handled before REVALIDATING DOMAIN.
+>>
+>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+>> ---
+>> Changes since v1:
+>> - Simplify the process of getting ex_phy id based on Jason's suggestion.
+>> - Update commit information.
+>> ---
+>>   drivers/scsi/libsas/sas_discover.c | 2 ++
+>>   drivers/scsi/libsas/sas_expander.c | 8 ++++++++
+>>   drivers/scsi/libsas/sas_internal.h | 6 +++++-
+>>   3 files changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/libsas/sas_discover.c 
+>> b/drivers/scsi/libsas/sas_discover.c
+>> index 8fb7c41c0962..aae90153f4c6 100644
+>> --- a/drivers/scsi/libsas/sas_discover.c
+>> +++ b/drivers/scsi/libsas/sas_discover.c
+>> @@ -517,6 +517,8 @@ static void sas_revalidate_domain(struct 
+>> work_struct *work)
+>>       struct sas_ha_struct *ha = port->ha;
+>>       struct domain_device *ddev = port->port_dev;
+>> +    sas_destruct_devices(port);
+>> +    sas_destruct_ports(port);
+> 
+> We still have both these same calls at the @out label - is that as desired?
+Yes, I think so
+> 
+> Why do these new additions not cover the same job which those calls to 
+> the same functions @out covers?
+For asynchronous probes like sata, the failure occurs after @out. After 
+adding the device to port_delete_list, the port is not deleted 
+immediately. This may cause the device to fail to create a new port 
+because the previous port has not been deleted when the device attached 
+again. as follow:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0a053ab9d75b/disk-8f6a15f0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a1cac58c3541/vmlinux-8f6a15f0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/180b83fc69a9/bzImage-8f6a15f0.xz
+1. REVALIDATING DOMAIN
+2. new device attached
+3. ata_sas_async_probe
+4. done REVALIDATING DOMAIN
+5. @out, handle parent->port->sas_port_del_list
+6. sata probe failed
+7. add phy->port->list to parent->port->sas_port_del_list // port won't 
+delete now
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f8f2e9a62c70487ab828@syzkaller.appspotmail.com
+8、REVALIDATING DOMAIN
+9、new device attached
+10、new port create failed, as port already exits.
 
-Starting dhcpcd...
-dhcpcd-9.4.1 starting
-dev: loaded udev
-DUID 00:04:19:0b:4d:1d:24:6b:9f:8b:bf:f7:85:18:31:02:d0:f0
-forked to background, child pid 4697
-Starting sshd: [  113.935289][    C0] BUG: KMSAN: uninit-value in receive_mergeable drivers/net/virtio_net.c:1839 [inline]
-Starting sshd: [  113.935289][    C0] BUG: KMSAN: uninit-value in receive_buf+0x25e3/0x5fd0 drivers/net/virtio_net.c:1955
+> 
+>>       /* prevent revalidation from finding sata links in recovery */
+>>       mutex_lock(&ha->disco_mutex);
+>>       if (test_bit(SAS_HA_ATA_EH_ACTIVE, &ha->state)) {
+>> diff --git a/drivers/scsi/libsas/sas_expander.c 
+>> b/drivers/scsi/libsas/sas_expander.c
+>> index f6e6db8b8aba..45793c10009b 100644
+>> --- a/drivers/scsi/libsas/sas_expander.c
+>> +++ b/drivers/scsi/libsas/sas_expander.c
+>> @@ -1856,6 +1856,14 @@ static void sas_unregister_devs_sas_addr(struct 
+>> domain_device *parent,
+>>       }
+>>   }
+>> +void sas_ex_unregister_end_dev(struct domain_device *dev)
+>> +{
+>> +    struct domain_device *parent = dev->parent;
+>> +    struct sas_phy *phy = dev->phy;
+>> +
+>> +    sas_unregister_devs_sas_addr(parent, phy->number, true);
+>> +}
+>> +
+>>   static int sas_discover_bfs_by_root_level(struct domain_device *root,
+>>                         const int level)
+>>   {
+>> diff --git a/drivers/scsi/libsas/sas_internal.h 
+>> b/drivers/scsi/libsas/sas_internal.h
+>> index 3804aef165ad..434f928c2ed8 100644
+>> --- a/drivers/scsi/libsas/sas_internal.h
+>> +++ b/drivers/scsi/libsas/sas_internal.h
+>> @@ -50,6 +50,7 @@ void sas_discover_event(struct asd_sas_port *port, 
+>> enum discover_event ev);
+>>   void sas_init_dev(struct domain_device *dev);
+>>   void sas_unregister_dev(struct asd_sas_port *port, struct 
+>> domain_device *dev);
+>> +void sas_ex_unregister_end_dev(struct domain_device *dev);
+>>   void sas_scsi_recover_host(struct Scsi_Host *shost);
+>> @@ -145,7 +146,10 @@ static inline void sas_fail_probe(struct 
+>> domain_device *dev, const char *func, i
+>>           func, dev->parent ? "exp-attached" :
+>>           "direct-attached",
+>>           SAS_ADDR(dev->sas_addr), err);
+>> -    sas_unregister_dev(dev->port, dev);
+>> +    if (dev->parent && !dev_is_expander(dev->dev_type))
+> 
+> This check looks odd.
+> 
+> So we're checking if we have a parent device and we are not an expander, 
+> right?
+Yes.
+> 
+>> +        sas_ex_unregister_end_dev(dev);
+>> +    else
+>> +        sas_unregister_dev(dev->port, dev);
+>>   }
+>>   static inline void sas_fill_in_rphy(struct domain_device *dev,
+> 
+> .
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Xingui
 
