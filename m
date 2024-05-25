@@ -1,204 +1,106 @@
-Return-Path: <linux-kernel+bounces-189505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9C68CF0F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 897708CF0FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91DF1C2092B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC251C204F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7134086653;
-	Sat, 25 May 2024 18:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A5E127E10;
+	Sat, 25 May 2024 18:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GXPFa/9o";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oXTGqGAC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GXPFa/9o";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oXTGqGAC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d6Qhb33m"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673099473;
-	Sat, 25 May 2024 18:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668B31CF8F;
+	Sat, 25 May 2024 18:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716660935; cv=none; b=uQRCEoufSaIdIg5QQiYH5hDQ5+o1Ev9m6eIxW7atYoKuFW0MCVK9K/yZxY1WK/846TMSXdQQNdYCpnvmenTwrd8GIl4Fu1q6Vx9I8kR+41ocFUAEcAifDHqGQdqrVZDBWkO6t1GzH/lqSuhrU/KnkPZwysRdI4Pq26vnoK7gHTA=
+	t=1716661227; cv=none; b=ZYGqvqlomzGsHzeMBIlIpYjy25NKjr8KgQpfrxfq+HjWOO6TJql9VpRiEiKZRydw254cEgJQSz7kg3iqdkcvXKQXcbUiUyW0QyJrGVEz/qe71aj+vGqb9BOX3sRkbETqEzgOZos22ll5tgD2gm+xvKNlzMMgFFQBpUoTrzln4IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716660935; c=relaxed/simple;
-	bh=h9JgLrbRZjPLaX3q5EmomeHwEIM+TyOAhWwJVd8yMG4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WHR+3Kp/kJsxVvsRj8vLvxspjKVcPKsnMLDxeyLNOFsZLCTPbkSPFfE5wDVLGdb0/cwsZBavoTdWmAgLs3RPz1pj1pJYJoBHzvU6PLcjzsYfuV8Z80xPzOFjTz/5B0162E1MtY4AENWlYMm3IHwUmSR9oScrMgeRpIdPFN5fU9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GXPFa/9o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oXTGqGAC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GXPFa/9o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oXTGqGAC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 95C9D5C269;
-	Sat, 25 May 2024 18:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716660925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
-	b=GXPFa/9oIyPkQvQFpWFuL4d796QLUSF71OVsOCoTpjm2vZL+qXWr2ZqC0vgsmavi0fS9Vf
-	SteUz6k/qBZnj9tyTlOOFlvLmjH/vY1trJHPt1QSWrhdXjkyylkyJ0mRcFWqKFK5axcRR/
-	CH1mCIeNksIhazpal6pW4NORHiMcUHw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716660925;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
-	b=oXTGqGAC7Fqz/1A35U6koQPZWll0Qthqa4cZdmkakHUhHPGh3efJl30/OPiyWVPgwHKoBH
-	7uYkaxLbjDEB/+Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="GXPFa/9o";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oXTGqGAC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716660925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
-	b=GXPFa/9oIyPkQvQFpWFuL4d796QLUSF71OVsOCoTpjm2vZL+qXWr2ZqC0vgsmavi0fS9Vf
-	SteUz6k/qBZnj9tyTlOOFlvLmjH/vY1trJHPt1QSWrhdXjkyylkyJ0mRcFWqKFK5axcRR/
-	CH1mCIeNksIhazpal6pW4NORHiMcUHw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716660925;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlI/1fQUHPJ28qJv6dfQq5z4tYvrNlHxR64HTljE4Lg=;
-	b=oXTGqGAC7Fqz/1A35U6koQPZWll0Qthqa4cZdmkakHUhHPGh3efJl30/OPiyWVPgwHKoBH
-	7uYkaxLbjDEB/+Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5265313A6C;
-	Sat, 25 May 2024 18:15:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a8kYDr0qUmazTwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sat, 25 May 2024 18:15:25 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: "Eduardo Vela <Nava>" <evn@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Jens Axboe
- <axboe@kernel.dk>,  linux-cve-announce@vger.kernel.org,  cve@kernel.org,
-  linux-kernel@vger.kernel.org,  =?utf-8?Q?Tam=C3=A1s?= Koczka
- <poprdi@google.com>
-Subject: Re: CVE-2023-52656: io_uring: drop any code related to SCM_RIGHTS
-In-Reply-To: <CAFswPa9jR6mKAsCrdmspCARe-evk16s1t0SG9LrRLCze_f6Ydw@mail.gmail.com>
-	(Eduardo' Vela's message of "Sat, 25 May 2024 17:09:45 +0200")
-Organization: SUSE
-References: <2024051338-CVE-2023-52656-6545@gregkh>
-	<871q5rqhuc.fsf@mailhost.krisman.be>
-	<d1cb0cd3-0826-48fc-8713-8648d6eb9fd7@kernel.dk>
-	<2024052542-diner-snare-a618@gregkh>
-	<CAFswPa9jR6mKAsCrdmspCARe-evk16s1t0SG9LrRLCze_f6Ydw@mail.gmail.com>
-Date: Sat, 25 May 2024 14:15:19 -0400
-Message-ID: <87fru5pxl4.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716661227; c=relaxed/simple;
+	bh=frYNqj8bLyBV24XE+B8L2uQXn++Kl/zNdYU7wxv28Jw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kIDVmtDdNEVpc1ienA1YxvyCNZnEQZgN4AWoL85x4huSIYffDxkrnOGeKeKLMw6qpcBSgW9pgLPg5bCacZfxwTqtQn6TOxhTxLmYBopArBCdGaMhQ2rVJ1ghpmFHB9T8HSbkFSi7+ioB1u3/nV7sZSEpSk116cDZ3sUokEpuSf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d6Qhb33m; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716661217; x=1717266017; i=markus.elfring@web.de;
+	bh=ylDCKNwB+uExXDGAm68CO6JDJtc9Fbkz8M9YBROBEBQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=d6Qhb33m3fUi27fwH48NbTDdVwIfuRd3UrnCMZEF9Ld1fJNZOZwr6wrUnrGKfQBN
+	 YbQ7T2xTKDvbVsWre9nhLk5WAotWUycY2rE/VjOXTnzc3iuWK+DMT2STJWRUcGUBm
+	 bXYbAwON291ga26XnA5u4V27B3NYJ6CIkRtEnbfLV8sAbB39P72iKUbTNBIrmdU4a
+	 e04KvoH2dHrqF9nazuLtkk42uOTlxSEmuZ7nEoAWd1Zh3ryDoILyspnopNhuWbZb7
+	 PuUJuu+YQPopDdYlGIeShwib6Bj0pSnuGPRQh4jNzhdfc/eEmyaNJAIO+57LqT3bL
+	 ybpXy6dfpCKeXLLHpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK52w-1rw9D50YeM-00SgSC; Sat, 25
+ May 2024 20:20:17 +0200
+Message-ID: <0a362e81-1e4a-4c4b-823e-e84c6f408630@web.de>
+Date: Sat, 25 May 2024 20:20:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 95C9D5C269
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: msm8996: add reset for display
+ subsystem
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:u5iv6GIczXOJlRb+JNjI53MKRSNQ9Ww+aJMAc/yNUauEqBvtVTy
+ 9ClrXkpMNjJ9pFnVG4yY+Dx63T6lIdXdwV17bu9EJHpp62FUIxdapr6mHeyahcvPXMQsa/D
+ +JO63/O3NMUVohlKmKS8tj4Sz+jxdjl0qteihV+oKrw8UCV3PSTJxUJq+FbRFL7kWPuR8w+
+ LhJy8r9oQr5RpQ0yHvuVw==
 X-Spam-Flag: NO
-X-Spam-Score: -4.51
+UI-OutboundReport: notjunk:1;M01:P0:x8jl3ITeGf4=;VLGHTn9XQxgy5Tp1Y7wyZd3pm9X
+ wHY8tjLQKH0KHDo0Y6a3bEpfxRC8uI/ASFm9TQrZYplCeOhJMiOgi5b5vPiVTvPV2bC3Ti5VS
+ 6trBEhfKTXxqRl5JCUcyMM5zzILHlx3ld9eCKDURst054bic+hHPgPLVqPfIWVylLTFbscdPO
+ AoN1g2gObW6bXADDCuzWZ/L5DUA7uimmjC0JYA7lK+emf2P0c0SRth86jbZ/gui8v753H58qi
+ uAaUihPISiaXdmtJPk0hzgE/3eDP/shObJZbaVwuZWKX3d02a0WYX6YtAAXCfK9wwt/8/WOhe
+ Js+x6alRW223M6bcRp/hHLRoB3vdkwPLR+yF0cQYW86WH9SZafqST5d2FE3CODk7AAyoxygc9
+ aUeRsaVlMjHvufhr8E5xtXWcPROMKTAiiAeGgcGLhw30g6Zeif83P1SVaJCqo0Ckiym3qSXm+
+ JqmDS2MRTuSqNlS4NEfADZkFYmreNmtZJBqG3jyidPrY2YXI4k6wu9q/SSFGZ6/gXFXgvJ4Am
+ XYYYS0mSxaN425Gji4lmTWk2sJtXZWtLFTtLNh0IDkXeeZt9GL2L8gR8VyCt+40JZ/Z+SRVdt
+ Iu+ucSmSSC21kbaaf6Y56cTeRagW0gU+r5t4WnQJ4H4NXFJaID3u5qPkaCgsFxUeeFKAww/Ce
+ gSKqIYKY4k4QpWUGAXQn+5k3ts/oq7hLa9nGlyC+G+0wFlgMDaHGzjp2e1nmB6XcPphGb7bjJ
+ n3regGLE2QgSViNXWkJ7+lOteCGga/94Di06uW3BXRreIfv0Fb/dHou3pfodPDN1Q0darUHmU
+ yUN0a8yvaGKsluuNimYCs7D/HbvZO5JQNJW2PHlX6nnYY=
 
-"Eduardo' Vela\" <Nava>" <evn@google.com> writes:
+> Add reset for display subsystem, make sure it gets
+> properly reset.
 
-> So, either I'm completely lost or CVE-2023-52656 shouldn't have been
-> rejected. Forgive me for mudding the problem even more.
->
-> I think we need to unreject this CVE (CVE-2023-52656) or CVE-2023-52654
-> should be amended to include the dead code removal commit.. that said,
-> that'll be weirder than just unrejecting this commit.
->
-> The reason is that the commit "io_uring/af_unix: disable sending io_uring
-> over sockets" is not enough to fix the vulnerability in stable branches,
-> because e.g. bcedd497b3b4a0be56f3adf7c7542720eced0792 on 5.15 only fixes
-> one path (io_sqe_file_register) to reach unix_inflight(), but it is still
-> reachable via another path (io_sqe_fileS_register) which is only removed by
-> d909d381c3152393421403be4b6435f17a2378b4 ("io_uring: drop any code related
-> to SCM_RIGHTS").
+* I suggest to use occasionally more than 50 characters in lines of
+  such change descriptions.
 
-Hm, right.  this is real for some really old stable tree.  thanks for
-the clarification.
+* Please reconsider word wrapping accordingly.
 
-But lets agree, the above write up is literally the *only* relevant,
-public information on the issue (that I could find).  And it only
-appeared because we almost wrongfully rejected it.  The CVE description,
-the list of affected trees and everything else in the CVE report are
-absolute non-sense.  Still, the CVE report is all downstream developers
-have to work on the issue.  Of course, the original commit message could
-not have tracked the new information, but the analysis MUST be appended
-to the CVE description.
+* Can such information be relevant for the tag =E2=80=9CFixes=E2=80=9D?
 
-FWIW,
-
-	Fixed in 6.1.83 with commit a3812a47a320
-	Fixed in 6.7.11 with commit 88c49d9c8961
-	Fixed in 6.8 with commit 6e5e6d274956
-
-Is nonsense, then.  We check for io_is_uring_fops(file) right before it.
-
-Greg,
-
-I understand we have multiple streams for security issues, including
-some that might be automated through Fixes tag. But for cases like this,
-where a discussion apparently happened and a human did the excellent
-work of properly analyzing it, can we get a real CVE description
-beyond the original commit message?  Even publishing the archives of the
-original report (minus, whatever, the exploit) alongside the CVE would
-improve the situation.  The old CVE process was notoriously bad with
-descriptions, but this is somehow worse.
-
-> Although that patch claims "it is dead code", this claim was only true on
-> upstream, but not on stable branches (or at least on 5.15 where the
-> vulnerability was proven to be reachable).
-
-Yet, there no information about this "small" detail anywhere I can find.
-
-> My colleague poprdi@google.com sent this analysis to the CNA list, so maybe
-> we can continue the discussion there
-
-No. this *really* needs to be discussed on an *open* list.  The CVE is
-out already.
-
--- 
-Gabriel Krisman Bertazi
+Regards,
+Markus
 
