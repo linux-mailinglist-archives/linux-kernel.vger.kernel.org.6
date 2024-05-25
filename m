@@ -1,164 +1,199 @@
-Return-Path: <linux-kernel+bounces-189409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7300C8CEF90
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:58:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BFC8CEF94
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D831C206A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F38B2817FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D712B5FBB9;
-	Sat, 25 May 2024 14:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32FA5FBB9;
+	Sat, 25 May 2024 14:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYHCHhdH"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PzB2Qpdb"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784EF3C08F;
-	Sat, 25 May 2024 14:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446865A109
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716649107; cv=none; b=LmMW4YGIle2fmKPktOo18bmSYysxeqhbKzOQM/4tXcRn/h9lMnAp/JN/yRm+chczC70oNNHknsZwBKeZ7LImgtapnaXxeIFgjtDVu6J4uczHEzARxWBX8rOd8APJ7QqUJ8b6IMLweg2rtcVcpn579u1jBr9yhvhtRo8Fyf/Jzl0=
+	t=1716649139; cv=none; b=dfz1llRQRowXnqCZf0YrBfJAx0oNkbadIZUHEx+CBUvjD71DU9Gl5qWjfxjdOOKJvYuJ55+mOfMnfReRaacd6/LKPA9pFXKFRWAGfxQjEVfgFuNuB9gss0lZ7XTKmvWHpT2s2g3w9Tye2lHbaK6aLbO+XDMQG41eI+CjfItNGjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716649107; c=relaxed/simple;
-	bh=y07DZNM/QDvEedbvvJlMHk1r5ZGYfBSPPra93Momo0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hf0NAVTIQXXOXke/PmX5TA52y4qi+WoHmsDqGfw+tlx3D3WJr+a+H5yww4KkiCTdHsPs+J3woNylMrZGFU9WRW9Qvae5m5MDbbo0hHBs9tDmyQ4PNbFj3J96Qus4lg9BT0b0CGYS1oMwzgTrLhGrwGZnFh+T252Ufz/QddcTELY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYHCHhdH; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6265d3ccf7so213646766b.0;
-        Sat, 25 May 2024 07:58:25 -0700 (PDT)
+	s=arc-20240116; t=1716649139; c=relaxed/simple;
+	bh=ctVivX1+W8q8tZAHLWU5NkBdoFQr7AVs+kpkVYw/Sks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxkqv0WNsHVMX26reQbse7Xt5xkkvJ6H9HkbrsgrPrDDhik9aW2HqgctsRON8cA1f5wC7fB7my0rgBH/HxPvMW3GJRB6p/Fb3KnmNSLxEVwlnBBDspU620SYYAs+2EzvIOI/M3ghWYNNth4XrB9E4tdMbZDhdnv+1UZQL0D7RqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PzB2Qpdb; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f33d84eaefso21356085ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:58:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716649104; x=1717253904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N5jpB4fiszoJDHewi5PTIYyY+d12c+mT7kvwJL6peD4=;
-        b=lYHCHhdHjptz2Pc2o7mb410suBMyeW0+9S+RyYL1FOsREfiM6PGTQOqTqFNGdeYK8K
-         RBamUhTl1vUFDcS+OfUq7Zjnna0pLlflI2k7O4lOhrSApQufLKW5r9hxW0PzoOovx/a1
-         +9IIBSXmON3dWKh0/gZPDNGeq2d6EGJQjlDT4K2PACPvvYC1pv2i9XiDjOIw+/F4actN
-         E/Ie250Egt/bm3is1wuPlxkjygkIrtO8U2iq/UqhYRv/aKW7kVPQjZpJ/rTGOA43I3mA
-         W8cdOCpUGQ+jba0MLV5BwNQF91FCvMgieNjTA1WvX7EhdrTTnweZivwZLKlwF1Urw1mD
-         1Sug==
+        d=bytedance.com; s=google; t=1716649136; x=1717253936; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VHPLiXIsNVv4WuCaS7ekbfM/TDyHyeP6QTh2jB8T2ME=;
+        b=PzB2QpdbpXrjVI/2JJ3DKRcOBW57Uv768YQpjJCsWeu7BFbco0Gb324apd7IT2bIhL
+         IfFwbKBvuil0A95nf0VPkms8zTcK9JwCnROqBZtykFRHbNef6qejOw0THrXf4zP38UmJ
+         zzWoUvOY3W+HLqfNGo3CmxbOvZTtvTh2f2nTnyJ4nf51sWcIiiT10n9kFg1yDMCY6fnq
+         FBx3Hx59FF1ol3xTuYg8Z2K1fEszEXCZ6X1E6PJ0QsdI+EuYOzJtRze+mY5ym0jZrE7v
+         b+GX1kS0G5pSOVbgDE54aeTdLu3IghBeCW/0qHl8etP9IbSup5EcHEI9aAuBPs/3DwDu
+         /WsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716649104; x=1717253904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N5jpB4fiszoJDHewi5PTIYyY+d12c+mT7kvwJL6peD4=;
-        b=KR+OWcMcduVaNxHyDAYZxTGIwqH+mTI8iZZTUKA7f7jKa2C6gys+JKZeqygr/d4spY
-         aEVTlAv/mUPcppN11YAhEE9nLT3Z87Ww2V/G6OO94sadjNHRLINC8f+I6r74jQMX8Hp4
-         sNuo+BzOh/pFD1eKrZmkKsszodOVLWUdLhH7eQ1SCScqozF0NoTrIZkKuJepC12mXnZe
-         PiJ2WkgZFVKD5Eam6XWLmL1GjF7Shgk1tgmIidOTppoLxo+0ezmMkiif0K/rERPb37fB
-         CfVXCy3TX27/3ewFnYr9rRQdTTJAmvSKsAQQ+gDY+eEX2VCFe7T24w8XO3umN7LCgaDm
-         F8xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBJ6WupDySnqFFqDP7xL7D0uhtZeaN3s5DMfLI80vnCrqicKN0GJC80Br9s87eky+vWT24g3273BwSLYG9UaCBiGmr9CtNYa6x5fhvg6dgEMDHz5kI1Tpc2xkbJ3/WTWUlxdg+YXMv
-X-Gm-Message-State: AOJu0YybB6zHMXCeIxbLNnbhEVTbSTDP/CSt3gxDsd4zhclMeav2BbM5
-	SdDM7DLdi8g23iDnq4JkV9u8M3Sft0XcfYVFpmDBchd4rCAT5KsGbiJZRcYzjw9EV7bEQI6aabG
-	4ksTGQShsCuUB178ibkh68BnF9HU=
-X-Google-Smtp-Source: AGHT+IFl9IYSmRIHAQ2JRUkfyUpWDshgscT9Icfine2tPalV0L8rIirAWlBF7oh28M86LpzfGNLAXACOy6Dx5O1utkY=
-X-Received: by 2002:a17:906:e84:b0:a62:404a:d0d0 with SMTP id
- a640c23a62f3a-a62643e458cmr329166366b.42.1716649103717; Sat, 25 May 2024
- 07:58:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716649136; x=1717253936;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHPLiXIsNVv4WuCaS7ekbfM/TDyHyeP6QTh2jB8T2ME=;
+        b=w1DrTO2f8a9CyahNunVF5vGtEg9kZmw+24Oc29ANOwsHQxHPqM+VWO4TwzLbFVdjcv
+         afTElpVrk+j94HTMrPVVQDixhiG25Bcecj/tLbHlRolLknYnPJjluLIPXZYvQUzXLKQG
+         Thsmsr72PsG4s6zh5eJnPzw1cmYb1kSZfg5cAObGetru9QZQCUaymQw7CgnNeLJ6vgXs
+         RjPP5XbVdjd3yqTNxZlUzJImS2BSwfMQhlepQZx6Wu3gW4cbQPtQul7IuE/TYuSl5bDD
+         fmSGgTbGhW1lAbAy321iBQSL+xz5+tl5fZyVtSMiYcGUDvVe5On6wpPHXlwhHb1D+9Pj
+         NFqw==
+X-Gm-Message-State: AOJu0Yz/rsQ/tGH0vv+8IYFgoYJgS1EPHUMZ8OcMiVmqI5EXoJWoGyek
+	cvBicpcHVKjMFXuSO+jXJeM1Z2LRUMaD/V3N0vpZaO0aB7/9qcY/OCe7fT5H0rg=
+X-Google-Smtp-Source: AGHT+IE03GMYuk9QPTabQ7daTxznFXxYjLRuev4Y2EV4xRnc0qFc+uwYRzpHC2RHLd7qjKUqZYKgHA==
+X-Received: by 2002:a17:903:32cb:b0:1f3:52fe:4497 with SMTP id d9443c01a7336-1f4487438d7mr86026535ad.32.1716649136320;
+        Sat, 25 May 2024 07:58:56 -0700 (PDT)
+Received: from [10.254.221.56] ([139.177.225.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9a9659sm31193515ad.228.2024.05.25.07.58.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 May 2024 07:58:55 -0700 (PDT)
+Message-ID: <e6f2e188-5354-4e2a-814c-e8781507fef1@bytedance.com>
+Date: Sat, 25 May 2024 22:58:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524-ioatdma-fixes-v1-0-b785f1f7accc@yadro.com> <20240524-ioatdma-fixes-v1-3-b785f1f7accc@yadro.com>
-In-Reply-To: <20240524-ioatdma-fixes-v1-3-b785f1f7accc@yadro.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 25 May 2024 17:57:47 +0300
-Message-ID: <CAHp75VePTCdWTSSH_Hdmn4nDX3LWRMvsQsfSHUrgJA2r1Qhf_Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dmaengine: ioatdma: Fix kmemleak in ioat_pci_probe()
-To: n.shubin@yadro.com
-Cc: Vinod Koul <vkoul@kernel.org>, Dave Jiang <dave.jiang@intel.com>, 
-	Logan Gunthorpe <logang@deltatee.com>, dmaengine@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux kernel bug] KASAN: slab-use-after-free Read in
+ pressure_write
+Content-Language: en-US
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Sam Sun <samsun1006219@gmail.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ hannes@cmpxchg.org, lizefan.x@bytedance.com, tj@kernel.org,
+ syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
+References: <CAEkJfYMMobwnoULvM8SyfGtbuaWzqfvZ_5BGjj0APv+=1rtkbA@mail.gmail.com>
+ <q7lfvwrjrs3smyoyt5pyduv5c7hmmgv2mgo6ns3agbjaxawoso@24dbbmumc7ou>
+From: Chengming Zhou <zhouchengming@bytedance.com>
+In-Reply-To: <q7lfvwrjrs3smyoyt5pyduv5c7hmmgv2mgo6ns3agbjaxawoso@24dbbmumc7ou>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 1:24=E2=80=AFPM Nikita Shubin via B4 Relay
-<devnull+n.shubin.yadro.com@kernel.org> wrote:
->
-> From: Nikita Shubin <n.shubin@yadro.com>
->
-> If probing fails we end up with leaking ioatdma_device and each
-> allocated channel.
->
-> Following kmemleak is easy to be reproduced by injecting error in
+On 2024/5/25 00:03, Michal Koutný wrote:
+> On Fri, May 17, 2024 at 03:14:23PM GMT, Sam Sun <samsun1006219@gmail.com> wrote:
+>> ...
+>> We analyzed the root cause of this problem. It happens when
+>> concurrently accessing
+>> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/irq.pressure" and
+>> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/cgroup.pressure". If we
+>> echo 0 to cgroup.pressure, kernel will invoke cgroup_pressure_write(),
+>> and call kernfs_show(). It will set kn->flags to KERNFS_HIDDEN and
+>> call kernfs_drain(), in which it frees kernfs_open_file *of. On the
+>> other side, when accessing irq.pressure, kernel calls
+>> pressure_write(), which will access of->priv. So that it triggers a
+>> use-after-free.
+> 
+> Thanks for the nice breakdown.
+> 
+> What would you tell to something like below (not tested).
 
-easy to reproduce
+Thanks for the detailed report analysis and this fix patch.
 
-an error
+I can still reproduce the UAF problem with this patch by running:
 
-> ioat_alloc_chan_resources() when doing ioat_dma_self_test().
->
-> unreferenced object 0xffff888014ad5800 (size 1024):
->   comm "modprobe", pid 73, jiffies 4294681749
->   hex dump (first 32 bytes):
->     00 10 00 13 80 88 ff ff 00 c0 3f 00 00 c9 ff ff  ..........?.....
->     00 ce 76 13 80 88 ff ff 00 00 00 00 00 00 00 00  ..v.............
->   backtrace (crc 1f353f55):
->     [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
->     [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
->     [<ffffffffa000b7d1>] ioat_pci_probe+0xc1/0x1c0 [ioatdma]
->     [<ffffffff8199376a>] local_pci_probe+0x7a/0xe0
->     [<ffffffff81995189>] pci_call_probe+0xd9/0x2c0
->     [<ffffffff81995975>] pci_device_probe+0xa5/0x170
->     [<ffffffff81f5f89b>] really_probe+0x14b/0x510
->     [<ffffffff81f5fd4a>] __driver_probe_device+0xda/0x1f0
->     [<ffffffff81f5febf>] driver_probe_device+0x4f/0x120
->     [<ffffffff81f6028a>] __driver_attach+0x14a/0x2b0
->     [<ffffffff81f5c56c>] bus_for_each_dev+0xec/0x160
->     [<ffffffff81f5ee1b>] driver_attach+0x2b/0x40
->     [<ffffffff81f5e0d3>] bus_add_driver+0x1a3/0x300
->     [<ffffffff81f61db3>] driver_register+0xa3/0x1d0
->     [<ffffffff8199325b>] __pci_register_driver+0xeb/0x100
->     [<ffffffffa003009c>] 0xffffffffa003009c
->
-> repeated for each ioatdma channel:
->
-> unreferenced object 0xffff8880148e5c00 (size 512):
->   comm "modprobe", pid 73, jiffies 4294681751
->   hex dump (first 32 bytes):
->     40 58 ad 14 80 88 ff ff 00 00 00 00 00 00 00 00  @X..............
->     01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace (crc fbc62789):
->     [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
->     [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
->     [<ffffffffa0009641>] ioat_enumerate_channels+0x101/0x2d0 [ioatdma]
->     [<ffffffffa000b266>] ioat3_dma_probe+0x4d6/0x970 [ioatdma]
->     [<ffffffffa000b891>] ioat_pci_probe+0x181/0x1c0 [ioatdma]
->     [<ffffffff8199376a>] local_pci_probe+0x7a/0xe0
->     [<ffffffff81995189>] pci_call_probe+0xd9/0x2c0
->     [<ffffffff81995975>] pci_device_probe+0xa5/0x170
->     [<ffffffff81f5f89b>] really_probe+0x14b/0x510
->     [<ffffffff81f5fd4a>] __driver_probe_device+0xda/0x1f0
->     [<ffffffff81f5febf>] driver_probe_device+0x4f/0x120
->     [<ffffffff81f6028a>] __driver_attach+0x14a/0x2b0
->     [<ffffffff81f5c56c>] bus_for_each_dev+0xec/0x160
->     [<ffffffff81f5ee1b>] driver_attach+0x2b/0x40
->     [<ffffffff81f5e0d3>] bus_add_driver+0x1a3/0x300
->     [<ffffffff81f61db3>] driver_register+0xa3/0x1d0
+terminal 1: while true; do echo "some 150000 1000000" > cpu.pressure; done
+terminal 2: while true; do echo 1 > cgroup.pressure; echo 0 > cgroup.pressure; done
 
-Please, read
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#back=
-traces-in-commit-messages
-and follow the advice given there.
+Because we still access kernfs_open_file in pressure_write() before cgroup_mutex taken.
 
-..
+It seems like a problem with kernfs_drain()? I think it should make sure no active users
+of kernfs_open_file when it returns, right? Will take a look again.
 
-> +       int err, i;
+Thanks.
 
-Why signed?
-
---=20
-With Best Regards,
-Andy Shevchenko
+> 
+> Regards,
+> Michal
+> 
+> -- >8 --
+> From f159b20051a921bcf990a4488ca6d49382b61a01 Mon Sep 17 00:00:00 2001
+> From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+> Date: Fri, 24 May 2024 16:50:24 +0200
+> Subject: [PATCH] cgroup: Pin appropriate resources when creating PSI pressure
+>  trigger
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> Wrongly synchronized access to kernfs_open_file was detected by
+> syzkaller when there is a race between trigger creation and disabling of
+> pressure measurements for a cgroup (echo 0 >cgroup.pressure).
+> 
+> Use cgroup_mutex to synchronize whole duration of pressure_write() to
+> prevent working with a free'd kernfs_open_file by excluding concurrent
+> cgroup_pressure_write() (uses cgroup_mutex already).
+> 
+> Fixes: 0e94682b73bf ("psi: introduce psi monitor")
+> Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enable interface")
+> Reported-by: Yue Sun <samsun1006219@gmail.com>
+> Reported-by: xingwei lee <xrivendell7@gmail.com>
+> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> ---
+>  kernel/cgroup/cgroup.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index e32b6972c478..e16ebd0c4977 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -3777,31 +3777,30 @@ static ssize_t pressure_write(struct kernfs_open_file *of, char *buf,
+>  	struct psi_trigger *new;
+>  	struct cgroup *cgrp;
+>  	struct psi_group *psi;
+> +	ssize_t ret = nbytes;
+>  
+>  	cgrp = cgroup_kn_lock_live(of->kn, false);
+>  	if (!cgrp)
+>  		return -ENODEV;
+>  
+> -	cgroup_get(cgrp);
+> -	cgroup_kn_unlock(of->kn);
+> -
+>  	/* Allow only one trigger per file descriptor */
+>  	if (ctx->psi.trigger) {
+> -		cgroup_put(cgrp);
+> -		return -EBUSY;
+> +		ret = -EBUSY;
+> +		goto out;
+>  	}
+>  
+>  	psi = cgroup_psi(cgrp);
+>  	new = psi_trigger_create(psi, buf, res, of->file, of);
+>  	if (IS_ERR(new)) {
+> -		cgroup_put(cgrp);
+> -		return PTR_ERR(new);
+> +		ret = PTR_ERR(new);
+> +		goto out;
+>  	}
+>  
+>  	smp_store_release(&ctx->psi.trigger, new);
+> -	cgroup_put(cgrp);
+>  
+> -	return nbytes;
+> +out:
+> +	cgroup_kn_unlock(of->kn);
+> +	return ret;
+>  }
+>  
+>  static ssize_t cgroup_io_pressure_write(struct kernfs_open_file *of,
 
