@@ -1,154 +1,235 @@
-Return-Path: <linux-kernel+bounces-189268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7566C8CEDC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 883818CEDC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB48281EBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DDF1281DF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A9246A4;
-	Sat, 25 May 2024 03:41:47 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57DD5250;
+	Sat, 25 May 2024 03:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VVN9dcEE"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF89DAD25;
-	Sat, 25 May 2024 03:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447FA138E
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 03:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716608507; cv=none; b=dai6dQ7d3OFPzo6WxZEImxv29t7zeeC3ccGwg1mpZpLZ0ZQsL9uG1F7/CYU1slMxma+Ec5Fpo4hHdZh8EUNnGoM9+t0rziCp0LndQHC5VMRLnhNYzrlliY53MI0lzXippWlkVtkwGQytvmBMVUUdSfI+vyCXHCOdHZ95i4zduMM=
+	t=1716608893; cv=none; b=jklz8II+fKtlSuHeIEqmNc1eBTGuQ0ZIF0KB062OzrALpvkf9i+ifmzumvBW1ebI+NeQct5NM16eKiuzeZdpWbe8cDDEc+5oDHRFnviIrCTcqeozkevHpz8NT1BxpP+4HICG90gbEESg1iAckzsRvWO9vECHFWASgdD9Zv9Qcko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716608507; c=relaxed/simple;
-	bh=2TGCDEyhBPglEtC27Vub6VPtL/Rs/yRHv5FhWC5j5+k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q5GHAZMqG3SOPrPesoGDhKNJSFbkcJjTkZKrUv3jjXIHEzMHoUbtBHtiKsJvd8Q3jmL43ILDq/bxw7WxtxO3gWhXFp8dVRVPXbBhwcQwjXwt1Uf/Crz40IetHYN8Z45uDCMbZPrye+BW5EOLYrobzQTkbwi5ALbgjZou9rANDcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VmSKc3YdhzxQ1M;
-	Sat, 25 May 2024 11:37:56 +0800 (CST)
-Received: from canpemm500007.china.huawei.com (unknown [7.192.104.62])
-	by mail.maildlp.com (Postfix) with ESMTPS id DEE6014022E;
-	Sat, 25 May 2024 11:41:40 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by canpemm500007.china.huawei.com
- (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 25 May
- 2024 11:41:40 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <hannes@stressinduktion.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net] ipvlan: Dont Use skb->sk in ipvlan_process_v{4,6}_outbound
-Date: Sat, 25 May 2024 11:42:31 +0800
-Message-ID: <20240525034231.2498827-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716608893; c=relaxed/simple;
+	bh=9h+hPTeUfQOcpsBAA9XgOVwljDzYnUuEJMBxx2V+Zi4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VTjKlZ/ohKZE/9JlbDR7wH351tzHmxbaaeaTCfcGjG+7NqZ7xfrzP21WUvzoPK6dRWNzkZEDLmR9bplcyTFXGRUdn+onTgz4sJVQfhDtQBD4TBrAXRRaJrc4Wi8s3cza1tFBLW8LwBLMxA+V2925zQfzs+oC/7nQbTskcfiS5Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VVN9dcEE; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-36db863679bso40005ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716608891; x=1717213691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ae90xQD1JSfJyYVhaJGFBnlHi96JVOZGp7BSWxGOUA=;
+        b=VVN9dcEE+Y/vTHZfXRCfWplD0Eb1BGvZgYBkBCOYBtmefvEdCXGAXAaemz+x+wDoYR
+         YXmhVOIv/L9fuIi0KMqcVPtyCwJlzAWew9TipjTVo3G0z0aX9bpfInQ8/8Oc9imIWgVJ
+         U4Q3rEhgUTghW6kCh05mhQplNZK9b2O7/zuf3+cRFPhUdwFp83RYgOoNP5Krohr/VRHm
+         M0xKqjBfJYyzZt9LQNcRvj0Mm/1x+zJXbm+BLF8gj8j6WSB61ClDFsrl2u52WaM31i0U
+         gLNCMXoo5zsaD1oLuC7A4IZbr0hawV3JutHkFky1MUHLkYJiCniZOZcq3aDSbe7kmWcp
+         fqFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716608891; x=1717213691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ae90xQD1JSfJyYVhaJGFBnlHi96JVOZGp7BSWxGOUA=;
+        b=OJc1H+sJthwTE7vb4605y7VX2n8Tp3xbYbjBByBY5JBNPvkK2yPoF145rp9n4AQFMo
+         56JbInclglVDJruDrPtF4Vh/zH/TxJWINEUF/hCvl8KEm32DcP59eUyUJCAJ9XS3+R45
+         DcY6C3oaASlXhaF+T/ik2wrr8OhisArUiDmpWI+SKornr/BgFD28v0c7iIbIzHd8Amr5
+         pJyn8BDZnDLDYDpMVRmBX1HZwGW44g6ry3QGNtpN6Te7Khh1gNsTaXAhQZX8azS9ayop
+         CLaexiPOs64DWu6SeF4eEv4vrqyILOnajUG42DvJ5QuFAlkmUZ8uC+45dH4cb6PpvElU
+         Xcnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZHoneCUu9VQLBnaHRZzbZUPEkb/DWAnWtcmOO/E2dfYmzPew+cuGSVSWaaMZ8wxqDHB2NbQpIlOEa6FQ5o66V+wAX/rHD0Dl1zRmU
+X-Gm-Message-State: AOJu0YyC1jI0g5Sh3r3dRlLNOqbO67hprAdfQLV9shrtN/z4p+KhvOpL
+	03pKjGngvUaXOg72hXW3XxQe5iSvvGZ7OoKMtMYC8XKkLHbcj03UW40tiMTYbMYAjhMOURfTlTy
+	jPcvfB37rAWvA1HDzFiWD2E27YDNM1rn4lKp4
+X-Google-Smtp-Source: AGHT+IH9AudXBRg06HeJ2lMfXh7iaMoDr8xto6pnVvEb6aUWVkk5wmCn5cRqO9PYpm8emOvieo6JJpoPBYDzbnlv0oM=
+X-Received: by 2002:a92:cc08:0:b0:36d:cb9e:a0da with SMTP id
+ e9e14a558f8ab-3738b350a12mr590685ab.25.1716608891228; Fri, 24 May 2024
+ 20:48:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500007.china.huawei.com (7.192.104.62)
+References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1>
+In-Reply-To: <ZlFGpxWGQskCTjeK@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 24 May 2024 20:47:59 -0700
+Message-ID: <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Leo Yan <leo.yan@linux.dev>, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Clark Williams <williams@redhat.com>, Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
+	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
+	Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Raw packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device will
-hit WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path.
+On Fri, May 24, 2024 at 7:02=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Fri, May 24, 2024 at 10:55:11PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Fri, May 24, 2024 at 06:31:52PM -0700, Linus Torvalds wrote:
+> > > On Tue, 21 May 2024 at 12:26, Arnaldo Carvalho de Melo <acme@kernel.o=
+rg> wrote:
+> > > >
+> > > > perf tools fixes and improvements for v6.10:
+> > >
+> > > This actually broke 'perf' completely for me on arm64.
+> > >
+> > > With a 6.9 version of 'perf', I can do this:
+> > >
+> > >     perf record -e cycles:pp make -j199
+> > >
+> > > and it all works fine.
+> > >
+> > > With the current -git version, when I do the same, I instead get
+> > >
+> > >   Error:
+> > >   cycles:pp: PMU Hardware doesn't support
+> > > sampling/overflow-interrupts. Try 'perf stat'
+> > >
+> > > and after trying desperately to chase down what went wrong on the
+> > > kernel side, I finally figured out that it wasn't a kernel change at
+> > > all, it was the tooling that had changed.
+> > >
+> > > I did a 'git bisect', and it says
+> > >
+> > >   617824a7f0f73e4de325cf8add58e55b28c12493 is the first bad commit
+> > >   commit 617824a7f0f73e4de325cf8add58e55b28c12493
+> > >   Author: Ian Rogers <irogers@google.com>
+> > >   Date:   Mon Apr 15 23:15:25 2024 -0700
+> > >
+> > >       perf parse-events: Prefer sysfs/JSON hardware events over legac=
+y
+> > >
+> > > and very clearly this does *NOT* work at all for me.
+> > >
+> > > I didn't notice until now, simply because I had been busy with the
+> > > merge window, so I hadn't been doing any profiles, but the merge
+> > > window is calming down and the end is nigh, and I just wasted more
+> > > time than I care to admit trying to figure out what went wrong in the
+> > > kernel.
+> > >
+> > > And no, I don't speak JSON, and I have *no* idea what the legacy
+> > > events are. Plus I'm not very familiar with the arm64 profiling etc
+> > > anyway, so I'm just a clueless user here.
+> > >
+> > > I *can* confirm that just reverting that commit makes that trivial
+> > > "perf record" work for me. So the bisect was good, and it reverts
+> > > cleanly, but I don't know _why_ my arm64 setup hates it so much.
 
-WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
-Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm_kms_helper
-CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:sk_mc_loop+0x2d/0x70
-Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 85 ff 74 1c
-RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
-RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
-RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
-R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
-R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
-FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-<IRQ>
- ? __warn (kernel/panic.c:693)
- ? sk_mc_loop (net/core/sock.c:760)
- ? report_bug (lib/bug.c:201 lib/bug.c:219)
- ? handle_bug (arch/x86/kernel/traps.c:239)
- ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
- ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
- ? sk_mc_loop (net/core/sock.c:760)
- ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
- ? nf_hook_slow (net/netfilter/core.c:626)
- ip6_finish_output (net/ipv6/ip6_output.c:222)
- ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
- ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
- ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
- dev_hard_start_xmit (net/core/dev.c:3594)
- sch_direct_xmit (net/sched/sch_generic.c:343)
- __qdisc_run (net/sched/sch_generic.c:416)
- net_tx_action (net/core/dev.c:5286)
- handle_softirqs (kernel/softirq.c:555)
- __irq_exit_rcu (kernel/softirq.c:589)
- sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043)
+Thanks for the report. TL;DR try putting the PMU name with the event
+name, so "cycles:pp" becomes "armv8_pmuv3_0/cycles/pp", where
+armv8_pmuv3_0 is the name of the PMU from /sys/devices.
 
-The warning triggers as this:
-packet_sendmsg
-   packet_snd //skb->sk is packet sk
-      __dev_queue_xmit
-         __dev_xmit_skb //q->enqueue is not NULL
-             __qdisc_run
-               sch_direct_xmit
-                 dev_hard_start_xmit
-                   ipvlan_start_xmit
-                      ipvlan_xmit_mode_l3 //l3 mode
-                        ipvlan_process_outbound //vepa flag
-                          ipvlan_process_v6_outbound
-                            ip6_local_out
-                                __ip6_finish_output
-                                  ip6_finish_output2 //multicast packet
-                                    sk_mc_loop //sk->sk_family is AF_PACKET
+The perf tool has a number of inbuilt "legacy" event names, cycles is
+one. Most events these days are either found in sysfs (this is on a
+Raspberry Pi 5):
+```
+$ ls /sys/devices/armv8_cortex_a76/events/
+br_mis_pred          exc_return        l1d_tlb_refill      l2d_tlb
+        remote_access
+br_mis_pred_retired  exc_taken         l1i_cache
+l2d_tlb_refill      stall_backend
+br_pred              inst_retired      l1i_cache_refill    l3d_cache
+        stall_frontend
+br_retired           inst_spec         l1i_tlb
+l3d_cache_allocate  sw_incr
+bus_access           itlb_walk         l1i_tlb_refill
+l3d_cache_refill    ttbr_write_retired
+bus_cycles           l1d_cache         l2d_cache           ll_cache_miss_rd
+cid_write_retired    l1d_cache_refill  l2d_cache_allocate  ll_cache_rd
+cpu_cycles           l1d_cache_wb      l2d_cache_refill    mem_access
+dtlb_walk            l1d_tlb           l2d_cache_wb        memory_error
+```
+ or json that is turned into tables built into the perf tool.
 
-Call ip{6}_local_out() with NULL sk in ipvlan as other tunnels to fix this.
+ARM requested that sysfs and json events take priority over legacy
+events. So 'armv8_cortex_a76/cycles/' should first try to open an
+event in either sysfs or json, and if not present fallback on using
+the legacy constants. Note that the event name has the PMU name first.
+What should the behavior of the 'cycles' event with no PMU be? In
+Linux 6.9 the behavior was that cycles without a PMU would be a legacy
+encoding and only try to be on the core's PMU (generally cpu on Intel
+or armv8... on ARM), but with a PMU it would prefer sysfs and json
+tables.
 
-Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive dereference inside the stack")
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/net/ipvlan/ipvlan_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+RISC-V had asked that in the no PMU case they'd also like sysfs/json
+to have priority so the driver could be more ignorant of event
+encodings. It was also inconsistent that in Linux 6.9:
 
-diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_core.c
-index 2d5b021b4ea6..fef4eff7753a 100644
---- a/drivers/net/ipvlan/ipvlan_core.c
-+++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -439,7 +439,7 @@ static noinline_for_stack int ipvlan_process_v4_outbound(struct sk_buff *skb)
- 
- 	memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
- 
--	err = ip_local_out(net, skb->sk, skb);
-+	err = ip_local_out(net, NULL, skb);
- 	if (unlikely(net_xmit_eval(err)))
- 		DEV_STATS_INC(dev, tx_errors);
- 	else
-@@ -494,7 +494,7 @@ static int ipvlan_process_v6_outbound(struct sk_buff *skb)
- 
- 	memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
- 
--	err = ip6_local_out(dev_net(dev), skb->sk, skb);
-+	err = ip6_local_out(dev_net(dev), NULL, skb);
- 	if (unlikely(net_xmit_eval(err)))
- 		DEV_STATS_INC(dev, tx_errors);
- 	else
--- 
-2.34.1
+$ perf stat -e inst_retired.any true
 
+was a sysfs/json event that we'd try to open on every PMU but:
+
+$ perf stat -e instructions true
+
+was a legacy event that would only be opened on the core PMU. (I'm
+ignoring the complexity that BIG.little/hybrid adds).
+
+The blamed patch does away with the inconsistency and makes it so that
+legacy events are always the 2nd choice and we try to open every event
+on every PMU. It is the 2nd point that I think is breaking you. I
+think you have a PMU on your system with a cycles event, maybe an
+uncore PMU with memory controller data or CXL, and the perf record is
+trying to open the cycles event on that and the error message
+correctly reports that sampling wouldn't be possible on that PMU.
+
+Putting verbose flags on perf record:
+
+$ perf record -vv ...
+
+should hopefully give more breadcrumbs and confirm this. You could also do:
+
+$ ls /sys/devices/*/events/cycles
+
+If there are more than 1 sysfs cycles event then probably one of them
+is the problem. Adding the PMU name removes the trying every PMU
+behavior and so should be a fix. We could also change it so that when
+we open multiple events for perf record we don't fail in a case like
+this. Maybe it is a feature to fail.
+
+Thanks,
+Ian
+
+> > That is a good data point, we probably could go with the revert, but I
+> > think Ian submitted a few patches fixing this issue that came up close
+> > to LSFMM/BPF and the merge window, so didn't have time to sit on
+> > linux-next for a while, I'm looking those up now.
+>
+> Couldn't find it quickly, its late here, perhaps Ian can chime in and
+> point those fixes here. I'll try and continue tomorrow.
+>
+> - Arnaldo
+>
+> > ARM64 eyes on this would also be good. Adding Mark Rutland and Leo Yan
+> > to the CC list, maybe they can help us here with the best course of
+> > action.
 
