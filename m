@@ -1,108 +1,97 @@
-Return-Path: <linux-kernel+bounces-189420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944BB8CEFD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:24:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3778CEFBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468951F215AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353B22815D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D656985929;
-	Sat, 25 May 2024 15:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6740283CBD;
+	Sat, 25 May 2024 15:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UcNiW7vq"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtdhsD21"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9B81429E;
-	Sat, 25 May 2024 15:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941661429E;
+	Sat, 25 May 2024 15:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716650639; cv=none; b=fvX+Gru6iNxO8+vPJHArqET6HcMv1/affvEkJYmuhjQitpLomM7LpsrAgiqeiste8F1Tgb4LxKWGKhdNkoJIulSMo2FycT5rBpobxVfp5geWA60BdylKbzf3g5xJ43dbG9rsj/z8ELf7WUjFF7jGSwXJvSCaidNbRLieQmHKzyo=
+	t=1716650148; cv=none; b=c8MZVi74P9VKe+kr1Sse76+VawtyL+5i0cMStXKvQ8mKPv2dANDk7WLxU9hUU9IZLYJtzyyQNsz7/x0pxHoMlMOlMLkK8IMfqY6yUd6dOfWXLiBasI6F3p1vv+hx12y5zIPtV2KlUdt4eFeyZsFvtf1By8oRfr6XO/0D8H5aRiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716650639; c=relaxed/simple;
-	bh=Y1QbV1fVDvWYwh1mRKjVim+xdyrWT0f/WnYH38ND510=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOU2QGAbtu/+ghiQ8HW4bVOGUoJKwMP4WqhmAYUQ3rAij8KNZViMPDEHj1nHTAGYCEsHn6MA9kVCWjXl5/vFXqgw64wJQokr7ZQp+Jw87PExKZk7Dg89Amsnnu+iGe5Kx3ITc8HYLF70F1hQNIUYNMfr6+yr5idw1N6ZjmK1a7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UcNiW7vq; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id At6asqDFCOBGCAt6asbEpr; Sat, 25 May 2024 17:14:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716650087;
-	bh=SsSnU22BLOw2sFJbi0JknTXepGNVkme9LGYumcyMsq0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UcNiW7vqBL6W/uiJKJok9ctWJIJmgX2JZMruZnW+I5yvkB6lsgwEVFIa07qypLFq1
-	 HWc7s94sRHNc7PwjCcHclfEeCFFuE0HZ+FRG1BZCZNZESKn2Jrda875XMEAESMpY6w
-	 5+Ysr+/16CU3fUE2TEoz5OHshQGHoLZLYbTmszZuxpd9OPZ3Nvsowe+VuMoIkPBI7D
-	 eOoWxtp/ePwL+D//ijSf/y+eFEDdSfKDVbWREi6NCihYDfaIVeLDjItTUibKkRibM/
-	 qVSegiqnjva1HfXNG+dUC+TMg3xNO8iAv9fvqgENWbk4flNtwAOWa5MLW3NQ2SCaee
-	 jXRW6ExbhnTtg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 25 May 2024 17:14:47 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Akhil R <akhilrajeev@nvidia.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-crypto@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free() call in tegra_se_remove()
-Date: Sat, 25 May 2024 17:14:35 +0200
-Message-ID: <ea775b351a3dbe4cef4056ea89da25084f73df22.1716650050.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716650148; c=relaxed/simple;
+	bh=wa6xP9S3uLlfg3n05vhFPt+ult4CTmP8SbHN1IB6x8k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=KyD95gB5RCbXHB85BuOfwDBFCKWhDdeqYso2dpsGt9gH7j52ey2Fr9KVjWECY4y54EUjh/SxgmYKVK95urEirwLjGoRYn/lUS7n+kptEkIgef+pG4fUFsIHdPu99N+p2YcqIoC9qTYLNU0nl9G7s8PDDO5rj5yqrtt6ARqm1jUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtdhsD21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5E0DC2BD11;
+	Sat, 25 May 2024 15:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716650148;
+	bh=wa6xP9S3uLlfg3n05vhFPt+ult4CTmP8SbHN1IB6x8k=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=EtdhsD21R6oyJ+uqt0hQcgFgh0snb4v+N6wSvwXT2XYlgYogoAL/13xwlDlzxDJag
+	 LpH3cjRPZmTOpgBEmYl4pz4O+Nf+jyJ0fj+cVfIy8L5/MgWQwK4j99+mKrGw00Qu28
+	 EN6pNZfN06ZXmKry8u67XOiHwUL5TtCf24E5LIQTYVcEYHHveRYlFbyVbyWkY9WiNh
+	 Mt/lt56vD/IRJpQnhEs5iDLz9M7KRtUTidg3vj43D0I6G1ao1AkA5v3gFXq5+JSUrZ
+	 fUn1c2MNp7rkVqciE5C+qucjVuDphhB8UGM1oqRAOy1m4xTtLLPHse+lrcGKOsiadI
+	 Zsl3XjysNN09w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 25 May 2024 18:15:43 +0300
+Message-Id: <D1ITOT1F26RK.S2V3FRMXPAPD@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <stable@vger.kernel.org>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: trusted_tpm2: Only check options->keyhandle for
+ ASN.1
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240525123634.3396-1-jarkko@kernel.org>
+ <b1ac7ec116c871294d856185da44ae1e9fc02fe7.camel@HansenPartnership.com>
+In-Reply-To: <b1ac7ec116c871294d856185da44ae1e9fc02fe7.camel@HansenPartnership.com>
 
-The only iommu function call in this driver is a
-tegra_dev_iommu_get_stream_id() which does not allocate anything and does
-not take any reference.
+On Sat May 25, 2024 at 4:42 PM EEST, James Bottomley wrote:
+> On Sat, 2024-05-25 at 15:36 +0300, Jarkko Sakkinen wrote:
+> > tpm2_load_cmd incorrectly checks options->keyhandle also for the
+> > legacy format, as also implied by the inline comment. Check
+> > options->keyhandle when ASN.1 is loaded.
+>
+> No that's not right.  keyhandle must be specified for the old format,
+> because it's just the two private/public blobs and doesn't know it's
+> parent. Since tpm2_key_decode() always places the ASN.1 parent into
+> options->keyhandle, the proposed new code is fully redundant (options-
+> >keyhandle must be non zero if the ASN.1 parsed correctly) but it loses
+> the check that the loader must specify it for the old format.
+>
+> What the comment above the code you removed means is that the keyhandle
+> must be non zero here, either extracted from the ASN.1 for the new
+> format or specified on the command line for the old.
 
-More-over, what is freed is "se->dev" which has been devm_kzalloc()'ed in
-the probe.
+My code change was plain direct to the word interpreation of the
+comment.
 
-So there is no point in calling iommu_fwspec_free() in the remove function.
+So I just take the last paragraph of yours and instead fix the
+misleading comment:
 
-Remove this incorrect function call.
+/*
+ * Keyhandle must be non zero here, either extracted from the ASN.1 for
+ * the new format or specified on the command line for the old.
+ */
 
-Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
-
-This patch is completely speculative. *Review with care*.
----
- drivers/crypto/tegra/tegra-se-main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
-index 9955874b3dc3..f94c0331b148 100644
---- a/drivers/crypto/tegra/tegra-se-main.c
-+++ b/drivers/crypto/tegra/tegra-se-main.c
-@@ -326,7 +326,6 @@ static void tegra_se_remove(struct platform_device *pdev)
- 
- 	crypto_engine_stop(se->engine);
- 	crypto_engine_exit(se->engine);
--	iommu_fwspec_free(se->dev);
- 	host1x_client_unregister(&se->client);
- }
- 
--- 
-2.45.1
-
+BR, Jarkko
 
