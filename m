@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-189510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6231E8CF106
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF008CF10C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966581C20A20
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD6C1F21831
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A85C127E05;
-	Sat, 25 May 2024 18:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC30127E2A;
+	Sat, 25 May 2024 18:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tv6JSaeR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gPCtwBgA"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9DB4AEF8;
-	Sat, 25 May 2024 18:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342C72D054;
+	Sat, 25 May 2024 18:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716662399; cv=none; b=DaDtyHAqDEFLS/oP1USCOmjvMubgYFByK6e0Gg/C5gDr4I2D6NMDfPbm+Ijdkbp2ONe7ld8CiNj/aFewShhgjy2M7pcCypD0teFBPMVdyQEYT3y+1jFWf7RQcSKz6PJTFjTyVeCXV+EOLS6P9XNPaLjM8yAAzzxh/QIVGKCNlRI=
+	t=1716663385; cv=none; b=maHpGQ2+R/LPq6eAPGRZoSsIuP6lsUCnInBveIE9BiBL+N8V9aoasZ+DhE+8KYuPMugJNMrA4OvEp7EB5mqO/xyv+DHYVFiUds6PsRqrRUEyB3qSxdLs5H4/W7OxcMU17CqiRm5Vc5ZcCsHORu/WidI1SiyUMwuKkI1Q+euGrJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716662399; c=relaxed/simple;
-	bh=+Wdxh9pPLwNtyelouBv9RsJhb0YW1U3TgG+5clqC2kY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m0OHik5UYb7lNCrkY2rBKZxQand8adfmYnrrVo5TwTQ6a4cGX4iZyHS61UwNfW8Xn7wNMIKMcDTv/0fy0I7WQ+Sr+MKHnzWZHR337W4pVh+jnUW9IDQzKj47ndSHNQxVwCzJl1TSHMtv+BemjbNVn50GZDjUu9WoXpRLvvAJN6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tv6JSaeR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51DD0C2BD11;
-	Sat, 25 May 2024 18:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716662399;
-	bh=+Wdxh9pPLwNtyelouBv9RsJhb0YW1U3TgG+5clqC2kY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tv6JSaeRZpP59Zb9HXvrmH/x/v6Sl8JyKP0ELumfQ109RCpfnXorFAp96vlp8j/Xg
-	 lnO8RPuVs4dEC2aC2oggSn+ple+/wpE+Y2EjVj4e8TEitYYSsrnJK1Gt7zT1bOknFu
-	 NROgR9p2gnCMNCHqYo2R4Za9CeBnK8UI6O7jagka9NJQm6yj9T9/qm49d/1qCwAzK8
-	 I9gwpJC8Ti5jh88InR3yNmW+iF9eRoPWkaoq8DRkZjDj4koBhLhM/K/3M3qH66H+5j
-	 5iEjLT7rbZptv0xGCB+oYOEMKrgHHB+M4WvqlJoLF81/39C20GOuEycjZVrY5q1/qs
-	 QeJzuXO66X3gQ==
-Message-ID: <0b7099b6-8eab-41b4-9685-1b27350bbcb9@kernel.org>
-Date: Sat, 25 May 2024 20:39:53 +0200
+	s=arc-20240116; t=1716663385; c=relaxed/simple;
+	bh=u5kc3T0d1t7VTulBjsJ9BN9TM+HxwlgLQTDBgj+qAtg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=tPGEGTKUnqDioGe2i03/1dAEfic6NLYv/qKzffgsN1FsRZlvXrWA+jd3E52cpBAoMJEODbmmi2jIqSch/vZcysjXvHAD5k/D7MZhBeMJzmwOOLkSWB5Z3Psu9Rae06nKEWbQTTfiSGXkAjubkEsZsh4FX/nFmiIHbnHjJsarYwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gPCtwBgA; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716663345; x=1717268145; i=markus.elfring@web.de;
+	bh=otZ1ymj2tqkpbqE9c0QPaxhZ2hMV5/4szWg3ccvyUUM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gPCtwBgAxy8hXOr9pavL+mYgllfCZNwIaYf5tAFKy13EjxiJoA8Z74v+SfeJXQ2t
+	 CrYokUsEHLerBl0eHPh2US4zXsMKsRNoE4ikUOELNsQBfi3ma7uJTfUHJC4ehjW/k
+	 59VfIfPSQ0KGO1NrqLXzdBENF+jM7Mrrq53F+Ygsdb3XVCon3gmovtEQQSEqb7EZI
+	 bdMbnxLjMGpBsGrmLMAY7QMBcAlcIXi4fYeULn3//KJtFphH4RqXJLNpJaQMpWPtH
+	 mzcliTCGP8jOzWpdlz/J3gGNDiYyEJMJjN2RxSBWyUe8upUBMIxspXeeyXGdwC6nF
+	 XVGkTiEyGtuoYUY/7w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3ouq-1sbVwn3PAe-00siTw; Sat, 25
+ May 2024 20:55:45 +0200
+Message-ID: <57cef938-fe79-4745-80a1-1285f87cdc7c@web.de>
+Date: Sat, 25 May 2024 20:55:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,77 +56,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] dt-bindings: ROHM BD96801 PMIC regulators
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <cover.1716533790.git.mazziesaccount@gmail.com>
- <6a7d3b9dc594f253bf190508df98395556449068.1716533790.git.mazziesaccount@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6a7d3b9dc594f253bf190508df98395556449068.1716533790.git.mazziesaccount@gmail.com>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>, cgroups@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240525094403.1584987-1-xiujianfeng@huawei.com>
+Subject: Re: [PATCH -next] cgroup/cpuset: Remove unnecessary zeroing
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240525094403.1584987-1-xiujianfeng@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4H/AFM09eXMdDH8ofE10+RVKwkLM6PKpcF+70soekPfLQNIRinj
+ Ho02yw1vWFDtYO+nK+kQuD7u7ktt167vDyzoeXBqiz+eT5idXb8t3Ukmmn3EXFFstd5H8aG
+ O2yP6PpIHCGROtFgHFx0ydALjP/R0DGTItgzegm7ZLVG9uyFSSI7v/DufqO9oD42LvlJ3M5
+ DnsfAiwCR5hypMB8jYObw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5IuDjFeHSXc=;M6r+191U0bS7HoIkE9j5DzBA6r9
+ AjFoWXvKvPa5EK+fR41iMeFxgcyJj8rVh21tYzGOrOJFOgjaTuyI2nh6pnfo0tVlABSfGsMG6
+ Yzxy1CELxl6UhIb3QPxjYTQxQN5KTZA2NzyRqhq5HkD4QFoWEL6juHSj666O8UZcuUqmhbFcb
+ X+0kPX8P5pKuXHK0s4/2kudiuUKVAAoosYRNCeep0l15Uxl0KpOSg5rZm2lt0bq366rXvP7U3
+ CjwqgG/ttlNF7Xf4JHGBCwNlAOn0/3xQkQ6vNLGrGs2MUCKUxsoxiR5U8hksn8dnddKB9IRxO
+ vpixQ4taSsAQYkHFMt52OAAZ/oZtL/bHW35On/0h9CpVuOUMt8AjrZahefzKsFEkvnNNgt2eW
+ qVlFehMWqEnt3M9/Li0CDxHEr08/DKco5KUxUAxKGUozndrB+/EAuRJhVOczqtq36J12oou51
+ tgguxfKf3JOWFTxZb01t+pEQ2x/9uBVTzDmMkte+mQVRkRY/2O1zxZLAaXGv56zBGbEv/+QqX
+ CMLIBqhIJ8bdETL4As9rg1dm8JVIClU4t+sDPrhm/uoHzbkAQGnF7jjfVyFihx8W0d0GIu6sB
+ kz6O5vTorD8KJUWJUxSNEfIezCTdJ0cghDJlipJzk5lCnh4YfRmNwKkS/6bTiGNLQ2rEx07zQ
+ EZg5YkGjigSwdGGiEEn2kUzblG+t5HosKxRLFy3wiB+xvZPr6rz8sdybEJmKVOgfHtkcn/x4B
+ UgvuDhlRsFyKtqLyRv0rmnOezMAqHWTaFBWwGrq+Bc7MSPDKEqVJyzCSJD76Z2R2rvTxctZNw
+ 5DsdiF5zMP5BvMp/zULpC2VfOvShG0/DEjtL+FZStQuOo=
 
-On 24/05/2024 10:16, Matti Vaittinen wrote:
-> ROHM BD96801 is a highly configurable automotive grade PMIC. Introduce
-> DT bindings for the BD96801 regulators.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> ---
+> The struct cpuset is kzalloc'd, all the members are zeroed already,
+> so don't need nodes_clear() here.
+
+* How do you think about to convert a part of this change description
+  to an imperative wording?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9#n94
+
+* Please avoid a typo in the domain of an email address.
+
+* Can the proposed source code cleanup be relevant for the addition
+  of the tag =E2=80=9CFixes=E2=80=9D?
 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
+Regards,
+Markus
 
