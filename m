@@ -1,217 +1,196 @@
-Return-Path: <linux-kernel+bounces-189282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A0A8CEDE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F42A8CEDEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A1B2817B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD94281A07
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99059AD5D;
-	Sat, 25 May 2024 04:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51B5664;
+	Sat, 25 May 2024 04:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxcN8Z+n"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt1MCyQ5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RZuyb9y7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt1MCyQ5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RZuyb9y7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B7B4691;
-	Sat, 25 May 2024 04:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69616AD35
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 04:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716611895; cv=none; b=Jsrobiv1/gOaxwaN1rC3odJalQQcXPIfjoSEW3otZxKFjADcPwSudvMe4Cjm/x73/8HydIl+2gw5qznOZ3oa31PU/w/7MFcIlHL5UA8uk5Y7PtUrhFvbVkLCPz0GksV+JgUd8sS8mL0eR8CnNtgwqlQ0lMrIqIKLIpfkpDxp2GM=
+	t=1716612896; cv=none; b=qWEEXVqbswJlihC/pHEu8N0BqPHmJOgMj51j/oAHQ5VxLC7MCqpwCCxmVKo3yQ4tqFVYsxRMeDEHI+d6RthvcSfIC6BLsij2h//A+oivdWnMGtvQTgmnJ/pNhlIz50T2etWbY/3iQo56wDqeJGCZuTC/P3e4lMSXCirzgMHxUbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716611895; c=relaxed/simple;
-	bh=ygi3KwrQbmFvRyvCTzW/j/rPVSMaVts9NBBE5ot04zM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cfTWx8Ygzy66/YPEd6AmxJdKEkpFxDYgQ9g42DSozvrNpgw+uOxatVXlqaO+XeRuVfu/BEy6FqPyx+thg2rkQ33jIpBp1GL3xEotMoS2xr9KY6B6EEc0ITu04OgN+0kuByrWJVDWsW6a5tpUrwaqIx//9a1BShMLxti8RG0Nfyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IxcN8Z+n; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so3598290e87.1;
-        Fri, 24 May 2024 21:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716611892; x=1717216692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cpa/U7JghcNpsn+qpJzea7q5OYNnmAkuecyejaHoCd4=;
-        b=IxcN8Z+nofGSAVGZvZkI6OLXjOqxu5wreVTutPq1sOaTniDdeUwDK6Wi+MpX5sVi4O
-         EKYRHwuGaAwztiL/1MYrqq0UxFd6EpKDbR7RR5x5nSe/OPjH2w1iqgsBz1oi3fxBfN7M
-         VVQ1HbdQh/g6pX0h7789nsQgc5IWOqPD6qxzyzzD47SUe+oBNbYRMoSG6E2hSPOZRlx5
-         +YPp+ZeMPs8Ri7GqbOLDRswN6upHmObYj7s4UiP+er1uVyjYyzTSWCEnpcskbCeDTXX6
-         IaCejZMtU2eI83S+bte4hMk+5IepK0bgFR5Eeba3MiDN1qn6axBn6NsPvFyGnZzTPGA2
-         0Fcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716611892; x=1717216692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cpa/U7JghcNpsn+qpJzea7q5OYNnmAkuecyejaHoCd4=;
-        b=eKqVH65Wr7BjurkeEexx+CpXIb/X9cKf0jMmnkyIYzzv6ozs12uWcYfoV+WekfD4u6
-         QSq6xhs6jcAr8RRU+N+lWh4gZ2W0lCWfibXLWW4r1yqFfjxrOsGBBIVpJF7Hz4N/5kR2
-         CrgSDeqhw3MN6IH5cRGWMYebJrHRIXgfIDSWuZYwLIExGqr3P/FpdsrGtaD5x3apP0p2
-         y0mVPmKPRm+H84OzaPl+N6yURRyEbmZLrZfpSGWyyXhVLrEplU+ekVN+5MC0xWC7lkpd
-         4Ry02Jjcx3Djji2A8F1lqlTUT2PSUel5xbadPZlwDfrQW1zQYHHGjSs7gyCCLA0AugJQ
-         dskw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdCx4Ym8nxVeW/GLhWd48GqhsyvfZMkGu1/Xs99pLhoZwCxkzROwlu/Sl11qv1V8YTTVcxtnwgBCeJ5j+03o2AvbCxImXDFDRupA9seT35dczJHBDxEHbJXvLFxj8sBYRq4E+2O/V+UAiHzw==
-X-Gm-Message-State: AOJu0Yy4TfKBuIFNAbE+FoGzwS+Skb0UKJIOnOud33Y+R4hRUqH7P9nu
-	NYXPoPLOoE9yjOwJW+YTI8UUTo+Cz9LewLuTFKORq2uzfVLfWYONEq9CE/cvD/zLRrNneFSRqK2
-	N++oGOuVyFyKdD2eW9SmQvBb7P0mHj2A1
-X-Google-Smtp-Source: AGHT+IHp3iiFucD3eESbD2F4iLGJkvO3+UxacJCUUC4BUifXreeuECCB8wFyug22P8lyym01JzYnrfAm27paHYvGqYE=
-X-Received: by 2002:a05:6512:210b:b0:51d:8c06:d662 with SMTP id
- 2adb3069b0e04-527eee35c90mr2123572e87.5.1716611891973; Fri, 24 May 2024
- 21:38:11 -0700 (PDT)
+	s=arc-20240116; t=1716612896; c=relaxed/simple;
+	bh=N26xMOX50MmHiSEBKDTFyzq26dgmnaZ2RwmwN2hl1W0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcEPIAj/JkRSoUzPNTFH0GXBRxNbNlza83erqLWZxS+RjOZ0JZ2R4VhhMFWNWbtrNL2pHOWZ0Ec8R/GQogb27+NaKq2w+tQhwWHLBmDhSuI6rVfc4/qmfsicGS+zOR9Glw4EhiqQ4FApjZCohivLFqLaCT54MzPD9FX82EKYimI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt1MCyQ5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RZuyb9y7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt1MCyQ5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RZuyb9y7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C22D340C0;
+	Sat, 25 May 2024 04:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716612892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btAdsS+hCf3mFF4waPo4jB02fuvhLt2lHJ3C41E1r4k=;
+	b=Zt1MCyQ5caV8HNnwgF8lwsk22p2c7ocPBHhIpu1+r0u7/0j2uJG4XFPYMhC3BDXIzoiWRT
+	EXWHelIIA5hoIhDl5nnnwoEV1T0aoCrayngeE7kDsvPD+4ot7UzfJXl9of72KRvk0Z0ryr
+	uTn3RiqzjohITJ5ijXqL2GnwQWeaaYc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716612892;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btAdsS+hCf3mFF4waPo4jB02fuvhLt2lHJ3C41E1r4k=;
+	b=RZuyb9y704LokAfoEqSC095O5lJp5/RlnWrO/4ZNb7F2kOyCkNwXWXRqW1Cjr4UhBo0cbs
+	8equLFiPPUMasiCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Zt1MCyQ5;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RZuyb9y7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716612892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btAdsS+hCf3mFF4waPo4jB02fuvhLt2lHJ3C41E1r4k=;
+	b=Zt1MCyQ5caV8HNnwgF8lwsk22p2c7ocPBHhIpu1+r0u7/0j2uJG4XFPYMhC3BDXIzoiWRT
+	EXWHelIIA5hoIhDl5nnnwoEV1T0aoCrayngeE7kDsvPD+4ot7UzfJXl9of72KRvk0Z0ryr
+	uTn3RiqzjohITJ5ijXqL2GnwQWeaaYc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716612892;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btAdsS+hCf3mFF4waPo4jB02fuvhLt2lHJ3C41E1r4k=;
+	b=RZuyb9y704LokAfoEqSC095O5lJp5/RlnWrO/4ZNb7F2kOyCkNwXWXRqW1Cjr4UhBo0cbs
+	8equLFiPPUMasiCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9887D13A6B;
+	Sat, 25 May 2024 04:54:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dPMWIhtvUWZnCwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Sat, 25 May 2024 04:54:51 +0000
+Date: Sat, 25 May 2024 06:54:46 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 15/20] powerpc/85xx: Switch to 64 bits PGD
+Message-ID: <ZlFvFk6QmyD-ieS5@localhost.localdomain>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <a1d92dd7c390672c163ce0611600dde8cb0eaab4.1715971869.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000000d480b060df43de5@google.com> <000000000000a8f1d606156b7ad9@google.com>
-In-Reply-To: <000000000000a8f1d606156b7ad9@google.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sat, 25 May 2024 13:37:55 +0900
-Message-ID: <CAKFNMokh7p55gN0pC+=Lw=ZNEkfVyuzHr7dOisD-UMnncCBn=A@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs?] KMSAN: uninit-value in nilfs_add_checksums_on_logs
- (2)
-To: syzbot <syzbot+47a017c46edb25eff048@syzkaller.appspotmail.com>
-Cc: linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xrivendell7@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1d92dd7c390672c163ce0611600dde8cb0eaab4.1715971869.git.christophe.leroy@csgroup.eu>
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 2C22D340C0
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
 
-On Sat, Apr 6, 2024 at 8:00=E2=80=AFPM syzbot
-<syzbot+47a017c46edb25eff048@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    e8b0ccb2a787 Merge tag '9p-for-6.9-rc3' of https://github=
-..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D115eb62318000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D5112b3f484393=
-436
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D47a017c46edb25e=
-ff048
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D156679a1180=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10f27ef618000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cf4b0d1e3b2d/dis=
-k-e8b0ccb2.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/422cac6cc940/vmlinu=
-x-e8b0ccb2.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9a4df48e199b/b=
-zImage-e8b0ccb2.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/69e1e69e75=
-22/mount_0.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+47a017c46edb25eff048@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in crc32_body lib/crc32.c:110 [inline]
-> BUG: KMSAN: uninit-value in crc32_le_generic lib/crc32.c:179 [inline]
-> BUG: KMSAN: uninit-value in crc32_le_base+0x43c/0xd80 lib/crc32.c:197
->  crc32_body lib/crc32.c:110 [inline]
->  crc32_le_generic lib/crc32.c:179 [inline]
->  crc32_le_base+0x43c/0xd80 lib/crc32.c:197
->  nilfs_segbuf_fill_in_data_crc fs/nilfs2/segbuf.c:224 [inline]
->  nilfs_add_checksums_on_logs+0xb80/0xe40 fs/nilfs2/segbuf.c:327
->  nilfs_segctor_do_construct+0x9876/0xdeb0 fs/nilfs2/segment.c:2078
->  nilfs_segctor_construct+0x1eb/0xe30 fs/nilfs2/segment.c:2381
->  nilfs_segctor_thread_construct fs/nilfs2/segment.c:2489 [inline]
->  nilfs_segctor_thread+0xc50/0x11e0 fs/nilfs2/segment.c:2573
->  kthread+0x3e2/0x540 kernel/kthread.c:388
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
->
-> Uninit was stored to memory at:
->  memcpy_from_iter lib/iov_iter.c:73 [inline]
->  iterate_bvec include/linux/iov_iter.h:122 [inline]
->  iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
->  iterate_and_advance include/linux/iov_iter.h:271 [inline]
->  __copy_from_iter lib/iov_iter.c:249 [inline]
->  copy_page_from_iter_atomic+0x12b7/0x2b60 lib/iov_iter.c:481
->  generic_perform_write+0x4c1/0xc60 mm/filemap.c:3982
->  __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4069
->  generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4095
->  __kernel_write_iter+0x68b/0xc40 fs/read_write.c:523
->  dump_emit_page fs/coredump.c:890 [inline]
->  dump_user_range+0x8dc/0xee0 fs/coredump.c:951
->  elf_core_dump+0x520f/0x59c0 fs/binfmt_elf.c:2077
->  do_coredump+0x32d5/0x4920 fs/coredump.c:764
->  get_signal+0x267e/0x2d00 kernel/signal.c:2896
->  arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
->  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
->  do_syscall_64+0xe4/0x1f0 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x72/0x7a
->
-> Uninit was created at:
->  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
->  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
->  alloc_pages+0x1bf/0x1e0 mm/mempolicy.c:2335
->  dump_user_range+0x4a/0xee0 fs/coredump.c:935
->  elf_core_dump+0x520f/0x59c0 fs/binfmt_elf.c:2077
->  do_coredump+0x32d5/0x4920 fs/coredump.c:764
->  get_signal+0x267e/0x2d00 kernel/signal.c:2896
->  arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
->  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
->  do_syscall_64+0xe4/0x1f0 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x72/0x7a
->
-> CPU: 0 PID: 5014 Comm: segctord Not tainted 6.9.0-rc2-syzkaller-00207-ge8=
-b0ccb2a787 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 03/27/2024
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+On Fri, May 17, 2024 at 09:00:09PM +0200, Christophe Leroy wrote:
+> In order to allow leaf PMD entries, switch the PGD to 64 bits entries.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-#syz fix: x86: call instrumentation hooks from copy_mc.c
+I do not quite understand this change.
+Are not powerE500 and power85xx two different things?
+You are changing making it 64 for PPC_E500_64bits, but you are updating head_85xx.
+Are they sharing this code?
 
-This is one of the false positive warnings that the memory dumped by
-elf_core_dump() was mixed into the file system side via
-copy_mc_to_kernel() of x86, which was called with the following call
-path and did not support KMSAN until recently:
+Also, we would benefit from a slightly bigger changelog, explaining why
+do we need this change in some more detail.
 
- elf_core_dump
-   dump_user_range
-      dump_page_copy
-          copy_mc_to_kernel
-      dump_emit_page
-          ...
+ 
+> diff --git a/arch/powerpc/include/asm/pgtable-types.h b/arch/powerpc/include/asm/pgtable-types.h
+> index 082c85cc09b1..db965d98e0ae 100644
+> --- a/arch/powerpc/include/asm/pgtable-types.h
+> +++ b/arch/powerpc/include/asm/pgtable-types.h
+> @@ -49,7 +49,11 @@ static inline unsigned long pud_val(pud_t x)
+>  #endif /* CONFIG_PPC64 */
+>  
+>  /* PGD level */
+> +#if defined(CONFIG_PPC_E500) && defined(CONFIG_PTE_64BIT)
+> +typedef struct { unsigned long long pgd; } pgd_t;
+> +#else
+>  typedef struct { unsigned long pgd; } pgd_t;
+> +#endif
+>  #define __pgd(x)	((pgd_t) { (x) })
+>  static inline unsigned long pgd_val(pgd_t x)
+>  {
+> diff --git a/arch/powerpc/kernel/head_85xx.S b/arch/powerpc/kernel/head_85xx.S
+> index 39724ff5ae1f..a305244afc9f 100644
+> --- a/arch/powerpc/kernel/head_85xx.S
+> +++ b/arch/powerpc/kernel/head_85xx.S
+> @@ -307,8 +307,9 @@ set_ivor:
+>  #ifdef CONFIG_PTE_64BIT
+>  #ifdef CONFIG_HUGETLB_PAGE
+>  #define FIND_PTE	\
+> -	rlwinm	r12, r10, 13, 19, 29;	/* Compute pgdir/pmd offset */	\
+> -	lwzx	r11, r12, r11;		/* Get pgd/pmd entry */		\
+> +	rlwinm	r12, r10, 14, 18, 28;	/* Compute pgdir/pmd offset */	\
+> +	add	r12, r11, r12;
 
-Given the syzbot CPU information, we can confirm that the x86 ERMS
-feature flag is set, a condition that is affected by the issue.
+You add the offset to pgdir? 
 
-The above commit, which was merged during the merge window for v6.10,
-made copy_mc_to_kernel() on x86 KMSAN-compatible and should have fixed
-this issue.
+> +	lwz	r11, 4(r12);		/* Get pgd/pmd entry */		\
 
-Ryusuke Konishi
+What is i offset 4?
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
