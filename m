@@ -1,106 +1,136 @@
-Return-Path: <linux-kernel+bounces-189489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760768CF0AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1258CF09D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267D028216F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:55:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1FC1C20E86
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDE4127B4B;
-	Sat, 25 May 2024 17:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788EB1272C4;
+	Sat, 25 May 2024 17:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nt5sPvr7"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IP8x7qGG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C91486ADC;
-	Sat, 25 May 2024 17:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EBC58ABC;
+	Sat, 25 May 2024 17:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716659724; cv=none; b=T7lRxcQmpYA8AnSGX9ff8QyV3Uz/WK/Wup+7lwPnj7KuAo3tM3Oi75yHjfKOwSI7rCYjWjHi6+RYyAD36wY+KFWGKOkSiSc4lOyKg9FacGL6U0NS7NV6ROCaIBpendv9+OBmABYUT5pF84TQxacNm48OzofjpfkfBGcAU7nU1G8=
+	t=1716659491; cv=none; b=KVwP8QrHjI+FPJQq96f5ejOmnCdPpOAhGXhZLjjhb9Z/u0aWTpywoVcQZjQSTyZkz0+Caka825Xm/qAGzTUoMb5yWLD0esd2vTDHn3+JTRpoDrFqupl6CRXg1gZKvHD1OcvuzYBsGdOFuUD/3Ra/f+HLDUj0dsCGh/GdLNXdPX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716659724; c=relaxed/simple;
-	bh=/Daddhd1J61xufDyCg5FjDOPfTMSIi5aUeTQ+lvhvCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+sess3WHfvit6AZtkLwMsSv/5cFfadgvjNFYt7kHm96kdJCislB57TCnxmB/vp2AoUUCtyuC42g6wRBB2oZhihF+2cTqpPj/jmRKZR2CJC0ZHa08fH8xThTW6sjzAaijXWHVhJ0tzRrwhP1bdp4rClfwuOVAN5lmK8vHiV85GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nt5sPvr7; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=sWHpoYAbwc/NBxu2pzSoM+et6peAc7u8uTs6bJ/QDWA=; b=nt5sPvr7/t2Sr7+N
-	z+/JCuQg3AyFyzIN2U2T4w4Pb3MdyeonPzZE0MfLIg3c04lA5icPxCfqNSNgGE/0ajRo72XcA3e8N
-	hdR9PwwBdsExr9nXtJ9QSAyLk+FSpYhlyjWjzEYdkHbZAS4MyinhQJTCFeZC5WSxcDETv8sLJ3eBE
-	udgcSmONr2grf/RAcjPHlPAxxbA37yNr3k4THhfywAfZX9/rLwX1uyRy5zIfm6PHSTwq5pyRd2QOd
-	rHBxR6hRWxHXvjH2/OCOO2eT6P1o5mC+i/eBEGo/GIKICOLL2k3fDy41h/UIFM/1u+YzAIbGRM6PP
-	BrzOz0PwHH+uQpyX3Q==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sAvc0-002Wjd-0l;
-	Sat, 25 May 2024 17:55:20 +0000
-Date: Sat, 25 May 2024 17:55:20 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: mchehab@kernel.org, isely@pobox.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] media dead struct removal
-Message-ID: <ZlImCPQJHUK3omiX@gallifrey>
-References: <20240525175229.100559-1-linux@treblig.org>
+	s=arc-20240116; t=1716659491; c=relaxed/simple;
+	bh=k1CrmebpQvUmjDNwM3zGg5dkDYDDnVyvxBSW376g+uQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hy1gQIqrGhBvJIhG7u35iM0zIL29iWcz4MKKzyWlK8EoRM3ilmz7GBmA8Cvkjk2ZQvBiQM/pi9J4fpzjL+tiGpyG3M6YDkXFqyaVBQZcJ4upa/OmlrmVqyvPEp1hEyhRPrt+yKD2qLIoOYqDpmJIf/7K3mKpWkDKClLY1rwr1D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IP8x7qGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E0AC2BD11;
+	Sat, 25 May 2024 17:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716659491;
+	bh=k1CrmebpQvUmjDNwM3zGg5dkDYDDnVyvxBSW376g+uQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=IP8x7qGGOEbwZsi3rksmAyg0OcovqQ6LjidMRXQ8fZINs8DjJRby7DKY2CjVUzwkG
+	 C7TuYHq4nAQJy4dr71lPtAmxfIs5KwBe84eg3xPEro090eMGuiwEFdjp/NEofalP1H
+	 3eBrsmB83obfZJxC/e0FZNqDN9Auj2pqrAiot1Ns63D7IBvYoP+stDzrm5i3R1Iuy7
+	 rmHhCMOIQo8WRbz4T0wya0d0F2ANuySVF6lFJAhmFDQx1FuZLmhdSl0+pcbez4uTjF
+	 UWD0GF800QLsZNxfVt7jyEes09+I2dnCtQi2ncby21y7jCnvtxvEPLIkFdgcQGfm4P
+	 +Umq6MNKxAB6w==
+From: Bjorn Andersson <andersson@kernel.org>
+Date: Sat, 25 May 2024 10:56:20 -0700
+Subject: [PATCH] arm64: dts: qcom: sc8180x: Correct PCIe slave ports
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240525175229.100559-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:54:41 up 17 days,  5:08,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240525-sc8180x-pcie-interconnect-port-fix-v1-1-f86affa02392@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEMmUmYC/x2NQQrDMAwEvxJ0rsA2CXH7ldJDkZVGF9nIpgRC/
+ l7R4+zAzgmdTbjDYzrB+CtdqjrE2wS0v/XDKMUZUkhzWNKCnXLM4cBG4k4HG1VVpoGt2sBNDiz
+ 3ksuc1y0mAj9qxj7/I8/Xdf0ASsI3DXQAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2018;
+ i=quic_bjorande@quicinc.com; h=from:subject:message-id;
+ bh=W5v+PaKdjt5yT2XBNSLkLrFoNSRfyyj3tCE4hy1JENA=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUiZEM/6IludXyGvoLCKtChYSFmfSwO5MDtuB+
+ /7Eu91Gj/uJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlImRBUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcUHahAA3GwSQV2Jd0lSptw1rag8oqqLA3H/KyFQe04hL02
+ CU9oLKds48y44f/a/tdikGr4pXrDQl3+eYCnTMlH84z/MR6AMbOuZFtThYl6NfzFvuoiKNRnmPh
+ YFienV6CioQHvM8vi4Vj8wTs17L6mTocvIFWaNegGoHJBMJ3MLjgoXMW92NyNchSSXeTL2i+Yrj
+ Z7ZTZNBp/MQez6Mfc7vWr12piInBRKCTFx1Fg+bPCYrDAHdL7lo98fSZTiZmN4F2GzmbFpoz+ig
+ SkW4OVa7SaNhn1ejUq9RRVuMWmkKbvTQSOqBKCQKc4S2zUgBBFNJKTMezu6xpvmXWe9hrYbI+Xl
+ fsItf1npESpfPWUI93LfZ7nx91BF18bFH+JwmF6LRm+CA6cZqFgqULsDhBWq83yPxbF1EI7Lb9Z
+ fbahNv49kXyATnKQwwWVURg+0DIhh5q2qEjhzUx5vPSfwXn4FbuKrhAVDJU9S2MRJMS2BwKhHVe
+ LrudvN2U+mlmaZefadV04jexIFf74f+GwgkkpQTME4HN/s546dGOSgAMLmK6o3Qde7GPgjP0Jxz
+ roJA67goGlDuBZK5/XyVbrwVzLUcnLEiQ3wG7dPreFAqW9ljWcDWGPTWBZUvieQhZ6l7P9bbMEu
+ RUfxuyiKhUkGwgGQXIBzi+R3VMPuidl9opGxs55bOUSQ=
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Dead struct removal in spi and usb.
-> 
-> (These are the last of my struct removal in media as
-> far as I know).
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-Note there's a bounce for:
-Charles-Antoine Couret <charles-antoine.couret@nexvision.fr> (maintainer:GS1662 VIDEO SERIALIZER)
+The interconnects property was clearly copy-pasted between the 4 PCIe
+controllers, giving all four the cpu-pcie path destination of SLAVE_0.
 
-  charles-antoine.couret@nexvision.fr
-    host mx0.mail.ovh.net [178.33.252.245]
-    SMTP error from remote mail server after RCPT TO:<charles-antoine.couret@nexvision.fr>:
-    550 5.1.1 <charles-antoine.couret@nexvision.fr>:
-    Recipient address rejected: User unknown
+The four ports are all associated with CN0, but update the property for
+correctness sake.
 
-> Dave
-> 
-> Dr. David Alan Gilbert (3):
->   media: gs1662: remove unused struct 'gs_reg_fmt_custom'
->   media: opera1: remove unused struct 'rc_map_opera_table'
->   media: pvrusb2: remove unused struct 'debugifc_mask_item'
-> 
->  drivers/media/spi/gs1662.c                   | 8 --------
->  drivers/media/usb/dvb-usb/opera1.c           | 4 ----
->  drivers/media/usb/pvrusb2/pvrusb2-debugifc.c | 5 -----
->  3 files changed, 17 deletions(-)
-> 
-> -- 
-> 2.45.1
-> 
+Fixes: d20b6c84f56a ("arm64: dts: qcom: sc8180x: Add PCIe instances")
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
+index 067712310560..61ce17e602c5 100644
+--- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
+@@ -1890,7 +1890,7 @@ pcie3: pcie@1c08000 {
+ 			power-domains = <&gcc PCIE_3_GDSC>;
+ 
+ 			interconnects = <&aggre2_noc MASTER_PCIE_3 0 &mc_virt SLAVE_EBI_CH0 0>,
+-					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_0 0>;
++					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_3 0>;
+ 			interconnect-names = "pcie-mem", "cpu-pcie";
+ 
+ 			phys = <&pcie3_phy>;
+@@ -2012,7 +2012,7 @@ pcie1: pcie@1c10000 {
+ 			power-domains = <&gcc PCIE_1_GDSC>;
+ 
+ 			interconnects = <&aggre2_noc MASTER_PCIE_1 0 &mc_virt SLAVE_EBI_CH0 0>,
+-					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_0 0>;
++					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_1 0>;
+ 			interconnect-names = "pcie-mem", "cpu-pcie";
+ 
+ 			phys = <&pcie1_phy>;
+@@ -2134,7 +2134,7 @@ pcie2: pcie@1c18000 {
+ 			power-domains = <&gcc PCIE_2_GDSC>;
+ 
+ 			interconnects = <&aggre2_noc MASTER_PCIE_2 0 &mc_virt SLAVE_EBI_CH0 0>,
+-					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_0 0>;
++					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_PCIE_2 0>;
+ 			interconnect-names = "pcie-mem", "cpu-pcie";
+ 
+ 			phys = <&pcie2_phy>;
+
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240525-sc8180x-pcie-interconnect-port-fix-d9d8d487f12c
+
+Best regards,
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Bjorn Andersson <quic_bjorande@quicinc.com>
+
 
