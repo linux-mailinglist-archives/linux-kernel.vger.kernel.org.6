@@ -1,247 +1,157 @@
-Return-Path: <linux-kernel+bounces-189457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B188CF047
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:55:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4A08CF04F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70BD1F2172C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB0B281C16
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3588486655;
-	Sat, 25 May 2024 16:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A5C86AC8;
+	Sat, 25 May 2024 17:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjBZDHEa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmqWjl/I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C3885C77;
-	Sat, 25 May 2024 16:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1553F9F8;
+	Sat, 25 May 2024 17:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716656099; cv=none; b=SVpBkuHPmJjcuORR2QR/qMk9rjqgEqmopoBWRiXJaS/Y0+dd/eyRKTszZrFPgwEGiIxJR3M5v4Eg3/H92YPYZqBF/WSdJTNsjZkpL3uudCk8wTxtnluBnwNl0V8qZUmU8drluT1GsCis6JKlkzJHe3j8MgiF15+llOPvAa/1hSs=
+	t=1716656484; cv=none; b=cZ6pIU5TrwQ8JcGEfkgcxO7K0KKM2RHxxCCdSiZzoJaGLiMgiZ0/MYDu25YG3UuQzPed3OJXpU05IDwiOdTNhkjJ7+cBpbovFTS//86oIxME6aecJm743Q75f7G+gJwdoqwmLQSw5dUes2Qc/q/+4cpESS7g6plOdOxNMZb6cEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716656099; c=relaxed/simple;
-	bh=wUwELUVHwo64lFmXvZH7t4xIWMjuXkr29anwgbNaTZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTWvBl23z19sk9RDVTzVkUvE8Ui3qkseqKHI7D+pGBE9z7U22qgA+aYSiPD7ffGd8JICR4dnT3Swq7r6yQ50aGy+8o+GWpht6f/rPrhPuSVwMIyhD6nERVT2Kb9+pC/mkmlQpxxrbXRSXq+yvbiYBX5D3q/9AuerV/G8J0NtRO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjBZDHEa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F498C2BD11;
-	Sat, 25 May 2024 16:54:54 +0000 (UTC)
+	s=arc-20240116; t=1716656484; c=relaxed/simple;
+	bh=/XhqLlNFPdwYGW6GA2lsso7cTXnh8Mkx+G2m3EcCAHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b+S9grzjmHG9//BN23Q5uUxaJbLCTMQNcU6DFXu13pyGyh9GyA3Lj9wsMwngquEueQn/lI651k7tZD6yfOXgrNn86PSPf2sywdv1cBaksRP3hNjNtVBrpr2fNewrqEASL/7r0+iAZpeGFs+K9qIuOZ6HYIA0kb47zqiAbZuVbkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmqWjl/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7717DC2BD11;
+	Sat, 25 May 2024 17:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716656098;
-	bh=wUwELUVHwo64lFmXvZH7t4xIWMjuXkr29anwgbNaTZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bjBZDHEa45+aaKX0ijGl4V/D2dRJi4L4MGgWT68equA4QCczUQ3xhfY94/rTnqYd1
-	 LoSoZBL9XCTF4zIyMAZGpWJoKl11Mq5B1vppogCvJC2zp6NYvfgSGeVymLRRAb1zbp
-	 0jtlQLdgjxZFRGocJXXzP08jOQk8ErdFk6O3ZXeHFvwAJckSlW2hFOcipsqRL0XAIS
-	 BMHfMk/5vOyvF7UB35AkTKUwsU+QYy31vfrObjbm1E51A4E057wL8U2AD7g5KCRva3
-	 YKCLlpQAmyM20FQ13VpHcGDyxZ4Um5i4Rs9ItPkO8Ei79+4BdnP4aAK9zTPSYWPRp0
-	 PzSVDuTAvJBhg==
-Date: Sat, 25 May 2024 17:54:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Amrit Anand <quic_amrianan@quicinc.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Andy Gross <agross@kernel.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Simon Glass <sjg@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
-	Julius Werner <jwerner@chromium.org>,
-	"Humphreys, Jonathan" <j-humphreys@ti.com>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Michal Simek <michal.simek@amd.com>,
-	boot-architecture@lists.linaro.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH RFC v3 2/9] dt-bindings: board: Introduce board-id
-Message-ID: <20240525-aids-jersey-a56ce764b430@spud>
-References: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
+	s=k20201202; t=1716656484;
+	bh=/XhqLlNFPdwYGW6GA2lsso7cTXnh8Mkx+G2m3EcCAHg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fmqWjl/I+NtBC1KYIrkwoj3esGfEV9ItfowymhioSGC7tlq5AxS7vIdiRi8IKXYHL
+	 kYDSY5cn4fr2JrEdDNrRQTdTG81dMGJ9ECSCa4pUL4ZerKpYEXY50R7JENHpZFsJfl
+	 P98gCtz0RD+JIeZ7RW8utVc1Wq8plQFHfhSx/UISJTt92cihR+A5nBaQlfM0f7G68W
+	 7OcJPrxN7s5FAeS6qrQhnNvE17jrXAn0Gnb2N+2fDTor8dUrXUCdOWmwVP8Fo63mny
+	 MQyksepHnVIdyQ6dPCMa3OIKe/56q+HAnaz56Vw7SYoeiHmgKU1yNwAUilRzD+Uabl
+	 oKAReJOizLKrA==
+Message-ID: <bd01676e-edf2-42e2-a689-d9a89819c490@kernel.org>
+Date: Sat, 25 May 2024 19:01:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4gDwNw3YpYlpY0Pi"
-Content-Disposition: inline
-In-Reply-To: <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: input: document Novatek NVT
+ touchscreen controller
+To: joelselvaraj.oss@gmail.com, Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20240524-nvt-ts-devicetree-regulator-support-v2-0-b74947038c44@gmail.com>
+ <20240524-nvt-ts-devicetree-regulator-support-v2-2-b74947038c44@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240524-nvt-ts-devicetree-regulator-support-v2-2-b74947038c44@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 24/05/2024 16:39, Joel Selvaraj via B4 Relay wrote:
+> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+> 
+> Document the Novatek NVT touchscreen controller present in devices like
+> the Xiaomi Poco F1 [1]. Also, include the devictree binding file in the
+
+Just name the DTS, no need for external link.
+
+> MAINTAINERS file.
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts?h=v6.9
+> 
 
 
---4gDwNw3YpYlpY0Pi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 22, 2024 at 04:54:23PM -0700, Elliot Berman wrote:
-> Device manufcturers frequently ship multiple boards or SKUs under a
-> single softwre package. These software packages ship multiple devicetree
-> blobs and require some mechanims to pick the correct DTB for the boards
-> that use the software package. This patch introduces a common language
-> for adding board identifiers to devicetrees.
->=20
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  .../devicetree/bindings/board/board-id.yaml        | 71 ++++++++++++++++=
-++++++
->  1 file changed, 71 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/board/board-id.yaml b/Docu=
-mentation/devicetree/bindings/board/board-id.yaml
-> new file mode 100644
-> index 000000000000..894c1e310cbd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/board/board-id.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/board/board-id.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Board identifiers
-> +description: |
-> +  This node contains a list of identifier values for the board(s) suppor=
-ted by
-> +  this devicetree. Identifier values are either N-tuples of integers or a
-> +  string. The number of items for an N-tuple identifer is determined by =
-the
-> +  property name. String identifiers must be suffixed with "-string".
+> +  vcc-supply: true
+> +  iovcc-supply: true
 > +
-> +  Every identifier in the devicetree must have a matching value from the=
- board
-> +  to be considered a valid devicetree for the board. In other words: if
-> +  multiple identifiers are present in the board-id and one identifier do=
-esn't
-> +  match against the board, then the devicetree is not applicable. Note t=
-his is
-> +  not the case where the the board can provide more identifiers than the
-> +  devicetree describes: those additional identifers can be ignored.
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
 > +
-> +  Identifiers in the devicetree can describe multiple possible valid val=
-ues,
-> +  such as revision 1 and revision 2.
-> +
-> +maintainers:
-> +  - Elliot Berman <quic_eberman@quicinc.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  board-id:
-
-
-Does this need to be
-properties:
-  $nodename:
-    const: board-id
-? That's the pattern I see for all top level nodes.
-
-> +    type: object
-> +    patternProperties:
-> +      "^.*(?<!-string)$":
-
-At least this regex now actually works :)
-
-> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +        description: |
-> +          List of values that match boards this devicetree applies to.
-> +          A bootloader checks whether any of the values in this list
-> +          match against the board's value.
-> +
-> +          The number of items per tuple is determined by the property na=
-me,
-> +          see the vendor-specific board-id bindings.
-> +      "^.*-string$":
-> +        $ref: /schemas/types.yaml#/definitions/string-array
-
-Your description above doesn't match a string-array, just a single
-string. That said I'm far from sold on the "thou shalt have -string"
-edict. If every vendor is expected to go and define their own set of
-properties (and provide their own callback in your libfdt PoC) there's
-little to no reason to inflict property naming on them, AFAICT all that
-is gained is a being able to share
-	if (string) {
-		return fdt_stringlist_contains(prop->data,
-					       fdt32_to_cpu(prop->len),
-					       data);
-	} else {
-		// exact data comparison. data_len is the size of each entry
-		if (fdt32_to_cpu(prop->len) % data_len || data_len % 4)
-			return -FDT_ERR_BADVALUE;
-
-		for (int i =3D 0; i < fdt32_to_cpu(prop->len); i +=3D data_len) {
-			if (!memcmp(&prop->data[i], data, data_len))
-				return 1;
-		}
-
-		return 0;
-	}
-in the libfdt PoC? I'd be expecting that a common mechanism would use
-the same "callback" for boards shipped by both Qualcomm and
-$other_vendor. Every vendor having different properties and only sharing
-the board-id node name seems a wee bit like paying lip-service to a
-common mechanism to me. What am I missing?
-
-Thanks,
-Conor.
-
-
-
-> +        description: |
-> +          List of strings that match boards this devicetree applies to.
-> +          A bootloader checks whether any of the strings in this list
-> +          match against the board's string representation.
-> +
-> +          String-based matching requires properties to be suffixed with
-> +          -string so that a bootloader can match values without otherwise
-> +          knowing the meaning of the identifier.
+> +unevaluatedProperties: false
 > +
 > +examples:
 > +  - |
-> +    / {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <1>;
-> +      compatible =3D "example";
-> +      board-id {
-> +        // this works with any boards where:
-> +        // some-hw-id =3D 1, other-hw-id =3D 1, some-id-string =3D "cat"
-> +        // some-hw-id =3D 1, other-hw-id =3D 1, some-id-string =3D "kitt=
-en"
-> +        // some-hw-id =3D 1, other-hw-id =3D 2, some-id-string =3D "cat"
-> +        // some-hw-id =3D 1, other-hw-id =3D 2, some-id-string =3D "kitt=
-en"
-> +        some-hw-id =3D <1>; // some-hw-id must be "1"
-> +        other-hw-id =3D <1>, <2>; // other-hw-id must be "1" or "2"
-> +        some-id-string =3D "cat", "kitten"; // some-id-string must be "c=
-at" or "kitten"
-> +      };
-> +    };
-> +
-> +additionalProperties: true
->=20
-> --=20
-> 2.34.1
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        touchscreen@1 {
+> +          compatible = "novatek,nt36672a-ts";
 
---4gDwNw3YpYlpY0Pi
-Content-Type: application/pgp-signature; name="signature.asc"
+Messed indentation. Use 4 spaces for example indentation.
 
------BEGIN PGP SIGNATURE-----
+With above fixes:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlIX3AAKCRB4tDGHoIJi
-0kYZAP9vG6zxYpMPz/B6sGJxZSWXoyFVPjKnC4ljUKRiUsijtgD+OgNsZE0wzF3X
-Sx2KhMGx8AukOYyInzSmbhFYGcDALgM=
-=2OA5
------END PGP SIGNATURE-----
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
---4gDwNw3YpYlpY0Pi--
+
+Best regards,
+Krzysztof
+
 
