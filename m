@@ -1,158 +1,177 @@
-Return-Path: <linux-kernel+bounces-189519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F878CF126
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C781A8CF128
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE061C208DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EA92818E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D2128382;
-	Sat, 25 May 2024 19:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE51812837E;
+	Sat, 25 May 2024 19:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="h5VjKQYf"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2053.outbound.protection.outlook.com [40.92.47.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="JHqGHvjU"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B94171AF;
-	Sat, 25 May 2024 19:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716666970; cv=fail; b=PNCsbFxq1wfhjkoRqr9olBIRze2g208FFNrKtVxGO3BEp+7lbbyaFTM8ukI+5i/i3aUjHYrLlomstpUUm3B9ynMLfM7izfkzpLFMydcxcf4er8c6YONs71EX0nqHKYhuYcDeDXJhzpvLe8JOmn6x549bEpN7RtE6POFnUH1gbHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716666970; c=relaxed/simple;
-	bh=ctgyF2VcEvsTxaxhfcYBangfvhE8tgP+7LFgA4eoazc=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RsAelUmZaeSV0Jr5lDlF3DYYlUJhAu3zYlUQbqMG1cp8RD5SwtcXrk4Y1JzLnoxZdczYlfDc/3PAyaLwI6nXwr1phwNRupxO1wzc6p6P6fly7CUwc2T3SuXpMRrNfS7+U6cCUkx1TQbYDRxKkRNyq+G9r7jZByQ3M1IFn+9knOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=h5VjKQYf; arc=fail smtp.client-ip=40.92.47.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QHX1FkfxaitylIqPYuColA0rgzlM3yb6KEyfPMSzESmgUx+8aLAYJXbbDHXDpzr9mQGFR3hRuoiSowDNwphzwHfPfJdtHVZgZQJx4fibzu/68JqEIhiXuG1Ioki1nTPRuotsd9NDQiaVQy+HfdtNAOiIyScus+6k0OXmO1pLdC+sraXHw24kfA+8uo2TYoLx2HjPwWPsfeIEzZBnDUEM1xlJeJduHDq4d7qV105fUhUFlfDPyEp2OJB9Ei3bPTX+STbw93OKaLR8Rsnu3J6cocN354ysYjxI/C6x/A0ONcxSXBP7eGx2zD9PpLc+UQo0aK4nBERkmmnpmCPbwlzRww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
- b=Lh0uxCwFS9xBZJ1eAB5+Zph0KgKyAskxOqSeddF4iSmXJ++28nWHOZ/bRDcmp7tW0TAgCITamrTq5zlq73VacwgLeVaKmghZL86yRJ3/iPMMJWe8fH3tfMLeGV+i5P79f2BF2BHBqdB1xoqdgwoNe139rCqZTG//9yLbCUGMd5JGe+0MZnBv/BG4ien/76UTbvey/hQgoUXJKXcfWFCghHrds7yydgrRMOX7VsxW2Bb6yWGxlNgwAMrxrqRSFJXJV/U5oY3tmK/w/Q+luj3zb7Gwrxrvw2Jke3tg1IM5TIIpjJPngM/BWap5M9Zp0bcNEsPNA9kH7buxd7o1zGxTHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZFFGHZfSXjUjLGWLTB29119AwgZ7BDKkGImqR3jmaTU=;
- b=h5VjKQYfeJXaL7ur7afPmz5MbIy83crOq1krA9iqbUX2GtKxc9HppdSEno0mM+AUUe0XlgO0CWc9ox+RLyP5vYqSxsEe1lLdClMWw9hn7hrqUwyfW5cxycuufCvoMfPvjDJURZ8RIffKE+e4Dd4sJ3izs4SHGM/tc249nqO5rmuPH6fcfU0GUGz1t+cHiOT80iqhMdwtr1/uDoLA+FIH2c8C6EoL93YGN/aoV8SZiF5WkkRggYQ2ha8c7AldATFRZT+VW1f10DqsaexyrqeawrhubEVEyRxtNdOGpneyxO90YM7SrpZYDFf76q1fcjk6IpoRPrcU5VI0541794N/1A==
-Received: from BL0PR03MB4161.namprd03.prod.outlook.com (2603:10b6:208:6e::27)
- by MN2PR03MB5295.namprd03.prod.outlook.com (2603:10b6:208:1e7::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28; Sat, 25 May
- 2024 19:56:04 +0000
-Received: from BL0PR03MB4161.namprd03.prod.outlook.com
- ([fe80::c5d3:dd2:eb42:c5d7]) by BL0PR03MB4161.namprd03.prod.outlook.com
- ([fe80::c5d3:dd2:eb42:c5d7%6]) with mapi id 15.20.7611.025; Sat, 25 May 2024
- 19:56:04 +0000
-From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	arnd@arndb.de,
-	gregkh@suse.de,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@outlook.com>
-Subject: Re: [PATCH] libfs: fix implicitly cast in simple_attr_write_xsigned()
-Date: Sat, 25 May 2024 19:55:52 +0000
-Message-ID:
- <BL0PR03MB41610A9302ADA6A5022A306BADF62@BL0PR03MB4161.namprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [ve1WjD7VnkK03IAOTDzKeXdaYxLFSL7J]
-X-ClientProxiedBy: CH0PR03CA0036.namprd03.prod.outlook.com
- (2603:10b6:610:b3::11) To BL0PR03MB4161.namprd03.prod.outlook.com
- (2603:10b6:208:6e::27)
-X-Microsoft-Original-Message-ID:
- <20240525195552.8750-1-jiashengjiangcool@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CF469959
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 19:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716667114; cv=none; b=K7RFfHI0NipJg+pylsG4KgBjBrDbd+54IAgnZXnB3uQfm8R5uq7Lfndn6wkxgeSO1RZ4JPH/Bp+lrRZEs+6XmRCYEFhAZTJUEeif7/q/+jg7i9GKjIv54uJ7a5YwuOYT/NbkcrLZhu6dUB226TWiePT9l1L3BQLY5XWL90QN2yk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716667114; c=relaxed/simple;
+	bh=YyktBYvkAnwaBKuCJSVUX+2IGFFXy4pY1RBykLD/eQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcGjLIRDQaUfbYY9aUD82t+dEZmEtCfFxzV5P7oMAC7bCw0fmR5oV5OZlJaYvLdZrH/7dMGKQxJYZZcWzAzOGrh5/O4KgxvqDjnSabsY0On1SINKBp08Al3uLqXrINa/0wyV9PPFrAjaTFpb7GiAqxIND8gc4Yi3XEtKveBJhCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=JHqGHvjU; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5a5c930cf6so1397794366b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 12:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks.com; s=google; t=1716667111; x=1717271911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9UkScwBgCN+E8s4yRTB4uCPcQeq88yLTx0RPgq0Jips=;
+        b=JHqGHvjUblGBUlK/oa6uJD86stGF3MYE2qyOT71/dxvF6pNwQgx71kBLqfpjHjmOh7
+         WDhPmxVcr7AAvpssnGoLRmSOC/TshIpqJEYK2fFV8ptTBwLal6SEvy32rFcIMT7kk+y6
+         sH1Dx0QIuy3oEiFlQfxWNJarc5CpzIaoOQKkj2pM21QAyfYgN+64ele9UQ8fVTWbR/NT
+         OQGJUTZsxgAeUB+SB0moEk18ZcWgHhUQ02FswaxT9AziHRxRFfj8Jtd9Ww3CyzLoy/OW
+         yuGXJsMDf0+QeyrGMbhsg3Cpy3j2FcaMWFiHG4ng+37bnmSzNqk/8xxuWn4NK1VPQsDl
+         UVQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716667111; x=1717271911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9UkScwBgCN+E8s4yRTB4uCPcQeq88yLTx0RPgq0Jips=;
+        b=oXPWBTgoCuuPd7zTgam2hdAaxMZg42kQMd1gR/DI+lSNGd7qFa0xHBr6fppfqDdNPh
+         T0RuOULrnRn2lctyl8fRoU+dWqNCdHcYqGuhGeNxM7/xIrYPikDfPxIqlJKrbWZOnhIg
+         +PqlLzQOr3+V8uYHt8QGbD/QUGHL9uz78Iq31wq+MZgo7DOxBTD/sI1xhuJpK2/ojkUs
+         4hq3avC9HSXL8/J9jtycdmsG/dgmLCGJF+mmVGxL4SOcmQye9rHJbasIKo7gERCTfD+6
+         MHO61uyNk8ejQFSpcCJ/37JhdsQnXb49C+XsTDjBY/OMTQLYBCfuoCoF4F3WzklyqTQ5
+         RFsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXySd57nDLQTaSv4UyUUgaYNm8LukwByaMelioWCVlfNn43Xa1d9z1SUoHL+7jul+Q0lqxgxVYzmuhDH8FBQOQlVcYgM0b3uwBZ6uKx
+X-Gm-Message-State: AOJu0YyxXxVxPg3FSNHMtYEyhjwppJRwqoWrkvY6va3mHlUG1UkDWoFi
+	pcyg3ECUWLpu6dj8Sc8KflyDzvffIp5S3p+f0gOjFkGEmkmg3IVahe50QRcN6e8CtrAImVDBNVU
+	F/3+g3L+BrM/VbWRSFG756jBjkWd7jYc2gvawsQ==
+X-Google-Smtp-Source: AGHT+IHmcUbw6PneWW81LNhoVdjfmvJD2KPXgw1NohVR46fYTKEQJ3xUFOcbylon09NqVhutwrjC7k1lIl8wFWY6ViM=
+X-Received: by 2002:a17:906:131b:b0:a59:9fc8:38bf with SMTP id
+ a640c23a62f3a-a62646cd6ddmr353575366b.24.1716667110587; Sat, 25 May 2024
+ 12:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR03MB4161:EE_|MN2PR03MB5295:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|4295299012|3420499023|3430499023|440099019|3412199016|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	tY0ucaV94BG6iio5V/Hc6VqoU20f4lJdEekWRdvy8XdA+lsrlKP2t0+Q27vPQl6MaxLJDHpp/pENhYI+ywINzIiksvgAtA+OrWPQHbhad7gsMEdU84IlmxHjndq3bNP4/QSSOZpiInCYyEqXvfnJIASpMvONbwDbep61hRqYCWopNIj091NnzTpIcKVjamahsaQFo4UOX7l5MJdZr5HF8cmbiDMajNCoe/KqnApXxlxrkRGDvROJSicbobnYkzji4yn9+dJDfs+dRiThzhQELo11/muEMvw3/z3W3f5rNiesV/EAFCzIA1XQ3g9iFUWiCP1ioqsgMZXFmv+EYLSEIQW9E+fMaOONHJplqEaQWrTQZ5Fzj+yanQRoVYDIIoBMHzroIRl/BTQReuxjQ97jeCsY+8yznJrgkGodCjlZyo7CM/u2y1Y7nj4HGndtqwTTmxWG2nwVoTltkhRzVPu11NxKorBhAxtTyGbx22OeqnYmVi8dFCcVYkufoo/UERvb6xI2VSB9/O310AqxtohC83fy+3hl5Cne0eeVxnq+FwXPXWI5L4NWUjHDF6QAWwrAEE5hAhTeZARHuLQDVvv7TdWcyKkvEoit5H8Uz9NOnAQsbC6VNQDa3WWNecI8rJcT
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4Vy9FI1VGFkEJewJA4aRy/ifcirjw+QxM557Z5Fli2g1rTY59tYn83g/JJie?=
- =?us-ascii?Q?SvGq9yLbynv7n7ZGPo3JOcVc0mLAIrNDS3Kcp6SX0Ad85wz0zm9RuNDtxY/Q?=
- =?us-ascii?Q?IQll+UyYAUqZKHARYvNWkewZIVB1U4grWfpQD/hYzqBUn+ExS2SfTaM7KEel?=
- =?us-ascii?Q?dHanXklum1ewQ5041VRDfWFcDez8BB/KTIzM90yDajZVH8VC3UrmcnKRL1+1?=
- =?us-ascii?Q?8CVnadv33M50YXFdeO986hGTTTip+0xTWt/S8ZDTcsvOK3WRPldXYGG//Byk?=
- =?us-ascii?Q?uY5hftnd4KXgvUfxuD8DOBUHDv2I1pTucJTkYs+FtGzf30Zh9Wa55qbeMAgK?=
- =?us-ascii?Q?PhxBulyUqYZl53O4milT3vsP+AaEmk3GauHLWUkvnVE2qb4Ijkzorh1hV1Kx?=
- =?us-ascii?Q?KRP0MMp//9i+7TdwwZa6KJwooQFgbfpNKkY30zTrg8OTQ6El8zI0RuMIgbpU?=
- =?us-ascii?Q?20yoX4g9ntZv4tQvC4+0dhjrVjFM8RXr6Py6sEmtFvaeSFYns2t/1fVMyTHS?=
- =?us-ascii?Q?+Bu6xpvAkVFDcHBqf8tY72YQso0PqfiBmUrJ3qw2/3hCFuhGIrO4DDfX6KHk?=
- =?us-ascii?Q?lkqrUUtkrnM0hzdm4z74958WnWVZpX4RI7az2gRZYmborQIGBOkYulQJyQxp?=
- =?us-ascii?Q?bl3P6dXtNS0YjpBrfq9Y3s/s/Lw5i1sFmPgxxpyV/SdzXTbBlyKXLiz5cyLs?=
- =?us-ascii?Q?vyX9k/woYv0TObuyIMGQkkl52R4S9JR0jRrdINJQbixZYjsHM8V5NfzVx4iR?=
- =?us-ascii?Q?emPPhxZiLsF7cfPp1sd/l1/QEnMatxvBa1uwPWSi0eSWymotPbRE4mP1ufLp?=
- =?us-ascii?Q?9ZGnG80Wa0BKH5g3dFQULIQ2SzIHdVcgAEYPXRI4OLFW5lqBwlCIcPfvehNc?=
- =?us-ascii?Q?uy1hRZWXWhfc0rgge5LrZ39WY5DjuCzYdB2yJPt7TfbVBICz+6c8wjAYHCmo?=
- =?us-ascii?Q?oO96RsA17WXRG8fEfJ6lGoIue0TpSk95ou9zQ5YEHXo03mqcRfyjYPFmiIEv?=
- =?us-ascii?Q?FnrJWjn91UgbUcQYSdOPxxMk+0ZWvC+OIsg5mCKvkcB+fRYbx6saYC8dk2cb?=
- =?us-ascii?Q?WY3yCCwZQwEckw9G9/+fklllYZtsb0mEIqQCdSr4mkSfqi7St8lLO3PElB8X?=
- =?us-ascii?Q?WCwnqIOKeGs7bYzBlGbdIbIuMSLEsEeDF4ponu9jDNKusBYAmdrtZo+x/jMb?=
- =?us-ascii?Q?/PzQTP+v4YLnoiJMfdRGCh2gjyuf2DVjyMYkay23Z7OVlN8EfEK1ihKg/2P1?=
- =?us-ascii?Q?Mn2Kumr+O7NlktjhW8qS?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94f7d27e-fffe-4824-31ed-08dc7cf4b2fc
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR03MB4161.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2024 19:56:04.8225
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB5295
+References: <20240522215043.3747651-1-tharvey@gateworks.com>
+ <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org> <20240523-vividly-sequester-d85ac7bccbbd@spud>
+ <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
+ <20240524-cavalier-outthink-51805f49c8fb@spud> <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
+In-Reply-To: <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Sat, 25 May 2024 12:58:18 -0700
+Message-ID: <CAJ+vNU3Rh6f-HrFbBLxNXVP1PwsGh8OyGmmGJBv6+GRwZaTXgw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, May 15, 2024 at 03:17:25PM +0000, Jiasheng Jiang wrote:
->> Return 0 to indicate failure and return "len" to indicate success.
->> It was hard to distinguish success or failure if "len" equals the error
->> code after the implicit cast.
->> Moreover, eliminating implicit cast is a better practice.
-> 
-> According to whom?
-> 
+On Sat, May 25, 2024 at 11:34=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 24/05/2024 20:40, Conor Dooley wrote:
+> > On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
+> >> On Thu, May 23, 2024 at 7:47=E2=80=AFAM Conor Dooley <conor@kernel.org=
+> wrote:
+> >>>
+> >>> On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wrote:
+> >>>> On 22/05/2024 23:50, Tim Harvey wrote:
+> >>>>> The GW7905 was renamed to GW7500 before production release.
+> >>>>>
+> >>>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> >>>>> ---
+> >>>>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+> >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Docum=
+entation/devicetree/bindings/arm/fsl.yaml
+> >>>>> index 0027201e19f8..d8bc295079e3 100644
+> >>>>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> >>>>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> >>>>> @@ -920,8 +920,8 @@ properties:
+> >>>>>                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+> >>>>>                - fsl,imx8mm-evk            # i.MX8MM EVK Board
+> >>>>>                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
+> >>>>> +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Boa=
+rd
+> >>>>
+> >>>> That's not even equivalent. You 7500 !=3D 75xx.
+> >>>>
+> >>>
+> >>>>>                - gateworks,imx8mm-gw7904
+> >>>>> -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Boa=
+rd
+> >>>>
+> >>>> Compatibles do not change. It's just a string. Fixed string.
+> >>>
+> >>> I think there's justification here for removing it, per the commit
+> >>> message, the rename happened before the device was available to
+> >>> customers.
+> >>> Additionally, I think we can give people that upstream things before =
+they're
+> >>> publicly available a bit of slack, otherwise we're just discouraging
+> >>> people from upstreaming early.
+> >>
+> >> Hi Conor,
+> >>
+> >> Thanks for understanding - that's exactly what happened. I'm in the
+> >> habit of submitting patches early and often and it's no fun when
+> >> something like a silly product name gets changed and breaks all the
+> >> hard work.
+> >>
+> >> The board model number is stored in an EEPROM at manufacturing time
+> >> and that EEPROM model is used to build a dt name. So instead of GW7905
+> >> which would be a one-off custom design it was decided to change the
+> >> product to a GW75xx. The difference between GW7500 and GW75xx is
+> >> because we subload components on boards between GW7500/GW7501/GW7502
+> >> etc but the dt is the same.
+> >>
+> >> If there is resistance to a patch that renames it then I guess I'll
+> >> have to submit a patch that removes the obsolete board, then adds back
+> >> the same board under a different name. Shall I do that?
+> >
+> > I think this patch is fine - other than the inconsistency that Krzyszto=
+f
+> > pointed out between the "renamed to gw7500" and the "gw75xx" in the new
+> > compatible.
+>
+> I am not a fan of renaming compatibles because of marketing change,
+> because compatible does not have to reflect the marketing name, but
+> there was already precedent from Qualcomm which I did not nak, so fine
+> here as well. Double wildcard 75xx is however a bit worrying.
+>
 
-Programmers can easily overlook implicit casts, leading to unknown
-behavior (e.g., this bug).
-Converting implicit casts to explicit casts can help prevent future
-errors.
+Hi Krzysztof,
 
-> Merits of your ex cathedra claims aside, you do realize that functions
-> have calling conventions because they are, well, called, right?
-> And changing the value returned in such and such case should be
-> accompanied with the corresponding change in the _callers_.
-> 
-> Al, wondering if somebody had decided to play with LLM...
+Thanks for understanding. The double-wildcard is again a marketing
+tool. All GW75** use the same device-tree by design. The boot firmware
+that chooses the device-tree understands this and for a GW7521 for
+example would look for gw7521 first, gw752x next, gw75xx last.
 
-As the comment shows that "ret = len; /* on success, claim we got the
-whole input */", the return value should be checked to determine whether
-it equals "len".
+Best Regards,
 
-Moreover, if "len" is 0, the previous copy_from_user() will fail and
-return an error.
-Therefore, 0 is an illegal value for "len". Besides, in the linux kernel,
-all the callers of simple_attr_write_xsigned() return the return value of
-simple_attr_write_xsigned().
-
--Jiasheng
+Tim
 
