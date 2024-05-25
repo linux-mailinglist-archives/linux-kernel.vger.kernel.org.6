@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-189458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4A08CF04F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E25FF8CF052
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB0B281C16
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6A4281C19
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A5C86AC8;
-	Sat, 25 May 2024 17:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7018786ADC;
+	Sat, 25 May 2024 17:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmqWjl/I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iexVq+Qu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1553F9F8;
-	Sat, 25 May 2024 17:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1269B644;
+	Sat, 25 May 2024 17:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716656484; cv=none; b=cZ6pIU5TrwQ8JcGEfkgcxO7K0KKM2RHxxCCdSiZzoJaGLiMgiZ0/MYDu25YG3UuQzPed3OJXpU05IDwiOdTNhkjJ7+cBpbovFTS//86oIxME6aecJm743Q75f7G+gJwdoqwmLQSw5dUes2Qc/q/+4cpESS7g6plOdOxNMZb6cEw=
+	t=1716656590; cv=none; b=uYKzSvcJq3bv0kKWPzsCMbYWpJEsFb7PgUrJRTdn7TNBWG/IITnkKuBBa57J7Aum3ectdk7v9fVNqT2ZPvNACesNR8BdyNUfuGO4rsRnrRsasJlt+HGdjME+h1uUxRhyGpOwX+Dk2c2+WV7qPq50EHjLLp+F8aSqlRFvE66/uDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716656484; c=relaxed/simple;
-	bh=/XhqLlNFPdwYGW6GA2lsso7cTXnh8Mkx+G2m3EcCAHg=;
+	s=arc-20240116; t=1716656590; c=relaxed/simple;
+	bh=9FK0oboQorZhbDvmMpgtORUFCkbQSkfqiSX4FWXKE2k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+S9grzjmHG9//BN23Q5uUxaJbLCTMQNcU6DFXu13pyGyh9GyA3Lj9wsMwngquEueQn/lI651k7tZD6yfOXgrNn86PSPf2sywdv1cBaksRP3hNjNtVBrpr2fNewrqEASL/7r0+iAZpeGFs+K9qIuOZ6HYIA0kb47zqiAbZuVbkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmqWjl/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7717DC2BD11;
-	Sat, 25 May 2024 17:01:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jkdd7B8PGBZE1M6z+VSb/ENct/74d+o2G/BaSQGvR3Npfn/ZftaMF7ZUjlva5vrsJ4DIVT+kc/KMLg2h/gOFcXNmRg1HL/TWpurlGH+exY+UQ/vr67QjL31jKUS9WJQG3YxOOtqU3CjjjvoPvwg0F9JKaY8FrV+T2xasN3WIrJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iexVq+Qu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 148E8C2BD11;
+	Sat, 25 May 2024 17:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716656484;
-	bh=/XhqLlNFPdwYGW6GA2lsso7cTXnh8Mkx+G2m3EcCAHg=;
+	s=k20201202; t=1716656590;
+	bh=9FK0oboQorZhbDvmMpgtORUFCkbQSkfqiSX4FWXKE2k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fmqWjl/I+NtBC1KYIrkwoj3esGfEV9ItfowymhioSGC7tlq5AxS7vIdiRi8IKXYHL
-	 kYDSY5cn4fr2JrEdDNrRQTdTG81dMGJ9ECSCa4pUL4ZerKpYEXY50R7JENHpZFsJfl
-	 P98gCtz0RD+JIeZ7RW8utVc1Wq8plQFHfhSx/UISJTt92cihR+A5nBaQlfM0f7G68W
-	 7OcJPrxN7s5FAeS6qrQhnNvE17jrXAn0Gnb2N+2fDTor8dUrXUCdOWmwVP8Fo63mny
-	 MQyksepHnVIdyQ6dPCMa3OIKe/56q+HAnaz56Vw7SYoeiHmgKU1yNwAUilRzD+Uabl
-	 oKAReJOizLKrA==
-Message-ID: <bd01676e-edf2-42e2-a689-d9a89819c490@kernel.org>
-Date: Sat, 25 May 2024 19:01:18 +0200
+	b=iexVq+Qu9L+ktoAOoPvqTT4kblZB6xL+rYeWbXyhu2clY+FQoZbOLwVahmGKVYbHx
+	 /BxkTPx1qolKedMcPqgTfoL6li0Nu4JLud8H9UTznmj4qv04wnO8TKTc2rZFxdU/K7
+	 vU3hS61nqZD4kVSQW8WCzIRaIKE3OOcjJWLvPbZyk4fQ4YgY05IvS29kyH4CfRnIc+
+	 /AZUV9XYXlDNq114L82O2YXBP0LQW3LA6lHm/dYFEzHDGBKQBCoLYJJcd8itEBZbPO
+	 U6NrVW4NQY4JrGIdoEUROqI5r8bYmq8zMq7/TQs0WHWhPydF8lYC7ZjUir0NyhbLiS
+	 8eKI1f3Nd+luQ==
+Message-ID: <7deee008-a2e6-45c7-8c83-5b2d7db7a04e@kernel.org>
+Date: Sat, 25 May 2024 19:03:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: input: document Novatek NVT
- touchscreen controller
-To: joelselvaraj.oss@gmail.com, Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCM6490 snd
+ QCS6490 sound card
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240524-nvt-ts-devicetree-regulator-support-v2-0-b74947038c44@gmail.com>
- <20240524-nvt-ts-devicetree-regulator-support-v2-2-b74947038c44@gmail.com>
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+ quic_pkumpatl@quicinc.com
+References: <20240524035350.3118981-1-quic_mohs@quicinc.com>
+ <20240524035350.3118981-2-quic_mohs@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,51 +109,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240524-nvt-ts-devicetree-regulator-support-v2-2-b74947038c44@gmail.com>
+In-Reply-To: <20240524035350.3118981-2-quic_mohs@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/05/2024 16:39, Joel Selvaraj via B4 Relay wrote:
-> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+On 24/05/2024 05:53, Mohammad Rafi Shaik wrote:
+> Document the bindings for the Qualcomm QCM6490 IDP and QCS6490 RB3Gen2
+> soc platforms sound card.
 > 
-> Document the Novatek NVT touchscreen controller present in devices like
-> the Xiaomi Poco F1 [1]. Also, include the devictree binding file in the
-
-Just name the DTS, no need for external link.
-
-> MAINTAINERS file.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts?h=v6.9
+> The bindings are the same as for other newer Qualcomm ADSP sound cards,
+> thus keep them in existing qcom,sm8250.yaml file, even though Linux driver
+> is separate.
 > 
 
-
-> +
-> +  vcc-supply: true
-> +  iovcc-supply: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        touchscreen@1 {
-> +          compatible = "novatek,nt36672a-ts";
-
-Messed indentation. Use 4 spaces for example indentation.
-
-With above fixes:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
