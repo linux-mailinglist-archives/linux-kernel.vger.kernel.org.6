@@ -1,153 +1,176 @@
-Return-Path: <linux-kernel+bounces-189568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DC68CF211
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81D88CF215
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471C3B2129F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E551281BAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B385E12F59D;
-	Sat, 25 May 2024 23:09:23 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB4312A146;
+	Sat, 25 May 2024 23:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="TYAcnYSZ"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B313512F379
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B03129A9A
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716678563; cv=none; b=GN7CwD5G3g7h6Z+sZ7MjASCrzLvvHj1p7zqGVYO72AEqzEbfPuXfDa0mmQeSJT0gipI1McakRPoOsKbwYyERYJ7FLCOjs3DdNVbDk+fxkixsgidIwpUmE43WFaMYTqtMgVECzbBZnC+UzwkEGDCSW4+y2l/FblrgJzc4NvxRJPY=
+	t=1716678573; cv=none; b=Bp3VvrWZWtI9VR1zs4GuPgNm2jiwvwB5oCpTVo+UoHkuf02qmcjGTdSE1feYB/NX2+9cuEHWJo2ksAhjf7AookBxobE0mD+90eqNknf1xlKRtPgD8mHIU+md2R6YI+0jt35k1p3ST4h/uj6hO4S4Z8HP3SzP+Sgwnm6vYV6w/Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716678563; c=relaxed/simple;
-	bh=P9Ju22vDo4ehK2fg74jr8wilBGvJpTWtCODrWF5yXbM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L1Dxzi6nNm+1YNeGlD/vJ2DORPKC0LoUnHPLXaKOaeqVByvb8GRwZG+LxUZMPWqZXVRJTZZKh+qNua0sfXv4Domaf0e1/dFYLwqFKYmJ5hU0q2m7taOoqvLHUiw444rccftvLDmtCPkWzkrdjswsLtaevhEETVJ9KQ/N0opBt9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e25de500d2so436370439f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:09:21 -0700 (PDT)
+	s=arc-20240116; t=1716678573; c=relaxed/simple;
+	bh=faN9rNSdcMcbjtK47u0oId+ibnqpzDbiA+nKCknSZ+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1xUchBMAAdL8Oy5jOtANAGzcAo8rliQulPk+iGsNZI+IBof+YCnhNSEFzDmxNH4UGhmQa3b7poP6TwbDmiBXcRc5IqGWSnHb1uRvAjpyULRVcS/eb/gQgJ8u9XtYyT/auJ/RT4c99lzGAyy96Ap++xa/7r7pVYAn3DpQTYJ8/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=TYAcnYSZ; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-68197de7400so1731412a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716678571; x=1717283371; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Crh6RjgT+TcJb1jq4rCjRtTqJLBvMRyCXUhpelsfOKA=;
+        b=TYAcnYSZr305sH9XLnMvStIEDlJaWfuAxeIKJ8RHPQ2FdZChlHVw3WOedEm+oJTNqI
+         stTuZ4fQcw6UxiGfRHR90Bp74bwzaixt2GDlsFinFqwsc869LKAliJMxIv9qTmLKte90
+         sq9F8bi8bpvUJzN0IUjLPRE9fJjkfjv5gfgmowNLTuqBzw1qcIAMQNDSly1A1w3VVbGl
+         8+P7OVtW0gK8XJZGCmv5e1rowLpX51EXhR5iPw/zYbDLRoTZIL2nRgW5TTKIhnQ6151n
+         cTidOa1KmAj+ZAT11fKYV1i4bpCfpO+pzVNGRkUDuJnBIDt7bLWMHaeIDv9F1c8BEZf0
+         OwMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716678561; x=1717283361;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EXvm1BRPoDDQ1PtVnmKGKMJFHmcEADNxdlulxvcnIsQ=;
-        b=UnrpDNFhOKwgvSvrGxaFYz+rzo/9K2qTMJVl4E9Ms4Erblo60xkjGJk8cUUnCHPa9V
-         6/Z1ZoUR35l4G7/p87hajEuBJt0NJcyy/kICyOG7nMmZCvBWsp0ptZ4tv2g1doSZS1UM
-         Lz+1gU5w8B+TfcLnncRAlgITsbwn95I2txklPK3nZp05tQphDgrgsGfSyTUvqthKefSx
-         3Cu5752x6gYa3Ty1YDwW4Mnop3SoKXbOQqxpJGIN0Z3eChSbcuR/2XVeQfFgkEGEiAII
-         6BJqSTkwEjNfauq5EyaL4QLIW5l211YnzHjORLv9PSL80/6beXIX1sOd9mselQl0Wkt1
-         CRYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3UAxXZLTdWVTAc7OINbB7nR3nTAwqLOdSKCtEnEU3SKKZanppm1tQH3AEUYTBoj4s6q1bQr55GNAGLQQ72dmZa2mhyfTaL3krHX79
-X-Gm-Message-State: AOJu0YyMoRwFWGeobzetcQgL6fYBBzgQrQS0uHDwdSVsdpIEizY0n0+H
-	UgVTOS2+CW4TK+/mxcNOPuQ0vkBESO/IIJTeuifZVffy4gHHn19rFh7SdLFggXEX0/c6FNFVWUk
-	V6xTQ5D6DnuYIem63tvWtzjDQ5Fi9rYSs2yiuyJEJieXSh4E4UTISz9A=
-X-Google-Smtp-Source: AGHT+IE1QwqyM/Xe95598eJ4YD/14LIpTGT3SBzPrORWFCdO4v3X14qSGTQnRm0QVA6aPL6K+eb/V34QRlpY4NarMIRpXwdPHoB8
+        d=1e100.net; s=20230601; t=1716678571; x=1717283371;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Crh6RjgT+TcJb1jq4rCjRtTqJLBvMRyCXUhpelsfOKA=;
+        b=QQgBTp8W21SsZyRGaE9soaXh6lrb0A+ZZjtiJa5urCQahvsaEsReXh0mPlJu0ULx3g
+         MYlW0c8w7HO+y+sGQy0+JiaJ6NlyKQfwfW9bXVMPewC7qeUDk6Aksx6yqOkcrBVNfyCL
+         9H1tyUHrNDw/eY4jXvIar4RrR62CDgGt7zqIuXKPLPr0udeWWlAfXps/Rg3DVhlWWaCS
+         mTSalBGOx6vnt7M/XGWPqXgchrDM8N3VDOIOUqLYEbMxvwXbt77Fi4pk5bJfEH1UF9EH
+         uKg4Q9y2AX6wrX+0Jo4MyokVn04e68enhCdZKU2CXjbQYgykmnz3Q0wpq4Sj0HwYqDTP
+         bCug==
+X-Forwarded-Encrypted: i=1; AJvYcCUHksD+digREVmv2fj8HMCAu6lp15uRj7AJ/Knil5Q6N3o9XzJnEb01qcd2WtnVLEsKroHmh+3anR3adu/jbgwdqK7hBzVXaVKskrvZ
+X-Gm-Message-State: AOJu0Yxqg5vTp3e2Ueb/WVen106pI4xbqHQ2/KLcGw0goEcKsYC8qWgn
+	7AZ1gXGa+1D5PHGGviBYgz27DUF+FzPyYVxoe8NfMB/drViR/qS2UytBxG6HpJg=
+X-Google-Smtp-Source: AGHT+IGYciyTBhNiI5PZlCjyMDogB+ANQNNWDCUuYjIsBj+L8eTBYhs5xE8S13XEF72yE6eBkoNGvg==
+X-Received: by 2002:a17:902:d50b:b0:1f4:768b:445e with SMTP id d9443c01a7336-1f4768b4768mr21943575ad.24.1716678570642;
+        Sat, 25 May 2024 16:09:30 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9afba1sm34658165ad.246.2024.05.25.16.09.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 16:09:30 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sB0Vz-00AUvI-1V;
+	Sun, 26 May 2024 09:09:27 +1000
+Date: Sun, 26 May 2024 09:09:27 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, bvanassche@acm.org, hare@suse.de,
+	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 06/12] fs, block: copy_file_range for def_blk_ops for
+ direct block device
+Message-ID: <ZlJvp47RSFKkbwRJ@dread.disaster.area>
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102929epcas5p2f4456f6fa0005d90769615eb2c2bf273@epcas5p2.samsung.com>
+ <20240520102033.9361-7-nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:14cb:b0:7de:e175:fd2d with SMTP id
- ca18e2360f4ac-7e8c75d4c18mr26200539f.3.1716678560487; Sat, 25 May 2024
- 16:09:20 -0700 (PDT)
-Date: Sat, 25 May 2024 16:09:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cab78606194f5fcc@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in txUpdateMap
-From: syzbot <syzbot+0a8a0b1abad0363db585@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520102033.9361-7-nj.shetty@samsung.com>
 
-Hello,
+On Mon, May 20, 2024 at 03:50:19PM +0530, Nitesh Shetty wrote:
+> For direct block device opened with O_DIRECT, use blkdev_copy_offload to
+> issue device copy offload, or use splice_copy_file_range in case
+> device copy offload capability is absent or the device files are not open
+> with O_DIRECT.
+> 
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> ---
+>  block/fops.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index 376265935714..5a4bba4f43aa 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/iomap.h>
+>  #include <linux/module.h>
+> +#include <linux/splice.h>
+>  #include "blk.h"
+>  
+>  static inline struct inode *bdev_file_inode(struct file *file)
+> @@ -754,6 +755,30 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	return ret;
+>  }
+>  
+> +static ssize_t blkdev_copy_file_range(struct file *file_in, loff_t pos_in,
+> +				      struct file *file_out, loff_t pos_out,
+> +				      size_t len, unsigned int flags)
+> +{
+> +	struct block_device *in_bdev = I_BDEV(bdev_file_inode(file_in));
+> +	struct block_device *out_bdev = I_BDEV(bdev_file_inode(file_out));
+> +	ssize_t copied = 0;
+> +
+> +	if ((in_bdev == out_bdev) && bdev_max_copy_sectors(in_bdev) &&
+> +	    (file_in->f_iocb_flags & IOCB_DIRECT) &&
+> +	    (file_out->f_iocb_flags & IOCB_DIRECT)) {
+> +		copied = blkdev_copy_offload(in_bdev, pos_in, pos_out, len,
+> +					     NULL, NULL, GFP_KERNEL);
+> +		if (copied < 0)
+> +			copied = 0;
+> +	} else {
+> +		copied = splice_copy_file_range(file_in, pos_in + copied,
+> +						 file_out, pos_out + copied,
+> +						 len - copied);
+> +	}
 
-syzbot found the following issue on:
+This should not fall back to a page cache copy.
 
-HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=144e3042980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
-dashboard link: https://syzkaller.appspot.com/bug?extid=0a8a0b1abad0363db585
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+We keep being told by application developers that if the fast
+hardware/filesystem offload fails, then an error should be returned
+so the application can determine what the fallback operation should
+be.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+It may well be that the application falls back to "copy through the
+page cache", but that is an application policy choice, not a
+something the kernel offload driver should be making mandatory.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
+Userspace has to handle copy offload failure anyway, so they a
+fallback path regardless of whether copy_file_range() works on block
+devices or not...
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0a8a0b1abad0363db585@syzkaller.appspotmail.com
+Cheers,
 
-BUG at fs/jfs/jfs_txnmgr.c:2340 assert(mp->nohomeok == 1)
-------------[ cut here ]------------
-kernel BUG at fs/jfs/jfs_txnmgr.c:2340!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 PID: 133 Comm: jfsCommit Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:txUpdateMap+0xc8b/0xd20 fs/jfs/jfs_txnmgr.c:2340
-Code: e9 5c f9 ff ff e8 d5 fd 82 fe 48 c7 c1 00 f4 6a 8b ba 24 09 00 00 48 c7 c6 80 e7 6a 8b 48 c7 c7 c0 e7 6a 8b e8 c6 9d 63 fe 90 <0f> 0b 48 89 df e8 7b 32 e0 fe e9 e1 f8 ff ff e8 31 33 e0 fe e9 a8
-RSP: 0000:ffffc900020c7ce0 EFLAGS: 00010286
-RAX: 0000000000000039 RBX: ffff88805f267580 RCX: ffffffff816f3519
-RDX: 0000000000000000 RSI: ffffffff816fc096 RDI: 0000000000000005
-RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000000 R12: ffffc900022ea120
-R13: 0000000000000001 R14: ffffc900022ea124 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f76f6e2f760 CR3: 00000000294c0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
- jfs_lazycommit+0x5e6/0xb20 fs/jfs/jfs_txnmgr.c:2733
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:txUpdateMap+0xc8b/0xd20 fs/jfs/jfs_txnmgr.c:2340
-Code: e9 5c f9 ff ff e8 d5 fd 82 fe 48 c7 c1 00 f4 6a 8b ba 24 09 00 00 48 c7 c6 80 e7 6a 8b 48 c7 c7 c0 e7 6a 8b e8 c6 9d 63 fe 90 <0f> 0b 48 89 df e8 7b 32 e0 fe e9 e1 f8 ff ff e8 31 33 e0 fe e9 a8
-RSP: 0000:ffffc900020c7ce0 EFLAGS: 00010286
-RAX: 0000000000000039 RBX: ffff88805f267580 RCX: ffffffff816f3519
-RDX: 0000000000000000 RSI: ffffffff816fc096 RDI: 0000000000000005
-RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000000 R12: ffffc900022ea120
-R13: 0000000000000001 R14: ffffc900022ea124 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88802c100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7a37f24488 CR3: 00000000294c0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
