@@ -1,57 +1,67 @@
-Return-Path: <linux-kernel+bounces-189425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017378CEFDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:37:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9E08CEFDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F451F21603
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:37:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9F23B21079
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEFC83CA3;
-	Sat, 25 May 2024 15:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD3184E0A;
+	Sat, 25 May 2024 15:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0qyl2cPB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cpNihL3C"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E424A1DFFC;
-	Sat, 25 May 2024 15:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE6E29CE5;
+	Sat, 25 May 2024 15:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716651441; cv=none; b=CrPCrkXeZ1/BcZ0/79gDQWlP0yDlPoWiaGyIKUztBPF9qy/zdJEcE1kQ31/FEGC9CaiRb1Jz6CSwfi2+hjqVRIVfDzj0xNkQkOL7LbhkCnF4FNqGyuWGtOYcBjQz5JpFx7lR8BP2ZG9hURPdWx++QAuYxb3CVupWpFy40tpDS8U=
+	t=1716651653; cv=none; b=W59pFleZvNIRSjiFQUHlrU2TXrbJXFGH3Rwn/9Gvx7a/aLGeQuFvy86GC+U+V5RAMSURMDcr+vHBEhMIijcT3J9KfPGLVMPGpCPenlK1T/BzxeqQx7AN9CrYhpAHnTWjKwoTf6ZmVCz8MiIx4eYBFcUQTwXSLQ40ojTjsL7iX5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716651441; c=relaxed/simple;
-	bh=uUjeSZ8n67tGvTCtDHKyxBGEkV9qifQrCGxlPSJk66o=;
+	s=arc-20240116; t=1716651653; c=relaxed/simple;
+	bh=nsMlYfrbACr4A+ifWYV1NJR6P+PBisHXcccRZav55lQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+z64L7OVLQAv6yEJGY/ndMmSS/5j7Jg1hAQ+7ZVoVDAuJasCg4YOYv7qbe4H7dfOz3HWVz6caIHZvknbvhCVKXAKgGEBXYfZ/lGwmQq6HRGEHkEwKxnhg4LUsVomSfNYdeCF6e0OP+6QHLgbVM/H3mzHuy5wwfywjHlaNsT8xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0qyl2cPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04832C2BD11;
-	Sat, 25 May 2024 15:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716651440;
-	bh=uUjeSZ8n67tGvTCtDHKyxBGEkV9qifQrCGxlPSJk66o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0qyl2cPBnHKuucOVAjyKvESVrXQGsXxfKWpuN/BA28C774waGj//eRVoKn5AjWNdv
-	 81ebPTjxtVd1eMjbo+6AHFuFYEgOg9vJ/tmsgxnVWx80ORphnw9fkjQ9mSftc/EpyM
-	 zoM9ECcOjCTlbeg4glMTQWk3K6kYXrCmZW1GfWgQ=
-Date: Sat, 25 May 2024 17:37:22 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
-	linux-cve-announce@vger.kernel.org, cve@kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Tam=E1s?= Koczka <poprdi@google.com>
-Subject: Re: CVE-2023-52656: io_uring: drop any code related to SCM_RIGHTS
-Message-ID: <2024052515-usual-chewer-cbb4@gregkh>
-References: <2024051338-CVE-2023-52656-6545@gregkh>
- <871q5rqhuc.fsf@mailhost.krisman.be>
- <d1cb0cd3-0826-48fc-8713-8648d6eb9fd7@kernel.dk>
- <2024052542-diner-snare-a618@gregkh>
- <CAFswPa9jR6mKAsCrdmspCARe-evk16s1t0SG9LrRLCze_f6Ydw@mail.gmail.com>
- <ededb63f-7abc-4cca-8bf7-c767e6026e48@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zse0xXzNCXJ/I3D/6hyEizgtK0yMTzybEsj5VGCrBjGVpRlQzUP7QUPaFqKD9jGeC137pXrhS8t/x1ZPLHdCUb4QLG2MGHioxkaD/r3V0uIDTPUD6iSyJRoEGKTSyq2gDrGk//MkoAls3yRm01VMTKtiEbY5pDnk+XechZmZ8CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cpNihL3C; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dNqXp/hhyPdCaPUnPmAwqKc/MFxMVyqfvLBtHgPIDRY=; b=cpNihL3CbSDMFHIuby+bAR0aRu
+	K/gqLEIg3HgQ46NLOXM4zVdHTkovLsG/UAlkE+TIGDzCt5l6M2lDzzaMPba+kIIS+ThmRmnsrfcvo
+	nYq9gyZrE87vvGYL8WO0BWZCwoOmch2U3df6gSNuCF6pTifr0vkUEJrc7Cm3ag71qzObNYMcZz6ZM
+	qGJFeEGTcOQCkEl40yB3CsyBMShs6UB+ecDKxax3pM7r6e2nMqeP5Kt6bcvcg7iCs+Df+UE2m9Iwx
+	fQ35wVYhr9nwQhVFKHMggNlZemQpPtyW979vmPhP0WC9KtGTJDtGRfKf6OGQZsq+hzBKkT/Ddc2tH
+	GxMY5ZXg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sAtVM-007YFB-1K;
+	Sat, 25 May 2024 15:40:20 +0000
+Date: Sat, 25 May 2024 16:40:20 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: brauner@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com,
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com,
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
+	joel@joelfernandes.org, keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
+	rust-for-linux@vger.kernel.org, surenb@google.com,
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu,
+	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20240525154020.GW2118490@ZenIV>
+References: <20240524-anhieb-bundesweit-e1b0227fd3ed@brauner>
+ <20240524191714.2950286-1-aliceryhl@google.com>
+ <20240524225640.GU2118490@ZenIV>
+ <20240525003305.GV2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,78 +70,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ededb63f-7abc-4cca-8bf7-c767e6026e48@kernel.dk>
+In-Reply-To: <20240525003305.GV2118490@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, May 25, 2024 at 09:28:35AM -0600, Jens Axboe wrote:
-> On 5/25/24 9:09 AM, Eduardo' Vela" <Nava> wrote:
-> > On Sat, 25 May 2024, 09:15 Greg Kroah-Hartman, <gregkh@linuxfoundation.org <mailto:gregkh@linuxfoundation.org>> wrote:
-> > 
-> >     On Fri, May 24, 2024 at 10:57:07AM -0600, Jens Axboe wrote:
-> >     > On 5/24/24 10:45 AM, Gabriel Krisman Bertazi wrote:
-> >     > > Greg Kroah-Hartman <gregkh@linuxfoundation.org <mailto:gregkh@linuxfoundation.org>> writes:
-> >     > >
-> >     > >> Description
-> >     > >> ===========
-> >     > >>
-> >     > >> In the Linux kernel, the following vulnerability has been resolved:
-> >     > >>
-> >     > >> io_uring: drop any code related to SCM_RIGHTS
-> >     > >>
-> >     > >> This is dead code after we dropped support for passing io_uring fds
-> >     > >> over SCM_RIGHTS, get rid of it.
-> >     > >>
-> >     > >> The Linux kernel CVE team has assigned CVE-2023-52656 to this issue.
-> >     > >
-> >     > > Hello Greg,
-> >     > >
-> >     > > [+Jens in Cc]
-> >     > >
-> >     > > This is stable material, but doesn't deserve CVE status.  There is
-> >     > > nothing exploitable that is fixed here. Instead, this commit is dropping
-> >     > > unreachable code after the removal of a feature, following another CVE
-> >     > > report.  Doing the clean up in the original patch would have made the
-> >     > > real security fix harder to review.
-> >     > >
-> >     > > The real issue was reported as CVE-2023-52654 and handled by a different
-> >     > > commit.
-> >     >
-> >     > FWIW, the same is true for a number of other commits recently. They are
-> >     > nowhere near CVE material, it's just generic bug fixes.
-> > 
-> >     Ok, glad to revoke them if you do not think they are user triggerable
-> >     issues.  I'll go reject this one right now, thanks.
-> > 
-> > 
-> > Good day!
-> > 
-> > So, either I'm completely lost or CVE-2023-52656 shouldn't have been
-> > rejected. Forgive me for mudding the problem even more.
-> > 
-> > I think we need to unreject this CVE (CVE-2023-52656) or
-> > CVE-2023-52654 should be amended to include the dead code removal
-> > commit.. that said, that'll be weirder than just unrejecting this
-> > commit.
-> > 
-> > The reason is that the commit "io_uring/af_unix: disable sending
-> > io_uring over sockets" is not enough to fix the vulnerability in
-> > stable branches, because e.g. bcedd497b3b4a0be56f3adf7c7542720eced0792
-> > on 5.15 only fixes one path (io_sqe_file_register) to reach
-> > unix_inflight(), but it is still reachable via another path
-> > (io_sqe_fileS_register) which is only removed by
-> > d909d381c3152393421403be4b6435f17a2378b4 ("io_uring: drop any code
-> > related to SCM_RIGHTS").
-> > 
-> > Although that patch claims "it is dead code", this claim was only true
-> > on upstream, but not on stable branches (or at least on 5.15 where the
-> > vulnerability was proven to be reachable).
-> > 
-> > What a mess! ?
+On Sat, May 25, 2024 at 01:33:05AM +0100, Al Viro wrote:
+
+> FWIW, fdget()...fdput() form a scope.  The file reference _in_ that
+> struct fd is just a normal file reference, period.
 > 
-> Ah right, yeah it was a mess because of the stable backports, it was not
-> for the upstream front. Agree Greg, let's just keep it because of the
-> stable side.
+> You can pass it to a function as an argument, etc.  You certainly can
+> clone it (with get_file()).
+> 
+> The rules are basically "you can't spawn threads with CLONE_FILES inside
+> the scope and you can't remove reference in your descriptor table while
+> in scope".  The value in fd.file is guaranteed to stay with positive
+> refcount through the entire scope, just as if you had
+> 
+> {
+> 	struct file *f = fget(n);
+> 
+> 	if (!f)
+> 		return -EBADF;
+> 
+> 	...
+> 
+> 	fput(f);
+> }
+> 
+> The rules for access are exactly the same - you can pass f to a function
+> called from the scope, you can use it while in scope, you can clone it
+> and store it somewhere, etc.
 
-Now republished, thanks!
+If anything, fd = fdget(N) is "clone or borrow the file reference from the
+Nth slot of your descriptor table into fd.file and record whether it had
+been cloned or borrowed into fd.flags".
 
-greg k-h
+The rules for what can't be done in the scope of fd are there to guarantee
+that the reference _can_ be borrowed in the common case when descriptor table
+is not shared.
+
+The tricks with calling conventions of __fdget() (it returns both the
+reference and flags in single unsigned long, with flags in the lowest
+bits) are implementation details; those should stay hidden from anyone
+who uses struct fd.
+
+Incidentally, there's no "light refcount" - "light references" are simply
+the ones that had been borrowed from the descriptor table rather than
+having them cloned.
+
+One more thing: we never get fd.file == NULL && fd.flags != 0 - that
+combination is never generated (NULL couldn't have been cloned).
+As the result, if fd.file is NULL, fdput(fd) is a no-op.  Most of the
+places where we use struct fd are making use of that -
+	fd = fdget(n);
+	if (fd.file) {
+		do something
+		fdput(fd);
+	}
+is equivalent to
+	fd = fdget(n);
+	if (fd.file)
+		do something
+	fdput(fd);
+and the former is more common way to spell it.  In particular,
+	fd = fdget(n);
+	if (!fd.file)
+		return -EBADF;
+	error = do_something(fd.file);
+	fdput(fd);
+is often convenient and very common.  We could go for
+	CLASS(fd, fd)(n);
+	if (!fd.file)
+		return -EBADF;
+	return do_something(fd.file);
+and let the compiler add fdput(fd) whenever it goes out of scope,
+but that gets clumsy - we'd end up with a plenty of declarations
+in the middle of blocks that way, and for C that looks wrong.
+
+There are very few places where struct fd does not come from
+fdget()/fdget_raw()/fdget_pos().  One variety is "initialize
+it to NULL,0, then possibly replace with fdget() result;
+unconditional fdput() will be safe either way" (a couple of places).
+Another is overlayfs ovl_real_fdget() and ovl_real_fdget_meta().
+Those two are arguably too clever for their readers' good.
+It's still "borrow or clone, and remember which one had it been",
+but that's mixed with returning errors:
+	err = ovl_read_fdget(file, &fd);
+may construct and store a junk value in fd if err is non-zero.
+Not a bug, but only because all callers remember to ignore that
+value in such case.
+Another inconvenient bit is this:
+static int vmsplice_type(struct fd f, int *type)
+{
+        if (!f.file)
+                return -EBADF;
+        if (f.file->f_mode & FMODE_WRITE) {
+                *type = ITER_SOURCE;
+        } else if (f.file->f_mode & FMODE_READ) {
+                *type = ITER_DEST;
+        } else {
+                fdput(f);
+                return -EBADF;
+        }
+        return 0;
+}
+It's a move if an error had been returned and borrow otherwise.
+There's a couple of other examples of the same sort.
+It might be better to lift fdput() into the callers (or, in this
+case, just fold the entire sucker into its sole caller).
+
+Finally, there's a non-obvious thing in net/socket.c -
+sockfd_lookup_light()..fput_light().  What happens is that
+if sock_from_file(f) is non-NULL, we are guaranteed that
+sock_from_file(f)->file == f (and that reference does not
+contribute to refcount of f).  So we do the same clone-or-borrow
+thing, but we only keep the socket for the rest of operation;
+when it comes to undoing the clone-or-borrow, we do that manually
+and use sock->file to reconstruct the file pointer.
+It's still an equivalent of fdget()/fdput() pair, but it slightly
+reduces a register pressure in some very hot paths; hell knows
+if it's warranted these days.  Avoiding an unconditional clone
+in there is a really important part, but not keeping the struct
+file reference in a local variable through the syscall...
+probably not so much.  It is very localized - nothing of that
+sort is done outside of net/socket.c (we probably ought to
+move fput_light() over there - no other users).
+
+That's about it as far as struct fd is concerned...
 
