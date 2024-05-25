@@ -1,99 +1,176 @@
-Return-Path: <linux-kernel+bounces-189354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F1A8CEEF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8969B8CEEFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA3A1C20A59
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 13:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54651C20A2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 13:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E767481D0;
-	Sat, 25 May 2024 13:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2159C4AEF8;
+	Sat, 25 May 2024 13:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8dNiMUb"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MifxOLym"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B4A101F4;
-	Sat, 25 May 2024 13:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A245723769;
+	Sat, 25 May 2024 13:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716643377; cv=none; b=T5BugqcDnB2u+5IapwJu1Am+uYjoM6Z9N5OjLLJwXc0RyJb1UT374ID40ouqt05FUYv8ZF8HyIIxDQH2NKy0taj3aJz8HKOXfBb/95BobOqDWyK8v4e3VABSDMl8cesnBWg0GDVOxlT1G13rVIGjQ5Zj8hoX1hH4j/ineZFNnzs=
+	t=1716643690; cv=none; b=GhMEtaC+nbcFkuK5jTWNTuSOjEFrHMIHUq8LrxjXB5pn8twPMcNDBMsUL9m+wDlfifX6DkiQxqsysBUOF06its5wa/RzGLhaVVIs8ve034hhkKcb/JDbqNq7+EZjMeGyTEtGHxtosGcU/QLUgsFAEAUuyBldEMxgPgpiL393as4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716643377; c=relaxed/simple;
-	bh=twZv0XwD38Sgrc7cZswUW04/P8d8QPz8QlGCO53cniQ=;
-	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
-	 In-Reply-To:Content-Type; b=Z85e7zFBUZziUjtf7QJO6iIIrK32PjvgDRXASF0Zp1EaQKdBVoWI1Wz3ZdKZRAqAhY9aiZHu7KprF+a+1Tdm7JpZDQeVsPM8clS4m/0FURY18DFS1AH6wwba2x1eJKJMrAqMhp0dRnFIDSOM9VbIE19uiZG1cWLEAan4dKnm310=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G8dNiMUb; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716643351; x=1717248151; i=markus.elfring@web.de;
-	bh=twZv0XwD38Sgrc7cZswUW04/P8d8QPz8QlGCO53cniQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
-	 Subject:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=G8dNiMUbwUKjzXMaWkHcvdLfiXs3jWf45cPgiEfjG9T0zQLr4FYfz/Rp50ihAv6B
-	 BX3uWY8Frx9sfjGK5DIM06ITMTBpe7SIUfNKwWg4U4UAo3rChE27JwikO0wizsE/E
-	 H/g3L+HJ7ju0fDUj3TAeTUTMmtmCtbeXl+UebmdhsOu7fcaGVolL3hTXV/J3vQ1WJ
-	 MdQRz3Hb1CKSRC7j5ohuT6arVN9zsPQEN8mzmdwmTjSgXwoNdSQG/R9O6uqotGEZ8
-	 ot+UZHOn3bx5IV6QNc9VkGxz83Y1eCT7cgdi+SaonN00zmP3K0/hzf401e/Wbhl5A
-	 L/H7lVrArypDL3htfA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKM5z-1rwloW2E4l-00Lxhx; Sat, 25
- May 2024 15:22:31 +0200
-Message-ID: <e084c47b-5a14-464e-b2fd-bdfeb9fc8dc3@web.de>
-Date: Sat, 25 May 2024 15:22:30 +0200
+	s=arc-20240116; t=1716643690; c=relaxed/simple;
+	bh=4zLRKryEPEhLxtkijn6RbgJhMMJkRIFlKDleLaNwm/A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TrCrVdME/w4ig5UtWla974ZvofScHp8f+SKpiXWILqWO1go742hV6z4qkTtHJCHR+0Oduk8sDUpTFcSc1XKUgwVXQJI+mZPEz5rTB1KGcBT1+N6++IwVa/RDGFJiNBp/lRI7Zc9ei9qxohCaKfZGGmNrKOuAa7IhItNuSyU0+Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MifxOLym; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57883b25b50so544910a12.2;
+        Sat, 25 May 2024 06:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716643687; x=1717248487; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mo8+1mx/nA30VwrcIjP4AOPt1PugmzRzdV+Mta/P/KY=;
+        b=MifxOLymWV9kdarKIMc7uFLR4LJIHGY93ZHy/Jk7IJO8cUyrhxEq2ZwghVZKYgycGu
+         PRFXAj19Dq2ThBC461rKT1zPHbtiKzCDNLxEkdO/glWMe4MxrInWaYfuAX0WuL+WcTdT
+         bXsdmFoNh2q6ZgaVShDSiR20pzGvgdu4z9tvOPOCbPLldFK6ForG5NPbJg0a1CKPcHXJ
+         K63ekMRelAx61zRJKyDFu+ryW6nfsriaAv+FLyXEpbOqwbgUcXs/ePDCVtyrk2SKOlv5
+         lOVN+wUyL5170LomeHbHhHKwXEKEhoY8D0JbaKFUVXxszFFtu9EgvE3WvDtjSZCAl5Gr
+         VG0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716643687; x=1717248487;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mo8+1mx/nA30VwrcIjP4AOPt1PugmzRzdV+Mta/P/KY=;
+        b=FMUbD37jMfR+zXFkzDO7xTK8bbVqJZ+xbmUU+LbWB5AwCmHLSN1xyJ6kNS4PIw00qz
+         Kymkx664t6GNeTVQIhKXoIR6nUCuiaU1Aip4E2UfyImIBmEdHG8pp8w8O7M2VNaXXdgp
+         EfTd1xYW7gXl+d9RrDB4kfBzysBeJNurwgKLmOHs6hSh+cKErY6Uv8yGSNUbjHyUBWDS
+         okBJ59m2dq0VYK4tNORRKpxJLusdVayQyqabo9scj2CRrvRsWRKc61GGxzHL3+somWha
+         bE9QgympYAwZI06ThLqda4+YNUpHvBgZznDK1O8F0chfBFZeHwhypL8VhTA7Rg7ogmQV
+         uzZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBxNvvUxFNxHRjtEiFj4QvLM5XZBA9HaQvqeadANvz7RrvcFUWexZ+1fIMJlbWJVJwF1OCOW+anghKb/TikCwH7/qJMPQTJcGHdEIOdvcL+pZHKxLd1DLTAf46s4uXKOMaDLaVZPLP1hPWbztOSSJM7tHwpXh5OuM4ywXrCzrUm4zrXjR4vQEXt93NaCkmpGJb8REkbbqBWB70kpSYabclmJI9E0JCs2Y=
+X-Gm-Message-State: AOJu0YwQKBfgu+g/jX7lUU2KmVQhSqHIJzRV7L+Vsiv8tg6BEDc5qNuV
+	GKx6QdUArZm52mu3pE7bCyvbktdBHjBU1UF/lqq3AT89907+e16W
+X-Google-Smtp-Source: AGHT+IE3gmJUIvul4S1O2zw/h8rOZCXQEQULnqDXXH8/XuEr0PvPCteVwNCcdD28vdmFGEI5XQNy4Q==
+X-Received: by 2002:a17:906:48d8:b0:a59:a7b7:2b8e with SMTP id a640c23a62f3a-a62643e0787mr323899366b.29.1716643686789;
+        Sat, 25 May 2024 06:28:06 -0700 (PDT)
+Received: from hex.my.domain (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda46e1sm251842566b.196.2024.05.25.06.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 06:28:06 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v4 0/9] ASoC: samsung: midas-audio: Add GPIO-based headset
+ jack detection
+Date: Sat, 25 May 2024 15:28:04 +0200
+Message-Id: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org,
- linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
- x86@kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
-References: <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
-Subject: Re: [PATCH v3 2/8] EDAC/amd64: Check return value of amd_smn_read()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:h9m6DHXFR84RKzbcIb+FaTFLgvibH9mmJn4paw4Qt9pUSGJ3Od1
- nQUAbZjvazlKRaZs06sabcarChxiTkFHP/IioLOfUxtH0DRQsMRxE1yv5idWv5zrt31V5B0
- dmKB0k7L1KBbWmV+aXsNdvQpri/fsQo5D1RhqDvhJC3m1260hp29FChdfklFTZsGls5kk1g
- ACkGD3JXkFUoxBx9ok6DA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HMLPTIJfApg=;xDoy1xlEVS2hpwr5HArNs8O5zrr
- nFRNbneLkEeMvq80JZ524EbzsyU+rZCOwFK19GKTluHxPj+wsBYkA3Fje7mUyTUW7chLCvqu+
- O7ij7zgkVJHsUGMS7H7IIwARcZ184JWr1WzEBNTiPiihC0OLG2xE/EQfSddPT8JDE2obEyAsS
- PKsL14Omf+ykRHbNjllJwTHNdJyEY3cef2mhjvUG/4tXkdd7yFNwGqkbASxvOW5W9EskPuAxJ
- Hi8g/6kylZXZp6/36vUpriq1+Cn6ZVOp4ZD9mj+cu00vP0Qj8khuHAdsWo6M1dJ8S9M6U+gq7
- 50RH8XIMZOfscfQr4bmyLBdTdcP7e0Nh2l0M+FrsNXW1gIj9Rzm1Es/R8oP/bXA4xq6YW2hKE
- iCPQudJt8TkWaHeVulvPpk5GLfqRcTdmJCaYEo1sE/BrSKwfiFnNV4rBGOLVz6cKjEueh9D15
- pdPLGPli75AA48polfPADoRbGw7KKMUAoW2IwDzUg3/rySTTkI4X+f6mvRnyVxOVCnYpuh9JD
- PMePvSXaEibvEQUTjFLPRX3YU/+Czbw6UmGk6lJL/x+cenMJnxxTDEe78GG3W7fMBoxt5JmV1
- Dg3xPL8FwN4Vm4SJUz7xzw1RNrHbojLaaU/iR40KywJ3fKZNwLEcZA04exVXwup9Ld3S1EczF
- qaVdNpweezPoTfWEfD89R0vW/Rojr60hiX/BAqPiL0CaWB1q0WmVP/WsYDmnH3oU83la3i/ss
- h1mLED9x+wsSwJQr0JccKP3ZF9p41+SJa1aNmsXNgspYvSUMsqBZG/8SOrS89edbHzzd5/OxZ
- NEorrtGdKE9V12OktZTdC2+NTP+mh21mlO4G/Ahnm8HDc=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGTnUWYC/3XNTQrCMBCG4atI1kYySUyrK+8hLppJ2o7aHxqpS
+ undTQtCFbp8P5hnBhZ8Rz6w42Zgne8pUFPH0NsNwzKrC8/JxWZSSC32QvKKXBb4s4IUgBctNfy
+ a4Y1bEFIaC4lHZPG47XxOrxk+X2KXFB5N957/9DCtX1KtkT1wwX2KzllnErT5qagyuu+wqdhE9
+ nLJpKuMjIzVThl0QqLx/4xaMHBYZVRkBEKiDGiN4ocZx/EDd8zgKEoBAAA=
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716643685; l=3607;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=4zLRKryEPEhLxtkijn6RbgJhMMJkRIFlKDleLaNwm/A=;
+ b=lzS2mNI5ljRanb1yQ0vamjZSFmy4b2nQZa2vjTwXuGZWExrbMpjflCts+SmNj5dVCDUH3E5rg
+ KYPnEJ0mCskCVn7yrDhQ8xurQgoxPydl+59q6OdsOXxiyIy1A3xjv1t
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-=E2=80=A6
-> Check the return value of amd_smn_read() before saving a value.
-> This ensures invalid values aren't saved. =E2=80=A6
+Many of Samsung's Exynos 4 devices share the same midas-audio driver
+to handle the codec setup. While most of these devices, including the
+Midas itself, use the jack detection provided by the WM8994 driver,
+other devices such as the Samsung Galaxy Tab 3 8.0 (lt01) use two GPIOs
+and an ADC channel to determine jack insertion, the jack's type, and
+button presses (for headsets with volume up/down/play buttons).
 
-Does such information indicate a need for the tag =E2=80=9CFixes=E2=80=9D?
+In the downstream kernel, this behavior is implemented in the sec-jack
+driver[1], and the per-device settings are configured in *-jack.c files
+in the mach folder (see e.g. the Tab 3's implementation[2]).
 
-Regards,
-Markus
+This patchset implements this mechanism in the midas_wm1811.c driver,
+and adds new DTS options to allow for its configuration. It also
+enables jack detection for the Samsung Galaxy Tab 3 8.0.
+
+A very similar mechanism was already present in the aries_wm8994.c
+driver[3]; this implementation heavily borrows from it, though there
+are a few extra cleanups as well.
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+
+[1] https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/lineage-14.1/drivers/misc/sec_jack.c
+[2] https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/lineage-14.1/arch/arm/mach-exynos/tab3-jack.c
+[3] https://github.com/torvalds/linux/blob/master/sound/soc/samsung/aries_wm8994.c
+
+---
+Changes in v4:
+- Replaced manual regulator toggles with SND_SOC_DAPM_REGULATOR_SUPPLY,
+  both for existing mic bias regulators and for the new headset mic bias
+  regulator
+- Link to v3: https://lore.kernel.org/r/20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com
+
+Changes in v3:
+- Re-added pipe (|) character to samsung,headset-button-threshold-microvolt
+  description to prevent it from being parsed as a mapping (fixes syntax
+  error)
+- Split out "ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset
+  jack detection" into two patches
+- Link to v2: https://lore.kernel.org/r/20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com
+
+Changes in v2:
+- Added vendor prefix to threshold properties
+- Added separate headset mic bias regulator
+- Changed some cases of dev_err + return with return dev_err_probe
+- Added an extra patch to replace some previous dev_err + return cases
+  with dev_err_probe
+- Moved tab3 DTS wm1811 codec config changes to separate commit
+
+---
+Artur Weber (9):
+      ASoC: dt-bindings: samsung,midas-audio: Add headset mic bias supply
+      ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection
+      ASoC: samsung: midas_wm1811: Use SND_SOC_DAPM_REGULATOR_SUPPLY for bias regulators
+      ASoC: samsung: midas_wm1811: Add headset mic bias supply support
+      ASoC: samsung: midas_wm1811: Add GPIO-based headset jack detection
+      ASoC: samsung: midas_wm1811: Use dev_err_probe where appropriate
+      ARM: dts: samsung: exynos4212-tab3: Fix headset mic, add jack detection
+      ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock to WM1811 codec config
+      ARM: dts: samsung: exynos4212-tab3: Drop interrupt from WM1811 codec
+
+ .../bindings/sound/samsung,midas-audio.yaml        |  33 ++
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  31 +-
+ sound/soc/samsung/Kconfig                          |   2 +-
+ sound/soc/samsung/midas_wm1811.c                   | 348 +++++++++++++++++----
+ 4 files changed, 343 insertions(+), 71 deletions(-)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240502-midas-wm1811-gpio-jack-b10226b17ecc
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
 
