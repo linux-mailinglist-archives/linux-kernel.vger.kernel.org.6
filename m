@@ -1,106 +1,163 @@
-Return-Path: <linux-kernel+bounces-189506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897708CF0FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:20:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D558CF0FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC251C204F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2691F2146E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A5E127E10;
-	Sat, 25 May 2024 18:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6381127B50;
+	Sat, 25 May 2024 18:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d6Qhb33m"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B4BkDQGf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="10UCqdOY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B4BkDQGf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="10UCqdOY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668B31CF8F;
-	Sat, 25 May 2024 18:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632011CF8F;
+	Sat, 25 May 2024 18:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716661227; cv=none; b=ZYGqvqlomzGsHzeMBIlIpYjy25NKjr8KgQpfrxfq+HjWOO6TJql9VpRiEiKZRydw254cEgJQSz7kg3iqdkcvXKQXcbUiUyW0QyJrGVEz/qe71aj+vGqb9BOX3sRkbETqEzgOZos22ll5tgD2gm+xvKNlzMMgFFQBpUoTrzln4IA=
+	t=1716661334; cv=none; b=guWHh5+ehCMNPZmgU42qfrsrGSuczCri/LQ/E86s9Q2U54+AZXw7h8+/9NCrkgZI11jBdT/PK34ufYHnSkXLdLjibW+crRtDzH89jiiqRUOiOA/vnsI3K5JzeaREDWTcygdbWLpLqeeN/MAqcTMa9B8BAXdJ+MuBGBkdGeNWYEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716661227; c=relaxed/simple;
-	bh=frYNqj8bLyBV24XE+B8L2uQXn++Kl/zNdYU7wxv28Jw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=kIDVmtDdNEVpc1ienA1YxvyCNZnEQZgN4AWoL85x4huSIYffDxkrnOGeKeKLMw6qpcBSgW9pgLPg5bCacZfxwTqtQn6TOxhTxLmYBopArBCdGaMhQ2rVJ1ghpmFHB9T8HSbkFSi7+ioB1u3/nV7sZSEpSk116cDZ3sUokEpuSf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d6Qhb33m; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716661217; x=1717266017; i=markus.elfring@web.de;
-	bh=ylDCKNwB+uExXDGAm68CO6JDJtc9Fbkz8M9YBROBEBQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=d6Qhb33m3fUi27fwH48NbTDdVwIfuRd3UrnCMZEF9Ld1fJNZOZwr6wrUnrGKfQBN
-	 YbQ7T2xTKDvbVsWre9nhLk5WAotWUycY2rE/VjOXTnzc3iuWK+DMT2STJWRUcGUBm
-	 bXYbAwON291ga26XnA5u4V27B3NYJ6CIkRtEnbfLV8sAbB39P72iKUbTNBIrmdU4a
-	 e04KvoH2dHrqF9nazuLtkk42uOTlxSEmuZ7nEoAWd1Zh3ryDoILyspnopNhuWbZb7
-	 PuUJuu+YQPopDdYlGIeShwib6Bj0pSnuGPRQh4jNzhdfc/eEmyaNJAIO+57LqT3bL
-	 ybpXy6dfpCKeXLLHpA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK52w-1rw9D50YeM-00SgSC; Sat, 25
- May 2024 20:20:17 +0200
-Message-ID: <0a362e81-1e4a-4c4b-823e-e84c6f408630@web.de>
-Date: Sat, 25 May 2024 20:20:14 +0200
+	s=arc-20240116; t=1716661334; c=relaxed/simple;
+	bh=k/iX0RaIP3m97XishbvBAFhhUj0SK/I4pjIxMOIgjEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=j7jKvhbcLdtjqDnvnX4h4kDh1yXbgRgcRkh7xPazWY/lJpT0/ssJTx20fmKpOXnODaEg7J8DUwm4p/hCtNDYOLI3+OPbBCKHmsg9RLTLcymMbkZv+6OVknzGMQZBcWCvwrGc/IKsEwV50IH505+snv+UV1qSrmYSifx20qaG87M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B4BkDQGf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=10UCqdOY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B4BkDQGf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=10UCqdOY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 94B235C277;
+	Sat, 25 May 2024 18:22:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716661331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m8k3YJ6Pa5+fRRrELod8+uIM03/stiCjVD21MeOxwQs=;
+	b=B4BkDQGf0rCTeARCz0UkQTcGjf3OPQjySDDjBszbhFlo37z7KB8cze6xp3xez0fVf1vlFx
+	BERhWCTXF5H8Ju23n80kQsQLyxsyDVy7TdSpRDpFaQ0qrFOjC9dN8a2XBdJ7AqqCjhWqGl
+	wHRRSuRcRTDCazbstSmXbitD61SG0uM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716661331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m8k3YJ6Pa5+fRRrELod8+uIM03/stiCjVD21MeOxwQs=;
+	b=10UCqdOY0AAmOSPKOXTYmNHS7ZqvWkxg2MB5s1+a0XQHQyiyHvwpqwca+YwIush5VvlhZd
+	Edq3wmjBkGKz/CAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=B4BkDQGf;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=10UCqdOY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716661331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m8k3YJ6Pa5+fRRrELod8+uIM03/stiCjVD21MeOxwQs=;
+	b=B4BkDQGf0rCTeARCz0UkQTcGjf3OPQjySDDjBszbhFlo37z7KB8cze6xp3xez0fVf1vlFx
+	BERhWCTXF5H8Ju23n80kQsQLyxsyDVy7TdSpRDpFaQ0qrFOjC9dN8a2XBdJ7AqqCjhWqGl
+	wHRRSuRcRTDCazbstSmXbitD61SG0uM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716661331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m8k3YJ6Pa5+fRRrELod8+uIM03/stiCjVD21MeOxwQs=;
+	b=10UCqdOY0AAmOSPKOXTYmNHS7ZqvWkxg2MB5s1+a0XQHQyiyHvwpqwca+YwIush5VvlhZd
+	Edq3wmjBkGKz/CAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2BD813A6C;
+	Sat, 25 May 2024 18:22:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V7oMOFIsUmYhTQAAD6G6ig
+	(envelope-from <clopez@suse.de>); Sat, 25 May 2024 18:22:10 +0000
+From: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>
+To: linux-trace-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org (open list:TRACING)
+Subject: [PATCH] tracing/probes: fix error check in parse_btf_field()
+Date: Sat, 25 May 2024 20:21:32 +0200
+Message-Id: <20240525182131.15740-1-clopez@suse.de>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
- <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: msm8996: add reset for display
- subsystem
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:u5iv6GIczXOJlRb+JNjI53MKRSNQ9Ww+aJMAc/yNUauEqBvtVTy
- 9ClrXkpMNjJ9pFnVG4yY+Dx63T6lIdXdwV17bu9EJHpp62FUIxdapr6mHeyahcvPXMQsa/D
- +JO63/O3NMUVohlKmKS8tj4Sz+jxdjl0qteihV+oKrw8UCV3PSTJxUJq+FbRFL7kWPuR8w+
- LhJy8r9oQr5RpQ0yHvuVw==
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.13 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	BAYES_HAM(-0.62)[82.14%];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 94B235C277
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:x8jl3ITeGf4=;VLGHTn9XQxgy5Tp1Y7wyZd3pm9X
- wHY8tjLQKH0KHDo0Y6a3bEpfxRC8uI/ASFm9TQrZYplCeOhJMiOgi5b5vPiVTvPV2bC3Ti5VS
- 6trBEhfKTXxqRl5JCUcyMM5zzILHlx3ld9eCKDURst054bic+hHPgPLVqPfIWVylLTFbscdPO
- AoN1g2gObW6bXADDCuzWZ/L5DUA7uimmjC0JYA7lK+emf2P0c0SRth86jbZ/gui8v753H58qi
- uAaUihPISiaXdmtJPk0hzgE/3eDP/shObJZbaVwuZWKX3d02a0WYX6YtAAXCfK9wwt/8/WOhe
- Js+x6alRW223M6bcRp/hHLRoB3vdkwPLR+yF0cQYW86WH9SZafqST5d2FE3CODk7AAyoxygc9
- aUeRsaVlMjHvufhr8E5xtXWcPROMKTAiiAeGgcGLhw30g6Zeif83P1SVaJCqo0Ckiym3qSXm+
- JqmDS2MRTuSqNlS4NEfADZkFYmreNmtZJBqG3jyidPrY2YXI4k6wu9q/SSFGZ6/gXFXgvJ4Am
- XYYYS0mSxaN425Gji4lmTWk2sJtXZWtLFTtLNh0IDkXeeZt9GL2L8gR8VyCt+40JZ/Z+SRVdt
- Iu+ucSmSSC21kbaaf6Y56cTeRagW0gU+r5t4WnQJ4H4NXFJaID3u5qPkaCgsFxUeeFKAww/Ce
- gSKqIYKY4k4QpWUGAXQn+5k3ts/oq7hLa9nGlyC+G+0wFlgMDaHGzjp2e1nmB6XcPphGb7bjJ
- n3regGLE2QgSViNXWkJ7+lOteCGga/94Di06uW3BXRreIfv0Fb/dHou3pfodPDN1Q0darUHmU
- yUN0a8yvaGKsluuNimYCs7D/HbvZO5JQNJW2PHlX6nnYY=
+X-Spam-Score: -1.13
 
-> Add reset for display subsystem, make sure it gets
-> properly reset.
+btf_find_struct_member() might return NULL or an error via the
+ERR_PTR() macro. However, its caller in parse_btf_field() only checks
+for the NULL condition. Fix this by using IS_ERR() and returning the
+error up the stack.
 
-* I suggest to use occasionally more than 50 characters in lines of
-  such change descriptions.
+Fixes: c440adfbe3025 ("tracing/probes: Support BTF based data structure field access")
+Signed-off-by: Carlos López <clopez@suse.de>
+---
+ kernel/trace/trace_probe.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-* Please reconsider word wrapping accordingly.
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 5e263c141574..5417e9712157 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -554,6 +554,8 @@ static int parse_btf_field(char *fieldname, const struct btf_type *type,
+ 			anon_offs = 0;
+ 			field = btf_find_struct_member(ctx->btf, type, fieldname,
+ 						       &anon_offs);
++			if (IS_ERR(field))
++				return PTR_ERR(field);
+ 			if (!field) {
+ 				trace_probe_log_err(ctx->offset, NO_BTF_FIELD);
+ 				return -ENOENT;
+-- 
+2.35.3
 
-* Can such information be relevant for the tag =E2=80=9CFixes=E2=80=9D?
-
-Regards,
-Markus
 
