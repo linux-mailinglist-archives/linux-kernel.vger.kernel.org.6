@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-189372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628208CEF30
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:56:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B3D8CEF33
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F1691C209DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 13:56:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C112CB210BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9A44EB3C;
-	Sat, 25 May 2024 13:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223444CB5B;
+	Sat, 25 May 2024 14:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pjCtGx7S"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8nbfQTH"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1309B652;
-	Sat, 25 May 2024 13:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06D01DFD6;
+	Sat, 25 May 2024 14:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716645363; cv=none; b=b157xNXY8bIW9sQQhUlgVW9w7zzRJmglSOD+JUJRU9t7i6lcVqorUtOND3cpU1lY5p+BXU7QHWMZGFb+sXbYWHP5bkqX0fHSdRhutSIAuyJ65WKoyCNSvyyq7eJNFCZehKDS066+qOsaO3WXKZXuCa4rmwoOC4wouOLSz6khLvk=
+	t=1716645699; cv=none; b=bvivYMJQCsAKsWGfsemyct11drvg7goKprkF/YQAx94WwsFHgJR34WU6fvaw11OWrVyh8yZOhk6ARy9Jt3347R/LCF2yAbp5HkmHsGHfgLGbDV6YoNdyd9XUwqFyWbYhTIgiuH07OGM4y/9vLpBUFeOLJTddRpSdGOXBelqUXAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716645363; c=relaxed/simple;
-	bh=EDSZ+t9eeoZ/S27lFFmK0yqgyDG5QixJYOls16lDhyo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LFiBJ/WY9rxUMxv0hxffeTIN7ALCOcODVGegg0mK4rpVIfYcNDrG+H4i72mm/MKmHnWvPeTlroROyaP9CEs+WxZtq7a5rPXjJ6fMsRTOwHr5bMw5Ir0PMPIQkAmYk5GFvgkjbShkhlIkPANA8vAlOAFAMdzmS6wUF160a9Tah6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pjCtGx7S; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716645339; x=1717250139; i=markus.elfring@web.de;
-	bh=SBXIH9zX5kPE4nMYQkrY5M0b+lEnjHUeuUIGpZsKoaE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pjCtGx7SMqtL/2lfO9n3DM6tDF5e8WE3CSciUcLx43VWgvhUWvsmW2jGr6ZQJOi2
-	 f0tlwbgHp5cfb45DfCF9yQf/C2hOhDovSS1x2IINYyuzeuE2MAQqL+2dzY0MiAMEL
-	 vNB47NrU9bRlB7Q+eG7Wo4KMShELi5yInCt5YETmfyb+wF4atFCDMi859hCb7VL8P
-	 g23CbzJCNsmNXj0Bhswxi/W3pAsvLUk/Ar7gC8bAJPueDZovIQQcPaymgNTr7We3B
-	 1xLqpGj0owbCLywkOTHw7OjuL23hxOqTSNtjIqmxPUPsH7Xx1qk0OFvTGnh77sxXF
-	 M9xUKEiDh5Q1uVfxNw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOm0x-1rsNdt45ct-00XLQj; Sat, 25
- May 2024 15:55:39 +0200
-Message-ID: <8610cb8f-ad3a-421a-8a85-4c498c8fd0bf@web.de>
-Date: Sat, 25 May 2024 15:55:38 +0200
+	s=arc-20240116; t=1716645699; c=relaxed/simple;
+	bh=jz9wkc1FMP4qp1PK1KagkY0E2zB1V5eh7JiuozjXfyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FxfkGyOBpMVHNVIXQrumw8Q9tadJ96wwhaKJJqDo4LkzXL4SBCKoye4I32Br5QpCR73kB1MPFI7+xKI1MEfVoEh9suk+r6yel4PohJ6mNe7MlwOP58QMG3ZzHt+3pdYbgckzi6xFK+AmjYmNhrQqbcrl3V/4h8KeX5m9RKtgs5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8nbfQTH; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e724bc466fso83689801fa.3;
+        Sat, 25 May 2024 07:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716645696; x=1717250496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjIf/Nlt5hfmMgIm9+EKfmLkc5Lr9onDLEUZ7ihTSio=;
+        b=C8nbfQTHijM8OKftU2wzt+GSwbAbdNUaAXmg80F6gfOQYG5/odVM16o9+9uNF1xXg6
+         6bQMk02PrZPdS1M2eCNdO8lBSieM+4ehSNV1Rl/3NUhWIv6MMxOwV6cTht6ryqoJCTL1
+         8fuYEW7LlntNDNYovM4a3dYaRJfujLrXz3cAiR/MO2M5qnDbBwnSz58yt3gdo1HvF7KZ
+         yasdpEusroWdZhiWLXfePGwtJ6UiekL53eiA5puXN77E6cxX8lb14MjHjL8Rq7b41+vG
+         jO7comiCvYa4oWvqSwRqApRHYLXu4aCOnGwavvlf1EgpEZT9TNH0rni+cdElRVDdwPyB
+         uhAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716645696; x=1717250496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qjIf/Nlt5hfmMgIm9+EKfmLkc5Lr9onDLEUZ7ihTSio=;
+        b=WUKIpQY6Z3QntlJK6wjFW2r7+yPMVIYQJ+bCYkBbqjNcwBuxYQ1pMuEELcj4OimVvf
+         FVLQxQMmicJRboSFFuxE39swTve94qoobULknLhcZ3Th5cvRT5gFX9do2D79/kFFcfIs
+         ZqDpfuG5dROBqFA74py00QzjCHyxeuhe1LtAXIRaPl4ojLsdKqb7B/XXqReziTx3Vb/S
+         UsgDDc923vz/smS9c62YoEz+XboG0hyC8563VSTYiNxWkT5Ol/jy3WkSb2QaVxAwZDak
+         91dWOcu80pTnMGLA4np98r8Fk4HLA7NxcoKENXLArNpt3gvaGXL5imgJcy0wPhO9JzYL
+         Xwmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgiRSgLA8fS4UCKwcQsjxwSFayNw6cUUqz8TFu45o8Phs5JDq7WB3slMO9WBtWRTOFLG2uvQl5BdsJO7nNqYvgiTVwDukF7R/jYRFFiIrK+oW6++s4digsXgowFjzjV8TelqZNqGxQ
+X-Gm-Message-State: AOJu0YxWmktJD/wL5Md6/TeFo3fMbFQjLVnmMDZ3ys/hwG0uUvEDVzoj
+	/Stkn34Bwg79bZ3NX548BunlmGBAGGHykMaOn9t3MZUnDtVfnTkWs8RkpswbcwpjU4P1EDgXRIh
+	NwiMqIi/S6Pi/yPvYgM5W2MxYT/Y=
+X-Google-Smtp-Source: AGHT+IHy4xNxaHBYuO/6Df4lWzmUbbVJPFJKbyrk49Ry6yefo2WEXYFOcDI9deIszyWdSb6CWPt6cebYXP2Gu8iRLSA=
+X-Received: by 2002:a05:6512:1051:b0:529:a66e:5b52 with SMTP id
+ 2adb3069b0e04-529a66e5bd3mr1852678e87.46.1716645695725; Sat, 25 May 2024
+ 07:01:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org,
- linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
- x86@kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20240523-fix-smn-bad-read-v3-4-aa44c622de39@amd.com>
-Subject: Re: [PATCH v3 4/8] x86/amd_nb: Enhance SMN access error checking
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240523-fix-smn-bad-read-v3-4-aa44c622de39@amd.com>
-Content-Type: text/plain; charset=UTF-8
+References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+ <59869d5f-3d97-48a2-8a96-127f7b46c0e8@moroto.mountain>
+In-Reply-To: <59869d5f-3d97-48a2-8a96-127f7b46c0e8@moroto.mountain>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 25 May 2024 17:00:59 +0300
+Message-ID: <CAHp75VcTxXsnKVR5EQYTNhokHeXrOxQPe9gAkWFRr0yZT1KTPA@mail.gmail.com>
+Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org, 
+	lkp@intel.com, oe-kbuild-all@lists.linux.dev, lars@metafoo.de, 
+	swboyd@chromium.org, nuno.a@analog.com, u.kleine-koenig@pengutronix.de, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yasin.lee.x@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:urr3nIG7Roa28FTFjHGAy9EfXto9s16eYPbCl+FfZ32ENTwuq0/
- aoxWA2yLKf5UDJkJ227ckGg1sR+KkM1ZIc9WE//RcMwZLF/HzYzpYhuK76lFi2gqtAS0xV2
- hhX7BGuYUU5CSfq3KcuaXXiqLNDdt4W42UZREwL9u2NdApwOI9y/fyBzBhRSCYpEjNNnlVE
- 4xm/UmBBIbffbvr90FGJQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fABZ+vIg7vQ=;Zinq8XQxkn2Hj8SfC88xZCe1mFa
- 46f864MhCTkr9wv+qjGhYxW15ggV4/UgmIJho5W5vv5erKQB7qFfDJTZzJDQv/Z8TbnaWWLdl
- Z3B5uOVFClQjWjKOgQRKUs0G5xbCrW8SNK9TkWMBqzE3JN7767oEqwm0QHcOLWmE27QqSXiuw
- ++4eLCxsIzkNbR/eR/JgpDmlttQYcvd/QME8SkkPKFGxNvdXMxzXzBHTffxNFZPaDFHcGchLC
- z9qFxhX8nfab+z23fHn+pB6Y+nSZvFMyv6b5h7DlnjfJzUudhsJ2TfNgafNDOUPWIis6h/wFz
- Gt8cZjgG1gEyWfiZQxLg9trIieSuhqhSKWy1APLr08VBbDGr2YO9xyne+FyL1feJSl1SbAY/n
- b/kdysyGWT5GvKb9Ej9ARhn0yWeR3nwfpjPQdsfIGQUETfZfVzetfhPFNTyEMLcLeKDZvFaFR
- KGUnPLO5AQ7HGctXRAFTGLgq3rGew63NxRcQU8IrE+REK8kfmeY0g0psTQ3Aoj9meXWGdkTDG
- IK/HrpavGRxu+EBPdaFktwD9CnL5ZmhHeOd72Y0JkQrfq4WGJwZ+uMq0lsGgQTyZQW8pFgvod
- pia2wE1W0XUx1gEcUfMN8DVxb0PdM+S2UvRJ56cMe7uDW1SlzOdcXUeaeu+K5x7bz5ZAEl36M
- pjWIMLCRjEahiYEn0MiyBjbGw44EOScHL6bNYHFlvS+A0E9ZkX8j3AkOx1Vl50gIn+HhcrxWc
- 6mTExFoIsfnAoOuzrS9JvNr3dUWy3bOYzRf6iSrK3S3pGrTG16VSVD3FPYyPxET4FEBOMqZxl
- /8KNuFx9wfcCQAXEvjZyloGNh5OoVFMyZ5dOMeLiXqChk=
 
-> Furthermore, require error checking for callers of amd_smn_read() and
-> amd_smn_write(). This is needed because many error conditions cannot
-> be checked by these functions.
-
-Does such information qualify for the tag =E2=80=9CFixes=E2=80=9D?
+On Thu, May 23, 2024 at 3:42=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+org> wrote:
 
 
->                                                 =E2=80=A6 And remove a w=
-arning
-> that will not be trigger in many cases.
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1110  static ssize_t hx9031as_raw_da=
+ta_show(struct file *file, char __user *user_buf, size_t count, loff_t *ppo=
+s)
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1111  {
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1112       char buf[BUF_SIZE] =3D {0=
+};
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1113       char *p =3D buf;
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1114       int ii =3D 0;
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1115
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1116       hx9031as_sample();
+> 5e5a419c9407f6 Yasin Lee 2024-05-10  1117       for (ii =3D 0; ii < HX903=
+1AS_CH_NUM; ii++) {
+> 5e5a419c9407f6 Yasin Lee 2024-05-10 @1118               p +=3D snprintf(p=
+, PAGE_SIZE, "ch[%d]: DIFF=3D%-8d, RAW=3D%-8d, OFFSET=3D%-8d, BL=3D%-8d, LP=
+=3D%-8d\n",
+>                                                                          =
+^^^^^^^^^
 
-                   triggered?
 
-I suggest to perform this source code cleanup in a separate update step.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n81
+> Also use scnprintf() instead of snprintf() unless you need to check the
+> results.
 
-Regards,
-Markus
+This is incorrect advice. You should recommend sysfs_emit() /
+sysfs_emit_at() in this kind of case.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
