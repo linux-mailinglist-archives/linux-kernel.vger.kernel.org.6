@@ -1,385 +1,153 @@
-Return-Path: <linux-kernel+bounces-189566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203B88CF20D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:09:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DC68CF211
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC65281C74
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:09:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471C3B2129F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEC342AA9;
-	Sat, 25 May 2024 23:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fZiPBH/2"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B385E12F59D;
+	Sat, 25 May 2024 23:09:23 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8EC12A145;
-	Sat, 25 May 2024 23:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B313512F379
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716678510; cv=none; b=ebynZR0qklDtONh9V/T4dF+uV+PpxfANfoNmOCm92fxmt/v4v4k/SnLM46ToeCcCHJsKi71DNFMQFCXyVHFOlY3Eay5KKIRM5PUXG36rMJwQryUrVD5qRHgebWsCheV36+7ZZVXEfy4SX8tGOFX29NVoLo25Ru+/FwzMqdIBt2g=
+	t=1716678563; cv=none; b=GN7CwD5G3g7h6Z+sZ7MjASCrzLvvHj1p7zqGVYO72AEqzEbfPuXfDa0mmQeSJT0gipI1McakRPoOsKbwYyERYJ7FLCOjs3DdNVbDk+fxkixsgidIwpUmE43WFaMYTqtMgVECzbBZnC+UzwkEGDCSW4+y2l/FblrgJzc4NvxRJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716678510; c=relaxed/simple;
-	bh=HJJ0gtfc/uYYGvqyMndSoDljhuoFS6b3zuRRpa/MoLY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q5aYqQONt7PnDUqB6qJAAMUlIvWgePxEig1Cj6/dvMTasv17pR7kwn5e6dZcYItFAkS+sSybuOjtExkxLSQGkJdqVkU57CJth/6w1wylQUFX/Da4/ZL9gLvOaGoWNDTCN4CFzHKl80RqbTo6bPIw/J45NVmP5s9ftKg7tuyNcKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fZiPBH/2; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: aa03d1841aeb11ef8c37dd7afa272265-20240526
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=duLkq3MY08t3TPV16Qz00xGJ7IWdS0qMJsGqtmvG1LI=;
-	b=fZiPBH/2QRVWDymvSJ15KDvBhxl1/twMTpjCD71XPWx38ESeh2mx8R05cmWnGwSJp98Wx4sSFftGMHLR1Kstduo7jkV/NWeYilVIxsCfJFxtgByxeAFOqI/IasCW8DvmH+vSkqE6c/JAtc0bq4m/3XiOQ3n0loC333THGazKKjI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:979ad1aa-02ff-4662-a49e-b90f9d521ca0,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:d6f1cf87-8d4f-477b-89d2-1e3bdbef96d1,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: aa03d1841aeb11ef8c37dd7afa272265-20240526
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2049064832; Sun, 26 May 2024 07:08:14 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sun, 26 May 2024 07:08:12 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sun, 26 May 2024 07:08:12 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Chun-Kuang Hu
-	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Jason-ch Chen
-	<jason-ch.chen@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
-	Shawn Sung <shawn.sung@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v6 8/8] soc: mediatek: mtk-cmdq: Add secure cmdq_pkt APIs
-Date: Sun, 26 May 2024 07:08:10 +0800
-Message-ID: <20240525230810.24623-9-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240525230810.24623-1-jason-jh.lin@mediatek.com>
-References: <20240525230810.24623-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1716678563; c=relaxed/simple;
+	bh=P9Ju22vDo4ehK2fg74jr8wilBGvJpTWtCODrWF5yXbM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L1Dxzi6nNm+1YNeGlD/vJ2DORPKC0LoUnHPLXaKOaeqVByvb8GRwZG+LxUZMPWqZXVRJTZZKh+qNua0sfXv4Domaf0e1/dFYLwqFKYmJ5hU0q2m7taOoqvLHUiw444rccftvLDmtCPkWzkrdjswsLtaevhEETVJ9KQ/N0opBt9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e25de500d2so436370439f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:09:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716678561; x=1717283361;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EXvm1BRPoDDQ1PtVnmKGKMJFHmcEADNxdlulxvcnIsQ=;
+        b=UnrpDNFhOKwgvSvrGxaFYz+rzo/9K2qTMJVl4E9Ms4Erblo60xkjGJk8cUUnCHPa9V
+         6/Z1ZoUR35l4G7/p87hajEuBJt0NJcyy/kICyOG7nMmZCvBWsp0ptZ4tv2g1doSZS1UM
+         Lz+1gU5w8B+TfcLnncRAlgITsbwn95I2txklPK3nZp05tQphDgrgsGfSyTUvqthKefSx
+         3Cu5752x6gYa3Ty1YDwW4Mnop3SoKXbOQqxpJGIN0Z3eChSbcuR/2XVeQfFgkEGEiAII
+         6BJqSTkwEjNfauq5EyaL4QLIW5l211YnzHjORLv9PSL80/6beXIX1sOd9mselQl0Wkt1
+         CRYw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3UAxXZLTdWVTAc7OINbB7nR3nTAwqLOdSKCtEnEU3SKKZanppm1tQH3AEUYTBoj4s6q1bQr55GNAGLQQ72dmZa2mhyfTaL3krHX79
+X-Gm-Message-State: AOJu0YyMoRwFWGeobzetcQgL6fYBBzgQrQS0uHDwdSVsdpIEizY0n0+H
+	UgVTOS2+CW4TK+/mxcNOPuQ0vkBESO/IIJTeuifZVffy4gHHn19rFh7SdLFggXEX0/c6FNFVWUk
+	V6xTQ5D6DnuYIem63tvWtzjDQ5Fi9rYSs2yiuyJEJieXSh4E4UTISz9A=
+X-Google-Smtp-Source: AGHT+IE1QwqyM/Xe95598eJ4YD/14LIpTGT3SBzPrORWFCdO4v3X14qSGTQnRm0QVA6aPL6K+eb/V34QRlpY4NarMIRpXwdPHoB8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--2.816800-8.000000
-X-TMASE-MatchedRID: CrmPfhth5sDDBNgbKIiiTM36paW7ZnFoI0ZIn3NG5Q2JoFTGeLN6N+7x
-	5pfAGjL6K+GE57usLIhYo3G+rvxrNW94Ipa1otxoYEtx50+o73+XYX34rFl3xxUZTfM00s4+62a
-	+037kacJVn6tr4tn+oa23e1tXXsFrE69fuQMno67il2r2x2PwtTAKasuXH5J1xeGR7mtrTn1SdV
-	bMKiueSOsLoj7xkpvN9RsOD/mzVHL/o+5l9ZSgvrIGMNfiwa5N1KoSW5Ji1XtHZg0gWH5yUXKcL
-	5Ghhf874vM1YF6AJbbCCfuIMF6xLSdET58jp62Slf1PzZRYJjxTy9Shy79Ruk2XcebyFTNbOUtL
-	7t59GengqZ4vSF/h+U29n6FHXNno6vEfkC3oqnKWMssgsGBGYBYP1M+A4AabgITnGkK0NFNRskX
-	KHhdfKpij9M86UwHhsKHfMTjCprwNQJGvyiKf6Q==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--2.816800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	039C7B2CDA5AD5BF02909C7A384C7F2F19DCB8967D7FB9CCB10E8FB6982D25992000:8
-X-MTK: N
+X-Received: by 2002:a05:6602:14cb:b0:7de:e175:fd2d with SMTP id
+ ca18e2360f4ac-7e8c75d4c18mr26200539f.3.1716678560487; Sat, 25 May 2024
+ 16:09:20 -0700 (PDT)
+Date: Sat, 25 May 2024 16:09:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cab78606194f5fcc@google.com>
+Subject: [syzbot] [jfs?] kernel BUG in txUpdateMap
+From: syzbot <syzbot+0a8a0b1abad0363db585@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Open secure cmdq_pkt APIs to support executing commands in secure world.
+Hello,
 
-1. Add cmdq_sec_pkt_alloc_sec_data(), cmdq_sec_pkt_free_sec_data() and
-   cmdq_sec_pkt_set_data() to prepare the sec_data in cmdq_pkt that will
-   be referenced in the secure world.
+syzbot found the following issue on:
 
-2. Add cmdq_sec_insert_backup_cookie() and cmdq_sec_pkt_write() to
-   generate commands that need to be executed in the secure world.
-   In cmdq_sec_pkt_write(), we need to prepare the metadata to store
-   buffer offset of the secure buffer handle because secure world can
-   only translate the start address of secure buffer by secure handle.
+HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144e3042980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a8a0b1abad0363db585
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0a8a0b1abad0363db585@syzkaller.appspotmail.com
+
+BUG at fs/jfs/jfs_txnmgr.c:2340 assert(mp->nohomeok == 1)
+------------[ cut here ]------------
+kernel BUG at fs/jfs/jfs_txnmgr.c:2340!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 PID: 133 Comm: jfsCommit Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:txUpdateMap+0xc8b/0xd20 fs/jfs/jfs_txnmgr.c:2340
+Code: e9 5c f9 ff ff e8 d5 fd 82 fe 48 c7 c1 00 f4 6a 8b ba 24 09 00 00 48 c7 c6 80 e7 6a 8b 48 c7 c7 c0 e7 6a 8b e8 c6 9d 63 fe 90 <0f> 0b 48 89 df e8 7b 32 e0 fe e9 e1 f8 ff ff e8 31 33 e0 fe e9 a8
+RSP: 0000:ffffc900020c7ce0 EFLAGS: 00010286
+RAX: 0000000000000039 RBX: ffff88805f267580 RCX: ffffffff816f3519
+RDX: 0000000000000000 RSI: ffffffff816fc096 RDI: 0000000000000005
+RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000000 R12: ffffc900022ea120
+R13: 0000000000000001 R14: ffffc900022ea124 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f76f6e2f760 CR3: 00000000294c0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+ jfs_lazycommit+0x5e6/0xb20 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:txUpdateMap+0xc8b/0xd20 fs/jfs/jfs_txnmgr.c:2340
+Code: e9 5c f9 ff ff e8 d5 fd 82 fe 48 c7 c1 00 f4 6a 8b ba 24 09 00 00 48 c7 c6 80 e7 6a 8b 48 c7 c7 c0 e7 6a 8b e8 c6 9d 63 fe 90 <0f> 0b 48 89 df e8 7b 32 e0 fe e9 e1 f8 ff ff e8 31 33 e0 fe e9 a8
+RSP: 0000:ffffc900020c7ce0 EFLAGS: 00010286
+RAX: 0000000000000039 RBX: ffff88805f267580 RCX: ffffffff816f3519
+RDX: 0000000000000000 RSI: ffffffff816fc096 RDI: 0000000000000005
+RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000000 R12: ffffc900022ea120
+R13: 0000000000000001 R14: ffffc900022ea124 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88802c100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7a37f24488 CR3: 00000000294c0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 155 +++++++++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h  |  71 +++++++++++
- 2 files changed, 226 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 42fae05f61a8..de6557f3ca2f 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -562,4 +562,159 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
- }
- EXPORT_SYMBOL(cmdq_pkt_finalize);
- 
-+int cmdq_sec_insert_backup_cookie(struct cmdq_pkt *pkt)
-+{
-+	struct cmdq_client *cl = (struct cmdq_client *)pkt->cl;
-+	struct cmdq_operand left, right;
-+	dma_addr_t addr;
-+
-+	addr = cmdq_sec_get_exec_cnt_addr(cl->chan);
-+	cmdq_pkt_assign(pkt, CMDQ_THR_SPR_IDX1, CMDQ_ADDR_HIGH(addr));
-+	cmdq_pkt_read_s(pkt, CMDQ_THR_SPR_IDX1, CMDQ_ADDR_LOW(addr), CMDQ_THR_SPR_IDX1);
-+
-+	left.reg = true;
-+	left.idx = CMDQ_THR_SPR_IDX1;
-+	right.reg = false;
-+	right.value = 1;
-+	cmdq_pkt_logic_command(pkt, CMDQ_THR_SPR_IDX1, &left, CMDQ_LOGIC_ADD, &right);
-+
-+	addr = cmdq_sec_get_cookie_addr(cl->chan);
-+	cmdq_pkt_assign(pkt, CMDQ_THR_SPR_IDX2, CMDQ_ADDR_HIGH(addr));
-+	cmdq_pkt_write_s(pkt, CMDQ_THR_SPR_IDX2, CMDQ_ADDR_LOW(addr), CMDQ_THR_SPR_IDX1);
-+	cmdq_pkt_set_event(pkt, cmdq_sec_get_eof_event_id(cl->chan));
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(cmdq_sec_insert_backup_cookie);
-+
-+static int cmdq_sec_realloc_addr_list(struct cmdq_pkt *pkt, const u32 count)
-+{
-+	struct cmdq_sec_data *sec_data = (struct cmdq_sec_data *)pkt->sec_data;
-+	void *prev = (void *)(unsigned long)sec_data->addr_metadatas, *curr;
-+
-+	if (count <= sec_data->addr_metadata_max_cnt)
-+		return 0;
-+
-+	curr = kcalloc(count, sizeof(*sec_data), GFP_KERNEL);
-+	if (!curr)
-+		return -ENOMEM;
-+
-+	if (count && sec_data->addr_metadatas)
-+		memcpy(curr, prev, sizeof(*sec_data) * sec_data->addr_metadata_max_cnt);
-+
-+	kfree(prev);
-+
-+	sec_data->addr_metadatas = (uintptr_t)curr;
-+	sec_data->addr_metadata_max_cnt = count;
-+	return 0;
-+}
-+
-+void cmdq_sec_pkt_free_sec_data(struct cmdq_pkt *pkt)
-+{
-+	kfree(pkt->sec_data);
-+}
-+EXPORT_SYMBOL_GPL(cmdq_sec_pkt_free_sec_data);
-+
-+int cmdq_sec_pkt_alloc_sec_data(struct cmdq_pkt *pkt)
-+{
-+	struct cmdq_sec_data *sec_data;
-+
-+	if (pkt->sec_data)
-+		return 0;
-+
-+	sec_data = kzalloc(sizeof(*sec_data), GFP_KERNEL);
-+	if (!sec_data)
-+		return -ENOMEM;
-+
-+	pkt->sec_data = (void *)sec_data;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(cmdq_sec_pkt_alloc_sec_data);
-+
-+static int cmdq_sec_append_metadata(struct cmdq_pkt *pkt,
-+				    const enum cmdq_iwc_addr_metadata_type type,
-+				    const u32 base, const u32 offset)
-+{
-+	struct cmdq_sec_data *sec_data;
-+	struct iwc_cmdq_addr_metadata_t *meta;
-+	int idx, max, ret;
-+
-+	pr_debug("[%s %d] pkt:%p type:%u base:%#x offset:%#x",
-+		 __func__, __LINE__, pkt, type, base, offset);
-+
-+	ret = cmdq_sec_pkt_alloc_sec_data(pkt);
-+	if (ret < 0)
-+		return ret;
-+
-+	sec_data = (struct cmdq_sec_data *)pkt->sec_data;
-+	idx = sec_data->addr_metadata_cnt;
-+	if (idx >= CMDQ_IWC_MAX_ADDR_LIST_LENGTH) {
-+		pr_err("idx:%u reach over:%u", idx, CMDQ_IWC_MAX_ADDR_LIST_LENGTH);
-+		return -EFAULT;
-+	}
-+
-+	if (!sec_data->addr_metadata_max_cnt)
-+		max = ADDR_METADATA_MAX_COUNT_ORIGIN;
-+	else if (idx >= sec_data->addr_metadata_max_cnt)
-+		max = sec_data->addr_metadata_max_cnt * 2;
-+	else
-+		max = sec_data->addr_metadata_max_cnt;
-+
-+	ret = cmdq_sec_realloc_addr_list(pkt, max);
-+	if (ret)
-+		return ret;
-+
-+	if (!sec_data->addr_metadatas) {
-+		pr_info("addr_metadatas is missing");
-+
-+		meta = kzalloc(sizeof(*meta), GFP_KERNEL);
-+		if (!meta)
-+			return -ENOMEM;
-+
-+		sec_data->addr_metadatas = (uintptr_t)(void *)meta;
-+	}
-+	meta = (struct iwc_cmdq_addr_metadata_t *)(uintptr_t)sec_data->addr_metadatas;
-+
-+	meta[idx].type = type;
-+	meta[idx].base_handle = base;
-+	meta[idx].offset = offset;
-+	sec_data->addr_metadata_cnt += 1;
-+	return 0;
-+}
-+
-+int cmdq_sec_pkt_set_data(struct cmdq_pkt *pkt, enum cmdq_sec_scenario scenario)
-+{
-+	struct cmdq_sec_data *sec_data;
-+	int ret;
-+
-+	if (!pkt) {
-+		pr_err("invalid pkt:%p", pkt);
-+		return -EINVAL;
-+	}
-+
-+	ret = cmdq_sec_pkt_alloc_sec_data(pkt);
-+	if (ret < 0)
-+		return ret;
-+
-+	pr_debug("[%s %d] pkt:%p sec_data:%p scen:%u",
-+		 __func__, __LINE__, pkt, pkt->sec_data, scenario);
-+
-+	sec_data = (struct cmdq_sec_data *)pkt->sec_data;
-+	sec_data->scenario = scenario;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(cmdq_sec_pkt_set_data);
-+
-+int cmdq_sec_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
-+		       enum cmdq_iwc_addr_metadata_type type,
-+		       u32 base, u32 base_offset)
-+{
-+	cmdq_pkt_write(pkt, subsys, offset, base);
-+
-+	return cmdq_sec_append_metadata(pkt, type, base, base_offset);
-+}
-+EXPORT_SYMBOL_GPL(cmdq_sec_pkt_write);
-+
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 5bee6f7fc400..6baf60313409 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -9,6 +9,7 @@
- 
- #include <linux/mailbox_client.h>
- #include <linux/mailbox/mtk-cmdq-mailbox.h>
-+#include <linux/mailbox/mtk-cmdq-sec-mailbox.h>
- #include <linux/timer.h>
- 
- #define CMDQ_ADDR_HIGH(addr)	((u32)(((addr) >> 16) & GENMASK(31, 0)))
-@@ -399,6 +400,52 @@ int cmdq_pkt_eoc(struct cmdq_pkt *pkt);
-  */
- int cmdq_pkt_finalize(struct cmdq_pkt *pkt);
- 
-+/**
-+ * cmdq_sec_pkt_free_sec_data() - free sec_data for CMDQ packet.
-+ * @pkt:	the CMDQ packet.
-+ */
-+void cmdq_sec_pkt_free_sec_data(struct cmdq_pkt *pkt);
-+
-+/**
-+ * cmdq_sec_pkt_alloc_sec_data() - allocate sec_data for CMDQ packet.
-+ * @pkt:	the CMDQ packet.
-+ *
-+ * Return: 0 for success; else the error code is returned
-+ */
-+int cmdq_sec_pkt_alloc_sec_data(struct cmdq_pkt *pkt);
-+
-+/**
-+ * cmdq_sec_insert_backup_cookie() - append backup cookie related instructions.
-+ * @pkt:	the CMDQ packet.
-+ *
-+ * Return: 0 for success; else the error code is returned
-+ */
-+int cmdq_sec_insert_backup_cookie(struct cmdq_pkt *pkt);
-+
-+/**
-+ * cmdq_sec_pkt_set_data() - set secure configuration to sec_data in CDMQ packet.
-+ * @pkt:	the CMDQ packet.
-+ * @scenario:		the scenario to CMDQ TA.
-+ *
-+ * Return: 0 for success; else the error code is returned
-+ */
-+int cmdq_sec_pkt_set_data(struct cmdq_pkt *pkt, enum cmdq_sec_scenario scenario);
-+
-+/**
-+ * cmdq_sec_pkt_write() - append write secure buffer related instructions.
-+ * @pkt:	  the CMDQ packet.
-+ * @subsys:	the CMDQ sub system code.
-+ * @offset:	register offset from CMDQ sub system.
-+ * @type:	the address metadata conversion type.
-+ * @base:	the secure handle of secure buffer.
-+ * @base_offset:the address offset of secure buffer.
-+ *
-+ * Return: 0 for success; else the error code is returned
-+ */
-+int cmdq_sec_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
-+		       enum cmdq_iwc_addr_metadata_type type,
-+		       u32 base, u32 base_offset);
-+
- #else /* IS_ENABLED(CONFIG_MTK_CMDQ) */
- 
- static inline int cmdq_dev_get_client_reg(struct device *dev,
-@@ -524,6 +571,30 @@ static inline int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
- 	return -EINVAL;
- }
- 
-+static inline void cmdq_sec_pkt_free_sec_data(struct cmdq_pkt *pkt) {}
-+
-+static inline int cmdq_sec_pkt_alloc_sec_data(struct cmdq_pkt *pkt)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int cmdq_sec_insert_backup_cookie(struct cmdq_pkt *pkt)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int cmdq_sec_pkt_set_data(struct cmdq_pkt *pkt, enum cmdq_sec_scenario scenario)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int cmdq_sec_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
-+				     enum cmdq_iwc_addr_metadata_type type,
-+				     u32 base, u32 base_offset)
-+{
-+	return -EINVAL;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_MTK_CMDQ) */
- 
- #endif	/* __MTK_CMDQ_H__ */
--- 
-2.18.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
