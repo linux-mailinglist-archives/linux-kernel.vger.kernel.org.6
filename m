@@ -1,222 +1,329 @@
-Return-Path: <linux-kernel+bounces-189296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FF78CEE16
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 08:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507AA8CEE1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BCDFB21B28
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0401F21B7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B06CA7A;
-	Sat, 25 May 2024 06:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4F14294;
+	Sat, 25 May 2024 07:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="io32y1Nd"
-Received: from PAUP264CU001.outbound.protection.outlook.com (mail-francecentralazon11021010.outbound.protection.outlook.com [52.101.167.10])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="S+3HKbea"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FAE1CD38
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 06:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716619450; cv=fail; b=l6tiTSYdyxqAhjBGnkOY7txa28ljU0YlND3hQqxlWcZkeKvRavln2ZfdSqOziHui+U1L6hJPbclzzVmrYTkXfc0v4pN5uOX6rbbPVH2aqb33vCuY9NWn3EvEacuB9Py7Jd2Efl0jjAchCP4QH5QRnzSSSeVppf6deJzlBhgTx1I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716619450; c=relaxed/simple;
-	bh=WIyxDz97RWBs0pkSooA3We+ZV17leJoU7ZpF+CZkWUE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jp0OKKGQGSDF+et/Tnnkaf5bRz6IxSuM/yXcrrpSe4GmdSMN7DfDA8LIJinXYcepDYFp2O+cIlbwTQ5VQdB+72wJjnP3osi3EXaBbnfrucNdZz/7qiRWCpyG0lH+23388xrLBcdGdTjqiPDY2JbcdOA2QgRyyYdBifkckFStI08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=io32y1Nd; arc=fail smtp.client-ip=52.101.167.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JPB8LUd4SWokm4/RwSRrBCxxTI2PiDY8HIf1/f6PIw9caONhPaqZVQHi7Z1A3KP5zrlHCv5iXyGDEWaxG7sl0zFKw+luBE76OR+5zsoQuDH0uT8xvBFMy8OuRccW/C1sIBlbnBXJVYXonZfkAi9UKPr60bdB7Gr4PzRTL6N23A1GyCIW0dMf6fqAYkYiO6ryXRgBLLAb5lVRREIhdzW/4/bPw/UXiJqi+l1Hk04W5jI2GCT8+HDp7E6V98Rj2cKezEWNNbBuODcHEqOnip6IqxxsEcbmVKb/qbYI3GX9385w3bHLYR3e9Iij3x/4OegUqnVuBlBjWX12tjAiSEseLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WIyxDz97RWBs0pkSooA3We+ZV17leJoU7ZpF+CZkWUE=;
- b=W3nl7wLL/eGeDIA4Z2ALHtXJv/zDyi16xMCfJqM7VwCkZ0vCE2bpg6kifkEttR4zv1WGdNcVjyiWIr6JmIbNVdHLZY9eFUy3Z3O41civ5Ei+zNNCll0YQBQ3IZkBnqQX3KfUt9gBiLgoMrkAXY/JENlgChvCdJ5hoXZMnH+UzB/BERa3Mx0lGI3m07mNZSDKQdFKuNJpVkgoaaw0k+tCYqsqNwqia36VMCGwbwNOzKzl9vBqzrPXn1civ32Gr7qoZxN7KytNKBQ/mhQBJWJXcff1WPK96uWWcQRSzU1VaQzkCKNLiRZX2+CbaDQrw/vgoiCjUJOtD+PPKZJvkwfHJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WIyxDz97RWBs0pkSooA3We+ZV17leJoU7ZpF+CZkWUE=;
- b=io32y1NdD5EHwm0XbRcT2LrC9JXdfnnGV0SVemTABE0GZGf6KwfIE73L53HPzsyuFTDHekrv6s00jzgatClbeIyjrcED/A3NmM2u1N+TfZ/6eoZd/qC8pwoYt95GH5Y0FPwCRaFDp8uWlUdDOsYvutp77yZowWLz7N6Li1Vh/ahQdR90DFdy3tJDfEf7lri1GKpdEQFgP07DlTkMHC4Whx252n5f+V1Q6mJm7ADV+7bpewM1RiYJVyaajbFDmFnyK+0zmfQWCMM+721yPVpQsFVw+gxHbcyxiAYEPj9ICeNIYeKvsNNSfasVgOr7ipcXf6Fq35jk+/zhN+nHMpfhFA==
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by MRZP264MB2055.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:9::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Sat, 25 May
- 2024 06:44:06 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.025; Sat, 25 May 2024
- 06:44:06 +0000
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Oscar Salvador <osalvador@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
-	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Michael Ellerman
-	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v2 11/20] powerpc/mm: Complement huge_pte_alloc() for
- all non HUGEPD setups
-Thread-Topic: [RFC PATCH v2 11/20] powerpc/mm: Complement huge_pte_alloc() for
- all non HUGEPD setups
-Thread-Index: AQHaqIx0MP6iulWHnE2alhVNihc8I7GnZ0EAgAAlhYA=
-Date: Sat, 25 May 2024 06:44:06 +0000
-Message-ID: <d7da9fcb-2516-4233-b24f-22391cc7a553@csgroup.eu>
-References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
- <59a1390923c40b0b83ae062e3041873292186577.1715971869.git.christophe.leroy@csgroup.eu>
- <ZlFpPBlLoBZNjd73@localhost.localdomain>
-In-Reply-To: <ZlFpPBlLoBZNjd73@localhost.localdomain>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MRZP264MB2988:EE_|MRZP264MB2055:EE_
-x-ms-office365-filtering-correlation-id: 44380e68-b4e9-41d6-f97d-08dc7c8612d9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|376005|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?M2NpZTdoNFk3T1FsY0liQ2o0ZFRNbHc1LzFrdHM0eDFEWVY0QWR2cEhFSXYy?=
- =?utf-8?B?SW01dStjSkVKSkdDeGFHQTVOclRsa0R0cWcvcVcwWXYvMWZhalhpNFRucnFk?=
- =?utf-8?B?b2l0UktaMDk2R0dwVVJOb2E1OGZjMVRNSVRreDdqSi9LM2NqMlorbFBmeU1K?=
- =?utf-8?B?ejcxc1o3aUd5V05hd0U5dkk0M2Y0cVozc1lkK1AvMWtGUU9UR2REd2d0dTFr?=
- =?utf-8?B?aTNHdUczbVRqR0FOZ3NIazBQZW8zdHMvNldzYTNxWjBRK0NKRyt0UktkMmlv?=
- =?utf-8?B?ZFRvb0d0Y1hSY1BReGgxc1BISktRcDNOR2ZLQ1FrcmhIdnlnakp4bGFOQXFS?=
- =?utf-8?B?NWwvREtFMVNjM3oyQ2NQR3gwQjN4c0VFOHRINWFIcFAyQkhzQklURGFBQmtx?=
- =?utf-8?B?Q1ZYKy9nOTQ5dFR2NVYyYnF5Tld6OEJ1K1FBcy9hMFpPTFpiMUo0WEViZVRo?=
- =?utf-8?B?eEJFSXlkZW8wZHhoSUQxMk1NZ05kOGZMUW1YMjhTVGtwa1RCNGd5Z3RlRFRD?=
- =?utf-8?B?MngvQTZYeTZVM01EaHFNcmkrNUNzdGplLzViVHd4c0d5M1ArOEVzK1MrYTFM?=
- =?utf-8?B?ZE45WEVrTThQTEFJaGgwWFBoVml0NnZtcjdMSlBGc01NRWpqZERVanZzcHdQ?=
- =?utf-8?B?SFNQYlV4dVpjK3BaSnFLcjI0L2wwV1llZEdwTk5RcGtuY2t3Wjc2cWlJNGw0?=
- =?utf-8?B?dFByRVQwYnNYZkp5M3hFV0pyMCtsR0hiR3ZtMVlnUE1haXFoQ01ZQ0JWbmtl?=
- =?utf-8?B?emJTU2p2Y1dBcFBZWjFOQVNTNHl4d3YzSUFMQ2NveEdMejA0OGh4UnUxQkRN?=
- =?utf-8?B?dGhBWkR2UzQwQTRrSVRWbTRvVHdFTDkxQUlWaE5GVGNOd3ZoM0gvTnVYanBr?=
- =?utf-8?B?T1U4VEcvcVRsbGE1MHZHU1BqRmRTMEQ5cmNCdjRLRkYvOTQxKzBQM3JHREdx?=
- =?utf-8?B?MTFEREFvYWFLWDFJaUdYa3cwQWRZcFkzREhjRHVYYnhydTU0bjdEeFRnd2I1?=
- =?utf-8?B?VDdlaTRjNk5lQnJZT2x3Zk9xc2xLYmVPdWpUWC9mdEZNUUIvcERIU3VkM1dr?=
- =?utf-8?B?c215V3BvSmZRZ3ovVFA2UXdCQWgwcld2cGMyMSt3Q1N0em9LWC9nV3hEM0RI?=
- =?utf-8?B?cnI1aVBSK2x3N3NGQVhFdEwzeDM5TlYvYXg0ekE2YURiWjRXTWUreW50a2Q3?=
- =?utf-8?B?Y3BZaElxVlB1bEJabFRGYWNLdWpOMzNtakVCSHh3VXZNK0pSNytHZUZ6WVVl?=
- =?utf-8?B?Rk9sdGpBRDREZnVZRk9TWVMwNXhUQmhqU01mVXR3UW5IOHJrYzkwYkVmZHZV?=
- =?utf-8?B?MytpdWhLajA1NTVJSzZEM1lYNzZzSjducHhTL3RUL0xvOTJzTHBhMWxqS1Fm?=
- =?utf-8?B?enBLbEkyb1Nud1lSWGNKZWJuTXhWWHc4QWo2Zm1RL1BrZ3grNkM2VHZYdmR2?=
- =?utf-8?B?eElteTdJWDM5SXNOL29TRTQxT1NTck5EaDVVTFNaeko4TjNTV2Yrd0FWYUZ2?=
- =?utf-8?B?SHZldDVoRlJDeVZjd0orTUdrM0FQbTRyYjN5RlV5SFJKWE02eDd5NU56YU1C?=
- =?utf-8?B?Q1J4aE9XSkxJZmhubkJNYWp0QktUUHkvTFY5Zi9adzErTUFWbmd6ZS9LT001?=
- =?utf-8?B?ZVJ2N0hGdTlIOHpjNnIrUHhGby85QXBWZVJNTmRmeVBhVkN4c3ZHZXI1Vlp4?=
- =?utf-8?B?MWNHZW5LbnQ3WXRVNFVqSGhuMnFxcDlzRzN5Wi9ybGh6Zzk5MU9CREN2Y3VQ?=
- =?utf-8?Q?svi2VRzKpEH/zxsgeuo9kxBwGg6i+qSad/aJnNe?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NnFENzlrU09lUTZzTlBMVTRRdi9IdUdVbHFJMWdycGV4RzVpQml6cXB0Zmcx?=
- =?utf-8?B?LzlscExIM3hZSUdVUi8zUUFYS0FLaXNvVUVxamxPVUs5NEFyL0FNWlBFUVAy?=
- =?utf-8?B?VnN4NmIraFUrYlJ5c0QycmtMaUxVbjdSMlV6SUF6c3huamRYTEtLek9nRFhE?=
- =?utf-8?B?bnZEdHk0MlJrTTJIV2dZM2plZkdCcHUxc0FLdFZhZ1NwdlhVKzBXWmZDejVo?=
- =?utf-8?B?RktsRnVFMVRGZmFoU3BPejk3OWxiM0dZLzE4dUxrZVN2ZXhNOWo5WFk0ZFB6?=
- =?utf-8?B?N3Y2emlLZ1VhTk9iSXZpM0hRbkpPMldrR0QvdU5HeGVDZTdkcmsxUUVjNmRt?=
- =?utf-8?B?OU1tOFVScy8wRGJmZXhBUmUyK2F0V2tRUGNvOGdQN1lWRThhRE5DTHR2V2VL?=
- =?utf-8?B?TWo0Nk82Z3R2WmZ3bGt5QXkrR0hwUU5SZTNFdW1CZkxqYVNtQUxkL0t4Y3JG?=
- =?utf-8?B?YjJtRXU3TVAvVmJFYTVHME53aXVTRmRuSlN2SnBsTE1XbGZVU3JrYlE4aDlC?=
- =?utf-8?B?ME5rekI5dzRCU1plSkxpeDF2bkhEbmVKdFZ1QkRVQjBsMjMwTGVuQkpGMjFV?=
- =?utf-8?B?Tmp0LzFDNENWV2pJTlg2dDhPRE9XK0Rrb0Y3N0RYN2pzYjd2SEtUOTFRZkUz?=
- =?utf-8?B?MXlwUmY5YkxKR3Q2bzJPTnFlVG02dUtEOXVjV2hEZEYxdHNzb0IweXZ0NVl0?=
- =?utf-8?B?ZkhBeVlJenJVQ0R0SXBRU3lnNHEzZU54SnR0TkpaM3RJdVdUK01xMmIvZEJm?=
- =?utf-8?B?K0VTcnRYdnhEa09hUm9BWlFmeENxWGdCYjVZZHY2b2hGZWFteXZVck4rekVB?=
- =?utf-8?B?NExmUXRxSFVEZm8rZngvdkJzNzFLd1JxdXVqYU5pcGtFNExYQWRSMURQOXY4?=
- =?utf-8?B?cE5ka2dMelFOMnVWVWdSU0ZrdUJ6TFFBY2ttVWYvVUdOQzhkbEZlN0JRMm53?=
- =?utf-8?B?K0tYSDlaWWt6bWJjR1Y5SHpydkhIWmlzMkhEV1Jld3N6ei9TaTBlVWVCVnpI?=
- =?utf-8?B?N2Y2SGp6RlVvZWRYck40cUFueU15YUNmZkdmRkNoeW0zTWtjTW92enZyN0pQ?=
- =?utf-8?B?aERYOWs2S2tkbEgyaUVvNGc1azBqYW9ENisvUnNiZjhiRXQzdVdobjdXUDhD?=
- =?utf-8?B?RmVsRVQxSUI2N1B0eFN0SzJmRGE3Y25Jd0E0R29BenkzNWxYTEp6VlhMbXEr?=
- =?utf-8?B?Q3ZobmFJQURXVnBwVjhJNXQyTnBSRlVUVzZ4b051cGlMekdRL0FRbGxwSk05?=
- =?utf-8?B?cnIrS3BmWmVPTXVKeFFlY1hPUUE0cXJrQWxVOG9HM0VIQjltZ2VLbUNRbkFU?=
- =?utf-8?B?WmxBNklkRFVSOURUKzJzRVNONHE0cXExTUpXblYyMGlTdGQxRk04UkFvcXlK?=
- =?utf-8?B?Y1BldHdzQ09zakRsUFUvVncvSjJONVUyOWFtL3loN3Myclo3NnFMVGhVbHRw?=
- =?utf-8?B?RWh2eGlPdzRTUGxSclNYRjB5RnlZOVB4UHpIMWpQOXk0VUk4T2ZRbDRDT0xa?=
- =?utf-8?B?SVFpb0I3RTd5a3JkcEVsa081VWhzNks1Z2loVWNsODlPaDhUeDRWSDVHa01o?=
- =?utf-8?B?dnphaFBwcEJaYy9WRGdnYTI2aUZtd0pyK2ZmeHByanFVOGlkSTlqaG9sS1pq?=
- =?utf-8?B?V2IzZzV4R0FWc3dXUzk2Z3JnOWpOQlkyeVl2cnAvTXk3MUxHRForMXVXSFBa?=
- =?utf-8?B?TEtsOW1wTFVLVWJjQzdhcFc5dmlDa2FlOGlNd21JaHdTK04rTHdOMVd2RUxZ?=
- =?utf-8?B?VVBQYUNyMmFDOXV3NitqVkFIY2IxeE5FK1U0S0JYMC9YSjdMWGhrb3FLckZa?=
- =?utf-8?B?K2tMZGRrUXFzQnd1MTVaa2lDT3M3ZkljbSt4VWVtWGFYc2xzcW51WVF0SFZZ?=
- =?utf-8?B?SlRuNFVHZ3NxUkNtaVJJTU5SQVJReERNdjRjczVnS0xqSWsyZ2NkeW5wNFF4?=
- =?utf-8?B?eUJxeUx4eHA3dkJBTkxZcmFFeko5dCt1VXlGVkd5YTNnZm4vc0FGQSt2T3Rt?=
- =?utf-8?B?SzU1ZjRTUlFHZnludWRhb0VUTmtKQVVnWFNqbXdoc2VweE95V0FqSit5aS9u?=
- =?utf-8?B?M3h2c2FyWTBodUZ2S21CeE84am5oRTVLSzIxSzZEc0RJY3FpZ29yY3RWVHgy?=
- =?utf-8?B?alIxTzVlQng3ZFBFUzhLcTNxZys5Y29NS3JVMVEveE8rT2hzaG9nS1BoUjZm?=
- =?utf-8?Q?Zx5B3HxpyDOtIqNh+xM4OIF+GX9MemFwTfPw/S5xQurI?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F6F8C98B75C45441B2E4BAF66E3019B1@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813B0138C;
+	Sat, 25 May 2024 07:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716620418; cv=none; b=Bek/ic0A/teTvsHdliIlTDycV+fwBjHArGjAteGxFyb+0ENVXWW1jwSxtWSdZcdQNiMItMEGFC8Uuo11j27ratL4t0NfloNlTD4CHX3MeAMADkSxkRG4eFmt1qhPBGyZu9ToBSBKSei2rLH83QWbTyZiIMb9YY2Iv86uN8/q4Ws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716620418; c=relaxed/simple;
+	bh=zZ4Z9htX4zC9singJrmMJUDyjOTFxoOpSU+SUW4zRMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CPkLYRtzqYBrKP6UmIeBYJhFifA4QaIQGp+GsImIastZqUx0ReimMHo3FhcEx1+C6nFgjTQ5jcHYBHMV3EFtYswBHFJgcNg8YPCxdzurxJni+I5cGT7ctwO5hqEkIsD/RfO11nhw3jQ7D6XXB9tNUAphON146jqMrT/FvMAlWWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=S+3HKbea; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1716620396; x=1717225196; i=wahrenst@gmx.net;
+	bh=nIqWSc3ZaklDz+cAaEm24M8PzXmEYNEtLVLtIyG2WCE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=S+3HKbeaIDQM2KvndCVAk0XoUyNd65tKLv7tGEoLbS+SJGRU/zsRnlZSNxe2rDxN
+	 ZFQi+miEt8NqBrnEkxff4vmbJ5mXD3dQSjZchBjtX5eC05Z3NWfYtASS9aXi8l98q
+	 GImt5IcerQ6MRKmVQaQjhF2Hs0jFo4N7Kn3RqdFhfgmugSabd5LvkVszuek5TJagN
+	 eSCytHCAW2QZJb1quNnr/uWpdth1ETXCN942LAekH3G3aq9kM4mosBKFzLDj5TwCB
+	 k9mZ9eilOq29ZylRjjrcXPsdT8DvpmcxqhZL0hn8732qrSmSF9dI1P59P8RDmHjXV
+	 PADEi2i77lXVY59Uog==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N49h5-1saqyL2YYj-0104rZ; Sat, 25
+ May 2024 08:59:56 +0200
+Message-ID: <9ef2d8c2-621a-4e05-8afa-5d2b99a36caa@gmx.net>
+Date: Sat, 25 May 2024 08:59:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44380e68-b4e9-41d6-f97d-08dc7c8612d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2024 06:44:06.2983
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Oo7HtkzFJSkMNAoEx357ExX56pNjL5qpSdFalLadudT7vpZFRhsnBpWxTgthlvLO+ifuAxROgHzYqmbYDCZ+nz1vek+GJy5WxC+I+98rjgE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2055
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] mmc: sdhci-brcmstb: Add BCM2712 support
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Marc Zyngier <maz@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1716277695.git.andrea.porta@suse.com>
+ <c413737f538d9bd403c30104a83a7fbb1ea7461d.1716277695.git.andrea.porta@suse.com>
+ <f27aaf92-8109-4cad-94ba-6f72cd9bdabf@gmx.net> <ZlF5dQbNpZ921e66@apocalypse>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <ZlF5dQbNpZ921e66@apocalypse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5xZGo4wnACFwuy26GkUhX2rvxLsKoEsJ77Ch9n51a7NFLRACtOx
+ NQS5WtbostbzDR/Vzbn2ipQdqOPoTHVz1PpkS7khxrzhA+If8HwE/WRtMBuqs7mt4YJ+DRA
+ RQeSCVkS6o4uiXbtvNyBjS9zzUSUEg/rUqd/Xivti9NQLNk+hyfEuNH07C7+Klxdi9GaBHy
+ OcP4KGd7j9y+JMhY8cs2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+4jXvxIqCvo=;pE6vlU6J684NpgZjySC/5Pf3iDv
+ sfO9DFL1njcIttJ7k51Ez0c8Kn22XMgWAM0CvIDk/mG8mZl9GeDDFBkcPM9GSgLqqjgcNz7ev
+ 3AVryZC6zgOszxVF2UlZrdD/UBH2YC+bgOHP9adxSm3SzWdCt33ejHJUNZnijTPzy02HzGjVt
+ WrNylzQ6yspRMO+/J9H+8404JpMMDejME/YqeqepAH6Hs8FR9lW5xxoK33fnK3kqVnqeRTC4+
+ 2EximiyCf/S02sshcqxyRj7oylxMDUaPPxKxxqycZLEwH5lhYcsUDqu6nIifRpAc9neVOFEYi
+ 9QVTcpdxK0LECjxVH6mbtXmUt/3RdVIzkqbLkHNXqvE1zPwhEKezLH2BUkgWOGkHpM4RggdDf
+ aLGe6zUavCxIR2+MRUbG3cjlch15QI9zNrU39in4PKrugydFU10RPWEf8bZSPqsHUtb9Fx6m6
+ //V+0jFCVf9jrQA3k8iyc42nkGww3Whb8GKSlXJapGebpWLFuM913TPlkrk1X5XopwfQizZeN
+ lw+h4+Lg2WpMtPyKObjoCpGnxqZscwwtsjdZmWs/nj8rTh9GeJeVo6UHZlThZ0T856ygW52+u
+ A3ieP7q9xfJ6n6nehB3Ld+BEjREMlZKQQV6sNPCM47nKg38l+FIkbeyzUx9Qpeh7QJ6GlzNY5
+ AtxKRuTLA/JMb7IsFf0fUoM2SBEz5YBaCVg6zjNhtKErOtKmNjVQy3gozXsYt3LiFFv+95I69
+ LJMrs4RUXkQiP8fuHlaPgjZXI5bRKy2P3Cx7IloYdTPkwGrDvE6o8KXZcBPUaFow+KEY1B33c
+ TJ1WP6blC/hp8MDpCn/dMPvbVbqQDrqtgYrzHc1gILufc=
 
-DQoNCkxlIDI1LzA1LzIwMjQgw6AgMDY6MjksIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
-IE9uIEZyaSwgTWF5IDE3LCAyMDI0IGF0IDA5OjAwOjA1UE0gKzAyMDAsIENocmlzdG9waGUgTGVy
-b3kgd3JvdGU6DQo+PiBodWdlX3B0ZV9hbGxvYygpIGZvciBub24tSFVHRVBEIHRhcmdldHMgaXMg
-cmVzZXJ2ZWQgZm9yIDh4eCBhdCB0aGUNCj4+IG1vbWVudC4gSW4gb3JkZXIgdG8gY29udmVydCBv
-dGhlciB0YXJnZXRzIGZvciBub24tSFVHRVBELCBjb21wbGVtZW50DQo+PiBodWdlX3B0ZV9hbGxv
-YygpIHRvIHN1cHBvcnQgYW55IHN0YW5kYXJkIGNvbnQtUHhEIHNldHVwLg0KPj4NCj4+IFNpZ25l
-ZC1vZmYtYnk6IENocmlzdG9waGUgTGVyb3kgPGNocmlzdG9waGUubGVyb3lAY3Nncm91cC5ldT4N
-Cj4+IC0tLQ0KPj4gICBhcmNoL3Bvd2VycGMvbW0vaHVnZXRsYnBhZ2UuYyB8IDI1ICsrKysrKysr
-KysrKysrKysrKysrKysrKy0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMoKyks
-IDEgZGVsZXRpb24oLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL21tL2h1Z2V0
-bGJwYWdlLmMgYi9hcmNoL3Bvd2VycGMvbW0vaHVnZXRsYnBhZ2UuYw0KPj4gaW5kZXggNDJiMTJl
-MWVjODUxLi5mOGFlZmExZTczNjMgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3Bvd2VycGMvbW0vaHVn
-ZXRsYnBhZ2UuYw0KPj4gKysrIGIvYXJjaC9wb3dlcnBjL21tL2h1Z2V0bGJwYWdlLmMNCj4+IEBA
-IC0xOTUsMTEgKzE5NSwzNCBAQCBwdGVfdCAqaHVnZV9wdGVfYWxsb2Moc3RydWN0IG1tX3N0cnVj
-dCAqbW0sIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hLA0KPj4gICBwdGVfdCAqaHVnZV9wdGVf
-YWxsb2Moc3RydWN0IG1tX3N0cnVjdCAqbW0sIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hLA0K
-Pj4gICAJCSAgICAgIHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBzeikNCj4+ICAg
-ew0KPj4gLQlwbWRfdCAqcG1kID0gcG1kX29mZihtbSwgYWRkcik7DQo+PiArCXBnZF90ICpwZ2Q7
-DQo+PiArCXA0ZF90ICpwNGQ7DQo+PiArCXB1ZF90ICpwdWQ7DQo+PiArCXBtZF90ICpwbWQ7DQo+
-PiArDQo+PiArCWFkZHIgJj0gfihzeiAtIDEpOw0KPj4gKwlwZ2QgPSBwZ2Rfb2Zmc2V0KG1tLCBh
-ZGRyKTsNCj4+ICsNCj4+ICsJcDRkID0gcDRkX29mZnNldChwZ2QsIGFkZHIpOw0KPj4gKwlpZiAo
-c3ogPj0gUEdESVJfU0laRSkNCj4+ICsJCXJldHVybiAocHRlX3QgKilwNGQ7DQo+PiArDQo+PiAr
-CXB1ZCA9IHB1ZF9hbGxvYyhtbSwgcDRkLCBhZGRyKTsNCj4+ICsJaWYgKCFwdWQpDQo+PiArCQly
-ZXR1cm4gTlVMTDsNCj4+ICsJaWYgKHN6ID49IFBVRF9TSVpFKQ0KPj4gKwkJcmV0dXJuIChwdGVf
-dCAqKXB1ZDsNCj4+ICsNCj4+ICsJcG1kID0gcG1kX2FsbG9jKG1tLCBwdWQsIGFkZHIpOw0KPj4g
-KwlpZiAoIXBtZCkNCj4+ICsJCXJldHVybiBOVUxMOw0KPj4gICANCj4+ICAgCWlmIChzeiA8IFBN
-RF9TSVpFKQ0KPj4gICAJCXJldHVybiBwdGVfYWxsb2NfaHVnZShtbSwgcG1kLCBhZGRyLCBzeik7
-DQo+PiAgIA0KPj4gKwlpZiAoIUlTX0VOQUJMRUQoQ09ORklHX1BQQ184eHgpKQ0KPj4gKwkJcmV0
-dXJuIChwdGVfdCAqKXBtZDsNCj4gDQo+IFNvIG9ubHkgOHh4IGhhcyBjb250LVBNRCBmb3IgaHVn
-ZXBhZ2VzPw0KDQpObywgYWxsIGhhdmUgY29udC1QTUQgYnV0IG9ubHkgOHh4IGhhbmRsZXMgcGFn
-ZXMgZ3JlYXRlciB0aGFuIFBNRF9TSVpFIA0KYXMgY29udC1QVEUgaW5zdGVhZCBvZiBjb250LVBN
-RC4NCg0KPiANCj4+ICsNCj4+ICAgCWlmIChzeiAhPSBTWl84TSkNCj4+ICAgCQlyZXR1cm4gTlVM
-TDsNCj4gDQo+IFNpbmNlIHRoaXMgZnVuY3Rpb24gaXMgdGhlIGNvcmUgZm9yIGFsbG9jYXRpb24g
-aHVnZSBwYWdlcywgSSB0aGluayBpdCB3b3VsZA0KPiBiZW5lZml0IGZyb20gYSBjb21tZW50IGF0
-IHRoZSB0b3AgZXhwbGFpbmluZyB0aGUgcG9zc2libGUgbGF5b3V0cy4NCj4gZS5nOiBXaG8gY2Fu
-IGhhdmUgY29udC17UDRkLFBVRCxQTUR9IGV0Yy4NCj4gQSBicmllZiBleHBsYW5hdGlvbiBvZiB0
-aGUgcG9zc2libGUgc2NoZW1lIGZvciBhbGwgcG93ZXJwYyBwbGF0Zm9ybXMuDQoNCkFsbCBpcyBz
-dGFuZGFyZCBleGNlcHQgOHh4LCBsZXQncyBqdXN0IGhhdmUgYSBjb21tZW50IGZvciA4eHguDQoN
-Cj4gDQo+IFRoYXQgd291bGQgaGVscCBwZW9wbGUgbG9va2luZyBpbnRvIHRoaXMgaW4gYSBmdXR1
-cmUuDQo+IA0KPiAgIA0KPiANCg==
+Hi Andrea,
+
+Am 25.05.24 um 07:39 schrieb Andrea della Porta:
+> On 14:26 Tue 21 May     , Stefan Wahren wrote:
+>> Hi Andrea,
+>>
+>> Am 21.05.24 um 10:35 schrieb Andrea della Porta:
+>>> Broadcom BCM2712 SoC has an SDHCI card controller using the SDIO CFG
+>>> register block present on other STB chips. Add support for BCM2712
+>>> SD capabilities of this chipset.
+>>> The silicon is SD Express capable but this driver port does not curren=
+tly
+>>> include that feature yet.
+>>> Based on downstream driver by raspberry foundation maintained kernel.
+>>>
+>>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+>>> ---
+>>>    drivers/mmc/host/sdhci-brcmstb.c | 65 +++++++++++++++++++++++++++++=
++++
+>>>    1 file changed, 65 insertions(+)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci=
+-brcmstb.c
+>>> index 9053526fa212..b349262da36e 100644
+>>> --- a/drivers/mmc/host/sdhci-brcmstb.c
+>>> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+>>> @@ -30,6 +30,21 @@
+>>>
+>>>    #define SDHCI_ARASAN_CQE_BASE_ADDR		0x200
+>>>
+>>> +#define SDIO_CFG_CQ_CAPABILITY			0x4c
+>>> +#define SDIO_CFG_CQ_CAPABILITY_FMUL		GENMASK(13, 12)
+>>> +
+>>> +#define SDIO_CFG_CTRL				0x0
+>>> +#define SDIO_CFG_CTRL_SDCD_N_TEST_EN		BIT(31)
+>>> +#define SDIO_CFG_CTRL_SDCD_N_TEST_LEV		BIT(30)
+>>> +
+>>> +#define SDIO_CFG_MAX_50MHZ_MODE			0x1ac
+>>> +#define SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE	BIT(31)
+>>> +#define SDIO_CFG_MAX_50MHZ_MODE_ENABLE		BIT(0)
+>>> +
+>>> +#define MMC_CAP_HSE_MASK	(MMC_CAP2_HSX00_1_2V | MMC_CAP2_HSX00_1_8V)
+>>> +/* Select all SD UHS type I SDR speed above 50MB/s */
+>>> +#define MMC_CAP_UHS_I_SDR_MASK	(MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR10=
+4)
+>>> +
+>>>    struct sdhci_brcmstb_priv {
+>>>    	void __iomem *cfg_regs;
+>>>    	unsigned int flags;
+>>> @@ -38,6 +53,7 @@ struct sdhci_brcmstb_priv {
+>>>    };
+>>>
+>>>    struct brcmstb_match_priv {
+>>> +	void (*cfginit)(struct sdhci_host *host);
+>>>    	void (*hs400es)(struct mmc_host *mmc, struct mmc_ios *ios);
+>>>    	struct sdhci_ops *ops;
+>>>    	const unsigned int flags;
+>>> @@ -168,6 +184,38 @@ static void sdhci_brcmstb_set_uhs_signaling(struc=
+t sdhci_host *host,
+>>>    	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+>>>    }
+>>>
+>>> +static void sdhci_brcmstb_cfginit_2712(struct sdhci_host *host)
+>>> +{
+>>> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+>>> +	struct sdhci_brcmstb_priv *brcmstb_priv =3D sdhci_pltfm_priv(pltfm_h=
+ost);
+>>> +	u32 reg, base_clk_mhz;
+>>> +
+>>> +	/*
+>>> +	 * If we support a speed that requires tuning,
+>>> +	 * then select the delay line PHY as the clock source.
+>>> +	 */
+>>> +	if ((host->mmc->caps & MMC_CAP_UHS_I_SDR_MASK) || (host->mmc->caps2 =
+& MMC_CAP_HSE_MASK)) {
+>>> +		reg =3D readl(brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
+>>> +		reg &=3D ~SDIO_CFG_MAX_50MHZ_MODE_ENABLE;
+>>> +		reg |=3D SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE;
+>>> +		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
+>>> +	}
+>>> +
+>>> +	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE) ||
+>>> +	    (host->mmc->caps & MMC_CAP_NEEDS_POLL)) {
+>>> +		/* Force presence */
+>>> +		reg =3D readl(brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
+>>> +		reg &=3D ~SDIO_CFG_CTRL_SDCD_N_TEST_LEV;
+>>> +		reg |=3D SDIO_CFG_CTRL_SDCD_N_TEST_EN;
+>>> +		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
+>>> +	}
+>>> +
+>>> +	/* Guesstimate the timer frequency (controller base clock) */
+>>> +	base_clk_mhz =3D max_t(u32, clk_get_rate(pltfm_host->clk) / (1000 * =
+1000), 1);
+>>> +	reg =3D SDIO_CFG_CQ_CAPABILITY_FMUL | base_clk_mhz;
+>>> +	writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CQ_CAPABILITY);
+>> This part assumes the clock isn't changed afterwards, see below ...
+>>> +}
+>>> +
+>>>    static void sdhci_brcmstb_dumpregs(struct mmc_host *mmc)
+>>>    {
+>>>    	sdhci_dumpregs(mmc_priv(mmc));
+>>> @@ -200,6 +248,14 @@ static struct sdhci_ops sdhci_brcmstb_ops =3D {
+>>>    	.set_uhs_signaling =3D sdhci_set_uhs_signaling,
+>>>    };
+>>>
+>>> +static struct sdhci_ops sdhci_brcmstb_ops_2712 =3D {
+>>> +	.set_clock =3D sdhci_set_clock,
+>>> +	.set_power =3D sdhci_set_power_and_bus_voltage,
+>>> +	.set_bus_width =3D sdhci_set_bus_width,
+>>> +	.reset =3D sdhci_reset,
+>>> +	.set_uhs_signaling =3D sdhci_set_uhs_signaling,
+>>> +};
+>>> +
+>>>    static struct sdhci_ops sdhci_brcmstb_ops_7216 =3D {
+>>>    	.set_clock =3D sdhci_brcmstb_set_clock,
+>>>    	.set_bus_width =3D sdhci_set_bus_width,
+>>> @@ -214,6 +270,11 @@ static struct sdhci_ops sdhci_brcmstb_ops_74165b0=
+ =3D {
+>>>    	.set_uhs_signaling =3D sdhci_brcmstb_set_uhs_signaling,
+>>>    };
+>>>
+>>> +static const struct brcmstb_match_priv match_priv_2712 =3D {
+>>> +	.cfginit =3D sdhci_brcmstb_cfginit_2712,
+>>> +	.ops =3D &sdhci_brcmstb_ops_2712,
+>>> +};
+>>> +
+>>>    static struct brcmstb_match_priv match_priv_7425 =3D {
+>>>    	.flags =3D BRCMSTB_MATCH_FLAGS_NO_64BIT |
+>>>    	BRCMSTB_MATCH_FLAGS_BROKEN_TIMEOUT,
+>>> @@ -238,6 +299,7 @@ static struct brcmstb_match_priv match_priv_74165b=
+0 =3D {
+>>>    };
+>>>
+>>>    static const struct of_device_id __maybe_unused sdhci_brcm_of_match=
+[] =3D {
+>>> +	{ .compatible =3D "brcm,bcm2712-sdhci", .data =3D &match_priv_2712 }=
+,
+>>>    	{ .compatible =3D "brcm,bcm7425-sdhci", .data =3D &match_priv_7425=
+ },
+>>>    	{ .compatible =3D "brcm,bcm7445-sdhci", .data =3D &match_priv_7445=
+ },
+>>>    	{ .compatible =3D "brcm,bcm7216-sdhci", .data =3D &match_priv_7216=
+ },
+>>> @@ -370,6 +432,9 @@ static int sdhci_brcmstb_probe(struct platform_dev=
+ice *pdev)
+>>>    	    (host->mmc->caps2 & MMC_CAP2_HS400_ES))
+>>>    		host->mmc_host_ops.hs400_enhanced_strobe =3D match_priv->hs400es;
+>>>
+>>> +	if (match_priv->cfginit)
+>>> +		match_priv->cfginit(host);
+>>> +
+>> I'm not sure this is the right place to call cfginit.
+>> sdhci_brcmstb_cfginit_2712 retrives the current controller base clock,
+>> but at the end of=C2=A0 sdhci_brcmstb_probe this clock frequency could =
+be
+>> adjusted by the device property "clock-frequency". So i'm not sure this
+>> is intended.
+> I've tried to interpret the meaning of those two clocks since unfortunat=
+ely I don't
+> own the datasheet for any of the platforms involved, so please take the =
+following
+> as the result of my own (possibly wrong) intuition and (mostly wild) gue=
+ssing.
+>
+> The main clock is 'sw_sdio' while 'sdio_freq' is optional and the latter=
+ seems to be
+> orthogonal to the former.
+> While sw_sdio is mostly used for SD storage card, sdio_freq seems more r=
+elated to
+> SDIO family of cards (wifi, gps, camera, etc) for which you could specif=
+y a particular
+> (and higher) base frequency.
+> Unfortunately I wasn't able to find any reference to sdio_freq in curren=
+t devicetree
+> so it's probably only specific to custom appliances: to be honest I'm no=
+t even sure
+> that BCM2712 is supporting that improved clock source.  Also, from the f=
+ollowing lines
+> at the end of cfginit function:
+>
+> /* Guesstimate the timer frequency (controller base clock) */
+> base_clk_mhz =3D max_t(u32, clk_get_rate(pltfm_host->clk) / (1000 * 1000=
+), 1);
+> reg =3D SDIO_CFG_CQ_CAPABILITY_FMUL | base_clk_mhz;
+> writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CQ_CAPABILITY);
+>
+> judging from the name of SDIO_CFG_CQ_CAPABILITY register, I'd guess that=
+ it relates
+> to some Command Queue (timeout?) setting so it's probably only important=
+ if CQE is
+> enabled specifying 'supports-cqe' property, which is not in current devi=
+cetree (nor
+> in  downstream one). If this is the case it's mostly a performance impro=
+vement, and
+> as such something that we are not necessarily interested in right now si=
+nce this
+> patchset adds just minimal boot support. I would then drop those lines, =
+as we could
+> just reintroduce them if they need be once we have a better understandin=
+g of that
+> specific register and/if the cqe support will be enabled. As a matter of=
+ fact those
+> lines are not working as expected in any case since pltfm_host->clk is s=
+et at the
+> very end of sdhci_brcmstb_probe() while the cfginit function is invoked =
+much earlier.
+> The result is that right now the value set ito SDIO_CFG_CQ_CAPABILITY re=
+gister is always
+> equal to 1MHz. Further testing reveals that it is indeed working fine ev=
+en with those
+> lines dropped, so I would deem that code as unnecessary for this early p=
+atchset.
+> Is it a viable solution?
+I don't have any knowledge about this hardware, so my opinion based on
+your good investigations. But i would be fine with this.
+
+Just to make it clear, this works with and without U-Boot in the bootchain=
+?
+
+Thanks
+>
+> Many thanks,
+> Andrea
+>
+>>>    	/*
+>>>    	 * Supply the existing CAPS, but clear the UHS modes. This
+>>>    	 * will allow these modes to be specified by device tree
+
 
