@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-189419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EFC8CEFCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:24:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5518CEFD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012BD1C20AB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:24:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 990F4B210C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C9384D0A;
-	Sat, 25 May 2024 15:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C7884DF7;
+	Sat, 25 May 2024 15:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkL1V6X/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e6jJvMUF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032AE4EB51;
-	Sat, 25 May 2024 15:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE28444C6F;
+	Sat, 25 May 2024 15:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716650638; cv=none; b=k7cfmCKzE3/hzj9PiB9fIChFvfuo4j877d4QRBwEw2urGvmtz3RPdVP7gcpY/7MGQpd4lJ/4ZbLNTD7e9NaKWco9vtVupkA5sAC55mTtjPxuYECCWwMrn+SQoNBx4apsfJLxRH8doJjUy9mtbqh/u33DVddSpAvkpXOuI0ogDGs=
+	t=1716650773; cv=none; b=g1XDBTXj86awzDkgUPIk5QrrCp/lLR5+427IivamkkhSyMsaW7GjQ6xIb1JmzHJZs/6i+hpmmShx0f2uJWvvOepqrWzc8n072FSBEu4hlEggPykkd5YoyfcfWcceSPBnr5EobZSLEVMpi2hD7kvd39O/9CL/oB9sFudsgJyrPBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716650638; c=relaxed/simple;
-	bh=hWex0/0EDFdU/EG8w6h6Es7v4FQycOVdAAznlCeBeTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8LEmD4lgkMsYY97PlOZC8xcjCZhxwl9uYHjVpcsS+ysrodldcpAea/zFN6lFWM5adnvnhPJmPbePePphZ3XttlXdGNOILS1o548CXzCDA1PQRtjJMTFUwRBzkyexbLT70iQbp/jL+oaXnG+7MOJ4F5nt7BC1XTwNqVDKA7BdJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkL1V6X/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C5DC2BD11;
-	Sat, 25 May 2024 15:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716650637;
-	bh=hWex0/0EDFdU/EG8w6h6Es7v4FQycOVdAAznlCeBeTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkL1V6X/oNXEsr099GOqomLQ5Fa3bk6UX5V7XtHOGdLU8QQYydARcKOxHFFbbFoHk
-	 f1ZJF/LZkCueJeuATzmD/uEyEWDerQGwlKicH3o/yifUkpZCaM+9oKXbWuFGUPHYCn
-	 iFMpgasccP7bFAvv7l6VdW7ha/1Qn1DGTBa7ii6ZJHX64eMFEF/oNqxPLgVbJEhSuT
-	 BRwEWXLwGAidEwjZZLVU21yDPSURSKsu9t46bys3BuUAWLWqSCkg3/vje5RW239sIt
-	 hy3WJTXAQ5aMeVQMm3bBGaWBFg3iWQOf494CWdAZKBMDyfNP1vURd00+HDPRHEyv1Z
-	 giEcyZovW03VA==
-Date: Sat, 25 May 2024 16:23:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Judith Mendez <jm@ti.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	William Breathitt Gray <william.gray@linaro.org>,
-	David Lechner <david@lechnology.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
- compatible
-Message-ID: <20240525-tall-cultural-1a3f181d39ac@spud>
-References: <20240523231516.545085-1-jm@ti.com>
- <20240523231516.545085-3-jm@ti.com>
- <20240524-wrecker-busybody-2c082b87ddef@spud>
- <57e4f7b1-2955-4dd5-b9d9-f3b1f27aab75@ti.com>
+	s=arc-20240116; t=1716650773; c=relaxed/simple;
+	bh=UpornZwFGcZkt9ze4fdtoh3iyUIkzReEUqXzo7qNhTQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SuE7cMYKgBBo/25+WS5W+60TGwUeAwRAiauT+SebHvqkj45sBP0Yx7QIpZE9vpFJcdhqXp1efE/gS2GL6+5EhmMXCgA8IX5UhcH6sAtYh502adeKZDamXJbsmekPApM6dLgZ9C7kwSQmRF0svQhLyFakGyY3rD1yXCzfT3vYi10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e6jJvMUF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44PB9tm3022757;
+	Sat, 25 May 2024 15:25:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9dCJ/M81ZarIpNHGwnzW6v
+	E62xjRIb1v5A0jpB2E2+w=; b=e6jJvMUFvroAl87b3MvOlhuG6xi56VvQNH4WFr
+	4N32zul/MkrAQTwk/ZVcuJaDxgOBuKG+pxbGmwsLuyw5KIKYp7VQ7nVpS2gXCeYV
+	mmN5iF3xjmfWQsUPIMuIjGK0VRSuyPFeRBCTMlWLQ5gsjBCP9TxQZ8OlLOQLx4gI
+	l5nCaf2yXclhEju4q+xFbMh/WWgkKlElYQQ1zKft37fKFmTWh8EO/0RGpk5aeUi/
+	pDasP0hMBmx6Uw7RPhmzx4U310icbgtLDVZT3k7NyaQ6rijKV7/Us/6XYx1DBFQO
+	02qimBkF93DGq/QWBa/Y0WMQbL5Y6KNM2S20129BykMj0HmQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h0ggf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 15:25:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44PFPvR2006005
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 15:25:57 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 25 May
+ 2024 08:25:56 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 25 May 2024 08:25:56 -0700
+Subject: [PATCH] fs: minix: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8je3ZeGf7UWWQx7L"
-Content-Disposition: inline
-In-Reply-To: <57e4f7b1-2955-4dd5-b9d9-f3b1f27aab75@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240525-md-fs-minix-v1-1-824800f78f7d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAMDUmYC/x3M0QrCMAyF4VcZuTZQy4riq4gX6Za6gI2jcVIZe
+ /fVXX5wzr+CcRE2uHUrFP6KyVsbzqcOhon0yShjM3jnexd8wDxiMsyiUtGn0Ed3iVdKCdpjLpy
+ kHrX7ozmSMcZCOkz/xkt0qZjJPlxw/rUpbNsOJHnmyoIAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jNiwyS40TNX6W4vfdHtZ5wzWx3c4ZRsR
+X-Proofpoint-ORIG-GUID: jNiwyS40TNX6W4vfdHtZ5wzWx3c4ZRsR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-25_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=790 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405250125
 
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
 
---8je3ZeGf7UWWQx7L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/minix/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, May 24, 2024 at 04:30:32PM -0500, Judith Mendez wrote:
-> On 5/24/24 1:38 PM, Conor Dooley wrote:
-> > On Thu, May 23, 2024 at 06:15:10PM -0500, Judith Mendez wrote:
-> > > Add new compatible ti,am62-eqep for TI K3 devices. If a device
-> > > uses this compatible, require power-domains property.
-> > >=20
-> > > Since there is only one functional and interface clock for eqep,
-> > > clock-names is not really required. The clock-name also changed
-> > > for TI K3 SoCs so make clock-names optional for the new compatible
-> > > since there is only one clock that is routed to the IP.
-> >=20
-> > Really the clock should be named after the function it has in the IP
-> > block - it looks like "sysoutclk" is more likely the name of the clock
-> > routed to the IP rather than the role it has?
->=20
-> It is the name of the clock, though id like to keep sysclkout for
-> backwards compatibility, even though the name is confusing.
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 7f9a2d8aa420..1c3df63162ef 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -730,5 +730,6 @@ static void __exit exit_minix_fs(void)
+ 
+ module_init(init_minix_fs)
+ module_exit(exit_minix_fs)
++MODULE_DESCRIPTION("Minix file system");
+ MODULE_LICENSE("GPL");
+ 
 
-FWIW, I was not suggesting that it be renamed.
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240525-md-fs-minix-2f54b07b8aff
 
-Thanks,
-Conor.
-
---8je3ZeGf7UWWQx7L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlICiAAKCRB4tDGHoIJi
-0t6iAQClRgCyK+bzcV2T6gg6WUEarZMXaD9E9NT/lqh7PJoeSAEArxBbuYcL8wXg
-TQbhTBU5CK6YWmRE9K233SaqLbSV7gw=
-=MmSb
------END PGP SIGNATURE-----
-
---8je3ZeGf7UWWQx7L--
 
