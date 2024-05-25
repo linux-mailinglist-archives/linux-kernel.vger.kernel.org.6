@@ -1,294 +1,115 @@
-Return-Path: <linux-kernel+bounces-189463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62D08CF05F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:09:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445628CF064
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292DFB20F47
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7347281C41
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF9386AE3;
-	Sat, 25 May 2024 17:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F61126F08;
+	Sat, 25 May 2024 17:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWDoq/3w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcoDDGJ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4161B644;
-	Sat, 25 May 2024 17:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE93938382;
+	Sat, 25 May 2024 17:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716656933; cv=none; b=ggSKxGbIAoK8QV3IP0QWgiPoO72gQYcPUkXSj6XVGdwDeZVcjgvauiLVXCEBXJNwVzrjNADrB//oTURHqJlyd5uWctjBsgPEMX56jc+r/1grMdw19428H2cK4kojduoGr8nupoUlhh4pzSbkwyLrMCH8jyyECQawaOj31F8iwPo=
+	t=1716657465; cv=none; b=TL+JjvPajucQWW+94kbyGogPbFmK+7VleyDJCRrM629tXkKopgZx+yZbhWGxncAc2kut1WnpIJtTB0bcREMcZfIRWqYh8R8hf5QkCfmQOG2wejoSE3bM26oLtVSCW4d4nSFAgpvVPY2O+Mhvq3dbsFb/LwB/ZHf1CXfVyEcRMsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716656933; c=relaxed/simple;
-	bh=oD+OOWOoYQr68PffjFpo9sEKBfMWG/HzUK2GEmo4o8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e7JvwCXMiGZXzLPOcJuU+1VQUL62ILhPuNDO3/hNlKHxPxJyo7HY6wfGOPHXcPOp1QfwJtyoboKWqqOJaYEK39j9ITBicBDuGZqXwiTpGiS7SmjkRfv8qOx7grsGuTXHwQMoocDuypvVPtzLX0MueyTBPnTixHM5a2ZinU1zwmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWDoq/3w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B7DC2BD11;
-	Sat, 25 May 2024 17:08:48 +0000 (UTC)
+	s=arc-20240116; t=1716657465; c=relaxed/simple;
+	bh=B1F5K+I2rON4uX6Ud7Trur0KVSRn4kdoQl2TEA9EphQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oAPCaVXqZ7shUh2w7Rq3YZqrgx08+zur+idoJERLdU4GjDbHOQqOSH5tEJvRFb8pO2r2hQfRNoJTspmR12aiXqFRXKimEKFn8vdvg6dAaWTyKr0SthhGXO1obHP5hXJDRoa7ePnyupRjpUZkC/Q8bTVnG17kHmFw8L1uOGP3Iv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcoDDGJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB0CC2BD11;
+	Sat, 25 May 2024 17:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716656933;
-	bh=oD+OOWOoYQr68PffjFpo9sEKBfMWG/HzUK2GEmo4o8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HWDoq/3wp7P3PYnVAMNPqjxVsUcRALTfvCeGhy5UYpVz/Erxw/W+NOtZ3/3PFh2gX
-	 LQMdBMedGCkxIwzPPFG9qsfeJ0oTz9GwXCtUIS+hryZVg6Ke4hJHItZvXrVpi6tcKK
-	 1kyBJVXnMX5/4g09OfYw2J6k1Wilx7T4egyA+R7MAdW1/NeJnnG711UMq2KOzCXCpH
-	 r78vyAqDOxm/ENB2bRjtXaBYL4jlMReUJoCmXCFkqOb/wUMWA+85SpCg+0sNZwq5l7
-	 K3SasTjVArwI3eL+ka9DpfDjtCuLCgGQbro2AEq1pXpOtQVY1Wp8MVtQFpTYni7PRc
-	 w55N292HuVc5w==
-Date: Sat, 25 May 2024 18:08:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Amrit Anand <quic_amrianan@quicinc.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Andy Gross <agross@kernel.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Simon Glass <sjg@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
-	Julius Werner <jwerner@chromium.org>,
-	"Humphreys, Jonathan" <j-humphreys@ti.com>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Jon Hunter <jonathanh@nvidia.org>,
-	Michal Simek <michal.simek@amd.com>,
-	boot-architecture@lists.linaro.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH RFC v3 5/9] dt-bindings: board: Document board-ids for
- Qualcomm devices
-Message-ID: <20240525-parachute-plutonium-ef8d1472ff50@spud>
-References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
- <20240521-board-ids-v3-5-e6c71d05f4d2@quicinc.com>
+	s=k20201202; t=1716657465;
+	bh=B1F5K+I2rON4uX6Ud7Trur0KVSRn4kdoQl2TEA9EphQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WcoDDGJ1+ZD44CCgyTZIdcDHW97MgBfOOfQc+rQ/g1xMpINaf0MlI3fhlt46f8x3Y
+	 hbB9sN0+ZliA8rbYb9Qitu/XK17ToYeU/KgBu32CAUiv+m1MpmbvXGV+qoypRmG/+1
+	 1hQlbDjKRZmAXB/wCbQnhkeUb7gvnMMfzVDQmiQTeAc9cuoB5xKJEd7NsLPvNNlrSf
+	 iYVF3yS4YMUPs8lFFS1Ggmn+0ZGH3v1eyImlu8zhHuUVt9ama3E9A7uYey5ilds7xj
+	 vBFb2LeU/zna2k2kjp0Ohe01MFK/Sq1/VtCO/v6DI9yeBUJZxCZCCMXjKDrqhrnlO/
+	 Qql57wnTAWMnQ==
+Date: Sat, 25 May 2024 18:17:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Michael Hennerich"
+ <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+Message-ID: <20240525181730.6cccec73@jic23-huawei>
+In-Reply-To: <20240523031909.19427-4-kimseer.paller@analog.com>
+References: <20240523031909.19427-1-kimseer.paller@analog.com>
+	<20240523031909.19427-4-kimseer.paller@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="A98bZ1uEY8yJEbmg"
-Content-Disposition: inline
-In-Reply-To: <20240521-board-ids-v3-5-e6c71d05f4d2@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
---A98bZ1uEY8yJEbmg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A few comments inline.
 
-On Tue, May 21, 2024 at 11:38:02AM -0700, Elliot Berman wrote:
-> Document board identifiers for devices from Qualcomm Technologies, Inc.
-> These platforms are described with two mechanisms: the hardware SoC
-> registers and the "CDT" which is in a RO storage.
->=20
-> The hardware SoC registers describe both the SoC (e.g. SM8650, SC7180)
-> as well as revision. Add qcom,soc to describe only the SoC itself and
-> qcom,soc-version when the devicetree only works with a certain revision.
->=20
-> The CDT describes all other information about the board/platform.
-> Besides the platform type (e.g. MTP, ADP, CRD), there are 3 further
-> levels of versioning as well as additional fields to describe the PMIC
-> and boot storage device attached. The 3 levels of versioning are a
-> subtype, major, and minor version of the platform. Support describing
-> just the platform type (qcom,platform), the platform type and subtype
-> (qcom,platform-type), and all 4 numbers (qcom,platform-version).
->=20
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  .../devicetree/bindings/board/qcom,board-id.yaml   | 144 +++++++++++++++=
-++++++
->  1 file changed, 144 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/board/qcom,board-id.yaml b=
-/Documentation/devicetree/bindings/board/qcom,board-id.yaml
-> new file mode 100644
-> index 000000000000..53ba7acab4c3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/board/qcom,board-id.yaml
-> @@ -0,0 +1,144 @@
-> +# SPDX-License-Identifier: BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/board/qcom,board-id.yaml
-> +$schema: http://devicetree.org/meta-schemas/core.yaml
-> +
-> +title: Board identifiers for devices from Qualcomm Technologies, Inc.
-> +description: Board identifiers for devices from Qualcomm Technologies, I=
-nc.
-> +
-> +maintainers:
-> +  - Elliot Berman <quic_eberman@quicinc.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: 'board-id'
-> +
-> +  qcom,soc:
+> +  adi,manual-span-operation-config:
 > +    description:
-> +      List of Qualcomm SoCs this devicetree is applicable to.
+> +      This property must mimic the MSPAN pin configurations. By tying the MSPAN
+> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can be
+> +      hardware-configured with different mid-scale or zero-scale reset options.
+> +      The hardware configuration is latched during power on reset for proper
+> +      operation.
+> +        0 - MPS2=GND, MPS1=GND, MSP0=GND
+> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC
+> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND
+> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC
+> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND
+> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC
+> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND
+> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (enables SoftSpan feature)
+Could you add to the description to say what results of the entries are
+(like you have done for 7)
+e.g.
+          0 - MSP2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
+at least I think that's what reset to mid scale means.
+
+This seems like a reasonable level of information to convey here.
+
+I was going to suggest making this a 3 value array, but that would
+make ti hard to add such docs, so perhaps what you have here
+is the right approach.
+
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> +    default: 7
 > +
-> +  qcom,soc-version:
-> +    items:
-> +      items:
-> +        - description: Qualcomm SoC identifier
-> +        - description: SoC version
-> +
-> +  qcom,platform:
+> +  io-channels:
 > +    description:
-> +      List of Qualcomm platforms this devicetree is applicable to.
+> +      Analog multiplexer output. VOUT0-VOUT3, MUXIN0-MUXIN3, REFLO, REF, V+, V-,
+> +      and a temperature monitor output can be internally routed to the MUXOUT pin.
 > +
-> +  qcom,platform-type:
-> +    items:
-> +      items:
-> +        - description: Qualcomm platform type identifier
-> +        - description: Qualcomm platform subtype
-> +
-> +  qcom,platform-version:
-> +    items:
-> +      items:
-> +        - description: Qualcomm platform type identifier
-> +        - description: Qualcomm platform subtype
-> +        - description: Qualcomm platform major and minor version.
-> +
-> +  qcom,boot-device:
-> +    description:
-> +      Boot device type
-> +
-> +  qcom,pmic:
-> +    description:
-> +      List of Qualcomm PMIC attaches
-> +
-> +  qcom,pmic-id:
-> +    items:
-> +      items:
-> +        - description: Qualcomm PMIC identifier
-> +        - description: Qualcomm PMIC revision
-> +
-> +allOf:
-> +  # either describe soc or soc-version; it's confusing to have both
+That's a little confusing.   What you are specifying here is the ADC
+channels that is connected to. This description sort of suggests it's about
+what is routed there.
 
-Why not just use the one that has the most information and discard the
-others? If your dtb picker for this platform doesn't care about the soc
-version, then just don't look at that cell?
 
-Likewise for platform and PMIC, why can't you ignore the cells you don't
-care about, rather than having a new property for each variant? Nothing
-in this patch explains why multiple variants are required rather than
-just dealing with the most informational.
 
-Thanks,
-Conor.
-
-> +  - if:
-> +      properties:
-> +        qcom,soc: true
-> +    then:
-> +      properties:
-> +        qcom,soc-version: false
-> +  - if:
-> +      properties:
-> +        qcom,soc-version: true
-> +    then:
-> +      properties:
-> +        qcom,soc: false
-> +
-> +  # describe one of platform, platform-type, or platform-version; it's c=
-onfusing to have multiple
-> +  - if:
-> +    properties:
-> +      qcom,platform: true
-> +    then:
-> +      properties:
-> +        qcom,platform-type: false
-> +        qcom,platform-version: false
-> +  - if:
-> +    properties:
-> +      qcom,platform-type: true
-> +    then:
-> +      properties:
-> +        qcom,platform: false
-> +        qcom,platform-version: false
-> +  - if:
-> +    properties:
-> +      qcom,platform: true
-> +    then:
-> +      properties:
-> +        qcom,platform: false
-> +        qcom,platform-type: false
-> +
-> +  # either describe pmic or pmic-id; it's confusing to have both
-> +  - if:
-> +    properties:
-> +      qcom,pmic: true
-> +    then:
-> +      properties:
-> +        qcom,pmic-id: false
-> +  - if:
-> +    properties:
-> +      qcom,pmic-id: true
-> +    then:
-> +      properties:
-> +        qcom,pmic: false
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/arm/qcom,ids.h>
-> +    / {
-> +      compatible =3D "qcom,sm8650";
-> +      board-id {
-> +        qcom,soc =3D <QCOM_ID_SM8650>;
-> +        qcom,platform =3D <QCOM_BOARD_ID_MTP>;
-> +      };
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/arm/qcom,ids.h>
-> +    / {
-> +      compatible =3D "qcom,sm8650";
-> +      board-id {
-> +        qcom,soc-version =3D <QCOM_ID_SM8650 QCOM_SOC_REVISION(1)>,
-> +                           <QCOM_ID_SM8650 QCOM_SOC_REVISION(2)>;
-> +        qcom,platform-type =3D <QCOM_BOARD_ID_MTP 0>, <QCOM_BOARD_ID_MTP=
- 1>;
-> +      };
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/arm/qcom,ids.h>
-> +    / {
-> +      compatible =3D "qcom,sm8650";
-> +      board-id {
-> +        qcom,soc =3D <QCOM_ID_SM8650>;
-> +        qcom,platform-version =3D <QCOM_BOARD_ID(MTP, 0, 1, 0)>,
-> +                                <QCOM_BOARD_ID(MTP, 0, 1, 1)>;
-> +        qcom,boot-device =3D <QCOM_BOARD_BOOT_UFS>;
-> +      };
-> +    };
->=20
-> --=20
-> 2.34.1
->=20
-
---A98bZ1uEY8yJEbmg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlIbHgAKCRB4tDGHoIJi
-0ra+AQDEoFa2vpuunjIrZlnjVrWlBEXl/FNWKRB4NdVTCzeCFgEAl6U1vl8Lwh4W
-zaBtPCnhIm0w8+h4XSwJ3r2eizsvRAw=
-=llk1
------END PGP SIGNATURE-----
-
---A98bZ1uEY8yJEbmg--
 
