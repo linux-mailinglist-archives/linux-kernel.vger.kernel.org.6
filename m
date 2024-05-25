@@ -1,200 +1,337 @@
-Return-Path: <linux-kernel+bounces-189426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9E08CEFDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:41:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFB08CEFE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9F23B21079
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:41:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F578B21350
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD3184E0A;
-	Sat, 25 May 2024 15:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cpNihL3C"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DE084DE3;
+	Sat, 25 May 2024 15:41:18 +0000 (UTC)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE6E29CE5;
-	Sat, 25 May 2024 15:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3888B83CBD;
+	Sat, 25 May 2024 15:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716651653; cv=none; b=W59pFleZvNIRSjiFQUHlrU2TXrbJXFGH3Rwn/9Gvx7a/aLGeQuFvy86GC+U+V5RAMSURMDcr+vHBEhMIijcT3J9KfPGLVMPGpCPenlK1T/BzxeqQx7AN9CrYhpAHnTWjKwoTf6ZmVCz8MiIx4eYBFcUQTwXSLQ40ojTjsL7iX5M=
+	t=1716651678; cv=none; b=XvnofCERrkAuan3IqcNYN2KCtc2AcW3Pk4qq+Tj281BGQUpgn3mHOE0ONNFHrmwWkUkcBwqCZQhJWgq3enoJpSdAIZCFjFTCA6L0NP5jPGn9jV49/nEjA6LFcbV5H4qIlzi0uiH52dlTeYiCvzbIQqw+XMZCM6XCmlYJEcMfJ/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716651653; c=relaxed/simple;
-	bh=nsMlYfrbACr4A+ifWYV1NJR6P+PBisHXcccRZav55lQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zse0xXzNCXJ/I3D/6hyEizgtK0yMTzybEsj5VGCrBjGVpRlQzUP7QUPaFqKD9jGeC137pXrhS8t/x1ZPLHdCUb4QLG2MGHioxkaD/r3V0uIDTPUD6iSyJRoEGKTSyq2gDrGk//MkoAls3yRm01VMTKtiEbY5pDnk+XechZmZ8CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cpNihL3C; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dNqXp/hhyPdCaPUnPmAwqKc/MFxMVyqfvLBtHgPIDRY=; b=cpNihL3CbSDMFHIuby+bAR0aRu
-	K/gqLEIg3HgQ46NLOXM4zVdHTkovLsG/UAlkE+TIGDzCt5l6M2lDzzaMPba+kIIS+ThmRmnsrfcvo
-	nYq9gyZrE87vvGYL8WO0BWZCwoOmch2U3df6gSNuCF6pTifr0vkUEJrc7Cm3ag71qzObNYMcZz6ZM
-	qGJFeEGTcOQCkEl40yB3CsyBMShs6UB+ecDKxax3pM7r6e2nMqeP5Kt6bcvcg7iCs+Df+UE2m9Iwx
-	fQ35wVYhr9nwQhVFKHMggNlZemQpPtyW979vmPhP0WC9KtGTJDtGRfKf6OGQZsq+hzBKkT/Ddc2tH
-	GxMY5ZXg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sAtVM-007YFB-1K;
-	Sat, 25 May 2024 15:40:20 +0000
-Date: Sat, 25 May 2024 16:40:20 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: brauner@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com,
-	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com,
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
-	joel@joelfernandes.org, keescook@chromium.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
-	rust-for-linux@vger.kernel.org, surenb@google.com,
-	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu,
-	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-Message-ID: <20240525154020.GW2118490@ZenIV>
-References: <20240524-anhieb-bundesweit-e1b0227fd3ed@brauner>
- <20240524191714.2950286-1-aliceryhl@google.com>
- <20240524225640.GU2118490@ZenIV>
- <20240525003305.GV2118490@ZenIV>
+	s=arc-20240116; t=1716651678; c=relaxed/simple;
+	bh=PqizwEOTlFqMpVQuMh/x1K6KlzpBnxyw0yxVInJo3ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a2XLdHmBPbR9em+BrlaWiDC7D2v+qiKMhS0m6+102tPzhe+WJCBL1oNp1rDlCcSFmqmGGBQ2UgVIYNWy3vyBYp9uI/EHEmexsAjh7KKVPlpfh53rN8DiXav4vS6wJsnT/ae+TN7JDmaTEbbnpVUq6fjCx28ryUKNkTkzyo5VnDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44PFFVTe001874;
+	Sat, 25 May 2024 15:40:47 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Dibm.com;_h=3Dcc?=
+ =?UTF-8?Q?:content-transfer-encoding:content-type:date:from:in-reply-to:m?=
+ =?UTF-8?Q?essage-id:mime-version:references:subject:to;_s=3Dpp1;_bh=3DEoi?=
+ =?UTF-8?Q?SA/lg1KnnEE0rSnE06BIpGm2yBnycaH1rnnzfo14=3D;_b=3DEeNhtuH/Evope5?=
+ =?UTF-8?Q?47/3FaZ6X7clGCoo2zQ4421fvcHNRObQaHYltH1Gmvb0szZ+PdMqd9_0xIGZRL+?=
+ =?UTF-8?Q?TJp4VBowBt/lAqhDnS4KBvCblOwAP46Omd31TQQB9btlZ6rgciXwnllozjLQ_yH?=
+ =?UTF-8?Q?OSAzrgmT50mDvSNmWgBEthbnAFhbB1lNAJbqHd2mktF4OtWBuzRYRgCDXFrlejk?=
+ =?UTF-8?Q?116_L+SodtdaZ7aTLntNjMTups7+NX9sYOUHT65EixJ/L+h2H0iOVgGRnwjazmm?=
+ =?UTF-8?Q?zLQNQDU41_S/BwnscXgZ+IPvhtyoAIVtAEItDqwDsGjU8ZSACAplhZIHJCTFiS0?=
+ =?UTF-8?Q?ECBI+kEBlnLZ8o6_CA=3D=3D_?=
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ybhu4g3g5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 15:40:46 +0000
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44PFekcw006159;
+	Sat, 25 May 2024 15:40:46 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ybhu4g3g0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 15:40:46 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44PFZW25030540;
+	Sat, 25 May 2024 15:40:45 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yb8gftpkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 15:40:45 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44PFegEb50070138
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 25 May 2024 15:40:44 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 273085806C;
+	Sat, 25 May 2024 15:40:42 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF6E358052;
+	Sat, 25 May 2024 15:40:37 +0000 (GMT)
+Received: from [9.179.11.60] (unknown [9.179.11.60])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 25 May 2024 15:40:37 +0000 (GMT)
+Message-ID: <4c7b4ac5-126b-422a-9f6d-f4aef22920b0@linux.ibm.com>
+Date: Sat, 25 May 2024 21:10:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240525003305.GV2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during
+ __bio_release_pages()
+Content-Language: en-US
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        Tony Battersby <tonyb@cybernetics.com>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <songmuchun@bytedance.com>,
+        David Hildenbrand <david@redhat.com>, stable@vger.kernel.org
+References: <20240523063905.3173-1-donettom@linux.ibm.com>
+ <c94ad517-59c6-461c-98dc-1f1706c76389@collabora.com>
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <c94ad517-59c6-461c-98dc-1f1706c76389@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Md6YDFM6O2epxThMa4Z9O0bS-nnXQhAW
+X-Proofpoint-GUID: uFohzGfMM9OkPk_zME6E5lBvInYwayTz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-25_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 impostorscore=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405250127
 
-On Sat, May 25, 2024 at 01:33:05AM +0100, Al Viro wrote:
 
-> FWIW, fdget()...fdput() form a scope.  The file reference _in_ that
-> struct fd is just a normal file reference, period.
-> 
-> You can pass it to a function as an argument, etc.  You certainly can
-> clone it (with get_file()).
-> 
-> The rules are basically "you can't spawn threads with CLONE_FILES inside
-> the scope and you can't remove reference in your descriptor table while
-> in scope".  The value in fd.file is guaranteed to stay with positive
-> refcount through the entire scope, just as if you had
-> 
-> {
-> 	struct file *f = fget(n);
-> 
-> 	if (!f)
-> 		return -EBADF;
-> 
-> 	...
-> 
-> 	fput(f);
-> }
-> 
-> The rules for access are exactly the same - you can pass f to a function
-> called from the scope, you can use it while in scope, you can clone it
-> and store it somewhere, etc.
+On 5/24/24 23:43, Muhammad Usama Anjum wrote:
+> Thank you for submitting a patch.
+>
+> On 5/22/24 11:39 PM, Donet Tom wrote:
+>> Commit 1b151e2435fc ("block: Remove special-casing of compound
+>> pages") caused a change in behaviour when releasing the pages
+>> if the buffer does not start at the beginning of the page. This
+>> was because the calculation of the number of pages to release
+>> was incorrect.
+>> This was fixed by commit 38b43539d64b ("block: Fix page refcounts
+>> for unaligned buffers in __bio_release_pages()").
+>>
+>> We pin the user buffer during direct I/O writes. If this buffer is a
+>> hugepage, bio_release_page() will unpin it and decrement all references
+>> and pin counts at ->bi_end_io. However, if any references to the hugepage
+>> remain post-I/O, the hugepage will not be freed upon unmap, leading
+>> to a memory leak.
+>>
+>> This patch verifies that a hugepage, used as a user buffer for DIO
+>> operations, is correctly freed upon unmapping, regardless of whether
+>> the offsets are aligned or unaligned w.r.t page boundary.
+>>
+>> Test Result  Fail Scenario (Without the fix)
+>> --------------------------------------------------------
+>> []# ./hugetlb_dio
+>> TAP version 13
+>> 1..4
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 1 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 2 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 3 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 6
+>> not ok 4 : Huge pages not freed!
+>> Totals: pass:3 fail:1 xfail:0 xpass:0 skip:0 error:0
+>>
+>> Test Result  PASS Scenario (With the fix)
+>> ---------------------------------------------------------
+>> []#./hugetlb_dio
+>> TAP version 13
+>> 1..4
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 1 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 2 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 3 : Huge pages freed successfully !
+>> No. Free pages before allocation : 7
+>> No. Free pages after munmap : 7
+>> ok 4 : Huge pages freed successfully !
+>> Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>
+>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> ---
+>>   tools/testing/selftests/mm/Makefile      |   1 +
+>>   tools/testing/selftests/mm/hugetlb_dio.c | 118 +++++++++++++++++++++++
+> Add this test to vm_runtest.sh as all the tests are run from this script in
+> CIs.
+>
+>>   2 files changed, 119 insertions(+)
+>>   create mode 100644 tools/testing/selftests/mm/hugetlb_dio.c
+>>
+>> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+>> index eb5f39a2668b..87d8130b3376 100644
+>> --- a/tools/testing/selftests/mm/Makefile
+>> +++ b/tools/testing/selftests/mm/Makefile
+>> @@ -71,6 +71,7 @@ TEST_GEN_FILES += ksm_functional_tests
+>>   TEST_GEN_FILES += mdwe_test
+>>   TEST_GEN_FILES += hugetlb_fault_after_madv
+>>   TEST_GEN_FILES += hugetlb_madv_vs_map
+>> +TEST_GEN_FILES += hugetlb_dio
+>>   
+>>   ifneq ($(ARCH),arm64)
+>>   TEST_GEN_FILES += soft-dirty
+>> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+>> new file mode 100644
+>> index 000000000000..6f6587c7913c
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
+>> @@ -0,0 +1,118 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * This program tests for hugepage leaks after DIO writes to a file using a
+>> + * hugepage as the user buffer. During DIO, the user buffer is pinned and
+>> + * should be properly unpinned upon completion. This patch verifies that the
+>> + * kernel correctly unpins the buffer at DIO completion for both aligned and
+>> + * unaligned user buffer offsets (w.r.t page boundary), ensuring the hugepage
+>> + * is freed upon unmapping.
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <stdio.h>
+>> +#include <sys/stat.h>
+>> +#include <stdlib.h>
+>> +#include <fcntl.h>
+>> +#include <stdint.h>
+>> +#include <unistd.h>
+>> +#include <string.h>
+>> +#include <sys/mman.h>
+>> +#include "vm_util.h"
+>> +#include "../kselftest.h"
+>> +
+>> +void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+>> +{
+>> +	int fd;
+>> +	char *buffer =  NULL;
+>> +	char *orig_buffer = NULL;
+>> +	size_t h_pagesize = 0;
+>> +	size_t writesize;
+>> +	int free_hpage_b = 0;
+>> +	int free_hpage_a = 0;
+>> +
+>> +	writesize = end_off - start_off;
+>> +
+>> +	/* Get the default huge page size */
+>> +	h_pagesize = default_huge_page_size();
+>> +	if (!h_pagesize)
+>> +		ksft_exit_fail_msg("Unable to determine huge page size\n");
+>> +
+>> +	/* Open the file to DIO */
+>> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
+>> +	if (fd < 0)
+>> +		ksft_exit_fail_msg("Error opening file");
+> Use ksft_exit_fail_perror to print the info about the error
+>> +
+>> +	/* Get the free huge pages before allocation */
+>> +	free_hpage_b = get_free_hugepages();
+>> +	if (free_hpage_b == 0) {
+>> +		close(fd);
+>> +		ksft_exit_skip("No free hugepage, exiting!\n");
+>> +	}
+>> +
+>> +	/* Allocate a hugetlb page */
+>> +	orig_buffer = mmap(NULL, h_pagesize, PROT_READ | PROT_WRITE, MAP_PRIVATE
+>> +			| MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+> Better align the arguments. Put all flags in one line instead of slitting
+> like this
+>
+>> +	if (orig_buffer == MAP_FAILED) {
+>> +		close(fd);
+>> +		ksft_exit_fail_msg("Error mapping memory");
+> nit: "\n" is missing from here.
+>
+>> +	}
+>> +	buffer = orig_buffer;
+>> +	buffer += start_off;
+>> +
+>> +	memset(buffer, 'A', writesize);
+>> +
+>> +	/* Write the buffer to the file */
+>> +	if (write(fd, buffer, writesize) != (writesize)) {
+>> +		munmap(orig_buffer, h_pagesize);
+>> +		close(fd);
+>> +		ksft_exit_fail_msg("Error writing to file");
+>> +	}
+>> +
+>> +	/* unmap the huge page */
+>> +	munmap(orig_buffer, h_pagesize);
+>> +	close(fd);
+>> +
+>> +	/* Get the free huge pages after unmap*/
+>> +	free_hpage_a = get_free_hugepages();
+>> +
+>> +	/*
+>> +	 * If the no. of free hugepages before allocation and after unmap does
+>> +	 * not match - that means there could still be a page which is pinned.
+>> +	 */
+>> +	if (free_hpage_a != free_hpage_b) {
+>> +		printf("No. Free pages before allocation : %d\n", free_hpage_b);
+> Use ksft_print_msg instead
+>
+>> +		printf("No. Free pages after munmap : %d\n", free_hpage_a);
+>> +		ksft_test_result_fail(": Huge pages not freed!\n");
+>> +	} else {
+>> +		printf("No. Free pages before allocation : %d\n", free_hpage_b);
+>> +		printf("No. Free pages after munmap : %d\n", free_hpage_a);
+>> +		ksft_test_result_pass(": Huge pages freed successfully !\n");
+>> +	}
+>> +}
+>> +
+>> +int main(void)
+>> +{
+>> +	size_t pagesize = 0;
+>> +
+>> +	ksft_print_header();
+>> +	ksft_set_plan(4);
+>> +
+>> +	/* Get base page size */
+>> +	pagesize  = psize();
+>> +
+>> +	/* start and end is aligned to pagesize */
+>> +	run_dio_using_hugetlb(0, (pagesize * 3));
+>> +
+>> +	/* start is aligned but end is not aligned */
+>> +	run_dio_using_hugetlb(0, (pagesize * 3) - (pagesize / 2));
+>> +
+>> +	/* start is unaligned and end is aligned */
+>> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3));
+>> +
+>> +	/* both start and end are unaligned */
+>> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3) + (pagesize / 2));
+>> +
+>> +	ksft_finished();
+> ksft_finished() never returns. Remove the following line.
 
-If anything, fd = fdget(N) is "clone or borrow the file reference from the
-Nth slot of your descriptor table into fd.file and record whether it had
-been cloned or borrowed into fd.flags".
+Thank you for all your suggestions.  I will make all the changes and send V2.
 
-The rules for what can't be done in the scope of fd are there to guarantee
-that the reference _can_ be borrowed in the common case when descriptor table
-is not shared.
+Thanks
+Donet
 
-The tricks with calling conventions of __fdget() (it returns both the
-reference and flags in single unsigned long, with flags in the lowest
-bits) are implementation details; those should stay hidden from anyone
-who uses struct fd.
-
-Incidentally, there's no "light refcount" - "light references" are simply
-the ones that had been borrowed from the descriptor table rather than
-having them cloned.
-
-One more thing: we never get fd.file == NULL && fd.flags != 0 - that
-combination is never generated (NULL couldn't have been cloned).
-As the result, if fd.file is NULL, fdput(fd) is a no-op.  Most of the
-places where we use struct fd are making use of that -
-	fd = fdget(n);
-	if (fd.file) {
-		do something
-		fdput(fd);
-	}
-is equivalent to
-	fd = fdget(n);
-	if (fd.file)
-		do something
-	fdput(fd);
-and the former is more common way to spell it.  In particular,
-	fd = fdget(n);
-	if (!fd.file)
-		return -EBADF;
-	error = do_something(fd.file);
-	fdput(fd);
-is often convenient and very common.  We could go for
-	CLASS(fd, fd)(n);
-	if (!fd.file)
-		return -EBADF;
-	return do_something(fd.file);
-and let the compiler add fdput(fd) whenever it goes out of scope,
-but that gets clumsy - we'd end up with a plenty of declarations
-in the middle of blocks that way, and for C that looks wrong.
-
-There are very few places where struct fd does not come from
-fdget()/fdget_raw()/fdget_pos().  One variety is "initialize
-it to NULL,0, then possibly replace with fdget() result;
-unconditional fdput() will be safe either way" (a couple of places).
-Another is overlayfs ovl_real_fdget() and ovl_real_fdget_meta().
-Those two are arguably too clever for their readers' good.
-It's still "borrow or clone, and remember which one had it been",
-but that's mixed with returning errors:
-	err = ovl_read_fdget(file, &fd);
-may construct and store a junk value in fd if err is non-zero.
-Not a bug, but only because all callers remember to ignore that
-value in such case.
-Another inconvenient bit is this:
-static int vmsplice_type(struct fd f, int *type)
-{
-        if (!f.file)
-                return -EBADF;
-        if (f.file->f_mode & FMODE_WRITE) {
-                *type = ITER_SOURCE;
-        } else if (f.file->f_mode & FMODE_READ) {
-                *type = ITER_DEST;
-        } else {
-                fdput(f);
-                return -EBADF;
-        }
-        return 0;
-}
-It's a move if an error had been returned and borrow otherwise.
-There's a couple of other examples of the same sort.
-It might be better to lift fdput() into the callers (or, in this
-case, just fold the entire sucker into its sole caller).
-
-Finally, there's a non-obvious thing in net/socket.c -
-sockfd_lookup_light()..fput_light().  What happens is that
-if sock_from_file(f) is non-NULL, we are guaranteed that
-sock_from_file(f)->file == f (and that reference does not
-contribute to refcount of f).  So we do the same clone-or-borrow
-thing, but we only keep the socket for the rest of operation;
-when it comes to undoing the clone-or-borrow, we do that manually
-and use sock->file to reconstruct the file pointer.
-It's still an equivalent of fdget()/fdput() pair, but it slightly
-reduces a register pressure in some very hot paths; hell knows
-if it's warranted these days.  Avoiding an unconditional clone
-in there is a really important part, but not keeping the struct
-file reference in a local variable through the syscall...
-probably not so much.  It is very localized - nothing of that
-sort is done outside of net/socket.c (we probably ought to
-move fput_light() over there - no other users).
-
-That's about it as far as struct fd is concerned...
+>> +	return 0;
+>> +}
+>> +
 
