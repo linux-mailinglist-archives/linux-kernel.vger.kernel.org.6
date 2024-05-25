@@ -1,203 +1,148 @@
-Return-Path: <linux-kernel+bounces-189270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F45E8CEDC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEF48CEDCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A71D1C20A7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059521C20DFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1112A522E;
-	Sat, 25 May 2024 03:50:24 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E18BF9;
+	Sat, 25 May 2024 04:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="B1R3j0Pt"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E664F2904
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 03:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B343C28
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 04:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716609023; cv=none; b=Eq1u/1V2zPSkhAFDJy22ioJ/DbJW53a84dvrdigMCH963Htw49GAfhOUAma8dYg4Hzp5Rbk8MJ4yzafzYsC7DPvPYkSO8HjlDKSrMBvfPYZsA0/0mzFs2SAqa8bm0wkesnR9Ib/HogqBZT9BRX//GO+sWPXwIFyyTq8puKwJviU=
+	t=1716610303; cv=none; b=Ri9ff+NXyRu47PxgxRiP6F1kTwQLCnjvqToEnCqpFIoWS5YSHZX76UtJTSExB1OkyyjAo/sYNRNV1CqIeCMOFyX5A9LPeGQVtiQM/7xAhl7yZ5LbWYvFSIfbp+Qj4B+tyxAHxHSNHV9R9oFpExbzithPSqLM9tD4OXsNKyvVhhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716609023; c=relaxed/simple;
-	bh=04e0iFaLdmXGkZM8lqn+cCR6xiFvZ0L31j1DmpefSIo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OwzZUqjbAEtsglyccsbRZes5hdH82jkdzDmXiXlsjwBXpBixzs2iFzQLl359Gw5T6612xhigzixmL8Qr5iGB/NqIAhTJlJ6HNQ56JAEV3MqP91zmBsmWcKZ7us1PhbQTvG7r++h8U1AL4A9Jz/kkF4sM35z1XUItCohSufuP490=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36db3bbf931so40057805ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:50:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716609021; x=1717213821;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QKPNbdGh9u9aMJeo1SjEg9KsR8vOcDWPVbRPuND0hu4=;
-        b=udjsgNE1rtzOwDzbhKa3FB3VVjUN6caXX7hSHXXl1t/trZWCDazz721X1AHIjhcbJ3
-         ktzyNKC6CW+KFD7LEUULeMbGi/TRLXweEgw6Km4ndUkGOcKJylxfjDxqYzNdhkTE5F3R
-         tlCMfA0LlQEXRTYcWeXKWPUAm34uwwvmd0eOzISknWHzlBNVb5TQnkbU/eLCh2eQwrP+
-         IVBc++Qy34Rm5nL2S3/MscXb8/EaRpf5YYRxjFX8LKzuSU7/Yx4KUQITJa9Xo5lApgHT
-         1OS8Wdu2JAh3CzeLCJDoiTD+LlMIMN41cS8Jo+Z9AJQKXIAfPXSlS3fZ2iyhZjVTXpwI
-         1jdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI4W0qx9FJMpFi5IZ45bQUR44rWWr+aQIThUeg3xLuSvC7s+ArLH/Y8QYFF9oKNKok1XD4uG4wGrYK6LYoMbPU1dDxYS8AdDAIM/gp
-X-Gm-Message-State: AOJu0YwR0rkTNkcOaw/ReBisK9ZL4n02gbQtEOVBaWZbb8tOeQYFdxoD
-	IaeMwcap5TUipSCa/CPAQDzRg4V5EDtrEIElsZ8ueRyiwb/fZHfRjptNQSjhNubR4eACrnr+UuR
-	B85pJ3HyujIwD1DiVFEaNGpyAY24CC+tmJyNiE9+He3lWLfmi+XFqxuo=
-X-Google-Smtp-Source: AGHT+IF7TcmogvrdNsmxOquvj+MVvTJgA3T0scIpC00VYn64lUjbviyQ8Gk7LvqUQ85n7AWGIU1dX8i9UryPKmu5j7Fbwt5Y87oH
+	s=arc-20240116; t=1716610303; c=relaxed/simple;
+	bh=i/8bPKTHQepSw/PtXN54/xFyaQLHX5/Ic1/k3GfFdm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5k8fkso/SycIdEEgI/FKRL5y2DUou0Zg3fOqojyWINTQd/R4Yh/5RCDX5HhMPE4RsDcCTBHBo/WRp86W4fv3wZqAJ9SzkfbHQrvlqn8fvFa24CHQSrEADkStjqGHcrWJLZO2zq5ptbriYlnx8r4LLv9AS6UGMYUaFAGy5TPDdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=B1R3j0Pt; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-128-134.bstnma.fios.verizon.net [173.48.128.134])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44P4BJ0v016606
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 00:11:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1716610282; bh=3oV+IctIQAXy0pIwXkAp3Hfhz/d4vXvllmxaqFVFWew=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=B1R3j0PtzOdAxET9gbHYXeU9ZKKvZRFgyQ+kKi0uFXe+hYdqh8t9mrTQxHGrwV9Yn
+	 +/ajaGSJ6RHA2njb+Tsj1AEWEQOq9rdiaIKh+fBm80yw5bSyo1GJ9Mn9S8Lu/5aYkD
+	 PUiFOFWSYLvdZagZ13sYsE1YPnjSsdX5m5AE+1pdC5xdzYbXAFOSGAxZwnWbRRiwLI
+	 u3vzEKuVYqClO0WXTBsWMv0iYhk+18WVdFo50ZSB9CmghkWuzJ+LBZxspV5fY/KLvg
+	 K1f5JUK6+aL5FE9fBFbTUQHZQzP+EVqaewUYqrCg850xZqgcXM3OadYBUAO5j0bVV8
+	 bkLi622X0YNXw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 3E21B15C0225; Sat, 25 May 2024 00:11:19 -0400 (EDT)
+Date: Sat, 25 May 2024 00:11:19 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kees Cook <keescook@chromium.org>
+Cc: syzbot <syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Justin Stitt <justinstitt@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in __fortify_report
+Message-ID: <20240525041119.GA981794@mit.edu>
+References: <00000000000019f4c00619192c05@google.com>
+ <20240523130456.GH65648@mit.edu>
+ <202405231540.84B3DBE841@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8d:b0:36d:a793:51a with SMTP id
- e9e14a558f8ab-3737b330202mr2949695ab.3.1716609021228; Fri, 24 May 2024
- 20:50:21 -0700 (PDT)
-Date: Fri, 24 May 2024 20:50:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000edcc7906193f2e93@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_release
-From: syzbot <syzbot+a8074a75b8d73328751e@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202405231540.84B3DBE841@keescook>
 
-Hello,
+On Thu, May 23, 2024 at 03:48:01PM -0700, Kees Cook wrote:
+> It looks like this is another case of a non-terminated string being made
+> terminated by strncpy into a string with 1 extra byte at the end:
+> 
+>         char label[EXT4_LABEL_MAX + 1];
+> 	...
+> -       memset(label, 0, sizeof(label));
+>         lock_buffer(sbi->s_sbh);
+> -       strncpy(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
+> +       strscpy_pad(label, sbi->s_es->s_volume_name);
+>         unlock_buffer(sbi->s_sbh);
+> 
+> This should be using memtostr_pad() as:
+> 
+> 	memtostr_pad(label, sbi->s_es->s_volume_name);
+> 
 
-syzbot found the following issue on:
+Ah... I see what is going on.  The two argument variants of
+memtostr_pad() and strscpy_pad() are confusing and dangerous.  These
+don't exist in the original OpenBSD strscpy() function, because the
+size in the third argument is explicit, while with strscpy_pad(), the
+automagic size is intuited from the first argument (the destination),
+while with memtostr_pad(), the size is automagically intuited from the
+second argument (the source).
 
-HEAD commit:    6e51b4b5bbc0 Merge tag 'mips_6.10' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1499dbe4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d5d254b2919253a
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8074a75b8d73328751e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+This confused me, and I couldn't figure out the bug even when I was
+given the stack trace from syzkaller.  So it's an accident waiting to
+happen, I clearly I was not smart enough not to fall into the trap,
 
-Unfortunately, I don't have any reproducer for this issue yet.
+So perhaps it might be nice if the descriptions of strscpy() is moved
+out of process/deprecated.rst (and BTW, memstrtopad isn't mentioned at
+all), and moved inta separate doumentation which safe string handling
+in C --- so instead of talking about what functions *shouldn't* used,
+such as strncpy(), it talks about how the various functions *should*
+be used instead.  
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6e51b4b5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4a78abf5bef3/vmlinux-6e51b4b5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/283fe971fc00/bzImage-6e51b4b5.xz
+I'll also note that figuring out what was going on from looking at
+include/linu/string.h was confusing, because there is so much #define
+magic to provide the magic multiple argument handling.  Personally, I
+was never a fan of C++'s function overloading where different function
+signatures could result in different implementations being called, and
+doing with C preprocessor magic makes it even worse.  To be fair,
+there is the kernel-doc inline documentation, but my eyes were drawn
+to the C++ implementation, and the kernel-doc documentation is more of
+a reference and not a tutorial style "this is how you should do
+things".
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a8074a75b8d73328751e@syzkaller.appspotmail.com
+Anyway, thanks for sending the patch.  I spent a good 30 minutes
+trying to figure out the bug, and was half-tempted to just revert the
+patch and go back to strncpy(), which at least I could obviously see
+was correct, unlike the strscpy_pad() transmogrification.
 
-loop0: detected capacity change from 0 to 32768
-workqueue: Failed to create a rescuer kthread for wq "bcachefs": -EINTR
-bcachefs (076a1832-646e-4f3c-b13d-b3e266154efd): shutdown complete
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/super.c:567!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 2 PID: 6873 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-09868-g6e51b4b5bbc0 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
-RIP: 0010:bch2_fs_release+0x6b0/0x810 fs/bcachefs/super.c:603
-Code: 89 ee e8 63 7d 7b fd 48 85 ed 75 34 e8 29 82 7b fd 31 ff 4c 89 ee e8 4f 7d 7b fd 4d 85 ed 0f 84 02 fc ff ff e8 11 82 7b fd 90 <0f> 0b e8 09 82 7b fd 48 8b 7c 24 10 e8 7f 63 d9 ff e9 cb fa ff ff
-RSP: 0000:ffffc9000e047410 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffff888061080068 RCX: ffffc90003f21000
-RDX: 0000000000040000 RSI: ffffffff8412febf RDI: 0000000000000007
-RBP: 0000000000000008 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000008
-R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5e8fb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000edabe000 CR3: 00000000120f0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1fa/0x5b0 lib/kobject.c:737
- bch2_fs_alloc+0xe49/0x2550 fs/bcachefs/super.c:954
- bch2_fs_open+0x713/0x10f0 fs/bcachefs/super.c:2102
- bch2_mount+0xd41/0x1090 fs/bcachefs/fs.c:1917
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1779
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf729d579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5e8f400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 00000000f5e8f460 RCX: 0000000020000080
-RDX: 0000000020011a00 RSI: 0000000001200014 RDI: 00000000f5e8f4a0
-RBP: 00000000f5e8f460 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
-RIP: 0010:bch2_fs_release+0x6b0/0x810 fs/bcachefs/super.c:603
-Code: 89 ee e8 63 7d 7b fd 48 85 ed 75 34 e8 29 82 7b fd 31 ff 4c 89 ee e8 4f 7d 7b fd 4d 85 ed 0f 84 02 fc ff ff e8 11 82 7b fd 90 <0f> 0b e8 09 82 7b fd 48 8b 7c 24 10 e8 7f 63 d9 ff e9 cb fa ff ff
-RSP: 0000:ffffc9000e047410 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffff888061080068 RCX: ffffc90003f21000
-RDX: 0000000000040000 RSI: ffffffff8412febf RDI: 0000000000000007
-RBP: 0000000000000008 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000008
-R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5e8fb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000edabe000 CR3: 00000000120f0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+> It looks like __nonstring markings from commit 072ebb3bffe6 ("ext4:
+> add nonstring annotations to ext4.h") were incomplete.
 
+Yes, I'll patch ext4.h to add a __nonstring annotation to
+s_volume_name.  As I recall, the reason why we had added the
+__nonstring markings was to shut up gcc's -Wstringpop-truncation
+warnings, and apparently it was needed for s_volume_name, which is why
+it was never annotated.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Out of curiosity, though, would this have caused some analysis tool to
+trigger a warning when the strscpy_pad() commit was added?  I've
+tried, and it doesn't seem to have triggered any kind of warning with
+either gcc, clang, or sparse.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Anyway, since I'm an old fart, it was pretty obvious to *me* that the
+how strcnpy() was used was obviouly correct, whereas I actually have
+to do more careful thinking and analysis with strscpy() and
+memtostr().  So it would be nice if there were some automated tools
+that warn if those new functions aren't used correctly, because this
+bug shows that these functions are definitely not fool proof --- both
+by the original patch submitter, and the fool who reviewed the patch
+and missed the problem.  :-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+     	     	       		 	     - Ted
 
