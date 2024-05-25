@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-189262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839FA8CEDAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:43:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B51B8CEDB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A655E1C223AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00861F221BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131AB2119;
-	Sat, 25 May 2024 02:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzB1IYI6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DE03C39;
+	Sat, 25 May 2024 02:56:25 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3111877;
-	Sat, 25 May 2024 02:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E892139F
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 02:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716604766; cv=none; b=WZpPdSxPsuqd03r9/OkH8XZq2CEMdxghMkGgIAdoxsj7E22tGp1dWqKGsPzbidsbp1/8mkcijigJGCTuctKwLzERT2WSXnVMUS3M2v8tlm4VvsXOFm3OCvNrdv6mpDrqvGPZQQnNXh67yD9ZNkKFhuy6zMbbj3fXiBWzbnFoN7c=
+	t=1716605784; cv=none; b=NF2/DGaYCqtTuAkZHVsrm9rOLcTcMukneWDZgvXe35L/VKkEFNgjOFdlehzRmwEUUYofMFooeNQxO5ZQVs0djeDeoRU9iEPs1YxbMw6Ao/JdQNZpKlo4jwUhEwgqMwHWV4GJlPeHHxpmqWV8ZJoUirtKHkzAoomsPjHgT/CyoeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716604766; c=relaxed/simple;
-	bh=rkOH6L+W7aZnSSaSuMD+3YpBPBhp6pBQvLG8T6pSwuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJZjGVeenmjopbDPKw/jaS7YlQqiySCr2Y0+DzMHtIUKlFrlIoW3U8nfcy3IorZORzXqkBVRul5XuejWOdfOmrhI0zrNQlrLhitCplbxx5v5dw8e0pgrJlE0GdnWEvTokqF39jQb2XeblNgxqC3FcFKpNs91R53ZB9jnsJe2OSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzB1IYI6; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716604763; x=1748140763;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rkOH6L+W7aZnSSaSuMD+3YpBPBhp6pBQvLG8T6pSwuM=;
-  b=HzB1IYI6dShtXSwpzD2dvU+GAzg8XbWXUN5kfzNO1XvigUH5CxoXyfXA
-   zWJgN0dbsM8bnSyl1SiFBQLdzJNwya/UiZcqYTyDihzXVEfKjVIWnmMMw
-   u5WGmyndDFgxcPCYef7i9fUTCdDHBKUzZ4SdJkUe5q34cRqk8cGRdH0L4
-   RBcWAYhtrsxOBgEMgFvyhMbLqCn9GwAgQCMstol/06B5cFJIYsUJcGKy/
-   rJEi0uMz1NWnxx/OHhFxzq8UQjuNTVsWBXaKB9LBdYm9wD9ArMrMrwU7B
-   oDqcy3CjSgS2FhA7Q94XSxxRLkUGTdZfwWHdaLXRgSyXhsVLoZKg8FyAM
-   Q==;
-X-CSE-ConnectionGUID: zJD90U/ETImhFvJg5pGGcA==
-X-CSE-MsgGUID: g/QO7xpMTfSbXFppT1pJzw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11082"; a="30528694"
-X-IronPort-AV: E=Sophos;i="6.08,187,1712646000"; 
-   d="scan'208";a="30528694"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 19:39:22 -0700
-X-CSE-ConnectionGUID: NZrcuIz0SDGNS4WCv5LMJQ==
-X-CSE-MsgGUID: PRuO5gB3SiCkY3R4WW3hnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,187,1712646000"; 
-   d="scan'208";a="39181932"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 24 May 2024 19:39:20 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sAhJV-0006Nn-1W;
-	Sat, 25 May 2024 02:39:17 +0000
-Date: Sat, 25 May 2024 10:39:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org,
-	tony.luck@intel.com, bp@alien8.de
-Cc: oe-kbuild-all@lists.linux.dev, nao.horiguchi@gmail.com,
-	linmiaohe@huawei.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
-Subject: Re: [PATCH 10/13] mm/memory-failure: move some function declarations
- into internal.h
-Message-ID: <202405251049.hxjwX7zO-lkp@intel.com>
-References: <20240524091310.1430048-11-linmiaohe@huawei.com>
+	s=arc-20240116; t=1716605784; c=relaxed/simple;
+	bh=Ks3KmzwMbRsannbXAsBY5Mpb/8YYOiPHCfk/qKRpZZ8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QoZNzchh01FU20bFHhbWJfOEv985dt0t+LJgfx4HxOEJ+tIlgX9SiJNWWY7hRF3dOqkunlwib2C7wuBy+9Bj+xc95Dhjzq8nRN1L7FtdRv05MAK68lXNhiqyBwCYRq3+LhbH/ZocJArrDdnYs+/BcARLL1yzs+bfcYpBrVRE+KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3705289d46fso37992165ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:56:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716605783; x=1717210583;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ExZtektDIQPH03325dsSn5zzOZ7zTFNhg8HxEcmp2pY=;
+        b=nmaVwtB/Qz9uEIzBkehkgJhFHX9BcB3SJsdorT9c0MBFpD6Z9BPoMeVKmAR76QER43
+         e/QCP3GEKHt5196HDrJ/ubobYOY1mVrOxXhS1LPcPwADHLkpkYNiBgNACIEsDdpwEdPX
+         m4DWkXrHDwrcBP7T6DrXieNnXBfw54k0zwLZh8w7S6lXzkLL0Qnx6N28o6Gk5G2kgNRH
+         UkrqhQc5urYnTlbL9YB1n+yJJDkqHTgzLrA6IWtK7Bz8SauKKmIz1mXE/6e6Zsv/FGoC
+         E/Xh3i2xwZ59BHVtVkY7vOazpUrJnU8Lilg4Cf9IQsz3YsJaJxBFC5pO1osJy3gxYSCh
+         8lzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDMkWUA/gtebUe3NoFRKBmXIu3dLNR4/iAQWfU6j5jezhKivH7haqHVEUk3PIK0FaZ7bM1DmS0aws9ZXb+Wyg9f50fS865+zXmdK+e
+X-Gm-Message-State: AOJu0YwgBv5UHrUfekSlwpTi3f3wvvt5eTrRUlmUjneWpD5RrZmupW92
+	pyu7VP/0ncd8nPupNp/6VcrtLdziDGlzEq/SvZtjpurvshsHyESnA9s42lW3Im9LVD6p7OnfNnn
+	+Z6vDf8TmbLPKnKnZaPMuH+8nnp6HvCQRY0k+i8BkY1nbCb7Z6oTifIo=
+X-Google-Smtp-Source: AGHT+IHSvRTiPokUE/70fZDTdslc+f038Gctibu7OR86v/OeWMvaJzlipA+ZcFINQ4y9b22ZNVZQjCUPPTqhv8pdYQnNEkbykyQr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524091310.1430048-11-linmiaohe@huawei.com>
+X-Received: by 2002:a92:c743:0:b0:373:874e:93be with SMTP id
+ e9e14a558f8ab-373874e977emr865105ab.3.1716605782818; Fri, 24 May 2024
+ 19:56:22 -0700 (PDT)
+Date: Fri, 24 May 2024 19:56:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e7924806193e6dcc@google.com>
+Subject: [syzbot] [net?] [virt?] upstream boot error: KMSAN: uninit-value in corrupted
+From: syzbot <syzbot+f8f2e9a62c70487ab828@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jasowang@redhat.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Miaohe,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master next-20240523]
-[cannot apply to v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=119aa5cc980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d66c5ffb962c9d5b
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8f2e9a62c70487ab828
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Miaohe-Lin/mm-memory-failure-simplify-put_ref_page/20240524-171903
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240524091310.1430048-11-linmiaohe%40huawei.com
-patch subject: [PATCH 10/13] mm/memory-failure: move some function declarations into internal.h
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240525/202405251049.hxjwX7zO-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240525/202405251049.hxjwX7zO-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0a053ab9d75b/disk-8f6a15f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a1cac58c3541/vmlinux-8f6a15f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/180b83fc69a9/bzImage-8f6a15f0.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405251049.hxjwX7zO-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f8f2e9a62c70487ab828@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
-
-   drivers/vfio/vfio_iommu_spapr_tce.c: In function 'tce_page_is_contained':
->> drivers/vfio/vfio_iommu_spapr_tce.c:195:16: error: implicit declaration of function 'page_shift'; did you mean 'page_size'? [-Werror=implicit-function-declaration]
-     195 |         return page_shift(compound_head(page)) >= it_page_shift;
-         |                ^~~~~~~~~~
-         |                page_size
-   cc1: some warnings being treated as errors
---
-   arch/powerpc/mm/book3s64/iommu_api.c: In function 'mm_iommu_do_alloc':
->> arch/powerpc/mm/book3s64/iommu_api.c:155:45: error: implicit declaration of function 'page_shift'; did you mean 'page_size'? [-Werror=implicit-function-declaration]
-     155 |                                 pageshift = page_shift(compound_head(page));
-         |                                             ^~~~~~~~~~
-         |                                             page_size
-   cc1: some warnings being treated as errors
---
-   drivers/net/ethernet/ibm/ehea/ehea_qmr.c: In function 'ehea_is_hugepage':
->> drivers/net/ethernet/ibm/ehea/ehea_qmr.c:676:13: error: implicit declaration of function 'page_shift'; did you mean 'page_size'? [-Werror=implicit-function-declaration]
-     676 |         if (page_shift(pfn_to_page(pfn)) != EHEA_HUGEPAGESHIFT)
-         |             ^~~~~~~~~~
-         |             page_size
-   cc1: some warnings being treated as errors
+Starting dhcpcd...
+dhcpcd-9.4.1 starting
+dev: loaded udev
+DUID 00:04:19:0b:4d:1d:24:6b:9f:8b:bf:f7:85:18:31:02:d0:f0
+forked to background, child pid 4697
+Starting sshd: [  113.935289][    C0] BUG: KMSAN: uninit-value in receive_mergeable drivers/net/virtio_net.c:1839 [inline]
+Starting sshd: [  113.935289][    C0] BUG: KMSAN: uninit-value in receive_buf+0x25e3/0x5fd0 drivers/net/virtio_net.c:1955
 
 
-vim +195 drivers/vfio/vfio_iommu_spapr_tce.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-2157e7b82f3b81 Alexey Kardashevskiy    2015-06-05  179  
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  180  static bool tce_page_is_contained(struct mm_struct *mm, unsigned long hpa,
-94ad9338109fe9 Matthew Wilcox (Oracle  2019-09-23  181) 		unsigned int it_page_shift)
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  182  {
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  183  	struct page *page;
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  184  	unsigned long size = 0;
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  185  
-94ad9338109fe9 Matthew Wilcox (Oracle  2019-09-23  186) 	if (mm_iommu_is_devmem(mm, hpa, it_page_shift, &size))
-94ad9338109fe9 Matthew Wilcox (Oracle  2019-09-23  187) 		return size == (1UL << it_page_shift);
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  188  
-c10c21efa4bcca Alexey Kardashevskiy    2018-12-19  189  	page = pfn_to_page(hpa >> PAGE_SHIFT);
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  190  	/*
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  191  	 * Check that the TCE table granularity is not bigger than the size of
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  192  	 * a page we just found. Otherwise the hardware can get access to
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  193  	 * a bigger memory chunk that it should.
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  194  	 */
-94ad9338109fe9 Matthew Wilcox (Oracle  2019-09-23 @195) 	return page_shift(compound_head(page)) >= it_page_shift;
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  196  }
-e432bc7e15d802 Alexey Kardashevskiy    2015-06-05  197  
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
