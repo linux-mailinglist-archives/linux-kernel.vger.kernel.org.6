@@ -1,198 +1,148 @@
-Return-Path: <linux-kernel+bounces-189517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140418CF11D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:37:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2148CF124
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 21:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D571C20D0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E253E1C209CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8317D127E2B;
-	Sat, 25 May 2024 19:37:23 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 0C2C98664A
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 19:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FD6127B6A;
+	Sat, 25 May 2024 19:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alcVc9AR"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4F29CE5
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 19:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716665843; cv=none; b=TYOcn1vixsVqIKQGcewzLlRNPls06RAwd2s0Nzmev0/ZmNpmbzogeMSlZ7tek14pz2LbO0sq+18xWUtmPiRiWMo2EkDO35sX7z/PmRPdEy7n/K5nZhHCx2rvueWp0NUPrQBJEWF7xq3d6+pGqN7MXoW+ryH1/ifJu9V7/+LCT78=
+	t=1716666804; cv=none; b=P/QYtb4ZqAh0NihLW+DmyY5EYn05blN70hgsS0eD4/0dvWy5+V//ZvSIEShs/iTrcrDcJyrgqzhBw3hO/kIipoDrJkZeKYHHF6zfmsWNs88vWCzW6Lhk2t7NMraaKpuog5aIzaVPr1HcWzgeKw+hBPSOIDOCvlvVICAbTX1AQl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716665843; c=relaxed/simple;
-	bh=RiQOK8BJS10Xc4xLKZaufd84Et5CSNC4fnnN9TgwzZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HM/DbGGNnGoiSlo2+tNH8NfRhqVp3U98cyHWDZyNU9F8CHtBpfHTd//4dd1ESHbQVnOeKZ2u2oXCpprTElTqSdOVmIvkFAESXGalob1CIx0kXwV0gB0QNXHPQSGCs5n9wQtNkz7IfxQiEV25puEaZKtmtaSIZUkOXU+iB/OiStI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 613412 invoked by uid 1000); 25 May 2024 15:37:19 -0400
-Date: Sat, 25 May 2024 15:37:19 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-  npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-  luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-  dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
-  jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <cf81a3c2-9754-4130-a67e-67d475678829@rowland.harvard.edu>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <ZlC0IkzpQdeGj+a3@andrea>
+	s=arc-20240116; t=1716666804; c=relaxed/simple;
+	bh=M/3s1GxCdbe10Q+Ris65wPXVXEe1DMs6c1mNw58Yb4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HHrau3BQ7ROAroaEEeHFIjBaf+PRmesRSpb8sdlfz3tSwqRkPzBkEkVet/WPWu283thuyXRJrIjlrE8B3Y6TyUcSYuWDm/8GfsAECCqRkNN35W0HU5VyJ16vZ6hFwvQEP6j1BzyGDNF4fIAMFUCcnTO63wc+F2Tm1/D7FR3yPSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alcVc9AR; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35834c76cffso7641f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 12:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716666801; x=1717271601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oPqPzXoshwO3X5GrkiASssYjgVLQm4/xRukqmuyA2Sg=;
+        b=alcVc9ARYRLN/dZHezGHKFAF8ck/PwMxlKXMbOo6lmaiZ6tbgfk4qlVWVKRqiAdtE+
+         ECxpCtydqQabaCZs8M32birfK/76Yn3b0o/2WSZRc4QhpFzXrCmk6GMoRda9FQUKebRg
+         6lreLOQZEI+nswt9ttNOuP3IIuLr9AqZpcuaASX8vzwOq7RINaA+02AoHN56a3WA8bwv
+         Ey/UD1fVBKpFDWOO91SRbWNyC/vM45/Jf3opEV65RU4K/+2YsnCpYKpoSK8/Fgo4pKZI
+         E7zbSLrhHEesenvd713ZEJxJa47bAt1UWhkdvfSwA9mSPlMQ1QQ8KcQYZAprI/3S+txd
+         TkOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716666801; x=1717271601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oPqPzXoshwO3X5GrkiASssYjgVLQm4/xRukqmuyA2Sg=;
+        b=qLZoh/2pj98PXCgFSy2INadLD1wmmIhw2YAST5OzRFqcFekOKHmVGaREHdeNwEiq44
+         OQmeWkfXsHL5fOYRvbhwpXaQAbm8fDeBRHSuIEnL0x2WmsUfF9xmHaTRuSDarcT5IC22
+         LihW0Bv47GjEbYPn5Hi2keYuhVC3XcShsGtH45UMnDTIf5MeMsjlwogTVn7Dsogz3I6k
+         /8ys8INz3atBUS9oocbc5C01fI2J/EWeCW3fTQlhy3Ly/da6pFwlB6OdRWRJwGesgi0V
+         n44k5gHuHFNe63bCFbfU0P+LU0pMbGzxAOkKJskjSq2QFkBoz6b0PbHmTSqfJXidY0wi
+         OkLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHGIjAl3d2bP9XOdjS1sYhXTev22DEIYTXHHwH37mR5Pw+8HPJdOp/Ole1lWk4AZIeslLaYX0ORtvJiypJZjlrI3J0/RayRaGDJRi7
+X-Gm-Message-State: AOJu0YxWzQ10Yc8ZN9+31JO2Iwl1F1EpiR1+S+odwA8MutBpJZC+MUju
+	kWXRUz0FgUZsl5w75Cp4KvRJm8jcZqVCYx27g0qk1a1IjxEFAn1z
+X-Google-Smtp-Source: AGHT+IFe6BKMaPWpLr6rOrgLIvvYyuPJtLKEx/wU3Add+KxVCLzTLbbpch0b4hOOGRd2/PyWAZJeBw==
+X-Received: by 2002:a05:600c:3b88:b0:418:ef65:4b11 with SMTP id 5b1f17b1804b1-421099b03e5mr40154515e9.2.1716666801145;
+        Sat, 25 May 2024 12:53:21 -0700 (PDT)
+Received: from [192.168.44.127] ([185.238.218.61])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee7e1fsm90288625e9.6.2024.05.25.12.53.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 May 2024 12:53:20 -0700 (PDT)
+Message-ID: <5f591c67-235c-4afa-bf87-8fd01dc0e5af@gmail.com>
+Date: Sat, 25 May 2024 21:53:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlC0IkzpQdeGj+a3@andrea>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] staging: rtl8192e: Fix spelling mistakes in
+ rtllib_softmac.c
+To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org,
+ tdavies@darkphysics.net, garyrookard@fastmail.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240524041235.61184-1-topofeverest8848@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240524041235.61184-1-topofeverest8848@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 05:37:06PM +0200, Andrea Parri wrote:
-> > - While checking the information below using herd7, I've observed some
-> >   "strange" behavior with spin_is_locked() (perhaps, unsurprisingly...);
-> >   IAC, that's also excluded from this table/submission.
+On 24.05.24 06:12, Roshan Khatri wrote:
+> This patch corrects some misspellings to increase code readability and
+> searching.
 > 
-> For completeness, the behavior in question:
+> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+> ---
+> v3:
+>   - Added the missing patch history on v2 patch
+> v2:
+>   - Updated the patch description as suggested by Phillips
+>   - https://lore.kernel.org/all/1aefa708-b1fe-4246-bb67-36f25919c766@gmail.com/
+> v1: https://lore.kernel.org/all/20240523035952.59724-1-topofeverest8848@gmail.com/
 > 
-> $ cat T.litmus 
-> C T
+>   drivers/staging/rtl8192e/rtllib_softmac.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> {}
-> 
-> P0(spinlock_t *x)
-> {
-> 	int r0;
-> 
-> 	spin_lock(x);
-> 	spin_unlock(x);
-> 	r0 = spin_is_locked(x);
-> }
-> 
-> $ herd7 -conf linux-kernel.cfg T.litmus
-> Test T Required
-> States 0
-> Ok
-> Witnesses
-> Positive: 0 Negative: 0
-> Condition forall (true)
-> Observation T Never 0 0
-> Time T 0.00
-> Hash=6fa204e139ddddf2cb6fa963bad117c0
-> 
-> Haven't been using spin_is_locked for a while...  perhaps I'm doing
-> something wrong?  (IAC, will have a closer look next week...)
+> diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
+> index 97fdca828da7..0fc97c868f81 100644
+> --- a/drivers/staging/rtl8192e/rtllib_softmac.c
+> +++ b/drivers/staging/rtl8192e/rtllib_softmac.c
+> @@ -421,7 +421,7 @@ static void rtllib_softmac_scan_syncro(struct rtllib_device *ieee)
+>   		 *    So we switch to MAC80211_LINKED_SCANNING to remember
+>   		 *    that we are still logically linked (not interested in
+>   		 *    new network events, despite for updating the net list,
+> -		 *    but we are temporarly 'unlinked' as the driver shall
+> +		 *    but we are temporarily 'unlinked' as the driver shall
+>   		 *    not filter RX frames and the channel is changing.
+>   		 * So the only situation in which are interested is to check
+>   		 * if the state become LINKED because of the #1 situation
+> @@ -934,7 +934,7 @@ static void rtllib_associate_abort(struct rtllib_device *ieee)
+>   
+>   	ieee->associate_seq++;
+>   
+> -	/* don't scan, and avoid to have the RX path possibily
+> +	/* don't scan, and avoid to have the RX path possibly
+>   	 * try again to associate. Even do not react to AUTH or
+>   	 * ASSOC response. Just wait for the retry wq to be scheduled.
+>   	 * Here we will check if there are good nets to associate
+> @@ -1359,7 +1359,7 @@ static short rtllib_sta_ps_sleep(struct rtllib_device *ieee, u64 *time)
+>   		return 0;
+>   	timeout = ieee->current_network.beacon_interval;
+>   	ieee->current_network.dtim_data = RTLLIB_DTIM_INVALID;
+> -	/* there's no need to nofity AP that I find you buffered
+> +	/* there's no need to notify AP that I find you buffered
+>   	 * with broadcast packet
+>   	 */
+>   	if (dtim & (RTLLIB_DTIM_UCAST & ieee->ps))
+> @@ -1806,7 +1806,7 @@ void rtllib_softmac_xmit(struct rtllib_txb *txb, struct rtllib_device *ieee)
+>   
+>   	spin_lock_irqsave(&ieee->lock, flags);
+>   
+> -	/* called with 2nd parm 0, no tx mgmt lock required */
+> +	/* called with 2nd param 0, no tx mgmt lock required */
+>   	rtllib_sta_wakeup(ieee, 0);
+>   
+>   	/* update the tx status */
 
-It turns out the problem lies in the way lock.cat tries to calculate the 
-rf relation for RU events (a spin_is_locked() that returns False).  The 
-method it uses amounts to requiring that such events must read from the 
-lock's initial value or an LU event (a spin_unlock()) in a different 
-thread.  This clearly is wrong, and glaringly so in this litmus test 
-since there are no other threads!
-
-A patch to fix the problem and reorganize the code a bit for greater 
-readability is below.  I'd appreciate it if people could try it out on 
-various locking litmus tests in our archives.
-
-Alan
-
-
----
- tools/memory-model/lock.cat |   61 +++++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 25 deletions(-)
-
-Index: usb-devel/tools/memory-model/lock.cat
-===================================================================
---- usb-devel.orig/tools/memory-model/lock.cat
-+++ usb-devel/tools/memory-model/lock.cat
-@@ -54,6 +54,12 @@ flag ~empty LKR \ domain(lk-rmw) as unpa
-  *)
- empty ([LKW] ; po-loc ; [LKR]) \ (po-loc ; [UL] ; po-loc) as lock-nest
- 
-+(*
-+ * In the same way, spin_is_locked() inside a critical section must always
-+ * return True (no RU events can be in a critical section for the same lock).
-+ *)
-+empty ([LKW] ; po-loc ; [RU]) \ (po-loc ; [UL] ; po-loc) as nested-is-locked
-+
- (* The final value of a spinlock should not be tested *)
- flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
- 
-@@ -79,42 +85,47 @@ empty ([UNMATCHED-LKW] ; loc ; [UNMATCHE
- (* rfi for LF events: link each LKW to the LF events in its critical section *)
- let rfi-lf = ([LKW] ; po-loc ; [LF]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
- 
--(* rfe for LF events *)
-+(* Utility macro to convert a single pair to a single-edge relation *)
-+let pair-to-relation p = p ++ 0
-+
-+(*
-+ * Given an LF event r outside a critical section, r cannot read
-+ * internally but it may read from an LKW event in another thread.
-+ * Compute the relation containing these possible edges.
-+ *)
-+let possible-rfe-noncrit-lf r = (LKW * {r}) & loc & ext
-+
-+(* Compute set of sets of possible rfe edges for LF events *)
- let all-possible-rfe-lf =
--	(*
--	 * Given an LF event r, compute the possible rfe edges for that event
--	 * (all those starting from LKW events in other threads),
--	 * and then convert that relation to a set of single-edge relations.
--	 *)
--	let possible-rfe-lf r =
--		let pair-to-relation p = p ++ 0
--		in map pair-to-relation ((LKW * {r}) & loc & ext)
-+	(* Convert the possible-rfe relation for r to a set of single edges *)
-+	let set-of-singleton-rfe-lf r =
-+		map pair-to-relation (possible-rfe-noncrit-lf r)
- 	(* Do this for each LF event r that isn't in rfi-lf *)
--	in map possible-rfe-lf (LF \ range(rfi-lf))
-+	in map set-of-singleton-rfe-lf (LF \ range(rfi-lf))
- 
- (* Generate all rf relations for LF events *)
- with rfe-lf from cross(all-possible-rfe-lf)
- let rf-lf = rfe-lf | rfi-lf
- 
- (*
-- * RU, i.e., spin_is_locked() returning False, is slightly different.
-- * We rely on the memory model to rule out cases where spin_is_locked()
-- * within one of the lock's critical sections returns False.
-+ * Given an RU event r, r may read internally from the last po-previous UL,
-+ * or it may read from a UL event in another thread or the initial write.
-+ * Compute the relation containing these possible edges.
-  *)
--
--(* rfi for RU events: an RU may read from the last po-previous UL *)
--let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
--
--(* rfe for RU events: an RU may read from an external UL or the initial write *)
--let all-possible-rfe-ru =
--	let possible-rfe-ru r =
--		let pair-to-relation p = p ++ 0
--		in map pair-to-relation (((UL | IW) * {r}) & loc & ext)
--	in map possible-rfe-ru RU
-+let possible-rf-ru r = (((UL * {r}) & po-loc) \
-+			([UL] ; po-loc ; [UL] ; po-loc)) |
-+		(((UL | IW) * {r}) & loc & ext)
-+
-+(* Compute set of sets of possible rf edges for RU events *)
-+let all-possible-rf-ru =
-+	(* Convert the possible-rf relation for r to a set of single edges *)
-+	let set-of-singleton-rf-ru r =
-+		map pair-to-relation (possible-rf-ru r)
-+	(* Do this for each RU event r *)
-+	in map set-of-singleton-rf-ru RU
- 
- (* Generate all rf relations for RU events *)
--with rfe-ru from cross(all-possible-rfe-ru)
--let rf-ru = rfe-ru | rfi-ru
-+with rf-ru from cross(all-possible-rf-ru)
- 
- (* Final rf relation *)
- let rf = rf | rf-lf | rf-ru
-
+Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
