@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-189235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF238CED73
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:52:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771A18CED75
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A7E1F223BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F971F213CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 01:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C97139F;
-	Sat, 25 May 2024 01:52:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D77E15C9;
+	Sat, 25 May 2024 01:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOJUjO+7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2837A7E8;
-	Sat, 25 May 2024 01:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA3610F1;
+	Sat, 25 May 2024 01:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716601942; cv=none; b=gM24tBt3Jef6S+g92FHwBpmwJ83rBfTSqi/h6yC7UI3fqDujrEcYg7jwcxdu9HUuqvK1hh/lS+2OvYPXyoGIpmAygchNMB9CLo2MEC7VM4fBx8+I4WFWwnbOZ3XuE56iWJTBKKCOpsC8SxJSZTz2GEVT89YBtmvTFbJLwjRhwWU=
+	t=1716602111; cv=none; b=HLv5LqADOtFJfA8i/hpga6GXbIUrQOJ99DkIzaqHjicyfGx+5G8FBOuhxGVW3AdrW+7uLK//X0viM90imA4k75xMF5Bx4IexlbwBWVe60EzKnDkqwWV8lJ6uizbcAcaFNmzbavDf3fF0sxGxIi5TSTZKTXPdCIkitOUqZAdTBFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716601942; c=relaxed/simple;
-	bh=awSIA+3nw6YEa7ya8Rz4WrVm5yoMZPTaf7PQQisCJ58=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZD1N/IquxCHTqKPrKMdqwmmG2RqQMJkvd7LAfZtMukVn6SE6SozBWYTP2b6KNeJ+14t5vRp2DAR0ec145uLG2eOGApWxJ7yLtumYHOdgF7O8VzWDi75crpWnoR7lngOmj8A2y9qa8qveGUacLGeO8jLgB0sYHQ5q4tf6xuwmY00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VmPvQ0tBkzwPcM;
-	Sat, 25 May 2024 09:48:34 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6AE6180A9F;
-	Sat, 25 May 2024 09:52:15 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 25 May 2024 09:52:15 +0800
-Subject: Re: [PATCH 07/13] mm/memory-failure: remove unneeded
- hwpoison_filter() variant
-To: kernel test robot <lkp@intel.com>
-CC: <oe-kbuild-all@lists.linux.dev>, <nao.horiguchi@gmail.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-edac@vger.kernel.org>, <akpm@linux-foundation.org>,
-	<tony.luck@intel.com>, <bp@alien8.de>
-References: <20240524091310.1430048-8-linmiaohe@huawei.com>
- <202405242336.o1NEOrln-lkp@intel.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <c7e30692-2e53-e212-dfef-f2539528a0f3@huawei.com>
-Date: Sat, 25 May 2024 09:52:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1716602111; c=relaxed/simple;
+	bh=a54UVgoaDej+I+wxWPyBO0VxFtBuKYRSZeAMl3H8y04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BokQ1lq+fea574QUz/YqKjRUwLjrirKuMj/TDMl9i+nQrfLi8Oba39SJkg8FhbQQ+Ozmh4Ybkjr8K82owt3lnzDoXVkkxvmo6UaoLRLOlpa1ZhQ+VF+m7HkXfyW845mucLNOS5hH8MU8X63B6V9wlyP9iIP/S3VZPshXf8fL/7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOJUjO+7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6FFC2BBFC;
+	Sat, 25 May 2024 01:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716602110;
+	bh=a54UVgoaDej+I+wxWPyBO0VxFtBuKYRSZeAMl3H8y04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOJUjO+7lDDTIzsOdM6TYaN6cEgwoP5OY9I4lpvIf/phoZV5aae3SqBjfEaI59x7l
+	 CBV2wMbI46EOUz/Q5IFANwdSpaCjxPSGfZR0oKz5dNoOgOaaAui9JziUvT6Y4stdLR
+	 WKl3bMOzVTNkIpZlz+9gX9XYgkEUwugKuD86bOKumeQ7oae/olE95M811DtH52Lit7
+	 Z6667/BGxvAefbOmDf31Gu1kw+4HqiipvQAbefoNGNz7B3g5gfHJvogqRa+AJeby1Q
+	 LnE5gl2jb7awMavm1t9AfF3J9/0eiLrkPE4M3mhJHu3G1wN68dHd32dtYpAGfckk7F
+	 a8JxEGxTh+OYw==
+Date: Fri, 24 May 2024 22:55:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Leo Yan <leo.yan@linux.dev>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Anne Macedo <retpolanne@posteo.net>,
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+	Ethan Adams <j.ethan.adams@gmail.com>,
+	James Clark <james.clark@arm.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tycho Andersen <tycho@tycho.pizza>,
+	Yang Jihong <yangjihong@bytedance.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+Message-ID: <ZlFE-wbwStOqt8Ra@x1>
+References: <20240521192614.3937942-1-acme@kernel.org>
+ <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202405242336.o1NEOrln-lkp@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
 
-On 2024/5/24 23:59, kernel test robot wrote:
-> Hi Miaohe,
+On Fri, May 24, 2024 at 06:31:52PM -0700, Linus Torvalds wrote:
+> On Tue, 21 May 2024 at 12:26, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> >
+> > perf tools fixes and improvements for v6.10:
 > 
-> kernel test robot noticed the following build errors:
+> This actually broke 'perf' completely for me on arm64.
 > 
-> [auto build test ERROR on akpm-mm/mm-everything]
-> [also build test ERROR on linus/master next-20240523]
-> [cannot apply to v6.9]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> With a 6.9 version of 'perf', I can do this:
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Miaohe-Lin/mm-memory-failure-simplify-put_ref_page/20240524-171903
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20240524091310.1430048-8-linmiaohe%40huawei.com
-> patch subject: [PATCH 07/13] mm/memory-failure: remove unneeded hwpoison_filter() variant
-> config: i386-randconfig-005-20240524 (https://download.01.org/0day-ci/archive/20240524/202405242336.o1NEOrln-lkp@intel.com/config)
-> compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405242336.o1NEOrln-lkp@intel.com/reproduce)
+>     perf record -e cycles:pp make -j199
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405242336.o1NEOrln-lkp@intel.com/
+> and it all works fine.
 > 
-> All errors (new ones prefixed by >>):
+> With the current -git version, when I do the same, I instead get
 > 
->    ld: mm/memory-failure.o: in function `try_memory_failure_hugetlb':
->>> mm/memory-failure.c:2098:(.text+0x28a8): undefined reference to `hwpoison_filter'
->    ld: mm/memory-failure.o: in function `memory_failure':
->    mm/memory-failure.c:2321:(.text+0x2a98): undefined reference to `hwpoison_filter'
->    ld: mm/memory-failure.o: in function `soft_offline_page':
->    mm/memory-failure.c:2841:(.text+0x3217): undefined reference to `hwpoison_filter'
+>   Error:
+>   cycles:pp: PMU Hardware doesn't support
+> sampling/overflow-interrupts. Try 'perf stat'
+> 
+> and after trying desperately to chase down what went wrong on the
+> kernel side, I finally figured out that it wasn't a kernel change at
+> all, it was the tooling that had changed.
+> 
+> I did a 'git bisect', and it says
+> 
+>   617824a7f0f73e4de325cf8add58e55b28c12493 is the first bad commit
+>   commit 617824a7f0f73e4de325cf8add58e55b28c12493
+>   Author: Ian Rogers <irogers@google.com>
+>   Date:   Mon Apr 15 23:15:25 2024 -0700
+> 
+>       perf parse-events: Prefer sysfs/JSON hardware events over legacy
+> 
+> and very clearly this does *NOT* work at all for me.
+> 
+> I didn't notice until now, simply because I had been busy with the
+> merge window, so I hadn't been doing any profiles, but the merge
+> window is calming down and the end is nigh, and I just wasted more
+> time than I care to admit trying to figure out what went wrong in the
+> kernel.
+> 
+> And no, I don't speak JSON, and I have *no* idea what the legacy
+> events are. Plus I'm not very familiar with the arm64 profiling etc
+> anyway, so I'm just a clueless user here.
+> 
+> I *can* confirm that just reverting that commit makes that trivial
+> "perf record" work for me. So the bisect was good, and it reverts
+> cleanly, but I don't know _why_ my arm64 setup hates it so much.
 
-Thanks for building and reporting. I will fix this in next version.
-Thanks.
-.
+That is a good data point, we probably could go with the revert, but I
+think Ian submitted a few patches fixing this issue that came up close
+to LSFMM/BPF and the merge window, so didn't have time to sit on
+linux-next for a while, I'm looking those up now.
+
+ARM64 eyes on this would also be good. Adding Mark Rutland and Leo Yan
+to the CC list, maybe they can help us here with the best course of
+action.
+
+- Arnaldo
 
