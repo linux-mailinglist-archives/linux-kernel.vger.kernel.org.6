@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-189487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A618CF0A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:54:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8858CF0EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F864B21050
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:54:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08725B223F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AEE126F37;
-	Sat, 25 May 2024 17:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A1C128393;
+	Sat, 25 May 2024 18:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkZP4p+C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NOOxKcKh"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486A86ADC;
-	Sat, 25 May 2024 17:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2188F9F8;
+	Sat, 25 May 2024 18:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716659644; cv=none; b=YNNeFeRk5rH+JCHKVROjWztaLjan/bychKGcXt5Rep951AFoP2PeometjladAb6oB/7yw3Wh2htwtDOBkigkk0UXWyJZgTD+zeXJrxy9kMtxKeGqRQw2iZrAW9qKFEYMr31rHY+rmDw8pCwrhnUec7dvd1E9mSPiGwYUN7K8+kU=
+	t=1716660035; cv=none; b=AnneYvQ9BWxaE3v8Ybabzxw0oLOWxlnWBn6oL5zt8BEq112cw62lH6K2C9gKWO50m3iq94N7c/kBuYRAccYA0Ft+/sGS6Pw3Ex/7czjd/B2eq+X3J0WPjo4RzOTEBbtaqPcaPDDa9iYWLi1fh/Ox4gDTtYNl6b/LX55j7cS988Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716659644; c=relaxed/simple;
-	bh=/9E54IUa5vKqZmcSc3DLwHGDSPhA2ETj0P/v7ZZUru0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ljic0iIM50V98u2tLBCMdCdX4qtHhJ1huJcwTKf8q0tpIKfqUmO/zixnKqhqAMzFaqXfis5iN5vBGDn3m5vkXyCrkOuo9Kb3xAzsGiBjYxy3tfNWd7EUyLeYX7WGmszJtbBRCzZqFKPiUCPSXdyMVJDBOVxWdW1R7wYt7XL9VME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkZP4p+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621E2C2BD11;
-	Sat, 25 May 2024 17:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716659644;
-	bh=/9E54IUa5vKqZmcSc3DLwHGDSPhA2ETj0P/v7ZZUru0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=dkZP4p+CKgUo2frJeR4ZNrwFaSroISb/+RALAfMT+9P7Qn3o1Fcho4RomV6G1SZ7S
-	 AJCsj7mJvISR6+qDxDakuqufuUTgKWIVZ7q27lRjh5fp8LJvNGbty4Qj5BYVwO0908
-	 DZpHIKMdtx/b/Pm7F3VQEzKsdnPbvXb8G9YdSf/1MbccBpJgcb5VIoA6ivCGJ96lew
-	 WTI60mWQdDv/f2P0MCTxEP/ffXOf8ZK3ZZ8d8mPa7669LkyPQhIGT2tArUU7wGverI
-	 2VluggiTpVRdSNabE1KehI60K+rr31FGIZ44DvLU4hXj78QpUhfNPF9R+qFv+NdW6F
-	 R4nHQSKxPbMGw==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 10:58:52 -0700
-Subject: [PATCH] dt-bindings: arm-smmu: Fix Qualcomm SC8180X binding
+	s=arc-20240116; t=1716660035; c=relaxed/simple;
+	bh=4p+EeENtrNBhk+BdqQn7xAY7/P5w0W1qsA3OlgQYGGA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hU/efklqHsXUASGyRlH8PjKT8i3gm23/7qA+YxDlf4urFFdq83/cxrHvKRVqWYoqHQkbV5nWRgJHJ6h6nsOuDqkr8olJIRN+ZmXJCIfGv78mNFOUaz2EN7u2VU9Jp03k4KN52iRbsIrdn0wwn8lU+uPfEyub8t7omtiUZ21S5XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NOOxKcKh; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716660028; x=1717264828; i=markus.elfring@web.de;
+	bh=4p+EeENtrNBhk+BdqQn7xAY7/P5w0W1qsA3OlgQYGGA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=NOOxKcKh7hMBGZYJhXb0JttxmWERmptV2LsfYdRIWIGNDbOBDeolIFnUaLxyV6KP
+	 NxVtLZIpyNp3trpwyL4ImjjQ5Md31M7Gu3iS56JNkfFBYUFjYDVlV7EAByfK2WgvO
+	 qgTTKPzswqNvVQTyv2eCx/Q8UMJpTXrC/b6FAJ6WAB8QswcDeHMecTFSuVnDDsdHt
+	 UNQR0gGEgNEo6Q7z2ikxnw4ScKMCm84+3xZEqNh3yuY8LLtZwMJTrf36MEyF9hQkZ
+	 wbFdwdiRrPDLJ7bguCUuo3sBNy6L3uWUY8v0n09vYcqizb6uufqAxtdN9cu/qV9Cl
+	 VSeMDCN6A4JYE/2jLg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgRMB-1siuOJ0G9n-00hjap; Sat, 25
+ May 2024 20:00:28 +0200
+Message-ID: <7721c32f-06ea-4e8c-894b-cdfb4f6270b4@web.de>
+Date: Sat, 25 May 2024 20:00:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-adreno-smmu-binding-fix-v1-1-e3c00aa9b9d4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANsmUmYC/x2NywqEMAwAf0VyNtCHYtlfEQ+1jZqDcWlQBPHft
- +xx5jDzgFJhUvg0DxS6WPmQCrZtIG1RVkLOlcEZ15ne9agp2GBujLmQHKj7fuLMkllWXPhGb/1
- gbAqdjwPUyrdQ1f/DOL3vDy3NWTNxAAAA
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1620;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=uqLaeur6Ki8/NC3RQKXPLAWlmHc2yAqNwMSVoGUCLyU=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUibc0PlVG63qaFlnc+puNVGs19t2Z7OG+HJS8
- FjWRWn9bi2JAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIm3BUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWZJBAAtDfq5SYykwEK4mJdGQCrC4NB/TIa/FtbhGBXcsg
- YKsSK8uGfNsIZoecNB6CeCIhV35y6FzOljAdXNRmXUetjz8kdLUxHKUx6X9BBRiiJcqp8MITh6+
- WdjIva44w+5tKxoGrSn1y5j7vGAjmRf8UXuYUFQpvx0MiVqjpFuXFyUFZWrFBI+CBiawWNOzna1
- EgrkDbGZ7SRUNB8I4wGC010Z8L6xO1+BmlXm/5nCKv+LPxCNCT7NB5PGfpklWZixrywihLu1sB7
- y49ZSgfpTsS87yYvlkojkWbS/SjtS/4wDo+CQa8Qpw9SzOa9M8Y5/6DWGPwe4NNhd4KI6HA9N2N
- GV17QHtwlxEdZse+niZsCPWHcUyaaRQxDZOlNPZOR04VDsmAdo/ee9IpJLC26WMt5US9FxR5oix
- xTxn2R6pAUKL+6PgEwMZlkB7qu+RgvJ53iIIZ8vQY9CTefqe/AdUxcyjPinl3EAICyjI2vPC4oz
- CWlxxxJP+RSn/eKC6X9xYlaAt8t5VCuG7hiWjsMI7TeR8lbHajUXt+FjAAL9+4xXS1p3xT/BJw9
- CmzECvcD/8RiXlgY3mxMkp+6vzwSiPQlRKSSlPrHi9ztU6qVNlcZBTGVD5NgYjFUsJdzyki5S/I
- kbUf+sRdU9TXtYvY2lDRK3sEafmi6UgwjV8iJGKPwCVY=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+User-Agent: Mozilla Thunderbird
+To: Shichao Lai <shichaorai@gmail.com>, usb-storage@lists.one-eyed-alien.net,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+ Xingwei Lee <xrivendell7@gmail.com>, Yue Sun <samsun1006219@gmail.com>
+References: <20240525141020.2520942-1-shichaorai@gmail.com>
+Subject: Re: [PATCH v5] usb-storage: Check whether the media is initialized
+ successfully
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240525141020.2520942-1-shichaorai@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q2jtdCbdvwkFxXuO0488+GAQQIdetaKP637x3VlWViN3e+5OOgB
+ w66bNNcVqgIm0sFx+N0lIc5D6/qZ7Ib0UVrIZ2KA5JQ5RwS6WLVz4ax7m8ynj5f7Gk+hyvo
+ YnN/nn0ESPBQTP9BwZ+lknUROPvztDI2cAyH/iG4FMA8vkNr7LXtVHM4YfsvJaEvyif3etA
+ s0tK6mcv9r4d8HoIHrvHg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lDKllwEVkwk=;V4laeXtw9iFysfIld77f31ySKbk
+ IaJwFmlUVUQFce6bkVWJNwW+pUZhYzir4QyPcjye4LMympoV7sJYWURhOzB2KsiWNtLPlk+fO
+ +MCfDz/LUT73j+EcS+5aasejPDf+OzCIwUIN0yp59vFTYueHZQbovS/zBg4IUxjhEhaVVhhr/
+ QuA1p2hoeVpOJHeH+u+bfFgU6b0urLQ8UBeSt2rwxk82TYosX5ok35YU7icDhIGsr+kr1oujK
+ FLUkhyKsuxNeOFTLw/PITM+6VdqloH5dqRNxYe2CnBrHSmLfWSspIl1YzSiD4+0buTQhskSrx
+ VVG4d+4s+ofBxbk1yN73mxXiEkIGJefOi5OSO6rjg20zKEOGAofw1qIlFzg153cWYBP/usUio
+ ota0pug/hcgCniNrHRuvl+KzAHCVRTCl/6JyGjaDA1sT3YVrGLRk4x2vHzbV8DqxMGy/vbMZg
+ R5z5Eg0G6FIbLfRojMxaFLQ3Mc20xUBN3OX2Xw6xtMpDsx4U1qANviktLG+pbWO8jMIhm9VwO
+ kUwVW3w5CokYVWZhO0WiUUT5rjBqAyC6THCZ5ixGOQK75DF9FeT2OiuYPlRhzgcOMqaG6Z3cu
+ /6tCxckN4OHGocohWpwMZRB+iVCta4fXXVuyYCW7UnL5AJ2Qb7BxDBA8wainRpUh3ORcwyxZg
+ D7U8ZJMNMBEFD+2g9OsfJRiBjAklD89EQbZlvqjMD4Q5Z2bot9+CGm//94PJNKk8wuQ1s9csX
+ 9nx/OcDuwnhiUPDp1sw9QKd331+tIYRV+BCTMbe1b/Cj0aau1LMXQrrQaf/ZRt3fEMpND+jBu
+ EswABUsVrCVte8AzNZ0OLTEf/v+08RCO8/mdhvrax7Bbs=
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+=E2=80=A6
+> - Add an error check for the return value of alauda_init_media().
 
-Update the Qualcomm SC8180X SMMU binding to allow describing the Adreno
-SMMU, with its three clocks.
+Does such information indicate a need for the tag =E2=80=9CFixes=E2=80=9D?
 
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index 5c130cf06a21..7f584ce4bb22 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -86,6 +86,7 @@ properties:
-               - qcom,qcm2290-smmu-500
-               - qcom,sa8775p-smmu-500
-               - qcom,sc7280-smmu-500
-+              - qcom,sc8180x-smmu-500
-               - qcom,sc8280xp-smmu-500
-               - qcom,sm6115-smmu-500
-               - qcom,sm6125-smmu-500
-@@ -415,6 +416,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,sc8180x-smmu-500
-               - qcom,sm6350-smmu-v2
-               - qcom,sm7150-smmu-v2
-               - qcom,sm8150-smmu-500
-@@ -550,7 +552,6 @@ allOf:
-               - nvidia,smmu-500
-               - qcom,qdu1000-smmu-500
-               - qcom,sc7180-smmu-500
--              - qcom,sc8180x-smmu-500
-               - qcom,sdm670-smmu-500
-               - qcom,sdm845-smmu-500
-               - qcom,sdx55-smmu-500
-
----
-base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
-change-id: 20240525-sc8180x-adreno-smmu-binding-fix-313701c843a7
-
-Best regards,
--- 
-Bjorn Andersson <quic_bjorande@quicinc.com>
-
+Regards,
+Markus
 
