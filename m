@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-189320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2E78CEE5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:48:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6278CEE67
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5AE1F218AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:48:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52108B21771
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36FD20DD3;
-	Sat, 25 May 2024 09:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0B2224FB;
+	Sat, 25 May 2024 09:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+RYCCbr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAQbjCXT"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E0F18044;
-	Sat, 25 May 2024 09:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF883208D6;
+	Sat, 25 May 2024 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716630522; cv=none; b=NhfMXEzz1nGoK4Zx+NtI/NPtW9TB9agZE6xBrtyd1P9AZFVhu/OHP8m/e4lp6fIElPRerEurZN0wadZFfvFxOOjDZuKQPnEDoK35xVdd8AODsVGGGf+aOZ8WTA2afhTuaDuP7a+mBUTwUWeGMNNDnizniuXEu+z7FC0Xjh/uwkQ=
+	t=1716631088; cv=none; b=bf2lvNvWnBYZ/RrdVQ/2cEqRCLFB/woI3NPM7SXGWUc92nikI4b2s1+1hDRSG0qsmGYvvF2KIAxHd7YS3JfK57uHcvGm0TL9SFVRyRZ9oCAETb68WyiT/Id6u1kLclBGxB0zqqcbPXL+VVinU9IS6kutERE+DF7vQ5dyLr3MhAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716630522; c=relaxed/simple;
-	bh=hkVq9wt5jhijGu8t++0r5AFS3tlAo9uhrGC7TUJWOi0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LXe6BjrW8oAGdfb2kVH8Ap19w4BLs+soZPnJ77hzvb1QgIwDFsTBw7VXL1YyEroJHjt3bBOUKKBWqSwOuBoNzuQMP9DBLhGtF92IqlEfiQ2yeaPULm+1cEHONiAZeR53bm+t683yqwJwDwaBFbfOBqC4qp6dXDcwV0HhMK/nffA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+RYCCbr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E2AC3277B;
-	Sat, 25 May 2024 09:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716630521;
-	bh=hkVq9wt5jhijGu8t++0r5AFS3tlAo9uhrGC7TUJWOi0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u+RYCCbrnnV50N3hnYaGDr4UFsVlrzLtIktr3MSCkr6fLkTMH5fwT8vr5P7wP7AcC
-	 ZkiIfb0l13d17Ygs5GgDXvd4Ci3SRY5M1gWM4Ga4UqeMuiLHSv1A0lpCPHVSiwJFoh
-	 MAuvvc5ou30DzjLgDun/2E4p1yq9H4FMEG8K3Zj9SDMsDklzGxVxNy3Wc9hVZEzgWI
-	 uPNUMqq46eLcODoav6GvBD3DBHEJmUFci8TAq34LNQEzkdL+uKXj3UQr62H/PkHRce
-	 o7dsSP5K51p/QX/PWKiQo0WLa03VzDm8bdjC5V43fs54XYk4U+FDYavsI3bHdJXJ/C
-	 HNLYDgzeOsSEw==
-Date: Sat, 25 May 2024 18:48:35 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, Alexei
- Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v10 00/36] tracing: fprobe: function_graph:
- Multi-function graph and fprobe on fgraph
-Message-Id: <20240525184835.dffd8a4420c159ece0feb63e@kernel.org>
-In-Reply-To: <20240524184156.2d9704c2@gandalf.local.home>
-References: <171509088006.162236.7227326999861366050.stgit@devnote2>
-	<20240524184156.2d9704c2@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716631088; c=relaxed/simple;
+	bh=uVSIth6ogeOC/8FQzcjH9y0w6jOWh1Y0ZlSRtiXqTw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GhYEKZhJ9ETMkLdVCeNxwpHeAtB5PdhfckoAyeQr6epSnk3Y4tlQLQwbvF9ro2bDq49G55srkdk1VdRcbXsWjhfBUTAjaLAkGmtPlh3PB9P+0hO1ha1sdDWTYw4j6x28fyuNsE+yIL6cnMiStmZVyAWMsA5XwCklkbGZqXgpBzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAQbjCXT; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-529597d77b4so1662731e87.0;
+        Sat, 25 May 2024 02:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716631085; x=1717235885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/oK9VbRLSqksA3s8yPL/Mo5ZKUPSWzfI/BM0U3lWD4=;
+        b=ZAQbjCXTgGZ04jt6okbx5HyEiVAB9pCkZ4nwHr9GIAPFnZrlpomkQ1Lav86dIe/x9+
+         l94lcfywuWixs2yf0ygtOXJlEo7pxI/s7MPHuzJOTs3YOt92OGQxD4QlOTMXswAGpE5I
+         XcGnrqgKwyUUfap1IZ4ByccriR2XOu03+Gc/P8uBt7umI5Ski2AOwox82tbTzd1nzRcV
+         RCddDBEMkrungKtC6qoOlWNq1FsmzvAQpHw1LQRAvxv9ztaI3Clxs9Sn/cEPBuo3v4zy
+         DF8TclpwvnFdi6AjP4kCGSoAz+9zFzb4AP05ddn/ytE+sTbk4CRMa5Ok1IjGsD2YgPoi
+         gyWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716631085; x=1717235885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G/oK9VbRLSqksA3s8yPL/Mo5ZKUPSWzfI/BM0U3lWD4=;
+        b=jHuG9sj4/eiiOIvlpC4IXfCFhUGR6ZYoa0qXPZoAST0sYWvo7lC1zTAxl6sRdzvAyV
+         FIyd7fTstL3kHKui838hsfc2qWbiPn6nsGLEqCfGDhqhQslXaQwnUgEkQZjlJjwxFhSf
+         nGn16XDeRcgZ8SjBtre1gkxzMqqcNQFSCSrUYvsbpPL4ZSyPBLmlVUiiZGVfrtTbwb4h
+         7dIZpAIRWIKvA6fcu7J6lQiBBI0qNgxKWlYKAm583/GvQwsLPmVHxHx2pi7bOV7FeZne
+         3TuiTHlNrRz1WcspYhogWBPn2/X8BMtVhY0H9xPs4WFpNCQPl6lE33R6wm0MoAq2IA2U
+         y+Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUUGcDfl05wd1BLvcVuMDfIVGMnx1Mse1JqLKfvx3spe6OSGtiJ8tMwLrTpXeuYLNFmgTw1VWMgZthojZSNyesiUK4JBQJiGrCKK7Ha
+X-Gm-Message-State: AOJu0YxVAgL65ShlvmmHrc6/0uAGmMqf+Gi9TckLIX+mLOJKhyQUY1mJ
+	Y9/u6H4oTpLPo5eXTIfDscRvEhF8MqxVSvpaqByEaF98KKWzgvJHS3plx5If
+X-Google-Smtp-Source: AGHT+IG2M3nzhep0olkhXEKvEzVhg9J40leNtuAl3S+t1h+TD9xTwQ1I/O+XdGle4xU4PPu8l57w7g==
+X-Received: by 2002:a05:6512:68b:b0:520:7a44:3f30 with SMTP id 2adb3069b0e04-529645e342amr2766068e87.16.1716631084319;
+        Sat, 25 May 2024 02:58:04 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad965sm77025795e9.34.2024.05.25.02.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 02:58:03 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 6.10-rc1
+Date: Sat, 25 May 2024 11:57:37 +0200
+Message-ID: <20240525095738.3046298-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 24 May 2024 18:41:56 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Linus,
 
-> On Tue,  7 May 2024 23:08:00 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > Steven Rostedt (VMware) (15):
-> >       function_graph: Convert ret_stack to a series of longs
-> >       fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
-> >       function_graph: Add an array structure that will allow multiple callbacks
-> >       function_graph: Allow multiple users to attach to function graph
-> >       function_graph: Remove logic around ftrace_graph_entry and return
-> >       ftrace/function_graph: Pass fgraph_ops to function graph callbacks
-> >       ftrace: Allow function_graph tracer to be enabled in instances
-> >       ftrace: Allow ftrace startup flags exist without dynamic ftrace
-> >       function_graph: Have the instances use their own ftrace_ops for filtering
-> >       function_graph: Add "task variables" per task for fgraph_ops
-> >       function_graph: Move set_graph_function tests to shadow stack global var
-> >       function_graph: Move graph depth stored data to shadow stack global var
-> >       function_graph: Move graph notrace bit to shadow stack global var
-> >       function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
-> >       function_graph: Add selftest for passing local variables
-> 
-> Hi Masami,
-> 
-> While reviewing these patches, I realized there's several things I dislike
-> about the patches I wrote. So I took these patches and started cleaning
-> them up a little. Mostly renaming functions and adding comments.
+The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
 
-Thanks for cleaning up the patches!!
+  Linux 6.9 (2024-05-12 14:12:29 -0700)
 
-> 
-> As this is a major change to the function graph tracer, and I feel nervous
-> about building something on top of this, how about I take over these
-> patches and push them out for the next merge window. I'm hoping to get them
-> into linux-next by v6.10-rc2 (I spent the day working on them, and it's
-> mostly minor tweaks).
+are available in the Git repository at:
 
-OK.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.10-rc1
 
-> Then I can push it out to 6.11 and get some good testing against it. Then
-> we can add your stuff on top and get that merged in 6.12.
+for you to fetch changes up to 93a2221c9c1ae32643df67c482dc4c4c591b7514:
 
-Yeah, it is reasonable plan. I also concerns about the stability. Especially,
-this involves fprobe side changes too. If we introduce both at once, it may
-mess up many things.
+  doc: ceph: update userspace command to get CephFS metadata (2024-05-23 10:35:47 +0200)
 
-> 
-> If all goes well, I'm hoping to get a series on just these patches (and
-> your selftest addition) by tonight.
-> 
-> Thoughts?
+----------------------------------------------------------------
+We have a series from Xiubo that adds support for additional access
+checks based on MDS auth caps which were recently made available to
+clients.  This is needed to prevent scenarios where the MDS quietly
+discards updates that a UID-restricted client previously (wrongfully)
+acked to the user.  Other than that, just a documentation fixup.
 
-I agree with you.
+----------------------------------------------------------------
+Artem Ikonnikov (1):
+      doc: ceph: update userspace command to get CephFS metadata
 
-Thank you,
+Xiubo Li (6):
+      ceph: save cap_auths in MDS client when session is opened
+      ceph: add ceph_mds_check_access() helper
+      ceph: check the cephx mds auth access for setattr
+      ceph: check the cephx mds auth access for open
+      ceph: check the cephx mds auth access for async dirop
+      ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
 
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ Documentation/filesystems/ceph.rst |  15 ++-
+ fs/ceph/dir.c                      |  28 ++++
+ fs/ceph/file.c                     |  66 ++++++++-
+ fs/ceph/inode.c                    |  46 +++++--
+ fs/ceph/mds_client.c               | 270 ++++++++++++++++++++++++++++++++++++-
+ fs/ceph/mds_client.h               |  28 +++-
+ 6 files changed, 434 insertions(+), 19 deletions(-)
 
