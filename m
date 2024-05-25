@@ -1,113 +1,88 @@
-Return-Path: <linux-kernel+bounces-189477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED03B8CF08B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:45:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB348CF0A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E292819D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2DD1C20FCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BAE1272A7;
-	Sat, 25 May 2024 17:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D75128803;
+	Sat, 25 May 2024 17:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q79xK9lx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="iWxvDqR+"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6817A58ABC;
-	Sat, 25 May 2024 17:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0662127B53;
+	Sat, 25 May 2024 17:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716659133; cv=none; b=O4ve7REbaJAPnkbgorW7zgImFH2oGDhDbxWg7eWgJg7vpeoZ+a2b9gHaNl6fHfymjsXQPi9mSnq4FVqUoEKDymO006UHNUoboUr6oqdXBaN7R2d0lHKWw/rMkoj6PJY63Z38YcTORZpRjMnb9hSDSa/9SKSEmBcmca0xMwrEKC4=
+	t=1716659573; cv=none; b=bQFgZM336OR0C0l4X8XxQt1mXnaV3oUDByFacX0eY9Tp3IRKGOohGwOepnsPXlVJ8KNfM6GkeAqItqjSPAhTu25CNB8gw85Q9MvCUXdRw67JIGcw9xAOiFoF7xDmhxoIZsUtpra3UXdOCI9A9tOfccOGyW/OgaqXP5CHQ8KrbtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716659133; c=relaxed/simple;
-	bh=7Qxfdxf9w6jrY3F5TbthaloLYesSfD5pScmpoEaqkv8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k5AuUseJEIMEL5kQAW6IEVcu08L52qu8q2ECRsAzqavo6Egv08PfvbfLkz3jyNA7TJPW96xY05LF5mA3qs5xM+BzfDAuvdPdrC/O3Ll7qZy68ML2zmUQd4yPRntTIaaXysuzebTELQe7QPEpM8d4KXm5y5ttTN2KjcWXBsFNhj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q79xK9lx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA8FC2BD11;
-	Sat, 25 May 2024 17:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716659132;
-	bh=7Qxfdxf9w6jrY3F5TbthaloLYesSfD5pScmpoEaqkv8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=q79xK9lx0MHpwP3ziWWoGvlCHkV7zt4jwCybLwTDtK1OzGPF3QyZGzWuMb9KR+LUu
-	 MhoZkrUQ+KTqinwmD16ifKLuvJfZRM6BUNHPWcBmAEk9/1i08egHmvSi3O/Hz2C8pL
-	 K87PjCP+JodgmvdkjjlI/U2opGIPAi+2A3xJk31dmFNd/+FQW9JIDn0goTXNrgmc1u
-	 zjEaWuQQJ8QiJJQyRpy0zDj3+8jVOCHH5eznlzgctr5POfkwHR80COu743D9Gey1S2
-	 3Pct4QAS0xifF/DZSFj5kC+jp2TUPyBeaaB2cZAmvypeZ+KhPRakcCLXRtt5Zr2ke3
-	 AYVykOx0jWdvA==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 10:50:21 -0700
-Subject: [PATCH] arm64: dts: qcom: sc8180x: Add UFS PHY power-domain
+	s=arc-20240116; t=1716659573; c=relaxed/simple;
+	bh=n2gSzLJAVR/Dw4PlUaVFh/cZe8nDCg+VsxMJYZV6wiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pVH0jTrsfXD9OEqtaX2HO+aaLnhbU5VbXCkirB1+6Gx6jzBKY1jwL3dL47GW7ZVM3rnmVvERjuakNtH+cxAv3mcvIzwQ+V7OTZWYjzyHNO7KjmTZ5o2KUzIhgvyWeXn+e+or8byhL85I82DkgG+1p83UNi2pxa4RxFVw8nAM+KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=iWxvDqR+; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=FogEAuJxLZKuSvi+ipJi2aarhPLy54vfOso/MWiUiSk=; b=iWxvDqR+b/AHa8kf
+	egJ75QCJZ0MzNISv7HIROJBY5H5HiMVIZEyPOGE+jahgqVaKxUWI2qM5s7GSDypZXWLlTBBBKvI4j
+	xBtORmaArTGUW+gXMlrIDZRzczpQslxjlNStJWsXQMj6mry0sTHa3MBTCrYptj4wqIQcQ39aYsY8c
+	nQrY4AvINGdBoAHEC1enMbbr0lazXH74qByl4UbYo3EZiCZ6HSr8Ho3u2bjowAfFWh1Q7hWO3VORe
+	7cM3pTHLyZzIZZWypM/xD59flZf6gHibdfNV6MNNBZ7OzT9JV7Garezs5AldShg0PC+hO4hAVYz5I
+	p5QvXDQcHMSqfmagSw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sAvZJ-002Wcl-17;
+	Sat, 25 May 2024 17:52:33 +0000
+From: linux@treblig.org
+To: mchehab@kernel.org,
+	charles-antoine.couret@nexvision.fr,
+	isely@pobox.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/3] media dead struct removal
+Date: Sat, 25 May 2024 18:52:26 +0100
+Message-ID: <20240525175229.100559-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-ufs-phy-add-power-domain-v1-1-019d515b1c26@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANwkUmYC/x3NQQ6DIBBA0auYWTsJYiW0VzEuUIY6iwJhorUx3
- l3S5dv8f4JQYRJ4NScU2lk4xYqubWBZXXwTsq8GrfRDDXpAWWxn1YFbEMzrD533mNOXCvr0cRy
- xfwYzW9srbQzUTC4U+Pgvxum6bsbAmKZyAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=843;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=WLW83VPlEaBT6SIFfg08QjOzxrB3SmhSTMMh2S3NOt0=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUiTd6gA7ZRZCJj4ceVOXNHU6cObrQRLVWEPk+
- kDdrpzgG9aJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIk3RUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcXwchAAs1rn5HUTcOVSqlqag9+2MdPvRfwAUZOG50JReUl
- 9CuwyrZ15Ty5PYtnGwcfcVZPfHbB4igjuEorKZmlgW2yZ7EYSvz2rWfUKlsk/cfthGgId3G2c4G
- HlRqMRWaMtvuEGQIbBFvODdXgQNncrBM13uNq6kWB/EjduzNvwYJQMM+fBepxERIkXGlblfFoPQ
- wt89jA70wq7DDe0skdV86Qp06aKO5e8iQP0we2155jBBNwK96FvCEPmv7wRx+LtXEYGeZcljLye
- wNxW+bDoMwzNvIzM5We+ToHSMJgJUKEz7RTOch+cM+fVMEIWrPWPudiSnV5dsLK2jECGuudMciG
- oKkuzvkLWdOL0oXtetTAosZ81g0tn+1rys+xXIwpxQ8oRAWC+Zql770t0/tyU7+NNUIjAu1zVW0
- 0d0UJltcJz0dKyA0x5qzMC6AMB2tcHre2VmLwbkaMUkNvctXNByxHaH0q+LqIOxHJm4fWzylGYp
- ++A2MMAq9KkggkaXOnY2rhS5gDe5PHRY+T2NIUDPvTYTih/vYSj/4ZTE1hKRUQw8y4B4wyArQAF
- dOadZSlNbK/fhEwkIhD5YJ8XX03x3fiDcKnTvKt2ImDYp14mRAoY9X1dI7+H2JQl1MM5oz7Ot60
- VV4zSKWyHD2J52WdOtD6PR9+KC8FLo1488fupUaMerko=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+Content-Transfer-Encoding: 8bit
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-As defined by the binding, the UFS PHY node should have a power-domain,
-add this.
+Dead struct removal in spi and usb.
 
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+(These are the last of my struct removal in media as
+far as I know).
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 067712310560..4b0a25d84659 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -2244,6 +2244,7 @@ ufs_mem_phy: phy-wrapper@1d87000 {
- 
- 			resets = <&ufs_mem_hc 0>;
- 			reset-names = "ufsphy";
-+			power-domains = <&gcc UFS_PHY_GDSC>;
- 
- 			#phy-cells = <0>;
- 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
----
-base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
-change-id: 20240525-sc8180x-ufs-phy-add-power-domain-39f6b8830266
+Dave
 
-Best regards,
+Dr. David Alan Gilbert (3):
+  media: gs1662: remove unused struct 'gs_reg_fmt_custom'
+  media: opera1: remove unused struct 'rc_map_opera_table'
+  media: pvrusb2: remove unused struct 'debugifc_mask_item'
+
+ drivers/media/spi/gs1662.c                   | 8 --------
+ drivers/media/usb/dvb-usb/opera1.c           | 4 ----
+ drivers/media/usb/pvrusb2/pvrusb2-debugifc.c | 5 -----
+ 3 files changed, 17 deletions(-)
+
 -- 
-Bjorn Andersson <quic_bjorande@quicinc.com>
+2.45.1
 
 
