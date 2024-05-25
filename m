@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-189464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445628CF064
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:17:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095678CF065
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 19:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7347281C41
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBCC1F21783
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F61126F08;
-	Sat, 25 May 2024 17:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB3D126F03;
+	Sat, 25 May 2024 17:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcoDDGJ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="bWwDs9Me"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE93938382;
-	Sat, 25 May 2024 17:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857DD38382
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 17:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716657465; cv=none; b=TL+JjvPajucQWW+94kbyGogPbFmK+7VleyDJCRrM629tXkKopgZx+yZbhWGxncAc2kut1WnpIJtTB0bcREMcZfIRWqYh8R8hf5QkCfmQOG2wejoSE3bM26oLtVSCW4d4nSFAgpvVPY2O+Mhvq3dbsFb/LwB/ZHf1CXfVyEcRMsU=
+	t=1716657559; cv=none; b=c9IjW4ePomcPLfiM9D1i0BbNbyr7gPkuXgOJEqGAMpnHvhiN4R27ilgVyt1EEibr+WJEGnVw5X0rdX8cs9D/LXgn4LDDVu5Q9PJ6/g86OjRZbFlj77dyRPSSQHPGqJfONBJ1053y2YFvTsowWN8Kujv8Osg81hJkbxBNkaINWSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716657465; c=relaxed/simple;
-	bh=B1F5K+I2rON4uX6Ud7Trur0KVSRn4kdoQl2TEA9EphQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oAPCaVXqZ7shUh2w7Rq3YZqrgx08+zur+idoJERLdU4GjDbHOQqOSH5tEJvRFb8pO2r2hQfRNoJTspmR12aiXqFRXKimEKFn8vdvg6dAaWTyKr0SthhGXO1obHP5hXJDRoa7ePnyupRjpUZkC/Q8bTVnG17kHmFw8L1uOGP3Iv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcoDDGJ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB0CC2BD11;
-	Sat, 25 May 2024 17:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716657465;
-	bh=B1F5K+I2rON4uX6Ud7Trur0KVSRn4kdoQl2TEA9EphQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WcoDDGJ1+ZD44CCgyTZIdcDHW97MgBfOOfQc+rQ/g1xMpINaf0MlI3fhlt46f8x3Y
-	 hbB9sN0+ZliA8rbYb9Qitu/XK17ToYeU/KgBu32CAUiv+m1MpmbvXGV+qoypRmG/+1
-	 1hQlbDjKRZmAXB/wCbQnhkeUb7gvnMMfzVDQmiQTeAc9cuoB5xKJEd7NsLPvNNlrSf
-	 iYVF3yS4YMUPs8lFFS1Ggmn+0ZGH3v1eyImlu8zhHuUVt9ama3E9A7uYey5ilds7xj
-	 vBFb2LeU/zna2k2kjp0Ohe01MFK/Sq1/VtCO/v6DI9yeBUJZxCZCCMXjKDrqhrnlO/
-	 Qql57wnTAWMnQ==
-Date: Sat, 25 May 2024 18:17:30 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Michael Hennerich"
- <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Message-ID: <20240525181730.6cccec73@jic23-huawei>
-In-Reply-To: <20240523031909.19427-4-kimseer.paller@analog.com>
-References: <20240523031909.19427-1-kimseer.paller@analog.com>
-	<20240523031909.19427-4-kimseer.paller@analog.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716657559; c=relaxed/simple;
+	bh=mXfaldkmQp9zoxainTSGgMi/YAMt/fNUyWQZOsHCuQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ul3iNPBZ6TW+e1baBofWUeiqCC2OM/A4tBUwyafB8llJiVhGAk6UvcqzprCIFCeRHyc/g5p2rocsng8hs+6A3mQfq20PlawM28ufyKcnJNlGM8bZzuPUgWCxNwabbQOpnYIm1jyzpj0oLeSLBzkmtUjc/Bd7TrdYuWSk8hCoblM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=bWwDs9Me; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id AqVYsINOCjfBAAv36svnIE; Sat, 25 May 2024 17:19:16 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id Av33sSlppBRjWAv34sR9CL; Sat, 25 May 2024 17:19:15 +0000
+X-Authority-Analysis: v=2.4 cv=ffuryVQF c=1 sm=1 tr=0 ts=66521d93
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=TpHVaj0NuXgA:10 a=oz0wMknONp8A:10 a=vU9dKmh3AAAA:8 a=a9P5MKdw97X2SnwXmdQA:9
+ a=kY_tvdopC4hwhjKiM0yX:22 a=rsP06fVo5MYu2ilr0aT5:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=jD/YoOEgXZvli1lq03GtvXqlgEPL32eow8Ak1hlEoaU=; b=bWwDs9MexH9P/9n/UyOFrSyx5u
+	jG6HuRvty6Z0Y6jbdIx7TrvuBUmoy4UpkzqGUf6xyD6cEe/XuULSDah6XSEw9Izj2zZILDxasISLH
+	a+utkFp2uvtguApbHtq0ao2oFiLC7bKh2xUQs4mGTVxiWJ5IQaZpoPjiWCaAJkdWFIX3XisEf9SgH
+	iBd6MZxZmvX3kkO5gKEPnTu0M73akA3My1WI/bEZOWSsk5QwMgVdttiONnfmfvXln3eOd8S2f0aPI
+	sxBXnHlAWtznNnEnlLOavI9lBInd0+0fsygVfZwGwu88zP5wEipV061JQCHY7Y6mCg4gd2sAIlG3Y
+	I+cVJz6w==;
+Received: from [122.165.245.213] (port=56054 helo=localhost.localdomain)
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1sAv2x-001NCX-2L;
+	Sat, 25 May 2024 22:49:07 +0530
+From: Parthiban Nallathambi <parthiban@linumiz.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Parthiban Nallathambi <parthiban@linumiz.com>
+Subject: [PATCH 1/2] arm64: phygate-tauri-l enable pcie phy
+Date: Sat, 25 May 2024 22:48:53 +0530
+Message-Id: <20240525171854.2165241-1-parthiban@linumiz.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1sAv2x-001NCX-2L
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [122.165.245.213]:56054
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 1
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfE5cZI4G9/2GlK2qpf/L2zll/XrfpxO43F2ig5H67W04Rg0oQkXA+Cn+oOCzHZGqicpZM2GBtjJ6rJ5vyBG21kXNqysGsFH3gQ85uUjBGlBlfSSit2/p
+ H/flEon6tZjRfZnRoXoc4qhjj6dzrVMq46kvTTJY7UcRbrxLoW7IDCNk/dVtmbRheDEd9OO5ifmPg49d6FS9P9XuTxkUpFC8XI0=
 
+I210 intel ethernet controller is connected to PCIe. Enable the PHY
+to use the ethernet controller.
 
-A few comments inline.
+Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+---
+ .../boot/dts/freescale/imx8mm-phygate-tauri-l.dts      | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> +  adi,manual-span-operation-config:
-> +    description:
-> +      This property must mimic the MSPAN pin configurations. By tying the MSPAN
-> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can be
-> +      hardware-configured with different mid-scale or zero-scale reset options.
-> +      The hardware configuration is latched during power on reset for proper
-> +      operation.
-> +        0 - MPS2=GND, MPS1=GND, MSP0=GND
-> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC
-> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND
-> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC
-> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND
-> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC
-> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND
-> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (enables SoftSpan feature)
-Could you add to the description to say what results of the entries are
-(like you have done for 7)
-e.g.
-          0 - MSP2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
-at least I think that's what reset to mid scale means.
-
-This seems like a reasonable level of information to convey here.
-
-I was going to suggest making this a 3 value array, but that would
-make ti hard to add such docs, so perhaps what you have here
-is the right approach.
-
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-> +    default: 7
-> +
-> +  io-channels:
-> +    description:
-> +      Analog multiplexer output. VOUT0-VOUT3, MUXIN0-MUXIN3, REFLO, REF, V+, V-,
-> +      and a temperature monitor output can be internally routed to the MUXOUT pin.
-> +
-That's a little confusing.   What you are specifying here is the ADC
-channels that is connected to. This description sort of suggests it's about
-what is routed there.
-
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
+index 27a902569e2a..ba6ce3c7f477 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/leds/common.h>
++#include <dt-bindings/phy/phy-imx8-pcie.h>
+ #include "imx8mm-phycore-som.dtsi"
+ 
+ / {
+@@ -185,6 +186,15 @@ &pcie0 {
+ 	status = "okay";
+ };
+ 
++&pcie_phy {
++	clocks = <&clk IMX8MM_CLK_PCIE1_PHY>;
++	fsl,clkreq-unsupported;
++	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
++	fsl,tx-deemph-gen1 = <0x2d>;
++	fsl,tx-deemph-gen2 = <0xf>;
++	status = "okay";
++};
++
+ &pwm1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pwm1>;
+-- 
+2.34.1
 
 
