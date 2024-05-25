@@ -1,133 +1,197 @@
-Return-Path: <linux-kernel+bounces-189276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D428B8CEDDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:28:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7F78CEDDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 06:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC3C2820BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0281C20D01
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 04:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18C56FB2;
-	Sat, 25 May 2024 04:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57F5CB8;
+	Sat, 25 May 2024 04:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4oYl54JU"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l1u02PQ7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/P4sqCWy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l1u02PQ7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/P4sqCWy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968DFD29B;
-	Sat, 25 May 2024 04:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09A6F9C1
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 04:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716611302; cv=none; b=fDjN6eiuZJkVOwvGsLrVLLlmw0FvaXXggfhst38x+bcSAtk8+i/WWDYz2XEwjRrW3p52ZhVwoHxSi0po8B9K3Z1HdBJvEaAoqkoZIBPnvYJVRoewhH354YmY5en3cMr0xHPx0Ra8mxEkBT9U1mQ71o1LPpvxtT65FsrbY7gmJFg=
+	t=1716611394; cv=none; b=FGseYRFlBS0G5IbVWE/9p8nkWYwH2g4MF8BJpVJrkMhik16+scVyW2cK6nbFllFKIXWOVRcS9Ul8VO0a+DWnVUjr6c005HEQuSm9fC6fOIOrKaOpfOynGqnuhQVvsEfZCgTP2qVPQGAkciCc8FZEWmCsbwaLzCu9z1sQM4pfd+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716611302; c=relaxed/simple;
-	bh=ttlCjFGN1GWY/TRCbxgxdnLzYeRMUvqNwRjJELBMJSw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U8lx9Cz9lbrcnsSz/gOpwS+X1RmtIaRhuxHU7SI1KhZGj6PWzS35AddQwoK/9Q6eBC5yK71PiORw4CKFELAa4DssfzwE6umBMwJx6R3Qc+EqhSpc0gr+eKMWa2PIpFqKBLEHDDM30rp3dsF/bj5mhD72t5+tHaAW9yJb+u+SIOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4oYl54JU; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716611298;
-	bh=ttlCjFGN1GWY/TRCbxgxdnLzYeRMUvqNwRjJELBMJSw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=4oYl54JU9WNgEPcMjvWlTxh2YNyVcBYI0T4zCpnO9XKUTsSh70gOR/xLsl9kjKOpw
-	 zzT0I1JMFIcgjNKX5vE9rpJUxInTLle0XlOEb55KyPiNAOuRKfJ/tRjooQOtjWbpH+
-	 D/IhPYK9ydHAKMqMqScl+GREoW/lUcKj5Izo6tI5caMTDpb/lszzCbFxWoLqRnM6Bd
-	 5B4C9QiJwCgjDfHqcN3TyAAr1RVXODXy+QL6KIcCwaFo5HUiTkiPXl0ds5z2InH9kc
-	 D3URgFnWliYDZ0LcrTm9nFHewzfb9wiOUNw2QzzI0ry6MRPOpNxI1KqoGBVnRcv/r/
-	 xXj8JHyg8dkrw==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1716611394; c=relaxed/simple;
+	bh=bH985PCkjrHThWH40dgoTwSqL8js44GHRYc/HN2XcGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jg1qHeB9PhUNkJw9AMaYH2B6wdNbeki216dQInQVIDCfyOce21R/jBBZGQ85AkCRkkPZgjXenkqIUs7lN8CiQAY5yASNzc0a8/cFYrjCVw2kCyJgSUl23Fs7Bg9ypuqImKc9tNp1WQJSX6KEt2fZ+JJM87l4uCjQOux+ekdmvo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l1u02PQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/P4sqCWy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l1u02PQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/P4sqCWy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4C4E53782085;
-	Sat, 25 May 2024 04:28:17 +0000 (UTC)
-Message-ID: <f03e4933-d835-4080-ac44-f7f17adeca62@collabora.com>
-Date: Fri, 24 May 2024 21:28:02 -0700
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B90FE210B7;
+	Sat, 25 May 2024 04:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716611390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jMHt0Q/JR84IkdUwzp1Rd4JSoh8dVTU4aWoOj2QTcg=;
+	b=l1u02PQ7mUeizPUtziKZMSjLfSDrBiAuCREz31HsHEIKq6Y05wZ/ksZDnm96yJCEyTPp89
+	s+woPlXhybRjXGtzwwPgGx4OyhUH2WiS/97dN6hchsbJ593I1ri2VE0E9y1EHydxnEf6Jq
+	zRIaWjIMf0LqWRyNkCQmi3MLLt8gtr0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716611390;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jMHt0Q/JR84IkdUwzp1Rd4JSoh8dVTU4aWoOj2QTcg=;
+	b=/P4sqCWykN268llQRDZDNDK/3U5kd/JdBzk4bO/RCBrUwi8Yi3n/+zg7ms3JYCFIumrcNw
+	wnHCd3Mdif0hhBDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716611390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jMHt0Q/JR84IkdUwzp1Rd4JSoh8dVTU4aWoOj2QTcg=;
+	b=l1u02PQ7mUeizPUtziKZMSjLfSDrBiAuCREz31HsHEIKq6Y05wZ/ksZDnm96yJCEyTPp89
+	s+woPlXhybRjXGtzwwPgGx4OyhUH2WiS/97dN6hchsbJ593I1ri2VE0E9y1EHydxnEf6Jq
+	zRIaWjIMf0LqWRyNkCQmi3MLLt8gtr0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716611390;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jMHt0Q/JR84IkdUwzp1Rd4JSoh8dVTU4aWoOj2QTcg=;
+	b=/P4sqCWykN268llQRDZDNDK/3U5kd/JdBzk4bO/RCBrUwi8Yi3n/+zg7ms3JYCFIumrcNw
+	wnHCd3Mdif0hhBDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3F5F513A6B;
+	Sat, 25 May 2024 04:29:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vwuLDD5pUWaVPAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Sat, 25 May 2024 04:29:50 +0000
+Date: Sat, 25 May 2024 06:29:48 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 11/20] powerpc/mm: Complement huge_pte_alloc() for
+ all non HUGEPD setups
+Message-ID: <ZlFpPBlLoBZNjd73@localhost.localdomain>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <59a1390923c40b0b83ae062e3041873292186577.1715971869.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/2] selftests/ftrace: Update required config
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-References: <171624961322.252417.15852003285637286674.stgit@devnote2>
- <171624963215.252417.12572658025062192987.stgit@devnote2>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <171624963215.252417.12572658025062192987.stgit@devnote2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59a1390923c40b0b83ae062e3041873292186577.1715971869.git.christophe.leroy@csgroup.eu>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
 
-On 5/20/24 5:00 PM, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Fri, May 17, 2024 at 09:00:05PM +0200, Christophe Leroy wrote:
+> huge_pte_alloc() for non-HUGEPD targets is reserved for 8xx at the
+> moment. In order to convert other targets for non-HUGEPD, complement
+> huge_pte_alloc() to support any standard cont-PxD setup.
 > 
-> Update required config options for running all tests.
-> This also sorts the config entries alphabetically.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-LGTM
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > ---
->  tools/testing/selftests/ftrace/config |   26 +++++++++++++++++++-------
->  1 file changed, 19 insertions(+), 7 deletions(-)
+>  arch/powerpc/mm/hugetlbpage.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-> index e59d985eeff0..048a312abf40 100644
-> --- a/tools/testing/selftests/ftrace/config
-> +++ b/tools/testing/selftests/ftrace/config
-> @@ -1,16 +1,28 @@
-> -CONFIG_KPROBES=y
-> +CONFIG_BPF_SYSCALL=y
-> +CONFIG_DEBUG_INFO_BTF=y
-> +CONFIG_DEBUG_INFO_DWARF4=y
-> +CONFIG_EPROBE_EVENTS=y
-> +CONFIG_FPROBE=y
-> +CONFIG_FPROBE_EVENTS=y
->  CONFIG_FTRACE=y
-> +CONFIG_FTRACE_SYSCALLS=y
-> +CONFIG_FUNCTION_GRAPH_RETVAL=y
->  CONFIG_FUNCTION_PROFILER=y
-> -CONFIG_TRACER_SNAPSHOT=y
-> -CONFIG_STACK_TRACER=y
->  CONFIG_HIST_TRIGGERS=y
-> -CONFIG_SCHED_TRACER=y
-> -CONFIG_PREEMPT_TRACER=y
->  CONFIG_IRQSOFF_TRACER=y
-> -CONFIG_PREEMPTIRQ_DELAY_TEST=m
-> +CONFIG_KALLSYMS_ALL=y
-> +CONFIG_KPROBES=y
-> +CONFIG_KPROBE_EVENTS=y
->  CONFIG_MODULES=y
->  CONFIG_MODULE_UNLOAD=y
-> +CONFIG_PREEMPTIRQ_DELAY_TEST=m
-> +CONFIG_PREEMPT_TRACER=y
-> +CONFIG_PROBE_EVENTS_BTF_ARGS=y
->  CONFIG_SAMPLES=y
->  CONFIG_SAMPLE_FTRACE_DIRECT=m
->  CONFIG_SAMPLE_TRACE_PRINTK=m
-> -CONFIG_KALLSYMS_ALL=y
-> +CONFIG_SCHED_TRACER=y
-> +CONFIG_STACK_TRACER=y
-> +CONFIG_TRACER_SNAPSHOT=y
-> +CONFIG_UPROBES=y
-> +CONFIG_UPROBE_EVENTS=y
-> 
-> 
+> diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+> index 42b12e1ec851..f8aefa1e7363 100644
+> --- a/arch/powerpc/mm/hugetlbpage.c
+> +++ b/arch/powerpc/mm/hugetlbpage.c
+> @@ -195,11 +195,34 @@ pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+>  pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+>  		      unsigned long addr, unsigned long sz)
+>  {
+> -	pmd_t *pmd = pmd_off(mm, addr);
+> +	pgd_t *pgd;
+> +	p4d_t *p4d;
+> +	pud_t *pud;
+> +	pmd_t *pmd;
+> +
+> +	addr &= ~(sz - 1);
+> +	pgd = pgd_offset(mm, addr);
+> +
+> +	p4d = p4d_offset(pgd, addr);
+> +	if (sz >= PGDIR_SIZE)
+> +		return (pte_t *)p4d;
+> +
+> +	pud = pud_alloc(mm, p4d, addr);
+> +	if (!pud)
+> +		return NULL;
+> +	if (sz >= PUD_SIZE)
+> +		return (pte_t *)pud;
+> +
+> +	pmd = pmd_alloc(mm, pud, addr);
+> +	if (!pmd)
+> +		return NULL;
+>  
+>  	if (sz < PMD_SIZE)
+>  		return pte_alloc_huge(mm, pmd, addr, sz);
+>  
+> +	if (!IS_ENABLED(CONFIG_PPC_8xx))
+> +		return (pte_t *)pmd;
+
+So only 8xx has cont-PMD for hugepages?
+
+> +
+>  	if (sz != SZ_8M)
+>  		return NULL;
+
+Since this function is the core for allocation huge pages, I think it would
+benefit from a comment at the top explaining the possible layouts.
+e.g: Who can have cont-{P4d,PUD,PMD} etc.
+A brief explanation of the possible scheme for all powerpc platforms.
+
+That would help people looking into this in a future.
+
+ 
 
 -- 
-BR,
-Muhammad Usama Anjum
+Oscar Salvador
+SUSE Labs
 
