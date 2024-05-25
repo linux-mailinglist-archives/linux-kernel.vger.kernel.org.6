@@ -1,72 +1,54 @@
-Return-Path: <linux-kernel+bounces-189410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BFC8CEF94
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4316F8CEF9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 17:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F38B2817FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 741C41C20A6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32FA5FBB9;
-	Sat, 25 May 2024 14:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C97961674;
+	Sat, 25 May 2024 15:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PzB2Qpdb"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sDDJuVS4"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446865A109
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3382D15A4;
+	Sat, 25 May 2024 15:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716649139; cv=none; b=dfz1llRQRowXnqCZf0YrBfJAx0oNkbadIZUHEx+CBUvjD71DU9Gl5qWjfxjdOOKJvYuJ55+mOfMnfReRaacd6/LKPA9pFXKFRWAGfxQjEVfgFuNuB9gss0lZ7XTKmvWHpT2s2g3w9Tye2lHbaK6aLbO+XDMQG41eI+CjfItNGjo=
+	t=1716649240; cv=none; b=AzNDwChtfbIPzwiUNCiQjSKIgEW3aOjcz4VOlI1Axgtff71+mcguc+zg0O1YlBT7ivVR85DJi6q+Ok0TU52n2KYwubnRSwUYmL4LM1bH+yx7JD4EYb6Ou1vhd5cA9N8kOaqS2RcmEYBdhag/bs7pLHhEp+lq4fJIkhlQ31SiqDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716649139; c=relaxed/simple;
-	bh=ctVivX1+W8q8tZAHLWU5NkBdoFQr7AVs+kpkVYw/Sks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxkqv0WNsHVMX26reQbse7Xt5xkkvJ6H9HkbrsgrPrDDhik9aW2HqgctsRON8cA1f5wC7fB7my0rgBH/HxPvMW3GJRB6p/Fb3KnmNSLxEVwlnBBDspU620SYYAs+2EzvIOI/M3ghWYNNth4XrB9E4tdMbZDhdnv+1UZQL0D7RqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PzB2Qpdb; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f33d84eaefso21356085ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1716649136; x=1717253936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VHPLiXIsNVv4WuCaS7ekbfM/TDyHyeP6QTh2jB8T2ME=;
-        b=PzB2QpdbpXrjVI/2JJ3DKRcOBW57Uv768YQpjJCsWeu7BFbco0Gb324apd7IT2bIhL
-         IfFwbKBvuil0A95nf0VPkms8zTcK9JwCnROqBZtykFRHbNef6qejOw0THrXf4zP38UmJ
-         zzWoUvOY3W+HLqfNGo3CmxbOvZTtvTh2f2nTnyJ4nf51sWcIiiT10n9kFg1yDMCY6fnq
-         FBx3Hx59FF1ol3xTuYg8Z2K1fEszEXCZ6X1E6PJ0QsdI+EuYOzJtRze+mY5ym0jZrE7v
-         b+GX1kS0G5pSOVbgDE54aeTdLu3IghBeCW/0qHl8etP9IbSup5EcHEI9aAuBPs/3DwDu
-         /WsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716649136; x=1717253936;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHPLiXIsNVv4WuCaS7ekbfM/TDyHyeP6QTh2jB8T2ME=;
-        b=w1DrTO2f8a9CyahNunVF5vGtEg9kZmw+24Oc29ANOwsHQxHPqM+VWO4TwzLbFVdjcv
-         afTElpVrk+j94HTMrPVVQDixhiG25Bcecj/tLbHlRolLknYnPJjluLIPXZYvQUzXLKQG
-         Thsmsr72PsG4s6zh5eJnPzw1cmYb1kSZfg5cAObGetru9QZQCUaymQw7CgnNeLJ6vgXs
-         RjPP5XbVdjd3yqTNxZlUzJImS2BSwfMQhlepQZx6Wu3gW4cbQPtQul7IuE/TYuSl5bDD
-         fmSGgTbGhW1lAbAy321iBQSL+xz5+tl5fZyVtSMiYcGUDvVe5On6wpPHXlwhHb1D+9Pj
-         NFqw==
-X-Gm-Message-State: AOJu0Yz/rsQ/tGH0vv+8IYFgoYJgS1EPHUMZ8OcMiVmqI5EXoJWoGyek
-	cvBicpcHVKjMFXuSO+jXJeM1Z2LRUMaD/V3N0vpZaO0aB7/9qcY/OCe7fT5H0rg=
-X-Google-Smtp-Source: AGHT+IE03GMYuk9QPTabQ7daTxznFXxYjLRuev4Y2EV4xRnc0qFc+uwYRzpHC2RHLd7qjKUqZYKgHA==
-X-Received: by 2002:a17:903:32cb:b0:1f3:52fe:4497 with SMTP id d9443c01a7336-1f4487438d7mr86026535ad.32.1716649136320;
-        Sat, 25 May 2024 07:58:56 -0700 (PDT)
-Received: from [10.254.221.56] ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9a9659sm31193515ad.228.2024.05.25.07.58.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 May 2024 07:58:55 -0700 (PDT)
-Message-ID: <e6f2e188-5354-4e2a-814c-e8781507fef1@bytedance.com>
-Date: Sat, 25 May 2024 22:58:49 +0800
+	s=arc-20240116; t=1716649240; c=relaxed/simple;
+	bh=Q4pzHCy4+tG7Zfat4dTz2yoLFglRjI6sDCvu3SF13IY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=jNLsqTa7cp53ei2U+6viGexJe8ilk0eiaEznEZKLVL+6uFvDjK9fxIPhN8nzfKmsKoeGiS/MFLNhs825+o0x9bUEZSDmChTNcUHy6bNh7wsePR2ECj8msCYNLG0MzxJYvV77W/WwfROcSAMdGB5Mgq4cHbzrJNIYRmCLzKSYC5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sDDJuVS4; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716649214; x=1717254014; i=markus.elfring@web.de;
+	bh=Q4pzHCy4+tG7Zfat4dTz2yoLFglRjI6sDCvu3SF13IY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sDDJuVS4LuXtznwMdAZ99aoXYPLqs15tsCkafF698ZnL2gkw5UMNscR0AKFTtkip
+	 qK8dYmTgdSs8j2cgyDvkCJz1cJux/NVB2U6wh5ae/ebrKEXYa7aO0TH4RLMEouQvC
+	 5aXwanwKKG38ovLION3dJxURqy/hk09fXNzHbvMYvvH2jlGmT39Jc+Dcw+o/cOkeh
+	 ywgUkLFFlCNl6j88hkjXuoRkLGwwTfJ8PxboGsDYqr4A4x12HSAgnKanBn8C/Mdww
+	 Y4pP8a6kOOywKasPJU2u/GlVYTtmrLsUnZgZk6/0bdxoaF76d2t4Ed8/96Fpap3O2
+	 Rf9TlT+fEIJDrTBCng==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1rwmVF0V7X-00SzY9; Sat, 25
+ May 2024 17:00:14 +0200
+Message-ID: <120effa0-b739-4fab-a890-559cf353c4ab@web.de>
+Date: Sat, 25 May 2024 17:00:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,126 +56,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux kernel bug] KASAN: slab-use-after-free Read in
- pressure_write
-Content-Language: en-US
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Sam Sun <samsun1006219@gmail.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, tj@kernel.org,
- syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
-References: <CAEkJfYMMobwnoULvM8SyfGtbuaWzqfvZ_5BGjj0APv+=1rtkbA@mail.gmail.com>
- <q7lfvwrjrs3smyoyt5pyduv5c7hmmgv2mgo6ns3agbjaxawoso@24dbbmumc7ou>
-From: Chengming Zhou <zhouchengming@bytedance.com>
-In-Reply-To: <q7lfvwrjrs3smyoyt5pyduv5c7hmmgv2mgo6ns3agbjaxawoso@24dbbmumc7ou>
+To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ x86@kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20240523-fix-smn-bad-read-v3-7-aa44c622de39@amd.com>
+Subject: Re: [PATCH v3 7/8] hwmon: (k10temp) Remove unused HAVE_TDIE() macro
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240523-fix-smn-bad-read-v3-7-aa44c622de39@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:18e4ZdRo77H94xd/yj+nZPqU3N9WiFOdAfqaQzyAZfEgBkjvxKl
+ 4izmT08RherBSjcEuZPvg27RDS7zQzB8g4JgU9UbSdTpbNiuoVTbJMJXKAREY3wtDlUYCM2
+ RZD32oD9ykjTZpajRzQZY92YO9XMh4KSN1lLKXcdZg/pf9N0bK0NJ/EzisSpZMlspc4Cqhs
+ Ek1YKAljWlEyRGfLyaxxg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YXst0CnWAZY=;bWLS72JZhB6sGBWTU5Uum+GIYAm
+ 4rH0a+REkNHHAr2u+IVcvR/EHoB+ZwyA0AG6vqHmaDd+5+Zde/+x+uUxVCE/QaDh2Si+37Cb6
+ d0XGxNa5p91vYKiREq/kuOQXWe06k4WU9LZYCfza45OluUJT9tj/Kixy79wcAHN2zEURzAYKf
+ PuQb9piTEkG5tLE3Z/icLoiPtGDJX1QUsuHfupvQH8dTZjTmKY6ORYhMDkbNgYoNO28pE1zn5
+ f49Yr1n/HQ0x5ZEHnmZPeHwXVms3k7TWZKXqq8MUvEY5O0pwcUdlMSkia+ivWTRPsbu3ONdCY
+ FiHSzCqjvvMVM+52FquyXCtYpZYQIpwjEaO8emPu60kIjWdVrgvG7NZE5izUwB3Z4tRn2mOyt
+ UBBM3X0a4qRFIwIMzRb0Z4XNoXyJUmBH/2DCxedH3+jJzJ24ihlyTsRr8HzeieKBNSSKo0Fqo
+ gd0Trap9tteWE02mqYdcGD2vYEQd8/S9+FXRDnKeB/iKmzHJIPaLO12Q6HnPEl1iro5UEa1ft
+ WPyUXnBpetGunVyUI16+Lm/3rYjKUm0/HQZN3Obx6L6ec5DUmC42D49m8fizuwtaoFUY2X9fx
+ b68Kk3PGcmF4XjgsXWJu7z1Zz1hOzumZjQ/6cXK3Nx62Jxb9enqVBilfN0c2UkWlJFAF/Bc5W
+ 37mryidQGH20pASj5NLpbL1YSkyiJivZQT0DGnBsVF6kTAeCT9DkIBoM5GhoZp8j+pr1OK6LW
+ WHGktG7FwW7tGWVsQSZX/tKKeWnhfgH7/pp+p9Qzr5wkFTboJoFOus4sGrmKTO0WPjVmeDtdH
+ IlnN0u8ZSsk4OMiJahSltaTDDjbEJFnva287vhtRdUGBg=
 
-On 2024/5/25 00:03, Michal Koutný wrote:
-> On Fri, May 17, 2024 at 03:14:23PM GMT, Sam Sun <samsun1006219@gmail.com> wrote:
->> ...
->> We analyzed the root cause of this problem. It happens when
->> concurrently accessing
->> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/irq.pressure" and
->> "/sys/fs/cgroup/sys-fs-fuse-connections.mount/cgroup.pressure". If we
->> echo 0 to cgroup.pressure, kernel will invoke cgroup_pressure_write(),
->> and call kernfs_show(). It will set kn->flags to KERNFS_HIDDEN and
->> call kernfs_drain(), in which it frees kernfs_open_file *of. On the
->> other side, when accessing irq.pressure, kernel calls
->> pressure_write(), which will access of->priv. So that it triggers a
->> use-after-free.
-> 
-> Thanks for the nice breakdown.
-> 
-> What would you tell to something like below (not tested).
+> ...to address the following warning:
+>
+> drivers/hwmon/k10temp.c:104:9:
+> warning: macro is not used [-Wunused-macros]
 
-Thanks for the detailed report analysis and this fix patch.
+Can such a source code cleanup matter also for the tag =E2=80=9CFixes=E2=
+=80=9D?
 
-I can still reproduce the UAF problem with this patch by running:
-
-terminal 1: while true; do echo "some 150000 1000000" > cpu.pressure; done
-terminal 2: while true; do echo 1 > cgroup.pressure; echo 0 > cgroup.pressure; done
-
-Because we still access kernfs_open_file in pressure_write() before cgroup_mutex taken.
-
-It seems like a problem with kernfs_drain()? I think it should make sure no active users
-of kernfs_open_file when it returns, right? Will take a look again.
-
-Thanks.
-
-> 
-> Regards,
-> Michal
-> 
-> -- >8 --
-> From f159b20051a921bcf990a4488ca6d49382b61a01 Mon Sep 17 00:00:00 2001
-> From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-> Date: Fri, 24 May 2024 16:50:24 +0200
-> Subject: [PATCH] cgroup: Pin appropriate resources when creating PSI pressure
->  trigger
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> Wrongly synchronized access to kernfs_open_file was detected by
-> syzkaller when there is a race between trigger creation and disabling of
-> pressure measurements for a cgroup (echo 0 >cgroup.pressure).
-> 
-> Use cgroup_mutex to synchronize whole duration of pressure_write() to
-> prevent working with a free'd kernfs_open_file by excluding concurrent
-> cgroup_pressure_write() (uses cgroup_mutex already).
-> 
-> Fixes: 0e94682b73bf ("psi: introduce psi monitor")
-> Fixes: 34f26a15611a ("sched/psi: Per-cgroup PSI accounting disable/re-enable interface")
-> Reported-by: Yue Sun <samsun1006219@gmail.com>
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> ---
->  kernel/cgroup/cgroup.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index e32b6972c478..e16ebd0c4977 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -3777,31 +3777,30 @@ static ssize_t pressure_write(struct kernfs_open_file *of, char *buf,
->  	struct psi_trigger *new;
->  	struct cgroup *cgrp;
->  	struct psi_group *psi;
-> +	ssize_t ret = nbytes;
->  
->  	cgrp = cgroup_kn_lock_live(of->kn, false);
->  	if (!cgrp)
->  		return -ENODEV;
->  
-> -	cgroup_get(cgrp);
-> -	cgroup_kn_unlock(of->kn);
-> -
->  	/* Allow only one trigger per file descriptor */
->  	if (ctx->psi.trigger) {
-> -		cgroup_put(cgrp);
-> -		return -EBUSY;
-> +		ret = -EBUSY;
-> +		goto out;
->  	}
->  
->  	psi = cgroup_psi(cgrp);
->  	new = psi_trigger_create(psi, buf, res, of->file, of);
->  	if (IS_ERR(new)) {
-> -		cgroup_put(cgrp);
-> -		return PTR_ERR(new);
-> +		ret = PTR_ERR(new);
-> +		goto out;
->  	}
->  
->  	smp_store_release(&ctx->psi.trigger, new);
-> -	cgroup_put(cgrp);
->  
-> -	return nbytes;
-> +out:
-> +	cgroup_kn_unlock(of->kn);
-> +	return ret;
->  }
->  
->  static ssize_t cgroup_io_pressure_write(struct kernfs_open_file *of,
+Regards,
+Markus
 
