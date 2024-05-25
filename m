@@ -1,168 +1,190 @@
-Return-Path: <linux-kernel+bounces-189558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414A78CF1F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0AA8CF201
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312791C20EBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C16281C4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9525D42AA9;
-	Sat, 25 May 2024 23:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6429B12A152;
+	Sat, 25 May 2024 23:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="upxmnVYb"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bxib8nGO"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7595F2CCC2
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513E842AA9;
+	Sat, 25 May 2024 23:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716678164; cv=none; b=GFObeRDn5fRTI/lqe+pDjfo1F6FNPOti7dNUCNOHFcvHYwb2GyFcMUnxyNfrPaQdJEdnswVwC7JuPER9XTyS36Oa/9JvuoCn9rpqi9ZhI5LDV4CCrAh2w5AQ7P/Q5/7jzHNfWX52P1Wf8irBQQgyltV/7Rj/BFw1deTBsbGtaVk=
+	t=1716678507; cv=none; b=FPw9DOHZwc/hq+pviA6+B5zd2jPUsb73Zk0NMbG+Fm/7X4YB+/kPccs6lP0yQM2zs9GYcPXdj5tRgZEaMz6ZA0GBLK79Yv4t/0cqb23EqV9PvYMymBEIMWpNpuatOzk/Jl3vJ6yrQgSTd6P9DsvvpxhNJ9UBuRkwsBWDvkDoSnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716678164; c=relaxed/simple;
-	bh=L3hWBTMmA6viEgmlEybu5t+iS/55NiCc6jPW1Kjsoa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iE8WAYeIYTF+BWOGlcOBpV3KprPX2GkOXBqgh/e8+snjGWXjV5/QbXhmqmxb/ON8yM+BE+6U3+faHzUkND2GL6VEwTctxIewt1Ada6NmvEBTeKL+OXPVZUqZySC8Kke0Onmqi1UT1WCJ6xnQk/Zz0jPWew7BjFCeU7ZP2P1f8wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=upxmnVYb; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f6911d16b4so4940491b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:02:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716678163; x=1717282963; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gic6Wo3zjudyzI0BAjsVaWRrn7WVkv86SSZTvDO7XFs=;
-        b=upxmnVYbF9XuqlhXcqNr8K+zIJ1d9TVX6Mon09OG0FFLHCqYaj7yD1Ms1Sfxu9RZpD
-         TaeFXJNQ4eJ1FqL21NTClYIV26S51nH8shM+vzjfb7KSxRYxcH0dk2Wng+cxkDpr40EH
-         hFgNR/0qWwNxlLCHQ6WGhnSpbnJLmLmN2k+/XAQdFWDFjrtPZHVdDAxS55mGnXE9Ldv8
-         NEba7m2oCj4uPOVIAKdjDZBlyNaTbGOcVUvJIH4YWzWz4WXeeb3eGs6is2FivFkODsB+
-         QOR88d4K70UUIwKaKx6rEcHOO+FDHMF8DLliEHlzPAHFkPz5aUoRlKnlUkPN6i7y5TAs
-         KzVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716678163; x=1717282963;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gic6Wo3zjudyzI0BAjsVaWRrn7WVkv86SSZTvDO7XFs=;
-        b=WaX4gl1apmtXiYGfF4NqUAqhK10a0faMxb5H3t/Lsrutcbv4RG7mTIlIG1FEjbkY1Z
-         iTH1WWltaFRQO+mVmIM11e3KYrYhmv++tb7LU/bFrFNBJw6mQKx41iKoYOS81HmV/bGX
-         ZnPYEABUuqeFLyrZGEa0ivTVhREWryc669KLWqTcRTgrT9dLkXLviteqGYm2BJX009er
-         SSt8XMMioGyekTuWME+5u0Uvc74fmpzvXad0V/2lTlr6d6MAA0LeVL0YfjP+rfyUo8S3
-         ldo/4gs/gi7UYT8xS/oHC0dGHwNoWY9CN7h1AgW+xc8Wn9DAjKLd4ussWbMKYXKTpm89
-         kIrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQeVwR02jIIwqLB0/FPj9Olvc5/L+Uq8u9dxMgIrN8Sr5bnupOTn+5PlyWUVhFRUqnGY/XyHNHeJTrvPQtJtzqL+TTRNChtyhcSHJo
-X-Gm-Message-State: AOJu0Yzley/sXzLuOW1wwD+h59w9eogoKtuy5QNVdFd+HTWEPZwe/ATz
-	9GcHAjEBlajcEyDiE2RP85kWLabbsVct4QKnOEUHtSoJU1s2xYDWZf/KazrgpnA=
-X-Google-Smtp-Source: AGHT+IHkIK468Us7w5racBBbD0k32HWYTGqS9h3qKLyIaPSGj5Sg+dT6eM4UpYv8VhDI97pWq3omsw==
-X-Received: by 2002:a05:6a00:4405:b0:6f8:caf2:8f4f with SMTP id d2e1a72fcca58-6f8f45d2624mr6450954b3a.33.1716678162585;
-        Sat, 25 May 2024 16:02:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcbeaaa3sm2831749b3a.103.2024.05.25.16.02.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 May 2024 16:02:42 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sB0PP-00AUdG-2E;
-	Sun, 26 May 2024 09:02:39 +1000
-Date: Sun, 26 May 2024 09:02:39 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, bvanassche@acm.org, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 05/12] fs/read_write: Enable copy_file_range for
- block device.
-Message-ID: <ZlJuDxhMEpJxKQHV@dread.disaster.area>
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102917epcas5p1bda532309b9174bf2702081f6f58daf7@epcas5p1.samsung.com>
- <20240520102033.9361-6-nj.shetty@samsung.com>
+	s=arc-20240116; t=1716678507; c=relaxed/simple;
+	bh=KuxwgnxpkTBE1s2EjO4AS1uttpmw+m2gpJs53jqjupE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DG2DyrNbu1/YDyTSegVD8Ec1RzAuwD2jDQC4gyokg+tz0hZSvyrQ3DXAx4hlahzLOa0YlqbjqdKCmMh5VP+tAIG4gJPEnA5FW8skV4s9fovlsxxwEUNW19BKe0xuZR8hdqFbhVZPL1ZBRWvli838tjVutFam3GkORO7PJCCxEMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bxib8nGO; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a9743be61aeb11ef8c37dd7afa272265-20240526
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=B8rLV0HeBn69eRaQfJMzJjbq3WYSpLpvqrC1Q0pSsCA=;
+	b=bxib8nGOGrFxYg5faEzXumTHLbLaFo/eYvoH+4oZ8OeNro/UQNWEC2rHfD7nqT0YAgSWOLxg9dN2ALGrK3c7q5mDQu2sbatWb3vamG7EoNihkihZelYzPn63ni/yIr+UZMDuewsQ49y1+jzj1whvu/5FymPvHjenPsKPJkhNrss=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:f4e72cdf-cbe0-46f8-ae1d-ff19ce0b4dea,IP:0,U
+	RL:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:100
+X-CID-META: VersionHash:82c5f88,CLOUDID:f84dcd43-4544-4d06-b2b2-d7e12813c598,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:801|102,TC:nil,Content:3,EDM:-3,IP:n
+	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
+	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: a9743be61aeb11ef8c37dd7afa272265-20240526
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2133953594; Sun, 26 May 2024 07:08:13 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sun, 26 May 2024 07:08:10 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Sun, 26 May 2024 07:08:10 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Jason-ch Chen
+	<jason-ch.chen@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+	Shawn Sung <shawn.sung@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jason-jh Lin
+	<jason-jh.lin@mediatek.corp-partner.google.com>
+Subject: [PATCH v6 0/8] Add CMDQ secure driver for SVP
+Date: Sun, 26 May 2024 07:08:02 +0800
+Message-ID: <20240525230810.24623-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520102033.9361-6-nj.shetty@samsung.com>
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--9.574600-8.000000
+X-TMASE-MatchedRID: HhL2K2fGQMRsLX/Zy50gf4QnnAFRgjn9OlW1BAebvzBzwVmY5TMrNmSQ
+	gJ6pnW8lfTfiNIO3sGjdzcJEB3Zs4SgoulOyr3u8/4ToWehCRQUZKp0SZ4P+dcUmcSma304TOGj
+	73Ju1zWPhNoChA1M9WA7VVWr/VuT8LSTGw1g/Kd4SEYfcJF0pRbLiLKO9VZOiGNAPebYwJ/uYAj
+	JavrGfnw/OeYZBTj6CEdcBbrgDa8DHGs1A87wEZt35+5/2RxqmiK5qg1cmsr+na6U74e0+qLZVh
+	39LD7EPfRvCo8kOueMuDzNTHYi3Lf4zNVp6ir9FA9lly13c/gEraL2mh8ZVK0k7tZaD19NMo8WM
+	kQWv6iXBcIE78YqRWo6HM5rqDwqtux1CiS1LpJ8yNvWrkZnUKmwBl3cPmzc+NaSmy0CtSX8vwdI
+	o2/jpWg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--9.574600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: B488D17A83804E6D2B18BFC25267F78324440A50A8DE9971BC9C55B18A0ED2162000:8
+X-MTK: N
 
-On Mon, May 20, 2024 at 03:50:18PM +0530, Nitesh Shetty wrote:
-> From: Anuj Gupta <anuj20.g@samsung.com>
-> 
-> This is a prep patch. Allow copy_file_range to work for block devices.
-> Relaxing generic_copy_file_checks allows us to reuse the existing infra,
-> instead of adding a new user interface for block copy offload.
-> Change generic_copy_file_checks to use ->f_mapping->host for both inode_in
-> and inode_out. Allow block device in generic_file_rw_checks.
-> 
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> ---
->  fs/read_write.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index ef6339391351..31645ca5ed58 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1413,8 +1413,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
->  				    struct file *file_out, loff_t pos_out,
->  				    size_t *req_count, unsigned int flags)
->  {
-> -	struct inode *inode_in = file_inode(file_in);
-> -	struct inode *inode_out = file_inode(file_out);
-> +	struct inode *inode_in = file_in->f_mapping->host;
-> +	struct inode *inode_out = file_out->f_mapping->host;
->  	uint64_t count = *req_count;
->  	loff_t size_in;
->  	int ret;
+From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
 
-Ok, so this changes from file->f_inode to file->mapping->host. No
-doubt this is because of how bdev inode mappings are munged.
-However, the first code that is run here is:
+For the Secure Video Path (SVP) feature, inculding the memory stored
+secure video content, the registers of display HW pipeline and the
+HW configure operations are required to execute in the secure world.
 
-	ret = generic_file_rw_checks(file_in, file_out);
+So using a CMDQ secure driver to make all display HW registers
+configuration secure DRAM access permision settings execute by GCE
+secure thread in the secure world.
 
-and that function still uses file_inode().
+We are landing this feature on mt8188 and mt8195 currently.
+---
+TODO:
+1) Squash cmdq_sec_task_exec_work() into cmdq_sec_mbox_send_data()
+2) Call into TEE to query cookie instead of using shared memory in
+   cmdq_sec_get_cookie()
+3) Register shared memory as command buffer instead of copying normal
+   command buffer to IWC shared memory
+4) Use SOFTDEP to make cmdq_sec_probe later than OPTEE loaded and then
+   move cmdq_sec_session_init into cmdq_sec_probe()
+5) Remove timeout detection in cmdq_sec_session_send()
+---
 
-Hence there checks:
+Changes in v6:
+1. Rebase to linux-next
+2. Change the way to add gce-events prop into dt-binding and add more
+   commit message
+3. Remove unused parameters in secure mailbox driver
+4. Move cmdq_sec_XXX APIs from secure mailbox driver to helper to fix the
+   build cycle dependency error
+5. Remove finalize loop API and write_s_reg API patch
+6. Add cmdq secure helper API patch
 
-> @@ -1726,7 +1726,9 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
->  	/* Don't copy dirs, pipes, sockets... */
->  	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
->  		return -EISDIR;
-> -	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
-> +	if (!S_ISREG(inode_in->i_mode) && !S_ISBLK(inode_in->i_mode))
-> +		return -EINVAL;
-> +	if ((inode_in->i_mode & S_IFMT) != (inode_out->i_mode & S_IFMT))
->  		return -EINVAL;
+Changes in v5:
+1. Sync the local changes
 
-... are being done on different inodes to the rest of
-generic_copy_file_checks() when block devices are used.
+Changes in v4:
+1. Rebase on mediatek-drm-next(278640d4d74cd) and fix the conflicts
+2. This series is based on 20240307013458.23550-1-jason-jh.lin@mediatek.com
 
-Is this correct? If so, this needs a pair of comments (one for each
-function) to explain why the specific inode used for these functions
-is correct for block devices....
+Changes in v3:
+1. separate mt8188 driver porting patches to another series
+2. separate adding 'mediatek,gce-events' event prop to another series
+3. sepatate mailbox helper and controller driver modification to a
+   single patch for adding looping thread
+4. add kerneldoc for secure mailbox related definition
+5. add moving reuseable definition patch before adding secure mailbox
+   driver patch
+6. adjust redundant logic in mtk-cmdq-sec-mailbox
 
--Dave.
+Changes in v2:
+1. adjust dt-binding SW event define patch before the dt-binding patch using it
+2. adjust dt-binding patch for secure cmdq driver
+3. remove the redundant patches or merge the patches of modification for the same API
+---
+
+Jason-JH.Lin (8):
+  dt-bindings: gce: mt8195: Add CMDQ_SYNC_TOKEN_SECURE_THR_EOF event id
+  dt-bindings: mailbox: Add property for CMDQ secure driver
+  soc: mediatek: cmdq: Add cmdq_pkt_logic_command to support math
+    operation
+  mailbox: mtk-cmdq: Support GCE loop packets in interrupt handler
+  mailbox: mediatek: Move reuseable definition to header for secure
+    driver
+  mailbox: mediatek: Add CMDQ secure mailbox driver
+  mailbox: mediatek: Add secure CMDQ driver support for CMDQ driver
+  soc: mediatek: mtk-cmdq: Add secure cmdq_pkt APIs
+
+ .../mailbox/mediatek,gce-mailbox.yaml         |   8 +-
+ drivers/mailbox/Makefile                      |   2 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            | 113 ++-
+ drivers/mailbox/mtk-cmdq-sec-mailbox.c        | 932 ++++++++++++++++++
+ drivers/mailbox/mtk-cmdq-sec-tee.c            | 195 ++++
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 191 ++++
+ include/dt-bindings/gce/mt8195-gce.h          |   6 +
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |  35 +
+ .../linux/mailbox/mtk-cmdq-sec-iwc-common.h   | 342 +++++++
+ include/linux/mailbox/mtk-cmdq-sec-mailbox.h  | 106 ++
+ include/linux/mailbox/mtk-cmdq-sec-tee.h      | 105 ++
+ include/linux/soc/mediatek/mtk-cmdq.h         | 113 +++
+ 12 files changed, 2118 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/mailbox/mtk-cmdq-sec-mailbox.c
+ create mode 100644 drivers/mailbox/mtk-cmdq-sec-tee.c
+ create mode 100644 include/linux/mailbox/mtk-cmdq-sec-iwc-common.h
+ create mode 100644 include/linux/mailbox/mtk-cmdq-sec-mailbox.h
+ create mode 100644 include/linux/mailbox/mtk-cmdq-sec-tee.h
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.18.0
+
 
