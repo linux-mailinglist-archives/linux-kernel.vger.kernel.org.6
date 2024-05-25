@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-189441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAD28CF014
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257E28CF016
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819831C20FBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01D0281BCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722185C65;
-	Sat, 25 May 2024 16:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B32F85C48;
+	Sat, 25 May 2024 16:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trIbj26K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRtWxuel"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A9058ABC;
-	Sat, 25 May 2024 16:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A310C4EB39;
+	Sat, 25 May 2024 16:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716653976; cv=none; b=oB8gH1uuRqPCF46gPVKTEhv06AwIg5biDIEGDU2RtlLJeP2U5RxlkpI8l6Wn3PZtWOehx3ECwAgGDUZ+INOnmlo1yaHL3yTsxqfDZgSc2iG4qZP61/8WRcukVdxOw7tMizDdg7TRV3u02R4SOZEnjcnnJ5k1KNgrb9n8cm8mr9k=
+	t=1716654294; cv=none; b=rhqc0zCtPZ/Gy96XSzV80RzTSerRJYg0Z6IobGVaVMzDA/YMLUgv8Sr+nXJlzs+8eKdoLvao11esWrdSoc0JJmreRVbngIYuIU0ekI34elKRDm5xbEbrGNsBq0TYFlmKAGHAySPF3qBmYegfbgC5hi4CbpSNbukxC8ijih/500A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716653976; c=relaxed/simple;
-	bh=DqBxfVMDTtQnFRu/56CssttbGbxLKTGzD2Ic2RIAcxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F5eDaiL/j5uKEoJlXvr8CkM7ChWkWvym8Q8Lx0J0yyhyw2jbLRP1ILyFJ9rAuL+o+JfWs2IqW7+Pxxnz0drzV40lsdUzDoa0dXYa0XhBNGygLiKHKy1KdaOnvrxOhxEc84YzAyvsSwclSxmmGu9QMfu9Sokk7uTq1sdyaFz2WpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trIbj26K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EFAC2BD11;
-	Sat, 25 May 2024 16:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716653976;
-	bh=DqBxfVMDTtQnFRu/56CssttbGbxLKTGzD2Ic2RIAcxY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=trIbj26KDRTFngfSwrAoTXCdJ8vQRM+Kj9EEgvwY3YAawrHomLA5pkmqwYeyKOSPn
-	 +kXPIjQ7F55odO6Pt8qUFOT2M0kQNyOOcEJkDkw0wWE/WJ19NqXsrVqfSJ7BDUgncA
-	 KwkZQtRB0jqv6wiym5uOsSh2RcTEL9OTnMTAJQGF+1LNbL2aXgcUiGSTk3YMcQFFPr
-	 T7QUKQxdpmjTvARY7KvRX/8cZ5akqL+OpFGdrDaCy5XfRpI0ZShoHQRx5oZQQnY7EW
-	 s0tuhHWl10ROPiBwk7oKkaD/innTmlG7GBvZgWnpZgkgO7IWDLXgohWnVzM/Wc60s7
-	 pbmAdTOKeG29g==
-Date: Sat, 25 May 2024 17:19:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
- <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/4] iio: add support for multiple scan types
-Message-ID: <20240525171922.58974617@jic23-huawei>
-In-Reply-To: <e1277a004b5aef8e6b407089ac1e3df6ff6fee50.camel@gmail.com>
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
-	<e1277a004b5aef8e6b407089ac1e3df6ff6fee50.camel@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716654294; c=relaxed/simple;
+	bh=86AVJKuhdZUAYzX2g6oF3oFG/tJCgWUrWARGlNXmoc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ARU8iMi2fiRionkKRYhEEeXKOzWQVCg7FaboPUmwssFM4BgjrKQjWad59z7KWq54u60RON/62kKLSe+78EDGeR8U0frrCBCWLXtTykfoSlP/qxp0cFJg8yOqFG4UmEtyqdYcURtjtiLWszsCXXg9BVTojH4zRq+ODLNYhPSuQ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRtWxuel; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4e4f0020ca3so685437e0c.2;
+        Sat, 25 May 2024 09:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716654291; x=1717259091; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C10eo8thbRqiep/D1Jvta7yZisLgi/lEZwTUZMNg/g8=;
+        b=DRtWxuelcgShaZiAb3YfVcBP7c7RhEWfzKUZcsyRtwF7XXCB2vgVXKtspYGLiOGIBI
+         kaQ0d5HYu11MN4dppQqlwV+JBS1UN9+UpgT1xWRTbzxYdkyN3EYMHlR9BPIdivVk2dNG
+         NPPKCI2tMwrhWSj9HyOeokWCuOoTygWwh00lq+6iY+caQ8zABFCIYIT9c5buftO86/Yd
+         xQT2nFUkiH0e0kO0r0vHFuJRBTCLoxqP9qiLcMbJcoXc8BPOuw1WFbwITeGX1jZo4z4v
+         i3AdSPb3ZCGdB8lzM9VDCH3HSwPDOjVzM8GYYgA+nVygRJsjQG7Vn/YoactCMlTpWvr2
+         +u0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716654291; x=1717259091;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C10eo8thbRqiep/D1Jvta7yZisLgi/lEZwTUZMNg/g8=;
+        b=I4rV5kpw8ZYnXcVYDh+t5DZI3yBRIDhN6NWqrdRFG2NOqFJXxyZIW6yrwuJ6XL5N9I
+         yBBBfc1TUEjbknGwZRSKnLTLmmOot6RYINn2QrcgY3pjPQNdaHZlhWOaBKc9H3LUe4B2
+         9nqCa8JHUtBI49kYkEtCBlJSTNeeYHJFwfpS2IjacWfM1naL3Hed+lzwbB6VOQ7/H+Cq
+         HcLP2aOvfhaUxvjaT5VZmx9hwwbAagyZvbJGpi8lZEQt/81lO3bUcUFj8gW2llmKxfMN
+         gtFjYu5SxBAMPQvDSX3pPgWGrfhMqXmDw+va1yNiiNcOH32AODYMkRPJOO/+mfL9D5XX
+         t3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmQgb8f2tQkcmhvoAF9WIjX9jiIMVsF8BHnRCucAiZRnA3ZS8T6SAp5oY9APYM+jgNvARMScPgVNgYAyx1Tu2x/BNXRC12/R5dMfUR
+X-Gm-Message-State: AOJu0YyZydd+ILmnZHzxFKrJB7qpe/dTO7UH8OgYLpstox8mWUPJ6DGB
+	ObR6xzBWyJjvcToQKKuM/q5isbahdaeaQcI8GL4xODlzddnWvNoEBsLS6ZtzQSo7b0/Cxkb2waw
+	8u033A5afe94AWcgamzWcNMeADwc=
+X-Google-Smtp-Source: AGHT+IFId4xEaD4/ofxKGNhKoPOyE8jZ3s7P0t1ilfqVQ1iQY6jvQOmdiFltbAST5U4WtGcX9TQp6jPRC5eHIOtj9zQ=
+X-Received: by 2002:a05:6122:3114:b0:4d8:690d:c02a with SMTP id
+ 71dfb90a1353d-4e4f0230564mr4693418e0c.6.1716654290006; Sat, 25 May 2024
+ 09:24:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240523130329.745905823@linuxfoundation.org>
+In-Reply-To: <20240523130329.745905823@linuxfoundation.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Sat, 25 May 2024 09:24:39 -0700
+Message-ID: <CAOMdWSL+_5+nq2ToLsyW=92u9uxWVL8z9Pw3=_mp-KX9_rwDWw@mail.gmail.com>
+Subject: Re: [PATCH 6.8 00/23] 6.8.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 21 May 2024 11:18:24 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+> This is the start of the stable review cycle for the 6.8.11 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-> On Tue, 2024-05-07 at 14:02 -0500, David Lechner wrote:
-> > Following up from this thread [1]...
-> >=20
-> > Unless I've overlooked something important, I think adding support for
-> > multiple scan types per channels should be rather trivial, at least in
-> > the kernel. Userspace tools will need to learn to re-read buffer _type
-> > attributes though. For example, it looks like libiio caches these value=
-s.
-> > I had to restart iiod to get a proper capture with the iio-oscilloscope
-> > after changing the scan type at runtime. =20
->=20
-> No for now but to add more future fun, we may consider in having something
-> similar as hwmon [1]. Hence, userspace could do things like poll(2) on the
-> specific file rather than having to read it over and over...
->=20
-> [1]: https://elixir.bootlin.com/linux/latest/source/drivers/hwmon/hwmon.c=
-#L649
-> - Nuno S=C3=A1
->=20
+Compiled and booted on my x86_64 and ARM64 test systems. No errors or
+regressions.
 
-It would take a well reasoned usecase to convince me sysfs notifications
-are useful in cases where an explicit userspace action caused the value that
-would be read from another file to change immediately.
+Tested-by: Allen Pais <apais@linux.microsoft.com>
 
-Jonathan
-
-
+Thanks.
 
