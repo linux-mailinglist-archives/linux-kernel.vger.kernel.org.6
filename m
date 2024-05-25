@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-189508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630D68CF102
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:29:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4485B8CF104
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08461F218F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:29:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A210EB210B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340EDBA31;
-	Sat, 25 May 2024 18:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF08127E0E;
+	Sat, 25 May 2024 18:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v1aTWdzr"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6KbzW7y"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF34186653
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B3F84A41
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716661754; cv=none; b=d0Ps/iNc9JGJrtB4NF+v9uWbOo9yLVv1k263i3HXJM/wl9vd87B+0Grc/xrOFWgOcpi18lvPAw6vqSOfGAtUh1ToDTFnUe8Rb2Dmp6GThLxEhpq1nmuSAvpqVnfHALRNSrzBxDtpL1sPfLMlsEeh+NQfMB4GbRjqp9dZWu7VZNQ=
+	t=1716662076; cv=none; b=D6PIZkeBShrauIiAo+Z7/Z5S6J7xaXZkV5dvjNhBdOujcsRcGEdXQzc/uLgKtr4DMNADQONsrPz345ldZUT1tqDxVJUcLF/WiicvcQ7tGgvQ6D276JH/++Kqylz4VPepyyxGrXhHmMZtC0yi+A/QNv+k7Q1HgXgLDY3kHZ25SQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716661754; c=relaxed/simple;
-	bh=jTdege99R9Q3cjjZDkZno85AtpCjNDTnDiVN9qI7BC8=;
+	s=arc-20240116; t=1716662076; c=relaxed/simple;
+	bh=gXp7mtxI5+En4bOppVLsZ3l7pBgVT0WiilnTsdsYR+A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=peP5j7WWBjo8FgQADHWOD04wkQMnSak8txUVmeDyLogc+/Cvh2bQ08I2+jhKk+UHo+EidLtwnv9vltFQsWPj/N1gI7esDhjUROKDEbfOCjBH3yjyh1VhwC3+GSJOTgZ1A3XKHHAEdczKsMkeV6oKXsmQJmFpkaLY77qeEELxypg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v1aTWdzr; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=dFLquA/6tl7PBtjLTcqg1omxmAX40cZ7EHtXg7jbtJzqcUI9K7MzSRhCr+m0MQxbvHWErmMJczeO7qJ418U+IekUqhS1uasV3EFYwLRt6/cwHsZsXQojYYc+gZ9OURTXdtF84fK9JvLNTTRfry9ftrz1D8vJYxm8yQSjRFEI2E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O6KbzW7y; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-351da5838fcso759400f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:29:12 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-351d309bbecso7079212f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:34:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716661751; x=1717266551; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716662073; x=1717266873; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xW2sIduJwcVHrsxOw9YEA2zdD9FyTS9ik+ZZnrTpQHE=;
-        b=v1aTWdzrK9unND/yK0XVb+bWnJUvVJo//F92pGh/94mKtOWiORmNHhrl7+kJjCVWNA
-         xPLYFQrXyb4l+laD455wzdrnlCEan0K/DJRpt299qjRAOWddmbxet2dLE5+4Huc1J/gH
-         wVG7Wx92n7ri+ZsAqPbdYxlMEVs0NZjRWXH0oHBDj01wVYBJsSNV7MB6X5awYf8YWzKV
-         WBvMC7hHgsmTdx4vwtzjYoPZZKS+9Nch+cxm+abH40ihsLbQkwFcMyuQU+CcIkciaLqU
-         chJaxbuLa43XIB6btm5eVzyPpYoEpwaumRjB022V+PV7QFKj5moKcr9wOu+igDAIfprx
-         aHXw==
+        bh=2rB90Zyk/xnV7pjOge9pMgAzrLvBX8WyYkOhzQ6Icas=;
+        b=O6KbzW7yzknn0pq7x6QivTMueEiMUxJtTqkHk7j2pc+5W1MTx0vc6HEfX4jDUH9/Wn
+         yi549Nkn4xHZaF2h5yw9qh0g/dKS3/9zkjdu0b6idHM7Dz9g1OxrBMdmYsLOe6ziqs5M
+         C+Zizo53KMnhRIMkCPQMwvOJa27+68WUP0LQfbsHuHRMEAVWGYyG09CUKF8y5jC37v+5
+         ThFau8hD82znPvTIVUpCH9Q2Ivdj1UUUqe1/qP5cdBWxtQU6e/ByFzjcH2xpj6TUYAK/
+         OflsjLpdVCRPthb0o67/qv2xww2MNCZWF43Wlj5FaZMGqKXV2AKMQjY4bAB/TM+ZYyGr
+         FJhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716661751; x=1717266551;
+        d=1e100.net; s=20230601; t=1716662073; x=1717266873;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xW2sIduJwcVHrsxOw9YEA2zdD9FyTS9ik+ZZnrTpQHE=;
-        b=umi528GqByeEZY/MiNpptObxBuxCqtnKrMa+aw+UwxL3mMUYPTbU50czphx88067c9
-         vUxBJR3VYS3jlRTReSCH7/EjZLZfp2iDWst+JhDRB+HvmkXXgq448f9YRUyElTkCWmhn
-         MyCYMmEdr69iNnPQF6ApWsIvbjpQgfQy60/k8oChj0PXDAsjKSxvCL8BJl+pmW7MNr4G
-         2zx+YmbSlZcNAP5cufRaTsKHZJ9Hkg6KAw3VtEMp13+k6s8hVZI1WI7RGRQPamZXDGsH
-         TTjtpvE39ynoWSLMTtKu6IbQIDcZeS4l9Qs7vQbg2AKmNAU/aBwH5neikiB4p6lIScnD
-         +81A==
-X-Gm-Message-State: AOJu0YxWHlByXMgR+Rl261j2lfHf9/SP+YxOgg9NmSdYMP6K777uoDDI
-	5GwCmidG0PcblH8M5JdQZDr7SfLqSr1OsukRMIYcbkSuJr2XFSbaUcQSXkA60uk=
-X-Google-Smtp-Source: AGHT+IEcmRVgoRrKj8If9fjB5p3Ks9X/CeOQ8uNEwi5DFsH3tNn5HVGahUnpfqR9aPsvYRdH/KbsrA==
-X-Received: by 2002:a05:6000:1acd:b0:357:f0b8:e701 with SMTP id ffacd0b85a97d-357f0b8e7a0mr368754f8f.61.1716661750642;
-        Sat, 25 May 2024 11:29:10 -0700 (PDT)
+        bh=2rB90Zyk/xnV7pjOge9pMgAzrLvBX8WyYkOhzQ6Icas=;
+        b=mN7Z5ZF9Kpf2g76cVEdWsCMpRSOrHBYBZdE42sJTZXuOKCqomXary/7imF9lMUYVIA
+         MfWae3YMs+sStAIV3vnt2xIXImPBBbXvWKArPDx2j8g9hbsypObkQ/nPJpMVqD6FN6jJ
+         Tw5h3LaQ+Me+0EOS5Vtl4xF5KUfWQoWubod875WVKlLVqVBU4k5bfphALP/sjUZ/j0U2
+         WNN77KR14DOiPJ/0RM5TSV2ddyEE7JkMyzhMy7I/Hp71J8MBXOwoTC7dSiqrfNbgieqC
+         TQBLqGgDDlMZl+X3bE9AGECHAu6IYysNmV6w5jBbv9Keix552Iip/eyhUNjVgbGhpNCU
+         5+aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgsQtM2KoEfiJ9gVJ3NDrrDfkW9FLXSePttRN5P6UqlsH5xC7Tcp23UUAvheqdkUfpjyEp+NnUSg2tcOYsRTZe+7g3bC76rtajcddv
+X-Gm-Message-State: AOJu0YwiIr+QdE9o7mudFHUn8icbYsLEaZZXFsTqHPtHcaecSkdrBhK6
+	JvNXMM11NAe/N50JAxv9XVAx3IREaYqZBSH/TTYxLrBe8Ee5vzbdiyNrRJo/a/s=
+X-Google-Smtp-Source: AGHT+IHu4K3qkmTYK4sRJW7Q4z82iFN/TsWlBdU2oIeYfo05jlo/wrTGSzE2FPwp7sn8N/JdOA6LwQ==
+X-Received: by 2002:adf:ce06:0:b0:354:f2b0:ebda with SMTP id ffacd0b85a97d-35527056594mr4952326f8f.10.1716662072990;
+        Sat, 25 May 2024 11:34:32 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-357f0c88894sm453421f8f.28.2024.05.25.11.29.09
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3558889fb57sm4599424f8f.114.2024.05.25.11.34.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 May 2024 11:29:09 -0700 (PDT)
-Message-ID: <f817aa2a-e0b5-49ad-92c5-bfa49cea4a5e@linaro.org>
-Date: Sat, 25 May 2024 20:29:08 +0200
+        Sat, 25 May 2024 11:34:32 -0700 (PDT)
+Message-ID: <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
+Date: Sat, 25 May 2024 20:34:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,17 +76,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: msm8996: add reset for display
- subsystem
-To: Markus Elfring <Markus.Elfring@web.de>,
- =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
- <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
- <0a362e81-1e4a-4c4b-823e-e84c6f408630@web.de>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+To: Conor Dooley <conor@kernel.org>, Tim Harvey <tharvey@gateworks.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240522215043.3747651-1-tharvey@gateworks.com>
+ <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org>
+ <20240523-vividly-sequester-d85ac7bccbbd@spud>
+ <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
+ <20240524-cavalier-outthink-51805f49c8fb@spud>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -132,27 +137,74 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <0a362e81-1e4a-4c4b-823e-e84c6f408630@web.de>
+In-Reply-To: <20240524-cavalier-outthink-51805f49c8fb@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 25/05/2024 20:20, Markus Elfring wrote:
->> Add reset for display subsystem, make sure it gets
->> properly reset.
+On 24/05/2024 20:40, Conor Dooley wrote:
+> On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
+>> On Thu, May 23, 2024 at 7:47 AM Conor Dooley <conor@kernel.org> wrote:
+>>>
+>>> On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wrote:
+>>>> On 22/05/2024 23:50, Tim Harvey wrote:
+>>>>> The GW7905 was renamed to GW7500 before production release.
+>>>>>
+>>>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+>>>>> index 0027201e19f8..d8bc295079e3 100644
+>>>>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+>>>>> @@ -920,8 +920,8 @@ properties:
+>>>>>                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+>>>>>                - fsl,imx8mm-evk            # i.MX8MM EVK Board
+>>>>>                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
+>>>>> +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Board
+>>>>
+>>>> That's not even equivalent. You 7500 != 75xx.
+>>>>
+>>>
+>>>>>                - gateworks,imx8mm-gw7904
+>>>>> -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
+>>>>
+>>>> Compatibles do not change. It's just a string. Fixed string.
+>>>
+>>> I think there's justification here for removing it, per the commit
+>>> message, the rename happened before the device was available to
+>>> customers.
+>>> Additionally, I think we can give people that upstream things before they're
+>>> publicly available a bit of slack, otherwise we're just discouraging
+>>> people from upstreaming early.
+>>
+>> Hi Conor,
+>>
+>> Thanks for understanding - that's exactly what happened. I'm in the
+>> habit of submitting patches early and often and it's no fun when
+>> something like a silly product name gets changed and breaks all the
+>> hard work.
+>>
+>> The board model number is stored in an EEPROM at manufacturing time
+>> and that EEPROM model is used to build a dt name. So instead of GW7905
+>> which would be a one-off custom design it was decided to change the
+>> product to a GW75xx. The difference between GW7500 and GW75xx is
+>> because we subload components on boards between GW7500/GW7501/GW7502
+>> etc but the dt is the same.
+>>
+>> If there is resistance to a patch that renames it then I guess I'll
+>> have to submit a patch that removes the obsolete board, then adds back
+>> the same board under a different name. Shall I do that?
 > 
-> * I suggest to use occasionally more than 50 characters in lines of
->   such change descriptions.
-> 
-> * Please reconsider word wrapping accordingly.
-> 
-> * Can such information be relevant for the tag “Fixes”?
+> I think this patch is fine - other than the inconsistency that Krzysztof
+> pointed out between the "renamed to gw7500" and the "gw75xx" in the new
+> compatible.
 
-<form letter>
-Feel free to ignore all comments from Markus, regardless whether the
-suggestion is reasonable or not. This person is banned from LKML and
-most maintainers ignore Markus' feedback, because it is just a waste of
-time.
-</form letter>
+I am not a fan of renaming compatibles because of marketing change,
+because compatible does not have to reflect the marketing name, but
+there was already precedent from Qualcomm which I did not nak, so fine
+here as well. Double wildcard 75xx is however a bit worrying.
 
 Best regards,
 Krzysztof
