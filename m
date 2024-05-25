@@ -1,180 +1,164 @@
-Return-Path: <linux-kernel+bounces-189407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66E58CEF8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7300C8CEF90
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8A82817B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:55:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D831C206A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E6D63511;
-	Sat, 25 May 2024 14:55:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D712B5FBB9;
+	Sat, 25 May 2024 14:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYHCHhdH"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6669605C6
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784EF3C08F;
+	Sat, 25 May 2024 14:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716648927; cv=none; b=WVnTHmcpnCMeN3MyDE0O6VICvPS9yOc9QrN4IX51pqNuPL6ImdKu2F13otFAgsuDRbBOQo2/W7NxoOIlu7OMZE9xTzOZKRDVizmNK2iUux1y04+truoXAqJfr+jIKQK0yENHkADiszrw87B7RHiByqDUAq/RIxfQIWQmPoqd4t4=
+	t=1716649107; cv=none; b=LmMW4YGIle2fmKPktOo18bmSYysxeqhbKzOQM/4tXcRn/h9lMnAp/JN/yRm+chczC70oNNHknsZwBKeZ7LImgtapnaXxeIFgjtDVu6J4uczHEzARxWBX8rOd8APJ7QqUJ8b6IMLweg2rtcVcpn579u1jBr9yhvhtRo8Fyf/Jzl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716648927; c=relaxed/simple;
-	bh=Fz0aw1EiF6ZOsk6k1keRmejxcoSipTICrN0oQ3OoEV8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KPhNM4xaGrdJwEIimyljiWKF55KNLAsCjYwazHHDlZ5pCdq+2qDXsxEwn+qJdicfuQ2s8Gr0u2ichS7pusuCR94yF6AqH2ADsT5B/EqT0RjUD7TYV6HE0x1kmPW8pAdgevY2mxDiPQcPV4EtOTHTVRp9OiJ12Lv0Td6tihk2fFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-36db3bbf931so43182005ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:55:25 -0700 (PDT)
+	s=arc-20240116; t=1716649107; c=relaxed/simple;
+	bh=y07DZNM/QDvEedbvvJlMHk1r5ZGYfBSPPra93Momo0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hf0NAVTIQXXOXke/PmX5TA52y4qi+WoHmsDqGfw+tlx3D3WJr+a+H5yww4KkiCTdHsPs+J3woNylMrZGFU9WRW9Qvae5m5MDbbo0hHBs9tDmyQ4PNbFj3J96Qus4lg9BT0b0CGYS1oMwzgTrLhGrwGZnFh+T252Ufz/QddcTELY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYHCHhdH; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6265d3ccf7so213646766b.0;
+        Sat, 25 May 2024 07:58:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716649104; x=1717253904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N5jpB4fiszoJDHewi5PTIYyY+d12c+mT7kvwJL6peD4=;
+        b=lYHCHhdHjptz2Pc2o7mb410suBMyeW0+9S+RyYL1FOsREfiM6PGTQOqTqFNGdeYK8K
+         RBamUhTl1vUFDcS+OfUq7Zjnna0pLlflI2k7O4lOhrSApQufLKW5r9hxW0PzoOovx/a1
+         +9IIBSXmON3dWKh0/gZPDNGeq2d6EGJQjlDT4K2PACPvvYC1pv2i9XiDjOIw+/F4actN
+         E/Ie250Egt/bm3is1wuPlxkjygkIrtO8U2iq/UqhYRv/aKW7kVPQjZpJ/rTGOA43I3mA
+         W8cdOCpUGQ+jba0MLV5BwNQF91FCvMgieNjTA1WvX7EhdrTTnweZivwZLKlwF1Urw1mD
+         1Sug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716648925; x=1717253725;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7P0rG7yKNGHrRRe/5Vz8+uxInZHOLcNoxttbH0GENig=;
-        b=bACZ8GPX7oRxsBMq2shCAamNufC6jD+bztf+aegYsntyHxFZcea26HHFWGx3w+sQVR
-         QZaCAQbbhmLcSJby4++mGHjq1dOPV1RDUxsJ2WsJi2/xkddLJvajqqEeuDzDU1u0rvB6
-         OPpN2jrjibRcgyTLamVzFmaS2gKfpt64eupfdijisMWJaU+G2Tx1oynU5ffBL0djPElW
-         Rf2CVNV4dxz0zia/4CxTg7+/iFArFOozFKIsodhanR4WaiOkmIV2+G9v/VuCDv6ATWL0
-         6Zv0LaxvDLk03w+dsabE+i/ULcn6wNCuR9SN/6OkTxD9Qipji9jxsDfsl+ndONvXyd50
-         wjYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuPEvUCfoep8AvSN+I7RhNYbIXN4YGU5l/nZgOsTXAcOtFMqjFp5ggeQC9mmoma+iam09Fm98xB83zWYuki+FN+hYXoBfHSbeonUvR
-X-Gm-Message-State: AOJu0Yze2QM87Ui1YsagXOaNQ6pmheXUTnBpuhDfG4U6LEW09Omw4Qzi
-	mxNrKTrzbKYh5xk1FyAZsS6nmX3ZtOcvrwbSsYpFodbKGWhxvhIW9QBYAaYnIk8kXKEVfrWk+0T
-	mCQUO3igX5Jkc99vi4Ckcup/QpAHohCO/+GLX6rWUOmDy2nI6PvoJNzA=
-X-Google-Smtp-Source: AGHT+IEYU52nZW35CbtGY+KBokbn0lYgK9/tzTsldeM5A23wuJhtCjFzvgGlzX3U7WfWHdv/tFfVWr4XKMPbKihB/Jmuox9BnMLI
+        d=1e100.net; s=20230601; t=1716649104; x=1717253904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N5jpB4fiszoJDHewi5PTIYyY+d12c+mT7kvwJL6peD4=;
+        b=KR+OWcMcduVaNxHyDAYZxTGIwqH+mTI8iZZTUKA7f7jKa2C6gys+JKZeqygr/d4spY
+         aEVTlAv/mUPcppN11YAhEE9nLT3Z87Ww2V/G6OO94sadjNHRLINC8f+I6r74jQMX8Hp4
+         sNuo+BzOh/pFD1eKrZmkKsszodOVLWUdLhH7eQ1SCScqozF0NoTrIZkKuJepC12mXnZe
+         PiJ2WkgZFVKD5Eam6XWLmL1GjF7Shgk1tgmIidOTppoLxo+0ezmMkiif0K/rERPb37fB
+         CfVXCy3TX27/3ewFnYr9rRQdTTJAmvSKsAQQ+gDY+eEX2VCFe7T24w8XO3umN7LCgaDm
+         F8xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBJ6WupDySnqFFqDP7xL7D0uhtZeaN3s5DMfLI80vnCrqicKN0GJC80Br9s87eky+vWT24g3273BwSLYG9UaCBiGmr9CtNYa6x5fhvg6dgEMDHz5kI1Tpc2xkbJ3/WTWUlxdg+YXMv
+X-Gm-Message-State: AOJu0YybB6zHMXCeIxbLNnbhEVTbSTDP/CSt3gxDsd4zhclMeav2BbM5
+	SdDM7DLdi8g23iDnq4JkV9u8M3Sft0XcfYVFpmDBchd4rCAT5KsGbiJZRcYzjw9EV7bEQI6aabG
+	4ksTGQShsCuUB178ibkh68BnF9HU=
+X-Google-Smtp-Source: AGHT+IFl9IYSmRIHAQ2JRUkfyUpWDshgscT9Icfine2tPalV0L8rIirAWlBF7oh28M86LpzfGNLAXACOy6Dx5O1utkY=
+X-Received: by 2002:a17:906:e84:b0:a62:404a:d0d0 with SMTP id
+ a640c23a62f3a-a62643e458cmr329166366b.42.1716649103717; Sat, 25 May 2024
+ 07:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8a:b0:36c:2976:3012 with SMTP id
- e9e14a558f8ab-3737b2b947dmr3482855ab.2.1716648925146; Sat, 25 May 2024
- 07:55:25 -0700 (PDT)
-Date: Sat, 25 May 2024 07:55:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000633dce06194879ad@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_alloc_v4_invalid
-From: syzbot <syzbot+3b2968fa4953885dd66a@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240524-ioatdma-fixes-v1-0-b785f1f7accc@yadro.com> <20240524-ioatdma-fixes-v1-3-b785f1f7accc@yadro.com>
+In-Reply-To: <20240524-ioatdma-fixes-v1-3-b785f1f7accc@yadro.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 25 May 2024 17:57:47 +0300
+Message-ID: <CAHp75VePTCdWTSSH_Hdmn4nDX3LWRMvsQsfSHUrgJA2r1Qhf_Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dmaengine: ioatdma: Fix kmemleak in ioat_pci_probe()
+To: n.shubin@yadro.com
+Cc: Vinod Koul <vkoul@kernel.org>, Dave Jiang <dave.jiang@intel.com>, 
+	Logan Gunthorpe <logang@deltatee.com>, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, May 24, 2024 at 1:24=E2=80=AFPM Nikita Shubin via B4 Relay
+<devnull+n.shubin.yadro.com@kernel.org> wrote:
+>
+> From: Nikita Shubin <n.shubin@yadro.com>
+>
+> If probing fails we end up with leaking ioatdma_device and each
+> allocated channel.
+>
+> Following kmemleak is easy to be reproduced by injecting error in
 
-syzbot found the following issue on:
+easy to reproduce
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1259beb2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b2968fa4953885dd66a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+an error
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> ioat_alloc_chan_resources() when doing ioat_dma_self_test().
+>
+> unreferenced object 0xffff888014ad5800 (size 1024):
+>   comm "modprobe", pid 73, jiffies 4294681749
+>   hex dump (first 32 bytes):
+>     00 10 00 13 80 88 ff ff 00 c0 3f 00 00 c9 ff ff  ..........?.....
+>     00 ce 76 13 80 88 ff ff 00 00 00 00 00 00 00 00  ..v.............
+>   backtrace (crc 1f353f55):
+>     [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
+>     [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
+>     [<ffffffffa000b7d1>] ioat_pci_probe+0xc1/0x1c0 [ioatdma]
+>     [<ffffffff8199376a>] local_pci_probe+0x7a/0xe0
+>     [<ffffffff81995189>] pci_call_probe+0xd9/0x2c0
+>     [<ffffffff81995975>] pci_device_probe+0xa5/0x170
+>     [<ffffffff81f5f89b>] really_probe+0x14b/0x510
+>     [<ffffffff81f5fd4a>] __driver_probe_device+0xda/0x1f0
+>     [<ffffffff81f5febf>] driver_probe_device+0x4f/0x120
+>     [<ffffffff81f6028a>] __driver_attach+0x14a/0x2b0
+>     [<ffffffff81f5c56c>] bus_for_each_dev+0xec/0x160
+>     [<ffffffff81f5ee1b>] driver_attach+0x2b/0x40
+>     [<ffffffff81f5e0d3>] bus_add_driver+0x1a3/0x300
+>     [<ffffffff81f61db3>] driver_register+0xa3/0x1d0
+>     [<ffffffff8199325b>] __pci_register_driver+0xeb/0x100
+>     [<ffffffffa003009c>] 0xffffffffa003009c
+>
+> repeated for each ioatdma channel:
+>
+> unreferenced object 0xffff8880148e5c00 (size 512):
+>   comm "modprobe", pid 73, jiffies 4294681751
+>   hex dump (first 32 bytes):
+>     40 58 ad 14 80 88 ff ff 00 00 00 00 00 00 00 00  @X..............
+>     01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc fbc62789):
+>     [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
+>     [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
+>     [<ffffffffa0009641>] ioat_enumerate_channels+0x101/0x2d0 [ioatdma]
+>     [<ffffffffa000b266>] ioat3_dma_probe+0x4d6/0x970 [ioatdma]
+>     [<ffffffffa000b891>] ioat_pci_probe+0x181/0x1c0 [ioatdma]
+>     [<ffffffff8199376a>] local_pci_probe+0x7a/0xe0
+>     [<ffffffff81995189>] pci_call_probe+0xd9/0x2c0
+>     [<ffffffff81995975>] pci_device_probe+0xa5/0x170
+>     [<ffffffff81f5f89b>] really_probe+0x14b/0x510
+>     [<ffffffff81f5fd4a>] __driver_probe_device+0xda/0x1f0
+>     [<ffffffff81f5febf>] driver_probe_device+0x4f/0x120
+>     [<ffffffff81f6028a>] __driver_attach+0x14a/0x2b0
+>     [<ffffffff81f5c56c>] bus_for_each_dev+0xec/0x160
+>     [<ffffffff81f5ee1b>] driver_attach+0x2b/0x40
+>     [<ffffffff81f5e0d3>] bus_add_driver+0x1a3/0x300
+>     [<ffffffff81f61db3>] driver_register+0xa3/0x1d0
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+Please, read
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#back=
+traces-in-commit-messages
+and follow the advice given there.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3b2968fa4953885dd66a@syzkaller.appspotmail.com
+..
 
-=====================================================
-BUG: KMSAN: uninit-value in bch2_alloc_v4_invalid+0x625/0x10f0 fs/bcachefs/alloc_background.c:247
- bch2_alloc_v4_invalid+0x625/0x10f0 fs/bcachefs/alloc_background.c:247
- bch2_bkey_val_invalid+0x24f/0x380 fs/bcachefs/bkey_methods.c:140
- bset_key_invalid fs/bcachefs/btree_io.c:831 [inline]
- validate_bset_keys+0x12d8/0x25d0 fs/bcachefs/btree_io.c:904
- validate_bset_for_write+0x1dd/0x340 fs/bcachefs/btree_io.c:1945
- __bch2_btree_node_write+0x4777/0x67c0 fs/bcachefs/btree_io.c:2138
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- __bch2_journal_reclaim+0xd88/0x1610 fs/bcachefs/journal_reclaim.c:685
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:727
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> +       int err, i;
 
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:46 [inline]
- bch2_sort_keys+0x1f34/0x2cb0 fs/bcachefs/bkey_sort.c:194
- __bch2_btree_node_write+0x3acd/0x67c0 fs/bcachefs/btree_io.c:2100
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2288
- btree_node_write_if_need fs/bcachefs/btree_io.h:153 [inline]
- __btree_node_flush+0x4d0/0x640 fs/bcachefs/btree_trans_commit.c:229
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:238
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:553
- __bch2_journal_reclaim+0xd88/0x1610 fs/bcachefs/journal_reclaim.c:685
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:727
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Why signed?
 
-Uninit was created at:
- __kmalloc_large_node+0x231/0x370 mm/slub.c:3994
- __do_kmalloc_node mm/slub.c:4027 [inline]
- __kmalloc_node+0xb10/0x10c0 mm/slub.c:4046
- kmalloc_node include/linux/slab.h:648 [inline]
- kvmalloc_node+0xc0/0x2d0 mm/util.c:634
- kvmalloc include/linux/slab.h:766 [inline]
- btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
- bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
- btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
- bch2_btree_node_read+0x3d42/0x4b50
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
- bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
- read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
- bch2_fs_recovery+0x7b6a/0x93e0 fs/bcachefs/recovery.c:785
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
- bch2_fs_open+0x152a/0x15f0 fs/bcachefs/super.c:2105
- bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1906
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 PID: 8109 Comm: bch-reclaim/loo Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+With Best Regards,
+Andy Shevchenko
 
