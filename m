@@ -1,146 +1,98 @@
-Return-Path: <linux-kernel+bounces-189384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2238CEF55
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FD98CEF5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E499EB210F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527A61C209F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFD4537E7;
-	Sat, 25 May 2024 14:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B145B5821A;
+	Sat, 25 May 2024 14:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dHm2H7Jf"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v9GRPg1K"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D7143AD1
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 14:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E0357C94;
+	Sat, 25 May 2024 14:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716647988; cv=none; b=lOxlclQc8edgsayNkg6xj14UHMnF8zw49x/4H9OKejMwCHMSIhHxfoTuXm/ARrqGndENuFeNCPKxl5RD8nFNS0BmKaiccJ4llK+Mz2ix5lbUF5/QTV3PqGENbZtKCxjFvRHD1jurQ8qdZ/ozQIIEPHcg+gWNrWqa0H1B5Wp4zeM=
+	t=1716648226; cv=none; b=gO7jKsQT+ZynBbQBb10NGJFZvtSTT+upiE6ytIhad3E/Xv1MxhPc9Lqh/5l0tSr8JCLsT2VjBm7FxTETXZstWF/9y72h0y7gMLOHLXc+agB/LS2P6Ik/QI7wy60qspYA+6GlWU4MvTUb4pyyylcNExP5h7YSTQPEaiDEGvoQU4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716647988; c=relaxed/simple;
-	bh=Y4T7pbQtADwH/bbaTgPIAdUqhjKHFrElhzFanucHHOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUCYYtfNukufE5+SYKNJcTEo5+Sj4WQE3jWf70Opguze+TTkRsc5hopedFqe6rnvgc6RYJpduv4W8bUs3rIYqxpYyWv+RmmdBJsXLI2M82buyrnwCoNtQqWpSvynkOTTZdJsm9IGU+1ny3dxmGELeuhNYxVP+cwVLLsUlzTvdAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dHm2H7Jf; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vml170C44z6Cnk9X;
-	Sat, 25 May 2024 14:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:in-reply-to:content-disposition
-	:content-type:content-type:mime-version:references:reply-to
-	:message-id:subject:subject:from:from:date:date:received
-	:received; s=mr01; t=1716647976; x=1719239977; bh=wzdGIvVeas6cfl
-	W4dzZNIQbq57bEwr0qOTTzIb9+4Co=; b=dHm2H7JftcP93Qm48MqeBtHr8OZzbY
-	f6yobsQTgkeNL9N1mx8RRfAq0UrFClkjI7RueqPRrxQ2gq+oQtdBVeq5+CLIkK8G
-	29feyF/I7vUluRFB+1pjkOiTdkCSEoguVjgLORU74uB8Wpsychq+nBnSmm79YKkl
-	C+nMTirjKRVqxFIg1q76m7JcMQCXmdZwUJQ0Mr/v/2FgYWflzud8ymGo/1JxcFY0
-	1FbjEf+1N4ycPFOTSVgxxEoHw6EDQ7K+eJe41E1/vd16p4YBZArA+6vvl+8DgTQi
-	GKfPNkJBeUtvn9PFBX5SqroiF5U2zUPUpwAhLNF8cp2JNt+4ZAFhEnHA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id dxHjxwqORrP9; Sat, 25 May 2024 14:39:36 +0000 (UTC)
-Received: from mail.minyard.net (unknown [47.184.136.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: minyard@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vml136788z6Cnk9W;
-	Sat, 25 May 2024 14:39:35 +0000 (UTC)
-Date: Sat, 25 May 2024 09:39:33 -0500
-From: Corey Minyard <minyard@acm.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	openipmi-developer@lists.sourceforge.net
-Cc: Jani Rantanen <jrantanen@mvista.com>
-Subject: Re: [GIT PULL] IPMI bug fixes for 6.10
-Message-ID: <ZlH4JYGpbVd1CW8P@mail.minyard.net>
-Reply-To: minyard@acm.org
-References: <ZkJhmhatRHeKuIfE@mail.minyard.net>
+	s=arc-20240116; t=1716648226; c=relaxed/simple;
+	bh=fkcSscRVePBzClU/ByafnLde7oTUX6HZ++aSee07ccs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=aK250zl1sEBPfr5oKmktA0lmnIlFLH9GWuxv2sQVaNr0yQIX7nkk3hvKp8sv4QWdfPJZ/vsDju1XKYWLKgEVE+5KEeywiW7Deq6iXAxjDzjnHUbBmne5LJJiI6tgJqOTcPzJwNTGxJ/6Q1dHuGSSbkORHLuc6AwF00B2hY75u9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v9GRPg1K; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716648199; x=1717252999; i=markus.elfring@web.de;
+	bh=fkcSscRVePBzClU/ByafnLde7oTUX6HZ++aSee07ccs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=v9GRPg1KEYYrxlY/tsE9O4exPHM5M5OvPE72/MZr+cv0S59+jLS5PcLP6YXZ9xnU
+	 zndQKjjrCl3KQMhc0INkNTjEI0KDY1YnoDn2W8UnyVZ94ghyACYIw+i0OgIi+rkwr
+	 Eu064jBbcdMMznekVEnIYk4C3xPFFy0VETsMnC6S3szMD2OTlG+lNWOZ12RxsckVc
+	 AP4s1v6oBpwXEu9DDLZWwj5eCcvN/nxcxPa1094c6ydVKuBABNBOv4a/RamzzVMfc
+	 YglqBkknmagIw/ZZFBuDGH3TWsAi4hzD2XvKi1LaLHn/w1iQQr87z9/epqW+NLSWP
+	 u/OVpGgUZXr8qahCGA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6K1l-1sYXLq2s93-00zZ6o; Sat, 25
+ May 2024 16:43:19 +0200
+Message-ID: <cc397371-cb8a-43ba-8a63-98856b6fc0ca@web.de>
+Date: Sat, 25 May 2024 16:43:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZkJhmhatRHeKuIfE@mail.minyard.net>
+User-Agent: Mozilla Thunderbird
+To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ x86@kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20240523-fix-smn-bad-read-v3-6-aa44c622de39@amd.com>
+Subject: Re: [PATCH v3 6/8] hwmon: (k10temp) Reduce k10temp_get_ccd_support()
+ parameters
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240523-fix-smn-bad-read-v3-6-aa44c622de39@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8e5ILg0ccv40lWaOtqg2D8SgzVpmxsIPIOXqqOAu2EP0gVU6f5h
+ dMXEsFiyjFLeoa8OKIncw3mrV1ziT9Ioexl4PPU/UHCqytDerJ1y0n4UeFbQA7oePWkAAxs
+ H+jic0ZGoXtwfYJRmDrBRmmM38jsNHsX9aqOcGLWyfWnxFuhx8tyTjCsI7iOpESHy6aCEeT
+ PKTx1pj4UHwXXY+02MwCA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ull0oJpgIdY=;FurdIMuXMAktoU+xEw8OTdQmBM6
+ H4V1sd0KyLKThgT0BqjK4U4qgNJLoHXQCDN8GLrvum63kSTIFlo6ElI2R1K3gwHtcuFVI8iW+
+ iTitMPLjrb0Bq97Y3+IGhBLF+fedpGguAK/rET3ZJXi9Q74FU5GUxsamNWq2Xu2ZtBwomuLax
+ XzYFwJKjWQc7Xyk+0FwG4+cQsXphwL2sSD5KVDZ9MdFlTVb2PAVYbTnIygceQGQdVcFYy5SQZ
+ 3DuXODfb8d+x4xQyfyg9fG3SiV2K3PRr3kxeZZT2NAMeoqZ0vrTbB6OmuXwuMfIcDEJtPbQYz
+ oIJ+QLnX+BM7T7MJXSJkQW/EiCHD7inafmV8Klv2i+Y7B4CyIrFr5+ktVfXpsYEJ/rQBOq4Tt
+ QgzIRcUYdJWbzyeWXW9rCWd1nbnQn7UPwrrtCjWhyQ6+YVybEP8YlQ8gbGvvxpTYIIYN6+tV3
+ ooTANPcM5EAAVBqw3oaN1+ynYRsxtReQ8zMNv5WLt6kGMNkCNyhz/Jui4zkxNNBu14M7kkNFI
+ Gm8maROV1S0eQQvMFwshe2tikAKBhi2Om3PxYApcsyPwCE9SxQSp1oKr/btXMEF+aM5NUXYzv
+ ICRHVL9dOlDuvpI2HywASV22hYNW+UkuFt5nn3yIGoF0trtrhWbUSu0wPLCEjr3oMr2MGsQJ6
+ hr6vPkdnkIDOmvx5pjLdrrkGGHj2MJkZZC+L9yiJrflv8hePuSV98S0bH+brX8zBfK7TgLSJp
+ hqqkec4Fwbd927OCemuYrjSFOsS5dXvTyABayG0BhnxTVbPRIdf0zfH2TpxOidPNe5ufxi+iC
+ BC97E8RAwauT9GtGEarZjc/lIl+9m8tzY3tLUfofY9eB8=
 
-Hi Linus,
+=E2=80=A6
+> Drop the "pdev" input parameter as it is no longer needed.
 
-These haven't hit the kernel yet, were the missed?
+Can such information be relevant for the tag =E2=80=9CFixes=E2=80=9D?
 
-Thank you,
-
--corey
-
-On Mon, May 13, 2024 at 01:53:15PM -0500, Corey Minyard wrote:
-> The following changes since commit 8d025e2092e29bfd13e56c78e22af25fac83=
-c8ec:
->=20
->   Merge tag 'erofs-for-6.9-rc2-fixes' of git://git.kernel.org/pub/scm/l=
-inux/kernel/git/xiang/erofs (2024-03-27 20:24:09 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/cminyard/linux-ipmi.git tags/for-linus-6.10-1
->=20
-> for you to fetch changes up to 999dff3c13930ad77a7070a5fb4473b1fafdcecc=
-:
->=20
->   ipmi: kcs_bmc_npcm7xx: Convert to platform remove callback returning =
-void (2024-04-17 14:55:04 -0500)
->=20
-> ----------------------------------------------------------------
-> ipmi: Mostly updates for deprecated interfaces
->=20
-> These changes are mostly updates for deprecated interfaces,
-> platform.remove and converting from a tasklet to a BH workqueue.  Also
-> use HAS_IOPORT for disabling inb()/outb().
->=20
-> -corey
->=20
-> ----------------------------------------------------------------
-> Allen Pais (1):
->       ipmi: Convert from tasklet to BH workqueue
->=20
-> Niklas Schnelle (1):
->       char: ipmi: handle HAS_IOPORT dependencies
->=20
-> Uwe Kleine-K=C3=B6nig (6):
->       ipmi: bt-bmc: Convert to platform remove callback returning void
->       ipmi: ipmi_powernv: Convert to platform remove callback returning=
- void
->       ipmi: ipmi_si_platform: Convert to platform remove callback retur=
-ning void
->       ipmi: ipmi_ssif: Convert to platform remove callback returning vo=
-id
->       ipmi: kcs_bmc_aspeed: Convert to platform remove callback returni=
-ng void
->       ipmi: kcs_bmc_npcm7xx: Convert to platform remove callback return=
-ing void
->=20
->  drivers/char/ipmi/Makefile           | 11 ++++-------
->  drivers/char/ipmi/bt-bmc.c           |  5 ++---
->  drivers/char/ipmi/ipmi_msghandler.c  | 29 ++++++++++++++--------------=
--
->  drivers/char/ipmi/ipmi_powernv.c     |  6 ++----
->  drivers/char/ipmi/ipmi_si_intf.c     |  3 ++-
->  drivers/char/ipmi/ipmi_si_pci.c      |  3 +++
->  drivers/char/ipmi/ipmi_si_platform.c |  6 ++----
->  drivers/char/ipmi/ipmi_ssif.c        |  5 ++---
->  drivers/char/ipmi/kcs_bmc_aspeed.c   |  6 ++----
->  drivers/char/ipmi/kcs_bmc_npcm7xx.c  |  6 ++----
->  10 files changed, 35 insertions(+), 45 deletions(-)
->=20
+Regards,
+Markus
 
