@@ -1,141 +1,301 @@
-Return-Path: <linux-kernel+bounces-189574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56608CF234
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:30:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA028CF245
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FCE28110E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:30:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E891C20FE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CB512BE8C;
-	Sat, 25 May 2024 23:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0508B25777;
+	Sat, 25 May 2024 23:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="M99oINRF"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hVTkRfwf"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2783127E34;
-	Sat, 25 May 2024 23:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542D820DE7
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716679781; cv=none; b=RxrH6gF+ThdWSB6I0EUOEuS5ELVpgjAX+jc3hrE9PnUQAf5Sg6iySY7LYbIFRD4l191aZUT7umn24IiqRVUNsoehKZSqukbQUmHWx+gKKi06o5UYEC80FkIfTa9JX7TOQuLqkzbRGE3OlxT16h8MSOJnKIOufC41FR79IQvME3E=
+	t=1716680069; cv=none; b=EA28FqyI8rMBu1n+Qg5abTTl1zyb76+ZPtIgt3AIKJh1mzOt7IR0ongjAaICl3k18zXEr1uYcLQb9bhQ23WcHDhmEG3Dqvt2Fi5RWoiGf0HAXOA/tPMtHCZc3gF1Wyc34/HkbK5RaOGR42q5pxNhnlcN1jFZi+POQ4kc9eYTXDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716679781; c=relaxed/simple;
-	bh=PBNn0jdNfUp4z8i6OCekSOpLNXWwmbOY9aEsHfW/x5E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xd0fq7UR+eDDP+nboAoE8+dgJVWtmEZxPd4olw6dRxUdzpXGReLEKJth4N7An8f1x+u5chqin1lfP92L6cm4mCDrtnNIaueqhOlglLhSKq3ejisIiYIOCTEZKjo8HKzeEPhu+iekEzWI1VQdLsSlv8bxZeUCx+Pbh2F2H615HY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=M99oINRF; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a452f6a41aee11ef8c37dd7afa272265-20240526
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Tl2QN13jl/RXNBMTp3Wzf+yLZtDlERtwTZOrjciV6eA=;
-	b=M99oINRFyM9yICI92W0c3g6n6V1A4krihoJGlUgqEXeDep49dmgcE9n1oZdSF7slV+67OTq1Hzo5SoG2w3Y8tFGb+61GrInuRwDdVXQOg9FuaBddUB9hAd57M9EmgnceCRUxyVaPA20y/cAiL3zBCES2kUbGvg8pyLPIdOl9oNg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:7915aedf-e663-40c8-a289-c5881c836dad,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:e060cd43-4544-4d06-b2b2-d7e12813c598,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a452f6a41aee11ef8c37dd7afa272265-20240526
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1552233013; Sun, 26 May 2024 07:29:33 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sun, 26 May 2024 07:29:31 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sun, 26 May 2024 07:29:31 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Maxime Ripard <mripard@kernel.org>
-CC: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>, "Jason-ch
- Chen" <jason-ch.chen@mediatek.com>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Nancy
- Lin" <nancy.lin@mediatek.com>, Shawn Sung <shawn.sung@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jeffrey Kardatzke
-	<jkardatzke@google.com>
-Subject: [PATCH v6 7/7] drm/mediatek: Add cmdq_insert_backup_cookie before secure pkt finalize
-Date: Sun, 26 May 2024 07:29:28 +0800
-Message-ID: <20240525232928.5524-8-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240525232928.5524-1-jason-jh.lin@mediatek.com>
-References: <20240525232928.5524-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1716680069; c=relaxed/simple;
+	bh=uUzfAIJAN8UOtttIYoZiBPiN+mS3jw1s66mcLXazIvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GO7/ZjUSS9jKSJjWhmsh00o6RVbTfMF0lfV7vNJQGg+SLJq0BdQwd/HzfZ4rdjHirq622ZgFWdPnVaS2S8Awt0YMZvmuWpJ/0bgyOmdEPxeFa6gknLiHl0Ia+ZCtnmSNS+5jAnpg3qLjmnZ9YUYrZr3kYYUe4CF+EgAdGTefApE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hVTkRfwf; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36c6056f7bdso163945ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716680066; x=1717284866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VyDDv123oM7gFPBqZNEnU0l4e5csQD/v1tgVMBREQS8=;
+        b=hVTkRfwfauw92SOS29Dqr0TUajj4TaI9BKrmERxWzvOT9Q9kiVwB/yLUjmDq/vLb0m
+         MOoulP6dc5+D3kdZYEe8zUJ0sYxTu/dDYtKX32Kf//ifBOSjnWY8bWnkqXPXDURFdc8p
+         doG5vZh+wslMAIyd3jQSBL4g1+jbKlnKThjq3ptXtxHNfdYqxhKpGlOHgac6dOvpEpAW
+         woCM1BISCO82obdBZaAdg+6qVPJudwv5Fp/xbvjVexQU1sYK7FVSAa9K9MBxaVVA+Jw0
+         k7WEMuCH6X4bRt14NAlL1itab0yDiegqLMjnp21lzNlFhs0Mnrmhv2XgLEt6cTMx/MVE
+         QsqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716680066; x=1717284866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VyDDv123oM7gFPBqZNEnU0l4e5csQD/v1tgVMBREQS8=;
+        b=TvJcnbRc0kYu2ZS9NXpCzzXogK3JE25qAJwqjRtXxMN0uX6rzcKHMXkZOYHgBh/AlI
+         tB8Z+QTvdO+Rs9CnUZOmK7kp/gslE2K002OCha4x7jM30l9cg6bm88k88ztFcrVwuXPc
+         X0bsMexPeiAtjDf6fEC7iqfRTbJPehoV4hjiKq7B7XdenWmJ2BIdPPTNASgG7pbRYmSQ
+         A7jzm+vkqz4rOrFPMbmydddsV0zAMIyrnWAk9Dv0cw7enNEfKQWxEe96v4i+dPOWQ3pX
+         RJuVQf/eI5wwwPcFgcPp8S6yZ6J4ErVumhF4ZgyGkog3ibE7eX66xKHaz9oIggZjfyCu
+         lw4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhUuwUY9+jF9kSy1UDqxKN4ogoyWa3Qf0hb2Z/YP4il4bYX5UR0zVup/jKb6HH+g/Yvn8SAf4KI9M/tl0cEdZ/PP6vVtApV8xc4s8X
+X-Gm-Message-State: AOJu0YxCmu6DPND6DwtCksQOUE+yYtKZSVUx3v1/TPq5RAIJarMpL14Q
+	XNvxUBzzvoVxaQmSALHh5EMztAxbzfQmVFPkjYADPyVa5rRX5JEfEVfF5kydfPxAqYprCc3G3WW
+	FbZ/5L1cwebZyknwq3VE3KM83FbnmhESvHyIe
+X-Google-Smtp-Source: AGHT+IEFPou839IYn52nxYvnLuzElIpziWWNUre//vAxOnb6alTAcRjMhiwI1g9ND3ujWy0WXgIQXHtHnH7qWJI7MMo=
+X-Received: by 2002:a92:d38a:0:b0:36c:3046:a6ef with SMTP id
+ e9e14a558f8ab-3738a706885mr2292555ab.12.1716680066259; Sat, 25 May 2024
+ 16:34:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--11.595200-8.000000
-X-TMASE-MatchedRID: XAa2d/45j8Tob/hVdrvnXjPDkSOzeDWW+eBf9ovw8I27eXIF2U7rKy+8
-	OxujShyxE/UmhJjBrzZC3mgca9yt8kttpN+KVVd9syNb+yeIRArvJY9pBzgg1P+RKQghHjkeBgH
-	mCxujQvyjmrD+IUq29hI7tf+6KnxtiBoFctaOhN8jRwcsjqWGAgrefVId6fzVCqIJhrrDy2/jZY
-	67L74Lw7o3/co+ykK6UFTYnego7LJccQ8eam5EfRRFJJyf5BJe3QfwsVk0UbtuRXh7bFKB7gRuY
-	qpRzYwt5tYzjYMxVNFdPwsV1FdNCbaRD1c+EJMdvuvB6gAgryg=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--11.595200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	9AEA3DB8CB88483491FE005922C30F1CE0AE72AEC367029CE1464088C652F4422000:8
-X-MTK: N
+References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+ <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com> <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 25 May 2024 16:34:14 -0700
+Message-ID: <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
+	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
+	Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add cmdq_insert_backup_cookie to append some commands before EOC:
-1. Get GCE HW thread execute count from the GCE HW register.
-2. Add 1 to the execute count and then store into a shared memory.
-3. Set a software event siganl as secure irq to GCE HW.
+On Sat, May 25, 2024 at 10:22=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, 25 May 2024 at 00:38, Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Yep, so I'm curious what makes it fail.  IIUC the commit in question
+> > would convert "cycles" event to "${whatever_pmu}/cycles/" if the pmu
+> > has "events/cycles" alias in sysfs or in JSON.  But it should work afte=
+r
+> > that too. :(
+>
+> Well, having looked at it some more, I have the main CPU PMU:
+>
+>     /sys/bus/event_source/devices/armv8_pmuv3_0/
+>
+> which has a 'cpu_cycles' event, and the cpumask covers all the 128
+> cores in this thing.
+>
+> That's the thing the regular profiling *should* use:
+>
+>     $ ls events/
+>     br_mis_pred          l1d_cache_wb        l3d_cache_allocate
+>     br_mis_pred_retired  l1d_tlb             l3d_cache_refill
+>     br_pred              l1d_tlb_refill      l3d_cache_wb
+>     br_retired           l1i_cache           mem_access
+>     bus_access           l1i_cache_refill    memory_error
+>     bus_cycles           l1i_tlb             sample_collision
+>     cid_write_retired    l1i_tlb_refill      sample_feed
+>     cpu_cycles           l2d_cache           sample_filtrate
+>     exc_return           l2d_cache_allocate  sample_pop
+>     exc_taken            l2d_cache_refill    stall_backend
+>     inst_retired         l2d_cache_wb        stall_frontend
+>     inst_spec            l2d_tlb             ttbr_write_retired
+>     l1d_cache            l2d_tlb_refill
+>     l1d_cache_refill     l3d_cache
+>
+> But the thing that seems to have confused the new parsing is that this
+> machine _also_ has
+>
+>     /sys/bus/event_source/devices/arm_dsu_{0..63}/
+>
+> which all have a 'cycles' event:
+>
+>     $ ls events/
+>     bus_access  cycles     l3d_cache_allocate  l3d_cache_wb
+>     bus_cycles  l3d_cache  l3d_cache_refill    memory_error
+>
+> but these things are basically some "each pair of cpus has some bridge
+> to the L3", which is why this 128-core machine has 64 of them. So each
+> of those have something like this:
+>
+>     $ cat cpumask
+>     40
+>     $ cat associated_cpus
+>     40-41
+>
+> I did not look any closer at what the 'cycles' there can actually
+> count, but clearly they can't be used for recording. And even if they
+> can, they shouldn't for the default "cycles".
 
-Since the value of execute count + 1 is stored in a shared memory,
-CMDQ driver in the normal world can use it to handle task done in irq
-handler and CMDQ driver in the secure world will use it to schedule
-the task slot for each secure thread.
+So this is now the behavior with the patch I sent.
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+> > It seems my system doesn't have the alias (both in x86_64 and arm64)
+> > at least in sysfs.  I think that's why I don't see the failure and mayb=
+e
+> > there's a specific hardware issue - like a M1 macbook issue?  IIRC it
+> > required the exclude_guest bit to be set, but I think we handled it alr=
+eady
+> > so this must be a different issue.
+>
+> This is my new Ampere system, which has basically replaced the M2
+> Macbook Air as my arm64 test platform, since it builds the kernel a
+> whole lot faster. That's what 128 cores will do...
+>
+> Ian's patch at
+>
+>     https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.c=
+om/
+>
+> makes things work for me again, but I get the feeling that the JSON
+> parsing is too fragile. It should have noticed that the 'cycles' event
+> it found wasn't useful for profiling, and gone on to the next one,
+> instead of just giving an incomprehensible error message.
+>
+> I think the real problem was that the JSON parsing code blindly just
+> looked for "cycles".
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 59f6263ae806..0df9bf695f65 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -178,6 +178,7 @@ void mtk_crtc_disable_secure_state(struct drm_crtc *crtc)
- 
- 	cmdq_sec_pkt_set_data(&mtk_crtc->sec_cmdq_handle, sec_scn);
- 
-+	cmdq_sec_insert_backup_cookie(&mtk_crtc->sec_cmdq_handle);
- 	cmdq_pkt_finalize(&mtk_crtc->sec_cmdq_handle);
- 	dma_sync_single_for_device(mtk_crtc->sec_cmdq_client.chan->mbox->dev,
- 				   mtk_crtc->sec_cmdq_handle.pa_base,
-@@ -795,6 +796,8 @@ static void mtk_crtc_update_config(struct mtk_crtc *mtk_crtc, bool needs_vblank)
- 		cmdq_pkt_clear_event(cmdq_handle, mtk_crtc->cmdq_event);
- 		cmdq_pkt_wfe(cmdq_handle, mtk_crtc->cmdq_event, false);
- 		mtk_crtc_ddp_config(crtc, cmdq_handle);
-+		if (cmdq_handle->sec_data)
-+			cmdq_sec_insert_backup_cookie(cmdq_handle);
- 		cmdq_pkt_finalize(cmdq_handle);
- 		dma_sync_single_for_device(cmdq_client.chan->mbox->dev,
- 					   cmdq_handle->pa_base,
--- 
-2.18.0
+I don't think JSON really means anything here. We use JSON as a way to
+import tables of events. We want to map an event name to a config
+value, we could do it in lots of different ways. There is a difference
+between:
+ - legacy events: hard coded event numbers for certain typically CPU
+events, although there are L3 cache events in there,
+ - sysfs: events advertised by the PMU driver in sysfs,
+ - events built into the tool, imported from json files.
 
+The first problem that happened was BIG.little. ARM did nothing to fix
+the perf APIs for BIG.little and Intel fixed things up when they did
+hybrid. What does it mean to open a legacy event on a process in a
+BIG.little CPU when the process may be scheduled onto either BIG or
+little cores? ARM's non-solution was that you'd profile based on which
+PMU driver registered first and not profile on the other - you would
+be profiling on some fraction of your CPUs but not all.
+
+While Intel added proper hybrid/BIG.little support they did so by
+essentially forking every aspect of the perf tool to have a "hybrid"
+version. I put a stop to this in the metrics code and by doing so
+ended up taking on responsibility for cleaning up the mess Intel had
+been creating. This led to the event parser being able to parse "<PMU
+name>/<legacy event name>/" for example in "cpu_core/cycles/" and
+"cpu_atom/cycles/" and encode the legacy event.
+
+This caused issues on ARM, especially Apple ones - maybe Apple should
+be asked to support their PMU? Previously their PMU would advertise
+events like cycles and the sysfs encoding would be used as there was
+no notion of using the legacy encoding. Now the legacy encoding was
+used and for some reason we don't maintain legacy mappings of events
+for PMUs on Apple CPUs. After being politely shouted at, and to my
+surprise Intel agreeing, we made it so sysfs or events built into the
+tool take priority over legacy events if the PMU is specified. This
+wasn't a small change as every test expectation needed updating for
+this. We still have some broken test expectations.
+
+So we had a case where legacy events weren't the priority if the PMU
+was specified but when no PMU was specified they had priority. This
+was frankly weird and so the patch you bisected to fixed this and was
+also a behavior RISC-V had asked for. There was even some discussion
+on this subject at LPC 2023.
+
+Is everything fixed? Nope. It is still the case on ARM that we don't
+profile on all CPUs for perf stat. This is because when no event is
+specified hand crafted perf_event_attr are passed to perf_event_open
+and these perf_event_attr need to open multiple for a
+BIG.little/hybrid system:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
+ls/perf/builtin-stat.c#n1942
+I wrote a fix for this:
+https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
+Unreviewed/unmerged and frankly I think ARM should be in the driving
+seat for reviewing it as it is trying to fix their CPUs.
+
+> The only thing that seems to make Ian's new
+> evlist__add_default_events() special is that it uses
+> "perf_pmus__scan_core()" for that cycles finding, which in turn then
+> uses only the *core* PMU's.
+>
+> It feels to me like the "parse the JSON info" is just too fragile,
+> picks the wrong events, and Ian's "add defaults" just works around the
+> weakness.
+
+So I think the parsing is now robust/consistent but that doesn't mean
+the behavior matches your expectations.
+
+I say robust as when any event, regardless of whether it happens to
+alias the few hundred legacy names, will parse. Previous parsing meant
+events advertised by AMD's PMU, like branch-brs, would return parse
+errors as "branch" and "brs" looked like components of a legacy event
+name.
+
+Consistent in that, regardless of event name, we will try the same
+process to find the event.
+
+I don't understand why you think JSON comes into this. Is it because
+I've sent patches with JSON encoding events and metrics in? In the
+case of AMD's "branch-brs" and the "cycles" event, the event has been
+advertised via sysfs and not from data in JSON tables.
+
+> But whatever. With his patch, at least it works for me.
+
+You followed up in:
+https://lore.kernel.org/lkml/CAHk-=3Dwi5Ri=3DyR2jBVk-4HzTzpoAWOgstr1LEvg_-O=
+XtJvXXJOA@mail.gmail.com/
+with:
+
+> So no. That still needs to be fixed, or the whole "prefer sysfs/JSON
+> by default" needs to be reverted.
+
+So I think we still need to figure out what:
+
+$ perf <command> -e <event> ...
+
+where <event> doesn't specify a PMU means. I'll try to enumerate the option=
+s:
+
+1) the 6.9 behavior where <event> will be searched for on every PMU
+and each PMU that has that event will have it opened. This can lead to
+failures depending on what <command> is going to do. If <event> is a
+legacy event name then it will be opened only on core PMUs.
+2) the current perf-tools branch behavior where <event> is searched
+for on every PMU regardless of it being a legacy or non-legacy event
+name.
+3) (2) but we change drivers to not advertise events where the name
+conflicts with a legacy event name.
+4) if the PMU isn't specified with <event> then we only search core
+PMUs (e.g. armv8_pmuv3_0, cpu, cpu_core, cpu_atom)
+5) we parse all events as with (2) but depending on <command> can
+choose to ignore perf_event_open failing.
+
+I'll try to rustle up a patch for (5), I have no way to test it. I
+expect it will make somebody somewhere unhappy, apologies in advance.
+
+Thanks,
+Ian
+
+>                  Linus
 
