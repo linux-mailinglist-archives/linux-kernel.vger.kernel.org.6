@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-189512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130738CF110
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE428CF112
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9D3EB20FAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA51F219C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA272127E25;
-	Sat, 25 May 2024 18:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02390127E25;
+	Sat, 25 May 2024 18:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wIgmQ2wD"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7woUNvd"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E83B86653
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A618F127B6A
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 18:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716663523; cv=none; b=f5Qyh6BOhWBTl6w5w7CvcKB47A46EI7WN/XwIYWSWrUh2jcweKgc12C+3fQ+UH7Cx0a4hTbM0s4Ixhiv+2kX7udymHwVfFSVfFvaC64w1Bc8Fm8OoMHAWZWxBuyVbWg0j+UEFKVhC8YQ1tYwDb90raeGdoxHHJMJSFiQSGhC9zs=
+	t=1716663543; cv=none; b=geJJj2nJPAlYI8adxEAZVlDVR2vol3Z7T/jUlyiNHlT4TYXVIpXVlO7vGIbBnioQ4pVBbMt3q39ssAAkicUscjRZy9xMJLe3cnuAwat2dEOvH0bmUl6VMGDHH3M1GUwQGCdwnz7kPAo3wA1AF+nOdWl2Xvd1AlPmV9ytLyzic54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716663523; c=relaxed/simple;
-	bh=iKEIVO+4VmSS9Oc5MntKhaJZ/iGMcGlkEC+aUBukEHo=;
+	s=arc-20240116; t=1716663543; c=relaxed/simple;
+	bh=EKyzkvw7ItMT2A1KApog1OWblbXsMQaqWtGfoyM3PzQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixPY4pCgRqXrQEmSn/2Ya04/Xs5NDnDxyjYNmDOVgrCX+76wHBIAOOplW7BE6w3yEJMsGGQ8mBoEs6qQptgRy/h3F3L1aappjQa2g3M1PVhC/DLEMEICcgWEmq17ngFaFpY0DciWEsgSoP2a6OtmQ2X0XjObkJgjxVTUlqn3CYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wIgmQ2wD; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=bmXlarXeix9KBmajfSqo3pt/WWED8wcR7TbvUGMjIBjOTpFnJ+EpJ/XZo2HNB7QLvzxO9Ux3hN8VTcD0vfZcDd0ES4KsgFwmZ5Fa/YDqRJj3gaeWg68RdnIJ5jcSv7DFF5bjIAOboePY1YIUbJ0RYgqRra52HJbCTl0FlG4zCj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7woUNvd; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4202ca70289so71194045e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:58:41 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-420160f8f52so39909485e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 11:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716663520; x=1717268320; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716663540; x=1717268340; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7he0sZ2GZcZ4jN7OuNxSgoGWU8clRyZzA1mrnUKwrw=;
-        b=wIgmQ2wD9cwXdPB00KF2TNgBPy2LfhiyvHlQwzrhihPP3mzT7nrG1YKd6cVJf4PrwC
-         z8XzH1viKmIDqk5nCRJPCFVxC8J1egiIcuihWH6XniW+2/6235r2YRpTimw840+lvOwg
-         iyHEggY1aBUwTK2Xv50ZuiEWIqU8POFI9kgu2vKTPXPKF+41avskEZ2uUp3GRg9JoMEz
-         c8nLH/v8zgA9ld9kUMWQ4ojo4RgJc4cscNWovY/ZfcOPLyXhMUzqpk5KdOnVmw6KmEM9
-         NkYVnpTzHW8jRA/goq7kPXmZ4erUvBVlcCzmixsq2JbfgFaPnNEVBIY97Sre26xIjR4c
-         9TbQ==
+        bh=C1ltb2McNZuu2wPm9iznTsJgQEP1zyUhfvWhmZMyoGA=;
+        b=u7woUNvdU8F0WrbLq0im1Wl7bJCbZSYb1D37msa1KGSRXnqMGyZc2ahPpcgXXCNCpr
+         50/xfM4EPHtwbBc/NSOd2NKh+K7QT0kr7WgJ1fwWFUjxV2ZL9AUYiBXgC0/2QP7i0FA0
+         fEMFdN9H6JTMJ6eNRrco1/NOUAZWMIV7zkZb9MODv3J3T6t1RQL4WlyUZDazsAZ8pn4F
+         fyp0CPJUW0Vt0DvSpfiTlhO+BWAaR7E1GCXLNPD0ISOAGvvb1zGZX+fHTs5+Q24PChcW
+         o9HH8ddAWTC/k4Oh0qw5L6DfzMrHdCR4N0phRxrwIMcHe8pfmzes/7XePQxx4DG28KIC
+         oBAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716663520; x=1717268320;
+        d=1e100.net; s=20230601; t=1716663540; x=1717268340;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t7he0sZ2GZcZ4jN7OuNxSgoGWU8clRyZzA1mrnUKwrw=;
-        b=QRUCn8+x52P4DOBPS4AKI6ukrCd0OTuhIEwpBFYsnxGCokiR3p+xEd2ksh07Zr/jKH
-         JU+4ptsdL8uuQN1zWYhwiz0X08IMPVArGIV4iTnofWMqqSP9cDknZgi94zCMXcQPF9V0
-         jixUYfautY2HeMra40j4Jw+fA3Tw0u/dB0OObywQTpzvjwmy/mD557wJbuyIpV0/jNy1
-         3A5Rmle6RfhGq9Md/GrNhpoM0GpOlgqQuUsXvsqi0dlaRPvNE1wtUTWWCMXrhnteQkGE
-         l5X+3Okbw7At3QWsfbPCZXYkBzlCjl9RTUkkJ0jiUJO25fO4rs+SQjjLRflbruPYRMIr
-         vPqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvR57aIIBZ/w0uFKangbcHcO2pLSmQ0VEPtbYSlL6SK8tFI7gT5j0wUea+rfx20gi5TkYPAMZ4ZZwr5qVsMbA+w6jPZnXvtYUdPRhk
-X-Gm-Message-State: AOJu0Yw+3WKKlJ35tCLOc1Oh5HcRg2O8iCUaPGFS7S6bphpyOQn6MbUy
-	eKs+TqT/GqYDZ+zTpidx0KfmgFn0XK+jNQXUeWnDdZIqcY/tHx+sI4bJtRM0QEU=
-X-Google-Smtp-Source: AGHT+IG+6KpN0Pe/v3SLZ8mnBfNrJmJz9mBszytORzY3EJM2Uw7jCaB0GzXeJ11/zaPwbSB6qOj0kg==
-X-Received: by 2002:a05:600c:35c5:b0:420:1db0:53c1 with SMTP id 5b1f17b1804b1-42108a17b9fmr33015355e9.41.1716663519804;
-        Sat, 25 May 2024 11:58:39 -0700 (PDT)
+        bh=C1ltb2McNZuu2wPm9iznTsJgQEP1zyUhfvWhmZMyoGA=;
+        b=MLElMt0LcHMRX/L5IEVg5U3dMwcK4cBf1kBpaWy/1b9MYLED+E75B9Ksicm3ZzPX/5
+         ZGuiMev1/5Ae6e+r6UeFNnzG2gkrEv74WeJP8v4w3/QqN93BKUtf5v8c9SCP5ZhdjRXB
+         ib6L0/dPjWEbkMtGtoV4XkBYBrUF643Vc3psH5CNLHRU5bKEJilB93FSnhLNEqpmo2b9
+         gyz4C/WroNlQOIdXPKnp2gnvpN5hKNYJXEI2jPjPetEiGTl2tsgndve6ONV6oQkjDv34
+         PTmNoenXnCS3LSPDHFvdFNrPyaEAlHOiRm5aogxgeqQbO0B9WQwj2LyzFH675oDhplL9
+         jNmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwcXlHS8SCDNqvUep0YRRPqZachIwbpXhMYE0WgKa7x8Sr6fLPa33jwYoN0dvy7H3GBoPulWScU6GU++ybFZLgM3koPmWZ2CoG4XSC
+X-Gm-Message-State: AOJu0YwkPaQ5EVDybvOUEsCf0FPGZvtUlIA3vo72rB2fY5ds6PlrQsOE
+	UQn35WzgZeJ+vGF1tZ4e9XYyAMEhuisXl4C0eCfflIBJxr8mkuG4comKOyiopvg=
+X-Google-Smtp-Source: AGHT+IHI+mBtTEcC58bs/lQSj2ZRcVFjCFjDftFjbvks/j0ZOZdiYC24EihRv026a89MlOJq5l169Q==
+X-Received: by 2002:a05:600c:19d2:b0:418:2ccf:cbc7 with SMTP id 5b1f17b1804b1-421089ebd3dmr39580715e9.2.1716663539942;
+        Sat, 25 May 2024 11:58:59 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-356c8daef27sm2426626f8f.115.2024.05.25.11.58.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108970b4esm56327965e9.14.2024.05.25.11.58.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 May 2024 11:58:39 -0700 (PDT)
-Message-ID: <bdb78a67-ec6b-4178-81a0-212796f9738a@linaro.org>
-Date: Sat, 25 May 2024 20:58:37 +0200
+        Sat, 25 May 2024 11:58:59 -0700 (PDT)
+Message-ID: <f2650797-f681-4363-8a67-87c8c16226e3@linaro.org>
+Date: Sat, 25 May 2024 20:58:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,19 +76,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk
- bindings
-To: Tomer Maimon <tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240509192411.2432066-1-tmaimon77@gmail.com>
- <20240509192411.2432066-5-tmaimon77@gmail.com>
- <20240513155330.GA2676859-robh@kernel.org>
- <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
- <CAP6Zq1gKp+Hu93CK=78chvNk70WtKMKUv8ny0Mzkw47wn7Af2g@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] dt-bindings: mfd: bd96801 PMIC core
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1716533790.git.mazziesaccount@gmail.com>
+ <bd468e695d8331762d5be77196368b82366be7af.1716533790.git.mazziesaccount@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -135,51 +131,19 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAP6Zq1gKp+Hu93CK=78chvNk70WtKMKUv8ny0Mzkw47wn7Af2g@mail.gmail.com>
+In-Reply-To: <bd468e695d8331762d5be77196368b82366be7af.1716533790.git.mazziesaccount@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2024 18:34, Tomer Maimon wrote:
-> Hi Rob,
+On 24/05/2024 10:17, Matti Vaittinen wrote:
+> ROHM BD96801 is a highly configurable automotive grade PMIC. Introduce
+> DT bindings for the BD96801 core.
 > 
-> Kind reminder about the question in the mail thread below.
-> Your response would be greatly appreciated.
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 > 
-> Thanks,
-> 
-> Tomer
-> 
-> On Thu, 16 May 2024 at 12:44, Tomer Maimon <tmaimon77@gmail.com> wrote:
->>
->> Hi Rob,
->>
->> Thanks for your comment.
->>
->> On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
->>>
->>> On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
->>>> Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
->>>> using the auxiliary device framework and not the device tree framework.
->>>
->>> Again, this is an ABI break. Changing driver architecture for 1 OS is
->>> not a reason to change DT.
->> Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
->> the kernel vanilla yet?
->>
->> I thought that since the NPCM8xx clock driver hasn't upstream the
->> kernel vanilla yet and and in the latest NPCM8xx clock driver patch
->> the NPCM8xx clock driver.
->> using auxiliary device framework instead of DT we should remove the
->> nuvoton,npcm845-clk.yaml file.
->> https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
->>
 
-Binding goes with the driver, so I wonder how did it happen that driver
-is not in mainline but binding is?
 
-Anyway, once binding is released other users might start to use it, so
-yeah, could still be ABI break.
-
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
