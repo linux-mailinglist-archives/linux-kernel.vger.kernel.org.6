@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-189210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895948CED2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E828CED31
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FE1C1C2108E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75E91F2195D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75C864F;
-	Sat, 25 May 2024 00:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EE0137E;
+	Sat, 25 May 2024 00:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HfxB1L2b"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X4ghCieO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FF817C;
-	Sat, 25 May 2024 00:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F13382;
+	Sat, 25 May 2024 00:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716595762; cv=none; b=lA5s7oI+AKhFYI2v3wYIB+thRzuPLri5NNg70elHopBpkfvNCZFyjXjAj5cIlMH3OEMmkzO0Dvr6H+MhkIfn8tdcEgBjjDv68eQ2nyQrjDE3zXfwTkV0dOo0l077vE3VCsF0340IQpecHhhYvzP+40k3nE3NnSOu3adHz5RUQJQ=
+	t=1716596257; cv=none; b=PeL93JnEru5wU5RGUEJVcgkN6mUwcesOdKG3Y+6SYwubW61LFYSUDRbGUMtsqffDJHmorfWyizjOMw3T2r0zDWF+uQtyGIx5c8G+27OBDXYA+GsScUW9IrjtPiKJVhI3uZll6t9nvNR12aEGZeP1jbgm1l54MtFeUo+yYCBvF4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716595762; c=relaxed/simple;
-	bh=aM5sWLM0UH7fhbVqQABGRdgI6VqLOtZC6UR97WHhgww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ku4ibutrW/WZGg9ZBkozXY/teCVGXbeeeIN4wXNLAeVsz23vkKuiEaLBKuBRAaMpR0CClq68VMVuPPSfQksAOvP8uZxexMhHqhmBjxp5oShi4fOHsNcSp+9Mk5RnKOFAmbum0eEk3EOcHWzWJhawaJ/OXGKWvQ9FYJGI3D0BFFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HfxB1L2b; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=UZhKIy0Yrc0Ws4kcMyEJnctS9jEAqL96AA14XHxT3cY=; b=HfxB1L2beYD69tma
-	/UkqgKsUMMUEWbXxJLLJvazcZ0ekw8r6kO4WMGt8/6GbJ/EsKLeBu1b4k9gsgEopLQgYUWaE+ecAr
-	hDfDglHbejWgptJypDPke1tNbC9M3sX9oNTuDaLVN0m9ACw8DNqXCLj77ex6aY7tKJqvGOfKxGBk0
-	xd2t8PNRkrpQoK6Ppg09vMM3sgg6VMO1J6Qk4XSvyHY9cd+fHpA2KM13ESY29i2z2Henk2G6y5AYg
-	djivCO1z6eSPJUOrGwuTW4I0oNDKQE0ffNX40iukuWAsIHGHwiTIj4du6M6GxA8QDibH9xLILHSOE
-	P5jmTw3ACGhi2H9VhA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sAeyL-002TRt-0h;
-	Sat, 25 May 2024 00:09:17 +0000
-Date: Sat, 25 May 2024 00:09:17 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org, sparclinux@vger.kernel.org,
-	andreas@gaisler.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: niagara2: Remove unused struct
- 'n2_skcipher_request_context'
-Message-ID: <ZlEsLYaoQxZjyyAX@gallifrey>
-References: <20240511145620.226548-1-linux@treblig.org>
+	s=arc-20240116; t=1716596257; c=relaxed/simple;
+	bh=BbauQxWMN0JI117TXfZpAyS5rwsGBt25bcZE1MQ3zeo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=aOMuLYCG6dHCTuhyAKoV1wAzeZxCNiFuNaXxUFlROhLwkPPoLjCpS5Dgre8GYHeS2Pa+Olv1tS5TzWx0UN4qKjhiKC4AoIR8obSi0jxeqCC5N2ZZ4/R8+VcgzkjNbTnFwHlXNtZRCM2HluzcULu+cPkjMzFhlDVLBebrrmer/6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X4ghCieO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ONbljG012387;
+	Sat, 25 May 2024 00:17:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5Spshvdqh7GjrxRh8KyZoF
+	u4oCIhNpxOAWpDuCCn8uc=; b=X4ghCieO6eMYLPMpjn756Ts32CE6IEkmeYk27K
+	8ZxQ2clt+69gLp67eN5tob+TIn14oNli2QhpX3850flZd/lRtEWqgcOmtG8TIHAK
+	J2Dz2w4wsmXNYGPOplVbnucRqpZjDXKzkE2zMoIEU5phjmtZ0OXKfeyJyOuw7KIZ
+	eDlmia8TyRQAxUVLPdiccWC49pgl547I4dZk+3hwVZ19uSnXTjJLcN0Vf07mIqet
+	6SZUIrwPHmrqlnxQ0XM0cDpyOXZNoE05B/BYdG9o1v51p+jxhzuLzlzKOO0aVjDj
+	tbtcqF7apD2hWXrd0vsyz/0f4Al3kYX8UW/844wP+1tysoEg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8hunyn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 00:17:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44P0HSOM023522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 25 May 2024 00:17:28 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 17:17:28 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 24 May 2024 17:17:24 -0700
+Subject: [PATCH] locktorture: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240511145620.226548-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 00:09:04 up 16 days, 11:23,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240524-md-locktorture-v1-1-f84c5d07b1ab@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABMuUWYC/x3MQQqDMBCF4avIrDugaSqlVyldjMlYBzWRSRSLe
+ PemXX7w3n9AYhVO8KgOUN4kSQwFzaUCN1B4M4ovBlMbW9+MxdnjFN2Yo+ZVGVtvr01/N0TGQjk
+ tyr3s/+DzVdxRYuyUght+mUnCuuNMKbPi8ilTOM8v/5m5G4UAAAA=
+To: Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney"
+	<paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gnk-32QW9bSnTJWYgdZb95TNuO1WZv-x
+X-Proofpoint-GUID: gnk-32QW9bSnTJWYgdZb95TNuO1WZv-x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxlogscore=957 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405250000
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'n2_skcipher_request_context' was added in
-> commit 23a6564a6b51 ("crypto: niagara2 - switch to skcipher API")
-> but never used.
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
 
-Ping.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ kernel/locking/locktorture.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Dave
-> ---
->  drivers/crypto/n2_core.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/crypto/n2_core.c b/drivers/crypto/n2_core.c
-> index 59d472cb11e75..251e088a53dff 100644
-> --- a/drivers/crypto/n2_core.c
-> +++ b/drivers/crypto/n2_core.c
-> @@ -720,10 +720,6 @@ static inline struct n2_skcipher_alg *n2_skcipher_alg(struct crypto_skcipher *tf
->  	return container_of(alg, struct n2_skcipher_alg, skcipher);
->  }
->  
-> -struct n2_skcipher_request_context {
-> -	struct skcipher_walk	walk;
-> -};
-> -
->  static int n2_aes_setkey(struct crypto_skcipher *skcipher, const u8 *key,
->  			 unsigned int keylen)
->  {
-> -- 
-> 2.45.0
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index 415d81e6ce70..de95ec07e477 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -30,6 +30,7 @@
+ #include <linux/torture.h>
+ #include <linux/reboot.h>
+ 
++MODULE_DESCRIPTION("torture test facility for locking");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+ 
+
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240524-md-locktorture-6d431f82aa24
+
 
