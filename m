@@ -1,235 +1,203 @@
-Return-Path: <linux-kernel+bounces-189269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883818CEDC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:48:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F45E8CEDC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DDF1281DF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A71D1C20A7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 03:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57DD5250;
-	Sat, 25 May 2024 03:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VVN9dcEE"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1112A522E;
+	Sat, 25 May 2024 03:50:24 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447FA138E
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 03:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E664F2904
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 03:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716608893; cv=none; b=jklz8II+fKtlSuHeIEqmNc1eBTGuQ0ZIF0KB062OzrALpvkf9i+ifmzumvBW1ebI+NeQct5NM16eKiuzeZdpWbe8cDDEc+5oDHRFnviIrCTcqeozkevHpz8NT1BxpP+4HICG90gbEESg1iAckzsRvWO9vECHFWASgdD9Zv9Qcko=
+	t=1716609023; cv=none; b=Eq1u/1V2zPSkhAFDJy22ioJ/DbJW53a84dvrdigMCH963Htw49GAfhOUAma8dYg4Hzp5Rbk8MJ4yzafzYsC7DPvPYkSO8HjlDKSrMBvfPYZsA0/0mzFs2SAqa8bm0wkesnR9Ib/HogqBZT9BRX//GO+sWPXwIFyyTq8puKwJviU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716608893; c=relaxed/simple;
-	bh=9h+hPTeUfQOcpsBAA9XgOVwljDzYnUuEJMBxx2V+Zi4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VTjKlZ/ohKZE/9JlbDR7wH351tzHmxbaaeaTCfcGjG+7NqZ7xfrzP21WUvzoPK6dRWNzkZEDLmR9bplcyTFXGRUdn+onTgz4sJVQfhDtQBD4TBrAXRRaJrc4Wi8s3cza1tFBLW8LwBLMxA+V2925zQfzs+oC/7nQbTskcfiS5Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VVN9dcEE; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-36db863679bso40005ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716608891; x=1717213691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ae90xQD1JSfJyYVhaJGFBnlHi96JVOZGp7BSWxGOUA=;
-        b=VVN9dcEE+Y/vTHZfXRCfWplD0Eb1BGvZgYBkBCOYBtmefvEdCXGAXAaemz+x+wDoYR
-         YXmhVOIv/L9fuIi0KMqcVPtyCwJlzAWew9TipjTVo3G0z0aX9bpfInQ8/8Oc9imIWgVJ
-         U4Q3rEhgUTghW6kCh05mhQplNZK9b2O7/zuf3+cRFPhUdwFp83RYgOoNP5Krohr/VRHm
-         M0xKqjBfJYyzZt9LQNcRvj0Mm/1x+zJXbm+BLF8gj8j6WSB61ClDFsrl2u52WaM31i0U
-         gLNCMXoo5zsaD1oLuC7A4IZbr0hawV3JutHkFky1MUHLkYJiCniZOZcq3aDSbe7kmWcp
-         fqFw==
+	s=arc-20240116; t=1716609023; c=relaxed/simple;
+	bh=04e0iFaLdmXGkZM8lqn+cCR6xiFvZ0L31j1DmpefSIo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OwzZUqjbAEtsglyccsbRZes5hdH82jkdzDmXiXlsjwBXpBixzs2iFzQLl359Gw5T6612xhigzixmL8Qr5iGB/NqIAhTJlJ6HNQ56JAEV3MqP91zmBsmWcKZ7us1PhbQTvG7r++h8U1AL4A9Jz/kkF4sM35z1XUItCohSufuP490=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36db3bbf931so40057805ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:50:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716608891; x=1717213691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ae90xQD1JSfJyYVhaJGFBnlHi96JVOZGp7BSWxGOUA=;
-        b=OJc1H+sJthwTE7vb4605y7VX2n8Tp3xbYbjBByBY5JBNPvkK2yPoF145rp9n4AQFMo
-         56JbInclglVDJruDrPtF4Vh/zH/TxJWINEUF/hCvl8KEm32DcP59eUyUJCAJ9XS3+R45
-         DcY6C3oaASlXhaF+T/ik2wrr8OhisArUiDmpWI+SKornr/BgFD28v0c7iIbIzHd8Amr5
-         pJyn8BDZnDLDYDpMVRmBX1HZwGW44g6ry3QGNtpN6Te7Khh1gNsTaXAhQZX8azS9ayop
-         CLaexiPOs64DWu6SeF4eEv4vrqyILOnajUG42DvJ5QuFAlkmUZ8uC+45dH4cb6PpvElU
-         Xcnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZHoneCUu9VQLBnaHRZzbZUPEkb/DWAnWtcmOO/E2dfYmzPew+cuGSVSWaaMZ8wxqDHB2NbQpIlOEa6FQ5o66V+wAX/rHD0Dl1zRmU
-X-Gm-Message-State: AOJu0YyC1jI0g5Sh3r3dRlLNOqbO67hprAdfQLV9shrtN/z4p+KhvOpL
-	03pKjGngvUaXOg72hXW3XxQe5iSvvGZ7OoKMtMYC8XKkLHbcj03UW40tiMTYbMYAjhMOURfTlTy
-	jPcvfB37rAWvA1HDzFiWD2E27YDNM1rn4lKp4
-X-Google-Smtp-Source: AGHT+IH9AudXBRg06HeJ2lMfXh7iaMoDr8xto6pnVvEb6aUWVkk5wmCn5cRqO9PYpm8emOvieo6JJpoPBYDzbnlv0oM=
-X-Received: by 2002:a92:cc08:0:b0:36d:cb9e:a0da with SMTP id
- e9e14a558f8ab-3738b350a12mr590685ab.25.1716608891228; Fri, 24 May 2024
- 20:48:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716609021; x=1717213821;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QKPNbdGh9u9aMJeo1SjEg9KsR8vOcDWPVbRPuND0hu4=;
+        b=udjsgNE1rtzOwDzbhKa3FB3VVjUN6caXX7hSHXXl1t/trZWCDazz721X1AHIjhcbJ3
+         ktzyNKC6CW+KFD7LEUULeMbGi/TRLXweEgw6Km4ndUkGOcKJylxfjDxqYzNdhkTE5F3R
+         tlCMfA0LlQEXRTYcWeXKWPUAm34uwwvmd0eOzISknWHzlBNVb5TQnkbU/eLCh2eQwrP+
+         IVBc++Qy34Rm5nL2S3/MscXb8/EaRpf5YYRxjFX8LKzuSU7/Yx4KUQITJa9Xo5lApgHT
+         1OS8Wdu2JAh3CzeLCJDoiTD+LlMIMN41cS8Jo+Z9AJQKXIAfPXSlS3fZ2iyhZjVTXpwI
+         1jdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVI4W0qx9FJMpFi5IZ45bQUR44rWWr+aQIThUeg3xLuSvC7s+ArLH/Y8QYFF9oKNKok1XD4uG4wGrYK6LYoMbPU1dDxYS8AdDAIM/gp
+X-Gm-Message-State: AOJu0YwR0rkTNkcOaw/ReBisK9ZL4n02gbQtEOVBaWZbb8tOeQYFdxoD
+	IaeMwcap5TUipSCa/CPAQDzRg4V5EDtrEIElsZ8ueRyiwb/fZHfRjptNQSjhNubR4eACrnr+UuR
+	B85pJ3HyujIwD1DiVFEaNGpyAY24CC+tmJyNiE9+He3lWLfmi+XFqxuo=
+X-Google-Smtp-Source: AGHT+IF7TcmogvrdNsmxOquvj+MVvTJgA3T0scIpC00VYn64lUjbviyQ8Gk7LvqUQ85n7AWGIU1dX8i9UryPKmu5j7Fbwt5Y87oH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1>
-In-Reply-To: <ZlFGpxWGQskCTjeK@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 24 May 2024 20:47:59 -0700
-Message-ID: <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Leo Yan <leo.yan@linux.dev>, 
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Clark Williams <williams@redhat.com>, Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
-	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
-	Yang Jihong <yangjihong@bytedance.com>
+X-Received: by 2002:a05:6e02:1c8d:b0:36d:a793:51a with SMTP id
+ e9e14a558f8ab-3737b330202mr2949695ab.3.1716609021228; Fri, 24 May 2024
+ 20:50:21 -0700 (PDT)
+Date: Fri, 24 May 2024 20:50:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000edcc7906193f2e93@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_release
+From: syzbot <syzbot+a8074a75b8d73328751e@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 7:02=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Fri, May 24, 2024 at 10:55:11PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Fri, May 24, 2024 at 06:31:52PM -0700, Linus Torvalds wrote:
-> > > On Tue, 21 May 2024 at 12:26, Arnaldo Carvalho de Melo <acme@kernel.o=
-rg> wrote:
-> > > >
-> > > > perf tools fixes and improvements for v6.10:
-> > >
-> > > This actually broke 'perf' completely for me on arm64.
-> > >
-> > > With a 6.9 version of 'perf', I can do this:
-> > >
-> > >     perf record -e cycles:pp make -j199
-> > >
-> > > and it all works fine.
-> > >
-> > > With the current -git version, when I do the same, I instead get
-> > >
-> > >   Error:
-> > >   cycles:pp: PMU Hardware doesn't support
-> > > sampling/overflow-interrupts. Try 'perf stat'
-> > >
-> > > and after trying desperately to chase down what went wrong on the
-> > > kernel side, I finally figured out that it wasn't a kernel change at
-> > > all, it was the tooling that had changed.
-> > >
-> > > I did a 'git bisect', and it says
-> > >
-> > >   617824a7f0f73e4de325cf8add58e55b28c12493 is the first bad commit
-> > >   commit 617824a7f0f73e4de325cf8add58e55b28c12493
-> > >   Author: Ian Rogers <irogers@google.com>
-> > >   Date:   Mon Apr 15 23:15:25 2024 -0700
-> > >
-> > >       perf parse-events: Prefer sysfs/JSON hardware events over legac=
-y
-> > >
-> > > and very clearly this does *NOT* work at all for me.
-> > >
-> > > I didn't notice until now, simply because I had been busy with the
-> > > merge window, so I hadn't been doing any profiles, but the merge
-> > > window is calming down and the end is nigh, and I just wasted more
-> > > time than I care to admit trying to figure out what went wrong in the
-> > > kernel.
-> > >
-> > > And no, I don't speak JSON, and I have *no* idea what the legacy
-> > > events are. Plus I'm not very familiar with the arm64 profiling etc
-> > > anyway, so I'm just a clueless user here.
-> > >
-> > > I *can* confirm that just reverting that commit makes that trivial
-> > > "perf record" work for me. So the bisect was good, and it reverts
-> > > cleanly, but I don't know _why_ my arm64 setup hates it so much.
+Hello,
 
-Thanks for the report. TL;DR try putting the PMU name with the event
-name, so "cycles:pp" becomes "armv8_pmuv3_0/cycles/pp", where
-armv8_pmuv3_0 is the name of the PMU from /sys/devices.
+syzbot found the following issue on:
 
-The perf tool has a number of inbuilt "legacy" event names, cycles is
-one. Most events these days are either found in sysfs (this is on a
-Raspberry Pi 5):
-```
-$ ls /sys/devices/armv8_cortex_a76/events/
-br_mis_pred          exc_return        l1d_tlb_refill      l2d_tlb
-        remote_access
-br_mis_pred_retired  exc_taken         l1i_cache
-l2d_tlb_refill      stall_backend
-br_pred              inst_retired      l1i_cache_refill    l3d_cache
-        stall_frontend
-br_retired           inst_spec         l1i_tlb
-l3d_cache_allocate  sw_incr
-bus_access           itlb_walk         l1i_tlb_refill
-l3d_cache_refill    ttbr_write_retired
-bus_cycles           l1d_cache         l2d_cache           ll_cache_miss_rd
-cid_write_retired    l1d_cache_refill  l2d_cache_allocate  ll_cache_rd
-cpu_cycles           l1d_cache_wb      l2d_cache_refill    mem_access
-dtlb_walk            l1d_tlb           l2d_cache_wb        memory_error
-```
- or json that is turned into tables built into the perf tool.
+HEAD commit:    6e51b4b5bbc0 Merge tag 'mips_6.10' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1499dbe4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d5d254b2919253a
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8074a75b8d73328751e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-ARM requested that sysfs and json events take priority over legacy
-events. So 'armv8_cortex_a76/cycles/' should first try to open an
-event in either sysfs or json, and if not present fallback on using
-the legacy constants. Note that the event name has the PMU name first.
-What should the behavior of the 'cycles' event with no PMU be? In
-Linux 6.9 the behavior was that cycles without a PMU would be a legacy
-encoding and only try to be on the core's PMU (generally cpu on Intel
-or armv8... on ARM), but with a PMU it would prefer sysfs and json
-tables.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-RISC-V had asked that in the no PMU case they'd also like sysfs/json
-to have priority so the driver could be more ignorant of event
-encodings. It was also inconsistent that in Linux 6.9:
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6e51b4b5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4a78abf5bef3/vmlinux-6e51b4b5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/283fe971fc00/bzImage-6e51b4b5.xz
 
-$ perf stat -e inst_retired.any true
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a8074a75b8d73328751e@syzkaller.appspotmail.com
 
-was a sysfs/json event that we'd try to open on every PMU but:
+loop0: detected capacity change from 0 to 32768
+workqueue: Failed to create a rescuer kthread for wq "bcachefs": -EINTR
+bcachefs (076a1832-646e-4f3c-b13d-b3e266154efd): shutdown complete
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/super.c:567!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 2 PID: 6873 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-09868-g6e51b4b5bbc0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
+RIP: 0010:bch2_fs_release+0x6b0/0x810 fs/bcachefs/super.c:603
+Code: 89 ee e8 63 7d 7b fd 48 85 ed 75 34 e8 29 82 7b fd 31 ff 4c 89 ee e8 4f 7d 7b fd 4d 85 ed 0f 84 02 fc ff ff e8 11 82 7b fd 90 <0f> 0b e8 09 82 7b fd 48 8b 7c 24 10 e8 7f 63 d9 ff e9 cb fa ff ff
+RSP: 0000:ffffc9000e047410 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff888061080068 RCX: ffffc90003f21000
+RDX: 0000000000040000 RSI: ffffffff8412febf RDI: 0000000000000007
+RBP: 0000000000000008 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000008
+R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5e8fb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000edabe000 CR3: 00000000120f0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x1fa/0x5b0 lib/kobject.c:737
+ bch2_fs_alloc+0xe49/0x2550 fs/bcachefs/super.c:954
+ bch2_fs_open+0x713/0x10f0 fs/bcachefs/super.c:2102
+ bch2_mount+0xd41/0x1090 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1779
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x6e1/0x1f10 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf729d579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5e8f400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 00000000f5e8f460 RCX: 0000000020000080
+RDX: 0000000020011a00 RSI: 0000000001200014 RDI: 00000000f5e8f4a0
+RBP: 00000000f5e8f460 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
+RIP: 0010:bch2_fs_release+0x6b0/0x810 fs/bcachefs/super.c:603
+Code: 89 ee e8 63 7d 7b fd 48 85 ed 75 34 e8 29 82 7b fd 31 ff 4c 89 ee e8 4f 7d 7b fd 4d 85 ed 0f 84 02 fc ff ff e8 11 82 7b fd 90 <0f> 0b e8 09 82 7b fd 48 8b 7c 24 10 e8 7f 63 d9 ff e9 cb fa ff ff
+RSP: 0000:ffffc9000e047410 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff888061080068 RCX: ffffc90003f21000
+RDX: 0000000000040000 RSI: ffffffff8412febf RDI: 0000000000000007
+RBP: 0000000000000008 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000008
+R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5e8fb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000edabe000 CR3: 00000000120f0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
-$ perf stat -e instructions true
 
-was a legacy event that would only be opened on the core PMU. (I'm
-ignoring the complexity that BIG.little/hybrid adds).
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The blamed patch does away with the inconsistency and makes it so that
-legacy events are always the 2nd choice and we try to open every event
-on every PMU. It is the 2nd point that I think is breaking you. I
-think you have a PMU on your system with a cycles event, maybe an
-uncore PMU with memory controller data or CXL, and the perf record is
-trying to open the cycles event on that and the error message
-correctly reports that sampling wouldn't be possible on that PMU.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Putting verbose flags on perf record:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-$ perf record -vv ...
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-should hopefully give more breadcrumbs and confirm this. You could also do:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-$ ls /sys/devices/*/events/cycles
-
-If there are more than 1 sysfs cycles event then probably one of them
-is the problem. Adding the PMU name removes the trying every PMU
-behavior and so should be a fix. We could also change it so that when
-we open multiple events for perf record we don't fail in a case like
-this. Maybe it is a feature to fail.
-
-Thanks,
-Ian
-
-> > That is a good data point, we probably could go with the revert, but I
-> > think Ian submitted a few patches fixing this issue that came up close
-> > to LSFMM/BPF and the merge window, so didn't have time to sit on
-> > linux-next for a while, I'm looking those up now.
->
-> Couldn't find it quickly, its late here, perhaps Ian can chime in and
-> point those fixes here. I'll try and continue tomorrow.
->
-> - Arnaldo
->
-> > ARM64 eyes on this would also be good. Adding Mark Rutland and Leo Yan
-> > to the CC list, maybe they can help us here with the best course of
-> > action.
+If you want to undo deduplication, reply with:
+#syz undup
 
