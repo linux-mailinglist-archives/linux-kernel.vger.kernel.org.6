@@ -1,190 +1,181 @@
-Return-Path: <linux-kernel+bounces-189437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C4E8CF00B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:12:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FF68CF00D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5FB8B20EF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A14281C90
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80CA85C65;
-	Sat, 25 May 2024 16:12:28 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A818595C;
+	Sat, 25 May 2024 16:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTXP5P9V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E751DFFC
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2165F39FE5;
+	Sat, 25 May 2024 16:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716653548; cv=none; b=Mm1XXnPcctE78tAYvGuArMwm2TUWyLT68UdY5HFJx6U/pKt1avPnakXhMf9ng0k7wQCnaj0nwDf5wczcHCJiyzYcRHp7mPkmcznIue43P2RZL9qh3Z20EJZPorPzn2kq4xdQMTyoftDPga1leLrU6/P+LhfZhT4UCZpDvQkjfzY=
+	t=1716653662; cv=none; b=PeDBM+CEmEere4Q8c3qnsy/5LhSkre2sRS7jNJCHai9Ysa8/XpO2VYQmJBB8LR6ucJT20Hl6WbGyHuzsU96h9F8diDYRNvputGKRgIK/r0sE/BO29m/eV4RSNz6apakKyDHcHf+pjKjKNhf/0eP/wgW7mPJru/qSmL6ZYWwWqDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716653548; c=relaxed/simple;
-	bh=OZepftTAC1FcRyFWhPRaHCFE/Oetkj5/jAjnZ3hLibA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MRQYVnK3nEgCHnUQyAOovHfWN254XvZTKgpw35mxQL2B4mBfAVJK1tcpbXIQQzg3lSCgF5gJJH2UKvon4Y3P7j9HRbMZbXtLZtv16DwynGMDOolwTHAzaPmM0g+HN1oeYjx/ukUc9c0GdltbjiMvySzVIwVEL0ZLb3I8u6BJzlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e25de500d2so415469539f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 09:12:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716653546; x=1717258346;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qppKSing007VFbuzxdWD4I4aBmnaSOSGhNYLuq1/gO0=;
-        b=E8UUyz1w6yLfvpalH1WA0zRzkR3/uncaCN6KrFs33ZKCmL/IHWAe3gNk7A5p/as9Gw
-         LEngNYBq1894MUBL12MEvr336i0TM95t2K+oh0VipFiiNJgoJgizKi761MTioXk/7tlp
-         GFOy79yY+Pprnagkao/PZgKcpXce/frH58C0LvT+s19b+MFpxQNZxc09Oqdi8JDaqDUF
-         3vdg+QvbmYes1IDxY67iz4/WLd/WLX/dqTc6gUs9B/SaojbjR9iHIpwouYol+j0dadPF
-         6jMpC2REcV5inElAH6/OmBmHptmP2VDFDGGAgJudGS27oFPCrvERWvFHx5L74kQjxWYI
-         LZKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX48XQxum4uj/W46PahX0CKefsEiwj6vYZpqzTbmuK314v4JeL1TJp2ETH+dYLB5ewF6YtiOm0I8U3efjkahEdQLa1uDTQntj1hic/
-X-Gm-Message-State: AOJu0YzMDg+CXZzKXYdKE6wX9kMJer1iybadbaKxqvbiX/aOXVbYYSuP
-	IxbAIxV4aschutHoAOpnKMWeuJM3ru3I+TZaSh1W/mAGq7Q3GKGCoNvnr/RNclU4qAjcoEqX9g2
-	+u8phKniX6pLlwHRHkfxCDRn/T/hrSujLWZCNPHalS2PeM6i/Pm1idQE=
-X-Google-Smtp-Source: AGHT+IFKB6dxIXo20KL7IU/S43qkYCImShfkQ1rrrWxgWmlP/1ZQWw0SdtCYvsToAyRolY3zDerrrSGnA6FzJT8ksEeM8onZUX+T
+	s=arc-20240116; t=1716653662; c=relaxed/simple;
+	bh=ci3qNCWOEbPWD0A/YQ3B40wpXUPRTgAXrvngcy3/GEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tTB7+FJkMWpbN3+RlcH0lVpVogpI2Li5AJvZUFDpsYXeLQonZPtq6Z4hqD93fi6//byY2KAr7TBslj30RMIYrTNN0ALNNgizXxtdsfHlVT4EvzsCz/lAMjMj/5I0+fODzn/AUpMze3AKy7z8Lr/jmANOFJzmIKx7AYvmldBtMDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTXP5P9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E0AC2BD11;
+	Sat, 25 May 2024 16:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716653661;
+	bh=ci3qNCWOEbPWD0A/YQ3B40wpXUPRTgAXrvngcy3/GEQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kTXP5P9VpjaWZdTIqoyUp6f+vHrO50Hs52sW1gXFIYwl8+7omYNEX1JspN7sQzwwy
+	 AivUusI9E+mnQ1UbhlFVKFa+wri7IyN5HyYQAJqA0HMJtzRTex9YzF/qqUsaoS7QFJ
+	 lcyzTIQZqi33WHPWRAvdPR94PlZGLaAlFyFZwB+9rIJMvrIRvZMDzFpPEy4TFHTXa7
+	 6f23jkYsbeGphmqW0DqZh5qZnQ3F9kFlUi3FVYQszVStyDMOTOeF69k3i/WdwcjmF8
+	 O1b+LvNStsMfz7AjfEGG5uQgnXCRDScvoZrMVpcbKwXEigVwsQLrMnwQNaDj7eTATA
+	 +NzlA/BLDF5Eg==
+Date: Sat, 25 May 2024 17:14:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
+ <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
+ channel
+Message-ID: <20240525171408.36bda583@jic23-huawei>
+In-Reply-To: <5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+	<20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
+	<20240519201241.7c60abac@jic23-huawei>
+	<ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+	<20240520171205.000035b0@Huawei.com>
+	<5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8419:b0:4b0:8e83:8222 with SMTP id
- 8926c6da1cb9f-4b08e838603mr61406173.5.1716653546076; Sat, 25 May 2024
- 09:12:26 -0700 (PDT)
-Date: Sat, 25 May 2024 09:12:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d10c260619498c25@google.com>
-Subject: [syzbot] [net?] [virt?] upstream test error: KMSAN: uninit-value in receive_buf
-From: syzbot <syzbot+799fbb6d9e02a7a1d62b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com, 
-	jasowang@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 24 May 2024 10:56:55 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-syzbot found the following issue on:
+> On 5/20/24 11:12 AM, Jonathan Cameron wrote:
+> > On Mon, 20 May 2024 08:51:52 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> On 5/19/24 2:12 PM, Jonathan Cameron wrote:  
+> >>> On Tue,  7 May 2024 14:02:07 -0500
+> >>> David Lechner <dlechner@baylibre.com> wrote:
+> >>>     
+> >>>> This adds new fields to the iio_channel structure to support multiple
+> >>>> scan types per channel. This is useful for devices that support multiple
+> >>>> resolution modes or other modes that require different data formats of
+> >>>> the raw data.
+> >>>>
+> >>>> To make use of this, drivers can still use the old scan_type field for
+> >>>> the "default" scan type and use the new scan_type_ext field for any
+> >>>> additional scan types.    
+> >>>
+> >>> Comment inline says that you should commit scan_type if scan_type_ext
+> >>> is provided.  That makes sense to me rather that a default no one reads.
+> >>>
+> >>> The example that follows in patch 4 uses both the scan_type and
+> >>> the scan_type_ext which is even more confusing.
+> >>>     
+> >>>> And they must implement the new callback
+> >>>> get_current_scan_type() to return the current scan type based on the
+> >>>> current state of the device.
+> >>>>
+> >>>> The buffer code is the only code in the IIO core code that is using the
+> >>>> scan_type field. This patch updates the buffer code to use the new
+> >>>> iio_channel_validate_scan_type() function to ensure it is returning the
+> >>>> correct scan type for the current state of the device when reading the
+> >>>> sysfs attributes. The buffer validation code is also update to validate
+> >>>> any additional scan types that are set in the scan_type_ext field. Part
+> >>>> of that code is refactored to a new function to avoid duplication.
+> >>>>
+> >>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> >>>> ---    
+> >>>     
+> >>>> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> >>>> index 19de573a944a..66f0b4c68f53 100644
+> >>>> --- a/include/linux/iio/iio.h
+> >>>> +++ b/include/linux/iio/iio.h
+> >>>> @@ -205,6 +205,9 @@ struct iio_scan_type {
+> >>>>   * @scan_index:		Monotonic index to give ordering in scans when read
+> >>>>   *			from a buffer.
+> >>>>   * @scan_type:		struct describing the scan type
+> >>>> + * @ext_scan_type:	Used in rare cases where there is more than one scan
+> >>>> + *			format for a channel. When this is used, omit scan_type.    
+> >>>
+> >>> Here is the disagreement with the patch description.
+> >>>     
+> >>>> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
+> >>>>   * @info_mask_separate: What information is to be exported that is specific to
+> >>>>   *			this channel.
+> >>>>   * @info_mask_separate_available: What availability information is to be
+> >>>> @@ -256,6 +259,8 @@ struct iio_chan_spec {
+> >>>>  	unsigned long		address;
+> >>>>  	int			scan_index;
+> >>>>  	struct iio_scan_type scan_type;
+> >>>> +	const struct iio_scan_type *ext_scan_type;
+> >>>> +	unsigned int		num_ext_scan_type;    
+> >>>
+> >>> Let's make it explicit that you can't do both.
+> >>>
+> >>> 	union {
+> >>> 		struct iio_scan_type scan_type;
+> >>> 		struct {
+> >>> 			const struct iio_scan_type *ext_scan_type;
+> >>> 			unsigned int num_ext_scan_type;
+> >>> 		};
+> >>> 	};
+> >>> should work for that I think.
+> >>>
+> >>> However this is I think only used for validation. If that's the case
+> >>> do we care about values not in use?  Can we move the validation to
+> >>> be runtime if the get_current_scan_type() callback is used.    
+> >>
+> >> I like the suggestion of the union to use one or the other. But I'm not
+> >> sure I understand the comments about validation.
+> >>
+> >> If you are referring to iio_channel_validate_scan_type(), it only checks
+> >> for programmer error of realbits > storagebits, so it seems better to
+> >> keep it where it is to fail as early as possible.  
+> > 
+> > That requires the possible scan masks to be listed here but there is
+> > nothing enforcing the callback returning one from here.  Maybe make it
+> > return an index instead?
+> >   
+> 
+> Sorry, still not understanding what we are trying to catch here. Why
+> would the scan mask have any effect of checking if realbits > storagebits?
+Hmm. I seem to be failing to explain this!  Key is the complete lack of
+association between what is returned by the get_current_scan_type() callback
+and this ext_scan_type array.
 
-HEAD commit:    56fb6f92854f Merge tag 'drm-next-2024-05-25' of https://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=157a5462980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b6c22bca89a3565
-dashboard link: https://syzkaller.appspot.com/bug?extid=799fbb6d9e02a7a1d62b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+So either:
+1) Make it do so - easiest being to return an index into the array rather than
+   a possibly unrelated scan_type - that would guarantee the scan_type returned
+   by the callback was one that has been validated.
+or
+2) Drop validation at initial probe because you are validating something
+   that is irrelevant to what actually gets returned later. Validate
+   when the scan type is read back via get_current_scan_type()
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/39a256e13faa/disk-56fb6f92.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d4ecc47a8198/vmlinux-56fb6f92.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0d37bfdfb0ca/bzImage-56fb6f92.xz
+I prefer option 1.
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+799fbb6d9e02a7a1d62b@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in receive_mergeable drivers/net/virtio_net.c:1839 [inline]
-BUG: KMSAN: uninit-value in receive_buf+0x25e3/0x5fd0 drivers/net/virtio_net.c:1955
- receive_mergeable drivers/net/virtio_net.c:1839 [inline]
- receive_buf+0x25e3/0x5fd0 drivers/net/virtio_net.c:1955
- virtnet_receive drivers/net/virtio_net.c:2259 [inline]
- virtnet_poll+0xd1c/0x23c0 drivers/net/virtio_net.c:2362
- __napi_poll+0xe7/0x980 net/core/dev.c:6721
- napi_poll net/core/dev.c:6790 [inline]
- net_rx_action+0x82a/0x1850 net/core/dev.c:6906
- handle_softirqs+0x1ce/0x800 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0x68/0x120 kernel/softirq.c:637
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:649
- common_interrupt+0x94/0xa0 arch/x86/kernel/irq.c:278
- asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
- kmsan_get_shadow_origin_ptr+0x86/0xb0 mm/kmsan/shadow.c:116
- get_shadow_origin_ptr mm/kmsan/instrumentation.c:36 [inline]
- __msan_metadata_ptr_for_load_4+0x24/0x40 mm/kmsan/instrumentation.c:91
- stack_trace_consume_entry+0x16f/0x1e0 kernel/stacktrace.c:94
- arch_stack_walk+0x1ca/0x2d0 arch/x86/kernel/stacktrace.c:27
- stack_trace_save+0xaa/0xe0 kernel/stacktrace.c:122
- kmsan_save_stack_with_flags mm/kmsan/core.c:74 [inline]
- kmsan_internal_poison_memory+0x49/0x90 mm/kmsan/core.c:58
- kmsan_slab_alloc+0xdf/0x160 mm/kmsan/hooks.c:68
- slab_post_alloc_hook mm/slub.c:3946 [inline]
- slab_alloc_node mm/slub.c:4000 [inline]
- __do_kmalloc_node mm/slub.c:4120 [inline]
- __kmalloc_noprof+0x660/0xf30 mm/slub.c:4134
- kmalloc_noprof include/linux/slab.h:664 [inline]
- tomoyo_realpath_from_path+0x104/0xaa0 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_check_open_permission+0x1ef/0xc50 security/tomoyo/file.c:771
- tomoyo_file_open+0x271/0x360 security/tomoyo/tomoyo.c:334
- security_file_open+0x9a/0xc60 security/security.c:2962
- do_dentry_open+0x5b1/0x22b0 fs/open.c:942
- vfs_open+0x49/0x60 fs/open.c:1089
- do_open fs/namei.c:3650 [inline]
- path_openat+0x4ab0/0x5b70 fs/namei.c:3807
- do_filp_open+0x20e/0x590 fs/namei.c:3834
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_openat fs/open.c:1436 [inline]
- __se_sys_openat fs/open.c:1431 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1431
- x64_sys_call+0x128b/0x3b90 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4683
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2336
- skb_page_frag_refill+0x2bf/0x7c0 net/core/sock.c:2920
- virtnet_rq_alloc+0x43/0xbb0 drivers/net/virtio_net.c:882
- add_recvbuf_mergeable drivers/net/virtio_net.c:2110 [inline]
- try_fill_recv+0x3f0/0x2f50 drivers/net/virtio_net.c:2155
- virtnet_open+0x1cc/0xb00 drivers/net/virtio_net.c:2434
- __dev_open+0x546/0x6f0 net/core/dev.c:1472
- __dev_change_flags+0x309/0x9a0 net/core/dev.c:8780
- dev_change_flags+0x8e/0x1d0 net/core/dev.c:8852
- devinet_ioctl+0x13ec/0x22c0 net/ipv4/devinet.c:1177
- inet_ioctl+0x4bd/0x6d0 net/ipv4/af_inet.c:1003
- sock_do_ioctl+0xb7/0x540 net/socket.c:1222
- sock_ioctl+0x727/0xd70 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
- __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
- x64_sys_call+0x18c0/0x3b90 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 PID: 4772 Comm: ssh-keygen Not tainted 6.9.0-syzkaller-12277-g56fb6f92854f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
