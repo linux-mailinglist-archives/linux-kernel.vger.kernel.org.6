@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-189324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6278CEE67
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A308CEE6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 12:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52108B21771
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4948A281B08
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 10:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0B2224FB;
-	Sat, 25 May 2024 09:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E2023765;
+	Sat, 25 May 2024 10:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAQbjCXT"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaVXwYJA"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF883208D6;
-	Sat, 25 May 2024 09:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610A12B83;
+	Sat, 25 May 2024 10:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716631088; cv=none; b=bf2lvNvWnBYZ/RrdVQ/2cEqRCLFB/woI3NPM7SXGWUc92nikI4b2s1+1hDRSG0qsmGYvvF2KIAxHd7YS3JfK57uHcvGm0TL9SFVRyRZ9oCAETb68WyiT/Id6u1kLclBGxB0zqqcbPXL+VVinU9IS6kutERE+DF7vQ5dyLr3MhAM=
+	t=1716631775; cv=none; b=SAJaMxiceQhTszAO03qWF1inEZISQwICWngaf+5H7brEQTj0QiL2moiKednsM/+8dfHxfvaosyPD0Y8TCgE4eXpNTdacs80s/xiwg9S+/tDsXYk1xdajcDCVE4QkYjQ0TxBYamRL+GRsG+NW22AOZNGVtdDMAPnUTUvDhd0Kmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716631088; c=relaxed/simple;
-	bh=uVSIth6ogeOC/8FQzcjH9y0w6jOWh1Y0ZlSRtiXqTw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GhYEKZhJ9ETMkLdVCeNxwpHeAtB5PdhfckoAyeQr6epSnk3Y4tlQLQwbvF9ro2bDq49G55srkdk1VdRcbXsWjhfBUTAjaLAkGmtPlh3PB9P+0hO1ha1sdDWTYw4j6x28fyuNsE+yIL6cnMiStmZVyAWMsA5XwCklkbGZqXgpBzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAQbjCXT; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1716631775; c=relaxed/simple;
+	bh=zqs9j1k6kqJzwv0KHEg2mNpznZuyVMBE5Z4GeV8kxlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAOWY91cclAtW00nZbClKyl+zP44k/rK8d00+HubnvFg5tSq8lPya31O3fWu6MmCRW4wHiwIUn8jaw9BiiajfANTF/Jbn52dnFUzetYo5bthu8xTqkMRXHBk7vZrhWD3o319OQZPL88kdWfQfv4rTFe0o58E5KwVZwGzkrukO4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaVXwYJA; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-529597d77b4so1662731e87.0;
-        Sat, 25 May 2024 02:58:06 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e9684e0288so3542961fa.1;
+        Sat, 25 May 2024 03:09:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716631085; x=1717235885; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/oK9VbRLSqksA3s8yPL/Mo5ZKUPSWzfI/BM0U3lWD4=;
-        b=ZAQbjCXTgGZ04jt6okbx5HyEiVAB9pCkZ4nwHr9GIAPFnZrlpomkQ1Lav86dIe/x9+
-         l94lcfywuWixs2yf0ygtOXJlEo7pxI/s7MPHuzJOTs3YOt92OGQxD4QlOTMXswAGpE5I
-         XcGnrqgKwyUUfap1IZ4ByccriR2XOu03+Gc/P8uBt7umI5Ski2AOwox82tbTzd1nzRcV
-         RCddDBEMkrungKtC6qoOlWNq1FsmzvAQpHw1LQRAvxv9ztaI3Clxs9Sn/cEPBuo3v4zy
-         DF8TclpwvnFdi6AjP4kCGSoAz+9zFzb4AP05ddn/ytE+sTbk4CRMa5Ok1IjGsD2YgPoi
-         gyWQ==
+        d=gmail.com; s=20230601; t=1716631772; x=1717236572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vUOaV2vBXxdf5jUTsdTYD9aM/Pj+H+s6kkpg7loxZLQ=;
+        b=VaVXwYJA/saHWLQY4cCzcvu6GckgKsT/hEeWlZKn13TuS0AyZKEqn5ZUrDaAMoGG25
+         TMD3eye7XNkFENGQQI2Nob3YsujcZ92pVvQhP3JzaQYreaugVv6OATz58mI/pzw23owu
+         gsvpjaCmPjDdiGpkZA9DeO9MzAdueJfvdW0kOPgCob5cHW1ghZqw3K/+p8kpKF4qsckL
+         eUoNUajGq5jDYlH+cnCdwnU3AAs6PcclxegWOTsfOBt0MKB+pgNybMraCkQt2hzsTWNZ
+         PIWUc8D6IXCRwfmfgzaFBToavnVuqmV2nqZbZeIouTKi48w4RXdBrsLmK77tV3mSBPUp
+         GcZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716631085; x=1717235885;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G/oK9VbRLSqksA3s8yPL/Mo5ZKUPSWzfI/BM0U3lWD4=;
-        b=jHuG9sj4/eiiOIvlpC4IXfCFhUGR6ZYoa0qXPZoAST0sYWvo7lC1zTAxl6sRdzvAyV
-         FIyd7fTstL3kHKui838hsfc2qWbiPn6nsGLEqCfGDhqhQslXaQwnUgEkQZjlJjwxFhSf
-         nGn16XDeRcgZ8SjBtre1gkxzMqqcNQFSCSrUYvsbpPL4ZSyPBLmlVUiiZGVfrtTbwb4h
-         7dIZpAIRWIKvA6fcu7J6lQiBBI0qNgxKWlYKAm583/GvQwsLPmVHxHx2pi7bOV7FeZne
-         3TuiTHlNrRz1WcspYhogWBPn2/X8BMtVhY0H9xPs4WFpNCQPl6lE33R6wm0MoAq2IA2U
-         y+Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUUGcDfl05wd1BLvcVuMDfIVGMnx1Mse1JqLKfvx3spe6OSGtiJ8tMwLrTpXeuYLNFmgTw1VWMgZthojZSNyesiUK4JBQJiGrCKK7Ha
-X-Gm-Message-State: AOJu0YxVAgL65ShlvmmHrc6/0uAGmMqf+Gi9TckLIX+mLOJKhyQUY1mJ
-	Y9/u6H4oTpLPo5eXTIfDscRvEhF8MqxVSvpaqByEaF98KKWzgvJHS3plx5If
-X-Google-Smtp-Source: AGHT+IG2M3nzhep0olkhXEKvEzVhg9J40leNtuAl3S+t1h+TD9xTwQ1I/O+XdGle4xU4PPu8l57w7g==
-X-Received: by 2002:a05:6512:68b:b0:520:7a44:3f30 with SMTP id 2adb3069b0e04-529645e342amr2766068e87.16.1716631084319;
-        Sat, 25 May 2024 02:58:04 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad965sm77025795e9.34.2024.05.25.02.58.02
+        d=1e100.net; s=20230601; t=1716631772; x=1717236572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vUOaV2vBXxdf5jUTsdTYD9aM/Pj+H+s6kkpg7loxZLQ=;
+        b=jqLaIrdKeSA0K2ygjVcXGzZRLyukeD71tiFtQsX+0VNgyqJ6uyVhNjQKyUmPSqwNeK
+         nnuRPtP0zoYI27KaKvsc/IyECcRDm69wFV+euDgBvceq3JzoH6Rc58IcErnQ52fbe0Nu
+         btlr5Nxv6IwlS0h9NS9uJ/oul/WfpVtNaaoYuzz+rKE/OKu7AiwdBytVVb/GY2NNyu9K
+         T+Y9Mv28IeneW2r4irxc+hDAqbn5D5oKxgPsf77VQrXuMjH3L2EOh16z6xD+fZl9m5O5
+         lelsboVKIhsTNE6zwhf+QM1enGN3KAg9SE5sFiUzMWS2chBTd1eTJDUWNcETO+scxORa
+         //3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvpKz7OS5qDWp0wJe8l3yyuhWUomSBGPUIfDoNGQjt5QrqB9itfONl+vzrYr8qR/GxbNVbnnzPmwE8Fx7jJfg9fN9GuUsm8ujGhDTOS8omNLs2ABDAlfdFTJNCU+tVyEF/Ymflz+Ufm7M=
+X-Gm-Message-State: AOJu0Yx3u9GgsNWYYiOcAxPqZ6IL/I4WYh1jd4g6us7J83lRdpspuyuO
+	VdFQD6d6ZLWg/n9JeA2mhclge7sr4SS9ThNo3yGQ2rLX22jzlDxn
+X-Google-Smtp-Source: AGHT+IG+k8/71TBeBI0HoC6uDq4/3ivYRjrw4KYOJgHOeToBArl1Mc8j2V/y5kh1U2aMwlN3x7+k9g==
+X-Received: by 2002:a2e:9996:0:b0:2e9:555f:54e with SMTP id 38308e7fff4ca-2e95b0977d4mr45005141fa.18.1716631771547;
+        Sat, 25 May 2024 03:09:31 -0700 (PDT)
+Received: from localhost.localdomain ([178.70.43.28])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bb87429sm6506561fa.0.2024.05.25.03.09.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 May 2024 02:58:03 -0700 (PDT)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 6.10-rc1
-Date: Sat, 25 May 2024 11:57:37 +0200
-Message-ID: <20240525095738.3046298-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        Sat, 25 May 2024 03:09:31 -0700 (PDT)
+Date: Sat, 25 May 2024 13:09:29 +0300
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Nas Chung <nas.chung@chipsnmedia.com>, 
+	Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Wave515 decoder IP support
+Message-ID: <pnwbwczlzpofdrrizep5i3la3hxpk3hn6a4sb2aeaac57kldgp@mgqf2mau5hqr>
+References: <20240415100726.19911-1-brnkv.i1@gmail.com>
+ <mwgydgjstvedkatdvopt3wh4imhnzflr7ut3vejgl6fz3vbgzg@x4spldwklrm3>
+ <20240503150721.qd6d7csev5452rss@basti-XPS-13-9310>
+ <bliiovkmzwkd5ikvvhvuokiacdclinb5rx4fxbtufwqnvqypgw@uygv56l7a45c>
+ <20240524101950.zhzenp3ilarwv5oc@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524101950.zhzenp3ilarwv5oc@basti-XPS-13-9310>
 
-Hi Linus,
+On Fri, May 24, 2024 at 12:19:50PM GMT, Sebastian Fricke wrote:
+> Hey Ivan,
+> 
+> On 24.05.2024 12:09, Ivan Bornyakov wrote:
+> > Greetings,
+> > 
+> > On Fri, May 03, 2024 at 05:07:21PM GMT, Sebastian Fricke wrote:
+> > > Hey Ivan,
+> > > 
+> > > On 02.05.2024 09:40, Ivan Bornyakov wrote:
+> > > >
+> > > > Friendly ping.
+> > > 
+> > > Sorry again for the delay, I was nearly finished with the patch set last
+> > > week but the time wasn't sufficient. And I sadly have to delay it again
+> > > a bit as I am on vacation until 13.05. I expect finishing it probably
+> > > until 17.05.
+> > > 
+> > > Regards,
+> > > Sebastian
+> > 
+> > Do you still intend to review the patch series?
+> 
+> Yes, sadly maintainer work isn't the highest priority work at my job
+> however.
+> 
+> > 
+> > Also should I resend? Is there anything I can do to budge the process?
+> 
+> Nope no action required from your side, just my busy schedule that keeps
+> me from doing the work. If you want to you can help me get through my
+> shelf quicker however by for example reviewing:
+> https://patchwork.linuxtv.org/project/linux-media/list/?series=12848
+> 
+> Regards,
+> Sebastian
 
-The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
-
-  Linux 6.9 (2024-05-12 14:12:29 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.10-rc1
-
-for you to fetch changes up to 93a2221c9c1ae32643df67c482dc4c4c591b7514:
-
-  doc: ceph: update userspace command to get CephFS metadata (2024-05-23 10:35:47 +0200)
-
-----------------------------------------------------------------
-We have a series from Xiubo that adds support for additional access
-checks based on MDS auth caps which were recently made available to
-clients.  This is needed to prevent scenarios where the MDS quietly
-discards updates that a UID-restricted client previously (wrongfully)
-acked to the user.  Other than that, just a documentation fixup.
-
-----------------------------------------------------------------
-Artem Ikonnikov (1):
-      doc: ceph: update userspace command to get CephFS metadata
-
-Xiubo Li (6):
-      ceph: save cap_auths in MDS client when session is opened
-      ceph: add ceph_mds_check_access() helper
-      ceph: check the cephx mds auth access for setattr
-      ceph: check the cephx mds auth access for open
-      ceph: check the cephx mds auth access for async dirop
-      ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
-
- Documentation/filesystems/ceph.rst |  15 ++-
- fs/ceph/dir.c                      |  28 ++++
- fs/ceph/file.c                     |  66 ++++++++-
- fs/ceph/inode.c                    |  46 +++++--
- fs/ceph/mds_client.c               | 270 ++++++++++++++++++++++++++++++++++++-
- fs/ceph/mds_client.h               |  28 +++-
- 6 files changed, 434 insertions(+), 19 deletions(-)
+Understood. I'll have a look.
 
