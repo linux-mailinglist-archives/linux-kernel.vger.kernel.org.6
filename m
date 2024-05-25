@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-189302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B198CEE28
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0FB8CEE2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996921C20BD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E947281F59
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5058BFBED;
-	Sat, 25 May 2024 07:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YcUDsL6D";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HDbMBRb+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01B012B83;
+	Sat, 25 May 2024 07:38:11 +0000 (UTC)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D2DDC4
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 07:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF9ABE6F;
+	Sat, 25 May 2024 07:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716622357; cv=none; b=nHo4iIVUxNMMHcEFCHhZs6U/JCI1TeAQudnPvOXT1V+a/J52Q+r9VkV2C4h0LC4uIZm+6knWiaP6ay/hbq5jSX3YHEq7NkvIkBISHmwNyLqlxDh+0BjrYynsZ/yv9psKrlMxZW8Lje8DCjEwYvaOnCGj5KICC2lWJjXWEBv5ykQ=
+	t=1716622691; cv=none; b=RjpNEOnBPrK9llNxp7i+gn9KK5RKstmtgLbF6cL2DerCrSZpdhqyMvIJlC3r8VHVlboOwlBlwj4VeNLzL3sp0nkxdc9TD9KS/asevhKuQbEbKS7CUXy0JXGRronGp/hvQX93y3N82RkOjCC4nuyrEwDqhSzwRKrAktEhyW9Waxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716622357; c=relaxed/simple;
-	bh=7/qtvsoEYPm/gp5Dn4A9Wd7Ix2aEqp7UV1ynS6s6QVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HO3CH4REf2Z0T31jArR055maHzq3CtXKlIjrPKOZhwgmpkfAN54vjlSF6NJfF2jjtDbawPLlvo2YzwFtdprKU2Q+HjMjDsk0uk0jUxLBhqWjulsOST4iI/i6jTsBIOXh4pdT6Pyah3VDW3BWsWHvr8lPNGVkjk0lUpt6wAYWx4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YcUDsL6D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HDbMBRb+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716622353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wi+/J+ptePQGvzXQ0v1rtPKu00m6VIgRcYRhLkIVOyY=;
-	b=YcUDsL6DOKRV1Su0hk7BeA3Umye3dohePC6fFISxBMs9/b/VWwCI6EN8n93rcMvsjw5Mz4
-	SurM6A2oipPlgllcdUWCQ3bkCsapnX2nvA5Jp/Wa80pNASPt4xRUy7rxPpsvSinl6fQcJ7
-	Ih3uKtg3W6HCdFgsxmNuCD+2rgCpwMvnI9CgqMjnoU2mTjB4gLKkJ0rSvSDzJfX4jQ4yRu
-	6QBSQDf/SU7ISC7GAUCRdQuIIe35Rr7f+/cIOF8ovWDJf6CSJf1WYInIt5tc3aQ0Tel8Vd
-	oHHk5XFiAhCP3OiORvHNfE5DfAEQKqbHSTqSFaKpyLSyPDPyKubIJxyHpjzH6A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716622353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wi+/J+ptePQGvzXQ0v1rtPKu00m6VIgRcYRhLkIVOyY=;
-	b=HDbMBRb+gwwDSymD2ZGCQydsOKGCm/du827Due4IKaY5lYB04uZwONAawKs+PPdhghdJz5
-	eA+t0v+xyKtonjCw==
-To: Larry Finger <Larry.Finger@lwfinger.net>,
-	Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Nam Cao <namcao@linutronix.de>,
-	syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com
-Subject: [PATCH] staging: rtl8712: remove unnecessary alignment of pxmitpriv->pxmitbuf
-Date: Sat, 25 May 2024 09:32:29 +0200
-Message-Id: <20240525073229.4144612-1-namcao@linutronix.de>
+	s=arc-20240116; t=1716622691; c=relaxed/simple;
+	bh=hjnFQGsTJPR8cRFI+tzxhz1tkZh4lBxpR3/xX+fvjJY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W48pQZumYGfPJV0Hlh5X5uU769l2W63u6NZR2T08nGKkh/A5QBr2wXrFcErZY2ygOm2XnoYwXIa7WPdhDDJeVpQOPzBaS8r4RreDEKl/c+OXLLKZthk/jzwU1QIxmYXMziQ0P5ijjvQlVKFqigWktIWM4eiPUbpmoDmYbhCJNdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-656d8b346d2so4131609a12.2;
+        Sat, 25 May 2024 00:38:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716622689; x=1717227489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VjSDPJ3ndkcl6uhv0oiHbgYv63rSd+FyYBnXbtqOYhg=;
+        b=manLXTVNhGBqJV3TNl4vkqHosGzzf3H9fmYpKpk8sBJiS9mYZofQ8Lh0iaP7mZhXRF
+         0c/R3DQdmM9it0pjDpVrbuFpuImUNQtNtIz6ARfArxdq0mzYNqZDLTAImgPsZshqzpa1
+         /LgKcYYgR4cFfdnQXxZT1UfRVLItnQjwPMc16OHRwhGkIPjthEZlUfckUGf1BS51CpD1
+         ygOgPlZKoSTSgO4AR7gbDY0s0EawPO8dA5xK42MZNMAFVIKkzzRRPaH12XZAC7h7159b
+         divceGNCiumoYVs3KlIykPhdXXDlVRQhS46MbYmNONaicVSu/rQz0zSlq1CO0w/Z6dWQ
+         Ne/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXgiUDUykQcBCr0GMviewfNHz/HoX2jukHYO9LaAfNtJve1eDqu2qFbLD9YbWcjTe+x1Lev9gW7wEmntDNZ1MNxaxXRMigC0PRT1ICbzWv3Lk1DM1o76o7sL/LeY6vb5N3ENzz+ei4hq4pvBHaZmA==
+X-Gm-Message-State: AOJu0YzFNnwFuRtuXAvqVymnKQL97Wko6U2l87Q6LcEL9HkoJcrxozrL
+	UNmHH3O3W2T+So86pBGI/Q36zBI7N7LWgTajCKd7azud8DO2tdC3CwlFZsuRqsjO0ElwnHfwvI7
+	N4z2RjmF/NFeFdL2ZnJIeva2NeN4=
+X-Google-Smtp-Source: AGHT+IHye6O0IdalgUS2IBMSDJiqTD6MjEHp+CyiIXyHMvmWb3eLtGiSu5COu7sJMX/b2rFNmcx7d6BsqIVlCA1j2tY=
+X-Received: by 2002:a05:6a20:3cac:b0:1af:d1b2:4c21 with SMTP id
+ adf61e73a8af0-1b212dee2dcmr5320981637.41.1716622689230; Sat, 25 May 2024
+ 00:38:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Sat, 25 May 2024 00:37:57 -0700
+Message-ID: <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+To: Ian Rogers <irogers@google.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
+	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
+	Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This driver wants pxmitpriv->pxmitbuf to be 4-byte aligned. This is ensured
-by allocating 4 more bytes than required with kmalloc(), then do the
-p = p + 4 - (p & 3) trick to make sure the pointer is 4-byte aligned.
+Hi guys,
 
-This is unnecessary. Pointers from kmalloc() are already at least
-8-byte-aligned.
+On Fri, May 24, 2024 at 9:20=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, 24 May 2024 at 20:48, Ian Rogers <irogers@google.com> wrote:
+> >
+> > Thanks for the report. TL;DR try putting the PMU name with the event
+> > name, so "cycles:pp" becomes "armv8_pmuv3_0/cycles/pp", where
+> > armv8_pmuv3_0 is the name of the PMU from /sys/devices.
+>
+> What? No.
+>
+> If that is the new rule, then I'm just going to revert. I'm not going
+> to use some random different PMU names across architectures when all I
+> want is just "cycles".
+>
+> In fact, the "cycles:pp" is a complete red herring. Just doing a simple
+>
+>  $ perf record sleep 1
+>
+> with no explicit expression at all, results in that same
+>
+>   Error:
+>   cycles:P: PMU Hardware doesn't support sampling/overflow-interrupts.
+> Try 'perf stat'
+>
+> because perf *ITSELF* uses the sane format by default.
 
-Remove this alignment trick to simplify the code, and also to stop wasting
-4 extra bytes of dynamic memory allocator.
+Yep, so I'm curious what makes it fail.  IIUC the commit in question
+would convert "cycles" event to "${whatever_pmu}/cycles/" if the pmu
+has "events/cycles" alias in sysfs or in JSON.  But it should work after
+that too. :(
 
-This also gets rid of a (false) warning from kmemleak. This 4-byte-aligned
-buffer is used to store pointers from kmalloc(). For 64-bit platforms,
-pointer size is 8 bytes and kmemleak only scans for pointers in 8-byte
-blocks, thus it misses the pointers stored in this 4-byte-aligned buffer
-and thinks that these pointers have been leaked. This is just a false
-warning, not a real problem. But still, it would be nice to get rid of
-these warnings.
+It seems my system doesn't have the alias (both in x86_64 and arm64)
+at least in sysfs.  I think that's why I don't see the failure and maybe
+there's a specific hardware issue - like a M1 macbook issue?  IIRC it
+required the exclude_guest bit to be set, but I think we handled it already
+so this must be a different issue.
 
-Reported-and-tested-by: syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-staging/000000000000809328060a8a4c1c@google.com
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-Patch sent using this driver with this patch applied.
+The error message is for EOPNOTSUPP, and I don't think it will set any
+special attributes for the default event.  So I have no clue yet..
 
- drivers/staging/rtl8712/rtl871x_xmit.c | 13 +++++--------
- drivers/staging/rtl8712/rtl871x_xmit.h |  1 -
- 2 files changed, 5 insertions(+), 9 deletions(-)
+Thanks,
+Namhyung
 
-diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
-index 6353dbe554d3..408616e9afcf 100644
---- a/drivers/staging/rtl8712/rtl871x_xmit.c
-+++ b/drivers/staging/rtl8712/rtl871x_xmit.c
-@@ -117,12 +117,9 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
- 	/*init xmit_buf*/
- 	_init_queue(&pxmitpriv->free_xmitbuf_queue);
- 	_init_queue(&pxmitpriv->pending_xmitbuf_queue);
--	pxmitpriv->pallocated_xmitbuf =
--		kmalloc(NR_XMITBUFF * sizeof(struct xmit_buf) + 4, GFP_ATOMIC);
--	if (!pxmitpriv->pallocated_xmitbuf)
-+	pxmitpriv->pxmitbuf = kmalloc(NR_XMITBUFF * sizeof(struct xmit_buf), GFP_ATOMIC);
-+	if (!pxmitpriv->pxmitbuf)
- 		goto clean_up_frame_buf;
--	pxmitpriv->pxmitbuf = pxmitpriv->pallocated_xmitbuf + 4 -
--			      ((addr_t)(pxmitpriv->pallocated_xmitbuf) & 3);
- 	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmitbuf;
- 	for (i = 0; i < NR_XMITBUFF; i++) {
- 		INIT_LIST_HEAD(&pxmitbuf->list);
-@@ -165,8 +162,8 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
- 		for (k = 0; k < 8; k++)		/* delete xmit urb's */
- 			usb_free_urb(pxmitbuf->pxmit_urb[k]);
- 	}
--	kfree(pxmitpriv->pallocated_xmitbuf);
--	pxmitpriv->pallocated_xmitbuf = NULL;
-+	kfree(pxmitpriv->pxmitbuf);
-+	pxmitpriv->pxmitbuf = NULL;
- clean_up_frame_buf:
- 	kfree(pxmitpriv->pallocated_frame_buf);
- 	pxmitpriv->pallocated_frame_buf = NULL;
-@@ -193,7 +190,7 @@ void _free_xmit_priv(struct xmit_priv *pxmitpriv)
- 		pxmitbuf++;
- 	}
- 	kfree(pxmitpriv->pallocated_frame_buf);
--	kfree(pxmitpriv->pallocated_xmitbuf);
-+	kfree(pxmitpriv->pxmitbuf);
- 	free_hwxmits(padapter);
- }
- 
-diff --git a/drivers/staging/rtl8712/rtl871x_xmit.h b/drivers/staging/rtl8712/rtl871x_xmit.h
-index cdcbc87a3cad..784172c385e3 100644
---- a/drivers/staging/rtl8712/rtl871x_xmit.h
-+++ b/drivers/staging/rtl8712/rtl871x_xmit.h
-@@ -244,7 +244,6 @@ struct	xmit_priv {
- 	int cmdseq;
- 	struct  __queue free_xmitbuf_queue;
- 	struct  __queue pending_xmitbuf_queue;
--	u8 *pallocated_xmitbuf;
- 	u8 *pxmitbuf;
- 	uint free_xmitbuf_cnt;
- };
--- 
-2.39.2
-
+>
+> So ABSOLUTELY NO. We're not changing the rules to "You have to know
+> some idiotic per-architecture JSON magic".
+>
+> I don't want any excuses like this. No "You are holding it wrong".
+> This is a BUG. Treat it as such.
+>
+> And yes, "perf record -vv" shows that it apparently picked some insane
+> arm_dsu_0 event. Which just shows that trying to parse the JSON rules
+> instead of just having sane defaults is clearly not working.
+>
+> So here's the deal: I will revert your commit tomorrow unless you show
+> that you are taking it seriously and have a sane fix.
+>
+> Because no, "You are holding it wrong" is not the answer. Never was,
+> never will be. Things used to work, they don't work any more. That
+> shit is not acceptable.
+>
+>                    Linus
 
