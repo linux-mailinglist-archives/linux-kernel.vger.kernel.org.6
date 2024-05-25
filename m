@@ -1,181 +1,132 @@
-Return-Path: <linux-kernel+bounces-189438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FF68CF00D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AB78CF00E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A14281C90
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4E91C20F9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A818595C;
-	Sat, 25 May 2024 16:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021BF8595B;
+	Sat, 25 May 2024 16:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTXP5P9V"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hSyr3sRb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2165F39FE5;
-	Sat, 25 May 2024 16:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A528F66;
+	Sat, 25 May 2024 16:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716653662; cv=none; b=PeDBM+CEmEere4Q8c3qnsy/5LhSkre2sRS7jNJCHai9Ysa8/XpO2VYQmJBB8LR6ucJT20Hl6WbGyHuzsU96h9F8diDYRNvputGKRgIK/r0sE/BO29m/eV4RSNz6apakKyDHcHf+pjKjKNhf/0eP/wgW7mPJru/qSmL6ZYWwWqDo=
+	t=1716653759; cv=none; b=XeetCKyMpAwgOeSJEHEThc0sHzqP0z+0IpuMSCxeld68l/wVvW253YArMQSJigvfOKbRCn6LlLnMt07Omt/DKyheSVIuq5LUnWD/JkoQJV0x5pIKJDXpCsdAqGpxGuNS4cox7m6cYwJBm2pUptzhwsbzpWhahzsbnlXmzjWECOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716653662; c=relaxed/simple;
-	bh=ci3qNCWOEbPWD0A/YQ3B40wpXUPRTgAXrvngcy3/GEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tTB7+FJkMWpbN3+RlcH0lVpVogpI2Li5AJvZUFDpsYXeLQonZPtq6Z4hqD93fi6//byY2KAr7TBslj30RMIYrTNN0ALNNgizXxtdsfHlVT4EvzsCz/lAMjMj/5I0+fODzn/AUpMze3AKy7z8Lr/jmANOFJzmIKx7AYvmldBtMDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTXP5P9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E0AC2BD11;
-	Sat, 25 May 2024 16:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716653661;
-	bh=ci3qNCWOEbPWD0A/YQ3B40wpXUPRTgAXrvngcy3/GEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kTXP5P9VpjaWZdTIqoyUp6f+vHrO50Hs52sW1gXFIYwl8+7omYNEX1JspN7sQzwwy
-	 AivUusI9E+mnQ1UbhlFVKFa+wri7IyN5HyYQAJqA0HMJtzRTex9YzF/qqUsaoS7QFJ
-	 lcyzTIQZqi33WHPWRAvdPR94PlZGLaAlFyFZwB+9rIJMvrIRvZMDzFpPEy4TFHTXa7
-	 6f23jkYsbeGphmqW0DqZh5qZnQ3F9kFlUi3FVYQszVStyDMOTOeF69k3i/WdwcjmF8
-	 O1b+LvNStsMfz7AjfEGG5uQgnXCRDScvoZrMVpcbKwXEigVwsQLrMnwQNaDj7eTATA
-	 +NzlA/BLDF5Eg==
-Date: Sat, 25 May 2024 17:14:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
- <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1716653759; c=relaxed/simple;
+	bh=l+aDviQghwZhl0H+B/JfTAM+86dh8zBmoZuOzzzDX3g=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=d0k7rGjm8cbJSvY6We/2cmfvmrA2YaRWWDH2JG9EaC0ItF3xqmLeEpfc0CmKu3kPQrU1F2uckcvpTf5kzMAtF930YSmIu5r3fFqHVF7jaMXp59tUEuFc1GM2KLQWzbkqfvRHlv/Aa796V0MzmzsuTft1sjKHB95hyF1FaIMyuLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hSyr3sRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78714C2BD11;
+	Sat, 25 May 2024 16:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716653758;
+	bh=l+aDviQghwZhl0H+B/JfTAM+86dh8zBmoZuOzzzDX3g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hSyr3sRbmWGs94KVxDngMq5wkiCnY3WnGQ1VS3pO8nFD+wNjFYkKpyzU5gN17xEv/
+	 DJSb3BQDWC/uqb9gpFqIZUmbz8urwvA03l0DUFGJSNI0XBcIqnD17S7kQEKCQ/DZ+c
+	 TBHD8ZOF96ZEdV9BvziLiuekVegTDB93d3/QsEKQ=
+Date: Sat, 25 May 2024 09:15:57 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
- channel
-Message-ID: <20240525171408.36bda583@jic23-huawei>
-In-Reply-To: <5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
-	<20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
-	<20240519201241.7c60abac@jic23-huawei>
-	<ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
-	<20240520171205.000035b0@Huawei.com>
-	<5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Subject: [GIT PULL] hotfixes for 6.10-rc1
+Message-Id: <20240525091557.9ca6e57ab6d41bf204c12531@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 24 May 2024 10:56:55 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On 5/20/24 11:12 AM, Jonathan Cameron wrote:
-> > On Mon, 20 May 2024 08:51:52 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> >> On 5/19/24 2:12 PM, Jonathan Cameron wrote:  
-> >>> On Tue,  7 May 2024 14:02:07 -0500
-> >>> David Lechner <dlechner@baylibre.com> wrote:
-> >>>     
-> >>>> This adds new fields to the iio_channel structure to support multiple
-> >>>> scan types per channel. This is useful for devices that support multiple
-> >>>> resolution modes or other modes that require different data formats of
-> >>>> the raw data.
-> >>>>
-> >>>> To make use of this, drivers can still use the old scan_type field for
-> >>>> the "default" scan type and use the new scan_type_ext field for any
-> >>>> additional scan types.    
-> >>>
-> >>> Comment inline says that you should commit scan_type if scan_type_ext
-> >>> is provided.  That makes sense to me rather that a default no one reads.
-> >>>
-> >>> The example that follows in patch 4 uses both the scan_type and
-> >>> the scan_type_ext which is even more confusing.
-> >>>     
-> >>>> And they must implement the new callback
-> >>>> get_current_scan_type() to return the current scan type based on the
-> >>>> current state of the device.
-> >>>>
-> >>>> The buffer code is the only code in the IIO core code that is using the
-> >>>> scan_type field. This patch updates the buffer code to use the new
-> >>>> iio_channel_validate_scan_type() function to ensure it is returning the
-> >>>> correct scan type for the current state of the device when reading the
-> >>>> sysfs attributes. The buffer validation code is also update to validate
-> >>>> any additional scan types that are set in the scan_type_ext field. Part
-> >>>> of that code is refactored to a new function to avoid duplication.
-> >>>>
-> >>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> >>>> ---    
-> >>>     
-> >>>> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-> >>>> index 19de573a944a..66f0b4c68f53 100644
-> >>>> --- a/include/linux/iio/iio.h
-> >>>> +++ b/include/linux/iio/iio.h
-> >>>> @@ -205,6 +205,9 @@ struct iio_scan_type {
-> >>>>   * @scan_index:		Monotonic index to give ordering in scans when read
-> >>>>   *			from a buffer.
-> >>>>   * @scan_type:		struct describing the scan type
-> >>>> + * @ext_scan_type:	Used in rare cases where there is more than one scan
-> >>>> + *			format for a channel. When this is used, omit scan_type.    
-> >>>
-> >>> Here is the disagreement with the patch description.
-> >>>     
-> >>>> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
-> >>>>   * @info_mask_separate: What information is to be exported that is specific to
-> >>>>   *			this channel.
-> >>>>   * @info_mask_separate_available: What availability information is to be
-> >>>> @@ -256,6 +259,8 @@ struct iio_chan_spec {
-> >>>>  	unsigned long		address;
-> >>>>  	int			scan_index;
-> >>>>  	struct iio_scan_type scan_type;
-> >>>> +	const struct iio_scan_type *ext_scan_type;
-> >>>> +	unsigned int		num_ext_scan_type;    
-> >>>
-> >>> Let's make it explicit that you can't do both.
-> >>>
-> >>> 	union {
-> >>> 		struct iio_scan_type scan_type;
-> >>> 		struct {
-> >>> 			const struct iio_scan_type *ext_scan_type;
-> >>> 			unsigned int num_ext_scan_type;
-> >>> 		};
-> >>> 	};
-> >>> should work for that I think.
-> >>>
-> >>> However this is I think only used for validation. If that's the case
-> >>> do we care about values not in use?  Can we move the validation to
-> >>> be runtime if the get_current_scan_type() callback is used.    
-> >>
-> >> I like the suggestion of the union to use one or the other. But I'm not
-> >> sure I understand the comments about validation.
-> >>
-> >> If you are referring to iio_channel_validate_scan_type(), it only checks
-> >> for programmer error of realbits > storagebits, so it seems better to
-> >> keep it where it is to fail as early as possible.  
-> > 
-> > That requires the possible scan masks to be listed here but there is
-> > nothing enforcing the callback returning one from here.  Maybe make it
-> > return an index instead?
-> >   
-> 
-> Sorry, still not understanding what we are trying to catch here. Why
-> would the scan mask have any effect of checking if realbits > storagebits?
-Hmm. I seem to be failing to explain this!  Key is the complete lack of
-association between what is returned by the get_current_scan_type() callback
-and this ext_scan_type array.
+Linus, please merge this batch of nilfs2 and mm/ hotfixes, thanks.
 
-So either:
-1) Make it do so - easiest being to return an index into the array rather than
-   a possibly unrelated scan_type - that would guarantee the scan_type returned
-   by the callback was one that has been validated.
-or
-2) Drop validation at initial probe because you are validating something
-   that is irrelevant to what actually gets returned later. Validate
-   when the scan type is read back via get_current_scan_type()
 
-I prefer option 1.
-> 
+The following changes since commit c760b3725e52403dc1b28644fb09c47a83cacea6:
+
+  Merge tag 'mm-nonmm-stable-2024-05-22-17-30' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-05-22 18:59:29 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-05-25-09-13
+
+for you to fetch changes up to 90e823498881fb8a91d83e9a8eed87c8c3ff2176:
+
+  mm/ksm: fix possible UAF of stable_node (2024-05-24 11:55:08 -0700)
+
+----------------------------------------------------------------
+16 hotfixes, 11 of which are cc:stable.
+
+A few nilfs2 fixes, the remainder are for MM: a couple of selftests fixes,
+various singletons fixing various issues in various parts.
+
+----------------------------------------------------------------
+Andrey Konovalov (1):
+      kasan, fortify: properly rename memintrinsics
+
+Chengming Zhou (1):
+      mm/ksm: fix possible UAF of stable_node
+
+Dev Jain (3):
+      selftests/mm: compaction_test: fix bogus test success on Aarch64
+      selftests/mm: compaction_test: fix incorrect write of zero to nr_hugepages
+      selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation
+
+Hailong.Liu (1):
+      mm/vmalloc: fix vmalloc which may return null if called with __GFP_NOFAIL
+
+Miaohe Lin (2):
+      mm/huge_memory: don't unpoison huge_zero_folio
+      mm/memory-failure: fix handling of dissolved but not taken off from buddy pages
+
+Michael Ellerman (1):
+      selftests/mm: fix build warnings on ppc64
+
+Ryusuke Konishi (3):
+      nilfs2: fix use-after-free of timer for log writer thread
+      nilfs2: fix unexpected freezing of nilfs_segctor_sync()
+      nilfs2: fix potential hang in nilfs_detach_log_writer()
+
+Satya Priya Kakitapalli (1):
+      mailmap: update email address for Satya Priya
+
+Suren Baghdasaryan (1):
+      lib: add version into /proc/allocinfo output
+
+Will Deacon (1):
+      arm64: patching: fix handling of execmem addresses
+
+Yuanyuan Zhong (1):
+      mm: /proc/pid/smaps_rollup: avoid skipping vma after getting mmap_lock again
+
+ .mailmap                                     |  2 +-
+ Documentation/filesystems/proc.rst           |  5 +-
+ arch/arm64/kernel/patching.c                 |  2 +-
+ fs/nilfs2/segment.c                          | 63 ++++++++++++++++-----
+ fs/proc/task_mmu.c                           |  9 ++-
+ include/linux/fortify-string.h               | 22 +++++--
+ lib/alloc_tag.c                              | 47 ++++++++++-----
+ mm/ksm.c                                     |  3 +-
+ mm/memory-failure.c                          | 11 +++-
+ mm/vmalloc.c                                 |  5 +-
+ tools/testing/selftests/mm/compaction_test.c | 85 ++++++++++++++++++++--------
+ tools/testing/selftests/mm/gup_test.c        |  1 +
+ tools/testing/selftests/mm/uffd-common.h     |  1 +
+ 13 files changed, 187 insertions(+), 69 deletions(-)
 
 
