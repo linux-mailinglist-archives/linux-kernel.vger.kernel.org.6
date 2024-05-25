@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-189284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547198CEDEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D368CEDF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 07:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517E6B216A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461201C20A84
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 05:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A58B644;
-	Sat, 25 May 2024 05:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlCMP2mz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8018DBE4B;
+	Sat, 25 May 2024 05:11:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FF52913;
-	Sat, 25 May 2024 05:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B037A63BF
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 05:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716613319; cv=none; b=TWaQ72MIUfEJ8UcINTrncfaIwxWMFBVaPkgZN8NtBPgI69v9EYMYIZ80mAvKr1tGVR8sf0/3u8CjwRgGBKtghcm6DmZWg2TYj0tIbdke1poz1GBFthaFxQLJR2wHhBkS7srUpnBo2aPHBpzKkoUZAOABQBZwkOswpTG+Kk4wCNo=
+	t=1716613865; cv=none; b=rrV4dqCkCrHsMXJx9fppZzaSV0OpjBjoCiVm8NyBGgAiyhaRyn8bC0Ue4CafllcltPEWgEjdQXeaC061ullcG0j/YTuknsjsmyIMqVvRrexoM9ytp7QxrGTzaIvRkroU42QTZiWiULoNTh2m4MOgtFNM3Iq10C/18QXbXL33ilo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716613319; c=relaxed/simple;
-	bh=J9LYVGzOxQPYwrVOWTVSxCqfC+l4YKyMKpoA0Q5Tdn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=snLyYoRUrRNe61ZxwOkqlt5miYEfOx5+XK9tf8KkzjNHf50UTAZGEkrjNB7zRBWruqcwtjp8KhQOgyq3sTdVlk19vZCss6inAxjXHnCYxwO71LibdUeR05YaZOs9hUaScWxkPbb1ojF6M/a4LMdsfNeoZ5N6qOyxW8a+vEEovPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlCMP2mz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEB1C32782;
-	Sat, 25 May 2024 05:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716613318;
-	bh=J9LYVGzOxQPYwrVOWTVSxCqfC+l4YKyMKpoA0Q5Tdn0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=SlCMP2mzmlwCDrUejywY+td+Chdr7OCXYJTVD2IALDS/cmpxakEF3fAzG3mASfOwC
-	 fe9SHGvL1juyc0/cAerYXrAeSJyEUCd/1a632X2KFEFIl0C/LyqVMDd4BMvh2IKbGo
-	 U2111VpOjKPTD678A6oECG4lIxYfxz6aPG/KUmXr+JNKQsY7poYYfS+/PiZa0XbiD7
-	 WWT3dNC4+wlwwM1NUpro2n5A09muPd/IROybC2bWVKXEFeaQEqqFJhCY8t1Jbibtt2
-	 s5OA5QaOC+qyCf1MtKTcOOYVKO4BdOvd4VRfaOFzEvKNyAlivFZzOTKx1lEyjo+jxg
-	 Hz2CNH9jsoWiA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1D012CE2A84; Fri, 24 May 2024 22:01:58 -0700 (PDT)
-Date: Fri, 24 May 2024 22:01:58 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] locktorture: add MODULE_DESCRIPTION()
-Message-ID: <b05ea477-cecc-4745-9c74-e78b21e7a37b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240524-md-locktorture-v1-1-f84c5d07b1ab@quicinc.com>
+	s=arc-20240116; t=1716613865; c=relaxed/simple;
+	bh=ChEzdL3+2gOHaf5Aw/yfnfdaUguDfZndQdJ72R/j/mQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uiJZ+lP5x5dvT2j8CXrPxVsjT6R8QBuIIAxQIzlAyfKjqT6HQuZzQcRUKfEGhmYBMwtYs14sx4hysRZrxPIoTD02X3yZ2eLdlS7HpXV6jxdJ91kKuwTjThjZhcdR/WwO+qSJp0w62mjo4TrvCEztwRPx/xUUbUx8RMFtCEnmFRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3737b3276a0so17397935ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 22:11:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716613863; x=1717218663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I8IyrQNJ0zAFLZsLTn91HX7IoDexMyQtJMtnbbiIgt0=;
+        b=kywkOg79AhxtmFaP106hQYPyUjGElWSCB/hYfHWKZgWgcVnTaqq0iLmjV26gPAA4fV
+         ItoZJwoNIVofz/yhdL9QXAZerkwtNYzT61364degwR3RpNCtW65/tndKfDmrxLgHQK8d
+         amnDrDW2g7kV05WnKtveW59yqxL1iMyTrbKQMTdrUiklgk1YDpUmbnMoEKLynPY1u81Q
+         Qb5fQURYo0C42eTz797rSxzX8SUVwZIlFAEq8TQCivblbuDvIG6zd0sH8WApgDR7vXuO
+         d2f6Lue0GRIs4h6/zZ3L/vIcrAWCrjokyQa5+4z/pfbD6APf/mLrTWM8MZT6jRHKIZHO
+         h+bA==
+X-Forwarded-Encrypted: i=1; AJvYcCXN+MkqP5AaxOszOePCobVLdRp9mgkyrgwnfxnKm1NsrOgIa+jE0YBCUSHPHjiCpUg8lBA8QOgm4NCIkNJYBSIlEr7ammzQnkWFUbQ+
+X-Gm-Message-State: AOJu0YzJgpw06TqnugoF9IfqpRH5jMMieYwfU2j27LrIOCEINRkxB/KN
+	CA9yMQ439vNZXupp85IUKfw5ZGJ4lEhL5BgXBKFUp1dgW/OV3esWZntAqeT1ziQngybmk5uWOpB
+	INAmRPz8vq2BsahaMocxawvD2Hlpj5X8FBwh8kogWw3+iSx+8H9xiaYE=
+X-Google-Smtp-Source: AGHT+IEwpd5Ene7lFVYgVE0epmFBsfn5s2UO1jINS7zpgHxZEKqzT9qhLjfX+igNk2YQjqbsnny9VTdFYS/nCzzlC7H/KSJs3Gmi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524-md-locktorture-v1-1-f84c5d07b1ab@quicinc.com>
+X-Received: by 2002:a05:6e02:1a4e:b0:373:8c59:d31b with SMTP id
+ e9e14a558f8ab-3738c59d5c8mr455755ab.2.1716613863064; Fri, 24 May 2024
+ 22:11:03 -0700 (PDT)
+Date: Fri, 24 May 2024 22:11:03 -0700
+In-Reply-To: <20240524201212.mjMDljAc@linutronix.de>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000865ac60619404fa2@google.com>
+Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv (2)
+From: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>
+To: florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, 
+	larry.finger@lwfinger.net, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-usb@vger.kernel.org, n.zhandarovich@fintech.ru, namcao@linutronix.de, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 24, 2024 at 05:17:24PM -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Hello,
 
-Queued for the v6.11 merge window, thank you!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-							Thanx, Paul
+Reported-and-tested-by: syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com
 
-> ---
->  kernel/locking/locktorture.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-> index 415d81e6ce70..de95ec07e477 100644
-> --- a/kernel/locking/locktorture.c
-> +++ b/kernel/locking/locktorture.c
-> @@ -30,6 +30,7 @@
->  #include <linux/torture.h>
->  #include <linux/reboot.h>
->  
-> +MODULE_DESCRIPTION("torture test facility for locking");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
->  
-> 
-> ---
-> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-> change-id: 20240524-md-locktorture-6d431f82aa24
-> 
+Tested on:
+
+commit:         56fb6f92 Merge tag 'drm-next-2024-05-25' of https://gi..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=12817cb2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b43fd1b132bcf5ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=83763e624cfec6b462cb
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=117c460c980000
+
+Note: testing is done by a robot and is best-effort only.
 
