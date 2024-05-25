@@ -1,93 +1,156 @@
-Return-Path: <linux-kernel+bounces-189448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7093D8CF023
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:41:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6660E8CF02A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0193E1F216EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899E01C20F9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A3D85C77;
-	Sat, 25 May 2024 16:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061786270;
+	Sat, 25 May 2024 16:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EL8DAVf7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQqtpjF9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1882185C48;
-	Sat, 25 May 2024 16:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F37487A5;
+	Sat, 25 May 2024 16:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716655305; cv=none; b=PPidJGxxD9Vwq8nFB5Y4Fd9P6FoAfSQCs4KMlhkd8fDH9F1Oukxwohl9poUs3+ZwWLwpDR7+O12rSIa1hcCsv1t+3c6imFIbvuTEu0IMXaJIuuAH5kkTK+obkKN4VIi9r5ZHIen3a+cQIVkzUydhhBhjtS0bAdmtWz53f4ARAdQ=
+	t=1716655423; cv=none; b=c118QrdgyCSlZZlJnLdBDX7fiRLEquiUEm0LeVsb8LrSHs4GYduz2hgHKsSFbn2RQ4ohtnB2VllrxL/9y1F07Pde3aF0Y5DaH7wifqneblD195a6jm4UKibZFKhWeyD1P7yry5/quMm7dDtNj7RQprj5k4m4cX/TQR3153UuuxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716655305; c=relaxed/simple;
-	bh=H6n28H+HtDv/m+Z1+XAALfhcjV4LjMbqOBUaBrxM3Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JwvEM7tIFPTyQpqcJyZ2l7b65bM9E7dA+MgO5OPO8Bv8kvY6M1VqiEb1L9wtZjsfQOviy9cVnWu2Y2GplKSJMRAmo3qFmijJDYYSrrrXFLB2bZKX9Qs7d42s6OjH4VzKlE1y6CHqZXeNystrIZEB+NH2wS+UASSoWg/2uUQhS3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EL8DAVf7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02ADAC2BD11;
-	Sat, 25 May 2024 16:41:41 +0000 (UTC)
+	s=arc-20240116; t=1716655423; c=relaxed/simple;
+	bh=BYvRVlfnOcEYCohSU9+i09Mb94lZWB25nxoPHqEd0Lo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I2O1ILAelfdsVYL3Js5DIXexgzRzDwGE/mpoWZVOb7KBJTFoHPn317XKWDT96ho7mNz8auqD2zAsMi764+sOcc+jGSumgxTpMrtJhp00EQrgQbuQ2xWguyHLakIHqPOT2zBgs/LpVZA0a81vlDU9ULp8hkScxGSueihonK8XmmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQqtpjF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C50C32782;
+	Sat, 25 May 2024 16:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716655304;
-	bh=H6n28H+HtDv/m+Z1+XAALfhcjV4LjMbqOBUaBrxM3Tk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EL8DAVf7nI3oseEWJ/I7FAvknOv5mdFSVP1N2cjZjH3S5EvFYJAotPLRF9Tq5Ulzt
-	 aIX5ZCUokZwwBP7CLzDXUuFtgZeQkhuxXWRZ57LHB0Ueczstp65nkQidiBmCfU6vuN
-	 mv40CdFbDOAbkkWrAk5MYSvChbkRgi5HTlPVXrAZ0yHZbFPBlMNifVwCzV4wpohyQJ
-	 axIp+MsCOwtrRg9Ikskfe/2mTWqfia8d5TWQxgSK9aWEngPE9nMziHYNPLBHqbMccp
-	 N6k0535Xd4GjRu5M32FMy+F7o18mDhPy4aHmmA8EYXJBGP8QZI8afj12wdIp6O60hf
-	 6HIBHVH0dEv0Q==
-Date: Sat, 25 May 2024 17:41:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: linux@treblig.org
-Cc: lars@metafoo.de, marius.cristea@microchip.com, mazziesaccount@gmail.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] IIO dead struct cleanup
-Message-ID: <20240525174133.4d70bb0b@jic23-huawei>
-In-Reply-To: <20240522230457.478156-1-linux@treblig.org>
-References: <20240522230457.478156-1-linux@treblig.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1716655423;
+	bh=BYvRVlfnOcEYCohSU9+i09Mb94lZWB25nxoPHqEd0Lo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VQqtpjF9ci4TPs43sML4DRO6vWzmik2gcCGgE+GkYfnYvRG/M+vOkmXt+6stMhwLt
+	 VTNDWHqvhai/cNU8SVheBNeFZLQZQKKQ6eUsnjdXbGEnDgOqpCxX27+SmipVMXryKz
+	 EH7epCNj8esHUS2vIuo94Dz7LJrk8QKQ5SKjer8RnLDZzbQPxbP7ex0PSCGLVvtXLp
+	 oLK7Lj3G0rPSrcBo1UWKqNTSX8DDrMliwuD7cPivwdenX4u8vQQ2M0jHZgho9/3DQS
+	 HuoTNoL4W941MxLn9HjS8SlINoIOsulBKr3rF7DqEGHAbIYzKIWUtkEN/zV78liRi4
+	 pDb65u3yAlOdw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so85398291fa.0;
+        Sat, 25 May 2024 09:43:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVb4q7tbW0A0+UPZEO/cPjyY0sk69EgM1tDnUrOFDe1J/Mcb9txjLX31CD6Vk8W+eWjfSDIq9LpXk343dFQxonpQgcKbG4N25Koz6YhyuDBGb9VoQTVziunPn/W9rkF5IRAHirDAJriWV/uF+FfaFO0nWzUGl8OnwUSHcFnhg==
+X-Gm-Message-State: AOJu0YwvLOm7idn3Ql73J0Wx2yNwn77pj/o3D72YlT/IldUD4H2avBBN
+	x1D0f5WJrqCvXMreW6VfUYHX4dWvSBCpR00EzzxVgDjQzF+PTIQpT3QiUuF0v8etm0G9uhe7+ye
+	QP6n1jpQhErmYwU4nH0Jo31F8wsA=
+X-Google-Smtp-Source: AGHT+IGho3f8KKeAWOOGieu1BeXrWfXkamAMqAEvp1bl5gSAUC88VYD3wLf3Li0DW8C4rCu3GIr+nmE3+gU7YXcmSu0=
+X-Received: by 2002:ac2:4e10:0:b0:51b:e0f0:e4f8 with SMTP id
+ 2adb3069b0e04-52964bb0ea4mr4203773e87.31.1716655422028; Sat, 25 May 2024
+ 09:43:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240522114755.318238-1-masahiroy@kernel.org> <20240522114755.318238-3-masahiroy@kernel.org>
+ <CAMj1kXHwEMxAhj=zCBRCAxE8MXhzT95CTtAin+fPQr3DSJ46fA@mail.gmail.com>
+In-Reply-To: <CAMj1kXHwEMxAhj=zCBRCAxE8MXhzT95CTtAin+fPQr3DSJ46fA@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 26 May 2024 01:43:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQCq+hGm2CJz149fiCs5sOAZ15HmeYbmWK0h70KF5sFxw@mail.gmail.com>
+Message-ID: <CAK7LNAQCq+hGm2CJz149fiCs5sOAZ15HmeYbmWK0h70KF5sFxw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: remove PROVIDE() for kallsyms symbols
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 May 2024 00:04:54 +0100
-linux@treblig.org wrote:
+On Thu, May 23, 2024 at 6:32=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Wed, 22 May 2024 at 13:48, Masahiro Yamada <masahiroy@kernel.org> wrot=
+e:
+> >
+> > This reimplements commit 951bcae6c5a0 ("kallsyms: Avoid weak references
+> > for kallsyms symbols").
+> >
+> > I am not a big fan of PROVIDE() because it always satisfies the linker
+> > even in situations that should result in a link error. In other words,
+> > it can potentially shift a compile-time error into a run-time error.
+> >
+>
+> I don't disagree. However, I did realize that, in this particular
+> case, we could at least make the preliminary symbol definitions
+> conditional on CONFIG_KALLSYMS rather than always providing them.
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Hi,
->   Three dead structs to cleanup in iio.
-> The bmi and pac are very recent.
-> 
-> (Build tested only)
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> 
-Series applied,
 
-Thanks,
+Fair enough. I am fine with dropping this statement.
 
-Jonathan
 
-> Dr. David Alan Gilbert (3):
->   iio: accel: bmi088: remove unused struct 'bmi088_scale_info'
->   iio: adc: pac1934: remove unused struct 'samp_rate_mapping'
->   iio: light: rohm-bu27034: remove unused struct 'bu27034_result'
-> 
->  drivers/iio/accel/bmi088-accel-core.c | 5 -----
->  drivers/iio/adc/pac1934.c             | 5 -----
->  drivers/iio/light/rohm-bu27034.c      | 6 ------
->  3 files changed, 16 deletions(-)
-> 
 
+
+>
+> This approach is also fine with me, though.
+>
+>
+> > Duplicating kallsyms_* in vmlinux.lds.h also reduces maintainability.
+> >
+> > As an alternative solution, this commit prepends one more kallsyms step=
+.
+> >
+> >     KSYMS   .tmp_vmlinux.kallsyms0.S          # added
+> >     AS      .tmp_vmlinux.kallsyms0.o          # added
+> >     LD      .tmp_vmlinux.btf
+> >     BTF     .btf.vmlinux.bin.o
+> >     LD      .tmp_vmlinux.kallsyms1
+> >     NM      .tmp_vmlinux.kallsyms1.syms
+> >     KSYMS   .tmp_vmlinux.kallsyms1.S
+> >     AS      .tmp_vmlinux.kallsyms1.o
+> >     LD      .tmp_vmlinux.kallsyms2
+> >     NM      .tmp_vmlinux.kallsyms2.syms
+> >     KSYMS   .tmp_vmlinux.kallsyms2.S
+> >     AS      .tmp_vmlinux.kallsyms2.o
+> >     LD      vmlinux
+> >
+> > Step 0 takes /dev/null as input, and generates .tmp_vmlinux.kallsyms0.o=
+,
+> > which has a valid kallsyms format with the empty symbol list, and can b=
+e
+> > linked to vmlinux. Since it is really small, the added compile-time cos=
+t
+> > is negligible.
+> >
+>
+> OK, so the number of linker invocations is the same, right? The
+> difference is that the kallsyms symbol references are satisfied by a
+> dummy object?
+
+
+Correct.
+
+In 3/3, I even reduce the number of link steps
+when both CONFIG_DEBUG_INFO_BTF and CONFIG_KALLSYMS are enabled.
+
+
+
+
+
+>
+> That seems reasonable to me.
+>
+> For the series,
+>
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
