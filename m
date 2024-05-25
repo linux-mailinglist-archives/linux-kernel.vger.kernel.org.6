@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-189494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B47F8CF0C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:00:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29238CF0CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 20:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1541C20FCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:00:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7B5B2108A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3678912AAF8;
-	Sat, 25 May 2024 17:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9663C12A160;
+	Sat, 25 May 2024 17:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFamleQC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFGUivNp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6550A12A17D;
-	Sat, 25 May 2024 17:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0C12B158;
+	Sat, 25 May 2024 17:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716659954; cv=none; b=nOk7l9yTUZz72OGgF3q0Nui/4EGr+IOzYiiF88ycfimRdTXdQq6RTv7mDrRmXwFjsYDpX6KbOgZKrvucvdVp4XVmnFxKpjfcuaV4OtLcA0F4vPafgz3AKz4FpEX2aVd5X7HAD5bBZwoL05Baji7VotHZKVNN4tFLMa5lr71rr8c=
+	t=1716659955; cv=none; b=KlR/U3+hOwEOW7T0NLTmUkjbkPnyoAlctIDjYw2WPc5qkYfQcPYSCgCg8sUKx8TBHC3PHkkAY+8Hz9CTuEBMODYEss5OhBtx7NJTBu33+dfIbYzACbcnWWTE71/itB+/O2gRiyzgiVdZpVDoZjO0yWOSMfMb/qIo5thpJrNfv5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716659954; c=relaxed/simple;
-	bh=Q2ceOV02t0UpAKlBT7IZDlFZ4VK5kxjOlehGgDK729I=;
+	s=arc-20240116; t=1716659955; c=relaxed/simple;
+	bh=kKBQ+V1STVv37u+gh6B1hIEDYj1HFZs8V021y3zgYSc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Npuh5sj5Cv55DOMkhyOwLkZ/4U1OhwlU7NW0h7ldIqfabMgbJBQ39yxQUXMl8EQQIHeBoRq9WspXRkZVTw7YDGJMUTWtes1kcqvklmyXN/qN7jzGreTb3a8hDKjR1/A71CQr34DVlXO986ThMGqQGvrRFBqsZd30PFobYJVcCkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFamleQC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21370C32782;
-	Sat, 25 May 2024 17:59:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kA+tSjj109p2VfS+eY9OTayP4v1sYm7pLhSnC+NPrzM/b+jAhUaiOBWL+IDBz6g1PIfAybjkdqrk3KSsuhFmtkwf5hgRxgLOm8tikqdG4QXHswIdwayaqVh7IDtRc4EZTQH6Y2t7sA+iMugsE4H1WXgdzllVvS3M743xqm7LKxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFGUivNp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CDCC4AF09;
+	Sat, 25 May 2024 17:59:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716659954;
-	bh=Q2ceOV02t0UpAKlBT7IZDlFZ4VK5kxjOlehGgDK729I=;
+	s=k20201202; t=1716659955;
+	bh=kKBQ+V1STVv37u+gh6B1hIEDYj1HFZs8V021y3zgYSc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IFamleQCqmp4hyGizraruuelpC4DJCrYrItyOCkcLvJntK1R56HyMM4DQDmcwqX0R
-	 MmaFhQyHZJgcNiD5z2cDx69DM7nOVYtH3vpHGsqTfBD9yAv15nrCaTXrxVhS0AdNRI
-	 HUzwTVncXZQUsT+HUtnk8gExkQx4muPO4cmYo98JKz6QOC1ScNqnflq3N4dwPIKEp/
-	 Sz7/4jngiErm1QwRko1llqbHWR22/FvrR5r/ZeVUL4JfqKR8xvQWHkS49jhnGvCKky
-	 y138ESwFXKWrG7XFHD8zlMmnO2pvaCOMbinmSbBoayLL6Yf+5NUzBtU3FLVUg0dgPU
-	 l9VzZRJIVwd4g==
+	b=IFGUivNp34Ds1IMolxu/szdceAtScMwmHQFPS7gAUHPKHj36Bp8NO+DIfz0ft3Ngn
+	 7uKWVUclffLp1CMQPF0Py02XATzB8e6gv5akJUzP57yw2pJtnD9JnzC0VnjvBoPpCs
+	 AcY6cs+UY4Hz1+KM7yPb92ZbYkO2KBUX3GEkTPCMsky+lSxNGKtYrei0XJ4y/Q076y
+	 kGqizQyePtGvfJEyh77wz0sNvkOorX01FlpY4Izug5VNHDXo47HuzTRdoJm4vjUYJy
+	 SPxRF2WinXZYkTc7Pz55eWcvVGXgFYaa0KZhaFu8Pp9U/3JbWOHUkHPboMPBXD7Olz
+	 HZDn4LT+fTP/A==
 From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 11:03:57 -0700
-Subject: [PATCH 04/10] clk: qcom: gcc-sc8180x: Add missing USB MP resets
+Date: Sat, 25 May 2024 11:03:58 -0700
+Subject: [PATCH 05/10] dt-bindings: usb: qcom,dwc3: Add SC8180X compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-usb-mp-v1-4-60a904392438@quicinc.com>
+Message-Id: <20240525-sc8180x-usb-mp-v1-5-60a904392438@quicinc.com>
 References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
 In-Reply-To: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -68,49 +68,95 @@ Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, 
  Bjorn Andersson <quic_bjorande@quicinc.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=938;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2247;
  i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=iUm27Y39fR9WTb3MyN1jhNQc6XLpkUGGL3f13Lft8RM=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUigMcLXih/lldJjCgFL8NnxiZ8IM0Tbfl9WVQ
- fy+uETiTgeJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIoDBUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWsIg//fclC9y+rIhNKjYnJBEFmB1IWTkQ+5fXehS0dHCT
- CxUILyOOXF8ypStrb5gyUvFowWCzB1zAUaOyVFDpIBWTIVYUL1OFUxEH4Y/VpqD2tjjrNj659cT
- SWTA/W0m/DcLC4gyujCMzz5YyLkV4V95Q/l+AnxzR9Q6cizGzT87+kQmppIHpap1xdUwDwFER/J
- D0wvqaAAxTlrq7UCizBkDI4/H/9tUj8lreyDnclg5QN8txzltYHyDnDMSiMrTT1njMcmkEGv6MQ
- VvtedNa6sstvrDdIQ660nfg3/7SjyqLWv6TUSGpYsG7YM2NwLniPKRpcaqvyV5Yz+lvKE8ju7lx
- BKsYvq9Ly+za4F812S73ZYhmXZvvap6IvBK8to18Zh45VcwOv7487heXPJnTz1aRpxTBwBnaowg
- PhnWm/Ds520AQ0kDvq+XKqAra4JpCG++4Z+yHVWF1hh85jC5jPXk/RlLnlNL+rcGLq7RQILlL6T
- tPFNTfEG+B8T0G05XXILuGbsDtd6pns+SEtJ9Ube10+126ECR7waYHv8/xWbjaZiLedmka+aY+x
- OnXrsPbpHU10z4xukO+5YvYzkII0esDTOagXjfAvziPdrNSzaBFEg4igsGvu4TL2YXNM64jcJhQ
- lRt0E1b3ft+xY+czul9WwOUwjj1FlQ73mJjA9RkW5ox4=
+ bh=N4n+wQsIpQ6gV1gQhqd7keI6q9G66m1V/hA0aZNldN4=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUigM0Lq5y7erhHEHacXi1mEF7ZbJBeQz26gx4
+ CwbduSiKCCJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIoDBUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcUWTA//a4rL49W/cpkzoUoUaeirBQ2GbiNyJ7aGIMdO84d
+ f7BRqJxfxocyw60D8AUMmj3lzbwm33XLivP8TNJ1DDXrJO7YNOAZZxq2kcP2+r7bD4qhOmwkxVi
+ 4xCs+nUGCH8uUVlUe65chk188BcFU4nIaHcSAEA88XiE9wWChY935FvvJIcbG09OnZs1wYRMAI0
+ XrGXD8XzMFyPYWO7GSw5id9sAbohwsDIgYkdc8gt105q7JCUTHKlz650/09apLuL3x6DT6Qkutn
+ iIWw8GFxWF8HwxoUQYrOhr4F5whjy0DkA2siuU+5AhH54m2gNa52C2VRYaetjOGHZpe87EcMHPN
+ 0SycDQgG6X9tk9QTjWqLH3sFEx7BXYkyutwlXOjpTDiToO7SLabUQ101cX9fYC+HLi8IFH1EFw1
+ Qwn4VWUr+2iHUyihMvs4YTRysnP0dYaNCOpP3JyB6+oqgo4nroc3vMCsQTsU/sW2I5EXOJTy0bk
+ kiyXMVP/LmW+mxeZBeY1TyUrkZ0XbOnuW+Xw+4zB4QrZyJD570wdLeTMuX1Uv1kU3h1HPjAIvRl
+ HX/Y2HnnLvIUBtubM9Fyn5Q5u+hZoVfC7an4r4esXr39gk9GR70fl443CP3dLL9PWwt0ok450w3
+ pAo2FzC9k+/UuQtR6kWRwa+RZ+JKYNzH1k8X3zErrLcE=
 X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
  fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
 From: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-The USB multiport controller needs a few additional resets, add these to
-the driver.
+The SC8180X platform has two single port DWC3 instances and a two-port
+DWC3 instance. Add compatibles for these to the binding.
 
 Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 ---
- drivers/clk/qcom/gcc-sc8180x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
-index 5261bfc92b3d..f77578e98ca7 100644
---- a/drivers/clk/qcom/gcc-sc8180x.c
-+++ b/drivers/clk/qcom/gcc-sc8180x.c
-@@ -4546,6 +4546,10 @@ static const struct qcom_reset_map gcc_sc8180x_resets[] = {
- 	[GCC_USB3_PHY_SEC_BCR] = { 0x50018 },
- 	[GCC_USB3PHY_PHY_SEC_BCR] = { 0x5001c },
- 	[GCC_USB3_DP_PHY_SEC_BCR] = { 0x50020 },
-+	[GCC_USB3_UNIPHY_MP0_BCR] = { 0x50024 },
-+	[GCC_USB3_UNIPHY_MP1_BCR] = { 0x50028 },
-+	[GCC_USB3UNIPHY_PHY_MP0_BCR] = { 0x5002c },
-+	[GCC_USB3UNIPHY_PHY_MP1_BCR] = { 0x50030 },
- 	[GCC_SDCC2_BCR] = { 0x14000 },
- 	[GCC_SDCC4_BCR] = { 0x16000 },
- 	[GCC_TSIF_BCR] = { 0x36000 },
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index cf633d488c3f..efde47a5b145 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -30,6 +30,8 @@ properties:
+           - qcom,sa8775p-dwc3
+           - qcom,sc7180-dwc3
+           - qcom,sc7280-dwc3
++          - qcom,sc8180x-dwc3
++          - qcom,sc8180x-dwc3-mp
+           - qcom,sc8280xp-dwc3
+           - qcom,sc8280xp-dwc3-mp
+           - qcom,sdm660-dwc3
+@@ -334,6 +336,8 @@ allOf:
+           contains:
+             enum:
+               - qcom,qcm2290-dwc3
++              - qcom,sc8180x-dwc3
++              - qcom,sc8180x-dwc3-mp
+               - qcom,sm6115-dwc3
+               - qcom,sm6125-dwc3
+               - qcom,sm8150-dwc3
+@@ -448,6 +452,7 @@ allOf:
+               - qcom,sa8775p-dwc3
+               - qcom,sc7180-dwc3
+               - qcom,sc7280-dwc3
++              - qcom,sc8180x-dwc3
+               - qcom,sc8280xp-dwc3
+               - qcom,sdm670-dwc3
+               - qcom,sdm845-dwc3
+@@ -475,6 +480,30 @@ allOf:
+             - const: dm_hs_phy_irq
+             - const: ss_phy_irq
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,sc8180x-dwc3-mp
++    then:
++      properties:
++        interrupts:
++          minItems: 10
++          maxItems: 10
++        interrupt-names:
++          items:
++            - const: pwr_event_1
++            - const: pwr_event_2
++            - const: hs_phy_1
++            - const: hs_phy_2
++            - const: dp_hs_phy_1
++            - const: dm_hs_phy_1
++            - const: dp_hs_phy_2
++            - const: dm_hs_phy_2
++            - const: ss_phy_1
++            - const: ss_phy_2
++
+   - if:
+       properties:
+         compatible:
 
 -- 
 2.43.0
