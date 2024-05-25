@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-189453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0544F8CF035
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:47:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADE78CF03A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 18:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A14C281BE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9CF1C20F3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 16:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0918627B;
-	Sat, 25 May 2024 16:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DE86621;
+	Sat, 25 May 2024 16:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9UDp9XA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNF0lNsd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2958BF4FC;
-	Sat, 25 May 2024 16:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC7DF4FC;
+	Sat, 25 May 2024 16:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716655635; cv=none; b=LJ/KzU2WfMM5UgyQqYktxOcZBS27b+BDCzNZbLdxLHWPKVX9GXKA3HqjqICQjoBbBWIPLgnBHaoIihH2eXleuXajn7ih/r0V+kx6pggkufUKOSKUku8e0s+sdIvJUEtwvh9ejSFO8yHcY0sh/J16sdhx+xO3wSwoTHE5xhaMXkI=
+	t=1716655786; cv=none; b=ADZjUI8WbmyklxyP3fgd80n4DLB6kou76K01GSo3BQcLixM+oBLv63gYlArbVK7yuxuFQ+DcOKsz3jI0YTtCURO+kRsWCuuGzGEKQAdv5DvrWbU4WT4wb4rc2nnmCMTeYRVItq/13zazJ+HK8ZvF66497Ch2HoT1O0DDasxGWxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716655635; c=relaxed/simple;
-	bh=tcgFFUdEq/vKTYnqwg5KpKxETpCiRxdBDuidnItfaZs=;
+	s=arc-20240116; t=1716655786; c=relaxed/simple;
+	bh=g+GXgokgnraVNmt3XZgsH3MhDJt6PYQpo8++yls+FPY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ISTEdXKp9lz6CAAVyTwUImM4LKSRsymz9Wmprnb40dDI1KqAWjq+D34ZQZacCYiFUokAV6syy3tfzjh/LodxVUqf5dn5cnSN1N/eGf9ye59xQt9ac5EYTczuSwjQkdIVXroxOUOk7w/gl9h//+uFwHmEP/L1jz4mfxxAGufr4oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9UDp9XA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85D9C2BD11;
-	Sat, 25 May 2024 16:47:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=KSJeY3u+Z/BgbETpi8sbpwZBz1lzVCTmIfeqDgAtYOsHPPpgDfHgVx7FVeDghD29pKFICu1rpsceUHWbThdm9gnMeQVpl5K9m3fSQLA5GgiV/8vrsIl8/1dV730aURctehzDagmJWKHD6Mgm3x7q7qjr3xSh1kL/wLItYWJxlgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNF0lNsd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79CC6C2BD11;
+	Sat, 25 May 2024 16:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716655634;
-	bh=tcgFFUdEq/vKTYnqwg5KpKxETpCiRxdBDuidnItfaZs=;
+	s=k20201202; t=1716655785;
+	bh=g+GXgokgnraVNmt3XZgsH3MhDJt6PYQpo8++yls+FPY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F9UDp9XAsENdtKmn//ggvG6nygcJsAbLvgJkkwSopi3DAL9TbMfH+M9YymqU4OifW
-	 jElkL2B9w5OKPOsIkYGpOu+mSEKmdoHtSiLcxsgG6o0UVz2w4+lI0Vt0O7L09gLHav
-	 qtRxZ0GKSacEmzsug7LBGdVQdCA7JiFBSyrfnOCAFCIlWAyoV6AYfQrz1j+tqNo+BN
-	 rdPhiO+/6anwaRwQ5DQ0Fm82YbtkMCarlbapHHYg31z5PcWauJyM0Zz21Qbn30umh4
-	 p8jPPvtOlfVaQIcy5vs40dNatn23qZhf3AOcr0HpRWazR2/lal8WcH8jYozbOSuoSX
-	 KeABX/GvtQOQQ==
-Message-ID: <f8c48554-984f-48fd-aa12-87d39888b0f6@kernel.org>
-Date: Sat, 25 May 2024 18:47:08 +0200
+	b=dNF0lNsdI+Ta3HpHd/zBBT97KoC/Qqxoci7phyESv1VGXzw+2dV7vcH1IuoK/0Yyp
+	 LF9LvR4/YTlzY0iMuDeR6Oz+2fNdHoQTC4Y3x4El8bV0wK3LfDM42ImoKlOEQ1Qzqh
+	 N08ZbdzTx9xXhKN6Dfb1kmaoV1dViDQQ93+RpN+Xfy+ofVsFd9MoikyUC6l0AI9OsC
+	 d4GFSCJNdZ3NIa+4eCekK2rLrx/5aFlH4SaqwmvP6dew49xw0MaVIgoSsGeZbwuWq/
+	 EgsDG0js+6yZw2TgdWVEcq2tCWEt/7vhLVS09hAgMu2oio9neRJ9xo+39XvRFZaCvi
+	 RhbrSZpeDEQcg==
+Message-ID: <65019fa4-9e69-43b5-ac6c-c7607486cf69@kernel.org>
+Date: Sat, 25 May 2024 18:49:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying
- mboxes instead of qcom,ipc
-To: Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht
-Cc: phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz>
- <5099926.GXAFRqVoOG@g550jk> <e4579702-089e-48cb-bf06-f8e4fb618050@kernel.org>
- <4881282.LvFx2qVVIh@g550jk>
+Subject: Re: [PATCH v2 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+References: <20240523031909.19427-1-kimseer.paller@analog.com>
+ <20240523031909.19427-4-kimseer.paller@analog.com>
+ <d1c3dd0c-9f24-4d0f-b15a-b727522a9662@kernel.org>
+ <PH0PR03MB71411D6F23D918723B9A5DA7F9F52@PH0PR03MB7141.namprd03.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,110 +111,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <4881282.LvFx2qVVIh@g550jk>
+In-Reply-To: <PH0PR03MB71411D6F23D918723B9A5DA7F9F52@PH0PR03MB7141.namprd03.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/05/2024 19:55, Luca Weiss wrote:
-> On Donnerstag, 23. Mai 2024 08:19:11 MESZ Krzysztof Kozlowski wrote:
->> On 23/05/2024 08:16, Luca Weiss wrote:
->>> On Donnerstag, 23. Mai 2024 08:02:13 MESZ Krzysztof Kozlowski wrote:
->>>> On 22/05/2024 19:34, Luca Weiss wrote:
->>>>> On Mittwoch, 22. Mai 2024 08:49:43 MESZ Krzysztof Kozlowski wrote:
->>>>>> On 21/05/2024 22:35, Luca Weiss wrote:
->>>>>>> On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
->>>>>>>> On 20/05/2024 17:11, Luca Weiss wrote:
->>>>>>>>> Hi Krzysztof
->>>>>>>>>
->>>>>>>>> Ack, sounds good.
->>>>>>>>>
->>>>>>>>> Maybe also from you, any opinion between these two binding styles?
->>>>>>>>>
->>>>>>>>> So first using index of mboxes for the numbering, where for the known
->>>>>>>>> usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
->>>>>>>>>
->>>>>>>>> The second variant is using mbox-names to get the correct channel-mbox
->>>>>>>>> mapping.
->>>>>>>>>
->>>>>>>>> -               qcom,ipc-1 = <&apcs 8 13>;
->>>>>>>>> -               qcom,ipc-2 = <&apcs 8 9>;
->>>>>>>>> -               qcom,ipc-3 = <&apcs 8 19>;
->>>>>>>>> +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
->>>>>>>>>
->>>>>>>>> vs.
->>>>>>>>>
->>>>>>>>> -               qcom,ipc-1 = <&apcs 8 13>;
->>>>>>>>> -               qcom,ipc-2 = <&apcs 8 9>;
->>>>>>>>> -               qcom,ipc-3 = <&apcs 8 19>;
->>>>>>>>> +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
->>>>>>>>> +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
->>>>>>>>
->>>>>>>> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
->>>>>>>> in first case?
->>>>>>>
->>>>>>> Actually not, ipc-0 would be permissible by the driver, used for the 0th host
->>>>>>>
->>>>>>> e.g. from:
->>>>>>>
->>>>>>> 	/* Iterate over all hosts to check whom wants a kick */
->>>>>>> 	for (host = 0; host < smsm->num_hosts; host++) {
->>>>>>> 		hostp = &smsm->hosts[host];
->>>>>>>
->>>>>>> Even though no mailbox is specified in any upstream dts for this 0th host I
->>>>>>> didn't want the bindings to restrict that, that's why in the first example
->>>>>>> there's an empty element (<0>) for the 0th smsm host
->>>>>>>
->>>>>>>> Anyway, the question is if you need to know that some
->>>>>>>> mailbox is missing. But then it is weird to name them "ipc-1" etc.
->>>>>>>
->>>>>>> In either case we'd just query the mbox (either by name or index) and then
->>>>>>> see if it's there? Not quite sure I understand the sentence..
->>>>>>> Pretty sure either binding would work the same way.
->>>>>>
->>>>>> The question is: does the driver care only about having some mailboxes
->>>>>> or the driver cares about each specific mailbox? IOW, is skipping ipc-0
->>>>>> important for the driver?
->>>>>
->>>>> There's nothing special from driver side about any mailbox. Some SoCs have
->>>>> a mailbox for e.g. hosts 1&2&3, some have only 1&3, and apq8064 even has
->>>>> 1&2&3&4.
->>>>>
->>>>> And if the driver doesn't find a mailbox for a host, it just ignores it
->>>>> but then of course it can't 'ring' the mailbox for that host when necessary.
->>>>>
->>>>> Not sure how much more I can add here, to be fair I barely understand what
->>>>> this driver is doing myself apart from the obvious.
->>>>
->>>> From what you said, it looks like it is enough to just list mailboxes,
->>>> e.g. for ipc-1, ipc-2 and ipc-4 (so no ipc-0 and ipc-3):
->>>
->>> No, for sure we need also the possibility to list ipc-3.
+On 24/05/2024 08:28, Paller, Kim Seer wrote:
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Thursday, May 23, 2024 2:40 PM
+>> To: Paller, Kim Seer <KimSeer.Paller@analog.com>; linux-
+>> kernel@vger.kernel.org; linux-iio@vger.kernel.org; devicetree@vger.kernel.org
+>> Cc: Jonathan Cameron <jic23@kernel.org>; David Lechner
+>> <dlechner@baylibre.com>; Lars-Peter Clausen <lars@metafoo.de>; Liam
+>> Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
+>> Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof Kozlowski
+>> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
+>> <conor+dt@kernel.org>; Hennerich, Michael
+>> <Michael.Hennerich@analog.com>; Nuno Sá <noname.nuno@gmail.com>
+>> Subject: Re: [PATCH v2 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
 >>
->> ? You can list it, what's the problem>
+>> [External]
+>>
+>> On 23/05/2024 05:19, Kim Seer Paller wrote:
+>>> Add documentation for ltc2664.
+>>>
+>>
+>>
+>>> +
+>>> +  ref-supply:
+>>> +    description:
+>>> +      Reference Input/Output. The voltage at the REF pin sets the full-scale
+>>> +      range of all channels. If not provided the internal reference is used and
+>>> +      also provided on the VREF pin.
+>>> +
+>>> +  clr-gpios:
+>>> +    description:
+>>> +      Active-low Asynchronous Clear Input. A logic low at this level-triggered
+>>> +      input clears the part to the reset code and range determined by the
+>>> +      hardwired option chosen using the MSPAN pins. The control registers are
+>>> +      cleared to zero.
+>>
+>> So this is a reset gpio?
 > 
-> Maybe we're talking past each other...
-> 
-> You asked why this wouldn't work:
-> 
->   e.g. for ipc-1, ipc-2 and ipc-4 (so no ipc-0 and ipc-3):
->   mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> 
-> How would we know that the 3rd mailbox (&apcs 19) is for the 4th host
-> (previous ipc-4)?
-> 
-> 1. If we use mboxes with indexes we'd need to have <0> values for
-> "smsm hosts" where we don't have a mailbox for - this is at least
-> for the 2nd smsm host (qcom,ipc-2) for a bunch of SoCs.
-> 
-> 2. If we use mboxes with mbox-names then we could skip that since we
-> can directly specify which "smsm host" a given mailbox is for.
-> 
-> My only question really is whether 1. or 2. is a better idea.
-> 
-> Is this clearer now or still not?
+> Yes, this is a reset gpio.
 
-
-So again, does the driver care about missing entry? If so, why?
+Then call it that - reset-gpios (see gpio-consumer-common).
 
 Best regards,
 Krzysztof
