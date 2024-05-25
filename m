@@ -1,234 +1,405 @@
-Return-Path: <linux-kernel+bounces-189309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD878CEE40
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A57D38CEE46
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C068B1F2185C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E81B1F21AE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A48018E02;
-	Sat, 25 May 2024 09:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868AD20DE7;
+	Sat, 25 May 2024 09:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="TstCgUa7"
-Received: from PR0P264CU014.outbound.protection.outlook.com (mail-francecentralazon11022019.outbound.protection.outlook.com [52.101.167.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BN7VFvu6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D6E18C19
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 09:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716627728; cv=fail; b=R7EUFBWMi1E/Yrs/ri5Ik+m0xgSN5GTxJ5bYXIZL9zEn1ioGjoZEDNC9rcQ4Q2kkJCPHKJp5LnQcEE6/n1PNOrVfA0ZQ4FozZ8/kiNCnfNoeenF8lPQif/dxB+teAB9mo3jkbo3LuXnen8uVKnV3bIuBCFbvYRvzXmfm6QcRBHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716627728; c=relaxed/simple;
-	bh=X+6A8zdYTXFfuZppZ4M03th9EzOGnQfX9KqOMi+EwkI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JVajFO/gUf11yBFRA4UUkmHBLMBSWt0VxuOI+pcAPpTr5Bo3SY6gT5+pH12PVSRPXZImsxAx8GClj16JPbweQU2YzX/VIvJ+0hqp2VzLGfvymxHR4wyrFRfigC8nup9ZbwyIK3WEehbwqaFi57dMx2EvCaelekdAUKDN4xOSnO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=TstCgUa7; arc=fail smtp.client-ip=52.101.167.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e/bx6CvMs85V6Q1d+b2nLd88i4qgCkoiL3nbs0UDQpaDz9rGQQ4CE5HpXVom2Ph049Eu58ewlfpdz3fkyUGwm426zc93FHWC5i3sfheNv9w87KZfzJM/i/YTBklIYeLk97tY01xzl35iz+zvDGWO/BeyF7X/ViSLQlCyZoJ/oALjgqyZS0t1VX/yZ6b+U12jwaoonYAfpWJ51ptlppfFGqqrPPLJGwjqPgniDjlgVeSg/DyH2hT1StuOYm1YTBLi+I4wU3A5paNEhok9yyRtMIOETM/5r79qZ+IR1UtfINzq5zlOO70flhKSfVcNU0ID8MrdfuFIB8mlRmMOTVTaKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X+6A8zdYTXFfuZppZ4M03th9EzOGnQfX9KqOMi+EwkI=;
- b=IwX7DwkAXQhzzS2RJtUKfJhYzdB5h6zHQE558/+P/fTgH8t9toGU25D/gw3r0TQXLOq8YDQKEtT8rUuxVgZ8i9/T39DtVX6yl/ZV7KrNgkq9k/IwIn0ipF/hb0ZNlct0ZgcgxbIZJA0sDqa2hf9pKlnNgLCieuAigk8RHt5ZWf0nUcgl9jqI3q5w6Beslrrst046hBtOomN3FPhQldzJCA4JYjI2vv2cj9KH9jEZxvhPFCkzTiy6GuEyo2eVY7j6PC1oNOL/xutVIukKIS7iq1LNZ93Zxg8qojPaEv3vsqe5F/jD0nVNGvYPtxomOvdjTYrlIjXc+o64GV001wprIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X+6A8zdYTXFfuZppZ4M03th9EzOGnQfX9KqOMi+EwkI=;
- b=TstCgUa7wytyQRshLWAyFvQdaJif4j9mK2kYXcgUd4cxij+e1YGofzbIBqSEH0R4k87AYZ8D+MKCFhXgCJIwLmrv8hvlPZT+aZ25zzoTyscVdOqvdAP0II70jZKD+pKHnQZ97cksrLBGTLm1MVqxkF1o+k/SAQYFJHsGKazpDsIBJv6wVoWqzatZzjT4kQMttzpIKajB13eHSneWnBOITTGtSeCe+tdCJtZslB0beHzG2gs9iK4Q/FynaOUTRPjaH2wTbTkPyZMHI4QcTHwCdxu/YQyG+Cvb50CPMebzDEdsDRjX4L7K56NszGRKxNuaep1miireA5YCeDbxKfXCkw==
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by MRZP264MB1815.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:17::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Sat, 25 May
- 2024 09:02:03 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.025; Sat, 25 May 2024
- 09:02:03 +0000
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Oscar Salvador <osalvador@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
-	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Michael Ellerman
-	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v2 15/20] powerpc/85xx: Switch to 64 bits PGD
-Thread-Topic: [RFC PATCH v2 15/20] powerpc/85xx: Switch to 64 bits PGD
-Thread-Index: AQHaqIx3uHI/lyrVtkKRd0iDhgkRD7GnbjsAgABFFgA=
-Date: Sat, 25 May 2024 09:02:03 +0000
-Message-ID: <1281454b-5025-4f18-b806-ca28b5136642@csgroup.eu>
-References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
- <a1d92dd7c390672c163ce0611600dde8cb0eaab4.1715971869.git.christophe.leroy@csgroup.eu>
- <ZlFvFk6QmyD-ieS5@localhost.localdomain>
-In-Reply-To: <ZlFvFk6QmyD-ieS5@localhost.localdomain>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MRZP264MB2988:EE_|MRZP264MB1815:EE_
-x-ms-office365-filtering-correlation-id: 7e6624ad-e06b-4b16-019c-08dc7c99588f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bnRFNDFxY3ZobVhmS2lUU3F3WnpFaE9WRWpYVm5MK2hPTWp1dlo5ckZyQ3VN?=
- =?utf-8?B?RG5XREdUeFJqRUV4NXZRL3NFWGNIV09zNnIzVHFaZDZDbXJVUzFFMlY1T1Nj?=
- =?utf-8?B?ek13cE9PNmhpYStXRzNySXFYZEptdWpMTVFUaXVvV3hCckUrTVFDdjdidGpJ?=
- =?utf-8?B?RFJKMDZucWZUS1B6QytCWDRrZmtkcHhYMDVYYVBJRXZFS3JnS2FDUHhlRFFv?=
- =?utf-8?B?R0IrbGJzRitxY2NBZzQwVXEyMk1aU0s3SXA2Z0lyREowZjRTSUxmUGJCS2Vq?=
- =?utf-8?B?UkdxbGVvUHhKeHhzTXlxNHhZUGRLY2tCemFGUmVhQytWZ21JZVVZZ1cwc3dR?=
- =?utf-8?B?Mk8yOCtRZ0NSQkFPNWVYMWpDNjlRTHJmU0Ixa3l4ejZMRnBFaGw5cWV2T0Zh?=
- =?utf-8?B?MHo0ZXdsaTFKUVhncThvd3hIK0VyRGxmVW4rSWVyc3g0aGtGZkxRUzE2OGpM?=
- =?utf-8?B?cTczcEpERDkra3FxeUNNV1pCMzlJcHI4TG5UUmRVTThsckVKSGU1QlJGS1J6?=
- =?utf-8?B?MytsejZ1MnlsdGY0WmVma1RyaTZDOUJMbUtXTGgwMkFVYUNsZXd2TVhnL2tv?=
- =?utf-8?B?ZDRTWUhTdzVRQk1SY1gySWJjeVp5bmVoNnRkaGpCT2g0OGJ2aWpUclo1MUNw?=
- =?utf-8?B?Qy9jcmxsR1F2MWRpTVM0YWlsQU1EaFdDWGplNGRqWXg5ejlaQVZISmFhOVBx?=
- =?utf-8?B?ODFSTmc2NDRkdSt2anFoYUFxMFNnVlMzTE40MTMvM1p0YWFVdmFSWHZIUVhQ?=
- =?utf-8?B?RVhKZHBRbmxuS3RqeDJKZEdvWVd6SE0vdjRtTnRtZXhGZ0kwSTJlajU1QlRH?=
- =?utf-8?B?b1oyZ3I0VlJMWUlxVWtTbHBGSSs4UGRmN1ZsMm8rQlhtdFR5b3BFdzlKY3FW?=
- =?utf-8?B?Qjk5NkFUQVFUZUJSRFE3QndQL0VYY0hmTkg5ZXV2T1o2NlR6VElmV1dyamhG?=
- =?utf-8?B?WEU1K0U3eVEvSmU0cFkwL3l3dWRmZ0xZdGkxbGtzNXo1QzBzcjF2QUV0dTh2?=
- =?utf-8?B?VHNKa3B5dkNFVnBCUU51Y1Y4SWdoQU0yellsc0RVTTlmV0J3VDVFZDBVcHNm?=
- =?utf-8?B?cFpvTVRjZUd6VEFsbWkvdkt4dE43cExGNGFQVEdpUmx4WTh0NFBFNll1SFJs?=
- =?utf-8?B?aCsxcDZRL3ZEenRhNk9tMkVpRWxQSWVodHArN2xRRytZTVlVREh3aUpEOHpN?=
- =?utf-8?B?eEVoQ2dwUlNLYlpKcWdsRDVzei90Qi83QTVCRXhOWWhrN2VuSDFLQWlkcURv?=
- =?utf-8?B?S3hoMWdacTN6RWNYR0ZTSXJvd21tT055MHFyNkQ3WFZhZUhsb1cwTFNDQ0th?=
- =?utf-8?B?OGp2RHlqUjlLQmYxbDBub2xqRUdDMXJIL0J6MEhKN1Y5azNPNHpENlFtazVa?=
- =?utf-8?B?cGVJMENqU3FOWHliSGpHZUVVSndjbFNsakZUT1ZVcGVTQlpRUnZIdDBXdUoy?=
- =?utf-8?B?TmFLNkpKcmZoSHFwOHRTRCtwNTY1M2NRSVZzK3VlR2ViZ2JqUUo0QWM4a0pU?=
- =?utf-8?B?SUFKc0w0UFlydG0wSVJra1dZUGxROWgydWU0S2dQaDloWUFxTngrWHJ1MTFU?=
- =?utf-8?B?bWgwaXIzZWlobE5Kb0lCZjg1Y1BtYnZ5T2c0YkJFWU9pWm9BV2NTaGNQczZh?=
- =?utf-8?B?ZlN5M2d5azk1azZDaEkxS29FazV3ZHhndS9RRDFqNnB1dk9QcGpQcDlMTVFp?=
- =?utf-8?B?S3R6eXpZMzFnWDdHUGNoLzFWbDhTYVQvRVFrVkRqK0puYlEwcDR1aXlrVWdY?=
- =?utf-8?B?ZGV5WSs4VUtkZ1dKTkFFWnIrQ2FqQ1E2ZEdTRFVSSHA1Z0pxYXBQZkZZQ0dj?=
- =?utf-8?B?Y0J3N2ZCMjVmWDBuMlV0QT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MkdIbDdOd1RmdVNrbk8xS3VjbzV4b0o5MUxwMyt3dXc3dm9MUVUyamwzT2pB?=
- =?utf-8?B?OENJL0h4cGZVUmZNK3VwL0VyR1pCYlQyNCtveWVXQTBpdkNPc0lSKzdRaVgw?=
- =?utf-8?B?MXlYN25xTDNRMzlISHJ4UGZGb0FDTkVMQTd3OWZNTkVxeno4UTg2UmZoTHgv?=
- =?utf-8?B?SWRsVnpJMS9saGxRRnM0STVKSGxQT1k2YStHUmF1UCtwTnNZbElyUlI5UXRN?=
- =?utf-8?B?SEpWSllJajZ6YU9yYXc1d3ZmR3czYThBcDROUXhDSDMyNDZpbTJqY1c5Tnpn?=
- =?utf-8?B?Mkw2c0NhSUkxTkpyMlRrUjlMZ21WNmQrK2U2ZFZHVG1EUll3WFg0b3l3Z2Q1?=
- =?utf-8?B?dG96cmpzRkJDN0x1cFJJT0hPVjNIbVplY3Q3bGN2N2RicWlORlE5aG4zL21Q?=
- =?utf-8?B?TVNlYmhDbmovM1JSNExYZUtYbzZ4d2lrWWh2MFZaS0lZelRhVzVtTisyZFVu?=
- =?utf-8?B?TDJJcVV3SGpqMU4vWUxVU0RIZ2ZSZmQzZUlKeGRCWW96TkVYMGR2bXNMenBE?=
- =?utf-8?B?dml3MmNybDZFMnlxY2NZVmZrdWxYMExldjh5dUhzNGJxUi9JTk44SDdFYjZ4?=
- =?utf-8?B?RytQcEVXNWZsZkJWNGNPZzdTZmNEQ09Bc2w2Mm43SHhmUTIrTDBtQVVUMlR3?=
- =?utf-8?B?M2VpeUlCTnNjTkhOR041djE5akZPMzRxamxucXlEMStVSXVJVnVBODRFUFFD?=
- =?utf-8?B?T2VodWlnenE4NjY0cmUzY3ljeVRQUXZlN2dwSHJ0aWFja3RuVk5GSWNuY3FK?=
- =?utf-8?B?UzFXQWFCMUNqVy9aOWhzM1padTFFcGoyd0RtZDhNMHdYL0hDb0Z3N3p3eXlo?=
- =?utf-8?B?cWYyWTNyWmFqbnBhcTl1Yk4wQk5uc29GeHA1VkFPVU1XRkJDZE1SNTk2WDNU?=
- =?utf-8?B?dmx6Mlc0M1FsdlBRNWRWYkRqdkZYQ3lTZ1FtLzZKR2RDMGlGSHB5U3lDMytK?=
- =?utf-8?B?NG04Sm5TNy93VjdIenZ6aXFkQUpQNWg1U21vOTZiT0R0RDEvVVFjaFJjOGJY?=
- =?utf-8?B?NWpYVmRkcVNtejZjU1dBWFRidk5KaFlNMnVLM29xb0ZQakZhaFhvcTIvekRq?=
- =?utf-8?B?K0VtTjg3UFJsZXM0cDJUODAwckQ3QlJZMG9qUG9lc0JXdk50OHZXbHRBb2dj?=
- =?utf-8?B?TFprVE9RZnhVT1lMUkVIMlErbWZKOUVTUjJZcGVIS1orcUpNWk4zd1FWeUc4?=
- =?utf-8?B?cmg4TzFqbjVQTzUxTElzRGwybjNHNzFOTDM2WG9ZSERIbEE0VGp5STlJbFRm?=
- =?utf-8?B?YU0vcFk0NmtaSGhoZkJkVy9EU00xczMzZjMxTWJXQUN4RjRkRks5MEpBVE54?=
- =?utf-8?B?NllyckFBcGhGUzMxdWY1TkNVSU9JcUJQV1JpS1pqcW85UFNzMG5OSjc1YjRy?=
- =?utf-8?B?ckRvY3E5Vzc2SkJuYklsQ3ZjcDVqS281Q3d1dEZ6bVVjdmV4WFBEM2hzYWNI?=
- =?utf-8?B?dWZjVHBEb0I1VjJwR1VPRllhODNMUWRZZmlpbWg1dTRDTlhualN0WlNSUlda?=
- =?utf-8?B?clFaM1N1MWZLY21pNGx3WGtCQ3BEZjRidFVMZ05JdkE1TWpUcVUrWVdrdzB0?=
- =?utf-8?B?RWFDNXFHSEZJS2Q0VXV6MmRmRU5PcEJKQUdTUklXb205OTZCcE5rTkpzdUlR?=
- =?utf-8?B?Yld2TndaNzFFQ3lTMEZlRGhQb2NyN3BXbUVYVEVLazVWS2RGOHQ3WDRKeTJT?=
- =?utf-8?B?aFZ6VE1SUFlnWjNsTCtsUVhEcDUrSEFsbzBqZXJ4elRoRjdZMmNxTUJWYnNI?=
- =?utf-8?B?OGdDUEUzdHhjTXQvYUlmYzZLdzBkUW5CSXh6b1NwVnNqemI0TFMvclNreUtE?=
- =?utf-8?B?ZExrclJHOHB2dU0xYlFuMWFDQ2FZTEdyU3pRdEgvZDN0TisyTWZmSS9WTXN1?=
- =?utf-8?B?VFYvSWswTnJDYWFBQUkxMWRncW04bWhheldBYnREdDNNamliMDhPaE56dW9C?=
- =?utf-8?B?NTVkNldFMWdVUTVDOTRnN2Z0VGVudUp4Rjg4T2h6K0prQU9MZHJzeEx0Z0R0?=
- =?utf-8?B?azF3eVo4Q2dSU3VHWHl0T2dYQk5KeW5IQTF2UTFmQUFWR0oxRHVGMk1mbGdK?=
- =?utf-8?B?cUU4NHU1Z2RqWmxraXBqQ2pzZy81TTdYbzZscXZMWkNTQVJsY0ZyRGt4RWhT?=
- =?utf-8?B?ZnBCYys1YWJINkc4cnJ4dHZyOXdDWENpU2JSMTZNVVBFdDAvRU9xaTQ2Vkxs?=
- =?utf-8?Q?+jWU8xY8Mn5DFFgELi3KTQMv7vljnGLGplaxazJ1utpR?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A9393BABF71E4E49901FD9D82ECA2E7A@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EC120315
+	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 09:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716627770; cv=none; b=LmsB1GzI8VcvkkBQ9hVtAfnS7m+bU5TRqe2Lx8Tw6VTMkZ+PoghGdsqdus5vBgBi6mgIjcVLtj3LhNNcRg0UkUacwUyfVYEbfIL61UpbeARP9sm2gtaIEFZcatYnYEFnKmdoY8hw/AAB2olHrn3XTW/7fcUr2itVlq2O38FS6U8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716627770; c=relaxed/simple;
+	bh=WXZ3aTu/mmAKPxVAoAnX/sGVd7wKZ9FD/gY3DymuZY8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=T1IaTyKw3YwO5tM0Du1nwHPdsTk2K1TVPOidzk1ESDW0jf2S8Kg7nsEBnueWxpK0bibs+3btSFfrszgnAxVR5q7WzMBZ3DC2VcVbzvSfwle+TzWYA8wNyG32o2wbkg221rPOzo4MYGBZg02Y3IiqGuPOIkTJwyw9pAYukl0wnAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BN7VFvu6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716627767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1J0rKNy85PKDwGmqMPeEERwZIA8DQYDYUviYS11PQQ8=;
+	b=BN7VFvu6VmVOOiBFc3iX49uiVs4NUajryx2p1z60AeymFQN1xDuyiKaWHIUTa8eHeWB6yX
+	vcrjh3D7mLl9/WUkZBFtsXyE1wirE+XLiOUBfVxmnTaaWKLFmn2is0vhnMs1gxiKwlJZ/f
+	cwWADfRBWsWIgQ2onpW/2YcgldUn5NQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-61-egEkEatAOuOAHeJGROQ6tw-1; Sat, 25 May 2024 05:02:41 -0400
+X-MC-Unique: egEkEatAOuOAHeJGROQ6tw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 67D8F101A525;
+	Sat, 25 May 2024 09:02:40 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E3736200B4CF;
+	Sat, 25 May 2024 09:02:39 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id C2A9D30C1C33; Sat, 25 May 2024 09:02:39 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id BE9F23FB52;
+	Sat, 25 May 2024 11:02:39 +0200 (CEST)
+Date: Sat, 25 May 2024 11:02:39 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, 
+    tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, 
+    snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v19 12/20] dm verity: expose root hash digest and signature
+ data to LSMs
+In-Reply-To: <1716583609-21790-13-git-send-email-wufan@linux.microsoft.com>
+Message-ID: <fc51683b-827e-3f6c-baff-c64670ea5ab@redhat.com>
+References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com> <1716583609-21790-13-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e6624ad-e06b-4b16-019c-08dc7c99588f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2024 09:02:03.7255
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GK8CZ0lhxcT03xpxm0jlHDP+MQetjEWwoSi3rNKItFBdXrKYns82vKgo+23vApL/xDKhU8ddmvz8ECOnKK80dlfW6kBQBXPTslUalC+RHfQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB1815
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-DQoNCkxlIDI1LzA1LzIwMjQgw6AgMDY6NTQsIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
-IE9uIEZyaSwgTWF5IDE3LCAyMDI0IGF0IDA5OjAwOjA5UE0gKzAyMDAsIENocmlzdG9waGUgTGVy
-b3kgd3JvdGU6DQo+PiBJbiBvcmRlciB0byBhbGxvdyBsZWFmIFBNRCBlbnRyaWVzLCBzd2l0Y2gg
-dGhlIFBHRCB0byA2NCBiaXRzIGVudHJpZXMuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0
-b3BoZSBMZXJveSA8Y2hyaXN0b3BoZS5sZXJveUBjc2dyb3VwLmV1Pg0KPiANCj4gSSBkbyBub3Qg
-cXVpdGUgdW5kZXJzdGFuZCB0aGlzIGNoYW5nZS4NCj4gQXJlIG5vdCBwb3dlckU1MDAgYW5kIHBv
-d2VyODV4eCB0d28gZGlmZmVyZW50IHRoaW5ncz8NCg0KWWVzIHRoZXkgYXJlIHR3byBkaWZmZXJl
-bnQgdGhpbmdzLCBidXQgb25lIGNvbnRhaW5zIHRoZSBvdGhlcg0KDQplNTAwIGlzIHRoZSBwcm9j
-ZXNzb3ItY29yZSB3aGljaCBpcyBpbmNsdWRlZCBpbnNpZGUgdGhlIE1QQzg1eHggbWljcm8gDQpj
-b250cm9sbGVyLg0KDQpCdXQgQ09ORklHX1BQQ19FNTAwIGlzIGEgYml0IG1vcmUgdGhhbiBlNTAw
-IGNvcmUsIGl0IGFsc28gaW5jbHVkZXMgZTU1MDAgDQphbmQgZTY1MDAgd2hpY2ggYXJlIGV2b2x1
-dGlvbnMgb2YgZTUwMC4NCg0KbXBjODV4eCBpcyAzMiBiaXRzDQplNTUwMCBhbmQgZTY1MDAgYXJl
-IDY0IGJpdHMNCg0KDQoNCj4gWW91IGFyZSBjaGFuZ2luZyBtYWtpbmcgaXQgNjQgZm9yIFBQQ19F
-NTAwXzY0Yml0cywgYnV0IHlvdSBhcmUgdXBkYXRpbmcgaGVhZF84NXh4Lg0KPiBBcmUgdGhleSBz
-aGFyaW5nIHRoaXMgY29kZT8NCg0KTm90IGV4YWN0bHkuIG1wYzg1eHggY2FuIGJlIGJ1aWx0IHdp
-dGggMzIgYml0cyBQVEUgb3IgNjQgYml0cyBQVEUsIGJhc2VkIA0Kb24gQ09ORklHX1BURV82NEJJ
-VA0KDQpXaGVuIENPTkZJR19QVEVfNjRCSVQgaXMgc2VsZWN0ZWQgaXQgdXNlcyB0aGUgc2FtZSBQ
-VEUgbGF5b3V0IG9uIDMyLWJpdHMgDQphbmQgNjQtYml0cy4gQnV0IG9uIDMyLWJpdHMgdGhlIFBH
-RCBpcyBzdGlsbCAzMi1iaXRzLCBzbyBpdCBpcyBub3QgDQpwb3NzaWJsZSB0byB1c2UgbGVhZiBl
-bnRyaWVzIGF0IFBHRCBsZXZlbCBoZW5jZSB0aGUgY2hhbmdlLg0KDQpXaGVuIENPTkZJR19QVEVf
-NjRCSVQgaXMgbm90IHNlbGVjdGVkLCBodWdlIHBhZ2VzIGFyZSBub3Qgc3VwcG9ydGVkLg0KDQo+
-IA0KPiBBbHNvLCB3ZSB3b3VsZCBiZW5lZml0IGZyb20gYSBzbGlnaHRseSBiaWdnZXIgY2hhbmdl
-bG9nLCBleHBsYWluaW5nIHdoeQ0KPiBkbyB3ZSBuZWVkIHRoaXMgY2hhbmdlIGluIHNvbWUgbW9y
-ZSBkZXRhaWwuDQoNClllcyBJIGNhbiB3cml0ZSB0aGlzIGlzIGJlY2F1c2UgUFRFcyBhcmUgNjQt
-Yml0cyBhbGx0aG91Z2h0IEkgdGhvdWdodCBpdCANCndhcyBvYnZpb3VzLg0KDQo+IA0KPiAgIA0K
-Pj4gZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9wZ3RhYmxlLXR5cGVzLmgg
-Yi9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vcGd0YWJsZS10eXBlcy5oDQo+PiBpbmRleCAwODJj
-ODVjYzA5YjEuLmRiOTY1ZDk4ZTBhZSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvcG93ZXJwYy9pbmNs
-dWRlL2FzbS9wZ3RhYmxlLXR5cGVzLmgNCj4+ICsrKyBiL2FyY2gvcG93ZXJwYy9pbmNsdWRlL2Fz
-bS9wZ3RhYmxlLXR5cGVzLmgNCj4+IEBAIC00OSw3ICs0OSwxMSBAQCBzdGF0aWMgaW5saW5lIHVu
-c2lnbmVkIGxvbmcgcHVkX3ZhbChwdWRfdCB4KQ0KPj4gICAjZW5kaWYgLyogQ09ORklHX1BQQzY0
-ICovDQo+PiAgIA0KPj4gICAvKiBQR0QgbGV2ZWwgKi8NCj4+ICsjaWYgZGVmaW5lZChDT05GSUdf
-UFBDX0U1MDApICYmIGRlZmluZWQoQ09ORklHX1BURV82NEJJVCkNCj4+ICt0eXBlZGVmIHN0cnVj
-dCB7IHVuc2lnbmVkIGxvbmcgbG9uZyBwZ2Q7IH0gcGdkX3Q7DQo+PiArI2Vsc2UNCj4+ICAgdHlw
-ZWRlZiBzdHJ1Y3QgeyB1bnNpZ25lZCBsb25nIHBnZDsgfSBwZ2RfdDsNCj4+ICsjZW5kaWYNCj4+
-ICAgI2RlZmluZSBfX3BnZCh4KQkoKHBnZF90KSB7ICh4KSB9KQ0KPj4gICBzdGF0aWMgaW5saW5l
-IHVuc2lnbmVkIGxvbmcgcGdkX3ZhbChwZ2RfdCB4KQ0KPj4gICB7DQo+PiBkaWZmIC0tZ2l0IGEv
-YXJjaC9wb3dlcnBjL2tlcm5lbC9oZWFkXzg1eHguUyBiL2FyY2gvcG93ZXJwYy9rZXJuZWwvaGVh
-ZF84NXh4LlMNCj4+IGluZGV4IDM5NzI0ZmY1YWUxZi4uYTMwNTI0NGFmYzlmIDEwMDY0NA0KPj4g
-LS0tIGEvYXJjaC9wb3dlcnBjL2tlcm5lbC9oZWFkXzg1eHguUw0KPj4gKysrIGIvYXJjaC9wb3dl
-cnBjL2tlcm5lbC9oZWFkXzg1eHguUw0KPj4gQEAgLTMwNyw4ICszMDcsOSBAQCBzZXRfaXZvcjoN
-Cj4+ICAgI2lmZGVmIENPTkZJR19QVEVfNjRCSVQNCj4+ICAgI2lmZGVmIENPTkZJR19IVUdFVExC
-X1BBR0UNCj4+ICAgI2RlZmluZSBGSU5EX1BURQlcDQo+PiAtCXJsd2lubQlyMTIsIHIxMCwgMTMs
-IDE5LCAyOTsJLyogQ29tcHV0ZSBwZ2Rpci9wbWQgb2Zmc2V0ICovCVwNCj4+IC0JbHd6eAlyMTEs
-IHIxMiwgcjExOwkJLyogR2V0IHBnZC9wbWQgZW50cnkgKi8JCVwNCj4+ICsJcmx3aW5tCXIxMiwg
-cjEwLCAxNCwgMTgsIDI4OwkvKiBDb21wdXRlIHBnZGlyL3BtZCBvZmZzZXQgKi8JXA0KPj4gKwlh
-ZGQJcjEyLCByMTEsIHIxMjsNCj4gDQo+IFlvdSBhZGQgdGhlIG9mZnNldCB0byBwZ2Rpcj8NCg0K
-WWVzIGJlY2F1c2UgbGF0ZXIgcjEyIHBvaW50cyB0byB0aGUgUFRFIHNvIHdoZW4gaXQgaXMgYSBs
-ZWFmIFBHRCBlbnRyeSANCndlIG5lZWQgcjEyIHRvIHBvaW50IHRvIHRoYXQgZW50cnkuDQoNCj4g
-DQo+PiArCWx3eglyMTEsIDQocjEyKTsJCS8qIEdldCBwZ2QvcG1kIGVudHJ5ICovCQlcDQo+IA0K
-PiBXaGF0IGlzIGkgb2Zmc2V0IDQ/DQoNCkl0IGlzIGJpZyBlbmRpYW4sIHRoZSBlbnRyeSBpcyBu
-b3cgNjQgYml0cyBidXQgdGhlIHJlYWwgY29udGVudCBvZiB0aGUgDQplbnRyeSBpcyBzdGlsbCAz
-MiBiaXRzIHNvIGl0IGlzIGluIHRoZSBsb3dlciB3b3JkLg0KDQo+IA0KPiANCg==
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+
+
+
+On Fri, 24 May 2024, Fan Wu wrote:
+
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+> 
+> dm-verity provides a strong guarantee of a block device's integrity. As
+> a generic way to check the integrity of a block device, it provides
+> those integrity guarantees to its higher layers, including the filesystem
+> level.
+> 
+> An LSM that control access to a resource on the system based on the
+> available integrity claims can use this transitive property of
+> dm-verity, by querying the underlying block_device of a particular
+> file.
+> 
+> The digest and signature information need to be stored in the block
+> device to fulfill the next requirement of authorization via LSM policy.
+> This will enable the LSM to perform revocation of devices that are still
+> mounted, prohibiting execution of files that are no longer authorized
+> by the LSM in question.
+> 
+> This patch adds two security hook calls in dm-verity to expose the
+> dm-verity roothash and the roothash signature to LSMs via preresume
+> callback. The hook calls are depended on CONFIG_SECURITY.
+> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> ---
+> v2:
+>   + No Changes
+> 
+> v3:
+>   + No changes
+> 
+> v4:
+>   + No changes
+> 
+> v5:
+>   + No changes
+> 
+> v6:
+>   + Fix an improper cleanup that can result in
+>     a leak
+> 
+> v7:
+>   + Squash patch 08/12, 10/12 to [11/16]
+>   + Use part0 for block_device, to retrieve the block_device, when
+>     calling security_bdev_setsecurity
+> 
+> v8:
+>   + Undo squash of 08/12, 10/12 - separating drivers/md/ from
+>     security/ & block/
+>   + Use common-audit function for dmverity_signature.
+>   + Change implementation for storing the dm-verity digest to use the
+>     newly introduced dm_verity_digest structure introduced in patch
+>     14/20.
+>   + Create new structure, dm_verity_digest, containing digest algorithm,
+>     size, and digest itself to pass to the LSM layer. V7 was missing the
+>     algorithm.
+>   + Create an associated public header containing this new structure and
+>     the key values for the LSM hook, specific to dm-verity.
+>   + Additional information added to commit, discussing the layering of
+>     the changes and how the information passed will be used.
+> 
+> v9:
+>   + No changes
+> 
+> v10:
+>   + No changes
+> 
+> v11:
+>   + Add an optional field to save signature
+>   + Move the security hook call to the new finalize hook
+> 
+> v12:
+>   + No changes
+> 
+> v13:
+>   + No changes
+> 
+> v14:
+>   + Correct code format
+>   + Remove unnecessary header and switch to dm_disk()
+> 
+> v15:
+>   + Refactor security_bdev_setsecurity() to security_bdev_setintegrity()
+>   + Remove unnecessary headers
+> 
+> v16:
+>   + Use kmemdup to duplicate signature
+>   + Clean up lsm blob data in error case
+> 
+> v17:
+>   + Switch to depend on CONFIG_SECURITY
+>   + Use new enum name LSM_INT_DMVERITY_SIG_VALID
+> 
+> v18:
+>   + Amend commit title
+>   + Fix incorrect error handling
+>   + Make signature exposure depends on CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+>   + Fix inaccurate comment
+>   + Remove include/linux/dm-verity.h
+>   + use crypto_ahash_alg_name(v->tfm) instead of v->alg_name
+> 
+> v19:
+>   + Drop finalize callback and switch to preresume callback
+>   + Adding NULL check to avoid kmemdup when sig is NULL
+> ---
+>  drivers/md/dm-verity-target.c | 108 ++++++++++++++++++++++++++++++++++
+>  drivers/md/dm-verity.h        |   6 ++
+>  include/linux/security.h      |   9 ++-
+>  3 files changed, 122 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index bb5da66da4c1..0a54ce02ea53 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/string.h>
+>  #include <linux/jump_label.h>
+> +#include <linux/security.h>
+>  
+>  #define DM_MSG_PREFIX			"verity"
+>  
+> @@ -1017,6 +1018,41 @@ static void verity_io_hints(struct dm_target *ti, struct queue_limits *limits)
+>  	blk_limits_io_min(limits, limits->logical_block_size);
+>  }
+>  
+> +#ifdef CONFIG_SECURITY
+> +
+> +static int verity_init_sig(struct dm_verity *v, const void *sig,
+> +			   size_t sig_size)
+> +{
+> +	v->sig_size = sig_size;
+> +
+> +	if (sig) {
+> +		v->root_digest_sig = kmemdup(sig, v->sig_size, GFP_KERNEL);
+> +		if (!v->root_digest_sig)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void verity_free_sig(struct dm_verity *v)
+> +{
+> +	kfree(v->root_digest_sig);
+> +}
+> +
+> +#else
+> +
+> +static inline int verity_init_sig(struct dm_verity *v, const void *sig,
+> +				  size_t sig_size)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void verity_free_sig(struct dm_verity *v)
+> +{
+> +}
+> +
+> +#endif /* CONFIG_SECURITY */
+> +
+>  static void verity_dtr(struct dm_target *ti)
+>  {
+>  	struct dm_verity *v = ti->private;
+> @@ -1035,6 +1071,7 @@ static void verity_dtr(struct dm_target *ti)
+>  	kfree(v->salt);
+>  	kfree(v->root_digest);
+>  	kfree(v->zero_digest);
+> +	verity_free_sig(v);
+>  
+>  	if (v->tfm)
+>  		crypto_free_ahash(v->tfm);
+> @@ -1434,6 +1471,13 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>  		ti->error = "Root hash verification failed";
+>  		goto bad;
+>  	}
+> +
+> +	r = verity_init_sig(v, verify_args.sig, verify_args.sig_size);
+> +	if (r < 0) {
+> +		ti->error = "Cannot allocate root digest signature";
+> +		goto bad;
+> +	}
+> +
+>  	v->hash_per_block_bits =
+>  		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
+>  
+> @@ -1584,6 +1628,67 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_SECURITY
+> +
+> +#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+> +
+> +static int verity_security_set_signature(struct block_device *bdev,
+> +					 struct dm_verity *v)
+> +{
+> +	return security_bdev_setintegrity(bdev,
+> +					  LSM_INT_DMVERITY_SIG_VALID,
+> +					  v->root_digest_sig,
+> +					  v->sig_size);
+> +}
+> +
+> +#else
+> +
+> +static inline int verity_security_set_signature(struct block_device *bdev,
+> +						struct dm_verity *v)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG */
+> +
+> +/*
+> + * Expose verity target's root hash and signature data to LSMs before resume.
+> + *
+> + * Returns 0 on success, or -ENOMEM if the system is out of memory.
+> + */
+> +static int verity_preresume(struct dm_target *ti)
+> +{
+> +	struct block_device *bdev;
+> +	struct dm_verity_digest root_digest;
+> +	struct dm_verity *v;
+> +	int r;
+> +
+> +	v = ti->private;
+> +	bdev = dm_disk(dm_table_get_md(ti->table))->part0;
+> +	root_digest.digest = v->root_digest;
+> +	root_digest.digest_len = v->digest_size;
+> +	root_digest.alg = crypto_ahash_alg_name(v->tfm);
+> +
+> +	r = security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, &root_digest,
+> +				       sizeof(root_digest));
+> +	if (r)
+> +		return r;
+> +
+> +	r =  verity_security_set_signature(bdev, v);
+> +	if (r)
+> +		goto bad;
+> +
+> +	return 0;
+> +
+> +bad:
+> +
+> +	security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, NULL, 0);
+> +
+> +	return r;
+> +}
+> +
+> +#endif /* CONFIG_SECURITY */
+> +
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+>  	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
+> @@ -1596,6 +1701,9 @@ static struct target_type verity_target = {
+>  	.prepare_ioctl	= verity_prepare_ioctl,
+>  	.iterate_devices = verity_iterate_devices,
+>  	.io_hints	= verity_io_hints,
+> +#ifdef CONFIG_SECURITY
+> +	.preresume	= verity_preresume,
+> +#endif /* CONFIG_SECURITY */
+>  };
+>  module_dm(verity);
+>  
+> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+> index 20b1bcf03474..2de89e0d555b 100644
+> --- a/drivers/md/dm-verity.h
+> +++ b/drivers/md/dm-verity.h
+> @@ -43,6 +43,9 @@ struct dm_verity {
+>  	u8 *root_digest;	/* digest of the root block */
+>  	u8 *salt;		/* salt: its size is salt_size */
+>  	u8 *zero_digest;	/* digest for a zero block */
+> +#ifdef CONFIG_SECURITY
+> +	u8 *root_digest_sig;	/* signature of the root digest */
+> +#endif /* CONFIG_SECURITY */
+>  	unsigned int salt_size;
+>  	sector_t data_start;	/* data offset in 512-byte sectors */
+>  	sector_t hash_start;	/* hash start in blocks */
+> @@ -56,6 +59,9 @@ struct dm_verity {
+>  	bool hash_failed:1;	/* set if hash of any block failed */
+>  	bool use_bh_wq:1;	/* try to verify in BH wq before normal work-queue */
+>  	unsigned int digest_size;	/* digest size for the current hash algorithm */
+> +#ifdef CONFIG_SECURITY
+> +	unsigned int sig_size;	/* root digest signature size */
+> +#endif /* CONFIG_SECURITY */
+>  	unsigned int ahash_reqsize;/* the size of temporary space for crypto */
+>  	enum verity_mode mode;	/* mode for handling verification errors */
+>  	unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index a64e83622c7c..09c80326518f 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -83,8 +83,15 @@ enum lsm_event {
+>  	LSM_POLICY_CHANGE,
+>  };
+>  
+> +struct dm_verity_digest {
+> +	const char *alg;
+> +	const u8 *digest;
+> +	size_t digest_len;
+> +};
+> +
+>  enum lsm_integrity_type {
+> -	__LSM_INT_MAX
+> +	LSM_INT_DMVERITY_SIG_VALID,
+> +	LSM_INT_DMVERITY_ROOTHASH,
+>  };
+>  
+>  /*
+> -- 
+> 2.44.0
+> 
+
 
