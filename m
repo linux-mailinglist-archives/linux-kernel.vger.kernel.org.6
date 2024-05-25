@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-189206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7CAD8CED24
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:03:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0A88CED26
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 02:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FD0281A41
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26721C212AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95E22092;
-	Sat, 25 May 2024 00:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7316F64A;
+	Sat, 25 May 2024 00:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gM/WzCfV"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fMh6PVJC"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299E214AB4;
-	Sat, 25 May 2024 00:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688A417C;
+	Sat, 25 May 2024 00:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716595369; cv=none; b=n/v6mZIlz1XKb73zcaGQjh1TRRnxAS39y0TbMVqYBa0zVCZIROHTquFW0BhnHygfCG+saiHthaXJ0FRy1+aWxx1tXQsrBxFinp8iahK22moTj0ml9hsCB3bRlOeKV+tiB6QpCYtb0Ec3gtBakYS2JHwL9OaROpZr2krOFqdPK+Y=
+	t=1716595599; cv=none; b=r5mq0uAnWheWFsn+HGW1JAZXj5UVLPTyne29sx3KPMnwSY4xwAbmLasOmb0+qL4qzSIkikxjx/Sgw2PBBNSYAmHISIkh2SIkJyeoQgh9ag/WRjheRwC4iZJ+HKp+a7qunA8OFcjDzNHrXKmWDv7M1nQoNf7PmyXoOX90nI4PGOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716595369; c=relaxed/simple;
-	bh=CCcjSZqzsrKz0nV7FFyP45kQ4TL0l3/Kmr9dL8UzXb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FkuLF0qLd/W6AlORdaOT7dUUFE9QNsK6t3itt+uY+OpURQB2UjHrEVq3dZFOtWs1HOx+G5WpE0xKQoCi934aRvrxjGxJ80J3PI5e1xBOTR4VO0GnC6rJIMzsSh9qBkQHZ2HXeDglXfyfjZaS4ZqcwMa9l2xjooCCSMlm6xLbYsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gM/WzCfV; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1716595599; c=relaxed/simple;
+	bh=EWhgYpCmMrxcuZJ4sW5ipw3sluGXwaCAXLbNAXNrLAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtIqoOljmioWwz+b8QwlfDIVMZ11iGbFi9bdJ3Us7Eu3m4T/xa3PUQb5u41OROP2/UauEjw/LlSzQ6TmEps82Y6HH7kd9LZc8Tk3GLRouCYoI0rK/CiOFrvm+pqNnYa/BWPxOMN1o1cmaPwVTQgo/V++nn0MX66vL30hnJhRiU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fMh6PVJC; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=47fHQ0JrYe5JAX3Z6GnvPA5cT+jmMOB4fSbGBxYNQQI=; b=gM/WzCfVpR0Tn8h7
-	hq3fNwcL9ItLKNPTqwH2vrLb537Ds0YfJtLNK38I+heDV/fEz71HGsVqyNkg3fyBs564TWhNSXPAt
-	tPot6Bi2MKhzHofiL073ScMz+3Kn6q6TaZQ/xyTL5YMwVGugalxBnsHD9IfXRcZ4FA4Cl34ZzECvo
-	vrjF9ntIMb2dBMByzFAQ2jjWdeKLv9jzkigXcUkRSsv2M9g+1R/aHsC+QdobA4a2HxVAUEmgvQ8iI
-	m5ty2d71F3ix0yW0Qu5M8DNUtxvAM7vGgVg6CpJmZY7jwJqvGyXgxcWS4JHYzNox58wOGgLRIpAjC
-	K1XFRzsGvdPW20kZJw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sAerz-002TKv-0z;
-	Sat, 25 May 2024 00:02:43 +0000
-From: linux@treblig.org
-To: mchehab@kernel.org,
-	ming.qian@nxp.com,
-	eagle.zhou@nxp.com,
-	digetx@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-tegra@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/3] media: tegra-vde: remove unused struct 'tegra_vde_h264_frame'
-Date: Sat, 25 May 2024 01:01:46 +0100
-Message-ID: <20240525000146.282500-4-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240525000146.282500-1-linux@treblig.org>
-References: <20240525000146.282500-1-linux@treblig.org>
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=RilHObJtsLbJvm703RNoBG1z8cyUp2+3mrHjFWX/xMY=; b=fMh6PVJCDdu7SPWF
+	t2RPFrBcpC4haU23a8F0mKA/9YVDIdecePAIwSECmNNfhzQmDpz0y7cfnyGs19Jl0plhvKf0BLHZF
+	n43+82lZP25yvyPtWQ+xdah+qYbnRw7Ob4h4BnvZBjaocDN+ODSe84SKJPP1fjEN8PCqJkI6gTNwt
+	nGMoE5I0mbbSx/gr8lHegf4p09Gh/yLJI8j6yGATzOSrt7x0H40ZYY92NmWdKX/JPKdkje8wtH2fd
+	V8TR4DHQKONEYLZeoJI4Yk87RbKwASpbbhao3vSNy+U0QQt3blxtzGkesdmFIsS18sfRmdpZ1/hkq
+	YtiFniWykfdK5Hka6g==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sAevg-002TPm-03;
+	Sat, 25 May 2024 00:06:32 +0000
+Date: Sat, 25 May 2024 00:06:31 +0000
+From: "Dr. David Alan Gilbert" <dave@treblig.org>
+To: jesper.nilsson@axis.com, lars.persson@axis.com
+Cc: herbert@gondor.apana.org.au, linux-arm-kernel@axis.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: acix: Remove unused struct 'dbgfs_u32'
+Message-ID: <ZlErh687UaEjCkIV@gallifrey>
+References: <20240511145017.226166-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20240511145017.226166-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 00:05:01 up 16 days, 11:19,  1 user,  load average: 0.01, 0.02, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'dbgfs_u32' appears unused.
+> Remove it.
+> (pdma_stat_descr is also unused, but I'm assuming it's
+> some useful layout description of firmware/hardware
+> so best left in)
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-'tegra_vde_h264_frame' has been unused since
-commit 313db7d235a0 ("media: staging: tegra-vde: Remove legacy UAPI
-support").
+Ping.
 
-Remove it.
+Dave
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/platform/nvidia/tegra-vde/h264.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/media/platform/nvidia/tegra-vde/h264.c b/drivers/media/platform/nvidia/tegra-vde/h264.c
-index cfea5572a1b8..d8812fc06c67 100644
---- a/drivers/media/platform/nvidia/tegra-vde/h264.c
-+++ b/drivers/media/platform/nvidia/tegra-vde/h264.c
-@@ -19,11 +19,6 @@
- #define FLAG_B_FRAME		0x1
- #define FLAG_REFERENCE		0x2
- 
--struct tegra_vde_h264_frame {
--	unsigned int frame_num;
--	unsigned int flags;
--};
--
- struct tegra_vde_h264_decoder_ctx {
- 	unsigned int dpb_frames_nb;
- 	unsigned int dpb_ref_frames_with_earlier_poc_nb;
+> ---
+>  drivers/crypto/axis/artpec6_crypto.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/crypto/axis/artpec6_crypto.c b/drivers/crypto/axis/artpec6_crypto.c
+> index dbc1d483f2afa..75440ea6206e2 100644
+> --- a/drivers/crypto/axis/artpec6_crypto.c
+> +++ b/drivers/crypto/axis/artpec6_crypto.c
+> @@ -2811,13 +2811,6 @@ static struct aead_alg aead_algos[] = {
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  
+> -struct dbgfs_u32 {
+> -	char *name;
+> -	mode_t mode;
+> -	u32 *flag;
+> -	char *desc;
+> -};
+> -
+>  static struct dentry *dbgfs_root;
+>  
+>  static void artpec6_crypto_init_debugfs(void)
+> -- 
+> 2.45.0
+> 
 -- 
-2.45.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
