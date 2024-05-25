@@ -1,117 +1,162 @@
-Return-Path: <linux-kernel+bounces-189311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DA48CEE49
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E638CEE4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 11:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02AEB1C20E24
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6FE1C209F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 09:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF5D20317;
-	Sat, 25 May 2024 09:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wwvbsh3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D38D11182;
-	Sat, 25 May 2024 09:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1C02031D;
+	Sat, 25 May 2024 09:30:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7023C138E;
+	Sat, 25 May 2024 09:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716628526; cv=none; b=CjbYjMijeA+Srllp6gUyFK42ioXhw9LKDD0MxBV6Td3pfYdk+8f2nYl8m85W1ltkOC08S3pJInD6E8D13c3IPp25NZYsmGev9c2tmxPZwH7X8yklgB5Ymp3vbDCsxd5WaCnCwA5U4W5g9/fjzCKIizxs3joiuYOsNgBxDDiyi5E=
+	t=1716629401; cv=none; b=UyYX9lldZKcZxBJRuuNenrZJX/SnVwD4KkcplaGj8cG5MTJLirJ1noLnSCVl6iG+gab2Jzkg7Je7qJwsjVKAMaE0x9S5VKeqBQKzK945sZwLktEIRVI1nnkponoEChmu7N94b+MW2KF72S7qp9ATWTI2J+ZBeq6sb2vAOflfR1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716628526; c=relaxed/simple;
-	bh=5O/2NC0ZC7GcRUeBdQJ7keatQdN3MPSj+yKACm9w/bY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=nvsDSXtpGGucQPkebvpdYyvJGxsTpBBcosSu/M2fO605ztLhSsvzx8q9ID04IWU57KHi4lFbjpAfReATEMcD70elI+B5gIG/O0aT0AvWi18/pphzDGZWp6kIUZo/o8DaH47AA9Ol3t3wMexXfXW+h/14cKDIpyiYbUGhccPznR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wwvbsh3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862B3C3277B;
-	Sat, 25 May 2024 09:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716628525;
-	bh=5O/2NC0ZC7GcRUeBdQJ7keatQdN3MPSj+yKACm9w/bY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=Wwvbsh3knDF/5OUwzPLF5qmCgGV8DcWpLnoh5yOkOB/PxO30EL+7YAnlzbjbL9ZHc
-	 noWzpExjaTkoMH94gFrccXbHliuBEQ1BdLJyJX9LGktBTeF/SPFcWUSbR1pYodHPbz
-	 mp0YsrNHdzgdQuROQSBtHhtIW93uovkNBQhocPepWR1Uh1Ouo9kcYOd7eiQ+fegUvI
-	 ulWO/+GLe2VdGm3zXvvBHZXBzimTi84PRgRFUqWzC97fCEto03amo1qRCX8QTrR+QO
-	 deb9U82753rQekX13nonWqvnQ3k9iQPS6dHlgWAl5nZnNIJPYr+86maWnX2/7tZAmW
-	 6kXPSXVrWdkQA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org,  Brian
- Norris <briannorris@chromium.org>,  Francesco Dolcini
- <francesco@dolcini.it>,  David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: fix parsing of more than two AKM suites
-References: <20240523081428.2852276-1-s.hauer@pengutronix.de>
-Date: Sat, 25 May 2024 12:15:22 +0300
-In-Reply-To: <20240523081428.2852276-1-s.hauer@pengutronix.de> (Sascha Hauer's
-	message of "Thu, 23 May 2024 10:14:28 +0200")
-Message-ID: <878qzyntg5.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1716629401; c=relaxed/simple;
+	bh=b1OJCXMUNGZ5CqkObxi4L1NfyClQcLFRQhFPOz4S2xU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sOhK/RV6X8pDB2jJZWCK72vl7VBDCubVidsLFiERLWabrcKDq13nawdHqIjy2wa7C779ainHkTZ/lU5XoPKcJaX3/C6uwc+dfe9CJFnCj7adA+OvCCAo5OD94FhbrYuXVyaFnAR0rk2uxMklcribX1Ajc90NVO540HWWNtG++DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B58A339;
+	Sat, 25 May 2024 02:30:21 -0700 (PDT)
+Received: from [10.57.68.224] (unknown [10.57.68.224])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBD3D3F641;
+	Sat, 25 May 2024 02:29:55 -0700 (PDT)
+Message-ID: <02fbb30f-19cf-4822-9676-35d3e51d99b1@arm.com>
+Date: Sat, 25 May 2024 10:29:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] perf maps: Sort kcore maps
+To: Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Namhyung Kim <namhyung@kernel.org>, James Clark <james.clark@arm.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240520090647.949371-1-leo.yan@arm.com>
+ <20240520090647.949371-2-leo.yan@arm.com>
+ <2f4fce9f-6283-40ad-8adc-c370e98627da@intel.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <2f4fce9f-6283-40ad-8adc-c370e98627da@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sascha Hauer <s.hauer@pengutronix.de> writes:
+Hi Adrian,
 
-> params->crypto.n_akm_suites seems to be limited to two AKM suites. Once
-> there are more they will be passed as extra elements of type WLAN_EID_RSN
-> or WLAN_EID_VENDOR_SPECIFIC.
->
-> This takes some snippets from the downstream vendor driver to parse
-> these elements and to set the correct protocol and key_mgmt bits to
-> enable the desired key managements algorithms in the hardware.
->
-> This patch is not a request for inclusion, more a heads up that there's
-> something missing and the question if the approach taken is the right
-> one or if there are other preferred ways to fix this issue.
+On 5/22/2024 11:31 AM, Adrian Hunter wrote:
+> On 20/05/24 12:06, Leo Yan wrote:
+>> When merging kcore maps into the kernel maps, it has an implicit
+>> requirement for the kcore maps ordering, otherwise, some sections
+>> delivered by the kcore maps will be ignored.
+> 
+> perf treats the kernel text map as a special case.  The problem
+> is that the kcore loading logic did not cater for there being 2
+> maps that covered the kernel mapping.
+> 
+> The workaround was to choose the smaller mapping, but then that
+> still only worked if that was the first.
 
-Please mark patches like this as "[PATCH RFC]", that way we maintainers
-know to drop them automatically.
+You could see below are Kcore maps dumped on Arm64:
 
-> --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> @@ -9,6 +9,112 @@
->  #include "11ac.h"
->  #include "11n.h"
->  
-> +struct wpa_suite_ucast {
-> +        /* count */
-> +        u16 count;
-> +        /** wpa_suite list */
-> +	__be32 suite[1];
-> +} __packed;
+kore map start: ffff000000000000 end: ffff00001ac00000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff00001ad88000 end: ffff000032000000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff000032101000 end: ffff00003e000000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff000040000000 end: ffff000089b80000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff000089cc0000 end: ffff0000b9ab0000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff0000b9ad0000 end: ffff0000b9bb0000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff0000b9c50000 end: ffff0000b9d50000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff0000ba114000 end: ffff0000bf130000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff0000bf180000 end: ffff0000e0000000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff000200000000 end: ffff000220000000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff800000000000 end: ffff800080000000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff800080000000 end: ffff8000822f0000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: ffff800080000000 end: fffffdffbf800000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc0000000 end: fffffdffc06b0000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc06b6000 end: fffffdffc0c80000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc0c84000 end: fffffdffc0f80000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc1000000 end: fffffdffc226e000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc2273000 end: fffffdffc2e6b000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc2e6b000 end: fffffdffc2e6f000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc2e71000 end: fffffdffc2e76000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc2e84000 end: fffffdffc2fc5000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc2fc6000 end: fffffdffc3800000 name: [kernel.kallsyms]
+refcnt: 1
+kore map start: fffffdffc8000000 end: fffffdffc8800000 name: [kernel.kallsyms]
+refcnt: 1
 
-The comments here are not adding any extra information, please remove.
+You could see it's much more complex rather than only for kernel text section
+and vmalloc region. We cannot only handle the case for the overlapping between
+the text section and vmalloc region, it is possible for other maps to be
+overlapping with each other.
 
-In general having a some kind of prefix in the struct name would be
-nice. I don't know what mwifiex uses (if any) but, for example, in
-ath12k we use 'ath12k_'.
+And different arches have their own definition for the Kcore maps. This is why
+I want to sort maps in this patch, it can allow us to find a reliable way to
+append the kcore maps.
 
-> +struct IEEEtypes_Rsn_t {
+> James essentially fixed that by ensuring the kernel "replacement"
+> map is inserted first.
 
-Lower case, no '_t' and also improve the naming.
+Yeah, I agreed James' patch has fixed the kernel "replacement" map. But as I
+elaborated above, there still have other maps might overlap with each other,
+my understanding is we don't handle all cases.
+> In other respects, the ordering of the maps does not matter, so
+> I am not sure it is worth this extra processing.
 
-> +        /** Rsn : version */
-> +        u16 version;
-> +        /** Rsn : group cipher */
-> +        __be32 group_cipher;
-> +        /** Rsn : pairwise cipher */
-> +        struct wpa_suite_ucast pairwise_cipher;
-> +} __packed;
+To sell my patch, I have another point for why we need sorting Kcore maps.
 
-Useless comments.
+Now Perf verifies the map in the function check_invariants(), this function
+reports the broken issue, but we still have no clue how the broken issue happens.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+If we can sort the Kcore maps in kcore_mapfn(), then we have chance to detect
+the overlapping within maps, and then it can reports the overlapping in the
+first place and this would be helpful for debugging and locating the failures.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+So I have another patch for printing overlapping maps in kcore_mapfn(). I did
+not send out the patch, as I found there have other logs in maps.c and
+symbol.c should be improved a bit. So I am planning to send out a separate
+patch series.
+
+Please let me know if you still think this patch is not useful or not.
+
+Thanks,
+Leo
 
