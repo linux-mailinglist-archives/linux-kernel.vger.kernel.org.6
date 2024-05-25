@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-189353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6354A8CEEEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 14:45:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F1A8CEEF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 15:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0363B1F216FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 12:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA3A1C20A59
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 13:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015313A1C9;
-	Sat, 25 May 2024 12:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E767481D0;
+	Sat, 25 May 2024 13:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNhG/m95";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="elRecitd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8dNiMUb"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAEF101F4;
-	Sat, 25 May 2024 12:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B4A101F4;
+	Sat, 25 May 2024 13:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716641136; cv=none; b=TeVRIMhfjlqHoDNU4AX0LnQIokBwT4Dye2RA7yJb97tPiCUwlJm4OxwYWvl98wKtyicME7XJOC4G8G3kwRz1nwebwb60Ypkan8bqfI8riXcv1ebacraP+29dQCWvZrv/H5cF2CeyX39I3CAtqkF0ZursSODScffLxTOjK/YTnvc=
+	t=1716643377; cv=none; b=T5BugqcDnB2u+5IapwJu1Am+uYjoM6Z9N5OjLLJwXc0RyJb1UT374ID40ouqt05FUYv8ZF8HyIIxDQH2NKy0taj3aJz8HKOXfBb/95BobOqDWyK8v4e3VABSDMl8cesnBWg0GDVOxlT1G13rVIGjQ5Zj8hoX1hH4j/ineZFNnzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716641136; c=relaxed/simple;
-	bh=eeAitaAmSAkbYaU04UOTjrZ7ojZYRcqsyQM0YGQFGjY=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=J3pVNXPlVJU8ZxrAobVbK/IESyPHG5Tb0DwmAUvDAciyb0UhtiyC48hF6pSW271Dn0ka3ltxrLAqIFs0GxNF2wzT0CYsWvK3xEuvC6aFp4Qk0lKwoV61EIlIAfGX24nTEDiGwUoXJfSYdtsy9V/knjiwpghJQSIzQJeWALFs3iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNhG/m95; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=elRecitd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 25 May 2024 12:45:31 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716641132;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=f9m3fQbxEulN8aOMpTnoJl+7t0n/1G78kbyvVi25U38=;
-	b=pNhG/m95mlT6/4DVXjXKgAeFd4rW3z/doo7I2lyNa6wkPx9TtOgjlA9OwzoJebyu+BCSgf
-	av5dA78KvQ4pUMHg9JGEU7o6gaoidjDJQLhdp58IEpEtvlSTxinDtWjBgfdyeJBWZCxf0x
-	pDiMBoVGtIKqTsrYTPrYUMRTtxb7QAJjEfOVl1fHA/eK99u8/p/3o9cP7PdaPcBC1ur84R
-	4zcWZBuqy6+c2KqPyw7F6VfGdlKjJLtUkiennr7KrY90ZNBwP8EgjJY2VWBmPXA/8uw8b5
-	gI0D6ge89Y570JXQqQg0u1D2UnCS2anX4kuFa5UD8o/6SjiaS9OCCygDi3ITtQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716641132;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=f9m3fQbxEulN8aOMpTnoJl+7t0n/1G78kbyvVi25U38=;
-	b=elRecitdMgliBy2pg7Ome0/6GUl0TcR61ib2il9y/tANv6F0nL5G/DUyWN0hmPTstW3Vwd
-	4Td8S7AlYACCqGCg==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/urgent] cleanup: Standardize the header guard define's name
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, x86@kernel.org
+	s=arc-20240116; t=1716643377; c=relaxed/simple;
+	bh=twZv0XwD38Sgrc7cZswUW04/P8d8QPz8QlGCO53cniQ=;
+	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
+	 In-Reply-To:Content-Type; b=Z85e7zFBUZziUjtf7QJO6iIIrK32PjvgDRXASF0Zp1EaQKdBVoWI1Wz3ZdKZRAqAhY9aiZHu7KprF+a+1Tdm7JpZDQeVsPM8clS4m/0FURY18DFS1AH6wwba2x1eJKJMrAqMhp0dRnFIDSOM9VbIE19uiZG1cWLEAan4dKnm310=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G8dNiMUb; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716643351; x=1717248151; i=markus.elfring@web.de;
+	bh=twZv0XwD38Sgrc7cZswUW04/P8d8QPz8QlGCO53cniQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
+	 Subject:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=G8dNiMUbwUKjzXMaWkHcvdLfiXs3jWf45cPgiEfjG9T0zQLr4FYfz/Rp50ihAv6B
+	 BX3uWY8Frx9sfjGK5DIM06ITMTBpe7SIUfNKwWg4U4UAo3rChE27JwikO0wizsE/E
+	 H/g3L+HJ7ju0fDUj3TAeTUTMmtmCtbeXl+UebmdhsOu7fcaGVolL3hTXV/J3vQ1WJ
+	 MdQRz3Hb1CKSRC7j5ohuT6arVN9zsPQEN8mzmdwmTjSgXwoNdSQG/R9O6uqotGEZ8
+	 ot+UZHOn3bx5IV6QNc9VkGxz83Y1eCT7cgdi+SaonN00zmP3K0/hzf401e/Wbhl5A
+	 L/H7lVrArypDL3htfA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKM5z-1rwloW2E4l-00Lxhx; Sat, 25
+ May 2024 15:22:31 +0200
+Message-ID: <e084c47b-5a14-464e-b2fd-bdfeb9fc8dc3@web.de>
+Date: Sat, 25 May 2024 15:22:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171664113181.10875.8784434350512348496.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ x86@kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
+References: <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
+Subject: Re: [PATCH v3 2/8] EDAC/amd64: Check return value of amd_smn_read()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:h9m6DHXFR84RKzbcIb+FaTFLgvibH9mmJn4paw4Qt9pUSGJ3Od1
+ nQUAbZjvazlKRaZs06sabcarChxiTkFHP/IioLOfUxtH0DRQsMRxE1yv5idWv5zrt31V5B0
+ dmKB0k7L1KBbWmV+aXsNdvQpri/fsQo5D1RhqDvhJC3m1260hp29FChdfklFTZsGls5kk1g
+ ACkGD3JXkFUoxBx9ok6DA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HMLPTIJfApg=;xDoy1xlEVS2hpwr5HArNs8O5zrr
+ nFRNbneLkEeMvq80JZ524EbzsyU+rZCOwFK19GKTluHxPj+wsBYkA3Fje7mUyTUW7chLCvqu+
+ O7ij7zgkVJHsUGMS7H7IIwARcZ184JWr1WzEBNTiPiihC0OLG2xE/EQfSddPT8JDE2obEyAsS
+ PKsL14Omf+ykRHbNjllJwTHNdJyEY3cef2mhjvUG/4tXkdd7yFNwGqkbASxvOW5W9EskPuAxJ
+ Hi8g/6kylZXZp6/36vUpriq1+Cn6ZVOp4ZD9mj+cu00vP0Qj8khuHAdsWo6M1dJ8S9M6U+gq7
+ 50RH8XIMZOfscfQr4bmyLBdTdcP7e0Nh2l0M+FrsNXW1gIj9Rzm1Es/R8oP/bXA4xq6YW2hKE
+ iCPQudJt8TkWaHeVulvPpk5GLfqRcTdmJCaYEo1sE/BrSKwfiFnNV4rBGOLVz6cKjEueh9D15
+ pdPLGPli75AA48polfPADoRbGw7KKMUAoW2IwDzUg3/rySTTkI4X+f6mvRnyVxOVCnYpuh9JD
+ PMePvSXaEibvEQUTjFLPRX3YU/+Czbw6UmGk6lJL/x+cenMJnxxTDEe78GG3W7fMBoxt5JmV1
+ Dg3xPL8FwN4Vm4SJUz7xzw1RNrHbojLaaU/iR40KywJ3fKZNwLEcZA04exVXwup9Ld3S1EczF
+ qaVdNpweezPoTfWEfD89R0vW/Rojr60hiX/BAqPiL0CaWB1q0WmVP/WsYDmnH3oU83la3i/ss
+ h1mLED9x+wsSwJQr0JccKP3ZF9p41+SJa1aNmsXNgspYvSUMsqBZG/8SOrS89edbHzzd5/OxZ
+ NEorrtGdKE9V12OktZTdC2+NTP+mh21mlO4G/Ahnm8HDc=
 
-The following commit has been merged into the locking/urgent branch of tip:
+=E2=80=A6
+> Check the return value of amd_smn_read() before saving a value.
+> This ensures invalid values aren't saved. =E2=80=A6
 
-Commit-ID:     fda570c8796f8fbb3285fb7ac007ace9aabbbb68
-Gitweb:        https://git.kernel.org/tip/fda570c8796f8fbb3285fb7ac007ace9aabbbb68
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Sat, 25 May 2024 13:18:17 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 25 May 2024 13:20:36 +02:00
+Does such information indicate a need for the tag =E2=80=9CFixes=E2=80=9D?
 
-cleanup: Standardize the header guard define's name
-
-At some point during early development, the <linux/cleanup.h> header
-must have been named <linux/guard.h>, as evidenced by the header
-guard name:
-
-  #ifndef __LINUX_GUARDS_H
-  #define __LINUX_GUARDS_H
-
-It ended up being <linux/cleanup.h>, but the old guard name for
-a file name that was never upstream never changed.
-
-Do that now - and while at it, also use the canonical _LINUX prefix,
-instead of the less common __LINUX prefix.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
----
- include/linux/cleanup.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index c2d09bc..cef68e8 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __LINUX_GUARDS_H
--#define __LINUX_GUARDS_H
-+#ifndef _LINUX_CLEANUP_H
-+#define _LINUX_CLEANUP_H
- 
- #include <linux/compiler.h>
- 
-@@ -247,4 +247,4 @@ __DEFINE_LOCK_GUARD_0(_name, _lock)
- 	{ return class_##_name##_lock_ptr(_T); }
- 
- 
--#endif /* __LINUX_GUARDS_H */
-+#endif /* _LINUX_CLEANUP_H */
+Regards,
+Markus
 
