@@ -1,214 +1,138 @@
-Return-Path: <linux-kernel+bounces-189620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F9A8CF2FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:18:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F25A8CF300
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5162B1F21A80
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D003B1C2116F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FEA8F55;
-	Sun, 26 May 2024 09:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B799476;
+	Sun, 26 May 2024 09:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtB4/Jh/"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rzKgZG1D"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48F8F40;
-	Sun, 26 May 2024 09:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF5A1A2C2B;
+	Sun, 26 May 2024 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716715077; cv=none; b=Yfpm/v8gjE0/n7c36e65KuWFcw6oFpelnAEBOWDKjYH/3pE27nIL/fLIIZFvvxWDQPia1qPToA4K2DCbsUVYeSP7gTdrvW5+X4b9UtzhTA9txmQVe83CfViuGtMmag6YnaKSFoX8UY4S6ffgQ2i8FmO6kflbsARlFJXloOYbdyE=
+	t=1716715237; cv=none; b=dWR7HDwXxKF3SWobNwikQTCYzSa7OQeXqsCYLAsravHo70i7DI4BCOJYG4W6z7iV/W/e4ROqIX4hseOnVOWu6xTCQhImFp/CVjBxoZno6fUPCRq+gpHgFRNEifqmNG5aH6/qYeoIeA6O6twlqlWShMrFhUWipx8ZnBaAr6/jb9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716715077; c=relaxed/simple;
-	bh=RQd7eI50+omXgehX6fPqPQWqKoV3t7pNAGyZICWOLas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pMRMlq0IzP+dAl1Rk9Ae+JbfqpQA784CvpZ4WYsbi6pg02bd4Fd9tqRlnPQybAEZFLz94EJvnq2L2e3exxiTtrfTkeSx2oPsWFZ+7xxsT/11rLC4ByfdrmUfTDLPv8GFZztR+pPJ5EZd0zqKZHTl3PZJdVLYMcQ7AO3cls0+Kic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtB4/Jh/; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-529682e013dso2284205e87.3;
-        Sun, 26 May 2024 02:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716715074; x=1717319874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=goyX40MpO9c6U+QncCsJjuNFHpMKeUPXDPypSlJzumE=;
-        b=WtB4/Jh/vk3pgZBElW5J+VutLxDBEEvEqH0IlXU6ZNaZsLwEXqtCl8jL+smb7mRqpo
-         qDHl8bjzvdl1i/1gRo+QMr7yzbS6tqA7qGk5cS+LR/9oQz66l4Y9rh1pB8RfUKNrxE0v
-         H1iWWeMzDyxM6F74s5l6jjIsm1i5yvgP5s468Oamlk8VEAt1uxZGq1KHWM+KsdTuY7uu
-         qc+Vb65DeQfdCHelK08rA9LSJUBpfU7yRb0P5ygeD2dG3xWmnHg3Oo4OagpAGFzFTG4h
-         Dlen687kX4pLp0SK3O55jK57Q8jsOX2pn7KO4ltR3mpEpZMVcYGvbaWJoqaqhK+wLnvL
-         nN2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716715074; x=1717319874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=goyX40MpO9c6U+QncCsJjuNFHpMKeUPXDPypSlJzumE=;
-        b=aVcfdkQqQRx4f25VFen1RnJpHGpELzHRil3eqZdSm9O5UyPdPQi0nFegdeVxjkvYAG
-         lIx5pTwcSmop+NFvXInlC5+bUL8JMZXme7usjHGUQVUOUOyrWjepOwzYoB/F3QiEU3HR
-         z2/QGVBSCD9PX0zIi7I45AjvmOR3doJEvzem4J9M7prID0KzVq8gU/RETJARRpmFb48W
-         NlSWm9ZVUKgkIdXEZNaaAw4Fx67Fh/D8ReA4kDbmjU9t3MkcmAyCPtBYpHU6ylRfgEJW
-         GOclvpsshMSP1KIUFAPHomkq5TyubKTUjtHM86OxGPzIqsuS/1gD2flAP6MNe4Yu8Ccy
-         glhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTornuiKLuYBgO080etPwbM+PHOeCcJ3cwmJK36tNGBkjdHAmlB0n1ffSNATgW0lg0CM75bmJc9OR6bZ1IaOiSBA2uorHfAwZpbx6APxtNR4QADrb6/xS0Bz7xYW1uzfRbe8DIQYIj
-X-Gm-Message-State: AOJu0YxObgqm1fhwEt9qpeY9D2PqIWarTDjpmNDlH4cIDmJBs3aa9Uxq
-	ItZ0+wjpJY3rVwEQ3ISA+61oxbziWPJlwDVUp2pT22GtTzPSBLl+QxWg1ZXBpvs22wytayr47iE
-	UPufSPD+5sLoQrXWkBK8oHkBGOww=
-X-Google-Smtp-Source: AGHT+IHP85Brq+zt9olJsBLOeg9dcYitYeyb2WMPISwr4bI9K1IleEX3PFCqN4Rigizc63Rp2MbOeUGgS4+9gFhaROk=
-X-Received: by 2002:ac2:43b7:0:b0:51f:b781:72a7 with SMTP id
- 2adb3069b0e04-52966ab5947mr4122035e87.60.1716715073409; Sun, 26 May 2024
- 02:17:53 -0700 (PDT)
+	s=arc-20240116; t=1716715237; c=relaxed/simple;
+	bh=eqdB+c9AHV8Vh8prMy2Bz/FOpvhm7Ix0hdzFjT/E4pA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxHaOQyKNabw/sXiN2Fz4fxrK9uDO6UY6XD6N5HTaalPNPRQUjDeFp0jom/adfiK3+s3eBFNl1WwmUUdPfwoV3BkoTsxo57V5Znme8+FqfEXDfL9DMyHubJ7DWDYiULcVBVM0Wi4KeXHEUKLDZCGoM6CLla0H9tKIjsJhDLbT5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rzKgZG1D; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716715224; x=1717320024; i=markus.elfring@web.de;
+	bh=eqdB+c9AHV8Vh8prMy2Bz/FOpvhm7Ix0hdzFjT/E4pA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rzKgZG1D0ChG4qMoe33SPqZyjz069OXTeVGhbE2MxCFW9Nk09GHMZPS5sVRCS8le
+	 Cf8ic6FX4P/8jxv0f837Z2MA8m+coZq7v6p6ZbYIZon6ytA8lvem2XA1+mcR7JhYq
+	 7iUkfgy6lyEFWa5WKgZ5mcE8CmPcpkAqsnVb3VYcGQAjd0buzv98GgCxU6o+ASSE4
+	 ihJWnhJ0VULjVVdIyHTihzeN00ExfN3YSN8BkWqu99Mz+cSgIvd343IhR/82NkkYT
+	 wt2NvNvVU/2LMrgAE9A8KyowAKRBa5ifNL4pKJ6buh0rAWo5Q134FzpFzAIDCQsxS
+	 1hHH7FjFC+u3+kopBg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MF2ke-1sHhUu1Ivg-00FaCL; Sun, 26
+ May 2024 11:20:24 +0200
+Message-ID: <ce266282-029f-4333-9ef8-6ddce64e661f@web.de>
+Date: Sun, 26 May 2024 11:20:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240318020916.1299190-1-haibo1.xu@intel.com> <7d69fac0-4cd1-4db6-b19f-fb5a418549ab@rivosinc.com>
- <CAJve8omCXANwhQuvFnhzw_=Fx0fh1pHq+7UYMWS507-2cHVx9A@mail.gmail.com>
-In-Reply-To: <CAJve8omCXANwhQuvFnhzw_=Fx0fh1pHq+7UYMWS507-2cHVx9A@mail.gmail.com>
-From: Haibo Xu <xiaobo55x@gmail.com>
-Date: Sun, 26 May 2024 17:17:40 +0800
-Message-ID: <CAJve8onakqwyXNcwtNOLTGah+=pbWzdNBwM64U0htyDJyY3nwQ@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: dmi: Add SMBIOS/DMI support
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Haibo Xu <haibo1.xu@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	ardb@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6] usb-storage: alauda: Check whether the media is initialized
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shichao Lai <shichaorai@gmail.com>, usb-storage@lists.one-eyed-alien.net,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+ Xingwei Lee <xrivendell7@gmail.com>, Yue Sun <samsun1006219@gmail.com>
+References: <20240526012745.2852061-1-shichaorai@gmail.com>
+ <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
+ <2024052647-battle-sacred-83b3@gregkh>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <2024052647-battle-sacred-83b3@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0ObuDBLfuLFa0QOeHXUf9Fax6lqFkPp/xqy7Q1g5mIFWgujlCWQ
+ 3W5fZGi+ueg86bIyQzYrFoASqXJ/+mGwpka1P+aLcyuKSbFuih6HM1qlG//JuwOa9HMBUQy
+ 7Na22fDWceunyjGf3NyqINM737mFZ3BR9BAwvOhxhedbDV3u3IwAEZumY1Khl1vS7SBjT0r
+ bZZoxNBoQIwKsSDz2DTqA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AyrklB7QiJI=;9L2S08+WTu0VCvDPknYXCxiKTnC
+ /0lWKYZHZ8v1g0HnqKmUHAGexYL2Q0dVu5cXP9cS7atmm68B1PzzKoQeMhHo1Fe4pjCoCv5Sx
+ osEJm23xY8bj6c5/TFqWd84v3pSTOtbEytopGu6LaNVtG4EANTrxsYt/+uov7S2Hk7WBifv/u
+ 8yJUotgU2dnUj04wtO4Ogai9yleDo0WrNvjTwIELRnFAzCI2AHtUdMK7V/j/Hv17rCNl+EsMd
+ GjJKpmdB14bpAAXuNBB1++JVnRtp4sxFxBZamHSWmh1t6uMNjtYOXUSVlYOalu/gd08zJGC3W
+ K6fuA0KjEj6ShJqlaRHsvg0p3omwGC6xuVnnpV9JnkoODAM0OhFakkc7pS0TYSalZkoFx11wV
+ i+snJxFj1lmHZJcW7z7GWboTKUZSPyxCZAAJ47Ngu2VpWHLW8hxmPQ5f2c8U/rBZHLejkJqm3
+ O0SiENecwD4iCrSF5ERB6NZi0Ahi7buI3m3H9gsRxLMBr0giPw3heKyFaghip2OKxpVi99JtA
+ B8OO8AAj5u5JfFVOu50shT5o5Cj+WF/ZIU/t6/2gVvKyGPxejBw2/8ibFHswvo/VpJMDll4ZV
+ DYksbIGGzE3SAPPMjOHGP1XBEdz5C1+O5lt3cuC+klEW5sNTIJfvPokyYKKE9lXnqAN793Pjz
+ E+I3waAlBwWSpFgnLeHytze00I9FK7gbN0SxVB0PnTKCY6K9aUI/yqa4PiYEzd2VbrQWNSMZ5
+ rYy0QOgP2ELLyE3sn6UakCtQhiq339kqZo55HvumHKFsbWyqPL4N7VsCIXvmUazL9xBv0cMq1
+ XI4vDttu91XWBYaLid19z5IDwqFFweoFuCQG553KpznIo=
 
-kindly ping!
+>> =E2=80=A6
+>>> Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
+>>
+>> How do you think about to omit the text =E2=80=9C[PATCH] =E2=80=9D from=
+ the tag summary?
+>
+> Then it would be incorrect.
 
-Any more comments on this patch?
+I find this view interesting.
 
-Thanks,
-Haibo
 
-On Mon, Apr 29, 2024 at 10:22=E2=80=AFPM Haibo Xu <xiaobo55x@gmail.com> wro=
-te:
->
-> Hi @Palmer,
->
-> Could you please let me know whether this patch was OK for the next RISC-=
-V PULL?
->
-> Thanks,
-> Haibo
->
-> On Wed, Mar 20, 2024 at 3:46=E2=80=AFAM Atish Patra <atishp@rivosinc.com>=
- wrote:
-> >
-> > On 3/17/24 19:09, Haibo Xu wrote:
-> > > Enable the dmi driver for riscv which would allow access the
-> > > SMBIOS info through some userspace file(/sys/firmware/dmi/*).
-> > >
-> > > The change was based on that of arm64 and has been verified
-> > > by dmidecode tool.
-> > >
-> > > Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> > > ---
-> > > Changes since v1
-> > >    - Change to use memremap/memunmap for dmi_(early)_remap/unmap
-> > >      definition(suggested by Ard)
-> > >    - Minor clean up for comments (Ard)
-> > > ---
-> > >   arch/riscv/Kconfig                   | 11 +++++++++++
-> > >   arch/riscv/include/asm/dmi.h         | 24 ++++++++++++++++++++++++
-> > >   drivers/firmware/efi/riscv-runtime.c | 13 +++++++++++++
-> > >   3 files changed, 48 insertions(+)
-> > >   create mode 100644 arch/riscv/include/asm/dmi.h
-> > >
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index 8ebafe337eac..3639151cb4ef 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -952,6 +952,17 @@ config EFI
-> > >         allow the kernel to be booted as an EFI application. This
-> > >         is only useful on systems that have UEFI firmware.
-> > >
-> > > +config DMI
-> > > +     bool "Enable support for SMBIOS (DMI) tables"
-> > > +     depends on EFI
-> > > +     default y
-> > > +     help
-> > > +       This enables SMBIOS/DMI feature for systems.
-> > > +
-> > > +       This option is only useful on systems that have UEFI firmware=
-.
-> > > +       However, even with this option, the resultant kernel should
-> > > +       continue to boot on existing non-UEFI platforms.
-> > > +
-> > >   config CC_HAVE_STACKPROTECTOR_TLS
-> > >       def_bool $(cc-option,-mstack-protector-guard=3Dtls -mstack-prot=
-ector-guard-reg=3Dtp -mstack-protector-guard-offset=3D0)
-> > >
-> > > diff --git a/arch/riscv/include/asm/dmi.h b/arch/riscv/include/asm/dm=
-i.h
-> > > new file mode 100644
-> > > index 000000000000..ca7cce557ef7
-> > > --- /dev/null
-> > > +++ b/arch/riscv/include/asm/dmi.h
-> > > @@ -0,0 +1,24 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/*
-> > > + * Copyright (C) 2024 Intel Corporation
-> > > + *
-> > > + * based on arch/arm64/include/asm/dmi.h
-> > > + *
-> > > + * This file is subject to the terms and conditions of the GNU Gener=
-al Public
-> > > + * License.  See the file "COPYING" in the main directory of this ar=
-chive
-> > > + * for more details.
-> > > + */
-> > > +
-> > > +#ifndef __ASM_DMI_H
-> > > +#define __ASM_DMI_H
-> > > +
-> > > +#include <linux/io.h>
-> > > +#include <linux/slab.h>
-> > > +
-> > > +#define dmi_early_remap(x, l)                memremap(x, l, MEMREMAP=
-_WB)
-> > > +#define dmi_early_unmap(x, l)                memunmap(x)
-> > > +#define dmi_remap(x, l)                      memremap(x, l, MEMREMAP=
-_WB)
-> > > +#define dmi_unmap(x)                 memunmap(x)
-> > > +#define dmi_alloc(l)                 kzalloc(l, GFP_KERNEL)
-> > > +
-> > > +#endif
-> > > diff --git a/drivers/firmware/efi/riscv-runtime.c b/drivers/firmware/=
-efi/riscv-runtime.c
-> > > index 09525fb5c240..c3bfb9e77e02 100644
-> > > --- a/drivers/firmware/efi/riscv-runtime.c
-> > > +++ b/drivers/firmware/efi/riscv-runtime.c
-> > > @@ -152,3 +152,16 @@ void arch_efi_call_virt_teardown(void)
-> > >   {
-> > >       efi_virtmap_unload();
-> > >   }
-> > > +
-> > > +static int __init riscv_dmi_init(void)
-> > > +{
-> > > +     /*
-> > > +      * On riscv, DMI depends on UEFI, and dmi_setup() needs to
-> > > +      * be called early because dmi_id_init(), which is an arch_init=
-call
-> > > +      * itself, depends on dmi_scan_machine() having been called alr=
-eady.
-> > > +      */
-> > > +     dmi_setup();
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +core_initcall(riscv_dmi_init);
-> >
-> > Reviewed-by: Atish Patra <atishp@rivosinc.com>
+> Again, Markus, please STOP sending review comments that are obviously wr=
+ong.
+
+The mentioned tag needs an =E2=80=9Cone line summary=E2=80=9D.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n145
+
+Do you find it required to repeat a questionable commit subject completely=
+?
+
+
+> New developers do not know who to ignore and you are telling
+> them things that are wrong and not helpful at all.
+
+Additional development views can occasionally become helpful.
+
+
+> Please stop reviewing patches,
+
+Patch review is one of the usual software development activities.
+
+
+> this is not ok
+
+I suggest to reconsider such a view once more.
+
+
+> is actually harmful to our community.
+
+Possible improvements are varying between affected software components.
+
+Regards,
+Markus
 
