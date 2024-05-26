@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-189789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF2B8CF4F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:00:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6628CF4F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8E71C2093F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E36B20BC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D72200D2;
-	Sun, 26 May 2024 17:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E121B94D;
+	Sun, 26 May 2024 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjwBKDNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IO955frt"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E8AD524;
-	Sun, 26 May 2024 17:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5E5200BA
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 17:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716742806; cv=none; b=ULfvBCcko17vjNxTAmMI5VwMRjk4J0ze4pFfeKZ3AigDsc4OztXFwdNO2n2wXAETxhoycASlR8b1i+hbUM83cz/fxdch0D6vxMq64TsIO0e6SN+yH/q7IV8zYXO+qfhG5EgXAjZrq6iMpZgQOMS88AXxKqkwXTBEwPQnf3nCc2Q=
+	t=1716742993; cv=none; b=UqtCrwQNBNxiHQGaZnmT4Red/z5QCOKbMEaF8qeDYwWnSltJrNUFxZkcgTygqtru/3o8D7DDopOa5CXldsaX4qDt4T6qAx4yjSVq3p3pyAk3RPpC0VejY7Ly5zMk/ANBsXv8Wec6rPOwrVyW2ruFO2Ezci/0U3zypDeU1NcwH6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716742806; c=relaxed/simple;
-	bh=RxevVCz/VKL7gWOtSnkCv/6LrpxrIuubSx4lvATAUME=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pKwldihY47W1lI+DipMPzXaIVLyFiFFItCeZ0zG8Q5CGRo2u7nvE/2+i88jK/fqUANkyBZKXx4CiRCwAiecB+YXknaU68gjN6nNFK+XJbX95bGw3DX/ovOZ/B5rpVVLTP0Z+/+9Y5YA2NYkMmOy8litftUQfbh+QevpywbkpHx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjwBKDNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E2476C2BD10;
-	Sun, 26 May 2024 17:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716742806;
-	bh=RxevVCz/VKL7gWOtSnkCv/6LrpxrIuubSx4lvATAUME=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZjwBKDNvQRnEyvqUdeEKssJDTAKJgfS+CzcMouUYpxD9N20zd4WrPuzsnO/yZpGCO
-	 ZCTI4Y3bHCbq64mDRCZxw/eIQOxR7aix/hznE0B9ocWX12rQ/zEuKORdqMHkInFEyl
-	 k+oJQuPdHPKqJLh11qAHAp/OlmM2K7CcoZd44IOqfxfpOpU4jPDeT5xV1Uigm/EET2
-	 M4S6oi/YiKIcrWvUGTBsnJhj9/FZiT4C2ksugoCmfqB9VHrBg9k9WzuhgbOL3eou5z
-	 /FGTA9sYksYv9HU7fbJNmtcD4o3CuxliqTPY5jk0WcYwh0hVz2xzKYq75sIXJT9rdl
-	 o8Kd47RpKB1qg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C64B6D6033C;
-	Sun, 26 May 2024 17:00:05 +0000 (UTC)
-Subject: Re: [GIT PULL] perf tools fix for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240526115834.4080389-1-acme@kernel.org>
-References: <20240526115834.4080389-1-acme@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240526115834.4080389-1-acme@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.10-1-2024-05-26
-X-PR-Tracked-Commit-Id: 4f1b067359ac8364cdb7f9fda41085fa85789d0f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6fbf71854e2ddea7c99397772fbbb3783bfe15b5
-Message-Id: <171674280579.20245.12855170738646474612.pr-tracker-bot@kernel.org>
-Date: Sun, 26 May 2024 17:00:05 +0000
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, Yang Jihong <yangjihong@bytedance.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+	s=arc-20240116; t=1716742993; c=relaxed/simple;
+	bh=tFZFEGMvVkVlCK6u9Aig/nw745nXbWR9VtGHw6z5Lxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B+cr+qWp4ICx18QinZSYrHqLjA36v5j6VLgwL3NrhZpO5WAg+tXAWbhTxz9TkWmFqRswKEfYdwuYYenPxVmGnfi3cV5FVHoOwjwzVhlF1wz+/difwAWpfbg27UNSVFOh/kilwogVe23FS0+AcaRX46dvc3StWtuKp5pQ1PSepKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IO955frt; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: torvalds@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716742987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=dqhH+uw34lp5DiUdfeUhU1eSbI3jUtWHnBiE4Qio80k=;
+	b=IO955frt/4ILeL2bKyUsTxPRDAO9GmBXegsXpXZGXCzCLQHBBAIUOhw7Tcw4xalJH+ZnlJ
+	YIFBz5E0yJmVF28wKzt1IeCJxznVg0hzzcW1VKdJLu4dNx7gO0nnEXpachl+pg5aQCxsce
+	POGqfdfaNuc6/iYNhEOm46hVAZjN8SI=
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: surenb@google.com
+Date: Sun, 26 May 2024 13:03:03 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>
+Subject: [GIT PULL] header fix for riscv build failure
+Message-ID: <h23suk5s4hhkf7prhkzxp6a4kmhpgqxyl6ioski5cg7ciihxmj@j4zif6l6dqxc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Sun, 26 May 2024 08:58:34 -0300:
+Hi Linus, this fixes a riscv randconfig build failure from memory
+allocation profiling...
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.10-1-2024-05-26
+Did some more local randconfig build testing for this one, as well as
+had 0day test it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6fbf71854e2ddea7c99397772fbbb3783bfe15b5
+The following changes since commit d960f67701b21b945a3fb5b6555aa4a97062fcd0:
 
-Thank you!
+  Merge tag 'nfs-for-6.10-1' of git://git.linux-nfs.org/projects/trondmy/linux-nfs (2024-05-24 11:42:03 -0400)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+are available in the Git repository at:
+
+  https://evilpiepirate.org/git/bcachefs.git fix_missing_include
+
+for you to fetch changes up to acb7ffcaeaa6793fecf71decbe41ed2ff4422ad1:
+
+  bcachefs: Include smp.h in alloc_tag.h (2024-05-24 11:42:09 -0400)
+
+----------------------------------------------------------------
+Kent Overstreet (1):
+      bcachefs: Include smp.h in alloc_tag.h
+
+ include/linux/alloc_tag.h | 1 +
+ 1 file changed, 1 insertion(+)
 
