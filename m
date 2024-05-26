@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-189876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8DB8CF619
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9BE8CF61C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE49281862
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:23:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4006B21217
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA16139D01;
-	Sun, 26 May 2024 21:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D67613A249;
+	Sun, 26 May 2024 21:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="XmjO/I9h"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4ZgPEhj"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD8A55C1A
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4EB12F5A6
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716758621; cv=none; b=CG8/h4MMcrmzIN7/SJqhq93rT/oWRCx6I0/Jo/WHXQezfsxcBw6tGNd9kXyxZwIQBzCT8kKjtGjOD07X+hXFec2G3Lp9j2e93Z385xsjGfv/V8XmsGdAI7IXLd4w57TXHYjqGwcnZTlae1P4u0ALVXeDiAPHz2Z04A9f4eHodao=
+	t=1716758688; cv=none; b=r0UCC/Qo9lgB+/o0GWZ1BGAxCgRATlE+EIXREFQUY+wAE+KZWXsFAoaikIeAglbQRFay3tZlzv55RqOBd+3cvsABOUPPXfjXLp4YZdtx82Y+HEYhKnVLi3w3TcsvAnfMUA9RV+4g6wxVm6GwJaFZvyWU2DrbjG2IymSljyr5eO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716758621; c=relaxed/simple;
-	bh=4br1+bsqarhpsUSUDMHnPY9ItAu5sQzF64WsQKB/4Bg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VAkMWAoYnt6ZqBFWb7eU7kEP4J1JXbZLCzkBdidGqYafAiFelhckk3t2ZFCVtX08UiwbrzPTjBmxoAq6JDC71QAJXyeZIIa+KoHHZwZfRG8WycO6YwgbmRzX7vo6VolcflEx2bqsqafsIWyGERBls5w7GPLzb4dd0z1nYyfek1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=XmjO/I9h; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-354e22bc14bso3972009f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:23:39 -0700 (PDT)
+	s=arc-20240116; t=1716758688; c=relaxed/simple;
+	bh=Fc+Yxlu/eOYcBEZ15ctTkP/Gy0RI2ZGUfJkYqXamuco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Av7ffxZ9Vyh+ELXC/0KzwWc49Jm07YXlRdaqARNeDjB3Hkv3PP0jFOrKn6Omi38T8yr78vmRO4CBNrA7OiaPGncK7ezP9EK4bOmJNI232tyE6x6GUzNvzMRkGHGvOj4kcDfEWVLnLn0CEmxMyvlL/WmS4AFoMLVi5Sfi4Tks8uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B4ZgPEhj; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e9684e0288so19108551fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716758618; x=1717363418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qbk0UNvpsQrSUqN6RzC4hENS9R3C9NfeLNOx5djjey0=;
-        b=XmjO/I9haUhiyklbPuZ9WpTglsUZdxk9OmWkuSxY6sNAUOyzp/IR/oUhSthm6XcE3L
-         wJmuerQQprftAOKfkl9baTQLYH6T36DkBMkmyNLzzcVNizzheJu/zoe/hqGeLvGM4xFJ
-         +cFcNtMMWq1Kj2gQpoXAFFWhodzuiJHLp4gFEOJ35YagajD7/2Ky23oABy5shch5Hkm9
-         RxcXrW93bZepY62gWQnbwK4z89bXIhXdoRgtHoM8OICVbw4qnEX+D06h9U6TwFC+OLbD
-         fxE7V63w6kBqOWvtS1En49gwNijuIOJEWyzOK8Jbn4eDETFSKXIwNYRkjgPlpgSrCJNd
-         ff7w==
+        d=google.com; s=20230601; t=1716758685; x=1717363485; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTI9+Tooj7QXANR7xYSYhH9MioraP53ANnHXVs8kx10=;
+        b=B4ZgPEhjhnjGfNDvPgf3YR3S/X0SeWg40atYpzu9KzCbAEMR+5FncL0BuTVj6Ka8KG
+         Bfya9fp4OhlpO9QabpgO9JY0R8xXr+rnNVd4l/NUa2n71eMxHjGWgf3u9rKFQ34OCO77
+         b9vV2I/du6thnuQu8wNd0jG0k8iZvVnOY9kqKxiYvhEhzDvVyFBpRYdFZrFnjk/5KT1o
+         nZaCdsXKgrRWE+6pHc04r0OT9pBcDbS5XvtjERN5iy6IrxaT88HgzONhSno21ENi7ET+
+         +keQqF9zEg5CwpaWxrEG+wSUk9W6v+4yT/RitWyIJJQ+iwSNDP6du8LG8n4bLpK4E48u
+         KsMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716758618; x=1717363418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qbk0UNvpsQrSUqN6RzC4hENS9R3C9NfeLNOx5djjey0=;
-        b=hnjfJBdarmYltGjj5YlfH88hlrJvA5/E9VpF/++NEtHjwVQOvfQaEp18bquMGILfXi
-         pUakJpydjs5pwJfFTEzZ1A8vmUsk9u1QDy5yuMVK5no6WjkmMWWaNa7ZsXEVuZPqOq70
-         gwqho6UHV8upF6ikIN8vGnRXZ+wPAJqNC2Ym79qNv4QSactS6voElLaHaC7qBuXsCpky
-         Aw/J4FYnP/SSIQkZzd3Yo0CEKx/Yuu01Z6b8w7VZYKeTByFqTzyksSHq4XSRycwVd7VW
-         CJxC25dHGu2EoPxW8+KGgBttVgA8vkvd3mTJvClqb3TYtyfLz9OYkwKZB7LFD4hP6rJC
-         NffA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzI95qUvkwtzo6v/+75KWOU/FU77nv08pD49hPPochK6lub5eYna2oi4f6lSaakcasBV/PVnlO34Rl01pF6wM+LdB9MxWEaqNsVlLi
-X-Gm-Message-State: AOJu0YwOIYUgbEJAp+o2Uy0eMC6WEB60dvDpOW85hu7myiCvUwPfT2Oe
-	1tYN/LEYYzQdCboQkFZTc93GpM1YTTloK/jKsx5Da+VKKanQOTjmN+X2BhHacUc=
-X-Google-Smtp-Source: AGHT+IFy5L/fF6HnmYmy15FzQ2I5Aj94AJhD6S8HOgJeCGnH2efGYlzLjxrfvdfR5wJ4GRUcUbR/8g==
-X-Received: by 2002:a5d:4e01:0:b0:354:f1de:33eb with SMTP id ffacd0b85a97d-3552f4fd249mr5166115f8f.26.1716758618179;
-        Sun, 26 May 2024 14:23:38 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7de1bsm7224197f8f.13.2024.05.26.14.23.37
+        d=1e100.net; s=20230601; t=1716758685; x=1717363485;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tTI9+Tooj7QXANR7xYSYhH9MioraP53ANnHXVs8kx10=;
+        b=cTDjHpQ/KycuCMZd4J21DPf4BtpQHtk+4WPZRcYav5FKO7Z4pyzVuGvBPkBS20QUtu
+         jFTDuB1IXtSUMlWlibvfx59/+alDowpjua6y8yUndp8sputRolo0bd1RvMN1R0GvfWd7
+         381br1NoNm1PTxKzpagsoi62DxYvcHL9LPbWYneI/K2t05Hw0eLkKsYwH5njVyWMe9+H
+         3j6YhDi+jw/ddYMVwoF23FHMNRKgnhMYLOPdUHjWz4QL7RtKTGYxUBBBSIH7iwdsxYaN
+         SWU6gjGwlvtXHmub4kRDmUrtLd433Mb5X1UNJR/NPuy5GVR/FULCypBUheMCJxIsy0+7
+         z8Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5PBcJp0rMsPKh5SH8FQdYf8naDmn+jwgND6iKMtVtG8kG7SfFt9RC/H4a24o2YH81LMnpPz9UCL7UyxF7JCHtgHLrwIi/51OzPKSS
+X-Gm-Message-State: AOJu0Yz4/mRSfmlNWwr04EIrqdkKu/2jdjBL1ccwgCkZ3FLOVViWC9UE
+	M1AI5beLbxrvG3Cr+heRSOcenjbi9YFQMULJmQFa7fnMe8nYyZy1dM0BC8/apQ==
+X-Google-Smtp-Source: AGHT+IGvmNaT28lfbXf8UTbZhn9cKaGxzBV4CQTw2CnqFzcDb0bv69PhDXXaD+BhFCx/DST9bxwpcw==
+X-Received: by 2002:a2e:2c19:0:b0:2e9:564a:db29 with SMTP id 38308e7fff4ca-2e95b0c4da4mr66780081fa.29.1716758684437;
+        Sun, 26 May 2024 14:24:44 -0700 (PDT)
+Received: from google.com ([2a00:79e0:18:10:9da6:3a1c:cab8:1718])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc48d3sm15888561fa.5.2024.05.26.14.24.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 14:23:37 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: bhe@redhat.com
-Cc: amir73il@gmail.com,
-	clm@fb.com,
-	dhowells@redhat.com,
-	dsterba@suse.com,
-	dyoung@redhat.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	kexec@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu,
-	netfs@lists.linux.dev,
-	thorsten.blum@toblux.com,
-	vgoyal@redhat.com
-Subject: [RESEND PATCH 4/4] crash: Remove duplicate included header
-Date: Sun, 26 May 2024 23:23:10 +0200
-Message-ID: <20240526212309.1586-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
-References: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
+        Sun, 26 May 2024 14:24:43 -0700 (PDT)
+Date: Sun, 26 May 2024 23:24:40 +0200
+From: "Steinar H. Gunderson" <sesse@google.com>
+To: acme@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	irogers@google.com
+Subject: Re: [PATCH v7 4/4] perf report: LLVM-based symbol listing
+Message-ID: <ZlOomG5NacWlV_RY@google.com>
+References: <20240526182212.544525-1-sesse@google.com>
+ <20240526182212.544525-4-sesse@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240526182212.544525-4-sesse@google.com>
 
-Remove duplicate included header file linux/kexec.h
+On Sun, May 26, 2024 at 08:22:12PM +0200, Steinar H. Gunderson wrote:
+> +
+> +	symbols__fixup_end(dso__symbols(dso), false);
+> +	symbols__fixup_duplicate(dso__symbols(dso));
+> +	dso__set_adjust_symbols(dso, true);
+> +	ret = 0;
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Acked-by: Baoquan He <bhe@redhat.com>
----
- kernel/crash_reserve.c | 1 -
- 1 file changed, 1 deletion(-)
+Urgh, evidently I forgot to copy over dso->text_offset and dso->text_end
+here, which I guess needs to happen.
 
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5b2722a93a48..d3b4cd12bdd1 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -13,7 +13,6 @@
- #include <linux/memory.h>
- #include <linux/cpuhotplug.h>
- #include <linux/memblock.h>
--#include <linux/kexec.h>
- #include <linux/kmemleak.h>
- 
- #include <asm/page.h>
--- 
-2.45.1
+Even after doing that, I still cannot annotate Windows symbols, though;
+I get
 
+  Couldn't annotate RtlLeaveCriticalSection:
+  Internal error: Invalid -1 error code
+
+This is true even with libbfd in a non-distro build (without any of my
+LLVM patches), so there must be something else at play here.
+
+I _can_ run a Windows binary in WINE and get the right symbols out with
+perf report, though. So this leaves only demangling as the final piece
+of the puzzle to make distro builds essentially equal to nondistro builds.
+
+/* Steinar */
 
