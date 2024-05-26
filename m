@@ -1,156 +1,158 @@
-Return-Path: <linux-kernel+bounces-189744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824618CF46D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF328CF46F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D5A228109A
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:49:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 992ABB20B7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D80710971;
-	Sun, 26 May 2024 13:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917041095C;
+	Sun, 26 May 2024 13:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AdkeXcWb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cxKGFPgG"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4508F55;
-	Sun, 26 May 2024 13:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6B101CF
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 13:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716731346; cv=none; b=g2lNeyf37OZFy3I35gJxFdRRGToat73qB6NYzS9jY4lEovxsMjmTLR0QmXHw6xhjXUynoDkVw0HPitQgyjyUAzmlryURUAqPSKsrDH9O7GF3uRL4dIJ5A2bk+3f+i1ZA8gHP7Otdsj9KZtseW/rA4NgbEFMTOxrA0dScA+IFR0Y=
+	t=1716731615; cv=none; b=EW2W/x1iYeeAHH9V25Fk7FglxVEBAlTCHsX8Qx4vimSrCnIQI8UNUG5WL5XYDKU/VfUP/Kw2ummrr/x8m0u3f35xLSF8uhp/jJP3jnPKEfdTg2wN/083hQ4xror0wwp1ES7AuXxsaY6hfW0f7cQ3fhgB/n88q4n04KiLKTDCzf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716731346; c=relaxed/simple;
-	bh=Fvd2yMfinY76Ir6MHTON59Mb9cqtnlP19SKf1KtXrYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pd4JNOhzDWOu6GZ0wdU4GBA6eTYLo2ukFlWjVaVnQgDxAfXJv9VxIH83b4r7srlpop7a7DoWphGp4nRiLWNiG58NrUhExCgI0YWuq1u5jG1k9OPz9qF8/SxZTceM+5Lf0xQwkrf2WG3StT85ygh5I2mdnz9B9d6FDZdHIxPTiws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AdkeXcWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58E6C2BD10;
-	Sun, 26 May 2024 13:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716731346;
-	bh=Fvd2yMfinY76Ir6MHTON59Mb9cqtnlP19SKf1KtXrYE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AdkeXcWbj4BASWi1RboTFZxjneV9YZ7iD+i0qZXEJ/XKBGDVuWZU6D0z9bMK8xjtd
-	 56Zdjbtj54wEyiFsRtMMSXyPiSCLv0tQdMyxMouPtW21NGQJh76YyLv4+Vod0id1Ba
-	 jPwbTR5PP1BDJ67vgu3RUK7oye27YS5aNeWQbWRH4Xx/t64qc8jCIFazET3xz/1z9s
-	 y4nfOcFu2fOrmEfzeHBDJ8YfdL9N/QQX03Z4xuvE4/OOnD92NJcFk27a8PJDBXisLR
-	 7bBbEkU+v7wCFkAl/k/4h22utLuO5weEJnMYNyr3MriayQTxbngoGmVWJcpBmbTEGz
-	 xAqWvJAR7ZwGg==
-Date: Sun, 26 May 2024 14:48:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
- Roeck <linux@roeck-us.net>, Antoniu Miclaus <antoniu.miclaus@analog.com>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] hwmon: (ltc2992) Use
- fwnode_for_each_available_child_node_scoped()
-Message-ID: <20240526144851.493dd3f2@jic23-huawei>
-In-Reply-To: <20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
-References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
-	<20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716731615; c=relaxed/simple;
+	bh=4DUJdEjkxUJgbaVeUQ4R/vAmvDf9VaruCLYklc7L/oY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dBuFOdzqAqluH4U/mk/IZe/EgEjyGWMn933LFzUbCPuu4Orp1pUJcT34roWmpqLSM8+K5kD4V1R+XX28Ma+aXVJfulHQwXlq0zazknOGOGlzSI1id+jbFNEAtuffyzS6y/B8YgVu6/eceTxBlCkypxP5sUI+Cu6jJk+TXdg35CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cxKGFPgG; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e3efa18e6aso43968531fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 06:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716731611; x=1717336411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JQ+eNpUujXQv/I2aShP9JWthU8Vec/B5xvxOzvo8tV4=;
+        b=cxKGFPgGZ68mZSWsYvec53i7XZroE2awZLgXNTFhBzx1hDU6epJ1DWpwRGkvXGpJLh
+         Bp4XLvAD4dT3VM7ewDJbaF8Pu6u3hqNZWKHCdJf0xVUa91WFcXpc8lVuJoHtize50iAG
+         TMdOMgnQiJKyI0VDnqIN70/E33H4uUn7fMCwhu7pyBu/G0rho8lSTM6Wi8prGQK1Wk4X
+         eaCcKA2sKMuqtZ44tlifKj5coSOzR9+xpnXunH2+1tYHE+PAgj8kINSqHf8L4U/OwaxW
+         k6rYEJJ8IMx6xyQjkwbff9VOQ860L8R3yoD5w1yrW6NPWXLvboNfi1ZYNASEEqRZNV13
+         ++Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716731611; x=1717336411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JQ+eNpUujXQv/I2aShP9JWthU8Vec/B5xvxOzvo8tV4=;
+        b=C1hP7JYNCWXB7SpidoCujJkKML/KpLBemIXI2QDrffUbFRnWmzKCg13wpv0Ygd7jl1
+         EPHl7r49rf7oij0hz9CPGQGUwWJZCDH2URvBQZLekY/+n3oDr7WWd0mfOdprLvJDU97H
+         qGdcxvJO1XnoeYQWPsJFWcUaWQuyc9SWT/k4qhU9QVOmcF2xy4eASgTMT9T60Q/0sFV+
+         8IBnn/U2yk8YcL5GYIB1uscsQcd9OF6n2qxPM9C9QRvVtvoG8cuDXmLKynKR+8H1KsNk
+         Aso6JT8NIPR9enDuX0HICWgLfKmrXKKHoIvLWKJA9MLvMDw+x68RMkx2sSmKGjSCsdHh
+         0P4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUeWY/92M++pcgmi8DpTw74KCmIdRPu9B0XfV4HalZkQ5M6k/VUiRx2BfwocmI4GDgbxl3bDNrupJJoO2g/0xEPN9UOnYVKzxZdnD9R
+X-Gm-Message-State: AOJu0YzqS0krIe8bNy/AHuQyh+Xw4va4PrkNVhYs7Tu7gfsXRs0EYcpQ
+	pk7E16Ksljj2xfCvba2rmAgpczfT0Qsyp9gB6TZHCQ0feXNEuIu9AtqSrPxN9jfCO8topUw9ryY
+	944gKxmV1Ylb1wEiAu0yudltLRLBXqvGIQNOCiWm21h01odCO9cg=
+X-Google-Smtp-Source: AGHT+IF+3IQbVc77xxtstsfMGHkyaHT/cjv5L3bC7b2v9W3j5znvEb5jOZ19F7ugtzBYR5T7s4xn9B427/FHrhZj/nc=
+X-Received: by 2002:a05:651c:383:b0:2e4:dd5c:933b with SMTP id
+ 38308e7fff4ca-2e95a095ef4mr21960481fa.2.1716731610673; Sun, 26 May 2024
+ 06:53:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+ <20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
+ <20240519201241.7c60abac@jic23-huawei> <ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+ <20240520171205.000035b0@Huawei.com> <5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
+ <20240525171408.36bda583@jic23-huawei> <003d0998-dd25-45ab-9bb1-feda2d0f91a3@baylibre.com>
+ <20240526131018.40c772d6@jic23-huawei>
+In-Reply-To: <20240526131018.40c772d6@jic23-huawei>
+From: David Lechner <dlechner@baylibre.com>
+Date: Sun, 26 May 2024 08:53:19 -0500
+Message-ID: <CAMknhBGhk5VNG+L-HyT3=b2h38k0-dGwTfoWzxLTZfsKuidvtQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per channel
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Julien Stephan <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 May 2024 17:47:16 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+On Sun, May 26, 2024 at 7:11=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Sat, 25 May 2024 12:04:46 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>
+> > On 5/25/24 11:14 AM, Jonathan Cameron wrote:
+> > > On Fri, 24 May 2024 10:56:55 -0500
+> > > David Lechner <dlechner@baylibre.com> wrote:
+> > >
+> > >> On 5/20/24 11:12 AM, Jonathan Cameron wrote:
+> > >>> On Mon, 20 May 2024 08:51:52 -0500
+> > >>> David Lechner <dlechner@baylibre.com> wrote:
+> > >>>
+> > >>>> On 5/19/24 2:12 PM, Jonathan Cameron wrote:
+> > >>>>> On Tue,  7 May 2024 14:02:07 -0500
+> > >>>>> David Lechner <dlechner@baylibre.com> wrote:
+> > >>>>>
 
-> The scoped version of the fwnode_for_each_available_child_node() macro
-> automates object recfount decrement, avoiding possible memory leaks
-> in new error paths inside the loop like it happened when
-> commit '10b029020487 ("hwmon: (ltc2992) Avoid division by zero")'
-> was added.
-> 
-> The new macro removes the need to manually call fwnode_handle_put() in
-> the existing error paths and in any future addition. It also removes the
-> need for the current child node declaration as well, as it is internally
-> declared.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+..
 
-This looks like another instances of the lack of clarify about 
-what device_for_each_child_node[_scoped]() guarantees about node availability.
-On DT it guarantees the node is available as ultimately calls
-of_get_next_available_child()
+> >
+> > Maybe we are talking about two different things but calling them the sa=
+me thing?
+>
+> I'm not sure.  Sounds like we both think our point is entirely obvious an=
+d clearly
+> it isn't :(
+>
+> > > Key is the complete lack of
+> > > association between what is returned by the get_current_scan_type() c=
+allback
+> > > and this ext_scan_type array.
+> >
+> > Why would the caller of get_current_scan_type() need to know that the
+> > returned value is associated with ext_scan_type?
+>
+> Because you are validating ext_scan_type, not the return of get_current_s=
+can_type().
+> They may or may not include the same data - to make this a good interface=
+, that isn't
+> error prone, get_current_scan_type() must return one that has been valida=
+ted - i.e.
+> is in the ext_scan_type array.
+>
+> I've looked several times and maybe I'm just failing to spot what ensures=
+ the validation
+> is sufficient.
+>
 
-On ACPI it doesn't (I think).
-For swnode, there isn't an obvious concept of available.
+Ah, I finally get it now. I was having tunnel vision and it didn't
+even occur to me that someone might be tempted to return anything that
+wasn't a pointer to the ext_scan types array.
 
-It would be much better if we reached some agreement on this and
-hence could avoid using the fwnode variants just to get the _available_ form
-as done here.  Or just add the device_for_each_available_child_node[_scoped]()
-and call that in almost all cases.
+> >
+> > >
+> > > So either:
+> > > 1) Make it do so - easiest being to return an index into the array ra=
+ther than
+> > >    a possibly unrelated scan_type -
+> >
 
-In generic code, do we ever want to walk unavailable child nodes?
+This option 1) makes sense to me now.
 
-Jonathan
-
-
-
-
-
-> ---
->  drivers/hwmon/ltc2992.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/hwmon/ltc2992.c b/drivers/hwmon/ltc2992.c
-> index d4a93223cd3b..3feee400ecf8 100644
-> --- a/drivers/hwmon/ltc2992.c
-> +++ b/drivers/hwmon/ltc2992.c
-> @@ -855,32 +855,25 @@ static const struct regmap_config ltc2992_regmap_config = {
->  static int ltc2992_parse_dt(struct ltc2992_state *st)
->  {
->  	struct fwnode_handle *fwnode;
-> -	struct fwnode_handle *child;
->  	u32 addr;
->  	u32 val;
->  	int ret;
->  
->  	fwnode = dev_fwnode(&st->client->dev);
->  
-> -	fwnode_for_each_available_child_node(fwnode, child) {
-> +	fwnode_for_each_available_child_node_scoped(fwnode, child) {
->  		ret = fwnode_property_read_u32(child, "reg", &addr);
-> -		if (ret < 0) {
-> -			fwnode_handle_put(child);
-> +		if (ret < 0)
->  			return ret;
-> -		}
->  
-> -		if (addr > 1) {
-> -			fwnode_handle_put(child);
-> +		if (addr > 1)
->  			return -EINVAL;
-> -		}
->  
->  		ret = fwnode_property_read_u32(child, "shunt-resistor-micro-ohms", &val);
->  		if (!ret) {
-> -			if (!val) {
-> -				fwnode_handle_put(child);
-> +			if (!val)
->  				return dev_err_probe(&st->client->dev, -EINVAL,
->  						     "shunt resistor value cannot be zero\n");
-> -			}
->  			st->r_sense_uohm[addr] = val;
->  		}
->  	}
-> 
-
+Do we also need to validate that the index returned is <
+num_ext_scan_types in iio_get_current_scan_type()?
 
