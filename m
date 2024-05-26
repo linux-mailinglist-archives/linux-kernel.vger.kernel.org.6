@@ -1,117 +1,128 @@
-Return-Path: <linux-kernel+bounces-189873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFC58CF60E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 22:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81978CF613
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A611C20B39
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162FB1F21083
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D930E13A25D;
-	Sun, 26 May 2024 20:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD6139D00;
+	Sun, 26 May 2024 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dyb3hzOe"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7jt2jSa"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F075139D12;
-	Sun, 26 May 2024 20:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91D2F46
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716757178; cv=none; b=WbkSu79AjjN8Xl4EYUICfI60VGxvyLnIyCNC+z0aAxr0zdi0BHJaQ3K1IY5VFJnUBCo0tJL6agkl6yGi8FEv3bTbePJ2pezyxN7cBOluusgNhyy6WxDbrgQMSqAr6EhpwDteoDuUoYr5OXL7iUH/hXc3L0Q1r/UUhg7dJq5Zpbk=
+	t=1716758351; cv=none; b=e8E3vF90fAC4EKnHZeh0yy/n3za8Lg2W6wAnGSL9aymT8XOHa41Gq+iQkRDmwcCVlfamW7+ZpuXIdHYsQqWYltLlRF59aKAeerMpddqofqBATVKv+j27cNySAjyzBvE+tijS21tZHu2oRdTwhMBWNcMjocqq2iXfHd6h7UZH6Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716757178; c=relaxed/simple;
-	bh=0NV0NiIU/HwJhgiikDfkIFbTT3lXlGerI9bUAof39b8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aouNcIs6rCznaJ6ia2sEhEpiJ0yhnJFBMQdJ8gnkuYFiAxrorYQ5FJKkpiY7w523Yp9N1WTJ2/Fro7nvsUghz6gO45WKGGInBkluMtA2IGMiph4QqBzQClrp30o/KkGsR6OBVi6BgPTpJ55fKLUgdUsPChNk0NKbZ+5L7C2pcPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dyb3hzOe; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=W9PU7BCcJXDnlcu7PSCv78S1l1Ocn4NX2Nr+M4p6vgA=; b=dyb3hzOecrWOsx12
-	71czfo3kbJbegJc/DBKyknQ44vBrmhkU5VluU7whtYA3J9s9p6AN0NB3LHq3fqZTiD0sZwlXpY5k8
-	7bLfI/TKpYOFzp+3ZnmBR1Iw80VxELwezsi+e7odRpEUV8WdBpRi8UrXtDjyrchx+23BsrjXcMpwX
-	+ICj7RmK7xh3QSNcRoInEy5O0JSIAzIKpZmUbGrOF5oSw2+ZOwORFeX7/HHx7w4t9G0Nybm0UK+q0
-	3xQ9L7VsmWzLpWQAA4EmbY8cAUpKs+bPSNNk9ruZZcFxxdGVb/izQdJhR5upAr3KWqoY2eZlOU9yt
-	J5a6NTALd2+y+dAQIA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sBKxg-002bNb-12;
-	Sun, 26 May 2024 20:59:24 +0000
-From: linux@treblig.org
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	woojung.huh@microchip.com,
-	UNGLinuxDriver@microchip.com,
-	steve.glendinning@shawell.net
-Cc: linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] net: usb: remove unused structs 'usb_context'
-Date: Sun, 26 May 2024 21:59:22 +0100
-Message-ID: <20240526205922.176578-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716758351; c=relaxed/simple;
+	bh=Pn8FslhbcHCMf78r21xAL7hMjz7SqSvFvE3Vdll6SFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBtAvyMfB2BvszAvWJ+4ykMKKvRyAOEodaVv/rNTmEn8hUH1I1Lhgl8jkVO7J7il3kKfWe5rkm8Fpn/d8V+3eY0OeW6STYgcnOZVxmm+f8OYk2PS3xUvEVMxc3gvyHx5UgXWHoFY+dDbkk26zWmT1wsggYYgPUOUywwssQWFZPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7jt2jSa; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e72224c395so83137771fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716758348; x=1717363148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OEIFM+ukt26ot774C0FBgnpAZ7Ab3pUhoDY2KfgwdKw=;
+        b=E7jt2jSabwkEocc9SDeyqYkTOoCDSNIonyrSui7KLjFNKSzgVCGl5UQOIejDWXNgeU
+         v737TomtRjG/+5MXW9hgNudUt3dtUz8QsfHL4xF3Hz3IjB3uK8P6WUTUpBKSyh5r4EJ2
+         yJttPfF3Hi86kY432Ci9GhMWK+neAXk8j2CiiuouED0tO51yt01OBEjfAznA6nVJZXO6
+         zPtjuNLV1Aux0cbB/uVBUQjAy9DCI6/KAYE70oSPKOJKSbideFp1mgEmdBmePDf9tqbn
+         M2AvI7LsylE6KC2xkEV0fzsHRjaIEZyDl04AyOynL2u2JVwSWP35MhndVUb+iMKKWD9i
+         RnIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716758348; x=1717363148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OEIFM+ukt26ot774C0FBgnpAZ7Ab3pUhoDY2KfgwdKw=;
+        b=NRR5J40tWUZkvnPV8/Zid0W1hUtTBME6zDZxhxKglR1E4zUSiPikeaxnFRcSDsON4t
+         p+HwouShk6J02vodUgvG8hlMqiEWRttlAF6UOqvtTPBayIRgKCIg0ODJRWpcVs9hA0A6
+         ZYVIVWohxdMJHkT44dcTi8DqI7YOe6MhT4ooMyU7+fxJ1/oryA1H9fhbWTVgZOTpnbGK
+         S8qvGI21mZW0y4hNKIEdrlx8UUah8fusWHVtxms6BCWenmRoqml1qAcLsHKcYncR4/ag
+         6T/PZ1iaRwHFSnqxzawAGdLdfUExGP0E8HzJVnwT964QyPUFBMsFqa5xlR5J/rlH8oqe
+         JvXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV51AyObiH5e4c+Wf1L7hW6314F3zM7iX1NKtJY/CrxHN8Rl+IleCxQJCKC7daSIkRKujQIMVYNvcT5DtBA23XT5oCPp2B7zm5AU3E
+X-Gm-Message-State: AOJu0YyThuk1/uX/Fy/XqCSa8NQWPZPcm1NPr0D22o+4Rr6vyVH43OVC
+	/2jvLwuyQgtBEUP/++61bY/25t2dr5fzehtWHJAUgykWNC+k+bipuPQzug853d8=
+X-Google-Smtp-Source: AGHT+IFrJTTBkEiw1EI5YgPKR8vkpSp697fOmBeacYJpaNOQSuBqiiQeMhcGuKW0GUoctcDWYbgGhg==
+X-Received: by 2002:a2e:2e10:0:b0:2e5:87c1:e845 with SMTP id 38308e7fff4ca-2e95b278a70mr44542691fa.48.1716758348145;
+        Sun, 26 May 2024 14:19:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcf47dasm15796671fa.55.2024.05.26.14.19.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 14:19:07 -0700 (PDT)
+Date: Mon, 27 May 2024 00:19:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/10] drm/bridge: Set firmware node of drm_bridge
+ instances automatically
+Message-ID: <lfgb24qv22sohgizlmt7kq3ymnshjeawlkwwcndivbeiloip55@x3qnu4ss3x4y>
+References: <20240526202115.129049-1-sui.jingfeng@linux.dev>
+ <20240526202115.129049-3-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240526202115.129049-3-sui.jingfeng@linux.dev>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, May 27, 2024 at 04:21:07AM +0800, Sui Jingfeng wrote:
+> Normally, the drm_bridge::of_node won't be used by bridge driver instances
+> themselves. Rather, it is mainly used by other modules to find associated
+> drm bridge drvier. Therefore, adding a drm bridge to the global bridge list
+> and setting 'of_node' field of a drm bridge share the same goal. Both are
+> for finding purpose, therefore better to group them to one function.
+> 
+> Update the drm_bridge_add() interface and implementation to achieve such
+> goal atomically, new implementation will fetch the device node from the
+> backing device of the drm bridge driver automatically. For the majority
+> cases, which is one device backing one drm bridge driver, this model works
+> well. Drivers still can set it manually by passing NULL if this model
+> doesn't fit.
+> 
+> While at it, Add a 'struct device *' pointer to the drm_bridge structure.
+> As it already being passed in by both of drm_bridge_add() and
+> devm_drm_bridge_add(). A lot of driver instances has already added it into
+> their derived structure, promote it into drm_bridge core helps to reduce
+> a batch of boilerplates.
+> 
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
 
-Both lan78xx and smsc75xx have a 'usb_context'
-struct which is unused, since their original commits.
+[trimmed]
 
-Remove them.
+> @@ -231,7 +243,7 @@ static void drm_bridge_remove_void(void *bridge)
+>   */
+>  int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge)
+>  {
+> -	drm_bridge_add(bridge);
+> +	drm_bridge_add(bridge, dev);
+>  	return devm_add_action_or_reset(dev, drm_bridge_remove_void, bridge);
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/usb/lan78xx.c  | 5 -----
- drivers/net/usb/smsc75xx.c | 5 -----
- 2 files changed, 10 deletions(-)
+This breaks aux-hpd-bridge, which gets of_node as an external pointer
+rather than dev->of_node.
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 5a2c38b63012..7a5cc49ebec6 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -380,11 +380,6 @@ struct skb_data {		/* skb->cb is one of these */
- 	int num_of_packet;
- };
- 
--struct usb_context {
--	struct usb_ctrlrequest req;
--	struct lan78xx_net *dev;
--};
--
- #define EVENT_TX_HALT			0
- #define EVENT_RX_HALT			1
- #define EVENT_RX_MEMORY			2
-diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
-index 0726e18bee6f..78c821349f48 100644
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -61,11 +61,6 @@ struct smsc75xx_priv {
- 	u8 suspend_flags;
- };
- 
--struct usb_context {
--	struct usb_ctrlrequest req;
--	struct usbnet *dev;
--};
--
- static bool turbo_mode = true;
- module_param(turbo_mode, bool, 0644);
- MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
+
 -- 
-2.45.1
-
+With best wishes
+Dmitry
 
