@@ -1,202 +1,102 @@
-Return-Path: <linux-kernel+bounces-189776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F5C8CF4C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:45:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F31D8CF4CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF28F280EE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7CE91F211EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BD17C8D;
-	Sun, 26 May 2024 15:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B1217C8D;
+	Sun, 26 May 2024 15:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYox2exv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOKenyha"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D377C171CC;
-	Sun, 26 May 2024 15:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0992F1803A;
+	Sun, 26 May 2024 15:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716738345; cv=none; b=XY0/upiNmVoUzKssytanbSttCX9677r6xkKLSsUbNraUMWchZJOag+8bW5DObXG8bWh6UQZlIn4G2kS+FC/n3zBYOxPaBYtXo/jJJDenWhm18/LSKWSf0c65fpmEGbSNCYU1hdTGP5kJUGPfm5jryi7yxqRlLrX66CtJfQcwCSo=
+	t=1716738535; cv=none; b=tubGB8DdD9tMfrYo1qUC9D75TzkDQzSuawFiEDLTAqNAsDbalLN3mraJJALHxFRv2b1/KgL2BYBo64ZxGg2Xpi/14h1Mu3mAzB9aoEIpvSc7QRnF4K4vIshFFzARguuRXrLx2FiKM+Ra9GuqM/EbSFaGHKmETGliob9X8bWt7dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716738345; c=relaxed/simple;
-	bh=9yFVJ82e242IH9QBdMocDHZK6zErfeb2QrxlJvc4+fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAp8Fw7Q8XyVadBNBlKMdD6cw+zE8O2aPEDzeFRfJhHgqXa/iJV98YmMpOuNBzaPgCOS2D1+Flf1NV6xYUDpD/+AZE8eAD/6sOAFvZwqK+ipESzSSr9YewT1ClkWUC0fMu7oLpd35WG7nNV1hM3pPNIXuBnM5Pi8Jzi26HaP5Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYox2exv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6696AC2BD10;
-	Sun, 26 May 2024 15:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716738344;
-	bh=9yFVJ82e242IH9QBdMocDHZK6zErfeb2QrxlJvc4+fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYox2exv3GKpYl83K76KDfOGC8GHvq3APF42q1kgLtN3G/T44a421CX0gDjGUips0
-	 rV2hSgV+OEsMga852Z0C5/wVVAXjgU1jhSsTzfFO6lLFQY7iKKOmi3UDWqV3waLIWa
-	 lsufu6wB2Q2GkMIIGxN2UkB108IuIFgl0nlXvwYtck86oWZgi5P3I6xnSJWa1kqx4y
-	 OEvqSurzWj8PiNopZXafNvI6qz/aHsS0svXPqNbC1LJyd9ZuPjSGFG02N/8uhLns1O
-	 Vwamw9aduhCTyWmIE2+1oYuxTtBehNMRDjIKppM3TQ3SHY/rdc8OaKmuRs+9d6WBiK
-	 mU+2MG13ZRgzQ==
-Date: Sun, 26 May 2024 16:45:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <20240526-stylized-preaching-d0b15a95fe19@spud>
-References: <20240513-headsman-hacking-d51fcc811695@spud>
- <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
- <20240514-aspire-ascension-449556da3615@spud>
- <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
- <20240516-rudder-reburial-dcf300504c0a@spud>
- <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <59df2cc3-5a62-45be-a0aa-5bbff13c2ae4@baylibre.com>
+	s=arc-20240116; t=1716738535; c=relaxed/simple;
+	bh=vX8Soimw+0P8TQSw2dZ1kVgK27f8UCPdL9tr4CQShz0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:Message-Id; b=a7pLcHX4P6dRPGvY8PlFyD7hx5STht6AGbcJLqg+304YkB0fp0Ygm6b+9fq/KZ1GGBsfOGlH92bbh+wJTu8wFUpzN5HWaz5MP1iirjKJ1bPSqV67GT/1uqSNoB6lR5JtQ91CQBO56qFXDdlv226B32QVBNFi9ATlzz55mL6V/TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOKenyha; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6269ad7db2so283820566b.2;
+        Sun, 26 May 2024 08:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716738532; x=1717343332; darn=vger.kernel.org;
+        h=user-agent:message-id:in-reply-to:references:from:subject:cc:to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dZCRHP3lD4Nrttw3etgWRodRKmfLXV1xJdjRxR6e4U=;
+        b=DOKenyha+hAoUaHLSmZer8lT2y/VMdAXv3YbxEeAXlDlBc5NWnGJ9vVty7imSIWyzl
+         dKRAgPPAd2/D2p0E9X8wHG4ukZ3UHUA7ljNa2I5kcfsoH9E3uB/rfxLoFKz4XvbTiywg
+         PdHOtxDJbILsp8gHjVufoKLoQ5qb8CqAhiaj6IWNB8qwwfcqj/d3VdjIQVdDoq7CDTYs
+         R8KPvrX0lIQU9gP4aFYdVvuWjjHqtyr8WxODIqEBQwdQHzIUmPfzzuiGSF1keAG251qD
+         9OTAHXfIQfPO4GBVERzDCch2HETCvW30kFnP8HrcE+0ZV+YW9F01+Yr0ebGr62Mzu0hr
+         fe7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716738532; x=1717343332;
+        h=user-agent:message-id:in-reply-to:references:from:subject:cc:to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dZCRHP3lD4Nrttw3etgWRodRKmfLXV1xJdjRxR6e4U=;
+        b=fBOTThxCXHGIg/dAvIAXpFVOGIEHhZ8glJxT8us/dQGX/0uPFlr736LBxjTaSWzNlQ
+         lI4S5gazk6TBuoA1dZna2hJQGQYxCptH8Aemjc3oN+XA3b9KtoujQdqSWwjviAGvzZkD
+         8N4SJYlNztnsCMplz9tSeGMb+gbK8pv64MUs6OSElNDCWj8AfQ+yuOkc1Z01kkBhooUZ
+         DjypqpPfVNQEtnkpqavcNO/dom3jZar3t6+8j47dSWfCou6JeEeSPQbNz3CXtkx+YNNq
+         M4bkV80tmtWJfI4Xt+GYOoGyZpyxnAamlxMHXD+mv77wMeqku2PbsIfa/WD24jEEiIGG
+         95/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDP1/unqBM3+OIMy577jTSHa04iAvPRShXFTcKQBTN7F5eHhE6VoDwS4axyqyjl4dja0HAYLdE/I//nh7Bjc43l+biX1On++HwFwSSxbbOfZspZf84rkgygwU4mLhxIMW0HI5WMooGkmnfC6s2AHCpmfX9tvDq5WQOqBaN/0hWwPrLqtyBnv2Cjis=
+X-Gm-Message-State: AOJu0YzlHqdqaLKhpOxTALTYozZL1jjJrssEpfrzRH8qY6+jZ3eLhxvc
+	4fpZaJL/i+XHP1c8dXOPIOrGgOc84cw99lxBDD8CA8hwqHk3FUbl
+X-Google-Smtp-Source: AGHT+IGtjapIJoW7FFG5Jd2WyRu8B7pkFVo/HAEQ5T3d4nRUjhtgfUtCBj+AXz6lIh1kM9SK48cbvg==
+X-Received: by 2002:a17:906:170f:b0:a59:d063:f5f3 with SMTP id a640c23a62f3a-a626501c25cmr433471566b.63.1716738532214;
+        Sun, 26 May 2024 08:48:52 -0700 (PDT)
+Received: from localhost ([2a02:169:1e9:0:8f4d:9ee2:cc35:c67b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4fd41sm397612866b.137.2024.05.26.08.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 08:48:51 -0700 (PDT)
+Date: Sun, 26 May 2024 17:48:51 +0200
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Daniel J. Ogorchock" <djogorchock@gmail.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Martino Fontana <tinozzo123@gmail.com>, Ryan McClelland <rymcclel@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH] HID: nintendo: Fix an error handling path in nintendo_hid_probe()
+From: "Silvan Jegen" <s.jegen@gmail.com>
+References: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
+Message-Id: <31TNA0FQDFO0L.21EUCKC20GDGV@homearch.localdomain>
+User-Agent: mblaze/1.2-30-ga027417 (2024-05-20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QI9Azi51wmSyyaZK"
-Content-Disposition: inline
-In-Reply-To: <59df2cc3-5a62-45be-a0aa-5bbff13c2ae4@baylibre.com>
 
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> joycon_leds_create() has a ida_alloc() call. So if an error occurs after
+> it, a corresponding ida_free() call is needed, as already done in the
+> .remove function.
+> 
+> This is not 100% perfect, because if ida_alloc() fails, then
+> 'ctlr->player_id' will forced to be U32_MAX, and an error will be logged
+> when ida_free() is called.
+> 
+> Considering that this can't happen in real life, no special handling is
+> done to handle it.
+> 
+> Fixes: 5307de63d71d ("HID: nintendo: use ida for LED player id")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/hid/hid-nintendo.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
---QI9Azi51wmSyyaZK
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+LGTM!
 
-On Thu, May 23, 2024 at 09:28:54AM -0500, David Lechner wrote:
-> On 5/22/24 1:24 PM, Conor Dooley wrote:
-> > On Tue, May 21, 2024 at 09:54:39AM -0500, David Lechner wrote:
-> >> On Sun, May 19, 2024 at 7:53=E2=80=AFAM Conor Dooley <conor@kernel.org=
-> wrote:
-> >>>
-> >>> On Fri, May 17, 2024 at 11:51:58AM -0500, David Lechner wrote:
-> >>>> On Thu, May 16, 2024 at 4:32=E2=80=AFPM Conor Dooley <conor@kernel.o=
-rg> wrote:
-> >>>>> On Tue, May 14, 2024 at 05:56:47PM -0500, David Lechner wrote:
-> >>>
->=20
-> ...
->=20
-> >> This time, the periodic trigger (PWM) is connected to the pin on the
-> >> ADC that triggers a sample conversion (CNV). The ADC has a BUSY output
-> >> that will go high at the start of the conversion and go low at the end
-> >> of the conversion. The BUSY output of the ADC is wired as the hardware
-> >> trigger input of the offload.
-> >>
-> >> In this case would we still consider the PWM as part of the SPI
-> >> controller/offload since it can only be used in conjunction with the
-> >> SPI offload? It isn't connected to it at all though.
-> >=20
-> > No, in this case the ADC is a PWM consumer and the offload engine is
-> > not. The ADC is a "trigger" provider and the SPI offload engine is a
-> > trigger consumer.
->=20
-> Makes sense.
->=20
-> ...
->=20
->=20
-> >=20
-> >>> In fact, looking at the documentation for the "spi engine" some more,=
- I
-> >>> am even less convinced that the right place for describing the offloa=
-d is
-> >>> the peripheral as I (finally?) noticed that the registers for the off=
-load
-> >>> engine are mapped directly into the "spi engine"'s memory map, rather=
- than
-> >>> it being a entirely separate IP in the FPGA fabric.
-> >>
-> >> True, but we don't use these registers, e.g., to configure the
-> >> sampling frequency of a trigger (if it can even be done). That is done
-> >> in a completely separate IP block with it's own registers.
-> >=20
-> > Where is the binding for that IP block? I think describing that is
-> > pretty key. goto continuation;
->=20
-> For the real-world case I used to test this series, it is an AXI PWMGEN
-> [1] that is providing the trigger event source. It has a typical PWM
-> provider binding with #pwm-cells [2].
->=20
-> Calling this a "trigger" provider to the SPI offload instance just like t=
-he
-> case above where the ADC is directly connected as the offload trigger mak=
-es
-> sense to me.
->=20
-> What I was going for in this patch (slightly revised to use #cells) is th=
-at
-> this trigger provider, whatever it is, is selected by one of the cells of
-> #spi-offload-cells. It doesn't seem like there should be a special case f=
-or
-> if the trigger provider is a clock or PWM where the SPI controller node
-> becomes a consumer of the clock or PWM provider rather than just describi=
-ng
-> the trigger relationship.
->=20
-> For example, supposing we had an FPGA/HDL that could handle all 3 wiring
-> configurations we have discussed so far. A) PWM connected directly to SPI
-> offload as trigger, B) PWM connected to CNV of ADC and BSY of ADC connect=
-ed
-> to SPI offload as trigger, C) self clocked ADC with RDY of ADC connected
-> to SPI offload as trigger. So the DT would have:
->=20
-> controller:
-> #spi-offload-cells =3D <2>: /* 1st cell =3D offload instance
->                            * 2nd cell =3D trigger provider */
->=20
-> peripheral (choose one based on actual wiring):
-> spi-offloads =3D <0 0>; /* case A */
-> spi-offloads =3D <0 1>; /* case B */
-> spi-offloads =3D <0 2>; /* case C */
->=20
->=20
-> As to what is the actual consumer of the PWM provider in each of these
-> cases...
->=20
-> * C is easy. There isn't a PWM provider since the ADC is self-clocked.
-> * B, as discussed elsewhere is fairly straight forward. The ADC node is
->   the consumer since the PWM is connected directly to the ADC.
-> * A is the one we need to figure out. I'm proposing that the PWM consumer
->   should be whatever kind of composite device node we come up with that
->   also solves the issue described below about where does the CRC checker
->   (or whatever) go. I think we are in agreement here at least on the point
->   that it doesn't belong in the SPI controller node?
-
-To be clear, you're saying that we agree that the CRC checker doesnt
-belong in the SPI controller node, right?
-
---QI9Azi51wmSyyaZK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlNZIwAKCRB4tDGHoIJi
-0rcJAP4wlXLinDBuLMMunDenDCKzMAGTqwXYWCzQ/j3lCyGyoQD/VtLRpzJv9NSw
-f18ipYHVyeIm4uS0jnHQHIEOmj5gjAo=
-=AKAC
------END PGP SIGNATURE-----
-
---QI9Azi51wmSyyaZK--
+Reviewed-by: Silvan Jegen <s.jegen@gmail.com>
 
