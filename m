@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-189598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD9A8CF2AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:36:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA948CF2B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EAA1C20A04
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 06:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0821C2095D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 06:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE93E63A5;
-	Sun, 26 May 2024 06:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9D38821;
+	Sun, 26 May 2024 06:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sqVx3Tn9"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h1kWEPQE"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEF71849;
-	Sun, 26 May 2024 06:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D1E63A5;
+	Sun, 26 May 2024 06:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716705381; cv=none; b=Cs3D7LNIsjHhQ79MhEWVRC65TWcSWxm64gY1LIGkDy7lmUdACT76dP05q6nZTqKJx6+2n65v8tLzEskmKDQnqLML0kw9ii0C5XuuSEar3z5pZZMRd8n9BTBCxx7jEcT4lTFJHrDC/hqDvSvD46cNF1HSGc20lsTtkePEBodkoH8=
+	t=1716706151; cv=none; b=UD5QvqiBLB0BaJTqtYhAesTOqwwd9SdHNINYmxeDsMV32aZmwvicQlXMORHUx6IIiiywBONalKHveghFU13mIB39wPNpD0qmxJr1x6N6X1w9mRd7LIILJzcrHMSdbzAgfw/kc+PwOgimOoBzanSHUvIzO3bVeVmuXM3Kn82+z8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716705381; c=relaxed/simple;
-	bh=dSe/spixs5ApqjgYm/X4+SVSriMdGKzobyY1DlqnnEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BxbpDhm0J/dtQjlhDiR1KyeyiydopTG6Ctux+zi+9R5O7AILbPkonnRzoOS1jLQjkUb+AF3oHpHuutI4pvffZTI0KdGgh28EmJ58JuWdfkwgFWQ97EDX+05Tjwkwf2DZMkZBCB9Yi0dLwZP50bRm5XIDXetfeIRzr+jFf06Hl90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sqVx3Tn9; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44Q6Zllo080701;
-	Sun, 26 May 2024 01:35:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716705347;
-	bh=6gX7cZSZkx3L27ZPyp9s5Fptuzr9oyyi4A1VrdhCEMM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=sqVx3Tn9SMYqGNRFi7GQg453kyw5grWzB3wlLIdrYNaZl1gi1/ljZAKCFbWdQfkxV
-	 gJp8DlJRA8goTS+vEQmyytPACJCZOSPQUbmuB60qdw4wtBUQzThJesit+hK5CpbTqb
-	 heD8Ajs45c2rYasz3D0jmI9rD4Gqz0V3bVy7lgYU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44Q6Zl3l105952
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 26 May 2024 01:35:47 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 26
- May 2024 01:35:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 26 May 2024 01:35:46 -0500
-Received: from [10.250.145.232] ([10.250.145.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44Q6ZiMn036976;
-	Sun, 26 May 2024 01:35:44 -0500
-Message-ID: <96d5ccb5-660b-4f40-82a3-83495da4f595@ti.com>
-Date: Sun, 26 May 2024 09:35:43 +0300
+	s=arc-20240116; t=1716706151; c=relaxed/simple;
+	bh=OiHjt0siDQqvGY8VnV+rHZQiQTcvyc3EyCZa+CupTjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lvxj9/jTCEv/eh9s9+Q0dN/TGnZsSNM/XAgQqXTB5PVEPBhkYWC62L3JCr8F/ywwnJTVvyzi97V/Ia+IMVRL1Kt6/6JY9vmtyb7xhMXio6qAiBsCsigIdVUkGZo1jGxeAEVDCgevbJUQvefLcMSTBy0l1rFEt2mgBWMWo0GbA7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h1kWEPQE; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716706143; x=1717310943; i=markus.elfring@web.de;
+	bh=OiHjt0siDQqvGY8VnV+rHZQiQTcvyc3EyCZa+CupTjc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=h1kWEPQEiHR5KbRXzsiVZ/RU99yGOvPUQziWgiJiYSHGnh3fKwn5fbjil2E/5U+h
+	 +DmAjOUdShyUY7DzegvIU9r9YKFKlX+SLYEipv/HB/hW93ZQDePqoEqF12d0AbNmm
+	 BWmergP8tPBaHO2OYFeCuDTlZFv3ClIrSHWFSkz83tIFVvK4/mCmgBT6LHNL+xj/G
+	 2NRugboxd3xxSEKdJCh6WjLF0D5K+eOK4RWS+DLYtZjddtxc7fuS/eT8FRA08RbBi
+	 VqyfXa7kwgLwIO1Edn/+eDtQG5cSKjLHr3ceGDXQ148F9utwb9N/amCpa4DFjDwMe
+	 mim4QZqxRsP0uIDDNw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSZMD-1s4kp40jRh-00LqcC; Sun, 26
+ May 2024 08:49:03 +0200
+Message-ID: <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
+Date: Sun, 26 May 2024 08:49:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,44 +57,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/17] Add ti,cc33xx.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-18-michael.nemanov@ti.com>
- <1686c1e6-94c6-45c0-adc5-c05d49614d30@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <1686c1e6-94c6-45c0-adc5-c05d49614d30@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: [PATCH v6] usb-storage: alauda: Check whether the media is
+ initialized
+To: Shichao Lai <shichaorai@gmail.com>, usb-storage@lists.one-eyed-alien.net,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+ Xingwei Lee <xrivendell7@gmail.com>, Yue Sun <samsun1006219@gmail.com>
+References: <20240526012745.2852061-1-shichaorai@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240526012745.2852061-1-shichaorai@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OXoA+aME6lnNAQSWdIumGtUQ+qNtxO4D83yhqvkNyUne1qneMsd
+ cGdDBzuwsNW6I/xTqrtrINfSLrO1z0QmXpwKnaEC25OIxbrkJkG/Y+rHnoSZauTXrqJvCfe
+ bHFd5Sfzi7HlomS0eGt6IQqbIh5vG+k1ztRIGb1kpCz4CUSMbpDa1JYvl3z8wmVZFKLch1H
+ EQpOEpku0Q3ddQY1CZqNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jGCwj6I+3Oo=;8eY2ZJ+x+r/9GB0D0lp9OfZ83KV
+ c1LauGbB0wPyH4rfhzKiQn3QE5P8w0Rt00iSJmxur6FfxDJRWOELwGaGmuUPiWWglf1J00t/X
+ hclDKTCgo2IjmcIDKiL9QpyxZ7dN6PRjOJR02zt16Ti+SlW2CA7yAgvivifktmG3zVO+V5lDR
+ Nvo0PLF3tlDYt493U3sPmaJB4Ccas/fakO2cOSyikhiqDdQ8B8O+iFSqtssAPLlflVDEa3Sc0
+ ie1cCpmxleNGYBitjTfL+Xy+d95d8E4mxAZHxrEvpXscjvezr4B0YL5mIGPcmDSkaVbD0jQTo
+ 6r/RPLUbbaTcve/1p5yQbT/UnIb/RTBYKyh9WU8Tr8RioC26p+D/b4WmmAcmjXKOvza6O8a8P
+ bs+ntkewDMIfEN4ImjhzmLOn+99/Uov4NZUU4K1pk0aGujvuTjLTzSCKx/rInPsOYOqI3f9SZ
+ XSP0kGrVSUebVyqbWXKL9Al7uV+7hldiVZz3oS7KuuqwGrQqKTpv9ilVjjK718oPGHFoeDj+8
+ Hr6SFfZ2f/4WdiWlZ8acXrd66jcTNyd0WCCYLGBIcg/fUJlsWR0371PWJ6+y/PW8knopYH/i3
+ 1wmILOOo/IUgsgNtGiwRNCEAFiUZhCN9+CKNz27Yjc+2bD6ICXuOSWoN/V+CpCQKFZyRycIlH
+ b+sQlWS6/o1k01o9k5SPIVVC/GnL9uT9sudUYemEQEhMKP6OGHE6i2AHJoFVAyfxjx4A3PP/H
+ P9ucS04ANoB0CWwf9ABcOLf0x0A1ILYOgzWcQaKAB8FvdSJzjyGL7V3AjDj0wYs6w8RrqB57/
+ QU6s9mE7qS45lt5/QlOz0LqYEysdh2iZ2TVN3SVX0j4gE=
+
+=E2=80=A6
+> Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
+
+How do you think about to omit the text =E2=80=9C[PATCH] =E2=80=9D from th=
+e tag summary?
 
 
-On 5/22/2024 12:35 PM, Krzysztof Kozlowski wrote:
-> Missing commit msg.
->
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC. It might happen, that command when run on an older
-> kernel, gives you outdated entries. Therefore please be sure you base
-> your patches on recent Linux kernel.
->
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline), work on fork of kernel
-> (don't, instead use mainline) or you ignore some maintainers (really
-> don't). Just use b4 and everything should be fine, although remember
-> about `b4 prep --auto-to-cc` if you added new patches to the patchset.
+> Reported-by: xingwei lee <xrivendell7@gmail.com>
+> Reported-by: yue sun <samsun1006219@gmail.com>
 
-I'm working on mainline but was not using scripts/get_maintainers.pl 
-correctly. Will fix the address list for v2 along with proper names for 
-all patches.
+Would you like to add any links as background information for these report=
+s?
 
-Michael.
-
+Regards,
+Markus
 
