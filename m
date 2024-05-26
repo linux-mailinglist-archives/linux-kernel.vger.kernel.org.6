@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-189740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88908CF455
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:49:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9A48CF458
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D221C20AD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:49:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF48B20C49
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DD3F9DE;
-	Sun, 26 May 2024 12:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ABB101DA;
+	Sun, 26 May 2024 12:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AalhAbx2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uG0ygbpX"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47E6DF60;
-	Sun, 26 May 2024 12:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8A7B640;
+	Sun, 26 May 2024 12:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716727790; cv=none; b=DethIk9Bm4h7Hu6Xffv5j7jicpCBM099BiTnt5gsOeMsjNn+kZYOjbDEOMBkAZDjO98rO5LM9sNnzfO9PTPOprwib/e3qvONqpQuTOxx7yR9PKvl9gdEvho0ciygsVdZrQrxklQ+bs+EHXzurX3CSH1jLZ0uUCXS+/WNFkniFmQ=
+	t=1716728305; cv=none; b=TZAvROF2v5glUwE9Je18iorPNayR+WqEWTByTRJn2LgH158zwbgZ5APgmSvhkr3mWLiy+5LG5pyrUBugLsNP6v5wMO9DGzDs6yy4Ff5LzY79HgnbWE5NERmDmx5VRhJ8GnnEIAnPMa2GOL4ZxK/Af5QB7c+GGRu/FFgDQ8B2oVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716727790; c=relaxed/simple;
-	bh=mRfq0TFYrIwU/YNjg/1gxs3DAKBxoubVD2/h3CYP9is=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dUrq89NdE6DbcavMWaS7go7wyS3llhDYdeAutXaE0YCSbOyCinVKCikJYRY+UTsvYwbm+eGO+rSaDZ3WV+0y+GSpadI+QWlkO2YhkkBhCIEoKa/5gNjSV4fZdSxNgwG/xo42+BGiYHd3b5eleJRcKYb75qFjbpX9Fz0WehPZk8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AalhAbx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AC7C2BD10;
-	Sun, 26 May 2024 12:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716727789;
-	bh=mRfq0TFYrIwU/YNjg/1gxs3DAKBxoubVD2/h3CYP9is=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AalhAbx2ZcTiAzrA5IXdrKWE1cxH5oMw53Axo95u5hSQn0PuLWR24BSeAzjVeuAZe
-	 5NsDqbglZYFjQtvG04xa6W4pe6yGp5lS8rEauGnlXSh8uiXvQANOolPbdBErtTTBxn
-	 /JFJ5cUIbB7ZVrMw8FzWHmuNyvVkKLyonoGP/gmpL8x9DOpegAyccQ9WtTOPTiYXpj
-	 uO0/0dWe0vKcrzfWF14iVbH1x//5BEWt6VKMVAj4TsChujxzlMaWSc0dcEl1VPxtMy
-	 IBznp/UOefU9buH+udd+aeprbOmcAF1i+PnWbHuHc9LRx3RlH4aqMYJMuBStsizfuK
-	 vgCLPR5v9n8Vw==
-Date: Sun, 26 May 2024 13:48:58 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
-Subject: Re: [PATCH v4 10/10] drivers: iio: imu: Add support for adis1657x
- family
-Message-ID: <20240526134858.636d2c8f@jic23-huawei>
-In-Reply-To: <bdc88590fe3e54326c1edbe6f2b4ac2d8f453df4.camel@gmail.com>
-References: <20240524090329.340810-1-ramona.bolboaca13@gmail.com>
-	<bdc88590fe3e54326c1edbe6f2b4ac2d8f453df4.camel@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716728305; c=relaxed/simple;
+	bh=+Jk/U5uDbfjV3TVqCr1thBx3H0i66FuEANV7xC+xlvQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=tLyQ+0Gz8nFk8rG9B78zKQY37flALSgPVgyd6yuSCzQQ1i6hcstWRckHpP+9dgTB/HQ6f7f8G8Su8/MQrd5sgSUqIuETLyDIjNfWIzJC0soQkaiedeFUttzlu4an7DMPAXOFPXenwkBwa4hitSJRvHyzMvMCAqqWr0GeOFUXJPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uG0ygbpX; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716728235; x=1717333035; i=markus.elfring@web.de;
+	bh=TH4bJDOAOe0AwLA0U7wO9TtqPvaa/z7ZkRomrKnaLd4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uG0ygbpXlIzchJJB+ZdOgUQP4d/HFkCO8o4Ry3NUK+JNWGVW5k2T4bvra9f5+K1f
+	 z1WlHA5y263i+om7NxkheRkx6Ly4c46fT6T2r1+nYVkrBro/p6bbfLjKXqomo/hu2
+	 B/IMzN3Ciguh4J9g63On2I4BKA8h9RYhbr1WMbHAYd57uXVnLWNu/onDtyBAyyjlW
+	 zMJQv8Qc3V11NMrOKokYrmIKmAtz7022B6qOPv1wIZ/pfWVbkUxlCwH/E+kqAK31T
+	 0OxlMt0lD1uTBSPEt5r/Yo0yuBHDVmO1hYpYqltVQffBf2jaQav3RjhUoH9DKsn8d
+	 CLQTdcTc1GEgfwiAuw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1sts6v2L1a-00jhaj; Sun, 26
+ May 2024 14:57:15 +0200
+Message-ID: <369912bd-2ccf-4cb7-817a-a32ccbb3d83d@web.de>
+Date: Sun, 26 May 2024 14:57:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Yu Kuai <yukuai3@huawei.com>, linux-block@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+ Chaitanya Kulkarni <kch@nvidia.com>,
+ Chengming Zhou <zhouchengming@bytedance.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn
+ <johannes.thumshirn@wdc.com>, Yi Zhang <yi.zhang@redhat.com>,
+ Zhu Yanjun <yanjun.zhu@linux.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, Yang Erkun <yangerkun@huawei.com>,
+ Yi Zhang <yi.zhang@huawei.com>, Yu Kuai <yukuai1@huaweicloud.com>
+References: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v2] null_blk: fix null-ptr-dereference while configuring
+ 'power' and 'submit_queues'
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FdTFfjKeMbueufJpEs7qeLt78+mhGzQxV8dbJ8BZleWz5WKA7rT
+ FmGUKdTjZd2dbVMLZpVl7LIsbMuJLfg+tHDnPWxHvuhi4yjHMtb/37F+G0k0OMUZSklQxrR
+ U7j1LjI7dnRcX0WfLVIBFx/4LC/ivVsTNZYd13CSXIxcr2ousa0Dmfbf7RWLbsBjyhD+AZc
+ v55JqHyCA8lj+nijOSZUg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RONZyowvkdA=;qIEX4tPfOuBuJwMVujzM1AjwnE1
+ fXfbD52+wJJcpo3wOabKrMkSIDjnDwSl8GM15LMmisc19pOR3V1pMZesXaadRNs19u8Xj7375
+ ePbES4D9Y13fcIO69qSLHjB0GJOzqN1TjG3+fwRBflTPOHV3nDH95sWqVwau/8cJ16OCuMlnd
+ JLcVWuVRbp3MH/xfZIly7mLV5lD8gulrxBpKEFZf79OHWlW4Tt0Gcdry76SWw9MQRLDcG0A3e
+ JwEaAbBxy58YkZSiznpsrgVYiv66q5V0Ow35UxwhXLeIIVTAK1bGII4kWds/QUDkZpgkNILOk
+ qA/HkQ8le1/9K056RAc5NuuDSrPfK7IUZkWFvCOPhZzJstTLDDsDr9LZP8vgNGZRglHCBsm3v
+ MPrn8D4F35ovmZK5Vz9ZoP/BX4EOx95a6zsjCZVytgapfmRh6St6kTQr8gZuBKOjuEj1rbr3l
+ VGBXNl3fUnB1UlMgEzgSjXkdDLUevJcAeFjelk2oyHUvKxh4PFLQ7OHiWlwIzQBpvg23n92SP
+ iUljOEXZuzg744GjEZWWBu4h0sufg8aEQ9b80BwlA9h51WGarTeWFZr5LiQai5FFX3gv7ocB/
+ xVPeRvCZkvX8szP0Mh6KajMJxHkXuRF4en0E0V0ksrB+pBYbTc1lcwZqX6cbCndW/GgGyoVxh
+ fhZWIYqzDqq7GlbKlxkxrQRrxuajaCtdgO+c0TsaAkZ5lwxQNJspvrvDocMxoWx1hI1Fe1eSg
+ FLZeQNSEiGmu2i/N7RndvIWx8gLjsysEzPI3H6Fkw5QFsIVUUP1ZdGJQdQI1tdddeB0HINLIi
+ +kkcErcdMI7Ry4PI9w7+koiRTUQ1nuSTln1TGTqLt8OPo=
 
+=E2=80=A6
+> Fix this problem by resuing the global mutex to protect
+> nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs=
+.
+>
+> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after a=
+n instance has been configured")
+=E2=80=A6
+> +++ b/drivers/block/null_blk/main.c
+> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_=
+device *dev,
+>  static int nullb_apply_submit_queues(struct nullb_device *dev,
+>  				     unsigned int submit_queues)
+>  {
+> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues)=
+;
+> +	int ret;
+> +
+> +	mutex_lock(&lock);
+> +	ret =3D nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues=
+);
+> +	mutex_unlock(&lock);
+> +
+> +	return ret;
+>  }
+=E2=80=A6
 
-> > @@ -1500,7 +1973,10 @@ static int adis16475_probe(struct spi_device *sp=
-i)
-> > =C2=A0	indio_dev->name =3D st->info->name;
-> > =C2=A0	indio_dev->channels =3D st->info->channels;
-> > =C2=A0	indio_dev->num_channels =3D st->info->num_channels;
-> > -	indio_dev->info =3D &adis16475_info;
-> > +	if (st->adis.data->has_fifo)
-> > +		indio_dev->info =3D &adis16575_info;
-> > +	else
-> > +		indio_dev->info =3D &adis16475_info;
-> > =C2=A0	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> >=20
-> > =C2=A0	ret =3D __adis_initial_startup(&st->adis);
-> > @@ -1515,10 +1991,25 @@ static int adis16475_probe(struct spi_device *s=
-pi)
-> > =C2=A0	if (ret)
-> > =C2=A0		return ret;
-> >=20
-> > -	ret =3D devm_adis_setup_buffer_and_trigger(&st->adis, indio_dev,
-> > -						 adis16475_trigger_handler);
-> > -	if (ret)
-> > -		return ret;
-> > +	if (st->adis.data->has_fifo) {
-> > +		ret =3D devm_adis_setup_buffer_and_trigger_with_attrs(&st->adis,
-> > indio_dev,
-> > +								=C2=A0=C2=A0=C2=A0
-> > adis16475_trigger_handler_with_fifo,
-> > +								=C2=A0=C2=A0=C2=A0
-> > &adis16475_buffer_ops,
-> > +								=C2=A0=C2=A0=C2=A0
-> > adis16475_fifo_attributes);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		/* Update overflow behavior to always overwrite the oldest sample.
-> > */
-> > +		ret =3D adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16575_OVERFLOW_MASK,
-> > (u16)ADIS16575_OVERWRITE_OLDEST); =20
->=20
-> Slight preference for local variable to avoid the cast.
+How do you think about to increase the application of scope-based resource=
+ management here?
+https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h#L12=
+4
 
-Hmm. This is a symptom of adis_update_bits() being 'too clever'.
-I'd be tempted to just split that into 16 bit and 32 bit versions but
-that is a much larger patch so a local variable is ok if ugly.
+Will development interests grow for the usage of a statement like =E2=80=
+=9Cguard(mutex)(&lock);=E2=80=9D?
 
-
->=20
-> - Nuno S=C3=A1
->=20
->=20
-
+Regards,
+Markus
 
