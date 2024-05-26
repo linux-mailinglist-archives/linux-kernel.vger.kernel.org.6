@@ -1,152 +1,207 @@
-Return-Path: <linux-kernel+bounces-189595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A468CF2A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A73F8CF2A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8851F21268
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 06:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B0C1F212AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 06:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE4D441D;
-	Sun, 26 May 2024 06:16:24 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D09E3D62;
+	Sun, 26 May 2024 06:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="INqJNrjN"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBCF17D2
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 06:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1F917D2
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 06:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716704184; cv=none; b=KNmAiWwwvO3OSmOPAK/e0d/BRPUm0OR6m/vPWAL4se2kFxFgO869RNEVONieXp5VTc6Yi6ALAaLcRVR/f+xAhwIhEkq0gRxvkxlm0wkLwu/1jnwfCMb13+RAWr9azQu1jpcn0AjmZQnxp1z/JNslvz60+Ww8A2w717q9BiMjnh8=
+	t=1716704542; cv=none; b=EvT+pK0+wJxc3o7ofS5GZBq740dJzp5tTE9ZIV2Lt31o9JPg3O5Kce+XV/oWn7d1JvJRptCTMliPNhmWcZNp5OsjZO225nbR5KHPc/xYh7B7iUJp2NyGLxnVes/R8Ix8dTvXyqvdcoSInPId9TwV/oN8aaPy+K22+Q8Sf7WlZVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716704184; c=relaxed/simple;
-	bh=LEJRrr8+ciU7jaznDnmbd+w4DF33t2zIZ01uPKYK7x0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nAttEDmr8yUOxsSnVsJPJL9/Y6dg8xA3LowOI2vEwCMAyVtjjE4A1prqUgkCHxY21mHnFNzHOWWbuuJtKGdhKyTKDxkIShic7S+NXA3GYX9iJ0VnNveXnLjetsZq3ada9RjppAdTgikSVKth5YMPcYd4qiLG07xaL3Z0TCCmCl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eac4d26336so60546939f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:16:22 -0700 (PDT)
+	s=arc-20240116; t=1716704542; c=relaxed/simple;
+	bh=EE8BTXmet0WFB7GKsVR0ZWDaP2FTwcYXZes7aSfRQjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C4NW5pR3sRvMw1SLwyEZoi7ffEx8Vjbz3Mhw1aqH42SidzFUAcMBzfS6n5419HHO+Yy33haKv1KQNA6hEVoE6cG65c6e3z/nGxProPMnJXSaV6vgodtLUJZyVos3+oKS+ERnSkmixaxz1vNe8gG7j7QUZy/lOaTN9eOJ5bXzCsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=INqJNrjN; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-36c6056f7bdso196795ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:22:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716704540; x=1717309340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IPuTC1vAAk7gbV8KtBdVCBb6XPyiuQya/wCN3kuuIQQ=;
+        b=INqJNrjNUcvmi/KCYq5ea9+TY0xFfFsJrHcRgHLqQA+1UQQI6rDpeGoWpy39awPFXL
+         OEcHRAm9lBD4wE1T4zE11caDVOXsj64odflXt/61hVkWShHHmTf7JjBq8xgRR4IFHo5H
+         SPa8NeFhwBrhqiv8pwcrzDO6ykt9OCAOMnp7tYjdwVF/ss5/L/EK85+tEb2lUpbBdhlE
+         nkTtyKPdKMTj8jM46IpbWMpGKu15hzZdI2zhpqrhlQSu1XEpdF3sXhMBLUIYYs5I73oj
+         Xcas1Fi1qRQ4G53yaYdZEYckuMcrR+8O+RhF/M7brAummcqawYCf4njS0cwMu1yt4+xF
+         Pd+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716704182; x=1717308982;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xqz3OmqrV4/kaQFba8nrxHe8FASlgXMbUyOj/T3OI1w=;
-        b=jok+F/5Qu1Ml2kUEOa8RTPospORoD5Caq/+slzgLGzUpe+dZ6zcjqB83wzFcxU5RTj
-         TcN0GFdMef0/guK22r70lQ+aYV7ZDDXfySW+McmKyAAln4P2Xni0tMBiy5eW8qQtUUSl
-         qG491S7B3MX9IrvzPUTQgUaC+NdKbp9teny/NfmATIDW3/4iekG2PgaU39apxWCGIBo1
-         vsyfyf3mLuSPBsB5kSsv596nkVVOpxAwezrZ7Gl6J0lW01m3gOMb5AJFBzkd2S+7fyh1
-         jyTK1+T334hKLG+R3MN21fOgxeBvZMYvXKN2XlLbHuwxFJAClDKCmEkXTBisDztp4vp+
-         im1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrwYM1jTriZWRbAcQYWC6trsOx+ux31Pbq3Cl4O0owbELl5Pg59vebHYr3FsySI+g56qM/QiiYd8o6+jsEmJ/rl1enLjDjmIsi/BMp
-X-Gm-Message-State: AOJu0Yzk10UQ9A4lC9sGMVmCXv8Tdlq/m9AbppqVdGgJOYc3xvgnvUSQ
-	qg52YJesDS3IBfrdTUwrZEXj/oIVYIzxkK3Y4ZJ6fjUDPQ0a5NOaf4apMMaZPw69xvYR9yyb4FS
-	qIV+LUjCDk1gkDEDFqbUHj0QWBzoYYC9yQjlY18DVbxXjPf07H5wD9oU=
-X-Google-Smtp-Source: AGHT+IGzJEpq819L+S42AsUcLkVvaFp8ykVfYhW3ECG9bWN2SJW0wkbphk2NfKqWs8CJY3OnKLdoLZx/ujG+eCaGw08+3LvVrPye
+        d=1e100.net; s=20230601; t=1716704540; x=1717309340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IPuTC1vAAk7gbV8KtBdVCBb6XPyiuQya/wCN3kuuIQQ=;
+        b=M6b73cAJQGg4jDiL28rVdp4+MoXpARWFhrY212o4MHErVDPlkqxaGg8Rg1tni6fF7y
+         NLdIvA14gfb1KdXDVwwin8dc+EQXSCxcy2v3LxtcJ4Wqbn1aSqmOYdpXdGnuatmcETKl
+         2aDTwPBLA3ZMKnUtUGjGiQ8e4wKZf0N16qs2pB/6I/p7+nk1X4BDTGvuwlFfWFDHD/g4
+         NZ4DYTn8+Yssn3CSE9E0LOWsHtZkR4xSQYe6DRqWJYzkHBfo5t030IA8IhdjWAV5n3BK
+         3+9xP8roHo0uo2OvzJFO66njt+Z51F0ZIxNmxJPN8InWJtdlKLOq2ySovtG25fALG5mv
+         zd7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgoFFZPA1EVQ1typ5NGp8CR4riwVanFSn1tvRc3Tb+YGHfJQ7LJc8h4dXAJRK101P/7dypRwy0jxwiKertzPjx3g0ZdVZ+WV34QAI
+X-Gm-Message-State: AOJu0Yz2cqU5hCEBxTol3y+tl256Q8kQwJGqG7MWzHtiMMxQgj2rI5dx
+	ajfuE/vdGwapkJeeJWJAHozNm7eKcnD0dLGb7h1bvvE2iH/wLovCbOpRxwclsdFnSIcaWH1OEAO
+	QVAdEq+zodPaokAz3VYYXTeuZddGU+p9YOJ+p
+X-Google-Smtp-Source: AGHT+IHOA+3MC5BCfYSWcQg2wRbFihyeqfHBSu7YvoHy4Tl4WaL1ZBauL1kAIowyYSCno5WQwGNXBMvJTlwcx9+mjo0=
+X-Received: by 2002:a92:3611:0:b0:373:7fc0:e392 with SMTP id
+ e9e14a558f8ab-3738b349abbmr2093135ab.19.1716704540022; Sat, 25 May 2024
+ 23:22:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:340a:b0:7d6:1df1:bf08 with SMTP id
- ca18e2360f4ac-7e8c6e18876mr36973639f.3.1716704181895; Sat, 25 May 2024
- 23:16:21 -0700 (PDT)
-Date: Sat, 25 May 2024 23:16:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f2562606195556e5@google.com>
-Subject: [syzbot] [wireguard?] WARNING: locking bug in wg_packet_encrypt_worker
-From: syzbot <syzbot+f19160c19b77d76b5bc2@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+ <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
+ <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+ <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com> <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 25 May 2024 23:22:08 -0700
+Message-ID: <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
+	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
+	Yang Jihong <yangjihong@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, May 25, 2024 at 10:22=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, 25 May 2024 at 16:34, Ian Rogers <irogers@google.com> wrote:
+> >
+> > So I think we still need to figure out what:
+> >
+> > $ perf <command> -e <event> ...
+> >
+> > where <event> doesn't specify a PMU means. I'll try to enumerate the op=
+tions:
+>
+> [ snip snip ]
+>
+> How about make the rule be that if the event doesn't have a specified
+> PMU, then that just means "legacy rules first".
+>
+> IOW, if you have a fully qualified event name (maybe define that as
+> "event name contains a slash), then you use the sysfs lookup.
+>
+> But a simple event name that doesn't contain a slash shall mean "use
+> legacy lookup rules".
 
-syzbot found the following issue on:
+What to do with events with no PMU like data_read? On my Intel tigerlake la=
+ptop:
+```
+$ ls /sys/devices/*/events/data_read
+/sys/devices/uncore_imc_free_running_0/events/data_read
+/sys/devices/uncore_imc_free_running_1/events/data_read
+$ perf --version
+perf version 6.6.15
+$ sudo perf stat --no-merge -e data_read -a sleep 0.1
 
-HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=150fd9cc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
-dashboard link: https://syzkaller.appspot.com/bug?extid=f19160c19b77d76b5bc2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+ Performance counter stats for 'system wide':
 
-Unfortunately, I don't have any reproducer for this issue yet.
+            122.84 MiB  data_read [uncore_imc_free_running_0]
+            123.00 MiB  data_read [uncore_imc_free_running_1]
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
+       0.101826301 seconds time elapsed
+```
+The rule for looking up an event with no PMU specified is to try it on
+every PMU - the rule is about as old as perf itself. For heterogeneous
+systems (BIG.little, hybrid) legacy events (cycles, instructions..)
+will be opened on every "core" PMU before the change. The behavior now
+is to just be consistent and say when no PMU is specified we always
+search all PMUs. This is motivated by ARM, RISC-V, .. wanting legacy
+events to be a last resort if sysfs or json encodings can't be found.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f19160c19b77d76b5bc2@syzkaller.appspotmail.com
+> Maybe in practice that ends up being the same as your option #4 ("if
+> the PMU isn't specified with <event> then we only search core PMUs")?
+> I don't know the perf code well enough to be able to say.
+>
+> But basically, the #1 rule in the kernel is that we do not break user
+> workflows. I happen to think that that is a really important rule, and
+> I'm disgusted at how many other open source projects ignore that rule
+> and think that "in the name of improvement, we will break the world".
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 2 PID: 5289 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 2 PID: 5289 at kernel/locking/lockdep.c:232 hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-Modules linked in:
-CPU: 2 PID: 5289 Comm: kworker/2:5 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: wg-crypt-wg0 wg_packet_encrypt_worker
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-Code: b6 14 11 38 d0 7c 04 84 d2 75 43 8b 05 53 0b 77 0e 85 c0 75 19 90 48 c7 c6 00 bb 2c 8b 48 c7 c7 a0 b5 2c 8b e8 f7 40 e5 ff 90 <0f> 0b 90 90 90 31 c0 eb 9e e8 58 f7 7f 00 e9 1c ff ff ff 48 c7 c7
-RSP: 0018:ffffc900030c7960 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: 00000000000019e3 RCX: ffffffff81510229
-RDX: ffff8880203e0000 RSI: ffffffff81510236 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 000000002d2d2d2d R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8880203e0b30 R15: 00000000000019e3
-FS:  0000000000000000(0000) GS:ffff88802c200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c000873681 CR3: 000000004adc0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- check_wait_context kernel/locking/lockdep.c:4773 [inline]
- __lock_acquire+0x3f2/0x3b30 kernel/locking/lockdep.c:5087
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
- _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- ptr_ring_consume_bh include/linux/ptr_ring.h:365 [inline]
- wg_packet_encrypt_worker+0xe4/0xb60 drivers/net/wireguard/send.c:293
- process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+So the problem was that the world was broken. It still is. Find a
+BIG.little ARM and try "perf stat -a sleep 1", the counts reported
+will be for either the BIG or the little cores. BIG.little is a decade
+old now.
 
+The switch to prioritize sysfs/JSON events over legacy events was
+specifically so that we wouldn't break Apple M1 and newer CPUs when
+making ARM properly support BIG.little when an event is specified. I
+think perf was broken over 2 kernel releases on Apple devices because
+of that. I had to fix issues with Apple M1 and later while not having
+access to such a machine. Frankly life would have been easier if ARM
+had just fixed the driver.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> And as long as "perf" is maintained in the kernel sources, that kernel
+> rule will guide perf too. Because the rule is not so much "kernels are
+> special" as a "Linus wants people to be able to feel confident in
+> updating".
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Sure, me too. This wouldn't have been an issue if Ampere had chosen a
+different event name than cycles. Often the driver writers don't test
+or consider perf. For example, perf will treat PMUs with a number at
+the end as being something to merge together in counts. On my laptop,
+uncore_imc_free_running_0 and uncore_imc_free_running_1 were merged in
+the data_read example above. ARM decided to start a new convention of
+putting hex addresses as suffixes many Linux releases ago, I've sent
+patches to make these encodings work like the numeric case and we may
+get it landed in v6.11 (a big problem being S390 already had PMUs like
+cpum_cf and cf is a valid hex suffix):
+https://lore.kernel.org/lkml/20240515060114.3268149-1-irogers@google.com/
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+In doing that work the code was tested by IBM for S390 and by Intel,
+but it was fixing an ARM created problem. ARM were the first to have
+BIG.little systems but contributed nothing to the perf tool to handle
+it, even though each core type has a different PMU. ARM BIG.little
+remains broken with the perf tool and when I fix it for them they
+don't review or test the code. ARM changed and left unworking uncore
+PMU naming conventions. ARM don't fix tests for their platform. ARM
+don't help make perf's tests cover their different way of naming PMUs.
+No one is trying to break ARM machines, but when ARM fails to do
+anything other than review their own changes in the perf tree it is
+something of an inevitability.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Fwiw, I am working on making perf record, perf top, etc. skip events
+on non-core PMUs when they fail to open. It is a rather large and ugly
+change. It is also a holiday weekend and I'm spending a lot of my time
+in it addressing latent ARM problems.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Thanks,
+Ian
 
-If you want to undo deduplication, reply with:
-#syz undup
+>            Linus
+>
 
