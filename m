@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-189896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A27D8CF6A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:16:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E818CF6BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D6C02818EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 990A22817C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4D513A26E;
-	Sun, 26 May 2024 23:16:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D695A13A3EB;
+	Sun, 26 May 2024 23:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkv3zkx9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185061C27
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 23:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194AD1C27;
+	Sun, 26 May 2024 23:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716765385; cv=none; b=jpnRIB2WQYEbvJPzjpWLAHxRRnj+HHr+GkHPO1GaYwZJRX5oj6h7OK29PfU4rYrYc2xoE5NAIv54CkoMD2PC1PIeUbuSMhqhk7XufXXMNs7fxI2szcst6C69qQGdAnLuid/D2DVCSgsaNG/CAhph/OqPF9MoEwLmek8lb8HN2vw=
+	t=1716765444; cv=none; b=b4ZSd+MKCIrt8aLK343RjiK3/GM50wgM13hzQWEq1IjbsgL4JaQjjj37w8QMrJKTN2YgbhY2+jiYff8/Hbbsm1Q/o4kcVe/OaRAcw9heVY3JPm+xsB8lAux62qPiLEtziOQu1GLWCha9D9zCHULxZn+GZ5tFP9oW4K1ttk0OFSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716765385; c=relaxed/simple;
-	bh=pT2C6pkL79vgz+ZCS1ONaWJouZsVnsiaTdxLyoQeLSg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kCCZkSWljQ7cCl3pIAC+4B8/23cbpsfF5Gh+E4jr1KqfrG7ew0ZT0TOjwf+aj0GJw95MRfZset7815ozwoJZlKyKxTNsZHXJo9Jw7hhMnYfxJpNPHWPiSFjdnlJ1YHEJfdJGE4beyQkayPCpeq/ln5t7ruffDL6qErxLnjOunME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36da6da1d98so50120185ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 16:16:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716765383; x=1717370183;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oC8x2Dny6NMl03OjByychK0bgBBN5LCFjldcNIPARlc=;
-        b=hk4NBwXcSFkThWmEQGdhd679Apu1SDwscfUMK6UM96REt1IMCoyar7zN7zCEhvGVf0
-         naNdqg82KzMhlTj5/Ch1+ItvehHjTseTUS/U2sw3lf2Zs9oEfkCcshv8zIcQyiA3/hBP
-         WbWMYmNALAmIPvEwHwBHQju8fdwpfZKdGbksOMyj2RbwQTMk1lOQtXam5Fb5MQTd6oOS
-         KqQaJslXfqfr5GDo/sMXkvn+HtGE0WZQo7wWnNt4IPy/AXA1mbgffEDa6VasVQ9JQD72
-         wj+32sHYIYjSz7YUo6yrdgEEEBDIESCAy2niSYKgVjiACl/K9DthUH+hhehotrJOBZds
-         3npQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvtYMS6+4g4Rq1dESuip5u7wkNWtqUZJWpYzvQE9u3TA9G/kXNiZisRn8wR9Dd/uvrLcykUdgQeejWXmMHBU3VY8CsLmZdUFadt+6z
-X-Gm-Message-State: AOJu0Yzj+hxWDjCoIsP5ZgDT/OuUN8g+l7Fg2ohebOO6zKXhte6dTaYe
-	OHb23b/f+34uARfW79XTEBMdjV5pkAanLeMyt0eU6JwkBHCsjX71C4M3SNeSgz3C3zxVYAVWETK
-	dy5DSOX8kO9SF2PjfsH5dhVChUewC8HSw1OW/woqM7Gmk40BfYriD1Q8=
-X-Google-Smtp-Source: AGHT+IFi8sbn2Y2eQ+ZWTIDbmXh9+hc3xfhZvQ/D/UMAgjOfQHiJed5gSvuonfPxn/POpRN/+WvhIYkvC+nvzIMbcv6LnufCv8KR
+	s=arc-20240116; t=1716765444; c=relaxed/simple;
+	bh=lqV71dyGNzoKcV/Iv3TfEMBsKD/L3s54JM57KtyVYmo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Nny6eokHVuYQ9c5fLZD9WjXop6+s0byi4h3tCZhEopsbV2w0FOMX3UwVZmoEBZvZYhhNJqR20leDeicz1xoqq7QsopujssYmZ3K6plrct7zx2IQdUx2aEsf4ipr4dK1s08t+/9u9nw1VlKhGQI+RWtu6cTbvTgwk9v9MC1rLaCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkv3zkx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E861C2BD10;
+	Sun, 26 May 2024 23:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716765443;
+	bh=lqV71dyGNzoKcV/Iv3TfEMBsKD/L3s54JM57KtyVYmo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dkv3zkx9qPFKNDRFoa351crEdyWzXNNHPoLvdZYvN+w9aarqlWKSPo/pay8YVUgG/
+	 KjRcXMefFa4YFPGgaXXDoDTzKin5YTBi6AeCNAu6ifEyMu86Y18E6bqObOnPvFPj5t
+	 jEK6mSBl1Uja7hd6WHM/pKJ4HDtmCPS5z4ANq0kaESRfFV21H1zixHj0YQAnb9nqej
+	 wJHrQnbS0VASvaem+zQAo77fql3mV31eb8VtvNT5ltEOB+FHkrSm3l1c8dWqCFimrO
+	 TkY9gw/w3wmdKswCRNkDDXSQkomyAbormsKri2kGqHRRspPPtgkz4Ud3fZ5yPNj7ef
+	 CXRiBh/0MMPMA==
+Date: Mon, 27 May 2024 08:17:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>, rostedt@goodmis.org,
+ mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix stack trace entry generated by
+ ftrace_pid_func()
+Message-Id: <20240527081719.a3f5b4c270d54a0453e3464f@kernel.org>
+In-Reply-To: <202405262232.L4XH8q6O-lkp@intel.com>
+References: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
+	<202405262232.L4XH8q6O-lkp@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:ca0d:0:b0:36d:c039:a51a with SMTP id
- e9e14a558f8ab-3737b3ed18cmr9312675ab.5.1716765383294; Sun, 26 May 2024
- 16:16:23 -0700 (PDT)
-Date: Sun, 26 May 2024 16:16:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d58eb306196396c1@google.com>
-Subject: [syzbot] riscv/fixes build error (2)
-From: syzbot <syzbot+55235599b5a8c657dac8@syzkaller.appspotmail.com>
-To: anup@brainfault.org, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun, 26 May 2024 22:51:53 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-syzbot found the following issue on:
+> Hi Tatsuya,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on rostedt-trace/for-next v6.9 next-20240523]
+> [cannot apply to rostedt-trace/for-next-urgent]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Tatsuya-S/ftrace-Fix-stack-trace-entry-generated-by-ftrace_pid_func/20240526-193149
+> base:   linus/master
+> patch link:    https://lore.kernel.org/r/20240526112658.46740-1-tatsuya.s2862%40gmail.com
+> patch subject: [PATCH] ftrace: Fix stack trace entry generated by ftrace_pid_func()
+> config: x86_64-buildonly-randconfig-002-20240526 (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405262232.L4XH8q6O-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> kernel/trace/ftrace.c:102:6: warning: no previous prototype for function 'ftrace_pids_enabled' [-Wmissing-prototypes]
+>      102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
+>          |      ^
+>    kernel/trace/ftrace.c:102:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+>      102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
+>          | ^
+>          | static 
+>    1 warning generated.
 
-HEAD commit:    0bfbc914d943 Merge tag 'riscv-for-linus-6.10-mw1' of git:/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=1471118a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c599cb5e39a20f2
-dashboard link: https://syzkaller.appspot.com/bug?extid=55235599b5a8c657dac8
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
+This is because the prototype in linux/ftrace.h is placed in the 
+#ifdef CONFIG_DYNAMIC_FTRACE block. The prototype needs to be moved
+outside of the block.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+55235599b5a8c657dac8@syzkaller.appspotmail.com
+Thank you,
 
-drivers/irqchip/irq-riscv-imsic-early.c:52:9: error: too many arguments to function 'riscv_ipi_set_virq_range'
+> 
+> 
+> vim +/ftrace_pids_enabled +102 kernel/trace/ftrace.c
+> 
+>    101	
+>  > 102	bool ftrace_pids_enabled(struct ftrace_ops *ops)
+>    103	{
+>    104		struct trace_array *tr;
+>    105	
+>    106		if (!(ops->flags & FTRACE_OPS_FL_PID) || !ops->private)
+>    107			return false;
+>    108	
+>    109		tr = ops->private;
+>    110	
+>    111		return tr->function_pids != NULL || tr->function_no_pids != NULL;
+>    112	}
+>    113	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
