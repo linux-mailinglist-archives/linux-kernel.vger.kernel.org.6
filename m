@@ -1,79 +1,71 @@
-Return-Path: <linux-kernel+bounces-189820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949A38CF546
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24F88CF561
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495B3280DC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53E921F20B65
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C970712BEA7;
-	Sun, 26 May 2024 18:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C281EB26;
+	Sun, 26 May 2024 18:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lz5Fykl+"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="IynnE00z"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1212B14F;
-	Sun, 26 May 2024 18:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFF812BE9D;
+	Sun, 26 May 2024 18:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716747125; cv=none; b=fGcr60hYsxpYs/fM7Yb+rE0QnLwF9dGpvchwKYDkr/LoS+U8aDukqNb2gDBRHwtsa/EzByp9voYBcqhtRh2iLaPJdFO0XGqCgUxstNFjxx2RVscT1C9PG9uumFIFBeKMLIWmBl/6hKtrTZLOeAhNK/m3ga8ETPhCEG0c4kzKtrw=
+	t=1716747746; cv=none; b=Qs+u9BarLGs0vRf+PGIKL0Lzyb8NowpVXfl1qjKruHa9k4g3xLEAywybX8kvNWucRu/FTzPXN9URzFid3JFNorS2EZW9UVwNTijP8sPCTqHIYM8oetCwPDXMHoqAdX8ojY30JlhOi29MOjsW20SCFcpRc5qtvgN2f5HnDk3TBVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716747125; c=relaxed/simple;
-	bh=OX9638MTevFX/ie6YKInE6t8JKdZ3ISf0pO1ivz4nXQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a4PaDZV6rQ9mK2wjqtp+eu7fUYmCGYwKBmHyLepjxMBaILPbg6xtMFteOkoe78BCDlocHjotuPgeNJHLGXm1OJ+gYTiaJ0+sgF2uS02VGkc0aWe5sB70JZK2VKQKwUigXE0af+qD967zB7AFwVQGLn+Z2G1ln43XCA24lrz2eSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lz5Fykl+; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44QIBnmt104929;
-	Sun, 26 May 2024 13:11:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716747109;
-	bh=7b71w3wTu7ljSPqTnEpkFDRPeQGF6eQu8Nu53psHfAc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=lz5Fykl+W5wLJD58DU4uzguynJDVuMsk7mtLDLxKJC4mgTYHQDeK1ihzeqdiahj4n
-	 ZFLPRPbPqRd1d6L0LkVBhMrfBCseOSJIU7rPNiZRRQNf2bFHUYsw0DhM6rLJRB+YN9
-	 kYUKSo+DKwTEwbgsk3DBV0TRrEnu9sTcGGmDyWFA=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44QIBnm2045495
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 26 May 2024 13:11:49 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 26
- May 2024 13:11:49 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 26 May 2024 13:11:49 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44QIBmSo101598;
-	Sun, 26 May 2024 13:11:49 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        <adobriyan@gmail.com>, <jani.nikula@intel.com>
-Subject: [PATCH v9 10/10] gpu: ipu-v3: Use generic macro for rounding closest to specified value
-Date: Sun, 26 May 2024 23:41:48 +0530
-Message-ID: <20240526181148.1131956-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240526175655.1093707-1-devarsht@ti.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
+	s=arc-20240116; t=1716747746; c=relaxed/simple;
+	bh=gMVISDvt27PqArWWAYMROWxlMPEWKBZrhuZFwb21ZKk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jgM/LpJN4Yf4H+5wPXn/IGzKjxyH54wuKdBzKMmps7Om8vY7iir1gA+AuVoxQEylhL8FVYcpaB2ve/bJyZ8EWEAKATyarCaHBfKf6QqxgaMFiBATrkeKGKog3OPpCrR30Lpdvb2Y9JZjVw/2XFw8HQ8cp5KT7d4tAzALLbVyt9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=IynnE00z; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
+	by mxout2.routing.net (Postfix) with ESMTP id 82B725FAAF;
+	Sun, 26 May 2024 18:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1716747401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gynUFeKlK7bwR/LNfSPExiIbRZQ2pzBMdaawzedPczQ=;
+	b=IynnE00z7paNMV+3GPrFYtyiFr+2FcbJUT9iiEdRE83sUPjLC9RWDzQO2vzoejp/rgLrPI
+	qZ4xpHVZj7BMbd1IkrqlIN4nTtvN6y70qhvJIzAkUtuna4hKTsNtxQ52Cm0HCs7o8D64+2
+	4AIok5UT37SA0dDt3C3pcMmqWuYY6WY=
+Received: from frank-G5.. (fttx-pool-157.180.226.247.bambit.de [157.180.226.247])
+	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 5A26040029;
+	Sun, 26 May 2024 18:16:40 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	John Crispin <john@phrozen.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [net] net: ethernet: mtk_eth_soc: handle dma buffer size soc specific
+Date: Sun, 26 May 2024 20:16:16 +0200
+Message-Id: <20240526181616.63727-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,47 +73,361 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Mail-ID: 61986cbb-004f-4af2-a9fc-cb68983d8dba
 
-Use generic macro round_closest_up() for rounding closest to specified
-value instead of using local macro round_closest().
+From: Frank Wunderlich <frank-w@public-files.de>
 
-There is no change from functionality point of view as round_closest_up()
-is functionally same as the previously used local macro round_closest().
+The mainline MTK ethernet driver suffers long time from rarly but
+annoying tx queue timeouts. We think that this is caused by fixed
+dma sizes hardcoded for all SoCs.
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Use the dma-size implementation from SDK in a per SoC manner.
+
+Fixes: 656e705243fd ("net-next: mediatek: add support for MT7623 ethernet")
+Suggested-by: Daniel Golle <daniel@makrotopia.org>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
-V9: No change
-V8: Update commit message
-V1->V7 : (No change, patch introduced in V7)
----
- drivers/gpu/ipu-v3/ipu-image-convert.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+based on SDK:
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index 841316582ea9..5192a8b5c02c 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -477,8 +477,6 @@ static int calc_image_resize_coefficients(struct ipu_image_convert_ctx *ctx,
- 	return 0;
+https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/fac194d6253d339e15c651c052b532a449a04d6e
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 106 +++++++++++++-------
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h |   9 +-
+ 2 files changed, 79 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index cae46290a7ae..6178bb53608c 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -1131,9 +1131,9 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
+ {
+ 	const struct mtk_soc_data *soc = eth->soc;
+ 	dma_addr_t phy_ring_tail;
+-	int cnt = MTK_QDMA_RING_SIZE;
++	int cnt = soc->tx.fq_dma_size;
+ 	dma_addr_t dma_addr;
+-	int i;
++	int i, j, len;
+ 
+ 	if (MTK_HAS_CAPS(eth->soc->caps, MTK_SRAM))
+ 		eth->scratch_ring = eth->sram_base;
+@@ -1142,40 +1142,47 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
+ 						       cnt * soc->tx.desc_size,
+ 						       &eth->phy_scratch_ring,
+ 						       GFP_KERNEL);
++
+ 	if (unlikely(!eth->scratch_ring))
+ 		return -ENOMEM;
+ 
+-	eth->scratch_head = kcalloc(cnt, MTK_QDMA_PAGE_SIZE, GFP_KERNEL);
+-	if (unlikely(!eth->scratch_head))
+-		return -ENOMEM;
++	phy_ring_tail = eth->phy_scratch_ring + soc->tx.desc_size * (cnt - 1);
+ 
+-	dma_addr = dma_map_single(eth->dma_dev,
+-				  eth->scratch_head, cnt * MTK_QDMA_PAGE_SIZE,
+-				  DMA_FROM_DEVICE);
+-	if (unlikely(dma_mapping_error(eth->dma_dev, dma_addr)))
+-		return -ENOMEM;
++	for (j = 0; j < DIV_ROUND_UP(soc->tx.fq_dma_size, MTK_FQ_DMA_LENGTH); j++) {
++		len = min_t(int, cnt - j * MTK_FQ_DMA_LENGTH, MTK_FQ_DMA_LENGTH);
++		eth->scratch_head[j] = kcalloc(len, MTK_QDMA_PAGE_SIZE, GFP_KERNEL);
+ 
+-	phy_ring_tail = eth->phy_scratch_ring + soc->tx.desc_size * (cnt - 1);
++		if (unlikely(!eth->scratch_head[j]))
++			return -ENOMEM;
+ 
+-	for (i = 0; i < cnt; i++) {
+-		dma_addr_t addr = dma_addr + i * MTK_QDMA_PAGE_SIZE;
+-		struct mtk_tx_dma_v2 *txd;
++		dma_addr = dma_map_single(eth->dma_dev,
++					  eth->scratch_head[j], len * MTK_QDMA_PAGE_SIZE,
++					  DMA_FROM_DEVICE);
+ 
+-		txd = eth->scratch_ring + i * soc->tx.desc_size;
+-		txd->txd1 = addr;
+-		if (i < cnt - 1)
+-			txd->txd2 = eth->phy_scratch_ring +
+-				    (i + 1) * soc->tx.desc_size;
++		if (unlikely(dma_mapping_error(eth->dma_dev, dma_addr)))
++			return -ENOMEM;
+ 
+-		txd->txd3 = TX_DMA_PLEN0(MTK_QDMA_PAGE_SIZE);
+-		if (MTK_HAS_CAPS(soc->caps, MTK_36BIT_DMA))
+-			txd->txd3 |= TX_DMA_PREP_ADDR64(addr);
+-		txd->txd4 = 0;
+-		if (mtk_is_netsys_v2_or_greater(eth)) {
+-			txd->txd5 = 0;
+-			txd->txd6 = 0;
+-			txd->txd7 = 0;
+-			txd->txd8 = 0;
++		for (i = 0; i < cnt; i++) {
++			dma_addr_t addr = dma_addr + i * MTK_QDMA_PAGE_SIZE;
++			struct mtk_tx_dma_v2 *txd;
++
++			txd = eth->scratch_ring + (j * MTK_FQ_DMA_LENGTH + i) * soc->tx.desc_size;
++			txd->txd1 = dma_addr + i * MTK_QDMA_PAGE_SIZE;
++			if (j * MTK_FQ_DMA_LENGTH + i < cnt)
++				txd->txd2 = eth->phy_scratch_ring +
++					    (j * MTK_FQ_DMA_LENGTH + i + 1) * soc->tx.desc_size;
++
++			txd->txd3 = TX_DMA_PLEN0(MTK_QDMA_PAGE_SIZE);
++			if (MTK_HAS_CAPS(soc->caps, MTK_36BIT_DMA))
++				txd->txd3 |= TX_DMA_PREP_ADDR64(addr);
++
++			txd->txd4 = 0;
++			if (mtk_is_netsys_v2_or_greater(eth)) {
++				txd->txd5 = 0;
++				txd->txd6 = 0;
++				txd->txd7 = 0;
++				txd->txd8 = 0;
++			}
+ 		}
+ 	}
+ 
+@@ -2457,7 +2464,7 @@ static int mtk_tx_alloc(struct mtk_eth *eth)
+ 	if (MTK_HAS_CAPS(soc->caps, MTK_QDMA))
+ 		ring_size = MTK_QDMA_RING_SIZE;
+ 	else
+-		ring_size = MTK_DMA_SIZE;
++		ring_size = soc->tx.dma_size;
+ 
+ 	ring->buf = kcalloc(ring_size, sizeof(*ring->buf),
+ 			       GFP_KERNEL);
+@@ -2465,8 +2472,8 @@ static int mtk_tx_alloc(struct mtk_eth *eth)
+ 		goto no_tx_mem;
+ 
+ 	if (MTK_HAS_CAPS(soc->caps, MTK_SRAM)) {
+-		ring->dma = eth->sram_base + ring_size * sz;
+-		ring->phys = eth->phy_scratch_ring + ring_size * (dma_addr_t)sz;
++		ring->dma = eth->sram_base + soc->tx.fq_dma_size * sz;
++		ring->phys = eth->phy_scratch_ring + soc->tx.fq_dma_size * (dma_addr_t)sz;
+ 	} else {
+ 		ring->dma = dma_alloc_coherent(eth->dma_dev, ring_size * sz,
+ 					       &ring->phys, GFP_KERNEL);
+@@ -2588,6 +2595,7 @@ static void mtk_tx_clean(struct mtk_eth *eth)
+ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
+ {
+ 	const struct mtk_reg_map *reg_map = eth->soc->reg_map;
++	const struct mtk_soc_data *soc = eth->soc;
+ 	struct mtk_rx_ring *ring;
+ 	int rx_data_len, rx_dma_size, tx_ring_size;
+ 	int i;
+@@ -2595,7 +2603,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
+ 	if (MTK_HAS_CAPS(eth->soc->caps, MTK_QDMA))
+ 		tx_ring_size = MTK_QDMA_RING_SIZE;
+ 	else
+-		tx_ring_size = MTK_DMA_SIZE;
++		tx_ring_size = soc->tx.dma_size;
+ 
+ 	if (rx_flag == MTK_RX_FLAGS_QDMA) {
+ 		if (ring_no)
+@@ -2610,7 +2618,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
+ 		rx_dma_size = MTK_HW_LRO_DMA_SIZE;
+ 	} else {
+ 		rx_data_len = ETH_DATA_LEN;
+-		rx_dma_size = MTK_DMA_SIZE;
++		rx_dma_size = soc->rx.dma_size;
+ 	}
+ 
+ 	ring->frag_size = mtk_max_frag_size(rx_data_len);
+@@ -3139,7 +3147,10 @@ static void mtk_dma_free(struct mtk_eth *eth)
+ 			mtk_rx_clean(eth, &eth->rx_ring[i], false);
+ 	}
+ 
+-	kfree(eth->scratch_head);
++	for (i = 0; i < DIV_ROUND_UP(soc->tx.fq_dma_size, MTK_FQ_DMA_LENGTH); i++) {
++		kfree(eth->scratch_head[i]);
++		eth->scratch_head[i] = NULL;
++	}
  }
  
--#define round_closest(x, y) round_down((x) + (y)/2, (y))
--
- /*
-  * Find the best aligned seam position for the given column / row index.
-  * Rotation and image offsets are out of scope.
-@@ -565,7 +563,7 @@ static void find_best_seam(struct ipu_image_convert_ctx *ctx,
- 		 * The closest input sample position that we could actually
- 		 * start the input tile at, 19.13 fixed point.
- 		 */
--		in_pos_aligned = round_closest(in_pos, 8192U * in_align);
-+		in_pos_aligned = round_closest_up(in_pos, 8192U * in_align);
- 		/* Convert 19.13 fixed point to integer */
- 		in_pos_rounded = in_pos_aligned / 8192U;
+ static bool mtk_hw_reset_check(struct mtk_eth *eth)
+@@ -5052,11 +5063,14 @@ static const struct mtk_soc_data mt2701_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+ 		.irq_done_mask = MTK_RX_DONE_INT,
+ 		.dma_l4_valid = RX_DMA_L4_VALID,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
+ 	},
+@@ -5076,11 +5090,14 @@ static const struct mtk_soc_data mt7621_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+ 		.irq_done_mask = MTK_RX_DONE_INT,
+ 		.dma_l4_valid = RX_DMA_L4_VALID,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
+ 	},
+@@ -5102,11 +5119,14 @@ static const struct mtk_soc_data mt7622_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+ 		.irq_done_mask = MTK_RX_DONE_INT,
+ 		.dma_l4_valid = RX_DMA_L4_VALID,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
+ 	},
+@@ -5127,11 +5147,14 @@ static const struct mtk_soc_data mt7623_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+ 		.irq_done_mask = MTK_RX_DONE_INT,
+ 		.dma_l4_valid = RX_DMA_L4_VALID,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
+ 	},
+@@ -5150,11 +5173,14 @@ static const struct mtk_soc_data mt7629_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+ 		.irq_done_mask = MTK_RX_DONE_INT,
+ 		.dma_l4_valid = RX_DMA_L4_VALID,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
+ 	},
+@@ -5176,6 +5202,8 @@ static const struct mtk_soc_data mt7981_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma_v2),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
+ 		.dma_len_offset = 8,
++		.dma_size = MTK_DMA_SIZE(4K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+@@ -5183,6 +5211,7 @@ static const struct mtk_soc_data mt7981_data = {
+ 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(1K),
+ 	},
+ };
  
+@@ -5202,6 +5231,8 @@ static const struct mtk_soc_data mt7986_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma_v2),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
+ 		.dma_len_offset = 8,
++		.dma_size = MTK_DMA_SIZE(4K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+@@ -5209,6 +5240,7 @@ static const struct mtk_soc_data mt7986_data = {
+ 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(1K),
+ 	},
+ };
+ 
+@@ -5228,6 +5260,8 @@ static const struct mtk_soc_data mt7988_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma_v2),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
+ 		.dma_len_offset = 8,
++		.dma_size = MTK_DMA_SIZE(4K),
++		.fq_dma_size = MTK_DMA_SIZE(4K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma_v2),
+@@ -5235,6 +5269,7 @@ static const struct mtk_soc_data mt7988_data = {
+ 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
+ 		.dma_len_offset = 8,
++		.dma_size = MTK_DMA_SIZE(1K),
+ 	},
+ };
+ 
+@@ -5249,6 +5284,8 @@ static const struct mtk_soc_data rt5350_data = {
+ 		.desc_size = sizeof(struct mtk_tx_dma),
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
++		.fq_dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ 	.rx = {
+ 		.desc_size = sizeof(struct mtk_rx_dma),
+@@ -5256,6 +5293,7 @@ static const struct mtk_soc_data rt5350_data = {
+ 		.dma_l4_valid = RX_DMA_L4_VALID_PDMA,
+ 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
+ 		.dma_len_offset = 16,
++		.dma_size = MTK_DMA_SIZE(2K),
+ 	},
+ };
+ 
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+index 4eab30b44070..f5174f6cb1bb 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+@@ -32,7 +32,9 @@
+ #define MTK_TX_DMA_BUF_LEN	0x3fff
+ #define MTK_TX_DMA_BUF_LEN_V2	0xffff
+ #define MTK_QDMA_RING_SIZE	2048
+-#define MTK_DMA_SIZE		512
++#define MTK_DMA_SIZE(x)		(SZ_##x)
++#define MTK_FQ_DMA_HEAD		32
++#define MTK_FQ_DMA_LENGTH	2048
+ #define MTK_RX_ETH_HLEN		(ETH_HLEN + ETH_FCS_LEN)
+ #define MTK_RX_HLEN		(NET_SKB_PAD + MTK_RX_ETH_HLEN + NET_IP_ALIGN)
+ #define MTK_DMA_DUMMY_DESC	0xffffffff
+@@ -1176,6 +1178,8 @@ struct mtk_soc_data {
+ 		u32	desc_size;
+ 		u32	dma_max_len;
+ 		u32	dma_len_offset;
++		u32	dma_size;
++		u32	fq_dma_size;
+ 	} tx;
+ 	struct {
+ 		u32	desc_size;
+@@ -1183,6 +1187,7 @@ struct mtk_soc_data {
+ 		u32	dma_l4_valid;
+ 		u32	dma_max_len;
+ 		u32	dma_len_offset;
++		u32	dma_size;
+ 	} rx;
+ };
+ 
+@@ -1264,7 +1269,7 @@ struct mtk_eth {
+ 	struct napi_struct		rx_napi;
+ 	void				*scratch_ring;
+ 	dma_addr_t			phy_scratch_ring;
+-	void				*scratch_head;
++	void				*scratch_head[MTK_FQ_DMA_HEAD];
+ 	struct clk			*clks[MTK_CLK_MAX];
+ 
+ 	struct mii_bus			*mii_bus;
 -- 
-2.39.1
+2.34.1
 
 
