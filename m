@@ -1,190 +1,242 @@
-Return-Path: <linux-kernel+bounces-189732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C27C8CF434
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58CC8CF437
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDD01C20A0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B62815B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD54DF5C;
-	Sun, 26 May 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED00DDF42;
+	Sun, 26 May 2024 12:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVfmAuCT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVmtEots"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF356C2D6;
-	Sun, 26 May 2024 12:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D1B676;
+	Sun, 26 May 2024 12:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716726023; cv=none; b=h9iJ+r00cUOrrB0T5/yJWDd1PYYjF0n0l7zj6qy5PjNKbailO3wScb18TP9o3R+JDBT95nnKaLUx3HN0bDeNILM8lKbwdCmXGciswC6PC9mgNU8wr2qo31QSnw6hrWFwrPAPPSxxoOWvTFpYJtJLhzDbaZUwohlzu0UxHV3wRmc=
+	t=1716726072; cv=none; b=C+qUbz1bXW8uieSk6IKULsHYonhcppWHBweMmOb21rJ0eK0F7jbtH+zQnjJYfIssEDn1iniX6IRT8gJEn+J+fapNKd4UGQBHA2dQRiw03AQOm5Z9z++/XYpOiw1lYfTLf6XsL3SHi4OnEEd9pOx/aWOLdkQggyyLl9ASgeE8y6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716726023; c=relaxed/simple;
-	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IZtGDx6T/vvJolazyCisJnJkINiPcFcv9YaSubjl8jU6KIZhZVWu7XLAPT9A8XxC2vY8OtUEoeLZ/zv6xhRNq2LjkvwR073qLqkrQa1iUyqyIi8QZ+uIfnyrNbL8HcBC+1mj7CDVgsWY0wF+jS0QtBJSzjuqSuaGgsnOQYeuneA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVfmAuCT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFF2C2BD10;
-	Sun, 26 May 2024 12:20:21 +0000 (UTC)
+	s=arc-20240116; t=1716726072; c=relaxed/simple;
+	bh=f1kHWS542LSTMfdmWktNiOaMXzRkAj1bsw6jPECvGyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gnfzQt+lRwHR2WW9r7pZO7evC0xzpPIC6h1FD9Hesxf7WJy91vQVmig9naH/ouAhIPJqHTvhk4oisRwTAfEFwqge6l1iX9bOgRv2u1TWiveTQ5Y4zBJc0AcnPKGCGHgl/PaQII6MoEe9EGQc6u6exKcK8Z8LVG0RbLjY+6A7a/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVmtEots; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91547C2BD10;
+	Sun, 26 May 2024 12:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716726023;
-	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
-	h=From:Date:Subject:To:Cc:From;
-	b=GVfmAuCTDm2k7wjoJMrE/Y5Jx3RFofSI/A+9FRFhlJFDYROLSINICrlsTJ/rMvE+2
-	 lvPQXx7zZCVnPBdPZDcXEZPPGCrp9L6OzLNI5R1M2ScsUHYtd/4PMc1C9snikOf8Jp
-	 6/cxSJ2gj42idZlhbPDuF/w+LkhNkpp4ScGsACqtgEdROOT10FDv6OystyBirh2kPM
-	 CN6bCdTgU1cuUMSg2zJjHX23hNFRC9pgSprAVNNy/6KwpzFk8Z2XmRu51NH4RJQOYd
-	 4JxK7muJMc5tiuqu0Q78IAVCm5gf6jwMJw9Er5kj2OApfIJo8sZnQtUkJGgtVPGmDd
-	 ansdfY1fT1AeA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Sun, 26 May 2024 08:20:16 -0400
-Subject: [PATCH RFC] fs: turn inode->i_ctime into a ktime_t
+	s=k20201202; t=1716726071;
+	bh=f1kHWS542LSTMfdmWktNiOaMXzRkAj1bsw6jPECvGyg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cVmtEotsGjCe7Knku67qpVLkurVHkdp0+UAV1/yAg1a3bt+8qw/CwKEFEFqfD/wX2
+	 qRt4e7M+tu/Kd97zmNp1iZiCU86Z02895CsbAFlm4qLvI+6pLGYTfcgaz0lPaOUYTx
+	 EAmaNKrdlQi0H/JLJDLxz19BFzhxCjST1QY9zVH0qQ4Cre++oI5ULhHErkTQg3yDYK
+	 2n+gTJFxut/c/Z1Tjk4x23eSvCS51zZOgTIQmpIi36qFT0Cz2cVKf/acACOMloJgGg
+	 kknxXzUQPxFnaxUmEvNAbL0rYq26bukoAYX2bUrPgE3T4FbvxYvhmWdJsCJWYhPxwl
+	 3MhZp6lORJIVw==
+Date: Sun, 26 May 2024 13:20:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, christophe.jaillet@wanadoo.fr,
+ gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: chemical: add driver for ENS160 sensor
+Message-ID: <20240526131927.1ab92e13@jic23-huawei>
+In-Reply-To: <wsaoofbe3gvwyejkhkqv3xx4q36a6wupn2yr7ntyklzwxovxhs@s6s2fcy5yebg>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+	<20240512210444.30824-4-gustavograzs@gmail.com>
+	<20240519150151.291a21dc@jic23-huawei>
+	<wsaoofbe3gvwyejkhkqv3xx4q36a6wupn2yr7ntyklzwxovxhs@s6s2fcy5yebg>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240526-ctime-ktime-v1-1-016ca6c1e19a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAP8oU2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyMz3eSSzNxU3WwwmWJiaGqUkmphaGhqrATUUVCUmpZZATYtWinIzVk
- ptrYWADLB4TZiAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
- Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3692; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmUykFGfWXjogqlx0kTGbCIxPDMLJ/+LnSVWox/
- /9P0qRBgruJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZlMpBQAKCRAADmhBGVaC
- FZg/D/9Ouih6Qb8A825LnXh8eyDl7mGgk/t1bSuTnuW7mlJ52hqLVDyFfOS6PsxuBsj/4qJUsmT
- I15VLG2/i0mfOLWEQfxyPScT9L8HKuVHbd0iZsqV2SLboBjuDvc7kTHYv9IIChhRW0YZMrIPRLN
- 6g5wXq58I+SHciw5eo/hAmGlNwL787u8dQTVQg+vhsP0M25+4vt40NwptD/cLbMBlbFoUsg8Xpx
- exSNPoFU46sE1draokpTL7nlujNc9O/Gi75s+k34U7v03SVSJekzPMsLXIikF424FnBuoCRwc/I
- y7KF8kjMWSqhUoL8y5lD4XU84iYhNiT2PzKXsgWRmYQQcS95Z+iA69S2E1nycoYGqZK3b3A2mbp
- hXs9qGgz671EGpDkfTtr26ZBgN90QWjkwMfxqmcFtDSSQClwwjX3QNbrQ2goPYGREmk52S05eVL
- j4KGiF2SSFEMuiROqgphZG/9YnPlr0sxtwMVxM8tf+Ns2hlu3Lo1uwXaoA2BF/7q1+XQjO9qcJU
- WV2tqBDtHfZ/v1v/DF65sVQubkRnRx7WXMISBtUiLNH8us0LNXf8OKOdMslAuEWagYJuvLxAqbh
- gOx9x96EoVQXd3XAx1H5haoYKGzBMOJCagjWjAKrbnwUgqkAU8oeqOZgzyb6IdP8uEQV8+SpmW5
- oqxkcvGLCLcPasw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-The ctime is not settable to arbitrary values. It always comes from the
-system clock, so we'll never stamp an inode with a value that can't be
-represented there. If we disregard people setting their system clock
-past the year 2262, there is no reason we can't replace the ctime fields
-with a ktime_t.
+On Sat, 25 May 2024 21:29:42 -0300
+Gustavo Silva <gustavograzs@gmail.com> wrote:
 
-Switch the __i_ctime fields to a single ktime_t. Move the i_generation
-down above i_fsnotify_mask and then move the i_version into the
-resulting 8 byte hole. This shrinks struct inode by 8 bytes total, and
-should improve the cache footprint as the i_version and __i_ctime are
-usually updated together.
+> Hi Jonathan,
+> 
+> Thank you for your review. I've got a few questions inline.
+> 
+> On Sun, May 19, 2024 at 03:01:51PM GMT, Jonathan Cameron wrote:
+> > On Sun, 12 May 2024 18:04:39 -0300
+> > Gustavo Silva <gustavograzs@gmail.com> wrote:
+> >   
+> > > ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
+> > > for indoor air quality monitoring. The driver supports readings of
+> > > CO2 and VOC, and can be accessed via both SPI and I2C.
+> > > 
+> > > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>  
+> >   
+> > > +
+> > > +static int ens160_read_raw(struct iio_dev *indio_dev,
+> > > +			   struct iio_chan_spec const *chan,
+> > > +			   int *val, int *val2, long mask)
+> > > +{
+> > > +	struct ens160_data *data = iio_priv(indio_dev);
+> > > +	__le16 buf;
+> > > +	int ret;
+> > > +
+> > > +	switch (mask) {
+> > > +	case IIO_CHAN_INFO_RAW:
+> > > +		ret = regmap_bulk_read(data->regmap, chan->address,
+> > > +					&buf, sizeof(buf));  
+> > 
+> > As below, should use a DMA safe buffer.
+> >   
+> > > +static int ens160_chip_init(struct ens160_data *data)
+> > > +{
+> > > +	struct device *dev = regmap_get_device(data->regmap);
+> > > +	u8 fw_version[3];
+> > > +	__le16 part_id;
+> > > +	unsigned int status;
+> > > +	int ret;
+> > > +
+> > > +	ret = ens160_set_mode(data, ENS160_REG_MODE_RESET);
+> > > +	if (ret)
+> > > +		return ret;  
+> > 
+> > No docs that I can see on what this means for access to registers etc.
+> > Good to add a comment if you have info on this.
+> >   
+> Performing a reset at this point isn't strictly necessary. When we reach
+> this point the chip should be in idle state because:
+> 
+> a) it was just powered on
 
-The one downside I can see to switching to a ktime_t is that if someone
-has a filesystem with files on it that has ctimes outside the ktime_t
-range (before ~1678 AD or after ~2262 AD), we won't be able to display
-them properly in stat() without some special treatment. I'm operating
-under the assumption that this is not a practical problem.
+Maybe but we have no way of telling that
+> 
+> b) the driver had been previously removed
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-I've been looking at this as part of trying to resurrect the multigrain
-timestamp work, as Linus mentioned it in passing in an earlier
-discussion, but then Willy threw down the gauntlet.
+Maybe or maybe not - the device may have just done a soft reboot and switched
+operating system. We have no idea what the hardware state is.
+As such the reset is a good idea.
+> 
+> This is documented in the state diagram on page 24 of the datasheet.
+> 
+> I'll remove this reset.
 
-Thoughts?
----
- include/linux/fs.h | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+Better to keep the reset and provide info on what it means wrt to accessing
+registers etc if possible. If there is no information then obviously not
+much you can add in the way of documentation!
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 639885621608..6b9ed7dff6d5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -662,11 +662,10 @@ struct inode {
- 	loff_t			i_size;
- 	time64_t		i_atime_sec;
- 	time64_t		i_mtime_sec;
--	time64_t		i_ctime_sec;
- 	u32			i_atime_nsec;
- 	u32			i_mtime_nsec;
--	u32			i_ctime_nsec;
--	u32			i_generation;
-+	ktime_t			__i_ctime;
-+	atomic64_t		i_version;
- 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
- 	unsigned short          i_bytes;
- 	u8			i_blkbits;
-@@ -701,7 +700,6 @@ struct inode {
- 		struct hlist_head	i_dentry;
- 		struct rcu_head		i_rcu;
- 	};
--	atomic64_t		i_version;
- 	atomic64_t		i_sequence; /* see futex */
- 	atomic_t		i_count;
- 	atomic_t		i_dio_count;
-@@ -724,6 +722,8 @@ struct inode {
- 	};
- 
- 
-+	u32			i_generation;
-+
- #ifdef CONFIG_FSNOTIFY
- 	__u32			i_fsnotify_mask; /* all events this inode cares about */
- 	/* 32-bit hole reserved for expanding i_fsnotify_mask */
-@@ -1608,29 +1608,25 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
- 	return inode_set_mtime_to_ts(inode, ts);
- }
- 
--static inline time64_t inode_get_ctime_sec(const struct inode *inode)
-+static inline struct timespec64 inode_get_ctime(const struct inode *inode)
- {
--	return inode->i_ctime_sec;
-+	return ktime_to_timespec64(inode->__i_ctime);
- }
- 
--static inline long inode_get_ctime_nsec(const struct inode *inode)
-+static inline time64_t inode_get_ctime_sec(const struct inode *inode)
- {
--	return inode->i_ctime_nsec;
-+	return inode_get_ctime(inode).tv_sec;
- }
- 
--static inline struct timespec64 inode_get_ctime(const struct inode *inode)
-+static inline long inode_get_ctime_nsec(const struct inode *inode)
- {
--	struct timespec64 ts = { .tv_sec  = inode_get_ctime_sec(inode),
--				 .tv_nsec = inode_get_ctime_nsec(inode) };
--
--	return ts;
-+	return inode_get_ctime(inode).tv_nsec;
- }
- 
- static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
- 						      struct timespec64 ts)
- {
--	inode->i_ctime_sec = ts.tv_sec;
--	inode->i_ctime_nsec = ts.tv_nsec;
-+	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
- 	return ts;
- }
- 
+> 
+> > > +
+> > > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_PART_ID, &part_id,
+> > > +			       sizeof(part_id));  
+> > 
+> > Ah. So this is a fun corner case.  Currently regmap makes not guarantees
+> > to always bounce buffer things (though last time I checked it actually did
+> > do so - there are optimisations that may make sense where it will again
+> > not do so).  So given we have an SPI bus involved, we should ensure that
+> > only DMA safe buffers are used. These need to ensure that no other data
+> > that might be changed concurrently with DMA is in the same IIO_DMA_MINALIGN
+> > of aligned data (traditionally a cacheline but it gets more complex in some
+> > systems and is less in others).  Upshot is that if you are are doing
+> > bulk accesses you need to use a buffer that is either on the heap (kzalloc etc)
+> > or carefully placed at the end of the iio_priv() structure marked
+> > __align(IIO_DMA_MINALIGN). Lots of examples of that in tree.
+> > If you are curious, wolfram did a good talk on the i2c equivalent of this
+> > a few years back. 
+> > https://www.youtube.com/watch?v=JDwaMClvV-s I think.
+> >  
+> Interesting. Thank you for the detailed info.
+> 
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (le16_to_cpu(part_id) != ENS160_PART_ID)
+> > > +		return -ENODEV;
+> > > +
+> > > +	ret = ens160_set_mode(data, ENS160_REG_MODE_IDLE);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> > > +			   ENS160_REG_COMMAND_CLRGPR);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> > > +			   ENS160_REG_COMMAND_GET_APPVER);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	msleep(ENS160_BOOTING_TIME_MS);  
+> > 
+> > Why here?  Not obviously associated with a boot command?
+> > A comment might make this easier to follow.  I 'think' it is
+> > because this next read is the first time it matters. If so that
+> > isn't obvious.  Also, there is an existing sleep in the mode set,
+> > so I'm not sure why we need another one.
+> >  
+> The usage of booting time is not documented in the datasheet. From
+> ScioSense's arduino driver the booting time is necessary after setting
+> the operation mode. I performed some tests that confirm this.
+> 
+> In this case in particular it is not necessary. Maybe I forgot to remove
+> it after some testing.
+> > > +
+> > > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_GPR_READ4,
+> > > +			       fw_version, sizeof(fw_version));  
+> >   
+> Does this bulk read also need to be made DMA safe? I'm guessing in this
+> case it would be best to devm_kzalloc() a buffer of three bytes?
+All bulk accesses need dma safe buffers.
+I would take the approach many IIO drivers do of not doing another allocation
+(which has overheads etc) but instead just add a suitable __aligned(IIO_DMA_MINALIGN)
+buffer to the iio_priv structure.  Note you normally only need to do mark
+the first one like that as we don't care if various different DMA buffers
+are in the same cacheline as the SPI controller should not cause DMA safety
+issues with itself.
 
----
-base-commit: a6f48ee9b741a6da6a939aa5c58d879327f452e1
-change-id: 20240526-ctime-ktime-d4152de81153
+> 
+> > The first datasheet that google provided me has this 
+> > GPR_READ0/GPR_READ1 and only 2 bytes. I hope they have maintained backwards
+> > compatibility with that earlier doc!
+> > 
+> > When you do a separate DT binding in v2, make sure to include a link
+> > to the datasheet you are using.  Also use a Datasheet: tag
+> > in this patch to make it easy to find that.
+> > I dug a little deeper and found the one on sciosense own website
+> > - ah, you do have it in the comments.  Add to the commit message
+> > and DT binding as well.
+> > 
+> >   
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	msleep(ENS160_BOOTING_TIME_MS);  
+> > Why again?  
+> Again, not needed. I'll remove it.
+> 
+> > > +	data = iio_priv(indio_dev);
+> > > +	dev_set_drvdata(dev, indio_dev);  
+> > 
+> > After you've moved to devm_add_action_or_reset() for the unwind of
+> > ens160_chip_init() you probably don't need to set the drvdata.
+> >   
+> I don't get it. Could you please elaborate on why it isn't needed to
+> set drvdata after the change?
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+No other users.  Only the remove() callback calls the matching get_drvdata()
+and that function won't exist once you've added device managed callbacks
+to handle everything it does.
+
+Jonathan
+
 
 
