@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-189764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BB68CF4A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:52:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A1D8CF4A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867641C2095D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 052F9281151
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1112C1755B;
-	Sun, 26 May 2024 14:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Idv90CoM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A98A17BA7;
+	Sun, 26 May 2024 14:57:48 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.58.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435F415E97;
-	Sun, 26 May 2024 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D06171B0;
+	Sun, 26 May 2024 14:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.58.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716735144; cv=none; b=aeXuHmq3I5/DattyZkPSH/dF/5FFVhING2njdZLdkVwWjXwlrcetZIiBSQTSMGqu7tnK9vGxEeJrpLFO4ZektYjjWQmjeCsfCnYScFzfkPVgRhhMbwCVy8NG2Tu38SZ0nljazUazy6kBHbYo8iyQpgm+9KPJVYuRpM5F+Z9nOmw=
+	t=1716735467; cv=none; b=UPgHGYMuditHdZEBYwxK+6oGK3NfeZ+jsqPn8L4DhZqgT/IQdLanEXZcoez4Z414aKRIKgCnxKzp5bafKFG1m1aK3m2pwGAPrvinjUrAuOSSDzmAMZON70op+srHixQlbR7sc8iePK4Pc5y3FawVA+HADJBQwepY481NO8vodtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716735144; c=relaxed/simple;
-	bh=D08KqfwLn6zPSed+s+WzJOGqLtwXk+mXoW/t1KDA+kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQSVwdPKGbXxfaANrVoDdpjm0vuSZey5hfTXvq/t9x0wMMtROivO1yFMn8RgW6PM+E2dMAyG29JwpOpzhgBs4NxsruBrAqleAk6i1iNPBmRdOb8d/y9eIi4Ut3cB4Uugo02QkASzY7MA4F4Q5KvCClcwc/1mYyX8JRbthXifgVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Idv90CoM; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716735141; x=1748271141;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D08KqfwLn6zPSed+s+WzJOGqLtwXk+mXoW/t1KDA+kA=;
-  b=Idv90CoMCw5F7mewZGhOUuNV9SWrdqXbtm/nCoXBQGQgIDas79E9glyl
-   RE4bzP8+MPJif06OlksuFeSiXiWJlS183hMI37anCT054wDryq4pN3Msp
-   HDvTuph5HQIPRuY2ewQjTTw0oBlSgBVa+QBC5KB8EVOXsByVA7Aq758en
-   fP+4s227ooLrdQdbTJSR+PNGWGTI1kjh+d0bpBuk2ot1Yc5N+kHb2bsgB
-   AdWdhpyT1V5WQ+Mb/MAWmozfM/DHItynlFpP2rmfDREXAVIasnKhycJg+
-   Xzu8bQzo9n+3gqaZwDQEaLH/V0qZq4OtIL+IkE1d5+m26aMb7kjiM4yid
-   g==;
-X-CSE-ConnectionGUID: ubc4Xa0SSky9A2k4oZ34uw==
-X-CSE-MsgGUID: xuIM2pu9T1eyXxIqu92g5g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="15995933"
-X-IronPort-AV: E=Sophos;i="6.08,190,1712646000"; 
-   d="scan'208";a="15995933"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 07:52:20 -0700
-X-CSE-ConnectionGUID: VgCDjZlCRcW1AmXR9amjaw==
-X-CSE-MsgGUID: 4yBunriQTZ68WmqHo/pp3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,190,1712646000"; 
-   d="scan'208";a="38912144"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 26 May 2024 07:52:19 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sBFEO-00087P-0q;
-	Sun, 26 May 2024 14:52:16 +0000
-Date: Sun, 26 May 2024 22:51:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tatsuya S <tatsuya.s2862@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Tatsuya S <tatsuya.s2862@gmail.com>
-Subject: Re: [PATCH] ftrace: Fix stack trace entry generated by
- ftrace_pid_func()
-Message-ID: <202405262232.L4XH8q6O-lkp@intel.com>
-References: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
+	s=arc-20240116; t=1716735467; c=relaxed/simple;
+	bh=AWuyBa9xPCLRsgOsdytfGSl/rbd5PD3DKk+m9xlX1hE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MkDJH4RZnUYw1FV2capL6XayIos6VQayeg9KU0QlAgc2Tutootamlv5WDOCzeNtYA4Lky/fBGZrk079nu+bqDVIdxZjrxwhLnIeenHjgAbQcaTKJXSXMFK8Z+ZwLHb37kICXJpgsYzCSPJr7Fq7Cer7h/c1QRf3OPSetwZG1FRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=114.132.58.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtp90t1716735442tmrpnru2
+X-QQ-Originating-IP: d19yNXHlKFhMn1jXpxkUY3K5Jw8/ed9ZnmhrIZ9gsXM=
+Received: from localhost.localdomain ( [125.76.217.162])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 26 May 2024 22:57:20 +0800 (CST)
+X-QQ-SSF: 01400000000000I0J000000A0000000
+X-QQ-FEAT: QityeSR92A1kDI7lTOharDXzqe3GCZqJ3snE2fLcyD6KqoFxCw4zW51Me1aIu
+	ZP6gz0Cazu36eZxWlwU3u8sBNlXCy5CdrE+Xoys4lg16NxMc90Nek3j9UQbJqWOf3V8ypBM
+	vJjQ2IqEuX5jq8/wo0E3HWWJY6cTOrPR74N14KaDdMx+ZAcSWkMYe9iwkbuQl+W/KbdCR0O
+	lX+kJWTFeIQxFTiz3VOQh+xZAjO4MADzPG5CV4AgE71vKgJtVIvvSWUzJFWNsqlLXSo5HkR
+	rR6AY0U0EisXgyOlSwy54b8VeoUWs3QMhmB3odsPCT5XyLQ2eco0QzuQnSFvk0iMyVh702c
+	bcKoPDg0fWhs+/MP6d1cJy8xB+oAd8/o6pDf4D96GIyZsQggIbQuP2Qc8aqeUOnLHDU8Gw2
+	KQ9t0fJc1jY=
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 634043123438159302
+From: Gou Hao <gouhao@uniontech.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kuniyu@amazon.com,
+	wuyun.abel@bytedance.com,
+	leitao@debian.org,
+	alexander@mihalicyn.com,
+	dhowells@redhat.com,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	gouhaojake@163.com
+Subject: [PATCH 1/2] net/core: remove redundant sk_callback_lock initialization
+Date: Sun, 26 May 2024 22:57:17 +0800
+Message-Id: <20240526145718.9542-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-2
 
-Hi Tatsuya,
+sk_callback_lock has already been initialized in sk_init_common().
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
+---
+ net/core/sock.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on rostedt-trace/for-next v6.9 next-20240523]
-[cannot apply to rostedt-trace/for-next-urgent]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tatsuya-S/ftrace-Fix-stack-trace-entry-generated-by-ftrace_pid_func/20240526-193149
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240526112658.46740-1-tatsuya.s2862%40gmail.com
-patch subject: [PATCH] ftrace: Fix stack trace entry generated by ftrace_pid_func()
-config: x86_64-buildonly-randconfig-002-20240526 (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405262232.L4XH8q6O-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/trace/ftrace.c:102:6: warning: no previous prototype for function 'ftrace_pids_enabled' [-Wmissing-prototypes]
-     102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
-         |      ^
-   kernel/trace/ftrace.c:102:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/ftrace_pids_enabled +102 kernel/trace/ftrace.c
-
-   101	
- > 102	bool ftrace_pids_enabled(struct ftrace_ops *ops)
-   103	{
-   104		struct trace_array *tr;
-   105	
-   106		if (!(ops->flags & FTRACE_OPS_FL_PID) || !ops->private)
-   107			return false;
-   108	
-   109		tr = ops->private;
-   110	
-   111		return tr->function_pids != NULL || tr->function_no_pids != NULL;
-   112	}
-   113	
-
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8629f9aecf91..67b10954e0cf 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3460,7 +3460,6 @@ void sock_init_data_uid(struct socket *sock, struct sock *sk, kuid_t uid)
+ 	}
+ 	sk->sk_uid	=	uid;
+ 
+-	rwlock_init(&sk->sk_callback_lock);
+ 	if (sk->sk_kern_sock)
+ 		lockdep_set_class_and_name(
+ 			&sk->sk_callback_lock,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.20.1
+
 
