@@ -1,128 +1,123 @@
-Return-Path: <linux-kernel+bounces-189874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81978CF613
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043CB8CF616
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162FB1F21083
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD4C28112C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD6139D00;
-	Sun, 26 May 2024 21:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C8013A267;
+	Sun, 26 May 2024 21:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7jt2jSa"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="eeZcNRTZ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91D2F46
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DAA12F5A6
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716758351; cv=none; b=e8E3vF90fAC4EKnHZeh0yy/n3za8Lg2W6wAnGSL9aymT8XOHa41Gq+iQkRDmwcCVlfamW7+ZpuXIdHYsQqWYltLlRF59aKAeerMpddqofqBATVKv+j27cNySAjyzBvE+tijS21tZHu2oRdTwhMBWNcMjocqq2iXfHd6h7UZH6Tc=
+	t=1716758501; cv=none; b=PsXNHYuc1qPPlWm75AfmfaD+aQk7w6sRMWfjJGZRMKx+DeeUO2nJikGDULgqxoIN8oIjPLGYsBd0xhMVJLaKAzd57cP872Gk6U7BF3lvvxPKimNUfUM5vNUyKmzXKzoSw+O34cWWZYwsL2iOIkKf0d5xzXvM+eaV3nRZwXqr3ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716758351; c=relaxed/simple;
-	bh=Pn8FslhbcHCMf78r21xAL7hMjz7SqSvFvE3Vdll6SFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBtAvyMfB2BvszAvWJ+4ykMKKvRyAOEodaVv/rNTmEn8hUH1I1Lhgl8jkVO7J7il3kKfWe5rkm8Fpn/d8V+3eY0OeW6STYgcnOZVxmm+f8OYk2PS3xUvEVMxc3gvyHx5UgXWHoFY+dDbkk26zWmT1wsggYYgPUOUywwssQWFZPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7jt2jSa; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e72224c395so83137771fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:19:09 -0700 (PDT)
+	s=arc-20240116; t=1716758501; c=relaxed/simple;
+	bh=h07742SfbAhVzUh56nb4wWh/jm6ZTEc0nPN1Utkt790=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uE6JpUWkB7NF8rdqdEsMuE/T/wfm3/KlIT5r6aV1eFywPKrllc3XUHRIXkZ9CKUecUUyqyGRXEtcPqIT3YdDhMN6qCKUykb9rbeSuvVGB5XSRPoy6xBCQrmt0XHnMtJOd3Xi6+c8cTpCz8/0DEMihnBWG/NeWT1aP5gotwr+Atc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=eeZcNRTZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-421124a04d6so4405705e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:21:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716758348; x=1717363148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEIFM+ukt26ot774C0FBgnpAZ7Ab3pUhoDY2KfgwdKw=;
-        b=E7jt2jSabwkEocc9SDeyqYkTOoCDSNIonyrSui7KLjFNKSzgVCGl5UQOIejDWXNgeU
-         v737TomtRjG/+5MXW9hgNudUt3dtUz8QsfHL4xF3Hz3IjB3uK8P6WUTUpBKSyh5r4EJ2
-         yJttPfF3Hi86kY432Ci9GhMWK+neAXk8j2CiiuouED0tO51yt01OBEjfAznA6nVJZXO6
-         zPtjuNLV1Aux0cbB/uVBUQjAy9DCI6/KAYE70oSPKOJKSbideFp1mgEmdBmePDf9tqbn
-         M2AvI7LsylE6KC2xkEV0fzsHRjaIEZyDl04AyOynL2u2JVwSWP35MhndVUb+iMKKWD9i
-         RnIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716758348; x=1717363148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716758497; x=1717363297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OEIFM+ukt26ot774C0FBgnpAZ7Ab3pUhoDY2KfgwdKw=;
-        b=NRR5J40tWUZkvnPV8/Zid0W1hUtTBME6zDZxhxKglR1E4zUSiPikeaxnFRcSDsON4t
-         p+HwouShk6J02vodUgvG8hlMqiEWRttlAF6UOqvtTPBayIRgKCIg0ODJRWpcVs9hA0A6
-         ZYVIVWohxdMJHkT44dcTi8DqI7YOe6MhT4ooMyU7+fxJ1/oryA1H9fhbWTVgZOTpnbGK
-         S8qvGI21mZW0y4hNKIEdrlx8UUah8fusWHVtxms6BCWenmRoqml1qAcLsHKcYncR4/ag
-         6T/PZ1iaRwHFSnqxzawAGdLdfUExGP0E8HzJVnwT964QyPUFBMsFqa5xlR5J/rlH8oqe
-         JvXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV51AyObiH5e4c+Wf1L7hW6314F3zM7iX1NKtJY/CrxHN8Rl+IleCxQJCKC7daSIkRKujQIMVYNvcT5DtBA23XT5oCPp2B7zm5AU3E
-X-Gm-Message-State: AOJu0YyThuk1/uX/Fy/XqCSa8NQWPZPcm1NPr0D22o+4Rr6vyVH43OVC
-	/2jvLwuyQgtBEUP/++61bY/25t2dr5fzehtWHJAUgykWNC+k+bipuPQzug853d8=
-X-Google-Smtp-Source: AGHT+IFrJTTBkEiw1EI5YgPKR8vkpSp697fOmBeacYJpaNOQSuBqiiQeMhcGuKW0GUoctcDWYbgGhg==
-X-Received: by 2002:a2e:2e10:0:b0:2e5:87c1:e845 with SMTP id 38308e7fff4ca-2e95b278a70mr44542691fa.48.1716758348145;
-        Sun, 26 May 2024 14:19:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcf47dasm15796671fa.55.2024.05.26.14.19.07
+        bh=FrZS6a+2WmF7PbI/Eek9PooMML2FIBwy4rVSyH7zOdU=;
+        b=eeZcNRTZMjJO4YnNQC5LsnYWgEIEkaUK7VRrH2kgUN57tFqpRYGi9DVEihP4of3sIX
+         XFLo842CUd6TJFClqdCyoxKP0te2StP2BYj3h/ptB/PiBi9jpAkMBsippgKK0J3pqEJH
+         R14zp2THbaJYl+KsKidRXo48qgeBJSPBPU2hqy/3bbtB9NsymtlzzatQfU+XMQB80FWK
+         fKwxkoD0LmjeF/WNL4zIpQ5zpgY3svmyFyA4Mtz/1t2NmqyXjVHkFc1PTyPBT6rmZxJD
+         i4AnJKVe3Y9UYTMYyxOeYGa0jgZvR3PGL+gswoKY26xIXD/VVS5lI4rh73iRdFUK8Wcf
+         10yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716758497; x=1717363297;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FrZS6a+2WmF7PbI/Eek9PooMML2FIBwy4rVSyH7zOdU=;
+        b=gQrZDiO/Z5YEFDoEV9iJB/wDGC436r3TKbTwHdI/Ct3qrm4y9ekpq18Aw2njmy5OEu
+         SAer/xmGt+DwZJZp+0RvrpcRXihwuIodk8hMXVYk6OaqwRgnA1WBvi7pp7rPqRgnWOyc
+         CxWyV/LH/lGOzN69zonS0VOi1N+2Bb6HYFURkvHYyohwI+eRLMIS8o/AEZT4tpFSrlKK
+         ve10Ka213sSQKvO40I/fwBIj1JqkqhnRqPZQafLZyZMtUlXyLJ3+YkH4DnqmRTXL600s
+         /UnawqYWUzGf89YCdl+Bsxf9hPab38PUT6PSHIhPEnRpujkZ5RUFr2Y94BPN7TiI36sb
+         qQyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnL/JSF56cYKNrJ5qvca9ODdRx3/mOi15KavBuiJJxKhN8KyzyLDMsPffvRJNu7W8CLd2guaAuYwgqbrhf1Q9AP8xMbgK+coHydDBi
+X-Gm-Message-State: AOJu0YyPTdPX2PyK4GjDjeBEql1OPIMQIwOxBLhZzyoaD2taK5FbmzHm
+	fKxLVunydH5eSH2Cpvd7Yar2kgisoakotAcNE1yiIWnoyNP8rqSOJQZLASbc8Xc=
+X-Google-Smtp-Source: AGHT+IHW4ae7lxNWn2WaLCNzfX0cTLfvfU9RcG3UisSM/eMD5CFFw81oCKu+GmqWICgbek/bKosQUg==
+X-Received: by 2002:a05:600c:6a93:b0:41b:f359:2b53 with SMTP id 5b1f17b1804b1-42108a14eaemr57525155e9.37.1716758497510;
+        Sun, 26 May 2024 14:21:37 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ccf32sm87534245e9.48.2024.05.26.14.21.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 14:19:07 -0700 (PDT)
-Date: Mon, 27 May 2024 00:19:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 02/10] drm/bridge: Set firmware node of drm_bridge
- instances automatically
-Message-ID: <lfgb24qv22sohgizlmt7kq3ymnshjeawlkwwcndivbeiloip55@x3qnu4ss3x4y>
-References: <20240526202115.129049-1-sui.jingfeng@linux.dev>
- <20240526202115.129049-3-sui.jingfeng@linux.dev>
+        Sun, 26 May 2024 14:21:37 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: thorsten.blum@toblux.com
+Cc: amir73il@gmail.com,
+	bhe@redhat.com,
+	clm@fb.com,
+	dhowells@redhat.com,
+	dsterba@suse.com,
+	dyoung@redhat.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	kexec@lists.infradead.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	miklos@szeredi.hu,
+	netfs@lists.linux.dev,
+	vgoyal@redhat.com
+Subject: [RESEND PATCH 2/4] fscache: Remove duplicate included header
+Date: Sun, 26 May 2024 23:21:09 +0200
+Message-ID: <20240526212108.1462-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240502212631.110175-2-thorsten.blum@toblux.com>
+References: <20240502212631.110175-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240526202115.129049-3-sui.jingfeng@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 04:21:07AM +0800, Sui Jingfeng wrote:
-> Normally, the drm_bridge::of_node won't be used by bridge driver instances
-> themselves. Rather, it is mainly used by other modules to find associated
-> drm bridge drvier. Therefore, adding a drm bridge to the global bridge list
-> and setting 'of_node' field of a drm bridge share the same goal. Both are
-> for finding purpose, therefore better to group them to one function.
-> 
-> Update the drm_bridge_add() interface and implementation to achieve such
-> goal atomically, new implementation will fetch the device node from the
-> backing device of the drm bridge driver automatically. For the majority
-> cases, which is one device backing one drm bridge driver, this model works
-> well. Drivers still can set it manually by passing NULL if this model
-> doesn't fit.
-> 
-> While at it, Add a 'struct device *' pointer to the drm_bridge structure.
-> As it already being passed in by both of drm_bridge_add() and
-> devm_drm_bridge_add(). A lot of driver instances has already added it into
-> their derived structure, promote it into drm_bridge core helps to reduce
-> a batch of boilerplates.
-> 
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> ---
+Remove duplicate included header file linux/uio.h
 
-[trimmed]
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/netfs/fscache_io.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> @@ -231,7 +243,7 @@ static void drm_bridge_remove_void(void *bridge)
->   */
->  int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge)
->  {
-> -	drm_bridge_add(bridge);
-> +	drm_bridge_add(bridge, dev);
->  	return devm_add_action_or_reset(dev, drm_bridge_remove_void, bridge);
-
-This breaks aux-hpd-bridge, which gets of_node as an external pointer
-rather than dev->of_node.
-
-
+diff --git a/fs/netfs/fscache_io.c b/fs/netfs/fscache_io.c
+index 38637e5c9b57..b1722a82c03d 100644
+--- a/fs/netfs/fscache_io.c
++++ b/fs/netfs/fscache_io.c
+@@ -9,7 +9,6 @@
+ #include <linux/uio.h>
+ #include <linux/bvec.h>
+ #include <linux/slab.h>
+-#include <linux/uio.h>
+ #include "internal.h"
+ 
+ /**
 -- 
-With best wishes
-Dmitry
+2.45.1
+
 
