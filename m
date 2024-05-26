@@ -1,172 +1,141 @@
-Return-Path: <linux-kernel+bounces-189763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600D28CF4A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:47:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BB68CF4A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E191F213C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867641C2095D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DEF1C6AD;
-	Sun, 26 May 2024 14:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1112C1755B;
+	Sun, 26 May 2024 14:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=toralf.foerster@gmx.de header.b="p6orHGgL"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Idv90CoM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23960200BF;
-	Sun, 26 May 2024 14:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435F415E97;
+	Sun, 26 May 2024 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716734787; cv=none; b=KPUWablkp8GlRlST5kP6gS02L06nLJxJ/19D3Wu8r/UynRcMvmZCcULlEs8j8Xv9p2eThZaduwKXp39LKbr3yUCsMKCUkKwIIcx+CUVGOY51D0gST+kt/EhLcJvPv2atoo6vS9v5YlzEFbwMDU1eZw46uhe3y8bqusgJHnAN5ew=
+	t=1716735144; cv=none; b=aeXuHmq3I5/DattyZkPSH/dF/5FFVhING2njdZLdkVwWjXwlrcetZIiBSQTSMGqu7tnK9vGxEeJrpLFO4ZektYjjWQmjeCsfCnYScFzfkPVgRhhMbwCVy8NG2Tu38SZ0nljazUazy6kBHbYo8iyQpgm+9KPJVYuRpM5F+Z9nOmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716734787; c=relaxed/simple;
-	bh=0vsSP2Wb4Od4B1kmO3pzd4R2Y0OIKxRcYyO4Yyav6B4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=R/24YDG5k6GpWM9RSK1MZmlsgqd6OJ5+gjLXaQqOk2WHdLNEOSohBcinYBPf/1bnXX9DkxmzMRfqrvecjvghBbiTVqIHJD1t9KC8lvw55A5zOr1+BCEwCc1t+TxU4qIohc3LcI9uu+HUqnxq53wrYn+V8OQO9g/pgnh4SmwYNSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=toralf.foerster@gmx.de header.b=p6orHGgL; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1716734783; x=1717339583; i=toralf.foerster@gmx.de;
-	bh=0vsSP2Wb4Od4B1kmO3pzd4R2Y0OIKxRcYyO4Yyav6B4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 References:In-Reply-To:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=p6orHGgLp83RyK3e9qpvsFUe7YeN+rJjKFy5IZPq41UJaINdrMO5l1j6001XAR73
-	 qEjoDyrOlamUBTNU1F03FnGhhTBkqH92VLCXKhzfRDD/W71dA3arPR5X/vKHygroD
-	 K2TlkVhNo83uERgvRzdc6b5jAqLWg0bPWvvo6OW5p2Rf7K5b/hAxYFJPJVJM/DqmC
-	 hwk/3upVfR/D3TKnrT+WqTRZWPflAyrSpzvajd8zAljKqxbcNUJPt62Dj+J94JAIB
-	 PzMqcvCtw4ye5UPcPMBcAqxiSJoxWWn81gjiBpKqPjZqjo1u6O6a9gQXW/KdeWrVW
-	 xjqS1q8Capi6oX/TLQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.178.33] ([77.6.29.73]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MCKFk-1sJWaz0p1O-009PlK; Sun, 26
- May 2024 16:46:23 +0200
-Message-ID: <3c053912-4e47-4c44-be80-dee4ade8bc6b@gmx.de>
-Date: Sun, 26 May 2024 16:46:22 +0200
+	s=arc-20240116; t=1716735144; c=relaxed/simple;
+	bh=D08KqfwLn6zPSed+s+WzJOGqLtwXk+mXoW/t1KDA+kA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQSVwdPKGbXxfaANrVoDdpjm0vuSZey5hfTXvq/t9x0wMMtROivO1yFMn8RgW6PM+E2dMAyG29JwpOpzhgBs4NxsruBrAqleAk6i1iNPBmRdOb8d/y9eIi4Ut3cB4Uugo02QkASzY7MA4F4Q5KvCClcwc/1mYyX8JRbthXifgVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Idv90CoM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716735141; x=1748271141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D08KqfwLn6zPSed+s+WzJOGqLtwXk+mXoW/t1KDA+kA=;
+  b=Idv90CoMCw5F7mewZGhOUuNV9SWrdqXbtm/nCoXBQGQgIDas79E9glyl
+   RE4bzP8+MPJif06OlksuFeSiXiWJlS183hMI37anCT054wDryq4pN3Msp
+   HDvTuph5HQIPRuY2ewQjTTw0oBlSgBVa+QBC5KB8EVOXsByVA7Aq758en
+   fP+4s227ooLrdQdbTJSR+PNGWGTI1kjh+d0bpBuk2ot1Yc5N+kHb2bsgB
+   AdWdhpyT1V5WQ+Mb/MAWmozfM/DHItynlFpP2rmfDREXAVIasnKhycJg+
+   Xzu8bQzo9n+3gqaZwDQEaLH/V0qZq4OtIL+IkE1d5+m26aMb7kjiM4yid
+   g==;
+X-CSE-ConnectionGUID: ubc4Xa0SSky9A2k4oZ34uw==
+X-CSE-MsgGUID: xuIM2pu9T1eyXxIqu92g5g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="15995933"
+X-IronPort-AV: E=Sophos;i="6.08,190,1712646000"; 
+   d="scan'208";a="15995933"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 07:52:20 -0700
+X-CSE-ConnectionGUID: VgCDjZlCRcW1AmXR9amjaw==
+X-CSE-MsgGUID: 4yBunriQTZ68WmqHo/pp3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,190,1712646000"; 
+   d="scan'208";a="38912144"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 26 May 2024 07:52:19 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBFEO-00087P-0q;
+	Sun, 26 May 2024 14:52:16 +0000
+Date: Sun, 26 May 2024 22:51:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tatsuya S <tatsuya.s2862@gmail.com>, rostedt@goodmis.org,
+	mhiramat@kernel.org, mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Tatsuya S <tatsuya.s2862@gmail.com>
+Subject: Re: [PATCH] ftrace: Fix stack trace entry generated by
+ ftrace_pid_func()
+Message-ID: <202405262232.L4XH8q6O-lkp@intel.com>
+References: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RIP: + BUG: with 6.8.11 and BTRFS
-Content-Language: en-US
-From: =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>
-To: Linux Kernel <linux-kernel@vger.kernel.org>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-References: <e8b3311c-9a75-4903-907f-fc0f7a3fe423@gmx.de>
-Autocrypt: addr=toralf.foerster@gmx.de; keydata=
- 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
-In-Reply-To: <e8b3311c-9a75-4903-907f-fc0f7a3fe423@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6i6w8nSOaTlq0wXwkekdEooTmK9X7MxciXQU1yhRTLsNrjfmUrW
- ytiCX4XZsXXeMn3PBngobJJqf9OUpcsQA/9PqZmFg4Wp5DUSCZ5QttEXSYR0GY9GfTRyUIJ
- QB+tMQh3hlfw0xX0/qijs3FOiL6XNf7v6DA9BWqS4OtPakGr6KAgKLsVkpyED+I6vonhVJC
- Nk0yAcDVPaUGqDlGv7MAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:A1vqNOGN9PQ=;uO+Y1D1uu/JoQVirb/igGMzKW3C
- Ckt4O314IHt3vZIWnagXZehzi8ezm7sAZUA71Sefd6CkL349w5Nnh7asWYfP+pdMxLleVMwD0
- atk8mIox9vv5NFo1iDKnmVnJ0jfIJWiIq6PIDp5ClUKYsganpVcZVH2wjPI6HivKC4QPQc9aJ
- FL1gElCG8x7Uh2gaI7s5t0yP5TLDcFIcxBQ5RQ5m5V90UXwmJKM+f3t77xVMi0ytAQ/534zMG
- NIWvZJ5m4b8axm39n8KlOv4w6psWcAczS8X8H3N4GiiNRh/MkHIK7+iSpe1kGOIcWSL4NRdND
- gLnSnekgMHABHAFiUZ3O3ojYeHhDrC7NHpV8JEvxFfX9baAQh0YY1/UGQbXS5XLEHvpPCCCwb
- iaD33rLYVy9prcd0z8SvIRCFwPFkK76QVFeTGI2gixd0xgLp6C+OoTj3upjhkKoXZFjFU0xs4
- Sn0E8SQ0cLIzea7rDVlHfKP8oWxwKBnxteclZDII1DWDZbUzXqQNz1No7lXHf+AoI4f89gwNx
- INgx79VXSCnL2KSJKt1Bl1VBSbQa0qBJbkryPqkQplfiExJ87D+XnXLysWHC/WIulasaiaK62
- ryPZOzrRkDLOq/gR2hfg2olwxm5mtnX9+XrRfsZGJzdcNHAz472AfQ0NsDEBPF49kuRXOOOdO
- LUepn2ZP18u83XWgiVm7KHYzB8s5pWl4Z6hA3BilTrbBFN+lXHkI8XaP5p/ITh9l7EUQu+9NE
- tb+0Fy0gHtQfLOAiEy1cltKXHg9lyZPzjOIQJA98mQ3f+tl0y4bp2I5/pUG1Cg1ktug5RtViQ
- BZqsKqO5a/qn2yHgA16C41eW21oGO2xPfICvuZAP9pPLw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
 
-On 5/26/24 11:08, Toralf F=C3=B6rster wrote:
->
-> I=C2=A0upgraded=C2=A0yesterday=C2=A0from=C2=A0kernel=C2=A06.8.10=C2=A0to=
-=C2=A06.8.11.
->
-> The=C2=A0system=C2=A0does=C2=A0not=C2=A0recover=C2=A0from=C2=A0reboot=C2=
-=A0in=C2=A0moment.
+Hi Tatsuya,
 
-It recovered eventually, I switched to 6.9.2, which runs fine so far.
-But these are new log messages:
+kernel test robot noticed the following build warnings:
 
-May 26 13:44:06 mr-fox kernel: WARNING: stack recursion on stack type 4
-May 26 13:44:06 mr-fox kernel: WARNING: can't access registers at
-syscall_return_via_sysret+0x64/0xc2
-May 26 13:44:06 mr-fox sSMTP[29464]: Creating SSL connection to host
-May 26 13:44:06 mr-fox sSMTP[29464]: SSL connection using
-TLS_AES_256_GCM_SHA384
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (2635 >
-2500), lowering kernel.perf_event_max_sample_rate to 75750
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (3323 >
-3293), lowering kernel.perf_event_max_sample_rate to 60000
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (4168 >
-4153), lowering kernel.perf_event_max_sample_rate to 47750
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (5273 >
-5210), lowering kernel.perf_event_max_sample_rate to 37750
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (6600 >
-6591), lowering kernel.perf_event_max_sample_rate to 30250
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (8318 >
-8250), lowering kernel.perf_event_max_sample_rate to 24000
-May 26 13:44:07 mr-fox kernel: perf: interrupt took too long (10415 >
-10397), lowering kernel.perf_event_max_sample_rate to 19000
-May 26 13:44:09 mr-fox kernel: perf: interrupt took too long (13048 >
-13018), lowering kernel.perf_event_max_sample_rate to 15250
+[auto build test WARNING on linus/master]
+[also build test WARNING on rostedt-trace/for-next v6.9 next-20240523]
+[cannot apply to rostedt-trace/for-next-urgent]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-=2D-
-Toralf
+url:    https://github.com/intel-lab-lkp/linux/commits/Tatsuya-S/ftrace-Fix-stack-trace-entry-generated-by-ftrace_pid_func/20240526-193149
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240526112658.46740-1-tatsuya.s2862%40gmail.com
+patch subject: [PATCH] ftrace: Fix stack trace entry generated by ftrace_pid_func()
+config: x86_64-buildonly-randconfig-002-20240526 (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405262232.L4XH8q6O-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/trace/ftrace.c:102:6: warning: no previous prototype for function 'ftrace_pids_enabled' [-Wmissing-prototypes]
+     102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
+         |      ^
+   kernel/trace/ftrace.c:102:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
+         | ^
+         | static 
+   1 warning generated.
+
+
+vim +/ftrace_pids_enabled +102 kernel/trace/ftrace.c
+
+   101	
+ > 102	bool ftrace_pids_enabled(struct ftrace_ops *ops)
+   103	{
+   104		struct trace_array *tr;
+   105	
+   106		if (!(ops->flags & FTRACE_OPS_FL_PID) || !ops->private)
+   107			return false;
+   108	
+   109		tr = ops->private;
+   110	
+   111		return tr->function_pids != NULL || tr->function_no_pids != NULL;
+   112	}
+   113	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
