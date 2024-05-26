@@ -1,116 +1,213 @@
-Return-Path: <linux-kernel+bounces-189712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305F78CF3F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E288CF3F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD1C1F21BD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 10:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05DE528163B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 10:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DD9B676;
-	Sun, 26 May 2024 10:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F84C144;
+	Sun, 26 May 2024 10:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnXk24sW"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CVuMyDRI"
+Received: from out.smtpout.orange.fr (out-17.smtpout.orange.fr [193.252.22.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048912CA2;
-	Sun, 26 May 2024 10:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9CA8F4E;
+	Sun, 26 May 2024 10:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716719543; cv=none; b=EwWN8YUQqFsuRuaAdv9NuG52dzTvoqcnvICi/zHZhVXrGenYr8DMlj+dtNzTnyxSsHZmpTmpCEGaJScnyzECDbWyQ7NjNXAuED2akI4RwDgpCOotpgEzfU5qMEFICRebo7X57JvigqwR5Hs9T0WU6bALAMKXeYTLWonT9GuPsbE=
+	t=1716720003; cv=none; b=pStvoKFyII9eBxeLfiClRU82lhGRhuZTgU9sf/MJSar67LS/cGZFWxJGcyLBfX27houkQU42pLA3apDdGHpARtqi2rP688XKwjgzpE+lZlI47qoY6SkeGNrYphJjmaG/Wd713ue9qHfWZMtxBr3H60Xsqsq9q9LRPSeJVZ5RhxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716719543; c=relaxed/simple;
-	bh=cM+3m9Vlx+Li31AKKrxvOFnkw6WwfSo8Tpsy25CvwDM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pyPwI97XTB5aB+6ScWmz9T7GT1rfQfQWd8hmEt2wdVtPHyw9haZgY7fJoDlncMtn19ro4jwelmUmFT4W9wqiz51NZKYlkP+UfQsGbBmZF0xfKHiQLg8nYOv+PDfUYP5u8oHw72pWOEbICdhQLyR/yYXvWkMn6wVU8BUVgJO0KdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnXk24sW; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42108822e3cso11278895e9.0;
-        Sun, 26 May 2024 03:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716719540; x=1717324340; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHGSRtBgYEwf5XeC+NvJ0ZSO87WeoCCUBD7D/Iu4rNY=;
-        b=gnXk24sW1XT2Uj81K/iZ1ZEJne7faC7Ca5l6srSru1g8H7M7+ZwgXxtnKqU4hbNSqj
-         zDF1TqrfvNOePEZhYT9aBDFzGDF6hUu1PrnAT7nM6FMC3e7+Bz/Mns3J//N0+Dx/IoVg
-         HevzBT+p3cu8pW3bbF7ftGpIOpICXmyHYZDpKaAkR0cvAzhuj/RTRdg+1Ct5GsxGtr8K
-         stIYcP34DOA2qUrsol2LgPJCEUxc57KvcxqA5F6sXgOP3I2WRchCO52uWf+r3/w4zEI+
-         6jcATQCysroyrPGbR350Touu2PqVWrmYwGUlrYZ9zcdyVL7eGWtsZVSkANXyrDHWur5w
-         8rhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716719540; x=1717324340;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qHGSRtBgYEwf5XeC+NvJ0ZSO87WeoCCUBD7D/Iu4rNY=;
-        b=btVzTPBt0mv0asvAaylm3Td/4ZE7zDOKbGtBzco5CTqo5Trxr5vb4aZQMsRfzI/ya+
-         My10Zgygbk4xTqhqzYdjfNK8SJQAkUctQTZ+yvGO9MQDsMUjZIt5QVhrWs1vk9urQgPV
-         bmpeTpXxPLLanEs0X+U1cvLVe5vKsCxPX40RqiQLBpZ1GwiK7PfJ2I/a7es5hjAaEk3x
-         X0SpTAd6EBnnTqHvriAL+LenkFbBnOoi7c11Q9//ws0/BYnuXnpk+WRh4EQiAmjMV+wG
-         dVtbJJ5F4RwWPB68oPl+k9XpuEU+rNg1PJR9bTdURyXGCWd8qhdIKx1aLvKQ6YsyFQj7
-         +Brw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsiAFZwmczcZ4jB1/NQ5iNxbHl7lu6EFbC3QLsUIPxp9ynslmE3r1Uyb+YgW7I61kyVPkxcLr1WhiSKpI2fEoCzGiTwFbNBrK6I5ZojjNy2yqlRfMHUwyxytP+w8z2FhUjDXd8vyv+9mLz
-X-Gm-Message-State: AOJu0Yyi0nDps2SSU+AUCsMz1DuI9gsPocbOpnR/Yryl64z7Te6nYY+J
-	KLYUA/a1NYELxBq6WXgx3lWlOGqLpMy5IBgiXO+MPjzgqpe8l8yb
-X-Google-Smtp-Source: AGHT+IH1/zyQQAW2UnztwvjH4KyCVYCCt/wjYrQb76m6DkbN6LiKHaAMA5t5MhdTV9ctjn9Kheh06A==
-X-Received: by 2002:a05:600c:4449:b0:41b:f4e1:381b with SMTP id 5b1f17b1804b1-421015a60b9mr93206105e9.2.1716719540014;
-        Sun, 26 May 2024 03:32:20 -0700 (PDT)
-Received: from 4728cded2e8d.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad638sm106565865e9.29.2024.05.26.03.32.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 03:32:19 -0700 (PDT)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: dan.carpenter@linaro.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	l.rubusch@gmail.com
-Subject: [PATCH] crypto: atmel-sha204a - fix negated return value
-Date: Sun, 26 May 2024 10:31:28 +0000
-Message-Id: <20240526103128.14703-1-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716720003; c=relaxed/simple;
+	bh=ABKkFQje7ZO0Xq2B2Vy/IfAlIAoW0dsuFwwptNEUZ1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t3mFuODbd043MByHNeIjaqMxxIuBwFB6CyzamK4ERjmFpsreeL/lbSjPd9OGdNOXf3chZIqADRHylt0Ku4Ah8MnMm7bV26O6WoCg4ecATn2sZg2IcCsHFOeTCM44P4/xJE/I58NKdT9eTLDGQHgXFkAAYxyzPoqXT9uvr4j1XCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CVuMyDRI; arc=none smtp.client-ip=193.252.22.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id BBH5su3rUWLctBBH5sRads; Sun, 26 May 2024 12:38:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716719928;
+	bh=RZoKiF0VbGitkMBWjUFlo2g+BnlJQuteJAm55UMz3vQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CVuMyDRIr84fG3FaKPfFroOvIXOd3eJvkBd2gegI2vB4BztPsDfmJiTNbiCP5u1Tv
+	 dDEoBj6aw7dDQiOWC/dRHbpo0Tfd9X/4q8A+0OyDflaBSWvkBSGbeJBfVE9apx7wnW
+	 vyXWX2fzltPe/tyOw4e5mWVUKdhOQ5nYWjWf9JM+iLnbBxcE8OnWW59eFyjq8Jqv27
+	 sNZ24iRWQ9c508bqVyjfE9Z+YslefAeHd9gLAoFj4vee/sAM0jeHF1f8ph7fR2dQqw
+	 iUJ7DggAFGrm6euvkBNR74lXuyHNxuXpvslE85QOj4ao5rCXQlJebplywuqolB/3wM
+	 BYJw6kKfWacDg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 26 May 2024 12:38:48 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <45007327-9d45-4a4e-b88f-ebb9a195e76c@wanadoo.fr>
+Date: Sun, 26 May 2024 12:38:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of
+ btintel_pcie_probe()
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+ linux-bluetooth@vger.kernel.org
+References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+ <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix negated variable return value.
+Le 24/05/2024 à 21:39, Luiz Augusto von Dentz a écrit :
+> Hi Christophe,
+> 
+> On Mon, May 20, 2024 at 3:42 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> Some resources freed in the remove function are not handled by the error
+>> handling path of the probe.
+>>
+>> Add the needed function calls.
+>>
+>> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only.
+>> Maybe incomplete.
+>> ---
+>>   drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
+>>   1 file changed, 14 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+>> index 5b6805d87fcf..d572576d0dbc 100644
+>> --- a/drivers/bluetooth/btintel_pcie.c
+>> +++ b/drivers/bluetooth/btintel_pcie.c
+>> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+>>
+>>          err = btintel_pcie_config_pcie(pdev, data);
+>>          if (err)
+>> -               goto exit_error;
+>> +               goto exit_destroy_worqueue;
+>>
+>>          pci_set_drvdata(pdev, data);
+>>
+>>          err = btintel_pcie_alloc(data);
+>>          if (err)
+>> -               goto exit_error;
+>> +               goto exit_free_irq_vectors;
+>>
+>>          err = btintel_pcie_enable_bt(data);
+>>          if (err)
+>> -               goto exit_error;
+>> +               goto exit_free_pcie;
+>>
+>>          /* CNV information (CNVi and CNVr) is in CSR */
+>>          data->cnvi = btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_REV_REG);
+>> @@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+>>
+>>          err = btintel_pcie_start_rx(data);
+>>          if (err)
+>> -               goto exit_error;
+>> +               goto exit_free_pcie;
+>>
+>>          err = btintel_pcie_setup_hdev(data);
+>>          if (err)
+>> -               goto exit_error;
+>> +               goto exit_free_pcie;
+>>
+>>          bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
+>>                     data->cnvr);
+>>          return 0;
+>>
+>> -exit_error:
+>> +exit_free_pcie:
+>> +       btintel_pcie_free(data);
+>> +
+>> +exit_free_irq_vectors:
+>> +       pci_free_irq_vectors(pdev);
+>> +
+>> +exit_destroy_worqueue:
+>> +       destroy_workqueue(data->workqueue);
+>> +
+> 
+> This looks a bit messy, perhaps we should really be calling
+> btintel_pcie_remove instead and adapt it to check if a field has been
+> initialized or not then proceed to free/cleanup/etc.
+> 
 
-Fixes: e05ce444e9e5 ("crypto: atmel-sha204a - add reading from otp zone")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-crypto/34cd4179-090e-479d-b459-8d0d35dd327d@moroto.mountain/
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- drivers/crypto/atmel-sha204a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not sure it would be that easy / readable.
 
-diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
-index 24ffdf505023..2034f6031518 100644
---- a/drivers/crypto/atmel-sha204a.c
-+++ b/drivers/crypto/atmel-sha204a.c
-@@ -106,7 +106,7 @@ static int atmel_sha204a_otp_read(struct i2c_client *client, u16 addr, u8 *otp)
- 
- 	if (cmd.data[0] == 0xff) {
- 		dev_err(&client->dev, "failed, device not ready\n");
--		return -ret;
-+		return -EINVAL;
- 	}
- 
- 	memcpy(otp, cmd.data+1, 4);
--- 
-2.39.2
+It would look like something like:
+static void btintel_pcie_remove(struct pci_dev *pdev)
+{
+	struct btintel_pcie_data *data;
+
+	data = pci_get_drvdata(pdev);
+
+	btintel_pcie_reset_bt(data);
+	for (int i = 0; i < data->alloc_vecs; i++) {
+		struct msix_entry *msix_entry;
+
+		msix_entry = &data->msix_entries[i];
+		free_irq(msix_entry->vector, msix_entry);
+	}
+
+	if (data->alloc_vecs)
+		pci_free_irq_vectors(pdev);
+
+	btintel_pcie_release_hdev(data);
+
+	flush_work(&data->rx_work);
+
+	if (data->workqueue)
+		destroy_workqueue(data->workqueue);
+
+	if (data->dma_pool)
+		btintel_pcie_free(data);
+
+	pci_clear_master(pdev);
+
+	pci_set_drvdata(pdev, NULL);
+}
+
+The added tests don't always look related to the function call just 
+after it :
+
+   - data->alloc_vecs vs pci_free_irq_vectors(), ok why not
+
+   - data->dma_pool vs btintel_pcie_free() does not look that really 
+obvious.
+
+
+There is also another issue in the remove function. We call free_irq() 
+on irq allocated with devm_request_threaded_irq().
+
+I'll try to see if more managed resources usage and/or some 
+devm_add_action_or_reset() could help.
+
+CJ
+
+>>          /* reset device before exit */
+>>          btintel_pcie_reset_bt(data);
+>>
+>> --
+>> 2.45.1
+>>
+> 
+> 
 
 
