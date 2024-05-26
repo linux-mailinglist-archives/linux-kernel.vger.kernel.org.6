@@ -1,279 +1,189 @@
-Return-Path: <linux-kernel+bounces-189808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895348CF525
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EC08CF52A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F68B20B10
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:57:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347E71F2124A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7432A12BE8C;
-	Sun, 26 May 2024 17:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774D712BE8B;
+	Sun, 26 May 2024 18:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yVTvSE13"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pBKTjnsF"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B6D524;
-	Sun, 26 May 2024 17:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B52200CD;
+	Sun, 26 May 2024 18:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716746254; cv=none; b=ZKlJBJIrPtN5SuZRSixMTMqtciW9z2sA3f6DH4IXgVwRaU0DmTHDeu2fMZW+J1alh3GLnlWnOavjqUdMWfeBHSCkqQ4gJooV1Z8l5n9dvo/n4YtpW+CS0lpW+928vo7PvyhZbS0ocz0+Xt9QtxXjT8tgpAE3MJOED1nb6DeISdE=
+	t=1716746453; cv=none; b=C5hO229/yuuO7qMVv/oJHxkdFlYFfdW+KrYokUvAifpHq4FXmO6GkrigZVim0DQ4pLzCBkfPfDEXd9w+qwxEdbnJO0PLC44+dcBqA3mK4TV5bKVvGCNb4Pyr7wcPwDUAo0DrWVZvG+LwYs4RN8ddqzFt4sZHV84rJkySeLcGj9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716746254; c=relaxed/simple;
-	bh=Diyf3ZspBkZVc/Nk2fXDW3NEcIJX1Il6Vl+W1+oKEaE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GzqMDA56LhDaiYvywtFJbDY5yzdXod3dZURKRUZITRxs6dM8IOJID0RkcVt+5Zn4Y/ElDguoYn7Wu5mWEOJUYVJRIiWK0zoOlu1ZCHc7Xbspsrk3lTr/bYvHTf2W2rkjQbXd3K0o7PW48IgafsJKXLpfvCk0bKZipb73AUbR4gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yVTvSE13; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44QHuvZ3055262;
-	Sun, 26 May 2024 12:56:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716746217;
-	bh=7x5QJeZY2rdnnAQKrhfcOhJcGH4F2nkBoyn9SE/tYGU=;
-	h=From:To:CC:Subject:Date;
-	b=yVTvSE13f5Gn+8FQHGaopajGzuJ8BkEOII4wjIXU636N0nSJnJysNshFtii/rJ6ti
-	 3okVf9u6eMF0pHQfmK486oEnWGt779WMhcc31qH3M2D0Me2UGRjUi+bBZfhqKyW1Ih
-	 4LeOVQFCWmN6s5QHHt9Eewz2SUqp5mMgeRKMUac8=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44QHuvCL009621
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 26 May 2024 12:56:57 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 26
- May 2024 12:56:56 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 26 May 2024 12:56:56 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44QHuteW077438;
-	Sun, 26 May 2024 12:56:56 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
-        <dlatypov@google.com>
-Subject: [PATCH v9 00/10] Add V4L2 M2M Driver for E5010 JPEG Encoder
-Date: Sun, 26 May 2024 23:26:55 +0530
-Message-ID: <20240526175655.1093707-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1716746453; c=relaxed/simple;
+	bh=dxSXSrx4/BXnb+d+NEYeKTYIf3VwJp56ouqWDIITsx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=foTm6zj3PkZOBt+ERoNz0xTg0ywNHBkwALs94oJV69cYpnL0oH8U1TTWQ0Dsg+1LJsWeBfU5cxa8F0ZF3ZoJLj5mH8/Niz9d8vaB3nnR8/2dD/kDps2BOJsa0JsBMhddxjjltBuG9CT9D9nfnctNXNT4It+22m2VPnM6yaYIj4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pBKTjnsF; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RU5ApuN+GYPU2T/hRDgB/i0RQ5fgmagDuVmvSKJ/0Qc=; b=pBKTjnsFNvJeY7Jrg7J0xLD0ZE
+	BJUpwNoWnf3du38CfvEeo+sDrN3swYgP49k45byB6A99GXWQ3jb80ZgF4YNaMta52h3G9hoNRVbuz
+	5GxDBGPqsXP5xQroI5em+Bwtw2fh18BDs1HlwFfxlS2d9n6jL0wlQslIhpTqmJGVrT8EPLzDBywQ+
+	5CqNS+YYMGWh2FhYf1LjhwlqLppkDGtAxfs8H8Gs4S4L1p9YwXmy6z2XovAUwtP4SjSYIYuptqV++
+	SWSm5/zcCoIw8FV9iCDFPWJ1OvKuEXg9aEuVb/vy+AFnx3MBb9AVnbYmpb4W5tIXV4EKKQGwPNPko
+	VvX+xpcg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59170)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBIAX-0002s2-0M;
+	Sun, 26 May 2024 19:00:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBIAR-0001Z9-6u; Sun, 26 May 2024 19:00:23 +0100
+Date: Sun, 26 May 2024 19:00:22 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Byungho An <bh74.an@samsung.com>,
+	Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
+ based on the selected iface
+Message-ID: <ZlN4tkY8fNM8/D8p@shell.armlinux.org.uk>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+ <20240524210304.9164-1-fancer.lancer@gmail.com>
+ <20240524210304.9164-2-fancer.lancer@gmail.com>
+ <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
-which is a stateful JPEG encoder from Imagination technologies
-and is present in TI AM62A SoC.
+On Sun, May 26, 2024 at 05:49:48PM +0100, Russell King (Oracle) wrote:
+> On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
+> > The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
+> > into the DW GMAC controller. It's always done if the controller supports
+> > at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
+> > interfaces support was activated during the IP-core synthesize the PCS
+> > block won't be activated either and the HWFEATURE.PCSSEL flag won't be
+> > set. Based on that the RGMII in-band status detection procedure
+> > implemented in the driver hasn't been working for the devices with the
+> > RGMII interface support and with none of the SGMII, TBI, RTBI PHY
+> > interfaces available in the device.
+> > 
+> > Fix that just by dropping the dma_cap.pcs flag check from the conditional
+> > statement responsible for the In-band/PCS functionality activation. If the
+> > RGMII interface is supported by the device then the in-band link status
+> > detection will be also supported automatically (it's always embedded into
+> > the RGMII RTL code). If the SGMII interface is supported by the device
+> > then the PCS block will be supported too (it's unconditionally synthesized
+> > into the controller). The later is also correct for the TBI/RTBI PHY
+> > interfaces.
+> > 
+> > Note while at it drop the netdev_dbg() calls since at the moment of the
+> > stmmac_check_pcs_mode() invocation the network device isn't registered. So
+> > the debug prints will be for the unknown/NULL device.
+> 
+> Thanks. As this is a fix, shouldn't it be submitted for the net tree as
+> it seems to be fixing a bug in the driver as it stands today?
+> 
+> Also, a build fix is required here:
+> 
+> > -	if (priv->dma_cap.pcs) {
+> > -		if ((interface == PHY_INTERFACE_MODE_RGMII) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_TXID)) {
+> > -			netdev_dbg(priv->dev, "PCS RGMII support enabled\n");
+> > -			priv->hw->pcs = STMMAC_PCS_RGMII;
+> > -		} else if (interface == PHY_INTERFACE_MODE_SGMII) {
+> > -			netdev_dbg(priv->dev, "PCS SGMII support enabled\n");
+> > -			priv->hw->pcs = STMMAC_PCS_SGMII;
+> > -		}
+> > -	}
+> > +	if (phy_interface_mode_is_rgmii(interface))
+> > +		priv->hw.pcs = STMMAC_PCS_RGMII;
+> > +	else if (interface == PHY_INTERFACE_MODE_SGMII)
+> > +		priv->hw.pcs = STMMAC_PCS_SGMII;
+> 
+> Both of these assignments should be priv->hw->pcs not priv->hw.pcs.
+> 
+> I think there's also another bug that needs fixing along with this.
+> See stmmac_ethtool_set_link_ksettings(). Note that this denies the
+> ability to disable autoneg, which (a) doesn't make sense for RGMII
+> with an attached PHY, and (b) this code should be passing the
+> ethtool op to phylink for it to pass on to phylib so the PHY can
+> be appropriately configured for the users desired autoneg and
+> link mode settings.
+> 
+> I also don't think it makes any sense for the STMMAC_PCS_SGMII case
+> given that it means Cisco SGMII - which implies that there is also
+> a PHY (since Cisco SGMII with inband is designed to be coupled with
+> something that looks like a PHY to send the inband signalling
+> necessary to configure e.g. the SGMII link symbol replication.
+> 
+> In both of these cases, even if the user requests autoneg to be
+> disabled, that _shouldn't_ affect internal network driver links.
+> This ethtool op is about configuring the externally visible media
+> side of the network driver, not the internal links.
 
-While adding support for it, following additional framework changes were
-made:
- - Moved reference quantization and huffman tables provided in
-   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
- - Add macros to round to closest integer (either higher or lower) while
-   rounding in order of 2.
- - Add KUnit tests for math functions.
+I have a concern about this patch. Have you considered dwmac-intel with
+its XPCS support, where the XPCS is used for Cisco SGMII and 1000base-X
+support. Does the dwmac-intel version of the core set
+priv->dma_cap.pcs? If it doesn't, then removing the test on this will
+cause a regression, since in Cisco SGMII mode, we end up setting
+priv->hw->pcs to SYMMAC_PCS_SGMII where we didn't before. As
+priv->flags will not have STMMAC_FLAG_HAS_INTEGRATED_PCS, this will
+enable all the "integrated PCS" code paths despite XPCS clearly
+intending to be used for Cisco SGMII.
 
-v4l2-compliance test :
-Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
+I'm also wondering whether the same applies to the lynx PCS as well,
+or in the general case if we have any kind of external PCS.
 
-E5010 JPEG Encoder Manual tests :
+Hence, I think this probably needs to be:
 
-Performance:
-Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
+	if (phy_interface_mode_is_rgmii(interface))
+		priv->hw->pcs = STMMAC_PCS_RGMII;
+	else if (interface == PHY_INTERFACE_MODE_SGMII && priv->dma_cap.pcs)
+		priv->hw->pcs = STMMAC_PCS_SGMII;
 
-Functionality:
-Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
+At least this is what unpicking the awful stmmac code suggests (and I
+do feel that my point about the shocking state of this driver is proven
+as details like this are extremely difficult to unpick, and not
+unpicking them correctly will lead to regressions.) Therefore, I would
+suggest that it would be wise if you also double-checked this.
 
-Compression Quality:
-Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
-
-Multi Instance:
-Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
-
-Crop support:
-Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
-
-Runtime PM:
-Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
-
-Math lib KUnit tests:
-Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
-
-[1]: 
-https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
-
-Changelog:
-V8->V9:
- - Remove kernel.h header file
- - Remove stale filler data on jpeg header in E5010 jpeg driver
-
-V7->V8:
- - Add KUnit tests for math functions
- - Add roundclosest() for supporting rounding for non-multiple of 2
- - Update commit message as suggested
- - Add Reviewed-by and Acked-by tags to patches as received
-
-V6->V7:
- - Fix cropping support
- - Move reference huffman and quantization tables to v4l2-jpeg.c
- - Fix suspend/resume use-case
- - Add Reviewed-by
-
-V5->V6:
- - Fix sparse warnings
-
-V4->V5:
- - Sort the #includes in driver file alphabetically
- - Rename huffman and quantization tables to not use '_'
- - Add Reviewed-by tag
-
-V3->V4:
-- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
-  dt-binding
-- Remove clock-names as only single clock in dt-binding
-- Fix issue with default params setting
-- Correct v4l2 error prints
-- Simplify register write functions with single statement return values
-- Remove unrequired error checks from get_queue()
-- Drop explicit device_caps setting as it is already taken care by v4l2
-  core
-- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
-  callback functions
-- Fix try_fmt callback to not update the queues
-- Remove unrequired contiguous format attribute from queue_init
-- Use dynamic allocation for video_device and remove unrequired
-  assignments in probe()
-- Remove unrequired checks from queue_setup function
-- Return queued buffers back if start_streaming fails
-- Use ARRAY_SIZE in place of hard-coding
-- Use huffman and quantization tables from reference header file
-
-V2->V3:
-- Add DONOTMERGE patches for dts and defconfig
-- Update driver with below changes :
-  - Correct license headers
-  - Use more generic name core instead of jasper for base registers
-  - Add Comment for forward declarations
-  - Simplify quantization table calculations
-  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
-    unrequired functions
-  - Place TODO at top of file and in commit message too
-  - Use dev_err_probe helper in probe function
-  - Fix return value checking for failure scenarios in probe function
-  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
-  - Fix unexpected indentation
-  - Correct commit message
-- Update dt-bindings with below changes :
-  - Add vendor specific compatible 
-  - Fix commit title and message
-  - Update reg names
-  - Update clocks to 1
-  - Fix dts example with proper naming
-
-V1->V2:
- - Send dt-bindings and driver together
-
-Patch-Diff between the series :
-V8->V9 Range diff :
-https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
-
-V7->V8 Range diff :
-https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
-
-V6->V7 Range diff :
-https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
-
-V5->V6 Range diff :
-https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
-
-V4->V5 Range diff :
-https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
-
-V3->V4 Range diff :
-https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
-
-Previous patch series:
-V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
-V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
-V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
-V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
-V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
-V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
-V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
-
-Daniel Latypov (1):
-  lib: add basic KUnit test for lib/math
-
-Devarsh Thakkar (9):
-  media: dt-bindings: Add Imagination E5010 JPEG Encoder
-  media: imagination: Add E5010 JPEG Encoder driver
-  media: v4l2-jpeg: Export reference quantization and huffman tables
-  media: imagination: Use exported tables from v4l2-jpeg core
-  media: verisilcon : Use exported tables from v4l2-jpeg for hantro
-    codec
-  math.h: Add macros for rounding to closest value
-  lib: math_kunit: Add tests for new macros related to rounding to
-    nearest value
-  media: imagination: Round to closest multiple for cropping region
-  gpu: ipu-v3: Use generic macro for rounding closest to specified value
-
- .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
- MAINTAINERS                                   |    7 +
- drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
- drivers/media/platform/Kconfig                |    1 +
- drivers/media/platform/Makefile               |    1 +
- drivers/media/platform/imagination/Kconfig    |   12 +
- drivers/media/platform/imagination/Makefile   |    3 +
- .../platform/imagination/e5010-core-regs.h    |  585 ++++++
- .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
- .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
- .../platform/imagination/e5010-jpeg-enc.c     | 1644 +++++++++++++++++
- .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
- .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
- .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
- drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
- include/linux/math.h                          |   65 +
- include/media/v4l2-jpeg.h                     |   11 +
- lib/math/Kconfig                              |   11 +
- lib/math/Makefile                             |    1 +
- lib/math/math_kunit.c                         |  325 ++++
- 20 files changed, 3705 insertions(+), 118 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
- create mode 100644 drivers/media/platform/imagination/Kconfig
- create mode 100644 drivers/media/platform/imagination/Makefile
- create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
- create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
- create mode 100644 lib/math/math_kunit.c
+If my analysis is correct, then my changes to stmmac_mac_select_pcs()
+are also wrong.
 
 -- 
-2.39.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
