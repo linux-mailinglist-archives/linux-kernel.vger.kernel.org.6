@@ -1,383 +1,82 @@
-Return-Path: <linux-kernel+bounces-189637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3678CF310
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AF78CF314
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74829282918
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8801C21A3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11FB23754;
-	Sun, 26 May 2024 09:23:48 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71064B660;
+	Sun, 26 May 2024 09:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hpO+942e"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AA2224EA
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEE78F54;
+	Sun, 26 May 2024 09:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716715427; cv=none; b=aQCQE77Y+mTr0T9vXymz8nDuHHz8UzJxEpIFG2ovGNSdgpxQbC+I7tTw9Y06izKsem54zomMFoZ8F2PHR9hjC5dwPcRuRjx42agOjJ/C4pyQBxQ3Vq4iMmj6bq5nfmsDj9xaDUk09t7j+M7pjSI7O31IumFTv0/rmI23UWht7xk=
+	t=1716715541; cv=none; b=Ls6MlNDyDJaYoP8bwnloBQbnrkweoMquuacYpH0GqwASBIS88U7EKnqp5goDxIUD2EHcJHdJPuPS5dLTtCxHMSVSmoKoh8Vzc1YYbvb1DrZCrwUaXlqgWPRLNw3RV6mHePMANRmVL754uC2srNjW7AWTnTgCnVfYcDfYUJUSe7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716715427; c=relaxed/simple;
-	bh=YBZKKmp3eD7Iomi12QR3QcSdbF4Q6xzuY14thrUhQoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fC2WN6p+OuLsYnfrA14zjoyrNQZiK//2E0+U606r3CGa/KQToppJa6X8J46wkrBfo80hMrTo2OFvp5M4YIvvIrDzLUw393nvXg9rEn1/FRXZkdf/eZegeB/5Beg3N1zDOkWkEmHKIW2BxibflfvJQRUo/WsWhIi6E+kdhgY8hBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4VnCx01J55z9sx4;
-	Sun, 26 May 2024 11:22:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id e43tbkECTMAR; Sun, 26 May 2024 11:22:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwr6429z9tCB;
-	Sun, 26 May 2024 11:22:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CC2628B773;
-	Sun, 26 May 2024 11:22:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id BWs5MIGftZLi; Sun, 26 May 2024 11:22:36 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.45])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 405F18B764;
-	Sun, 26 May 2024 11:22:36 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH v3 16/16] mm: Remove CONFIG_ARCH_HAS_HUGEPD
-Date: Sun, 26 May 2024 11:22:36 +0200
-Message-ID: <4655a5bb3ed235f8a9f22c0c539a289669f9db78.1716714720.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1716714720.git.christophe.leroy@csgroup.eu>
-References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1716715541; c=relaxed/simple;
+	bh=J3+xwB/7tX6Bth1ZZZOnPESeYeIK5qF5WnmoEBO+q5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2qAmq/68Th4F892GZSTGJB/IW/6eyAuFAynTOIlVLyxgxda3ApVX66Rn+R6LA+C8AN41E5bb3wr09nJVBq+778Ml14ks+Y+fO4WUroMxEn9ogQFbIHTLu2RvvRaUkguD5eMj5H6F1X70enhsUTCI1FPr8BXw1mW43+QcrUqX3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hpO+942e; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D7h0RhNkAKCic1Da42IZ3OgM6xXPiv190nM0wcYEFcg=; b=hpO+942ekCMbNp/hrhH5qKrYdX
+	qceekPpSF2doKYsp7ncNpU4saNLeCFGJoOGvO5XdMPt6ftuSEAPsQv7NAPmNAaKzI2ADfe2PKK+J0
+	rUqaroxmw0TEHUMQtFF3NUWbNJ4ix3BQxOO7Hmgo71z1xf31vnK640NH2JV75MPOD1grAxAhItkAR
+	wNdDEPBWZn/CESAi3dZNVlrWEq0D90TpLROmj3rTLV72X9k1sm3zMRDYkK62RxR/FqKDO8teppyA2
+	YLrA87ZjjpldN2mnlaejkPoej/0ggLAnyZBBYRodIeY4srlY9CTuY98PT0un15ilHaZO4gjmZGFS/
+	CPCdIexg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBA8E-0000000CQp5-39By;
+	Sun, 26 May 2024 09:25:34 +0000
+Date: Sun, 26 May 2024 02:25:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <ZlMADupKkN0ITgG5@infradead.org>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715344; l=9686; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=YBZKKmp3eD7Iomi12QR3QcSdbF4Q6xzuY14thrUhQoI=; b=0r4IhBGW/Ne1WYtt05SHsuCc8GlLS81x6sfkFW0OII2AS/3V7Z2yhqfj1WxiSOgFIQ9SUvvGY hLbH3ScpIi7DgGxii/MaXDw+6SHVYzL6vn1a9EtZrqHBV8A6IIDEjLQ
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-powerpc was the only user of CONFIG_ARCH_HAS_HUGEPD and doesn't
-use it anymore, so remove all related code.
+On Thu, May 23, 2024 at 01:57:32PM -0700, Aleksa Sarai wrote:
+> Now that we provide a unique 64-bit mount ID interface in statx, we can
+> now provide a race-free way for name_to_handle_at(2) to provide a file
+> handle and corresponding mount without needing to worry about racing
+> with /proc/mountinfo parsing.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/mm/hugetlbpage.c |   1 -
- include/linux/hugetlb.h       |   6 --
- mm/Kconfig                    |  10 ----
- mm/gup.c                      | 105 +---------------------------------
- mm/pagewalk.c                 |  57 ++----------------
- 5 files changed, 5 insertions(+), 174 deletions(-)
-
-diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-index 76846c6014e4..6b043180220a 100644
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -78,7 +78,6 @@ pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	return pte_alloc_huge(mm, pmd, addr);
- }
--#endif
- 
- #ifdef CONFIG_PPC_BOOK3S_64
- /*
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 77b30a8c6076..f6a509487773 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -20,12 +20,6 @@ struct user_struct;
- struct mmu_gather;
- struct node;
- 
--#ifndef CONFIG_ARCH_HAS_HUGEPD
--typedef struct { unsigned long pd; } hugepd_t;
--#define is_hugepd(hugepd) (0)
--#define __hugepd(x) ((hugepd_t) { (x) })
--#endif
--
- void free_huge_folio(struct folio *folio);
- 
- #ifdef CONFIG_HUGETLB_PAGE
-diff --git a/mm/Kconfig b/mm/Kconfig
-index b1448aa81e15..a52f8e3224fb 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1114,16 +1114,6 @@ config DMAPOOL_TEST
- config ARCH_HAS_PTE_SPECIAL
- 	bool
- 
--#
--# Some architectures require a special hugepage directory format that is
--# required to support multiple hugepage sizes. For example a4fe3ce76
--# "powerpc/mm: Allow more flexible layouts for hugepage pagetables"
--# introduced it on powerpc.  This allows for a more flexible hugepage
--# pagetable layouts.
--#
--config ARCH_HAS_HUGEPD
--	bool
--
- config MAPPING_DIRTY_HELPERS
-         bool
- 
-diff --git a/mm/gup.c b/mm/gup.c
-index 86b5105b82a1..95f121223f04 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2790,89 +2790,6 @@ static int record_subpages(struct page *page, unsigned long addr,
- 	return nr;
- }
- 
--#ifdef CONFIG_ARCH_HAS_HUGEPD
--static unsigned long hugepte_addr_end(unsigned long addr, unsigned long end,
--				      unsigned long sz)
--{
--	unsigned long __boundary = (addr + sz) & ~(sz-1);
--	return (__boundary - 1 < end - 1) ? __boundary : end;
--}
--
--static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
--		       unsigned long end, unsigned int flags,
--		       struct page **pages, int *nr)
--{
--	unsigned long pte_end;
--	struct page *page;
--	struct folio *folio;
--	pte_t pte;
--	int refs;
--
--	pte_end = (addr + sz) & ~(sz-1);
--	if (pte_end < end)
--		end = pte_end;
--
--	pte = huge_ptep_get(NULL, addr, ptep);
--
--	if (!pte_access_permitted(pte, flags & FOLL_WRITE))
--		return 0;
--
--	/* hugepages are never "special" */
--	VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
--
--	page = nth_page(pte_page(pte), (addr & (sz - 1)) >> PAGE_SHIFT);
--	refs = record_subpages(page, addr, end, pages + *nr);
--
--	folio = try_grab_folio(page, refs, flags);
--	if (!folio)
--		return 0;
--
--	if (unlikely(pte_val(pte) != pte_val(ptep_get(ptep)))) {
--		gup_put_folio(folio, refs, flags);
--		return 0;
--	}
--
--	if (!folio_fast_pin_allowed(folio, flags)) {
--		gup_put_folio(folio, refs, flags);
--		return 0;
--	}
--
--	if (!pte_write(pte) && gup_must_unshare(NULL, flags, &folio->page)) {
--		gup_put_folio(folio, refs, flags);
--		return 0;
--	}
--
--	*nr += refs;
--	folio_set_referenced(folio);
--	return 1;
--}
--
--static int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned int pdshift, unsigned long end, unsigned int flags,
--		struct page **pages, int *nr)
--{
--	pte_t *ptep;
--	unsigned long sz = 1UL << hugepd_shift(hugepd);
--	unsigned long next;
--
--	ptep = hugepte_offset(hugepd, addr, pdshift);
--	do {
--		next = hugepte_addr_end(addr, end, sz);
--		if (!gup_hugepte(ptep, sz, addr, end, flags, pages, nr))
--			return 0;
--	} while (ptep++, addr = next, addr != end);
--
--	return 1;
--}
--#else
--static inline int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned int pdshift, unsigned long end, unsigned int flags,
--		struct page **pages, int *nr)
--{
--	return 0;
--}
--#endif /* CONFIG_ARCH_HAS_HUGEPD */
--
- static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 			unsigned long end, unsigned int flags,
- 			struct page **pages, int *nr)
-@@ -3026,14 +2943,6 @@ static int gup_pmd_range(pud_t *pudp, pud_t pud, unsigned long addr, unsigned lo
- 				pages, nr))
- 				return 0;
- 
--		} else if (unlikely(is_hugepd(__hugepd(pmd_val(pmd))))) {
--			/*
--			 * architecture have different format for hugetlbfs
--			 * pmd format and THP pmd format
--			 */
--			if (!gup_huge_pd(__hugepd(pmd_val(pmd)), addr,
--					 PMD_SHIFT, next, flags, pages, nr))
--				return 0;
- 		} else if (!gup_pte_range(pmd, pmdp, addr, next, flags, pages, nr))
- 			return 0;
- 	} while (pmdp++, addr = next, addr != end);
-@@ -3058,10 +2967,6 @@ static int gup_pud_range(p4d_t *p4dp, p4d_t p4d, unsigned long addr, unsigned lo
- 			if (!gup_huge_pud(pud, pudp, addr, next, flags,
- 					  pages, nr))
- 				return 0;
--		} else if (unlikely(is_hugepd(__hugepd(pud_val(pud))))) {
--			if (!gup_huge_pd(__hugepd(pud_val(pud)), addr,
--					 PUD_SHIFT, next, flags, pages, nr))
--				return 0;
- 		} else if (!gup_pmd_range(pudp, pud, addr, next, flags, pages, nr))
- 			return 0;
- 	} while (pudp++, addr = next, addr != end);
-@@ -3083,11 +2988,7 @@ static int gup_p4d_range(pgd_t *pgdp, pgd_t pgd, unsigned long addr, unsigned lo
- 		if (p4d_none(p4d))
- 			return 0;
- 		BUILD_BUG_ON(p4d_huge(p4d));
--		if (unlikely(is_hugepd(__hugepd(p4d_val(p4d))))) {
--			if (!gup_huge_pd(__hugepd(p4d_val(p4d)), addr,
--					 P4D_SHIFT, next, flags, pages, nr))
--				return 0;
--		} else if (!gup_pud_range(p4dp, p4d, addr, next, flags, pages, nr))
-+		if (!gup_pud_range(p4dp, p4d, addr, next, flags, pages, nr))
- 			return 0;
- 	} while (p4dp++, addr = next, addr != end);
- 
-@@ -3111,10 +3012,6 @@ static void gup_pgd_range(unsigned long addr, unsigned long end,
- 			if (!gup_huge_pgd(pgd, pgdp, addr, next, flags,
- 					  pages, nr))
- 				return;
--		} else if (unlikely(is_hugepd(__hugepd(pgd_val(pgd))))) {
--			if (!gup_huge_pd(__hugepd(pgd_val(pgd)), addr,
--					 PGDIR_SHIFT, next, flags, pages, nr))
--				return;
- 		} else if (!gup_p4d_range(pgdp, pgd, addr, next, flags, pages, nr))
- 			return;
- 	} while (pgdp++, addr = next, addr != end);
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index f46c80b18ce4..ae2f08ce991b 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -73,45 +73,6 @@ static int walk_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	return err;
- }
- 
--#ifdef CONFIG_ARCH_HAS_HUGEPD
--static int walk_hugepd_range(hugepd_t *phpd, unsigned long addr,
--			     unsigned long end, struct mm_walk *walk, int pdshift)
--{
--	int err = 0;
--	const struct mm_walk_ops *ops = walk->ops;
--	int shift = hugepd_shift(*phpd);
--	int page_size = 1 << shift;
--
--	if (!ops->pte_entry)
--		return 0;
--
--	if (addr & (page_size - 1))
--		return 0;
--
--	for (;;) {
--		pte_t *pte;
--
--		spin_lock(&walk->mm->page_table_lock);
--		pte = hugepte_offset(*phpd, addr, pdshift);
--		err = ops->pte_entry(pte, addr, addr + page_size, walk);
--		spin_unlock(&walk->mm->page_table_lock);
--
--		if (err)
--			break;
--		if (addr >= end - page_size)
--			break;
--		addr += page_size;
--	}
--	return err;
--}
--#else
--static int walk_hugepd_range(hugepd_t *phpd, unsigned long addr,
--			     unsigned long end, struct mm_walk *walk, int pdshift)
--{
--	return 0;
--}
--#endif
--
- static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
- 			  struct mm_walk *walk)
- {
-@@ -159,10 +120,7 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
- 		if (walk->vma)
- 			split_huge_pmd(walk->vma, pmd, addr);
- 
--		if (is_hugepd(__hugepd(pmd_val(*pmd))))
--			err = walk_hugepd_range((hugepd_t *)pmd, addr, next, walk, PMD_SHIFT);
--		else
--			err = walk_pte_range(pmd, addr, next, walk);
-+		err = walk_pte_range(pmd, addr, next, walk);
- 		if (err)
- 			break;
- 
-@@ -215,10 +173,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
- 		if (pud_none(*pud))
- 			goto again;
- 
--		if (is_hugepd(__hugepd(pud_val(*pud))))
--			err = walk_hugepd_range((hugepd_t *)pud, addr, next, walk, PUD_SHIFT);
--		else
--			err = walk_pmd_range(pud, addr, next, walk);
-+		err = walk_pmd_range(pud, addr, next, walk);
- 		if (err)
- 			break;
- 	} while (pud++, addr = next, addr != end);
-@@ -250,9 +205,7 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
- 			if (err)
- 				break;
- 		}
--		if (is_hugepd(__hugepd(p4d_val(*p4d))))
--			err = walk_hugepd_range((hugepd_t *)p4d, addr, next, walk, P4D_SHIFT);
--		else if (ops->pud_entry || ops->pmd_entry || ops->pte_entry)
-+		if (ops->pud_entry || ops->pmd_entry || ops->pte_entry)
- 			err = walk_pud_range(p4d, addr, next, walk);
- 		if (err)
- 			break;
-@@ -287,9 +240,7 @@ static int walk_pgd_range(unsigned long addr, unsigned long end,
- 			if (err)
- 				break;
- 		}
--		if (is_hugepd(__hugepd(pgd_val(*pgd))))
--			err = walk_hugepd_range((hugepd_t *)pgd, addr, next, walk, PGDIR_SHIFT);
--		else if (ops->p4d_entry || ops->pud_entry || ops->pmd_entry || ops->pte_entry)
-+		if (ops->p4d_entry || ops->pud_entry || ops->pmd_entry || ops->pte_entry)
- 			err = walk_p4d_range(pgd, addr, next, walk);
- 		if (err)
- 			break;
--- 
-2.44.0
+file handles are not tied to mounts, they are tied to super_blocks,
+and they can survive reboots or (less relevant) remounts.  This thus
+seems like a very confusing if not wrong interfaces.
 
 
