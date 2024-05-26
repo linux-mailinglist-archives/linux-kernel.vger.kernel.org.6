@@ -1,222 +1,412 @@
-Return-Path: <linux-kernel+bounces-189887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AD88CF68B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:33:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF608CF68C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6DE281B55
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 22:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1173A1C210AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 22:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ED713A260;
-	Sun, 26 May 2024 22:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE8912FF9F;
+	Sun, 26 May 2024 22:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="ZMCmjYmB"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2117.outbound.protection.outlook.com [40.107.93.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HvdOyWND"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC78333F6;
-	Sun, 26 May 2024 22:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716762765; cv=fail; b=XklnbMxrAaLGEzZ+Z1783WSGBUxScUymXHjjUNPsyK0Sq/OrpuuuHt0pMKGySj/Qbkl0o/PYcJpyUApjvqF/qVtF80YryHkwNGSgyldcnYlQfeNHK+RK5d28dnhjbyfG3jVgL79uibb30C6cmxPeQSbegahouqp1oM1aFfjt094=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716762765; c=relaxed/simple;
-	bh=Aj4+WHvXaoRjXkjD3gW/hS5lWO0CcvO0IM5jrY1vLp4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BQhR/42CJzv4Rv/bJO2MQqToDIxzQE9Wohl+r1Y6sj7VfQ+fP/oNCDBxz6FZC1pF6zMXdAjBZfBiO+H/3vEEtJMLXwikpUyxgJ+tTW71EjeUkA+pGEro8SzezPIRtHJuuu5Q2ufBFCQ1RwX69hbNDGt8rS7FA4vskIbHWhwb+Js=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=ZMCmjYmB; arc=fail smtp.client-ip=40.107.93.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PV6DPZPfkd8diOMbJbBVJJtQNQ8cN6579TyP8Ps4yQ1BSBTWc9Yb1/lUINwyCRXT5h/5iSLdXyMZ4wFuwEcZ7Pd9Napi0YexwsHjGg5GsjlL5Ksmg5TrMpLF3cpchR9ss7Et/2uRV3D7JX5ioeKOLtplrB6/EN9XMoN54CHiWndWOp8NxOlibwGZVIS5n9TvsiuCG935bTWZpLZkPD1lBTnL9M7QRrLngQQgT1lRSxNiaGvfoPc7N8sSrTzGCcF4mf/DjTKTk35I+IuKhlclR2hNVs3kORBlWKfpYkwKDePY4TnonBf0uNXHZpcmn+MWSuf6GOGnL07eo9DlXnLcqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Aj4+WHvXaoRjXkjD3gW/hS5lWO0CcvO0IM5jrY1vLp4=;
- b=MPkrjp3Ql2HpVbJuQsM7JPPGHxus0/cOfYE/8vLZx8YBcMTGNQJYe7Ak0VZNSye8fD1Sw8kdVRFL9UpuAdWv6GNKckNOqz6Cm15DHV72eYgowVme8/L+d0Q/zYYbvhCFFCm42fD+GeKI3xlfwXamu4xpbYIqV2k+5npYH5sM5c2KLySJN3LzBixX05KTfhykOJKgpJiSU9Vt3mapj+9+wrRpxNKImvd2RKhYcM9qnlxt0bJXnVRvOlrWKd7Jhk3pBYJY/A21j5j2XFANyOrGbx2Z4x3P9/YkrVPqE79zBI2BTukpDBXu9tJaFyf3jLFN9MTG0yA34l7kjVfXBlNaRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Aj4+WHvXaoRjXkjD3gW/hS5lWO0CcvO0IM5jrY1vLp4=;
- b=ZMCmjYmBt8M9V71OUAVlLnwkwSeXGla4WZFlepCe5XWt3NbFqW799dM54iu6O1z1J4lE/idEv9D6YBjmCS4MZi9lSsS6/GZNDowdqYd7mAdAZLQY7V5pBmI3KOimehFNaGdDiiqQEOI2ddydPjhdX5dbrwYSwUjhVg9ex6sSNx4=
-Received: from DM8PR13MB5079.namprd13.prod.outlook.com (2603:10b6:8:22::9) by
- DM6PR13MB3772.namprd13.prod.outlook.com (2603:10b6:5:248::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.16; Sun, 26 May 2024 22:32:39 +0000
-Received: from DM8PR13MB5079.namprd13.prod.outlook.com
- ([fe80::3312:9d7:60a8:e871]) by DM8PR13MB5079.namprd13.prod.outlook.com
- ([fe80::3312:9d7:60a8:e871%6]) with mapi id 15.20.7633.001; Sun, 26 May 2024
- 22:32:39 +0000
-From: Trond Myklebust <trondmy@hammerspace.com>
-To: "cyphar@cyphar.com" <cyphar@cyphar.com>, "hch@infradead.org"
-	<hch@infradead.org>
-CC: "jack@suse.cz" <jack@suse.cz>, "brauner@kernel.org" <brauner@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>, "alex.aring@gmail.com"
-	<alex.aring@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>, "jlayton@kernel.org" <jlayton@kernel.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>, "linux-nfs@vger.kernel.org"
-	<linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Thread-Topic: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Thread-Index: AQHarVPtSe6qdv/lgk2vl1eWJoqLMLGpQqoAgADb5wA=
-Date: Sun, 26 May 2024 22:32:39 +0000
-Message-ID: <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
-	 <ZlMADupKkN0ITgG5@infradead.org>
-In-Reply-To: <ZlMADupKkN0ITgG5@infradead.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR13MB5079:EE_|DM6PR13MB3772:EE_
-x-ms-office365-filtering-correlation-id: 5d3a1fbf-daf8-472d-4476-08dc7dd3c05e
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|366007|7416005|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UStPbzlWRmhZMFZmdkZiaFcyY0haZStSUjFjRGRyY2NBN3drdVFuUGlSckxj?=
- =?utf-8?B?eisrWmE5amNMcnBxeDdzNERXcEc0VHIvSjVGNlFvckx0NXRhVGdyOXF3QXUw?=
- =?utf-8?B?QjgzR1l1eUh1NVZvczhpVEcvamttall3QUZFQk5NRSttNUFNUUpUUG9VSnlX?=
- =?utf-8?B?bEFmeTVlZG8vSVI1TDdBRG50SjVRQTNmY1gzQnQ5TzMya1NCS2t6ZGhreW8y?=
- =?utf-8?B?Z0ZTS3QzZzZXRTQybk5YU0R1RmdRdjhEOUh3Q3ZHUWQ5bS9JYVJMNDFaRDFK?=
- =?utf-8?B?RDhNV0l1VnlTbzlTdjI2OHNGY0twSSszS0YrbGppeVk1NFV0eXhCOExJK2ts?=
- =?utf-8?B?SWRzN1hidS9xSGhTcjB6RFQzTStNOENUTnBrT2ZFYjl5SWFiMk80WGhOV01r?=
- =?utf-8?B?bmErWkx0Rk4rNWdXY2xCNHowN25idERUb3UzRHZUc1Nnc3Z1cHFCTVEwYkRB?=
- =?utf-8?B?Z2xaNk92cEFpSHZ0aG02Qm1jUW11Sy9zRDhCU0J0clo1UFJ6TVVwYXU0NnNt?=
- =?utf-8?B?ZzV5R053MFNhdmhtQ3lxZlpIblNMY0ZqWTRpTjc4d2FmTVo1aVNIdHR6blRP?=
- =?utf-8?B?bzhuR0ZIZ2VSMW5xbXFHYzBndUNOcVNaVjdOWEswTDJnbGVwNTRHK2xkUjNn?=
- =?utf-8?B?bzRaRGE1cE12cDNJU3BKbDRCRG43cFpIYkl6VW5Yd2xVWUFadGpSeWpnbnFO?=
- =?utf-8?B?QTBxOW12SE0rKzJ6WXZLaDNZYTQvVHdDVUluR3dLRm5kRDFqMTlMN2t6TWJ0?=
- =?utf-8?B?K2ZHTmlHN2hpTi9TNEFRUjJYRDFDOFM5MnllVFV3dmpDM01vTGJEVzNYZHA0?=
- =?utf-8?B?ZlZ6b3ZwQ2hlbTF6eFpJQnNrbEJFelJQdS9tQUR1V3hxQzRLdnZacC9LNlBR?=
- =?utf-8?B?aXhhWnZ6NEJFUDl6ejRJK1RLWUJoVXR3RUFVUGVHVmFqVDNGNml0WjFmd3NX?=
- =?utf-8?B?TE5TZE16SjZBNTVhS09NVkw0MnFaTGNmblJmelg3RFM0ZXRyN2s0ZDhFSmRX?=
- =?utf-8?B?aVpIb1dyZUZDTUcybGNMMDFOM1JnYWFvMkNrNEVwRXRNNlZnWStaQzNsSUt5?=
- =?utf-8?B?Slh5aGVPWjhrWmNPZEFSTG40b0t3Z1VBYnpGUmVEYVBwWUo1NFlLVmtUM3o4?=
- =?utf-8?B?dndqK3c3b015bFNUOFJPSFJlSEVCOFJhQmg0emxMSjd1UzZhaFlaQm8raEpH?=
- =?utf-8?B?WXVkSkxBVEZWVmVQaHU5a1VaN3UwaGFkV1JzNkVsRHlRWWtoOFdIdG5kcG9O?=
- =?utf-8?B?bjBUUnlKekZZNGErcDRxRlJlSGxoSVNTOHVEOFFFcEM3TnVPM1pKWEpTTWg1?=
- =?utf-8?B?U0JYNGkyY0h1UFpmemdXMktPWnJNUTEvb0l1czMveHRFZ1dpTDMxRUNFTFJw?=
- =?utf-8?B?RVZKZTAwMkdySFppT0NXMDA2Y1RCM3d5VDZsLzNHY1FuQkZrcytYMDVkbGZG?=
- =?utf-8?B?QVo3dDlZOGNNa2g5dlJmWE40UTFDM3hac3ZzVjNjYXA2MVRIazNwRS95NkRK?=
- =?utf-8?B?L1ZlbFQzNkEzeHIrK2VYQ3RRQXBWdGJka09kemwwMk5sR3NQTVpNOU9nc01X?=
- =?utf-8?B?TjY0clJEalM1NWI0UzBVNENqckFsWHlsSWFpcUpXRWNGdjFGbkJ3eGZING5F?=
- =?utf-8?B?dWJoWC82N2daMm82TkV4dkdOWWJ2RnBuOEYrT0Z4a296ZnJhb2psQzQ0aGJT?=
- =?utf-8?B?aWlKdTRhditqT2pFR2dianhLdVRNTnRxbU9JcnpZMkJjZnhyWlA4SmpDK0hV?=
- =?utf-8?B?OXl3MXVOOUxWc1E4QTYxMkpwSjAyWW12eEVjWkplZUR3OU5hc1M4N0lYdDFJ?=
- =?utf-8?B?VTFaTk1KRExCb1YzSFN6UT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5079.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VWRPenFIblRuTDZvV1FOdlY5L3FwbVlXYjRBOSthcEJmU3ZmS011UHpTTTY3?=
- =?utf-8?B?VnJWdll6aGhGVFkyZzNmcHdoVGR6M0hPVk5CbjdONVp5bWl1aFVJNnc0QnN4?=
- =?utf-8?B?M3krUHduTEV0TUJFSmh4Mkh4alMvejlCNzdCR3k1eFZpYTAxKzFvOUNVc1pM?=
- =?utf-8?B?OER3YXZTeExZZ3VEMFhHMVFUSis1TG9sWU1GSmY0RXIxdnVQZlJsK3BuTzFj?=
- =?utf-8?B?bnY4eVdnUzE5ZFlGSklnU1Z4NVpWanJIdjROK0pHb0RCVWRvSjdya2Zwdjcw?=
- =?utf-8?B?UTY1ajgzRVpMRDAxME5PTlhabzlXWTJKVDFtQmNwakxBSHE0cVZNV0N0L1la?=
- =?utf-8?B?cUpZejR4MTE0WUNKWE5GQjVoVmFicnNnakFrYlpoeFN3cEVnaDQ1clYvQ1VC?=
- =?utf-8?B?RjRxODE5bUJGMlg0a3l1MjVpcUh5SFZha2ZmSHZoQzJSb0Z0L2NJTjVmNW11?=
- =?utf-8?B?cy9wZS9LVC96dm9LbkN4TkJNR2dLOW9kd042SElTaGhiYityOUFMTGE1Y0Ra?=
- =?utf-8?B?OWtTb3hXY2NNRzlQVTUvUjRCajYwbVJYZUI5UVdvVmhLN2hLMWtaaTFzWmNU?=
- =?utf-8?B?dkdiem9iWWd1M0JGM3V2MGN2NUNHYTdCVytOMVU2akZqM044OUFiajY2TkRU?=
- =?utf-8?B?Vk80c284Q3RSMEJ3YlF5bnptN1BTQXJUaXk5UzR3M1pkTS9yV3RackVtRjRw?=
- =?utf-8?B?OTZ1eUcwM2pISmJWU0ZVK1dwc3p1TUJwa0hEeThwQUJQMlA0azVpVXYvZ2FD?=
- =?utf-8?B?T2Q5MEJTbXZOWm5iblo3OVhBdXB1TEdtU1F0QVNIQjRnQ0YrNG5BOXBDZng4?=
- =?utf-8?B?NWZ6dEptQ0JTUlNVUWMrSnh3NkFjU0RLb25vaDJLZDRrQVJkSE9oY2FmcTg4?=
- =?utf-8?B?UVFuM3Mzam02ZjdRWUI0aWVETndzdFc5ZlErbmlzam9ZVDZGY3krQkRYcFcw?=
- =?utf-8?B?bG5XbmJXaUxmL2NoZThFYkRXMDRJWmFnRzFQSzkvQlVQVzF2K2tYaWlJVEcy?=
- =?utf-8?B?eTBVRUoydHBKUGlTUXcwVERpOVIveFlQVEM5WGNnd3Nwd1ZreWlHb3JxSTRq?=
- =?utf-8?B?N1ZWcC9selN1SDFuN1hKNkZBdi8xeHhzRGdVNk9ZM1l4VVA5YWxBbVpFenk1?=
- =?utf-8?B?UjN0L3Qzd1FhMzRXNDZrS2VsOTBwekU4UzVHSDYwL0d5VVczSlIweEczS0lO?=
- =?utf-8?B?OFFtYXlmTjRUQ1JFTXM1RjBYZnN1TFhXZTUzNE1lcGlSTEVRN3htbzlBNWha?=
- =?utf-8?B?TVYxaG5FWnhQTlNSMENUNTZ4L1hLK0U1QlBwV1JFSUx0amtTQlFCSlcrZWky?=
- =?utf-8?B?YjlnYWNEWjM3LzBKRmhQekUwWHZNdFplUTJ0T20zRkpHRWs1eEt6cVdCTElU?=
- =?utf-8?B?dkVOMTV2Y3FvVjhzMms4NEJkaDkwU0tmcnU1bmM2M3p2a3kvZXg1N1MraHhu?=
- =?utf-8?B?eCtEektLbHVGK29oZll4VXptRHNIa254RVNnaklJN1dSdlVnanozT2VtZlY3?=
- =?utf-8?B?WEdQWnVjRG5yMUZYdll4aHlpSFlQcWxpWkpqNEUyM3FZTlVDRWpnVHZSTXNa?=
- =?utf-8?B?Ykd4TFI0aGhBa3dhWHZBNE5Od3BEaDlUV3dsTGx3TitmYzNwNXlEVDk4Ly9n?=
- =?utf-8?B?b3ZucHpPN3d0TlV3WWJvMFRpcVd4bWVyTDhmbEZhMEtDSEdjaG5Rd1dVejNH?=
- =?utf-8?B?dmhRUXFKakdzb1NFTnhCSTYvbU5sY2tpc1kxTWdKS25waGM0L092cE1Qblhh?=
- =?utf-8?B?Qk9TeFU4SjJybjFoMTdvdlFRcUVYa3pJNHpYcmJpb2cwMWlTeUN3Y3UxOVNO?=
- =?utf-8?B?TUpXUTVSbEJtKzFya3dubXlwTlFmbGdOcVRxSE5Semh1TmQxK2lnV0xoSjJx?=
- =?utf-8?B?RFp2OFZnRkNhM0d0M1RpRGRjTEVZY3VjUThJQzl1Qmw5dnFPVFJoNFptQzlm?=
- =?utf-8?B?dnl6RkZnVGJkckgzQ0xRUHg1N3hNT212OC95Y0JXS2NteGdYMllSWXVoU0xT?=
- =?utf-8?B?RUF0RllzNVZGTWU2TFV1djZGdko3YVR0ZzF0Y1IxVWpPVGhzWWc5WDdBd1Uz?=
- =?utf-8?B?TjBJK1J0YVQ0ejQ2NlAxL25UTElIbXhXVXdIaVZ1OFozbzhlVGpKMUwxK3E2?=
- =?utf-8?B?OTlrUGd2M0phdWluV1FGaVhDU1Ezcjd6YkxOQUpqaHp1Ni81WTdWWGZDdHh0?=
- =?utf-8?B?VVNlVG43NWY3eUFVYlVwYTM4MnNKN0dOZ1JhME13UUtIMzMrZjBGVFlrdWZm?=
- =?utf-8?B?emFBM1pvYXFldjE0bG5yeWk5QzlRPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8191549F3A7C3F45AA4DF3E9115ECC4D@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99EE8821
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 22:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716763008; cv=none; b=B5FgTS6LPoQ5pRjdCpTkykkZTDiXbctPgwlnj5qjFwgG3vx9st9gYAmSWwVxEeyX+uS7jWqBQuypDv/8tPIJaDNh6MGVVhtKJknBVyBLLFM1PzkKuDjdPrBkr1jPa1kZ3IR86bBIPfMx5mNMtc6N3fVfDvo3E0GriB9nN8B56Sc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716763008; c=relaxed/simple;
+	bh=s0niX9/FaigW72TgbelTb+LMXI80kVxWQ0d9Iq9JheI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kgmiQMaGkoGvLXzz4AJh6aDEhP2devHZFHNlXGE4B7ZY8iIzyBes1dXJQjwvFJGlxmFlR0dJ+rXp9QaKMr0jQtv7J4VNgDALsbn3TZPTBfKxHUuZuBhOrmrqRGhUo9iGc0JFoBb9KgIqvQvz+vQnI70K23X2zaUScghUspiIyhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HvdOyWND; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52389c1308dso10663790e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 15:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716763004; x=1717367804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OCkslmUVZSTHRZnKpvkUm/cBl2lxrLrDtXQgdNA1eqs=;
+        b=HvdOyWND6AUWZfCki/G7O/w0ZaFICFUBGCTikDjm8aBhqdWIwm4K9U7TM4R/adE5Jm
+         rYhKd3w2UzBqQRTKgyoCpoFtOoboMTGZwrkD7n8JT8x+S1ZrBa7WncGEYHnK4U24Nbb7
+         M1arDTO9l5f+QVhtjDlViNBHkNxzyeyp1JfWA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716763004; x=1717367804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OCkslmUVZSTHRZnKpvkUm/cBl2lxrLrDtXQgdNA1eqs=;
+        b=dxAzezrPFiit+gWaFbg+juY3le2RRJUBQybNN+VRub22GGTVPLUjplxBmX41rmM23l
+         kWcY+SnVJxWY5QvXTwlOHkuWBDM8NHqQoPXMcrByRhWCjNz2bSEHVf9xWqDpaFI/P2LN
+         INiq2jNaGdtuJYUNaKcVH77kMGFVjVoBhg7OJQkeiHKAcsHoKMvlVtH82hwPo2l7jj3R
+         5NAFqYp+XV0ARKnGMFMCaOjMCIIw4M1D2ru2KjgKCFliGSbBmWfipv7f5ujuQwonIaeK
+         6AYw53nFFc2ExOW7Vylbqy9flOVScRb3h7PXZBvhrfLabZeQFVZOlNrVA/ExdvXS3kaG
+         YHYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNkTwqNLfvZEEHIsQOXYKQKgU1t+3Ykw2taNGbpXBhA+VGDp/x3i8NiUB/gYoXTqes0Af+v8kQJ85a/CAKtPl8Ii8pv7kpRbvPRkAB
+X-Gm-Message-State: AOJu0YwSBBTDxIBzEmk/fdIpNLocQZOKS5gdWPllktcIkwlFCnbpq0HP
+	oxLOxy1BHo0E7/jbDW2xKpNRpHTjfSVbl3SuAvqzTmHOBn9f+x18Rh+LTyxOmlR6HEw6u6ZBkp1
+	P5YRpRaupoimeYNurF47N+6mtDb+ayVWmWI4=
+X-Google-Smtp-Source: AGHT+IFJqfxM8en9IAhZff2RfH8ksgLsLcfTyOf7S8+8PeSoNU8rLCoJTrakSvc0eFoJre0F7Kck/mdXiOXrLswMUEI=
+X-Received: by 2002:a05:6512:10c6:b0:529:a913:2521 with SMTP id
+ 2adb3069b0e04-529a91327bfmr2961350e87.56.1716763003435; Sun, 26 May 2024
+ 15:36:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5079.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d3a1fbf-daf8-472d-4476-08dc7dd3c05e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2024 22:32:39.8152
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cVp2TFvXloXmcqGVdPlU3YewXxwbJ0wWQWT0D2DmzjrHk/cndZp+j/BPEKu4CO8Xz9aFVkGUP0WfKBBQXwnRQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR13MB3772
+References: <20240516174357.26755-1-jim.cromie@gmail.com>
+In-Reply-To: <20240516174357.26755-1-jim.cromie@gmail.com>
+From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Date: Mon, 27 May 2024 00:36:32 +0200
+Message-ID: <CALwA+NZ7Cdd9M2Cus+Lv3yoc+eWNdUjCmECGJbfoin3ikHLbxQ@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 00/33] Fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y regression
+To: Jim Cromie <jim.cromie@gmail.com>
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gU3VuLCAyMDI0LTA1LTI2IGF0IDAyOjI1IC0wNzAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gT24gVGh1LCBNYXkgMjMsIDIwMjQgYXQgMDE6NTc6MzJQTSAtMDcwMCwgQWxla3NhIFNh
-cmFpIHdyb3RlOg0KPiA+IE5vdyB0aGF0IHdlIHByb3ZpZGUgYSB1bmlxdWUgNjQtYml0IG1vdW50
-IElEIGludGVyZmFjZSBpbiBzdGF0eCwgd2UNCj4gPiBjYW4NCj4gPiBub3cgcHJvdmlkZSBhIHJh
-Y2UtZnJlZSB3YXkgZm9yIG5hbWVfdG9faGFuZGxlX2F0KDIpIHRvIHByb3ZpZGUgYQ0KPiA+IGZp
-bGUNCj4gPiBoYW5kbGUgYW5kIGNvcnJlc3BvbmRpbmcgbW91bnQgd2l0aG91dCBuZWVkaW5nIHRv
-IHdvcnJ5IGFib3V0DQo+ID4gcmFjaW5nDQo+ID4gd2l0aCAvcHJvYy9tb3VudGluZm8gcGFyc2lu
-Zy4NCj4gDQo+IGZpbGUgaGFuZGxlcyBhcmUgbm90IHRpZWQgdG8gbW91bnRzLCB0aGV5IGFyZSB0
-aWVkIHRvIHN1cGVyX2Jsb2NrcywNCj4gYW5kIHRoZXkgY2FuIHN1cnZpdmUgcmVib290cyBvciAo
-bGVzcyByZWxldmFudCkgcmVtb3VudHMuwqAgVGhpcyB0aHVzDQo+IHNlZW1zIGxpa2UgYSB2ZXJ5
-IGNvbmZ1c2luZyBpZiBub3Qgd3JvbmcgaW50ZXJmYWNlcy4NCg0KSSBhc3N1bWUgdGhlIHJlYXNv
-biBpcyB0byBnaXZlIHRoZSBjYWxsZXIgYSByYWNlIGZyZWUgd2F5IHRvIGZpZ3VyZSBvdXQNCndo
-aWNoIHN1Ym1vdW50IHRoZSBwYXRoIHJlc29sdmVzIHRvLiBUaGUgcHJvYmxlbSBpcyB0aGF0IG5v
-dGhpbmcgc3RvcHMNCmFub3RoZXIgcHJvY2VzcyBmcm9tIGNhbGxpbmcgdW1vdW50KCkgYmVmb3Jl
-IHlvdSdyZSBkb25lIHBhcnNpbmcNCi9wcm9jL21vdW50aW5mbyBhbmQgaGF2ZSByZXNvbHZlZCB0
-aGUgbW91bnQgaWQuDQoNCklmIHdlJ3JlIGxvb2tpbmcgdG8gY2hhbmdlIHRoZSBBUEksIHRoZW4g
-cGVyaGFwcyByZXR1cm5pbmcgYSBmaWxlDQpkZXNjcmlwdG9yIG1pZ2h0IGJlIGEgYmV0dGVyIGFs
-dGVybmF0aXZlPw0KTW9zdCB1c2VybGFuZCBORlMgc2VydmVycyBhcmUgaW4gYW55IGNhc2UgZ29p
-bmcgdG8gZm9sbG93IHVwIG9idGFpbmluZw0KdGhlIGZpbGVoYW5kbGUgd2l0aCBhIHN0YXQoKSBv
-ciBldmVuIGEgZnVsbCBibG93biBvcGVuKCkgaW4gb3JkZXIgdG8NCmdldCBmaWxlIGF0dHJpYnV0
-ZXMsIHNldCB1cCBmaWxlIHN0YXRlLCBldGMuIEJ5IHJldHVybmluZyBhbiBvcGVuIGZpbGUNCmRl
-c2NyaXB0b3IgdG8gdGhlIHJlc29sdmVkIGZpbGUgKGV2ZW4gaWYgaXQgaXMgb25seSBhbiBPX1BB
-VEgNCmRlc2NyaXB0b3IpIHdlIGNvdWxkIGFjY2VsZXJhdGUgdGhvc2Ugb3BlcmF0aW9ucyBpbiBh
-ZGRpdGlvbiB0byBzb2x2aW5nDQp0aGUgdW1vdW50KCkgcmFjZS4NCg0KQWx0ZXJuYXRpdmVseSwg
-anVzdCByZW1vdmUgdGhlIHBhdGggYXJndW1lbnQgYWx0b2dldGhlciwgYW5kIHJlcXVpcmUNCnRo
-ZSBkZXNjcmlwdG9yIGFyZ3VtZW50IHRvIGJlIGFuIE9fUEFUSCBvciByZWd1bGFyIG9wZW4gZmls
-ZSBkZXNjcmlwdG9yDQp0aGF0IHJlc29sdmVzIHRvIHRoZSBmaWxlIHdlIHdhbnQgdG8gZ2V0IGEg
-ZmlsZWhhbmRsZSBmb3IuIEhvd2V2ZXIgdGhpcw0Kd291bGQgcmVxdWlyZSBhIHVzZXJsYW5kIE5G
-UyBzZXJ2ZXIgdG8gZ2VuZXJhbGx5IGRvIGENCm9wZW5fYnlfaGFuZGxlX2F0KCkgdG8gcmVzb2x2
-ZSB0aGUgcGFyZW50IGRpcmVjdG9yeSBoYW5kbGUsIHRoZW4gZG8gYW4NCm9wZW5hdChPX1BBVEgp
-IHRvIGdldCB0aGUgZmlsZSB0byBsb29rIHVwLCBiZWZvcmUgYmVpbmcgYWJsZSB0byBjYWxsDQp0
-aGUgbmFtZV90b19oYW5kbGVfYXQoKSByZXBsYWNlbWVudC4NCmkuZS4gdGhlcmUgd291bGQgYmUg
-MSBleHRyYSBzeXNjYWxsLg0KDQotLSANClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVu
-dCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNv
-bQ0KDQoNCg==
+On Thu, May 16, 2024 at 7:44=E2=80=AFPM Jim Cromie <jim.cromie@gmail.com> w=
+rote:
+>
+> hi Greg, Jason,
+>
+> This patchset fixes the CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy regression,
+> Fixes: bb2ff6c27bc9 ("drm: Disable dynamic debug as broken")
+>
+> Im calling it v8, to keep consistent with previous labels.
+> v6 was what got committed, back in 9/2022.
+> v7 had at least 2 problems that blocked its submission:
+>
+>  https://lore.kernel.org/lkml/20231101002609.3533731-1-jim.cromie@gmail.c=
+om/
+>  https://patchwork.freedesktop.org/series/125066/
+>
+> 1. missing __align(8) in METATDATA macro, giving too much placement
+> freedom to linker, caused weird segvs following non-ptr vals, but for
+> builtin modules only. found by lkp-test.
+>
+> 2. the main patch touched 2 subsystems at once, which would require
+> special handling.
+>
+> What was broken about DYNAMIC_DEBUG ?
+>
+> Booting a modular kernel with drm.debug=3D0x1ff enabled pr_debugs only
+> in drm itself, not in the yet-to-be loaded driver + helpers.  Once
+> loaded, the driver's pr_debugs are properly enabled by:
+>
+>    echo 0x1ff > /sys/module/drm/parameters/debug  # still worked
+>
+> I had tested with scripts doing lots of modprobes with various
+> permutations of dyndbg=3D<> option, and I missed that I didn't test
+> without them.
+>
+> The deeper cause was my design error, a violation of the K&R rule:
+> "define once, refer many times".
+>
+> DECLARE_DYNDBG_CLASSMAP defined the classmap, and was used everywhere,
+> re-declaring the same static classmap repeatedly. Jani Nikula actually
+> picked up on this (iirc shortly after committed), but the problem
+> hadn't been seen yet in CI.  One patchset across 2 subsystems didn't
+> help either.
+>
+> So the revised classmap API "splits" it to def & ref:
+>
+> DYNDBG_CLASSMAP_DEFINE fixes & updates the busted macro, EXPORTing the
+> classmap instead.  It gets invoked once per subsystem, by the
+> parent/builtin, drm.ko for DRM.
+>
+> DYNDBG_CLASSMAP_USE in drivers and helpers refer to the classmap by
+> name, which links the 2 modules, (like a driver's dependency on extern
+> __drm_debug).
+>
+> These 2 tell dyndbg to map "class FOO" to the defined FOO_ID, which
+> allows it to make those changes via >control, in both class definer
+> modules and dependent modules.
+>
+> DYNDBG_CLASSMAP_PARAM*, defines the controlling kparam, and binds it
+> to both the _var, and the _DEFINEd classmap.  So drm uses this to bind
+> the classmap to __drm_debug.
+>
+> It provides the common control-point for the sub-system; it is applied
+> to the class'd pr_debugs during modprobe of both _DEFINEr and USErs.
+> It also enforces the relative nature of LEVEL classmaps, ie V3>V2.
+>
+> DECLARE_DYNDBG_CLASSMAP is preserved to decouple the DRM patches, so
+> they can be applied later.  I've included them for anyone who wants to
+> test against DRM now.
+>
+> A new struct and elf section contain the _USEs; on modprobe, these are
+> scanned similarly to the _DEFINEs, but follow the references to their
+> defining modules, find the kparam wired to the classmap, and apply its
+> classmap settings to the USEr.  This action is what V1 missed, which
+> is why drivers failed to enable debug during modprobe.
+>
+> In order to recapitulate the regression scenario without involving
+> DRM, the patchset adds test_dynamic_debug_submod, which is a duplicate
+> of its parent; _submod.c #defines _SUBMOD, and then includes parent.
+>
+> This puts _DEFINE and _USE close together in the same file, for
+> obviousness, and to guarantee that the submod always has the same
+> complement of debug()s, giving consistent output from both when
+> classmaps are working properly.
+>
+> Also ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh adds a
+> turn-key selftest.  I pulled it forward from a dyndbg-to-trace patchset
+> that I and Lukasz Bartozik have been working out.
+>
+> It works nicely from virtme-ng:
+>
+> [jimc@frodo vx]$ vrun_ -- ./tools/testing/selftests/dynamic_debug/dyndbg_=
+selftest.sh
+> doing: vng --verbose --name v6.9-rc5-34-g2f1ace6e1c68 \
+>        --user root --cwd ../.. \
+>        -a dynamic_debug.verbose=3D2 -p 4 \
+>        -- ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> virtme: waiting for virtiofsd to start
+> ...
+> [    3.546739] ip (260) used greatest stack depth: 12368 bytes left
+> [    3.609288] virtme-init: starting script
+> test_dynamic_debug_submod not there
+> test_dynamic_debug not there
+> # BASIC_TESTS
+> ...
+> # Done on: Fri Apr 26 20:45:08 MDT 2024
+> [    4.765751] virtme-init: script returned {0}
+> Powering off.
+> [    4.805790] ACPI: PM: Preparing to enter system sleep state S5
+> [    4.806223] kvm: exiting hardware virtualization
+> [    4.806564] reboot: Power down
+> [jimc@frodo vx]$
+>
+>
+> I've been running the kernel on my x86 desktop & laptop, booting with
+> drm.debug=3D0x1f, then turning it all-off after sleep 15.
+>
+> a few highlights from a bare-metal boot:
+>
+> here modprobe amdgpu; dyndbg applies last bit/class/category, and
+> finishes init, then drm and amdgpu start logging as they execute
+>
+> [    9.019696] gandalf kernel: dyndbg: query 0: "class DRM_UT_ATOMIC +p" =
+mod:amdgpu
+> [    9.019704] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_ATOMIC  m=
+odule:amdgpu nd:4754 nc:0 nu:1
+> [    9.020012] gandalf kernel: dyndbg: processed 1 queries, with 21 match=
+es, 0 errs
+> [    9.020017] gandalf kernel: dyndbg: bit_4: 21 matches on class: DRM_UT=
+_ATOMIC -> 0x1f
+> [    9.020021] gandalf kernel: dyndbg: applied bitmap: 0x1f to: 0x0 for a=
+mdgpu
+> [    9.020026] gandalf kernel: dyndbg: attach-client-module:  module:amdg=
+pu nd:4754 nc:0 nu:1
+> [    9.020031] gandalf kernel: dyndbg: 4754 debug prints in module amdgpu
+> [    9.055065] gandalf kernel: [drm] amdgpu kernel modesetting enabled.
+> [    9.055138] gandalf kernel: [drm:amdgpu_acpi_detect [amdgpu]] No match=
+ing acpi device found for AMD3000
+> [    9.055564] gandalf kernel: amdgpu: Virtual CRAT table created for CPU
+> [    9.055585] gandalf kernel: amdgpu: Topology: Add CPU node
+> [    9.055752] gandalf kernel: amdgpu 0000:0c:00.0: enabling device (0006=
+ -> 0007)
+> [    9.055821] gandalf kernel: [drm] initializing kernel modesetting (NAV=
+I10 0x1002:0x731F 0x148C:0x2398 0xC1).
+> [    9.055835] gandalf kernel: [drm] register mmio base: 0xFCB00000
+> [    9.055839] gandalf kernel: [drm] register mmio size: 524288
+> [    9.059148] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]] number of dies: 1
+> [    9.059387] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]] number of hardware IPs on die0: 39
+> [    9.059623] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]] ATHUB(35) #0 v2.0.0:
+> [    9.059856] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]]         0x00000c00
+> [    9.060096] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]]         0x02408c00
+> [    9.060328] gandalf kernel: [drm:amdgpu_discovery_set_ip_blocks [amdgp=
+u]] set register base offset for ATHUB
+>
+> a startup script, after sleep 15, turns off the logging:
+>
+>   echo 0 > /sys/module/drm/parameters/debug
+>
+> heres 1st 2 bits/classes/categories being turned off:
+>
+> [   29.105991] gandalf kernel: [drm:amdgpu_ih_process [amdgpu]] amdgpu_ih=
+_process: rptr 90752, wptr 90784
+> [   29.118086] gandalf kernel: dyndbg: bits:0x0 > *.debug
+> [   29.118096] gandalf kernel: dyndbg: apply bitmap: 0x0 to: 0x1f for '*'
+> [   29.118102] gandalf kernel: dyndbg: query 0: "class DRM_UT_CORE -p" mo=
+d:*
+> [   29.118122] gandalf kernel: dyndbg: good-class: drm.DRM_UT_CORE  modul=
+e:drm nd:338 nc:1 nu:0
+> [   29.119548] gandalf kernel: dyndbg: class-ref: drm_kms_helper.DRM_UT_C=
+ORE  module:drm_kms_helper nd:93
+> nc:0 nu:1
+> [   29.119552] gandalf kernel: dyndbg: class-ref: drm_display_helper.DRM_=
+UT_CORE  module:drm_display_helper nd:151 nc:0 nu:1
+> [   29.119737] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_CORE  mod=
+ule:amdgpu nd:4754 nc:0 nu:1
+> [   29.122181] gandalf kernel: [drm:amdgpu_ih_process [amdgpu]] amdgpu_ih=
+_process: rptr 90784, wptr 90816
+> [   29.127687] gandalf kernel: dyndbg: processed 1 queries, with 466 matc=
+hes, 0 errs
+> [   29.127690] gandalf kernel: dyndbg: bit_0: 466 matches on class: DRM_U=
+T_CORE -> 0x0
+> [   29.127692] gandalf kernel: dyndbg: query 0: "class DRM_UT_DRIVER -p" =
+mod:*
+> [   29.127696] gandalf kernel: dyndbg: good-class: drm.DRM_UT_DRIVER  mod=
+ule:drm nd:338 nc:1 nu:0
+> [   29.127699] gandalf kernel: dyndbg: class-ref: drm_kms_helper.DRM_UT_D=
+RIVER  module:drm_kms_helper nd:93 nc:0 nu:1
+> [   29.127701] gandalf kernel: dyndbg: class-ref: drm_display_helper.DRM_=
+UT_DRIVER  module:drm_display_helper nd:151 nc:0 nu:1
+> [   29.127885] gandalf kernel: dyndbg: class-ref: amdgpu.DRM_UT_DRIVER  m=
+odule:amdgpu nd:4754 nc:0 nu:1
+> [   29.152925] gandalf kernel: dyndbg: processed 1 queries, with 1384 mat=
+ches, 0 errs
+>
+>
+> The resulting journal is ~14.6k lines, written in the 1st 15 (29)
+> seconds of startup.  I'm unsure what the 15/29 discrepancy might
+> indicate/betray, besides a lot of logging work.  sleep 15 is not the
+> best stopwatch.
+>
+> Recent spins thru lkp-test have also been SUCCESS-ful.
+>
+> CC: Lukas Bartosik <ukaszb@chromium.org>
+> CC: Kees Cook <keescook@chromium.org>   # recent selftests/ reviews
+>
+> Jim Cromie (33):
+>
+> cleanups & preparations:
+>   docs/dyndbg: update examples \012 to \n
+>   test-dyndbg: fixup CLASSMAP usage error
+>   dyndbg: reword "class unknown," to "class:_UNKNOWN_"
+>   dyndbg: make ddebug_class_param union members same size
+>   dyndbg: replace classmap list with a vector
+>   dyndbg: ddebug_apply_class_bitmap - add module arg, select on it
+>   dyndbg: split param_set_dyndbg_classes to _module & wrapper fns
+>   dyndbg: drop NUM_TYPE_ARRAY
+>   dyndbg: reduce verbose/debug clutter
+>   dyndbg: silence debugs with no-change updates
+>   dyndbg: tighten ddebug_class_name() 1st arg type
+>   dyndbg: tighten fn-sig of ddebug_apply_class_bitmap
+>   dyndbg: reduce verbose=3D3 messages in ddebug_add_module
+>   dyndbg-API: remove DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
+>
+> core fix & selftests:
+>   dyndbg-API: fix DECLARE_DYNDBG_CLASSMAP
+>   selftests-dyndbg: add tools/testing/selftests/dynamic_debug/*
+>   selftests-dyndbg: exit 127 if no facility
+>   dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
+>   dyndbg-doc: add classmap info to howto
+>   dyndbg: treat comma as a token separator
+>   selftests-dyndbg: add comma_terminator_tests
+>   dyndbg: split multi-query strings with %
+>   selftests-dyndbg: test_percent_splitting multi-cmds on module classes
+>   docs/dyndbg: explain new delimiters: comma, percent
+>   selftests-dyndbg: add test_mod_submod
+>   selftests-dyndbg: test dyndbg-to-tracefs
+>   dyndbg-doc: explain flags parse 1st
+>
+> DRM parts
+>   drm+drivers: adapt to use DYNDBG_CLASSMAP_{DEFINE,USE}
+>   drm-dyndbg: adapt to use DYNDBG_CLASSMAP_PARAM
+>   drm: use correct ccflags-y spelling
+>   drm-drivers: DRM_CLASSMAP_USE in 2nd batch of drivers, helpers
+>   drm: restore CONFIG_DRM_USE_DYNAMIC_DEBUG un-BROKEN
+>   drm-print: workaround compiler meh
+>
+>  .../admin-guide/dynamic-debug-howto.rst       |  99 ++-
+>  MAINTAINERS                                   |   3 +-
+>  drivers/gpu/drm/Kconfig                       |   3 +-
+>  drivers/gpu/drm/Makefile                      |   3 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  12 +-
+>  drivers/gpu/drm/display/drm_dp_helper.c       |  12 +-
+>  drivers/gpu/drm/drm_crtc_helper.c             |  12 +-
+>  drivers/gpu/drm/drm_gem_shmem_helper.c        |   2 +
+>  drivers/gpu/drm/drm_print.c                   |  38 +-
+>  drivers/gpu/drm/gud/gud_drv.c                 |   2 +
+>  drivers/gpu/drm/i915/i915_params.c            |  12 +-
+>  drivers/gpu/drm/mgag200/mgag200_drv.c         |   2 +
+>  drivers/gpu/drm/nouveau/nouveau_drm.c         |  12 +-
+>  drivers/gpu/drm/qxl/qxl_drv.c                 |   2 +
+>  drivers/gpu/drm/radeon/radeon_drv.c           |   2 +
+>  drivers/gpu/drm/udl/udl_main.c                |   2 +
+>  drivers/gpu/drm/vkms/vkms_drv.c               |   2 +
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c           |   2 +
+>  include/asm-generic/vmlinux.lds.h             |   1 +
+>  include/drm/drm_print.h                       |  10 +
+>  include/linux/dynamic_debug.h                 | 127 ++-
+>  kernel/module/main.c                          |   3 +
+>  lib/Kconfig.debug                             |  24 +-
+>  lib/Makefile                                  |   3 +
+>  lib/dynamic_debug.c                           | 435 ++++++----
+>  lib/test_dynamic_debug.c                      | 131 +--
+>  lib/test_dynamic_debug_submod.c               |  17 +
+>  tools/testing/selftests/Makefile              |   1 +
+>  .../testing/selftests/dynamic_debug/Makefile  |   9 +
+>  tools/testing/selftests/dynamic_debug/config  |   2 +
+>  .../dynamic_debug/dyndbg_selftest.sh          | 765 ++++++++++++++++++
+>  31 files changed, 1391 insertions(+), 359 deletions(-)
+>  create mode 100644 lib/test_dynamic_debug_submod.c
+>  create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
+>  create mode 100644 tools/testing/selftests/dynamic_debug/config
+>  create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_selftest=
+sh
+>
+> --
+> 2.45.0
+>
+
+Jim,
+
+With the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM self test=
+ passes
+../selftests/dynamic_debug# ./dyndbg_selftest.sh
+# BASIC_TESTS
+# COMMA_TERMINATOR_TESTS
+# TEST_PERCENT_SPLITTING - multi-command splitting on %
+# TEST_MOD_SUBMOD
+
+However when (TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY) or
+                         (TEST_DYNAMIC_DEBUG=3DY and
+TEST_DYNAMIC_DEBUG_SUBMOD=3DM) self test fails with
+
+# TEST_PERCENT_SPLITTING - multi-command splitting on %
+test_dynamic_debug_submod not there
+test_dynamic_debug not there
+: ./dyndbg_selftest.sh:240 check failed expected 1 on =3Dpf, got 0
+
+This happens because module is compiled into kernel and the following
+line does not modify classmaps
+modprobe test_dynamic_debug
+dyndbg=3Dclass,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+
+Maybe selftest could verify if a module is compiled into a kernel and
+in such a case instead of calling modprobe as in the line above
+just do:
+ddcmd class,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+
+What do you think ?
+
+Thanks,
+Lukasz
 
