@@ -1,114 +1,225 @@
-Return-Path: <linux-kernel+bounces-189882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE94C8CF62E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043BF8CF633
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40FF4B21141
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D345280F3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA5139D1B;
-	Sun, 26 May 2024 21:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5336213A3E1;
+	Sun, 26 May 2024 21:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LZyyW1fn"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dONSCuLl"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D8B947A
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98377947A;
+	Sun, 26 May 2024 21:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716759986; cv=none; b=V+4XoMfMNm8X74sTvAIfw/RG6fquiU1xOdnyeG6vKlJ+g/HugtMDWl7MiHZHkGQTnw/O1qBfIOjjR87y3Fot+RGgIx8NYoIhd5v3uprFuBeM5rik5fkDle2+J5EEveJDlrCvytrJ+q5Ynv+KnXt1nIJLe4ej4bZltR6ZupafgTk=
+	t=1716760629; cv=none; b=jUr1In3+xzb7b+BkOAC+4bcyz0jqF+ENcqRxMeCz/YBqJU1IjAz1MLCoWmtbm6Gu3J5k9nLE63a6/qVoIj3C+luvhNG5mydcYGO4mxLVvzrOgPUpOmUgqeHHaeir58VvFNncS0gRW2RDliSmQqWCnqlvrCLuRIcvmmCDoap5vkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716759986; c=relaxed/simple;
-	bh=BZTyDxjsV/iXo/QKJ8gIKWeRlld6EAlqgh0Mqhycfrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjvjwdqXoHRv6K56JXJUBgTrVI5WGuAEgeu4WZ1UVar/fduBqUm6c2z1LPfNmr76Li2kVQoQGNQM5+Diq/o2NPsAH8R5vTeATeabw6GooGQ83iAdv6z4X2wA/MZY/MOgeTrtyQh8LRbh/BAdBiQ2BTMQ5SuoStWdTsVEmX8i9wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LZyyW1fn; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a61b70394c0so849375766b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:46:23 -0700 (PDT)
+	s=arc-20240116; t=1716760629; c=relaxed/simple;
+	bh=rXNP52xbCZ0tCH3EdYxEARpJusTg48r23ZLGQwMYmrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dr+kLQmiO9qi6IsjSXmP67aTwhrcHf3kDY93WZimnj3EaMRZhiWXIImxe3RwE5Wrx/ZX3OdKosZTfswSqDKQnkQ5HI4QRMIn3hs8ATOnwO5jCVmPB92iHEckOPnsiWsNIUUY+WT6NntNPVImBoHJ9v6Xk8Iw4W6k22Rm9qRF6L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dONSCuLl; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e964acff1aso24392611fa.0;
+        Sun, 26 May 2024 14:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716759982; x=1717364782; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SaOgVZCxVtqV/z4sdUNnjYMBPOoDFXTYVgkydMgh0gI=;
-        b=LZyyW1fntDG1A0z8FrZKutmn06TdXeLZkhKyd2S/rvf0c5/X9TTIhyYqSaf4xdTwZJ
-         J7S3yQywZ0qwVI4Xc5SFFABOu87RCmdmj1PKm3/aNYd/YmJje8Gvtt4LukPNyA6RSXf8
-         hURpynGKivM8lWwTPD6AGigfCpGxNvMpfTurs=
+        d=gmail.com; s=20230601; t=1716760626; x=1717365426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wSLYbNOc0WXKT9eTO9El1tEl9xgGnuLjqap+6tcHEXk=;
+        b=dONSCuLlwAOif18HIS8aEeFPtW1Zdv/jVEOoxbqq6Ry9zFd25S6CNKUuNUh3848NQs
+         ARV96MoIAAXpmxeHzcx1dmYnBTAmqqinJMmR0aY2MERg6d1mToKlQ6JHyeZDhHRmLA4Y
+         weu5w4+L7i0jqZMcr2PWYdaT0uepaKYBFTRbBIyB2CphrTyX2ok7udc+HQNFFuneY2fJ
+         9EVrqF29rzHy+unsivNWv5g0nDPTOYTMlZDGU5N7edWwp16mxIQMQWWurdYlhQgypfbp
+         I/KtdcGG4K3MBxgzLgbFA+7gaJDUdMn3YlvUACE5irEpo/TxLrF56dMW1oBycNUzpXUj
+         XPtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716759982; x=1717364782;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SaOgVZCxVtqV/z4sdUNnjYMBPOoDFXTYVgkydMgh0gI=;
-        b=eZ1XW0inshhZ2lP5wmPYlzZVsCKVXnhK7ZN+Exf7Sf2ScrfBDgSbFfWhcp9TqPqKT2
-         j6GV1nzZy+TKD0VQmwim409UzXgnwEN0+VGJzS+EKi3HOHIzCjjXrRVPkd+yvYpZAu4B
-         jE1zHKyWqEWXwxg9mj36xxaT5q4h+JI18X/M9K7k2Ck21aN6gviM104J1PxknTEfs0hF
-         kj51MWIA+xyJvYB1TmjslWej+t7V1OoRSEOWkxxS0OsA9R2jcy/L6eY8aGM47iXD/7zV
-         R0G20dp9tHomJqyDKWTSkEgdk+LJknvk5gnpQn1E7h9vYUjpSBMBY+pkAhozNvKgOFTQ
-         3L8g==
-X-Gm-Message-State: AOJu0YwUMqZpSmrx8X3TJg3Apr7EyiYsXZi0E83DvlWU2sWafHwniJSu
-	sZAHnJRQbrhl/R7OFJa5PsbnSp6r0NVoCgazLTglhUVowXmDJjOVq15kawNKaRPYB0KJ0WpO55G
-	D/FAM8A==
-X-Google-Smtp-Source: AGHT+IEjsB8F34YFcF6bEPXMGDA1GgpX9WYEPGY5sNJrBS9uVrz9rAS2t1uAPWroQYcGeU/t2x7pHQ==
-X-Received: by 2002:a17:906:491a:b0:a59:c844:beea with SMTP id a640c23a62f3a-a626511622emr434981966b.73.1716759981979;
-        Sun, 26 May 2024 14:46:21 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c937b92sm419904366b.68.2024.05.26.14.46.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 May 2024 14:46:21 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a61b70394c0so849375166b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:46:21 -0700 (PDT)
-X-Received: by 2002:a17:907:7743:b0:a59:aff8:c713 with SMTP id
- a640c23a62f3a-a62641a69a5mr464689166b.10.1716759980771; Sun, 26 May 2024
- 14:46:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716760626; x=1717365426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSLYbNOc0WXKT9eTO9El1tEl9xgGnuLjqap+6tcHEXk=;
+        b=vcP1pYGrjdzIh8jDdhn21q9uyTdAEsnDA13iPmpRQnmTUQS/y21xYS8zMiCHEAQykZ
+         qg1eEQtCvov/sZQfuSPkzpIDP7RPUHGOl7fSOGbayfEn49O17d1Dcg9WWczTHnUHUXlF
+         Q1qRpKtC1be63W6G33lkPm+/59qqX0k3MM9sBIKoCHlYdhk7eR4RHWN3RHOs6946EhjE
+         OQFihkokOAm8XQHmAermUHkAOpyGARzdJnuTVXDJYrYUrpTh6WgzpccoKIXtWoSt4KYk
+         3GNjAtY2mC5p7L0H43Zyp5dfQMEDEoU5xdM/A9dD2L8M7kq4DwFxHVSdOauAt00evSpJ
+         gJUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU97CRsOgB4VFYeGYVzV3IU1BYLXtVl5UaZOuemzsFeE/X4M6nQVHIEgfdjzBmONoBVwyGtTtKIAd/KPDV1t9VHWvhdFvvy6ZSjw2NL3a9kOwiMnze/xqmKTF7hmSwH9TJWhKfTi62b0odKQoXNyXusmd57GTkd/4jp
+X-Gm-Message-State: AOJu0Yy3YRR/mXwgBNypkEIBEHbxzeaiv7hTv/Lo1RRlWHPLChQQY2hJ
+	bxUUZHQm6GijEE+O0hT3UeSkllvB3+HlD4M2Lp1TubUnJHpUvE3+
+X-Google-Smtp-Source: AGHT+IELJz1bfY7qab9MN0pLBVMuQ7fP28zkZOcK3TiIbIg7HQ+RVmpy5KdYhCO/w//q2oL5AJ01vQ==
+X-Received: by 2002:ac2:5dca:0:b0:51e:150e:2c45 with SMTP id 2adb3069b0e04-52966e9ac88mr4682197e87.63.1716760625412;
+        Sun, 26 May 2024 14:57:05 -0700 (PDT)
+Received: from mobilestation ([95.79.182.53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529716dd12fsm453116e87.305.2024.05.26.14.57.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 14:57:04 -0700 (PDT)
+Date: Mon, 27 May 2024 00:57:02 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Byungho An <bh74.an@samsung.com>, Giuseppe CAVALLARO <peppe.cavallaro@st.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
+ based on the selected iface
+Message-ID: <fvjrnunu4lriegq3z7xkefsts6ybn2vkxmve6xzi73krjgvcj6@bhf4b4xx3x72>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+ <20240524210304.9164-1-fancer.lancer@gmail.com>
+ <20240524210304.9164-2-fancer.lancer@gmail.com>
+ <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <h23suk5s4hhkf7prhkzxp6a4kmhpgqxyl6ioski5cg7ciihxmj@j4zif6l6dqxc>
-In-Reply-To: <h23suk5s4hhkf7prhkzxp6a4kmhpgqxyl6ioski5cg7ciihxmj@j4zif6l6dqxc>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 26 May 2024 14:46:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whMS56xLhb7cAmTri2sXtGxK_zKWhZVX87YzjwAfVqTqQ@mail.gmail.com>
-Message-ID: <CAHk-=whMS56xLhb7cAmTri2sXtGxK_zKWhZVX87YzjwAfVqTqQ@mail.gmail.com>
-Subject: Re: [GIT PULL] header fix for riscv build failure
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
 
-On Sun, 26 May 2024 at 10:03, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Hi Linus, this fixes a riscv randconfig build failure from memory
-> allocation profiling...
+On Sun, May 26, 2024 at 05:49:48PM +0100, Russell King (Oracle) wrote:
+> On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
+> > The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
+> > into the DW GMAC controller. It's always done if the controller supports
+> > at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
+> > interfaces support was activated during the IP-core synthesize the PCS
+> > block won't be activated either and the HWFEATURE.PCSSEL flag won't be
+> > set. Based on that the RGMII in-band status detection procedure
+> > implemented in the driver hasn't been working for the devices with the
+> > RGMII interface support and with none of the SGMII, TBI, RTBI PHY
+> > interfaces available in the device.
+> > 
+> > Fix that just by dropping the dma_cap.pcs flag check from the conditional
+> > statement responsible for the In-band/PCS functionality activation. If the
+> > RGMII interface is supported by the device then the in-band link status
+> > detection will be also supported automatically (it's always embedded into
+> > the RGMII RTL code). If the SGMII interface is supported by the device
+> > then the PCS block will be supported too (it's unconditionally synthesized
+> > into the controller). The later is also correct for the TBI/RTBI PHY
+> > interfaces.
+> > 
+> > Note while at it drop the netdev_dbg() calls since at the moment of the
+> > stmmac_check_pcs_mode() invocation the network device isn't registered. So
+> > the debug prints will be for the unknown/NULL device.
+> 
 
-This pull request is odd in multiple ways.
+> Thanks. As this is a fix, shouldn't it be submitted for the net tree as
+> it seems to be fixing a bug in the driver as it stands today?
 
- (a) it's unsigned, and I really don't pull from unsigned sources any more
+From one point of view it could be submitted for the net tree indeed,
+but on the second thought are you sure we should be doing that seeing
+it will activate the RGMII-inband detection and the code with the
+netif-carrier toggling behind the phylink back? Who knows what new
+regressions the activated PCS-code can cause?..
 
- (b) the commit message is strange. It says "bcachefs", but I don't see why
+> 
+> Also, a build fix is required here:
+> 
+> > -	if (priv->dma_cap.pcs) {
+> > -		if ((interface == PHY_INTERFACE_MODE_RGMII) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+> > -		    (interface == PHY_INTERFACE_MODE_RGMII_TXID)) {
+> > -			netdev_dbg(priv->dev, "PCS RGMII support enabled\n");
+> > -			priv->hw->pcs = STMMAC_PCS_RGMII;
+> > -		} else if (interface == PHY_INTERFACE_MODE_SGMII) {
+> > -			netdev_dbg(priv->dev, "PCS SGMII support enabled\n");
+> > -			priv->hw->pcs = STMMAC_PCS_SGMII;
+> > -		}
+> > -	}
+> > +	if (phy_interface_mode_is_rgmii(interface))
+> > +		priv->hw.pcs = STMMAC_PCS_RGMII;
+> > +	else if (interface == PHY_INTERFACE_MODE_SGMII)
+> > +		priv->hw.pcs = STMMAC_PCS_SGMII;
+> 
+> Both of these assignments should be priv->hw->pcs not priv->hw.pcs.
 
- (c) you say riscv randconfig in the pull request but then when I
-follow the links in the commit, it says "mips-randconfig". Maybe the
-same thing ends up happening elsewhere too - including riscv - but it
-sure is confusing and I suspect it was just a typo.
+Ah, right. Originally I applied your patchset on top of my fixes,
+cleanups and platform glue-driver patchsets. One of the cleanups
+implied the mac_device_info instance movement to the stmmac_priv
+structure. When I was moving my changes onto your original series I
+just missed that part of the patch. Sorry about that. The rest of my
+patches seems free from such problem.
 
- (d) there's no "Fixes:" tag, so then I had to go and look up that
-this wasn't stable material (it doesn't seem to be, the "Fixes" tag
-would seem to be 24e44cc22aa3 ("mm: percpu: enable per-cpu allocation
-tagging") from the current merge window
+> 
+> I think there's also another bug that needs fixing along with this.
+> See stmmac_ethtool_set_link_ksettings(). Note that this denies the
+> ability to disable autoneg, which (a) doesn't make sense for RGMII
+> with an attached PHY, and 
 
-All of which means that I ended up just fetching the patch, fixing up
-the commit message, and applying it manually instead.
+This doesn't make sense for RGMII also due to DW GMAC/QoS Eth not having
+anything AN-related for the RGMII PHY interface. RGMII mode permits
+the Link status detection via the in-band signal retrieved from the
+PHY and nothing else. AN, if enabled, is performed on the PHY side.
 
-             Linus
+> (b) this code should be passing the
+> ethtool op to phylink for it to pass on to phylib so the PHY can
+> be appropriately configured for the users desired autoneg and
+> link mode settings.
+
+I am not that well aware of the phylink internals to be saying for
+100% sure, but thinking logically it would be indeed better if phylink
+was aware of the PCS state changes. But in case of the STMMAC PCS
+implementation I guess that the original PCS-code was designed to work
+with no PHY being involved:
+e58bb43f5e43 ("stmmac: initial support to manage pcs modes")
+See that commit prevented the MDIO-bus registration and PHY
+initialization in case of the PCS/RGMII-inband being available. But in
+practice the implementation turned to be not that well thought
+through. So eventually, commit-by-commit, the implementation was
+effectively converted to the no longer used code. At least for the
+MACs with just RGMII interface and no additional SGMII/TBI/RTBI
+interfaces, which I guess is the vast majority of the real devices
+with RGMII.
+
+> 
+> I also don't think it makes any sense for the STMMAC_PCS_SGMII case
+> given that it means Cisco SGMII - which implies that there is also
+> a PHY (since Cisco SGMII with inband is designed to be coupled with
+> something that looks like a PHY to send the inband signalling
+> necessary to configure e.g. the SGMII link symbol replication.
+
+AFAICS the STMMAC driver supports the MAC2MAC case connected over
+SGMII with no intermediate PHY. In that case the speed will be just
+fixed to what was set in the "snps,ps-speed" property. The RAL (Rate
+Adapter Layer) is configured to do that by having the SGMRAL flag set
+(see your dwmac_pcs_config() and what is done if hw->ps is non-zero).
+
+> 
+> In both of these cases, even if the user requests autoneg to be
+> disabled, that _shouldn't_ affect internal network driver links.
+> This ethtool op is about configuring the externally visible media
+> side of the network driver, not the internal links.
+
+IMO considering all the driver over-complexity (that's the most polite
+definition I managed to come up to.)) it would be much easier and
+likely safer not to try to fix the PCS-code and just convert it to
+something sane. At least the RGMII/In-band functionality we'll be able
+to test on my device. If the PCS SGMII part is still utilized by
+anybody, then if there are problems there the new kernel RCs will get
+to reveal them.
+
+-Serge(y)
+
+> 
+> -- 
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
