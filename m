@@ -1,330 +1,227 @@
-Return-Path: <linux-kernel+bounces-189810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16D08CF52B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A28CF52E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB12B20BFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:02:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82FCCB20A15
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA74E12B14B;
-	Sun, 26 May 2024 18:01:53 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8929312BE8B;
+	Sun, 26 May 2024 18:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e3MBnEgY"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740BA9449;
-	Sun, 26 May 2024 18:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1839449;
+	Sun, 26 May 2024 18:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716746513; cv=none; b=VajcjtFKtWamjqQ9seXbeXGe2R6MWELhqjCqvi/q3nzTOQzlsm1lfzyTM29+gZH4XAEMFSvwwBrFlbHKf9Sgm4Gk1IbJXfILr+EZSP8gKNCFPROHnXpMZSCi2n2Nj5yJHzMFfaR7qutITnsqWQ2wpAdavBF3mV71GcRjQNfqDgA=
+	t=1716746735; cv=none; b=Ivwn7apy9wpSJvhKvxUbLE2MvKd9/UW5A9G+bOT3+WBwrjTbgPU5OsJT8Wym2Sb0aFNPpDIGCuAZbPHYncgXmoiaRgZyQAY2Odp7jUopfpww1+rdxyYDq5VPC/u1ByrpWARqqNZYUSn7ZsJse5bkHno8dS6GS87CMJW4ljMQNBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716746513; c=relaxed/simple;
-	bh=GeM7l3n9b7yfTNpVAlxn4n6ZhpD0CYVFaOUjUxaGrJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2xXnH1JrTVqg1z+jPexQdHexWO8T3FeDydC+EZROr6fapAmHiKOg0I40spq34tsQH7wqkoSj31qmQ0VnUJ28dZ3xW0yujpjLtXrcIZTS4jX3ikYzqpV/BOWkTQQdXWfMubjiQmVn7Bk+w6VgjeVS1gyyN1RGEORHrSW3/0JH54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6570bd6c3d7so3419360a12.0;
-        Sun, 26 May 2024 11:01:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716746511; x=1717351311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nXPh7TFYjYz1hkCYmis26EZXSF/Y7T5SQc05dmlFt2E=;
-        b=bvLe2lFZX9zKBWPh3ULirdsPQKbkVpoaz959JEm/AH+GGlE5qfrG7jLNQ6aROh3VM1
-         xExQfn29N71KQN3MioGGnbWCkG5o8mCGUu/6JWXZ/tpHXMq/HDlAYU5qU7h9+Yy2iYNb
-         xzrqQrWLVYmoLGUEsWxgVAxhVC708zkUt7WvWKd8VtHh5oP7ItMOzDTi2k4KYV2FvOGm
-         uNRKnbA/qN9hixnWk9xzlvrOKilMIB/Te+Sswsorg/DzUou/pDO6hijVMDYZuStBNsU4
-         eqPzE/ie5txeeqbq3EuHewJnM86VhI7v0xZhE7Nn7i83X2IBt1lKF4BEz2btTm/gUy3K
-         dMXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCZfilaFBcOXWAZXvZUaFfjP/xoxNycRhmuH9vRGU04s5XOq6WGj/FOYFwjneRTSsD57cCTPAnIAL4UE5nBKQLPwl9CKSyvppILGJiwj9SKeCJlF5HBz/jT+BJC9kOtDUhJmmapoDh2Ns/wSAj5Q==
-X-Gm-Message-State: AOJu0YxSYZLoWsKSVxQKiAbkAdbKWO5i/+S/EuWn20R2SwBYuKG1OiJ7
-	Ig3EPpac62AsCeTMzvkuxmmTfq+VM1YFRZQz2HK44B7R/40PkCjyNYbdpbjfWuz//3cIGig+dMm
-	3hmTcNr4hLDsm7vVRfOpW2b9JOMY8Tw==
-X-Google-Smtp-Source: AGHT+IEj2oZe5cMbp27MPB0KaRgspifEGudks6L1xi03Ab2aItxW/y/uLIU7z4xfCkyp6uL/PF34xSBXGXiy+UIDaeI=
-X-Received: by 2002:a17:90b:fd3:b0:2b5:4ee8:e5e8 with SMTP id
- 98e67ed59e1d1-2bf5e189092mr6262469a91.16.1716746510638; Sun, 26 May 2024
- 11:01:50 -0700 (PDT)
+	s=arc-20240116; t=1716746735; c=relaxed/simple;
+	bh=zP20iQn3M+YzcvZeZRfL4TMtDAAvGyTKguyjeFJM34U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DZI23tM+CZJCCslo/FJKJXHram/6B1cuXLmmarfqZQ6SwR8BMjsWhPByQe9CipwFqfSM4xMnP/rxQ8RgviZGz3rcum70qn1C0Vd53j/UqbgkwCEVktnM/CAgwkU04aU41I1DDpw0pNacdxuHtJzdWSEgi0EF+LpuzZpgTvkDvhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e3MBnEgY; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44QI5Nd6056495;
+	Sun, 26 May 2024 13:05:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716746723;
+	bh=ut6RZiiGngOlYvVSiJegORi8aCialQhH/+JPbRda9hY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=e3MBnEgYvPEFbZ8Abdm0vzmJsW6nffG1yeJ0suiF/8xutAwJy9mVj7yJ5JBDbaxrX
+	 h6VkJFxcv3pPIH6I7KzYL155X91Hpd1kpP+pW7V9V3sGxH5x1DG5gzT+Q+U4NpzCsP
+	 2gLXS/neJS0VgXVpeszPFYeLhbG6FhUbFgNRORPI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44QI5NQB042191
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 26 May 2024 13:05:23 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 26
+ May 2024 13:05:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 26 May 2024 13:05:22 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44QI5Min092723;
+	Sun, 26 May 2024 13:05:22 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
+Subject: [PATCH v9 01/10] media: dt-bindings: Add Imagination E5010 JPEG Encoder
+Date: Sun, 26 May 2024 23:35:21 +0530
+Message-ID: <20240526180521.1114977-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240526175655.1093707-1-devarsht@ti.com>
+References: <20240526175655.1093707-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521173952.3397644-1-weilin.wang@intel.com>
- <20240521173952.3397644-5-weilin.wang@intel.com> <CAM9d7cjob_tfgN+rMRrh=0SV56+z32CmP34BRY1eoFv48RVocg@mail.gmail.com>
- <CO6PR11MB563589ED3FC7126A6B27EB22EEF52@CO6PR11MB5635.namprd11.prod.outlook.com>
-In-Reply-To: <CO6PR11MB563589ED3FC7126A6B27EB22EEF52@CO6PR11MB5635.namprd11.prod.outlook.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Sun, 26 May 2024 11:01:39 -0700
-Message-ID: <CAM9d7cjz0P=vrSr8yU=xMYhQ5XFT9A+K-WG9E+LyNzYWC-JhwA@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value from
- sampled data to evsel
-To: "Wang, Weilin" <weilin.wang@intel.com>
-Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"Hunter, Adrian" <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>, 
-	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb" <caleb.biggers@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 24, 2024 at 4:52=E2=80=AFPM Wang, Weilin <weilin.wang@intel.com=
-> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Namhyung Kim <namhyung@kernel.org>
-> > Sent: Friday, May 24, 2024 4:17 PM
-> > To: Wang, Weilin <weilin.wang@intel.com>
-> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
-> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
-> > <mingo@redhat.com>; Alexander Shishkin
-> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hun=
-ter,
-> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>=
-;
-> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor,=
- Perry
-> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Bigge=
-rs,
-> > Caleb <caleb.biggers@intel.com>
-> > Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value from=
- sampled
-> > data to evsel
-> >
-> > On Tue, May 21, 2024 at 10:40=E2=80=AFAM <weilin.wang@intel.com> wrote:
-> > >
-> > > From: Weilin Wang <weilin.wang@intel.com>
-> > >
-> > > In current :R parsing implementation, the parser would recognize even=
-ts
-> > with
-> > > retire_latency modifier and insert them into the evlist like a normal=
- event.
-> > > Ideally, we need to avoid counting these events.
-> > >
-> > > In this commit, at the time when a retire_latency evsel is read, set =
-the retire
-> > > latency value processed from the sampled data to count value. This sa=
-mpled
-> > > retire latency value will be used for metric calculation and final ev=
-ent count
-> > > print out.
-> >
-> > I'm confused.  Do you mean you don't count the event with 'R' modifier
-> > (w/ perf stat) and just print the (average) retire latency (from perf r=
-ecord)?
->
-> In metric formulas, event without 'R' modifier is included as a normal ev=
-ent already.
-> So we don't need to count the event that with 'R' modifier. They only nee=
-d to be
-> sampled.
+Add dt-bindings for Imagination E5010 JPEG Encoder [1] which is implemented
+as stateful V4L2 M2M driver.
 
-Oh, you have the event in the metric expression twice.  I thought of one.
-Then IIUC the metric looks something like this.
+The device supports baseline encoding with two different quantization
+tables and compression ratio as demanded.
 
-  myevent1 + (myevent2 * myevent1:R)
+Minimum resolution supported is 64x64 and Maximum resolution supported is
+8192x8192.
 
-I think you'll have 2 myevent1 in perf stat and 1 in perf record, right?
-But the second one in perf stat is never used and the value is updated
-from perf record.
+[1]:  AM62A TRM (Section 7.6 is for JPEG Encoder)
+Link: https://www.ti.com/lit/pdf/spruj16
 
-Then we can simply remove the event from the evlist (or replace it with
-a dummy) to reduce the overheads (of open and read).
+Co-developed-by: David Huang <d-huang@ti.com>
+Signed-off-by: David Huang <d-huang@ti.com>
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V9:
+ - No change
+V8:
+ - No change
+V7:
+ - No change
+V6:
+ - No change
+V5:
+ - Add Reviewed-By tag
+V4:
+ - Use ti-specific compatible ti,am62a-jpeg-enc as secondary one
+ - Update commit message and title
+ - Remove clock-names as only single clock
+V3:
+- Add vendor specific compatible
+- Update reg names
+- Update clocks to 1
+- Fix dts example with proper naming
+V2: No change
+---
+ .../bindings/media/img,e5010-jpeg-enc.yaml    | 75 +++++++++++++++++++
+ MAINTAINERS                                   |  5 ++
+ 2 files changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
 
->
-> >
-> > >
-> > > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
-> > > ---
-> > >  tools/perf/arch/x86/util/evlist.c |  6 +++++
-> > >  tools/perf/util/evsel.c           | 44 +++++++++++++++++++++++++++++=
-++
-> > >  tools/perf/util/evsel.h           |  5 ++++
-> > >  3 files changed, 55 insertions(+)
-> > >
-> > > diff --git a/tools/perf/arch/x86/util/evlist.c
-> > b/tools/perf/arch/x86/util/evlist.c
-> > > index b1ce0c52d88d..cebdd483149e 100644
-> > > --- a/tools/perf/arch/x86/util/evlist.c
-> > > +++ b/tools/perf/arch/x86/util/evlist.c
-> > > @@ -89,6 +89,12 @@ int arch_evlist__cmp(const struct evsel *lhs, cons=
-t
-> > struct evsel *rhs)
-> > >                         return 1;
-> > >         }
-> > >
-> > > +       /* Retire latency event should not be group leader*/
-> >
-> > Hmm.. why?
-> Because we don't want to count them. Make them the group leader would not=
- work.
+diff --git a/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+new file mode 100644
+index 000000000000..085020cb9e61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/img,e5010-jpeg-enc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Imagination E5010 JPEG Encoder
++
++maintainers:
++  - Devarsh Thakkar <devarsht@ti.com>
++
++description: |
++  The E5010 is a JPEG encoder from Imagination Technologies implemented on
++  TI's AM62A SoC. It is capable of real time encoding of YUV420 and YUV422
++  inputs to JPEG and M-JPEG. It supports baseline JPEG Encoding up to
++  8Kx8K resolution.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: ti,am62a-jpeg-enc
++          - const: img,e5010-jpeg-enc
++      - const: img,e5010-jpeg-enc
++
++  reg:
++    items:
++      - description: The E5010 core register region
++      - description: The E5010 mmu register region
++
++  reg-names:
++    items:
++      - const: core
++      - const: mmu
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/soc/ti,sci_pm_domain.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++      jpeg-encoder@fd20000 {
++          compatible = "img,e5010-jpeg-enc";
++          reg = <0x00 0xfd20000 0x00 0x100>,
++                <0x00 0xfd20200 0x00 0x200>;
++          reg-names = "core", "mmu";
++          clocks = <&k3_clks 201 0>;
++          power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
++          interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dbc5d9ec3d20..f68e1a5757b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10767,6 +10767,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/auxdisplay/img,ascii-lcd.yaml
+ F:	drivers/auxdisplay/img-ascii-lcd.c
+ 
++IMGTEC JPEG ENCODER DRIVER
++M:	Devarsh Thakkar <devarsht@ti.com>
++S:	Supported
++F:	Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
++
+ IMGTEC IR DECODER DRIVER
+ S:	Orphan
+ F:	drivers/media/rc/img-ir/
+-- 
+2.39.1
 
-I don't understand.  You'll read the event regardless of being a
-leader or not.
-
->
-> >
-> > > +       if (lhs->retire_lat && !rhs->retire_lat)
-> > > +               return 1;
-> > > +       if (!lhs->retire_lat && rhs->retire_lat)
-> > > +               return -1;
-> > > +
-> > >         /* Default ordering by insertion index. */
-> > >         return lhs->core.idx - rhs->core.idx;
-> > >  }
-> > > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > > index a0a8aee7d6b9..4d700338fc99 100644
-> > > --- a/tools/perf/util/evsel.c
-> > > +++ b/tools/perf/util/evsel.c
-> > > @@ -58,6 +58,7 @@
-> > >  #include <internal/xyarray.h>
-> > >  #include <internal/lib.h>
-> > >  #include <internal/threadmap.h>
-> > > +#include "util/intel-tpebs.h"
-> > >
-> > >  #include <linux/ctype.h>
-> > >
-> > > @@ -1523,6 +1524,40 @@ static int evsel__read_one(struct evsel *evsel=
-,
-> > int cpu_map_idx, int thread)
-> > >         return perf_evsel__read(&evsel->core, cpu_map_idx, thread, co=
-unt);
-> > >  }
-> > >
-> > > +static int evsel__set_retire_lat(struct evsel *evsel, int cpu_map_id=
-x, int
-> > thread)
-> > > +{
-> > > +       struct perf_counts_values *count;
-> > > +       struct tpebs_retire_lat *t;
-> > > +       bool found =3D false;
-> > > +       __u64 val;
-> > > +
-> > > +       count =3D perf_counts(evsel->counts, cpu_map_idx, thread);
-> > > +
-> > > +       list_for_each_entry(t, &tpebs_results, nd) {
-> > > +               if (!strcmp(t->tpebs_name, evsel->name)) {
-> > > +                       found =3D true;
-> > > +                       break;
-> > > +               }
-> > > +       }
-> > > +
-> > > +       if (!found)
-> > > +               return -1;
-> > > +
-> > > +       /*
-> > > +        * Only set retire_latency value to the first CPU and thread.
-> > > +        */
-> > > +       if (cpu_map_idx =3D=3D 0 && thread =3D=3D 0)
-> > > +               val =3D t->val;
-> > > +       else
-> > > +               val =3D 0;
-> > > +
-> > > +       count->val =3D val;
-> > > +       /* Set ena and run to non-zero */
-> > > +       count->ena =3D count->run =3D 1;
-> > > +       count->lost =3D 0;
-> >
-> > So here it seems you discard the actual count of the events
-> > and replace it with the retire latency.  That means you don't
-> > need to open the event in perf stat, and probably just have a
-> > placeholder, right?
-> >
-> > Btw, I think it's better to move this logic to intel-tpebs.c file and
-> > rename to tpebs_set_retire_lat().
->
-> Ian wants this to be here and also suggested me to rename this function t=
-o
-> evsel__read_retire_lat(). I'm ok with either way.
-
-I think it's better to have the tpebs logic together.
-
-Thanks,
-Namhyung
-
->
-> >
-> >
-> > > +       return 0;
-> > > +}
-> > > +
-> > >  static void evsel__set_count(struct evsel *counter, int cpu_map_idx,=
- int
-> > thread,
-> > >                              u64 val, u64 ena, u64 run, u64 lost)
-> > >  {
-> > > @@ -1530,6 +1565,12 @@ static void evsel__set_count(struct evsel
-> > *counter, int cpu_map_idx, int thread,
-> > >
-> > >         count =3D perf_counts(counter->counts, cpu_map_idx, thread);
-> > >
-> > > +       if (counter->retire_lat) {
-> >
-> > if (evsel__is_retire_lat(counter)) ?
-> >
-> >
-> > > +               evsel__set_retire_lat(counter, cpu_map_idx, thread);
-> > > +               perf_counts__set_loaded(counter->counts, cpu_map_idx,=
- thread,
-> > true);
-> > > +               return;
-> > > +       }
-> > > +
-> > >         count->val    =3D val;
-> > >         count->ena    =3D ena;
-> > >         count->run    =3D run;
-> > > @@ -1778,6 +1819,9 @@ int evsel__read_counter(struct evsel *evsel, in=
-t
-> > cpu_map_idx, int thread)
-> > >         if (evsel__is_tool(evsel))
-> > >                 return evsel__read_tool(evsel, cpu_map_idx, thread);
-> > >
-> > > +       if (evsel__is_retire_lat(evsel))
-> > > +               return evsel__set_retire_lat(evsel, cpu_map_idx, thre=
-ad);
-> > > +
-> >
-> > I'm not sure if it works well with group event.  Probably that's
-> > why you wanted to prevent group leaders.  But I guess you
-> > can just check this after the PERF_FORMAT_GROUP, no?
-> >
-> > Thanks,
-> > Namhyung
-> >
-> >
-> > >         if (evsel->core.attr.read_format & PERF_FORMAT_GROUP)
-> > >                 return evsel__read_group(evsel, cpu_map_idx, thread);
-> > >
-> > > diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> > > index bd8e84954e34..aaf572317e92 100644
-> > > --- a/tools/perf/util/evsel.h
-> > > +++ b/tools/perf/util/evsel.h
-> > > @@ -303,6 +303,11 @@ static inline bool evsel__is_tool(const struct e=
-vsel
-> > *evsel)
-> > >         return evsel->tool_event !=3D PERF_TOOL_NONE;
-> > >  }
-> > >
-> > > +static inline bool evsel__is_retire_lat(const struct evsel *evsel)
-> > > +{
-> > > +       return evsel->retire_lat;
-> > > +}
-> > > +
-> > >  const char *evsel__group_name(struct evsel *evsel);
-> > >  int evsel__group_desc(struct evsel *evsel, char *buf, size_t size);
-> > >
-> > > --
-> > > 2.43.0
-> > >
 
