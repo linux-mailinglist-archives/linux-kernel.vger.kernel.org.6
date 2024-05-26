@@ -1,188 +1,161 @@
-Return-Path: <linux-kernel+bounces-189792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4828CF4FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:16:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329318CF4E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356702811B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:16:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62CDE1C20B55
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20A3E476;
-	Sun, 26 May 2024 17:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836BA1C69E;
+	Sun, 26 May 2024 16:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TislT03C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="meYLVjXQ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A501B95E;
-	Sun, 26 May 2024 17:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC618EAF;
+	Sun, 26 May 2024 16:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716743761; cv=none; b=rPMr+ilyuJIH/f/3C8H4QdI40Sqoqbd5B3wKDph5+eoKtV54k25UIg/UvLVCE0RdRziG+eOXF8IBaPcNGmWD65i/tzLKmNdrrSPvRLOfhUD4qjcEyJEPVfZaGs/Jlras6rgHeoSawY2jImsdT9QA/S/aJYL5+jdHMhU9XIpq8AU=
+	t=1716741624; cv=none; b=dbuuoXp1SChdbSyoojBzDnNB/7+yrGIPQflLqWoKF5nn+QdMr6R1V+v7SFj6ZIDBOPDc5Lc/JZC4y50nm9Vsn/tnR3/9a+vB4ZBFUP6bl4PALbexCtFBXdYuJHLldjfD8S85riKwm5xN/4E3VhV9zYwvZ3yRCbVxbQ9WZ1IgKh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716743761; c=relaxed/simple;
-	bh=/4ROlZVtEZ2RXNVpfjWNo6guPp1ygtURhdmzW9MtTd8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=B3j7QKX4nb0wlscN+FFPwbuONZzKPkbUPMmPHhLYas+ieHPd6Ght6M6ANv8eDCltguLwrybd1g8KtgSHBfKO8+e15Zh7qcKYP0ZGzBv9ZfJAsIM6QXgRpbk04hw+OEPKjdsFwr3iM4U9Pq6zjMh7/Ud+XFZhT9obpR9cdV1L1lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TislT03C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFLp6a004265;
-	Sun, 26 May 2024 16:32:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=c01MyCAuUIjK4BKKwaVniW
-	6vmGJmR2W/cCTSrCDG2Qc=; b=TislT03CbRszEneV2AMw/WzSnAybRDh2sGX3Gz
-	6fi2UPCwR//eGyFfRpO2FstbuhlWdgUWjOGYlNABRmPUN6JTx9OMcghHGUFbfZx3
-	lOy6pTR7KQ1VtJWswnCadCZMTlt/nrq0NYQV5PyOqZKFtwby+g6dnOhNFXXst2gv
-	hG0eJjWj1Kc35XEKBxfbfGXDiGRHfBdxraJV4kOM1PFw3xkfbkxkusELTxYnATFv
-	/5FLEL2Gwvy7yDm15QxgyQRg+ZsmNEKK8sXTEFYxu6mM5RIejJPVq12hLx8V/o/u
-	b9LVTQpWuON4R/KNuzv6ALduoyzZcjEWtSxW7+nj6SbKHYtw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h1wtc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 16:32:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QGWZfq009333
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 16:32:35 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
- 2024 09:32:35 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 26 May 2024 09:32:34 -0700
-Subject: [PATCH] nvdimm: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1716741624; c=relaxed/simple;
+	bh=yOm6cdxOJDaW3vY/3rDEchTDMZQvn9FaKFIVCGigcZo=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=OtKlCeSq4LYnbiXre8XwbNW98VM+sEO7KO66ObZirfbw0s00wYXdtbyjgobMdxR5n/fFwi9SMIzPE3KGMidKsD0jHiCQezlxm1352TOU39oMimNuijuKmaqP84Dbi0Y3w/IHj4I39JHHZzm5ipIte1QuM5fQwy1m8kMEKuIX9Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=meYLVjXQ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240526-md-drivers-nvdimm-v1-1-172e682e76bd@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACFkU2YC/x2MQQrCQAxFr1KyNtCOraBXERczndQGnFgSHSqld
- zfKXz34721gpEwGl2YDpcrGT3HoDg2Mc5Q7IWdnCG3o2yGcsGTMypXUUGrmUrALviH26XycwL1
- FaeL137zenFM0wqRRxvlXerC8VyzRXqS4fPwK+/4FsiXaNYgAAAA=
-To: Vishal Verma <vishal.l.verma@intel.com>,
-        Dan Williams
-	<dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>,
-        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-        "Oliver
- O'Halloran" <oohall@gmail.com>
-CC: <nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <virtualization@lists.linux.dev>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6Hm4CDEG56hvzj2sEc_C21fa5BEB-zC9
-X-Proofpoint-ORIG-GUID: 6Hm4CDEG56hvzj2sEc_C21fa5BEB-zC9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405260138
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1716741613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j3lZcgRjy9m9i6VrLn+CFxC//39rHct7UpondOikJUI=;
+	b=meYLVjXQ14iHnjjG6vi6dXbEFJAFzMA7Dpk4lIIyPVVPoFpaMHYdL8m6kOW0lWbCeEM9+F
+	lu9ivY3Sl+YlcdpQCiaV7XVlwHdp501iTC97XUQ+ezqRzM9el9N+hc/5Zx6Zds377cFE3M
+	spGVPG4Sfo6QsbtJv56iEovKliySDyLg5LDhFi5Ul18YZj8EpymjWCc4PcgcDg8GgZpFbb
+	vJ2W8n+rTj+C2JELC6Nb1f7hG8jAX9LvZV/PDU21534fV4cIgu0XijTnzjHxhxK8rUjjZs
+	RUNWKOqJKVZWsYOo5qN4c12ptoCjx/g12xbp5reZ60XbMQRy+xWPt0zxA0A5IA==
+Date: Sun, 26 May 2024 18:40:12 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>, linux-sunxi@lists.linux.dev,
+ wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, didi.debian@cknow.org, Marek Kraus
+ <gamiee@pine64.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Correct the descriptions for
+ Pine64 boards
+In-Reply-To: <90fada7d9a37a5e413b16bc176ec2f8d@manjaro.org>
+References: <d2943d9f4c99a239f86188eaf45a73972685c255.1713833436.git.dsimic@manjaro.org>
+ <057b4a5504656bb7455ead39768d9e7167fb724b.camel@icenowy.me>
+ <5635a6e79427e43ef20b690c766267d0@manjaro.org>
+ <20240522110507.51b12966@donnerap.manchester.arm.com>
+ <90fada7d9a37a5e413b16bc176ec2f8d@manjaro.org>
+Message-ID: <eeb46ba769f6ee9a1972cd104f0de19d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Fix the 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/libnvdimm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_pmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_btt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_e820.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/of_pmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_virtio.o
+Hello Andre and Icenowy,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/nvdimm/btt.c       | 1 +
- drivers/nvdimm/core.c      | 1 +
- drivers/nvdimm/e820.c      | 1 +
- drivers/nvdimm/nd_virtio.c | 1 +
- drivers/nvdimm/of_pmem.c   | 1 +
- drivers/nvdimm/pmem.c      | 1 +
- 6 files changed, 6 insertions(+)
+On 2024-05-22 15:06, Dragan Simic wrote:
+> On 2024-05-22 12:05, Andre Przywara wrote:
+>> On Wed, 22 May 2024 08:10:21 +0200
+>> Dragan Simic <dsimic@manjaro.org> wrote:
+>>> On 2024-05-22 02:48, Icenowy Zheng wrote:
+>>> > 在 2024-04-23星期二的 03:00 +0200，Dragan Simic写道：
+>>> >> Correct the descriptions of a few Pine64 boards and devices,
+>>> >> according
+>>> >> to their official names used on the Pine64 wiki.  This ensures
+>>> >> consistency
+>>> >> between the officially used names and the names in the source code.
+>>> >>
+>>> >> [...]
+>>> >>
+>>> >> -      - description: Pine64 PineH64 model A
+>>> >> +      - description: Pine64 H64 Model A
+>>> >>          items:
+>>> >>            - const: pine64,pine-h64
+>>> >>            - const: allwinner,sun50i-h6
+>>> >>  
+>>> >> -      - description: Pine64 PineH64 model B
+>>> >> +      - description: Pine64 H64 Model B
+>>> >
+>>> > Sorry for replying so late, but I don't think there is a Pine64 H64
+>>> > board. The Pine64 wiki calls it Pine H64. [1]
+>>> >
+>>> > [1] https://wiki.pine64.org/wiki/PINE_H64
+>>> 
+>>> Good point, thanks.  Though, this board is really an exception to
+>>> the naming scheme employed for the Pine64 boards, so perhaps it would
+>>> actually be better to rename the board in the Pine64 wiki, by adding
+>>> "64" to "Pine", to ensure consistency.
+>> 
+>> I am sorry, but I don't think this is how it works. The board is 
+>> really
+>> called "Pine H64", that's printed on the board [1] and everywhere else 
+>> [2].
+>> That's a choice the manufacturer made, and renaming some Wiki page 
+>> won't
+>> change that. I understand the engineer's desire to make everything 
+>> nice and
+>> consistent ;-) , but I am afraid that's not our call. After all this 
+>> file
+>> is to document the device naming, not to be an example of consistent
+>> naming schemes.
+>> 
+>> [1] https://linux-sunxi.org/images/5/53/Pineh64_top.jpg
+>> [2] https://pine64.org/devices/pine_h64_model_a/
+> 
+> Those are all valid concerns.  Though, when it comes to the 
+> silkscreened
+> labels on PCBs, sometimes they have no connection with the real, 
+> official
+> board names.  An almost funny example :) is the QuartzPro64 board, also
+> from Pine64. [3]
+> 
+> I'll check with Pine64 are there some intentions for unifying the 
+> officially
+> used board names, and if there aren't, I'll submit the v2 of this 
+> series
+> with the corrected board names.
+> 
+> [3] 
+> https://wiki.pine64.org/images/f/fe/Quartzpro64_whole_board_top_resized.jpeg
 
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 1e5aedaf8c7b..a47acc5d05df 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1721,6 +1721,7 @@ static void __exit nd_btt_exit(void)
- 
- MODULE_ALIAS_ND_DEVICE(ND_DEVICE_BTT);
- MODULE_AUTHOR("Vishal Verma <vishal.l.verma@linux.intel.com>");
-+MODULE_DESCRIPTION("NVDIMM Block Translation Table");
- MODULE_LICENSE("GPL v2");
- module_init(nd_btt_init);
- module_exit(nd_btt_exit);
-diff --git a/drivers/nvdimm/core.c b/drivers/nvdimm/core.c
-index 2023a661bbb0..f4b6fb4b9828 100644
---- a/drivers/nvdimm/core.c
-+++ b/drivers/nvdimm/core.c
-@@ -540,6 +540,7 @@ static __exit void libnvdimm_exit(void)
- 	nvdimm_devs_exit();
- }
- 
-+MODULE_DESCRIPTION("NVDIMM (Non-Volatile Memory Device) core module");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Intel Corporation");
- subsys_initcall(libnvdimm_init);
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index 4cd18be9d0e9..008b9aae74ff 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -69,5 +69,6 @@ static struct platform_driver e820_pmem_driver = {
- module_platform_driver(e820_pmem_driver);
- 
- MODULE_ALIAS("platform:e820_pmem*");
-+MODULE_DESCRIPTION("NVDIMM support for e820 type-12 memory");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Intel Corporation");
-diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
-index 1f8c667c6f1e..35c8fbbba10e 100644
---- a/drivers/nvdimm/nd_virtio.c
-+++ b/drivers/nvdimm/nd_virtio.c
-@@ -123,4 +123,5 @@ int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
- 	return 0;
- };
- EXPORT_SYMBOL_GPL(async_pmem_flush);
-+MODULE_DESCRIPTION("Virtio Persistent Memory Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
-index d3fca0ab6290..5134a8d08bf9 100644
---- a/drivers/nvdimm/of_pmem.c
-+++ b/drivers/nvdimm/of_pmem.c
-@@ -111,5 +111,6 @@ static struct platform_driver of_pmem_region_driver = {
- 
- module_platform_driver(of_pmem_region_driver);
- MODULE_DEVICE_TABLE(of, of_pmem_region_match);
-+MODULE_DESCRIPTION("NVDIMM Device Tree support");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("IBM Corporation");
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 598fe2e89bda..57cb30f8a3b8 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -768,4 +768,5 @@ static struct nd_device_driver nd_pmem_driver = {
- module_nd_driver(nd_pmem_driver);
- 
- MODULE_AUTHOR("Ross Zwisler <ross.zwisler@linux.intel.com>");
-+MODULE_DESCRIPTION("NVDIMM Persistent Memory Driver");
- MODULE_LICENSE("GPL v2");
+It's been decided that the history should be preserved, so I'll prepare
+and submit the v2 of this series with the original Pine64 board names 
+that
+are currently used officially.
 
----
-base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
-change-id: 20240526-md-drivers-nvdimm-121215a4b93f
-
+>>> Alas, the Pine64 wiki is currently in read-only mode, due to some
+>>> recent issues with the underlying hardware that runs it.  Migration 
+>>> to
+>>> another form of documentation for Pine64 boards is also a 
+>>> possibility,
+>>> which makes the updates even more complicated.
+>>> 
+>>> With all this in mind, I think it would be the best to rename the 
+>>> board
+>>> on the Pine64 side, to ensure consistency, and keep this patch as-is.
+>>> I'll make a mental note to do that on the Pine64 side once the 
+>>> current
+>>> situation with the Pine64 wiki is resolved.
 
