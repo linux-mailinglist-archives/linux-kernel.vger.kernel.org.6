@@ -1,176 +1,188 @@
-Return-Path: <linux-kernel+bounces-189783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D9B8CF4E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:27:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4828CF4FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D551C2088B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356702811B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0F91BF2F;
-	Sun, 26 May 2024 16:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20A3E476;
+	Sun, 26 May 2024 17:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hp9Nyopb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TislT03C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92E41803D;
-	Sun, 26 May 2024 16:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A501B95E;
+	Sun, 26 May 2024 17:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716740858; cv=none; b=jSQdWZ6rqSsFiY/ci68lEx6bgNO7dF38YzeklMaIux3vE6l6pi8RZn/p3pYyB05M4boNiTAP5KL01yYRz3BwQBx0QqaISvj0uWfsRYRpGXb5Mfuskc9kiFVJLq1FFvi1BBF9mTwJtebzuNvSFk9+y3/4IwrjYlaTJRCvQI+PO9Y=
+	t=1716743761; cv=none; b=rPMr+ilyuJIH/f/3C8H4QdI40Sqoqbd5B3wKDph5+eoKtV54k25UIg/UvLVCE0RdRziG+eOXF8IBaPcNGmWD65i/tzLKmNdrrSPvRLOfhUD4qjcEyJEPVfZaGs/Jlras6rgHeoSawY2jImsdT9QA/S/aJYL5+jdHMhU9XIpq8AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716740858; c=relaxed/simple;
-	bh=Ck8ZP8XmBhx3qfNQgaZytRg6uoSkdm/hDN0wyzQbEcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSze0a8yysbPoOsHcit/5kSXcGV0HYbvZQ4zm49lFgbuJSFjLdyY0krPKbqrMZAiRiowR41xajiwS4NcG1Znv5jwyq+vxBH5lQ0gsEkcXUlH1vIxaIXYBLgh6dL5jjaWrNouwmFucTmqQGVvRtYG/6dkzziNQGP1uA5o4w0fdPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hp9Nyopb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HQ77S7fv3o2eNNFdQwNAIpUe0Htav/emvIcvmyeydso=; b=hp9NyopbKR1MoB2zPFnPbXwX3v
-	rO8DRx7ecCpR8ZcLKVQBjIBERF7z4kD288lBS4Wohdk/O/IVgrHyc8UkvLAAaimqFqScFr6MLPank
-	a/8ciH7WW+adrEUv+Twq7G29LVpNGKgClj+lJOaYJBqPCwbI7a+Fk4XhdATH7wvO7f9FoQG8AsP2R
-	KuQsqrWpTio7pYfgApOHJQ+u2a4MY9PXJmFpuNboiHKmu02OqC65mrVsmM4Iia1gSP9YnwfAoQFIq
-	IEX/qKvnoKUYJMgnrOvYun297Arp039xQT0uawxqddScEgHgxHAPek41V4X1D5/YHHM3JR4dTp568
-	nTxoWzbw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35300)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBGiA-0002of-2D;
-	Sun, 26 May 2024 17:27:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBGi8-0001Vm-2o; Sun, 26 May 2024 17:27:04 +0100
-Date: Sun, 26 May 2024 17:27:03 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sneh Shah <quic_snehshah@quicinc.com>
-Cc: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-Message-ID: <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
+	s=arc-20240116; t=1716743761; c=relaxed/simple;
+	bh=/4ROlZVtEZ2RXNVpfjWNo6guPp1ygtURhdmzW9MtTd8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=B3j7QKX4nb0wlscN+FFPwbuONZzKPkbUPMmPHhLYas+ieHPd6Ght6M6ANv8eDCltguLwrybd1g8KtgSHBfKO8+e15Zh7qcKYP0ZGzBv9ZfJAsIM6QXgRpbk04hw+OEPKjdsFwr3iM4U9Pq6zjMh7/Ud+XFZhT9obpR9cdV1L1lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TislT03C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFLp6a004265;
+	Sun, 26 May 2024 16:32:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=c01MyCAuUIjK4BKKwaVniW
+	6vmGJmR2W/cCTSrCDG2Qc=; b=TislT03CbRszEneV2AMw/WzSnAybRDh2sGX3Gz
+	6fi2UPCwR//eGyFfRpO2FstbuhlWdgUWjOGYlNABRmPUN6JTx9OMcghHGUFbfZx3
+	lOy6pTR7KQ1VtJWswnCadCZMTlt/nrq0NYQV5PyOqZKFtwby+g6dnOhNFXXst2gv
+	hG0eJjWj1Kc35XEKBxfbfGXDiGRHfBdxraJV4kOM1PFw3xkfbkxkusELTxYnATFv
+	/5FLEL2Gwvy7yDm15QxgyQRg+ZsmNEKK8sXTEFYxu6mM5RIejJPVq12hLx8V/o/u
+	b9LVTQpWuON4R/KNuzv6ALduoyzZcjEWtSxW7+nj6SbKHYtw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h1wtc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 16:32:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QGWZfq009333
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 16:32:35 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
+ 2024 09:32:35 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 26 May 2024 09:32:34 -0700
+Subject: [PATCH] nvdimm: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240526-md-drivers-nvdimm-v1-1-172e682e76bd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIACFkU2YC/x2MQQrCQAxFr1KyNtCOraBXERczndQGnFgSHSqld
+ zfKXz34721gpEwGl2YDpcrGT3HoDg2Mc5Q7IWdnCG3o2yGcsGTMypXUUGrmUrALviH26XycwL1
+ FaeL137zenFM0wqRRxvlXerC8VyzRXqS4fPwK+/4FsiXaNYgAAAA=
+To: Vishal Verma <vishal.l.verma@intel.com>,
+        Dan Williams
+	<dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Ira Weiny
+	<ira.weiny@intel.com>,
+        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        "Oliver
+ O'Halloran" <oohall@gmail.com>
+CC: <nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <virtualization@lists.linux.dev>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6Hm4CDEG56hvzj2sEc_C21fa5BEB-zC9
+X-Proofpoint-ORIG-GUID: 6Hm4CDEG56hvzj2sEc_C21fa5BEB-zC9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405260138
 
-On Thu, Dec 21, 2023 at 02:23:57PM +0530, Sneh Shah wrote:
-> On 12/20/2023 9:29 PM, Andrew Halaney wrote:
-> > I'd evaluate if you can update that function to clear the ANE bit when
-> > the ane boolean is false. From the usage I see I feel that makes sense,
-> > but correct me if you think I'm wrong.
-> > At the very least let's use the defines from there, and possibly add a
-> > new function if clearing is not acceptable in dwmac_ctrl_ane().
-> > 
-> > Stepping back, I was asking in general is the need to muck with ANE here
-> > is a Qualcomm specific problem, or is that a generic thing that should be
-> > handled in the core (and the phy_set_speed() bit stay here)? i.e. would
-> > any dwmac5 based IP need to do something like this for SPEED_2500?
-> I think disabling ANE for SPEED_2500 is generic not specific to qualcomm.
-> Even in dwxgmac2 versions also we need to disable ANE for SPEED_2500.
-> Autoneg clause 37 stadard doesn't support 2500 speed. So we need to
-> disable autoneg for speed 2500
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/libnvdimm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_btt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_e820.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/of_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_virtio.o
 
-(Going back over the history of this addition)
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/nvdimm/btt.c       | 1 +
+ drivers/nvdimm/core.c      | 1 +
+ drivers/nvdimm/e820.c      | 1 +
+ drivers/nvdimm/nd_virtio.c | 1 +
+ drivers/nvdimm/of_pmem.c   | 1 +
+ drivers/nvdimm/pmem.c      | 1 +
+ 6 files changed, 6 insertions(+)
 
-What 802.3 Clause 37 says is utterly _irrelevant_ when discussing Cisco
-SGMII. Cisco took 802.3 1000base-X and modified it for their own
-purposes, changing the format of the 16-bit control word, adding support
-for symbol replication to support 100Mbps and 10Mbps, changing the link
-timer, etc. SGMII is *not* 802.3 Clause 37.
+diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
+index 1e5aedaf8c7b..a47acc5d05df 100644
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -1721,6 +1721,7 @@ static void __exit nd_btt_exit(void)
+ 
+ MODULE_ALIAS_ND_DEVICE(ND_DEVICE_BTT);
+ MODULE_AUTHOR("Vishal Verma <vishal.l.verma@linux.intel.com>");
++MODULE_DESCRIPTION("NVDIMM Block Translation Table");
+ MODULE_LICENSE("GPL v2");
+ module_init(nd_btt_init);
+ module_exit(nd_btt_exit);
+diff --git a/drivers/nvdimm/core.c b/drivers/nvdimm/core.c
+index 2023a661bbb0..f4b6fb4b9828 100644
+--- a/drivers/nvdimm/core.c
++++ b/drivers/nvdimm/core.c
+@@ -540,6 +540,7 @@ static __exit void libnvdimm_exit(void)
+ 	nvdimm_devs_exit();
+ }
+ 
++MODULE_DESCRIPTION("NVDIMM (Non-Volatile Memory Device) core module");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+ subsys_initcall(libnvdimm_init);
+diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
+index 4cd18be9d0e9..008b9aae74ff 100644
+--- a/drivers/nvdimm/e820.c
++++ b/drivers/nvdimm/e820.c
+@@ -69,5 +69,6 @@ static struct platform_driver e820_pmem_driver = {
+ module_platform_driver(e820_pmem_driver);
+ 
+ MODULE_ALIAS("platform:e820_pmem*");
++MODULE_DESCRIPTION("NVDIMM support for e820 type-12 memory");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+index 1f8c667c6f1e..35c8fbbba10e 100644
+--- a/drivers/nvdimm/nd_virtio.c
++++ b/drivers/nvdimm/nd_virtio.c
+@@ -123,4 +123,5 @@ int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
+ 	return 0;
+ };
+ EXPORT_SYMBOL_GPL(async_pmem_flush);
++MODULE_DESCRIPTION("Virtio Persistent Memory Driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+index d3fca0ab6290..5134a8d08bf9 100644
+--- a/drivers/nvdimm/of_pmem.c
++++ b/drivers/nvdimm/of_pmem.c
+@@ -111,5 +111,6 @@ static struct platform_driver of_pmem_region_driver = {
+ 
+ module_platform_driver(of_pmem_region_driver);
+ MODULE_DEVICE_TABLE(of, of_pmem_region_match);
++MODULE_DESCRIPTION("NVDIMM Device Tree support");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("IBM Corporation");
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 598fe2e89bda..57cb30f8a3b8 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -768,4 +768,5 @@ static struct nd_device_driver nd_pmem_driver = {
+ module_nd_driver(nd_pmem_driver);
+ 
+ MODULE_AUTHOR("Ross Zwisler <ross.zwisler@linux.intel.com>");
++MODULE_DESCRIPTION("NVDIMM Persistent Memory Driver");
+ MODULE_LICENSE("GPL v2");
 
-I guess you are getting caught up in the widespread crud where
-manufacturers stupidly abuse "SGMII" to mean maybe "Cisco SGMII" and
-maybe "802.3 1000base-X" because both are "serial gigabit MII". Yes,
-both are serial in nature, but Cisco SGMII is not 1000base-X and it
-also is not 2500base-X.
+---
+base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
+change-id: 20240526-md-drivers-nvdimm-121215a4b93f
 
-What makes this even more difficult is that 2500base-X was never
-standardised by the 802.3 committees until very late, so we've ended
-up with manufacturers doing their own thing for years. We've ended up
-with a mess of different implementations described in different ways
-many of which boil down to being 2500base-X without inband AN. For
-example, one manufacturer talks about "HS-SGMII", but doesn't permit
-the interface to operate at the x10 and x100 symbol replications that
-conventional Cisco SGMII uses for 100M and 10M speeds respectfully,
-making it in effect no different from 2500base-X.
-
-Now through into this mess various implementations that do not support
-inband at 2.5G speeds, those that require inband at 2.5G speeds... one
-can get into the situation where one pairs a PHY that requires inband
-with a PCS that doesn't support it and the result doesn't work. This
-is particularly problematical if the PHY is on a hotpluggable module
-like a SFP.
-
-It's a total trainwreck.
-
-I do have some work-in-progress patches that attempt to sort this out
-in phylink and identify incompatible situations.
-
-See http://git.armlinux.org.uk/cgit/linux-arm.git/log/?h=net-queue
-
-commits (I think)...
-
-net: phylink: clean up phylink_resolve()
-
-to:
-
-net: phylink: switch to MLO_AN_PHY when PCS uses outband
-
-and since I'm converting stmmac's hacky PCS that bypasses phylink to
-a real phylink_pcs, the ethqos code as it stands presents a blocker
-because of this issue. So, I'm intending to post a series in the next
-few days (after the bank holiday) and will definitely need to be
-tested on ethqos hardware.
-
-However, first we need to get to the bottom of your latest patch that
-only sets PHY_INTERFACE_MODE_2500BASEX when plat_dat->flags has the
-STMMAC_FLAG_HAS_INTEGRATED_PCS flag _set_, but the stmmac code very
-oddly does _not_ use the built-in PCS if this flag is set. See:
-
-	stmmac_ethtool_get_link_ksettings()
-	stmmac_ethtool_set_link_ksettings()
-
-and their use of pcs_link / pcs_duplex / pcs_speed. Also see
-
-	stmmac_common_interrupt()
-
-and its use of pcs_link to control the carrier, the dwmac1000 and
-dwmac4 code that reads the status from the GMAC, updating the
-pcs_link / pcs_duplex / pcs_speed variables.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
