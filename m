@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-189581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB08D8CF255
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 02:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0858F8CF25F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 03:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24013B20EDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 00:31:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2A2B20E95
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63DDA32;
-	Sun, 26 May 2024 00:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946EFA5F;
+	Sun, 26 May 2024 01:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWUuIeOQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjxfSiic"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE36463E;
-	Sun, 26 May 2024 00:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF59387;
+	Sun, 26 May 2024 01:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716683491; cv=none; b=X97hDTMIk34RzJZ0yePdWf8aFWe1q0GNTJVp6Ud/AghEpehMoHH8dSU2wbJ4w3e1ifKVMjRrgEiwdNhSlYc36BTmzLjq5KjAv3Lz0xE1dTG1+dLrv+C7Uir4wpis2RXKe/XBbJMH2AxTro2X5W5ZNQubuazdlpRibYcjUBiFsCo=
+	t=1716686789; cv=none; b=CgzpcwugGc32EQi9U4oUGCPTd7rVhHEi0xetVU0cjBawKU9btiQcHUULOg4S2uxcGzxh8gUKEQGvNVuF1GSPMw8/GD8DxiRyPc7cZDClCDZkCjWMI7LUYI3J0Eoy7vH+qf7hTvb0nmZ+L64XxA6PvmFHQ6UxBEU73PKH92jqaWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716683491; c=relaxed/simple;
-	bh=tLBbbj7vrivOQBPs31i4Rk8bNdwrtQx9xSQ5x5v7dRs=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Cdg3HTcNjdPfqgkCOMGEkpv9J4lkAUEeqYEVWmpRDnNmYPXYbQ6vuYlx/GKcPIvs/4Xsy3BESViYS0q6q/GBzRwg8izyTmuVwDLVo3qFpv/yjUcuvHlWAGQTMXfzLtCX6JHhW2iu7hvFVjsnNX3ZMUlJRzjXV8qWxIo6OZSwRAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWUuIeOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B158C2BD11;
-	Sun, 26 May 2024 00:31:30 +0000 (UTC)
+	s=arc-20240116; t=1716686789; c=relaxed/simple;
+	bh=hliK7wtfdTHGdpCX/b8c2sgRKOvc0CvTg9bJ/aDLsWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgLuo2JRyNPY/KAJtf18b1TsG9XW/ikC1Px7uxQ6XRY3OzBlp/0u+HC2eiYTaDtoAfP8M88ybvNFWJAFrPlIT9EWup8UwASqLSpjqD4gBnw7ogK8z9mGotgN56vUspO6tFrvec8xilch+S1+sP7kgyHCR8mi5uZGlgtDUxtZrFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjxfSiic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0137CC2BD11;
+	Sun, 26 May 2024 01:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716683490;
-	bh=tLBbbj7vrivOQBPs31i4Rk8bNdwrtQx9xSQ5x5v7dRs=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=PWUuIeOQ2FKzGraLtFcDykcvJ/bwO54n+4BCw71Tpj0SuRXTUyRZGO9q++pZ6jQM1
-	 YlJCT20K1fdKtMu8BQerJUYdcYulu9gqP3n+/SwsjLDfkUeKdGUoGdreVpRlhf6/Oj
-	 SN8gxoE0atbIcU6Zdj8D7ZvIM0pvZcqk3l1QteY+dfVI+Ht/ZRdOgKdo2VFJ6/xqGt
-	 7ganyu2M1LlAfOPJceyRkPHogt5PiRhYZt1EqeQMUiSWH2I6XA8dwYfMusEfaXa2hv
-	 U4slhHmf4/+6mbwKlAygHM24yaVKUfVief5+hAHW3XjorkymGt54q73rYDi1vtYhOh
-	 tRmHsxIxZ+Tlg==
-Date: Sat, 25 May 2024 19:31:29 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1716686789;
+	bh=hliK7wtfdTHGdpCX/b8c2sgRKOvc0CvTg9bJ/aDLsWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NjxfSiickapoyY7GKSUZthmQ87dXNQZgqEWNvEzdt/zAoe808W7MTmVfYldr/2qOH
+	 2CF3apqhm41ZbeI7cDckO4g2O1eokvacv1ZJCzhPpjMBA10v9/mfRWy0HT55VHlYgf
+	 yJWN/TCIs1vuV6UcxXdQG4VZHvBgj0I5PkObTrKlK87+4anNbmCUSUvECv1KB4aGjv
+	 xUHKw6mLF357XqPhOZIXtHwJeJDgSgp1SpDj/ew/i9/tCxXp4o40Sa1I8rzQbRph+S
+	 L1ur/01mD5Hg4wyJAfQMxNkkqrF6/2sWRhb7UjgNhK9yIbIYDECTc6tc6zVhp38zfE
+	 EhN/EHSlOW21A==
+Date: Sun, 26 May 2024 01:26:26 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	"Dustin L. Howett" <dustin@howett.net>,
+	Kieran Levin <ktl@frame.work>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] platform/chrome: cros_ec_lpc: Correct ACPI name for
+ Framework Laptop
+Message-ID: <ZlKPwlF86Oe8OPK9@google.com>
+References: <20240515055631.5775-1-ben@jubnut.com>
+ <20240515055631.5775-6-ben@jubnut.com>
+ <ZkscFnmHeWWma7Nb@google.com>
+ <87jzjk1ibr.fsf@jubnut.com>
+ <Zk_63rrDJFhN1Y1q@google.com>
+ <87cypb12j9.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: dri-devel@lists.freedesktop.org, Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Singo Chang <singo.chang@mediatek.com>, linux-mediatek@lists.infradead.org, 
- Shawn Sung <shawn.sung@mediatek.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jason-ch Chen <jason-ch.chen@mediatek.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Nancy Lin <nancy.lin@mediatek.com>, Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20240525230810.24623-3-jason-jh.lin@mediatek.com>
-References: <20240525230810.24623-1-jason-jh.lin@mediatek.com>
- <20240525230810.24623-3-jason-jh.lin@mediatek.com>
-Message-Id: <171668348904.396809.16922327479169657625.robh@kernel.org>
-Subject: Re: [PATCH v6 2/8] dt-bindings: mailbox: Add property for CMDQ
- secure driver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cypb12j9.fsf@jubnut.com>
 
-
-On Sun, 26 May 2024 07:08:04 +0800, Jason-JH.Lin wrote:
-> 1. Add mboxes property to define a GCE loopping thread as a secure IRQ
-> handler.
-> The CMDQ secure driver requests a mbox channel and sends a looping
-> command to the GCE thread. The looping command will wait for a secure
-> packet done event signal from secure world and then jump back to the
-> first instuction. Each time it waits for an event, it notifies the
-> CMDQ driver to perform the same action as the IRQ handler.
+On Fri, May 24, 2024 at 07:35:22PM +0100, Ben Walsh wrote:
+> Tzung-Bi Shih <tzungbi@kernel.org> writes:
 > 
-> 2. Add gce-events property from gce-props.yaml to define a
-> secure packet done signal in secure world.
-> There are 1024 events IDs for GCE to use to execute instructions in
-> the specific event happened. These events could be signaled by HW or SW
-> and their value would be different in different SoC because of HW event
-> IDs distribution range from 0 to 1023.
-> If we set a static event ID: 855 for mt8188, it might be conflict the
-> event ID original set in mt8195.
-> So we define an event ID that will be set when GCE runs to the end of
-> secure cmdq packet in the secure world.
+> > From the context you provided, instead of matching "PNP0C09" in the driver,
+> > it makes more sense to me (for Framework EC):
+> >
+> > * Mainly use DMI match.
+> > * Add a quirk for looking up (acpi_get_devices()?) and binding
+> >   (e.g. ACPI_COMPANION_SET()) the `adev` in cros_ec_lpc_probe().
 > 
-> This can reduce the latency of software communication between normal
-> world and secure world. In addition, we can also remove the complex
-> logic after the secure packet done in the secure world.
+> Sorry, I don't think I provided enough context. There is already a
+> platform device /sys/bus/platform/devices/PNP0C09:00 with a companion
+> acpi device /sys/bus/acpi/devices/PNP0C09:00. I think it makes sense to
+> bind the driver to the existing platform device.
 > 
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> ---
->  .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
+> I could add a new quirk which provides an alternative ACPI match table
+> to be used instead of the default. In the default case the match_table
+> will contain only "GOOG0004" as before. But in the Framework EC case the
+> match table will be "PNP0C09".
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I think it doesn't work as the current quirk is handling in
+cros_ec_lpc_probe() which is after matching.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.example.dtb: mailbox@10212000: False schema does not allow {'compatible': ['mediatek,mt8173-gce'], 'reg': [[0, 270606336, 0, 4096]], 'interrupts': [[0, 135, 8]], '#mbox-cells': [[2]], 'clocks': [[4294967295, 4]], 'clock-names': ['gce'], '$nodename': ['mailbox@10212000']}
-	from schema $id: http://devicetree.org/schemas/mailbox/mediatek,gce-mailbox.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240525230810.24623-3-jason-jh.lin@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+My original idea: would it be possible to get the `adev` in cros_ec_lpc_probe()
+via any lookup API?  If yes, it could still use DMI match and get `adev` if
+required.
 
