@@ -1,322 +1,123 @@
-Return-Path: <linux-kernel+bounces-189904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9FB8CF6E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634D18CF70C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A422815D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6CD28172E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733FF2F43;
-	Mon, 27 May 2024 00:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F951FAA;
+	Mon, 27 May 2024 00:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oZFZCESK"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=web.de header.i=seb-dev@web.de header.b="FvyhgoxR"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF0C2F24
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2612536C;
+	Mon, 27 May 2024 00:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716768172; cv=none; b=TR8sDzqPwEtUrwA39KuBQMaW/I48NLoV0COJWqj4/mOnHEvN7AFfADV1Z8OIH8Joa391fnoVudH3amuG4XrsENAhGY8995O17GyUl4f8elEym0rXyVyCh1iqEMspSD9CgZHf/c91GzU8yHPsdSvMRHaqS/EaFgA5DbNIanV9O8A=
+	t=1716770549; cv=none; b=HekzSQVZ/sRMNmSV9Mwu+o75VtLK/f43Ix20qimXAWKf5j1Daor2805rPAU0Gr8DMWMDWhzmuOe69+0AbDG5VZDHW8RxNFQKbveUwRlxbeUIpVOeWVHJ1/xxupYpiGHAhoDpkQf2Dp+ddd/aeWNqlg5+m3kh9N9kPQetJbaWI90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716768172; c=relaxed/simple;
-	bh=5Z/IQ1AG0LSghMA4nafETdJADGNE+D470yXbhvbV++8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QfuzmxUMyzB7OPK6SkCwtPEolk2dxrvJ9ThpYzdCLcIkQEFWxkZ+k0bSYcqtqutndHGCbmfdZwB+hYVjts0j/XzcQkBEukxzlGp1u/Ru2/a06JoW09bre12xdtYAC5wVBlj+tzK+T7FSzt7SHR+GTe4qt/l7krxIc7WN68tbcLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oZFZCESK; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: skhan@linuxfoundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716768167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VjOimlkAb10m4KMSg1DOqlHJhsmFxHSlxPO0CJcAMP4=;
-	b=oZFZCESKyh4srLsDKsx5WPsLeRrP/XrmvJbpNuyLg7+fLFuBjxhdK+JDw0N6j29Dr+ZBCF
-	QGxoL82JDx2HkkQdJifXgoczMxUfnqPhW9YNUFGfkJLNW4w1z4GR4xJ6hPpMeLGOmSUO1l
-	KndM+M6bjwFFkAM0ZuJTKax0jVq5f20=
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: wen.yang@linux.dev
-X-Envelope-To: shuah@kernel.org
-X-Envelope-To: avagin@google.com
-X-Envelope-To: mathieu.desnoyers@efficios.com
-X-Envelope-To: rostedt@goodmis.org
-X-Envelope-To: dyoung@redhat.com
-X-Envelope-To: tim.bird@sony.com
-X-Envelope-To: linux-kselftest@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Wen Yang <wen.yang@linux.dev>,
-	SShuah Khan <shuah@kernel.org>,
-	Andrei Vagin <avagin@google.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dave Young <dyoung@redhat.com>,
-	Tim Bird <tim.bird@sony.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEDN PATCH v2] selftests: introduce additional eventfd test coverage
-Date: Mon, 27 May 2024 08:02:00 +0800
-Message-Id: <20240527000200.5615-1-wen.yang@linux.dev>
+	s=arc-20240116; t=1716770549; c=relaxed/simple;
+	bh=TOXuydf6kmrCdRgJX4EWgy9jhoi4MBlPqj8fUxfVgmk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FJurL84s7hvaO07dPv1xgb8niN2hBZwJx8mY7bghpC8crXiSvs3w6PizxbAA4tAUc0qc7fekAvukWItTae9XUDHawMaZo6XoH4zuNMya+RPf+tQXDoEwQK7ExAsSms4uVO7K+0ck+CUiu7716yBt571xgyDYJNd7meHefQR3I/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=seb-dev@web.de header.b=FvyhgoxR; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716770531; x=1717375331; i=seb-dev@web.de;
+	bh=frJ0lI8uicyNb2amZaZ+JjmJ6+ptKOdlxCG1Cr4tB24=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FvyhgoxR9pswppgtaepeMLhibem16GBxIrisWItGNokJYJ8JPLFFQYSK4ljnsDpW
+	 R0yS7X2lLJBItQsU8PElSbIAzwp3CddShEmmu1BhBDdT9iZCWOZDfOHUqPhRDxuHz
+	 GKjszeSz0uAoamBRuxdq1UGYUlS+Y0H8aA1J5/0QPZcl1urRpT2mLfZavfCLnk+v7
+	 Yiw+od5VBnRhCgeZBjahcBLcYhkl1/JFf7kJOKWto40Tt8SqfImOzPA9m21UHxmMe
+	 173anCLOkmAAUGisLzkHtQ1TbSRq6fIWTJkBlzFmMZvKQQzk/LBZTxADfsnbE628V
+	 6nqPWtCpiHI6HQ2e/w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.155.184.248]) by smtp.web.de
+ (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1N2BI2-1seN2q3Wla-00tG0q; Mon, 27 May 2024 02:42:10 +0200
+From: Sebastian Kropatsch <seb-dev@web.de>
+To: Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Kropatsch <seb-dev@web.de>
+Subject: [PATCH 1/2] dt-bindings: arm: rockchip: Add CM3588 NAS
+Date: Sun, 26 May 2024 23:46:22 +0200
+Message-ID: <20240526214625.8830-1-seb-dev@web.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240526214340.8459-1-seb-dev@web.de>
+References: <20240526214340.8459-1-seb-dev@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eDvQynp6rlZyxtMKGWx5rnGRjj8VMcE0Df3Mot2Fj73oulGPFk9
+ YitcjfcUUj2onb+BqftY/Kez/h7VYIK2JHJjPH6hQRhivqoDHGPvNXiBtolQzBf0qayzZqf
+ CZjMgLxlVfbByS4q7/rdkE0zp10ypiPV06Pkz/oQsGefz0A2ZLyOq8KKXfZJDMQvkc8jeXQ
+ Z8UTC0CDGhlPAxeLIurOA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7rTnEiaqkUc=;C+r37ENNb8ObuTCUnBL8kCFvDY9
+ m8XPPSnC7bhX6kTzi1v9ZI9EPjdpbjXIbsSkNGyOSwVViICeiKsGeB2b2TvNYMzDSY35Kveqz
+ GG6upZcGjS4f3SNt219cmAqRLHRXpg8mkmULb+RZjTmjdxt0L71aBkKTh8GkdIond0+5JWl6z
+ 8zCyO3p4p39u9+K6TnUUiEMCqXNFI89XpSD5ktY3xmW87ujehq8l3G20XwzZiZ7COzNMYsFPS
+ MBV5blAhLmCj7kgqnR6eFcig1b8OBU/HpVzQK3IHRa4TrQoZoz5aVgdNSNx3a1m5krTCdub7U
+ Oxesej3CUoKy9N1+N70GrC5r9K5f58T26nJwkM4DH/eD/qVsyZ9Z8D0+on7Nka2NfFhBKueIb
+ F1xz1YzbPDZLZ1rmpd4IvgNwLq1miHdBAyfJqa79If32z0HztrZe/jL/TmTPBYTJtfRc1Z3/x
+ AhnnrvuO1B//Pc8czODYYgxUgW5utBb/akPXoZoD8OClpCeI5uh3E+HgZTH10W2OvoiS02Mbi
+ 2LcAIkqojLj0W3SDNrGCXbRdWxBh6ClrmBEw5wKiGbAlT2q8llV51w/nZ6Kn/PZxRJgGSVWEm
+ CDzPsE1klYMCxUWbwu7Pg0mCcljjC5NT0JEW/z8mjv5jDYbdA82me/F9qQTZF1C/hz/umJSEe
+ OK2dVFKY1RA/IP8YQuRRxk5zzpyMCeKyNGRIb8WiwLFF8xO4q6WAhW0QBpNdl/NNXDtcIH1lM
+ Pta+DO8YpcqSmNwiluClcGmiamCmhpfe+RbtEky0Z8KJUSUDzAgICrkJy94nhoh358W+bcO6Y
+ noV0Y1FlYTNiAX62cvbY8W8Wjae5M14CAv40Z4yJREwUQ=
 
-Add several new test cases which assert corner cases on the eventfd
-mechanism, for example, the supplied buffer is less than 8 bytes,
-attempting to write a value that is too large, etc.
+Add devicetree binding for the FriendlyElec CM3588 NAS board.
 
-	./eventfd_test
-	# Starting 9 tests from 1 test cases.
-	#  RUN           global.eventfd_check_flag_rdwr ...
-	#            OK  global.eventfd_check_flag_rdwr
-	ok 1 global.eventfd_check_flag_rdwr
-	#  RUN           global.eventfd_check_flag_cloexec ...
-	#            OK  global.eventfd_check_flag_cloexec
-	ok 2 global.eventfd_check_flag_cloexec
-	#  RUN           global.eventfd_check_flag_nonblock ...
-	#            OK  global.eventfd_check_flag_nonblock
-	ok 3 global.eventfd_check_flag_nonblock
-	#  RUN           global.eventfd_chek_flag_cloexec_and_nonblock ...
-	#            OK  global.eventfd_chek_flag_cloexec_and_nonblock
-	ok 4 global.eventfd_chek_flag_cloexec_and_nonblock
-	#  RUN           global.eventfd_check_flag_semaphore ...
-	#            OK  global.eventfd_check_flag_semaphore
-	ok 5 global.eventfd_check_flag_semaphore
-	#  RUN           global.eventfd_check_write ...
-	#            OK  global.eventfd_check_write
-	ok 6 global.eventfd_check_write
-	#  RUN           global.eventfd_check_read ...
-	#            OK  global.eventfd_check_read
-	ok 7 global.eventfd_check_read
-	#  RUN           global.eventfd_check_read_with_nonsemaphore ...
-	#            OK  global.eventfd_check_read_with_nonsemaphore
-	ok 8 global.eventfd_check_read_with_nonsemaphore
-	#  RUN           global.eventfd_check_read_with_semaphore ...
-	#            OK  global.eventfd_check_read_with_semaphore
-	ok 9 global.eventfd_check_read_with_semaphore
-	# PASSED: 9 / 9 tests passed.
-	# Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
+The CM3588 NAS by FriendlyElec pairs the CM3588 compute module, based on
+the Rockchip RK3588 SoC, with the CM3588 NAS Kit carrier board.
 
-Signed-off-by: Wen Yang <wen.yang@linux.dev>
-Cc: SShuah Khan <shuah@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Tim Bird <tim.bird@sony.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-v2: use strings which indicate what is being tested, that are useful to a human
+Signed-off-by: Sebastian Kropatsch <seb-dev@web.de>
+=2D--
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- .../filesystems/eventfd/eventfd_test.c        | 136 +++++++++++++++++-
- 1 file changed, 131 insertions(+), 5 deletions(-)
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documen=
+tation/devicetree/bindings/arm/rockchip.yaml
+index e04c213a0dee..93d671e13f18 100644
+=2D-- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -248,6 +248,11 @@ properties:
+           - const: friendlyarm,nanopc-t6
+           - const: rockchip,rk3588
 
-diff --git a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-index f142a137526c..85acb4e3ef00 100644
---- a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-+++ b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-@@ -13,6 +13,8 @@
- #include <sys/eventfd.h>
- #include "../../kselftest_harness.h"
- 
-+#define EVENTFD_TEST_ITERATIONS 100000UL
++      - description: FriendlyElec CM3588 NAS
++        items:
++          - const: friendlyarm,cm3588-nas
++          - const: rockchip,rk3588
 +
- struct error {
- 	int  code;
- 	char msg[512];
-@@ -40,7 +42,7 @@ static inline int sys_eventfd2(unsigned int count, int flags)
- 	return syscall(__NR_eventfd2, count, flags);
- }
- 
--TEST(eventfd01)
-+TEST(eventfd_check_flag_rdwr)
- {
- 	int fd, flags;
- 
-@@ -54,7 +56,7 @@ TEST(eventfd01)
- 	close(fd);
- }
- 
--TEST(eventfd02)
-+TEST(eventfd_check_flag_cloexec)
- {
- 	int fd, flags;
- 
-@@ -68,7 +70,7 @@ TEST(eventfd02)
- 	close(fd);
- }
- 
--TEST(eventfd03)
-+TEST(eventfd_check_flag_nonblock)
- {
- 	int fd, flags;
- 
-@@ -83,7 +85,7 @@ TEST(eventfd03)
- 	close(fd);
- }
- 
--TEST(eventfd04)
-+TEST(eventfd_chek_flag_cloexec_and_nonblock)
- {
- 	int fd, flags;
- 
-@@ -161,7 +163,7 @@ static int verify_fdinfo(int fd, struct error *err, const char *prefix,
- 	return 0;
- }
- 
--TEST(eventfd05)
-+TEST(eventfd_check_flag_semaphore)
- {
- 	struct error err = {0};
- 	int fd, ret;
-@@ -183,4 +185,128 @@ TEST(eventfd05)
- 	close(fd);
- }
- 
-+/*
-+ * A write(2) fails with the error EINVAL if the size of the supplied buffer
-+ * is less than 8 bytes, or if an attempt is made to write the value
-+ * 0xffffffffffffffff.
-+ */
-+TEST(eventfd_check_write)
-+{
-+	uint64_t value = 1;
-+	ssize_t size;
-+	int fd;
-+
-+	fd = sys_eventfd2(0, 0);
-+	ASSERT_GE(fd, 0);
-+
-+	size = write(fd, &value, sizeof(int));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	size = write(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(value));
-+
-+	value = (uint64_t)-1;
-+	size = write(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	close(fd);
-+}
-+
-+/*
-+ * A read(2) fails with the error EINVAL if the size of the supplied buffer is
-+ * less than 8 bytes.
-+ */
-+TEST(eventfd_check_read)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+
-+	fd = sys_eventfd2(1, 0);
-+	ASSERT_GE(fd, 0);
-+
-+	size = read(fd, &value, sizeof(int));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(value));
-+	EXPECT_EQ(value, 1);
-+
-+	close(fd);
-+}
-+
-+
-+/*
-+ * If EFD_SEMAPHORE was not specified and the eventfd counter has a nonzero
-+ * value, then a read(2) returns 8 bytes containing that value, and the
-+ * counter's value is reset to zero.
-+ * If the eventfd counter is zero at the time of the call to read(2), then the
-+ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
-+ */
-+TEST(eventfd_check_read_with_nonsemaphore)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+	int i;
-+
-+	fd = sys_eventfd2(0, EFD_NONBLOCK);
-+	ASSERT_GE(fd, 0);
-+
-+	value = 1;
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = write(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+	}
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(uint64_t));
-+	EXPECT_EQ(value, EVENTFD_TEST_ITERATIONS);
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EAGAIN);
-+
-+	close(fd);
-+}
-+
-+/*
-+ * If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value,
-+ * then a read(2) returns 8 bytes containing the value 1, and the counter's
-+ * value is decremented by 1.
-+ * If the eventfd counter is zero at the time of the call to read(2), then the
-+ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
-+ */
-+TEST(eventfd_check_read_with_semaphore)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+	int i;
-+
-+	fd = sys_eventfd2(0, EFD_SEMAPHORE|EFD_NONBLOCK);
-+	ASSERT_GE(fd, 0);
-+
-+	value = 1;
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = write(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+	}
-+
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = read(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+		EXPECT_EQ(value, 1);
-+	}
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EAGAIN);
-+
-+	close(fd);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.25.1
+       - description: GameForce Chi
+         items:
+           - const: gameforce,chi
+=2D-
+2.43.0
 
 
