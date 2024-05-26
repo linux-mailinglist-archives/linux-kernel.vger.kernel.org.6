@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-189625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38088CF304
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35528CF305
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C171F21C52
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAB2282171
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D88DF43;
-	Sun, 26 May 2024 09:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA60B647;
+	Sun, 26 May 2024 09:22:59 +0000 (UTC)
 Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB02C8C7
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E319010A0B
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716715375; cv=none; b=BxCwhAPThpO+4ccqW6ytJdOcdm7ydXCGWmSxKcjy5H1DnrnkpEKPgpAGi+CFEVkOiGt26ldCqvXUkoH8LTPz+STLfQnGgLjC8GEvTlrY7Y/3sJxPyeLv9PQrTvW1FhcJh3WNWWhczYElMiimj4nljkuzkK0YSvLwvkzfQYnLAHo=
+	t=1716715379; cv=none; b=MYOm3vDIsrdfMKfd5W7oUv9gb+qB3G80k8UVBHuZk1sh1I5017P1x/KIo7CeKZXxwj2JnHYU4QeD1cXPAePoe9RANiQQ7Y1zVOS7j2bALWRtjNjstMda5aih4CG85vO9DFfIyyQZxuT6utovmunf+Vqmo5ER6ZnydH5wVp0asfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716715375; c=relaxed/simple;
-	bh=ymAToQL34uMf8YFNIV4scdsUyseWbpqXywhQPbZn4dQ=;
+	s=arc-20240116; t=1716715379; c=relaxed/simple;
+	bh=QlDPkU03jHVcQFwETp3uKDh3gxPw0YPnfm4bTul1DaE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bVMFITQrhu6tIH98kU2yvstRFAltSzo53E+QrFhcoiMa2CWccoSmnSiQ9q3ppQXCAaH59ay4sU3L6Z3WhMv/a5QssEm7srqHzfGAvNkJXYvUE5rYutaUTzbZGehgq4qifCP20uxfhxuNBY0ckpjRcYgQmH3iqDxdcLbRsuiOKkA=
+	 MIME-Version; b=sJbquZxHFj9evzQ4ElT0uB4hKnmKSt3x06jhKVRpcbqMTmrNggjx71e1vlxuyCY52R9MyZ5snVWSfkx3hN7o+uPAG+MzdZkHjqBvzcuOLkj3GygafOBg9HBJV86tofllb9iLcULMgVdwe1FLDGaA0hifY1p9u3/F/de0vZ7oVXc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4VnCwl0pdfz9tBW;
-	Sun, 26 May 2024 11:22:31 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4VnCwm1PjNz9tC6;
+	Sun, 26 May 2024 11:22:32 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
 	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id IXI2Gyg_XF-h; Sun, 26 May 2024 11:22:31 +0200 (CEST)
+	with ESMTP id cyEdOAE35yJU; Sun, 26 May 2024 11:22:32 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwk0zqXz9t0b;
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwk4NBZz9sgJ;
 	Sun, 26 May 2024 11:22:30 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1CE868B774;
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 90D3A8B773;
 	Sun, 26 May 2024 11:22:30 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id PeCoIfxqQ2Ro; Sun, 26 May 2024 11:22:30 +0200 (CEST)
+	with ESMTP id vP_K-aFXdBbu; Sun, 26 May 2024 11:22:30 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.45])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8AE608B773;
-	Sun, 26 May 2024 11:22:29 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 16BCC8B764;
+	Sun, 26 May 2024 11:22:30 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Jason Gunthorpe <jgg@nvidia.com>,
@@ -59,9 +59,9 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH v3 04/16] powerpc/mm: Remove _PAGE_PSIZE
-Date: Sun, 26 May 2024 11:22:24 +0200
-Message-ID: <14bf66be7945fc5052a684f344b45b65139de709.1716714720.git.christophe.leroy@csgroup.eu>
+Subject: [RFC PATCH v3 05/16] powerpc/mm: Fix __find_linux_pte() on 32 bits with PMD leaf entries
+Date: Sun, 26 May 2024 11:22:25 +0200
+Message-ID: <aa54834e9ee5e40179def32ff5834a8a2a02c413.1716714720.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1716714720.git.christophe.leroy@csgroup.eu>
 References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
@@ -71,108 +71,73 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715343; l=3781; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=ymAToQL34uMf8YFNIV4scdsUyseWbpqXywhQPbZn4dQ=; b=D05YiX5Xt04WUCd5afYeTBuyZdTWpucMbIlejdOkElHMhcN0CZNqvBUtI8yr0xEkikfPMWHFh E1SQ/HfwB7BCkr8WWab/gkfkfdvphk9q6btatoVUXvZlEzwW+dKCsSA
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715343; l=2111; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=QlDPkU03jHVcQFwETp3uKDh3gxPw0YPnfm4bTul1DaE=; b=LrZqurpYufbsEcF3rYJaveJGDTrjK/rShdEMQxcaILR9OkMKaPC1FyPddR7MYnYIUb8Ip46R2 WrHincdZRnVCfDl/ccH6LWvrNpgeq6PXybkN7ZbqvSS1rO9c/ivBu/a
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-_PAGE_PSIZE macro is never used outside the place it is defined
-and is used only on 8xx and e500.
+Building on 32 bits with pmd_leaf() not returning always false leads
+to the following error:
 
-Remove indirection, remove it and use its content directly.
+  CC      arch/powerpc/mm/pgtable.o
+arch/powerpc/mm/pgtable.c: In function '__find_linux_pte':
+arch/powerpc/mm/pgtable.c:506:1: error: function may return address of local variable [-Werror=return-local-addr]
+  506 | }
+      | ^
+arch/powerpc/mm/pgtable.c:394:15: note: declared here
+  394 |         pud_t pud, *pudp;
+      |               ^~~
+arch/powerpc/mm/pgtable.c:394:15: note: declared here
+
+This is due to pmd_offset() being a no-op in that case.
+
+So rework it for powerpc/32 so that pXd_offset() are used on real
+pointers and not on on-stack copies.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
 ---
- arch/powerpc/include/asm/nohash/32/pte-40x.h  | 3 ---
- arch/powerpc/include/asm/nohash/32/pte-44x.h  | 3 ---
- arch/powerpc/include/asm/nohash/32/pte-85xx.h | 3 ---
- arch/powerpc/include/asm/nohash/32/pte-8xx.h  | 5 ++---
- arch/powerpc/include/asm/nohash/pte-e500.h    | 4 +---
- 5 files changed, 3 insertions(+), 15 deletions(-)
+v3: Removed p4dp and pudp locals for PPC32 and add a comment.
+---
+ arch/powerpc/mm/pgtable.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-40x.h b/arch/powerpc/include/asm/nohash/32/pte-40x.h
-index d759cfd74754..52ed58516fa4 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-40x.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-40x.h
-@@ -49,9 +49,6 @@
- #define _PAGE_EXEC	0x200	/* hardware: EX permission */
- #define _PAGE_ACCESSED	0x400	/* software: R: page referenced */
+diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+index 9e7ba9c3851f..10adef5967a3 100644
+--- a/arch/powerpc/mm/pgtable.c
++++ b/arch/powerpc/mm/pgtable.c
+@@ -382,8 +382,10 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+ 			bool *is_thp, unsigned *hpage_shift)
+ {
+ 	pgd_t *pgdp;
++#ifdef CONFIG_PPC64
+ 	p4d_t p4d, *p4dp;
+ 	pud_t pud, *pudp;
++#endif
+ 	pmd_t pmd, *pmdp;
+ 	pte_t *ret_pte;
+ 	hugepd_t *hpdp = NULL;
+@@ -401,8 +403,12 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+ 	 * page fault or a page unmap. The return pte_t * is still not
+ 	 * stable. So should be checked there for above conditions.
+ 	 * Top level is an exception because it is folded into p4d.
++	 *
++	 * On PPC32, P4D/PUD/PMD are folded into PGD so go straight to
++	 * PMD level.
+ 	 */
+ 	pgdp = pgdir + pgd_index(ea);
++#ifdef CONFIG_PPC64
+ 	p4dp = p4d_offset(pgdp, ea);
+ 	p4d  = READ_ONCE(*p4dp);
+ 	pdshift = P4D_SHIFT;
+@@ -444,6 +450,9 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
  
--/* No page size encoding in the linux PTE */
--#define _PAGE_PSIZE		0
--
- /* cache related flags non existing on 40x */
- #define _PAGE_COHERENT	0
+ 	pdshift = PMD_SHIFT;
+ 	pmdp = pmd_offset(&pud, ea);
++#else
++	pmdp = pmd_offset(pud_offset(p4d_offset(pgdp, ea), ea), ea);
++#endif
+ 	pmd  = READ_ONCE(*pmdp);
  
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-44x.h b/arch/powerpc/include/asm/nohash/32/pte-44x.h
-index 851813725237..da0469928273 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-44x.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-44x.h
-@@ -75,9 +75,6 @@
- #define _PAGE_NO_CACHE	0x00000400		/* H: I bit */
- #define _PAGE_WRITETHRU	0x00000800		/* H: W bit */
- 
--/* No page size encoding in the linux PTE */
--#define _PAGE_PSIZE		0
--
- /* TODO: Add large page lowmem mapping support */
- #define _PMD_PRESENT	0
- #define _PMD_PRESENT_MASK (PAGE_MASK)
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-85xx.h b/arch/powerpc/include/asm/nohash/32/pte-85xx.h
-index 653a342d3b25..14d64b4f3f14 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-85xx.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-85xx.h
-@@ -31,9 +31,6 @@
- #define _PAGE_WRITETHRU	0x00400	/* H: W bit */
- #define _PAGE_SPECIAL	0x00800 /* S: Special page */
- 
--/* No page size encoding in the linux PTE */
--#define _PAGE_PSIZE		0
--
- #define _PMD_PRESENT	0
- #define _PMD_PRESENT_MASK (PAGE_MASK)
- #define _PMD_BAD	(~PAGE_MASK)
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-index 137dc3c84e45..625c31d6ce5c 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-@@ -74,12 +74,11 @@
- #define _PTE_NONE_MASK	0
- 
- #ifdef CONFIG_PPC_16K_PAGES
--#define _PAGE_PSIZE	_PAGE_SPS
-+#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_SPS)
- #else
--#define _PAGE_PSIZE		0
-+#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED)
- #endif
- 
--#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
- #define _PAGE_BASE	(_PAGE_BASE_NC)
- 
- #include <asm/pgtable-masks.h>
-diff --git a/arch/powerpc/include/asm/nohash/pte-e500.h b/arch/powerpc/include/asm/nohash/pte-e500.h
-index f516f0b5b7a8..975facc7e38e 100644
---- a/arch/powerpc/include/asm/nohash/pte-e500.h
-+++ b/arch/powerpc/include/asm/nohash/pte-e500.h
-@@ -65,8 +65,6 @@
- 
- #define _PAGE_SPECIAL	_PAGE_SW0
- 
--/* Base page size */
--#define _PAGE_PSIZE	_PAGE_PSIZE_4K
- #define	PTE_RPN_SHIFT	(24)
- 
- #define PTE_WIMGE_SHIFT (19)
-@@ -89,7 +87,7 @@
-  * pages. We always set _PAGE_COHERENT when SMP is enabled or
-  * the processor might need it for DMA coherency.
-  */
--#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE)
-+#define _PAGE_BASE_NC	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_PSIZE_4K)
- #if defined(CONFIG_SMP)
- #define _PAGE_BASE	(_PAGE_BASE_NC | _PAGE_COHERENT)
- #else
+ 	/*
 -- 
 2.44.0
 
