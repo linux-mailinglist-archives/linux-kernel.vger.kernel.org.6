@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-189786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9368CF4EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:53:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163CC8CF4F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDDD2811F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6E11F21198
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62E41DFD6;
-	Sun, 26 May 2024 16:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E36E1B94D;
+	Sun, 26 May 2024 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pkJEcoth"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RP8A/YVM"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F51758E;
-	Sun, 26 May 2024 16:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7C62260A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 16:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716742411; cv=none; b=auE4NCjdjaPFfZnSvLziyeL0ZAh7NqQVKuVuuiWEsPWZFNYIYVW3Ha8NBH0iEwDzVws+A4qyjj+43MbJ+bnjXRUz/R6dhCWT7y+Uj2NSTIytVKH9E6RVaGLI04Hv4lfPCBMLNmamcwnEepmH+pAIpZ/U2Yi5J8FYmlNxiUCos4I=
+	t=1716742423; cv=none; b=jot9Xa5Z0tURwGB7b/F4/JdufsAG0WdZBVVMpORhAg+SX6MfV2ksPhXvnllRN72Da3vRbiybQVvt/k2ThH4s1WwwZnPRPW4cqr3uYPYWzTwHh76Pge4UjGiPJb9w6d4AhECM1FkX2pjMwWs8w/fdTawPh123feVzN5AUZZ7e3Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716742411; c=relaxed/simple;
-	bh=DuIz6G9RKoV38cQtkSpR7QLaH8zvhm1mIsUnPVSj5EU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cKckwT/jQaHzztS8PTCpuLHnC7aeEPtV4eTAEp0RZIzPw/rdEvVBohEVc8xcEUktiQudKHU79RBa1JwjPPRtdJ3ed/qLr3b7jVuQ+SoF8fYPyvkPz00OX0m6i3nszvOXerzy2TPH9POgAXPTrmKO7w7lXAoY4DdoNv9ami9xa1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pkJEcoth; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFG8tu023549;
-	Sun, 26 May 2024 16:52:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hY+Lcx03LqVtjb+9FRb6Ft
-	CCsw4wjlH7Z9n5CV1t0Q8=; b=pkJEcoth7/ngITw2ovnH6IUE5rfeLdtmAWW/mj
-	qs9yBXsply4oHAtHA8guyPm6kb4YJ0cQ60pGknubZkro21Iv2ifpNjXKzFTn2ca8
-	pIWMOd7a4AV0UjYKgLD2EPaAoy25TG8RPiuEzSQIhCPJ3YKdiBurQ7ZF8syhz+ZQ
-	LgHsmIbbII449gQnHVyRHtgFYvzOiyTA3yaV38W0GkazmuvruAdPHIWqvTE6puF3
-	cdKytB4YaW3rxuzx5zjqz02uI63RljfbrSk2YwFXrhMAZzn35+ApD0pwRhL3nsQy
-	de2svwJCXvqF2wl5gkwdjeCr42qftS5LPSyATlK4KAEhGuYg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g1y6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 16:52:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QGqoGB032274
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 16:52:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
- 2024 09:52:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 26 May 2024 09:52:48 -0700
-Subject: [PATCH] fs: smb: common: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1716742423; c=relaxed/simple;
+	bh=/BKmWWBDfRlEDj7KIrCUITVqOvPtb4QcBiN5AA/liTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q6co9MlNvKa3j/qOg6ukssjQMXI1VbhcCbdFgjsu6bH6XYTTY3RyfOd5sLxoxfqsKxEdD99HH1YEPKL8Ci/yx70gErFO6R36VohpM2aAmqENZGpvjXGtLpzdjHM4TKsPTYxXt12B2dbjetGNBwNXJrz3W+UJ91Ejjoc1eKC4cqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RP8A/YVM; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6269ad9a6fso282794566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716742419; x=1717347219; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2KPz8fd987dNAatsylOyQp1D2cGtvz2jm5uP1CPuYGQ=;
+        b=RP8A/YVMxPxYCMdO3sc5oQNejfyAG3TAmozX8fQOCZkdzKLPWzjQYMahI+UztVc5xk
+         73yViex6GDlCsLjEWgIs0gwkD5X8JKh/DaO2VQ0Rv9Jysn/MJFKEErbLJBvtjuFbtO6A
+         oLYyV1Cnhvt9EF7zsNq0ehfZyLblPJxE/6DEw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716742419; x=1717347219;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2KPz8fd987dNAatsylOyQp1D2cGtvz2jm5uP1CPuYGQ=;
+        b=PMcgLQn6J5WSLqyuFdA7z8EoG1XExprJKekuROALsObhNlmbOcbq1JQ2dKc30XbkIK
+         vK1ML7B4lJv1eiTCzvkU1MLaaLwILPBh+PaG65ndsdQNdSnp+wZ5J5+QPZ7TcNh17zg5
+         UvCVsnfo15lGvKVitA+u2hkaeMN9P+AaP6fnZtfTFC2sIYk3DVT9ANT/o7hoEzObzqZD
+         Sh6Ge/mCgkKZHA/LvRB6ANWAVh6AXoblg5T6d/mI/tSund1oUfM06vUJSjQWAHSiX/Y2
+         JfYNel3Zkjoiu1i6l8VP1W/6Ur009dTL7piDUbCOtKTfE9Z0s6PmnCyAK5TQRermqq0a
+         E+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLU0rBwTeuQsh6x1tBTZuPHO1Utwq95Nypb5N7D6yDAhgCWLOjgIPAsNsasxG6nNOy3UsWBWbwdOjQaul/y1cfNilUV5AtTMHp9WMh
+X-Gm-Message-State: AOJu0YypNNLoDMH+om6oTHmcigr7fCUAbZ/7Kr75u06NzJhagpC97rIJ
+	ARBu1MbfYM7V0wUKLjcYt/0c+3YCazeLgE7lbjCeVu5yumFZeJ0VzBU9Z/IY03RGS/X/7r29lnG
+	eA2CZuQ==
+X-Google-Smtp-Source: AGHT+IEsvNFy5I+ktj/ElUxlT80bmpQV26/OAfaek7xdf848vARxey/OzFODsg+F7vpXCWKM4YVKYQ==
+X-Received: by 2002:a17:907:6d0f:b0:a62:c0aa:8c1a with SMTP id a640c23a62f3a-a62c0aa99ecmr294094566b.2.1716742419291;
+        Sun, 26 May 2024 09:53:39 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c81771fsm400556966b.27.2024.05.26.09.53.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 May 2024 09:53:37 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6266fff501so285497966b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:53:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWmhjOtd052HSJdURjXHfmBMfJ5Vzv4NoUSCAMM9Udv6iIjwj/vry29Q9Mbb2ZU6cG1ojEA7xEl0fJ3jelBXMSKCFdeu0lKyywUVHDy
+X-Received: by 2002:a17:907:928c:b0:a59:fca5:ccaa with SMTP id
+ a640c23a62f3a-a62641a3160mr583334366b.13.1716742417393; Sun, 26 May 2024
+ 09:53:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240526-md-fs-smb-common-v1-1-564a0036abe9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAN9oU2YC/x3MywrCMBCF4Vcps3YgTb2/irjIZWIHnKRktFRK3
- 93o8oNz/hWUKpPCtVuh0szKJTf0uw7C6PKDkGMzWGP35mCPKBGToorHUERKRrpYM/TpFM8hQbt
- NlRIv/+Tt3uydEvrqchh/oSfn94Li9EUVp0+bwrZ9AeNt1M6HAAAA
-To: Namjae Jeon <linkinjeon@kernel.org>, Steve French <sfrench@samba.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg
-	<ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        "Bharath
- SM" <bharathsm@microsoft.com>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3GqhrWkK7rjr073_-pZPlNwb3zAV88Zu
-X-Proofpoint-ORIG-GUID: 3GqhrWkK7rjr073_-pZPlNwb3zAV88Zu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=672 malwarescore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405260140
+References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+ <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
+ <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+ <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
+ <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
+ <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
+ <CAHk-=wjZ2JoyBNFnR-TUc7P8sBL2ZvR0W1fCjcK2R2w7137wfQ@mail.gmail.com> <CAP-5=fXwv0Ec4_wEG2m1X73cpFvEWs2b5GdNnMw7OY7fP6V1tw@mail.gmail.com>
+In-Reply-To: <CAP-5=fXwv0Ec4_wEG2m1X73cpFvEWs2b5GdNnMw7OY7fP6V1tw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 26 May 2024 09:53:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg0OtULpNxk3_vKgmQnMqfOkJ2+_Gx+79hC=bBP=AT1RQ@mail.gmail.com>
+Message-ID: <CAHk-=wg0OtULpNxk3_vKgmQnMqfOkJ2+_Gx+79hC=bBP=AT1RQ@mail.gmail.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
+	Kate Carcia <kcarcia@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, Anne Macedo <retpolanne@posteo.net>, 
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
+	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
+	Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix the 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
+On Sun, 26 May 2024 at 09:50, Ian Rogers <irogers@google.com> wrote:
+>
+> If you think what you are asking perf with no pmu for a cycles event, is it unreasonable it gives you every cycles event for event PMU?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- fs/smb/common/cifs_arc4.c | 1 +
- fs/smb/common/cifs_md4.c  | 1 +
- 2 files changed, 2 insertions(+)
+But that's not what it gave me. At all. All it gave me was NO
+PROFILING AT ALL and a useless error message.
 
-diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
-index 043e4cb839fa..df360ca47826 100644
---- a/fs/smb/common/cifs_arc4.c
-+++ b/fs/smb/common/cifs_arc4.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include "arc4.h"
- 
-+MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
- MODULE_LICENSE("GPL");
- 
- int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
-diff --git a/fs/smb/common/cifs_md4.c b/fs/smb/common/cifs_md4.c
-index 50f78cfc6ce9..7ee7f4dad90c 100644
---- a/fs/smb/common/cifs_md4.c
-+++ b/fs/smb/common/cifs_md4.c
-@@ -24,6 +24,7 @@
- #include <asm/byteorder.h>
- #include "md4.h"
- 
-+MODULE_DESCRIPTION("MD4 Message Digest Algorithm (RFC1320)");
- MODULE_LICENSE("GPL");
- 
- static inline u32 lshift(u32 x, unsigned int s)
+You're trying to change the goal-posts here and keep bringing up
+irrelevant things that didn't actually happen.
 
----
-base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
-change-id: 20240526-md-fs-smb-common-e92031f7d8cf
+I have a revert in the pull request from Arnaldo, and the revert is happening.
 
+                Linus
 
