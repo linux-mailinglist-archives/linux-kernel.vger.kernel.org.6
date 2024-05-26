@@ -1,301 +1,277 @@
-Return-Path: <linux-kernel+bounces-189579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA028CF245
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 01:34:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7B88CF253
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 02:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E891C20FE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 23:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626B01C20F6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 00:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0508B25777;
-	Sat, 25 May 2024 23:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D153A32;
+	Sun, 26 May 2024 00:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hVTkRfwf"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZI9ZL8F"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542D820DE7
-	for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 23:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B2C7E2;
+	Sun, 26 May 2024 00:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716680069; cv=none; b=EA28FqyI8rMBu1n+Qg5abTTl1zyb76+ZPtIgt3AIKJh1mzOt7IR0ongjAaICl3k18zXEr1uYcLQb9bhQ23WcHDhmEG3Dqvt2Fi5RWoiGf0HAXOA/tPMtHCZc3gF1Wyc34/HkbK5RaOGR42q5pxNhnlcN1jFZi+POQ4kc9eYTXDg=
+	t=1716683393; cv=none; b=rFgqrbBHYULsSJ/pmdQkICyVbK2q16wyb3nQ6Mlh5HtyA21aO4h7/FVyGeGaIrQZJGqihi8hKG3BAqqLjMpqMGS28MYZPmPLDmemYMCrNqlzPGLdVkeAbacTaJR6VNrEAVeoLPiv19tA0SpliSzJm3eew2WjzQZpdQkPjFk+b3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716680069; c=relaxed/simple;
-	bh=uUzfAIJAN8UOtttIYoZiBPiN+mS3jw1s66mcLXazIvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GO7/ZjUSS9jKSJjWhmsh00o6RVbTfMF0lfV7vNJQGg+SLJq0BdQwd/HzfZ4rdjHirq622ZgFWdPnVaS2S8Awt0YMZvmuWpJ/0bgyOmdEPxeFa6gknLiHl0Ia+ZCtnmSNS+5jAnpg3qLjmnZ9YUYrZr3kYYUe4CF+EgAdGTefApE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hVTkRfwf; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36c6056f7bdso163945ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2024 16:34:27 -0700 (PDT)
+	s=arc-20240116; t=1716683393; c=relaxed/simple;
+	bh=q1Jhkpl3iDvcAU4fBElGK4J5v4FGJ5LX4ANgAjn4C8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9IujbuHMxFuZ+SOo6UP0jVq9ZXoF4AyR6VUAan/ZOBOfc+uWFWX9yikie+IQK9RIX+zw8RkGkZF7U4+lVnImHgxFVCP8HPbM4YSfmGK+VVgcCXGIzl9Dn5Q+XCjTJB5JOhJy1BaD/qxjwgVUdtBE+QwG683Z0QkvPGJ6iIWg/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZI9ZL8F; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f8e98784b3so1650169b3a.1;
+        Sat, 25 May 2024 17:29:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716680066; x=1717284866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyDDv123oM7gFPBqZNEnU0l4e5csQD/v1tgVMBREQS8=;
-        b=hVTkRfwfauw92SOS29Dqr0TUajj4TaI9BKrmERxWzvOT9Q9kiVwB/yLUjmDq/vLb0m
-         MOoulP6dc5+D3kdZYEe8zUJ0sYxTu/dDYtKX32Kf//ifBOSjnWY8bWnkqXPXDURFdc8p
-         doG5vZh+wslMAIyd3jQSBL4g1+jbKlnKThjq3ptXtxHNfdYqxhKpGlOHgac6dOvpEpAW
-         woCM1BISCO82obdBZaAdg+6qVPJudwv5Fp/xbvjVexQU1sYK7FVSAa9K9MBxaVVA+Jw0
-         k7WEMuCH6X4bRt14NAlL1itab0yDiegqLMjnp21lzNlFhs0Mnrmhv2XgLEt6cTMx/MVE
-         QsqA==
+        d=gmail.com; s=20230601; t=1716683391; x=1717288191; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/+5YmaJeNF7VkilJwtRMH480JqWzFXOSu6W99rW8D4c=;
+        b=LZI9ZL8F1zQeZDG7U7FEoFNNwOaRSPSeAbAyuwnZ87rO/VL96wxCQo0tilo1+nw5jV
+         n1uZlQS1DxPy7HE2jQEb8GO4Ige+nsly5tAc1edEVaQCF3wotKxrafVfeeqz1JpncS7w
+         OCOPiYH7iY6FiONpVDgd2TyXML6iQHWitzjIMC339hqiyS1wgnTXlWG3RlDH1EG5kWw6
+         nT436AoTVec2b3NmRkA5Z8DX+OfgS5jRe21/Bh4b4qnZzz9NsMbP/WwkbTHnoybiF4AN
+         GQmQzs0iiGTYLIEYiNvJvmkq6uS+gDJVbJN4584+3dQf/SaT3vswtd409u9VRZFeVQuW
+         5+xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716680066; x=1717284866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VyDDv123oM7gFPBqZNEnU0l4e5csQD/v1tgVMBREQS8=;
-        b=TvJcnbRc0kYu2ZS9NXpCzzXogK3JE25qAJwqjRtXxMN0uX6rzcKHMXkZOYHgBh/AlI
-         tB8Z+QTvdO+Rs9CnUZOmK7kp/gslE2K002OCha4x7jM30l9cg6bm88k88ztFcrVwuXPc
-         X0bsMexPeiAtjDf6fEC7iqfRTbJPehoV4hjiKq7B7XdenWmJ2BIdPPTNASgG7pbRYmSQ
-         A7jzm+vkqz4rOrFPMbmydddsV0zAMIyrnWAk9Dv0cw7enNEfKQWxEe96v4i+dPOWQ3pX
-         RJuVQf/eI5wwwPcFgcPp8S6yZ6J4ErVumhF4ZgyGkog3ibE7eX66xKHaz9oIggZjfyCu
-         lw4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhUuwUY9+jF9kSy1UDqxKN4ogoyWa3Qf0hb2Z/YP4il4bYX5UR0zVup/jKb6HH+g/Yvn8SAf4KI9M/tl0cEdZ/PP6vVtApV8xc4s8X
-X-Gm-Message-State: AOJu0YxCmu6DPND6DwtCksQOUE+yYtKZSVUx3v1/TPq5RAIJarMpL14Q
-	XNvxUBzzvoVxaQmSALHh5EMztAxbzfQmVFPkjYADPyVa5rRX5JEfEVfF5kydfPxAqYprCc3G3WW
-	FbZ/5L1cwebZyknwq3VE3KM83FbnmhESvHyIe
-X-Google-Smtp-Source: AGHT+IEFPou839IYn52nxYvnLuzElIpziWWNUre//vAxOnb6alTAcRjMhiwI1g9ND3ujWy0WXgIQXHtHnH7qWJI7MMo=
-X-Received: by 2002:a92:d38a:0:b0:36c:3046:a6ef with SMTP id
- e9e14a558f8ab-3738a706885mr2292555ab.12.1716680066259; Sat, 25 May 2024
- 16:34:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716683391; x=1717288191;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/+5YmaJeNF7VkilJwtRMH480JqWzFXOSu6W99rW8D4c=;
+        b=uOfxhNuMynR/3FVtfQ1T0nXTS79aWGANwhaXglcBmkvwwsjbro8j0uHQWs3zPhsd3s
+         Jzam7vxWghLumjH761nVu0U5gJCApKP+N2tp1lWzsiFWo5+mjGoE9M4qTqIros0GB+MR
+         TjWEwXGrDBxBFSN23vTJAAGiehTODOvUhKc9+4ChdK06iC+NswqCzuf/2Xy/G7/aw3wd
+         70RaeUZd2m4gXCKjQPYaxDJ1yuVxtM1Rkk+I9IAKZc98FFsLTb/wMnyBpoZtbcnJAeqU
+         9/eAc4okouzBMu0oXMvJPbRl4wzxlheZwqAeibscGFOTrKHMiesd5ivoVCVs1E3KBwLZ
+         peZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWreRrynOfujJnVlngSeXHQUv2C9fAIP1YBkgDuoZBh+410fjEcaKXa7rITacDBB4b8Ukt+nG2w6nkbX2llYZ5v0RWUucuCangSSenp5ZbqFo6xI+XEyhL1pHBKF5LrE/cdzXxO1LAeNr0Zauj6vezfdcvb5w0atJ+thT7Ht74A3Hv9MA==
+X-Gm-Message-State: AOJu0YzId354hvj/lL4KE7YTqvWWOyuB/qDmUrvGLKPf16DHLt/lNEFb
+	WCzvD+kKE0mFkamHnRS9Sk5WBNUs8XiOHuASMZ04ItdEt++mzP23
+X-Google-Smtp-Source: AGHT+IGUZjdlXPa7clpLDcvEVhq+KdFx2TGsH1Y7xC6ULI6j5cpmdRyve+7RmvGBNhWtnAjJ18gVIw==
+X-Received: by 2002:a05:6a00:2917:b0:6f8:c1b6:d06a with SMTP id d2e1a72fcca58-6f8f3d84ba1mr6078678b3a.29.1716683390933;
+        Sat, 25 May 2024 17:29:50 -0700 (PDT)
+Received: from archlinux ([189.101.162.253])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822073f067sm3410868a12.5.2024.05.25.17.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 May 2024 17:29:50 -0700 (PDT)
+Date: Sat, 25 May 2024 21:29:42 -0300
+From: Gustavo Silva <gustavograzs@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	lars@metafoo.de, christophe.jaillet@wanadoo.fr, gerald.loacker@wolfvision.net, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: chemical: add driver for ENS160 sensor
+Message-ID: <wsaoofbe3gvwyejkhkqv3xx4q36a6wupn2yr7ntyklzwxovxhs@s6s2fcy5yebg>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+ <20240512210444.30824-4-gustavograzs@gmail.com>
+ <20240519150151.291a21dc@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
- <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
- <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com> <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 25 May 2024 16:34:14 -0700
-Message-ID: <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
-	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Anne Macedo <retpolanne@posteo.net>, 
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
-	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
-	Yang Jihong <yangjihong@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240519150151.291a21dc@jic23-huawei>
 
-On Sat, May 25, 2024 at 10:22=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Hi Jonathan,
+
+Thank you for your review. I've got a few questions inline.
+
+On Sun, May 19, 2024 at 03:01:51PM GMT, Jonathan Cameron wrote:
+> On Sun, 12 May 2024 18:04:39 -0300
+> Gustavo Silva <gustavograzs@gmail.com> wrote:
+> 
+> > ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
+> > for indoor air quality monitoring. The driver supports readings of
+> > CO2 and VOC, and can be accessed via both SPI and I2C.
+> > 
+> > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+> 
+> > +
+> > +static int ens160_read_raw(struct iio_dev *indio_dev,
+> > +			   struct iio_chan_spec const *chan,
+> > +			   int *val, int *val2, long mask)
+> > +{
+> > +	struct ens160_data *data = iio_priv(indio_dev);
+> > +	__le16 buf;
+> > +	int ret;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_RAW:
+> > +		ret = regmap_bulk_read(data->regmap, chan->address,
+> > +					&buf, sizeof(buf));
+> 
+> As below, should use a DMA safe buffer.
+> 
+> > +static int ens160_chip_init(struct ens160_data *data)
+> > +{
+> > +	struct device *dev = regmap_get_device(data->regmap);
+> > +	u8 fw_version[3];
+> > +	__le16 part_id;
+> > +	unsigned int status;
+> > +	int ret;
+> > +
+> > +	ret = ens160_set_mode(data, ENS160_REG_MODE_RESET);
+> > +	if (ret)
+> > +		return ret;
+> 
+> No docs that I can see on what this means for access to registers etc.
+> Good to add a comment if you have info on this.
+> 
+Performing a reset at this point isn't strictly necessary. When we reach
+this point the chip should be in idle state because:
+
+a) it was just powered on
+
+b) the driver had been previously removed
+
+This is documented in the state diagram on page 24 of the datasheet.
+
+I'll remove this reset.
+
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_PART_ID, &part_id,
+> > +			       sizeof(part_id));
+> 
+> Ah. So this is a fun corner case.  Currently regmap makes not guarantees
+> to always bounce buffer things (though last time I checked it actually did
+> do so - there are optimisations that may make sense where it will again
+> not do so).  So given we have an SPI bus involved, we should ensure that
+> only DMA safe buffers are used. These need to ensure that no other data
+> that might be changed concurrently with DMA is in the same IIO_DMA_MINALIGN
+> of aligned data (traditionally a cacheline but it gets more complex in some
+> systems and is less in others).  Upshot is that if you are are doing
+> bulk accesses you need to use a buffer that is either on the heap (kzalloc etc)
+> or carefully placed at the end of the iio_priv() structure marked
+> __align(IIO_DMA_MINALIGN). Lots of examples of that in tree.
+> If you are curious, wolfram did a good talk on the i2c equivalent of this
+> a few years back. 
+> https://www.youtube.com/watch?v=JDwaMClvV-s I think.
 >
-> On Sat, 25 May 2024 at 00:38, Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Yep, so I'm curious what makes it fail.  IIUC the commit in question
-> > would convert "cycles" event to "${whatever_pmu}/cycles/" if the pmu
-> > has "events/cycles" alias in sysfs or in JSON.  But it should work afte=
-r
-> > that too. :(
+Interesting. Thank you for the detailed info.
+
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (le16_to_cpu(part_id) != ENS160_PART_ID)
+> > +		return -ENODEV;
+> > +
+> > +	ret = ens160_set_mode(data, ENS160_REG_MODE_IDLE);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> > +			   ENS160_REG_COMMAND_CLRGPR);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> > +			   ENS160_REG_COMMAND_GET_APPVER);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	msleep(ENS160_BOOTING_TIME_MS);
+> 
+> Why here?  Not obviously associated with a boot command?
+> A comment might make this easier to follow.  I 'think' it is
+> because this next read is the first time it matters. If so that
+> isn't obvious.  Also, there is an existing sleep in the mode set,
+> so I'm not sure why we need another one.
 >
-> Well, having looked at it some more, I have the main CPU PMU:
+The usage of booting time is not documented in the datasheet. From
+ScioSense's arduino driver the booting time is necessary after setting
+the operation mode. I performed some tests that confirm this.
+
+In this case in particular it is not necessary. Maybe I forgot to remove
+it after some testing.
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_GPR_READ4,
+> > +			       fw_version, sizeof(fw_version));
+> 
+Does this bulk read also need to be made DMA safe? I'm guessing in this
+case it would be best to devm_kzalloc() a buffer of three bytes?
+
+> The first datasheet that google provided me has this 
+> GPR_READ0/GPR_READ1 and only 2 bytes. I hope they have maintained backwards
+> compatibility with that earlier doc!
+> 
+> When you do a separate DT binding in v2, make sure to include a link
+> to the datasheet you are using.  Also use a Datasheet: tag
+> in this patch to make it easy to find that.
+> I dug a little deeper and found the one on sciosense own website
+> - ah, you do have it in the comments.  Add to the commit message
+> and DT binding as well.
+> 
+> 
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	msleep(ENS160_BOOTING_TIME_MS);
+> Why again?
+Again, not needed. I'll remove it.
+
+> > +	data = iio_priv(indio_dev);
+> > +	dev_set_drvdata(dev, indio_dev);
+> 
+> After you've moved to devm_add_action_or_reset() for the unwind of
+> ens160_chip_init() you probably don't need to set the drvdata.
+> 
+I don't get it. Could you please elaborate on why it isn't needed to
+set drvdata after the change?
+
+> > +	data->regmap = regmap;
+> > +
+> > +	indio_dev->name = name;
+> > +	indio_dev->info = &ens160_info;
+> > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > +	indio_dev->channels = ens160_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(ens160_channels);
+> > +
+> > +	ret = ens160_chip_init(data);
+> > +	if (ret) {
+> > +		dev_err_probe(dev, ret, "chip initialization failed\n");
+> > +		return ret;
+> 		return dev_err_probe();
+> 
+> > +	}
+> > +
+> > +	return devm_iio_device_register(dev, indio_dev);
+> > +}
+> > +EXPORT_SYMBOL_NS(ens160_core_probe, IIO_ENS160);
+> > +
+> > +void ens160_core_remove(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct ens160_data *data = iio_priv(indio_dev);
+> > +
+> > +	ens160_set_mode(data, ENS160_REG_MODE_IDLE);
+> 
+> This looks to be mixing devm and manual cleanup.
+> My guess is this is the unwind for code in ens160_chip_init()
+> If so that unwind should definitely happen after we unregister
+> the userspace intefaces in the unwind of devm_iio_device_register().
+> Currently it happens before this.
+> 
+> This is an even stronger reason to use devm_add_action_or_reset()
+> for this than tidying up as mentioned below (note I tend to
+> review backwards through patches so my comments may make more
+> sense read that way around).
 >
->     /sys/bus/event_source/devices/armv8_pmuv3_0/
->
-> which has a 'cpu_cycles' event, and the cpumask covers all the 128
-> cores in this thing.
->
-> That's the thing the regular profiling *should* use:
->
->     $ ls events/
->     br_mis_pred          l1d_cache_wb        l3d_cache_allocate
->     br_mis_pred_retired  l1d_tlb             l3d_cache_refill
->     br_pred              l1d_tlb_refill      l3d_cache_wb
->     br_retired           l1i_cache           mem_access
->     bus_access           l1i_cache_refill    memory_error
->     bus_cycles           l1i_tlb             sample_collision
->     cid_write_retired    l1i_tlb_refill      sample_feed
->     cpu_cycles           l2d_cache           sample_filtrate
->     exc_return           l2d_cache_allocate  sample_pop
->     exc_taken            l2d_cache_refill    stall_backend
->     inst_retired         l2d_cache_wb        stall_frontend
->     inst_spec            l2d_tlb             ttbr_write_retired
->     l1d_cache            l2d_tlb_refill
->     l1d_cache_refill     l3d_cache
->
-> But the thing that seems to have confused the new parsing is that this
-> machine _also_ has
->
->     /sys/bus/event_source/devices/arm_dsu_{0..63}/
->
-> which all have a 'cycles' event:
->
->     $ ls events/
->     bus_access  cycles     l3d_cache_allocate  l3d_cache_wb
->     bus_cycles  l3d_cache  l3d_cache_refill    memory_error
->
-> but these things are basically some "each pair of cpus has some bridge
-> to the L3", which is why this 128-core machine has 64 of them. So each
-> of those have something like this:
->
->     $ cat cpumask
->     40
->     $ cat associated_cpus
->     40-41
->
-> I did not look any closer at what the 'cycles' there can actually
-> count, but clearly they can't be used for recording. And even if they
-> can, they shouldn't for the default "cycles".
+The intention was to transition the chip into idle mode upon driver
+removal, ensuring the sensor ceased data readings.
+I'll use devm_add_action_or_reset() as suggested.
 
-So this is now the behavior with the patch I sent.
-
-> > It seems my system doesn't have the alias (both in x86_64 and arm64)
-> > at least in sysfs.  I think that's why I don't see the failure and mayb=
-e
-> > there's a specific hardware issue - like a M1 macbook issue?  IIRC it
-> > required the exclude_guest bit to be set, but I think we handled it alr=
-eady
-> > so this must be a different issue.
->
-> This is my new Ampere system, which has basically replaced the M2
-> Macbook Air as my arm64 test platform, since it builds the kernel a
-> whole lot faster. That's what 128 cores will do...
->
-> Ian's patch at
->
->     https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.c=
-om/
->
-> makes things work for me again, but I get the feeling that the JSON
-> parsing is too fragile. It should have noticed that the 'cycles' event
-> it found wasn't useful for profiling, and gone on to the next one,
-> instead of just giving an incomprehensible error message.
->
-> I think the real problem was that the JSON parsing code blindly just
-> looked for "cycles".
-
-I don't think JSON really means anything here. We use JSON as a way to
-import tables of events. We want to map an event name to a config
-value, we could do it in lots of different ways. There is a difference
-between:
- - legacy events: hard coded event numbers for certain typically CPU
-events, although there are L3 cache events in there,
- - sysfs: events advertised by the PMU driver in sysfs,
- - events built into the tool, imported from json files.
-
-The first problem that happened was BIG.little. ARM did nothing to fix
-the perf APIs for BIG.little and Intel fixed things up when they did
-hybrid. What does it mean to open a legacy event on a process in a
-BIG.little CPU when the process may be scheduled onto either BIG or
-little cores? ARM's non-solution was that you'd profile based on which
-PMU driver registered first and not profile on the other - you would
-be profiling on some fraction of your CPUs but not all.
-
-While Intel added proper hybrid/BIG.little support they did so by
-essentially forking every aspect of the perf tool to have a "hybrid"
-version. I put a stop to this in the metrics code and by doing so
-ended up taking on responsibility for cleaning up the mess Intel had
-been creating. This led to the event parser being able to parse "<PMU
-name>/<legacy event name>/" for example in "cpu_core/cycles/" and
-"cpu_atom/cycles/" and encode the legacy event.
-
-This caused issues on ARM, especially Apple ones - maybe Apple should
-be asked to support their PMU? Previously their PMU would advertise
-events like cycles and the sysfs encoding would be used as there was
-no notion of using the legacy encoding. Now the legacy encoding was
-used and for some reason we don't maintain legacy mappings of events
-for PMUs on Apple CPUs. After being politely shouted at, and to my
-surprise Intel agreeing, we made it so sysfs or events built into the
-tool take priority over legacy events if the PMU is specified. This
-wasn't a small change as every test expectation needed updating for
-this. We still have some broken test expectations.
-
-So we had a case where legacy events weren't the priority if the PMU
-was specified but when no PMU was specified they had priority. This
-was frankly weird and so the patch you bisected to fixed this and was
-also a behavior RISC-V had asked for. There was even some discussion
-on this subject at LPC 2023.
-
-Is everything fixed? Nope. It is still the case on ARM that we don't
-profile on all CPUs for perf stat. This is because when no event is
-specified hand crafted perf_event_attr are passed to perf_event_open
-and these perf_event_attr need to open multiple for a
-BIG.little/hybrid system:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
-ls/perf/builtin-stat.c#n1942
-I wrote a fix for this:
-https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
-Unreviewed/unmerged and frankly I think ARM should be in the driving
-seat for reviewing it as it is trying to fix their CPUs.
-
-> The only thing that seems to make Ian's new
-> evlist__add_default_events() special is that it uses
-> "perf_pmus__scan_core()" for that cycles finding, which in turn then
-> uses only the *core* PMU's.
->
-> It feels to me like the "parse the JSON info" is just too fragile,
-> picks the wrong events, and Ian's "add defaults" just works around the
-> weakness.
-
-So I think the parsing is now robust/consistent but that doesn't mean
-the behavior matches your expectations.
-
-I say robust as when any event, regardless of whether it happens to
-alias the few hundred legacy names, will parse. Previous parsing meant
-events advertised by AMD's PMU, like branch-brs, would return parse
-errors as "branch" and "brs" looked like components of a legacy event
-name.
-
-Consistent in that, regardless of event name, we will try the same
-process to find the event.
-
-I don't understand why you think JSON comes into this. Is it because
-I've sent patches with JSON encoding events and metrics in? In the
-case of AMD's "branch-brs" and the "cycles" event, the event has been
-advertised via sysfs and not from data in JSON tables.
-
-> But whatever. With his patch, at least it works for me.
-
-You followed up in:
-https://lore.kernel.org/lkml/CAHk-=3Dwi5Ri=3DyR2jBVk-4HzTzpoAWOgstr1LEvg_-O=
-XtJvXXJOA@mail.gmail.com/
-with:
-
-> So no. That still needs to be fixed, or the whole "prefer sysfs/JSON
-> by default" needs to be reverted.
-
-So I think we still need to figure out what:
-
-$ perf <command> -e <event> ...
-
-where <event> doesn't specify a PMU means. I'll try to enumerate the option=
-s:
-
-1) the 6.9 behavior where <event> will be searched for on every PMU
-and each PMU that has that event will have it opened. This can lead to
-failures depending on what <command> is going to do. If <event> is a
-legacy event name then it will be opened only on core PMUs.
-2) the current perf-tools branch behavior where <event> is searched
-for on every PMU regardless of it being a legacy or non-legacy event
-name.
-3) (2) but we change drivers to not advertise events where the name
-conflicts with a legacy event name.
-4) if the PMU isn't specified with <event> then we only search core
-PMUs (e.g. armv8_pmuv3_0, cpu, cpu_core, cpu_atom)
-5) we parse all events as with (2) but depending on <command> can
-choose to ignore perf_event_open failing.
-
-I'll try to rustle up a patch for (5), I have no way to test it. I
-expect it will make somebody somewhere unhappy, apologies in advance.
-
-Thanks,
-Ian
-
->                  Linus
 
