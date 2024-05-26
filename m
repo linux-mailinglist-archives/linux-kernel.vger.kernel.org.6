@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-189864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B168CF5F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 22:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769F38CF5F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 22:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85B841C20C32
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 371601F21209
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386DA13AA53;
-	Sun, 26 May 2024 20:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF001139D07;
+	Sun, 26 May 2024 20:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PhiVssvG"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RswYs/pC"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141D2139CFA
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 20:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA89139D00
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 20:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716754935; cv=none; b=gEOka46Ssf3TVWR7wIPX1cElia6gWloIVU0E/V5PYzta5QrBuOeXZV1mSi5J8oUzRig/CFjFYYDKTHLxiHguTZwEYS0vXGymQEzQM3ZW5q7+owk7XbIi6+ely06AHF8al0G/GBli5EsebVvYBlqNm0QwiQCqCjVsi6J31cE9elI=
+	t=1716754939; cv=none; b=HROtabNArmn2oI/hILU3RwyKb5GdXSY3u3KAU1uBbzOxSSSnDC3c8srivRxEuakc82Sh02u1bKeTqjgk+N6wGqQTGoeK+s4wdmepR1kZ0ZsILH1p9DMjc3J4pyWdePy2T6DJ7gHMeXSz+Afc6m6EUfgkEFNP68M1dEYkAWadcXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716754935; c=relaxed/simple;
-	bh=6BzoTFV37Xlh0oGBJjU6vH9DkyXyO9By/npTth72kd4=;
+	s=arc-20240116; t=1716754939; c=relaxed/simple;
+	bh=yjXrCCEzHaobC15HySaJokFi2Tyu6bbB2BhMaQiRkYs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=llHJZgkTP/MDQB4hQWT8ohi1TkTmW/LbbxnldeL771jj/9dzh08R4E7XTOcs9FbKpnIo1f9nYhNXcWw1Uf/l7HBpWYSNsK1iK7r2zULlJC5XLHipYjdQ2aAV3wtJdbZ7TvZBWgNHo61V+lBtAPmrY7hR76V10DgUOkrf+iWX0HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PhiVssvG; arc=none smtp.client-ip=95.215.58.187
+	 MIME-Version; b=EsMRSFN8de+ne2bJGsfG/O1/5yvIYiZy20XYjKLWHJtW59PVzZvDA5aLBcHV2sWILbm8Upste7Z8jRK0S/9r8BrBRODWlxoZxUmohaFL1SGvoDBfJwTNhNmu8QER3cArFnDmLC4QRKYSRQJa/zkw967WZ8GPv649o6Nc0a04WL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RswYs/pC; arc=none smtp.client-ip=95.215.58.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: rfoss@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716754932;
+	t=1716754936;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HQejp35xdHl089YksIdueCjCLA/1BLC6JglYUKdLrzM=;
-	b=PhiVssvGa0otgkxBvZ6vngXfyNqXoYz2Td1XFsCxUXvwz5Y4MevBR8yY1/HMUCcdTJRlcu
-	zZXSkQan1Nyxd9NG89c86Y6VCJ+4Ok/+J8JhggcZ0Zbi3n0ejfPIpJCu2nRHTmEdOfU9+M
-	9oP9XD5m5a2RxER8e0NFI2n37N7g4lE=
+	bh=sHEGEyR5HKYcrfD9JBIV0ziW1Rx1W7V/ic0nMRKrGeo=;
+	b=RswYs/pCIv6lZwAAqKNacSfmf+2Q8+53Xm8HjQQyAgDzWNkXljRxyLKTiti8KPHXvk/06H
+	GMWBhTIghuoScRfT7eBtzJKFsl7wWFWHDyvCrlKIzF31M6rtWRFo78I4JHixpOasmTqgF8
+	TmZmtGzjItU+Eu169oGIzVKSaiwaJA4=
 X-Envelope-To: laurent.pinchart@ideasonboard.com
 X-Envelope-To: dri-devel@lists.freedesktop.org
 X-Envelope-To: linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ To: Robert Foss <rfoss@kernel.org>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH v6 09/10] drm/bridge: sii9234: Use fwnode APIs to abstract DT dependent API away
-Date: Mon, 27 May 2024 04:21:14 +0800
-Message-Id: <20240526202115.129049-10-sui.jingfeng@linux.dev>
+Subject: [PATCH v6 10/10] drm/bridge: ch7033: Switch to use fwnode based APIs
+Date: Mon, 27 May 2024 04:21:15 +0800
+Message-Id: <20240526202115.129049-11-sui.jingfeng@linux.dev>
 In-Reply-To: <20240526202115.129049-1-sui.jingfeng@linux.dev>
 References: <20240526202115.129049-1-sui.jingfeng@linux.dev>
 Precedence: bulk
@@ -66,36 +66,46 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Switch to use the freshly created drm_bridge_set_node() helper, no
-functional changes. The reason behind of this introduction is that
-the name 'of_node' itself has a smell of DT dependent, and it is a
-internal memeber, when there has helper function, we should use the
-revelant helper and avoid directly referencing and/or dereferencing
-it.
+Use the freshly created helper to replace the use of DT-dependent APIs,
+also print error log if the fwnode graph is not complete which is benefit
+to debug.
 
 Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 ---
- drivers/gpu/drm/bridge/sii9234.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/chrontel-ch7033.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index 7d2bbc31bac9..d930c093abb3 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -817,10 +817,11 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 				  struct i2c_client *client)
+diff --git a/drivers/gpu/drm/bridge/chrontel-ch7033.c b/drivers/gpu/drm/bridge/chrontel-ch7033.c
+index c6374440af7f..35dd2e6ba6c0 100644
+--- a/drivers/gpu/drm/bridge/chrontel-ch7033.c
++++ b/drivers/gpu/drm/bridge/chrontel-ch7033.c
+@@ -531,6 +531,7 @@ static const struct regmap_config ch7033_regmap_config = {
+ static int ch7033_probe(struct i2c_client *client)
  {
- 	struct i2c_adapter *adapter = client->adapter;
-+	struct fwnode_handle *fwnode = dev_fwnode(ctx->dev);
+ 	struct device *dev = &client->dev;
++	struct fwnode_handle *fwnode = dev_fwnode(dev);
+ 	struct ch7033_priv *priv;
+ 	unsigned int val;
  	int ret;
+@@ -541,10 +542,15 @@ static int ch7033_probe(struct i2c_client *client)
  
--	if (!ctx->dev->of_node) {
--		dev_err(ctx->dev, "not DT device\n");
-+	if (!fwnode) {
-+		dev_err(ctx->dev, "firmware data is missing\n");
- 		return -ENODEV;
- 	}
+ 	dev_set_drvdata(dev, priv);
  
+-	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, -1, NULL,
+-					  &priv->next_bridge);
+-	if (ret)
++	priv->next_bridge = drm_bridge_find_next_bridge_by_fwnode(fwnode, 1);
++	if (IS_ERR(priv->next_bridge)) {
++		ret = PTR_ERR(priv->next_bridge);
++		dev_err(dev, "Error in founding the next bridge: %d\n", ret);
+ 		return ret;
++	} else if (!priv->next_bridge) {
++		dev_dbg(dev, "Next bridge not found, deferring probe\n");
++		return -EPROBE_DEFER;
++	}
+ 
+ 	priv->regmap = devm_regmap_init_i2c(client, &ch7033_regmap_config);
+ 	if (IS_ERR(priv->regmap)) {
 -- 
 2.34.1
 
