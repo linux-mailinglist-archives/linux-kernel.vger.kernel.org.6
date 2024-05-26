@@ -1,111 +1,172 @@
-Return-Path: <linux-kernel+bounces-189877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9BE8CF61C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:24:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3318E8CF61F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4006B21217
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED7C1F21982
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D67613A249;
-	Sun, 26 May 2024 21:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723612F5A6;
+	Sun, 26 May 2024 21:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4ZgPEhj"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRfEYSyN"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4EB12F5A6
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9714A13A259;
+	Sun, 26 May 2024 21:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716758688; cv=none; b=r0UCC/Qo9lgB+/o0GWZ1BGAxCgRATlE+EIXREFQUY+wAE+KZWXsFAoaikIeAglbQRFay3tZlzv55RqOBd+3cvsABOUPPXfjXLp4YZdtx82Y+HEYhKnVLi3w3TcsvAnfMUA9RV+4g6wxVm6GwJaFZvyWU2DrbjG2IymSljyr5eO8=
+	t=1716758691; cv=none; b=PttQ0eS6j5BxJ4qTpEjWPw0yGNjQGS1Nuw3K4ZGL5TI1WO0Ev5xGPNoAHM548Pd354HGb84Tf2XrYYP69p0HLtcXtVRD9Zw/xOqnr8h20Z3Cxv2O1cvJFYYufIAKTxkxcrF7Pu7uxgW8wadYMBzArN2H4joZcVZfA99Usrl3cNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716758688; c=relaxed/simple;
-	bh=Fc+Yxlu/eOYcBEZ15ctTkP/Gy0RI2ZGUfJkYqXamuco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Av7ffxZ9Vyh+ELXC/0KzwWc49Jm07YXlRdaqARNeDjB3Hkv3PP0jFOrKn6Omi38T8yr78vmRO4CBNrA7OiaPGncK7ezP9EK4bOmJNI232tyE6x6GUzNvzMRkGHGvOj4kcDfEWVLnLn0CEmxMyvlL/WmS4AFoMLVi5Sfi4Tks8uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B4ZgPEhj; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e9684e0288so19108551fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:24:46 -0700 (PDT)
+	s=arc-20240116; t=1716758691; c=relaxed/simple;
+	bh=oeEP4ygQRGenE4hVSLTsl2TaoTbK+XgklW7Ivx2ujiU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A9/3RXKZZn1lw6VffkYibZVrNNXxeGEslwUp/MmYYxaBYDxchaJHoARw7k2EyGSuSCMrN6ohft7NYs38VUIdD2Ah0xSXhif2PFVyyvO7L7ABola0JNhEI1VuxCzFCmRXSIBxEeogs1Qc08507aMSAtyYharZq8vVgicx0BEiAOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRfEYSyN; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a609dd3fso838913466b.0;
+        Sun, 26 May 2024 14:24:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716758685; x=1717363485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tTI9+Tooj7QXANR7xYSYhH9MioraP53ANnHXVs8kx10=;
-        b=B4ZgPEhjhnjGfNDvPgf3YR3S/X0SeWg40atYpzu9KzCbAEMR+5FncL0BuTVj6Ka8KG
-         Bfya9fp4OhlpO9QabpgO9JY0R8xXr+rnNVd4l/NUa2n71eMxHjGWgf3u9rKFQ34OCO77
-         b9vV2I/du6thnuQu8wNd0jG0k8iZvVnOY9kqKxiYvhEhzDvVyFBpRYdFZrFnjk/5KT1o
-         nZaCdsXKgrRWE+6pHc04r0OT9pBcDbS5XvtjERN5iy6IrxaT88HgzONhSno21ENi7ET+
-         +keQqF9zEg5CwpaWxrEG+wSUk9W6v+4yT/RitWyIJJQ+iwSNDP6du8LG8n4bLpK4E48u
-         KsMg==
+        d=gmail.com; s=20230601; t=1716758688; x=1717363488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+dEpyyCSvCFW4rqJdqF5eNr6betO3sf3jn2avdoLW0=;
+        b=CRfEYSyNzk9+CGsj2TmyINP06MvLDZ2/zTjnJ4todz76f8VGZDnx0QqFGoEmzComRS
+         6it/b9qzFQGDLK5BzTtdgEyfc4vdyUxM7bLCHSWXeUmjgUbE2oYFrQckh+GnzDZbAg91
+         QEGoafmKe/jBgSeHFexlzIV+rQ5aB/6WO3u7/vzM9E+ZQJ2v2urRhvn4feZJP+17otfl
+         xFbDaV+uOVGMJNb2PbJwgvx8qvksBlamUikh1Pc2yyvyL0B3+1yQI0qNTTz2AAV8Lt2A
+         ridm9pta6c0f5m/4k6hJ0l2j5EP7JNugYkDZfCd6iQNj6unX9Xky1/zYU29XvEfH3i/T
+         9PpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716758685; x=1717363485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tTI9+Tooj7QXANR7xYSYhH9MioraP53ANnHXVs8kx10=;
-        b=cTDjHpQ/KycuCMZd4J21DPf4BtpQHtk+4WPZRcYav5FKO7Z4pyzVuGvBPkBS20QUtu
-         jFTDuB1IXtSUMlWlibvfx59/+alDowpjua6y8yUndp8sputRolo0bd1RvMN1R0GvfWd7
-         381br1NoNm1PTxKzpagsoi62DxYvcHL9LPbWYneI/K2t05Hw0eLkKsYwH5njVyWMe9+H
-         3j6YhDi+jw/ddYMVwoF23FHMNRKgnhMYLOPdUHjWz4QL7RtKTGYxUBBBSIH7iwdsxYaN
-         SWU6gjGwlvtXHmub4kRDmUrtLd433Mb5X1UNJR/NPuy5GVR/FULCypBUheMCJxIsy0+7
-         z8Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5PBcJp0rMsPKh5SH8FQdYf8naDmn+jwgND6iKMtVtG8kG7SfFt9RC/H4a24o2YH81LMnpPz9UCL7UyxF7JCHtgHLrwIi/51OzPKSS
-X-Gm-Message-State: AOJu0Yz4/mRSfmlNWwr04EIrqdkKu/2jdjBL1ccwgCkZ3FLOVViWC9UE
-	M1AI5beLbxrvG3Cr+heRSOcenjbi9YFQMULJmQFa7fnMe8nYyZy1dM0BC8/apQ==
-X-Google-Smtp-Source: AGHT+IGvmNaT28lfbXf8UTbZhn9cKaGxzBV4CQTw2CnqFzcDb0bv69PhDXXaD+BhFCx/DST9bxwpcw==
-X-Received: by 2002:a2e:2c19:0:b0:2e9:564a:db29 with SMTP id 38308e7fff4ca-2e95b0c4da4mr66780081fa.29.1716758684437;
-        Sun, 26 May 2024 14:24:44 -0700 (PDT)
-Received: from google.com ([2a00:79e0:18:10:9da6:3a1c:cab8:1718])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc48d3sm15888561fa.5.2024.05.26.14.24.43
+        d=1e100.net; s=20230601; t=1716758688; x=1717363488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y+dEpyyCSvCFW4rqJdqF5eNr6betO3sf3jn2avdoLW0=;
+        b=uWQBWwKNTPt6FXjB85ym9x0JDWUOzz02v8RH0GeGJl+QQaioyi2MFOI54Jge8t1hsc
+         Rk9ZvaWQ3L9yllfEjDsILG8/LgrZLV11nn16HAYC9Z7NNgEVhhtldQ5slr3hogBdslE+
+         o0Rl3q7CH6pq9d3PKeAbtj6o/sQehxaNWkqdl/du2p/58jQwCGMgmyKcKq8EKGrjitG0
+         Cf76wycWlm2mfQBdeD8+N1IawH75XdQlZmG7QiJhHyawrSt3rXQjEBv8EhgMu6dbWUhV
+         Riwuc1DRShExN/zrHHbJ7BGgELZse1zDuIwWEtCgexSPY6SvrXNBPh/IdhDxfxGO4weV
+         30iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWKou/L3l7+39gspvt2wLh/v/6R8Ahj2P+dsfyz2NdtAgY0unZOMn5pGcmjSdjXuBRICjoYjle6gYO1XSWQfM74cXdbeSxu9vqUBoyreyUSfx3qW9yQM+PVvz8ERtF/iCmboabw0pEGA==
+X-Gm-Message-State: AOJu0Yzd6DElkSvSkaNQn+rpBzk3M/SKq60E6MF7aBjSw7AXs73s4+7m
+	KquY05HbgXLh9uYrnLs8+oIrmtQD0/wQSOyXagAyi7aPmg2FuAbBmGCDvg==
+X-Google-Smtp-Source: AGHT+IExnpFoRBz8DfWymbraINrBAcfwwG8y93kzm2NnY6cqpxtoo2KOZnOUi6GecDN1adqlHeF1kQ==
+X-Received: by 2002:a17:906:358e:b0:a62:49ae:cd7b with SMTP id a640c23a62f3a-a626250ddcemr689759966b.24.1716758687647;
+        Sun, 26 May 2024 14:24:47 -0700 (PDT)
+Received: from kuzhyl-vm.. (89-64-18-73.dynamic.chello.pl. [89.64.18.73])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817088sm418093066b.24.2024.05.26.14.24.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 14:24:43 -0700 (PDT)
-Date: Sun, 26 May 2024 23:24:40 +0200
-From: "Steinar H. Gunderson" <sesse@google.com>
-To: acme@kernel.org
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	irogers@google.com
-Subject: Re: [PATCH v7 4/4] perf report: LLVM-based symbol listing
-Message-ID: <ZlOomG5NacWlV_RY@google.com>
-References: <20240526182212.544525-1-sesse@google.com>
- <20240526182212.544525-4-sesse@google.com>
+        Sun, 26 May 2024 14:24:47 -0700 (PDT)
+From: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	kuzhylol@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jeff@labundy.com,
+	neil.armstrong@linaro.org,
+	hdegoede@redhat.com,
+	artur.serhiienko@gmail.com,
+	igor.opaniuk@gmail.com
+Subject: [PATCH v3 1/2] dt-bindings: input: touchscreen: add Hynitron CST816X
+Date: Sun, 26 May 2024 23:24:41 +0200
+Message-Id: <20240526212443.8496-1-kuzhylol@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240526182212.544525-4-sesse@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 26, 2024 at 08:22:12PM +0200, Steinar H. Gunderson wrote:
-> +
-> +	symbols__fixup_end(dso__symbols(dso), false);
-> +	symbols__fixup_duplicate(dso__symbols(dso));
-> +	dso__set_adjust_symbols(dso, true);
-> +	ret = 0;
+Add documentation for the Hynitron CST816X touchscreen bindings.
 
-Urgh, evidently I forgot to copy over dso->text_offset and dso->text_end
-here, which I guess needs to happen.
+Signed-off-by: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+---
 
-Even after doing that, I still cannot annotate Windows symbols, though;
-I get
+Changes in v3:
+ - Rename filename to hynitron,cst816s.yaml
+ - Update description with display details
 
-  Couldn't annotate RtlLeaveCriticalSection:
-  Internal error: Invalid -1 error code
+ .../input/touchscreen/hynitron,cst816s.yaml   | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816s.yaml
 
-This is true even with libbfd in a non-distro build (without any of my
-LLVM patches), so there must be something else at play here.
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816s.yaml b/Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816s.yaml
+new file mode 100644
+index 000000000000..ac9f1d8e8fc0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816s.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/hynitron,cst816s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Hynitron CST816S Touchscreen controller
++
++description:
++  Hynitron CST816S Touchscreen controller for 1.28-inch 240x240 Resolution
++  Touch LCD Display Module
++
++maintainers:
++  - Oleh Kuzhylnyi <kuzhylol@gmail.com>
++
++allOf:
++  - $ref: touchscreen.yaml#
++
++properties:
++  compatible:
++    enum:
++      - hynitron,cst816s
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - reset-gpios
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      touchscreen@15 {
++        compatible = "hynitron,cst816s";
++        reg = <0x15>;
++        interrupt-parent = <&gpio0>;
++        interrupts = <4 IRQ_TYPE_EDGE_RISING>;
++        reset-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
++      };
++    };
++
++...
+-- 
+2.34.1
 
-I _can_ run a Windows binary in WINE and get the right symbols out with
-perf report, though. So this leaves only demangling as the final piece
-of the puzzle to make distro builds essentially equal to nondistro builds.
-
-/* Steinar */
 
