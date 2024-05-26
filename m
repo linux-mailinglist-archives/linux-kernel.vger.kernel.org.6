@@ -1,105 +1,144 @@
-Return-Path: <linux-kernel+bounces-189704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307AD8CF3D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FC88CF3DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4CA1C2128C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C6B1F21466
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EEA13281F;
-	Sun, 26 May 2024 09:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82D28F77;
+	Sun, 26 May 2024 09:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW1UUKKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kks7iPe5"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0AD132C16;
-	Sun, 26 May 2024 09:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A308F45
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716716638; cv=none; b=ibdmU3G8Cjc2qsQkVn2oZiAofnb/QzMqTr2MwqqVlbj7dQ4OLiqbmyMt4qeMCvUo3csgBJ9gZU7s7XmQ5Jgy2sxcCwhlwHN4q1S17IZ4oNeM48VnsvtrSM97hc119GUv5gPyCJr+M4vnHS736XhoTEJ0nH7Ol9daQISy0TV0tDk=
+	t=1716717526; cv=none; b=RCwB3NY4XiJ/ZvHl74BHfwIIM06mI2O/exAjKpn8zJZBs1RScS5lA4+MR75GobMs8sj0dY0hzpDQ6lc71PUfBaw6L1Ymc9x4gvjiv+CL0QBBukfGBqbj0a4Wurg4N9IRiwbK+p6wm+Gwmr0D1MaQbNbS5m2US/S5KNteJY3D7Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716716638; c=relaxed/simple;
-	bh=bXW37V1Flhx5xKq+9jOYUj5LIwd5KNR2wByg+MPa6WY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UHw1xcRQAb7P6FpjFk2gzZjA8pRBClEi/kMMU83bPSRGR8oCieWLZ8DQjaVgs3LKDpzZxRE381Q26e9EbwP0QT7sSwDUI9dtQ0FA6aBZQtIeqWJposFccBwi3NeCgfEfdgzU1TvMkum/y/TSAB/sGGV6vIGoLa6NPdA4jIzovDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW1UUKKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA5F3C2BD10;
-	Sun, 26 May 2024 09:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716716638;
-	bh=bXW37V1Flhx5xKq+9jOYUj5LIwd5KNR2wByg+MPa6WY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SW1UUKKNhtnTEvIMh7fV0vi11q2PwNUAxZkHQlWcz7Jqc7f6F0eEAXi002RvzjEO8
-	 StC79IF2IfzOpZv2MP6TIGlizlEMBHtU53WVKtMtFFha5IjLqSIQGNcMlOAPx+hhuh
-	 AEFv/okm7ji4bn/N7Na4SqHxKE/kXM/553t49tCeHyIwfCcJiA2XROW3GCkWeur3qN
-	 Z4eQDLVHQDAN2V5nFA7UE1KgfH2TKUh5bEXVWMnQpNnRC5utAWBGLxfCVAcf4DodEB
-	 qTREpr7IuwaQJOzcuXLll0lxpQrRe7FcQ56RKY9EQjMRDTAwG8F1Vfq/l8rbGqxlqF
-	 N8DTCKUTfrY9g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Sasha Levin <sashal@kernel.org>,
-	dave@stgolabs.net,
-	josh@joshtriplett.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	boqun.feng@gmail.com,
-	rcu@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] rcutorture: Fix rcu_torture_one_read() pipe_count overflow comment
-Date: Sun, 26 May 2024 05:43:55 -0400
-Message-ID: <20240526094355.3413996-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716717526; c=relaxed/simple;
+	bh=hRnXOL3/JG4PcBU2yqlNxZ96e+xvO+9TwGHHI2I5pnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVwacCdrKnRsr7xwStzqAQsnUcjdvFpemqQNQqndmwkPoqH6FmVY9yYB29WzUPdiWp9RI9fJMz3tSwNd24LRQbubVOXLz7uPVdN6RWGQDTaoaDyL8jj3hGksgp0OPnJK6bWqgvUXyO63lElDgbD/+Fwf2NUwqCbiveOOjTS5QVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kks7iPe5; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: irogers@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716717521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J4epl//+/WLyc/JhDbO+OjPKpdtrbovVIa7El3gIFMA=;
+	b=kks7iPe55jwgWSkp0t9Ue7pLpfBbn+3u4R/aXez1d4hvQEvRYnCw1SV4fU5JAqUVdwSt+5
+	6mxomxnsYPGlM7SZdU81kaUReKuTLk07u4H9uoU3Uu9O3PABBt6Vp2pwDRBHdggQcqJ6ER
+	5uD47PXKH5HxHCiMdKqgYR0WlEhDnWQ=
+X-Envelope-To: torvalds@linux-foundation.org
+X-Envelope-To: namhyung@kernel.org
+X-Envelope-To: acme@kernel.org
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: mingo@kernel.org
+X-Envelope-To: tglx@linutronix.de
+X-Envelope-To: jolsa@kernel.org
+X-Envelope-To: adrian.hunter@intel.com
+X-Envelope-To: williams@redhat.com
+X-Envelope-To: kcarcia@redhat.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-perf-users@vger.kernel.org
+X-Envelope-To: retpolanne@posteo.net
+X-Envelope-To: unixbhaskar@gmail.com
+X-Envelope-To: j.ethan.adams@gmail.com
+X-Envelope-To: james.clark@arm.com
+X-Envelope-To: kan.liang@linux.intel.com
+X-Envelope-To: tmricht@linux.ibm.com
+X-Envelope-To: tycho@tycho.pizza
+X-Envelope-To: yangjihong@bytedance.com
+Date: Sun, 26 May 2024 17:58:38 +0800
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leo Yan <leo.yan@linux.dev>
+To: Ian Rogers <irogers@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Anne Macedo <retpolanne@posteo.net>,
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+	Ethan Adams <j.ethan.adams@gmail.com>,
+	James Clark <james.clark@arm.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tycho Andersen <tycho@tycho.pizza>,
+	Yang Jihong <yangjihong@bytedance.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+Message-ID: <20240526095838.GA33806@debian-dev>
+References: <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
+ <ZlFE-wbwStOqt8Ra@x1>
+ <ZlFGpxWGQskCTjeK@x1>
+ <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+ <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
+ <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+ <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
+ <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
+ <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.314
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Hi Ian,
 
-[ Upstream commit 8b9b443fa860276822b25057cb3ff3b28734dec0 ]
+On Sat, May 25, 2024 at 11:22:08PM -0700, Ian Rogers wrote:
 
-The "pipe_count > RCU_TORTURE_PIPE_LEN" check has a comment saying "Should
-not happen, but...".  This is only true when testing an RCU whose grace
-periods are always long enough.  This commit therefore fixes this comment.
+[...]
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Closes: https://lore.kernel.org/lkml/CAHk-=wi7rJ-eGq+xaxVfzFEgbL9tdf6Kc8Z89rCpfcQOKm74Tw@mail.gmail.com/
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/rcu/rcutorture.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> In doing that work the code was tested by IBM for S390 and by Intel,
+> but it was fixing an ARM created problem. ARM were the first to have
+> BIG.little systems but contributed nothing to the perf tool to handle
+> it, even though each core type has a different PMU. ARM BIG.little
+> remains broken with the perf tool and when I fix it for them they
+> don't review or test the code. ARM changed and left unworking uncore
+> PMU naming conventions. ARM don't fix tests for their platform. ARM
+> don't help make perf's tests cover their different way of naming PMUs.
+> No one is trying to break ARM machines, but when ARM fails to do
+> anything other than review their own changes in the perf tree it is
+> something of an inevitability.
+> 
+> Fwiw, I am working on making perf record, perf top, etc. skip events
+> on non-core PMUs when they fail to open. It is a rather large and ugly
+> change. It is also a holiday weekend and I'm spending a lot of my time
+> in it addressing latent ARM problems.
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 0b7af7e2bcbb1..8986ef3a95888 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1334,7 +1334,8 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp)
- 	preempt_disable();
- 	pipe_count = p->rtort_pipe_count;
- 	if (pipe_count > RCU_TORTURE_PIPE_LEN) {
--		/* Should not happen, but... */
-+		// Should not happen in a correct RCU implementation,
-+		// happens quite often for torture_type=busted.
- 		pipe_count = RCU_TORTURE_PIPE_LEN;
- 	}
- 	completed = cur_ops->get_gp_seq();
--- 
-2.43.0
+James is in holiday, so I should cover this in time. Sorry that I did
+not respond the issue quickly - mainly as I am not familiar with JSON
+and perf event part.
 
+I tried to reproduce the issue reported by Linus on my Arm big.LITTLE
+system but cannot reproduce it. As I saw Linus mentioned the issue is
+related with Arm DSU event, which is absent on my test board.
+
+But your complaint is received well and I am very appreciate your work
+(especially in the weekend). I will continue to look into the details
+in this thread, and monitor incoming patches and I will verify them.
+
+Thanks,
+Leo
 
