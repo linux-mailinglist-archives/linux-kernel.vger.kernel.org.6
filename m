@@ -1,176 +1,188 @@
-Return-Path: <linux-kernel+bounces-189746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7C18CF470
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:57:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABA98CF473
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF97B20C4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F20E281441
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608B814003;
-	Sun, 26 May 2024 13:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEoxygiQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547261640B;
+	Sun, 26 May 2024 13:59:25 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99760FC1C
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3812E7C
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 13:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716731817; cv=none; b=Wtl3uLVMe2osV5XAmcjkK48b8kK3RgCTXw9JzQdltfhha3yef3uJAX9zCzkrKm5tjsgSUBsk22m0gDXy+XtGhu/qDPPHXQsIOzcAhcwYM3YzBsjYH1SapjiOUitJZaZzSARcjH/aOuJIj8kXVneQZfSPYKlLFTJp2GDCYSSvy8I=
+	t=1716731964; cv=none; b=UHv9DwwwixVbjorsmt8fzVK2nzNWdkCHVQP4OEXauLFiB25Sc92aMut1RUWfn3MCn+IOky/JmLbGUgv/27fA7rL4qGcMa2nJscsG/+cXydz/UmHF3kPEYWGAboosXvZcE3kXCyiEJ0gbgyiQ2ds9OKOpsKeJz79PeBKhZlTXtSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716731817; c=relaxed/simple;
-	bh=5krnBIVZ4dxE084sNLxLTA0q1E2w2NM4RO+BibuxlMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gv3QK7ScNu2w3t3sz/0lwEvho62nU2TLvTGxBos09FqUlNXQVtiS2c2VTqF6G/qhe3V8eqJXjSn9g2eDuqnfDyZSMZUjIJDtXpZlXfCuLygJDLAyKzWQvZORMgrTiMkSkB4RvELUQ/5bk0XEMjuA2avzzV22OxObLm95SQhN6x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEoxygiQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CFBC32782;
-	Sun, 26 May 2024 13:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716731817;
-	bh=5krnBIVZ4dxE084sNLxLTA0q1E2w2NM4RO+BibuxlMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pEoxygiQ8sk8AedVDHE6TRmYRugAfDR8g8jEx5U7Vbh8pU1Z3SCnLUQMLWFCplcbT
-	 y2QPvBdN6By4VqFw2dim0T+zGYfe8dbsEHkfjP1behElRJy5+fHXFYOLSMvtv0I+Bn
-	 0NDRzu/OFfIMD5cgY8WALcRuSEmhoRlN2N8bffaqqPy5Z0V/mULGO+ns7Z5kEejOgL
-	 q+D7DVnZEl5RgoUVTQAqb8VJJMtq7hAnGMFGGFET88cW1n9oshJ5ArKNIPpcE/qbF1
-	 EySY8+nG1kNXsWq6UM4tBghyd9cGLsBAMWR/10sTlZ4jRqhxz/poeiQgCG1jYsDJnV
-	 bGuzgxu21/1Tw==
-Date: Sun, 26 May 2024 16:55:01 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jaewon Kim <jaewon31.kim@samsung.com>
-Cc: "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>,
-	"tkjos@google.com" <tkjos@google.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Pintu Agarwal <pintu.ping@gmail.com>
-Subject: Re: (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Message-ID: <ZlM_Ndng_JstAee3@kernel.org>
-References: <Zk9UCsZdizqC1_36@kernel.org>
- <ZkxN0yQ7Fb0X26hT@kernel.org>
- <20240521023957.2587005-1-jaewon31.kim@samsung.com>
- <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
- <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
- <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p2>
- <20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
+	s=arc-20240116; t=1716731964; c=relaxed/simple;
+	bh=hAYL+MbMFc4YuIMEVpmCUEO5uqGqTDjYaM9WZUfwOx8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EGPHmJqMgOLMDTOCCWK/2jSa8ztW8b76fon3oEZlYo/o3XXqJiNB4fbLGmA8nZc1lwFatdJWkIGktQLWKtiHPdG64+wGnb/j9Y1ZMYavOCyfQ9a4Nv3W05kbpXi5pKIdAWy3fmmxtQuaQNqFhg/OJZe74uthbzZSod0CFFDYhuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e8dc9db8deso146383139f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 06:59:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716731962; x=1717336762;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jNEgY/oLrqRd+yaxQrrBw1t0SSKI8XMoyGe1kTK/1Ws=;
+        b=rO1SbOSYjrquJLHELvcydDUlqVMlb85DiMIydDQM+WfmYDm3Fi1CIgHBZM1n8dVLnc
+         0PQZ8qcSb4y0N13Vb5i7Fj47ypjPOG1jAGVjotsXjtMev7XOrZTVXDdSUq9gRibBz5W9
+         2OODZeu5me7ILUfppfqmzN5RKKnSSuAD42ZBVwLkCH5jKmDVJwu36XkQF6QWInkseODm
+         FfD4jk1nuRqw/j3ANFp779JOvhCV+pM5JemNMXPNYEJCuhkxi1yFwpoDvD2LsmGJBJIF
+         kocj1jlCSVc3Z5AV8toDT+D6+jkXVaLzokAf+AdFRC1ic2qsWyMoBYgUKf5iK3nzeW+7
+         Qigw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgL/Wh40+1a7Mt5bYCrlccL+VY7aQ78wwwlexMPelSRjint3HcIe4dNBuPWbO7Eklrc2J/3n2bLkTDmCqfQVa6BrUST+3yuEPruvJT
+X-Gm-Message-State: AOJu0Yy5qZJNoHzxIJ25HvL4Zi0GX7/ucVRIjB3PQ/LAQlAlm6LiIdpq
+	+9SXdMrbFM4spQc+OtHQp9qNazTW1fJVlS6aONawEkODh1aooiPAM8kqXq9emw1yQI/srvZH4V6
+	+t+EyKkZH5erxmrct4ugNlSz42KauwRlreP7XgWrHP17nbSbg/Vz6vYo=
+X-Google-Smtp-Source: AGHT+IHNNjsHcPytzQ4qNy8yJE2YJ9Q8829cNue7EDdSis/FiJ1bsV6YBDthQBQnJDzAlnUp5Xo63kcVHRe08OjvN7VW/ivZ+0hB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
+X-Received: by 2002:a92:6408:0:b0:374:5776:de62 with SMTP id
+ e9e14a558f8ab-3745776e1bdmr112205ab.2.1716731962249; Sun, 26 May 2024
+ 06:59:22 -0700 (PDT)
+Date: Sun, 26 May 2024 06:59:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c8e60006195bce35@google.com>
+Subject: [syzbot] [dri?] WARNING in drm_atomic_helper_wait_for_vblanks (3)
+From: syzbot <syzbot+0ac28002caff799b9e57@syzkaller.appspotmail.com>
+To: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, syzkaller-bugs@googlegroups.com, tzimmermann@suse.de
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jaewon,
+Hello,
 
-Please use reply-all!
+syzbot found the following issue on:
 
-I just realized my previous reply went off-list :(
+HEAD commit:    6d69b6c12fce Merge tag 'nfs-for-6.10-1' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14dbcda4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aeb4d28a6349ece
+dashboard link: https://syzkaller.appspot.com/bug?extid=0ac28002caff799b9e57
+compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm
 
-On Fri, May 24, 2024 at 06:07:15PM +0900, Jaewon Kim wrote:
-> >On Tue, May 21, 2024 at 07:17:53PM +0900, Jaewon Kim wrote:
-> >> >On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
-> >> >> >--------- Original Message ---------
-> >> >> >Sender : 김재원 <jaewon31.kim@samsung.com>System Performance Lab.(MX)/삼성전자
-> >> >> >Date   : 2024-05-21 11:40 (GMT+9)
-> >> >> >Title  : [RESEND PATCH 00/10] memblock: introduce memsize showing reserved memory
-> >> >> >?
-> >> >> >Some of memory regions can be reserved for a specific purpose. They are
-> >> >> >usually defined through reserved-memory in device tree. If only size
-> >> >> >without address is specified in device tree, the address of the region
-> >> >> >will be determined at boot time.
-> >> >> >
-> >> >> >We may find the address of the memory regions through booting log, but
-> >> >> >it does not show all. And it could be hard to catch the very beginning
-> >> >> >log. The memblock_dump_all shows all memblock status but it does not
-> >> >> >show region name and its information is difficult to summarize.
-> >> >> >
-> >> >> >This patch introduce a debugfs node, memblock/memsize, to see reserved
-> >> >> >memory easily.
-> >> >> 
-> >> >> This is actually RESEND as it was introduced 2 years ago.
-> >> >> Please refer to https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf@kernel.org/#t
-> >> >> 
-> >> >> > But you never provided details about *why* you want this information exposed.
-> >> >> 
-> >> >> For your question, I'd like to say ;
-> >> >> We can see the same format and exact information between different version of kernel status.
-> >> >> 
-> >> >> 1) Internally we can check if the reserved memory changes.
-> >> >> 2) Externally we can communicate between chipset vendors and OEM, with a same format.
-> >> >
-> >> >Why the existing debugfs interface is not sufficient?
-> >> 
-> >> debugfs/memblock/memory & debugfs/memblock/reserved have changed its
-> >> format but still does not show name, reusable, kernel size.  If memory is
-> >> reserved from memblock, and did not freed back to memblock. Memblock does
-> >> not know even after the memory is freed to system.  I think a simple
-> >> debug interface is needed to easily communicate with others or compare
-> >> different SW releases.
-> >
-> >I still don't understand what problem are you trying to solve with these
-> >patches. 
-> 
-> I think we need a common API to easily see the reserved memory status.
-> Through MemTotal on /proc/meminfo, we can only see only the total size
-> of reserved memory. We don't how big kernel init size within the the
-> total size. I think this really helps to compare different kernel and
-> communicate with others.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-As was already mentioned on this thread, something like
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-6d69b6c1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/85d8b411b76d/vmlinux-6d69b6c1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a9fe9b7875f4/zImage-6d69b6c1.xz
 
-$ dmesg | grep Memory:
-[    0.000000] Memory: 8058204K/8388608K available (35392K kernel code, 8706K rwdata, 23320K rodata, 16832K init, 848K bss, 297636K reserved, 32768K cma-reserved)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0ac28002caff799b9e57@syzkaller.appspotmail.com
 
-already shows init, rodata and bss sizes.
+input: AT Raw Set 2 keyboard as /devices/platform/bus@8000000/bus@8000000:motherboard-bus/bus@8000000:motherboard-bus:iofpga-bus@300000000/1c060000.kmi/serio0/input/input0
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/bus@8000000/bus@8000000:motherboard-bus/bus@8000000:motherboard-bus:iofpga-bus@300000000/1c070000.kmi/serio1/input/input2
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 24 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c drivers/gpu/drm/drm_atomic_helper.c:1682
+[CRTC:34:crtc-0] vblank wait timed out
+Modules linked in:
+Kernel panic - not syncing: kernel: panic_on_warn set ...
+CPU: 1 PID: 24 Comm: kworker/1:0 Not tainted 6.9.0-syzkaller #0
+Hardware name: ARM-Versatile Express
+Workqueue: events output_poll_execute
+Call trace: 
+[<818d5898>] (dump_backtrace) from [<818d5994>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
+ r7:00000000 r6:82622d44 r5:00000000 r4:81fe1500
+[<818d597c>] (show_stack) from [<818f2fa4>] (__dump_stack lib/dump_stack.c:88 [inline])
+[<818d597c>] (show_stack) from [<818f2fa4>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:114)
+[<818f2f50>] (dump_stack_lvl) from [<818f2fe4>] (dump_stack+0x18/0x1c lib/dump_stack.c:123)
+ r5:00000000 r4:8285fd18
+[<818f2fcc>] (dump_stack) from [<818d643c>] (panic+0x120/0x358 kernel/panic.c:347)
+[<818d631c>] (panic) from [<80243dcc>] (check_panic_on_warn kernel/panic.c:240 [inline])
+[<818d631c>] (panic) from [<80243dcc>] (print_tainted+0x0/0xa0 kernel/panic.c:235)
+ r3:8260c5c4 r2:00000001 r1:81fca178 r0:81fd1dc8
+ r7:80a1fec0
+[<80243d58>] (check_panic_on_warn) from [<80243fc0>] (__warn+0x7c/0x180 kernel/panic.c:693)
+[<80243f44>] (__warn) from [<802442ac>] (warn_slowpath_fmt+0x1e8/0x1f4 kernel/panic.c:726)
+ r8:00000009 r7:820530fc r6:df87dbdc r5:82e3b000 r4:00000000
+[<802440c8>] (warn_slowpath_fmt) from [<80a1fec0>] (drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c drivers/gpu/drm/drm_atomic_helper.c:1682)
+ r10:00000000 r9:00000001 r8:00000001 r7:00000000 r6:8405db00 r5:83ee5050
+ r4:00000000
+[<80a1fc5c>] (drm_atomic_helper_wait_for_vblanks.part.0) from [<80a2130c>] (drm_atomic_helper_wait_for_vblanks drivers/gpu/drm/drm_atomic_helper.c:1658 [inline])
+[<80a1fc5c>] (drm_atomic_helper_wait_for_vblanks.part.0) from [<80a2130c>] (drm_atomic_helper_commit_tail+0x84/0x94 drivers/gpu/drm/drm_atomic_helper.c:1758)
+ r10:8421269c r9:00000000 r8:00000000 r7:00000001 r6:217c7950 r5:841df000
+ r4:8405db00
+[<80a21288>] (drm_atomic_helper_commit_tail) from [<80a22910>] (commit_tail+0x178/0x1a0 drivers/gpu/drm/drm_atomic_helper.c:1835)
+ r5:00000000 r4:8405db00
+[<80a22798>] (commit_tail) from [<80a22aa0>] (drm_atomic_helper_commit+0x150/0x174 drivers/gpu/drm/drm_atomic_helper.c:2073)
+ r9:00000000 r8:8405db2c r7:00000000 r6:841df000 r5:00000000 r4:8405db00
+[<80a22950>] (drm_atomic_helper_commit) from [<809de954>] (drm_atomic_commit+0xc0/0xf4 drivers/gpu/drm/drm_atomic.c:1514)
+ r9:00000000 r8:83ee5520 r7:00000001 r6:841df000 r5:00000000 r4:8405db00
+[<809de894>] (drm_atomic_commit) from [<809e51c0>] (drm_client_modeset_commit_atomic+0x21c/0x25c drivers/gpu/drm/drm_client_modeset.c:1063)
+ r6:00000001 r5:841df1ac r4:8405db00
+[<809e4fa4>] (drm_client_modeset_commit_atomic) from [<809e52d8>] (drm_client_modeset_commit_locked+0x64/0x18c drivers/gpu/drm/drm_client_modeset.c:1166)
+ r10:841df1ec r9:00000001 r8:841df098 r7:83e71418 r6:83e71400 r5:841df000
+ r4:841df000
+[<809e5274>] (drm_client_modeset_commit_locked) from [<809e542c>] (drm_client_modeset_commit+0x2c/0x48 drivers/gpu/drm/drm_client_modeset.c:1192)
+ r9:00000001 r8:841df098 r7:8204c8e0 r6:83e714b8 r5:841df000 r4:83e71400
+[<809e5400>] (drm_client_modeset_commit) from [<80a2fcc8>] (__drm_fb_helper_restore_fbdev_mode_unlocked drivers/gpu/drm/drm_fb_helper.c:251 [inline])
+[<809e5400>] (drm_client_modeset_commit) from [<80a2fcc8>] (__drm_fb_helper_restore_fbdev_mode_unlocked+0x8c/0xc4 drivers/gpu/drm/drm_fb_helper.c:230)
+ r5:83e71400 r4:00000000
+[<80a2fc3c>] (__drm_fb_helper_restore_fbdev_mode_unlocked) from [<80a2fc2c>] (drm_fb_helper_set_par drivers/gpu/drm/drm_fb_helper.c:1344 [inline])
+[<80a2fc3c>] (__drm_fb_helper_restore_fbdev_mode_unlocked) from [<80a2fc2c>] (drm_fb_helper_hotplug_event+0xf8/0x108 drivers/gpu/drm/drm_fb_helper.c:1990)
+ r7:8204c8e0 r6:841df0ac r5:83e714b8 r4:83e71400
+[<80a2fb34>] (drm_fb_helper_hotplug_event) from [<80a19ed8>] (drm_fbdev_dma_client_hotplug+0x24/0xc8 drivers/gpu/drm/drm_fbdev_dma.c:182)
+ r5:841df000 r4:83e71400
+[<80a19eb4>] (drm_fbdev_dma_client_hotplug) from [<809e4750>] (drm_client_dev_hotplug drivers/gpu/drm/drm_client.c:238 [inline])
+[<80a19eb4>] (drm_fbdev_dma_client_hotplug) from [<809e4750>] (drm_client_dev_hotplug+0xbc/0x114 drivers/gpu/drm/drm_client.c:217)
+ r7:8204c8e0 r6:841df0ac r5:841df000 r4:83e71400
+[<809e4694>] (drm_client_dev_hotplug) from [<80a2a990>] (drm_kms_helper_hotplug_event drivers/gpu/drm/drm_probe_helper.c:738 [inline])
+[<809e4694>] (drm_client_dev_hotplug) from [<80a2a990>] (output_poll_execute+0x270/0x2c4 drivers/gpu/drm/drm_probe_helper.c:854)
+ r9:00000001 r8:841df0d8 r7:00000001 r6:841df000 r5:00000001 r4:82cb2180
+[<80a2a720>] (output_poll_execute) from [<802671bc>] (process_one_work+0x1c4/0x510 kernel/workqueue.c:3231)
+ r10:82c16205 r9:82e3b000 r8:01800000 r7:ddde40c0 r6:82c16200 r5:841df1ec
+ r4:82cb2180
+[<80266ff8>] (process_one_work) from [<80267df0>] (process_scheduled_works kernel/workqueue.c:3312 [inline])
+[<80266ff8>] (process_one_work) from [<80267df0>] (worker_thread+0x1ec/0x418 kernel/workqueue.c:3393)
+ r10:82e3b000 r9:82cb21ac r8:61c88647 r7:ddde40e0 r6:82604d40 r5:ddde40c0
+ r4:82cb2180
+[<80267c04>] (worker_thread) from [<80271228>] (kthread+0x104/0x134 kernel/kthread.c:389)
+ r10:00000000 r9:df819d60 r8:82cc3e40 r7:82cb2180 r6:80267c04 r5:82e3b000
+ r4:82cc3c00
+[<80271124>] (kthread) from [<80200114>] (ret_from_fork+0x14/0x20 arch/arm/kernel/entry-common.S:134)
+Exception stack(0xdf87dfb0 to 0xdf87dff8)
+dfa0:                                     00000000 00000000 00000000 00000000
+dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+ r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:80271124 r4:82cc3c00
+Rebooting in 86400 seconds..
 
-And size -A vmlinux provides detailed breakdown of the kernel image into
-sections.
- 
-> I think the debugfs API or early boot log shows quite much information
-> for the reserved memory information defined in device tree. But it is
-> difficult to see after boot, as the boot log already was removed ouf of
-> the kernel log buffer.
 
-Kernel log is persisted, isn't it?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> And it does not show some information like kernel init size, late free
-> pages. AFAIK if some memblocks are merged to a memblock data structure,
-> the debugfs memblock API show it a one memblock rather than showing what
-> each memblock request.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The reason to merge reserved regions is to save memory and CPU and in vast
-majority of cases it is not important from where memblock_reserve() was
-called. If it's really important to keep some of the reservations distinct,
-it can be achieved by e.g. using .flags field in the reserved regions.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Your repost of the patches still does not address my comment from two
-years ago:
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-	You propose complex mechanism that seems to fit very particular
-	scenario and sprinkle some calls to this mechanism at random places
-	because you need to "compare reserved memory map with other map".
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-As I said then, I don't mind providing more visibility into reserved memory
-attributes in general, but I'd like to see something way more simple and
-localized with a clear description what problem it solves and how it works
-in a general case.
- 
-> BR
-> Jaewon Kim
-
--- 
-Sincerely yours,
-Mike.
+If you want to undo deduplication, reply with:
+#syz undup
 
