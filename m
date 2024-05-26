@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-189785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6FA8CF4EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9368CF4EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12AC1C20BD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDDD2811F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BB8200D2;
-	Sun, 26 May 2024 16:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62E41DFD6;
+	Sun, 26 May 2024 16:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="w2wVi6XE"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pkJEcoth"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B931168B9;
-	Sun, 26 May 2024 16:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F51758E;
+	Sun, 26 May 2024 16:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716742214; cv=none; b=orHU5NAg/rI45/tFhaeuZsH2zqcakFCK2ytI5MRb50SJxzmf3vK/mDU5BPNaNSDA3K3XnK1jCJ+2/+fhyn4MjWtgnifb74AZT/TsahwBP6iS20Fj2soj6h+g//ixYZB1jKp9QynsQKwppMjRRduXkwJpDRkcof9vcFVHpsuUNpo=
+	t=1716742411; cv=none; b=auE4NCjdjaPFfZnSvLziyeL0ZAh7NqQVKuVuuiWEsPWZFNYIYVW3Ha8NBH0iEwDzVws+A4qyjj+43MbJ+bnjXRUz/R6dhCWT7y+Uj2NSTIytVKH9E6RVaGLI04Hv4lfPCBMLNmamcwnEepmH+pAIpZ/U2Yi5J8FYmlNxiUCos4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716742214; c=relaxed/simple;
-	bh=ETjA3dGIbrqGmMPuDEM7g9G8PK00mOnqw3j6bdPx5Q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGbcOHKqyzwjT4u16cWrndqwKPYvwx14Eftl3Gyr5rFTi836pUXYzDK12qBj9txExPngQKo6x3/gtaAtnNc3TqIGQ7dcbdAPuMis7OVA8P4g1XqHU6gpCvtrkRBDi4SyCmzyo1IwUZQ267zAEL9gNU+itLuPofJUbtAU5ZkpgfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=w2wVi6XE; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Se3l6VfrArDiw2sv7ishS59ORjDk+6CLWOFsd5rBSlk=; b=w2wVi6XEWBHXj27s1jxicTfKm7
-	EyjyocygWLXY7RgaPeE84Eo0aLHKkIFEEk1p05hwhlc4WsoBTZ4bLyUjQku7N/VqqwpB6pdlJp65T
-	Q0YqBcLapNOFqn7YaizyhRkoK63NxKl9Q4Du/3tVlDYYWr4il7fbD1FHeBnKNu8AmbVKmJTB6geF2
-	AOtHE/AejxFoXoRA6fQ8R8Drtjbob8M8UKUrR9PFJd45aWnv9S5DqRcumz1vGu/UZzzSJwEfyo/4S
-	JC3lAFUb0byd7XTZnEsWoXXYyFziyZmWPkYy8Y7jm4GypTINxQNi9Px/0hkJ87R+JcRbab57XP2Jo
-	EC9xRU8g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49196)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBH4A-0002pc-2v;
-	Sun, 26 May 2024 17:49:52 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBH48-0001Wp-8T; Sun, 26 May 2024 17:49:48 +0100
-Date: Sun, 26 May 2024 17:49:48 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Byungho An <bh74.an@samsung.com>,
-	Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
- based on the selected iface
-Message-ID: <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
-References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
- <20240524210304.9164-1-fancer.lancer@gmail.com>
- <20240524210304.9164-2-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1716742411; c=relaxed/simple;
+	bh=DuIz6G9RKoV38cQtkSpR7QLaH8zvhm1mIsUnPVSj5EU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cKckwT/jQaHzztS8PTCpuLHnC7aeEPtV4eTAEp0RZIzPw/rdEvVBohEVc8xcEUktiQudKHU79RBa1JwjPPRtdJ3ed/qLr3b7jVuQ+SoF8fYPyvkPz00OX0m6i3nszvOXerzy2TPH9POgAXPTrmKO7w7lXAoY4DdoNv9ami9xa1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pkJEcoth; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFG8tu023549;
+	Sun, 26 May 2024 16:52:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hY+Lcx03LqVtjb+9FRb6Ft
+	CCsw4wjlH7Z9n5CV1t0Q8=; b=pkJEcoth7/ngITw2ovnH6IUE5rfeLdtmAWW/mj
+	qs9yBXsply4oHAtHA8guyPm6kb4YJ0cQ60pGknubZkro21Iv2ifpNjXKzFTn2ca8
+	pIWMOd7a4AV0UjYKgLD2EPaAoy25TG8RPiuEzSQIhCPJ3YKdiBurQ7ZF8syhz+ZQ
+	LgHsmIbbII449gQnHVyRHtgFYvzOiyTA3yaV38W0GkazmuvruAdPHIWqvTE6puF3
+	cdKytB4YaW3rxuzx5zjqz02uI63RljfbrSk2YwFXrhMAZzn35+ApD0pwRhL3nsQy
+	de2svwJCXvqF2wl5gkwdjeCr42qftS5LPSyATlK4KAEhGuYg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g1y6a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 16:52:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QGqoGB032274
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 16:52:51 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
+ 2024 09:52:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 26 May 2024 09:52:48 -0700
+Subject: [PATCH] fs: smb: common: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524210304.9164-2-fancer.lancer@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240526-md-fs-smb-common-v1-1-564a0036abe9@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAN9oU2YC/x3MywrCMBCF4Vcps3YgTb2/irjIZWIHnKRktFRK3
+ 93o8oNz/hWUKpPCtVuh0szKJTf0uw7C6PKDkGMzWGP35mCPKBGToorHUERKRrpYM/TpFM8hQbt
+ NlRIv/+Tt3uydEvrqchh/oSfn94Li9EUVp0+bwrZ9AeNt1M6HAAAA
+To: Namjae Jeon <linkinjeon@kernel.org>, Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg
+	<ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        "Bharath
+ SM" <bharathsm@microsoft.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3GqhrWkK7rjr073_-pZPlNwb3zAV88Zu
+X-Proofpoint-ORIG-GUID: 3GqhrWkK7rjr073_-pZPlNwb3zAV88Zu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=672 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405260140
 
-On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
-> The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
-> into the DW GMAC controller. It's always done if the controller supports
-> at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
-> interfaces support was activated during the IP-core synthesize the PCS
-> block won't be activated either and the HWFEATURE.PCSSEL flag won't be
-> set. Based on that the RGMII in-band status detection procedure
-> implemented in the driver hasn't been working for the devices with the
-> RGMII interface support and with none of the SGMII, TBI, RTBI PHY
-> interfaces available in the device.
-> 
-> Fix that just by dropping the dma_cap.pcs flag check from the conditional
-> statement responsible for the In-band/PCS functionality activation. If the
-> RGMII interface is supported by the device then the in-band link status
-> detection will be also supported automatically (it's always embedded into
-> the RGMII RTL code). If the SGMII interface is supported by the device
-> then the PCS block will be supported too (it's unconditionally synthesized
-> into the controller). The later is also correct for the TBI/RTBI PHY
-> interfaces.
-> 
-> Note while at it drop the netdev_dbg() calls since at the moment of the
-> stmmac_check_pcs_mode() invocation the network device isn't registered. So
-> the debug prints will be for the unknown/NULL device.
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
 
-Thanks. As this is a fix, shouldn't it be submitted for the net tree as
-it seems to be fixing a bug in the driver as it stands today?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/smb/common/cifs_arc4.c | 1 +
+ fs/smb/common/cifs_md4.c  | 1 +
+ 2 files changed, 2 insertions(+)
 
-Also, a build fix is required here:
+diff --git a/fs/smb/common/cifs_arc4.c b/fs/smb/common/cifs_arc4.c
+index 043e4cb839fa..df360ca47826 100644
+--- a/fs/smb/common/cifs_arc4.c
++++ b/fs/smb/common/cifs_arc4.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include "arc4.h"
+ 
++MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
+ MODULE_LICENSE("GPL");
+ 
+ int cifs_arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
+diff --git a/fs/smb/common/cifs_md4.c b/fs/smb/common/cifs_md4.c
+index 50f78cfc6ce9..7ee7f4dad90c 100644
+--- a/fs/smb/common/cifs_md4.c
++++ b/fs/smb/common/cifs_md4.c
+@@ -24,6 +24,7 @@
+ #include <asm/byteorder.h>
+ #include "md4.h"
+ 
++MODULE_DESCRIPTION("MD4 Message Digest Algorithm (RFC1320)");
+ MODULE_LICENSE("GPL");
+ 
+ static inline u32 lshift(u32 x, unsigned int s)
 
-> -	if (priv->dma_cap.pcs) {
-> -		if ((interface == PHY_INTERFACE_MODE_RGMII) ||
-> -		    (interface == PHY_INTERFACE_MODE_RGMII_ID) ||
-> -		    (interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
-> -		    (interface == PHY_INTERFACE_MODE_RGMII_TXID)) {
-> -			netdev_dbg(priv->dev, "PCS RGMII support enabled\n");
-> -			priv->hw->pcs = STMMAC_PCS_RGMII;
-> -		} else if (interface == PHY_INTERFACE_MODE_SGMII) {
-> -			netdev_dbg(priv->dev, "PCS SGMII support enabled\n");
-> -			priv->hw->pcs = STMMAC_PCS_SGMII;
-> -		}
-> -	}
-> +	if (phy_interface_mode_is_rgmii(interface))
-> +		priv->hw.pcs = STMMAC_PCS_RGMII;
-> +	else if (interface == PHY_INTERFACE_MODE_SGMII)
-> +		priv->hw.pcs = STMMAC_PCS_SGMII;
+---
+base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
+change-id: 20240526-md-fs-smb-common-e92031f7d8cf
 
-Both of these assignments should be priv->hw->pcs not priv->hw.pcs.
-
-I think there's also another bug that needs fixing along with this.
-See stmmac_ethtool_set_link_ksettings(). Note that this denies the
-ability to disable autoneg, which (a) doesn't make sense for RGMII
-with an attached PHY, and (b) this code should be passing the
-ethtool op to phylink for it to pass on to phylib so the PHY can
-be appropriately configured for the users desired autoneg and
-link mode settings.
-
-I also don't think it makes any sense for the STMMAC_PCS_SGMII case
-given that it means Cisco SGMII - which implies that there is also
-a PHY (since Cisco SGMII with inband is designed to be coupled with
-something that looks like a PHY to send the inband signalling
-necessary to configure e.g. the SGMII link symbol replication.
-
-In both of these cases, even if the user requests autoneg to be
-disabled, that _shouldn't_ affect internal network driver links.
-This ethtool op is about configuring the externally visible media
-side of the network driver, not the internal links.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
