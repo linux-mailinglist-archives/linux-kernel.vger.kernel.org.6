@@ -1,93 +1,190 @@
-Return-Path: <linux-kernel+bounces-189731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C818CF432
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:20:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C27C8CF434
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53BD1C20ADD
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:20:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDD01C20A0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90801DDDC;
-	Sun, 26 May 2024 12:20:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD54DF5C;
+	Sun, 26 May 2024 12:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVfmAuCT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF61BB676
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 12:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF356C2D6;
+	Sun, 26 May 2024 12:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716726008; cv=none; b=RcEpTBb6NT4Wz60PXENz/bwUJQq01G4/t+5tObCbFlQECb2wzRVaKgiqQKOkLRJXA0ux/7nX2Vf19UftcQ+S1wUvtzXG79fGDiuQQhxDZZPRvYx9FMAIUk6kx9KXOs4uWWZMLLtbIUspPJVHja7i4uyQW2G6YMustSvg6YNEv+g=
+	t=1716726023; cv=none; b=h9iJ+r00cUOrrB0T5/yJWDd1PYYjF0n0l7zj6qy5PjNKbailO3wScb18TP9o3R+JDBT95nnKaLUx3HN0bDeNILM8lKbwdCmXGciswC6PC9mgNU8wr2qo31QSnw6hrWFwrPAPPSxxoOWvTFpYJtJLhzDbaZUwohlzu0UxHV3wRmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716726008; c=relaxed/simple;
-	bh=WaRJ+rA5WgS3mFqo4k0lp8UErqbl9DIH6B/VqP7V0ao=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uK2ofNJ7oL7m5kcDhh2bezqD8SrEsJoGpNgpYfoHk4cLlHY1o9aLiGh8EoEIE1R2t4JiyxHpQnQRz7TkAi5c02TC00yhtdIsYwFTF4u63vKTVnzqyiMGry/vCDyOyEEZ+fOjBDJPsjcBfIDtrwl6zAZFYBMMyAWbsqveheHRzy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37456723385so1807325ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 05:20:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716726006; x=1717330806;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/As+RO3hUU+6RkkzFvyl958mmQkvQbWtdetCc5wnIJ4=;
-        b=vQagfGmWe5GG8Q6woqrkI5CUVAiydRP3ZRssZK6sj2mFvphoiIKJAXkvWTyi7JfRks
-         grDxOv44WgNP4VVy8Jf6bZUtET3MRCxSazI4oYkYlK2zrrB5JQTIm5S0p8/qpvqNMmK+
-         Sv5g/mMaMJ0wNeYVploUHeZ0no/y/TFEQ+Kw74nGjtLBiH5CFEsNk0lSt3RwkwioEvhU
-         LMy0B+vhH3pDCYX9bDPmmzVeO3/Rw4pTLNP1kYUE4qZl86qPC4u88eNINdwWFCRTQ9GX
-         Lbct+lkct1JdQmX65DayIqMwFJOTIDd5sBrXV/egkaSnneghp+7rapO5s4oV8h6K1tg0
-         Cc3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3lnB51MazUcQpnDQwyI7PVoJbFinMF4gUv5RC+JZzkPm+9P03Cw+fv3P8o6kKiqR+cJaER92rc1FuVVtIOD8kDxPr+rKhHUxwUBIH
-X-Gm-Message-State: AOJu0YxeirNRimxPsY8pwpg+zfnd583dB9FB0P0BdlZiUCz3HGLGx8I+
-	9VaAZWJPQLUcouxzhrjkL9mKxDjYuQN3dtygIwiAPBgyw9/9WASfYWJ8EA1hs85zYFnVaiEwhms
-	i1rnkpfvw9CncAgNx9/XghIQeBQwGjs831pF4L+iNpdTOpebZyrjDHI0=
-X-Google-Smtp-Source: AGHT+IH83hL1JYz01PPFxLm89qIIXnDgvitXVzrNi/f/Ty1yRl7x7r6QJdsIu+cMLbZ5D756XmkdT0lLxSX8k6f1/G4V3e54gqgl
+	s=arc-20240116; t=1716726023; c=relaxed/simple;
+	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IZtGDx6T/vvJolazyCisJnJkINiPcFcv9YaSubjl8jU6KIZhZVWu7XLAPT9A8XxC2vY8OtUEoeLZ/zv6xhRNq2LjkvwR073qLqkrQa1iUyqyIi8QZ+uIfnyrNbL8HcBC+1mj7CDVgsWY0wF+jS0QtBJSzjuqSuaGgsnOQYeuneA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVfmAuCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFF2C2BD10;
+	Sun, 26 May 2024 12:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716726023;
+	bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GVfmAuCTDm2k7wjoJMrE/Y5Jx3RFofSI/A+9FRFhlJFDYROLSINICrlsTJ/rMvE+2
+	 lvPQXx7zZCVnPBdPZDcXEZPPGCrp9L6OzLNI5R1M2ScsUHYtd/4PMc1C9snikOf8Jp
+	 6/cxSJ2gj42idZlhbPDuF/w+LkhNkpp4ScGsACqtgEdROOT10FDv6OystyBirh2kPM
+	 CN6bCdTgU1cuUMSg2zJjHX23hNFRC9pgSprAVNNy/6KwpzFk8Z2XmRu51NH4RJQOYd
+	 4JxK7muJMc5tiuqu0Q78IAVCm5gf6jwMJw9Er5kj2OApfIJo8sZnQtUkJGgtVPGmDd
+	 ansdfY1fT1AeA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Sun, 26 May 2024 08:20:16 -0400
+Subject: [PATCH RFC] fs: turn inode->i_ctime into a ktime_t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160f:b0:373:fed2:d934 with SMTP id
- e9e14a558f8ab-373fed2dc57mr3307805ab.1.1716726006095; Sun, 26 May 2024
- 05:20:06 -0700 (PDT)
-Date: Sun, 26 May 2024 05:20:06 -0700
-In-Reply-To: <0000000000005736990617c4fa63@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c53d3206195a6b38@google.com>
-Subject: Re: [syzbot] [net?] WARNING in inet_csk_get_port (3)
-From: syzbot <syzbot+2459c1b9fcd39be822b1@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, jolsa@kernel.org, kuba@kernel.org, laoar.shao@gmail.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240526-ctime-ktime-v1-1-016ca6c1e19a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAP8oU2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyMz3eSSzNxU3WwwmWJiaGqUkmphaGhqrATUUVCUmpZZATYtWinIzVk
+ ptrYWADLB4TZiAAAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+ Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3692; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=vaox6C/5vKHxXFGk4CEyr/LzDKIY/J0CIiuiJyykHek=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmUykFGfWXjogqlx0kTGbCIxPDMLJ/+LnSVWox/
+ /9P0qRBgruJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZlMpBQAKCRAADmhBGVaC
+ FZg/D/9Ouih6Qb8A825LnXh8eyDl7mGgk/t1bSuTnuW7mlJ52hqLVDyFfOS6PsxuBsj/4qJUsmT
+ I15VLG2/i0mfOLWEQfxyPScT9L8HKuVHbd0iZsqV2SLboBjuDvc7kTHYv9IIChhRW0YZMrIPRLN
+ 6g5wXq58I+SHciw5eo/hAmGlNwL787u8dQTVQg+vhsP0M25+4vt40NwptD/cLbMBlbFoUsg8Xpx
+ exSNPoFU46sE1draokpTL7nlujNc9O/Gi75s+k34U7v03SVSJekzPMsLXIikF424FnBuoCRwc/I
+ y7KF8kjMWSqhUoL8y5lD4XU84iYhNiT2PzKXsgWRmYQQcS95Z+iA69S2E1nycoYGqZK3b3A2mbp
+ hXs9qGgz671EGpDkfTtr26ZBgN90QWjkwMfxqmcFtDSSQClwwjX3QNbrQ2goPYGREmk52S05eVL
+ j4KGiF2SSFEMuiROqgphZG/9YnPlr0sxtwMVxM8tf+Ns2hlu3Lo1uwXaoA2BF/7q1+XQjO9qcJU
+ WV2tqBDtHfZ/v1v/DF65sVQubkRnRx7WXMISBtUiLNH8us0LNXf8OKOdMslAuEWagYJuvLxAqbh
+ gOx9x96EoVQXd3XAx1H5haoYKGzBMOJCagjWjAKrbnwUgqkAU8oeqOZgzyb6IdP8uEQV8+SpmW5
+ oqxkcvGLCLcPasw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-syzbot has bisected this issue to:
+The ctime is not settable to arbitrary values. It always comes from the
+system clock, so we'll never stamp an inode with a value that can't be
+represented there. If we disregard people setting their system clock
+past the year 2262, there is no reason we can't replace the ctime fields
+with a ktime_t.
 
-commit 3505cb9fa26cfec9512744466e754a8cbc2365b0
-Author: Jiri Olsa <jolsa@kernel.org>
-Date:   Wed Aug 9 08:34:14 2023 +0000
+Switch the __i_ctime fields to a single ktime_t. Move the i_generation
+down above i_fsnotify_mask and then move the i_version into the
+resulting 8 byte hole. This shrinks struct inode by 8 bytes total, and
+should improve the cache footprint as the i_version and __i_ctime are
+usually updated together.
 
-    bpf: Add attach_type checks under bpf_prog_attach_check_attach_type
+The one downside I can see to switching to a ktime_t is that if someone
+has a filesystem with files on it that has ctimes outside the ktime_t
+range (before ~1678 AD or after ~2262 AD), we won't be able to display
+them properly in stat() without some special treatment. I'm operating
+under the assumption that this is not a practical problem.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15dbe672980000
-start commit:   977b1ef51866 Merge tag 'block-6.9-20240420' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17dbe672980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13dbe672980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=85dbe39cf8e4f599
-dashboard link: https://syzkaller.appspot.com/bug?extid=2459c1b9fcd39be822b1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126c6080980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11135520980000
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I've been looking at this as part of trying to resurrect the multigrain
+timestamp work, as Linus mentioned it in passing in an earlier
+discussion, but then Willy threw down the gauntlet.
 
-Reported-by: syzbot+2459c1b9fcd39be822b1@syzkaller.appspotmail.com
-Fixes: 3505cb9fa26c ("bpf: Add attach_type checks under bpf_prog_attach_check_attach_type")
+Thoughts?
+---
+ include/linux/fs.h | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 639885621608..6b9ed7dff6d5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -662,11 +662,10 @@ struct inode {
+ 	loff_t			i_size;
+ 	time64_t		i_atime_sec;
+ 	time64_t		i_mtime_sec;
+-	time64_t		i_ctime_sec;
+ 	u32			i_atime_nsec;
+ 	u32			i_mtime_nsec;
+-	u32			i_ctime_nsec;
+-	u32			i_generation;
++	ktime_t			__i_ctime;
++	atomic64_t		i_version;
+ 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
+ 	unsigned short          i_bytes;
+ 	u8			i_blkbits;
+@@ -701,7 +700,6 @@ struct inode {
+ 		struct hlist_head	i_dentry;
+ 		struct rcu_head		i_rcu;
+ 	};
+-	atomic64_t		i_version;
+ 	atomic64_t		i_sequence; /* see futex */
+ 	atomic_t		i_count;
+ 	atomic_t		i_dio_count;
+@@ -724,6 +722,8 @@ struct inode {
+ 	};
+ 
+ 
++	u32			i_generation;
++
+ #ifdef CONFIG_FSNOTIFY
+ 	__u32			i_fsnotify_mask; /* all events this inode cares about */
+ 	/* 32-bit hole reserved for expanding i_fsnotify_mask */
+@@ -1608,29 +1608,25 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+ 	return inode_set_mtime_to_ts(inode, ts);
+ }
+ 
+-static inline time64_t inode_get_ctime_sec(const struct inode *inode)
++static inline struct timespec64 inode_get_ctime(const struct inode *inode)
+ {
+-	return inode->i_ctime_sec;
++	return ktime_to_timespec64(inode->__i_ctime);
+ }
+ 
+-static inline long inode_get_ctime_nsec(const struct inode *inode)
++static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+ {
+-	return inode->i_ctime_nsec;
++	return inode_get_ctime(inode).tv_sec;
+ }
+ 
+-static inline struct timespec64 inode_get_ctime(const struct inode *inode)
++static inline long inode_get_ctime_nsec(const struct inode *inode)
+ {
+-	struct timespec64 ts = { .tv_sec  = inode_get_ctime_sec(inode),
+-				 .tv_nsec = inode_get_ctime_nsec(inode) };
+-
+-	return ts;
++	return inode_get_ctime(inode).tv_nsec;
+ }
+ 
+ static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->i_ctime_sec = ts.tv_sec;
+-	inode->i_ctime_nsec = ts.tv_nsec;
++	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
+ 	return ts;
+ }
+ 
+
+---
+base-commit: a6f48ee9b741a6da6a939aa5c58d879327f452e1
+change-id: 20240526-ctime-ktime-d4152de81153
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
