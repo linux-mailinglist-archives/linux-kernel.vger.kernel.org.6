@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-189626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35528CF305
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F19E8CF306
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAB2282171
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA3B1F21D79
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA60B647;
-	Sun, 26 May 2024 09:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07216BA38;
+	Sun, 26 May 2024 09:23:04 +0000 (UTC)
 Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E319010A0B
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C985CB669
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716715379; cv=none; b=MYOm3vDIsrdfMKfd5W7oUv9gb+qB3G80k8UVBHuZk1sh1I5017P1x/KIo7CeKZXxwj2JnHYU4QeD1cXPAePoe9RANiQQ7Y1zVOS7j2bALWRtjNjstMda5aih4CG85vO9DFfIyyQZxuT6utovmunf+Vqmo5ER6ZnydH5wVp0asfM=
+	t=1716715383; cv=none; b=JEa85QlCd4gA33yUuTb3u0sL6KkQpy4xJavaVhWHqYq5eveEreuDmFjq7pdY77Gnf7jlu8tTVyGUz3XHTat+Z4hkGZeaoWHER1KOhdFB5YAMBfSMekxFpzXQaRvx28av8TNknn1Zsy3lrcjZVPiuHWmem21Ovde/IvnYYRGRg98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716715379; c=relaxed/simple;
-	bh=QlDPkU03jHVcQFwETp3uKDh3gxPw0YPnfm4bTul1DaE=;
+	s=arc-20240116; t=1716715383; c=relaxed/simple;
+	bh=YHXXAKikz+yjGFibh8EtpvNY8BY3AGFWEQEdIqI/W5w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sJbquZxHFj9evzQ4ElT0uB4hKnmKSt3x06jhKVRpcbqMTmrNggjx71e1vlxuyCY52R9MyZ5snVWSfkx3hN7o+uPAG+MzdZkHjqBvzcuOLkj3GygafOBg9HBJV86tofllb9iLcULMgVdwe1FLDGaA0hifY1p9u3/F/de0vZ7oVXc=
+	 MIME-Version; b=HtE82oZa+2ePI8UTAKm0Suhb0b1/Bjojzdo1FN0ki111kfJ2JUKY5kDW+O2kyUAx08fGKEcdHyUYi5NrJrS2HIA9mR6px5AJ7R8hLRW0/kXnYR3Peoe6LZQMpNH64NxW4e5rIe4CAJ8z7vQfld7bJ2Dc/soHXwRBC4dfNGn96PE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4VnCwm1PjNz9tC6;
-	Sun, 26 May 2024 11:22:32 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4VnCwn2Pl5z9tFS;
+	Sun, 26 May 2024 11:22:33 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
 	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cyEdOAE35yJU; Sun, 26 May 2024 11:22:32 +0200 (CEST)
+	with ESMTP id f1D6EIRUfxuc; Sun, 26 May 2024 11:22:33 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwk4NBZz9sgJ;
-	Sun, 26 May 2024 11:22:30 +0200 (CEST)
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwl1D2Yz9t0b;
+	Sun, 26 May 2024 11:22:31 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 90D3A8B773;
-	Sun, 26 May 2024 11:22:30 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 24B418B773;
+	Sun, 26 May 2024 11:22:31 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id vP_K-aFXdBbu; Sun, 26 May 2024 11:22:30 +0200 (CEST)
+	with ESMTP id ya-yDRxmODXU; Sun, 26 May 2024 11:22:31 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.45])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 16BCC8B764;
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 934238B774;
 	Sun, 26 May 2024 11:22:30 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -59,9 +59,9 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH v3 05/16] powerpc/mm: Fix __find_linux_pte() on 32 bits with PMD leaf entries
-Date: Sun, 26 May 2024 11:22:25 +0200
-Message-ID: <aa54834e9ee5e40179def32ff5834a8a2a02c413.1716714720.git.christophe.leroy@csgroup.eu>
+Subject: [RFC PATCH v3 06/16] powerpc/mm: Allow hugepages without hugepd
+Date: Sun, 26 May 2024 11:22:26 +0200
+Message-ID: <f1f0466e04a048333f1d15867553eba5ef83c1de.1716714720.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1716714720.git.christophe.leroy@csgroup.eu>
 References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
@@ -71,73 +71,187 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715343; l=2111; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=QlDPkU03jHVcQFwETp3uKDh3gxPw0YPnfm4bTul1DaE=; b=LrZqurpYufbsEcF3rYJaveJGDTrjK/rShdEMQxcaILR9OkMKaPC1FyPddR7MYnYIUb8Ip46R2 WrHincdZRnVCfDl/ccH6LWvrNpgeq6PXybkN7ZbqvSS1rO9c/ivBu/a
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715343; l=5578; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=YHXXAKikz+yjGFibh8EtpvNY8BY3AGFWEQEdIqI/W5w=; b=Reo2Iwi+5ogLBzkg9BmijAEDu1YJsF6H2Kiorghv0PXTSCBm+4p5pPvaI4hLB7EqhUDW9brzI fIM+G/T6ssBC4lHvJjU39XD1N3l2mMyDJJ/MtojpJNjbCD/yaKq/wKJ
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Building on 32 bits with pmd_leaf() not returning always false leads
-to the following error:
+In preparation of implementing huge pages on powerpc 8xx
+without hugepd, enclose hugepd related code inside an
+ifdef CONFIG_ARCH_HAS_HUGEPD
 
-  CC      arch/powerpc/mm/pgtable.o
-arch/powerpc/mm/pgtable.c: In function '__find_linux_pte':
-arch/powerpc/mm/pgtable.c:506:1: error: function may return address of local variable [-Werror=return-local-addr]
-  506 | }
-      | ^
-arch/powerpc/mm/pgtable.c:394:15: note: declared here
-  394 |         pud_t pud, *pudp;
-      |               ^~~
-arch/powerpc/mm/pgtable.c:394:15: note: declared here
-
-This is due to pmd_offset() being a no-op in that case.
-
-So rework it for powerpc/32 so that pXd_offset() are used on real
-pointers and not on on-stack copies.
+This also allows removing some stubs.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-v3: Removed p4dp and pudp locals for PPC32 and add a comment.
+v3:
+- Prepare huge_pte_alloc() for full standard topology, not only for 2-level
+- Reordered last part of huge_pte_alloc()
 ---
- arch/powerpc/mm/pgtable.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/powerpc/include/asm/book3s/32/pgalloc.h |  2 --
+ arch/powerpc/include/asm/hugetlb.h           | 10 ++----
+ arch/powerpc/include/asm/nohash/pgtable.h    |  8 +++--
+ arch/powerpc/mm/hugetlbpage.c                | 33 ++++++++++++++++++++
+ arch/powerpc/mm/pgtable.c                    |  2 ++
+ 5 files changed, 42 insertions(+), 13 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+index dc5c039eb28e..dd4eb3063175 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@ -47,8 +47,6 @@ static inline void pgtable_free(void *table, unsigned index_size)
+ 	}
+ }
+ 
+-#define get_hugepd_cache_index(x)  (x)
+-
+ static inline void pgtable_free_tlb(struct mmu_gather *tlb,
+ 				    void *table, int shift)
+ {
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index ea71f7245a63..79176a499763 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -30,10 +30,12 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ }
+ #define is_hugepage_only_range is_hugepage_only_range
+ 
++#ifdef CONFIG_ARCH_HAS_HUGEPD
+ #define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
+ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
++#endif
+ 
+ #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+@@ -67,14 +69,6 @@ static inline void flush_hugetlb_page(struct vm_area_struct *vma,
+ {
+ }
+ 
+-#define hugepd_shift(x) 0
+-static inline pte_t *hugepte_offset(hugepd_t hpd, unsigned long addr,
+-				    unsigned pdshift)
+-{
+-	return NULL;
+-}
+-
+-
+ static inline void __init gigantic_hugetlb_cma_reserve(void)
+ {
+ }
+diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+index 427db14292c9..ac3353f7f2ac 100644
+--- a/arch/powerpc/include/asm/nohash/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/pgtable.h
+@@ -340,7 +340,7 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 
+ #define pgprot_writecombine pgprot_noncached_wc
+ 
+-#ifdef CONFIG_HUGETLB_PAGE
++#ifdef CONFIG_ARCH_HAS_HUGEPD
+ static inline int hugepd_ok(hugepd_t hpd)
+ {
+ #ifdef CONFIG_PPC_8xx
+@@ -351,6 +351,10 @@ static inline int hugepd_ok(hugepd_t hpd)
+ #endif
+ }
+ 
++#define is_hugepd(hpd)		(hugepd_ok(hpd))
++#endif
++
++#ifdef CONFIG_HUGETLB_PAGE
+ static inline int pmd_huge(pmd_t pmd)
+ {
+ 	return 0;
+@@ -360,8 +364,6 @@ static inline int pud_huge(pud_t pud)
+ {
+ 	return 0;
+ }
+-
+-#define is_hugepd(hpd)		(hugepd_ok(hpd))
+ #endif
+ 
+ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index 594a4b7b2ca2..20fad59ff9f5 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -42,6 +42,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr, unsigned long s
+ 	return __find_linux_pte(mm->pgd, addr, NULL, NULL);
+ }
+ 
++#ifdef CONFIG_ARCH_HAS_HUGEPD
+ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+ 			   unsigned long address, unsigned int pdshift,
+ 			   unsigned int pshift, spinlock_t *ptl)
+@@ -193,6 +194,36 @@ pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 
+ 	return hugepte_offset(*hpdp, addr, pdshift);
+ }
++#else
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
++		      unsigned long addr, unsigned long sz)
++{
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++
++	addr &= ~(sz - 1);
++
++	p4d = p4d_offset(pgd_offset(mm, addr), addr);
++	if (!mm_pud_folded(mm) && sz >= P4D_SIZE)
++		return (pte_t *)p4d;
++
++	pud = pud_alloc(mm, p4d, addr);
++	if (!pud)
++		return NULL;
++	if (!mm_pmd_folded(mm) && sz >= PUD_SIZE)
++		return (pte_t *)pud;
++
++	pmd = pmd_alloc(mm, pud, addr);
++	if (!pmd)
++		return NULL;
++
++	if (sz >= PMD_SIZE)
++		return (pte_t *)pmd;
++
++	return pte_alloc_huge(mm, pmd, addr);
++}
++#endif
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ /*
+@@ -248,6 +279,7 @@ int __init alloc_bootmem_huge_page(struct hstate *h, int nid)
+ 	return __alloc_bootmem_huge_page(h, nid);
+ }
+ 
++#ifdef CONFIG_ARCH_HAS_HUGEPD
+ #ifndef CONFIG_PPC_BOOK3S_64
+ #define HUGEPD_FREELIST_SIZE \
+ 	((PAGE_SIZE - sizeof(struct hugepd_freelist)) / sizeof(pte_t))
+@@ -505,6 +537,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+ 		}
+ 	} while (addr = next, addr != end);
+ }
++#endif
+ 
+ bool __init arch_hugetlb_valid_size(unsigned long size)
+ {
 diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index 9e7ba9c3851f..10adef5967a3 100644
+index 10adef5967a3..c56593f568a2 100644
 --- a/arch/powerpc/mm/pgtable.c
 +++ b/arch/powerpc/mm/pgtable.c
-@@ -382,8 +382,10 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
- 			bool *is_thp, unsigned *hpage_shift)
- {
- 	pgd_t *pgdp;
-+#ifdef CONFIG_PPC64
- 	p4d_t p4d, *p4dp;
- 	pud_t pud, *pudp;
-+#endif
- 	pmd_t pmd, *pmdp;
- 	pte_t *ret_pte;
- 	hugepd_t *hpdp = NULL;
-@@ -401,8 +403,12 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
- 	 * page fault or a page unmap. The return pte_t * is still not
- 	 * stable. So should be checked there for above conditions.
- 	 * Top level is an exception because it is folded into p4d.
-+	 *
-+	 * On PPC32, P4D/PUD/PMD are folded into PGD so go straight to
-+	 * PMD level.
- 	 */
- 	pgdp = pgdir + pgd_index(ea);
-+#ifdef CONFIG_PPC64
- 	p4dp = p4d_offset(pgdp, ea);
- 	p4d  = READ_ONCE(*p4dp);
- 	pdshift = P4D_SHIFT;
-@@ -444,6 +450,9 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+@@ -496,8 +496,10 @@ pte_t *__find_linux_pte(pgd_t *pgdir, unsigned long ea,
+ 	if (!hpdp)
+ 		return NULL;
  
- 	pdshift = PMD_SHIFT;
- 	pmdp = pmd_offset(&pud, ea);
-+#else
-+	pmdp = pmd_offset(pud_offset(p4d_offset(pgdp, ea), ea), ea);
++#ifdef CONFIG_ARCH_HAS_HUGEPD
+ 	ret_pte = hugepte_offset(*hpdp, ea, pdshift);
+ 	pdshift = hugepd_shift(*hpdp);
 +#endif
- 	pmd  = READ_ONCE(*pmdp);
- 
- 	/*
+ out:
+ 	if (hpage_shift)
+ 		*hpage_shift = pdshift;
 -- 
 2.44.0
 
