@@ -1,99 +1,101 @@
-Return-Path: <linux-kernel+bounces-189612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5B58CF2E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 10:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB7D8CF2E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 10:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28441F2116D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651951C209DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 08:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33248F54;
-	Sun, 26 May 2024 08:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D678F5D;
+	Sun, 26 May 2024 08:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YUihc3q1"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VbkPyGvo"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270F01A2C0D;
-	Sun, 26 May 2024 08:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998D08F45;
+	Sun, 26 May 2024 08:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716713625; cv=none; b=IGO2r33XA/Z5dyWBmzPxirqCCd6sxiSADsGPgMke1PDKN4yWdhlm21Q3ii0/xB/Srmiqf84MLsAPHRYaq7XCSBlItfN52MEmlVXmvcyPKKo8wMM0OVSaNRqsFbT3aZqJ2Eky4pprODT5ukP+RdheKUYBJBxfxoVThsyuN9NhwxA=
+	t=1716713655; cv=none; b=hPKoLLsOJwhNhcJuyrHfLpnRklGklk+sTUczor97uX9hxFuVEPcnPF8Ek7NBDaqO9NBmlJyeXI2oPogcMKThz209d0KHXvI3+NdVrm64fzmGJGLXOySSatPHvECOcBolHYcP4myGDCoiZfqTeT6kHSBdXFwa3+lBEehxeDOORtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716713625; c=relaxed/simple;
-	bh=ee7945mSyysXsIKupnhg9BhZJrX5CE0mIN2ytUkSWS0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SuyurOu+APagsLQ+uKcajpBEvdrR67VC7PsjHOudr4gfRYrCniZx8t9yzwzT4UsSrnlrtnlIfNCfQwXrBSL2QazpSil7j2B+nqpqf3U6YH7pgXaXonhR2ePUiXAVi+vaCRj4OmhVVHblMLwY8JCdou8KcvYecDx/dT36YW5zEh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YUihc3q1; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716713586; x=1717318386; i=markus.elfring@web.de;
-	bh=ee7945mSyysXsIKupnhg9BhZJrX5CE0mIN2ytUkSWS0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YUihc3q1lEaPzTWXunNad9GX8Xj3+gIKWVUfFPgjQXoIDCr8O6w/yMNQBPqLHsD6
-	 h7FYBojDTqORMYU6Odu9y2X+Rm7Re2TOIBdAlIYmDyzuEPum7yqUo2eXFGzAFc6OD
-	 JYfWzIyq0t2fWkS/Auwa8fcmYEiq5l5toiUbzCEzeT+Bqg6lGi6eJQSzRDSpnasPt
-	 6IzozLe/Wrh9SinwI+XQMeW0L3Y9dG5KRPTbFjMHIj8XmBVtZD7N9LwB0MbZ5hDbV
-	 MqNxmKngJ2f4nc+l03GjwVcxXjIHqHYpskeMDy9HzADmjMPnP7nDPOQAyiJQ1u/+X
-	 3oYru3LP07y0bA9DNQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwR05-1sTvZ12Bi1-00sGUW; Sun, 26
- May 2024 10:53:06 +0200
-Message-ID: <084d77ec-5eaa-487f-a9c1-d90454ace234@web.de>
-Date: Sun, 26 May 2024 10:53:01 +0200
+	s=arc-20240116; t=1716713655; c=relaxed/simple;
+	bh=cA7Ws5kGbeYZ56/9CtGWIABcTIJ42WDh1D1JqOL20dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvjlFsBjefcBoNrCv92hdtsAw+Mw97NLX8FlmStuSkLcHJOW7PrBBtM+FCyWh62nrArGBGOkEW7Z9modRuZp4vJVIwWCQnuLR9ZvELdPu48l+4h/o/cUVioNRWwzi2KZ0P7IlK9jUYENbdpNfwGhfGcP+dUjLmT7IdVRp8Mdaj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VbkPyGvo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=n3yJ3+ce7q5V5qKFmntDCIjLm2bWmBUIJjuIPEeKk64=; b=VbkPyGvoZjMTYs4o4RGegZQ2j/
+	VNtyf0yIl9DvapF6+IFJyTcQXwVgdTYK3yvxl2hsG/YIKM9FlnEQdq3Z6QvQbL7D5ZFevSvQNYxzr
+	8QX3Id45Jwsnuw/uER3JAHscanNf0Fv6PraehjuKzXkBw2uBWOLnqLFmat9UlN5jVKym+lwTrHs8Q
+	n9c/sfA9IF46fMvztgQ45DwHnu75qymSN+MjeY1dsFCEJ5as9Bf9m535fglF0iOy2dPkMkIAUW/iG
+	ZpA8+4S/Lg4TYA8VUuP5CYj0FipQgz75OLOE8mGhtCC8rKwXgUYWboVEkq3DK9A3GtthJR32Xp7FJ
+	atHyV/Aw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sB9dn-0000000CNlL-3Jtc;
+	Sun, 26 May 2024 08:54:07 +0000
+Date: Sun, 26 May 2024 01:54:07 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: linan666@huaweicloud.com
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] md: make md_flush_request() more readable
+Message-ID: <ZlL4rxKqcV5ePLXu@infradead.org>
+References: <20240525185622.3896616-1-linan666@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Lothar Rubusch <l.rubusch@gmail.com>, linux-crypto@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, "David S. Miller"
- <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240525192237.9837-1-l.rubusch@gmail.com>
-Subject: Re: [PATCH] crypto: atmel-sha204a - fix negated return value
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240525192237.9837-1-l.rubusch@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PGlmwAdNFRPbKeW4ueabV7+uSMzURZ+xy6eV1pN6OhVQILr3DG6
- K1UDa2KINy6kFs5T1mfiGUrmE3U1+B4pRcEih+1ZQmk7xwz7aFpoKPQqdVhQKdKrjs95luc
- GtEwxsEYRVpizyk2pTVtEiAuK41Qb/WyLxIAi4J+tp5YpxuqurrrO87Lq255X/HRk1DQoSj
- SAIAg+tzmjTV6TOqRYeew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YUniRF5HCNQ=;yKqI/BxDd7CB5lBEv7HzD1t/EVn
- /ccqYgOfVc0V5tcspAni/kjdfC7jFvzP0W6nxcVdg4SyyMA58Jwzm5QO2ReTWdn+ZUi1M1UUM
- M3W+eBxFJgR+HdbaevjUTaW+kfUFdGQ028nu2ZdBmN5dJZ8e7ox43iZVVisUaZ6QfChsMeeHS
- jOBw+TlY6lNmWpOaUQfwbnz09bZCPpfstHYKoAVSTxYNTNYtYhzoMaOAG99nO2AeKBF02G7wL
- DpgZtAlgYsoL0j1uPRSsvZdV2Ic3iDoMYPvYUmhycPSFg7EEXVb4B7i0ofcv/K8Dmfa/Zr7jm
- 9FJhqJaTIxGcY92zyJC1mBHycCA701lNWzmw9DfkyRaUnO31ujkl2zYuKxK/nYUSn5KTjsDeG
- e7q78IwGE4YPOkvp6tG1KHv0cPzml+cq3nBSV34r6mFXz/F0EpAZGPgLkSqEU9Dy/QNn7Xc0o
- P+M79Ja0i3ovv1Q4Gv4FJyLMSNV1tkjjiA/+Yes4CelibigMlTIsQBHhSbFpxKDbDkTkczKtl
- ykdhyB6w6fSkZnWY5cSO2Qz/7dT2GWBfNbsdJNpkZ2WpYzNYrV/a66GrDNEQlGLUI8b29y5o7
- cODHjmQgjm3liRMxSEWkbGTqCfzGqi7A24cnHKxrDgvqpLbivAVkldOGp15o0Nycpsa58B7HH
- IezL6Ms+mKUIdjIVu+kxqlN/UH6D+hX5lMA7O3aBKqvXBa15MN6aWgzETfNgHMR5mE75R/567
- 4q9WWgW4h7CLBK2/0is6z11dN8DCyAYdoV6xim65dr1J54ksfLJ04RQN8yRx0XQiTc/7+JDfh
- yEerOP3sI59DUHfUbpRIAj5ZfrINsNaRHrckT61Vugtvs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240525185622.3896616-1-linan666@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-> Fix negated variable return value.
+On Sun, May 26, 2024 at 02:56:22AM +0800, linan666@huaweicloud.com wrote:
+> -		bio = NULL;
+> -	}
+> -	spin_unlock_irq(&mddev->lock);
+> -
+> -	if (!bio) {
+> +		spin_unlock_irq(&mddev->lock);
+>  		INIT_WORK(&mddev->flush_work, submit_flushes);
+>  		queue_work(md_wq, &mddev->flush_work);
+>  	} else {
+>  		/* flush was performed for some other bio while we waited. */
+> +		spin_unlock_irq(&mddev->lock);
+>  		if (bio->bi_iter.bi_size == 0)
+>  			/* an empty barrier - all done */
 
-Will it be helpful to add the tag =E2=80=9CFixes=E2=80=9D?
+This stil looks like a somwwhat odd flow  Why not go all the way
+and turn it into:
 
-Regards,
-Markus
+
+	...
+		queue_work(md_wq, &mddev->flush_work);
+		return true;
+	}
+
+	/* flush was performed for some other bio while we waited. */
+	spin_unlock_irq(&mddev->lock);
+	if (bio->bi_iter.bi_size == 0) {
+		/* pure flush without data - all done */
+		bio_endio(bio);
+		return true;
+	}
+	bio->bi_opf &= ~REQ_PREFLUSH;
+	return false;
+}
+
 
