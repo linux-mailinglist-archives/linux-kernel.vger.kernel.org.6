@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-189846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2EB8CF58F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0391F8CF597
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D1B5B20B9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC44280EF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C9D12BE8B;
-	Sun, 26 May 2024 18:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A802412BEAE;
+	Sun, 26 May 2024 19:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cf3uTnZ4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="fkbI9bRf"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA6E1A2C21;
-	Sun, 26 May 2024 18:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B171DA5F;
+	Sun, 26 May 2024 19:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716749640; cv=none; b=jaxaoDdtEWgOsvDz0IROK9fLwuv0uhw7BJnr5WIeHW9qGK+swBzffbnmZ89b38UxL8ojHv2JglZoYyQ6osUJfuBUm0yxxomb48YofqmlL45UhyETdoO0ZZkZLP+hQZSaEOEu/qWqewW2M0JT3HxmDW6er+tTHXHOST+SRy0iQak=
+	t=1716750671; cv=none; b=iv6i8e+vgrm8otFI3+PfsvrW1XZTgB9SGPZVrYmuYMbMdnHrcEXfmouvGdcNU04MJdsRccnmaASWAsiLQYQNL/xg9ujYfe6gnGRqATZ/qtIPY7Jmhft68gYB1SvNo6Rupa78OHxevyi3sTBveUFkRpPSlRN/m+euJR7fU0nG5yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716749640; c=relaxed/simple;
-	bh=kuITH6P9GTetzXAVCMxT/omhG2Ghm9hRi7nGRq8Vp18=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=unSZAY0sTXg1yAfS5OuRh6rVpneCvlX0eezRQVhPcfKwyfQzKMw3GASNucUzYE1WZu0ButAPvZU+M4HpvVPofzlEMmxWockHvxY5kmSeUBgLm3qkg2N00Tz2GAyTZGBRPGPQaQ+bkiOWhyHgEixHG+MfBAGb+nQPdpgdSk4dOAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cf3uTnZ4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QIkUPb013226;
-	Sun, 26 May 2024 18:53:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=0IDPTEJDMuYERr/mRMDeMm
-	t/ibxc81efqZqaZ9uJiAo=; b=cf3uTnZ4D6FCK/4xdTIkHRAuO+1GIVNHIEzJS8
-	pDkiXJYbioYZXZtIXqPfu51kCK3kYvWThhyOOES71knmoCZRQTLToqRy4NL7wBtl
-	fZ1kj/MR4G8OcykewMkq6PrhCXFXBIfwaHeZHJzUSsBZBwLeLcr0nWU7DRcy+GlH
-	ziK43U26yGLjinWp1B1z4WdbRA83ozHBNadluVA8ySJY2G0TjlPtRjxZ/yeVI25q
-	PNrpAm4lGR6CpBiwSH5PrAcO32EPWF3ssg+H99PHo1IkQ74XFzxlEjBqT37YVsfV
-	AcZFLQUlcWoKLWWqqtQlighWyouNZqe9qaWieoZ3UOk4pLeg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h21vj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 18:53:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QIrpg7027750
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 18:53:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
- 2024 11:53:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 26 May 2024 11:53:49 -0700
-Subject: [PATCH] jbd2: add missing MODULE_DESCRIPTION()
+	s=arc-20240116; t=1716750671; c=relaxed/simple;
+	bh=V6pWRl5/R829vCPQdCBHueI2AkDTCJb53fNdMCXSLVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3GNuF+4urxAL06SeE9OYaxn/IfqIr6kHwbN4PON75MzcBYjnqphSMFWqrLELWjFnrkXZwMvNEZSqaCSbkH71p5cXGDSUOHXu05Nqwo2Osmp4GepTRX4TF5zq8INLC+wCj51tTZ2JPhBf7ImlS9lMRedGuw+QobCeLielGrnnMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=fkbI9bRf; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VnSmn5LbQz9srB;
+	Sun, 26 May 2024 21:01:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1716750089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r9cppxWmIe0VMvcGEUiv0Uu8DZiQtFpwpAKbCgnUVyg=;
+	b=fkbI9bRf/v/PG60NTXoiBFnGW5PQxoNWMLCvvN7rODxFDwx6ejMnjC9KwgfkpALWziWwaR
+	PDci3KZIGuSNuO/8QY+KkOQ3EDD0JSRLI2UOK7pZpOFEJx3jJAcYN9g8msXO/Zn1YK8Wt9
+	ZttMp8XBMWyX44zD2lk1aTuNNEf9DBEwkxGx458+K234gn22VwJ2KLGnY34uJ9/ASqfHhH
+	/Sa2c8xo3APTm4DQbujnAyZuT+1NDou7/yDDCgqpjb/83Db9rPLRB5Z3WvcW33k510oszj
+	E3jo6rKtWo5vyKnIoGnTb+r6GGHr2FUuALlyN/BfjHpHwLpAU5d3+o4cHYk+fg==
+Date: Sun, 26 May 2024 12:01:08 -0700
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240526-md-fs-jbd2-v1-1-7bba6665327d@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIADyFU2YC/x3MQQrCQAyF4auUrA2Mg63iVcRFMpPaiB3LpEql9
- O5Glx+8969gUlUMzs0KVd5q+iyO/a6BNFC5CWp2QwzxENrY4ZixN7xzjsg5UOKujUc+gR+mKr0
- u/9jl6mYyQa5U0vBLPLS8FhzJZqk4fXwK2/YFpcaqz4EAAAA=
-To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: p9U7thaAjs4NCVA11ig1iD9WK0ceEpJj
-X-Proofpoint-ORIG-GUID: p9U7thaAjs4NCVA11ig1iD9WK0ceEpJj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- spamscore=0 malwarescore=0 bulkscore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=926 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405260158
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3co2dmrrdjgd6wv5"
+Content-Disposition: inline
+In-Reply-To: <ZlMADupKkN0ITgG5@infradead.org>
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- fs/jbd2/journal.c | 1 +
- 1 file changed, 1 insertion(+)
+--3co2dmrrdjgd6wv5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 03c4b9214f56..0d2825c131cc 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -3181,6 +3181,7 @@ static void __exit journal_exit(void)
- 	jbd2_journal_destroy_caches();
- }
- 
-+MODULE_DESCRIPTION("Generic filesystem journal-writing module");
- MODULE_LICENSE("GPL");
- module_init(journal_init);
- module_exit(journal_exit);
+On 2024-05-26, Christoph Hellwig <hch@infradead.org> wrote:
+> On Thu, May 23, 2024 at 01:57:32PM -0700, Aleksa Sarai wrote:
+> > Now that we provide a unique 64-bit mount ID interface in statx, we can
+> > now provide a race-free way for name_to_handle_at(2) to provide a file
+> > handle and corresponding mount without needing to worry about racing
+> > with /proc/mountinfo parsing.
+>=20
+> file handles are not tied to mounts, they are tied to super_blocks,
+> and they can survive reboots or (less relevant) remounts.  This thus
+> seems like a very confusing if not wrong interfaces.
 
----
-base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
-change-id: 20240526-md-fs-jbd2-bd0acb6527b8
+The existing interface already provides a mount ID which is not even
+safe without rebooting.
 
+The purpose of the mount ID (in the existing API) is to allow userspace
+to make sure they know which filesystem mount the file handle came from
+so they can store the relevant information (fsid, etc) to make sure they
+know which superblock the mount came from when it comes to doing
+open_by_handle_at(2). However, there is a race between getting the mount
+ID from name_to_handle_at() and parsing /proc/self/mountinfo, which
+means that userspace cannot ever be sure that they know the correct
+mount the file handle came from (the man page for open_by_handle_at
+mentions this issue explicitly).
+
+Getting the ability to get a 64-bit mount ID would allow userspace to
+use statmount(2) directly, avoiding this race. You're quite right that
+obviously you wouldn't want to just store the mount ID.
+
+An alternative would be to return something unique to the filesystem
+superblock, but as far as I can tell there is no guarantee that every
+Linux filesystem's fsid is sufficiently unique to act as a globally
+unique identifier. At least with a 64-bit mount ID and statmount(2),
+userspace can decide what information is needed to get sufficiently
+unique information about the source filesystem.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--3co2dmrrdjgd6wv5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZlOG8AAKCRAol/rSt+lE
+b8uGAP9d019CDlw84s9QU6/eCUdNT1w0Lk0Ce3UIIdsD8vPxHgD/Xj44w2qaMngH
+r0EgXJWO83ghM64/Bg7QGygzx48oNQU=
+=/g8f
+-----END PGP SIGNATURE-----
+
+--3co2dmrrdjgd6wv5--
 
