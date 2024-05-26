@@ -1,251 +1,275 @@
-Return-Path: <linux-kernel+bounces-189729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CC38CF42B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 798568CF42D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6731F217C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8D81F2180F
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444F2DDCB;
-	Sun, 26 May 2024 12:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AB8DDB1;
+	Sun, 26 May 2024 12:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pa5TGMbS"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKDr8sDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159B1D28D
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 12:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80623C129;
+	Sun, 26 May 2024 12:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716725179; cv=none; b=htosunKFJ0t+dCfHSFkAs4Kq49uUoKwrfSLrDbvkm+HMAgDkIkq18AJxV9cBO6kwnzf9MP9TdjcbKv9lMmA/UrnOsT2wjz9+uLORvCPRRoF49F9d7t6zMPIBSODwyJt33psdU4OUNT4UM4P3QeRemBGvdmiRtzZJqZ2duhL3l6o=
+	t=1716725466; cv=none; b=vFwWpzRaZX/KlhQVRNuXwSBOzYIaUY/rjavu2wZVWi4fMmp2dVbiNlp9V4WafYO3tCu+5TWgIUBGecxwewsiPlII/Sq6KLsk5WL7KQhX1l+jrZET93saPV6CwFvd1JqzcrZVdC+tG5boHZoASDH5j11nwn/8q5Z7o98ci0mIhUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716725179; c=relaxed/simple;
-	bh=rNFPvgBklmUcC86gDjg2X8Vr+FvzY/KOE2Yw4BNMby0=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7aSsU0BegI9uHqCQsvJ0onw0YV8/UapIKtHAAXpoHNskA/LhrIf7AI1vuFWZwBrnitVczi7EVLlb6yckoeFc6bMmaJqXMmmlqXiOPqywGJOk4dv7Jzd5akf3tgXZt9G6NP1pPl6plmKoc6df6JEI/JQsvAV8BoZLwwitF1H5uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pa5TGMbS; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EF7824070C
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 12:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1716725174;
-	bh=QzPjQrvRFTNCaY9bkkx1AdOfiqg86uxrelAFKCvzxQw=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=pa5TGMbSlenTZwNfPJ+u/sJui9RFxmMEs7OCuLvktaKCVsvS0eM+udp5JOr04MJA2
-	 coNSCxNoi4viaNs2GN4Zd1lfcp0VLcE+4Mwszhoz8tPaNvmVs21ei6RB7SW9Z7YSLz
-	 v13PvvWbYXiqoVyTy03ikZLOFOo4ktB+eyCB66EjyB3zPsVAUO8sHhkYRG0jBNf0si
-	 SmRTQ5tRh4BOXAUjAhqfiEykrwFLqJ/FSuwXHMdu+ETatAYLc8+Dtj5U/sAOoOn/Tg
-	 i0TYj1toENQkmINa5k6Y7ZtVKpRgAWVylZNe9D47d0/g4hCZSOHEBTP4pkl29WLd1G
-	 Sup/LBNz9vIwQ==
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5295c099a53so1682067e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 05:06:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716725172; x=1717329972;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QzPjQrvRFTNCaY9bkkx1AdOfiqg86uxrelAFKCvzxQw=;
-        b=d12WUKnb719h4qV+G6ade8w9NThoLP3GLL97TAuWV1iT6OUCSYFoZotqTfTtGIwTDE
-         0404ZsnNazP8GmuQ06D6FImJO0UdxPD0LNHb/qyfnPv5weNOlUddOaHyCCjNS/e9KdI+
-         eemkKQZ0wGK/bmv57CTqH/qlSZIwfiGmt+OmbsSk7zOSZHO+0VMtmRZ3OqBXKtGWXUbt
-         YCU7j15ih88cAvT7ubhJs5LL8rKnBY5NE4rTX6Hlt/o8Uj/Y/o7rfsMh/N98oGG8Nfcw
-         2WpXtpCl8RvOaqlT4SCe9IHZvrICTvdJkHvA9kyeD7gZFKoaV/j9arwB5K+hT4W96hu+
-         V84w==
-X-Forwarded-Encrypted: i=1; AJvYcCXPRourHwdwuEDa003IBSLJ65rWex0hKg8/mve3mn342WzXkUZBguObSLWr/7gZk3RdPRAAO6vNcYZC47Bh+ST/EVqYl+DAXS6zj0sP
-X-Gm-Message-State: AOJu0YxsTgf7eVrTHpRbVUwW/w9EBxlB8KZtBilEHWTGzDLMO452mKyK
-	4XXrgnylsFdPXiKK6khAUYFg6zB8YzcPZM1nsoVzwSNFtTDZusfxiLchsJyFgyy/HL8JT5KgkOu
-	nA2RHhUhHmUJZQWROA+6HTaInOAROp7nDYz9bSa3B6uEBeggV9slQyRPB0ZqyrGtr/m6zZ8UE/B
-	iPQbaKaFTNv90ShoSTtPZiRPgL8pXhQi2Tt++tsiy+bt52GiujUUN2
-X-Received: by 2002:a05:6512:344c:b0:519:1a91:30cc with SMTP id 2adb3069b0e04-5296410ae61mr3785540e87.4.1716725172285;
-        Sun, 26 May 2024 05:06:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwx7fR7skOCtVUuIXew7lgRD1ZuwehO7HuKQP+7Gl7dRBpMQppQ1tqUrzN65seVnBlikG+1ZckVZ05Ol2ZpUE=
-X-Received: by 2002:a05:6512:344c:b0:519:1a91:30cc with SMTP id
- 2adb3069b0e04-5296410ae61mr3785524e87.4.1716725171737; Sun, 26 May 2024
- 05:06:11 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 26 May 2024 08:06:10 -0400
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240517-i2c-th1520-v2-3-d364d135ccc6@bootlin.com>
-References: <20240517-i2c-th1520-v2-0-d364d135ccc6@bootlin.com> <20240517-i2c-th1520-v2-3-d364d135ccc6@bootlin.com>
+	s=arc-20240116; t=1716725466; c=relaxed/simple;
+	bh=yxbwdeN2PxOOqOT+5MlpJZncAZLYV0mSBdHIDQMdQYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u0IiobFHvoCabloubo2HSDUWOjiYiekUow7qWj5Fcd6V1tna3i9Pr4rDYcrJEVFQ2fuuvHU5WAYuTIyhIZH5GPIB2rB5xc9cR3dwmZVgZmMJsMoCRA00i5oQYQSZ0R1Qbvp+tVm0gKwX+SBc7rA3VsGuPi8Hw51EpR6UuX08So0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKDr8sDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE04C32782;
+	Sun, 26 May 2024 12:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716725466;
+	bh=yxbwdeN2PxOOqOT+5MlpJZncAZLYV0mSBdHIDQMdQYc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dKDr8sDOduDKwIX6vlohITrFLG+PK9X4u+UDxseik1BmHh9y4YT1xgaNuC1EZMMWj
+	 MbEHyO9bzJKJNMCdrxZHFj0O3dsIJ9XaeIrz0lXf/ftJBJMIbpQ43jo2o8hz0b7qd3
+	 lMb5QVrXHLx0NP8gj8er3hi9wz+aZLF6uq7zLGYJ8zyJTX5ZvZgPQo2fwiCURB/mDk
+	 FwFn96/7Fgwg4sgNZRWqfzJlyjOzlHJzWWMww7mfg6VSL/W2BS95lrz+ZdtRXt1+zP
+	 4rx072GpLSosfansU+u1ksfkNNXoUtrAgUUNQujLXECi7gn8brAVKw/KFfqPLRmG6L
+	 yO82VBWJpuhIQ==
+Date: Sun, 26 May 2024 13:10:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
+ <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
+ channel
+Message-ID: <20240526131018.40c772d6@jic23-huawei>
+In-Reply-To: <003d0998-dd25-45ab-9bb1-feda2d0f91a3@baylibre.com>
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+	<20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
+	<20240519201241.7c60abac@jic23-huawei>
+	<ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+	<20240520171205.000035b0@Huawei.com>
+	<5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
+	<20240525171408.36bda583@jic23-huawei>
+	<003d0998-dd25-45ab-9bb1-feda2d0f91a3@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sun, 26 May 2024 08:06:10 -0400
-Message-ID: <CAJM55Z9FZxv9TskSX7H5U8_C4a1-LMv52sFgoyzO0bYUKnZ3Ug@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Enable I2C on the BeagleV-Ahead
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Conor Dooley <conor@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	=?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thomas Bonnefille wrote:
-> This commit enables the I2C0 controller of the TH1520, together with
-> the FT24C32A EEPROM that is connected to it.
-> In addition, this commit also enables the I2C controllers I2C2, I2C4
-> and I2C5 as they are all three exposed on headers (P9 19 and 20 for I2C2,
-> P9 17 and 18 for I2C5 and MikroBus 7 and 5 for I2C4).
-> It also defined the required pinctrl nodes.
->
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 84 ++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> index 57a2578123eb..aeb04f5159d5 100644
-> --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-> @@ -121,6 +121,47 @@ led-pins {
->  	};
->  };
->
-> +&padctrl1_apsys {
+On Sat, 25 May 2024 12:04:46 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-These node references should be ordered alphabetically, so please put this
-below &padctrl0_apsys.
+> On 5/25/24 11:14 AM, Jonathan Cameron wrote:
+> > On Fri, 24 May 2024 10:56:55 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> On 5/20/24 11:12 AM, Jonathan Cameron wrote:  
+> >>> On Mon, 20 May 2024 08:51:52 -0500
+> >>> David Lechner <dlechner@baylibre.com> wrote:
+> >>>     
+> >>>> On 5/19/24 2:12 PM, Jonathan Cameron wrote:    
+> >>>>> On Tue,  7 May 2024 14:02:07 -0500
+> >>>>> David Lechner <dlechner@baylibre.com> wrote:
+> >>>>>       
+> >>>>>> This adds new fields to the iio_channel structure to support multiple
+> >>>>>> scan types per channel. This is useful for devices that support multiple
+> >>>>>> resolution modes or other modes that require different data formats of
+> >>>>>> the raw data.
+> >>>>>>
+> >>>>>> To make use of this, drivers can still use the old scan_type field for
+> >>>>>> the "default" scan type and use the new scan_type_ext field for any
+> >>>>>> additional scan types.      
+> >>>>>
+> >>>>> Comment inline says that you should commit scan_type if scan_type_ext
+> >>>>> is provided.  That makes sense to me rather that a default no one reads.
+> >>>>>
+> >>>>> The example that follows in patch 4 uses both the scan_type and
+> >>>>> the scan_type_ext which is even more confusing.
+> >>>>>       
+> >>>>>> And they must implement the new callback
+> >>>>>> get_current_scan_type() to return the current scan type based on the
+> >>>>>> current state of the device.
+> >>>>>>
+> >>>>>> The buffer code is the only code in the IIO core code that is using the
+> >>>>>> scan_type field. This patch updates the buffer code to use the new
+> >>>>>> iio_channel_validate_scan_type() function to ensure it is returning the
+> >>>>>> correct scan type for the current state of the device when reading the
+> >>>>>> sysfs attributes. The buffer validation code is also update to validate
+> >>>>>> any additional scan types that are set in the scan_type_ext field. Part
+> >>>>>> of that code is refactored to a new function to avoid duplication.
+> >>>>>>
+> >>>>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> >>>>>> ---      
+> >>>>>       
+> >>>>>> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> >>>>>> index 19de573a944a..66f0b4c68f53 100644
+> >>>>>> --- a/include/linux/iio/iio.h
+> >>>>>> +++ b/include/linux/iio/iio.h
+> >>>>>> @@ -205,6 +205,9 @@ struct iio_scan_type {
+> >>>>>>   * @scan_index:		Monotonic index to give ordering in scans when read
+> >>>>>>   *			from a buffer.
+> >>>>>>   * @scan_type:		struct describing the scan type
+> >>>>>> + * @ext_scan_type:	Used in rare cases where there is more than one scan
+> >>>>>> + *			format for a channel. When this is used, omit scan_type.      
+> >>>>>
+> >>>>> Here is the disagreement with the patch description.
+> >>>>>       
+> >>>>>> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
+> >>>>>>   * @info_mask_separate: What information is to be exported that is specific to
+> >>>>>>   *			this channel.
+> >>>>>>   * @info_mask_separate_available: What availability information is to be
+> >>>>>> @@ -256,6 +259,8 @@ struct iio_chan_spec {
+> >>>>>>  	unsigned long		address;
+> >>>>>>  	int			scan_index;
+> >>>>>>  	struct iio_scan_type scan_type;
+> >>>>>> +	const struct iio_scan_type *ext_scan_type;
+> >>>>>> +	unsigned int		num_ext_scan_type;      
+> >>>>>
+> >>>>> Let's make it explicit that you can't do both.
+> >>>>>
+> >>>>> 	union {
+> >>>>> 		struct iio_scan_type scan_type;
+> >>>>> 		struct {
+> >>>>> 			const struct iio_scan_type *ext_scan_type;
+> >>>>> 			unsigned int num_ext_scan_type;
+> >>>>> 		};
+> >>>>> 	};
+> >>>>> should work for that I think.
+> >>>>>
+> >>>>> However this is I think only used for validation. If that's the case
+> >>>>> do we care about values not in use?  Can we move the validation to
+> >>>>> be runtime if the get_current_scan_type() callback is used.      
+> >>>>
+> >>>> I like the suggestion of the union to use one or the other. But I'm not
+> >>>> sure I understand the comments about validation.
+> >>>>
+> >>>> If you are referring to iio_channel_validate_scan_type(), it only checks
+> >>>> for programmer error of realbits > storagebits, so it seems better to
+> >>>> keep it where it is to fail as early as possible.    
+> >>>
+> >>> That requires the possible scan masks to be listed here but there is
+> >>> nothing enforcing the callback returning one from here.  Maybe make it
+> >>> return an index instead?
+> >>>     
+> >>
+> >> Sorry, still not understanding what we are trying to catch here. Why
+> >> would the scan mask have any effect of checking if realbits > storagebits?  
+> > Hmm. I seem to be failing to explain this!    
+> 
+> Maybe we are talking about two different things but calling them the same thing?
 
-> +	i2c0_pins: i2c0-0 {
-> +		i2c-pins {
-> +			pins = "I2C0_SDA",
-> +			       "I2C0_SCL";
-> +			function = "i2c";
-> +			bias-pull-up = <2100>;
+I'm not sure.  Sounds like we both think our point is entirely obvious and clearly
+it isn't :(
 
-Are you sure the strong pull-up is needed here and below?
+> > Key is the complete lack of
+> > association between what is returned by the get_current_scan_type() callback
+> > and this ext_scan_type array.  
+> 
+> Why would the caller of get_current_scan_type() need to know that the
+> returned value is associated with ext_scan_type?
 
-> +			drive-strength = <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
-> +	i2c4_pins: i2c4-0 {
-> +		i2c-pins {
-> +			pins = "GPIO0_19", /*I2C4_SDA*/
-> +			       "GPIO0_18"; /*I2C4_SCL*/
+Because you are validating ext_scan_type, not the return of get_current_scan_type().
+They may or may not include the same data - to make this a good interface, that isn't
+error prone, get_current_scan_type() must return one that has been validated - i.e.
+is in the ext_scan_type array.
 
-Please add spaces here like other kernel comments. Eg. /* I2C4_SDA */
+I've looked several times and maybe I'm just failing to spot what ensures the validation
+is sufficient.
 
-> +			function = "i2c";
-> +			bias-pull-up = <2100>;
-> +			drive-strength = <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
-> +	i2c5_pins: i2c5-0 {
-> +		i2c-pins {
-> +			pins = "QSPI1_D0_MOSI", /*I2C5_SDA*/
-> +			       "QSPI1_CSN0";    /*I2C5_SCL*/
+> 
+> > 
+> > So either:
+> > 1) Make it do so - easiest being to return an index into the array rather than
+> >    a possibly unrelated scan_type -  
+> 
+> Unrelated to what?
 
-Same here.
+Unrelated to anything the IIO core is currently aware of. You could have a list
+of types of cats that you've validated for feline characteristics
+and this callback returns a donkey.
 
-> +			function = "i2c";
-> +			bias-pull-up = <2100>;
-> +			drive-strength = <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +};
-> +
->  &padctrl0_apsys {
->  	uart0_pins: uart0-0 {
->  		tx-pins {
-> @@ -143,6 +184,19 @@ rx-pins {
->  			slew-rate = <0>;
->  		};
->  	};
-> +
-> +	i2c2_pins: i2c2-0 {
+> 
+> > that would guarantee the scan_type returned
+> >    by the callback was one that has been validated.  
+> 
+> Since all scan types are const data and not changed after the iio device
+> is registered, the validation done at registration seems sufficient to
+> me (validation happens in __iio_buffer_alloc_sysfs_and_mask()). All scan
+> types are validated at this time, including all ext_scan_types. So all
+> are guaranteed to be validated already when the get_current_scan_type
+> callback is called.
+> 
+> What other validation would need to be done later?
 
-i2c2-0 sorts before uart0-0 alphabetically.
+What makes get_current_scan_type() return a scan type that is in the ext_scan_type
+array?
 
-> +		i2c-pins {
-> +			pins = "I2C2_SDA",
-> +			       "I2C2_SCL";
-> +			function = "i2c";
-> +			bias-pull-up = <2100>;
-> +			drive-strength = <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
->  };
->
->  &uart0 {
-> @@ -150,3 +204,33 @@ &uart0 {
->  	pinctrl-0 = <&uart0_pins>;
->  	status = "okay";
->  };
-> +
-> +&i2c0 {
+A possible implementation (which should not be possible!) is
 
-Again please sort these references alphabetically.
+static const struct iio_scan_type scan_type_A = {
+	.sign = 's',
+	.realbits = 16,
+	.storagebits = 16,
+	.endianness = IIO_CPU,
+};
 
-> +	status = "okay";
+static const struct iio_scan_type scan_type_B = {
+	.sign = 's',
+	.realbits = 18,
+	.storagebits = 16,
+	.endianness = IIO_CPU,
+};
 
-And the properties. Eg. move status below pinctrl-0.
+ext_scan_type = &ad7380_scan_type_A,
 
 
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c0_pins>;
-> +
-> +	eeprom@50 {
-> +		compatible = "atmel,24c32";
-> +		reg = <0x50>;
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c2_pins>;
-> +};
-> +
-> +&i2c4 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c4_pins>;
-> +};
-> +
-> +&i2c5 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c5_pins>;
-> +};
->
-> --
-> 2.45.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+static const struct iio_scan_type *get_current_scan_type(
+		const struct iio_dev *indio_dev, struct iio_chan_spec const *chan)
+{
+	//some stuff to select
+
+	return scan_type_B; 
+}
+
+> 
+> > or
+> > 2) Drop validation at initial probe because you are validating something
+> >    that is irrelevant to what actually gets returned later. Validate>    when the scan type is read back via get_current_scan_type()  
+> 
+> The validation is just checking for programmer error, so it seems better
+> to catch that at probe where we are guaranteed to catch it for all scan
+> types. If the driver fails to probe, the programmer should notice this and
+> fix their mistake, but if we don't validate until later, the programmer
+> might not check every single configuration every time a change is made.
+
+I agreed - but today that isn't happening in the above example.
+You need to enforce that the scan_type returned is one that has been validated.
+
+Maybe I'm missing that validation occurring somewhere?
+
+Jonathan
+
+
+> 
+> > 
+> > I prefer option 1.  
+> >>  
+> >   
+> 
+> 
+
 
