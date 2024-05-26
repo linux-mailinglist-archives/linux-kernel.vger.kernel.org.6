@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-189881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BA08CF62C
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:40:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE94C8CF62E
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5682C1C21355
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:40:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40FF4B21141
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22C613A25D;
-	Sun, 26 May 2024 21:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA5139D1B;
+	Sun, 26 May 2024 21:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="uPCdcLmE"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LZyyW1fn"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64101EB3F;
-	Sun, 26 May 2024 21:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D8B947A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716759623; cv=none; b=MBdU1JOGAIdN2FVENIpeJKEMDy0ocpNt7pX1MMPQRRhXGRrTXoneqksPje1HLiXK52eCddWeZbxKeiuCaCNMn4GnqS47urPmn9TueDaLFMr3+AZzrHLlI0JKNJU6RMftPVr2Kteo0Jcf2aRM/Xspg1c8yrWRqP7ocsbmN/ALvN8=
+	t=1716759986; cv=none; b=V+4XoMfMNm8X74sTvAIfw/RG6fquiU1xOdnyeG6vKlJ+g/HugtMDWl7MiHZHkGQTnw/O1qBfIOjjR87y3Fot+RGgIx8NYoIhd5v3uprFuBeM5rik5fkDle2+J5EEveJDlrCvytrJ+q5Ynv+KnXt1nIJLe4ej4bZltR6ZupafgTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716759623; c=relaxed/simple;
-	bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Wq3DHIV/XcmyjH0lQQS95y1p67vrdxPAEVmYczDsSeSVLvmJi1QND80bgp55MPKt+BVJu4Woe+75QkzzqEK4yYEANrUC9vY3bP2iiWOY9dhucdLJ56ehgHd0X66m023L5hz7D0xgRQnXFs4KLzQnKJRwirJtXkWeoQJVkMu9cWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=uPCdcLmE; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716759617;
-	bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uPCdcLmERA64szIvlxaC24kOOSCTJL5W3sFcOEGDWtp41hfHsxnCjePoKUQGD8FkY
-	 cOkyuVcJ8VpNz4vibF3nRIv8HMDTCA9uh4Fhi30bsNgQFezDvi3GIphMGLmhrPFccS
-	 nu531i26iBay9aX8LMkN/oMu/yCQSSfkRHlKXWkQ=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 26 May 2024 23:40:01 +0200
-Subject: [PATCH] ACPI: AC: Properly notify powermanagement core about
- changes
+	s=arc-20240116; t=1716759986; c=relaxed/simple;
+	bh=BZTyDxjsV/iXo/QKJ8gIKWeRlld6EAlqgh0Mqhycfrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sjvjwdqXoHRv6K56JXJUBgTrVI5WGuAEgeu4WZ1UVar/fduBqUm6c2z1LPfNmr76Li2kVQoQGNQM5+Diq/o2NPsAH8R5vTeATeabw6GooGQ83iAdv6z4X2wA/MZY/MOgeTrtyQh8LRbh/BAdBiQ2BTMQ5SuoStWdTsVEmX8i9wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LZyyW1fn; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a61b70394c0so849375766b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716759982; x=1717364782; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SaOgVZCxVtqV/z4sdUNnjYMBPOoDFXTYVgkydMgh0gI=;
+        b=LZyyW1fntDG1A0z8FrZKutmn06TdXeLZkhKyd2S/rvf0c5/X9TTIhyYqSaf4xdTwZJ
+         J7S3yQywZ0qwVI4Xc5SFFABOu87RCmdmj1PKm3/aNYd/YmJje8Gvtt4LukPNyA6RSXf8
+         hURpynGKivM8lWwTPD6AGigfCpGxNvMpfTurs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716759982; x=1717364782;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SaOgVZCxVtqV/z4sdUNnjYMBPOoDFXTYVgkydMgh0gI=;
+        b=eZ1XW0inshhZ2lP5wmPYlzZVsCKVXnhK7ZN+Exf7Sf2ScrfBDgSbFfWhcp9TqPqKT2
+         j6GV1nzZy+TKD0VQmwim409UzXgnwEN0+VGJzS+EKi3HOHIzCjjXrRVPkd+yvYpZAu4B
+         jE1zHKyWqEWXwxg9mj36xxaT5q4h+JI18X/M9K7k2Ck21aN6gviM104J1PxknTEfs0hF
+         kj51MWIA+xyJvYB1TmjslWej+t7V1OoRSEOWkxxS0OsA9R2jcy/L6eY8aGM47iXD/7zV
+         R0G20dp9tHomJqyDKWTSkEgdk+LJknvk5gnpQn1E7h9vYUjpSBMBY+pkAhozNvKgOFTQ
+         3L8g==
+X-Gm-Message-State: AOJu0YwUMqZpSmrx8X3TJg3Apr7EyiYsXZi0E83DvlWU2sWafHwniJSu
+	sZAHnJRQbrhl/R7OFJa5PsbnSp6r0NVoCgazLTglhUVowXmDJjOVq15kawNKaRPYB0KJ0WpO55G
+	D/FAM8A==
+X-Google-Smtp-Source: AGHT+IEjsB8F34YFcF6bEPXMGDA1GgpX9WYEPGY5sNJrBS9uVrz9rAS2t1uAPWroQYcGeU/t2x7pHQ==
+X-Received: by 2002:a17:906:491a:b0:a59:c844:beea with SMTP id a640c23a62f3a-a626511622emr434981966b.73.1716759981979;
+        Sun, 26 May 2024 14:46:21 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c937b92sm419904366b.68.2024.05.26.14.46.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 May 2024 14:46:21 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a61b70394c0so849375166b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:46:21 -0700 (PDT)
+X-Received: by 2002:a17:907:7743:b0:a59:aff8:c713 with SMTP id
+ a640c23a62f3a-a62641a69a5mr464689166b.10.1716759980771; Sun, 26 May 2024
+ 14:46:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240526-acpi-ac-changed-v1-1-f4b5997753bb@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIADCsU2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyMz3cTkgkwgoQuRTdFNNLBINrM0MUxMNTVUAuoqKEpNy6wAmxgdW1s
- LAOi3GvxhAAAA
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Rajas Paranjpe <paranjperajas@gmail.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716759616; l=2189;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
- b=j+GJCEXFVOvovJMdyQteps+Udm76p3T99Fm1QXOnLD7X1riMBs6SJH1l7KvCDX7QxLAIDjRtZ
- P6KCe0/kr+aAxkMNg3A5UGDV3056MpnEv+H/aXH/MS8qO809EDsziUX
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <h23suk5s4hhkf7prhkzxp6a4kmhpgqxyl6ioski5cg7ciihxmj@j4zif6l6dqxc>
+In-Reply-To: <h23suk5s4hhkf7prhkzxp6a4kmhpgqxyl6ioski5cg7ciihxmj@j4zif6l6dqxc>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 26 May 2024 14:46:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whMS56xLhb7cAmTri2sXtGxK_zKWhZVX87YzjwAfVqTqQ@mail.gmail.com>
+Message-ID: <CAHk-=whMS56xLhb7cAmTri2sXtGxK_zKWhZVX87YzjwAfVqTqQ@mail.gmail.com>
+Subject: Re: [GIT PULL] header fix for riscv build failure
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The powermanagement core does various actions when a powersupply changes.
-It calls into notifiers, LED triggers, other power supplies and emits an uevent.
+On Sun, 26 May 2024 at 10:03, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> Hi Linus, this fixes a riscv randconfig build failure from memory
+> allocation profiling...
 
-To make sure that all these actions happen properly call power_supply_changed().
+This pull request is odd in multiple ways.
 
-Reported-by: Rajas Paranjpe <paranjperajas@gmail.com>
-Closes: https://github.com/MrChromebox/firmware/issues/420#issuecomment-2132251318
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/acpi/ac.c  | 4 ++--
- drivers/acpi/sbs.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ (a) it's unsigned, and I really don't pull from unsigned sources any more
 
-diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-index 2d4a35e6dd18..09a87fa222c7 100644
---- a/drivers/acpi/ac.c
-+++ b/drivers/acpi/ac.c
-@@ -145,7 +145,7 @@ static void acpi_ac_notify(acpi_handle handle, u32 event, void *data)
- 						  dev_name(&adev->dev), event,
- 						  (u32) ac->state);
- 		acpi_notifier_call_chain(adev, event, (u32) ac->state);
--		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-+		power_supply_changed(ac->charger);
- 	}
- }
- 
-@@ -268,7 +268,7 @@ static int acpi_ac_resume(struct device *dev)
- 	if (acpi_ac_get_state(ac))
- 		return 0;
- 	if (old_state != ac->state)
--		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-+		power_supply_changed(ac->charger);
- 
- 	return 0;
- }
-diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-index 94e3c000df2e..dc8164b182dc 100644
---- a/drivers/acpi/sbs.c
-+++ b/drivers/acpi/sbs.c
-@@ -610,7 +610,7 @@ static void acpi_sbs_callback(void *context)
- 	if (sbs->charger_exists) {
- 		acpi_ac_get_present(sbs);
- 		if (sbs->charger_present != saved_charger_state)
--			kobject_uevent(&sbs->charger->dev.kobj, KOBJ_CHANGE);
-+			power_supply_changed(sbs->charger);
- 	}
- 
- 	if (sbs->manager_present) {
-@@ -622,7 +622,7 @@ static void acpi_sbs_callback(void *context)
- 			acpi_battery_read(bat);
- 			if (saved_battery_state == bat->present)
- 				continue;
--			kobject_uevent(&bat->bat->dev.kobj, KOBJ_CHANGE);
-+			power_supply_changed(bat->bat);
- 		}
- 	}
- }
+ (b) the commit message is strange. It says "bcachefs", but I don't see why
 
----
-base-commit: 6fbf71854e2ddea7c99397772fbbb3783bfe15b5
-change-id: 20240526-acpi-ac-changed-a08c6941ae51
+ (c) you say riscv randconfig in the pull request but then when I
+follow the links in the commit, it says "mips-randconfig". Maybe the
+same thing ends up happening elsewhere too - including riscv - but it
+sure is confusing and I suspect it was just a typo.
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+ (d) there's no "Fixes:" tag, so then I had to go and look up that
+this wasn't stable material (it doesn't seem to be, the "Fixes" tag
+would seem to be 24e44cc22aa3 ("mm: percpu: enable per-cpu allocation
+tagging") from the current merge window
 
+All of which means that I ended up just fetching the patch, fixing up
+the commit message, and applying it manually instead.
+
+             Linus
 
