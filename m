@@ -1,138 +1,212 @@
-Return-Path: <linux-kernel+bounces-189621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F25A8CF300
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:20:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E188CF3D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D003B1C2116F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29726B22299
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B799476;
-	Sun, 26 May 2024 09:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rzKgZG1D"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA584BA2D;
+	Sun, 26 May 2024 09:50:06 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF5A1A2C2B;
-	Sun, 26 May 2024 09:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF18F45
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716715237; cv=none; b=dWR7HDwXxKF3SWobNwikQTCYzSa7OQeXqsCYLAsravHo70i7DI4BCOJYG4W6z7iV/W/e4ROqIX4hseOnVOWu6xTCQhImFp/CVjBxoZno6fUPCRq+gpHgFRNEifqmNG5aH6/qYeoIeA6O6twlqlWShMrFhUWipx8ZnBaAr6/jb9o=
+	t=1716717006; cv=none; b=K6mySJyrK3yfMEz4/zSixUkJivDvyYGbzH7im92wAE3WpAHjQs8hrYWWWHVGHqaOj2AlkodAELG3A+PH7ywFIZbjZ9oUW715Sbn38c4Ra344acR/WdQZPJiaUtUCaBFcU4mnGO9195allsq5QKkSUKcInKOIkb+cTQuWDXffNVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716715237; c=relaxed/simple;
-	bh=eqdB+c9AHV8Vh8prMy2Bz/FOpvhm7Ix0hdzFjT/E4pA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxHaOQyKNabw/sXiN2Fz4fxrK9uDO6UY6XD6N5HTaalPNPRQUjDeFp0jom/adfiK3+s3eBFNl1WwmUUdPfwoV3BkoTsxo57V5Znme8+FqfEXDfL9DMyHubJ7DWDYiULcVBVM0Wi4KeXHEUKLDZCGoM6CLla0H9tKIjsJhDLbT5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rzKgZG1D; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716715224; x=1717320024; i=markus.elfring@web.de;
-	bh=eqdB+c9AHV8Vh8prMy2Bz/FOpvhm7Ix0hdzFjT/E4pA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=rzKgZG1D0ChG4qMoe33SPqZyjz069OXTeVGhbE2MxCFW9Nk09GHMZPS5sVRCS8le
-	 Cf8ic6FX4P/8jxv0f837Z2MA8m+coZq7v6p6ZbYIZon6ytA8lvem2XA1+mcR7JhYq
-	 7iUkfgy6lyEFWa5WKgZ5mcE8CmPcpkAqsnVb3VYcGQAjd0buzv98GgCxU6o+ASSE4
-	 ihJWnhJ0VULjVVdIyHTihzeN00ExfN3YSN8BkWqu99Mz+cSgIvd343IhR/82NkkYT
-	 wt2NvNvVU/2LMrgAE9A8KyowAKRBa5ifNL4pKJ6buh0rAWo5Q134FzpFzAIDCQsxS
-	 1hHH7FjFC+u3+kopBg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MF2ke-1sHhUu1Ivg-00FaCL; Sun, 26
- May 2024 11:20:24 +0200
-Message-ID: <ce266282-029f-4333-9ef8-6ddce64e661f@web.de>
-Date: Sun, 26 May 2024 11:20:23 +0200
+	s=arc-20240116; t=1716717006; c=relaxed/simple;
+	bh=yEceD/hbpdIAELHf8uEaHdWd6UwZeeDcHUyMYFNuong=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rme+hMuu7aacI9GBAF7ZtGmn1GfOwFoK+gkhtEx8/iPsq+DpaTi+5a6sWOKDr93UO/C+EPbTBhsKyapwCfZ2ej2e51DkXiO5irrt2IJsARBNpdpT+RqMWs/jjwTWeovdP8u/QeCcWaLnY0Abj7OkGcFzg7gQsPQrOfDRLx5OlGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4VnCwg5Qnlz9scH;
+	Sun, 26 May 2024 11:22:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5fo1q1rQEO3k; Sun, 26 May 2024 11:22:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4VnCwg47nzz9sx4;
+	Sun, 26 May 2024 11:22:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 856478B774;
+	Sun, 26 May 2024 11:22:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id YDpGNZfzXcwu; Sun, 26 May 2024 11:22:27 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.45])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EB2488B764;
+	Sun, 26 May 2024 11:22:26 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH v3 00/16] Reimplement huge pages without hugepd on powerpc (8xx, e500, book3s/64)
+Date: Sun, 26 May 2024 11:22:20 +0200
+Message-ID: <cover.1716714720.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6] usb-storage: alauda: Check whether the media is initialized
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shichao Lai <shichaorai@gmail.com>, usb-storage@lists.one-eyed-alien.net,
- linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
- Xingwei Lee <xrivendell7@gmail.com>, Yue Sun <samsun1006219@gmail.com>
-References: <20240526012745.2852061-1-shichaorai@gmail.com>
- <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
- <2024052647-battle-sacred-83b3@gregkh>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024052647-battle-sacred-83b3@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0ObuDBLfuLFa0QOeHXUf9Fax6lqFkPp/xqy7Q1g5mIFWgujlCWQ
- 3W5fZGi+ueg86bIyQzYrFoASqXJ/+mGwpka1P+aLcyuKSbFuih6HM1qlG//JuwOa9HMBUQy
- 7Na22fDWceunyjGf3NyqINM737mFZ3BR9BAwvOhxhedbDV3u3IwAEZumY1Khl1vS7SBjT0r
- bZZoxNBoQIwKsSDz2DTqA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AyrklB7QiJI=;9L2S08+WTu0VCvDPknYXCxiKTnC
- /0lWKYZHZ8v1g0HnqKmUHAGexYL2Q0dVu5cXP9cS7atmm68B1PzzKoQeMhHo1Fe4pjCoCv5Sx
- osEJm23xY8bj6c5/TFqWd84v3pSTOtbEytopGu6LaNVtG4EANTrxsYt/+uov7S2Hk7WBifv/u
- 8yJUotgU2dnUj04wtO4Ogai9yleDo0WrNvjTwIELRnFAzCI2AHtUdMK7V/j/Hv17rCNl+EsMd
- GjJKpmdB14bpAAXuNBB1++JVnRtp4sxFxBZamHSWmh1t6uMNjtYOXUSVlYOalu/gd08zJGC3W
- K6fuA0KjEj6ShJqlaRHsvg0p3omwGC6xuVnnpV9JnkoODAM0OhFakkc7pS0TYSalZkoFx11wV
- i+snJxFj1lmHZJcW7z7GWboTKUZSPyxCZAAJ47Ngu2VpWHLW8hxmPQ5f2c8U/rBZHLejkJqm3
- O0SiENecwD4iCrSF5ERB6NZi0Ahi7buI3m3H9gsRxLMBr0giPw3heKyFaghip2OKxpVi99JtA
- B8OO8AAj5u5JfFVOu50shT5o5Cj+WF/ZIU/t6/2gVvKyGPxejBw2/8ibFHswvo/VpJMDll4ZV
- DYksbIGGzE3SAPPMjOHGP1XBEdz5C1+O5lt3cuC+klEW5sNTIJfvPokyYKKE9lXnqAN793Pjz
- E+I3waAlBwWSpFgnLeHytze00I9FK7gbN0SxVB0PnTKCY6K9aUI/yqa4PiYEzd2VbrQWNSMZ5
- rYy0QOgP2ELLyE3sn6UakCtQhiq339kqZo55HvumHKFsbWyqPL4N7VsCIXvmUazL9xBv0cMq1
- XI4vDttu91XWBYaLid19z5IDwqFFweoFuCQG553KpznIo=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716715343; l=6917; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=yEceD/hbpdIAELHf8uEaHdWd6UwZeeDcHUyMYFNuong=; b=5G7rRyOZLOxROPS9SmrKrxRmd20BM59A1ayCeawDYbnfoaVKrzWhAMJEc7/FZUbtPk61UGZrZ IKThwUehpKTB6vDGZ9keT4HXJkY1eg4g3ft38eV1WpBcOAPSDzCfn33
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
->> =E2=80=A6
->>> Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
->>
->> How do you think about to omit the text =E2=80=9C[PATCH] =E2=80=9D from=
- the tag summary?
->
-> Then it would be incorrect.
+This is the continuation of the RFC v1 series "Reimplement huge pages
+without hugepd on powerpc 8xx". It now get rid of hugepd completely
+after handling also e500 and book3s/64
 
-I find this view interesting.
+Also see https://github.com/linuxppc/issues/issues/483
 
+Unlike most architectures, powerpc 8xx HW requires a two-level
+pagetable topology for all page sizes. So a leaf PMD-contig approach
+is not feasible as such.
 
-> Again, Markus, please STOP sending review comments that are obviously wr=
-ong.
+Possible sizes on 8xx are 4k, 16k, 512k and 8M.
 
-The mentioned tag needs an =E2=80=9Cone line summary=E2=80=9D.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n145
+First level (PGD/PMD) covers 4M per entry. For 8M pages, two PMD entries
+must point to a single entry level-2 page table. Until now that was
+done using hugepd. This series changes it to use standard page tables
+where the entry is replicated 1024 times on each of the two pagetables
+refered by the two associated PMD entries for that 8M page.
 
-Do you find it required to repeat a questionable commit subject completely=
-?
+For e500 and book3s/64 there are less constraints because it is not
+tied to the HW assisted tablewalk like on 8xx, so it is easier to use
+leaf PMDs (and PUDs).
 
+On e500 the supported page sizes are 4M, 16M, 64M, 256M and 1G. All at
+PMD level on e500/32 (mpc85xx) and mix of PMD and PUD for e500/64. We
+encode page size with 4 available bits in PTE entries. On e300/32 PGD
+entries size is increases to 64 bits in order to allow leaf-PMD entries
+because PTE are 64 bits on e500.
 
-> New developers do not know who to ignore and you are telling
-> them things that are wrong and not helpful at all.
+On book3s/64 only the hash-4k mode is concerned. It supports 16M pages
+as cont-PMD and 16G pages as cont-PUD. In other modes (radix-4k, radix-6k
+and hash-64k) the sizes match with PMD and PUD sizes so that's just leaf
+entries. The hash processing make things a bit more complex. To ease
+things, __hash_page_huge() is modified to bail out when DIRTY or ACCESSED
+bits are missing, leaving it to mm core to fix it.
 
-Additional development views can occasionally become helpful.
+Global changes in v3:
+- Removed patches 1 and 2
+- Squashed patch 11 into patch 5
+- Replaced patches 12 and 13 with a series from Michael
+- Reordered patches a bit to have more general patches up front
 
+For more details on changes, see in each patch.
 
-> Please stop reviewing patches,
+Christophe Leroy (15):
+  mm: Define __pte_leaf_size() to also take a PMD entry
+  mm: Provide mm_struct and address to huge_ptep_get()
+  powerpc/mm: Remove _PAGE_PSIZE
+  powerpc/mm: Fix __find_linux_pte() on 32 bits with PMD leaf entries
+  powerpc/mm: Allow hugepages without hugepd
+  powerpc/8xx: Fix size given to set_huge_pte_at()
+  powerpc/8xx: Rework support for 8M pages using contiguous PTE entries
+  powerpc/8xx: Simplify struct mmu_psize_def
+  powerpc/e500: Remove enc and ind fields from struct mmu_psize_def
+  powerpc/e500: Switch to 64 bits PGD on 85xx (32 bits)
+  powerpc/e500: Encode hugepage size in PTE bits
+  powerpc/e500: Use contiguous PMD instead of hugepd
+  powerpc/64s: Use contiguous PMD/PUD instead of HUGEPD
+  powerpc/mm: Remove hugepd leftovers
+  mm: Remove CONFIG_ARCH_HAS_HUGEPD
 
-Patch review is one of the usual software development activities.
+Michael Ellerman (1):
+  powerpc/64e: Remove unused IBM HTW code [SQUASHED]
 
+ arch/arm/include/asm/hugetlb-3level.h         |   4 +-
+ arch/arm64/include/asm/hugetlb.h              |   2 +-
+ arch/arm64/mm/hugetlbpage.c                   |   2 +-
+ arch/powerpc/Kconfig                          |   1 -
+ arch/powerpc/include/asm/book3s/32/pgalloc.h  |   2 -
+ arch/powerpc/include/asm/book3s/64/hash-4k.h  |  15 -
+ arch/powerpc/include/asm/book3s/64/hash.h     |  38 +-
+ arch/powerpc/include/asm/book3s/64/hugetlb.h  |  38 --
+ .../include/asm/book3s/64/pgtable-4k.h        |  34 --
+ .../include/asm/book3s/64/pgtable-64k.h       |  20 -
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |  18 +
+ arch/powerpc/include/asm/hugetlb.h            |  15 +-
+ .../include/asm/nohash/32/hugetlb-8xx.h       |  38 +-
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h  |   9 +-
+ arch/powerpc/include/asm/nohash/32/pte-40x.h  |   3 -
+ arch/powerpc/include/asm/nohash/32/pte-44x.h  |   3 -
+ arch/powerpc/include/asm/nohash/32/pte-85xx.h |   3 -
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h  |  58 ++-
+ .../powerpc/include/asm/nohash/hugetlb-e500.h |  36 +-
+ arch/powerpc/include/asm/nohash/mmu-e500.h    |   6 +-
+ arch/powerpc/include/asm/nohash/pgalloc.h     |   2 -
+ arch/powerpc/include/asm/nohash/pgtable.h     |  45 +-
+ arch/powerpc/include/asm/nohash/pte-e500.h    |  35 +-
+ arch/powerpc/include/asm/page.h               |  32 --
+ arch/powerpc/include/asm/pgtable-be-types.h   |  10 -
+ arch/powerpc/include/asm/pgtable-types.h      |  13 +-
+ arch/powerpc/include/asm/pgtable.h            |   3 +
+ arch/powerpc/kernel/exceptions-64e.S          |   4 +-
+ arch/powerpc/kernel/head_85xx.S               |  33 +-
+ arch/powerpc/kernel/head_8xx.S                |  10 +-
+ arch/powerpc/kernel/setup_64.c                |   6 +-
+ arch/powerpc/mm/book3s64/hash_utils.c         |  11 +-
+ arch/powerpc/mm/book3s64/hugetlbpage.c        |  10 +
+ arch/powerpc/mm/book3s64/pgtable.c            |  12 -
+ arch/powerpc/mm/hugetlbpage.c                 | 455 +---------------
+ arch/powerpc/mm/init-common.c                 |   8 +-
+ arch/powerpc/mm/kasan/8xx.c                   |  21 +-
+ arch/powerpc/mm/nohash/8xx.c                  |  43 +-
+ arch/powerpc/mm/nohash/Makefile               |   2 +-
+ arch/powerpc/mm/nohash/book3e_pgtable.c       |   4 +-
+ arch/powerpc/mm/nohash/tlb.c                  | 407 +--------------
+ arch/powerpc/mm/nohash/tlb_64e.c              | 314 ++++++++++++
+ arch/powerpc/mm/nohash/tlb_low_64e.S          | 484 ++----------------
+ arch/powerpc/mm/pgtable.c                     |  92 ++--
+ arch/powerpc/mm/pgtable_32.c                  |   2 +-
+ arch/riscv/include/asm/hugetlb.h              |   2 +-
+ arch/riscv/mm/hugetlbpage.c                   |   2 +-
+ arch/s390/include/asm/hugetlb.h               |   4 +-
+ arch/s390/mm/hugetlbpage.c                    |   4 +-
+ fs/hugetlbfs/inode.c                          |   2 +-
+ fs/proc/task_mmu.c                            |   8 +-
+ fs/userfaultfd.c                              |   2 +-
+ include/asm-generic/hugetlb.h                 |   2 +-
+ include/linux/hugetlb.h                       |   6 -
+ include/linux/pgtable.h                       |   3 +
+ include/linux/swapops.h                       |   2 +-
+ kernel/events/core.c                          |   2 +-
+ mm/Kconfig                                    |  10 -
+ mm/damon/vaddr.c                              |   6 +-
+ mm/gup.c                                      | 105 +---
+ mm/hmm.c                                      |   2 +-
+ mm/hugetlb.c                                  |  46 +-
+ mm/memory-failure.c                           |   2 +-
+ mm/mempolicy.c                                |   2 +-
+ mm/migrate.c                                  |   4 +-
+ mm/mincore.c                                  |   2 +-
+ mm/pagewalk.c                                 |  57 +--
+ mm/userfaultfd.c                              |   2 +-
+ 68 files changed, 754 insertions(+), 1926 deletions(-)
+ create mode 100644 arch/powerpc/mm/nohash/tlb_64e.c
 
-> this is not ok
+-- 
+2.44.0
 
-I suggest to reconsider such a view once more.
-
-
-> is actually harmful to our community.
-
-Possible improvements are varying between affected software components.
-
-Regards,
-Markus
 
