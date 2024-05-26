@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-189747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABA98CF473
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC608CF475
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F20E281441
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B011281420
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547261640B;
-	Sun, 26 May 2024 13:59:25 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A71642B;
+	Sun, 26 May 2024 14:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJ2r4zs2"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3812E7C
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 13:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F345115E90
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 14:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716731964; cv=none; b=UHv9DwwwixVbjorsmt8fzVK2nzNWdkCHVQP4OEXauLFiB25Sc92aMut1RUWfn3MCn+IOky/JmLbGUgv/27fA7rL4qGcMa2nJscsG/+cXydz/UmHF3kPEYWGAboosXvZcE3kXCyiEJ0gbgyiQ2ds9OKOpsKeJz79PeBKhZlTXtSA=
+	t=1716732108; cv=none; b=bOYqJy5cZmUxjH9XXSzhfW0BOyIB6Y547YKd8KVU4x6GIHShfSLXZp21obtKzg4MEANHklFO16wzHHDKHnhPkf+45BjDmFmO8vlJcsll5SvnxtFKhiUjXyo//ObD+QPXvyv0UWFy0rL4waFa9INBG98+b/sbGTdL+30qrz6R48E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716731964; c=relaxed/simple;
-	bh=hAYL+MbMFc4YuIMEVpmCUEO5uqGqTDjYaM9WZUfwOx8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EGPHmJqMgOLMDTOCCWK/2jSa8ztW8b76fon3oEZlYo/o3XXqJiNB4fbLGmA8nZc1lwFatdJWkIGktQLWKtiHPdG64+wGnb/j9Y1ZMYavOCyfQ9a4Nv3W05kbpXi5pKIdAWy3fmmxtQuaQNqFhg/OJZe74uthbzZSod0CFFDYhuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e8dc9db8deso146383139f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 06:59:22 -0700 (PDT)
+	s=arc-20240116; t=1716732108; c=relaxed/simple;
+	bh=In48y0pApngmsbuMVu4rLDLb/XOfXDOmaT7OduNUFew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jDJgZ0Jkt0UP5t2DjchOge31x2H2PBL6p1zuOhRqp/cg3bZ5et6ZqeCskyJs8lrVFNoCJpUI438y9Wwxc/fStj/TipnYK7rU4mclyI6zxlEc7ybuXnQ1JbYC12opRWcsbGE6AZmzdw36CpshK1jKwZR7mvXozl7bDi2hdTU/y7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BJ2r4zs2; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f32a24e0b2so891735ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 07:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716732106; x=1717336906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9wWwa2blJw1v9DPCM805/uZ0DLUpVg3y4xjSDjosOAA=;
+        b=BJ2r4zs2spayVnniESeCaXksMNNcG3n+C3Qs5ZSsNKeTObbGjVchufMtc5I3hyUy1M
+         AMrlfGFbzo9x9iAVB5hi+McX6sONLCSYyD33IY0jEnhG+lKUG/FOeh6qBK97u/QTGmE1
+         GJXYpMtWCegqiUf+5+LpSwqxA5D+y+ZhAfeqOz/jH+8DZrCxvZfgemFcAUgdzDVqXD0p
+         JJgE/t/Wp7RHMX7KGXKo7VcQc24ajHPG5nd03j7uzw+Ox/EkmB6lEWO/estSS1CevU0G
+         GVSbI34Z6s4NMb0E31tRpayKIOHnDafiZ4Up438L8idCARQdpGWY0vxCzXjhyRymKqT8
+         WmZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716731962; x=1717336762;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jNEgY/oLrqRd+yaxQrrBw1t0SSKI8XMoyGe1kTK/1Ws=;
-        b=rO1SbOSYjrquJLHELvcydDUlqVMlb85DiMIydDQM+WfmYDm3Fi1CIgHBZM1n8dVLnc
-         0PQZ8qcSb4y0N13Vb5i7Fj47ypjPOG1jAGVjotsXjtMev7XOrZTVXDdSUq9gRibBz5W9
-         2OODZeu5me7ILUfppfqmzN5RKKnSSuAD42ZBVwLkCH5jKmDVJwu36XkQF6QWInkseODm
-         FfD4jk1nuRqw/j3ANFp779JOvhCV+pM5JemNMXPNYEJCuhkxi1yFwpoDvD2LsmGJBJIF
-         kocj1jlCSVc3Z5AV8toDT+D6+jkXVaLzokAf+AdFRC1ic2qsWyMoBYgUKf5iK3nzeW+7
-         Qigw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgL/Wh40+1a7Mt5bYCrlccL+VY7aQ78wwwlexMPelSRjint3HcIe4dNBuPWbO7Eklrc2J/3n2bLkTDmCqfQVa6BrUST+3yuEPruvJT
-X-Gm-Message-State: AOJu0Yy5qZJNoHzxIJ25HvL4Zi0GX7/ucVRIjB3PQ/LAQlAlm6LiIdpq
-	+9SXdMrbFM4spQc+OtHQp9qNazTW1fJVlS6aONawEkODh1aooiPAM8kqXq9emw1yQI/srvZH4V6
-	+t+EyKkZH5erxmrct4ugNlSz42KauwRlreP7XgWrHP17nbSbg/Vz6vYo=
-X-Google-Smtp-Source: AGHT+IHNNjsHcPytzQ4qNy8yJE2YJ9Q8829cNue7EDdSis/FiJ1bsV6YBDthQBQnJDzAlnUp5Xo63kcVHRe08OjvN7VW/ivZ+0hB
+        d=1e100.net; s=20230601; t=1716732106; x=1717336906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9wWwa2blJw1v9DPCM805/uZ0DLUpVg3y4xjSDjosOAA=;
+        b=Ng8NJE7E1qyU3PSucRwGE2S9ZwPMcqPy7ZdLW6z6e0YCcrfu8sCoGbIOhd4a0EkUsa
+         M8Gl8ez0hS0j1Gwvngz1Dp9dGq5jt4hhATwo8qmoWiwqthw3Rmao9ChZzMfhDHpTZPN1
+         vqKwhUZee3W9Y3nENNoPq5xSWWUk1mH2oj7hZe09RxJeTSdBNk/lzxwG8znmqMAR6vzN
+         +q/1cgEddtpp9fiM1LH3DT60eT2FjS5NmDfUQNkPMDZKRWkNVxDTrLj74xfr5FKTPgt6
+         8NrgZFEEOzoa9OuzaTDPWD/lxNPe12fh3C+hAjnk/mr9GgtGND4QFnSAW8SHlaszszpj
+         QprQ==
+X-Gm-Message-State: AOJu0YxsQaWbeZF45AQlEJTsPiwCH70y0qmeo3Rpj4U8nrjO/NKvbmCC
+	bYErN0H3NGAqtSqjxn5PMuuOjx7ApmVH4SiVmW5t8bjMfcdoGW+583JIIQ==
+X-Google-Smtp-Source: AGHT+IHAtx87oxiIyIRT+DNpcR/QG3eeRSxM/CPLi+a1mWzK7eM1Jk7VGlKPM5UPDZq3cz1ScCp87g==
+X-Received: by 2002:a17:903:2451:b0:1eb:50eb:c07d with SMTP id d9443c01a7336-1f4498f0cb6mr77393305ad.4.1716732106118;
+        Sun, 26 May 2024 07:01:46 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:da5d:2d85:2879:5a6a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f460b311f0sm31066085ad.212.2024.05.26.07.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 07:01:45 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH] lib/plist.c: Enforce memory ordering in plist_check_list
+Date: Sun, 26 May 2024 22:01:39 +0800
+Message-Id: <20240526140139.17220-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:6408:0:b0:374:5776:de62 with SMTP id
- e9e14a558f8ab-3745776e1bdmr112205ab.2.1716731962249; Sun, 26 May 2024
- 06:59:22 -0700 (PDT)
-Date: Sun, 26 May 2024 06:59:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c8e60006195bce35@google.com>
-Subject: [syzbot] [dri?] WARNING in drm_atomic_helper_wait_for_vblanks (3)
-From: syzbot <syzbot+0ac28002caff799b9e57@syzkaller.appspotmail.com>
-To: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, syzkaller-bugs@googlegroups.com, tzimmermann@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+There exist an iteration over a plist in the function plist_check_list,
+and memory dependency exists between variables "prev", "next" and
+"prev->next". Consider plist is used scheduling subsystem, we should
+guarantee the memory order between multiple processors.
 
-syzbot found the following issue on:
+Using macro "WRITE_ONCE()" can help us to ensure the memory ordering as
+it was stated in "/Documentation/memory-barriers.txt".
 
-HEAD commit:    6d69b6c12fce Merge tag 'nfs-for-6.10-1' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14dbcda4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=aeb4d28a6349ece
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ac28002caff799b9e57
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-6d69b6c1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/85d8b411b76d/vmlinux-6d69b6c1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a9fe9b7875f4/zImage-6d69b6c1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ac28002caff799b9e57@syzkaller.appspotmail.com
-
-input: AT Raw Set 2 keyboard as /devices/platform/bus@8000000/bus@8000000:motherboard-bus/bus@8000000:motherboard-bus:iofpga-bus@300000000/1c060000.kmi/serio0/input/input0
-input: ImExPS/2 Generic Explorer Mouse as /devices/platform/bus@8000000/bus@8000000:motherboard-bus/bus@8000000:motherboard-bus:iofpga-bus@300000000/1c070000.kmi/serio1/input/input2
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 24 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c drivers/gpu/drm/drm_atomic_helper.c:1682
-[CRTC:34:crtc-0] vblank wait timed out
-Modules linked in:
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 1 PID: 24 Comm: kworker/1:0 Not tainted 6.9.0-syzkaller #0
-Hardware name: ARM-Versatile Express
-Workqueue: events output_poll_execute
-Call trace: 
-[<818d5898>] (dump_backtrace) from [<818d5994>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
- r7:00000000 r6:82622d44 r5:00000000 r4:81fe1500
-[<818d597c>] (show_stack) from [<818f2fa4>] (__dump_stack lib/dump_stack.c:88 [inline])
-[<818d597c>] (show_stack) from [<818f2fa4>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:114)
-[<818f2f50>] (dump_stack_lvl) from [<818f2fe4>] (dump_stack+0x18/0x1c lib/dump_stack.c:123)
- r5:00000000 r4:8285fd18
-[<818f2fcc>] (dump_stack) from [<818d643c>] (panic+0x120/0x358 kernel/panic.c:347)
-[<818d631c>] (panic) from [<80243dcc>] (check_panic_on_warn kernel/panic.c:240 [inline])
-[<818d631c>] (panic) from [<80243dcc>] (print_tainted+0x0/0xa0 kernel/panic.c:235)
- r3:8260c5c4 r2:00000001 r1:81fca178 r0:81fd1dc8
- r7:80a1fec0
-[<80243d58>] (check_panic_on_warn) from [<80243fc0>] (__warn+0x7c/0x180 kernel/panic.c:693)
-[<80243f44>] (__warn) from [<802442ac>] (warn_slowpath_fmt+0x1e8/0x1f4 kernel/panic.c:726)
- r8:00000009 r7:820530fc r6:df87dbdc r5:82e3b000 r4:00000000
-[<802440c8>] (warn_slowpath_fmt) from [<80a1fec0>] (drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c drivers/gpu/drm/drm_atomic_helper.c:1682)
- r10:00000000 r9:00000001 r8:00000001 r7:00000000 r6:8405db00 r5:83ee5050
- r4:00000000
-[<80a1fc5c>] (drm_atomic_helper_wait_for_vblanks.part.0) from [<80a2130c>] (drm_atomic_helper_wait_for_vblanks drivers/gpu/drm/drm_atomic_helper.c:1658 [inline])
-[<80a1fc5c>] (drm_atomic_helper_wait_for_vblanks.part.0) from [<80a2130c>] (drm_atomic_helper_commit_tail+0x84/0x94 drivers/gpu/drm/drm_atomic_helper.c:1758)
- r10:8421269c r9:00000000 r8:00000000 r7:00000001 r6:217c7950 r5:841df000
- r4:8405db00
-[<80a21288>] (drm_atomic_helper_commit_tail) from [<80a22910>] (commit_tail+0x178/0x1a0 drivers/gpu/drm/drm_atomic_helper.c:1835)
- r5:00000000 r4:8405db00
-[<80a22798>] (commit_tail) from [<80a22aa0>] (drm_atomic_helper_commit+0x150/0x174 drivers/gpu/drm/drm_atomic_helper.c:2073)
- r9:00000000 r8:8405db2c r7:00000000 r6:841df000 r5:00000000 r4:8405db00
-[<80a22950>] (drm_atomic_helper_commit) from [<809de954>] (drm_atomic_commit+0xc0/0xf4 drivers/gpu/drm/drm_atomic.c:1514)
- r9:00000000 r8:83ee5520 r7:00000001 r6:841df000 r5:00000000 r4:8405db00
-[<809de894>] (drm_atomic_commit) from [<809e51c0>] (drm_client_modeset_commit_atomic+0x21c/0x25c drivers/gpu/drm/drm_client_modeset.c:1063)
- r6:00000001 r5:841df1ac r4:8405db00
-[<809e4fa4>] (drm_client_modeset_commit_atomic) from [<809e52d8>] (drm_client_modeset_commit_locked+0x64/0x18c drivers/gpu/drm/drm_client_modeset.c:1166)
- r10:841df1ec r9:00000001 r8:841df098 r7:83e71418 r6:83e71400 r5:841df000
- r4:841df000
-[<809e5274>] (drm_client_modeset_commit_locked) from [<809e542c>] (drm_client_modeset_commit+0x2c/0x48 drivers/gpu/drm/drm_client_modeset.c:1192)
- r9:00000001 r8:841df098 r7:8204c8e0 r6:83e714b8 r5:841df000 r4:83e71400
-[<809e5400>] (drm_client_modeset_commit) from [<80a2fcc8>] (__drm_fb_helper_restore_fbdev_mode_unlocked drivers/gpu/drm/drm_fb_helper.c:251 [inline])
-[<809e5400>] (drm_client_modeset_commit) from [<80a2fcc8>] (__drm_fb_helper_restore_fbdev_mode_unlocked+0x8c/0xc4 drivers/gpu/drm/drm_fb_helper.c:230)
- r5:83e71400 r4:00000000
-[<80a2fc3c>] (__drm_fb_helper_restore_fbdev_mode_unlocked) from [<80a2fc2c>] (drm_fb_helper_set_par drivers/gpu/drm/drm_fb_helper.c:1344 [inline])
-[<80a2fc3c>] (__drm_fb_helper_restore_fbdev_mode_unlocked) from [<80a2fc2c>] (drm_fb_helper_hotplug_event+0xf8/0x108 drivers/gpu/drm/drm_fb_helper.c:1990)
- r7:8204c8e0 r6:841df0ac r5:83e714b8 r4:83e71400
-[<80a2fb34>] (drm_fb_helper_hotplug_event) from [<80a19ed8>] (drm_fbdev_dma_client_hotplug+0x24/0xc8 drivers/gpu/drm/drm_fbdev_dma.c:182)
- r5:841df000 r4:83e71400
-[<80a19eb4>] (drm_fbdev_dma_client_hotplug) from [<809e4750>] (drm_client_dev_hotplug drivers/gpu/drm/drm_client.c:238 [inline])
-[<80a19eb4>] (drm_fbdev_dma_client_hotplug) from [<809e4750>] (drm_client_dev_hotplug+0xbc/0x114 drivers/gpu/drm/drm_client.c:217)
- r7:8204c8e0 r6:841df0ac r5:841df000 r4:83e71400
-[<809e4694>] (drm_client_dev_hotplug) from [<80a2a990>] (drm_kms_helper_hotplug_event drivers/gpu/drm/drm_probe_helper.c:738 [inline])
-[<809e4694>] (drm_client_dev_hotplug) from [<80a2a990>] (output_poll_execute+0x270/0x2c4 drivers/gpu/drm/drm_probe_helper.c:854)
- r9:00000001 r8:841df0d8 r7:00000001 r6:841df000 r5:00000001 r4:82cb2180
-[<80a2a720>] (output_poll_execute) from [<802671bc>] (process_one_work+0x1c4/0x510 kernel/workqueue.c:3231)
- r10:82c16205 r9:82e3b000 r8:01800000 r7:ddde40c0 r6:82c16200 r5:841df1ec
- r4:82cb2180
-[<80266ff8>] (process_one_work) from [<80267df0>] (process_scheduled_works kernel/workqueue.c:3312 [inline])
-[<80266ff8>] (process_one_work) from [<80267df0>] (worker_thread+0x1ec/0x418 kernel/workqueue.c:3393)
- r10:82e3b000 r9:82cb21ac r8:61c88647 r7:ddde40e0 r6:82604d40 r5:ddde40c0
- r4:82cb2180
-[<80267c04>] (worker_thread) from [<80271228>] (kthread+0x104/0x134 kernel/kthread.c:389)
- r10:00000000 r9:df819d60 r8:82cc3e40 r7:82cb2180 r6:80267c04 r5:82e3b000
- r4:82cc3c00
-[<80271124>] (kthread) from [<80200114>] (ret_from_fork+0x14/0x20 arch/arm/kernel/entry-common.S:134)
-Exception stack(0xdf87dfb0 to 0xdf87dff8)
-dfa0:                                     00000000 00000000 00000000 00000000
-dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
- r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:80271124 r4:82cc3c00
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ lib/plist.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/lib/plist.c b/lib/plist.c
+index 0d86ed7a7..2e51829d3 100644
+--- a/lib/plist.c
++++ b/lib/plist.c
+@@ -47,8 +47,8 @@ static void plist_check_list(struct list_head *top)
+ 
+ 	plist_check_prev_next(top, prev, next);
+ 	while (next != top) {
+-		prev = next;
+-		next = prev->next;
++		WRITE_ONCE(prev, next);
++		WRITE_ONCE(next, prev->next);
+ 		plist_check_prev_next(top, prev, next);
+ 	}
+ }
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
