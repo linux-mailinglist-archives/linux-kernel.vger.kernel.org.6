@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-189835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ACD98CF56E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 226F78CF570
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 20:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4DF2811B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E24281156
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C321EF15;
-	Sun, 26 May 2024 18:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09E1535A4;
+	Sun, 26 May 2024 18:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEaBQfOZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaJyUSC+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF8555C1A;
-	Sun, 26 May 2024 18:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0781EB35;
+	Sun, 26 May 2024 18:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716747834; cv=none; b=r0YX0P3koYk6bW6/OmiHLV7H3AzrRmWQr0xSjB7EUvsn8cu8Wa4gH4dhC8gwN4Xf5QxRV5chIcu61OgNT9ny3n4B0HjCHV7Zr7eUT8FlObp7nKv7w7EqeUCSEFwQSRA5ASlUDDMP6g7IQoFnQH09DRApmDICPYqyD36wSaWLjNQ=
+	t=1716747874; cv=none; b=em1vO45fUYIPTy1/XO873vwV8CO/mogrjbBh4/BmBUpLhG37kVCId0gBXvuGHX0jpfLsK56gY/ju16nIWOEKfHc/dmGL2kf1KnphUO/hxZ5seRh/3/xzkT+vySHxdmiq5xCf/UsSdOIS5b0VnaW8PmKCB0P1boM3CJaDlvofJGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716747834; c=relaxed/simple;
-	bh=eFpQNXZiPzjbkGeQi+tDfeOzF+zP+pKpvV0zqdI0Le4=;
+	s=arc-20240116; t=1716747874; c=relaxed/simple;
+	bh=A/KN+uWOMo5RgRCbJAyfJKRSejWeu8pmAzZob15UkMk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rLSwrU4bCKdSWu4OS1al8KVYJk0th5soHupaLYjxggNPtTTtnKIXJe2cftCN7t/GqLOkEXSw5VDBq96kgysLa5pYRUMRjKtBWAbA01FBQLZAe0e8zmaRk727SroO4Lw6jTQVimFCTnTdt4mi/lCn/DNCIKQ+L0k5j1puoV9q45A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEaBQfOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE587C2BD10;
-	Sun, 26 May 2024 18:23:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SmLKTbBFqC3KC8L2D5hxZKv3z460zEmeAD2KSuWVIKL3UHIzDLKWclCauvUubhtnEANH0qLjq3rOuxkeayXy+zRoLmHy4nTaXRV5/plTvSyajxXOA1oNVwuh8KuX/WL1f5P8fmU1x/+Li9bKvPK9dDpUVmshPFTRQ6LI5c/UoLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FaJyUSC+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDBC5C2BD10;
+	Sun, 26 May 2024 18:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716747833;
-	bh=eFpQNXZiPzjbkGeQi+tDfeOzF+zP+pKpvV0zqdI0Le4=;
+	s=k20201202; t=1716747873;
+	bh=A/KN+uWOMo5RgRCbJAyfJKRSejWeu8pmAzZob15UkMk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pEaBQfOZR1AWkJOifYLUwwr8RwdoK30yu/IDNpXJO0a7nva0fM4IdTQkr1h6jRUAT
-	 wKBtIXBx31I8BDkz+da9bypWlOBZRLeEPbhQRq7d7+eWbm5ikqIssqmVVcPB5GocMf
-	 xvo8huZ7WGy2FzmEozroeFRCKVtzSACDRJwD8yRKf05VNYvifJkax87uuxfRyVHAEq
-	 cFec9tOxehdIsWgVpos5n56aOb5CaahaRZAcKN4Ke3rrQWvJxyW172Gg7HoRo4qCND
-	 UYO7Hnluk3IQqXDoB5nSIYm/ocjxCMp73SnBQuk6Wkn+/9lALmL2gSWhDnNrI/gmQ+
-	 MgDCtOBVwplAw==
-Message-ID: <bf0c63a6-1789-4ea5-b783-54a7560a8b3f@kernel.org>
-Date: Sun, 26 May 2024 20:23:48 +0200
+	b=FaJyUSC+5rJpflqFMh8FAN7OfyZ/9BCVAni0vqEbcCqcShE1dkfqTUrfrB+S9j5pp
+	 MIiIB2js0IeThLk7c+EhcEpDzXIXJlJSaLNhPfOqFF62C/qNRY/VQ7q1YkJFoSuLo2
+	 Wf3S0Yx+FkKDKEo5dHdAHzQcBSlUt/hleCa3Prq7q4T9PUc7RleHbPSM1D1whDocX+
+	 Crhr5mJlz3oq6Evr4nutQdkJyxz0wHmUvwSjFhjxzZf2RLjIz3GjElm3YIfNRmGqob
+	 4+ttQgB9/Um/i+/QZHnGeuLMz295u59Z0zcdzbH8MtTJhvSlqkM5RMH5K3go9V2xTE
+	 kIwLKlU0RYGKw==
+Message-ID: <b0a003df-97f3-4423-b0ff-c5f425a2bdce@kernel.org>
+Date: Sun, 26 May 2024 20:24:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: qcom,pdc: Add sc8180x
- PDC
-To: Bjorn Andersson <andersson@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-References: <20240525-sc8180x-pdc-binding-compatible-v1-1-17031c85ed69@quicinc.com>
+Subject: Re: [PATCH] dt-bindings: arm-smmu: Fix Qualcomm SC8180X binding
+To: Bjorn Andersson <andersson@kernel.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bjorn Andersson <quic_bjorande@quicinc.com>
+References: <20240525-sc8180x-adreno-smmu-binding-fix-v1-1-e3c00aa9b9d4@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,16 +103,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240525-sc8180x-pdc-binding-compatible-v1-1-17031c85ed69@quicinc.com>
+In-Reply-To: <20240525-sc8180x-adreno-smmu-binding-fix-v1-1-e3c00aa9b9d4@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/05/2024 20:05, Bjorn Andersson wrote:
+On 25/05/2024 19:58, Bjorn Andersson wrote:
 > From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
-> The SC8180X platform has a PDC block, add a compatible for this.
+> Update the Qualcomm SC8180X SMMU binding to allow describing the Adreno
+> SMMU, with its three clocks.
 > 
 > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
