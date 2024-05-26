@@ -1,146 +1,127 @@
-Return-Path: <linux-kernel+bounces-189616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7328CF2F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6668CF2F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0191F217B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:08:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C0F281894
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE34944D;
-	Sun, 26 May 2024 09:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4F08F68;
+	Sun, 26 May 2024 09:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=toralf.foerster@gmx.de header.b="WL+o5N0R"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Y7Re1F/n";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KtdQLRS4"
+Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDB66FD3;
-	Sun, 26 May 2024 09:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D66FD3;
+	Sun, 26 May 2024 09:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716714486; cv=none; b=Kuv9obpduTNOBknwOcZjhvb0Ee1sQF3dqOMCiu9ck+3vvkZiIs7d6AHpumYnotElcAoEKEac+t7wA0fZ3c2FbvfAzGb20sUkactMhCIIsaMgiSwE0xM6XWTPaoSphAefqEqpvVpBaf+5jD1gJfU+KIluU/17J8EfSpUsM/KIEFg=
+	t=1716714647; cv=none; b=gIGiS0ErdC/TXCuKBCHdJf5FunYyoR+vR5YcVqWaH7kNV7DhiHyEL+QNeP9KSTqOrO1Hvb1wZMg6kdRDMQnEPJsRP7ehg7E/w9tylpR3p/aevrMptg2NcKg2wb+pxvHUzEf1e+5nfN48kmFDZqrJ1HiJLUitq4zTmjlifXyNBUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716714486; c=relaxed/simple;
-	bh=qChTYHdKiktPVHGBGd4i1Bcb/tITVD4DvQJ8LX0W9K0=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Qd58s7SP42oTngGzo4TYx3T1w7PjdJawr0n7rXzo36BI5bjgNlMY36sI+gmNOdBmF/Vnj8J1TsqBNhlRp5wH4pUSJgGtkENQ5dqAVEku9gH+9nkMbmh7A5W4LhVh3jLpTrhoMkbazKzbyi01XgdsgvZymBWVsFLjkSHwKzO+GCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=toralf.foerster@gmx.de header.b=WL+o5N0R; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1716714482; x=1717319282; i=toralf.foerster@gmx.de;
-	bh=qChTYHdKiktPVHGBGd4i1Bcb/tITVD4DvQJ8LX0W9K0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WL+o5N0ReIi7MoIMPUAeM+ab1A3QJ9/ycuneL9BpWwH94twUV1WNhL1HUdoNEhwR
-	 WNhVpVxcS+mv6JT/LMVUR4GuVFkyMMyV/S2PNbSqXU5QPYPnD8cZL1F75XUrKZbmM
-	 wqlIAUpAE1gJlg9WONBDnCeyAnMET7+vRq60y0cpehZlRZybvAgjwFmTuf1GNfx3Y
-	 4XW35CS5114fUhOO/R0TYCxT7eDEfaTFa6SaaO3hLb6b56usSmlSSjF4iKmsbkTyc
-	 qijhuskl89yJFHEMs5DPoPuECT2VQUwOk5yq1SFO/v8ZcPFQ9CyD/HuSu7kE1444p
-	 DgTaGF8AC2OOFNPeIQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.178.33] ([77.6.29.73]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MxUs7-1sQb8t2MVF-00wljU; Sun, 26
- May 2024 11:08:02 +0200
-Message-ID: <e8b3311c-9a75-4903-907f-fc0f7a3fe423@gmx.de>
-Date: Sun, 26 May 2024 11:08:02 +0200
+	s=arc-20240116; t=1716714647; c=relaxed/simple;
+	bh=8CrjV8UfJrDF9O25lLIHM93qe07O22Mo5Dlz1E/1Gw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qe13ZZRDqxNgQhBuBBsGtkLgE5cryexl+t1ZeNWLb/WGKoIu0ACyuvZ5jPCZDySg4or+VKbgBKhMpcyFkPzaA45dYCEd215nmgkTWXj4n68EDzQGBograa1K/i3IQmcFHOFH6rehmzqIUDELk5PLEzTvknN1uwpLOH2upEuoxVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Y7Re1F/n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KtdQLRS4; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6F6D31380118;
+	Sun, 26 May 2024 05:10:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 26 May 2024 05:10:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1716714643; x=1716801043; bh=mKJHgmashDivalhHdFKG0
+	1oCbJyBiIOuYrEgsZqZ19M=; b=Y7Re1F/noP48dAgZTLxVjKMpXSr8/yQZMVft5
+	+7tLLT/smXcdcIGuy+bVkqhsgjNWKVR7vKP1D20gQe4iYb+WXqw3WiBS2GF6iun5
+	jKUtDMet+wVK1CQZ1zE+Wv/QHNaHe86WAhlTsIpZ/Du4LT4s7RPWDuDNGufmxgOT
+	VTYYMPZKqkMZ3ER0TA1Q/dFLEu6tvC+gOfFOrS6YEa8a/o5MPPUQcm23IwtNThIR
+	cVX4xVW1k7Nb5cqiUdnTZDcaF9y+QKtBSKRYz4TYm69mZQRzV1R7VDkV8ZqJ1GnC
+	i/N+9MH2+j3V023aK7yP4oTtQDFA4+GySOfOh8Op3JR6AlMNg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716714643; x=1716801043; bh=mKJHgmashDivalhHdFKG01oCbJyB
+	iIOuYrEgsZqZ19M=; b=KtdQLRS4e3N08FFSCAYA3VFIkLyEw7C1E6aCfL5S9/DO
+	iYOUqre5B2LoyNmv1oSRylm9mB+FOu4m3Ne9D9gifPlMyKRXpJnnWK8bla8mMZ5N
+	I+/h/2UBcnjNeMjqTnY9pRcGAyu8wsTy3hLNyP4LMvWm5UeY3NVyiC77ju9HpQrV
+	58zu7H9McNrhzUuhkRhtIAZjV7A4YUOTq7WCmGWSivHuUVbnWw1e0VgopopZqbEU
+	G69lUl+V9KTlZTCTtxRgs1xmOXMs55A46m8F3AGjtwnG4t0Pq7VIJhgn+rpYcxVZ
+	8vCpdscuqAGt4myG/+Qn87Ac2L/hISiwyvQvFhoLWQ==
+X-ME-Sender: <xms:kvxSZk16d1uB0y4nVBOwCXLjcuwJoYoWj9TACTafr3l0lCb5BlvD3w>
+    <xme:kvxSZvFcshYqeBZZpZ-pP1uVUqubIFZOjVLVXeH_iXmut8TkHUsOusWpqyVU-iKns
+    ObMK6b0KVNdWtRJ8CU>
+X-ME-Received: <xmr:kvxSZs5w_ozVTQhrr6dyyXs_h1qnL4Cr9SuQCdcba3UhBR87KstWJ_CA8XNB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejvddgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhho
+    nhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthfduudekffefkeeiffdttd
+    dvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:kvxSZt2HeohLAUpH2DdrfYivtaMgDf_yfDm8OjA3qyyAlbk1fGK3vg>
+    <xmx:kvxSZnErPFRI4c_9utuTRKee1nOOrh9SoJ3v30pbw1kNef3CYLtUMw>
+    <xmx:kvxSZm-huHdfEecbT3bTpKUZjnO1yOdHvoOnPV1T0qqANtmjTH2Enw>
+    <xmx:kvxSZskHmGFnvQW1mNpi8lJ26y8TtUEoWmhvRvekGNguLkgRM6zk9Q>
+    <xmx:k_xSZv97OHsuQbQrmnToN2sjYJmzo1-937i5TgUetwS-TB-4Mo_ppavE>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 26 May 2024 05:10:38 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: tiwai@suse.com
+Cc: perex@perex.cz,
+	sbinding@opensource.cirrus.com,
+	kailang@realtek.com,
+	shenghao-ding@ti.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH] ALSA: hda/realtek: Adjust G814JZR to use SPI init for amp
+Date: Sun, 26 May 2024 21:10:32 +1200
+Message-ID: <20240526091032.114545-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linux Kernel <linux-kernel@vger.kernel.org>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-From: =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>
-Subject: RIP: + BUG: with 6.8.11 and BTRFS
-Autocrypt: addr=toralf.foerster@gmx.de; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:G4/xikM3HbpDuUgFj5qYgY6lckIC2xop/1caifcUeUxeJ9e+om8
- fFrBsXYmuipLYLRi9FEE6pS/f9CHsG+nxt9H6qyKFxLPBz1BDukAUFCOa7pDHnhqC1msYnD
- 81AS4DyhapDtsUvuO+NEGYO3gh/8/6rbytHHAxeXSyCvZ8P2Kj9k/GmLL4SHzfFYVBeR9xg
- 45i193/aT0vuhPgsA7c7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:X9AFn0fGzas=;9tYEb/mp874/6ml+Gj6VFntftjI
- dSAVc1Lb56jYKqcFC9t4wJcz8MjEnGV+Z/LFIzcHNq1lk5i+jWKjA1kNK0t1tyX+W52Oh+GL5
- W5ZsBYKIgWlQs4xUeIcGHMNN95xP303jRbZWHF95XAw5rDXPOqkjJSPbqVeTA9vaTU75raM2G
- ZuAxwbd//bhBLx0YJ1eEW6zrfF4hT0C7bL5vVGOj/m8UeDWCCQgUdXW5+NAwuVvDt8w0J7OW/
- iMcMkTnO/bQDD18lkJ0M/bSPIz16EIpS7mAEZh0D7c2rkcyBhrBYJvaIi4QF5ZG6tKZdkqy9p
- blLu+Mbc7R7PUjlbgCIZu4mKsj/Ybpg/dJc+stFMeKdPqH0KqniX2hAipV1zfUgInGooiyOeM
- EIKGCIa+UOKabFIE19F473O22TmLjbU4469OZeIxi9uXXi9p4XLyQ+8tv6Nb7qGo9XVhrurIn
- 38BHFd9zyiU1N+iaCVe7hPIupSFB0kDSEPR713nLoMeIjsulGOWIYUmiBWgnK4lCU8lTKmuB1
- YTlqOVdXeVLqbMngC4M+oba9y94tSnN3CcjZ93yUoBj/LDjcyV6bDsviYdrn1Qd7KAhks83Nh
- FxEwz34UHURcSgfGJ6K8AJVypkNRclPYE5LCbf+1ecd1OCrjZV0W+3gc5g/Cu57Jk8KDRbMgz
- zVpSyCykom04a6t4eMYd2gTlLuruYfWJWBeezXAXcD5ovPTHICM5PQuLlcfiSvDxVORabQWVo
- GFVSmH7/HEudZ84NYjrBz9/bbtk42GtO13Fb3bVbJxja+c8HPIANlRViP7Rbb7vNYpB7Ib/pw
- zV3o5BQgdxs+6KNfMy0lQMCyhWCTr/ubpkoiMPP+KDMGY=
+Content-Transfer-Encoding: 8bit
 
-Attached is the output of
+The 2024 ASUS ROG G814J model is much the same as the 2023 model
+and the 2023 16" version. We can use the same Cirrus Amp quirk.
 
-grep -A 200 -e BUG: -e RIP: messages > splats.txt
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ sound/pci/hda/patch_realtek.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-from a Gentoo hardened Linux server running at a bare metal server since
-3 yrs. The system contained 2x 3.84 TiB NVMe drives, / was a raid1,
-/data was configured as raid0.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index a696943aec0d..df86108f4fe1 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10307,7 +10307,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x3030, "ASUS ZN270IE", ALC256_FIXUP_ASUS_AIO_GPIO2),
+ 	SND_PCI_QUIRK(0x1043, 0x3a20, "ASUS G614JZR", ALC245_FIXUP_CS35L41_SPI_2),
+ 	SND_PCI_QUIRK(0x1043, 0x3a30, "ASUS G814JVR/JIR", ALC245_FIXUP_CS35L41_SPI_2),
+-	SND_PCI_QUIRK(0x1043, 0x3a40, "ASUS G814JZR", ALC245_FIXUP_CS35L41_SPI_2),
++	SND_PCI_QUIRK(0x1043, 0x3a40, "ASUS G814JZR", ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
+ 	SND_PCI_QUIRK(0x1043, 0x3a50, "ASUS G834JYR/JZR", ALC245_FIXUP_CS35L41_SPI_2),
+ 	SND_PCI_QUIRK(0x1043, 0x3a60, "ASUS G634JYR/JZR", ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
+ 	SND_PCI_QUIRK(0x1043, 0x831a, "ASUS P901", ALC269_FIXUP_STEREO_DMIC),
+-- 
+2.45.1
 
-I upgraded yesterday from kernel 6.8.10 to 6.8.11.
-
-The system does not recover from reboot in moment.
-
-=2D-
-Toralf
 
