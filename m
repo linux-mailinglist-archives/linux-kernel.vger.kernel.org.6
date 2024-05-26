@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-189806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428C88CF520
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7118CF521
 	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 19:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF44DB20A24
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AF51C20BA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1112B153;
-	Sun, 26 May 2024 17:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C8012B17C;
+	Sun, 26 May 2024 17:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4ltMKU5"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KihD5xGs"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D0EEC5
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 17:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA17127B7A
+	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 17:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716746227; cv=none; b=B4NbuSzTKvwH9lFSQQMu0NJPBaZg3+baKbomOM4wHHBRyFA5yrLLElgRLGsgomKp7iWUwl47KFojtZOjFSoBUshnnAk4FgHsUkffLE+XzY0hNTtFUgneCMVmMG0TdFfVM6Z0vRIJD6/mIJdy4zkS469SjnALkDl5yoJKtsNQKoo=
+	t=1716746227; cv=none; b=OQMfukP6iYFhG0c+viQul3DXjHVtS4f64tqXcKY2+fUMae930oCZqFzyeZpBTf8OcOeiIGgLRLyCmMOiAXoJZ2JW/bthJzKP9u9s1iHtCpO6IzlIVqKagSA9jlaqY+Y8P6wpalKozu1JV7t4YCH8T02zU0OxZyx+7fpgJ1YOPPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716746227; c=relaxed/simple;
-	bh=BbvmViwVwJ/KmB08kS0p2rNXTjkvnKUZiDNKPQAi+YQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AvH7qILs7yMSL+hpdLwJYrluEpuYVImbY5mmQfWDDHrfTJl8SoOMySu4lYVd+k1KeGMjNlu20vgaZL5tjk0zKtsEa4ud+49AU+d9No1U+ji6fJRjWge3dhymGOAlzNYJCbGz5AwUYaxeEiHln4RTGj8BphvVkTNR29Ea/HMsHC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4ltMKU5; arc=none smtp.client-ip=209.85.167.46
+	bh=gwrkl0x0ZYQXDs57tv+T6mmq3c+fVkN3vQ8jk1jAIGw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lmAc2DglCFHdZjnxeUuDak2UQRMNJ5EZXGm/LoeX+tD7oq0v+DJgCZbz6gyJyivnChD5zQKZ8aQWqz7HrO9pp3hH7shS+FSMeD3RT5fNcUPrCkQW3dmR6jdCYZr4Apl2YizRmSZfniQqlxgM0sOTbOUKYbpHdXByrkt75k+VeZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KihD5xGs; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52327368e59so11537215e87.1
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a62ef52e837so31940066b.3
         for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 10:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1716746224; x=1717351024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVCDGbDE1hxIe+eglZipWL8jWoLwckalVAU3UroUOMI=;
-        b=E4ltMKU5a0OXz7SxmH7u3isBftswNQltB0jdifL6bDWphOLBGNZOlXn/NT/GwyAyya
-         tb0IsaOWNCxGDFIK4bDs8jI526esIPsLFQq28ohY+eHjxSKYtrIthUkKuG5tTKLhLyv0
-         gbyAMqBgmno3KnwgPCUwGe/DOD/sFAjkDN5iNudhZDR96ozk9GTMjcOK/MSUAEUlcZlW
-         9G28JPF9fBFfYvkagiROYW8pnPpVT1Bw3ys8SjauNje+I8PnpunRI7M74Hmdy8MVSQ7T
-         K+5zFDO6eOi7FuNxPX3YduUixD5SKMTPjy9sP/086W9YOCt//zhGbWfssp+cN60wa5Cp
-         b/bQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wdEt72NXsmqG4ZgtbWkypOIL4UtO8kSPqTnYgEIfbA=;
+        b=KihD5xGsGFxOQItH2RtVfRUVzHAlF+lMkLaWFVEZsRCpDcvMYd6NZlhMfHKn++Twcv
+         QwOtdefK++LHVNra4GBXw1yEcsT2rQtgzTzUu58utBx+4Hezwiv3ChP+Hsjadfy8lmRi
+         92xB9+idVzYxRAkkM5ZAU6hVB9892o1/qu3227GgXw42FZV627OjPNnOShtlISz8YLL2
+         28g7/He5kzZ9zbfeZT54oCj/l9RheUq/5ZDYP0c8lktL4OzetqAt7+889riiFMv2JHnF
+         7nYCpCQ67pCeo6ohN84iux9EKVmNq+4xuGuJoruOcCGvsyTiWdmBwuVgU0G2dL/GwbTB
+         4GcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1716746224; x=1717351024;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qVCDGbDE1hxIe+eglZipWL8jWoLwckalVAU3UroUOMI=;
-        b=O7Mupfcf4ZKThmTzz46LqXVQtksI47/TxaH1KXyYJApm8ZpfeniZyq3ctx1QkCpwJo
-         duHP5KlsL08CFxmVXxjvLttjLC0nV84ZcPNVEbSasuMeaEfqn2J5TKj7Ij9xa4zBrem8
-         oQRS121Z4wVZoadoCWZHGr5vfOjKTftXNplqF6+rYVbWW9asv0NtmLScmv+wfBmC6ApL
-         iX8OQ9ufFAajrHIEdc5bLOhrmJQzUWA0q8MwSOjppqBEF0Mom7gxCq/7JUk6cDOPmGUk
-         4Ex64LL2eGG1r1fEGjrRBm6aUXitKQFXj2olmZr6QAims1CA3Z1qjJEtU6pdPkzDwdPS
-         BgYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqCK+rVvTl+tduGUeOhaBedTo0amccT9WXQCcyKNQT4yiHshGgtOEc1ie+J5lM4YrYmSJ+FEvhEUvA6ZxLfvKke0AqKlfMX2INzrhu
-X-Gm-Message-State: AOJu0YyYRwu1MOThnwDxJuzr6GFz4zPWQMGcPOS3Woqemq64vUvvYo43
-	m4RH/kD0/OYia1hRm+T8xY71gmdX8zGch/Mmg+eeAmRIeXYGnUAJ
-X-Google-Smtp-Source: AGHT+IFVa1qUR79s4iYKKBSRgnjEmsg+qJzvJ6uTrHbrHoR/ogdT9aBaMVRncpxJ8r9WTnaO3Of8sQ==
-X-Received: by 2002:a19:8c07:0:b0:519:5df9:d945 with SMTP id 2adb3069b0e04-529642048d7mr4287411e87.4.1716746223402;
-        Sun, 26 May 2024 10:57:03 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wdEt72NXsmqG4ZgtbWkypOIL4UtO8kSPqTnYgEIfbA=;
+        b=VFKX6wL0UpBqaiiZf22MWDdH56iRdama7VlHR7pLJYVuFRlJItAq0k+8N4u69j58nq
+         mU38htuEf0zm198kcbqZR6XHiTbLMacrKRJjjcNMSKR+FI+s9tzx3lLcGhjJpbJTFL78
+         rRyK/+2Xner1nCgbd4SiLqRAhxTPUXCWfrpr2G1aL0T12EV+xgOVn8A7XIoc2wSPsToV
+         KFSX/hEmSRB3DxfB4dmo5dFQTsQAscEzBbA+A9nkanJ7SOj6EZrcHCnc+drA16/0Pp0p
+         ORvcbctETDwtKN3pJPK+e/27e3CF+5nxozELjDg7VwUKQBNuTITYxNDk4+SBiHwggTqk
+         k5OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtaON3HuM4Fh6o+YBlFyt3T9eKzJL8uNhHoJT2v5aHs66E6yBo0eijPYuHsFTHEBm3qNNgNbmcQZUlliTvSNurfeHraju64b1b2msx
+X-Gm-Message-State: AOJu0YzBpqbrrlNYoizx88ME2F8xFPoFbcM2t4ksOr4Yljony96PmUDW
+	IlIfazDzVtXZvkNpKVKjzOzaRjT7elKedwg/4CVAKsg/1ntEoK3W
+X-Google-Smtp-Source: AGHT+IFPAMK0nTnoFeh8iBe1mJjQQc3xu6NNyMU2yvsrihWDwbp+bHn8GX1qWvA2iHXNjMEjyNQuDA==
+X-Received: by 2002:a17:906:d18d:b0:a59:ab57:741e with SMTP id a640c23a62f3a-a6265112305mr520494766b.76.1716746224366;
+        Sun, 26 May 2024 10:57:04 -0700 (PDT)
 Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817c52sm406424866b.1.2024.05.26.10.57.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817c52sm406424866b.1.2024.05.26.10.57.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 10:57:02 -0700 (PDT)
+        Sun, 26 May 2024 10:57:04 -0700 (PDT)
 From: Uros Bizjak <ubizjak@gmail.com>
 To: x86@kernel.org,
 	llvm@lists.linux.dev,
@@ -78,10 +80,12 @@ Cc: Uros Bizjak <ubizjak@gmail.com>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>
-Subject: [PATCH 1/2] x86/percpu: Fix "multiple identical address spaces specified for type" clang warning
-Date: Sun, 26 May 2024 19:55:52 +0200
-Message-ID: <20240526175655.227798-1-ubizjak@gmail.com>
+Subject: [PATCH 2/2] x86/percpu: *DO NOT MERGE* Enable named address spaces for clang
+Date: Sun, 26 May 2024 19:55:53 +0200
+Message-ID: <20240526175655.227798-2-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20240526175655.227798-1-ubizjak@gmail.com>
+References: <20240526175655.227798-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,15 +94,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The clang build with named address spaces enabled currently fails with:
+Enable named address spaces feature for clang.
 
-error: multiple identical address spaces specified for type [-Werror,-Wduplicate-decl-specifier]
-
-The warning is emitted when accessing const_pcpu_hot structure,
-which is already declared in __seg_gs named address space.
-
-Use specialized accessor for __raw_cpu_read_const() instead, avoiding
-redeclaring __seg_gs named address space via __raw_cpu_read().
+However, someone from clang side should qualify the compiler
+before this feature is enabled for real.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -111,25 +110,21 @@ Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Bill Wendling <morbo@google.com>
 Cc: Justin Stitt <justinstitt@google.com>
 ---
- arch/x86/include/asm/percpu.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index c55a79d5feae..aeea5c8a17de 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -160,7 +160,10 @@ do {									\
- 	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp)) = (val);	\
- } while (0)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index e8837116704c..08455e62f994 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2433,7 +2433,6 @@ endmenu
  
--#define __raw_cpu_read_const(pcp)	__raw_cpu_read(, , pcp)
-+#define __raw_cpu_read_const(pcp)					\
-+({									\
-+	*(typeof(pcp) *)(__force uintptr_t)(&(pcp));			\
-+})
+ config CC_HAS_NAMED_AS
+ 	def_bool $(success,echo 'int __seg_fs fs; int __seg_gs gs;' | $(CC) -x c - -S -o /dev/null)
+-	depends on CC_IS_GCC
  
- #else /* !CONFIG_USE_X86_SEG_SUPPORT: */
- 
+ config CC_HAS_NAMED_AS_FIXED_SANITIZERS
+ 	def_bool CC_IS_GCC && GCC_VERSION >= 130300
 -- 
 2.42.0
 
