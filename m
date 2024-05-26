@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-189902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E908CF6DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 289EB8CF6E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03AE6B21372
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:46:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BED5CB211CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B91313A3EC;
-	Sun, 26 May 2024 23:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F089B13A3F6;
+	Sun, 26 May 2024 23:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ORul72eL"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhkSU46r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1532F46;
-	Sun, 26 May 2024 23:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359EF2F46;
+	Sun, 26 May 2024 23:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716767161; cv=none; b=EntIqJ//1sw0ga2yZP2gqXzxvytJFAohvvv/RrWONIsWSiLXaEH4OVpEd3mf/QH/YrfzcNZRW6aSOulcb+Tz1q41n02RzfsTq0cz9Z8fgyMhAY2Mp83wGgoIyX9H5aSr+fyPN0lWko1grYEj3lVW8UgABJ71j3Jz27F9/Kqpy/E=
+	t=1716767928; cv=none; b=obLl4FGX8hBfTYyP3XeKv4e1LXvMvS0kR61fBpKozdCrIXtDXZbPJYA2l7M2rmWRtUSWuBhOUgDB0O/toAj2/YrI7tNaol1Z/W+yXmqlBJ488uyK0pdDLXXzJy9IUo6OKxYxjAi59dnrN5mO+Zh6dKTSEmhsifpsdy5GvsLZ5Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716767161; c=relaxed/simple;
-	bh=qXoqmCSRZqsK09WB7t0kMJUs/2SabjKRrcA53Ey6FAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2yTRF6JCzXX1y36ZDmnfySVkgUq8eFEP99ogacXZeK0ZaI74t52YdDY3XG0eWgo+M3pZaM0x59aAS1CmAlfSFPnK/MQ/eniVjhJ1VabSQmZjfbmW+hVai5qSKVG6mjzz4KhLz5UCqH4q8MEZ2Zfu9mDvqgP8t7z1LoHXpK6bDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ORul72eL; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=qiDGAoolFCI/rpAmXM4BDJt2JwmP7vG6h5f5QF4zoYY=; b=ORul72eLkU0mjtxe
-	2zuUg98R4TzLgV5yJAc+zJ4LxbhwwEdaW9+GHDuDWzqPc6OzVY/AgwwZCb1vlH8sCbGcgj1RLm8M7
-	Yc4Z+4KHGvoiL01rbYlsZdLM+SH9jEMgn658GIe292JxwRj8LZrh7u3P6hGmXAnhq6HxWaCr8ON94
-	DXZhcgXdQHDLKtLfrTMtTzWvTvZsm1G5GBWSNp11ICPX6aYjbdsCWSas29pEOJ8m8J5rBxa6xU51y
-	lhUc9F5u00V9FVLjJHM+qWfRLgck0X3WkVIfxtrIwTRZwbtZWjLzWKOxc9mA96RHRAFVjBtAyCW1z
-	SFLa6Df62XdntjUbDA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sBNYp-002bmh-2C;
-	Sun, 26 May 2024 23:45:56 +0000
-From: linux@treblig.org
-To: arend.vanspriel@broadcom.com,
-	kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] wifi: brcm80211: remove unused structs
-Date: Mon, 27 May 2024 00:45:53 +0100
-Message-ID: <20240526234553.286773-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716767928; c=relaxed/simple;
+	bh=b5DjLreslgkKOr9CzOVLysgDaJanR6GoFnpSSYrVds8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Uinj/T572ZhMG5s2kTSGAP+1tQJEC48ortG8BU4cGrFYfKSxL5BbyJWNA/Mzg+4UpbEeFFP+WOoosr+RKCsejDAVgx949uVKl8pb3r/8EQVYrJNyPLCEj6TXFzeQ9gKB5AB1+o9HGgVduo5Onzj9Fo939e8kNP67Pj371ymFNss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhkSU46r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA695C2BD10;
+	Sun, 26 May 2024 23:58:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716767927;
+	bh=b5DjLreslgkKOr9CzOVLysgDaJanR6GoFnpSSYrVds8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FhkSU46roOIGOu8nIldG3jCi4RxCCFFDyPlOZyPQyxBDbhepVHZ2WLgQOdF8vz3mb
+	 PW5sy69JxHdL4CbT0EG17DhGOe526wzeE8No3ViQmEjnkT1ySuAmyi8EiDeprm3WWe
+	 UEwqadlcyyAWHkDvUPWsGmQINx2acb4ZUtFdpIMKNjzsAui7P2QKF39jifsB8eYwun
+	 8H5FfVF2PNo/b7MHUkevltyd+FZ8TX338mHJ4ZFdzdiDspJnzQV6/wXQkK7AqGstGO
+	 rNSolmr21+EE5BrSmTRHZjPbbEPojScl8UKv5FwOl62Vsr6HLHis//Zq+LMOx0KiTP
+	 jNPTpY89nTgOQ==
+Date: Mon, 27 May 2024 08:58:41 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH 19/20] function_graph: Use for_each_set_bit() in
+ __ftrace_return_to_handler()
+Message-Id: <20240527085841.63b97b1b1926ff9c0a21fb46@kernel.org>
+In-Reply-To: <20240525023744.231570357@goodmis.org>
+References: <20240525023652.903909489@goodmis.org>
+	<20240525023744.231570357@goodmis.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, 24 May 2024 22:37:11 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-'brcmf_pcie_core_info' was added in
-commit 9e37f045d5e7 ("brcmfmac: Adding PCIe bus layer support.")
-but never used.
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> Instead of iterating through the entire fgraph_array[] and seeing if one
+> of the bitmap bits are set to know to call the array's retfunc() function,
+> use for_each_set_bit() on the bitmap itself. This will only iterate for
+> the number of set bits.
+> 
 
-'brcms_c_bit_desc' last use was removed in
-commit cdf4352f5c59 ("brcmsmac: Improve tx trace and debug support").
+Looks good to me.
 
-Remove them.
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c | 5 -----
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c | 6 ------
- 2 files changed, 11 deletions(-)
+Thanks,
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index 06698a714b52..ce482a3877e9 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -313,11 +313,6 @@ struct brcmf_pcie_shared_info {
- 	u8 version;
- };
- 
--struct brcmf_pcie_core_info {
--	u32 base;
--	u32 wrapbase;
--};
--
- #define BRCMF_OTP_MAX_PARAM_LEN 16
- 
- struct brcmf_otp_params {
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-index 34460b5815d0..4576b18fcd97 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-@@ -234,12 +234,6 @@
- /* max # tx status to process in wlc_txstatus() */
- #define TXSBND				8
- 
--/* brcmu_format_flags() bit description structure */
--struct brcms_c_bit_desc {
--	u32 bit;
--	const char *name;
--};
--
- /*
-  * The following table lists the buffer memory allocated to xmt fifos in HW.
-  * the size is in units of 256bytes(one block), total size is HW dependent
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/fgraph.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 4d503b3e45ad..5e8e13ffcfb6 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -827,11 +827,10 @@ static unsigned long __ftrace_return_to_handler(struct fgraph_ret_regs *ret_regs
+>  #endif
+>  
+>  	bitmap = get_bitmap_bits(current, offset);
+> -	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
+> +
+> +	for_each_set_bit(i, &bitmap, sizeof(bitmap) * BITS_PER_BYTE) {
+>  		struct fgraph_ops *gops = fgraph_array[i];
+>  
+> -		if (!(bitmap & BIT(i)))
+> -			continue;
+>  		if (gops == &fgraph_stub)
+>  			continue;
+>  
+> -- 
+> 2.43.0
+> 
+> 
+
+
 -- 
-2.45.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
