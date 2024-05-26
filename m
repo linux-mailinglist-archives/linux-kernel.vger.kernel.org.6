@@ -1,63 +1,77 @@
-Return-Path: <linux-kernel+bounces-189715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60ED8CF3FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:05:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B6E8CF3FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717F3281A72
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:05:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91997B20BBB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECD2BA2E;
-	Sun, 26 May 2024 11:05:01 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A24C127;
+	Sun, 26 May 2024 11:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ5vhup4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45A53D72
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 11:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F928F6A;
+	Sun, 26 May 2024 11:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716721501; cv=none; b=THCX9v8Dv+AjgI2W5EJaLvVB6avTZ51FOq2PKsUhlOnD0l7pF9EqEiJUvhlrB8TPAlyd8w6pYw3bZBsQC54lXkY0FH/IzrLgWRtElK9EnMlRfYqctBIzWHIWcwWpWpA4HBCbTRopy2ccUz+Ccmbn/mlh7aYAbzWUvf7hK4KW6FA=
+	t=1716721808; cv=none; b=Axt9ty9A9ISR06EEPJosfh0qR0+WZdeSfz1Aqd2oiweFoksc87shibbBpbDitQYshoanRKxBCv+fTbIQRgOmU2MqnXP2nzFRnMnJH2bv+6pttpkrBnDjd0C2MlAvxao5Wm9iYh7szIsWcQBUTEnzualDdPajFQMakdvFosqW0o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716721501; c=relaxed/simple;
-	bh=yGmmIuLTcFqjskdyA7AomRU8Ndv6IVRbK4wBd0fRrCQ=;
+	s=arc-20240116; t=1716721808; c=relaxed/simple;
+	bh=Vj982JLrWOcJw9DCj7R+f8VzhJL6EXf6MOZT4Q46SH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+KVvS/cXWnzmn5FuwgCXzg0h12hsMFncJgCCZdkO75d7/OVQMkIM6+SvRXdkJxo1+qLc6IgX8j3nx4EOtxxP0NGGQRopJBgRbcTk68C47BKDDDL20o9arbHZWVPBoaFraIIjNvzabyE+wCwntWcwu97VhH9X3/MOmW/HM94YDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D4B6B5C908;
-	Sun, 26 May 2024 11:04:57 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C7C913A51;
-	Sun, 26 May 2024 11:04:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pqKBD1kXU2ZiZgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Sun, 26 May 2024 11:04:57 +0000
-Date: Sun, 26 May 2024 13:04:51 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v3 00/16] Reimplement huge pages without hugepd on
- powerpc (8xx, e500, book3s/64)
-Message-ID: <ZlMXU_4sbm02jEwe@localhost.localdomain>
-References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KnfFZW9kGFZkkzK9qhirO5GYIOuyta/WDZdM0HzPhr3gBa2EnCkREFVlkw5apPEwIO5doNO+nouYQKqbpMiTJ4eLOzdK7lVBVpHW64jrBnlV8ZsGoqVapECL9cO4J4KLFJg6ttEkJavoOf9E5a5eqOPvpxm3ySKyZye3Ulk9Sm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ5vhup4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FB3C32782;
+	Sun, 26 May 2024 11:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716721808;
+	bh=Vj982JLrWOcJw9DCj7R+f8VzhJL6EXf6MOZT4Q46SH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KQ5vhup4Eb33IscmYcxWA/Xtl22VHrd+QOijfdvNFxWfO08blSeST9KAfETZJYglR
+	 34UqGt4pp76uZwEcpYfKJ7wZPYu4ox6u9FhsAmJP7pmZaH12O8wRG1sCn9GT67sOXm
+	 GSRJruaMtkycx8rFvJU1BlgtJWkqV4EoVLyi7N9Yz1CzdS1ACzMq1AxATVZEZs8lX7
+	 y0yuSkDMdxqLKEOCyeH/ptNwG2BLiVgtdF1W3CXrRpx7EecDAnVBubvRn82SwqiZ7o
+	 hXGofpdMiPEp+A5pf/f6MUdntVDkkqZQlS8m1BHJKPggBw1g3DiY+/WSlRlwUdm969
+	 0+v5sk7kdnkUw==
+Date: Sun, 26 May 2024 08:10:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Leo Yan <leo.yan@linux.dev>
+Cc: Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Anne Macedo <retpolanne@posteo.net>,
+	Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+	Ethan Adams <j.ethan.adams@gmail.com>,
+	James Clark <james.clark@arm.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tycho Andersen <tycho@tycho.pizza>,
+	Yang Jihong <yangjihong@bytedance.com>
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+Message-ID: <ZlMYjHdX-d0ODqyj@x1>
+References: <ZlFE-wbwStOqt8Ra@x1>
+ <ZlFGpxWGQskCTjeK@x1>
+ <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
+ <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
+ <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
+ <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
+ <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
+ <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
+ <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
+ <20240526095838.GA33806@debian-dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,91 +80,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1716714720.git.christophe.leroy@csgroup.eu>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: D4B6B5C908
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
+In-Reply-To: <20240526095838.GA33806@debian-dev>
 
-On Sun, May 26, 2024 at 11:22:20AM +0200, Christophe Leroy wrote:
-> This is the continuation of the RFC v1 series "Reimplement huge pages
-> without hugepd on powerpc 8xx". It now get rid of hugepd completely
-> after handling also e500 and book3s/64
-> 
-> Also see https://github.com/linuxppc/issues/issues/483
-> 
-> Unlike most architectures, powerpc 8xx HW requires a two-level
-> pagetable topology for all page sizes. So a leaf PMD-contig approach
-> is not feasible as such.
-> 
-> Possible sizes on 8xx are 4k, 16k, 512k and 8M.
-> 
-> First level (PGD/PMD) covers 4M per entry. For 8M pages, two PMD entries
-> must point to a single entry level-2 page table. Until now that was
-> done using hugepd. This series changes it to use standard page tables
-> where the entry is replicated 1024 times on each of the two pagetables
-> refered by the two associated PMD entries for that 8M page.
-> 
-> For e500 and book3s/64 there are less constraints because it is not
-> tied to the HW assisted tablewalk like on 8xx, so it is easier to use
-> leaf PMDs (and PUDs).
-> 
-> On e500 the supported page sizes are 4M, 16M, 64M, 256M and 1G. All at
-> PMD level on e500/32 (mpc85xx) and mix of PMD and PUD for e500/64. We
-> encode page size with 4 available bits in PTE entries. On e300/32 PGD
-> entries size is increases to 64 bits in order to allow leaf-PMD entries
-> because PTE are 64 bits on e500.
-> 
-> On book3s/64 only the hash-4k mode is concerned. It supports 16M pages
-> as cont-PMD and 16G pages as cont-PUD. In other modes (radix-4k, radix-6k
-> and hash-64k) the sizes match with PMD and PUD sizes so that's just leaf
-> entries. The hash processing make things a bit more complex. To ease
-> things, __hash_page_huge() is modified to bail out when DIRTY or ACCESSED
-> bits are missing, leaving it to mm core to fix it.
-> 
-> Global changes in v3:
-> - Removed patches 1 and 2
-> - Squashed patch 11 into patch 5
-> - Replaced patches 12 and 13 with a series from Michael
-> - Reordered patches a bit to have more general patches up front
-> 
-> For more details on changes, see in each patch.
-> 
-> Christophe Leroy (15):
->   mm: Define __pte_leaf_size() to also take a PMD entry
->   mm: Provide mm_struct and address to huge_ptep_get()
->   powerpc/mm: Remove _PAGE_PSIZE
->   powerpc/mm: Fix __find_linux_pte() on 32 bits with PMD leaf entries
->   powerpc/mm: Allow hugepages without hugepd
->   powerpc/8xx: Fix size given to set_huge_pte_at()
->   powerpc/8xx: Rework support for 8M pages using contiguous PTE entries
->   powerpc/8xx: Simplify struct mmu_psize_def
->   powerpc/e500: Remove enc and ind fields from struct mmu_psize_def
->   powerpc/e500: Switch to 64 bits PGD on 85xx (32 bits)
->   powerpc/e500: Encode hugepage size in PTE bits
->   powerpc/e500: Use contiguous PMD instead of hugepd
->   powerpc/64s: Use contiguous PMD/PUD instead of HUGEPD
->   powerpc/mm: Remove hugepd leftovers
->   mm: Remove CONFIG_ARCH_HAS_HUGEPD
+On Sun, May 26, 2024 at 05:58:38PM +0800, Leo Yan wrote:
+> On Sat, May 25, 2024 at 11:22:08PM -0700, Ian Rogers wrote:
+> > In doing that work the code was tested by IBM for S390 and by Intel,
+> > but it was fixing an ARM created problem. ARM were the first to have
+> > BIG.little systems but contributed nothing to the perf tool to handle
+> > it, even though each core type has a different PMU. ARM BIG.little
+> > remains broken with the perf tool and when I fix it for them they
+> > don't review or test the code. ARM changed and left unworking uncore
+> > PMU naming conventions. ARM don't fix tests for their platform. ARM
+> > don't help make perf's tests cover their different way of naming PMUs.
+> > No one is trying to break ARM machines, but when ARM fails to do
+> > anything other than review their own changes in the perf tree it is
+> > something of an inevitability.
 
-I glanced over it and it looks much better, not having to fiddle with other arch
-code and generic declarations is a big plus.
-I plan to do a proper review tomorrow.
+> > Fwiw, I am working on making perf record, perf top, etc. skip events
+> > on non-core PMUs when they fail to open. It is a rather large and ugly
+> > change. It is also a holiday weekend and I'm spending a lot of my time
+> > in it addressing latent ARM problems.
 
-Thanks for working on this Christophe!
+> James is in holiday, so I should cover this in time. Sorry that I did
+> not respond the issue quickly - mainly as I am not familiar with JSON
+> and perf event part.
 
+> I tried to reproduce the issue reported by Linus on my Arm big.LITTLE
+> system but cannot reproduce it. As I saw Linus mentioned the issue is
+> related with Arm DSU event, which is absent on my test board.
 
--- 
-Oscar Salvador
-SUSE Labs
+Yeah, I couldn't either with ARM boards I have, I think we should revert
+the change, as per Linus bisect and test that it makes thing work the
+way they were before that patch for him and get this work restarted as
+the first thing in the next devel cycle.
+
+It has to be widely tested, Ian tried, Linus tried his patch and it is
+still not acceptable, its a holiday, kids are home, we should be with
+family.
+ 
+> But your complaint is received well and I am very appreciate your work
+> (especially in the weekend). I will continue to look into the details
+> in this thread, and monitor incoming patches and I will verify them.
+
+Indeed, the situation was detailed to a wider audience, hybrid is a
+reality and we should properly support it, taming perf's tech debit on
+this matter.
+
+Ian's has been working on this for long time, testing all this takes a
+lot of time and requires access to lots of hardware not easily available
+for all of us, so its bound to break here and there, what we do when
+this happens depends on when the problem is detected, and today Linus is
+expected to close the merge window, so a revert is the technical, if not
+pleasant thing to do now.
+
+- Arnaldo
 
