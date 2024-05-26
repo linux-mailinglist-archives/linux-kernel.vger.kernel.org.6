@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-189737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08748CF44E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:44:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4768CF450
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38030B21278
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0106F1F2124A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8671F9CF;
-	Sun, 26 May 2024 12:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8ANDBL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2058E55F;
-	Sun, 26 May 2024 12:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955771119F;
+	Sun, 26 May 2024 12:44:19 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF74E10A25;
+	Sun, 26 May 2024 12:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716727453; cv=none; b=svGBuu0dydubuuo1KlkEoXSo8EJKA4zgAxng1GJMXVcZYFzne9ZOk8QTaL+M5N7Ewk9Pe7+XaLs2Xfw/KylgrXCw1DGjlKuvMSAaMWwPO/XmmQwyQxJV5QPXcaewKiKDw18ymOZp1x3RaSfNQzRxjFKLFyl6Z93R/LI9sg7XoYw=
+	t=1716727459; cv=none; b=qmux1/89rbWOb1ZbQtwKBun3WByhjVLTMAFNdklgg1+y7X9NpPGj05vpngx8I4bMmPBeDHeqIan60ZALOCrmlIhxXkO+yungSwcHrImWtPohN9c/IsHMLIXHnrKknqcKs4EVHC+IhO/PeyGH2V1J07C/rZ7TFsQOTLqjSEyrq1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716727453; c=relaxed/simple;
-	bh=hBzV6FgMM5YCNorVFd0uf12WCp/mI0demg44nwp60mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aWyzMYFoQdsk1LfwNpiQyULLYxIqLIOqSdMs9bggFyHCYsaTO3DykLvTEiMmLO++QbzRn5jh2uFq3CDs5g+pz+6WVivR6bkGrr4IAtNeQjE42LEzjHknikSoxDYgpGfJfTTTCQlnfKpyxiDiHgGNdUI4XvDH9YD4pz0dIPlFTVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8ANDBL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC60C2BD10;
-	Sun, 26 May 2024 12:43:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716727452;
-	bh=hBzV6FgMM5YCNorVFd0uf12WCp/mI0demg44nwp60mc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t8ANDBL0DdRdYYPX4L/oQqNuPvPDRBaf6YDczoOyjLtsBwKtLbSj5n/iz3MrQ5RGR
-	 eH2QBu6uYahDHeq0KkTdJWoow7E1I8qholMIow36TvpxX+wHXpoa5Gi8IJGsfiDgkf
-	 a5P9Hj9n8sBxtc7SLOkrM0b9b3bB1p056BW4lk2IwOTNYjSMMSCdFE5tDzbN7TyIsk
-	 uHBoUiRDPdEKN88ailfk2OAM/CXyk4LayHSpgza2gfWDG5+qtamC3ZZWYUXf5U75jf
-	 4wMlIVLrLLyqqXmqYZoMAPhZkpMXUjkmtQ3x50ki50tLBxbTawmyu/xPAYk0LeUVLa
-	 ZEwuQjt9eXlYg==
-Date: Sun, 26 May 2024 13:43:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
-Subject: Re: [PATCH v4 08/10] iio: imu: adis16475: Re-define ADIS16475_DATA
-Message-ID: <20240526134344.6675ab5c@jic23-huawei>
-In-Reply-To: <4ccfe084339360695edb5ae774a3bc67b1781c95.camel@gmail.com>
-References: <20240524090030.336427-1-ramona.bolboaca13@gmail.com>
-	<20240524090030.336427-9-ramona.bolboaca13@gmail.com>
-	<4ccfe084339360695edb5ae774a3bc67b1781c95.camel@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716727459; c=relaxed/simple;
+	bh=g6i85qqwj3MGax/kH7EXAdoQlIeb9sPfRzXZA92Ashg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pP4tyhj/fI3s0CP/ItwVo/huzLBwiXVNDLiH+XiuWdwhMNVFkb0EKk7DV2tYzD279RVDoxjTChs33ilm5BYQOsiXqRlIBtYcJrmOMr9mDgpxy0EeYpngawh/CgcSpbBJbzEdv4LGEljw8GenaQKnF/U3w1CeG7Lm1MQlW9ELs5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id DF3BA92009C; Sun, 26 May 2024 14:44:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id D17C992009B;
+	Sun, 26 May 2024 13:44:07 +0100 (BST)
+Date: Sun, 26 May 2024 13:44:07 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    linux-kernel@vger.kernel.org, 
+    =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3 0/9] MIPS: Unify low-level debugging functionalities
+In-Reply-To: <a62c1c0b-0b2a-4b3f-85df-da586e103fcb@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2405261326260.1257@angie.orcam.me.uk>
+References: <20240502-mips_debug_ll-v3-0-3b61f30e484c@flygoat.com> <3dcf3ac1-5494-482a-a80a-df4126e6ae59@app.fastmail.com> <3d6883ed-f8f4-44e5-a184-e5499c44f0f7@app.fastmail.com> <Zk2mt/FsgltvhVzf@alpha.franken.de> <13aa508f-6830-4d52-87fd-5063f737c990@app.fastmail.com>
+ <a62c1c0b-0b2a-4b3f-85df-da586e103fcb@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 24 May 2024 12:47:38 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Wed, 22 May 2024, Jiaxun Yang wrote:
 
-> On Fri, 2024-05-24 at 12:00 +0300, Ramona Gradinariu wrote:
-> > Re-define ADIS16475_DATA such that it takes _has_fifo as parameter.
-> >=20
-> > Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-> > --- =20
->=20
-> I may be missing something but do we actually need to patches redefining =
-the macro?
-> If I'm not missing nothing the first patch is only relevant for the new A=
-DIS devices
-> which are added in patch 10. So maybe squash both patches changing the ma=
-cro.
->=20
-> - Nuno S=C3=A1
->=20
-If that's not possible for some reason, give them both slightly more detail=
-ed
-patch titles. It's confusing to have them identical!
-=20
-I'd prefer them squashed as Nuno suggested.
+> That being said, have you noticed that prom_putchar and early_printk is
+> a non-extant on generic mach, ingenic, ralink etc? That's because we
+> really don't want to introduce any platform specific UART code for
+> early debugging on new platforms. With DEBUG_LL introduced by Arm it's
+> only a Kconfig option to do the trick.
+
+ IMHO that is however the logical thing to do.  And then you need no magic 
+options to fiddle with and say a distribution kernel will dump whatever it 
+has to say if something wrong has happened early on.
+
+ IOW just wire `prom_putchar' as required, using C code preferably.  NB 
+YAMON does have a `print' entry point for console output, so for the Malta 
+platform you can trivially use just that, no need for messy ad hoc 8250 
+code.
+
+ As to intercepting exceptions, it depends.  Again YAMON does handle that 
+and dumps the register state, so with the Malta you get the information 
+required.  For less capable ones it might make sense, but it ISTM like a 
+candidate for an independent change, and then again I fail to see why the 
+handler has to be written in the assembly language rather than C.
+
+  Maciej
 
