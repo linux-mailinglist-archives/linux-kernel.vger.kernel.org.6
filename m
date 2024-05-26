@@ -1,90 +1,135 @@
-Return-Path: <linux-kernel+bounces-189880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA578CF629
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:32:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BA08CF62C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9302B21070
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5682C1C21355
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 21:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDE213174B;
-	Sun, 26 May 2024 21:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22C613A25D;
+	Sun, 26 May 2024 21:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FS5QyzLo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="uPCdcLmE"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95C1A2C21
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64101EB3F;
+	Sun, 26 May 2024 21:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716759118; cv=none; b=R9KlKg5MkuU7tfF2kKAzwoo0OlUipBNFUVAjNUGeMjpoCfJjSyeSdRhKmwtzOtdYyd/AWIqvgIY6MavK6H0GPk2ae5sbtQDCrlmJYDnEvEMmQjKhia5sa8s3zgRnlBwZhsU1IYnmK49WsU3dwfh5p6ovlclzMFQ/0iUX8d4H1+k=
+	t=1716759623; cv=none; b=MBdU1JOGAIdN2FVENIpeJKEMDy0ocpNt7pX1MMPQRRhXGRrTXoneqksPje1HLiXK52eCddWeZbxKeiuCaCNMn4GnqS47urPmn9TueDaLFMr3+AZzrHLlI0JKNJU6RMftPVr2Kteo0Jcf2aRM/Xspg1c8yrWRqP7ocsbmN/ALvN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716759118; c=relaxed/simple;
-	bh=OVrLoTT3VWRKK8+T51uPGfdBRWS6IIkjOL2Z/igbpbE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GtseqS1kaqptipc/ngLx20elWzTDe6irM9zIfLK+xWOYtkgI3wPsvjjIRd9UzItLybPQlC4ErtmKMRsFz926Y1wrk4xSOX0InLB75wQVeOBjDhPPu3ccjEKOFBH85r6Mjn8bW3BO1SW6W7/DjVUF2205yu1JfvAkmecLK4IUojo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FS5QyzLo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E28FFC32786;
-	Sun, 26 May 2024 21:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716759117;
-	bh=OVrLoTT3VWRKK8+T51uPGfdBRWS6IIkjOL2Z/igbpbE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FS5QyzLoBFYerJnHpUnVAB70uEkEV4hyKXuEXrr0X1StypT7HB432u2N/TFyXlqBn
-	 ijLB00tZA/dyE/cuuwZ3lbsBidLGSoeweNu9gS81DZ/2vGk/74WU1HiHNE2rBK2Cmx
-	 WK+A1M7ijsLoK3cPMBPtRhaUK9z4St4slOCjzVhWkTEi8fF1VZgC5d9bSabGAlLYap
-	 YjPUqfrEkBak8GFkxe7+wEKyKR+l26180KufnnQsUasOBtbCv91RCwxpPUWfTN23p2
-	 HbXXIjkv23iUOnRlQfyukKAxtSrO2MYddTepLeP7fSFjL8kV1pHrRlUqO7GIksOBIH
-	 Qc8pGkuypzq9A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D1FE4D38A65;
-	Sun, 26 May 2024 21:31:57 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716759623; c=relaxed/simple;
+	bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Wq3DHIV/XcmyjH0lQQS95y1p67vrdxPAEVmYczDsSeSVLvmJi1QND80bgp55MPKt+BVJu4Woe+75QkzzqEK4yYEANrUC9vY3bP2iiWOY9dhucdLJ56ehgHd0X66m023L5hz7D0xgRQnXFs4KLzQnKJRwirJtXkWeoQJVkMu9cWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=uPCdcLmE; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716759617;
+	bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
+	h=From:Date:Subject:To:Cc:From;
+	b=uPCdcLmERA64szIvlxaC24kOOSCTJL5W3sFcOEGDWtp41hfHsxnCjePoKUQGD8FkY
+	 cOkyuVcJ8VpNz4vibF3nRIv8HMDTCA9uh4Fhi30bsNgQFezDvi3GIphMGLmhrPFccS
+	 nu531i26iBay9aX8LMkN/oMu/yCQSSfkRHlKXWkQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 26 May 2024 23:40:01 +0200
+Subject: [PATCH] ACPI: AC: Properly notify powermanagement core about
+ changes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] RISC-V Patches for the 6.10 Merge Window, Part 2
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <171675911785.27088.9320331335675774714.git-patchwork-notify@kernel.org>
-Date: Sun, 26 May 2024 21:31:57 +0000
-References: <mhng-3c77af8f-340f-41fd-86db-a2add39fdac2@palmer-ri-x1c9>
-In-Reply-To: <mhng-3c77af8f-340f-41fd-86db-a2add39fdac2@palmer-ri-x1c9>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
- linux-kernel@vger.kernel.org
+Message-Id: <20240526-acpi-ac-changed-v1-1-f4b5997753bb@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIADCsU2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyMz3cTkgkwgoQuRTdFNNLBINrM0MUxMNTVUAuoqKEpNy6wAmxgdW1s
+ LAOi3GvxhAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Rajas Paranjpe <paranjperajas@gmail.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716759616; l=2189;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=EQmU3js+i7J6XMtR1sPBepkOKA2uG18sojoN3Bu3988=;
+ b=j+GJCEXFVOvovJMdyQteps+Udm76p3T99Fm1QXOnLD7X1riMBs6SJH1l7KvCDX7QxLAIDjRtZ
+ P6KCe0/kr+aAxkMNg3A5UGDV3056MpnEv+H/aXH/MS8qO809EDsziUX
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hello:
+The powermanagement core does various actions when a powersupply changes.
+It calls into notifiers, LED triggers, other power supplies and emits an uevent.
 
-This pull request was applied to riscv/linux.git (fixes)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+To make sure that all these actions happen properly call power_supply_changed().
 
-On Fri, 24 May 2024 08:53:40 -0700 (PDT) you wrote:
-> merged tag 'riscv-for-linus-6.10-mw1'
-> The following changes since commit 0bfbc914d9433d8ac2763a9ce99ce7721ee5c8e0:
-> 
->   Merge tag 'riscv-for-linus-6.10-mw1' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux (2024-05-22 09:56:00 -0700)
-> 
-> are available in the Git repository at:
-> 
-> [...]
+Reported-by: Rajas Paranjpe <paranjperajas@gmail.com>
+Closes: https://github.com/MrChromebox/firmware/issues/420#issuecomment-2132251318
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/acpi/ac.c  | 4 ++--
+ drivers/acpi/sbs.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Here is the summary with links:
-  - [GIT,PULL] RISC-V Patches for the 6.10 Merge Window, Part 2
-    https://git.kernel.org/riscv/c/f1f9984fdc5e
+diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
+index 2d4a35e6dd18..09a87fa222c7 100644
+--- a/drivers/acpi/ac.c
++++ b/drivers/acpi/ac.c
+@@ -145,7 +145,7 @@ static void acpi_ac_notify(acpi_handle handle, u32 event, void *data)
+ 						  dev_name(&adev->dev), event,
+ 						  (u32) ac->state);
+ 		acpi_notifier_call_chain(adev, event, (u32) ac->state);
+-		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
++		power_supply_changed(ac->charger);
+ 	}
+ }
+ 
+@@ -268,7 +268,7 @@ static int acpi_ac_resume(struct device *dev)
+ 	if (acpi_ac_get_state(ac))
+ 		return 0;
+ 	if (old_state != ac->state)
+-		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
++		power_supply_changed(ac->charger);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+index 94e3c000df2e..dc8164b182dc 100644
+--- a/drivers/acpi/sbs.c
++++ b/drivers/acpi/sbs.c
+@@ -610,7 +610,7 @@ static void acpi_sbs_callback(void *context)
+ 	if (sbs->charger_exists) {
+ 		acpi_ac_get_present(sbs);
+ 		if (sbs->charger_present != saved_charger_state)
+-			kobject_uevent(&sbs->charger->dev.kobj, KOBJ_CHANGE);
++			power_supply_changed(sbs->charger);
+ 	}
+ 
+ 	if (sbs->manager_present) {
+@@ -622,7 +622,7 @@ static void acpi_sbs_callback(void *context)
+ 			acpi_battery_read(bat);
+ 			if (saved_battery_state == bat->present)
+ 				continue;
+-			kobject_uevent(&bat->bat->dev.kobj, KOBJ_CHANGE);
++			power_supply_changed(bat->bat);
+ 		}
+ 	}
+ }
 
-You are awesome, thank you!
+---
+base-commit: 6fbf71854e2ddea7c99397772fbbb3783bfe15b5
+change-id: 20240526-acpi-ac-changed-a08c6941ae51
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Thomas Weißschuh <linux@weissschuh.net>
 
 
