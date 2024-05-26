@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-189777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F31D8CF4CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:49:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D678CF4CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 17:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7CE91F211EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BBA1C20A39
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B1217C8D;
-	Sun, 26 May 2024 15:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA93E1803A;
+	Sun, 26 May 2024 15:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOKenyha"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D/6+JF2c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0992F1803A;
-	Sun, 26 May 2024 15:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7561773D;
+	Sun, 26 May 2024 15:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716738535; cv=none; b=tubGB8DdD9tMfrYo1qUC9D75TzkDQzSuawFiEDLTAqNAsDbalLN3mraJJALHxFRv2b1/KgL2BYBo64ZxGg2Xpi/14h1Mu3mAzB9aoEIpvSc7QRnF4K4vIshFFzARguuRXrLx2FiKM+Ra9GuqM/EbSFaGHKmETGliob9X8bWt7dc=
+	t=1716738771; cv=none; b=oI/Fg5uTONfktlRmx5ahAhcoMSixfUb4n1ZR7uWoIpKSTmZ8Mk/mdgq6syqG0ZJ9mSvfntwSjlP+0N3Fm7/+azJRzpuiuoP5j9UQd5KwsNevTj4PR87pnJWxLzpK6Sh6PRbKFEzsSu+2BB4ObspOQXiQVZ2N5hMxOrru6u3B66Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716738535; c=relaxed/simple;
-	bh=vX8Soimw+0P8TQSw2dZ1kVgK27f8UCPdL9tr4CQShz0=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:Message-Id; b=a7pLcHX4P6dRPGvY8PlFyD7hx5STht6AGbcJLqg+304YkB0fp0Ygm6b+9fq/KZ1GGBsfOGlH92bbh+wJTu8wFUpzN5HWaz5MP1iirjKJ1bPSqV67GT/1uqSNoB6lR5JtQ91CQBO56qFXDdlv226B32QVBNFi9ATlzz55mL6V/TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOKenyha; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6269ad7db2so283820566b.2;
-        Sun, 26 May 2024 08:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716738532; x=1717343332; darn=vger.kernel.org;
-        h=user-agent:message-id:in-reply-to:references:from:subject:cc:to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dZCRHP3lD4Nrttw3etgWRodRKmfLXV1xJdjRxR6e4U=;
-        b=DOKenyha+hAoUaHLSmZer8lT2y/VMdAXv3YbxEeAXlDlBc5NWnGJ9vVty7imSIWyzl
-         dKRAgPPAd2/D2p0E9X8wHG4ukZ3UHUA7ljNa2I5kcfsoH9E3uB/rfxLoFKz4XvbTiywg
-         PdHOtxDJbILsp8gHjVufoKLoQ5qb8CqAhiaj6IWNB8qwwfcqj/d3VdjIQVdDoq7CDTYs
-         R8KPvrX0lIQU9gP4aFYdVvuWjjHqtyr8WxODIqEBQwdQHzIUmPfzzuiGSF1keAG251qD
-         9OTAHXfIQfPO4GBVERzDCch2HETCvW30kFnP8HrcE+0ZV+YW9F01+Yr0ebGr62Mzu0hr
-         fe7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716738532; x=1717343332;
-        h=user-agent:message-id:in-reply-to:references:from:subject:cc:to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dZCRHP3lD4Nrttw3etgWRodRKmfLXV1xJdjRxR6e4U=;
-        b=fBOTThxCXHGIg/dAvIAXpFVOGIEHhZ8glJxT8us/dQGX/0uPFlr736LBxjTaSWzNlQ
-         lI4S5gazk6TBuoA1dZna2hJQGQYxCptH8Aemjc3oN+XA3b9KtoujQdqSWwjviAGvzZkD
-         8N4SJYlNztnsCMplz9tSeGMb+gbK8pv64MUs6OSElNDCWj8AfQ+yuOkc1Z01kkBhooUZ
-         DjypqpPfVNQEtnkpqavcNO/dom3jZar3t6+8j47dSWfCou6JeEeSPQbNz3CXtkx+YNNq
-         M4bkV80tmtWJfI4Xt+GYOoGyZpyxnAamlxMHXD+mv77wMeqku2PbsIfa/WD24jEEiIGG
-         95/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDP1/unqBM3+OIMy577jTSHa04iAvPRShXFTcKQBTN7F5eHhE6VoDwS4axyqyjl4dja0HAYLdE/I//nh7Bjc43l+biX1On++HwFwSSxbbOfZspZf84rkgygwU4mLhxIMW0HI5WMooGkmnfC6s2AHCpmfX9tvDq5WQOqBaN/0hWwPrLqtyBnv2Cjis=
-X-Gm-Message-State: AOJu0YzlHqdqaLKhpOxTALTYozZL1jjJrssEpfrzRH8qY6+jZ3eLhxvc
-	4fpZaJL/i+XHP1c8dXOPIOrGgOc84cw99lxBDD8CA8hwqHk3FUbl
-X-Google-Smtp-Source: AGHT+IGtjapIJoW7FFG5Jd2WyRu8B7pkFVo/HAEQ5T3d4nRUjhtgfUtCBj+AXz6lIh1kM9SK48cbvg==
-X-Received: by 2002:a17:906:170f:b0:a59:d063:f5f3 with SMTP id a640c23a62f3a-a626501c25cmr433471566b.63.1716738532214;
-        Sun, 26 May 2024 08:48:52 -0700 (PDT)
-Received: from localhost ([2a02:169:1e9:0:8f4d:9ee2:cc35:c67b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4fd41sm397612866b.137.2024.05.26.08.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 08:48:51 -0700 (PDT)
-Date: Sun, 26 May 2024 17:48:51 +0200
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Daniel J. Ogorchock" <djogorchock@gmail.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Martino Fontana <tinozzo123@gmail.com>, Ryan McClelland <rymcclel@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH] HID: nintendo: Fix an error handling path in nintendo_hid_probe()
-From: "Silvan Jegen" <s.jegen@gmail.com>
-References: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
-Message-Id: <31TNA0FQDFO0L.21EUCKC20GDGV@homearch.localdomain>
-User-Agent: mblaze/1.2-30-ga027417 (2024-05-20)
+	s=arc-20240116; t=1716738771; c=relaxed/simple;
+	bh=UpVOttyA/UnQTEE5Cc1EgmophjwkU+XEArMRL6occfA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=gua4Gn6Vb3GjNby7AvqdVHIpy0EDwvw4pXuUKaXp90fqGar6IpfkbPWeTu/UUHMmC9XFJpq8+UNxTFLHm+HPBMc4G/4prI8j2riwPSUSCxsMrHeXiClcEEtlnEeTpbURsUTp09YQoWL+GOSOnzE9NL1RbXq8E5D27VJX10pwzQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D/6+JF2c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFhG6P026382;
+	Sun, 26 May 2024 15:52:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=oS6Fr4nqr96rPUiETgcOjA
+	Wzr7B2lqg1ufTni7x5aIs=; b=D/6+JF2crLdd/oVHsI+WrPzjngdmFyQn6rzxzs
+	kcUs/WJ7ZZdbmiR6yljILG6EJd22g3Qkgrswfx+VTtZcSiEGd6uhz2ZJoRKM8Wpk
+	32r5aaBCakg2tuN4bhQjGLaPSs7ymnOW3Yq6F4BftImq1MOT9jBw5/IvVmxqdV7w
+	twPaauSjbF5o/0R/ZX5Z6ZPp+28TEjHls6CX4GyVqUlqSe53CVahnSFFAoeuTXDb
+	HbQ5BxxbdQe6ns5SsGsywgBtPpy7EPukoxfEEfI3gooy0eBcrTCyjttX85+uzl9U
+	WcYWGNMgHp8sr7lggblrwmyPajw8+lTXosd5pTJuhjln7xkg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0q9vna-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 15:52:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QFqbAK006008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 26 May 2024 15:52:37 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
+ 2024 08:52:37 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 26 May 2024 08:52:36 -0700
+Subject: [PATCH] testing: nvdimm: iomap: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240526-md-testing-nvdimm-v1-1-f8b617bb28e1@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMNaU2YC/x3MQQqDMBCF4avIrDuQBhtpr1K6SMyoA81UMlEs4
+ t2buvzgvX8Hpcyk8Gh2yLSy8kcqrpcG+snLSMixGqyxrblZhyliIS0sI8oaOSU0NtxbY13XeQf
+ 1N2caeDubz1d18EoYspd++pfeLMuGyWuhjPO3TuE4fhl5c86IAAAA
+To: Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma
+	<vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Ira Weiny
+	<ira.weiny@intel.com>
+CC: <nvdimm@lists.linux.dev>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TMT595saEGXmjn2yA6wAmQlln5f7iZTU
+X-Proofpoint-ORIG-GUID: TMT595saEGXmjn2yA6wAmQlln5f7iZTU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405260132
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> joycon_leds_create() has a ida_alloc() call. So if an error occurs after
-> it, a corresponding ida_free() call is needed, as already done in the
-> .remove function.
-> 
-> This is not 100% perfect, because if ida_alloc() fails, then
-> 'ctlr->player_id' will forced to be U32_MAX, and an error will be logged
-> when ida_free() is called.
-> 
-> Considering that this can't happen in real life, no special handling is
-> done to handle it.
-> 
-> Fixes: 5307de63d71d ("HID: nintendo: use ida for LED player id")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/hid/hid-nintendo.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Fix the 'make W=1' warning:
 
-LGTM!
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.o
 
-Reviewed-by: Silvan Jegen <s.jegen@gmail.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ tools/testing/nvdimm/test/iomap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
+index ea956082e6a4..e4313726fae3 100644
+--- a/tools/testing/nvdimm/test/iomap.c
++++ b/tools/testing/nvdimm/test/iomap.c
+@@ -407,4 +407,5 @@ union acpi_object * __wrap_acpi_evaluate_dsm(acpi_handle handle, const guid_t *g
+ }
+ EXPORT_SYMBOL(__wrap_acpi_evaluate_dsm);
+ 
++MODULE_DESCRIPTION("NVDIMM unit test");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
+change-id: 20240526-md-testing-nvdimm-02b9402677a6
+
 
