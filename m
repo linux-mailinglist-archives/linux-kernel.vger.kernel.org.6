@@ -1,161 +1,158 @@
-Return-Path: <linux-kernel+bounces-189784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329318CF4E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6FA8CF4EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62CDE1C20B55
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12AC1C20BD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836BA1C69E;
-	Sun, 26 May 2024 16:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BB8200D2;
+	Sun, 26 May 2024 16:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="meYLVjXQ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="w2wVi6XE"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC618EAF;
-	Sun, 26 May 2024 16:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B931168B9;
+	Sun, 26 May 2024 16:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716741624; cv=none; b=dbuuoXp1SChdbSyoojBzDnNB/7+yrGIPQflLqWoKF5nn+QdMr6R1V+v7SFj6ZIDBOPDc5Lc/JZC4y50nm9Vsn/tnR3/9a+vB4ZBFUP6bl4PALbexCtFBXdYuJHLldjfD8S85riKwm5xN/4E3VhV9zYwvZ3yRCbVxbQ9WZ1IgKh4=
+	t=1716742214; cv=none; b=orHU5NAg/rI45/tFhaeuZsH2zqcakFCK2ytI5MRb50SJxzmf3vK/mDU5BPNaNSDA3K3XnK1jCJ+2/+fhyn4MjWtgnifb74AZT/TsahwBP6iS20Fj2soj6h+g//ixYZB1jKp9QynsQKwppMjRRduXkwJpDRkcof9vcFVHpsuUNpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716741624; c=relaxed/simple;
-	bh=yOm6cdxOJDaW3vY/3rDEchTDMZQvn9FaKFIVCGigcZo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=OtKlCeSq4LYnbiXre8XwbNW98VM+sEO7KO66ObZirfbw0s00wYXdtbyjgobMdxR5n/fFwi9SMIzPE3KGMidKsD0jHiCQezlxm1352TOU39oMimNuijuKmaqP84Dbi0Y3w/IHj4I39JHHZzm5ipIte1QuM5fQwy1m8kMEKuIX9Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=meYLVjXQ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1716742214; c=relaxed/simple;
+	bh=ETjA3dGIbrqGmMPuDEM7g9G8PK00mOnqw3j6bdPx5Q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGbcOHKqyzwjT4u16cWrndqwKPYvwx14Eftl3Gyr5rFTi836pUXYzDK12qBj9txExPngQKo6x3/gtaAtnNc3TqIGQ7dcbdAPuMis7OVA8P4g1XqHU6gpCvtrkRBDi4SyCmzyo1IwUZQ267zAEL9gNU+itLuPofJUbtAU5ZkpgfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=w2wVi6XE; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Se3l6VfrArDiw2sv7ishS59ORjDk+6CLWOFsd5rBSlk=; b=w2wVi6XEWBHXj27s1jxicTfKm7
+	EyjyocygWLXY7RgaPeE84Eo0aLHKkIFEEk1p05hwhlc4WsoBTZ4bLyUjQku7N/VqqwpB6pdlJp65T
+	Q0YqBcLapNOFqn7YaizyhRkoK63NxKl9Q4Du/3tVlDYYWr4il7fbD1FHeBnKNu8AmbVKmJTB6geF2
+	AOtHE/AejxFoXoRA6fQ8R8Drtjbob8M8UKUrR9PFJd45aWnv9S5DqRcumz1vGu/UZzzSJwEfyo/4S
+	JC3lAFUb0byd7XTZnEsWoXXYyFziyZmWPkYy8Y7jm4GypTINxQNi9Px/0hkJ87R+JcRbab57XP2Jo
+	EC9xRU8g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49196)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBH4A-0002pc-2v;
+	Sun, 26 May 2024 17:49:52 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBH48-0001Wp-8T; Sun, 26 May 2024 17:49:48 +0100
+Date: Sun, 26 May 2024 17:49:48 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Byungho An <bh74.an@samsung.com>,
+	Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
+ based on the selected iface
+Message-ID: <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+ <20240524210304.9164-1-fancer.lancer@gmail.com>
+ <20240524210304.9164-2-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1716741613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j3lZcgRjy9m9i6VrLn+CFxC//39rHct7UpondOikJUI=;
-	b=meYLVjXQ14iHnjjG6vi6dXbEFJAFzMA7Dpk4lIIyPVVPoFpaMHYdL8m6kOW0lWbCeEM9+F
-	lu9ivY3Sl+YlcdpQCiaV7XVlwHdp501iTC97XUQ+ezqRzM9el9N+hc/5Zx6Zds377cFE3M
-	spGVPG4Sfo6QsbtJv56iEovKliySDyLg5LDhFi5Ul18YZj8EpymjWCc4PcgcDg8GgZpFbb
-	vJ2W8n+rTj+C2JELC6Nb1f7hG8jAX9LvZV/PDU21534fV4cIgu0XijTnzjHxhxK8rUjjZs
-	RUNWKOqJKVZWsYOo5qN4c12ptoCjx/g12xbp5reZ60XbMQRy+xWPt0zxA0A5IA==
-Date: Sun, 26 May 2024 18:40:12 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Icenowy Zheng <uwu@icenowy.me>, linux-sunxi@lists.linux.dev,
- wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, didi.debian@cknow.org, Marek Kraus
- <gamiee@pine64.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Correct the descriptions for
- Pine64 boards
-In-Reply-To: <90fada7d9a37a5e413b16bc176ec2f8d@manjaro.org>
-References: <d2943d9f4c99a239f86188eaf45a73972685c255.1713833436.git.dsimic@manjaro.org>
- <057b4a5504656bb7455ead39768d9e7167fb724b.camel@icenowy.me>
- <5635a6e79427e43ef20b690c766267d0@manjaro.org>
- <20240522110507.51b12966@donnerap.manchester.arm.com>
- <90fada7d9a37a5e413b16bc176ec2f8d@manjaro.org>
-Message-ID: <eeb46ba769f6ee9a1972cd104f0de19d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524210304.9164-2-fancer.lancer@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello Andre and Icenowy,
-
-On 2024-05-22 15:06, Dragan Simic wrote:
-> On 2024-05-22 12:05, Andre Przywara wrote:
->> On Wed, 22 May 2024 08:10:21 +0200
->> Dragan Simic <dsimic@manjaro.org> wrote:
->>> On 2024-05-22 02:48, Icenowy Zheng wrote:
->>> > 在 2024-04-23星期二的 03:00 +0200，Dragan Simic写道：
->>> >> Correct the descriptions of a few Pine64 boards and devices,
->>> >> according
->>> >> to their official names used on the Pine64 wiki.  This ensures
->>> >> consistency
->>> >> between the officially used names and the names in the source code.
->>> >>
->>> >> [...]
->>> >>
->>> >> -      - description: Pine64 PineH64 model A
->>> >> +      - description: Pine64 H64 Model A
->>> >>          items:
->>> >>            - const: pine64,pine-h64
->>> >>            - const: allwinner,sun50i-h6
->>> >>  
->>> >> -      - description: Pine64 PineH64 model B
->>> >> +      - description: Pine64 H64 Model B
->>> >
->>> > Sorry for replying so late, but I don't think there is a Pine64 H64
->>> > board. The Pine64 wiki calls it Pine H64. [1]
->>> >
->>> > [1] https://wiki.pine64.org/wiki/PINE_H64
->>> 
->>> Good point, thanks.  Though, this board is really an exception to
->>> the naming scheme employed for the Pine64 boards, so perhaps it would
->>> actually be better to rename the board in the Pine64 wiki, by adding
->>> "64" to "Pine", to ensure consistency.
->> 
->> I am sorry, but I don't think this is how it works. The board is 
->> really
->> called "Pine H64", that's printed on the board [1] and everywhere else 
->> [2].
->> That's a choice the manufacturer made, and renaming some Wiki page 
->> won't
->> change that. I understand the engineer's desire to make everything 
->> nice and
->> consistent ;-) , but I am afraid that's not our call. After all this 
->> file
->> is to document the device naming, not to be an example of consistent
->> naming schemes.
->> 
->> [1] https://linux-sunxi.org/images/5/53/Pineh64_top.jpg
->> [2] https://pine64.org/devices/pine_h64_model_a/
+On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
+> The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
+> into the DW GMAC controller. It's always done if the controller supports
+> at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
+> interfaces support was activated during the IP-core synthesize the PCS
+> block won't be activated either and the HWFEATURE.PCSSEL flag won't be
+> set. Based on that the RGMII in-band status detection procedure
+> implemented in the driver hasn't been working for the devices with the
+> RGMII interface support and with none of the SGMII, TBI, RTBI PHY
+> interfaces available in the device.
 > 
-> Those are all valid concerns.  Though, when it comes to the 
-> silkscreened
-> labels on PCBs, sometimes they have no connection with the real, 
-> official
-> board names.  An almost funny example :) is the QuartzPro64 board, also
-> from Pine64. [3]
+> Fix that just by dropping the dma_cap.pcs flag check from the conditional
+> statement responsible for the In-band/PCS functionality activation. If the
+> RGMII interface is supported by the device then the in-band link status
+> detection will be also supported automatically (it's always embedded into
+> the RGMII RTL code). If the SGMII interface is supported by the device
+> then the PCS block will be supported too (it's unconditionally synthesized
+> into the controller). The later is also correct for the TBI/RTBI PHY
+> interfaces.
 > 
-> I'll check with Pine64 are there some intentions for unifying the 
-> officially
-> used board names, and if there aren't, I'll submit the v2 of this 
-> series
-> with the corrected board names.
-> 
-> [3] 
-> https://wiki.pine64.org/images/f/fe/Quartzpro64_whole_board_top_resized.jpeg
+> Note while at it drop the netdev_dbg() calls since at the moment of the
+> stmmac_check_pcs_mode() invocation the network device isn't registered. So
+> the debug prints will be for the unknown/NULL device.
 
-It's been decided that the history should be preserved, so I'll prepare
-and submit the v2 of this series with the original Pine64 board names 
-that
-are currently used officially.
+Thanks. As this is a fix, shouldn't it be submitted for the net tree as
+it seems to be fixing a bug in the driver as it stands today?
 
->>> Alas, the Pine64 wiki is currently in read-only mode, due to some
->>> recent issues with the underlying hardware that runs it.  Migration 
->>> to
->>> another form of documentation for Pine64 boards is also a 
->>> possibility,
->>> which makes the updates even more complicated.
->>> 
->>> With all this in mind, I think it would be the best to rename the 
->>> board
->>> on the Pine64 side, to ensure consistency, and keep this patch as-is.
->>> I'll make a mental note to do that on the Pine64 side once the 
->>> current
->>> situation with the Pine64 wiki is resolved.
+Also, a build fix is required here:
+
+> -	if (priv->dma_cap.pcs) {
+> -		if ((interface == PHY_INTERFACE_MODE_RGMII) ||
+> -		    (interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+> -		    (interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+> -		    (interface == PHY_INTERFACE_MODE_RGMII_TXID)) {
+> -			netdev_dbg(priv->dev, "PCS RGMII support enabled\n");
+> -			priv->hw->pcs = STMMAC_PCS_RGMII;
+> -		} else if (interface == PHY_INTERFACE_MODE_SGMII) {
+> -			netdev_dbg(priv->dev, "PCS SGMII support enabled\n");
+> -			priv->hw->pcs = STMMAC_PCS_SGMII;
+> -		}
+> -	}
+> +	if (phy_interface_mode_is_rgmii(interface))
+> +		priv->hw.pcs = STMMAC_PCS_RGMII;
+> +	else if (interface == PHY_INTERFACE_MODE_SGMII)
+> +		priv->hw.pcs = STMMAC_PCS_SGMII;
+
+Both of these assignments should be priv->hw->pcs not priv->hw.pcs.
+
+I think there's also another bug that needs fixing along with this.
+See stmmac_ethtool_set_link_ksettings(). Note that this denies the
+ability to disable autoneg, which (a) doesn't make sense for RGMII
+with an attached PHY, and (b) this code should be passing the
+ethtool op to phylink for it to pass on to phylib so the PHY can
+be appropriately configured for the users desired autoneg and
+link mode settings.
+
+I also don't think it makes any sense for the STMMAC_PCS_SGMII case
+given that it means Cisco SGMII - which implies that there is also
+a PHY (since Cisco SGMII with inband is designed to be coupled with
+something that looks like a PHY to send the inband signalling
+necessary to configure e.g. the SGMII link symbol replication.
+
+In both of these cases, even if the user requests autoneg to be
+disabled, that _shouldn't_ affect internal network driver links.
+This ethtool op is about configuring the externally visible media
+side of the network driver, not the internal links.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
