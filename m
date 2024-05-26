@@ -1,133 +1,216 @@
-Return-Path: <linux-kernel+bounces-189741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9A48CF458
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558658CF45D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF48B20C49
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:58:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F6DB20DC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 13:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ABB101DA;
-	Sun, 26 May 2024 12:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAECFBEE;
+	Sun, 26 May 2024 13:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uG0ygbpX"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PA+CJcb5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8A7B640;
-	Sun, 26 May 2024 12:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C848F6A;
+	Sun, 26 May 2024 13:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716728305; cv=none; b=TZAvROF2v5glUwE9Je18iorPNayR+WqEWTByTRJn2LgH158zwbgZ5APgmSvhkr3mWLiy+5LG5pyrUBugLsNP6v5wMO9DGzDs6yy4Ff5LzY79HgnbWE5NERmDmx5VRhJ8GnnEIAnPMa2GOL4ZxK/Af5QB7c+GGRu/FFgDQ8B2oVg=
+	t=1716728506; cv=none; b=NmOULs1+h2KA9WFtnzGJYNVUu9G15VmrJ4ckRW1hTSNRHMPqsTLW7gT/qHgdxC3JGkD1z462IKEuMYxgFZdzESJPIvH2sePUHENLZ5m3esI+c5200x0Qw2gNxhLWks+GqMn0LarMsJIZgWD1FhQRvZ+BApVXcrNSYFnJFMwtUm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716728305; c=relaxed/simple;
-	bh=+Jk/U5uDbfjV3TVqCr1thBx3H0i66FuEANV7xC+xlvQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tLyQ+0Gz8nFk8rG9B78zKQY37flALSgPVgyd6yuSCzQQ1i6hcstWRckHpP+9dgTB/HQ6f7f8G8Su8/MQrd5sgSUqIuETLyDIjNfWIzJC0soQkaiedeFUttzlu4an7DMPAXOFPXenwkBwa4hitSJRvHyzMvMCAqqWr0GeOFUXJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uG0ygbpX; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716728235; x=1717333035; i=markus.elfring@web.de;
-	bh=TH4bJDOAOe0AwLA0U7wO9TtqPvaa/z7ZkRomrKnaLd4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uG0ygbpXlIzchJJB+ZdOgUQP4d/HFkCO8o4Ry3NUK+JNWGVW5k2T4bvra9f5+K1f
-	 z1WlHA5y263i+om7NxkheRkx6Ly4c46fT6T2r1+nYVkrBro/p6bbfLjKXqomo/hu2
-	 B/IMzN3Ciguh4J9g63On2I4BKA8h9RYhbr1WMbHAYd57uXVnLWNu/onDtyBAyyjlW
-	 zMJQv8Qc3V11NMrOKokYrmIKmAtz7022B6qOPv1wIZ/pfWVbkUxlCwH/E+kqAK31T
-	 0OxlMt0lD1uTBSPEt5r/Yo0yuBHDVmO1hYpYqltVQffBf2jaQav3RjhUoH9DKsn8d
-	 CLQTdcTc1GEgfwiAuw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1sts6v2L1a-00jhaj; Sun, 26
- May 2024 14:57:15 +0200
-Message-ID: <369912bd-2ccf-4cb7-817a-a32ccbb3d83d@web.de>
-Date: Sun, 26 May 2024 14:57:07 +0200
+	s=arc-20240116; t=1716728506; c=relaxed/simple;
+	bh=mUAswdY4bkKjHRY+od08oRhrXZZBaKuBJrPUOu+kkyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PfEGlQJtNkWNAV+rV3ldj7+MoAM+lu3X9IRxdpKbNEFfMx+ETISHaih38YvSr5kyomEGyq/ukh1N+JTc6WEF/u7B6DZKVJaMHbEEOXrC8yKqGtqLMHPHiReNSQ/TVqxbJuYPjNt46vfMNVjjePmdgge16BsrtCgYz5SoGlsOlII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PA+CJcb5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B34C2BD10;
+	Sun, 26 May 2024 13:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716728506;
+	bh=mUAswdY4bkKjHRY+od08oRhrXZZBaKuBJrPUOu+kkyY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PA+CJcb5Gd8Bidlh90pG+Uk1TjcCimjj9/c0tyAt4C5/0A0MCAeIJKMmI1MW/KEw5
+	 XXszos+HjQubyM87KxlNwJutTsuiTymdMidKNK05bU+Nzd+zzQrv7Hez3FX7nV82F3
+	 928uMZ0H6IUQ4DVZsbGfdmYFnZ1ZFFBTMQmIfO5RqLsww9CSEhoZF67FzNT1PszGOJ
+	 xiEVWlHuhqFk/JUh11rGg4I8Bk60uOLOZcXp3Gn2zyO8Bns6GD+9PNm68bSAJuzk/8
+	 2ZeyPV3O5EjhtVijflCFVgnJwtuiaqr0cN2PN/s1zJc/sTxnrU+Pk13Cr4l2eYEQlK
+	 J318T/De1Ex9w==
+Date: Sun, 26 May 2024 14:01:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Subject: Re: [PATCH v4 10/10] drivers: iio: imu: Add support for adis1657x
+ family
+Message-ID: <20240526140108.0abd1ef5@jic23-huawei>
+In-Reply-To: <20240524090329.340810-1-ramona.bolboaca13@gmail.com>
+References: <20240524090329.340810-1-ramona.bolboaca13@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yu Kuai <yukuai3@huawei.com>, linux-block@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
- Chaitanya Kulkarni <kch@nvidia.com>,
- Chengming Zhou <zhouchengming@bytedance.com>,
- Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
- Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn
- <johannes.thumshirn@wdc.com>, Yi Zhang <yi.zhang@redhat.com>,
- Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Yang Erkun <yangerkun@huawei.com>,
- Yi Zhang <yi.zhang@huawei.com>, Yu Kuai <yukuai1@huaweicloud.com>
-References: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2] null_blk: fix null-ptr-dereference while configuring
- 'power' and 'submit_queues'
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FdTFfjKeMbueufJpEs7qeLt78+mhGzQxV8dbJ8BZleWz5WKA7rT
- FmGUKdTjZd2dbVMLZpVl7LIsbMuJLfg+tHDnPWxHvuhi4yjHMtb/37F+G0k0OMUZSklQxrR
- U7j1LjI7dnRcX0WfLVIBFx/4LC/ivVsTNZYd13CSXIxcr2ousa0Dmfbf7RWLbsBjyhD+AZc
- v55JqHyCA8lj+nijOSZUg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RONZyowvkdA=;qIEX4tPfOuBuJwMVujzM1AjwnE1
- fXfbD52+wJJcpo3wOabKrMkSIDjnDwSl8GM15LMmisc19pOR3V1pMZesXaadRNs19u8Xj7375
- ePbES4D9Y13fcIO69qSLHjB0GJOzqN1TjG3+fwRBflTPOHV3nDH95sWqVwau/8cJ16OCuMlnd
- JLcVWuVRbp3MH/xfZIly7mLV5lD8gulrxBpKEFZf79OHWlW4Tt0Gcdry76SWw9MQRLDcG0A3e
- JwEaAbBxy58YkZSiznpsrgVYiv66q5V0Ow35UxwhXLeIIVTAK1bGII4kWds/QUDkZpgkNILOk
- qA/HkQ8le1/9K056RAc5NuuDSrPfK7IUZkWFvCOPhZzJstTLDDsDr9LZP8vgNGZRglHCBsm3v
- MPrn8D4F35ovmZK5Vz9ZoP/BX4EOx95a6zsjCZVytgapfmRh6St6kTQr8gZuBKOjuEj1rbr3l
- VGBXNl3fUnB1UlMgEzgSjXkdDLUevJcAeFjelk2oyHUvKxh4PFLQ7OHiWlwIzQBpvg23n92SP
- iUljOEXZuzg744GjEZWWBu4h0sufg8aEQ9b80BwlA9h51WGarTeWFZr5LiQai5FFX3gv7ocB/
- xVPeRvCZkvX8szP0Mh6KajMJxHkXuRF4en0E0V0ksrB+pBYbTc1lcwZqX6cbCndW/GgGyoVxh
- fhZWIYqzDqq7GlbKlxkxrQRrxuajaCtdgO+c0TsaAkZ5lwxQNJspvrvDocMxoWx1hI1Fe1eSg
- FLZeQNSEiGmu2i/N7RndvIWx8gLjsysEzPI3H6Fkw5QFsIVUUP1ZdGJQdQI1tdddeB0HINLIi
- +kkcErcdMI7Ry4PI9w7+koiRTUQ1nuSTln1TGTqLt8OPo=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> Fix this problem by resuing the global mutex to protect
-> nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs=
-.
->
-> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after a=
-n instance has been configured")
-=E2=80=A6
-> +++ b/drivers/block/null_blk/main.c
-> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_=
-device *dev,
->  static int nullb_apply_submit_queues(struct nullb_device *dev,
->  				     unsigned int submit_queues)
->  {
-> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues)=
-;
-> +	int ret;
+On Fri, 24 May 2024 12:03:29 +0300
+Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
+
+> Add support for ADIS1657X family devices in already exiting ADIS16475
+> driver.
+> 
+> Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+
+Some minor comments seeing as you will be doing a v5.
+Many of these I might have just tweaked whilst applying (line breaks etc)
+but easier for me if you do it ;)
+
+Jonathan
+
+
 > +
-> +	mutex_lock(&lock);
-> +	ret =3D nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues=
-);
-> +	mutex_unlock(&lock);
+>  static const struct adis_timeout adis16475_timeouts = {
+>  	.reset_ms = 200,
+>  	.sw_reset_ms = 200,
+> @@ -760,7 +929,7 @@ static const struct adis16475_chip_info adis16475_chip_info[] = {
+>  		.sync = adis16475_sync_mode,
+>  		.num_sync = ARRAY_SIZE(adis16475_sync_mode),
+>  		.adis_data = ADIS16475_DATA(16470, &adis16475_timeouts,
+> -					    ADIS16475_BURST32_MAX_DATA,
+> +					    ADIS16475_BURST32_MAX_DATA_NO_TS32,
+
+Avoid the noise in here by moving the rename to where this was extended in an earlier
+patch.  Just add a note there to say why you are naming it NO_TS32
+at that point.
+
+>  };
+
+> @@ -1264,20 +1582,30 @@ static int adis16475_push_single_sample(struct iio_poll_func *pf)
+>  	__be16 *buffer;
+>  	u16 crc;
+>  	bool valid;
+> +	u8 crc_offset = 9;
+> +	u16 burst_size = ADIS16475_BURST_MAX_DATA;
+> +	u16 start_idx = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 2 : 0;
 > +
-> +	return ret;
->  }
-=E2=80=A6
+>  	/* offset until the first element after gyro and accel */
+>  	const u8 offset = st->burst32 ? 13 : 7;
+> 
+> +	if (st->burst32) {
+> +		crc_offset = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ? 16 : 15;
+> +		burst_size = (st->info->flags & ADIS16475_HAS_TIMESTAMP32) ?
+> +			     ADIS16575_BURST32_DATA_TS32 : ADIS16475_BURST32_MAX_DATA_NO_TS32;
+> +	}
+> +
+>  	ret = spi_sync(adis->spi, &adis->msg);
+>  	if (ret)
+> -		goto check_burst32;
+> +		return ret;
+> 
+>  	buffer = adis->buffer;
+> 
+> -	crc = be16_to_cpu(buffer[offset + 2]);
+> -	valid = adis16475_validate_crc(adis->buffer, crc, st->burst32);
+> +	crc = be16_to_cpu(buffer[crc_offset]);
+> +	valid = adis16475_validate_crc(adis->buffer, crc, burst_size, start_idx);
+>  	if (!valid) {
+>  		dev_err(&adis->spi->dev, "Invalid crc\n");
+> -		goto check_burst32;
+> +		return ret;
+>  	}
+> 
+>  	for_each_set_bit(bit, indio_dev->active_scan_mask,
+> @@ -1337,23 +1665,127 @@ static int adis16475_push_single_sample(struct iio_poll_func *pf)
+>  		}
+>  	}
+> 
+> -	iio_push_to_buffers_with_timestamp(indio_dev, st->data, pf->timestamp);
+> -check_burst32:
+> +	if (adis->data->has_fifo)
+> +		iio_push_to_buffers(indio_dev, st->data);
+> +	else
+> +		iio_push_to_buffers_with_timestamp(indio_dev, st->data, pf->timestamp);
+You could be lazy here and not separate the two cases. I think we are guaranteed
+in the has_fifo case that the timestamp will never be turned on. Hence
+iio_push_to_buffers_with_timestamp() is effectively identical to
+iio_push_to_buffers().
 
-How do you think about to increase the application of scope-based resource=
- management here?
-https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h#L12=
-4
+However for reasons of potential tightening on buffer sizing that we have
+been talking about (adding checks into the iio_push_to_buffers() family that
+enough data is pushed), this may need to come back.  However that set of changes
+will require a per driver move to new interfaces anyway.
 
-Will development interests grow for the usage of a statement like =E2=80=
-=9Cguard(mutex)(&lock);=E2=80=9D?
+So if you want to just always call iio_push_to_buffers_with_timestamp()
+go ahead but add a comment here that there might not be a timestamp option
+for some devices.
 
-Regards,
-Markus
+> +
+> +	return 0;
+> +}
+> +
+
+> @@ -1367,6 +1799,14 @@ static int adis16475_config_sync_mode(struct adis16475 *st)
+>  	u32 sync_mode;
+>  	u16 max_sample_rate = st->info->int_clk + 100;
+> 
+> +	/* if available, enable 4khz internal clock */
+> +	if (st->info->int_clk == 4000) {
+> +		ret = __adis_update_bits(&st->adis, ADIS16475_REG_MSG_CTRL,
+> +					 ADIS16575_SYNC_4KHZ_MASK, (u16)ADIS16575_SYNC_4KHZ(1));
+line break in line above.  
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	/* default to internal clk */
+>  	st->clk_freq = st->info->int_clk * 1000;
+> 
+> @@ -1444,34 +1884,67 @@ static int adis16475_config_irq_pin(struct adis16475 *st)
+..
+> +	if (st->adis.data->has_fifo) {
+> +		/*
+> +		 * It is possible to configure the fifo watermark pin polarity.
+> +		 * Furthermore, we need to update the adis struct if we want the
+> +		 * watermark pin active low.
+> +		 */
+> +		if (irq_type == IRQ_TYPE_LEVEL_HIGH) {
+> +			polarity = 1;
+> +			st->adis.irq_flag = IRQF_TRIGGER_HIGH;
+> +		} else if (irq_type == IRQ_TYPE_LEVEL_LOW) {
+> +			polarity = 0;
+> +			st->adis.irq_flag = IRQF_TRIGGER_LOW;
+> +		} else {
+> +			dev_err(&spi->dev, "Invalid interrupt type 0x%x specified\n",
+> +				irq_type);
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Configure the watermark pin polarity. */
+> +		ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
+> +				       ADIS16575_WM_POL_MASK, (u16)ADIS16575_WM_POL(polarity));
+
+Add a line beak in the line above.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Enable watermark interrupt pin. */
+> +		ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
+> +				       ADIS16575_WM_EN_MASK, (u16)ADIS16575_WM_EN(1));
+
+Line break in line above.
+
+> +		if (ret)
+> +			return ret;
+> +
+>  	} else {
+
 
