@@ -1,144 +1,88 @@
-Return-Path: <linux-kernel+bounces-189706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FC88CF3DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 11:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FB58CF3E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C6B1F21466
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 09:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D78028118B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 10:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82D28F77;
-	Sun, 26 May 2024 09:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB7947A;
+	Sun, 26 May 2024 10:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kks7iPe5"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkp81Olt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A308F45
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33079944D;
+	Sun, 26 May 2024 10:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716717526; cv=none; b=RCwB3NY4XiJ/ZvHl74BHfwIIM06mI2O/exAjKpn8zJZBs1RScS5lA4+MR75GobMs8sj0dY0hzpDQ6lc71PUfBaw6L1Ymc9x4gvjiv+CL0QBBukfGBqbj0a4Wurg4N9IRiwbK+p6wm+Gwmr0D1MaQbNbS5m2US/S5KNteJY3D7Vk=
+	t=1716718261; cv=none; b=q1XmFzZgKT1DOnMGNvp30VOR3dmw45cKZ+SeaEuj7nnEG1OAwct6KgPVquY7+SSPZHItdVjPGfNhiDdQxQ5NRdyIhJ4wxe1buwzusx87xlUGTJeJrKFEHZwoVgBXWPnRmXYHBkJL22zzD6LxJ95rRY8OhfsjEj8WMoxZL6DLH6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716717526; c=relaxed/simple;
-	bh=hRnXOL3/JG4PcBU2yqlNxZ96e+xvO+9TwGHHI2I5pnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVwacCdrKnRsr7xwStzqAQsnUcjdvFpemqQNQqndmwkPoqH6FmVY9yYB29WzUPdiWp9RI9fJMz3tSwNd24LRQbubVOXLz7uPVdN6RWGQDTaoaDyL8jj3hGksgp0OPnJK6bWqgvUXyO63lElDgbD/+Fwf2NUwqCbiveOOjTS5QVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kks7iPe5; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: irogers@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716717521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J4epl//+/WLyc/JhDbO+OjPKpdtrbovVIa7El3gIFMA=;
-	b=kks7iPe55jwgWSkp0t9Ue7pLpfBbn+3u4R/aXez1d4hvQEvRYnCw1SV4fU5JAqUVdwSt+5
-	6mxomxnsYPGlM7SZdU81kaUReKuTLk07u4H9uoU3Uu9O3PABBt6Vp2pwDRBHdggQcqJ6ER
-	5uD47PXKH5HxHCiMdKqgYR0WlEhDnWQ=
-X-Envelope-To: torvalds@linux-foundation.org
-X-Envelope-To: namhyung@kernel.org
-X-Envelope-To: acme@kernel.org
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: mingo@kernel.org
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: adrian.hunter@intel.com
-X-Envelope-To: williams@redhat.com
-X-Envelope-To: kcarcia@redhat.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-perf-users@vger.kernel.org
-X-Envelope-To: retpolanne@posteo.net
-X-Envelope-To: unixbhaskar@gmail.com
-X-Envelope-To: j.ethan.adams@gmail.com
-X-Envelope-To: james.clark@arm.com
-X-Envelope-To: kan.liang@linux.intel.com
-X-Envelope-To: tmricht@linux.ibm.com
-X-Envelope-To: tycho@tycho.pizza
-X-Envelope-To: yangjihong@bytedance.com
-Date: Sun, 26 May 2024 17:58:38 +0800
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leo Yan <leo.yan@linux.dev>
-To: Ian Rogers <irogers@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Anne Macedo <retpolanne@posteo.net>,
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-	Ethan Adams <j.ethan.adams@gmail.com>,
-	James Clark <james.clark@arm.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tycho Andersen <tycho@tycho.pizza>,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-Message-ID: <20240526095838.GA33806@debian-dev>
-References: <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1>
- <ZlFGpxWGQskCTjeK@x1>
- <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
- <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
- <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
- <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
- <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
- <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
- <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
+	s=arc-20240116; t=1716718261; c=relaxed/simple;
+	bh=sYzAz15/z8faKs1VYVEOVSprSAaIaPmv/HsJiqwELDw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ApVQzD/grO2TAO3EswoE7P81NufN7TQYqZG9IQtfnD7hMjI6hMZhL4e9tWi+0CeZQoWeDofmdKZagS/lRl4+cEwpPdfSP3VmlN47GimMB1BZxHG4P9h965KSL1uIjD4d62zz6vWmutXBT/jOZ34TDdCSElAIBzTuytvukNpcjng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkp81Olt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724D2C2BD10;
+	Sun, 26 May 2024 10:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716718260;
+	bh=sYzAz15/z8faKs1VYVEOVSprSAaIaPmv/HsJiqwELDw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dkp81OltoVClOmVRjStYBulaO3MDzGMQsP3SM5sLcQCp4Nql9futT7xmJA4cb7Nub
+	 LgWxUaHAdadCzRB8LXOAjaDh5/qZX0eiiMe80EPsz7xrVyFTL3uBP0W+s8SOs0OoJw
+	 SvPtYuJHcO+drKGSg99X/D7aBEA+D0qwi6fzwjedeG4O0veWQGse1/pPPLPMs1MRlt
+	 oBog3W5kdnSAw0nDmfRVTnLzjLC2jAEE020/bjbSBI8sPReFXjXlrJFJowr4bBD4/D
+	 mDSNRgnVBQREPcX04+FZpaB+c+/miRdFHQP2qL3EyPDJnBcnlwDQOqmo3hAf2DUpbc
+	 5K37UEGEs5X3g==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH 0/3] tracing: Fix some selftest issues
+Date: Sun, 26 May 2024 19:10:57 +0900
+Message-Id: <171671825710.39694.6859036369216249956.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Ian,
+Hi,
 
-On Sat, May 25, 2024 at 11:22:08PM -0700, Ian Rogers wrote:
+Here is a series of some fixes/improvements for the test modules and boot
+time selftest of kprobe events. I found a WARNING message with some boot 
+time selftest configuration, which came from the combination of embedded
+kprobe generate API tests module and ftrace boot-time selftest. So the main
+problem is that the test module should not be built-in. But I also think
+this WARNING message is useless (because there are warning messages already)
+and the cleanup code is redundant. This series fixes those issues.
 
-[...]
+Thank you,
 
-> In doing that work the code was tested by IBM for S390 and by Intel,
-> but it was fixing an ARM created problem. ARM were the first to have
-> BIG.little systems but contributed nothing to the perf tool to handle
-> it, even though each core type has a different PMU. ARM BIG.little
-> remains broken with the perf tool and when I fix it for them they
-> don't review or test the code. ARM changed and left unworking uncore
-> PMU naming conventions. ARM don't fix tests for their platform. ARM
-> don't help make perf's tests cover their different way of naming PMUs.
-> No one is trying to break ARM machines, but when ARM fails to do
-> anything other than review their own changes in the perf tree it is
-> something of an inevitability.
-> 
-> Fwiw, I am working on making perf record, perf top, etc. skip events
-> on non-core PMUs when they fail to open. It is a rather large and ugly
-> change. It is also a holiday weekend and I'm spending a lot of my time
-> in it addressing latent ARM problems.
+---
 
-James is in holiday, so I should cover this in time. Sorry that I did
-not respond the issue quickly - mainly as I am not familiar with JSON
-and perf event part.
+Masami Hiramatsu (Google) (3):
+      tracing: Build event generation tests only as modules
+      tracing/kprobe: Remove unneeded WARN_ON_ONCE() in selftests
+      tracing/kprobe: Remove cleanup code unrelated to selftest
 
-I tried to reproduce the issue reported by Linus on my Arm big.LITTLE
-system but cannot reproduce it. As I saw Linus mentioned the issue is
-related with Arm DSU event, which is absent on my test board.
 
-But your complaint is received well and I am very appreciate your work
-(especially in the weekend). I will continue to look into the details
-in this thread, and monitor incoming patches and I will verify them.
+ kernel/trace/Kconfig        |    4 ++--
+ kernel/trace/trace_kprobe.c |   29 ++++++++++++-----------------
+ 2 files changed, 14 insertions(+), 19 deletions(-)
 
-Thanks,
-Leo
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
