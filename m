@@ -1,120 +1,209 @@
-Return-Path: <linux-kernel+bounces-189787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163CC8CF4F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8F98CF4F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 18:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6E11F21198
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1421F21092
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 16:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E36E1B94D;
-	Sun, 26 May 2024 16:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519211C69E;
+	Sun, 26 May 2024 16:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RP8A/YVM"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kloenk.de header.i=@kloenk.de header.b="uPMbV/H6"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7C62260A
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 16:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA70C3C38;
+	Sun, 26 May 2024 16:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716742423; cv=none; b=jot9Xa5Z0tURwGB7b/F4/JdufsAG0WdZBVVMpORhAg+SX6MfV2ksPhXvnllRN72Da3vRbiybQVvt/k2ThH4s1WwwZnPRPW4cqr3uYPYWzTwHh76Pge4UjGiPJb9w6d4AhECM1FkX2pjMwWs8w/fdTawPh123feVzN5AUZZ7e3Fk=
+	t=1716742593; cv=none; b=DX5b9d88mX4qSmA91Fx5pU7o3Pv2TZ5VHOi+qXcbr6sfDKhbvYLjCfy2V//59VssIYZvw8p5EcmAR7POjJFpUHQg4h/c7in+WDPclpuWM9l6dpG+wAGYRZQ7hxbo1CrtsGhrizrme/aNF44aQaPb7fAYeVDxSj6NhMdrl5hVWpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716742423; c=relaxed/simple;
-	bh=/BKmWWBDfRlEDj7KIrCUITVqOvPtb4QcBiN5AA/liTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q6co9MlNvKa3j/qOg6ukssjQMXI1VbhcCbdFgjsu6bH6XYTTY3RyfOd5sLxoxfqsKxEdD99HH1YEPKL8Ci/yx70gErFO6R36VohpM2aAmqENZGpvjXGtLpzdjHM4TKsPTYxXt12B2dbjetGNBwNXJrz3W+UJ91Ejjoc1eKC4cqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RP8A/YVM; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6269ad9a6fso282794566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716742419; x=1717347219; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KPz8fd987dNAatsylOyQp1D2cGtvz2jm5uP1CPuYGQ=;
-        b=RP8A/YVMxPxYCMdO3sc5oQNejfyAG3TAmozX8fQOCZkdzKLPWzjQYMahI+UztVc5xk
-         73yViex6GDlCsLjEWgIs0gwkD5X8JKh/DaO2VQ0Rv9Jysn/MJFKEErbLJBvtjuFbtO6A
-         oLYyV1Cnhvt9EF7zsNq0ehfZyLblPJxE/6DEw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716742419; x=1717347219;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2KPz8fd987dNAatsylOyQp1D2cGtvz2jm5uP1CPuYGQ=;
-        b=PMcgLQn6J5WSLqyuFdA7z8EoG1XExprJKekuROALsObhNlmbOcbq1JQ2dKc30XbkIK
-         vK1ML7B4lJv1eiTCzvkU1MLaaLwILPBh+PaG65ndsdQNdSnp+wZ5J5+QPZ7TcNh17zg5
-         UvCVsnfo15lGvKVitA+u2hkaeMN9P+AaP6fnZtfTFC2sIYk3DVT9ANT/o7hoEzObzqZD
-         Sh6Ge/mCgkKZHA/LvRB6ANWAVh6AXoblg5T6d/mI/tSund1oUfM06vUJSjQWAHSiX/Y2
-         JfYNel3Zkjoiu1i6l8VP1W/6Ur009dTL7piDUbCOtKTfE9Z0s6PmnCyAK5TQRermqq0a
-         E+mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLU0rBwTeuQsh6x1tBTZuPHO1Utwq95Nypb5N7D6yDAhgCWLOjgIPAsNsasxG6nNOy3UsWBWbwdOjQaul/y1cfNilUV5AtTMHp9WMh
-X-Gm-Message-State: AOJu0YypNNLoDMH+om6oTHmcigr7fCUAbZ/7Kr75u06NzJhagpC97rIJ
-	ARBu1MbfYM7V0wUKLjcYt/0c+3YCazeLgE7lbjCeVu5yumFZeJ0VzBU9Z/IY03RGS/X/7r29lnG
-	eA2CZuQ==
-X-Google-Smtp-Source: AGHT+IEsvNFy5I+ktj/ElUxlT80bmpQV26/OAfaek7xdf848vARxey/OzFODsg+F7vpXCWKM4YVKYQ==
-X-Received: by 2002:a17:907:6d0f:b0:a62:c0aa:8c1a with SMTP id a640c23a62f3a-a62c0aa99ecmr294094566b.2.1716742419291;
-        Sun, 26 May 2024 09:53:39 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c81771fsm400556966b.27.2024.05.26.09.53.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 May 2024 09:53:37 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6266fff501so285497966b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 09:53:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmhjOtd052HSJdURjXHfmBMfJ5Vzv4NoUSCAMM9Udv6iIjwj/vry29Q9Mbb2ZU6cG1ojEA7xEl0fJ3jelBXMSKCFdeu0lKyywUVHDy
-X-Received: by 2002:a17:907:928c:b0:a59:fca5:ccaa with SMTP id
- a640c23a62f3a-a62641a3160mr583334366b.13.1716742417393; Sun, 26 May 2024
- 09:53:37 -0700 (PDT)
+	s=arc-20240116; t=1716742593; c=relaxed/simple;
+	bh=X78jjsQ86RXdbowtYihaJzb8GQKZmbw2ydyhdKGXZFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bmoy9sV2NMxmBbYMgXf1x0Dx86jTTLInGxAtMOum05rx1hiQ+TL6v1waOyGtwjwHI6VVxLsHl9PK2PwAwgSOAOMXbW7ndku82wAOq/AtYmF/qaR9/mXCt2nbJ+bptZ9Ff0IAjLwCGPX29jZ7LpyIwxLNsSsWKEZi1G9iMlzJlKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.de; spf=pass smtp.mailfrom=kloenk.de; dkim=pass (1024-bit key) header.d=kloenk.de header.i=@kloenk.de header.b=uPMbV/H6; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.de
+From: Finn Behrens <me@kloenk.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.de; s=mail;
+	t=1716742586; bh=uY51i8VK4saPxA1AoHhLDzBJkgaIKcf7BimO7Tpr5fw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=uPMbV/H62AgvcaVgLEls2QddpD5MEtvsQ9hbiFEkv2GTSN+Rju98JG05WpUEojP0Q
+	 i52cLoKM+ywo8d5Em5WJb32zOr31DZiTnKEvXTR71WcL8U2RnnzfnHX3fgnDYwx6nv
+	 YnxO3GcMGe4rlUMnPkEQZ/zyfVS1fIg7l0DQ+/sk=
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-pwm@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Heisath <jannis@imserv.org>, Yureka Lilian <yuka@yuka.dev>
+Subject: Re: [PATCH] gpio-mvebu: no hardcoded timer assignment for pwm
+Date: Sun, 26 May 2024 18:56:25 +0200
+Message-ID: <224E981B-57DD-4C8F-BA37-F55ECB0F2CB6@kloenk.de>
+In-Reply-To: <6chccjdn3yidi7rodcledxx7czt3adjxvaeeneii5ghfiw4oc3@t5qtmnlasvlo>
+References: <20240130105515.30258-1-me@kloenk.de>
+ <6chccjdn3yidi7rodcledxx7czt3adjxvaeeneii5ghfiw4oc3@t5qtmnlasvlo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521192614.3937942-1-acme@kernel.org> <CAHk-=wiWvtFyedDNpoV7a8Fq_FpbB+F5KmWK2xPY3QoYseOf_A@mail.gmail.com>
- <ZlFE-wbwStOqt8Ra@x1> <ZlFGpxWGQskCTjeK@x1> <CAP-5=fXDdcjMmn8iBenjPmZZQdB=AX+gc4TYDsHXuwH9TYq4Ng@mail.gmail.com>
- <CAHk-=wheZptGieaObmQEsz6bocUjhQXNpWXFDmCK-TOKbOvO+Q@mail.gmail.com>
- <CAM9d7chXVsoNP6uYMCqy2MZOiWkt4GrFn+giYLHQjaJRsap1Cw@mail.gmail.com>
- <CAHk-=wjY7CG5WRZQ3E1gdEO9YtUQstMe7a=ciShY0wz0hKXyuQ@mail.gmail.com>
- <CAP-5=fUvT+O0iyXxst3WKqnWdpimqD8+aX8GJU7_7zYieniYxQ@mail.gmail.com>
- <CAHk-=wjMvgsBu5n9ifs5d8Qfu8x23=XmXgp6gXYNEN2y-g5UMA@mail.gmail.com>
- <CAP-5=fWk-eDfuRH-tL5TWU8dXumOnCTKby5VKonOfjGad4TG=Q@mail.gmail.com>
- <CAHk-=wjZ2JoyBNFnR-TUc7P8sBL2ZvR0W1fCjcK2R2w7137wfQ@mail.gmail.com> <CAP-5=fXwv0Ec4_wEG2m1X73cpFvEWs2b5GdNnMw7OY7fP6V1tw@mail.gmail.com>
-In-Reply-To: <CAP-5=fXwv0Ec4_wEG2m1X73cpFvEWs2b5GdNnMw7OY7fP6V1tw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 26 May 2024 09:53:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg0OtULpNxk3_vKgmQnMqfOkJ2+_Gx+79hC=bBP=AT1RQ@mail.gmail.com>
-Message-ID: <CAHk-=wg0OtULpNxk3_vKgmQnMqfOkJ2+_Gx+79hC=bBP=AT1RQ@mail.gmail.com>
-Subject: Re: [GIT PULL] perf tools changes for v6.10
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, 
-	Kate Carcia <kcarcia@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users <linux-perf-users@vger.kernel.org>, Anne Macedo <retpolanne@posteo.net>, 
-	Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, 
-	James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, 
-	Yang Jihong <yangjihong@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 26 May 2024 at 09:50, Ian Rogers <irogers@google.com> wrote:
+Hi,
+
+Sorry for taking so so long, life happened.
+Currently working on a v2 but maybe reasonable to discuss some things alr=
+eady here.
+
+(And sorry for first sending html, to long not worked on kernel and trust=
+ my mail client to much, so second resend without html)
+
+> On 8. Feb 2024, at 09:05, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengut=
+ronix.de> wrote:
 >
-> If you think what you are asking perf with no pmu for a cycles event, is it unreasonable it gives you every cycles event for event PMU?
+> Hello,
+>
+> On Tue, Jan 30, 2024 at 11:55:13AM +0100, Finn Behrens wrote:
+>> Removes the hardcoded timer assignment of timers to pwm controllers.
+>> This allows to use more than one pwm per gpio bank.
+>>
+>> Original patch with chip_data interface by Heisath <jannis@imserv.org =
+<mailto:jannis@imserv.org>>
+>>
+>> Link: https://wiki.kobol.io/helios4/pwm/#patch-requirement
+>> Co-developed-by: Yureka Lilian <yuka@yuka.dev <mailto:yuka@yuka.dev>>
+>> Signed-off-by: Yureka Lilian <yuka@yuka.dev <mailto:yuka@yuka.dev>>
+>> Signed-off-by: Finn Behrens <me@kloenk.de <mailto:me@kloenk.de>>
+>
+> I find this patch hard to understand and I hope it's more complicated
+> than it could be. I wonder if it would be beneficial to split this patc=
+h
+> in two. In the first patch just introduce the new structures with all
+> the necessary renaming and only in the second patch implement the added=
 
-But that's not what it gave me. At all. All it gave me was NO
-PROFILING AT ALL and a useless error message.
+> flexibility.
+I will try for the v2, currently not sure how easy that will be as most t=
+hings are used directly and will not work when not used.
+But might have to rewrite quite a bit as think I found a possible race co=
+ndition in this patch. (further down below with the static variable)
+>
+> Some more details below.
+>
+>> drivers/gpio/gpio-mvebu.c | 223 ++++++++++++++++++++++++--------------=
 
-You're trying to change the goal-posts here and keep bringing up
-irrelevant things that didn't actually happen.
+>> 1 file changed, 139 insertions(+), 84 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+>> index a13f3c18ccd4..303ea3be0b69 100644
+>> --- a/drivers/gpio/gpio-mvebu.c
+>> +++ b/drivers/gpio/gpio-mvebu.c
+>> @@ -94,21 +94,43 @@
+>>
+>> #define MVEBU_MAX_GPIO_PER_BANK		32
+>>
+>> -struct mvebu_pwm {
+>> +enum mvebu_pwm_ctrl {
+>> +	MVEBU_PWM_CTRL_SET_A =3D 0,
+>> +	MVEBU_PWM_CTRL_SET_B,
+>> +	MVEBU_PWM_CTRL_MAX
+>> +};
+>> +
+>> +struct mvebu_pwmchip {
+>> 	struct regmap		*regs;
+>> 	u32			 offset;
+>> 	unsigned long		 clk_rate;
+>> -	struct gpio_desc	*gpiod;
+>> -	struct pwm_chip		 chip;
+>> 	spinlock_t		 lock;
+>> -	struct mvebu_gpio_chip	*mvchip;
+>> +	bool			 in_use;
+>>
+>> 	/* Used to preserve GPIO/PWM registers across suspend/resume */
+>> -	u32			 blink_select;
+>> 	u32			 blink_on_duration;
+>> 	u32			 blink_off_duration;
+>> };
+>>
+>> +struct mvebu_pwm_chip_drv {
+>> +	enum mvebu_pwm_ctrl	 ctrl;
+>> +	struct gpio_desc	*gpiod;
+>> +	bool			 master;
+>> +};
+>> +
+>> +struct mvebu_pwm {
+>> +	struct pwm_chip		 chip;
+>> +	struct mvebu_gpio_chip	*mvchip;
+>> +	struct mvebu_pwmchip	 controller;
+>> +	enum mvebu_pwm_ctrl	 default_controller;
+>> +
+>> +	/* Used to preserve GPIO/PWM registers across suspend/resume */
+>> +	u32				 blink_select;
+>> +	struct mvebu_pwm_chip_drv	 drv[];
+>> +};
+>
+> So we have three different structures related to pwm. Some highlevel
+> description (in a comment or at least the commit log) about how the
+> hardware works and which struct describes what would be helpful. I gave=
 
-I have a revert in the pull request from Arnaldo, and the revert is happening.
+> up after 15 min of reading this patch and trying to understand it.
+>
+>> +static struct mvebu_pwmchip  *mvebu_pwm_list[MVEBU_PWM_CTRL_MAX];
+>
+> Huh, a static variable. Does that mean we can only have one mvebu_gpio
+> device?
+This is the global over the gpio aliases gpio0 and gpio1.
+As far as I understand this we take the id from the alias in the probe fu=
+nction and there we can only ever have the id 0 and 1.
 
-                Linus
+While looking over this again I noticed that we therefore don=E2=80=99t h=
+ave a working lock with this, and now gpio0 can take the pwm from gpio1 w=
+hich is the main idea behind this patch.
+My idea would be convert the lock from the pwm chip to a global lock in t=
+his module and use that for all pwm locks and this global list. I don=E2=80=
+=99t know if there is a less global variable that we can access from both=
+ gpio0 and gpio1?
+>
+>> +
+>> struct mvebu_gpio_chip {
+>> 	struct gpio_chip   chip;
+>> 	struct regmap     *regs;
+>> @@ -285,12 +307,12 @@ mvebu_gpio_write_level_mask(struct mvebu_gpio_ch=
+ip *mvchip, u32 val)
+>>  * Functions returning offsets of individual registers for a given
+>>  * PWM controller.
+>>  */
+>> -static unsigned int mvebu_pwmreg_blink_on_duration(struct mvebu_pwm *=
+mvpwm)
+>> +static unsigned int mvebu_pwmreg_blink_on_duration(struct mvebu_pwmch=
+ip *mvpwm)
+>
+> I'm a fan of picking always the same variable name for the same thing
+> and different names for different things. "mvpwm" is used for variables=
+
+> of type struct mvebu_pwmchip and struct mvebu_pwm.
+>
+>> {
+>> 	return mvpwm->offset + PWM_BLINK_ON_DURATION_OFF;
+>> }
+>
+> Best regards
+> Uwe
+>
+> -- =
+
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig     =
+       |
+> Industrial Linux Solutions                 | https://www.pengutronix.de=
+/ |
+
 
