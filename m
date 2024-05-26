@@ -1,189 +1,119 @@
-Return-Path: <linux-kernel+bounces-189739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3152B8CF451
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88908CF455
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 14:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0B7281709
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D221C20AD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 12:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A08DE57F;
-	Sun, 26 May 2024 12:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DD3F9DE;
+	Sun, 26 May 2024 12:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4k0ivvZ"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AalhAbx2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292922F55
-	for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 12:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47E6DF60;
+	Sun, 26 May 2024 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716727529; cv=none; b=t4OtPdVtOj3aixv1s0yTjincSwy50f1Nx2KkEawNtOelD7UaHJG4TGFjEmGNZVAngxTFLCe/tdgCJ8N3N+QtVouOd92BECfMJvXVXyl56Wmgs4paZWflAeb5EbwN8I5HSc1XalsJ9omxxWMSoNLl4bfoe2zvIuAKuwnoVjsMyaI=
+	t=1716727790; cv=none; b=DethIk9Bm4h7Hu6Xffv5j7jicpCBM099BiTnt5gsOeMsjNn+kZYOjbDEOMBkAZDjO98rO5LM9sNnzfO9PTPOprwib/e3qvONqpQuTOxx7yR9PKvl9gdEvho0ciygsVdZrQrxklQ+bs+EHXzurX3CSH1jLZ0uUCXS+/WNFkniFmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716727529; c=relaxed/simple;
-	bh=KOAVlkiuGyTnCQ2ZlXLO0vNIzDwXvGBopI5sg3sGgJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUnAUBJD86WFT6otft2v4j/cgOghAut1510MbQrbCYh2BU+XiYiK4Me+aQtl5Wqv7d/uhMGQgIdEIW+pEQR4vBnfSTxzA5FDV9mfyAEfHbfaqPVWqPhyyi9fSO3h1m7H0CsfROCgbjnRPquHQx/EsrtybCdwzplSAqm4Ro4m2q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4k0ivvZ; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6265d48ec3so250846366b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 05:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716727526; x=1717332326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGreP7ohmVf4AkzbVkuYO2XvY8O/AuY/tqcEe8fBOKk=;
-        b=B4k0ivvZM5UOCKip6EMaZzJVLbSKXGbOAKF9pJmkSC6B37+m4d5gvd8sucPrREvmOQ
-         5UjgfJYFsc7pydSzm5eztd1XjCBqgppjAg1+DBvTMok7XKrcUaOqRb2DJEgMCOTGs/XG
-         egXsclkS+e08G+WSn+6+IYV/SS8EMJFaOgzUa5BGk2WS1w31TFz14Mffsvn8I1ncFS6F
-         G9oD+RR48Nw1/Iq/Zz5yKfgMgR1IXtu1+d0nyHIpGd3joUyFmlvzUbzwnsH3X/habQvq
-         rPvQBqjf1V1MVoasZvwezg16Zv4GGNJT89Rm5z/jX0xU6gXSnTM7nwLbj4dW/YEseKHU
-         2ihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716727526; x=1717332326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sGreP7ohmVf4AkzbVkuYO2XvY8O/AuY/tqcEe8fBOKk=;
-        b=UfiFL5IuYGL2wvxOSnDPTERoQGetzCemIvBbWDIYfrDFWZBai43vA9lAQsx6/mefB4
-         RSoBTqdOm8KCoZx6fMbDObW0KT2WaHAR0oODQZ8/HYHSIdVDe5oE+LkXYbzfOYDj20W0
-         WI4dz/3SUdcNYUJMblv+3fERKhloI6pY3NEmZGC24ql6eKau58RnFVXsoMbPhKnWbGPx
-         Xy9fCaQRHMjKZvNowO93vcqL57lhe2AzFAQpnetOGKAzhQlBKOZgfMZiBnZbrfeuyHp4
-         ZZigQ8SwrizVpkZe+3mPOxmMnoT6LwIsLGaXrPfe/9n+97CrFFCcoPkML9EfAWT9m8wa
-         /POA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsbwPhr/Kq6qmUJPVKcdFspPFiaMU5IJnxzIrfGiVv2lD4E/LyWkBGQtG+y5IF0FBlzKEHOGsTh6kRgqslp6WO3IMLuVuvgyad9+H6
-X-Gm-Message-State: AOJu0YwncALVc5Rrk6iqYP/ek9i4dQ54j7VDQLWWxvn18v+DdrXtf1TZ
-	3EjBsarc5D2qR6uJSVQqCaD5n3D0v4f2Geeb3YCMeZbP7Z/JPZ3GYQHZIg==
-X-Google-Smtp-Source: AGHT+IE6UWx5TxyHQ3GKQF5hf8NlJGJeDS5QWJbyP1RP3ZnnrEJFTXgF+oPupSkgZoTGtxn9/7rbcw==
-X-Received: by 2002:a17:907:1b20:b0:a5a:99a4:62a with SMTP id a640c23a62f3a-a6265011c68mr609503166b.75.1716727526301;
-        Sun, 26 May 2024 05:45:26 -0700 (PDT)
-Received: from f (cst-prg-19-178.cust.vodafone.cz. [46.135.19.178])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a62b67f0bbesm177905466b.211.2024.05.26.05.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 05:45:25 -0700 (PDT)
-Date: Sun, 26 May 2024 14:45:16 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Dennis Zhou <dennis@kernel.org>
-Cc: tj@kernel.org, hughd@google.com, akpm@linux-foundation.org, 
-	vbabka@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] percpu_counter: add a cmpxchg-based _add_batch variant
-Message-ID: <qyuogq43hmgqguiswjt2r5hyxlk6epuc6gs3n6votoc4nwk5lf@o2alaj7nrgy2>
-References: <20240521233100.358002-1-mjguzik@gmail.com>
- <Zk1HsDYKwxpzeBjq@snowbird>
- <CAGudoHGpiJwuNX5MEj_RGdc+vVo_3u3hSv9wWSRm6ZrmAi65NA@mail.gmail.com>
- <Zk6FIJTUEiNORrzl@snowbird>
+	s=arc-20240116; t=1716727790; c=relaxed/simple;
+	bh=mRfq0TFYrIwU/YNjg/1gxs3DAKBxoubVD2/h3CYP9is=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dUrq89NdE6DbcavMWaS7go7wyS3llhDYdeAutXaE0YCSbOyCinVKCikJYRY+UTsvYwbm+eGO+rSaDZ3WV+0y+GSpadI+QWlkO2YhkkBhCIEoKa/5gNjSV4fZdSxNgwG/xo42+BGiYHd3b5eleJRcKYb75qFjbpX9Fz0WehPZk8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AalhAbx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AC7C2BD10;
+	Sun, 26 May 2024 12:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716727789;
+	bh=mRfq0TFYrIwU/YNjg/1gxs3DAKBxoubVD2/h3CYP9is=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AalhAbx2ZcTiAzrA5IXdrKWE1cxH5oMw53Axo95u5hSQn0PuLWR24BSeAzjVeuAZe
+	 5NsDqbglZYFjQtvG04xa6W4pe6yGp5lS8rEauGnlXSh8uiXvQANOolPbdBErtTTBxn
+	 /JFJ5cUIbB7ZVrMw8FzWHmuNyvVkKLyonoGP/gmpL8x9DOpegAyccQ9WtTOPTiYXpj
+	 uO0/0dWe0vKcrzfWF14iVbH1x//5BEWt6VKMVAj4TsChujxzlMaWSc0dcEl1VPxtMy
+	 IBznp/UOefU9buH+udd+aeprbOmcAF1i+PnWbHuHc9LRx3RlH4aqMYJMuBStsizfuK
+	 vgCLPR5v9n8Vw==
+Date: Sun, 26 May 2024 13:48:58 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Subject: Re: [PATCH v4 10/10] drivers: iio: imu: Add support for adis1657x
+ family
+Message-ID: <20240526134858.636d2c8f@jic23-huawei>
+In-Reply-To: <bdc88590fe3e54326c1edbe6f2b4ac2d8f453df4.camel@gmail.com>
+References: <20240524090329.340810-1-ramona.bolboaca13@gmail.com>
+	<bdc88590fe3e54326c1edbe6f2b4ac2d8f453df4.camel@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zk6FIJTUEiNORrzl@snowbird>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 04:52:00PM -0700, Dennis Zhou wrote:
-> On Wed, May 22, 2024 at 06:59:02AM +0200, Mateusz Guzik wrote:
-> +     do {
-> +             if (unlikely(abs(count + amount)) >= batch) {
-> +                     raw_spin_lock_irqsave(&fbc->lock, flags);
-> +                     /*
-> +                      * Note: by now we might have migrated to another CPU
-> +                      * or the value might have changed.
-> +                      */
-> +                     count = __this_cpu_read(*fbc->counters);
-> +                     fbc->count += count + amount;
-> +                     __this_cpu_sub(*fbc->counters, count);
-> +                     raw_spin_unlock_irqrestore(&fbc->lock, flags);
-> +                     return;
-> +             }
-> +     } while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount));
 
-For completeness I'll add that Vlastimil suggested creating an inline
-variant of the fast path of the routine, which does look reasonable now
-that it is 2 branches. Should it land, the reworked routine I posted
-would serve as the slowpath.
+> > @@ -1500,7 +1973,10 @@ static int adis16475_probe(struct spi_device *sp=
+i)
+> > =C2=A0	indio_dev->name =3D st->info->name;
+> > =C2=A0	indio_dev->channels =3D st->info->channels;
+> > =C2=A0	indio_dev->num_channels =3D st->info->num_channels;
+> > -	indio_dev->info =3D &adis16475_info;
+> > +	if (st->adis.data->has_fifo)
+> > +		indio_dev->info =3D &adis16575_info;
+> > +	else
+> > +		indio_dev->info =3D &adis16475_info;
+> > =C2=A0	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> >=20
+> > =C2=A0	ret =3D __adis_initial_startup(&st->adis);
+> > @@ -1515,10 +1991,25 @@ static int adis16475_probe(struct spi_device *s=
+pi)
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> >=20
+> > -	ret =3D devm_adis_setup_buffer_and_trigger(&st->adis, indio_dev,
+> > -						 adis16475_trigger_handler);
+> > -	if (ret)
+> > -		return ret;
+> > +	if (st->adis.data->has_fifo) {
+> > +		ret =3D devm_adis_setup_buffer_and_trigger_with_attrs(&st->adis,
+> > indio_dev,
+> > +								=C2=A0=C2=A0=C2=A0
+> > adis16475_trigger_handler_with_fifo,
+> > +								=C2=A0=C2=A0=C2=A0
+> > &adis16475_buffer_ops,
+> > +								=C2=A0=C2=A0=C2=A0
+> > adis16475_fifo_attributes);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		/* Update overflow behavior to always overwrite the oldest sample.
+> > */
+> > +		ret =3D adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADIS16575_OVERFLOW_MASK,
+> > (u16)ADIS16575_OVERWRITE_OLDEST); =20
+>=20
+> Slight preference for local variable to avoid the cast.
 
-I hacked it up (inlined below for reference).
+Hmm. This is a symptom of adis_update_bits() being 'too clever'.
+I'd be tempted to just split that into 16 bit and 32 bit versions but
+that is a much larger patch so a local variable is ok if ugly.
 
-This of course creates a tradeoff in terms of func call cost vs i-cache
-footprint. bloat-o-meter on a debian-based kernel config says:
-Total: Before=24584638, After=24592309, chg +0.03%
 
-I don't know if that automatically disqualifies the thing.
+>=20
+> - Nuno S=C3=A1
+>=20
+>=20
 
-At the moment the negative lookup test I used to bench the cmpxchg
-change failed to register a win due to numerous artificial slowdowns in
-that codepath (most notably memory alloc/free are incredibly slow).
-
-That is to say at the moment I cannot justify submitting the inline
-variant for inclusion. If someone has a test which bounces off of the
-routine they are welcome to bench it and share if it helps.
-
-I however do intent to whack out some of the problems in the test I was
-running, by the end of that process it may be the inline variant will
-provide a measurable win, in which case I'll send a proper patch.
-
-diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
-index 3a44dd1e33d2..b0038811b69f 100644
---- a/include/linux/percpu_counter.h
-+++ b/include/linux/percpu_counter.h
-@@ -52,9 +52,21 @@ static inline void percpu_counter_destroy(struct percpu_counter *fbc)
- 	percpu_counter_destroy_many(fbc, 1);
- }
- 
--void percpu_counter_set(struct percpu_counter *fbc, s64 amount);
-+#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
-+void percpu_counter_add_batch_slow(struct percpu_counter *fbc, s64 amount, s32 batch);
-+void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
-+{
-+        s64 count = this_cpu_read(*fbc->counters);
-+	if (unlikely((abs(count + amount)) >= batch ||
-+            !this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount)))
-+		percpu_counter_add_batch_slow(fbc, amount, batch);
-+}
-+#else
- void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount,
- 			      s32 batch);
-+#endif
-+
-+void percpu_counter_set(struct percpu_counter *fbc, s64 amount);
- s64 __percpu_counter_sum(struct percpu_counter *fbc);
- int __percpu_counter_compare(struct percpu_counter *fbc, s64 rhs, s32 batch);
- bool __percpu_counter_limited_add(struct percpu_counter *fbc, s64 limit,
-diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
-index c3140276bb36..80fa1aa7a1bb 100644
---- a/lib/percpu_counter.c
-+++ b/lib/percpu_counter.c
-@@ -90,7 +90,7 @@ EXPORT_SYMBOL(percpu_counter_set);
-  * 1. the fast path uses local cmpxchg (note: no lock prefix)
-  * 2. the slow path operates with interrupts disabled
-  */
--void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
-+void percpu_counter_add_batch_slow(struct percpu_counter *fbc, s64 amount, s32 batch)
- {
- 	s64 count;
- 	unsigned long flags;
-@@ -111,6 +111,7 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
- 		}
- 	} while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount));
- }
-+EXPORT_SYMBOL(percpu_counter_add_batch_slow);
- #else
- /*
-  * local_irq_save() is used to make the function irq safe:
-@@ -134,8 +135,8 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
- 	}
- 	local_irq_restore(flags);
- }
--#endif
- EXPORT_SYMBOL(percpu_counter_add_batch);
-+#endif
- 
- /*
-  * For percpu_counter with a big batch, the devication of its count could
 
