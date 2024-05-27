@@ -1,225 +1,141 @@
-Return-Path: <linux-kernel+bounces-191379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF838D0E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:01:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7468D0E7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CDD1C21C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D8F1F21EEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EE3160885;
-	Mon, 27 May 2024 20:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A6A16086C;
+	Mon, 27 May 2024 20:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlfzhBwf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HttzYzSD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CC610A0C;
-	Mon, 27 May 2024 20:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2398A10A0C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716840076; cv=none; b=ZIWexDTqC6xu8VcrRKScNKLHZowvHmsnjp6zPEHy5EtqZJdaR7jpMMPVqO1w452EWm3QX6+48jfY2NosyhnDMtLLhK6qSnThF4iV90Jnr1Yw9CZ72TQeX051aMt4qrmmF5zOEaX0iP/Zx61LeNng5wnga7I7ajhfMTfQvzaSj8o=
+	t=1716840179; cv=none; b=LKz4MkX4ipELWoXdoq+QI9dbZvnI+gh8+bYaYg1u8eztvF4+vGaBxj/+Plm3lYDNwYdX16RqPWlbg7DyY9mc7uCwECsZb1tb+CL92jpBYurIHCRRM2tZBPbZcl6/h0WDsU9KO6QXz1ybRk2urXrpiNyWD1PC+WZQV/KPlsfvgrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716840076; c=relaxed/simple;
-	bh=OWQYNDegokhSObT7nbj0+hL6/tPHQ6m0GIe7RUwAVXA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bsOQQrXXCMFvgwRprD8pX4c0y8PJZ1+H5GGaEbIPsTMVnqwgqdSqimTi/Aog4E854PoLYie4FlTSZnM+Wn8ExfBM8dzoiXsv1X1grlrdT17Bq05LkRZS4IV7KyWmRh/e+WEXWoOoadFsHO8bdYxSlb7cX/SFyihGGvYdEzYeIbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlfzhBwf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526CFC2BBFC;
-	Mon, 27 May 2024 20:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716840076;
-	bh=OWQYNDegokhSObT7nbj0+hL6/tPHQ6m0GIe7RUwAVXA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qlfzhBwfdAG2mxxccilHj0avcjDtwuzZC/VAbeTRGdxMOHXZLzTa0zvFvwCT0kcy6
-	 jbBKqvxVx8Z+tkgamv5EwVkSE6u3+pA99R6op1IyIeVuo33fMQdLXE4xPWJ0Btu8B7
-	 pgpGHT02fLsct+B+mPQvgkenRuoQZZrVPsbC1ehoHPfN96uHrAGoCLIbd5YbNYGbbT
-	 SdQT6fxlimLna1qC2L6p5A8XoB7Cdpsz/sDUHA0gGmmisxHoTYt4pcCOeFv6rBH4dC
-	 bsuPvqKeT88Gz7lzpe5m1nwlQWmBfmnAChMOw/dT6M0swbMCnMKzA7PVxvTawsKiys
-	 O7UPYq9sJmDRg==
+	s=arc-20240116; t=1716840179; c=relaxed/simple;
+	bh=cal7mG0qUZDbQaDkg8S5M7WXgm8vuqmTCMSvfQjBd84=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CIbO9v95+qI3xJ0QultGXonORvAYGJcAimgiljm0vZ+w6OfHnbg1kttXlfugS1kaLtL9tWfkPfj9Wb2CGI3j6a4oanGMoCzE02kix99ZOsNGh0xC9rrMnZBH/WfboTTMJp673eJ0X4Vuty6QAJCN0gYEOMMHLHnlYUO1cOA7aIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HttzYzSD; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716840177; x=1748376177;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=cal7mG0qUZDbQaDkg8S5M7WXgm8vuqmTCMSvfQjBd84=;
+  b=HttzYzSD2+JV+JpxljWFkW0rMJySdd0Un7/bY+Uq2JOGK1CE9Ue7nOr4
+   dBK5EDBT85xqsS4HUnfEvZ99ar8WCSom+5OtH5cCv5RBsnQp1com0iY5B
+   7iaMBU0U0pvrmJ5RiiLzWKaHOjv24B4b6D/OoxAX/Juq+Hx1GCrUzXuif
+   NEMykNxnKIy8UzPa2vJJRcVRzI5z2iHOBL6fbT2d8Q+8o6mmD5udeXhMu
+   ErV05LgefSSYymbHVIn9R670BJrqxA5H+udAgDwoasJHFncQF2ENFSxd3
+   S6qCg13PHvh7jl7mFqf307SDnabLmEZcnuRCWlSacOT84S5YYJ+7+yz47
+   g==;
+X-CSE-ConnectionGUID: 5hk7/ydWToeqDRl0wUUPtw==
+X-CSE-MsgGUID: JKMQQKvDQmWKkA5zULz8Vw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="38551854"
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="38551854"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 13:02:56 -0700
+X-CSE-ConnectionGUID: OvQQXpLfRQuX6VE8i4kLfQ==
+X-CSE-MsgGUID: 7hyXouXUT0eYX5P46h8/3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="34737795"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 27 May 2024 13:02:55 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBgYV-000B2t-36;
+	Mon, 27 May 2024 20:02:52 +0000
+Date: Tue, 28 May 2024 04:02:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Matthew Sakai <msakai@redhat.com>
+Subject: drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
+Message-ID: <202405280322.DuFLX7rb-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 May 2024 23:01:11 +0300
-Message-Id: <D1KP0GQGBREG.1L307RLJM4NAF@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Vitor Soares" <ivitro@gmail.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
- <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
- <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
- <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
- <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
- <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
- <D1KJBXOPFWT7.1F14BWQJO29FC@kernel.org>
- <ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com>
- <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
-In-Reply-To: <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon May 27, 2024 at 10:53 PM EEST, Jarkko Sakkinen wrote:
-> On Mon May 27, 2024 at 8:57 PM EEST, James Bottomley wrote:
-> > On Mon, 2024-05-27 at 18:34 +0300, Jarkko Sakkinen wrote:
-> > > On Mon May 27, 2024 at 6:12 PM EEST, Jarkko Sakkinen wrote:
-> > > > On Mon May 27, 2024 at 6:01 PM EEST, Jarkko Sakkinen wrote:
-> > > > > On Mon May 27, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
-> > > > > > On Thu May 23, 2024 at 10:59 AM EEST, Vitor Soares wrote:
-> > > > > > > On Wed, 2024-05-22 at 19:11 +0300, Jarkko Sakkinen wrote:
-> > > > > > > > On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> > > > > > > > > I did run with ftrace, but need some more time to go
-> > > > > > > > > through it.
-> > > > > > > > >=20
-> > > > > > > > > Here the step I did:
-> > > > > > > > > kernel config:
-> > > > > > > > > =C2=A0 CONFIG_FUNCTION_TRACER
-> > > > > > > > > =C2=A0 CONFIG_FUNCTION_GRAPH_TRACER
-> > > > > > > > >=20
-> > > > > > > > > ftrace:
-> > > > > > > > > =C2=A0 # set filters
-> > > > > > > > > =C2=A0 echo tpm* > set_ftrace_filter
-> > > > > > > > >=20
-> > > > > > > > > =C2=A0 # set tracer
-> > > > > > > > > =C2=A0 echo function_graph > current_tracer
-> > > > > > > > >=20
-> > > > > > > > > =C2=A0 # take the sample
-> > > > > > > > > =C2=A0 echo 1 > tracing_on; time modprobe tpm_tis_spi; ec=
-ho 0
-> > > > > > > > > > tracing_on
-> > > > > > > > >=20
-> > > > > > > > > regards,
-> > > > > > > > > Vitor Soares
-> > > > > > > >=20
-> > > > > > > > I'm now compiling distro kernel (OpenSUSE) for NUC7 with
-> > > > > > > > v6.10 contents.
-> > > > > > > >=20
-> > > > > > > > After I have that setup, I'll develop a perf test either
-> > > > > > > > with perf or
-> > > > > > > > bpftrace. I'll come back with the possible CONFIG_* that
-> > > > > > > > should be in
-> > > > > > > > place in your kernel. Might take up until next week as I
-> > > > > > > > have some
-> > > > > > > > conference stuff to prepare but I try to have stuff ready
-> > > > > > > > early next
-> > > > > > > > week.
-> > > > > > > >=20
-> > > > > > > > No need to rush with this as long as possible patches go to
-> > > > > > > > rc2 or rc3.
-> > > > > > > > Let's do a proper analysis instead.
-> > > > > > > >=20
-> > > > > > > > In the meantime you could check if you get perf and/or
-> > > > > > > > bpftrace to=20
-> > > > > > > > your image that use to boot up your device. Preferably both
-> > > > > > > > but
-> > > > > > > > please inform about this.
-> > > > > > > >=20
-> > > > > > >=20
-> > > > > > > I already have perf running, for the bpftrace I might not be
-> > > > > > > able to help.
-> > > > > >=20
-> > > > > > The interesting function to look at with/without hmac is
-> > > > > > probably
-> > > > > > tpm2_get_random().
-> > > > > >=20
-> > > > > > I attached a patch that removes hmac shenigans out of
-> > > > > > tpm2_get_random()
-> > > > > > for the sake of proper comparative testing.
-> > > > >=20
-> > > > > Other thing that we need to measure is to split the cost into
-> > > > > two parts:
-> > > > >=20
-> > > > > 1. Handshake, i.e. setting up and shutdowning a session.
-> > > > > 2. Transaction, payload TPM command.
-> > > > >=20
-> > > > > This could be done by setting up couple of kprobes_events:
-> > > > >=20
-> > > > > =C2=A0 payload_event: tpm2_get_random() etc.
-> > > > > =C2=A0 hmac_event: tpm2_start_auth_session(), tpm2_end_auth_sessi=
-on()
-> > > > > etc.
-> > > > >=20
-> > > > > And just summing up the time for a boot to get a cost for hmac.
-> > > > >=20
-> > > > > I'd use bootconfig for this:
-> > > > >=20
-> > > > > https://www.kernel.org/doc/html/v6.9/trace/boottime-trace.html
-> > > > >=20
-> > > > > So I've made up plans how measure the incident but not sure when
-> > > > > I
-> > > > > have time to pro-actively work on a benchmark (thus sharing
-> > > > > details).
-> > > > >=20
-> > > > > So I think with just proper bootconfig wtih no other tools uses
-> > > > > this
-> > > > > can be measured.
-> > > >=20
-> > > >=20
-> > > > I'll disable this for anything else than X86_64 by default, and put
-> > > > such patch to my next pull request.
-> > > >=20
-> > > > Someone needs to do the perf analysis properly based on the above
-> > > > descriptions. I cannot commit my time to promise them to get the
-> > > > perf regressions fixed by time. I can only commit on limiting the
-> > > > feature ;-)
-> > > >=20
-> > > > It is thus better be conservative and reconsider opt-in post 6.10.
-> > > > X86_64 is safeplay because even in that 2018 NUC7 based on Celeron,
-> > > > hmac is just fine.
-> > >=20
-> > > While looking at code I started to wanted what was the reasoning
-> > > for adding *undocumented* "TPM2_OA_TMPL" in include/linux/tpm.h.
-> > > It should really be in tpm2-sessions.c and named something like
-> > > TPM2_NULL_KEY_OA or similar.
-> >
-> > Well, because you asked for it. I originally had all the flags spelled
-> > out and I'm not a fan of this obscurity, but you have to do stuff like
-> > this to get patches accepted:
-> >
-> > https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@supp=
-ilovahvero/
->
-> I still think the constant does make sense.
->
-> The current constant does not really imply that it is for the null key,
-> it is defined in the wrong file and has no actual legit documentation
-> to go with it.
+Hi Mike,
 
-Thus, being conservative and enabling only for x86_64 is pretty balanced
-choice for v6.10. The feature really needs to mature before widening the
-scope.
+First bad commit (maybe != root cause):
 
-The only platform I'm confident is x86_64 because even the old NUC did
-good job, so for that part I'm not too worried. Otherwise, it would be
-pure guesswork to unconditionally eanble for all arch's.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+commit: f36b1d3ba533d21b5b793623f05761b0297d114e dm vdo: use a proper Makefile for dm-vdo
+date:   3 months ago
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240528/202405280322.DuFLX7rb-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405280322.DuFLX7rb-lkp@intel.com/reproduce)
 
-Those who want to turn the feature  on,still can but we should not make
-that decision for them. E.g. perhaps PowerPC could do this but I don't
-have any hardware to test it out, and have zero usage reports.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405280322.DuFLX7rb-lkp@intel.com/
 
-Obviously can be reconsidered to future kernel versions but right now
-this feels like the most legit way to act.
+All errors (new ones prefixed by >>):
 
-BR, Jarkko
+>> drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
+   drivers/md/dm-vdo/int-map.c:105: warning: Function parameter or struct member 'bucket_count' not described in 'int_map'
+   drivers/md/dm-vdo/int-map.c:330: warning: Function parameter or struct member '__always_unused' not described in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:330: warning: Excess function parameter 'map' description in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:461: warning: Function parameter or struct member '__always_unused' not described in 'move_empty_bucket'
+   drivers/md/dm-vdo/int-map.c:461: warning: Excess function parameter 'map' description in 'move_empty_bucket'
+
+
+vim +87 drivers/md/dm-vdo/int-map.c
+
+cc46b9554b3f6d Matthew Sakai 2023-11-16  66  
+cc46b9554b3f6d Matthew Sakai 2023-11-16  67  /**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  68   * struct bucket - hash bucket
+cc46b9554b3f6d Matthew Sakai 2023-11-16  69   *
+cc46b9554b3f6d Matthew Sakai 2023-11-16  70   * Buckets are packed together to reduce memory usage and improve cache efficiency. It would be
+cc46b9554b3f6d Matthew Sakai 2023-11-16  71   * tempting to encode the hop offsets separately and maintain alignment of key/value pairs, but
+cc46b9554b3f6d Matthew Sakai 2023-11-16  72   * it's crucial to keep the hop fields near the buckets that they use them so they'll tend to share
+cc46b9554b3f6d Matthew Sakai 2023-11-16  73   * cache lines.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  74   */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  75  struct __packed bucket {
+cc46b9554b3f6d Matthew Sakai 2023-11-16  76  	/**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  77  	 * @first_hop: The biased offset of the first entry in the hop list of the neighborhood
+cc46b9554b3f6d Matthew Sakai 2023-11-16  78  	 *             that hashes to this bucket.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  79  	 */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  80  	u8 first_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  81  	/** @next_hop: The biased offset of the next bucket in the hop list. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  82  	u8 next_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  83  	/** @key: The key stored in this bucket. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  84  	u64 key;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  85  	/** @value: The value stored in this bucket (NULL if empty). */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  86  	void *value;
+cc46b9554b3f6d Matthew Sakai 2023-11-16 @87  };
+cc46b9554b3f6d Matthew Sakai 2023-11-16  88  
+
+:::::: The code at line 87 was first introduced by commit
+:::::: cc46b9554b3f6d2f09b1111386b2706e5b4f56c8 dm vdo: add basic hash map data structures
+
+:::::: TO: Matthew Sakai <msakai@redhat.com>
+:::::: CC: Mike Snitzer <snitzer@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
