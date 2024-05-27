@@ -1,177 +1,178 @@
-Return-Path: <linux-kernel+bounces-191368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7798D0CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:24:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814688D0D0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7C01C21077
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABB01F2061D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354251607A5;
-	Mon, 27 May 2024 19:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE9B1607A4;
+	Mon, 27 May 2024 19:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="erhcU8xc"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWwI9mCG"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632C3168C4;
-	Mon, 27 May 2024 19:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB1515FD01;
+	Mon, 27 May 2024 19:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716837854; cv=none; b=GNqhckEQAOYkemCSPPssoEsvrQCpoTsu35DEB2N9uEtl6RRGLNU/oPPxQ/AB1X3jK5vJOd9bWu9IexexkRdlpvoyexiEiHldwwZPmujgZib1sPwhE/+WG2p7I3AvgTX/S94bX5UnK4+xtnOF9kGWEOTXl6hT2SSmMGbhqfzKYNw=
+	t=1716837946; cv=none; b=szDGwibaNz+cLFIZxNAoM1F6RQGIYua9GL4n5KpEkATH63Dj+ooTcih0Qp55Cql4ewXHXp7M/+eY8jBJCRq2MeMUm5pICENFTzGFeqNM3csZJpY6Tvu5siMyScQZd5sR2AzGbvcV5rt3Eemc3RK8H6aXGNF6OMnVBVhMOtamkmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716837854; c=relaxed/simple;
-	bh=1AYlBAqGh7pyXd2PfPvcQ+zPsx8akvGVdpbKbEb3WhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9kyW8S0LckUSpxYaEEtntYXQt5Nb8szOFWsnI0pJoD8PTTugHkbOxCMmNkko1osWcmx4dkRr7fi+HUFgAR50DJF4kQlBmyT3JbsSBmykS5J20HPGJHdXG1c0BMgCFt2wBQStYHzqAhR0mr8eXx8LH/MSfXAdpASIO6SRAIGSyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=erhcU8xc; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716837844;
-	bh=1AYlBAqGh7pyXd2PfPvcQ+zPsx8akvGVdpbKbEb3WhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=erhcU8xcTXBvLNHDveHYYQeXF3gXskdNyLRM8056BO0fY8Pqc64b1OofeHwV2Ua21
-	 J1sDiOvO1TELsFkRLxEUZCt1tvBcrEXFcK9Tc+oy+bTFIBu+s/9Fd6Ipuz5Ml6dJlf
-	 FNCCGr8twKdmSWywWiIbakE0EBsXqSICvlMfOgD8=
-Date: Mon, 27 May 2024 21:24:03 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Stephen Horvath <s.horvath@outlook.com.au>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Moritz Fischer <mdf@kernel.org>
-Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
-Message-ID: <9cf224dd-51eb-4608-abcf-06f337d08178@t-8ch.de>
-References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
- <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
- <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1716837946; c=relaxed/simple;
+	bh=UWZElWnD/lEhDgW78Wemug8QZpdfZGoVTj/8LI3lFiw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qi++BucriJPGrskLB7LC01AWeVHykaNmNYCvQRY3ZwLoUYXJ19/qMfWDKjrwXjG3lgD8K1vCtF09Xl1xTOmYukx/+NTG3HnNjPpWw0A/Pw8A1ms9jfh6tCAyPhHl15MLBEUOemvDyzYiNr7Sl4yiKxskYzLsFl0i100SE6TGTLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWwI9mCG; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b5254f9c32so39071eaf.0;
+        Mon, 27 May 2024 12:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716837944; x=1717442744; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6CNvLtiL3EHElRY2cknRBZ6IFenXiy2KNmFEpcwP0s=;
+        b=NWwI9mCGgbC5NQlCMUqQcFUXLBR1XfUurHsfEFN6zT+4oTof4+NwvTOHRKzOtdNTUh
+         +F9AbzIpSjmudKeB71sxD/dmY0vHHazsAY7Flmhv4DQHwziePxyUylhEs9vsPejN+Qcf
+         2QwSqmI35I+XmE4JUM2VfcDaVFzBd2sWo7I0dcy9kh6KGp0Sk8As17/qnSrX+dxFxIjs
+         rhi3ch5NiKXhvbDyy5ctTD9hzO3irpSK9wxlp6Zi6GmNJNiZ9nQKefrEesCANys3pt0f
+         AaWQ7Swl/2b53485kt+gTE0uORDvTLWwneDKHY1KAh2d/9twj64bGlX3HHjLNoDBDEOw
+         8TqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716837944; x=1717442744;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6CNvLtiL3EHElRY2cknRBZ6IFenXiy2KNmFEpcwP0s=;
+        b=EIJyCCmDU3ugycdvZRHEV0Fk130DpK0XDRuqmM7bqA3XdXZPRx9zuPiu8S78/BVnA1
+         sAiOSM/ZlXn1tU+PDAGrsPChRX8hh8B6agK8BhbPc8si7QUWpvMfYkpQjpEk+fTc+h6a
+         N+SUPuSwwkGxnGLlZPFX+1Px6Actxj4DoGAtVXqYF+8eZTnqMXI41sFLQVEc8Lapvv75
+         8nwTtVJ3z4jB1j8netRqnrtObUYGl2nylSr7FqAVcilb4sx3pcgs6TQ5fv5lwjnXfuD5
+         rncTbpPktvOPao8KSk3eg7FM9equGGUO9D4EoeqyLEMyaXxjoB4Mkl0G2YMa486Xzh4M
+         JYSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0EOqRfflKHQ04G4sPxA22YRvsUbWF22P0N+YMFnO7Zign2yfdo2zsStLRSIgZ3bFLbFEdv+YFvvuW3nDUQExbl9ZJNrYNdkjBNtIaQGQ8ImcdPW/U/wys+fGYCn7cL+QHB7ITiPgTB5epkQM=
+X-Gm-Message-State: AOJu0YwG+30p4mdWNA8co7DD53KbLvSstXzeFNcicQzYQrmcookbD2/g
+	kurOtj6rBn6Ez1MqDepykN/yw5Qko8jJUH6oOGEGKQWGnU6wJ3Er
+X-Google-Smtp-Source: AGHT+IE58+7Q47AWd+tVl2XmoD/fm6I4o4+xbJG/gABpSkQz1T6eU1JQ6xwfdK4Bk16/DZzkGI9nyw==
+X-Received: by 2002:a05:6358:2826:b0:194:6301:a71c with SMTP id e5c5f4694b2df-197e510cd08mr1282664855d.16.1716837944145;
+        Mon, 27 May 2024 12:25:44 -0700 (PDT)
+Received: from [192.168.7.110] ([190.196.103.34])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822189158bsm6269634a12.24.2024.05.27.12.25.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 12:25:43 -0700 (PDT)
+From: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
+X-Google-Original-From: Camila Alvarez Inostroza <calvarez@macbook-pro-de-camila.local>
+Date: Mon, 27 May 2024 15:25:39 -0400 (-04)
+To: Camila Alvarez <cam.alvarez.i@gmail.com>
+cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+    Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] bcachefs: fix last_seq and last_empty_seq in
+ bch2_fs_journal_start()
+In-Reply-To: <20240520025733.688425-1-cam.alvarez.i@gmail.com>
+Message-ID: <cf7d1a86-b1e4-08ee-0d99-0b3f2823fb47@macbook-pro-de-camila.local>
+References: <20240520025733.688425-1-cam.alvarez.i@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 
-Hi Stephen,
+Hello,
+I was wondering if you had had the time to take a look at this.
+Please let me know if there's something I'm missing.
 
-On 2024-05-25 09:13:09+0000, Stephen Horvath wrote:
-> I was the one to implement fan monitoring/control into Dustin's driver, and
-> just had a quick comment for your driver:
-> 
-> On 8/5/24 02:29, Thomas Weißschuh wrote:
-> > The ChromeOS Embedded Controller exposes fan speed and temperature
-> > readings.
-> > Expose this data through the hwmon subsystem.
-> > 
-> > The driver is designed to be probed via the cros_ec mfd device.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >   Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
-> >   Documentation/hwmon/index.rst         |   1 +
-> >   MAINTAINERS                           |   8 +
-> >   drivers/hwmon/Kconfig                 |  11 ++
-> >   drivers/hwmon/Makefile                |   1 +
-> >   drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
-> >   6 files changed, 316 insertions(+)
-> > 
+Thanks!
 
-<snip>
+On Sun, 19 May 2024, Camila Alvarez wrote:
 
-> > diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> > new file mode 100644
-> > index 000000000000..d59d39df2ac4
-> > --- /dev/null
-> > +++ b/drivers/hwmon/cros_ec_hwmon.c
-> > @@ -0,0 +1,269 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + *  ChromesOS EC driver for hwmon
-> > + *
-> > + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/hwmon.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/platform_data/cros_ec_commands.h>
-> > +#include <linux/platform_data/cros_ec_proto.h>
-> > +#include <linux/units.h>
-> > +
-> > +#define DRV_NAME	"cros-ec-hwmon"
-> > +
-> > +struct cros_ec_hwmon_priv {
-> > +	struct cros_ec_device *cros_ec;
-> > +	u8 thermal_version;
-> > +	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
-> > +};
-> > +
-> > +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
-> > +{
-> > +	u16 data;
-> > +	int ret;
-> > +
-> > +	ret = cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	data = le16_to_cpu(data);
-> > +
-> > +	if (data == EC_FAN_SPEED_NOT_PRESENT)
-> > +		return -ENODEV;
-> > +
-> 
-> Don't forget it can also return `EC_FAN_SPEED_STALLED`.
-
-Thanks for the hint. I'll need to think about how to handle this better.
-
-> Like Guenter, I also don't like returning `-ENODEV`, but I don't have a
-> problem with checking for `EC_FAN_SPEED_NOT_PRESENT` in case it was removed
-> since init or something.
-
-Ok.
-
-> My approach was to return the speed as `0`, since the fan probably isn't
-> spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` and
-> HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
-> No idea if this is correct though.
-
-I'm not a fan of returning a speed of 0 in case of errors.
-Rather -EIO which can't be mistaken.
-Maybe -EIO for both EC_FAN_SPEED_NOT_PRESENT (which should never happen)
-and also for EC_FAN_SPEED_STALLED.
-And EC_FAN_SPEED_STALLED also sets HWMON_F_FAULT.
-HWMON_F_ALARM doesn't seem right to me.
-
-But if Guenter has a preference, that will do, too.
-
-> 
-> > +	*speed = data;
-> > +	return 0;
-> > +}
-> > +
-
-<snip>
-
-> But feel free to ignore me if I'm completly wrong about this, since I really
-> don't have much experience with kernel dev.
-
-Thanks for your feedback!
-
-Would you mind if I Cc you on further revisions?
-
-
-Thomas
+> Values were left as the next possible sequence number when there were no
+> entries.
+>
+> The fix involves updating the last_seq initial value and
+> setting last_empty_seq to cur_seq - 1.
+>
+> Reported-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
+> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+> ---
+> Changes in v2:
+> - Introduce a new variable to distinguish the last sequence number, from
+>  the last written sequence number
+> - Abstract `cur_seq - 1` into a variable named `last_seq`
+> - Reference to the last sequence number are changed from `cur_seq - 1`
+>  to `last_seq`
+> ---
+> fs/bcachefs/journal.c | 22 +++++++++++-----------
+> 1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+> index adec8e1ea73e..99fc32f0382d 100644
+> --- a/fs/bcachefs/journal.c
+> +++ b/fs/bcachefs/journal.c
+> @@ -1195,8 +1195,8 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+> 	struct journal_entry_pin_list *p;
+> 	struct journal_replay *i, **_i;
+> 	struct genradix_iter iter;
+> -	bool had_entries = false;
+> -	u64 last_seq = cur_seq, nr, seq;
+> +	bool had_entries = false;
+> +	u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
+>
+> 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
+> 		i = *_i;
+> @@ -1204,11 +1204,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+> 		if (journal_replay_ignore(i))
+> 			continue;
+>
+> -		last_seq = le64_to_cpu(i->j.last_seq);
+> +		last_written_seq = le64_to_cpu(i->j.last_seq);
+> 		break;
+> 	}
+>
+> -	nr = cur_seq - last_seq;
+> +	nr = cur_seq - last_written_seq;
+>
+> 	if (nr + 1 > j->pin.size) {
+> 		free_fifo(&j->pin);
+> @@ -1219,14 +1219,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+> 		}
+> 	}
+>
+> -	j->replay_journal_seq	= last_seq;
+> +	j->replay_journal_seq	= last_written_seq;
+> 	j->replay_journal_seq_end = cur_seq;
+> -	j->last_seq_ondisk	= last_seq;
+> -	j->flushed_seq_ondisk	= cur_seq - 1;
+> -	j->seq_ondisk		= cur_seq - 1;
+> -	j->pin.front		= last_seq;
+> +	j->last_seq_ondisk	= last_written_seq;
+> +	j->flushed_seq_ondisk	= last_seq;
+> +	j->seq_ondisk		= last_seq;
+> +	j->pin.front		= last_written_seq;
+> 	j->pin.back		= cur_seq;
+> -	atomic64_set(&j->seq, cur_seq - 1);
+> +	atomic64_set(&j->seq, last_seq);
+>
+> 	fifo_for_each_entry_ptr(p, &j->pin, seq)
+> 		journal_pin_list_init(p, 1);
+> @@ -1256,7 +1256,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+> 	}
+>
+> 	if (!had_entries)
+> -		j->last_empty_seq = cur_seq;
+> +		j->last_empty_seq = last_seq;
+>
+> 	spin_lock(&j->lock);
+>
+> -- 
+> 2.34.1
+>
+>
 
