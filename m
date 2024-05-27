@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-190455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4A08CFE7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA9B8CFE81
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FFD4B22EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B41F2357E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179C413C3F6;
-	Mon, 27 May 2024 10:59:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62F613BC31;
+	Mon, 27 May 2024 11:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUkcDjA+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3861B13B794
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EAC17BCC;
+	Mon, 27 May 2024 11:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716807568; cv=none; b=Yy2AAaqSSrQX+pHMhu9ah8WiEHdxclK2T304rGa/BwoQYwQTgAUlOPt4GEFP1vE30OajdCvX7vR2yZeG60FbW2KRQ/GF8sUeRIpCNh8hVtcPA/4SQocd6Ksg+ljb7ylpQUZH0rqaSw96kMNKrCPK0GCLGtwYKNtlCFcfSyZbQSs=
+	t=1716807629; cv=none; b=fHeN3qEHvcJ/3RY+JAd3V3dDDO8yV8fRF4btNwhwQWnRfgkAtHnADB3RgaszwrFomxIOcM+lPUmYcZ1XQWq2ZVBFE1JbUbepSmtDpqcA2wMhkUzSoyxvoMYe8kspvL30BqxOnBABENvHz54rT2IIIQC5XD4jGEumMi59bzvXkVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716807568; c=relaxed/simple;
-	bh=8xA4CXYk2A7mqEyXN1r6pODew65oUNGtLCSCn7pNWnE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uvBRHDhsIaz2UQXPM35S6BbCicwTQzmN2NZs6rr/SYm+zlxupXqO8AXz1WyxU/4mK9lTyfN9wyNAcHkG44Lx8yMworXjhpcGeMECwDRoEOsx0+9V/rrgzDFq4YCDVpU/3uIEk3g/XJqyaWciPwIAUniXTvGqXJIoMzgouTgXqyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3738719ba5cso24865975ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 03:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716807566; x=1717412366;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/74GZnUOXqFTj0TYyb7t24tQQzKPVBAEjB566d/BI9E=;
-        b=Zg/RkVElPh58/YkyeQtSjzYWS0+RZju3edjL3tTyii8onFERn0OqlacscWAOBvaY3P
-         S8Q3WmaFjTp2AMP6SPRT6INUnkjCdmRqhEjTVOn3yPzIPMEPRrRjl5c7ZQ9V9JivpLjY
-         +N63VawIkSzERfwWI47YnlGxvBF2OU8FYgjd9UvFN+1S9pfenlaehGiM5OWgecAbP/6f
-         5uRa2snmaTNASUK5+fltVaQgb5oU4uPHaexVpKQBKzvKtqssa90fVE9LRfmlzMeL8f/x
-         0+m1k8u9qChNeq303Don1+vqGuCM9WvfsidMhYBHo55E9ODLnkOL5y0tnKI1xd8CV9pj
-         vVvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDj3J0Z/HI7s3E7zsyPs5NoQoWE/i9p6sciRJa7VPl06D+iHrvpnYTUQyoxlcOplzlrboH9peGdb4lgPdDAJrN40Cp7G9Nd09CBz4o
-X-Gm-Message-State: AOJu0YzhcSqOz08X6tq3783aQL4UaA2AMm+wvsGywvY3H4o0eS7uLrFY
-	xXKqGOT/qN74UxGXCbeEho/zyci6F8P6GRDkIBro+KteEGEGoEeYMLzWoo16mmHC0ZwCJi9cyS8
-	kiVZ4lTgAmbVfwkwrD0fhdVEzcIRUE01lZ8+76ywpzIOdkKOG7cfwnUE=
-X-Google-Smtp-Source: AGHT+IGXp/U5DhpU+gxJGdZo2E2LNiKkvtqN8FFyKIccAxeVPW6l8HTiyV4hklQ7etB5G0wZkpINgGp6+lAi7pu6L46+CeOIhzLo
+	s=arc-20240116; t=1716807629; c=relaxed/simple;
+	bh=9OvgGCLs7UsmYX5hDtFasiQG55WDAV2a+q/y+k0S2Ww=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JoMff3LHhgSoPoqh+sz+Lp3MJbBe7YSHjJZpIdH7JLoIsjyBoidZnwqwGIi7n+mpLz6BEWAzlywnr8Q+npJYCDm+1lHrZ9GMNTbPBZ0RGbIjwUbpbHODd74nCIfBrCNP0pJ9A5i3hXO5FIlkz3QQzbgzkqtsoq+/UymcHBq3k0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUkcDjA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A333AC32786;
+	Mon, 27 May 2024 11:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716807628;
+	bh=9OvgGCLs7UsmYX5hDtFasiQG55WDAV2a+q/y+k0S2Ww=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eUkcDjA+J4EeGU1jei0k9g0HiVpryBGM/5vp+X+5Vk+MznHrmADwPrJiNswqFDKLq
+	 F4ZmADjPovevjncTJ/JcQSvgxcpM0phPXFqFniSK0EnDGR5uKM/xsta6PASJjxfBrj
+	 tNa30VY9URVQBnclG0Q042u5ABe4AbnkEukdxA2fudDEY8ctt3uqJs4jsYP7r3N7ud
+	 ++7qm6OxxqDVZMhpPgYYp6hoOB5PEWECCdE8VY//nDslw9PqSUOzNHZJ0jamixW7g3
+	 e5R9xXNQ5m72ozMteVJ0s5H6IZ/7AYEAo5P4NgYituZXLZQQwVtCpMQcPXqNkzpSVL
+	 vsVNGW5R7JUOw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F94FCF21F8;
+	Mon, 27 May 2024 11:00:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b05:b0:371:30f1:96be with SMTP id
- e9e14a558f8ab-3737b1cd625mr5674175ab.0.1716807566391; Mon, 27 May 2024
- 03:59:26 -0700 (PDT)
-Date: Mon, 27 May 2024 03:59:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000024894706196d697f@google.com>
-Subject: [syzbot] [wireless?] WARNING in __cfg80211_connect_result (2)
-From: syzbot <syzbot+d6eb9cee2885ec06f5e3@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: usb: smsc95xx: fix changing LED_SEL bit value updated
+ from EEPROM
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171680762858.16270.336533909510921768.git-patchwork-notify@kernel.org>
+Date: Mon, 27 May 2024 11:00:28 +0000
+References: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
+In-Reply-To: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hello,
+Hello:
 
-syzbot found the following issue on:
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-HEAD commit:    0b4f5add9fa5 Merge branch 'mlx5-fixes'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d3e7dc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6eb9cee2885ec06f5e3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+On Thu, 23 May 2024 14:23:14 +0530 you wrote:
+> LED Select (LED_SEL) bit in the LED General Purpose IO Configuration
+> register is used to determine the functionality of external LED pins
+> (Speed Indicator, Link and Activity Indicator, Full Duplex Link
+> Indicator). The default value for this bit is 0 when no EEPROM is
+> present. If a EEPROM is present, the default value is the value of the
+> LED Select bit in the Configuration Flags of the EEPROM. A USB Reset or
+> Lite Reset (LRST) will cause this bit to be restored to the image value
+> last loaded from EEPROM, or to be set to 0 if no EEPROM is present.
+> 
+> [...]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Here is the summary with links:
+  - net: usb: smsc95xx: fix changing LED_SEL bit value updated from EEPROM
+    https://git.kernel.org/netdev/net/c/52a2f0608366
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/012c6c28629f/disk-0b4f5add.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a95912632824/vmlinux-0b4f5add.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4bc604c85096/bzImage-0b4f5add.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d6eb9cee2885ec06f5e3@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 2887 at net/wireless/sme.c:846 __cfg80211_connect_result+0x19ea/0x21d0 net/wireless/sme.c:846
-Modules linked in:
-CPU: 1 PID: 2887 Comm: kworker/u8:13 Not tainted 6.9.0-syzkaller-12082-g0b4f5add9fa5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: cfg80211 cfg80211_event_work
-RIP: 0010:__cfg80211_connect_result+0x19ea/0x21d0 net/wireless/sme.c:846
-Code: a3 00 89 c3 31 ff 89 c6 e8 83 eb b3 f6 85 db 74 29 e8 5a 17 9a f6 84 c0 74 27 e8 31 e7 b3 f6 e9 84 00 00 00 e8 27 e7 b3 f6 90 <0f> 0b 90 4c 89 ff 4c 89 f6 e8 68 23 00 00 eb 91 e8 11 e7 b3 f6 eb
-RSP: 0018:ffffc90009f579e0 EFLAGS: 00010293
-RAX: ffffffff8ae22d59 RBX: 0000000000000000 RCX: ffff88802b8c8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90009f57b00 R08: ffffffff8ae22929 R09: 1ffffffff25f4abd
-R10: dffffc0000000000 R11: fffffbfff25f4abe R12: ffff88807cb8f898
-R13: dffffc0000000000 R14: ffff88807cb8f818 R15: ffff88805ff1f000
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3362a000 CR3: 00000000732a4000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- cfg80211_process_wdev_events+0x356/0x510 net/wireless/util.c:1105
- cfg80211_process_rdev_events+0xac/0x110 net/wireless/util.c:1147
- cfg80211_event_work+0x2f/0x40 net/wireless/core.c:335
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
