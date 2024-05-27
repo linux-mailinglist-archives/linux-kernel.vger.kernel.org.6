@@ -1,115 +1,173 @@
-Return-Path: <linux-kernel+bounces-190592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980EB8D002B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D598CFFCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99091C22055
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19CD31F2311D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE2C15E5B6;
-	Mon, 27 May 2024 12:37:20 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F7015DBC7;
+	Mon, 27 May 2024 12:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVO2pEnD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A573215E5AF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B6613C3CA;
+	Mon, 27 May 2024 12:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716813439; cv=none; b=QiYITgrMsjOQDndk+Wye6BJI3Dq7ISJ/FDisKwvGYiTpaPaRk3+/QIeHg8B5o75KKqLHhV5kzKVJYgAPKhuI2RuCfiSDUC+0Y2KsCDL6xlTwDnll/OH9agR9qQRGHVdDk/sXkV+6WjCRkLMaSm3JGjZgs+x036T6aNvvlfDSUwI=
+	t=1716812230; cv=none; b=S9OWYQaf4uUHE+1lXKMLVhMNKhsvDgfpH/KUqvJXUj3YGxDOcXvt7CYpv2puqftjJL+7PQt89Utaby2OrhaJqcap2NE+ddiCmfReLJ7pnLoX0Qs+fBMb2uxpf8h9Bgu0Qs+0T/9Jzd8QGzsg3bmwiU5sErYrKanXIT38huTxjoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716813439; c=relaxed/simple;
-	bh=7+3IF3MN92ZTyrUu1kSOkIobd/fuy1IKeSNBJml1ZsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XtHEiqE7PDAu4NITD8ac6tFU3ch2VkeXbJLOyazTeAtFcx/E083DrGzHqAVoYY0o+khNevFHpa0yYG/TNcRfgvZtqAXesgWEFgJ6jjp1kxai699/L0jyvWoyMcqWnRhMNdb3oOr7RJsYTh9RiSIHQUunZ2wvOfVT0LoEPgaQIas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B34BAE0005;
-	Mon, 27 May 2024 12:37:13 +0000 (UTC)
-Message-ID: <0030930d-dbee-4a65-8ab9-5c96bd2aeeea@ghiti.fr>
-Date: Mon, 27 May 2024 14:37:13 +0200
+	s=arc-20240116; t=1716812230; c=relaxed/simple;
+	bh=v7mwebxOX/a1s/ML0ZEls3SJ4IPgSe8KPM9vsKrPK9I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FS8xG5enWKMHCZkFqaXpAKqx8u0ZyY5RScgXgiksNxpVbEMk7kvuJw4AJdlDf0/acfLIWO2TMV1u/g6qi3bgCoQe80UYKPzhf8/6To54i7Gz2zhxnVhUjDk5i+7JulmYlxQp+e5m0+90Du90npW53LrOmRxLJgfQVaI0vlJbCas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVO2pEnD; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716812228; x=1748348228;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=v7mwebxOX/a1s/ML0ZEls3SJ4IPgSe8KPM9vsKrPK9I=;
+  b=kVO2pEnDjK9x6TH/ykKA6NnsnfD4DDNcIfUHHsP7VECYWIw74hhX/4b6
+   kRZq2VwflOUlrrPVjL4hP1pL6tciwyIfN/yVpd+/PWjewCsXAndy4TzHy
+   EkzL5YvgvkME2ilE/eOPAMUXpFLLWwgltsnUj/yPKI2EXd8l3XCFMk/wg
+   YRzNvW42nNAzMdKDK4GzGaUtgrOZ3f7HZOQmaOIuiBoGfUI7Msgr4cLVq
+   /dpocrA4oku7upUFQC//9x5JvReZbISm0+47Jfatmc8wTJGRej61Pdubv
+   J0lJC8Hp20B6cNaWdITb1mTgOb+YNJ0HT4sXpmPeHuQ6pm2x0HwffR9vD
+   g==;
+X-CSE-ConnectionGUID: 57/v2V0xRy6xdyc7HNT0UA==
+X-CSE-MsgGUID: SOu1kKn8RUOUKHA7hloO1A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="24253945"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="24253945"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 05:17:08 -0700
+X-CSE-ConnectionGUID: r5jiZ86jQhaITYpFAWV54g==
+X-CSE-MsgGUID: mgrFYRFzR2iM6Xu4Hio2ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="39289986"
+Received: from wentongw-optiplex-8070.sh.intel.com ([10.239.154.12])
+  by fmviesa004.fm.intel.com with ESMTP; 27 May 2024 05:17:05 -0700
+From: Wentong Wu <wentong.wu@intel.com>
+To: sakari.ailus@linux.intel.com,
+	tomas.winkler@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Wentong Wu <wentong.wu@intel.com>,
+	stable@vger.kernel.org,
+	Hao Yao <hao.yao@intel.com>,
+	Jason Chen <jason.z.chen@intel.com>
+Subject: [PATCH v3] mei: vsc: Don't stop/restart mei device during system suspend/resume
+Date: Mon, 27 May 2024 20:38:35 +0800
+Message-Id: <20240527123835.522384-1-wentong.wu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] riscv: drop the use of XIP_OFFSET in XIP_FIXUP_OFFSET
-Content-Language: en-US
-To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1715286093.git.namcao@linutronix.de>
- <e18d9e8e3540098617d8f5b14859158a63b78594.1715286093.git.namcao@linutronix.de>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <e18d9e8e3540098617d8f5b14859158a63b78594.1715286093.git.namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
+The dynamically created mei client device (mei csi) is used as one V4L2
+sub device of the whole video pipeline, and the V4L2 connection graph is
+built by software node. The mei_stop() and mei_restart() will delete the
+old mei csi client device and create a new mei client device, which will
+cause the software node information saved in old mei csi device lost and
+the whole video pipeline will be broken.
 
-On 10/05/2024 08:28, Nam Cao wrote:
-> XIP_OFFSET is the hard-coded offset of writable data section within the
-> kernel.
->
-> By hard-coding this value, the read-only section of the kernel (which is
-> placed before the writable data section) is restricted in size.
->
-> As a preparation to remove this hard-coded macro XIP_OFFSET entirely, stop
-> using XIP_OFFSET in XIP_FIXUP_OFFSET. Instead, use CONFIG_PHYS_RAM_BASE and
-> _sdata to do the same thing.
->
-> While at it, also add a description for XIP_FIXUP_OFFSET.
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
->   arch/riscv/include/asm/xip_fixup.h | 14 ++++++++++++--
->   1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/xip_fixup.h b/arch/riscv/include/asm/xip_fixup.h
-> index b65bf6306f69..9ed2cfae09e0 100644
-> --- a/arch/riscv/include/asm/xip_fixup.h
-> +++ b/arch/riscv/include/asm/xip_fixup.h
-> @@ -9,8 +9,19 @@
->   
->   #ifdef CONFIG_XIP_KERNEL
->   .macro XIP_FIXUP_OFFSET reg
-> -        REG_L t0, _xip_fixup
-> +	/* Fix-up address in Flash into address in RAM early during boot before
-> +	 * MMU is up. Because generated code "thinks" data is in Flash, but it
-> +	 * is actually in RAM (actually data is also in Flash, but Flash is
-> +	 * read-only, thus we need to use the data residing in RAM).
-> +	 *
-> +	 * The start of data in Flash is _sdata and the start of data in RAM is
-> +	 * CONFIG_PHYS_RAM_BASE. So this fix-up essentially does this:
-> +	 * reg += CONFIG_PHYS_RAM_BASE - _start
-> +	 */
-> +	li t0, CONFIG_PHYS_RAM_BASE
->           add \reg, \reg, t0
-> +	la t0, _sdata
-> +	sub \reg, \reg, t0
->   .endm
->   .macro XIP_FIXUP_FLASH_OFFSET reg
->   	la t0, __data_loc
-> @@ -19,7 +30,6 @@
->   	add \reg, \reg, t0
->   .endm
->   
-> -_xip_fixup: .dword CONFIG_PHYS_RAM_BASE - CONFIG_XIP_PHYS_ADDR - XIP_OFFSET
->   _xip_phys_offset: .dword CONFIG_XIP_PHYS_ADDR + XIP_OFFSET
->   #else
->   .macro XIP_FIXUP_OFFSET reg
+Removing mei_stop()/mei_restart() during system suspend/resume can fix
+the issue above and won't impact hardware actual power saving logic.
 
+Fixes: f6085a96c973 ("mei: vsc: Unregister interrupt handler for system suspend")
+Cc: stable@vger.kernel.org # for 6.8+
+Reported-by: Hao Yao <hao.yao@intel.com>
+Signed-off-by: Wentong Wu <wentong.wu@intel.com>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Tested-by: Jason Chen <jason.z.chen@intel.com>
+Tested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+Changes since v2:
+ - add change log which is not covered by v2, and no code change
 
-Thanks,
+Changes since v1:
+ - correct Fixes commit id in commit message, and no code change
 
-Alex
+---
+ drivers/misc/mei/platform-vsc.c | 39 +++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
+index b543e6b9f3cf..1ec65d87488a 100644
+--- a/drivers/misc/mei/platform-vsc.c
++++ b/drivers/misc/mei/platform-vsc.c
+@@ -399,41 +399,32 @@ static void mei_vsc_remove(struct platform_device *pdev)
+ 
+ static int mei_vsc_suspend(struct device *dev)
+ {
+-	struct mei_device *mei_dev = dev_get_drvdata(dev);
+-	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
++	struct mei_device *mei_dev;
++	int ret = 0;
+ 
+-	mei_stop(mei_dev);
++	mei_dev = dev_get_drvdata(dev);
++	if (!mei_dev)
++		return -ENODEV;
+ 
+-	mei_disable_interrupts(mei_dev);
++	mutex_lock(&mei_dev->device_lock);
+ 
+-	vsc_tp_free_irq(hw->tp);
++	if (!mei_write_is_idle(mei_dev))
++		ret = -EAGAIN;
+ 
+-	return 0;
++	mutex_unlock(&mei_dev->device_lock);
++
++	return ret;
+ }
+ 
+ static int mei_vsc_resume(struct device *dev)
+ {
+-	struct mei_device *mei_dev = dev_get_drvdata(dev);
+-	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
+-	int ret;
+-
+-	ret = vsc_tp_request_irq(hw->tp);
+-	if (ret)
+-		return ret;
+-
+-	ret = mei_restart(mei_dev);
+-	if (ret)
+-		goto err_free;
++	struct mei_device *mei_dev;
+ 
+-	/* start timer if stopped in suspend */
+-	schedule_delayed_work(&mei_dev->timer_work, HZ);
++	mei_dev = dev_get_drvdata(dev);
++	if (!mei_dev)
++		return -ENODEV;
+ 
+ 	return 0;
+-
+-err_free:
+-	vsc_tp_free_irq(hw->tp);
+-
+-	return ret;
+ }
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(mei_vsc_pm_ops, mei_vsc_suspend, mei_vsc_resume);
+-- 
+2.34.1
 
 
