@@ -1,191 +1,76 @@
-Return-Path: <linux-kernel+bounces-190724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5640B8D01C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F2E8D01C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C32D291CBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:37:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCC381F21FA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193521607A7;
-	Mon, 27 May 2024 13:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ME75QF6Y"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A92716079B;
-	Mon, 27 May 2024 13:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C201607B9;
+	Mon, 27 May 2024 13:33:46 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id D2D4615FCFC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816807; cv=none; b=DH+2UH0BMTt9uLhO4gDL0Tz+PiM12ZagbjnlmTffSkV2huhFX3htbNIMCdL7916cFhvvfvaBXepEL/Lw472HAM5JTre6nIPlnutpnvuRbZ1nBuEXQ/R+TaUJLlSgAbAEaL/1ADJi8fmonwVqg88D7SXhZN/A1i/ufxE5p2dXK4Q=
+	t=1716816825; cv=none; b=Nfb88o7HX2tqckPds6S8KhKyq0GB+4nvI7Lz9fa1BE5hSmuJUK1FWZqEBtov7JeBygoORT8zznw4MldLLvoBsArc8PeIdxSa800NCWfDviDYHWcjQov22psDPSaQ1BfEf9JbF03sUDK+UbjlWgZ5EXldKj4BnK+W2b4swTWyGzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816807; c=relaxed/simple;
-	bh=cTo2Uf0K6KP8lhnU5XUXW1n0oSOX7ONtpZqRd7nMajs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mVj6QqfRlwuYCbP8135Tm7KvtnD/8oH9JvVMB3BH5/pBjO2PA7GrzLamji3BUAAqQz1oHKPCTNGLj+pd6XHwmgAthjDmd/Ar5wTcqTowkh6usZ9AnWiSrbZIFSD9Q06dS2f8UUi6vZr5jkSJqPHNEtNv9xsx+UQu2yVlzn7iXCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ME75QF6Y; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716816795; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=QidiVXUMnt6iKGOAcp6fa76mjoIKCzmR0QWL2hdQF5E=;
-	b=ME75QF6Yd2i6mVbWQgcLClcxI/3eylbYhke+OSggV6y80JDn3b2+okRmb1fiX25/H8lL+HcQCJOEyvUO12E54v3TYJVBatMaij2cr5cXzlw1MLyppxaPrdkoDs0EyU8zCelBbw4ZR27zrrFd46wMdS58aE0Rrhe4eyZxth9Neb8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W7LT3at_1716816793;
-Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7LT3at_1716816793)
-          by smtp.aliyun-inc.com;
-          Mon, 27 May 2024 21:33:15 +0800
-Message-ID: <0fbf98a5-bcb9-4276-bf41-62cd0401afc6@linux.alibaba.com>
-Date: Mon, 27 May 2024 21:33:11 +0800
+	s=arc-20240116; t=1716816825; c=relaxed/simple;
+	bh=HLaKj1OSX8J0+4JnLklX1GmIqpZ/oWIWx0x5KuNhncQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbskFbh2BMpsWEKCDQNXodHm69sjGb3I5W/4Kq1UyKrDggHpQD6vSBsbkMkonyeYDufMEu7VWyk/Mq6+jHLgBUujL8Uep3cv4sXOGXI8+DITaZVA8DqH5rKKSLAU4q67lH0/PszDn+tBQjKpDaOYfaFcWlOnEdGOj2u9m6z21Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 659937 invoked by uid 1000); 27 May 2024 09:33:37 -0400
+Date: Mon, 27 May 2024 09:33:37 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  paulmck@kernel.org, akiyks@gmail.com, dlustig@nvidia.com,
+  joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+  linux-arch@vger.kernel.org, jonas.oberhauser@huaweicloud.com
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <bbf1a4ee-977c-4e74-ac57-69124c37337a@rowland.harvard.edu>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1c6d4146-86f8-4fd5-a23e-a95ba2464c9e@rowland.harvard.edu>
+ <ZlC5q7bcdCAe7xPp@andrea>
+ <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] cachefiles: add consistency check for
- copen/cread
-To: Baokun Li <libaokun@huaweicloud.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
- <20240522114308.2402121-7-libaokun@huaweicloud.com>
- <11f10862-9149-49c7-bac4-f0c1e0601b23@linux.alibaba.com>
- <c2e331a1-8293-0055-3314-738530db3822@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <c2e331a1-8293-0055-3314-738530db3822@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
 
-
-
-On 5/24/24 10:28 AM, Baokun Li wrote:
-> Hi Jingbo,
+On Mon, May 27, 2024 at 02:25:01PM +0200, Hernan Ponce de Leon wrote:
+> On 5/24/2024 6:00 PM, Andrea Parri wrote:
+> > > What's the difference between R and R*, or between W and W*?
+> > 
+> > AFAIU, herd7 uses such notation, "*", to denote a load or a store which
+> > is also in RMW.
 > 
-> Thanks for the review!
+> I also got confused with this. What about the following notation?
 > 
-> On 2024/5/23 22:28, Jingbo Xu wrote:
->>
->> On 5/22/24 7:43 PM, libaokun@huaweicloud.com wrote:
->>> From: Baokun Li <libaokun1@huawei.com>
->>>
->>> This prevents malicious processes from completing random copen/cread
->>> requests and crashing the system. Added checks are listed below:
->>>
->>>    * Generic, copen can only complete open requests, and cread can only
->>>      complete read requests.
->>>    * For copen, ondemand_id must not be 0, because this indicates
->>> that the
->>>      request has not been read by the daemon.
->>>    * For cread, the object corresponding to fd and req should be the
->>> same.
->>>
->>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> Acked-by: Jeff Layton <jlayton@kernel.org>
->>> ---
->>>   fs/cachefiles/ondemand.c | 27 ++++++++++++++++++++-------
->>>   1 file changed, 20 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>> index bb94ef6a6f61..898fab68332b 100644
->>> --- a/fs/cachefiles/ondemand.c
->>> +++ b/fs/cachefiles/ondemand.c
->>> @@ -82,12 +82,12 @@ static loff_t
->>> cachefiles_ondemand_fd_llseek(struct file *filp, loff_t pos,
->>>   }
->>>     static long cachefiles_ondemand_fd_ioctl(struct file *filp,
->>> unsigned int ioctl,
->>> -                     unsigned long arg)
->>> +                     unsigned long id)
->>>   {
->>>       struct cachefiles_object *object = filp->private_data;
->>>       struct cachefiles_cache *cache = object->volume->cache;
->>>       struct cachefiles_req *req;
->>> -    unsigned long id;
->>> +    XA_STATE(xas, &cache->reqs, id);
->>>         if (ioctl != CACHEFILES_IOC_READ_COMPLETE)
->>>           return -EINVAL;
->>> @@ -95,10 +95,15 @@ static long cachefiles_ondemand_fd_ioctl(struct
->>> file *filp, unsigned int ioctl,
->>>       if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
->>>           return -EOPNOTSUPP;
->>>   -    id = arg;
->>> -    req = xa_erase(&cache->reqs, id);
->>> -    if (!req)
->>> +    xa_lock(&cache->reqs);
->>> +    req = xas_load(&xas);
->>> +    if (!req || req->msg.opcode != CACHEFILES_OP_READ ||
->>> +        req->object != object) {
->>> +        xa_unlock(&cache->reqs);
->>>           return -EINVAL;
->>> +    }
->>> +    xas_store(&xas, NULL);
->>> +    xa_unlock(&cache->reqs);
->>>         trace_cachefiles_ondemand_cread(object, id);
->>>       complete(&req->done);
->>> @@ -126,6 +131,7 @@ int cachefiles_ondemand_copen(struct
->>> cachefiles_cache *cache, char *args)
->>>       unsigned long id;
->>>       long size;
->>>       int ret;
->>> +    XA_STATE(xas, &cache->reqs, 0);
->>>         if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
->>>           return -EOPNOTSUPP;
->>> @@ -149,9 +155,16 @@ int cachefiles_ondemand_copen(struct
->>> cachefiles_cache *cache, char *args)
->>>       if (ret)
->>>           return ret;
->>>   -    req = xa_erase(&cache->reqs, id);
->>> -    if (!req)
->>> +    xa_lock(&cache->reqs);
->>> +    xas.xa_index = id;
->>> +    req = xas_load(&xas);
->>> +    if (!req || req->msg.opcode != CACHEFILES_OP_OPEN ||
->>> +        !req->object->ondemand->ondemand_id) {
->> For a valid opened object, I think ondemand_id shall > 0.  When the
->> copen is for the object which is in the reopening state, ondemand_id can
->> be CACHEFILES_ONDEMAND_ID_CLOSED (actually -1)?
-> If ondemand_id is -1, there are two scenarios:
->  * This could be a restore/reopen request that has not yet get_fd;
->  * The request is being processed by the daemon but its anonymous
->     fd has been closed.
-> 
-> In the first case, there is no argument for not allowing copen.
-> In the latter case, however, the closing of an anonymous fd may
-> not be malicious, so if a copen delete request fails, the OPEN
-> request will not be processed until RESTORE lets it be processed
-> by the daemon again. However, RESTORE is not a frequent operation,
-> so if only one anonymous fd is accidentally closed, this may result
-> in a hung.
-> 
-> So in later patches, we ensure that fd is valid (i.e. ondemand_id > 0)
-> when setting the object to OPEN state and do not prevent it
-> from removing the request here.
-> 
-> If ondemand_id is 0, then it can be confirmed that the req has not
-> been initialised, so the copen must be malicious at this point, so it
-> is not allowed to complete the request. This is an instantaneous
-> state, and the request can be processed normally after the daemon
-> has read it properly. So there won't be any side effects here.
-> 
+> 	R[once,RMW] ->rmw W[once,RMW]
 
-case 1 is literally illegal, while case 2 is permissible but has no way
-to be distinguished from case 1.  As the patch itself is only
-best-effort, so it LGTM.
+Either way, it would be a good idea to add an explanation at the start 
+of the file.
 
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+Likewise, add an explanation that blank entries mean the same as the 
+preceding row.
 
+Overall the table looks very good.
 
--- 
-Thanks,
-Jingbo
+Alan
 
