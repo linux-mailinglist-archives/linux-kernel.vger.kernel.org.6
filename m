@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-190343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9385C8CFD16
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:37:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD048CFD18
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9B3283C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39C91F25378
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B4C13A897;
-	Mon, 27 May 2024 09:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45F313C9AF;
+	Mon, 27 May 2024 09:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IGCOGKda"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2070.outbound.protection.outlook.com [40.107.212.70])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="W8uxL8eX"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E4A13A88D;
-	Mon, 27 May 2024 09:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EEC13A888;
+	Mon, 27 May 2024 09:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802506; cv=fail; b=BiVDTgmvPS984pbl6d5RkuGL9XimuMCLmqd3JU3vvlA+yT/x1/VDab75DVQUNnHH/3STarQCPbzkZKfvRIowByZIKVarcHfa1lmMx0uIPdyC59NUOQ5BxNXWckID2toM30ZdFyhzyEyR5q1Mum0AJHuUdCbEqQ1YWF31U9gcs9c=
+	t=1716802507; cv=fail; b=CJNSR4Uhp3MWZPG2P9SjcAUCBXiEkgY6DsxOYnkUdLlM7ZSrrixlVqvIAK7Y/Hjcg7dDcAf9Vt+8m+asN3NK44ZbrBCWLHvJewBIgm98GP+lMra8QQp+Xi/v+IgyYOsvsM+OyMpckk3pSQf63m6iBVX/2sb16ky/DYAoArBBhew=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802506; c=relaxed/simple;
-	bh=59azTxhi6ok1NJU3C98a8ab5AYVuvhTV4hMdsg4AAp4=;
+	s=arc-20240116; t=1716802507; c=relaxed/simple;
+	bh=su8005o28X+iTy18elzTqtwz2hTRT4CkJMjibTMeg3s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qAGzBu5gG431E2Y7pg/CGXa6KNAlk47nP0Eb2REgr67pcUzCK+nbiYpphoevw0wCUwjxEQw9ZbC6pikrqCrvXLaXcDqAS3hIIgKXMej+B5VUgdnzZyt4fIf/IHxiukK8lhYn504WnqjjBUPkJ9k7sfNPt02zN0bhgzz/f/BvHYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IGCOGKda; arc=fail smtp.client-ip=40.107.212.70
+	 MIME-Version:Content-Type; b=Xs3cgc0D+ZOP2jiV0ZUlScIhFCxWjdeK41nd2wTrg2Xp2sSdxNUIbnUBcl62nNT35Dam/DY5sk97gzeaJl35clMSy5E3CFZL2Zko/HO+wbrhg05cdxNH8NPv1rRvkjjcmFed8o2Rgz4pZcRwviQqvwsKLcIEMd6ZmbL+kWvsW8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=W8uxL8eX; arc=fail smtp.client-ip=40.107.93.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fv7SS/kyF2Ksp4PTXcnZi/yq5TgoEsi/H0tQshyoHPYK/WSE5yQYFxN+XZtFCsU15nOAROuWIthaU1wM0NktEm89DcBwmGylkylyQubaoubjv8DjptPp1JJCXoqk84Yxe10HVL0f6egiqcKH79nzPGODOCTs1G1udbT/P9jyJCUIM1EylNeZmJJwxuOAcvY1tlQEBaKNvUNpiGN0HNcNEGCgZzdB1FyDZkenwIvIUd0dr9B00mu0ctw8tm6Gtd9kmye0kgiP+voCqasAUMnCXaP9xAa190AVWsCrGJu5JMzyRd+xjOzp3HC48iifJGLG2prMZgyq+ddcj5OBw3YdeA==
+ b=CLl7zTVVgFRpt8q/7zpizYUgFq/G3GcktB6tJ5qlwDth5rOp4ef3I9MwPZQy1xUjxrmd2Eb2eRyVf6hahMQ+cp7tFTn6j+BcgNouF1lhnIOJSiVsYIAC5UjjKt6PvYOrb4GXUqj4169pGyPU4z2kMFkY8wCClgxXTkR+sSKCFGiz1TTJGimxGK2TqBZwUGWS8TbOGtuvpzMQEHgZflsGrQo3IRvqT9rKhm2HNlzr0QiM7MgmIirkMVgaHg9XIqSqT2koYw8Etw8Q88O1Yzr8N6RC0t3dLVLAdJEqXeYR1HX2EFTunTwPVttpKE9Nb4wSeI2TLNW0D2L+l9kLgyHxiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2qJv6FF1YN+sNMaPPetVxc5zFbg+erg0/sNdu2GXXRI=;
- b=Fjf2L9XKancwN4fV2lBKFimU9Eq0YKnjGJgX1UP8O3bk2aHYhe6a50KZGWosKfRvfxDMskx7CetHXbaTlWjBFuwsycM6/iHi937JT9LrZQiuqUrDZgC7XP6YgYVf++KC/MAb9BpoLOhlyp28JrDCqZSQnnIjBcn+Kz0dMs3yMBJAqa5vSnf4uTq9IIHoWAXfiaM0Exhr4/y2RT0PrwRsdpxm/BR4zaHCcdvyfM4tsM6+oO4Phx8HKsNh6gW85ChIVbCHd+0GP0OFmddVm2Ahw09Pr3EUeOnd9YRo+J44ZKy/AazgD/CoOzMUKKpXazcNBn5VxWzXm73C+3bcKuP6vw==
+ bh=zYViRoqR5XBizdmMjyNLnKrk3Idi3G7ZEE7LSK0UFWo=;
+ b=DtRN+955zX/kQWlX9Z8/YwEUuhR+m1fWktLyp92Q4il9YqtpoKd9lja3qI7x0t2JhnqyEMGwFRiNcO+X7LhBx5nOKwcSzyrfndFAX142YZFuV6aSZm1JyM8IxhcV25mvyV9rSbHSa8orPu0XnQwlWEsto2495w7Jb6fqNX8CequXGxZtda3bwgLOQzi/1gdVAQq8pwGkoirX0ieQG/I9tOtK9S2VuszmyHd++m1MuZkZHqQTwQz9X8Urg01QSsm9rE5q0UKtmstjLaoLKrWGHSLipK75l/H/qMycjInk+oLem4n1bt1Y/zlz7gPttwVrAE4vQxoweNuk3mdehk35xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2qJv6FF1YN+sNMaPPetVxc5zFbg+erg0/sNdu2GXXRI=;
- b=IGCOGKdahrR/5iTvmy7vjckl7GsCJve6Xd9f2F1n65ldsWpD8AbG7ap7dfppf4e9i96QRemZAMd3qNwQVygZxVAgTeZmsCSK6zFE9yHk2gY248+5L9oaepof0HILCyHuhKovMLdpFD1Q9aG9SGz7HLoJtbyehvRAZOz/JnoWIU4=
-Received: from SA0PR11CA0026.namprd11.prod.outlook.com (2603:10b6:806:d3::31)
- by PH7PR12MB8124.namprd12.prod.outlook.com (2603:10b6:510:2ba::14) with
+ bh=zYViRoqR5XBizdmMjyNLnKrk3Idi3G7ZEE7LSK0UFWo=;
+ b=W8uxL8eXn+VHISmqwVxrC4zbYKWiDflPF5xKWUwOebE59IKt451RMaNVVPenxyc/dn4bHTZggse+92HlVST084HV3e2onwvA+bvDzGTPyC8uSqtm6JsRz7IiMZZecKpOjmawQJCgYQ0fuATW25m9UFfxTg9rnUwqC+HNGChjytE=
+Received: from SN7PR04CA0027.namprd04.prod.outlook.com (2603:10b6:806:f2::32)
+ by PH8PR12MB8431.namprd12.prod.outlook.com (2603:10b6:510:25a::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Mon, 27 May
- 2024 09:35:00 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:806:d3:cafe::7e) by SA0PR11CA0026.outlook.office365.com
- (2603:10b6:806:d3::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28 via Frontend
- Transport; Mon, 27 May 2024 09:34:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 09:35:04 +0000
+Received: from SA2PEPF00003F61.namprd04.prod.outlook.com
+ (2603:10b6:806:f2:cafe::e) by SN7PR04CA0027.outlook.office365.com
+ (2603:10b6:806:f2::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29 via Frontend
+ Transport; Mon, 27 May 2024 09:35:03 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
+ SA2PEPF00003F61.mail.protection.outlook.com (10.167.248.36) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 09:34:59 +0000
+ 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 09:35:03 +0000
 Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
- 2024 04:34:58 -0500
+ 2024 04:35:02 -0500
 From: Michal Simek <michal.simek@amd.com>
 To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
 	<michal.simek@xilinx.com>, <git@xilinx.com>
@@ -77,9 +77,9 @@ CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
  list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
 	<devicetree@vger.kernel.org>, "moderated list:ARM/ZYNQ ARCHITECTURE"
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 08/12] arm64: zynqmp: Add compatible string for kv260
-Date: Mon, 27 May 2024 11:34:14 +0200
-Message-ID: <1e436f82182a92187f3892401664db2507482870.1716802450.git.michal.simek@amd.com>
+Subject: [PATCH 09/12] arm64: zynqmp: Add description for ina260 on kv260
+Date: Mon, 27 May 2024 11:34:15 +0200
+Message-ID: <944cba76ef5df932f1bebde6c5e64ec9d201356d.1716802450.git.michal.simek@amd.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1716802450.git.michal.simek@amd.com>
 References: <cover.1716802450.git.michal.simek@amd.com>
@@ -89,7 +89,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1640; i=michal.simek@amd.com; h=from:subject:message-id; bh=59azTxhi6ok1NJU3C98a8ab5AYVuvhTV4hMdsg4AAp4=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhrSQ4Glrfpl53H0sqX/dwX3+U4n2q8lza8ME9kn9yF+tW Cv0x/FwRywLgyATg6yYIou0zZUzeytnTBG+eFgOZg4rE8gQBi5OAZjI9iKGOVy77B3bnjBdvnTj B5OGcLeFGdcTVoZ56hE+bh9ePlfkMz/5IsDSpO5BN1suAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2639; i=michal.simek@amd.com; h=from:subject:message-id; bh=su8005o28X+iTy18elzTqtwz2hTRT4CkJMjibTMeg3s=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhrSQ4GlnZ0VP5qpsnbFuHc/W80f61G06/u58aOy2q7A75 sSlx4x/OmJZGASZGGTFFFmkba6c2Vs5Y4rwxcNyMHNYmUCGMHBxCsBEOtUY5tkIG8wz/z51ZYaY 8/btM12WxzDFMzIsmHxSZ+td9lX8F7L3XpTkmyyxOfHRNQA=
 X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -97,96 +97,126 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|PH7PR12MB8124:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d0f3db4-9cd4-4073-8292-08dc7e30473f
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F61:EE_|PH8PR12MB8431:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6dc255f5-47d0-435a-0724-08dc7e304990
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|36860700004|1800799015|82310400017;
+	BCL:0;ARA:13230031|36860700004|1800799015|82310400017|376005;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3OxcW4HMdzKWW+MYbVWxrhDe7euKrW6wx8TJKUn8peokm2mGiMxUDHRNcK2O?=
- =?us-ascii?Q?G2vjJQtSs3iFjHTq0gr+qMH9rBTp7iCGN451yVV4RAqHTfC4E5Lf4dSjyj8b?=
- =?us-ascii?Q?Fk7V/5NvgRsEB4WCvL65V5d6FuQ0oq+9/WIcKThQPBGO0SNpPxO/eUr37CPh?=
- =?us-ascii?Q?E+uF7gKd5GHbXld9tEvR4ShQj1QQdcXoaVWn1q5TcAYjgmuwCxd8GnpFUhnM?=
- =?us-ascii?Q?QBB0WsYmKU1Nioji/SmGbiGaR5hyFaPgIyQEPaRCu7csDKKmzrCuwyYNFWHQ?=
- =?us-ascii?Q?jLNnjvcPyOv9z56CWhabWJicZayXgN/QrM09pc4szM1O0q/U9l+pzFQX/Ndb?=
- =?us-ascii?Q?ZQIWdIkhjbSAtHCXhP027LuP3GDfAMkiBSMoKPRRkc1NqTiL5DHVvwSsXgXt?=
- =?us-ascii?Q?xLMYMa4vBtIWe/ZAhFtFzFidlJzKytMP2DIVytG8wxcUvi4kv5Uh5lVRHIKE?=
- =?us-ascii?Q?7gD+smts8AQ8Oc1g2gtqMDVDwFMjH1aFfyr13qBrrKjFUBfBpHzrceNaHMEs?=
- =?us-ascii?Q?uFc7twlLPNuoOKibyesBga/3UPFrgGlS1oEW5Q2dOm50c9wyyLFMNtXAbQMO?=
- =?us-ascii?Q?5GneDVxow3Tb7DxBmu2RQs1HQPVqYHxVjxCnB06vVaPcfTPmx/Jd5k9++taO?=
- =?us-ascii?Q?dPBZsc3wTYodJpFAfv18EZryYHW48AItp34Bdpqf5CkMPdXxz38AOoYvXqfp?=
- =?us-ascii?Q?rzpUaPRsPJg8cozBtd35bKEEQVFVuqZXfHxxA1KIZAJxFQV980LG3bWmMWEe?=
- =?us-ascii?Q?ooulv4VjtTaW1mK5JhJugXwJLejhCkboOebssf8yw8YbvN6e8EIhZlw+fj1q?=
- =?us-ascii?Q?Zty/1xlDBSFMFEuXVzuFJNW0Y28oxnL0GLg8EJhVxzW5Dj+mI14+4L6j+gnz?=
- =?us-ascii?Q?uU7dYXnlV6UqHezZ6U2ixf4CEY4EhLaMuNrHisVX85s3C/bFmN+/UD/ei/eB?=
- =?us-ascii?Q?Q5abfxNRdMc+5XXRZZQ3z2CgtVzcdSRHQP0BAV6QeMRRHJQ4gFtVNjdSJagI?=
- =?us-ascii?Q?TGsSM1Cjgkgrie/1dPFEtDH7BZniSTZ+nM9V5TYIc9dsRZBUTfryEU4kzOd3?=
- =?us-ascii?Q?DEZhKnSBfnH2Nzq0L85SXREOAEHZqrMbkttLDjwEITXsnWMFqlisgu71mwY3?=
- =?us-ascii?Q?/lwGxcRjKuJeM8u4g6lTPMDkkWupux79ekvg6CbY3ftTMNbZLeZTujJhpDn4?=
- =?us-ascii?Q?abIiH0FOSdxf5PxfjCCHof3TvzwhJN8iBLOykYONnxFUShZz+vJhQA1m2ol+?=
- =?us-ascii?Q?koprfrvi12OH8tNf6WG70M+vAETmH+OPz/Hg119Y0F+BArplND3V4WDZGooH?=
- =?us-ascii?Q?6sNLYfhKVwYUyaRfyIwO9aOyKCoFqPIFuoXFNAr577E7pCnXmR7rTzrifU/x?=
- =?us-ascii?Q?b6yDxCXW46l2nLW7+Bk4ckBjOBgX?=
+	=?us-ascii?Q?zOrAoWDLomZi6QmISso7c0pd81WmhYeHSWq1D0IyEdXJDGrXtMVUbZF3R6c4?=
+ =?us-ascii?Q?B1cLCoeTv/1pshPyV5WQR9+xoeiHYIBX2rt7sw/JGSC/DS2IdlO/Koti/Rfh?=
+ =?us-ascii?Q?gGo++xPrbDGhJsvmKaej5Onutn7YBtIGf7ffmSPGqVC8m4zEJPhVZAzZO1YW?=
+ =?us-ascii?Q?+PvY0zlZvXMXzXcmRO8s1UQDARwGIgd6vqp/n4VR9dNwBttS3X2gjD/I7X4r?=
+ =?us-ascii?Q?GiHI/Mq/b0zWgyJm4i2GdmUibUvwK5zEw1+pKnlSq+X+I1KMF/IEmZZcZ3Ky?=
+ =?us-ascii?Q?UhbgGtflG5IdmgcmERwZ8NCkfHyro911i+ela7o5CYsxa7iD6UT1izJrbt4M?=
+ =?us-ascii?Q?mIDJ6Z3xYA4l0QSBpMOOBTXzmyNJZU28CPVQrKC1ENkogBQD1BoIMJkt2HXq?=
+ =?us-ascii?Q?sfUKa043jDpQEIzvsibuHx4MSlG4bUX4MMADf2ZqCc8Dt4TipUoFsmc3zVc1?=
+ =?us-ascii?Q?DJGKRJPUAP0ORo2dAy6XE2SLZ2cHVeTEDXWooDPnXPjTsVv8LB90YZ9AEby+?=
+ =?us-ascii?Q?nLwv1GlPluuabSthvJSYXBBDJxgCz+Ou2iIXWaHvlC8fDpxgCnAVtRACI5y3?=
+ =?us-ascii?Q?iLVnt5HXuFvAV8HvSJiX+M6clgKH8dcTvq123F3Y+KzQ/oqOWRC8t7z4/7a5?=
+ =?us-ascii?Q?iJ907l/lhIr21XgYUn7vfEL+U2ZFinxaAYj9gCPpwIKO/ACE0PuqWLdl7xeA?=
+ =?us-ascii?Q?QiARUR/euwpgAfaS48hOTwZSr5pD0XJ4lU2rtnyQEnotXxN2gOnxHMaU3fDs?=
+ =?us-ascii?Q?dyFdTc0dHkBAGv6+lAgwNLqlEbQ9OEAHkxEKI/gaCfH2bMi8yWkvp8ow3pdA?=
+ =?us-ascii?Q?SqldYwk+dDWe8UeJ1HDKSOdUPwU7/ZjPw9c6Q7m9GQYmtnYJZCVG6N8V+2D7?=
+ =?us-ascii?Q?kFikXcRWWTAcTmwbq+wphfW3YX4BgglUTKFCrVaBUFvprDlIMKkrWZ0TqvpH?=
+ =?us-ascii?Q?fY0FHUpPvo+04/Zva48FvzlhjQlFea4wV4e63JJ7Zpgy3HFaLm6M5uHNLrqH?=
+ =?us-ascii?Q?+NdAKtoSOfW6yuOlv6+2pFBBNTl9jq6xGpr+rRJ3NK9zwsH6CIjskH41ClHZ?=
+ =?us-ascii?Q?4D3mvrahCZ5SWvQY5bJ68pznPqy/gM7BNTlov+DS/aYt5F/quXWCx22jEagZ?=
+ =?us-ascii?Q?Mplz8mG9olyK8iboCsPWaobvynx2O+5RWDsBvx2LLrqe2vKWNMrILFXUMfZ2?=
+ =?us-ascii?Q?QysoaGYod02+Y8DSwB4BSBseCHaRBSjiRmdKkKkIwfLdP9ZdYP4vhqM1A3Or?=
+ =?us-ascii?Q?hXTfLrGWcAyp43a6KnWgOvcrI1YNQFXFeghNuTyn0r3oya6UBqnZAgA6wgHF?=
+ =?us-ascii?Q?3btn7Rb6yYWlKA2KpQtC+i+ajGGcnfODPlpL5t7F4AHcEdbZiXo52KaZ+321?=
+ =?us-ascii?Q?yDjIjnA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(82310400017)(376005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 09:34:59.8017
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 09:35:03.6848
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d0f3db4-9cd4-4073-8292-08dc7e30473f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dc255f5-47d0-435a-0724-08dc7e304990
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
+	SA2PEPF00003F61.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8124
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8431
 
-The commit dbcd27526e6a ("dt-bindings: soc: xilinx: Add support for KV260
-CC") added description for kv260 kit and it should be also reflected in
-DTs.
+The commit f7ab2d180e6a ("dt-bindings: hwmon: ina2xx: Describe ina260
+chip"), commit f29996d0295e ("dt-bindings: hwmon: ina2xx:
+Describe #io-channel-cells property") and commit eea32fafadd3
+("dt-bindings: hwmon: ina2xx: Add label property") added description for
+ina260 that's why describe them on kv260
 
 Signed-off-by: Michal Simek <michal.simek@amd.com>
 ---
 
- arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso | 6 ++++++
- arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso | 6 ++++++
- 2 files changed, 12 insertions(+)
+ .../boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso      | 12 +++++++++++-
+ .../boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso      | 14 ++++++++++++--
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso b/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso
-index a09909a6f885..0e5597e2fe10 100644
+index 0e5597e2fe10..95d16904d765 100644
 --- a/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso
 +++ b/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso
-@@ -22,6 +22,12 @@
- /plugin/;
+@@ -28,6 +28,11 @@
+ 		     "xlnx,zynqmp-sk-kv260", "xlnx,zynqmp";
+ 	model = "ZynqMP KV260 revA";
  
- &{/} {
-+	compatible = "xlnx,zynqmp-sk-kv260-revA",
-+		     "xlnx,zynqmp-sk-kv260-revY",
-+		     "xlnx,zynqmp-sk-kv260-revZ",
-+		     "xlnx,zynqmp-sk-kv260", "xlnx,zynqmp";
-+	model = "ZynqMP KV260 revA";
++	ina260-u14 {
++		compatible = "iio-hwmon";
++		io-channels = <&u14 0>, <&u14 1>, <&u14 2>;
++	};
 +
  	si5332_0: si5332-0 { /* u17 */
  		compatible = "fixed-clock";
  		#clock-cells = <0>;
+@@ -74,7 +79,12 @@ &i2c1 { /* I2C_SCK C23/C24 - MIO from SOM */
+ 	scl-gpios = <&gpio 24 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 	sda-gpios = <&gpio 25 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 
+-	/* u14 - 0x40 - ina260 */
++	u14: ina260@40 { /* u14 */
++		compatible = "ti,ina260";
++		#io-channel-cells = <1>;
++		label = "ina260-u14";
++		reg = <0x40>;
++	};
+ 	/* u27 - 0xe0 - STDP4320 DP/HDMI splitter */
+ };
+ 
 diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso b/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso
-index b3b8875f8f7a..fb37c06cfd69 100644
+index fb37c06cfd69..3ada04781950 100644
 --- a/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso
 +++ b/arch/arm64/boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso
-@@ -17,6 +17,12 @@
- /plugin/;
+@@ -23,6 +23,11 @@
+ 		     "xlnx,zynqmp-sk-kv260", "xlnx,zynqmp";
+ 	model = "ZynqMP KV260 revB";
  
- &{/} {
-+	compatible = "xlnx,zynqmp-sk-kv260-rev2",
-+		     "xlnx,zynqmp-sk-kv260-rev1",
-+		     "xlnx,zynqmp-sk-kv260-revB",
-+		     "xlnx,zynqmp-sk-kv260", "xlnx,zynqmp";
-+	model = "ZynqMP KV260 revB";
++	ina260-u14 {
++		compatible = "iio-hwmon";
++		io-channels = <&u14 0>, <&u14 1>, <&u14 2>;
++	};
 +
  	si5332_0: si5332-0 { /* u17 */
  		compatible = "fixed-clock";
  		#clock-cells = <0>;
+@@ -69,8 +74,13 @@ &i2c1 { /* I2C_SCK C23/C24 - MIO from SOM */
+ 	scl-gpios = <&gpio 24 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 	sda-gpios = <&gpio 25 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 
+-	/* u14 - 0x40 - ina260 */
+-	/* u43 - 0x2d - usb5744 */
++	u14: ina260@40 { /* u14 */
++		compatible = "ti,ina260";
++		#io-channel-cells = <1>;
++		label = "ina260-u14";
++		reg = <0x40>;
++	};
++	/* u43 - 0x2d - USB hub */
+ 	/* u27 - 0xe0 - STDP4320 DP/HDMI splitter */
+ };
+ 
 -- 
 2.40.1
 
