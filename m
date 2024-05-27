@@ -1,88 +1,193 @@
-Return-Path: <linux-kernel+bounces-191522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9A48D10A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C9B8D10A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581121C217B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA9C1C21796
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57B813AD0E;
-	Mon, 27 May 2024 23:49:26 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A5817E912;
-	Mon, 27 May 2024 23:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2EB13B783;
+	Mon, 27 May 2024 23:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l1pdGKFL"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A910A1E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716853766; cv=none; b=T9MDBvsbdS2M8EyMvuLJgXUBe1ZZX2No2lKKDNV9K5fLVC2fqO1uPxSuHT+SWXAB2hoMSYavFYpyotfVZvP6Y4Q4AzUkXcgrCBqB7Q6fgSaqa1c066vOcEnexmhGDn6hiQApQsKVE484xBowZVNnBi61iDzLjQXQ6q3SEp5pIgc=
+	t=1716853880; cv=none; b=AJExOLHw+VdlWXc9T3mdm7T4SbrvdXwnLJoDb7b0hdNKjG4lgVZKK8RChmMQKUibjK7sKiiSoAPGwA+lVukBYz2rV7OwH+oOVVDuVE0fOW9LBJbIuO0kudbC4YTUTnHYu3o9/t6xa7ExjpWvKaio7PpKZu+Srg3KqqWKSIT7aUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716853766; c=relaxed/simple;
-	bh=rabRgxOsPh5C2GiXUHySc/EapwoLaPE6Cxr5XfGbp/Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GB7nG25tppRkm1TZaaBJ5q9cQsi4/YOPeP/6RlDAD/1Hx9oNdFwsThoxHFiOAIbTJvKYbJbNdX4lquN1b/4drGNfB8R14/2BAGDGWz1aObf8ZuHFp/0t8i4NcTS69bcf+FWXO07zsmjLTZbB07fKXnT/jhsMjFd6XKgma7fUnOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 2596D92009C; Tue, 28 May 2024 01:49:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 16C4092009B;
-	Tue, 28 May 2024 00:49:16 +0100 (BST)
-Date: Tue, 28 May 2024 00:49:16 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
-    Arnd Bergmann <arnd@arndb.de>, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Marc Zyngier <maz@kernel.org>, 
-    Linus Torvalds <torvalds@linux-foundation.org>, 
-    "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org, 
-    Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
-In-Reply-To: <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
-Message-ID: <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk>
-References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1716853880; c=relaxed/simple;
+	bh=tI9NBeK3FA4hVFn/PTMTjI//Pvzk9b2OpSVaf+DnJp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4oVJke89Gcn5ZB85R16riTh4442tDseXV7WWsutnLhun3ABLgnxnfkD2ETAFAF5MVlmM+4Hk/ZVGeOhAtg6eNBP/Immw8VuDu7VNo6ENS6BNwBW2vf9i79ZB/06GTGINaMEA+SlY9O98NZktaHQ939ag5Ie0uxS0XqhxXJarxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l1pdGKFL; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: f.weber@proxmox.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716853870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0fpWO7udVhwAzpQwUrBlzWeCLVvMJ31xIxpXuSXcUbY=;
+	b=l1pdGKFL7C3+FBQCwK3MPAziwcUlVq3vi28NG03hjzuwaww5Xx4cevfnA5pvQWdf5M1ERm
+	V4JoaXQ2pbBd2oV7DZ/4tWEDocd/B4IVO8LrLy70e1ChsScfwiT7WL2WsVpOr28/GG15sQ
+	TwgTuoIHjH2Uui5XmTwCIVJ/IH/1CPo=
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: ming.lei@redhat.com
+X-Envelope-To: hch@lst.de
+X-Envelope-To: bvanassche@acm.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+Message-ID: <8b1400e6-b35e-486b-8ea0-de76270267c0@linux.dev>
+Date: Tue, 28 May 2024 07:50:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH v4 4/4] blk-flush: reuse rq queuelist in flush state
+ machine
+Content-Language: en-US
+To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
+ ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20230717040058.3993930-1-chengming.zhou@linux.dev>
+ <20230717040058.3993930-5-chengming.zhou@linux.dev>
+ <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
+ <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
+ <4d799672-378b-42b1-896b-38df2c5e9c84@proxmox.com>
+ <0783d367-4608-4b16-9b88-6eaf5d5706eb@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <0783d367-4608-4b16-9b88-6eaf5d5706eb@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 3 May 2024, John Paul Adrian Glaubitz wrote:
-
-> > I had investigated dropping support for alpha EV5 and earlier a while
-> > ago after noticing that this is the only supported CPU family
-> > in the kernel without native byte access and that Debian has already
-> > dropped support for this generation last year [1] after it turned
-> > out to be broken.
+On 2024/5/28 07:34, Chengming Zhou wrote:
+> On 2024/5/28 00:04, Friedrich Weber wrote:
+>> Hi Chengming,
+>>
+>> Thank you for taking a look at this!
+>>
+>> On 27/05/2024 07:09, Chengming Zhou wrote:
+>>>> I've used this reproducer for a bisect, which produced
+>>>>
+>>>>  81ada09cc25e (blk-flush: reuse rq queuelist in flush state machine)
+>>>>
+>>>> as the first commit with which I can reproduce the crashes. I'm not 100%
+>>>> sure it is this one because the reproducer is a bit flaky. But it does
+>>>> sound plausible, as the commit is included in our 6.8 kernel, and
+>>>> touches `queuelist` which is AFAICT where blk_flush_complete_seq
+>>>> dereferences the NULL pointer.
+>>>
+>>> Ok, it will be better that I can reproduce it locally, will try later.
+>>
+>> Interestingly, so far I haven't been able to reproduce the crash when
+>> generating IO on the host itself, I only got crashes when generating IO
+>> in a QEMU VM.
+>>
+>> The reproducer in more detail:
 > 
-> That's not quite correct. Support for older Alphas is not broken and
-> always worked when I tested it. It's just that some people wanted to
-> raise the baseline in order to improve code performance on newer machines
-> with the hope to fix some minor issues we saw on Alpha here and there.
-
- I'm not quite happy to see pre-EV5 support go as EV45 is all the Alpha 
-hardware I have and it's only owing to issues with the firmware of my 
-console manager hardware that I haven't deployed it at my lab yet for 
-Linux and GNU toolchain verification.  I'd rather I wasn't stuck with an 
-obsolete version of Linux.
-
-> > This topic came up again when Paul E. McKenney noticed that
-> > parts of the RCU code already rely on byte access and do not
-> > work on alpha EV5 reliably, so I refreshed my series now for
-> > inclusion into the next merge window.
+> Thanks for these details, I will try to setup and reproduce when I back to work.
 > 
-> Hrrrm? That sounds like like Paul ran tests on EV5, did he?
+>>
+>> - Compile Linux 6.9 with CONFIG_FAULT_INJECTION,
+> [...]
+>>>
+>>> BUG shows it panic on 0000000000000008, not sure what it's accessing then,
+>>> does it means rq->queuelist.next == 0 or something? Could you use add2line
+>>> to show the exact source code line that panic? I use blk_flush_complete_seq+0x296/0x2e0
+>>> and get block/blk-flush.c:190, which is "fq->flush_data_in_flight++;",
+>>> obviously fq can't be NULL. (I'm using the v6.9 kernel)
+>>
+>> Sorry for the confusion, the crash dump was from a kernel compiled at
+>> 81ada09cc25e -- with 6.9, the offset seems to be different. See [2] for
+>> a kernel 6.9 crash dump.
+>>
+>> I don't know too much about kernel debugging, but I tried to get
+>> something useful out of addr2line:
+>>
+>> # addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-debug2
+>> blk_flush_complete_seq+0x291/0x2d0
+>> __list_del
+>> /[...]./include/linux/list.h:195
+>>
+>> I tried to find the relevant portions in `objdump -SD blk-flush.o`, see
+>> [3]. If I'm not mistaken, blk_flush_complete_seq+0x291 should point to
+>>
+>> 351:   48 89 4f 08             mov    %rcx,0x8(%rdi)
+>>
+>> To me this looks like part of
+>>
+>> 	list_move_tail(&rq->queuelist, pending);
+>>
+>> What do you think?
+> 
+> Yeah, it seems correct, so the rq->queuelist.next == NULL. It can't be NULL
+> if went through REQ_FSEQ_POSTFLUSH, so it must be REQ_FSEQ_PREFLUSH. It means
+> we allocated a request but its queuelist is not initialized or corrupted?
+> 
+> Anyway, I will use below changes for debugging when reproduce, and you could
+> also try this to see if we could get something useful. :)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 3b4df8e5ac9e..6e3a6cd7739d 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -2989,6 +2989,8 @@ void blk_mq_submit_bio(struct bio *bio)
+>                 blk_mq_use_cached_rq(rq, plug, bio);
+>         }
+> 
+> +       BUG_ON(rq->queuelist.next == NULL);
+> +
+>         trace_block_getrq(bio);
+> 
+>         rq_qos_track(q, rq, bio);
+> @@ -3006,6 +3008,8 @@ void blk_mq_submit_bio(struct bio *bio)
+>         if (bio_zone_write_plugging(bio))
+>                 blk_zone_write_plug_init_request(rq);
+> 
+> +       BUG_ON(rq->queuelist.next == NULL);
+> +
+>         if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
+>                 return;
+> 
 
- What exactly is required to make it work?
+Ah, I forgot to change to your kernel version, then should be:
 
-  Maciej
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index d98654869615..908fdfb62132 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2963,6 +2963,8 @@ void blk_mq_submit_bio(struct bio *bio)
+                        return;
+        }
+
++       BUG_ON(rq->queuelist.next == NULL);
++
+        trace_block_getrq(bio);
+
+        rq_qos_track(q, rq, bio);
+@@ -2977,6 +2979,8 @@ void blk_mq_submit_bio(struct bio *bio)
+                return;
+        }
+
++       BUG_ON(rq->queuelist.next == NULL);
++
+        if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
+                return;
+
 
