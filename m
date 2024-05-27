@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-190612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096FE8D0074
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:52:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626568D007A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A201C222ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F043F1F21B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2038F15E5D0;
-	Mon, 27 May 2024 12:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aWtUyG3N"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F4815E5D0;
+	Mon, 27 May 2024 12:53:35 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9144215E5BE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07211DDC9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814332; cv=none; b=id6zuSe2bKr2k4o6PDxv8NHXowMg8Iz/MUWATrY72zo/IPvcKITpxHaA7xBxkiyNJciMWZlnZvTN/F8bz3G779ibUeyiDUF70/tmC4i2Abm8vAGy3tA2ZZ6PNKJCsudQ0ptD1e86AQIv665L1yBKZCzWEv4WkCRElYMvjB4ik6w=
+	t=1716814414; cv=none; b=Nrloo0PsInPcSlIZfE7Cg2SvQk/mncrjz9jbFJ68h2xii5PFHYsyd+FblncGdzDHejybi5pI5u8TfocaM7DyriYCAXf57L16fvnPeJXDeMVv64djY2RFImkBsOv4XXh+z4KgHEZrGEAPCeq32vUse9EUBlTd3zGKBU7PLj087JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814332; c=relaxed/simple;
-	bh=MiGSg2DVarbMyLbJiHXGtEZVkuuMShi5RwBLr/tjlOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Q0p6HhcXWtBpYeNho1S6c4WrIYxsdz3YRamPOavcMXVG1ro7BqI/o6uRgKkf5VvAOFqQ9w5bk9u/YWvWnmmG13Y+d438DPI2vqy+IJ1tMqTuwRt+5zvju0R4qfqrvN4WMGlJNMDTUoop0LiGAv/V/vUBVTul0Y32DAy2Gy7HuXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aWtUyG3N; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24ca03ad307so1809280fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1716814329; x=1717419129; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0VNs4oFMLk5Bxve1lZWNZ/kvg56aSZ6dBKt3FEfaoOw=;
-        b=aWtUyG3N/TYslBGkr156D2iLHLkIadJAzhF0kN+s0+iQrSujsExmPvS5QJ3j1MnEaU
-         vgc0y/Ze3v07PKideScYsNy7XS42leI5GYn3FM29MCCIc/GvWUrDcMFDBFTAskjH8vk+
-         OAY2OuGB5ZoL1jxR12dKx6I3ZQL8F4l8oV2fL3DanKVKMEoFt4zIMLI8DJcv2yI5m0Zc
-         RBkUmKI9DS2pTYIDYvMBjYf5aF5IQRwf3+1bTzxBhSiOmtWGREpbFNnqB2QPd6CR3P2V
-         8LanbEc9b1IwAckjuo8ajFNEA6HIx2FAHGR4QZuvj8YQuXFySKvbZMr/FFdEZhV1hjKr
-         t2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716814329; x=1717419129;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0VNs4oFMLk5Bxve1lZWNZ/kvg56aSZ6dBKt3FEfaoOw=;
-        b=CNDZKNM0xcZOBxprqsAkdd5G1oIOp+j9UyZvxYMkz8icf7xPKPRJl2vxAiac6SeZ7j
-         UEZkbkRkPcgC0tDI6SunHkEtMg0g7yaDaAt/QPlXXzXO+8KZLVoWbI5352vSBiIGO606
-         Hnx444LBXJEhc3T0NhHxxJGqsbFW3CdHcdbuEoFA2iTfs4m8A4IzHrMr9eTfrxv8il0U
-         h9U30e7j6cGEDwL+p5VU1INLahiUTmScAmBQmKRnM2XpAkmezGL1Jd2URFtSnVm2kSCt
-         RmJQfcQLwklTR1+1MqSav6Nb3NBDPFSGuxlaHAJKH6404hd4lb1dVg0jeQi20tIRzfBl
-         QDmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkdmsVAUlf+vOTI2jbV3deFzh8TFArFNbaVk59h/CoBS/nPE6RG9qVGffD5gqMCO5fIBxZZw2OeLabqmV0zkOjdNE3zt9I5UDKKxdg
-X-Gm-Message-State: AOJu0Yzufe3cwV2IAlAK/XbadInFcgCVIZGHm541JvIXjhBESE0OdgnC
-	RY1H8qDa3NG1g/x095x3IrLOvSiZJ66zh8+yVagC8EOpDecsCqe/Exc+34ewj8fWWgdzUI1tC2V
-	R9EXRiUX3xKG/Wa77tBhEogqlwQH/XwRUjPuTAQ==
-X-Google-Smtp-Source: AGHT+IFVFWgWxhliY5IXKCFKP9m7cDXkraybWH9+iqYWLKMEa+9I0GGRzLeE9MBVs6oZk8aZlQsaGyKMaOogBnll8yY=
-X-Received: by 2002:a05:6870:1495:b0:24f:eced:8a38 with SMTP id
- 586e51a60fabf-24fecedcff3mr4083403fac.56.1716814329558; Mon, 27 May 2024
- 05:52:09 -0700 (PDT)
+	s=arc-20240116; t=1716814414; c=relaxed/simple;
+	bh=5Bybq8cKJlG0qEa1Ub7/CJsdd3PAgncbujsxxqAVJvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iTO4279iUiFx9+w0tKnhaYZmROXzt0xbKtYbLN0t6mM0gmpuphHS7kh3ARuwlsrTtRCrR6SGcfjOf3JRLuw5qJNbKBu3AROaX8TXEb/Vyw/aJGee8p0X5X9HkT07yc/RwNQrBGiVI2PACx4pL9M+01zfrWO8XYcez1qs+lc8oJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 21968FF808;
+	Mon, 27 May 2024 12:53:29 +0000 (UTC)
+Message-ID: <19a87876-70f3-40d3-996e-ea8b1862de0d@ghiti.fr>
+Date: Mon, 27 May 2024 14:53:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523111322.19243-1-cuiyunhui@bytedance.com> <20240523111322.19243-3-cuiyunhui@bytedance.com>
-In-Reply-To: <20240523111322.19243-3-cuiyunhui@bytedance.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 27 May 2024 20:51:58 +0800
-Message-ID: <CAEEQ3wnE+8FXXf76zapqNnC5vruoR9C-y0qjjFw47cHYP57MmQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5 3/3] RISC-V: Select ACPI PPTT drivers
-To: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	sunilvl@ventanamicro.com, aou@eecs.berkeley.edu, 
-	linux-riscv@lists.infradead.org, bhelgaas@google.com, james.morse@arm.com, 
-	jeremy.linton@arm.com, Jonathan.Cameron@huawei.com, pierre.gondois@arm.com, 
-	sudeep.holla@arm.com, tiantao6@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] riscv: drop the use of XIP_OFFSET in
+ create_kernel_page_table()
+Content-Language: en-US
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1715286093.git.namcao@linutronix.de>
+ <8748eab99d76e466a44a0bb81d836ff1c9ad9879.1715286093.git.namcao@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <8748eab99d76e466a44a0bb81d836ff1c9ad9879.1715286093.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Palmer,
 
-Gentle ping ...
-
-On Thu, May 23, 2024 at 7:13=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.com=
-> wrote:
+On 10/05/2024 08:28, Nam Cao wrote:
+> XIP_OFFSET is the hard-coded offset of writable data section within the
+> kernel.
 >
-> After adding ACPI support to populate_cache_leaves(), RISC-V can build
-> cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
-> configuration.
+> By hard-coding this value, the read-only section of the kernel (which is
+> placed before the writable data section) is restricted in size.
 >
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> As a preparation to remove this hard-coded value entirely, stop using
+> XIP_OFFSET in create_kernel_page_table(). Instead use _sdata and _start to
+> do the same thing.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 > ---
->  arch/riscv/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>   arch/riscv/mm/init.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
 >
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index f961449ca077..a9ebecd72052 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -14,6 +14,7 @@ config RISCV
->         def_bool y
->         select ACPI_GENERIC_GSI if ACPI
->         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
-> +       select ACPI_PPTT if ACPI
->         select ARCH_DMA_DEFAULT_COHERENT
->         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATIO=
-N
->         select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
-> --
-> 2.20.1
->
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 9846c6924509..62ff4aa2be96 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -907,7 +907,7 @@ static void __init relocate_kernel(void)
+>   static void __init create_kernel_page_table(pgd_t *pgdir,
+>   					    __always_unused bool early)
+>   {
+> -	uintptr_t va, end_va;
+> +	uintptr_t va, start_va, end_va;
+>   
+>   	/* Map the flash resident part */
+>   	end_va = kernel_map.virt_addr + kernel_map.xiprom_sz;
+> @@ -917,10 +917,11 @@ static void __init create_kernel_page_table(pgd_t *pgdir,
+>   				   PMD_SIZE, PAGE_KERNEL_EXEC);
+>   
+>   	/* Map the data in RAM */
+> +	start_va = kernel_map.virt_addr + (uintptr_t)&_sdata - (uintptr_t)&_start;
+>   	end_va = kernel_map.virt_addr + kernel_map.size;
+> -	for (va = kernel_map.virt_addr + XIP_OFFSET; va < end_va; va += PMD_SIZE)
+> +	for (va = start_va; va < end_va; va += PMD_SIZE)
+>   		create_pgd_mapping(pgdir, va,
+> -				   kernel_map.phys_addr + (va - (kernel_map.virt_addr + XIP_OFFSET)),
+> +				   kernel_map.phys_addr + (va - start_va),
+>   				   PMD_SIZE, PAGE_KERNEL);
+>   }
+>   #else
+
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
 Thanks,
-Yunhui
+
+Alex
+
 
