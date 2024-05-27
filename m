@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-190152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687368CFA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:39:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6B88CFA4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0111C2102B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFCD1C210A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694B3A8D2;
-	Mon, 27 May 2024 07:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2687C13C;
+	Mon, 27 May 2024 07:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WM1qBeR8"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CLJCQTE/"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA3839FC5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BA122338
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716795591; cv=none; b=o26Sfk4F8TSNO+MfuGZPQ6IAbv/G6mUmP4+iwfFU0Lf+JcIkkF3jtCjed9UATMIYIqXpnU1jeA1oPV6lImIGAeFykQCZq8mtWgm/Gq8EHGP+o1Ujg9QzUmvHDRrscEcFpF0229Px5quBPycHkijRJqQgQG7AP5JH39T7bCFRqeE=
+	t=1716795714; cv=none; b=mW5CE8mDMAB+OZclLQtIDa9eIHy8V5Z76vudz6QlmZIijnQLr1G412cC+VxmOFt/ukYGOfrgk//Duvmw1Ob3rulv0d4vHn8CN2+PWIUrfOUtKG33cRVhUbBsQtnbvZ6Ncuo44OjCaBHyMnWgJdqDTZSDo01h2yPy8ursqqnBLmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716795591; c=relaxed/simple;
-	bh=04u4dQCtGcXS38Akhe0zrrj/sbwxvvlprltkYuVA5Ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otEofjsq+YrPTAGVKh2zW+4XMjUCoMtjMv3W1sXK4zVpMiHE/X65YwJWSFPH3iEI1jtyhO7jFsJIXxaIVSvWec0kP0UiQDWxKxto5Cr0hvpDYyo/RypFYALsIyD+KzQjyAYWzgPqab4vlQ1K/lj+bI8BP5wI7u4oYf3g3iGiVM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WM1qBeR8; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5786988ae9bso2125988a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716795588; x=1717400388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xz0VrIh5WbRJv1JirmWuslt3IpDSba63xN+Qyimt8p0=;
-        b=WM1qBeR8yHA7P9/hCigVmmNQrdpRpAJ8RRgqe09yWqdauvjJqLvSqek3VFN95mQHna
-         i2LZuouLT0horK8bDfzrpYYJp3mGLlVHIhZ0QEOGd+QdZyVp3Bm6L4nxsVIlz+w8EH+Y
-         Kv1GsRY9iVkF3gBqjLLM9+4hrEEzWAOhqNjBP66DVLXCQH0NO3Sbh1c01tR6vV8baKpx
-         KWl6zRtUmc6S54a0lXFFb5NRn0fsL9HOY9VJwd2sTR+Js8xt3MLQXakb2X8k931rhBfv
-         bNE4uc2HG1bQHfejFPg85bAmQ6AuUA5HOTNQbgMy8FvETifBzlHtatOtSnUORtuvz3Cj
-         PTEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716795588; x=1717400388;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xz0VrIh5WbRJv1JirmWuslt3IpDSba63xN+Qyimt8p0=;
-        b=WyeSvLuumf+xWx2h9qeWvMuiZBx66NRgCQfGPPSFmwC+FASH0+h7B9MxzEPT+W8Ml8
-         hOzfSRJ73UVfffvwCDij1rm4RPpdf1K0nJfSlBqeWeDsGD0QPSOdioU5VsY39bZ3JzR4
-         EK2fBm2zMyfYkCdafR1ri1Xb8CV6sLdPDnBHfCXmL8IGTglN+5GOUooeIUB6VZu2SnM5
-         frxxHGtetHhywilDcKaSPv9Dw3+feA/7fzgZCy6AROamrtpFJbg7ZjT/CkjmzRGho4Sd
-         DAQj0AhkMG7yE9EnZGDOVCSz3B7CHQidAODSLhCeaku4vwEm5GBsM15QRwfzLSMBWDsn
-         gE3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVeCpDArHQhzRF/OpvXUoimaDuVF9JS3JfX88+7p5DNQYp/kcKg24PH0viRXNwt21yycCcplEa02RXhv/WVKHmV0LIE9ZDtQWHKyC9+
-X-Gm-Message-State: AOJu0YxFqa10pGwl/BuUdWI5piqYLntvIGQelXWEmUofyeQJgi6pi+Wi
-	JPX/CttilUV3XrRGvrnFrC8LNRMJjLH88hix9HCfIXWliwJla6kKbTCwsiWpLWnK3zAIWQK3Y68
-	s
-X-Google-Smtp-Source: AGHT+IG/HLXyHbW6yeseNbj0NSVOG4AOMaoKaf0CmG6jhGtq2IkEwO6pSd2/za8ScxvEWTGn9C3Xhg==
-X-Received: by 2002:a17:906:55d1:b0:a59:c319:f1db with SMTP id a640c23a62f3a-a62640779b9mr555490366b.1.1716795587600;
-        Mon, 27 May 2024 00:39:47 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda6cdcsm459010666b.209.2024.05.27.00.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 00:39:47 -0700 (PDT)
-Date: Mon, 27 May 2024 10:39:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michael Straube <straube.linux@gmail.com>
-Cc: Nam Cao <namcao@linutronix.de>, gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] staging: rtl8192e: remove dead code
-Message-ID: <9802cc9e-5962-44a1-a384-3e5ee226cbcb@moroto.mountain>
-References: <20240526111928.14574-1-straube.linux@gmail.com>
- <20240526111928.14574-4-straube.linux@gmail.com>
- <20240526143100.FmVupNWq@linutronix.de>
- <e25831a9-9913-43da-831b-d37bdc4d9dd3@gmail.com>
+	s=arc-20240116; t=1716795714; c=relaxed/simple;
+	bh=3Rr1HaG9tG9vsr3RvcnFDKNXwGd3bAmbX0F/s1f15pQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ciATLMXunvwyK1ZCELXGfqhUnANcj7qGPRaD4gC1D7Ii0ROmZnNMPNfF0KnCSgFLKgna/vIX8PPRV9eGUIA0n6mRMPUmZTdeT7H+MY7qFrHLYJeDZNhSStbqN/vVC8X5tPSVdJGoo5EXSPxKqtA15nzGfNxEn9vLoRTfBjWAO0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CLJCQTE/; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: david@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716795709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A8ih7vz66Rx+ZxVaMPrr50Ps6h1emlB7JWpOfQ6g6+8=;
+	b=CLJCQTE/vly7FuFm/O96eANqAlO1xjq4WZyQtTRg7+o7S3z8nAA/pw9hHG7z8v6UmUVWEj
+	DAsGh4R23PM3h1mMP9uGubp94rSQC5EifT1BGP+atzIxVzxjwpG8oi+kRoBoe5dQpL7jAO
+	QeQn9+WSoa/zkivs6BVf4vfdAZon4Es=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: aarcange@redhat.com
+X-Envelope-To: hughd@google.com
+X-Envelope-To: shr@devkernel.io
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+Message-ID: <f839ae47-2776-4684-a331-564554426ae2@linux.dev>
+Date: Mon, 27 May 2024 15:41:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e25831a9-9913-43da-831b-d37bdc4d9dd3@gmail.com>
+Subject: Re: [PATCH 1/4] mm/ksm: refactor out try_to_merge_with_zero_page()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, aarcange@redhat.com,
+ hughd@google.com, shr@devkernel.io
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240524-b4-ksm-scan-optimize-v1-0-053b31bd7ab4@linux.dev>
+ <20240524-b4-ksm-scan-optimize-v1-1-053b31bd7ab4@linux.dev>
+ <18259f7c-d57e-4504-91ec-90b7c87aad01@redhat.com>
+ <36d4f3a6-c426-4455-b5be-2ab503d380ad@linux.dev>
+ <18ad1a9f-8f00-41c1-9c77-ac3252061852@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <18ad1a9f-8f00-41c1-9c77-ac3252061852@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-This patch doesn't affect behavior at all, but to me the original
-author wrote the do nothing case for readability, and I don't have a
-problem with that.  In fact, I applaud the author for caring about
-readability at all which is not a given in staging code.  :P
+On 2024/5/27 15:18, David Hildenbrand wrote:
+> Am 27.05.24 um 06:36 schrieb Chengming Zhou:
+>> On 2024/5/24 23:12, David Hildenbrand wrote:
+>>> On 24.05.24 10:56, Chengming Zhou wrote:
+>>>> In preparation for later changes, refactor out a new function called
+>>>> try_to_merge_with_zero_page(), which tries to merge with zero page.
+>>>>
+>>>> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+>>>> ---
+>>>>    mm/ksm.c | 67 +++++++++++++++++++++++++++++++++++-----------------------------
+>>>>    1 file changed, 37 insertions(+), 30 deletions(-)
+>>>>
+>>>> diff --git a/mm/ksm.c b/mm/ksm.c
+>>>> index 4dc707d175fa..cbd4ba7ea974 100644
+>>>> --- a/mm/ksm.c
+>>>> +++ b/mm/ksm.c
+>>>> @@ -1531,6 +1531,41 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
+>>>>        return err;
+>>>>    }
+>>>>    +/* This function returns 0 if the pages were merged, -EFAULT otherwise. */
+>>>
+>>> No it doesn't. Check the "err = 0" case.
+>>>
+>>
+>> Right, how about this: This function returns 0 if the page were merged or the vma
+>> is out of date, which means we don't need to continue, -EFAULT otherwise.
+> 
+> Maybe slightly adjusted:
+> 
+> This function returns 0 if the pages were merged or if they are no longer merging candidates (e.g., VMA stale), -EFAULT otherwise.
+> 
 
-regards,
-dan carpenter
-
+Great, will change to this. Thanks!
 
