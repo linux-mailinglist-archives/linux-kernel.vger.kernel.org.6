@@ -1,58 +1,49 @@
-Return-Path: <linux-kernel+bounces-190768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D098D0270
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:00:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C08D02BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2CC71C2152F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C166AB2C4AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D177515EFDA;
-	Mon, 27 May 2024 13:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4492916C44F;
+	Mon, 27 May 2024 13:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXSx4FMG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ub+wU4Wr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D58C15F30D;
-	Mon, 27 May 2024 13:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F0C16C426;
+	Mon, 27 May 2024 13:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716818304; cv=none; b=KAzL5avd6nVtTs/I/Sa//SDXM+yDXkObLV1lwdERWd3uECVlz2Bxi0m2QHZ2zR9F5qH3lqDjAQvYpPxo47yrMYkM2OLbxJT0LH+QcijZ54ryhpK3hf83yuRrRoFf0CmqxAq4h83Yy9CNfOyre5oPtR5PbPmVHJKKs9vIJ6V3o74=
+	t=1716818319; cv=none; b=l1BxlmLY21f30mi+4Vr1vSLipjZmCB5H3fxFEBU6akwpSw8z5v4xUAK3sDPC0CEfRGjXK0vtXl7a+9BnjuC1s9Ll0nFERUJRPqsagfWMBzSrTyUMkJlygpFk9SMf6IfZ5MXYS+qHJDkWF6Zandoq8AQqaCu7UvHjFcwKZ40OAdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716818304; c=relaxed/simple;
-	bh=Isv9pNCDmG68dJYcDYRxbpANQJq8JEINJq10711HhoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fVVMSDGUDy89Yue0QpSBh/ILCPNaeouIy12xX7iWoZSjEk+Qy00IwW3yp4JLpgX2Q0ef68xARZgCC/0/8O410cDI+2P4iZLQ03zMyNd9Dr2UqpQwzzCUdwvX+G+GrzhhKeonER2cqDT4HOcW/h6txkY65hDyKqluIwkDIOEw5oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXSx4FMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0105FC32789;
-	Mon, 27 May 2024 13:58:21 +0000 (UTC)
+	s=arc-20240116; t=1716818319; c=relaxed/simple;
+	bh=L+f1h3qEgQI0VvM5QxP4rM7AUHSRqAbHmLrc4Ml1MV0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Egmygra2ATVy0RtOXiync/czHI/OO1+d4glmHWx9qTo5strSr0+ptoANPcFGrLqciLIividLmzfNyUpqtXhLNf5sy5PJ17r1ZaKGGE7YTcYjrI2GS1GTmRXHxpzZmzJ6WmAhIdZVSUz5cXOiclZi0EziGJUQA97IEgN49wQfON8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ub+wU4Wr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEB6AC2BBFC;
+	Mon, 27 May 2024 13:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716818303;
-	bh=Isv9pNCDmG68dJYcDYRxbpANQJq8JEINJq10711HhoM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uXSx4FMGHyDi1GgHk3nZRGQHHPWrYfXQVMltYm3IxigDcJDIgKzhyH4lvgE4s4FLG
-	 4gc8qhbSRWgM2RrVR7t5iVkxNbPyObOmltooF1Nga3FnDDpk9sffPC5fwe/G1BQn3W
-	 bqyzw3NKdlPuyykbjA4zqzZL3P2VhW+Ov28JHdVlTsNywSY2kVRX/sLAwU9DOyr5pL
-	 96QPXxufl2f1SvvBCitRkm+4VEXSyNyvtnrHSd8o6HDzEYWvnF8uwCSTAh85zKmAt/
-	 9RduCD5yIcZ3S2BHQAbBT7p065FlSp5NfhB8vXDLg3pPFVlGx9fGFFBucSLGE6Uoan
-	 0cG05RGTZC8ag==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Anders Larsen <al@alarsen.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] qnx4: add MODULE_DESCRIPTION()
-Date: Mon, 27 May 2024 15:58:09 +0200
-Message-ID: <20240527-harmlos-hauch-9f8216c158ef@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
-References: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
+	s=k20201202; t=1716818319;
+	bh=L+f1h3qEgQI0VvM5QxP4rM7AUHSRqAbHmLrc4Ml1MV0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Ub+wU4WrADOPYk14sALzideVQTRPGblfeb7HH8nMCf+iXlSHhKZepX9ZydTTkmSNP
+	 Nq6TmdAK5oKICQ4kuMx5jbnPpEzTgkTuokzAabDkU3y+KRvoKUolrhItgPuRrIFn6x
+	 ADzurDXY4qd8wXohlyZwmsUmkSuJ9ju6Zf5cog98zdGUf3M9mnQj5qsxB/8q9T0nRn
+	 h7U2JdUeXaR6QvI2gw+xlfOrrPyt5vlJt32MItf+PO6N/tcRow4fnIprugmyIaD5fy
+	 l5RvIa9W+AIHUmdGareNsNJSxXJy11YBY+W1/HhvTB4wvCdlpQVo0gCfKr7XCX1zfS
+	 v1a2C50buQiIQ==
+From: Maxime Ripard <mripard@kernel.org>
+Date: Mon, 27 May 2024 15:58:00 +0200
+Subject: [PATCH v15 11/29] drm/connector: hdmi: Calculate TMDS character
+ rate
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,31 +51,214 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=906; i=brauner@kernel.org; h=from:subject:message-id; bh=Isv9pNCDmG68dJYcDYRxbpANQJq8JEINJq10711HhoM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFTKx4Y9787GRAqVez/4pNMWduu9QUf8pln9r7M/uh7 NrPR9ItOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyUZjhn1bdV4s1Av8jtNrf iFyedSv5lOudkP6NTf+6PBecf1W/yZyR4cNem5OzNkl/cLmYe9t8Rkry/Xvz+GLr3u9e/Zr1z2v WXB4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240527-kms-hdmi-connector-state-v15-11-c5af16c3aae2@kernel.org>
+References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
+In-Reply-To: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Sebastian Wick <sebastian.wick@redhat.com>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6423; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=L+f1h3qEgQI0VvM5QxP4rM7AUHSRqAbHmLrc4Ml1MV0=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDGkhE1NOSRv1TdL4Zi4YtM4zaOIBzqdM23RdgpRdE6o3t
+ syutJPomMrCIMzJICumyPJEJuz08vbFVQ72K3/AzGFlAhnCwMUpABO58J2xvuisOecF9l9dRx/t
+ yTQ3+O1tvU6mlZvJbPXX5hvCDMeSfqeevXhn540kfZfa0HNVAhWrGOtzbv989K6wRT7afFLpBTY
+ Dhp27GIu9bzAznsnutnDVnJvBeS5hFqcn7+yy2QW9R9exVgEA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Fri, 24 May 2024 13:51:46 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
-> 
-> 
+Most HDMI drivers have some code to calculate the TMDS character rate,
+usually to adjust an internal clock to match what the mode requires.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Since the TMDS character rates mostly depends on the resolution, whether
+we need to repeat pixels or not, the bpc count and the format, we can
+now derive it from the HDMI connector state that stores all those infos
+and remove the duplication from drivers.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 67 ++++++++++++++++++++++
+ drivers/gpu/drm/drm_atomic.c                       |  1 +
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  3 +
+ include/drm/drm_connector.h                        |  5 ++
+ 4 files changed, 76 insertions(+)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+index f6cd0612ea2c..08630561d864 100644
+--- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
++++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+@@ -1,10 +1,11 @@
+ // SPDX-License-Identifier: MIT
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_connector.h>
+ 
++#include <drm/display/drm_hdmi_helper.h>
+ #include <drm/display/drm_hdmi_state_helper.h>
+ 
+ /**
+  * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
+  * @connector: DRM connector
+@@ -23,10 +24,67 @@ void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
+ 	new_conn_state->max_bpc = max_bpc;
+ 	new_conn_state->max_requested_bpc = max_bpc;
+ }
+ EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_reset);
+ 
++static const struct drm_display_mode *
++connector_state_get_mode(const struct drm_connector_state *conn_state)
++{
++	struct drm_atomic_state *state;
++	struct drm_crtc_state *crtc_state;
++	struct drm_crtc *crtc;
++
++	state = conn_state->state;
++	if (!state)
++		return NULL;
++
++	crtc = conn_state->crtc;
++	if (!crtc)
++		return NULL;
++
++	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
++	if (!crtc_state)
++		return NULL;
++
++	return &crtc_state->mode;
++}
++
++static enum drm_mode_status
++hdmi_clock_valid(const struct drm_connector *connector,
++		 const struct drm_display_mode *mode,
++		 unsigned long long clock)
++{
++	const struct drm_display_info *info = &connector->display_info;
++
++	if (info->max_tmds_clock && clock > info->max_tmds_clock * 1000)
++		return MODE_CLOCK_HIGH;
++
++	return MODE_OK;
++}
++
++static int
++hdmi_compute_clock(const struct drm_connector *connector,
++		   struct drm_connector_state *conn_state,
++		   const struct drm_display_mode *mode,
++		   unsigned int bpc, enum hdmi_colorspace fmt)
++{
++	enum drm_mode_status status;
++	unsigned long long clock;
++
++	clock = drm_hdmi_compute_mode_clock(mode, bpc, fmt);
++	if (!clock)
++		return -EINVAL;
++
++	status = hdmi_clock_valid(connector, mode, clock);
++	if (status != MODE_OK)
++		return -EINVAL;
++
++	conn_state->hdmi.tmds_char_rate = clock;
++
++	return 0;
++}
++
+ /**
+  * drm_atomic_helper_connector_hdmi_check() - Helper to check HDMI connector atomic state
+  * @connector: DRM Connector
+  * @state: the DRM State object
+  *
+@@ -42,10 +100,19 @@ int drm_atomic_helper_connector_hdmi_check(struct drm_connector *connector,
+ {
+ 	struct drm_connector_state *old_conn_state =
+ 		drm_atomic_get_old_connector_state(state, connector);
+ 	struct drm_connector_state *new_conn_state =
+ 		drm_atomic_get_new_connector_state(state, connector);
++	const struct drm_display_mode *mode =
++		connector_state_get_mode(new_conn_state);
++	int ret;
++
++	ret = hdmi_compute_clock(connector, new_conn_state, mode,
++				 new_conn_state->hdmi.output_bpc,
++				 new_conn_state->hdmi.output_format);
++	if (ret)
++		return ret;
+ 
+ 	if (old_conn_state->hdmi.output_bpc != new_conn_state->hdmi.output_bpc ||
+ 	    old_conn_state->hdmi.output_format != new_conn_state->hdmi.output_format) {
+ 		struct drm_crtc *crtc = new_conn_state->crtc;
+ 		struct drm_crtc_state *crtc_state;
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 8730137baa86..26f9e525c0a0 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1146,10 +1146,11 @@ static void drm_atomic_connector_print_state(struct drm_printer *p,
+ 	if (connector->connector_type == DRM_MODE_CONNECTOR_HDMIA ||
+ 	    connector->connector_type == DRM_MODE_CONNECTOR_HDMIB) {
+ 		drm_printf(p, "\toutput_bpc=%u\n", state->hdmi.output_bpc);
+ 		drm_printf(p, "\toutput_format=%s\n",
+ 			   drm_hdmi_connector_get_output_format_name(state->hdmi.output_format));
++		drm_printf(p, "\ttmds_char_rate=%llu\n", state->hdmi.tmds_char_rate);
+ 	}
+ 
+ 	if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
+ 		if (state->writeback_job && state->writeback_job->fb)
+ 			drm_printf(p, "\tfb=%d\n", state->writeback_job->fb->base.id);
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index 8bc1f9b0b12b..4f46a70a5017 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -70,10 +70,13 @@ static int light_up_connector(struct kunit *test,
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+ 	conn_state = drm_atomic_get_connector_state(state, connector);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+ 
++	conn_state->hdmi.output_bpc = connector->max_bpc;
++	conn_state->hdmi.output_format = HDMI_COLORSPACE_RGB;
++
+ 	ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 29883e6f8e50..54899c030031 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -1047,10 +1047,15 @@ struct drm_connector_state {
+ 
+ 		/**
+ 		 * @output_format: Pixel format to output in.
+ 		 */
+ 		enum hdmi_colorspace output_format;
++
++		/**
++		 * @tmds_char_rate: TMDS Character Rate, in Hz.
++		 */
++		unsigned long long tmds_char_rate;
+ 	} hdmi;
+ };
+ 
+ /**
+  * struct drm_connector_funcs - control connectors on a given device
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+-- 
+2.45.0
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] qnx4: add MODULE_DESCRIPTION()
-      https://git.kernel.org/vfs/vfs/c/39a8d8c49645
 
