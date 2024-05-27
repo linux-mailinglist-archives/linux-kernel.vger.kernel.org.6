@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-190661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3752E8D0109
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CB28D0107
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9948DB260C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20156288684
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B76A15ECE3;
-	Mon, 27 May 2024 13:15:21 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A6B15E5D0;
+	Mon, 27 May 2024 13:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bg34lXVZ"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9176315E5DD;
-	Mon, 27 May 2024 13:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31015DBC1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815721; cv=none; b=NXswnXU1R5ohu3+5uKpDXuVbW+ZFJCmMIJAxQMAA/5jZUgzKA55YHg742nxkCoB+EWP2Hdgsy8V7ZMTrWqy/QFDGdxTXngX1wn6hSib7aLJUBJPvJgby7VEKbD+f1XP0xYn7CrCENEVd6CJrS5nxieOCsQiZGG7mZN4OnM93hqs=
+	t=1716815719; cv=none; b=E6hdvxRXOYCXUsYJeJQUy+QWobn/de5UMA7DuwAOgBof6r4JgqTQC6R8185x0gt1m9ABJV8vknlxfY8XuwK5fBko36+rOtf2iUFynbAk7fB9NPvlbBCuEtMyIW/Gw5gaQjV/W6MUywjqW+HZeW4bEyeqDCogWJ6BDytQupHOm2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815721; c=relaxed/simple;
-	bh=h6jP6IddeCizaqoE9jp2cmuBloJpEnUogauaN3oACqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcfk1t5KO4ZD9gUN3HhoVgfj0xjzENHvn47KsGn79Imi4wTNEJiRDw9KkilzBfv52TsoYFWVlejlIb8m2f0KvwWm9HkzHsd5f7Mq5/nODaIX/n7WBAKP3fSrZA/PixPGgTW0YTTpn/98eOvFEcv4k9Bneaphl0ZA8j02CI22fvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VnwYK53M7z9v7Jb;
-	Mon, 27 May 2024 20:53:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 7F8CB140113;
-	Mon, 27 May 2024 21:15:15 +0800 (CST)
-Received: from [10.206.134.102] (unknown [10.206.134.102])
-	by APP1 (Coremail) with SMTP id LxC2BwCXjhdWh1RmqDwFCQ--.43980S2;
-	Mon, 27 May 2024 14:15:14 +0100 (CET)
-Message-ID: <747c6690-5314-4c23-b48d-1b463d058e0d@huaweicloud.com>
-Date: Mon, 27 May 2024 15:14:59 +0200
+	s=arc-20240116; t=1716815719; c=relaxed/simple;
+	bh=0Edaju5pGvykmoU4M2lpA68ncguVXLIcSKHtJCJSkOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZHHZmRAmjSJIyRFtapkAfcQu42DR68z1RJLGoeQWi7W8C+BPlo60Jf+HkOT8tItW5gVyhogiLJOq/X4uswkJo0GWM7+0apd4qplTYWOtjtTeeSXgaTsf7Tm95+1sShMTGdtswLdzbzcDKczjpwKeOQmI8KcSoT4f6c1eH+5vos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bg34lXVZ; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: vbabka@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716815714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fAbpqHYArlgEA4jndUz59wBOUYS1i0aiS/4KxphB4UI=;
+	b=bg34lXVZhV597vXyWDG4RuvE8RbwP3Lwxz6YxhMDRmvdkRdQ9zgF/aLMSysVqr3vIk0XXR
+	Gl7GlJa2JfxJLxT93Qf5EGxprVZuKjkPdnMvHnZdTW+x2+5yCkX/mTlIAoKjnOLWiYVP/N
+	k1No0gau4uhxJvwiIcwpHCuAhrT+8SQ=
+X-Envelope-To: cl@linux.com
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: surenb@google.com
+X-Envelope-To: keescook@chromium.org
+Date: Mon, 27 May 2024 09:15:10 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] mm, slab: don't wrap internal functions with
+ alloc_hooks()
+Message-ID: <gwbfutyz24pjzweivq7zhj6e3o3yngjcyk3zy4kletxskiizbg@nskn7qkayfig>
+References: <20240527090127.21979-2-vbabka@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
- Andrea Parri <parri.andrea@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
- npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
- luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
- dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <1c6d4146-86f8-4fd5-a23e-a95ba2464c9e@rowland.harvard.edu>
- <ZlC5q7bcdCAe7xPp@andrea>
- <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCXjhdWh1RmqDwFCQ--.43980S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYw7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aV
-	CY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
-	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
-	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxG
-	xcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527090127.21979-2-vbabka@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-Am 5/27/2024 um 2:25 PM schrieb Hernan Ponce de Leon:
-> On 5/24/2024 6:00 PM, Andrea Parri wrote:
->>> What's the difference between R and R*, or between W and W*?
->>
->> AFAIU, herd7 uses such notation, "*", to denote a load or a store which
->> is also in RMW.
+On Mon, May 27, 2024 at 11:01:28AM +0200, Vlastimil Babka wrote:
+> The functions __kmalloc_noprof(), kmalloc_large_noprof(),
+> kmalloc_trace_noprof() and their _node variants are all internal to the
+> implementations of kmalloc_noprof() and kmalloc_node_noprof() and are
+> only declared in the "public" slab.h and exported so that those
+> implementations can be static inline and distinguish the build-time
+> constant size variants. The only other users for some of the internal
+> functions are slub_kunit and fortify_kunit tests which make very
+> short-lived allocations.
 > 
-> I also got confused with this. What about the following notation?
+> Therefore we can stop wrapping them with the alloc_hooks() macro.
+> Instead add a __ prefix to all of them and a comment documenting these
+> as internal. Also rename __kmalloc_trace() to __kmalloc_cache() which is
+> more descriptive - it is a variant of __kmalloc() where the exact
+> kmalloc cache has been already determined.
 > 
->      R[once,RMW] ->rmw W[once,RMW]
+> The usage in fortify_kunit can be removed completely, as the internal
+> functions should be tested already through kmalloc() tests in the
+> test variant that passes non-constant allocation size.
 > 
->>
->>    Andrea
-> 
+> Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-
-
-Note that the * is also what herd will show in its graphs.
-
-   jonas
-
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
 
