@@ -1,198 +1,108 @@
-Return-Path: <linux-kernel+bounces-191378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A988D0E74
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:59:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023218D0E71
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AA01F21FC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:59:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707DFB218A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE94224D1;
-	Mon, 27 May 2024 19:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AA016086C;
+	Mon, 27 May 2024 19:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USf5Xh2X"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EbnoTdId"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C98161336;
-	Mon, 27 May 2024 19:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6401CAA9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 19:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716839943; cv=none; b=e3X4hWUJKvyc0fgWZcbX1W8NwuepHmieiAoK+UtI7BpfMHWVNcNwBQzZdbWY6Kf4WLtIbFaNZj/3wgirPeWalq6+mxNiZYnzNACd6ChhpytSBmCVl+1m0i51RImz4mAc/4YXGm8evyHGBJ93XB88QkSxUrkXZwTNi85wifYS5ys=
+	t=1716839936; cv=none; b=gGKMig8cKxOsAiD9nI/v3H4+KXvofQAX9YPN8Ext+A7Qv5l9Bp6RUE42x1JCRCCWjmtJyyTmZqu1+ZHPcJ9BgFzzT49D+UNkG/rQ/Gf8tRcJ0/3GxF090lHR7+Qpj4GSm8aGprkebgjj1JlpVWSELmcWSvHu/Xbk22aS0h/EIIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716839943; c=relaxed/simple;
-	bh=7HwlJsTk7wTCHlcGXASmOSkMO2SL/hHsk/04XDmFPUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UTiONIIttninCRJxR/0Qf4FbrtSJCsWCyLTW4W8RNZi+OKT3lQaRun/f4SK5At9daJNy+CXIJUV8IqdPxcHPKL3xSJpUofvem3tDI0gleCyGIs67JYl1dmo3pZuDXqvaO7v6X+VTTvg3BscJ5fNpmHDJIT+Vi5OJJWLd+YQDWUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USf5Xh2X; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f44b5b9de6so1075725ad.3;
-        Mon, 27 May 2024 12:59:02 -0700 (PDT)
+	s=arc-20240116; t=1716839936; c=relaxed/simple;
+	bh=ks7Mff04vGsMnYvo++ZgpbVUC58K1Rpct1dh+KIWgFY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mcKwGFsyoTWn3ZSlZ563TnISdBnLDbPzP5G0zgX21cxkfWDKbZ3O7NC/VK8xyLPrmUHJyau7tBrllwSObw7zWTbiqvv2acAUl/AMEtLlgkWo5tjch2ihXDWtPYwPVNbyG9GvdfdsOScrHctfsZdU2TxALToBlJHjpGmzhPh9c9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EbnoTdId; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2bf5ba9a2c5so12393a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716839942; x=1717444742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7aZbVHWf8PRPM9u8We9otI6H/hby/EBBNdp17XPutA0=;
-        b=USf5Xh2X9HOs7GftdY9No9RwUnyBY1YGDhlcudTAxxNFAvoyICGFlTyqdHuYINzXzD
-         kxYQ+t3IZezEFccakPmZ77hajVz0NYFjiSJpAAlvu/lLrWaj0QwbKWTBHpCQymyf+G9t
-         Ww3pZHOzThpBAfBgP7yjOJqifmRc1lps+xhj0nmjdIa6MZ2OWwkzZe35L9UmaE/ct8VW
-         179xQE2ehS54XecoBee/jK+wXIQVzGlI87I0rwz6BaNCqjtG1zEGCMB/XoC/JKU29bSE
-         2eU5dH+QM5kgCIsVb6dH605K+L4OMAOy/cxpERGCydClIon87/CNUWEd42OaR47RHXU3
-         kTwA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716839934; x=1717444734; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aCtCHMcHGMsYabdcrTqMbv7AnaT2U5qGwPVOFGULJ1o=;
+        b=EbnoTdId3NxJG0KlUC7WP2Oo15uqEUL6PYNOytUppr4vz+EfdjnXAIClxpE2yYa6V/
+         K0GFMFuoU5Oh9pCBej9q1mAemfKiVU1s1BXQIimnVIvbmfA58TvFUcjduM6dNZsP6wyH
+         OUSCVQwudDowCk5GeTqilB6C6Sa3Sj45KV5EeoRLA1sgg08QyiDNpa4qKhMlv1wutC52
+         VG2XPsXmCmWNop7HcujFGHcU91+ZSeYAMftkcmIE9jnIDSPJk2W73ClwxXXvEkefmwoo
+         Xo6/Han2y7bo3zlh3QLpNblGWyHPfA2xECfZ2X8qv7fSqOXonbvMcOFIP52HiSWomR0j
+         QNfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716839942; x=1717444742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7aZbVHWf8PRPM9u8We9otI6H/hby/EBBNdp17XPutA0=;
-        b=N4BKbibrcq51tSatdOdcq+TCHl+nTZmTokboYe3Bnx4rkwgUAAry5IMkwdpg4x9qtl
-         TC/D5y79vVtYLWLjqEyIfggs/HqtBZ+Xkx3cY0hWh4g8jxDDykHkZpDUB2R8aqv/wrGO
-         7zGzjQnSn9j35ocR2uF8vzmOqDl18idnZUok6S6HPg2MxghoHZzmFN43/J3gkIja/AZp
-         ENniJCasiKzj7SRRgb2M4Rs86lVYzI3pmb2jVCdrv5wfVWESuMVGgIqy6xAvm5y3iDCk
-         8FyoZtxKJdO9WBeAhPqiN3PUBGcJSNKs1PSE7a2sygnQCz0V11gvoaIO3ofqLo/qmsY3
-         Ujrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZCufx/uchB13l2rX2Mjw+ElnHV/J24aZxL44+IDUarEzwakkdkrdpqBHJaAXZ3Nn8HUBseMUvwSGGaqGUXZPfi+sHK+kjyuLxPbC0wsiQMyf6Posapnin+vBLMJ9l+ko4uYuB3Ip9uw==
-X-Gm-Message-State: AOJu0YwVgFyMLsbBcmXwtmtCBe6whbOxia1m/5syvNHDFKl76tcKq6ym
-	glK/4hsrKb30vpR+ggZSr3AHwWxWSpCcKrN/+DHsJC3fGwTlztnjuNQz5+ta
-X-Google-Smtp-Source: AGHT+IH3tzAQC/TIgpUDvGmWELBAnrpcUfWvKnZ7GZyTlAe8ndO1lQPxLG4foCxI+yL6T0kjVP8/oQ==
-X-Received: by 2002:a17:903:41cd:b0:1f4:a45b:8429 with SMTP id d9443c01a7336-1f4a45b8a85mr30853005ad.27.1716839941631;
-        Mon, 27 May 2024 12:59:01 -0700 (PDT)
-Received: from shresth-aspirea71576g.abesec.ac.in ([117.55.241.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f47596cae0sm42664875ad.237.2024.05.27.12.58.56
+        d=1e100.net; s=20230601; t=1716839934; x=1717444734;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCtCHMcHGMsYabdcrTqMbv7AnaT2U5qGwPVOFGULJ1o=;
+        b=Nsng66E+K2gPCyAZZs69EKGkkGYrDdXpQBBdqjPrrxgCtNiqivNeucp0GmvOuPfn9D
+         8zlP7pgMzcoco+wrgvgUaHzq4oMrddCizs280TFI6wtIwUZGQUE9MNhyiNeFWzkG1mnm
+         kcSdHM3rIzjrbm735bQba7URdZdP7vylxc/oxz/E9jlOUcpw/nhanxlSl9JrL8gJsJfv
+         8CBp76lT2C9VLMpmIuNvVKSfvRjH01+emL4gXRLtCuCnGCFO4zqjxMGk7PQDQFpMoZTg
+         6yZmBvxFRPa5pMHLoCdFVFkJtOnjRXeoFxCtxi40wWk5nnSqAaDyTd1rfYwCIggm39xp
+         OTPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH4+G2+p7eamwF5tWBKz8FxIUm9bK+lhkRJxc6szUerk3GPC6T1A8DEPlniLnsz5l7XRiM3wnIesjA5Oh23qFRV4tnPOsa4cdcHGHT
+X-Gm-Message-State: AOJu0YyndF9dshBufrTU5mzFcj+tIx+qWVFCBhO0ISjVf0foiuWR7Pgg
+	FprzNjDRJwVNdZkmGoH6KKdoTP2rT4swGQHUC7CG4+o6RZcW28qstpF0z9tAuTE=
+X-Google-Smtp-Source: AGHT+IHwIZPGluEus19FHdXWfCpeZrfreP+zIjtoh4A1gbN0wdglgFYVjd7Dn3/nbJj/bXdL8h7oAQ==
+X-Received: by 2002:a17:90a:df13:b0:2bd:7e73:6628 with SMTP id 98e67ed59e1d1-2bf5e0c1bc4mr9801465a91.0.1716839934416;
+        Mon, 27 May 2024 12:58:54 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5e13b6acsm6218409a91.0.2024.05.27.12.58.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 12:59:01 -0700 (PDT)
-From: Shresth Prasad <shresthprasad7@gmail.com>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Shresth Prasad <shrestprasad7@gmail.com>
-Subject: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to dtschema
-Date: Tue, 28 May 2024 01:28:12 +0530
-Message-ID: <20240527195811.7897-2-shresthprasad7@gmail.com>
-X-Mailer: git-send-email 2.45.1
+        Mon, 27 May 2024 12:58:53 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: hexue <xue01.he@samsung.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240527084533.1485210-1-xue01.he@samsung.com>
+References: <CGME20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6@epcas5p1.samsung.com>
+ <20240527084533.1485210-1-xue01.he@samsung.com>
+Subject: Re: [PATCH v2] block: delete redundant function declarations
+Message-Id: <171683993340.262308.9239565153961135856.b4-ty@kernel.dk>
+Date: Mon, 27 May 2024 13:58:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
-for validation.
 
-Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
----
-Changes in v2:
-    - Remove blank space
-    - Add item list with description for clocks
-    - Drop description for interrupts
-    - Drop properties assigned-clocks and assigned-clock-rates
----
- .../bindings/watchdog/img,pdc-wdt.yaml        | 55 +++++++++++++++++++
- .../bindings/watchdog/imgpdc-wdt.txt          | 19 -------
- 2 files changed, 55 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
- delete mode 100644 Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
+On Mon, 27 May 2024 16:45:33 +0800, hexue wrote:
+> blk_stats_alloc_enable is used in block hybrid poll, the related function
+> definitions have been removed by patch:
+> commit 54bdd67d0f88 ("blk-mq: remove hybrid polling")
+> but the function declaration was not deleted.
+> 
+> 
 
-diff --git a/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml b/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
-new file mode 100644
-index 000000000000..a88a27354505
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/img,pdc-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ImgTec PowerDown Controller (PDC) Watchdog Timer (WDT)
-+
-+maintainers:
-+  - Shresth Prasad <shresthprasad7@gmail.com>
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - img,pdc-wdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: watchdog counter clock
-+      - description: register interface clock
-+
-+  clock-names:
-+    items:
-+      - const: wdt
-+      - const: sys
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    watchdog@18102100 {
-+      compatible = "img,pdc-wdt";
-+      reg = <0x18102100 0x100>;
-+      clocks = <&pdc_wdt_clk>, <&sys_clk>;
-+      clock-names = "wdt", "sys";
-+      interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
-+    };
-diff --git a/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt b/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
-deleted file mode 100644
-index b2fa11fd43de..000000000000
---- a/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
-+++ /dev/null
-@@ -1,19 +0,0 @@
--*ImgTec PowerDown Controller (PDC) Watchdog Timer (WDT)
--
--Required properties:
--- compatible : Should be "img,pdc-wdt"
--- reg : Should contain WDT registers location and length
--- clocks: Must contain an entry for each entry in clock-names.
--- clock-names: Should contain "wdt" and "sys"; the watchdog counter
--               clock and register interface clock respectively.
--- interrupts : Should contain WDT interrupt
--
--Examples:
--
--watchdog@18102100 {
--	compatible = "img,pdc-wdt";
--	reg = <0x18102100 0x100>;
--	clocks = <&pdc_wdt_clk>, <&sys_clk>;
--	clock-names = "wdt", "sys";
--	interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
--};
+Applied, thanks!
+
+[1/1] block: delete redundant function declarations
+      commit: 30a0e3135f9aa14ba745f767375183b3112d7440
+
+Best regards,
 -- 
-2.45.1
+Jens Axboe
+
+
 
 
