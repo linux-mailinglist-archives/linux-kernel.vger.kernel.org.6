@@ -1,107 +1,82 @@
-Return-Path: <linux-kernel+bounces-191499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B72A8D105A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:43:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2D58D1060
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0811C21132
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709151F21BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B86167D92;
-	Mon, 27 May 2024 22:43:24 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31193167270;
+	Mon, 27 May 2024 22:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJmRQ1T0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7A0167292;
-	Mon, 27 May 2024 22:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC511DFE4;
+	Mon, 27 May 2024 22:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716849804; cv=none; b=EyLRq9a1K1+ITuv2KdBM1jR5pwbUBig8mCQJjIqFBmvjiB7wmVoSHRKX9FqaEfvY8KaD0qbsC2/I5IgwRtuCk7fkcRs+mAWLRd42F94Xt5U1xeXcAFfWeLr47KypUiNM3CRXNvl0JRQ2IY2z2fTLC8Z+qSkCNZF5dWMqdT7w7q4=
+	t=1716850192; cv=none; b=pZY6e9CLAYf8PXmt4ae8ZXIK1KQ9siA5bWJKxs7h6QudXNm3TmN5510nzy1t6AxnVP/4LJZpC5n0wD8voOQqFfgRDLGpFvzFF4g4FrLLgI4f8lxnXNx2Vw64Cz4xn8uwbhYsZNqlxcgVPlFdjsISvzfbqqaOtsnWiCXggViZsyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716849804; c=relaxed/simple;
-	bh=7OxofZiGxhcjWtYvBKTvsLyc5RWpkNBKUQTszFUvvfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ls6Cs9+h5L6wxTfwyXnbpi5uHcVywyPz0RvnYjFiubD6KArdX9u8xFQACloa5GdWVJPvuS+99dvTWPP6PbIqiQ6ZTq4yZDuUgLB1UdKg3vZLpt965eFn4tx11huYDcsttHhE2HGm+GIzbHtLZDCNIr05pqlbM959ISfxme+K0n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86193d.versanet.de ([94.134.25.61] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sBj3l-0005Qx-Me; Tue, 28 May 2024 00:43:17 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: (subset) [PATCH 00/13] rockchip: Fixes and improvements for ROCK Pi S
-Date: Tue, 28 May 2024 00:43:16 +0200
-Message-ID: <1750846.QkHrqEjB74@diego>
-In-Reply-To: <171684956152.1783037.15483261423757153532.b4-ty@sntech.de>
-References:
- <20240521211029.1236094-1-jonas@kwiboo.se>
- <171684956152.1783037.15483261423757153532.b4-ty@sntech.de>
+	s=arc-20240116; t=1716850192; c=relaxed/simple;
+	bh=hertHfbcpJw8JoTdFV/lxLDsx0EAanE9Z0HvkoE8yJw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QPVV6DGigUO2Fzzd3yrEade5tfjSTFH31wmiXDPL0Mr59GYDPAMLRSPT2qZTZ12TUeJ1adsrLKITRZHfY8WQANyvtVcYh+zpW9yPluLkAKE2Rox++6wx7a7ETBYNTxGdmPj+76xL7ID+zqzuA2riJG+51xjNXOfO/FoLNs8Yn58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJmRQ1T0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73786C2BBFC;
+	Mon, 27 May 2024 22:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716850191;
+	bh=hertHfbcpJw8JoTdFV/lxLDsx0EAanE9Z0HvkoE8yJw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=cJmRQ1T0Wp1HeszluEDk5/MA0HN4jAYUchfYZm1tHLFET7+gSF+6FvgaiJ0F9oQTN
+	 yBJdqOFjP7JtJwTzdJ5nCxYsECvYkBsd9/9FrDyGmICSepdyCGzAb52oH/5vLbzzCW
+	 ngrvePezcffJWiAnlcmDdqArVn85v0oXCgUlZoB8vGmo1nxECDfS1ecX1aQngZs+hf
+	 pmZc14UChc/99EavDaoksV6mmNpFkJWs46F6eGVoDtiy/MzN8znKD4dRBCsBOaJo9v
+	 8LFJRGWxRoHWezzXJ9a8p4r2Mal1goTEhEomjUIxx0wIixQR2YtPXvZQE1WQTq8Tp6
+	 G9OxOSlS2UxVQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 May 2024 01:49:48 +0300
+Message-Id: <D1KSLKGUWGFO.21T4OBXQQ88D@kernel.org>
+Cc: <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240527202840.4818-1-jarkko@kernel.org>
+ <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
+ <D1KRILI1KRQ8.2CNPU7PFES0VI@kernel.org>
+ <D1KRXI87G4S0.1ROKTQENIZHT7@kernel.org>
+ <D1KS7LCALKD4.1J13QGYGZ6LBW@kernel.org>
+In-Reply-To: <D1KS7LCALKD4.1J13QGYGZ6LBW@kernel.org>
 
-Am Dienstag, 28. Mai 2024, 00:42:16 CEST schrieb Heiko Stuebner:
-> On Tue, 21 May 2024 21:10:03 +0000, Jonas Karlman wrote:
-> > This series include fixes for DT schema validation, fixes and improve
-> > support for onboard features of the Radxa ROCK Pi S board.
-> > 
-> > Patch 1-2 fixes DT schema validation of ethernet and audio codec.
-> > 
-> > Patch 3 fixes use of onboard SD NAND and eMMC.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [02/13] arm64: dts: rockchip: rk3308: Fix codec@ff560000 reset-names
->         commit: cb1622df6a28e3eac34a8b95feba2dd2dc6cd887
-> [03/13] arm64: dts: rockchip: rk3308-rock-pi-s: Fix SD NAND and eMMC init
->         commit: 1fb98c855ccd7bc7f50c7a9626fbb8440454760b
-> [04/13] arm64: dts: rockchip: rk3308-rock-pi-s: Add sdmmc related properties
->         commit: fc0daeccc384233eadfa9d5ddbd00159653c6bdc
-> [05/13] arm64: dts: rockchip: rk3308-rock-pi-s: Add pinctrl for UART0
->         commit: 7affb86ef62581e3475ce3e0a7640da1f2ee29f8
-> [06/13] arm64: dts: rockchip: rk3308-rock-pi-s: Rename LED related pinctrl nodes
->         commit: d2a52f678883fe4bc00bca89366b1ba504750abf
-> [07/13] arm64: dts: rockchip: rk3308-rock-pi-s: Add mdio and ethernet-phy nodes
->         commit: 4b64ed510ed946a4e4ca6d51d6512bf5361f6a04
-> [08/13] arm64: dts: rockchip: Add OTP device node for RK3308
->         commit: 36d3bbc8cdbef2f83391f7708888265ac4c37a99
-> [09/13] dt-bindings: power: rockchip: Document RK3308 IO voltage domains
->         commit: 579e5b476307797b3a1260bec544dbbabcce1de5
-> [10/13] soc: rockchip: io-domain: Add RK3308 IO voltage domains
->         commit: 0536fa6e6fa3e48f4ca11855b586c277be524fbe
-> [11/13] arm64: dts: rockchip: Add RK3308 IO voltage domains
->         commit: d1829ba469d5743734e37d59fece73e3668ab084
-> [12/13] arm64: dts: rockchip: rk3308-rock-pi-s: Enable the io-domains node
->         commit: 100b3bdee6035192f6d4a1847970fe004bb505fb
-> [13/13] arm64: dts: rockchip: rk3308-rock-pi-s: Update WIFi/BT related nodes
->         commit: 12c3ec878cbe3709782e85b88124abecc3bb8617
-> 
-> I've split this up slightly.
-> Some patches for 6.10 as fixes, and the rest for 6.11 .
-> Edited patch7 (for 6.11) to apply without patch6 (6.10)
-> That disappears during a merge of those branches.
+On Tue May 28, 2024 at 1:31 AM EEST, Jarkko Sakkinen wrote:
+> >         ret =3D crypto_akcipher_set_pub_key(tfm, data, 3 * x_size + 1);
 
-and as stated, please re-send patch1 separately.
+Noticed this mistake i.e. fixed it with "2 * x_size + 1"
 
-Thanks
-Heiko
+This is results earlier failure:
 
+ecdsa: (tpm2_key_ecdsa_query+0x10d/0x170 <- ecdsa_set_pub_key) arg1=3D0xfff=
+fffea
+
+Totally lost with the expected input format after trying out various=20
+options.
+
+BR, Jarkko
 
 
