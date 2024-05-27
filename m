@@ -1,284 +1,121 @@
-Return-Path: <linux-kernel+bounces-190524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F168CFF80
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6808CFF82
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D51F234EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45945282BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10F515DBC7;
-	Mon, 27 May 2024 12:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0496715DBB7;
+	Mon, 27 May 2024 12:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="f97B7GHA"
-Received: from mail02.habana.ai (habanamailrelay.habana.ai [213.57.90.13])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VRgtj16q"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB89134B6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.57.90.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D9113A3EF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716811235; cv=none; b=O9BvhIzIBQk29CPS65kfOpB1wRsKPN053IEUGW1spxq6jVk/9TVS9UZHUlG8YlDgge3TASjgONTgYI61ynpcmKIuUavXuDnNYRfnS0YAJkLIwF2msDcGjkOEFJc/EnaBhFnPzAkbRjgcdeHN532B5c0yR2SVA7x9zNzLXkUpOZw=
+	t=1716811304; cv=none; b=W5cc+f7mgC5Jd+KQkohBoqJGaqK0JD1iWXKD4yoJd8TlOdIRydp3YSP7DHmQpdTmvtloCck6Y6m6jIxuwJc7xB6bcYIrQRpD/aCEgZjHsySGodHA5ebeXVlq+a8n/GYxu4ZYKuowHkaJK1guy+d7jEBySjwYW8TUJEwlzMaHsqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716811235; c=relaxed/simple;
-	bh=lZAa1vX0ZWQlFyjdjKOd8LRjHTs9ZWw3R9k3zMkqW8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CXXgZmAhDCSEYIeqpiWK3iE5WfA9MGTVrSj/iHEQMOYeW2ZSQtNpv0cEM8RTxEaV3oJQDhBIsbXuVPVFwDBjp2QIuNMpgZ+ibrVBhpvTy/yYmqqsKfvw+qzkMCGIbbd7nzy46SfN1JJQXKpeIpB0bZrnBtQe1fsN4a/DHoX++Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=f97B7GHA; arc=none smtp.client-ip=213.57.90.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
-Received: internal info suppressed
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
-	t=1716811235; bh=lZAa1vX0ZWQlFyjdjKOd8LRjHTs9ZWw3R9k3zMkqW8w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=f97B7GHAdIrG3Ty/ffs5eCFJLciL/VyRaqOXuqkWt61gC696vthtYfMqVbP+EPOxd
-	 ShSDOrbnZeEjfky1cgEs1IZ0pl2EwRTifK7ALpJPTbkUVMR6AQ3MsEE0GPI6tTbyaM
-	 3oyP3hybtrwI9v5eP/reA9JIakqDRjS/uUWLWp5UZF5qSqd9tg8UWsubwbbfY+xYeS
-	 MK1B5QfUKT/jScOo59ySLze3zZbi2EYoIyurpsiwyerDonv+DPXeBchLv/7MzkaAY8
-	 PLTMjQ6ZICpUEylen0ppAH9Rm1Xd2edrsAW4NTTdA5RdGYXH9xAbASjd65tPbJEklS
-	 kz926XeiBaXZw==
-Received: from obitton-vm-u22.habana-labs.com (localhost [127.0.0.1])
-	by obitton-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 44RC0Ju31920401;
-	Mon, 27 May 2024 15:00:19 +0300
-From: Ofir Bitton <obitton@habana.ai>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Ohad Sharabi <osharabi@habana.ai>
-Subject: [PATCH] accel/habanalabs/gaudi2: use single function to compare FW versions
-Date: Mon, 27 May 2024 15:00:17 +0300
-Message-Id: <20240527120017.1920370-1-obitton@habana.ai>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716811304; c=relaxed/simple;
+	bh=EAW5TG3gc2j1wPF4Y5JoxihPW3GzF9GGQCjYRG1CCA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZ5R95EpSFSgr5jVX6j9Sd3r8BnUWk8nlf1AERGEycstRz+K7V27Qy0x8Fz4c3cMvSTMDXMRiJG3QtpZAlB2+YNflrcfZguS1XwaiKraOiDc2AKzaEy0qhHgTTLznOG+3XgyAYyGiMM7u2pJdLZNRDhKcVQ/qwRWsKgFRjzTrCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VRgtj16q; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1491840E01E8;
+	Mon, 27 May 2024 12:01:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4YV-ZnbxMjNN; Mon, 27 May 2024 12:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716811295; bh=kFJbAAz0Ge0oQNpUds7hPofKuWTKPhhEYoWu+CDfR7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VRgtj16qkJpX3zuhQokUE9F7o0l8Z6Hduxi/hxfNla+AptmoJJGyoKSZxLyepgE+7
+	 udOjNmeZIHJX9vIK2yKWfTGrtDYJKLRQ8VEZh7TmKwrF5JlaVZGCyFEW+HE7wbJMAd
+	 MyFLBnwJrKDU1LR+29UEh/fItXxnQvagSwvk7kyS67UYuoKwsOYtH2ZuPbW6ZGXGVZ
+	 Payjce71JOapupgHLm3r0SVT2yzfKZxcPWGCqs/BVD7lmwvA50r7X1uUvYn1op4+CW
+	 650GkjNXwQqg4dPWfs5IM8OpPhAD1b6035EEjHQZXYjI4e0A+DfGpVBQeJ2AtOUU6s
+	 5NOSiSgOtU3S5ue+dHn9J5DE6W35qR/SCl9fRzTITFl9W1QtB51KmGEdh3OVx/dw9I
+	 2S70fsSS6NeNX9vHknF9V0ys2dQ/9qwM4DOGdzaBC29DSrxPoQkpEGegd65QR/2s8r
+	 Px7OG1RwFeb97NwslBEgvU6hdgSXdwUkjU9l3gznGoIzSKeaxScIAuV4mgdbmiJGQP
+	 3uvaIUiorY6yNj3Y/wkyeLVYXD4iRSFWYuCotPOf2xCIpSNBPVaUy+2XoDE+V0TrZH
+	 6S0U65tOh1WantTuA5gj9DJ53tG3XdlYlomiFPeJluGqGnE+hjshSE2CoNbRQJQuMG
+	 Cj7CTYij63C7u8xIa5Dh3S2E=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D112C40E016A;
+	Mon, 27 May 2024 12:01:20 +0000 (UTC)
+Date: Mon, 27 May 2024 14:01:14 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 06/15] x86/sev: Perform PVALIDATE using the SVSM when
+ not at VMPL0
+Message-ID: <20240527120114.GCZlR2Cpu_8rJXlMOS@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <ce5f7ded87868adce2f4724415313229a8bf3eb3.1713974291.git.thomas.lendacky@amd.com>
+ <20240522182403.GAZk44Q7DalfDBk7Br@fat_crate.local>
+ <408e9902-d9b1-d087-a44d-fb27342cf21f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <408e9902-d9b1-d087-a44d-fb27342cf21f@amd.com>
 
-From: Ohad Sharabi <osharabi@habana.ai>
+On Wed, May 22, 2024 at 04:14:54PM -0500, Tom Lendacky wrote:
+> Right, changing that from previous comment. But are you also asking that the
+> if / else style be used?
 
-Currently, the code contains 2 types of FW version comparison functions:
-- hl_is_fw_sw_ver_[below/equal_or_greater]()
-- gaudi2 specific function of the type
-  gaudi2_is_fw_ver_[below/above]x_y_z()
+Yeah, please. It is trivial and thus more readable this way.
 
-Moreover, some functions use the inner FW version which shuold be only
-stage during development but not version dependencies.
+> Sure, I'll add more comments or expand the comment above.
 
-Finally, some tests are done to deprecated FW version to which LKD
-should hold no compatibility.
+Yes, and pls split it into helpers. Those bunch of nested loops are
+kinda begging to be separate function helpers.
 
-This commit aligns all APIs to a single function that just compares the
-version and return an integers indicator (similar in some way to
-strcmp()).
+> That's because you can only pass a certain number of entries to the SVSM to
+> handle at one time. If the kernel is in the process of validating, say,
+> 1,000 entries, but the CA can only hold 511 at a time, then after it reaches
+> the 511th entry, the SVSM must be called. Upon return, the kernel resets the
+> CA area and builds up the entries in there again, calling the SVSM again
+> when the area is again full or we reach the last entry to be validated.
+> 
+> I'll add more detail in the comments.
 
-In addition, this generic function now considers also the sub-minor FW
-version and also remove dead code resulting in deprecated FW versions
-compatibility.
+Yeah, that "portioning" must be explained there.
 
-Signed-off-by: Ohad Sharabi <osharabi@habana.ai>
-Signed-off-by: Ofir Bitton <obitton@habana.ai>
-Reviewed-by: Ofir Bitton <obitton@habana.ai>
----
- drivers/accel/habanalabs/common/firmware_if.c | 25 ++++++++
- drivers/accel/habanalabs/common/habanalabs.h  | 20 +------
- drivers/accel/habanalabs/gaudi2/gaudi2.c      | 57 +++----------------
- 3 files changed, 34 insertions(+), 68 deletions(-)
+Thx.
 
-diff --git a/drivers/accel/habanalabs/common/firmware_if.c b/drivers/accel/habanalabs/common/firmware_if.c
-index 4bd02778a970..348418643709 100644
---- a/drivers/accel/habanalabs/common/firmware_if.c
-+++ b/drivers/accel/habanalabs/common/firmware_if.c
-@@ -40,6 +40,31 @@ static char *comms_sts_str_arr[COMMS_STS_INVLD_LAST] = {
- 	[COMMS_STS_TIMEOUT_ERR] = __stringify(COMMS_STS_TIMEOUT_ERR),
- };
- 
-+/**
-+ * hl_fw_version_cmp() - compares the FW version to a specific version
-+ *
-+ * @hdev: pointer to hl_device structure
-+ * @major: major number of a reference version
-+ * @minor: minor number of a reference version
-+ * @subminor: sub-minor number of a reference version
-+ *
-+ * Return 1 if FW version greater than the reference version, -1 if it's
-+ *         smaller and 0 if versions are identical.
-+ */
-+int hl_fw_version_cmp(struct hl_device *hdev, u32 major, u32 minor, u32 subminor)
-+{
-+	if (hdev->fw_sw_major_ver != major)
-+		return (hdev->fw_sw_major_ver > major) ? 1 : -1;
-+
-+	if (hdev->fw_sw_minor_ver != minor)
-+		return (hdev->fw_sw_minor_ver > minor) ? 1 : -1;
-+
-+	if (hdev->fw_sw_sub_minor_ver != subminor)
-+		return (hdev->fw_sw_sub_minor_ver > subminor) ? 1 : -1;
-+
-+	return 0;
-+}
-+
- static char *extract_fw_ver_from_str(const char *fw_str)
- {
- 	char *str, *fw_ver, *whitespace;
-diff --git a/drivers/accel/habanalabs/common/habanalabs.h b/drivers/accel/habanalabs/common/habanalabs.h
-index 48f0f3eea1ef..55495861f432 100644
---- a/drivers/accel/habanalabs/common/habanalabs.h
-+++ b/drivers/accel/habanalabs/common/habanalabs.h
-@@ -3596,25 +3596,6 @@ struct hl_ioctl_desc {
- 	hl_ioctl_t *func;
- };
- 
--static inline bool hl_is_fw_sw_ver_below(struct hl_device *hdev, u32 fw_sw_major, u32 fw_sw_minor)
--{
--	if (hdev->fw_sw_major_ver < fw_sw_major)
--		return true;
--	if (hdev->fw_sw_major_ver > fw_sw_major)
--		return false;
--	if (hdev->fw_sw_minor_ver < fw_sw_minor)
--		return true;
--	return false;
--}
--
--static inline bool hl_is_fw_sw_ver_equal_or_greater(struct hl_device *hdev, u32 fw_sw_major,
--							u32 fw_sw_minor)
--{
--	return (hdev->fw_sw_major_ver > fw_sw_major ||
--			(hdev->fw_sw_major_ver == fw_sw_major &&
--					hdev->fw_sw_minor_ver >= fw_sw_minor));
--}
--
- /*
-  * Kernel module functions that can be accessed by entire module
-  */
-@@ -3919,6 +3900,7 @@ void hl_mmu_dr_flush(struct hl_ctx *ctx);
- int hl_mmu_dr_init(struct hl_device *hdev);
- void hl_mmu_dr_fini(struct hl_device *hdev);
- 
-+int hl_fw_version_cmp(struct hl_device *hdev, u32 major, u32 minor, u32 subminor);
- int hl_fw_load_fw_to_device(struct hl_device *hdev, const char *fw_name,
- 				void __iomem *dst, u32 src_offset, u32 size);
- int hl_fw_send_pci_access_msg(struct hl_device *hdev, u32 opcode, u64 value);
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-index fa1c4feb9f89..ba1518f2bf5c 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-@@ -2601,6 +2601,8 @@ static int gaudi2_set_fixed_properties(struct hl_device *hdev)
- 
- 	prop->hbw_flush_reg = mmPCIE_WRAP_SPECIAL_GLBL_SPARE_0;
- 
-+	prop->supports_advanced_cpucp_rc = true;
-+
- 	return 0;
- 
- free_qprops:
-@@ -3308,8 +3310,6 @@ static int gaudi2_late_init(struct hl_device *hdev)
- 	struct gaudi2_device *gaudi2 = hdev->asic_specific;
- 	int rc;
- 
--	hdev->asic_prop.supports_advanced_cpucp_rc = true;
--
- 	rc = hl_fw_send_pci_access_msg(hdev, CPUCP_PACKET_ENABLE_PCI_ACCESS,
- 					gaudi2->virt_msix_db_dma_addr);
- 	if (rc) {
-@@ -3783,7 +3783,7 @@ static int gaudi2_sw_init(struct hl_device *hdev)
- 	prop->supports_compute_reset = true;
- 
- 	/* Event queue sanity check added in FW version 1.11 */
--	if (hl_is_fw_sw_ver_below(hdev, 1, 11))
-+	if (hl_fw_version_cmp(hdev, 1, 11, 0) < 0)
- 		hdev->event_queue.check_eqe_index = false;
- 	else
- 		hdev->event_queue.check_eqe_index = true;
-@@ -6314,26 +6314,6 @@ static void gaudi2_execute_hard_reset(struct hl_device *hdev)
- 	WREG32(mmPSOC_RESET_CONF_SW_ALL_RST, 1);
- }
- 
--static int gaudi2_get_soft_rst_done_indication(struct hl_device *hdev, u32 poll_timeout_us)
--{
--	int i, rc = 0;
--	u32 reg_val;
--
--	for (i = 0 ; i < GAUDI2_RESET_POLL_CNT ; i++)
--		rc = hl_poll_timeout(
--			hdev,
--			mmCPU_RST_STATUS_TO_HOST,
--			reg_val,
--			reg_val == CPU_RST_STATUS_SOFT_RST_DONE,
--			1000,
--			poll_timeout_us);
--
--	if (rc)
--		dev_err(hdev->dev, "Timeout while waiting for FW to complete soft reset (0x%x)\n",
--				reg_val);
--	return rc;
--}
--
- /**
-  * gaudi2_execute_soft_reset - execute soft reset by driver/FW
-  *
-@@ -6346,23 +6326,8 @@ static int gaudi2_get_soft_rst_done_indication(struct hl_device *hdev, u32 poll_
- static int gaudi2_execute_soft_reset(struct hl_device *hdev, bool driver_performs_reset,
- 						u32 poll_timeout_us)
- {
--	int rc;
--
--	if (!driver_performs_reset) {
--		if (hl_is_fw_sw_ver_below(hdev, 1, 10)) {
--			/* set SP to indicate reset request sent to FW */
--			WREG32(mmCPU_RST_STATUS_TO_HOST, CPU_RST_STATUS_NA);
--
--			WREG32(mmGIC_HOST_SOFT_RST_IRQ_POLL_REG,
--				gaudi2_irq_map_table[GAUDI2_EVENT_CPU_SOFT_RESET].cpu_id);
--
--			/* wait for f/w response */
--			rc = gaudi2_get_soft_rst_done_indication(hdev, poll_timeout_us);
--		} else {
--			rc = hl_fw_send_soft_reset(hdev);
--		}
--		return rc;
--	}
-+	if (!driver_performs_reset)
-+		return hl_fw_send_soft_reset(hdev);
- 
- 	/* Block access to engines, QMANs and SM during reset, these
- 	 * RRs will be reconfigured after soft reset.
-@@ -7914,7 +7879,7 @@ static bool gaudi2_handle_ecc_event(struct hl_device *hdev, u16 event_type,
- 	bool has_block_id = false;
- 	u16 block_id;
- 
--	if (!hl_is_fw_sw_ver_below(hdev, 1, 12))
-+	if (hl_fw_version_cmp(hdev, 1, 12, 0) >= 0)
- 		has_block_id = true;
- 
- 	ecc_address = le64_to_cpu(ecc_data->ecc_address);
-@@ -8165,13 +8130,7 @@ static void gaudi2_ack_module_razwi_event_handler(struct hl_device *hdev,
- 		}
- 
- 		hbw_rtr_id = gaudi2_tpc_initiator_hbw_rtr_id[module_idx];
--
--		if (hl_is_fw_sw_ver_below(hdev, 1, 9) &&
--				!hdev->asic_prop.fw_security_enabled &&
--				((module_idx == 0) || (module_idx == 1)))
--			lbw_rtr_id = DCORE0_RTR0;
--		else
--			lbw_rtr_id = gaudi2_tpc_initiator_lbw_rtr_id[module_idx];
-+		lbw_rtr_id = gaudi2_tpc_initiator_lbw_rtr_id[module_idx];
- 		break;
- 	case RAZWI_MME:
- 		sprintf(initiator_name, "MME_%u", module_idx);
-@@ -10070,7 +10029,7 @@ static void gaudi2_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_ent
- 		error_count = gaudi2_handle_pcie_drain(hdev, &eq_entry->pcie_drain_ind_data);
- 		reset_flags |= HL_DRV_RESET_FW_FATAL_ERR;
- 		event_mask |= HL_NOTIFIER_EVENT_GENERAL_HW_ERR;
--		if (hl_is_fw_sw_ver_equal_or_greater(hdev, 1, 13))
-+		if (hl_fw_version_cmp(hdev, 1, 13, 0) >= 0)
- 			is_critical = true;
- 		break;
- 
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
