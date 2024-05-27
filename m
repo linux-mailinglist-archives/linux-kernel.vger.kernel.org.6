@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-190644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDCB8D00DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:03:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131BC8D00E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7446D1F23C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5B0FB24F32
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025A715F316;
-	Mon, 27 May 2024 12:58:20 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD4115F41B;
+	Mon, 27 May 2024 12:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xyHfZBAP"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916DF15ECCD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EE115ECE4;
+	Mon, 27 May 2024 12:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814699; cv=none; b=ijYm9O2WM1/Qc7haVhFpCTpv2JMnNJscREl3ndSvMdL46zhEE2tJoum1aaBseCpIP6ejSVG6ofk2VzdZKnrTcfyvarobxScQfgejN1MYC0lahsJsQIipxI0+rgp2O0Yo7IpNPhUesIOMZvA1XQExeZyO1vkO1MRswat7WwPYbog=
+	t=1716814733; cv=none; b=kPtJ7T27rEL3d0LrY3R4I/7Sj3np0TaMpGexzkCwySCAJqaB5VIINIJTWhUtj+AnOw13bYUMspHNYg7EVI01HAyAtEfKrE+oA9SZ3NnHNUzfQM2mKAmrRBac/9DluUeh9edFRtQzC68xHEdyAIhrJT238ifLKQHrhAxnQ4ooRRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814699; c=relaxed/simple;
-	bh=v0J+sOVDHQy2wLhWEYp0vZ3fGEo6tOMovB9cWlyGRcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iXhyaC30r3jY13/+ZlYBDewA4/+0pEmHfJKtIHOvr3o7D8Jgl640yHtoxT3TtOs1fb/NOS1YoN/b4voL8FzL0NubQ/K4CGiKVARQiPhzg1plF592hH63SVAOkZOLeQAN3PqmpVNe3fdYt3Hn2mO7mAzJILJugbKDc9/JF1g9u9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C3D620008;
-	Mon, 27 May 2024 12:58:15 +0000 (UTC)
-Message-ID: <2e092f39-0716-4b73-9268-da9211a4b600@ghiti.fr>
-Date: Mon, 27 May 2024 14:58:14 +0200
+	s=arc-20240116; t=1716814733; c=relaxed/simple;
+	bh=Y5EStVtK5WBwaVqJnTBpsLDGG9CDOGGAhpofJDguFsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AM9dU4cLOUMbVsGu2JLfRERJfqrcjMRpVGq205lCcPkKzJh72qeSjj2AJaUZUK0wfQwxnHj9Hc5k/Go3RfBWs78kReLwcvh0t4ILY/6ad5MUcSiqjxUgHRsFls3GRs3lPoLGW1zct9Q7ZFwCyoMY+k4gFCX15dNGhYG8YXdwsYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xyHfZBAP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LizxiP53j7D2NoPkmTsvm1+adARrQRUkvK742gCLD4s=; b=xyHfZBAP16UcddrMhJmpJz3Jd6
+	5ksXFxX2gBhXrU2IeCQijkzwenNq+TDmDH9VGK7TboOMDwG6iZxIGJNrLoqEbpsomJR8y9g+jzRFg
+	LImskVT7Q6JV9hTwFqhDDEvFt+gLbWJZ9KZ4c+Q5DSbZd3tX+TOoWMywiF6cmQKJyRlP9OlgF+jeA
+	NGJfpZJflKTevGmnksZ4mPAPSI5L/hbzRO39rLbPts2lpLKLQjz+Bd5O8SkOWimf2xJ2yoAciiMIY
+	O4QdhHFpiEX88VxN5edNdV+Kz88wcLesD3dKy2xO9CLfNB7pMt00b+vOgCjzEfI6VZ1xbgrdb9OUh
+	KO6+F1kg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBZwA-0000000EysS-0LnS;
+	Mon, 27 May 2024 12:58:50 +0000
+Date: Mon, 27 May 2024 05:58:50 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Sukrit.Bhatnagar@sony.com" <Sukrit.Bhatnagar@sony.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Pavel Machek <pavel@ucw.cz>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
+Message-ID: <ZlSDinoWgqLt21QD@infradead.org>
+References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
+ <Zk+c532nfSCcjx+u@duo.ucw.cz>
+ <TYAPR01MB4048D805BA4F8DEC1A12374DF6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
+ <ZlRseMV1HgI4zXNJ@infradead.org>
+ <TYAPR01MB40481A5A5DC3FA97917404E2F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] riscv: remove limit on the size of read-only section
- for XIP kernel
-Content-Language: en-US
-To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel test robot <lkp@intel.com>
-References: <cover.1715286093.git.namcao@linutronix.de>
- <9eea4b61f7b6300def3b6582d8e465ef4207501e.1715286093.git.namcao@linutronix.de>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <9eea4b61f7b6300def3b6582d8e465ef4207501e.1715286093.git.namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYAPR01MB40481A5A5DC3FA97917404E2F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Mon, May 27, 2024 at 12:51:07PM +0000, Sukrit.Bhatnagar@sony.com wrote:
+> In my understanding, the resume offset in hibernate is used as follows.
+> 
+> Suspend
+> - Hibernate looks up the swap/swapfile using the details we pass in the
+>   sysfs entries, in the function swsusp_swap_check():
+>   * /sys/power/resume - path/uuid/major:minor of the swap partition (or
+>                         non-swap partition for swapfile)
+>   * /sys/power/resume_offset - physical offset of the swapfile in that
+>                                partition
+>   * If no resume device is specified, it just uses the first available swap!
+> - It then proceeds to write the image to the specified swap.
+>   (The allocation of swap pages is done by the swapfile code internally.)
 
-On 10/05/2024 08:28, Nam Cao wrote:
-> XIP_OFFSET is the hard-coded offset of writable data section within the
-> kernel.
->
-> By hard-coding this value, the read-only section of the kernel (which is
-> placed before the writable data section) is restricted in size. This causes
-> build failures if the kernel get too big (an example is in Closes:).
+Where "it" is userspace code?  If so, that already seems unsafe for
+a swap device, but definitely is a no-go for a swapfile.
 
-s/get/gets
+> - Hibernate gets the partition and offset values from kernel command-line
+>   parameters "resume" and "resume_offset" (which must be set from
+>   userspace, not ideal).
 
-I think you can use:
-
-Closes: https://lore.kernel.org/oe-kbuild-all/202404211031.J6l2AfJk-lkp@intel.com/ [1]
-
-And instead use:
-
-s/an example is in Closes:/[1]
-
-
->
-> Remove this limit.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202404211031.J6l2AfJk-lkp@intel.com/
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
->   arch/riscv/include/asm/pgtable.h    | 7 -------
->   arch/riscv/kernel/vmlinux-xip.lds.S | 4 ++--
->   2 files changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index fbf342f4afee..75f4a92ea5bb 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -104,13 +104,6 @@
->   
->   #endif
->   
-> -#ifdef CONFIG_XIP_KERNEL
-> -#define XIP_OFFSET		SZ_32M
-> -#define XIP_OFFSET_MASK		(SZ_32M - 1)
-> -#else
-> -#define XIP_OFFSET		0
-> -#endif
-> -
->   #ifndef __ASSEMBLY__
->   
->   #include <asm/page.h>
-> diff --git a/arch/riscv/kernel/vmlinux-xip.lds.S b/arch/riscv/kernel/vmlinux-xip.lds.S
-> index 8c3daa1b0531..01f73f2ffecc 100644
-> --- a/arch/riscv/kernel/vmlinux-xip.lds.S
-> +++ b/arch/riscv/kernel/vmlinux-xip.lds.S
-> @@ -65,10 +65,10 @@ SECTIONS
->    * From this point, stuff is considered writable and will be copied to RAM
->    */
->   	__data_loc = ALIGN(PAGE_SIZE);		/* location in file */
-> -	. = KERNEL_LINK_ADDR + XIP_OFFSET;	/* location in memory */
-> +	. = ALIGN(SZ_2M);			/* location in memory */
-
-
-You can't use SZ_2M here since it corresponds to PMD_SIZE for rv64 but 
-on rv32 (which is allowed to use xip kernels), it's 4MB. Use 
-SECTION_ALIGN instead.
-
-
->   
->   #undef LOAD_OFFSET
-> -#define LOAD_OFFSET (KERNEL_LINK_ADDR + XIP_OFFSET - (__data_loc & XIP_OFFSET_MASK))
-> +#define LOAD_OFFSET (KERNEL_LINK_ADDR + _sdata - __data_loc)
->   
->   	_sdata = .;			/* Start of data section */
->   	_data = .;
-
-When the above comment is fixed, you can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-And many thanks for this big cleanup.
-
-Alex
+Or is it just for these parameters?  In which case we "only" need to
+specify the swap file, which would then need code in the file system
+driver to resolve the logical to physical mapping as swap files don't
+need to be contiguous.
 
 
