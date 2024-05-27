@@ -1,146 +1,121 @@
-Return-Path: <linux-kernel+bounces-191477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDB18D1019
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:14:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029018D101C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AC91C218D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98AB71F21BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5F61667EE;
-	Mon, 27 May 2024 22:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA6C167264;
+	Mon, 27 May 2024 22:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="IGHQr9is"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TG3kesYE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC275161B58
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7352052F6D;
+	Mon, 27 May 2024 22:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716848069; cv=none; b=FAf6uJgXtOR1oyhWpj+akq7oLi5URlfc4F60P9Vz8ffOkkcDZLh0NjZv/n3S4SFQXOzTXZr4vAkht2iFlIF0tdgDuN6a5NfMS4Lrlzlexckg2EhpiVc141i8mulV4Wd+StEdgQ2ylrD4rcT9ShBGGkCHVQ6TNBghJkxqoDHhBgE=
+	t=1716848084; cv=none; b=TTlIupnyufbY18xKfTNLEYOoqq3qsjQ46LWVLiNNXz4OGriap31xGV3HGZLK+csaFkt3MEN3ntPjwY3/rtSti3CjQ8NKOYQEYe6spfTMxQdfxurB1TlS8tXT/K1i7zPC0H1bRzIzLmwqYkY9AFLYdz4NJB3OMqC+2d1nQkGBm+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716848069; c=relaxed/simple;
-	bh=HXu8FO1ScNVR3jbl9HR/Vt1CMWulFYMmliuYqg76wkw=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hRSvsMWF/DS+2wyGTgIoPKnuyvxwlPTZv8//sh5/Y3BwjheK6W6L8er1VGkd3j9k48Xq45dM12umgdxI8Xt8iW/piOWvX9QJjB6ynYTZnqG1Sc61aT8vhDpdZ4HT3MgrVYEFtu6j1dKs8Pn0oNmvAyChuFP88ukFRPf6UHvEPkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=IGHQr9is; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: heiko@sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1716848065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YnZ/NUIKzPnirf4nzS8FsKuGvYh2MR991UL4fFHPwO0=;
-	b=IGHQr9iszj6g7WZYaa2WxnCqObS9wjX+wmrILoqd0qwIfKD7ZV1Gy9wcIX0s3yRYOUw9g7
-	spQvOraVGUghBymnz2UaYZZQa1Qh0T86Cd5SIYEb5lsQTuMQxsKPiZsAMz0PR8dsXNb6u4
-	saUafCkEbA+yf0Ftk/AYo1iPgdym15rTqitQNvFfUXMANtcUR9UquykghQKNfFUuzJ0XqS
-	tC0j1hpFWd1P82j3ZKHHH1kMDiR+26hAgjlFdTV4ATw4Yb6Ebpe/Iv2f3GX+gVIG5/AuPJ
-	tK/B/po651uYGQ8hw3R0zls/uBmcy17wC6qxD8tZUf+sWgGMp9RTi/uL9BITpA==
-X-Envelope-To: stable@vger.kernel.org
-X-Envelope-To: hjc@rock-chips.com
-X-Envelope-To: andy.yan@rock-chips.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Mon, 27 May 2024 19:13:59 -0300
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-Subject: Re: [PATCH v2 1/2] drm/rockchip: vop: clear DMA stop bit upon vblank
- on RK3066
-To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Cc: stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>, Andy Yan
-	<andy.yan@rock-chips.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Message-Id: <BF06ES.TD22854ZPLB92@packett.cool>
-In-Reply-To: <1817371.3VsfAaAtOV@diego>
-References: <2024051930-canteen-produce-1ba7@gregkh>
-	<20240527071736.21784-1-val@packett.cool> <1817371.3VsfAaAtOV@diego>
+	s=arc-20240116; t=1716848084; c=relaxed/simple;
+	bh=MNJ7EaOmKWZ5jc1RxL7pDjEITEQqmj2VizO//tduxEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c36RrasjkdRAkF1AMWfJYrDhLsIy080SmxxIi7uYk0GMaq5jnSbfiGcqHwog7zzDioWJ43xVlGZs8w7jNjyiT1Q2XTBekHTrx6YwIQe0EHdsrIh7Q1qvJG90TkRq9jLNMflTgg3sdIGMjJcoFoRee6YWAhTlzOionkslvbqnM+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TG3kesYE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=P3m1mGGdZuBlv9pNaAOCADsgv4akQAfs3EJqTNO+jgw=; b=TG3kesYEvm/+2MM7UvfaDRcasQ
+	NTFdblKpqDjecRvPwAGqBOR9GwxO4LryY2Gru3qkY2ORNjvgXDlGF2Fi+S/bpcbqUqetdcrtF0xhc
+	eou1LE0qZxiEwW6PpFFuPWplSOCjp9T6PAXowj55gsaphPh7qzv2Cr1Awvf3EpEBwAAM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sBibq-00G6o7-9u; Tue, 28 May 2024 00:14:26 +0200
+Date: Tue, 28 May 2024 00:14:26 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Simon Horman <horms@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
+	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v5 3/3] net: ti: icssg-prueth: Add support for
+ ICSSG switch firmware
+Message-ID: <4f5a6d1b-e209-45b1-acec-ce84ca1c856f@lunn.ch>
+References: <20240527052738.152821-1-danishanwar@ti.com>
+ <20240527052738.152821-4-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527052738.152821-4-danishanwar@ti.com>
 
+On Mon, May 27, 2024 at 10:57:38AM +0530, MD Danish Anwar wrote:
+> Add support for ICSSG switch firmware using existing Dual EMAC driver
+> with switchdev.
+> 
+> Limitations:
+> VLAN offloading is limited to 0-256 IDs.
+> MDB/FDB static entries are limited to 511 entries and different FDBs can
+> hash to same bucket and thus may not completely offloaded
+> 
+> Example assuming ETH1 and ETH2 as ICSSG2 interfaces:
+> 
+> Switch to ICSSG Switch mode:
+>  ip link add name br0 type bridge
+>  ip link set dev eth1 master br0
+>  ip link set dev eth2 master br0
+>  ip link set dev br0 up
+>  bridge vlan add dev br0 vid 1 pvid untagged self
+> 
+> Going back to Dual EMAC mode:
+> 
+>  ip link set dev br0 down
+>  ip link set dev eth1 nomaster
+>  ip link set dev eth2 nomaster
+>  ip link del name br0 type bridge
+> 
+> By default, Dual EMAC firmware is loaded, and can be changed to switch
+> mode by above steps
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>  static int prueth_emac_buffer_setup(struct prueth_emac *emac)
+>  {
+>  	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
+> @@ -321,25 +401,63 @@ static void icssg_init_emac_mode(struct prueth *prueth)
+>  	/* When the device is configured as a bridge and it is being brought
+>  	 * back to the emac mode, the host mac address has to be set as 0.
+>  	 */
+> +	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
+> +	int i;
+>  	u8 mac[ETH_ALEN] = { 0 };
 
+nitpick: Reverse Christmas tree
 
-On Mon, May 27 2024 at 22:43:18 +02:00:00, Heiko St=FCbner=20
-<heiko@sntech.de> wrote:
-> Hi Val,
->=20
-> Am Montag, 27. Mai 2024, 09:16:33 CEST schrieb Val Packett:
->>  On the RK3066, there is a bit that must be cleared, otherwise
->>  the picture does not show up
->> on the display (at least for RGB).
->>=20
->>  Fixes: f4a6de8 ("drm: rockchip: vop: add rk3066 vop definitions")
->>  Cc: stable@vger.kernel.org
->>  Signed-off-by: Val Packett <val@packett.cool>
->>  ---
->>  v2: doing this on vblank makes more sense; added fixes tag
->=20
-> can you give a rationale for this please?
->=20
-> I.e. does this dma-stop bit need to be set on each vblank that happens
-> to push this frame to the display somehow?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-
-The only things I'm 100% sure about:
-
-- that bit is called dma_stop in the Android kernel's header;
-- without ever setting that bit to 1, it was getting set to 1 by the=20
-chip itself, as logging the register on flush was showing a 1 in that=20
-position (it was the only set bit - I guess others aren't readable=20
-after cfg_done?);
-- without clearing it "between" frames, the whole screen is always=20
-filled with noise, the picture is not visible.
-
-The rest is at least a bit (ha) speculative:
-
-As I understand from what the name implies, the hardware sets it to=20
-indicate that it has scanned out the frame and is waiting for=20
-acknowledgment (clearing) to be able to scan out the next frame. I=20
-guess it's a redundant synchronization mechanism that was removed in=20
-later iterations of the VOP hardware block.
-
-I've been trying to see if moving where I clear the bit affects the=20
-sort-of-tearing-but-vertical glitches that sometimes happen, especially=20
-early on after the system has just booted, but that seems to be=20
-completely unrelated pixel clock craziness (the Android kernel runs the=20
-screen at 66 fps, interestingly).
-
-I'm fairly confident that both places are "correct". The reason I'm=20
-more on the side of vblank now is that it made logical sense to me when=20
-I thought about it more: acknowledging that the frame has been scanned=20
-out is a reaction to the frame having been scanned out. It's a=20
-consequence of *that* that the acknowledgment is required for the next=20
-frame to be drawn.
-
-Unless we can get the opinion of someone closely familiar with this=20
-decade-old hardware, we only have this reasoning to go off of :)
-
-~val
->=20
-
-
+    Andrew
 
