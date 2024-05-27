@@ -1,238 +1,124 @@
-Return-Path: <linux-kernel+bounces-190590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563278D001D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6108D0029
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C406E1F2113A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3901C21472
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4502D15E5B8;
-	Mon, 27 May 2024 12:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF8115E5B1;
+	Mon, 27 May 2024 12:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YvmuBDwy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPKZxi1f"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7838FA6;
-	Mon, 27 May 2024 12:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D038FA6;
+	Mon, 27 May 2024 12:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716813336; cv=none; b=U2fw67bobuT4/G0xrkh/CGnZc8dJRX2tStT0kz283dLwbiQBJ6woYXvBl0qyQv/l1pcnM37E0DGamLMJDY4MuSTkWrS3Q9Y6DmE3RvqRCX/0/dmWXObk2YA6fnYrnPyIpar6lNma09HbY8KTig9Cd1g9nj1rjFB0S/UTkgAUEQ8=
+	t=1716813422; cv=none; b=dmbybSiBjYJNoaeRfUyVoCuy2ukqCKZ7zAMVti3ibYlwU76YTmNYiV4ZyYVKp/kWktNSetO39FyoHblCZ3l68xPQtB+5mhsStvWkUu3sZF0PgkLJbz/0M/CJEJ3cj7ZwxxLsET5fFaYzb++vgY1VQu+Pi7pw/95gx5865P8Nqxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716813336; c=relaxed/simple;
-	bh=oDlm0qQbyauU+N/HAOHJE8tfYtnpErh+P14GuxtZC/M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f+76QZIRrNacRJYo4B1HIwdRa+5Ttr2Lrob8RfIq4zwMsvjmGwCIlUxpb/tcRnqdfwVg5jiCaSONKwZKfk0WKOTvQnmRi8qvh9f0XJH7JFJkjkd017noOEUAPa8d626q+YEm3cK2dMtAEPdtlCEhd8s0nQfm4Y9EL4Dv50yynDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YvmuBDwy; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716813335; x=1748349335;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oDlm0qQbyauU+N/HAOHJE8tfYtnpErh+P14GuxtZC/M=;
-  b=YvmuBDwyhnHWTb8pzF3btU4j6J+ecUyyjaSGpaAyelhCbIheMO44lyvc
-   5uVM8VdYP+7ARHcSO6ZSERSggSL1anzVFrDWaE1Gi0HQXegVYuHaWjzAT
-   J0atiQbdA+2ZU5+0iPLseVCTsdd9vhGdiGByjnZnEB9gatk5dMX2/A3Ut
-   4E5EwY7Cdx81NnaN7j4SAF1jub9hpn3Kwo6jYqzS6sN9H1RR13e9pihs4
-   TXI557K74h1m6xUsjRPtxGiByy5zl6IYY5B51vHM5AonItZvL8YkQLb5R
-   2nQX9cX1xWa4jXvHMbSfv0Xki35qlBQsMIaeg5s8rBsZTzWfj4YEKkVGB
-   Q==;
-X-CSE-ConnectionGUID: FxBAM9RDQwaw0SypCKfU1Q==
-X-CSE-MsgGUID: TAr/TF+7T4a4lD5BDYmbgg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="38514607"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="38514607"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 05:35:34 -0700
-X-CSE-ConnectionGUID: 3QMiM5bJQWKM+fI13JCZlA==
-X-CSE-MsgGUID: z6zUzARgR+iOuF/FOfQzYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="39741828"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.138])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 05:35:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ben Widawsky <bwidawsk@kernel.org>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] cxl/pci: Convert PCIBIOS_* return codes to errnos
-Date: Mon, 27 May 2024 15:34:02 +0300
-Message-Id: <20240527123403.13098-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716813422; c=relaxed/simple;
+	bh=wRFP8S2fE4xivjqQVPOI2HxthRP0YWGnVBSIpwhEIqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDgq6TkBoEHMNlde6Np0YOgaZzouJtGKKYJXHJuQFF47IdTvMe9c+TDGhz9S/BlfVIf087ZOd4puEu0dBumHE/sFVAxSjkmpGbmDsSF74JBnqX19ByzLY2APqYzMG+fuzv8ZaUS+SzyimCUx5g4qRgjBpSQgXGfz8bZYk1R8sm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPKZxi1f; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e24b38c022so148751939f.0;
+        Mon, 27 May 2024 05:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716813420; x=1717418220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xDxrXBc9LQxklL06A0LeabV2mZ6SgqSB+i2/2QkjT0=;
+        b=hPKZxi1fd31tfyGyZoqeuqQxFA9I1Iyi3UWutKdpe8zVX5xeEQikyl93fRjc3R3tgT
+         d5hjWDmTMigFWiEtk+Z+XcF1wAAuUODAv9m+F0Y1u6pjqEJmbSyCjsUyuU76O7/O+m09
+         yWDCIvhHFnEaV4SQhz3lpFylcchshJMkIs0/2CrNSGBnTeR9dbK7+SijKdxt7aTmEhsT
+         JhDtykKjNgouiX8x0NyN5J+I/rYgrP4Lh3a0hbDMT6s5okVkCBDQeww5sMPNb0fwnhZu
+         6EvksS/XtOQ0HwhM0tWz21ja9me9PbXq/tkvAlsIbFVoYdbarEDabKgQx1tU6RsVgpNW
+         TqRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716813420; x=1717418220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xDxrXBc9LQxklL06A0LeabV2mZ6SgqSB+i2/2QkjT0=;
+        b=RrII68Dejbq1HkF4fydL3l0VZhtEv8gCoDLKLUDXccotD4FRoUa7m9nBS/BaGLlKBQ
+         mEHtMmX/Au2gSKMXDbHXuFVbaYBOAjJihzZUEd78ZF9Gt4h81c05ghX8b9qLiIHvc1Yj
+         9yFZuuC0jO6Rxh4h4ynBb3F/w4RG3tT3DenYXINsKfpn2yL8qlyYTGwHkgnSbUqVp1iA
+         gc7fPzYe2QL0fMsRGqN2WnHiYnkFPrCp6+kUlHWx6kqAOPIYI/RbfsgkujcPoJOCzwQO
+         BST8vDrkQTac8c+0k4YRil5sNBpllW7GfA79XtFY9ITLHA2PxgrUUCrzWx5gB6IjE2HB
+         Jotg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKuZDLZTnSxVXsONjJbkb6561ADMeArUcWrh3jB6C/oUcMY6mevPGugd1D5vpcmz6quVLLVqe/gblNAnwONLnKg8bloNRtB5pIkOXweY2S0x4CSXXevhncSgb7vYqLeNzmZD+CJWC9
+X-Gm-Message-State: AOJu0YwisCo0QUiBZYhStt0KNRjJ/gOpfvXJCwLp/8+qqK4qxLvgPvRD
+	6OGaHKEKeEE41b9AnjchzDtdQ1EOslNRumBcGImJqrrzyGP0qIUODgmq/SGPnoyypunhTV0ixto
+	4cgeb45AQJKEnJrgijpskPF5fLOM=
+X-Google-Smtp-Source: AGHT+IEbenEcD+K7Us/kByyWtAmMBYYHVQCv6uadqsaIVTfah+m3rW87L6fvsdS5x3c0A9QwWYL3fjR0c4Rd9rc00VY=
+X-Received: by 2002:a05:6e02:1c02:b0:372:1434:8241 with SMTP id
+ e9e14a558f8ab-3734aaff46dmr95389355ab.13.1716813419885; Mon, 27 May 2024
+ 05:36:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240424164725.GA18760@francesco-nb> <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
+In-Reply-To: <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 27 May 2024 20:36:48 +0800
+Message-ID: <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power saving
+To: Mark Brown <broonie@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, 
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pci_{read,write}_config_*word() and pcie_capability_read_word() return
-PCIBIOS_* codes, not usual errnos.
+On Mon, May 27, 2024 at 8:24=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
+> > On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> > > Add pm_runtime support for power saving. In pm runtime suspend
+> > > state the registers will be reseted, so add registers save
+> > > in pm runtime suspend and restore them in pm runtime resume.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> >
+> > Is this introducing a regression?
+> >
+> >   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+> >   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code=
+ 0x00000000bf000002 -- SError
+> >   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 =
+Not tainted 6.9.0-rc5-next-20240424 #1
+> >   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin =
+iMX8M Plus on Dahlia Board (DT)
+>
+> I am now seeing this failure in mainline on both the above board and
+> i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
+> landed for -rc1, both boards crash as above.  What's the plan for
+> getting this fixed, should the patch be reverted for now?
 
-Fix return value checks to handle PCIBIOS_* return codes correctly by
-dropping < 0 from the check and convert the PCIBIOS_* return codes into
-errnos using pcibios_err_to_errno() before returning them.
+https://lore.kernel.org/all/CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=3D8ssBJ9ogSvqG=
+1dzMZA@mail.gmail.com/
 
-Fixes: ce17ad0d5498 ("cxl: Wait Memory_Info_Valid before access memory related info")
-Fixes: 34e37b4c432c ("cxl/port: Enable HDM Capability after validating DVSEC Ranges")
-Fixes: 14d788740774 ("cxl/mem: Consolidate CXL DVSEC Range enumeration in the core")
-Fixes: 560f78559006 ("cxl/pci: Retrieve CXL DVSEC memory info")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/cxl/core/pci.c | 30 +++++++++++++++---------------
- drivers/cxl/pci.c      |  2 +-
- 2 files changed, 16 insertions(+), 16 deletions(-)
+fixed is merged,  but may not in v6.10-rc1. Should anybody help to cherry-p=
+ick?
 
-diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-index 8567dd11eaac..9ca67d4e0a89 100644
---- a/drivers/cxl/core/pci.c
-+++ b/drivers/cxl/core/pci.c
-@@ -121,7 +121,7 @@ static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
- 					   d + CXL_DVSEC_RANGE_SIZE_LOW(id),
- 					   &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		valid = FIELD_GET(CXL_DVSEC_MEM_INFO_VALID, temp);
- 		if (valid)
-@@ -155,7 +155,7 @@ static int cxl_dvsec_mem_range_active(struct cxl_dev_state *cxlds, int id)
- 		rc = pci_read_config_dword(
- 			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(id), &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		active = FIELD_GET(CXL_DVSEC_MEM_ACTIVE, temp);
- 		if (active)
-@@ -188,7 +188,7 @@ int cxl_await_media_ready(struct cxl_dev_state *cxlds)
- 	rc = pci_read_config_word(pdev,
- 				  d + CXL_DVSEC_CAP_OFFSET, &cap);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
- 	for (i = 0; i < hdm_count; i++) {
-@@ -225,7 +225,7 @@ static int wait_for_valid(struct pci_dev *pdev, int d)
- 	 */
- 	rc = pci_read_config_dword(pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(0), &val);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	if (val & CXL_DVSEC_MEM_INFO_VALID)
- 		return 0;
-@@ -234,7 +234,7 @@ static int wait_for_valid(struct pci_dev *pdev, int d)
- 
- 	rc = pci_read_config_dword(pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(0), &val);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	if (val & CXL_DVSEC_MEM_INFO_VALID)
- 		return 0;
-@@ -250,8 +250,8 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
- 	int rc;
- 
- 	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
--	if (rc < 0)
--		return rc;
-+	if (rc)
-+		return pcibios_err_to_errno(rc);
- 
- 	if ((ctrl & CXL_DVSEC_MEM_ENABLE) == val)
- 		return 1;
-@@ -259,8 +259,8 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
- 	ctrl |= val;
- 
- 	rc = pci_write_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, ctrl);
--	if (rc < 0)
--		return rc;
-+	if (rc)
-+		return pcibios_err_to_errno(rc);
- 
- 	return 0;
- }
-@@ -336,11 +336,11 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
- 
- 	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CAP_OFFSET, &cap);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	if (!(cap & CXL_DVSEC_MEM_CAPABLE)) {
- 		dev_dbg(dev, "Not MEM Capable\n");
-@@ -379,14 +379,14 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
- 		rc = pci_read_config_dword(
- 			pdev, d + CXL_DVSEC_RANGE_SIZE_HIGH(i), &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		size = (u64)temp << 32;
- 
- 		rc = pci_read_config_dword(
- 			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(i), &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		size |= temp & CXL_DVSEC_MEM_SIZE_LOW_MASK;
- 		if (!size) {
-@@ -400,14 +400,14 @@ int cxl_dvsec_rr_decode(struct device *dev, int d,
- 		rc = pci_read_config_dword(
- 			pdev, d + CXL_DVSEC_RANGE_BASE_HIGH(i), &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		base = (u64)temp << 32;
- 
- 		rc = pci_read_config_dword(
- 			pdev, d + CXL_DVSEC_RANGE_BASE_LOW(i), &temp);
- 		if (rc)
--			return rc;
-+			return pcibios_err_to_errno(rc);
- 
- 		base |= temp & CXL_DVSEC_MEM_BASE_LOW_MASK;
- 
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index e53646e9f2fb..0ec9cbc64896 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -540,7 +540,7 @@ static int cxl_pci_ras_unmask(struct pci_dev *pdev)
- 
- 	rc = pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap);
- 	if (rc)
--		return rc;
-+		return pcibios_err_to_errno(rc);
- 
- 	if (cap & PCI_EXP_DEVCTL_URRE) {
- 		addr = cxlds->regs.ras + CXL_RAS_UNCORRECTABLE_MASK_OFFSET;
--- 
-2.39.2
-
+Best regards
+Shengjiu Wang
 
