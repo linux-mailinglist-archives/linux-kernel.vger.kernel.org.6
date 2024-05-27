@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-190111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0A58CF99F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94988CF9A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160CB1F214AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85538281462
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3716717BA7;
-	Mon, 27 May 2024 06:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8293E17BA7;
+	Mon, 27 May 2024 07:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhgABS/M"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zLAcWfkI"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DC02836A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E2A1426C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716793017; cv=none; b=ijStH198BrdHMYxmJgLYB/vqH54BhKXpQ5rKCIJG/KdejQ6ysFvw//3ziQhSiE99j/EZE6Cay6hqOpHVMlYFz1UBYbTQS0w0IrsiCFKQogHvaFml1xKfHvoaT+nbWu//Q1rWLzyjmNYo8NHHziONpzXoRQTJbHX4CNMc0xx93eU=
+	t=1716793249; cv=none; b=XYUA1mPaxxKfaTowrGFjSptM1M2x2u9P///T0D53xpQESiXhCWp5rs3CW/AaGTBsVApCDb9HXBMYh9y5mK7e31QAxlrKj1fakdaLXjelcvKF+WNWx28MQbrpnC6OnygJHxCzC1v8YF7DVnVhISll3l53gncUCdidgZ1L8515MEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716793017; c=relaxed/simple;
-	bh=Ip3HyV+TwixV9ZJHQtqhXEVzHgpB9zQHR+NAaT+7PG8=;
+	s=arc-20240116; t=1716793249; c=relaxed/simple;
+	bh=ZBjRRGQfKQl5/b05tZA4zkWp+A2rO2OQzVfREOizFgI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rbAPOZqh2dhiHydBAQGiF3hq2U8kh/TG4di/hNX4VczM7YZwLyeEDtlST5WCyu94EE7IxLsSN8+DLxSfyPIK26Qa78A5ZNNqrWs8XsyHNbDcM2utMERfoxCr9bW+HSCMUf5OmpxV6fdYVq6TK0hOXc48TwZNdxmyWXLT1dipxHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WhgABS/M; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:Content-Type; b=LfIVilkQZ/HhK2jh+sy4zAuy0MV4qkUC2kE99tSTLVwYKWuN7dowDArCNARw89zGiSKvYMhmoHDnfrclUG611amDKoGFLFLysxYdINA/KtU2TUeEVZZxDkj6AvEdS6Y2Yhla6A98bTA9ecfDj8eybKoscj2YyvUbQosku0AvFOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zLAcWfkI; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-529aa4e988aso1495469e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 23:56:55 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57863a8f4b2so2379349a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:00:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716793014; x=1717397814; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716793246; x=1717398046; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gZ09OIEijtK7C2A3jYTqDcFl+COEux6T8i6drV3crdQ=;
-        b=WhgABS/MNGu+bQUmPyhuxHNFsuW6Yn4TtL5wDgDiXuS19/7VBZqcIUveff49LS7iT0
-         YH+8DNoByzTHahQe/QXhzkqBnTRoMWhpWXyouZ1iL1DsEflWjvXfo3pC5I2t8znt6VBn
-         MRS1HZNFP5H2MN8biligUIN196ungPL1kQpGDH2roOJMt7qWpIrMwy0D4lSIZLDU4xFs
-         tpKxzKUGWO4JCBji+rZtuJmfaKg/MkSmZIsq+JDyfPcdS0ffjNErGI0I5cXclSIHQOEb
-         QndD9nTERRXrx67UBkkaJLHhqYXOtUl+oqJ/dE5qWUmsy/YzOpCmilMpmI9gCZmw21iy
-         JKQw==
+        bh=O8uegtVJ9to2aA6iQ6J2dzPoiPz/JfrWOXr2v1sY4RA=;
+        b=zLAcWfkIdisVcpIalxEhBdjbELZvQbQQl0atM7L7fEqmUBxOfRSIrcZwo8Zv0hsPDS
+         G3V8iYZNraBFrjDAsZD3k0u4IUeVHm8SQOu2iWmJ9fiaZceZT/0SU87YJjRzTzrhu63L
+         slwYDT1P4jGyHbMIqM+xYV985SJ8ESQCNX1MEqqVzm/r9HgGVHNbDZwBtQYmfRu976+6
+         zqAaFDWuYxZw+eAgzZINwHLcfxZIlHPKT2IyT8W5fAnvfqBH7tOPNUCJ2ikRUGbSpUmE
+         00c32/DJwy4BzrAt8VnVrVfErdcsGXZKk8UQHgPMuJa1MULMo+S9fS1J4ww665G3eMe+
+         whog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716793014; x=1717397814;
+        d=1e100.net; s=20230601; t=1716793246; x=1717398046;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gZ09OIEijtK7C2A3jYTqDcFl+COEux6T8i6drV3crdQ=;
-        b=l0T9hsrF2YmaEa24t+T38KQ9wtK0lZQNMBg5ZrzRNoDrBFcCapNZyOXv4JkVOoSdQa
-         hPWDh6/9wGwhRlJ3xwNS8k58nQcCr20jeaEIdmLSW4qkNqqjncfFLOlQDFz+1JyyfbWZ
-         VQK/AnHLsUtCAqMmx1kThsQrM49cVevYvwbB/yMRl7rl5Gg4HvdxzMb3JO8shUrFUNHD
-         aAJ0eGRqJqF13P8EEIzbV1x/TWJKBYKFIAYdoEPMq6jkB+TP8GDnfVwecqsNAZMBA8+Z
-         unai4mpLuhITH5Ar8Bv57rysdk2o1AVMu6e6Ghnpd8nPsmKBWvBj57e2QCk8r1scIcga
-         GT8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfmY6WZPNZaVJ4+gJ28B8v93RzI/DhL3/rtf6273rSbidwEnnoyDCSpAl8OIGTR9ecxuGURAlyijQwEQtcq2UslqZBsbmZn6F4S4yN
-X-Gm-Message-State: AOJu0Yw8l1CWA9yGxF7iXmZvVJ4WUzYZcWT17yoiETjvVNVHY4wZLn36
-	S8I8MggEFl3C9S0IGzEM4HDLvNJyjg3Kfhbmmnm4e+GTyfDfjMtGtNmGRux5LAY=
-X-Google-Smtp-Source: AGHT+IEksji+C8SdKEcN0/ERudcieW1rIvO6gteM7TN0sGfhxja4qB8gUnNjhftbdS6zTM1idUY6OQ==
-X-Received: by 2002:a05:6512:110f:b0:51c:6c59:627e with SMTP id 2adb3069b0e04-529661f2c34mr6606138e87.42.1716793014216;
-        Sun, 26 May 2024 23:56:54 -0700 (PDT)
+        bh=O8uegtVJ9to2aA6iQ6J2dzPoiPz/JfrWOXr2v1sY4RA=;
+        b=Z6pJoc8s9rwZ3jcBUNKKaPrbz6kGkku4Fkdpwx5I+aGGUi9lsTLT3ial95PW7Y8i3U
+         WJ/VrMs3SCMkqT+MmHnNp1xqQrMnqNX4w11sZja0h+pVOeWYz5QVqJNK/yGX1bjXBJx7
+         Y5/xjbOOzMhCh/GFH4bJaZkYxKdH/QjpAgpew7NSNr+uo8JlvmQZJY+Y6KxclQiUMAO+
+         rNT4I/+jEVNh+sSNoVClTipBmo6EebsBUPQ9DBfiwPzCi9/RPDm26WSfVlCkiLC86UEq
+         9SKkG1b08MHBaCsNLS0tK978XteMVxK3ByC5VOU/0+FF1xfZlsxbczfkRq4RZUknbF8q
+         JEuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuve0TmZFFdnBU0v/1GzcI51V2j50YiD4fCqSMO43bdmEYR020mvG7I0K9e3t1DATFdPbagDWQL1b0Mk4MT1bw0qRxLIy9cnuC/Jx4
+X-Gm-Message-State: AOJu0YwlMpoBJ7rR/I5V2xM4tokAroULAfqzmQ53vKlxZsLB/5OU/LXI
+	FNYur9k//I8THsT4s0TxAHBY2WztCwWIds3neE+iOvnzYNKdjAy7WILDnjxyMDI=
+X-Google-Smtp-Source: AGHT+IGaeKhVHOqbW9aadAG0MXQb/uFbWeIPaa2CekoIThD5I6huDQAkltmyjKbIoa9Tfw7bxF5UQg==
+X-Received: by 2002:a17:906:adcb:b0:a62:8ee2:16c1 with SMTP id a640c23a62f3a-a628ee217f7mr385665266b.54.1716793246465;
+        Mon, 27 May 2024 00:00:46 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c81773bsm458298366b.30.2024.05.26.23.56.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817974sm457554866b.25.2024.05.27.00.00.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 May 2024 23:56:53 -0700 (PDT)
-Message-ID: <1b691b03-1d2c-48ee-9907-dc043ea1ed5d@linaro.org>
-Date: Mon, 27 May 2024 08:56:52 +0200
+        Mon, 27 May 2024 00:00:45 -0700 (PDT)
+Message-ID: <834e18c7-21b6-400e-aa61-a4f591027620@linaro.org>
+Date: Mon, 27 May 2024 09:00:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,15 +76,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] ARM64: mt8195: Use thermal aggregation for big and
- little cpu
+Subject: Re: [PATCH v3 2/6] thermal: Add support of multi sensors to
+ thermal_core
 To: Alexandre Bailon <abailon@baylibre.com>, rafael@kernel.org,
  daniel.lezcano@linaro.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
 Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240524143150.610949-1-abailon@baylibre.com>
- <20240524143150.610949-7-abailon@baylibre.com>
+ <20240524143150.610949-3-abailon@baylibre.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -131,33 +131,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240524143150.610949-7-abailon@baylibre.com>
+In-Reply-To: <20240524143150.610949-3-abailon@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 On 24/05/2024 16:31, Alexandre Bailon wrote:
-> This uses the thermal aggregation for the mt8195 to get the maximal
-> temperature of big and little cpu clusters.
+> This adds support of multi sensors to thermal.
+> Currently, this only support the get_temp operation.
+> This returns an average temperature of all the sensors.
+> If defined, a coefficient is applied to the value read from the sensor
+> before computing the average.
 > 
 > Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
 > ---
->  arch/arm64/boot/dts/mediatek/mt8195.dtsi | 212 +++--------------------
->  1 file changed, 27 insertions(+), 185 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> index 5d8b68f86ce4..8aa2bf142622 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> @@ -3600,50 +3600,31 @@ dp_tx: dp-tx@1c600000 {
->  	};
->  
->  	thermal_zones: thermal-zones {
-> -		cpu0-thermal {
-> +		cpu-little {
+>  drivers/thermal/Makefile        |   1 +
+>  drivers/thermal/thermal_core.h  |  15 ++
+>  drivers/thermal/thermal_multi.c | 332 ++++++++++++++++++++++++++++++++
+>  include/uapi/linux/thermal.h    |   5 +
+>  4 files changed, 353 insertions(+)
+>  create mode 100644 drivers/thermal/thermal_multi.c
 
-How is it related to the commit?
+This does not really build...
 
-Does not look tested. You just introduced warnings.
+
+./drivers/thermal/thermal_multi.c:249:38: error: initialization of ‘struct thermal_trip *’ from incompatible pointer type ‘struct thermal_trip_desc *’ [-Werror=incompatible-pointer-types]
 
 Best regards,
 Krzysztof
