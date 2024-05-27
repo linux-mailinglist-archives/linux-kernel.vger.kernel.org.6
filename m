@@ -1,108 +1,82 @@
-Return-Path: <linux-kernel+bounces-190463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BD98CFE99
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756CA8CFEAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A9D1C21237
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3093C283744
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E2F13C3C4;
-	Mon, 27 May 2024 11:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJxRuRSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD5513C3F3;
+	Mon, 27 May 2024 11:13:38 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F7C249FF;
-	Mon, 27 May 2024 11:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0319249FF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808153; cv=none; b=gVlWuUNlmXceAMZsa7lJX5JRFZpecp7ucvAjogpKkb11MLIHAYb4aoRG35tEWq7RlhsGnjPb7TX955n6PXXbRwxSOi9Rn85B0EgKRXGId5yMuPk0zJjjlEnAF143+ZPDK1uctcq8eNqYUzLxZcryEoAucaayqPFPdiEl5d2V0BU=
+	t=1716808417; cv=none; b=B29YnjNSMrMvsNxxUSDDObCl3e2Rd+pBu3SUKlkn9LyKoVlUWIhjqq7wzZWvWQHFPIoMGwpy0zU20CK/FLdxWhSAAng2bze+Bv4icVcgSodfppqwpA+mPevhDjyRzYyp1gyEkB0yyNXLphio5Et4e0AhPQYnKCOxyTdaONAgZjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808153; c=relaxed/simple;
-	bh=62hMWxUD6NFUz/J34q8tsRJOtZmuEttxuaWbk0zbTEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p7DTZJw7GtVaSI9fmCX8+AMInk9QPN6dzvcjl7PEj+l+XzW8/W6OybGYnL0YY3pg2sEHXu9tgSiJsL/wP0c1s2yrbIEbuju+A1cGqT79gg+50TppjlUJOle+rl0HK4K/iZgPMSkLIMG9FJQaiLt9o9qIbFRnwyrK+WwXWXj+DUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJxRuRSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F31AC2BBFC;
-	Mon, 27 May 2024 11:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716808152;
-	bh=62hMWxUD6NFUz/J34q8tsRJOtZmuEttxuaWbk0zbTEE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sJxRuRSyF8aZl6lcHv4GNNbUtVqSVlKp+Xe/+i+D6yW1/oO/ot6EalwOzSHtrCo4K
-	 s0dQbDVSkXR6WepDxxDij1Q54BKKBWWhdmNiSj8TTkMqt9MTvIiiPdh49TRPO6Pj86
-	 rWP0aK1OzS00I+zfo7KiYPoyReQVkRqVHKqOwaqlnSGP7f2HTBJ/5G1FScQj0Q9Dz8
-	 keqj6K/C1AuubkdWkfcykho2TfTj7Ukds7jbRtwZZjliN36IBWlvehAG7mXvXGjSMy
-	 UG9U+OMvUnqNU5ZqRlchB7sVZE4/zAiYA1s8HL5QllUGwa5ynmsu52/Nml3RMEB9vg
-	 dGhHN3oDTUPBA==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	syzbot+df038d463cca332e8414@syzkaller.appspotmail.com,
-	syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com,
-	syzbot+1527696d41a634cc1819@syzkaller.appspotmail.com,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Steve French <sfrench@samba.org>,
-	Hillf Danton <hdanton@sina.com>,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dominique Martinet <asmadeus@codewreck.org>
-Subject: Re: [PATCH v3] netfs, 9p: Fix race between umount and async request completion
-Date: Mon, 27 May 2024 13:09:00 +0200
-Message-ID: <20240527-losgefahren-albern-a9b1d8be3835@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <755891.1716560771@warthog.procyon.org.uk>
-References: <755891.1716560771@warthog.procyon.org.uk>
+	s=arc-20240116; t=1716808417; c=relaxed/simple;
+	bh=R2KAFyJ0ppoTQL04oRx1FgbUdLHm3uC3Pi/EGX9XWTY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kHKHpM2dETQhYm6R9abiVRbru1LPzl2Wzx8KZHBwoLuzTNB8/U9TZyDc+T5SxBxluvr+xO0u8/Jk5wSwuRamS9wwA8qlxF4lukiSZ8iteINxEdXtRJyJ8n00ZTw0piN1Jxbrusv+KNUr/ZmkeJeDcjqYdOMw+EIj3AY5dPGXoPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 44RBCpcs069126;
+	Mon, 27 May 2024 19:12:51 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VntFJ17bjz2Q6g9V;
+	Mon, 27 May 2024 19:09:08 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 27 May 2024 19:12:48 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>
+Subject: [PATCH] f2fs: fix to remove redundant SBI_NEED_FSCK flag set
+Date: Mon, 27 May 2024 19:12:37 +0800
+Message-ID: <1716808357-7161-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=brauner@kernel.org; h=from:subject:message-id; bh=62hMWxUD6NFUz/J34q8tsRJOtZmuEttxuaWbk0zbTEE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFZJ7zelnJM7U+5vs16+iDzU/eHak22+8zK2h3/Nxtx kt0hJJkO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbiZ8/wP5lhXd2tnn2lDrHe S064NiWHCmp8PyXfyLxJ4KB6Y7f0U0aGtffmxsec3rSGNywtN+FVmNpSSVFb/R/TPYJj8uSzQl6 wAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 44RBCpcs069126
 
-On Fri, 24 May 2024 15:26:11 +0100, David Howells wrote:
-> netfs, 9p: Fix race between umount and async request completion
-> 
-> There's a problem in 9p's interaction with netfslib whereby a crash occurs
-> because the 9p_fid structs get forcibly destroyed during client teardown
-> (without paying attention to their refcounts) before netfslib has finished
-> with them.  However, it's not a simple case of deferring the clunking that
-> p9_fid_put() does as that requires the p9_client record to still be
-> present.
-> 
-> [...]
+Subsequent f2fs_stop_checkpoint will set cp_err, so this
+SBI_NEED_FSCK flag set action is invalid.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/f2fs/gc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 20e2f98..ef667fe 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1752,7 +1752,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		if (type != GET_SUM_TYPE((&sum->footer))) {
+ 			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SSA and SIT",
+ 				 segno, type, GET_SUM_TYPE((&sum->footer)));
+-			set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 			f2fs_stop_checkpoint(sbi, false,
+ 				STOP_CP_REASON_CORRUPTED_SUMMARY);
+ 			goto skip;
+-- 
+1.9.1
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs, 9p: Fix race between umount and async request completion
-      https://git.kernel.org/vfs/vfs/c/e20fe12bfb0b
 
