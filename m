@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-190662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6D58D010C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A468D0120
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184E31C222C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF11289089
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B5215ECD3;
-	Mon, 27 May 2024 13:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyHO7WSO"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B262E15ECE3;
+	Mon, 27 May 2024 13:17:26 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872D115DBC1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E65515DBC1;
+	Mon, 27 May 2024 13:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815733; cv=none; b=cqMXjB8bffYs1s5nXKnMiqXkQNCC5/UsyCPhqHhI3KEdGcPu2Hq3xSkJd/7PSCn+cm0p0kKCq1e86PGRoLbCOS7zyYxQSivFYFC8AI/uDoJkZM9f4/7BH/NXBZIcMHxF1eDHn3wuRCo8PeCArAKkL+/Zdo+xfShWa/MHaZENZWM=
+	t=1716815846; cv=none; b=Xv5zJM1fnZzUo8muBySoKxo7iJJGExDJV8OJuOf4Mc6xAUkkB8EIvK75f/knBl3Z71BdkAsXjgWDPrmyjMr4TuKdqksoBDM4RuIrPUJaGIxLhD/4ghbdk1nhVs4PYJkAoQVk5+2KRcv7JjQS/WZrcfQo+sPa+pEl5jm+/MeF+AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815733; c=relaxed/simple;
-	bh=K247tM0uRG0BEBi0QtYli0dAiX2cPA2+pN50KQ+XwJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ta/dJPMNfdKLcSx0W6w5Sq8K1Iu3OZk7Ry+7vWj5zrJRVBINaAa9/QV3OVyr7YoOLihshf9ddNitW1GCP5zy8TDeg7ZE7qTAc7XfhVx+qlEAQA2g+wIiLMClDacig+HSVwf+pOPl272PVNRxufl1JTOkVg57CMp0W36d/muU5r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyHO7WSO; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a145e0bb2so25701287b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716815730; x=1717420530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ORWWAV5DFVa1AMsT2HoJ2yL9cgtTVCQWr4c970t4N2A=;
-        b=SyHO7WSObKi/9vVbWpFY6Iyi/jPD3vlvvL2Qk6liuyQAxH2aO220Y1WYbahv1/dan6
-         09NGErKxptysMMj+46h15XI65RhX+UsWq2UIEL4waYEsdm599mD/XZCbSGMjGtg6RxPz
-         h9eI5jS6jDdR6uMZUITLr5j96bji46XXFOwEIB2XweALj095/cSqImxFmxPSi7iiweNX
-         fOm+Tyz2NksN5ul5WLE6EgdFGXbbaQok5YCvUnOtaHHO+L+n6w0F175mAFyYpHJt3ZwC
-         57APHQ7Sq7sbOEj5Y8mLhpBED+N3a8WPC+OQrDaMW1HfMUMvqxB6E1q/e7F1n77SPB2b
-         hlhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716815730; x=1717420530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ORWWAV5DFVa1AMsT2HoJ2yL9cgtTVCQWr4c970t4N2A=;
-        b=rQIuJheKJnZc7FfWdI6AJtTl8XomJ0Q0WX89Znkrmi1Yyx+4IzW9CDYE9QBww2JH6J
-         2Y0dhf5sb31FWDVGhWJmtuAKc6ixL3FbS3DzCEGz6eilYQQn1AssBj7BmtothXarvxR7
-         jPjvrYsuhz7bQEOFePqfiPqRR1H5/SeemJrDCop+cUvHm+5UCJbq89h+qL29ma4s7sFI
-         z/AbD80aoQxN9Qs3WAVlt3HmZaUSJah/vWS9pXweMvQN9kcw6jTnQ6NEOCoEHD0PnN1/
-         9kSR20/PX56yOQnmBxZKtdo6qKt1iG0SzY1Crt6nTsrTfM0C7DE8EDvtbUDmI5RCMyti
-         MONw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnXJmnuuZNhoiqF4bdGhYWZGv/qba0rkwqRrs5C9ucX4VIRF8cq5uNdI7nvAP1dj1Hl/a830xXYMCsLONleFaesRArxW5kHicMhzBY
-X-Gm-Message-State: AOJu0YzjfkkG1dg5vxKoP01KmeWN19cd1WANi3eIaZahKWjCn+ACQQWM
-	ych6DCKhmAWP9HaaUHiKBD6gvWCJTDoZzsHaxooEwH4tl0flmZEsn06oKEB1JpjuLEgOlASLiha
-	jDSE/gFU1q6gbvyNGSKfu1d3iyjFVVLRVy/IMQg==
-X-Google-Smtp-Source: AGHT+IFLnsaD839+3qfvvjKNYcPNIoZukpexfAQJweynlTmE92arqErfYxJaJwjE2NjnD3ByeP9B2Eef7aVU5QowlBM=
-X-Received: by 2002:a25:bc0a:0:b0:df4:ece5:2712 with SMTP id
- 3f1490d57ef6-df7721c416bmr9545693276.39.1716815730399; Mon, 27 May 2024
- 06:15:30 -0700 (PDT)
+	s=arc-20240116; t=1716815846; c=relaxed/simple;
+	bh=P9Sp2M8DvUMb5rgeT8Yrm7zVrQWRZ2B/cS+bWosHL4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kLpKDvei0nNPJsBDUiwoe6HIyUxyhkgL3iglTOvaoJv6fumsjxVV6OEF13+V+xdpuMfdD8Cb23Z9Rro8fXfrMbyR8o+8eiO4QHAskzVlKj9fPjjostF9SfmhPAXF9jkwsN/spdpVssJsaot5kAGkyhoniehE8xI/t0pkD3hnAeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vnwj81qCNz9v7Hm;
+	Mon, 27 May 2024 20:59:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 884761403D2;
+	Mon, 27 May 2024 21:17:10 +0800 (CST)
+Received: from [10.206.134.102] (unknown [10.206.134.102])
+	by APP1 (Coremail) with SMTP id LxC2BwCXjhfJh1RmaUIFCQ--.43989S2;
+	Mon, 27 May 2024 14:17:09 +0100 (CET)
+Message-ID: <d0bc38bc-e089-48d9-80a5-aafa54e98595@huaweicloud.com>
+Date: Mon, 27 May 2024 15:16:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503162217.1999467-1-sean.anderson@linux.dev>
- <CACRpkdbOAoSDNFhXfz3djUZh1_MQ_T75CC+-LmojRXvyCbUusA@mail.gmail.com> <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
-In-Reply-To: <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 May 2024 15:15:19 +0200
-Message-ID: <CACRpkdbSsgxtKqF6ORXubufTaegjysHU7zH-tJfDfKNd=Kdoeg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: zynqmp: Support muxing individual pins
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
-	Krishna Potthuri <sai.krishna.potthuri@amd.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+To: Andrea Parri <parri.andrea@gmail.com>, stern@rowland.harvard.edu,
+ will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+ npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+ luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+ dlustig@nvidia.com, joel@joelfernandes.org
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ hernan.poncedeleon@huaweicloud.com
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <ZlC0IkzpQdeGj+a3@andrea>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <ZlC0IkzpQdeGj+a3@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwCXjhfJh1RmaUIFCQ--.43989S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY67AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aV
+	CY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxG
+	xcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon, May 6, 2024 at 4:45=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
-ev> wrote:
 
-> > Then we realize that not everyone need all the modem
-> > control signals provided. What to do. Well this:
-> >
-> > uart0_rxtx_grp =3D pin_rx, pin_tx:
-> > uart0_modem_grp =3D pin_cts, pin_dts, pin_dcd;
-> >
-> > mux0:
-> >     function =3D "uart0";
-> >     groups =3D "uart0_rxtx_grp";
-> >
-> > Now the CTS, DTS, DCD pins can be reused for something
-> > else such as GPIO.
-> >
-> > I *know* that this breaks ABI: the driver group definitions change
-> > and the device tree needs to be changed too.
 
-Actually I didn't think that over, it is possible to add new groups
-and retain the old ones.
+Am 5/24/2024 um 5:37 PM schrieb Andrea Parri:
+>> - While checking the information below using herd7, I've observed some
+>>    "strange" behavior with spin_is_locked() (perhaps, unsurprisingly...);
+>>    IAC, that's also excluded from this table/submission.
+> 
+> For completeness, the behavior in question:
+> 
+> $ cat T.litmus
+> C T
+> 
+> {}
+> 
+> P0(spinlock_t *x)
+> {
+> 	int r0;
+> 
+> 	spin_lock(x);
+> 	spin_unlock(x);
+> 	r0 = spin_is_locked(x);
+> }
+> 
 
-I.e. retain uart0_grp, but additionally add and use
-uart0_rxtx and uart0_modem_grp and use one or the
-other approach.
+Since 0 executions are generated, possibly herd things there's a deadlock.
 
-> Well, the pin groups are actually defined in the PMU firmware.
+Could be either a problem with the deadlock definition, or do you need 
+to initialize the lock somehow?
 
-Is that firmware written in such an helpful way that the groups
-can be extracted from the firmware then, as with SCMI? Or is it
-a matter of duplicating the info from the PMU in the software-defined
-groups.
-
-> And
-> frankly, I don't see the point of pin "groups" when there are not actual
-> pin groups at the hardware level. The pins can all be muxed
-> individually, so there's no point in adding artificial groups on top.
-> Just mux the pins like the hardware allows and everything is easy. Cuts
-> down on the absurd number of strings too.
-
-So are you going to switch all of Xilinx devicetrees over to using exclusiv=
-ely
-the new method (muxing individual pins)?
-
-I'm fine with one (string identified groups) which I encourage, but I
-let individual pin control pass as well on several occasions.
-
-What I don't want to see is a Franken-solution that mixes the two
-approaches, even less so on the same system. Someone is going to
-have to maintain the resulting mess. And this looks like exactly that.
-
-If you want to mux individual pins instead of groups and functions, by
-all means, but please do not mix the two approaches in the same
-driver, I'm just trying to save Xilinx from themselves here.
-
-Yours,
-Linus Walleij
 
