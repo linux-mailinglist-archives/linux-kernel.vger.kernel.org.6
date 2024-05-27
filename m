@@ -1,210 +1,179 @@
-Return-Path: <linux-kernel+bounces-190148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA8D8CFA3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A58CFA3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DD81F22716
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFD311F22959
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E043EA72;
-	Mon, 27 May 2024 07:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="agoQIcox"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E732561D;
+	Mon, 27 May 2024 07:35:29 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B3A3C482
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425681F5FA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716795311; cv=none; b=u0fzqLmS5KQyQV3HbdcXZqcwvMHzt1Vtduos8hBxTnIq5goGzTUMbvBu8vGB8WTZYDL/ihv/BjCxOSSI10VHn9NBlg2E8nkQkPjNHBvkC9bYx+16SGlMI4T3XgFyXF4zhbqvHsz3M7UKtOuqz7CGZdQ3SWi9qFUAPEv1XuNZ7GY=
+	t=1716795328; cv=none; b=WGpNGlvN5nNPZSZzSsyrIZaP7vWhzx2Hsk68ODsolPO2gtoQ6VrGIWqGjsmef3Z2bWN/qm55vV4vPPCmr96POUMX3U7Pjkx5p7Lpn654G9vycZ3IpVC9MYyWdmjYqU1jDeZV+tay34Dsd0d5djceHxzQkyp0swWdU/YBunMxlvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716795311; c=relaxed/simple;
-	bh=u9MklCu797KN1scq2oF2jtMHMhfjD3/Vqkcw9HdKah0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uKhysHqABZsD5pAwJxI02cDwJohkKXK6OlPWw6SUrY181ysF4oRZEEyNzNEUAFvCS4RU3lXzkBAo9LGxYER7H2Hw6vlrLLobO3028XPd/ev+449Ze8A8zmi9u/PuiawHJ5b0rb2OCIsnYI7aSBk/b8cpAJ9uszWpkbwIDoSkc3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=agoQIcox; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=/mJnBW0+/Ff0ADfcSqgqzSrAeQehjCnl6K5RtU81HSE=; b=agoQIcoxqmXGUU9K9jLGY3Pdh5
-	0PFaxaLGI7DR/sMEIswKa2Oh7sVqogyh4J/71jYegm6IrSeXn0wTpa4848OnSKR4o4L/PLCTjQO9/
-	lgy7KCtJuZ/LMHb9VnkFhRbX+Zbe89ewAiuRn94LRLW7nT9hcUK5+cNXQsOLMUFYObjGUWVWVXLQf
-	l+1ZTPW6EdmDnJOkUNCiEg00TCv/GF20GcuUPhC52UF+YA12Spoi8o1nbzc71qvuEW6B0pEFYLF1q
-	i4wu49q+04Vec3fB8r76aq5w+E9bgmisBtsAk9xIQklyPMnNQoU6V5kvTg2NCh3ZB3uXb/r7YLk1L
-	fhO1FdJQ==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sBUss-000Nbk-QH; Mon, 27 May 2024 09:35:06 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sBUsr-000JOe-2x;
-	Mon, 27 May 2024 09:35:06 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
-In-Reply-To: <c045f1a4-9ddf-4c53-a69b-22ceb68a1ce8@kernel.org> (Krzysztof
-	Kozlowski's message of "Mon, 27 May 2024 09:19:55 +0200")
-References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
-	<979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org>
-	<87cypc38gu.fsf@geanix.com>
-	<9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org>
-	<87le3zoatn.fsf@geanix.com>
-	<6c166ad5-8004-4bc4-9107-a47ba9a72161@kernel.org>
-	<87ttijaglp.fsf@geanix.com>
-	<c045f1a4-9ddf-4c53-a69b-22ceb68a1ce8@kernel.org>
-Date: Mon, 27 May 2024 09:35:05 +0200
-Message-ID: <87msobaes6.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716795328; c=relaxed/simple;
+	bh=eeICZKVVAQUBqBHwuxMALdSG+JLYmVgNYaWcBlcDvwA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BgXFX2gfvAPTSNoxsMO10azICx17jxRta8/4IJYnYOVRqvfZQ6q8Y9bqtGcWI83xXdQMvkxr8u+oaDsA8qNpEahEFZQW3nkuc6IOpGJUL1ryn5jj20eeUgvOBPXVWml6Ys0a8X5TD9JQCTwWX6nBTJi3peb/lk9xW+L09tjlDco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3738db5b07dso16135175ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:35:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716795326; x=1717400126;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=79abVKmLZyi5X7rHFzMKI0vkfiXQgcvpYZSqXcUWH4Q=;
+        b=cld3n5q2vy5PtSyTdpAwm4nPUaWwfj7RdJ0ZZ6wN38mVDhItHIBkQM3zsmwSF43RDA
+         qz/wg4nlW6Fu1pQRAdS2s/pqj3zpU/XoUw7gux0d7bAA09p+rFH4McZ8aBSvIF+miJX1
+         C1mt+rU/pkicdBNJyqAyoZG03BQk7SxKELnh5sSUa88+Gb/10lD0FpwMSNxcYhk6NK0L
+         G3Tkp3jh46m3vjAZIa2PKFZUn81ySPz4lYqX3RLjjbcerJ5u2dyJmh0EuPxd8guaTCi+
+         AkXH/XXNORFuC6s1hEzfj6sOVKT8N5Vzu3ipX7qJEuIF+pC/nMlnECzXcyCufQkt+CSG
+         5+Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeeYJeDdrZ+CN/2Jmu4hdSogYESJlYsDjiLZzhdqQz+1l1XcrYxMLLBJO3lNB0nl8zDNzpeFl5sByWfhT3gCFWfIeOwoqRNg+uN4lm
+X-Gm-Message-State: AOJu0Yw3mz5EVAtB3LyWHkOPWOU2UR3q5iW5tWxjoCSNbkipeM+UJ+NO
+	duEPx8004ZE5g7PCEOzpTnlDzRMW24tM1WBOf0oEGXuHgXaa3RZr6dh6sYvxKGoNrmE5t3i7JVT
+	wq9dRQWVGuDjwauXV+wK11CX2ZWDg54fm0jFG9oDWbF8VXO4ZCIeCyKM=
+X-Google-Smtp-Source: AGHT+IEZ40ydocE6/9QamDqGIURiJPf/WWQlDbNFNA6RWdOGgOwv0xkSMcZ0tSV4YMUdS3sB+LclCE9VJ2H0bpXFVx4I0sXz9W07
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27287/Sun May 26 10:27:50 2024)
+X-Received: by 2002:a05:6e02:1a8f:b0:36d:d06c:5c10 with SMTP id
+ e9e14a558f8ab-3737b3ca0aemr6186765ab.4.1716795326502; Mon, 27 May 2024
+ 00:35:26 -0700 (PDT)
+Date: Mon, 27 May 2024 00:35:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096a88206196a8f03@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
+From: syzbot <syzbot+8cb7ea0ddb1cdc8a21fc@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+Hello,
 
-> On 27/05/2024 08:55, Esben Haabendal wrote:
->> Krzysztof Kozlowski <krzk@kernel.org> writes:
->> 
->>> On 24/05/2024 10:47, Esben Haabendal wrote:
->>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>>
->>>>> On 23/05/2024 16:32, Esben Haabendal wrote:
->>>>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>>>>
->>>>>>> On 23/05/2024 15:58, Esben Haabendal wrote:
->>>>>>>> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
->>>>>>>> driver selects FSL_IFC automatically, we need the option to be selectable
->>>>>>>> for platforms using fsl_ifc with NOR flash.
->>>>>>>
->>>>>>> Which driver is that?
->>>>>>
->>>>>> This is drivers/memory/fsl_ifc.o driver. It is for Integrated Flash
->>>>>> Controller (IFC) from NXP. It is used in various Layerscape socs.
->>>>>
->>>>> ? I know that, I mean the NOR flash working here.
->>>>
->>>> Ah, sorry. The NOR flash I am using here is a Spansion S29AL016J.
->>>>
->>>>>>> Which DTS?
->>>>>>
->>>>>> It is for "fsl,ifc" compatible devices.
->>>>>
->>>>> That's not a NOR flash.
->>>>
->>>> Nope.  The binding used for the NOR flash is "cfi-flash".
->>>
->>> And now let's get back to my original question. I asked for driver, not
->>> device, and for DTS not compatible.
->> 
->> You got me really confused now. I am not sure what you are asking me
->> for, and why.
->> 
->> I am sending a patch which changes to Kconfig for a memory controller
->> driver. The change is AFAICS quite similar to commit be34f45f0d4a
->> ("memory: omap-gpmc: Make OMAP_GPMC config visible and selectable").
->> 
->> As for the NOR flash that in this situation is attached to the IFC
->> controller, it is (as mentioned) Spansion S29AL016J. It is handled by
->> the drivers/mtd/maps/physmap.o driver (CONFIG_MTD_PHYSMAP +
->> CONFIG_MTD_PHYSMAP_OF)
->
-> Thanks.
->
->> 
->> The DTS used to specify the NOR flash is
->
-> Upstream DTS. I don't care about downstream.
+syzbot found the following issue on:
 
-Upstream DTS is arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
+HEAD commit:    5f16eb0549ab Merge tag 'char-misc-6.10-rc1' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c46072980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7f4625418c9ed5c8
+dashboard link: https://syzkaller.appspot.com/bug?extid=8cb7ea0ddb1cdc8a21fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Which has
+Unfortunately, I don't have any reproducer for this issue yet.
 
-                ifc: memory-controller@1530000 {
-                        compatible = "fsl,ifc";
-                        reg = <0x0 0x1530000 0x0 0x10000>;
-                        interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-                        status = "disabled";
-                };
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-5f16eb05.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/20ac83ea5f8c/vmlinux-5f16eb05.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/31519c4f23c8/bzImage-5f16eb05.xz
 
-The NOR flash is not specified in upstream DTS, as it is board and not
-SoC specific.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8cb7ea0ddb1cdc8a21fc@syzkaller.appspotmail.com
 
-I assume it is not considered bad practise to keep downstream DTS out of
-tree.
+------------[ cut here ]------------
+==================================================================
+BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:646 [inline]
+BUG: KASAN: global-out-of-bounds in string+0x398/0x3d0 lib/vsprintf.c:728
+Read of size 1 at addr ffffffff8b2e4842 by task kswapd0/111
 
->> &ifc {
->>         status = "okay";
->>         #address-cells = <2>;
->>         #size-cells = <1>;
->>         ranges = <0x0 0x0 0x0 0x60000000 0x00200000>;
->> 
->>         nor_flash: nor@0,0 {
->>                 #address-cells = <1>;
->>                 #size-cells = <1>;
->>                 compatible = "cfi-flash";
->>                 reg = <0x0 0x0 0x200000>;
->>                 bank-width = <2>;
->> 
->>                 partition@0 {
->>                         reg = <0x000000 0x0f0000>;
->>                         label = "boot0";
->>                 };
->>         };
->> };
->> 
->> So as mentioned, it is a quite standard "cfi-flash" compatible device
->> declaration.
->> 
->> Do you think there is a way that ti enable CONFIG_FSL_IFC for my
->> situation without the config being visible? Something like automatically
->> selecting CONFIG_FSL_IFC when CONFIG_MTD_PHYSMAP and
->> CONFIG_MTD_PHYSMAP_OF is enabled? Will that not include a risk of
->> pulling in CONFIG_FSL_IFC in some cases where it is not desired?
->> 
->> Something like
->> 
->> config MTD_PHYSMAP
->> 	tristate "Flash device in physical memory map"
->> 	depends on MTD_CFI || MTD_JEDECPROBE || MTD_ROM || MTD_RAM || MTD_LPDDR
->>         select FSL_IFC if SOC_LS1021A
->> 
->> But that looks like a road somewhere not so nice. The generic
->> MTD_PHYSMAP being littered with architecture specific selects.
->> 
->> Or is there something completely obvious (not for me then) that I am
->> missing?
->
-> If there is no user for such option, why changing it? To clarify:
-> whatever is out of tree, does not really exist...
+CPU: 3 PID: 111 Comm: kswapd0 Not tainted 6.9.0-syzkaller-11919-g5f16eb0549ab #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ string_nocheck lib/vsprintf.c:646 [inline]
+ string+0x398/0x3d0 lib/vsprintf.c:728
+ vsnprintf+0xc67/0x1870 lib/vsprintf.c:2824
+ vprintk_store+0x3a2/0xbb0 kernel/printk/printk.c:2225
+ vprintk_emit kernel/printk/printk.c:2326 [inline]
+ vprintk_emit+0xac/0x5a0 kernel/printk/printk.c:2300
+ vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:45
+ __warn_printk+0x181/0x350 kernel/panic.c:740
+ look_up_lock_class+0x132/0x140 kernel/locking/lockdep.c:932
+ register_lock_class+0xb1/0x1230 kernel/locking/lockdep.c:1284
+ __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
+ _raw_spin_trylock+0x63/0x80 kernel/locking/spinlock.c:138
+ spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:373 [inline]
+ srcu_gp_start_if_needed+0x75e/0xf00 kernel/rcu/srcutree.c:1233
+ bkey_cached_free fs/bcachefs/btree_key_cache.c:90 [inline]
+ bch2_btree_key_cache_scan+0xb90/0x1820 fs/bcachefs/btree_key_cache.c:886
+ do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+ shrink_slab+0x18a/0x1310 mm/shrinker.c:662
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+ shrink_many mm/vmscan.c:4851 [inline]
+ lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+ shrink_node mm/vmscan.c:5910 [inline]
+ kswapd_shrink_node mm/vmscan.c:6720 [inline]
+ balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+ kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-I don't have anything out of tree other than the DTS. Is the kernel only
-supposed to support in-tree DTS? I thought that keeping (dtb)
-device-tree in bootloader was very much considered a supported setup.
+The buggy address belongs to the variable:
+ str__rcu__trace_system_name+0x922/0xb40
 
-Or are you saying that I should send patches with all downstream
-DTS files, even if it is for hardware that is not generally available?
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xb2e4
+flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000002000 ffffea00002cb908 ffffea00002cb908 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
 
-/Esben
+Memory state around the buggy address:
+ ffffffff8b2e4700: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
+ ffffffff8b2e4780: 00 00 00 00 00 00 01 f9 f9 f9 f9 f9 00 00 00 07
+>ffffffff8b2e4800: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 06
+                                           ^
+ ffffffff8b2e4880: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
+ ffffffff8b2e4900: 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 00 01 f9 f9
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
