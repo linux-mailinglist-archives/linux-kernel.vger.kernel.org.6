@@ -1,236 +1,143 @@
-Return-Path: <linux-kernel+bounces-191284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D28D0941
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:16:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137248D0946
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466E8B228C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E261C21379
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7696315EFBD;
-	Mon, 27 May 2024 17:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0EB15EFA8;
+	Mon, 27 May 2024 17:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UqEHkVvt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLnDTfTp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648EF1DA58;
-	Mon, 27 May 2024 17:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D2B1DA58;
+	Mon, 27 May 2024 17:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716830142; cv=none; b=Na84P9U1yQR9rtAVzuZPKhfLkZjJUB7GjOuB3eWMYkBDZboOgfmQuaPSGmNwnChxkB49HYEQF1pJA8IJ65HxBVOtQkZj2Ycnchx8jpfidio6BmfEK6rDS4r46YgKLQl4OcK4fJviVf3axrO3zqFb8ACFfDBBS0ozUrFwoc7/gcI=
+	t=1716830191; cv=none; b=GOHBQI15s9cAP30Wx8lRKOFb8gYcrocEHcet01ODvLctxNH5BC7OeEd6sQzZCWPhpKM2ifvAm3w0Aw2HkMFJ2oKk48tYeIvf4hz6EnYAPAcXDJjjIpDVMstaWgg7DPYoDCCwokFvQvSIg2yu/4gniIBzjOorcF3J3KGFxUhnhEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716830142; c=relaxed/simple;
-	bh=pt31EGsdEkZo53lwke3HcCRzxGGuWyxitKe94ccVdnc=;
+	s=arc-20240116; t=1716830191; c=relaxed/simple;
+	bh=EjOc56aRyzKFkw2McUibnXXwAFLZ8zW7DftTuyG0EAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqwtRQGWtsX2y7Hd5szTU0/3skq47uNHB+JFgz0/ToGtqYHrQJASBDf3lvw3e+GmXQPAJSCuGforz9TghXWpUBUEcLcr6Mwh36o2SOzZ9J9WWkxKCy/NU/2zffDm/m+oIqMckJfAR0stL/taGZ0lQANWDdC2Jgy/i3u9KYP+Ouc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UqEHkVvt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4533540E01E8;
-	Mon, 27 May 2024 17:08:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bimxyUlM5shO; Mon, 27 May 2024 17:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716829686; bh=zzMPJ6U6LHHCwo8zSeCN578JvIc5clkBHFvMwav3ulA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjjwvtgF/bPcq+6GG43+YdaM3HleLxOaE3qy5vkTVBn6Pa4ifk7N+2T8r/u+Udex9EdbN3BJXiaJJAQC2HcmWtr6FbJSn88diRwti9nj/7+vmSf1A62ksnQdCTpCfaRtTahZf+bV+gHtq/iQeDQeXcPNL+vWFxZkH+LzuGkq2Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLnDTfTp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5CBC2BBFC;
+	Mon, 27 May 2024 17:16:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716830190;
+	bh=EjOc56aRyzKFkw2McUibnXXwAFLZ8zW7DftTuyG0EAQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UqEHkVvtmndf7yBXhPjClvB23jAwbCH2y9mrqWuQVDLzPL5LKRkma5X0WAIXAslDI
-	 OWVmIJ6/GQh6MyHgNXH12gJzDPwF0OdhwM57t/S13aSva8RZqSNOaZBXycdRifKOfv
-	 0nvKCVZHTyaWAw7nHg6JeCT936cjd8IHWbDZetP9R64GkqGGbhn/Rq2o5O1lyk3xV/
-	 nYbgRJAb6ONjxRmC5hUl9xcu+okxrmSuyhHurHx00V4k20COwpr6rwpzQwAnyXHLMV
-	 m+czfkJWEL1NjV2TVhDcJ7mBL7mIdcM1fI5dycnLvxv1o9EI8YpByQh6R2sDWMk4An
-	 cyNP5dzV8x2tieKXMH4ReySNhZogLEwuhTGWdRnt928uQUmNRt4zprDoIAHQL2n21X
-	 lXVQ8ULIoVGrW3v4XqisVCko5CYOCA7b7kJ3zZKQ0w+pU8jRgndQBA4PekevN9v4C/
-	 w3YVJhZ84GxfQ2Jik3lPfedBlRPhMRAq2l2f+Vcoqu4HBD5/+MgUTgLY61H9GyG6+u
-	 foPRRlYX+NMMmBytfFA9fURUfzSdFIQaPgb/IPIcecIx2VtLoNK4Odm8q386PsdDba
-	 yPB0wl/TmUP+FPiUpIIrpy1wELmaq/xXv7yeZPb769FOhG57ozS+Z17YhfsAIYc+rJ
-	 8LVjMkN2N08NqOt51W4fqTAo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2CF0E40E016A;
-	Mon, 27 May 2024 17:07:41 +0000 (UTC)
-Date: Mon, 27 May 2024 19:07:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
-	tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
-	richardcochran@gmail.com, linux-input@vger.kernel.org,
-	dmitry.torokhov@gmail.com, zackr@vmware.com,
-	linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
-	timothym@vmware.com, akaher@vmware.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, horms@kernel.org,
-	kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v10 1/8] x86/vmware: Introduce VMware hypercall API
-Message-ID: <20240527170734.GCZlS91uXD68HRN1na@fat_crate.local>
-References: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
- <20240523191446.54695-2-alexey.makhalov@broadcom.com>
+	b=uLnDTfTpXCpxPpnS1b0p2OW/U4+nez++TEk9DGB62hFkWd0WTYihGnPZW8G0oHuaC
+	 3ACt4pJ0uQl2yYk0yj6m/1bUpbxGxuM9xi8XwV6xF2bzfUOWDW3hgGplgDGOX5BbMn
+	 ljGhVezYa4ioJybgoZbd80ptWCBkX0fQTC8x5gtEk7QRdKhq8arHWLzSeJ6BYW/3Xt
+	 ZK8hXyZhAkCBjsYPYsnOd9Sh8eQKQXRhaWssWk/rUkeyyJqhTFzH3qG7iMnR7xLkNS
+	 qk0qGz2VmviprKrdnfW/xyyzSWiJ63/uRVkXhKtNqASuTWQ6MYlLZPl1kWphF7qI0B
+	 o94A0Kk4lU/gg==
+Date: Mon, 27 May 2024 12:16:27 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: pm7250b: Add a TCPM description
+Message-ID: <rjhf6pzdcw6zjneosshvg4d6ov5twxndya7q2btf3tnj5yy3fs@zzu6rfg6wzlu>
+References: <20240329-fp4-tcpm-v2-0-d7f8cd165355@fairphone.com>
+ <20240329-fp4-tcpm-v2-2-d7f8cd165355@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523191446.54695-2-alexey.makhalov@broadcom.com>
+In-Reply-To: <20240329-fp4-tcpm-v2-2-d7f8cd165355@fairphone.com>
 
-On Thu, May 23, 2024 at 12:14:39PM -0700, Alexey Makhalov wrote:
-> +#define VMWARE_HYPERCALL						\
-> +	ALTERNATIVE_3("",						\
-> +		      "jmp .Lport_call%=", X86_FEATURE_HYPERVISOR,	\
-> +		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
-> +		      "vmmcall\n\t"					\
-> +		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
-> +		      "cmpb $"						\
-> +			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
-> +			", %[mode]\n\t"					\
-> +		      "jg .Lvmcall%=\n\t"				\
-> +		      "je .Lvmmcall%=\n\t"				\
-> +		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
-> +		      "inl (%%dx), %%eax\n\t"				\
-> +		      "jmp .Lend%=\n\t"					\
-> +		      ".Lvmmcall%=: vmmcall\n\t"			\
-> +		      "jmp .Lend%=\n\t"					\
-> +		      ".Lvmcall%=: vmcall\n\t"				\
-> +		      ".Lend%=:"
+On Fri, Mar 29, 2024 at 01:26:20PM GMT, Luca Weiss wrote:
+> Type-C port management functionality lives inside of the PMIC block on
+> pm7250b.
+> 
+> The Type-C port management logic controls orientation detection,
+> vbus/vconn sense and to send/receive Type-C Power Domain messages.
+> 
 
-So applied (and with minor fixups for the proper indentation, see end of
-this mail) this looks like this:
+pm7250b is found in devices where USB Type-C port management is
+performed in firmware, presumably using this hardware block.
 
-pushsection .altinstructions,"a"
- .long 661b - .
- .long 6641f - .
- .4byte ( 4*32+31)
- .byte 663b-661b
- .byte 6651f-6641f
- .long 661b - .
- .long 6642f - .
- .4byte ( 8*32+18)
- .byte 663b-661b
- .byte 6652f-6642f
- .long 661b - .
- .long 6643f - .
- .4byte ( 8*32+19)
- .byte 663b-661b
- .byte 6653f-6643f
-popsection
-pushsection .altinstr_replacement, "ax"
-# ALT: replacement 1
-6641:
-        jmp .Lport_call72
-6651:
-# ALT: replacement 2
-6642:
-        jmp .Lvmcall72
-6652:
-# ALT: replacement 3
-6643:
-        vmmcall
-        jmp .Lend72
-6653:
-popsection
-        cmpb $((((1UL))) << (0)), vmware_hypercall_mode(%rip)   # vmware_hypercall_mode
-        jg .Lvmcall72
-        je .Lvmmcall72
-Lport_call72:
-        movw $22104, %dx        #
-        inl (%dx), %eax
-        jmp .Lend72
-Lvmmcall72:
-        vmmcall
-        jmp .Lend72 
-Lvmcall72:
-        vmcall
-Lend72:
+As such, it seems reasonable to leave this node disabled and only enable
+it on the targets that doesn't do this in firmware.
 
----
+Regards,
+Bjorn
 
-so AFAICT, you want three things:
-
-1. X86_FEATURE_HYPERVISOR - that is always set when running as a guest.
-   For that it should do:
-
-        movw $22104, %dx        #
-        inl (%dx), %eax
-
-2. X86_FEATURE_VMCALL:
-
-	vmcall
-
-3. X86_FEATURE_VMW_VMMCALL:
-
-	vmmcall
-
-So why don't you simply do that?
-
-vmware_set_capabilities() sets vmware_hypercall_mode *and* those feature
-flags at the same time.
-
-And you either support VMCALL or VMMCALL so the first thing should be the
-fallback for some ancient crap.
-
-IOW, your hypercall alternative should simply be:
-
-	ALTERNATIVE_2("vmcall", "vmmcall", X86_FEATURE_VMW_VMMCALL, "movw %[port], %%dx; "inl (%%dx), %%eax", X86_FEATURE_HYPERVISOR);
-
-without any more silly dance?
-
-Hmmm?
-
----
-
-Fixup indentation for proper .s output:
-
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-index 5114f4c75c54..8be877d8bb7c 100644
---- a/arch/x86/include/asm/vmware.h
-+++ b/arch/x86/include/asm/vmware.h
-@@ -70,17 +70,18 @@ extern u8 vmware_hypercall_mode;
- 		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
- 		      "vmmcall\n\t"					\
- 		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
--		      "cmpb $"						\
--			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
--			", %[mode]\n\t"					\
-+		      "\tcmpb $" __stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL) ", %[mode]\n\t" \
- 		      "jg .Lvmcall%=\n\t"				\
--		      "je .Lvmmcall%=\n\t"				\
--		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
-+		      "je .Lvmmcall%=\n"				\
-+		      ".Lport_call%=:\n\t"				\
-+		      "movw %[port], %%dx\n\t"				\
- 		      "inl (%%dx), %%eax\n\t"				\
--		      "jmp .Lend%=\n\t"					\
--		      ".Lvmmcall%=: vmmcall\n\t"			\
--		      "jmp .Lend%=\n\t"					\
--		      ".Lvmcall%=: vmcall\n\t"				\
-+		      "jmp .Lend%=\n"					\
-+		      ".Lvmmcall%=:\n\t"				\
-+		      "vmmcall\n\t"					\
-+		      "jmp .Lend%=\n"					\
-+		      ".Lvmcall%=:\n\t"					\
-+		      "vmcall\n"					\
- 		      ".Lend%=:"
- 
- static inline
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/pm7250b.dtsi | 39 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm7250b.dtsi b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> index 4faed25a787f..0205c2669093 100644
+> --- a/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> @@ -51,6 +51,45 @@ pm7250b_vbus: usb-vbus-regulator@1100 {
+>  			status = "disabled";
+>  		};
+>  
+> +		pm7250b_typec: typec@1500 {
+> +			compatible = "qcom,pm7250b-typec", "qcom,pm8150b-typec";
+> +			reg = <0x1500>,
+> +			      <0x1700>;
+> +			interrupts = <PM7250B_SID 0x15 0x00 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x15 0x01 IRQ_TYPE_EDGE_BOTH>,
+> +				     <PM7250B_SID 0x15 0x02 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x15 0x03 IRQ_TYPE_EDGE_BOTH>,
+> +				     <PM7250B_SID 0x15 0x04 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x15 0x05 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x15 0x06 IRQ_TYPE_EDGE_BOTH>,
+> +				     <PM7250B_SID 0x15 0x07 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x00 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x01 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x02 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x03 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x04 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x05 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x06 IRQ_TYPE_EDGE_RISING>,
+> +				     <PM7250B_SID 0x17 0x07 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "or-rid-detect-change",
+> +					  "vpd-detect",
+> +					  "cc-state-change",
+> +					  "vconn-oc",
+> +					  "vbus-change",
+> +					  "attach-detach",
+> +					  "legacy-cable-detect",
+> +					  "try-snk-src-detect",
+> +					  "sig-tx",
+> +					  "sig-rx",
+> +					  "msg-tx",
+> +					  "msg-rx",
+> +					  "msg-tx-failed",
+> +					  "msg-tx-discarded",
+> +					  "msg-rx-discarded",
+> +					  "fr-swap";
+> +			vdd-vbus-supply = <&pm7250b_vbus>;
+> +		};
+> +
+>  		pm7250b_temp: temp-alarm@2400 {
+>  			compatible = "qcom,spmi-temp-alarm";
+>  			reg = <0x2400>;
+> 
+> -- 
+> 2.44.0
+> 
 
