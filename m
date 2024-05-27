@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-191266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334AE8D08F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B82DD8D08FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F121C21F82
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CB71C221C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992B915DBC8;
-	Mon, 27 May 2024 16:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2315DBC8;
+	Mon, 27 May 2024 17:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JQ4hKRQk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6CNCGDy"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E3D15A857
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EED6FB0;
+	Mon, 27 May 2024 17:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716828974; cv=none; b=WFw1Z9/GKDuiMe+NDTcJlJsXWb66EngxcZXdXOT/VEcxasJIdJniKqZbvc5DSPK+RL1+RcrWbICFPMtD22ZvODY5QyH0l1gpg7ZVFMIH6Jh69yfyLS43asTyVy9ztIxJnigQ/cOUh/4eOh04XyYB8hdKU8fuq7n8xZ0XSjNOmaM=
+	t=1716829235; cv=none; b=Vhm0bpZQ/PeN04fSEXHW3sxUFfI7MKOBGJUkgZ3vuw5xsbNopZonOWJ6h9hyF+fOwR4gzNMD2bOs54GUEMO4OpGlJaCS/ytKbnBxE0z0vYq28smxDrlO0o+hhqieh7yXvkR9DX0NkvOVcWUjnConVz5oepVgxpMMm6r9MHNAG0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716828974; c=relaxed/simple;
-	bh=MOQGj/O9nENAfDWnS43JBU7cZMPlMpG68N/EL5rH1mA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Utz3xS4Z7xE5N9cXxA87sSbwhVl3rzKA/kaKJQLElqh2NKh3Vleew3RVKZML4DtJLqggU/gVbIJBqGw3Qeurv7aqv5l5WFsw+0LeV8GTJyGzSkcNUEkFODEL18aL1/IeICWR3gU+Q90UaBCToNmS3y8YNMwgBhuju4/4iF8Fjr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JQ4hKRQk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716828972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=sM+GG+48pRGOiykDbhBtwf9oqy2W+a03FxmKjzpcs/I=;
-	b=JQ4hKRQkvuWnnqrooVip5bgakjTszjiGCF+JjPXuVyFaEhVG0grXENRIf9sEfDDYArfNgj
-	CMy49okHxfhnZ+SfzrrDu1PVyF7FNM7fUOYRW6A6VENr3hVzxhHQgooyCeajbtxPafEaVS
-	y6U7kKUqgZ4+zYjuWriXZTLp/7C1+TQ=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-FOM2wALuOK-8mPMov245Kw-1; Mon,
- 27 May 2024 12:56:08 -0400
-X-MC-Unique: FOM2wALuOK-8mPMov245Kw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 33E3C29AA39D;
-	Mon, 27 May 2024 16:56:08 +0000 (UTC)
-Received: from localhost (unknown [10.22.18.61])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 6713F200A6E7;
-	Mon, 27 May 2024 16:56:07 +0000 (UTC)
-Date: Mon, 27 May 2024 13:56:06 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.217-rt109
-Message-ID: <171682474597.368964.6174084453548790852@localhost.localdomain>
+	s=arc-20240116; t=1716829235; c=relaxed/simple;
+	bh=8MLNb2bRcbp/oLUAripV2zX69ZK7bOk3ntrl8bKbv7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2ZhoKwUzGGa3mp+UEs3F67+Lb5VzPJPeED3igy7rL1yrPECpRcdMPAw4HyZUXWuvokewUcITymDgOqIIM3yGDEkQKnultZ8T35qLRl1tFrByE2SB6mhXueMvu6UXO5YLMTNqcc9ICli9RQ8zOpXDfFMw3COSCZphD9lY2wzRt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6CNCGDy; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f480624d04so13909515ad.2;
+        Mon, 27 May 2024 10:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716829234; x=1717434034; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pnYD2vB9if3b0Pw8B9yj3OZSPzEecAxuxqjy5zfQk70=;
+        b=e6CNCGDy8hNGGL2YZWY/ZvWRPvuMMRYYv6VePDFcYjkxkpX0dENQEhCThcSHWgmrk5
+         tYVgo+STgb7JonTXR7fXAv7t5yALRiivIOvAqTzA79lsEGCsMHuzjjvo9M15JtsbjEHb
+         iSPPzr22fNUXppwm237sbPa38ZVVLafhzKFejn8W6Qh4Fg0iK4p1vfrWOI7QzffalM84
+         PoXlpVmHFPw+dg1IJTEtu8CZhnCiHcibvUJtcn6wXIkZxH+j3uAKpLIbCtxXHO/+h7tR
+         rm9jjcF63yyQ2wZMgjt+dlhjzkLNMWjyzWJOYGt2QOzCzx1BjqY/hyjE4FPmlYbg5TMl
+         p02Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716829234; x=1717434034;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pnYD2vB9if3b0Pw8B9yj3OZSPzEecAxuxqjy5zfQk70=;
+        b=v7GwpEEloFfKMDjMe1rd6DLsDZfFY0eUdzGxzkqc0DinJBo31FcFL6c8pogMETStC5
+         g4UTgnYhWJrqKjuuZdqzdQeLo5x0IG4wIlZWa/v3ewVp/FnvckJfgTuSqLVg3uWI5V3t
+         dI2i/E2a8uFGC6lGhWMte9lyJeqIz3gtspZXwzpyFPPDYsNprRU+BdmuepYaxh9txIQ2
+         97jeT7pQEz0d52LTitpgVuU61WCLo/3Lrq8gbT0eFqRM4g9/2GYeLmQw5ZKag/p4RH/T
+         VLU//Tug6CcKz/X64lYlhVZ0DuCEceHmdp8ZyC/3y9mAFXG/Y07JXLSHPXC3auXiQ+RA
+         jK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXjeXxkIC2ov/Aqb8KokMFhkzP3wpnn/sbmGp4+78OUMSMtdBnTpEtRiLqb+LCpXBEsnWzog+bs4JMFfddU4rWX24X36T5hPebzrKVBbBBzwLdjunblyN5J5/4EfzB6nAAKWtx42LoaK6G/NDCkPFb3+2ieL0pqQjBEl/eXUQsimHDo
+X-Gm-Message-State: AOJu0YwRk3OP1zAWRMdYW2Ih1oTBJDQ+GomI/yEkl71aZZVAouwLca+3
+	fuwrfzksEcgfEj80fp7e9os5FkXRL73XBISTqLnp1ugsFx2cvM0I
+X-Google-Smtp-Source: AGHT+IGmgWeyiRNe9+u2BnAS1T0LPl+16VQSq5K+KtGP+MlwlyWvOvoH3Tc4mPXyjH2k8Qjrfmh4Hg==
+X-Received: by 2002:a17:902:c94d:b0:1f4:98f4:4763 with SMTP id d9443c01a7336-1f498f449a0mr38374615ad.53.1716829233424;
+        Mon, 27 May 2024 10:00:33 -0700 (PDT)
+Received: from [10.59.0.127] ([210.178.66.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c99d23asm65061795ad.208.2024.05.27.10.00.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 10:00:33 -0700 (PDT)
+Message-ID: <f8a8c06a-9dcd-437f-ab75-d0ddb608662f@gmail.com>
+Date: Tue, 28 May 2024 02:00:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] Documentation: cve Korean translation
+Content-Language: ko
+To: Jonathan Corbet <corbet@lwn.net>, Yunseong Kim <yskelg@gmail.com>
+Cc: skhan@linuxfoundation.org, Austin Kim <austindh.kim@gmail.com>,
+ shjy180909@gmail.com, workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240527103003.29318-1-yskelg@gmail.com>
+ <87ikyzpgqz.fsf@meer.lwn.net>
+ <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
+ <87o78rnz3a.fsf@meer.lwn.net>
+ <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
+ <877cffnw2i.fsf@meer.lwn.net>
+From: Jinwoo Park <pmnxis@gmail.com>
+In-Reply-To: <877cffnw2i.fsf@meer.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello RT-list!
 
-I'm pleased to announce the 5.10.217-rt109 stable release.
 
-This release is just an update to the new stable 5.10.217 version and
-no other changes have been performed.
+On 2024. 5. 27. 오후 11:55, Jonathan Corbet wrote:
+> It does look like the patch was reviewed, but no Reviewed-by tag was
+> offered.  *Never* apply a Reviewed-by tag that has not been explicitly
+> given to you.
+> 
+> Jinwoo, would you like to offer that tag for this patch?
 
-You can get this release via the git tree at:
+Thank you for taking a close look at the content and flow of the patch.
+Jon, yes I want to offer and apply Reviewd-by tag for the patch.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.10-rt
-  Head SHA1: a4119312fd0c5672efda3c8487c92e7962c8c212
-
-Or to build 5.10.217-rt109 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.217.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.217-rt109.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+Thanks Regards,
+Jinwoo Park
 
