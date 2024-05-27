@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-191502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B938D1066
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9B08D1068
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65C601F21D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5DB282E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57F315FA62;
-	Mon, 27 May 2024 22:58:56 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998CE1E880
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D173216728A;
+	Mon, 27 May 2024 22:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEWdmpAO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8A61E880;
+	Mon, 27 May 2024 22:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716850736; cv=none; b=CZWr7MW090y6XW8NC46AwpVGjkFvq3Wlr3PfOvYpQazBb7jZk/ZtQasuVGJJCu03H+/8RFhZYtQOGf6BCOCdrO0LVPKaWRZh5ZpnwvVFaOZcB3Z6W5BoXgp34LZolnR5yTiSi5LGG5MtN+fRUgJE384A/VeHpWX/yeX2nncPNI8=
+	t=1716850767; cv=none; b=pWKfqJB/RT2Yeib8wUb7/MqzLFPLEsiFkTWEd5qquHYRKVVv8Hfsi+MjexZn1HDLDbIj1uLCPsG1XE8MY9i4emItmgRLUDqsHJLAyiakqrrLdKcXUUm5ZMYXaaKmGiiOOgOsrgMluiR/HqbB5frVYXbUl2IhW5H48l9kwl7I36w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716850736; c=relaxed/simple;
-	bh=Olu29UeVSkVbGtShgyYhAHPd6LxKRQmLgqch29oHb5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6R/TL0zlYdGm/4TogBLDNNJ3awWl8WogUgVbia0E88xk+1pfnk3Ft120Tmb9j4r9j0/1M/pqwgW3wZKzTcLaUk8xj/btSG+ggFFORaAuz/3ZYVam7TaaGU7OOS5ci7BOLXmxbeJCQ5GOpRC5LHZxSTV7SdsLWwl7gBg4w08kxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-82-66551028e845
-Date: Tue, 28 May 2024 07:58:43 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240527225843.GA50818@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
+	s=arc-20240116; t=1716850767; c=relaxed/simple;
+	bh=VKCgZlWSHFibD4oSASuBd0h+q3F3oLe5CbcNtavGaIE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=k+4+Cs/hqLAAxhcBVCEiDZHq2HKj9NKq8Gxoi2QMVLJcc807f6T80wIEYgeNn2nrxdgO7r91EOEFKfjopdV2AukVylV0klC0ib1QydZEFGmF9f194l2hivwSK7GKYpscN0EEXgKsHPhVYdQjnpkom4alI/LZ4cmDqAx76rcQICU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEWdmpAO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A792C2BBFC;
+	Mon, 27 May 2024 22:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716850766;
+	bh=VKCgZlWSHFibD4oSASuBd0h+q3F3oLe5CbcNtavGaIE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=tEWdmpAOnHMRsfcTZWnwmQSqLUOl+odU30epMpZP9ayt36mnpySkQJjkHnw1uY+hJ
+	 yhQnfhsJp7Th9k5hHHfFxeHnbWED6Rpe7v8dAsqlhvTMdIsVZmvC8XHa2pnFThgJ/Q
+	 lar2owTF/wlSJ9h4+fl7YO/dxOxjMKjM6YQRfJAvWzgmGdHylHW22XOvZICkQ4UO9C
+	 KPINJJmYi78WePaUfqmPnJbV/BN0NbKaAfKBvM3u4sbx6dLiKw/rYSuedG0nAOoa8T
+	 n1CKxFH7LdTmoWCYEjsxtCbr4Waof88mmIvjCAtHj04qT6vKr76bZmvxZ+TGVfA4YU
+	 Ppia4Eh5+E7sA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsXC9ZZnoa6GQGiawbU+XYs569ewWXze8I/N
-	4tPLB4wWLza0M1p8Xf+L2eLppz4Wi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
-	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
-	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2Ty2/rLzaJx6jc3j8ya5AL4oLpuU1JzMstQi
-	fbsErozHb4+xFnQwVzQveszewLiNqYuRk0NCwETiaMtFNhh7ye9zzCA2i4CqxINvG9lBbDYB
-	dYkbN36CxUWA7FMrlwPFuTiYBf4zSdx/2AqWEBYIkZj2YQ3YUF4BC4kpbRvBioQETjFK9F16
-	wwyREJQ4OfMJC4jNLKAlcePfS6AGDiBbWmL5Pw6QMKeArcTOuQ/AFosKKEsc2HacCWSOhMAm
-	dqA531ghLpWUOLjiBssERoFZSMbOQjJ2FsLYBYzMqxiFMvPKchMzc0z0MirzMiv0kvNzNzEC
-	o3JZ7Z/oHYyfLgQfYhTgYFTi4b3RFZImxJpYVlyZe4hRgoNZSYRXZF5gmhBvSmJlVWpRfnxR
-	aU5q8SFGaQ4WJXFeo2/lKUIC6YklqdmpqQWpRTBZJg5OqQbGhDsyfnHhmy6c6xPmV3YV+jov
-	uethCN/T7iV7XnlIf/zqrlPjLWr87V8cV7/Fq1rPQrNU0Y6/YgdOcSrYyCm1Wv1iEH/SoZ2w
-	vtJli/qPea+ezbBij0iSEFS74uzzxvDp2qt7fnUd2TCRVfzrD6OgXpvSXV9+P2nuXbRqwueH
-	wp2RNUF23keUWIozEg21mIuKEwHZluERxgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsXC5WfdrKshEJpmsPKqtMWc9WvYLD5v+Mdm
-	8enlA0aLFxvaGS2+rv/FbPH0Ux+LxeG5J1ktLu+aw2Zxb81/Vovzu9ayWuxYuo/J4tKBBUwW
-	x3sPMFnMv/eZzWLzpqnMFsenTGW0+P0DqPjkrMksDkIe31v7WDx2zrrL7rFgU6nH5hVaHov3
-	vGTy2LSqk81j06dJ7B7vzp1j9zgx4zeLx7yTgR7v911l81j84gOTx9Zfdh6NU6+xeXzeJBfA
-	H8Vlk5Kak1mWWqRvl8CV8fjtMdaCDuaK5kWP2RsYtzF1MXJySAiYSCz5fY4ZxGYRUJV48G0j
-	O4jNJqAucePGT7C4CJB9auVyoDgXB7PAfyaJ+w9bwRLCAiES0z6sARvEK2AhMaVtI1iRkMAp
-	Rom+S2+YIRKCEidnPmEBsZkFtCRu/HsJ1MABZEtLLP/HARLmFLCV2Dn3AdhiUQFliQPbjjNN
-	YOSdhaR7FpLuWQjdCxiZVzGKZOaV5SZm5pjqFWdnVOZlVugl5+duYgTG2LLaPxN3MH657H6I
-	UYCDUYmH90JzSJoQa2JZcWXuIUYJDmYlEV6ReYFpQrwpiZVVqUX58UWlOanFhxilOViUxHm9
-	wlMThATSE0tSs1NTC1KLYLJMHJxSDYxBhxKnLRcvfs647OSbCQmvk3539C3t2Fmku7mk4sMj
-	i2XMZ6f5d1+8wGh2+t+F55aPf0Q56M6qyd3kNEFOkH3GastjW1xLmee6aS7etEyt+4PbxU+W
-	nOfYbzzSqpSfuFvo5vLfn2bfFDb3OPUqVjjY6GIY8wbxb3O3CkmnlX35tj9+nU+e5sW3SizF
-	GYmGWsxFxYkAbXST8q0CAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 May 2024 01:59:23 +0300
+Message-Id: <D1KSSWD7FA94.5705Z3J7LKZA@kernel.org>
+Cc: <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240527202840.4818-1-jarkko@kernel.org>
+ <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
+ <D1KRILI1KRQ8.2CNPU7PFES0VI@kernel.org>
+ <D1KRXI87G4S0.1ROKTQENIZHT7@kernel.org>
+ <D1KS7LCALKD4.1J13QGYGZ6LBW@kernel.org>
+ <D1KSLKGUWGFO.21T4OBXQQ88D@kernel.org>
+In-Reply-To: <D1KSLKGUWGFO.21T4OBXQQ88D@kernel.org>
 
-On Sun, May 26, 2024 at 07:43:10PM -0700, Dave Hansen wrote:
-> It has absolutely not been tested nor reviewed enough.  <fud>I hope the
+On Tue May 28, 2024 at 1:49 AM EEST, Jarkko Sakkinen wrote:
+> On Tue May 28, 2024 at 1:31 AM EEST, Jarkko Sakkinen wrote:
+> > >         ret =3D crypto_akcipher_set_pub_key(tfm, data, 3 * x_size + 1=
+);
+>
+> Noticed this mistake i.e. fixed it with "2 * x_size + 1"
+>
+> This is results earlier failure:
+>
+> ecdsa: (tpm2_key_ecdsa_query+0x10d/0x170 <- ecdsa_set_pub_key) arg1=3D0xf=
+fffffea
+>
+> Totally lost with the expected input format after trying out various=20
+> options.
 
-It has been tested enough on my side, and it should be reviewed enough
-for sure.  I will respin after rebasing the current mm-unstble and
-working on vfs shortly.
+OK got it working with:
 
-	Byungchul
+        ptr =3D &data[0];
+        *ptr++ =3D 0x04; /* uncompressed */
+        memcpy(&ptr[0], &x[2], x_size);
+        memcpy(&ptr[x_size], &x[2 + x_size + 2], x_size);
+        ret =3D crypto_akcipher_set_pub_key(tfm, data, 2 * x_size + 1);
+        crypto_free_akcipher(tfm);
 
-> performance gains stick around once more of the bugs are gone.</fud>
+Had still a few "off-bys".
+
+Makes me wonder why this is not in ASN.1.
+E.g. TPM2 stuff and for instance RSA code takes ASN.1.
+
+This all and the required prefix byte really should be explained in
+the documentation of this function. I.e. follows the RFC in the sense
+that number is big-endian and has the prefix byte, but it does not
+follow it in the sense that x and y are not in input octect strings.
+
+Why is that? Does not feel right intuitively.
+
+BR, Jarkko
 
