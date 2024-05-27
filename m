@@ -1,144 +1,161 @@
-Return-Path: <linux-kernel+bounces-191096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5A68D068C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:49:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086A48D0760
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3341C21EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3E79B2807A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC1561FF8;
-	Mon, 27 May 2024 15:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32CF73459;
+	Mon, 27 May 2024 15:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fi/IC84K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxbKH5C2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A5E17E90A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2A17E90A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716824945; cv=none; b=ryF1xExywNjoO8p11zka3la0TbGKD5syERVM59thfVDHlUNM9wLwaly++hudwGUpgxBxcjRuCZbj4SGJy/FCCWqPP69eieD6ZhhBJgUp0n0J9I5uqwo9isHA1HBSagLimXoKugouwVqazPCkpQVrOSn5aVNjA/bWQtPeos6RLp4=
+	t=1716824949; cv=none; b=taT28WgjIpo+O2pu7erR4wnRqJLb5DAI4+Tb+aWdPoodl5+gPvvHiNbTDG5ZFTBaNiHZRESjZ7dMXvW5cUU/XguZ1MxpnnW+WvP7rs8Hp216nYA/yxn6pNqlBcjDWMagpq7oTcfLQGnazKVG1MGTd2pEDBK4G9+sRD7wV+Lt5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716824945; c=relaxed/simple;
-	bh=GxlOGHj1d+fvGjMkPrmkeACoJaShF+IpvrmmxK3sODQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jfz8MDQJYLS8lqnlbjqQo1U+njnbLGzIQoEKXhaemvDJyecDKPkLQvYC/alfXuBwuAmNTjRXCQEk55WSgM5gWyfvRdEtnh5rvEQNDEjHErmv5TMGN9lm8ux+g94Nij7JtfTXDZdLY3fAEpD3yhIHjkwvh0omhQobclmUy7wTyv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fi/IC84K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716824942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yAicwoPMKSSb7qAx+AbzoJUYT/07gUTt/oLzI/9bm7M=;
-	b=Fi/IC84KZF3D5j6rX/QsRBfN9/hi8wVVy/s3URxlbJwzDnObdswu/t5ob0rzBHKftoGGhO
-	8baDbz8/dItf0HhZvZi5b8BugMIWpGDk+c2JdS0H49EBpPtZwLqXCc+COQLYNWv9cN6AJv
-	Z08Ds7n4M7ln4FW3lpCUqoH/eekuyS0=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-_h4K0s2VNhmbPToFPdTdZA-1; Mon, 27 May 2024 11:48:59 -0400
-X-MC-Unique: _h4K0s2VNhmbPToFPdTdZA-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ad864825d0so69016d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:48:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716824939; x=1717429739;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yAicwoPMKSSb7qAx+AbzoJUYT/07gUTt/oLzI/9bm7M=;
-        b=TVgbP6ln30jNXWAmO5KCxTeRTQJ8sC0nZHWsTc2N9yawtWP7uI26aT+bfrzmEAHINx
-         XXxxOxokrMrwHk7IM1xad8O6GNEeGMx3rghvCBIcjzX+PmfYqbzejbc/Q8Cm4d016oGJ
-         cOg9ykPBaYQdfSzRdTr+rp5gcXnuF7pglLkoe3wJSwgeiN8nJOJJrqlAvCIXtjDkI9vZ
-         znqfj7+B8ACfofWiYezU98tdgGgA11Zy1jEH8zpK5bn8RHYoDiesbpXi5mlx25KMGc2Q
-         OPUkcGEE5Rm0dfTvlzT/bSpyh+7vKJLihe+GVjP2ieMEMb1LRcLLf+TLQHDNkPqxV1H/
-         z0sw==
-X-Gm-Message-State: AOJu0YxjBoU/BQ/3LY150akO5kVKuS1GfQtWrKtGSo7DI+SS0dD31dqO
-	PAMyDsMENN5Y9bPn4YQsykJ7jGOxrnT5AZZKITXQgRZkbpmBigs5KtM8O4JX+ysZAqmGX5oxdN6
-	W/d9HBGx5ZqCnCqyTKDFiFGHkUTsweGBnEDulY+Vys4XFWVSJ3lXJNOUPDTEH4BeLRy85Qx6/zK
-	vfSJ2LGqz63SSP2Jdx8COfxNRG6MsQ3ojV09O7WyO8YwQ=
-X-Received: by 2002:a05:620a:46a0:b0:793:17f:18ae with SMTP id af79cd13be357-794ab110986mr1258496385a.3.1716824938339;
-        Mon, 27 May 2024 08:48:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmqHDczcrltkmD4V6I6X9MZqEa2VhwAwSvr2qZNwDgwFTlINj7zzFZvIGFpxd0Ohz0I8RPyw==
-X-Received: by 2002:a05:620a:46a0:b0:793:17f:18ae with SMTP id af79cd13be357-794ab110986mr1258491285a.3.1716824937466;
-        Mon, 27 May 2024 08:48:57 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca63desm305917785a.5.2024.05.27.08.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 08:48:57 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: peterx@redhat.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: [PATCH] mm: Drop leftover comment references to pxx_huge()
-Date: Mon, 27 May 2024 11:48:55 -0400
-Message-ID: <20240527154855.528816-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1716824949; c=relaxed/simple;
+	bh=PTOD43twZezS1LaJReRCBTqZRcQpJg3FNX+Bc7pvXxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XkRXPuXo2PeWM/Rfi5ksVzAfYMf7mXC1eiOMeWr0RTM7iPzAEhwBdUxRmt3AaYbYsBx1UTSC9ao+izFHOrpVWcLVf3K9e2ChHV3ZnwDLZfeQFrj034/sitP2aUYRCaWymZOb2tAPipANg1sEuLoMmTszHnnq4yiZnXf47I6iMeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxbKH5C2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11313C4AF07;
+	Mon, 27 May 2024 15:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716824948;
+	bh=PTOD43twZezS1LaJReRCBTqZRcQpJg3FNX+Bc7pvXxE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IxbKH5C2BwSP+iOUIKaBS1SI3wXJKhKcDFUkIG4T9t9UPywfcjK5Ljk/qO0lPp55t
+	 217DLLh6BUR0hOyEtCUHB0lf7exkGCiKr+9YxJmGO5fLPA34hVX8VImzpAQCBR6CoX
+	 3dDifS/1vT/4ds3hUzCA3lkPy08MkQ6tSjCW8ySmYv3SeWfh3s8Ci8J5rsYJT1Ous9
+	 BNuunDrH+Rx8SdQ6ny8IQbh0QkTc0TD/Co53IIuU4MpiEGueDMJXqkBJ7VI6p9hmlf
+	 Aj3MOPUvSlG4SrPPa1gfFTwQturO3j1vm3XP/0PNgnwLybrgKjeddRuqUkpLBNsHrV
+	 M9f6khanAmVbg==
+Date: Mon, 27 May 2024 12:49:05 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jens Axboe <axboe@kernel.dk>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1 fyi] perf beauty: Update copy of linux/socket.h with the
+ kernel sources
+Message-ID: <ZlSrceExgjrUiDb5@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-pxx_huge() has been removed in recent commit 9636f055dae1 ("mm/treewide:
-remove pXd_huge()"), however there are still three comments referencing the
-API that got overlooked.  Remove them.
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Full explanation:
+
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
+
+The way these headers are used in perf are not restricted to just
+including them to compile something.
+
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+To pick up the fixes in:
+
+  0645fbe760afcc53 ("net: have do_accept() take a struct proto_accept_arg argument")
+
+That just changes a function prototype, not touching things used by the
+perf scrape scripts such as:
+
+  $ tools/perf/trace/beauty/sockaddr.sh | head -5
+  static const char *socket_families[] = {
+  	[0] = "UNSPEC",
+  	[1] = "LOCAL",
+  	[2] = "INET",
+  	[3] = "AX25",
+  $
+
+This addresses this perf tools build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/perf/trace/beauty/include/linux/socket.h include/linux/socket.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- Documentation/mm/arch_pgtable_helpers.rst | 4 ----
- arch/x86/mm/pat/set_memory.c              | 4 ++--
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ tools/perf/trace/beauty/include/linux/socket.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/mm/arch_pgtable_helpers.rst b/Documentation/mm/arch_pgtable_helpers.rst
-index ad50ca6f495e..af245161d8e7 100644
---- a/Documentation/mm/arch_pgtable_helpers.rst
-+++ b/Documentation/mm/arch_pgtable_helpers.rst
-@@ -90,8 +90,6 @@ PMD Page Table Helpers
- +---------------------------+--------------------------------------------------+
- | pmd_leaf                  | Tests a leaf mapped PMD                          |
- +---------------------------+--------------------------------------------------+
--| pmd_huge                  | Tests a HugeTLB mapped PMD                       |
--+---------------------------+--------------------------------------------------+
- | pmd_trans_huge            | Tests a Transparent Huge Page (THP) at PMD       |
- +---------------------------+--------------------------------------------------+
- | pmd_present               | Tests whether pmd_page() points to valid memory  |
-@@ -169,8 +167,6 @@ PUD Page Table Helpers
- +---------------------------+--------------------------------------------------+
- | pud_leaf                  | Tests a leaf mapped PUD                          |
- +---------------------------+--------------------------------------------------+
--| pud_huge                  | Tests a HugeTLB mapped PUD                       |
--+---------------------------+--------------------------------------------------+
- | pud_trans_huge            | Tests a Transparent Huge Page (THP) at PUD       |
- +---------------------------+--------------------------------------------------+
- | pud_present               | Tests a valid mapped PUD                         |
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 19fdfbb171ed..8b2164509b4d 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -1120,8 +1120,8 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
- 		lpinc = PMD_SIZE;
- 		/*
- 		 * Clear the PSE flags if the PRESENT flag is not set
--		 * otherwise pmd_present/pmd_huge will return true
--		 * even on a non present pmd.
-+		 * otherwise pmd_present() will return true even on a non
-+		 * present pmd.
- 		 */
- 		if (!(pgprot_val(ref_prot) & _PAGE_PRESENT))
- 			pgprot_val(ref_prot) &= ~_PAGE_PSE;
+diff --git a/tools/perf/trace/beauty/include/linux/socket.h b/tools/perf/trace/beauty/include/linux/socket.h
+index 139c330ccf2c3bf9..89d16b90370bd412 100644
+--- a/tools/perf/trace/beauty/include/linux/socket.h
++++ b/tools/perf/trace/beauty/include/linux/socket.h
+@@ -16,6 +16,7 @@ struct cred;
+ struct socket;
+ struct sock;
+ struct sk_buff;
++struct proto_accept_arg;
+ 
+ #define __sockaddr_check_size(size)	\
+ 	BUILD_BUG_ON(((size) > sizeof(struct __kernel_sockaddr_storage)))
+@@ -433,7 +434,7 @@ extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
+ extern int __sys_sendto(int fd, void __user *buff, size_t len,
+ 			unsigned int flags, struct sockaddr __user *addr,
+ 			int addr_len);
+-extern struct file *do_accept(struct file *file, unsigned file_flags,
++extern struct file *do_accept(struct file *file, struct proto_accept_arg *arg,
+ 			      struct sockaddr __user *upeer_sockaddr,
+ 			      int __user *upeer_addrlen, int flags);
+ extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
 -- 
-2.45.0
+2.45.1
 
 
