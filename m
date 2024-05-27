@@ -1,351 +1,187 @@
-Return-Path: <linux-kernel+bounces-190035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D162C8CF89F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:09:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498378CF8A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 465F7B224E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3263281F02
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4324D528;
-	Mon, 27 May 2024 05:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DADD50F;
+	Mon, 27 May 2024 05:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h3iYM6YJ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Cct6kq9N"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2083.outbound.protection.outlook.com [40.107.236.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73378828
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716786574; cv=none; b=bY7Zh5wNzuZy+/rCXZFEIX3yEXI+BgJ84RzKT+YzfVLbFsWJaO8sGcbSaZIa7PCqczWg/FB3PepNB0Nd5VyMWjcpgC58OgBhquslNj7SF1YsdENqcJnPCDEq0S56zA3yFiwhcsd9dl2HkAYqB20XwLhifbNWdBP+Ljmmv5sz9dg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716786574; c=relaxed/simple;
-	bh=o0gkSxr7BeB1XFVbO2AyoaeDCBeQmwWcESzdEg4uu0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+2/AZnItKDPPdOrQjumygZ86yU2tHT5Bg2dwSrEt/BJGD19W0oSOecRZytqDZTrQhloKZJJJTfO1n9yMvI1VXpAysXnxZOtL5BT+DrYzTHI+JEuCdZpUQ8EmPFNDJsu7u+lwcBqAChj3Uc5c7kqwUoeuZRm7JkOSnGOdtwwyss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h3iYM6YJ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: f.weber@proxmox.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716786568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g1WWxvdlhMhTXfGzzKHpOTyEARM/MvSTsyra7dhtxh0=;
-	b=h3iYM6YJdhtwUKCXNuHrdJ3LXBkSk21OjSNX6OaN3XNLZ85kn8p0ZtB4FBstLaWieyQtq/
-	ciOsrfWIxgX7t9Kjx2cIzu9YBvlf8m4KILRUEeV5FdlsWnm1fDnvg0Ap40hofYFQRhDVaa
-	ldCpKWkOhYuorqce5nt1J981taJsSxg=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: hch@lst.de
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-Message-ID: <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
-Date: Mon, 27 May 2024 13:09:20 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3400E79F0;
+	Mon, 27 May 2024 05:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716786714; cv=fail; b=KfLghz9I0p518jBYh+nI4E8UVMKyAwebPbD3UR4tn/iC2jbvVWU+/mCyRDh7FUo+lj/ZbcHeQPT7Hf7RbjTs/WWVP8W1w0OxVdzKJbg12HtRTc00Tz76me1B3NBhGdYmG9yOo3fSljU+r1iQQyU80nMMhMb4wQnEWNPRii381IM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716786714; c=relaxed/simple;
+	bh=LmRASh5Ou6QAzVNaN6CZCDFl568g/kmZp1BRO0atMVc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aGSmwUYOeuMdXDPknGco7VlXfc+vXwZqKuBSuXQH0AyOjqzr5NS5RXWO9pur6Yq0jprXVXsiwzmzfAj1ah1Ty6RMxfEOQboFGGAWekgk2rIVV5tmdqOfaQBedLGFAHWl/rM1vp0+JQ/mLZBCHzJJJrjB/vCE8/KAiINVQR738Iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Cct6kq9N; arc=fail smtp.client-ip=40.107.236.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XnPRIbvrtZLa4AlIOqvVlRu7Yk9gLa+P9Qzw4IkqLcrEA1F+Apem+dWVY6V/h0KihzIFttY3j96X/NeXoGbUo31e3znNNLej+EJatwoMv+P23U3gfeodoUmBB5h+u/vxxTz76BftB04c289dPc/llW3f9IXbbrg1Eg/+DT3q9/MlaTaHtlqzuV/S/UKleMqdUxJGWB6JEzzpMPQ/fObY++AG/Bs6SL06jrFkxRYXlgx8s1yplfy+Xtx1h6L2tOau9z/Isgo5kDtfLF6t/UL6JcwT6tyT1o/KXcv4uoU9Vj8iJ577nNcciWwsz763fLYVz0CiIxlCHXWA281H9flzgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jquh8+iyaRnqWj1uuIrfB2dGHuSX8+0S6DZZ5Mwu+14=;
+ b=MvyplEA9+ov8y7s+7bDWsteVzGk+CNnpOGzjH2jtrvYfU2nRLtIXxAGeAseN1w2UBrFg/mQTI7d+FILWrrIjgrw/4xOIonEAdzU33UdIfFPHNlZmbVoJ1/FO+K7KZeQ/gHZQHRfc9E9UsTIhutCE9nWH9SbozxI1A4FIV+Ukznh349gZxSoT5ztQ4LPKIxBsHpHdHHPB1nstOvUe02eXuZUfrrIuJs5Aav6MTL9AAmy2jmhhrjV5eZb0iHgQV0DPiYEQN6FaayubiDuLQ3/hGn35qye+xH6968n9QIKv8wyNBzRPyoLIzK4syPn+6W3nIvmqqtQxiq2PrOgTPDgh0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jquh8+iyaRnqWj1uuIrfB2dGHuSX8+0S6DZZ5Mwu+14=;
+ b=Cct6kq9NSE5XVvYm4qJj846AZk4oFdPThKv47t+iJiumSLgWNqfPCNTVbrIr0AlEwHUGb4w8UolisBsiMaVuxsPHGHr1/Awc4YheuThS8D3R3RyKCJFYGekhdXcESf3tU4JrxYbCwXxKA7D499Iz3ASTKtwPI877tTtInYzK+6g=
+Received: from DM6PR18CA0020.namprd18.prod.outlook.com (2603:10b6:5:15b::33)
+ by BL1PR12MB5802.namprd12.prod.outlook.com (2603:10b6:208:392::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 05:11:49 +0000
+Received: from DS2PEPF0000343C.namprd02.prod.outlook.com
+ (2603:10b6:5:15b:cafe::20) by DM6PR18CA0020.outlook.office365.com
+ (2603:10b6:5:15b::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29 via Frontend
+ Transport; Mon, 27 May 2024 05:11:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF0000343C.mail.protection.outlook.com (10.167.18.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 05:11:49 +0000
+Received: from BLR-L-DUGWEKAR.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
+ 2024 00:11:45 -0500
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <rafael@kernel.org>, <ray.huang@amd.com>, <viresh.kumar@linaro.org>,
+	<Mario.Limonciello@amd.com>, <gautham.shenoy@amd.com>
+CC: <ananth.narayan@amd.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Perry.Yuan@amd.com>, Dhananjay Ugwekar
+	<Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH] cpufreq: amd-pstate: Fix the inconsistency in max frequency units
+Date: Mon, 27 May 2024 10:41:28 +0530
+Message-ID: <20240527051128.110091-1-Dhananjay.Ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 4/4] blk-flush: reuse rq queuelist in flush state
- machine
-Content-Language: en-US
-To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
- ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20230717040058.3993930-1-chengming.zhou@linux.dev>
- <20230717040058.3993930-5-chengming.zhou@linux.dev>
- <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343C:EE_|BL1PR12MB5802:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53ec33ed-97d3-4d22-524e-08dc7e0b833e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aEVZt1M+FZWLPPtOP0a21fU0lyMsrQ/A96aLxu2ToPPpzrzPpig0sjJ/0Pjh?=
+ =?us-ascii?Q?8JKNCYjVMy1YjI1Hb9K58pUaCvI0Mzz3LzcjV8Q4z2NT+L9YilJXyS1mrcAT?=
+ =?us-ascii?Q?bmd939ubw6dyaeJkp0UK+X1aBbvyGX9f7Jw4wbtnVAYFCR4ULz4Bmj2Gaqad?=
+ =?us-ascii?Q?u3kEyObCaYLS4Dh7eqBVixDhjaVlYuCVjLbhmWrFoU/+VkGUMqQ1s1nPc9IK?=
+ =?us-ascii?Q?rvYxUzmLCYXBF0fQ6UKX/NVr7IQNqm5wmWADyWz/X0XWcrXWjBk2JASXmxIr?=
+ =?us-ascii?Q?oW0INxcgQy4uWLuu3/A2ipqDqMBd9FiZJ0ExoTrigXOnTICP1Dg/AMCu4GAE?=
+ =?us-ascii?Q?l4S4km+2W0u9x2nq8VO4Q3qCy/8T804C+w/i3lGYahHmCT8RzXuu/dNj8S64?=
+ =?us-ascii?Q?CdvkchuH4JwKNoOlStOTC+ov96co42ZTFIYlhrhQoD60UfFn0LCv+1zSwitU?=
+ =?us-ascii?Q?EURH1jUEQl4mYsWap8Jf2XxMYeh28wURV/broCD6XO3jJh1tKWetxGej7L+S?=
+ =?us-ascii?Q?2OgLxctirBjKV4iR1Jy2mdYn3QRqJBmBi6N/sMxMF8+3c2+iqqQ5mzwHE4mr?=
+ =?us-ascii?Q?pCiXGTW4gG2MsJGwulMHbTjvtD17WDRuNlvJWtiwZOqYBRvQ3qJxmbOFhlUq?=
+ =?us-ascii?Q?dlHU+pnXUTxCREFOn7PL9E5Oitmz26lUALk8oEGbBaJwJXYcKMjSEHOQMsR9?=
+ =?us-ascii?Q?V3JMCAuPhpRYg15oaYUzYXm4eh4EIMXPedqUrY0B0beNPyg7S66qsn23NYHP?=
+ =?us-ascii?Q?OhvIynqbHiVvArV8nqq1wz2oSADw1QCJMOlatvMLO1X1qu0U4EhZfyOUvuld?=
+ =?us-ascii?Q?BpcDYHuiNlfsVgWj8Tmv831ncbInxyeFQ6UEfmWnILWGoYFf7ohxXPKSVHo0?=
+ =?us-ascii?Q?8KmOz13MaNA1u2xHzFZBflqvcKhIAWIZ3fq0w3iRGe95CXyhteln7gyRAcVl?=
+ =?us-ascii?Q?euFvvkils+yA34zEOlM21srdC4P3pfs4b/7/kqyU5l5ciiMBVGPbdqmOQtNZ?=
+ =?us-ascii?Q?u8kPFh1mrEWu6p3a8Yp6Jy3MvpqYFp4/X+iHo7jVLMvQ+/etmLWEzX3lJt/H?=
+ =?us-ascii?Q?8j+BN2syEYsYfHvRquHMDVaWIZDoXUYG9xZ+GM5CMrBtiGTWKlP5MvGZ1/Jw?=
+ =?us-ascii?Q?klWyCpKxEH/WZmCXdyK3+3lq9AW3BoY8zrubOpQPaCK0hRCORJmDKXiKe1h7?=
+ =?us-ascii?Q?ieGFXYjTfKhz6t1+0FFSfjDO5fRlTm7ev/aEswAOa3RoPkf4O+N3c4/cGeDt?=
+ =?us-ascii?Q?F7HhLhnLsQ3admuM4rSxWXZlps+s+16oIMVBAbjIigWPgHfLqnTehX8PYRsO?=
+ =?us-ascii?Q?7Dx0BNKQz7Idyz74ImMomU4uEBktAmucJluvYNZ1ANlatfq6o8bNpHzDj3JJ?=
+ =?us-ascii?Q?UcfrxmAOuQTYMvgl3R3O0t81cacV?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 05:11:49.0626
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53ec33ed-97d3-4d22-524e-08dc7e0b833e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5802
 
-Hi,
+The nominal frequency in cpudata is maintained in MHz whereas all other
+frequencies are in KHz. This means we have to convert nominal frequency
+value to KHz before we do any interaction with other frequency values.
 
-On 2024/5/25 00:07, Friedrich Weber wrote:
-> Hi,
-> 
-> some of our (Proxmox VE) users have been reporting crashes [1] with NULL
-> pointer dereferences in blk_flush_complete_seq. AFAICT, all systems
-> crashing in blk_flush_complete_seq used software RAID1, and ran our
-> downstream kernel based on (Ubuntu) kernel 6.8.
-> 
-> On mainline kernel 6.9, I can reproduce the crash [1] by:
-> 
-> * compiling the kernel with CONFIG_FAIL_MAKE_REQUEST enabled
-> * setting up root on software RAID1
-> * enabling the write-intent bitmap with `mdadm --grow --bitmap=internal
-> /dev/md0`. So far, I have not been able to reproduce the crash with the
-> write-intent bitmap disabled.
-> * injecting write faults via CONFIG_FAIL_MAKE_REQUEST on one of the
-> RAID1 disks
-> * generating IO in a KVM guest with fio
-> * waiting ~5 minutes
-> 
-> I've used this reproducer for a bisect, which produced
-> 
->  81ada09cc25e (blk-flush: reuse rq queuelist in flush state machine)
-> 
-> as the first commit with which I can reproduce the crashes. I'm not 100%
-> sure it is this one because the reproducer is a bit flaky. But it does
-> sound plausible, as the commit is included in our 6.8 kernel, and
-> touches `queuelist` which is AFAICT where blk_flush_complete_seq
-> dereferences the NULL pointer.
+In amd_pstate_set_boost(), this conversion from MHz to KHz is missed,
+fix that.
 
-Ok, it will be better that I can reproduce it locally, will try later.
+Tested on a AMD Zen4 EPYC server
 
-> 
-> Does anyone have an idea what could be the cause for the crash, or how
-> to further debug this? Happy to provide more information if needed, as
-> well as the complete reproducer (I'd need to clean it up a little bit
-> first).
+Before:
+$ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq | uniq
+2151
+$ cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_min_freq | uniq
+400000
+$ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq | uniq
+2151
+409422
 
-BUG shows it panic on 0000000000000008, not sure what it's accessing then,
-does it means rq->queuelist.next == 0 or something? Could you use add2line
-to show the exact source code line that panic? I use blk_flush_complete_seq+0x296/0x2e0
-and get block/blk-flush.c:190, which is "fq->flush_data_in_flight++;",
-obviously fq can't be NULL. (I'm using the v6.9 kernel)
+After:
+$ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq | uniq
+2151000
+$ cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_min_freq | uniq
+400000
+$ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq | uniq
+2151000
+1799527
 
-Thanks.
+Fixes: ec437d71db77 ("cpufreq: amd-pstate: Introduce a new AMD P-State driver to support future processors")
+Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Do you think this could also affect setups without software RAID?
-> 
-> Best,
-> 
-> Friedrich
-> 
-> [1]
-> 
-> [  132.292488] BUG: kernel NULL pointer dereference, address:
-> 0000000000000008
-> [  132.293594] #PF: supervisor write access in kernel mode
-> [  132.294408] #PF: error_code(0x0002) - not-present page
-> [  132.295187] PGD 0 P4D 0
-> [  132.295609] Oops: 0002 [#1] PREEMPT SMP NOPTI
-> [  132.296285] CPU: 0 PID: 776 Comm: kvm Tainted: G            E
-> 6.5.0-rc2-bisect11+ #22
-> [  132.297556] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [  132.299292] RIP: 0010:blk_flush_complete_seq+0x296/0x2e0
-> [  132.300122] Code: 0f b6 f6 49 8d 56 01 49 c1 e6 04 4d 01 ee 48 c1 e2
-> 04 49 8b 4e 10 4c 01 ea 48 39 ca 74 2b 48 8b 4b 50 48 8b 7b 48 48 8d 73
-> 48 <48> 89 4f 08 48 89 39 49 8b 4e 18 49 89 76 18 48 89 53 48 48 89 4b
-> [  132.302946] RSP: 0018:ffffa431407a39b8 EFLAGS: 00010046
-> [  132.303765] RAX: 0000000000000000 RBX: ffff92d00c2fd000 RCX:
-> ffff92d00c2fd048
-> [  132.304856] RDX: ffff92d0036dfaa0 RSI: ffff92d00c2fd048 RDI:
-> 0000000000000000
-> [  132.305948] RBP: ffffa431407a39f8 R08: 0000000000000000 R09:
-> 0000000000000000
-> [  132.307043] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000801
-> [  132.308120] R13: ffff92d0036dfa80 R14: ffff92d0036dfa90 R15:
-> ffff92d00ba09e00
-> [  132.309216] FS:  0000727d191b86c0(0000) GS:ffff92d137c00000(0000)
-> knlGS:0000000000000000
-> [  132.310457] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  132.311355] CR2: 0000000000000008 CR3: 000000018f088006 CR4:
-> 0000000000372ef0
-> [  132.312444] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [  132.313535] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [  132.314633] Call Trace:
-> [  132.315016]  <TASK>
-> [  132.315381]  ? show_regs+0x6d/0x80
-> [  132.315921]  ? __die+0x24/0x80
-> [  132.316421]  ? page_fault_oops+0x176/0x500
-> [  132.317049]  ? do_user_addr_fault+0x31d/0x6a0
-> [  132.317744]  ? exc_page_fault+0x83/0x1b0
-> [  132.318368]  ? asm_exc_page_fault+0x27/0x30
-> [  132.319008]  ? blk_flush_complete_seq+0x296/0x2e0
-> [  132.319759]  ? __blk_mq_alloc_requests+0x383/0x3a0
-> [  132.320505]  ? wbt_wait+0xb3/0x100
-> [  132.321041]  blk_insert_flush+0xd1/0x220
-> [  132.321664]  blk_mq_submit_bio+0x564/0x690
-> [  132.322294]  __submit_bio+0xb3/0x1c0
-> [  132.322859]  submit_bio_noacct_nocheck+0x2b7/0x390
-> [  132.323622]  submit_bio_noacct+0x18a/0x6b0
-> [  132.324241]  submit_bio+0x6c/0x80
-> [  132.324774]  md_super_write+0xd1/0x120
-> [  132.325376]  write_page+0x23b/0x3f0
-> [  132.325915]  ? md_bitmap_wait_writes+0xda/0xf0
-> [  132.326624]  md_bitmap_unplug+0x9f/0x140
-> [  132.327251]  flush_bio_list+0x102/0x110 [raid1]
-> [  132.327963]  raid1_unplug+0x3c/0xe0 [raid1]
-> [  132.328626]  __blk_flush_plug+0xc1/0x130
-> [  132.329238]  blk_finish_plug+0x31/0x50
-> [  132.329819]  io_submit_sqes+0x53e/0x680
-> [  132.330426]  __do_sys_io_uring_enter+0x59a/0xc10
-> [  132.331149]  ? vfs_read+0x20a/0x360
-> [  132.331699]  __x64_sys_io_uring_enter+0x22/0x40
-> [  132.332414]  do_syscall_64+0x58/0x90
-> [  132.332979]  ? ksys_read+0xe6/0x100
-> [  132.333530]  ? exit_to_user_mode_prepare+0x49/0x220
-> [  132.334292]  ? syscall_exit_to_user_mode+0x1b/0x50
-> [  132.335032]  ? do_syscall_64+0x67/0x90
-> [  132.335627]  ? syscall_exit_to_user_mode+0x1b/0x50
-> [  132.336381]  ? do_syscall_64+0x67/0x90
-> [  132.336958]  ? syscall_exit_to_user_mode+0x1b/0x50
-> [  132.337707]  ? do_syscall_64+0x67/0x90
-> [  132.338296]  ? syscall_exit_to_user_mode+0x1b/0x50
-> [  132.339045]  ? do_syscall_64+0x67/0x90
-> [  132.339646]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-> [  132.340426] RIP: 0033:0x727d26282b95
-> [  132.341011] Code: 00 00 00 44 89 d0 41 b9 08 00 00 00 83 c8 10 f6 87
-> d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45 31 c0 b8 aa 01 00 00 0f
-> 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2 02 74 c2 f0 48 83 0c 24
-> [  132.343837] RSP: 002b:0000727d191b2fd8 EFLAGS: 00000246 ORIG_RAX:
-> 00000000000001aa
-> [  132.344990] RAX: ffffffffffffffda RBX: 0000727d0c0039d0 RCX:
-> 0000727d26282b95
-> [  132.346079] RDX: 0000000000000000 RSI: 0000000000000003 RDI:
-> 0000000000000033
-> [  132.347176] RBP: 0000727d0c0039d8 R08: 0000000000000000 R09:
-> 0000000000000008
-> [  132.348272] R10: 0000000000000000 R11: 0000000000000246 R12:
-> 0000727d0c003ac0
-> [  132.349376] R13: 0000000000000000 R14: 00005a5a2313bc68 R15:
-> 00005a5a25cf0450
-> [  132.350472]  </TASK>
-> [  132.350828] Modules linked in: veth(E) cmac(E) nls_utf8(E) cifs(E)
-> cifs_arc4(E) rdma_cm(E) iw_cm(E) ib_cm(E) ib_core(E) cifs_md4(E)
-> ebtable_filter(E) ebtables(E) ip_set(E) ip6table_raw(E) iptable_raw(E)
-> ip6table_filter(E) ip6_tables(E) iptable_filter(E) nf_tables(E)
-> sunrpc(E) softdog(E) binfmt_misc(E) bonding(E) tls(E) nfnetlink_log(E)
-> nfnetlink(E) intel_rapl_msr(E) intel_rapl_common(E) intel_pmc_core(E)
-> kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) polyval_clmulni(E)
-> polyval_generic(E) ghash_clmulni_intel(E) aesni_intel(E) crypto_simd(E)
-> cryptd(E) rapl(E) pcspkr(E) vmgenid(E) joydev(E) input_leds(E)
-> mac_hid(E) serio_raw(E) vhost_net(E) vhost(E) vhost_iotlb(E) tap(E)
-> efi_pstore(E) dmi_sysfs(E) qemu_fw_cfg(E) ip_tables(E) x_tables(E)
-> autofs4(E) hid_generic(E) usbhid(E) hid(E) raid10(E) raid456(E)
-> async_raid6_recov(E) async_memcpy(E) async_pq(E) async_xor(E)
-> async_tx(E) xor(E) raid6_pq(E) libcrc32c(E) raid0(E) raid1(E)
-> crc32_pclmul(E) bochs(E) drm_vram_helper(E) psmouse(E) drm_ttm_helper(E)
-> uhci_hcd(E) ttm(E)
-> [  132.350919]  ehci_hcd(E) i2c_piix4(E) pata_acpi(E) floppy(E)
-> [  132.365204] CR2: 0000000000000008
-> [  132.365747] ---[ end trace 0000000000000000 ]---
-> [  132.366468] RIP: 0010:blk_flush_complete_seq+0x296/0x2e0
-> [  132.367290] Code: 0f b6 f6 49 8d 56 01 49 c1 e6 04 4d 01 ee 48 c1 e2
-> 04 49 8b 4e 10 4c 01 ea 48 39 ca 74 2b 48 8b 4b 50 48 8b 7b 48 48 8d 73
-> 48 <48> 89 4f 08 48 89 39 49 8b 4e 18 49 89 76 18 48 89 53 48 48 89 4b
-> [  132.370119] RSP: 0018:ffffa431407a39b8 EFLAGS: 00010046
-> [  132.370935] RAX: 0000000000000000 RBX: ffff92d00c2fd000 RCX:
-> ffff92d00c2fd048
-> [  132.372015] RDX: ffff92d0036dfaa0 RSI: ffff92d00c2fd048 RDI:
-> 0000000000000000
-> [  132.373115] RBP: ffffa431407a39f8 R08: 0000000000000000 R09:
-> 0000000000000000
-> [  132.374193] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000801
-> [  132.375286] R13: ffff92d0036dfa80 R14: ffff92d0036dfa90 R15:
-> ffff92d00ba09e00
-> [  132.376385] FS:  0000727d191b86c0(0000) GS:ffff92d137c00000(0000)
-> knlGS:0000000000000000
-> [  132.377600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  132.378486] CR2: 0000000000000008 CR3: 000000018f088006 CR4:
-> 0000000000372ef0
-> [  132.379564] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [  132.380638] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [  132.381738] note: kvm[776] exited with irqs disabled
-> [  132.382631] note: kvm[776] exited with preempt_count 1
-> [  132.383469] ------------[ cut here ]------------
-> [  132.384193] WARNING: CPU: 0 PID: 776 at kernel/exit.c:818
-> do_exit+0x8db/0xae0
-> [  132.385307] Modules linked in: veth(E) cmac(E) nls_utf8(E) cifs(E)
-> cifs_arc4(E) rdma_cm(E) iw_cm(E) ib_cm(E) ib_core(E) cifs_md4(E)
-> ebtable_filter(E) ebtables(E) ip_set(E) ip6table_raw(E) iptable_raw(E)
-> ip6table_filter(E) ip6_tables(E) iptable_filter(E) nf_tables(E)
-> sunrpc(E) softdog(E) binfmt_misc(E) bonding(E) tls(E) nfnetlink_log(E)
-> nfnetlink(E) intel_rapl_msr(E) intel_rapl_common(E) intel_pmc_core(E)
-> kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) polyval_clmulni(E)
-> polyval_generic(E) ghash_clmulni_intel(E) aesni_intel(E) crypto_simd(E)
-> cryptd(E) rapl(E) pcspkr(E) vmgenid(E) joydev(E) input_leds(E)
-> mac_hid(E) serio_raw(E) vhost_net(E) vhost(E) vhost_iotlb(E) tap(E)
-> efi_pstore(E) dmi_sysfs(E) qemu_fw_cfg(E) ip_tables(E) x_tables(E)
-> autofs4(E) hid_generic(E) usbhid(E) hid(E) raid10(E) raid456(E)
-> async_raid6_recov(E) async_memcpy(E) async_pq(E) async_xor(E)
-> async_tx(E) xor(E) raid6_pq(E) libcrc32c(E) raid0(E) raid1(E)
-> crc32_pclmul(E) bochs(E) drm_vram_helper(E) psmouse(E) drm_ttm_helper(E)
-> uhci_hcd(E) ttm(E)
-> [  132.385396]  ehci_hcd(E) i2c_piix4(E) pata_acpi(E) floppy(E)
-> [  132.399854] CPU: 0 PID: 776 Comm: kvm Tainted: G      D     E
-> 6.5.0-rc2-bisect11+ #22
-> [  132.401165] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [  132.402987] RIP: 0010:do_exit+0x8db/0xae0
-> [  132.403661] Code: e9 44 f8 ff ff 48 8b bb d8 09 00 00 31 f6 e8 fc d7
-> ff ff e9 f0 fd ff ff 4c 89 ee bf 05 06 00 00 e8 4a 2e 01 00 e9 70 f8 ff
-> ff <0f> 0b e9 9e f7 ff ff 0f 0b e9 57 f7 ff ff 48 89 df e8 bf 7d 13 00
-> [  132.406622] RSP: 0018:ffffa431407a3ec8 EFLAGS: 00010282
-> [  132.407487] RAX: 0000000000000000 RBX: ffff92d08d53a940 RCX:
-> 0000000000000000
-> [  132.408637] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-> 0000000000000000
-> [  132.409791] RBP: ffffa431407a3f20 R08: 0000000000000000 R09:
-> 0000000000000000
-> [  132.410961] R10: 0000000000000000 R11: 0000000000000000 R12:
-> ffff92d0031cba80
-> [  132.412102] R13: 0000000000000009 R14: ffff92d090d53180 R15:
-> 0000000000000000
-> [  132.413256] FS:  0000727d191b86c0(0000) GS:ffff92d137c00000(0000)
-> knlGS:0000000000000000
-> [  132.414582] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  132.415512] CR2: 0000000000000008 CR3: 000000018f088006 CR4:
-> 0000000000372ef0
-> [  132.416670] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [  132.417842] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [  132.418998] Call Trace:
-> [  132.419430]  <TASK>
-> [  132.419788]  ? show_regs+0x6d/0x80
-> [  132.420352]  ? __warn+0x89/0x160
-> [  132.420891]  ? do_exit+0x8db/0xae0
-> [  132.421477]  ? report_bug+0x17e/0x1b0
-> [  132.422063]  ? handle_bug+0x46/0x90
-> [  132.422655]  ? exc_invalid_op+0x18/0x80
-> [  132.423299]  ? asm_exc_invalid_op+0x1b/0x20
-> [  132.423975]  ? do_exit+0x8db/0xae0
-> [  132.424565]  ? do_exit+0x72/0xae0
-> [  132.425131]  ? _printk+0x60/0x90
-> [  132.425666]  make_task_dead+0x86/0x180
-> [  132.426297]  rewind_stack_and_make_dead+0x17/0x20
-> [  132.427056] RIP: 0033:0x727d26282b95
-> [  132.427681] Code: 00 00 00 44 89 d0 41 b9 08 00 00 00 83 c8 10 f6 87
-> d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45 31 c0 b8 aa 01 00 00 0f
-> 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2 02 74 c2 f0 48 83 0c 24
-> [  132.430663] RSP: 002b:0000727d191b2fd8 EFLAGS: 00000246 ORIG_RAX:
-> 00000000000001aa
-> [  132.431895] RAX: ffffffffffffffda RBX: 0000727d0c0039d0 RCX:
-> 0000727d26282b95
-> [  132.433049] RDX: 0000000000000000 RSI: 0000000000000003 RDI:
-> 0000000000000033
-> [  132.434203] RBP: 0000727d0c0039d8 R08: 0000000000000000 R09:
-> 0000000000000008
-> [  132.435372] R10: 0000000000000000 R11: 0000000000000246 R12:
-> 0000727d0c003ac0
-> [  132.436529] R13: 0000000000000000 R14: 00005a5a2313bc68 R15:
-> 00005a5a25cf0450
-> [  132.437685]  </TASK>
-> [  132.438056] ---[ end trace 0000000000000000 ]---
-> 
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 1b7e82a0ad2e..cde3b91b4422 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -669,7 +669,7 @@ static int amd_pstate_set_boost(struct cpufreq_policy *policy, int state)
+ 	if (state)
+ 		policy->cpuinfo.max_freq = cpudata->max_freq;
+ 	else
+-		policy->cpuinfo.max_freq = cpudata->nominal_freq;
++		policy->cpuinfo.max_freq = cpudata->nominal_freq * 1000;
+ 
+ 	policy->max = policy->cpuinfo.max_freq;
+ 
+-- 
+2.34.1
+
 
