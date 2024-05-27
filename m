@@ -1,133 +1,204 @@
-Return-Path: <linux-kernel+bounces-190956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F0A8D04D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:55:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611738D04CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D34287121
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:55:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48701F20EFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0C416F8FF;
-	Mon, 27 May 2024 14:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C94160783;
+	Mon, 27 May 2024 14:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="geZBSPNM"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2qNMAeQj"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9453161339
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819848; cv=none; b=ACT/Sm+KmhEjbSdvC58lycp7P+Vc09Oj++9nbEWoYs7wlJbNX9cf+tPdBq8fMCI+y171z5T6JmB0n9KNCvdPGIkeGHoQ9qgn7sMgdle/+zC0an3A6gJ3GaWmnxQPe2dsMkYEr4ctIE3HOTehjH5TZD/vUxeQD8zlz1dJo3EM1yw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819848; c=relaxed/simple;
-	bh=OWccy+nICEZUKQPwByjtML13iQY9e7N6XueMvybRfeI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t6B0MVOsrRYytI1q3WYUQ5cnzmQJgXwANZzMw5Mq5n5p8l0wYWa2BgMb1pmtktXTKsxMhgyY+GEkPOvNrboqNxueE+MfX7i1MvUUusdk2gOL3HsITkXqrEdzKbEeLsmW+QGVqi7DXhTPQqNeufkOkKgc1A0guqVAv22OPQfFlkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=geZBSPNM; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7010a7df499so900930b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716819846; x=1717424646; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y7t4uYmRqlJLrpJDiHKBdOulRnB5HHZ6HHejKDBAJ1A=;
-        b=geZBSPNM0L7z+LF+w4vMu3B3WY7AF2PO+By/1Ifp0qgg5iN1245+kM7nXmhoFleiKm
-         Vpz8hEfwz4jho/HtEwTstgSK9WIPsZGUI1Tg1xYdKh23/zThArvtorBrWBgrp5DfizE/
-         s/O6Fv263DlWJgmyiQvlSfAWiGs4DUsV5c9WMYmeUgABxabXobrfVER4lw7CMcuj5POc
-         rPGcwoJNC/T5ZSxQLIG8W7d0zmU5DdNxbA4HiDdwJ+bqX9M3JbMbefitjNtbR44WuLYP
-         x+6DMVu/TTt7tgAkovfXB7lLJx2jCklNtC2o9sS0wRM0z1oVgSfL0YHWUxWFpr0ZRgYu
-         E0xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716819846; x=1717424646;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y7t4uYmRqlJLrpJDiHKBdOulRnB5HHZ6HHejKDBAJ1A=;
-        b=bb+RIFSvoZ7w0dqolYPnkDB20ms3eIx+FvuGPQmxVGfCN1k9A2NplnMwz/CAYYlQUb
-         cylXp/QCD8+dGcmvXJDDQZPmqk7zHkfEPzMtTY9wcocsAQExQskr/EGbPPn0ojNY8Xsi
-         Tqy8HsS2l0BuLegwTc+NJ/mFg2A+st7BnZnBgpS7K1B6t3+MfbGTp/koGl1pNtF4/ym2
-         mvcFHpszMT4YFqcYA+RHjvRkkrWfBjkHdv9noawbCja4TE9vKQcjic3fDqkiin/2OyDM
-         SlY5vTQST3xoZIrzStWWOyS2ycuxsLlCSs2lahuC3XgxnWTsmc/K99dUIlPILHmEHqov
-         CdKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ5pj3D5fnaGfPG63Ug9n/U3gyhzj7lYuHsj6X6+X10UzV056TbLIj0RjgRPqUk/QHaOljCacaApi/9hgCTy6oZar3pyPqkHrUXbKo
-X-Gm-Message-State: AOJu0Yza/aT+qL8zjCw6KAED38r6i6UNbOT6FyTIvzmW6JUoOQJl3EBJ
-	D1h8iT5QtjylGUFAzAzPldJIeChEKUWXrz/jLojG7w9erDsu3WIlxmGmCamYVZY=
-X-Google-Smtp-Source: AGHT+IHJ7Gus1KojOvbGG4MRVvDnQ0USYq7JfPcmCETBzGI3IuW+o9e/WGNMRkZQQAcHSiH5qpRc+Q==
-X-Received: by 2002:a05:6a20:5612:b0:1b0:24e7:5a35 with SMTP id adf61e73a8af0-1b212e5273emr8026076637.56.1716819846219;
-        Mon, 27 May 2024 07:24:06 -0700 (PDT)
-Received: from [127.0.1.1] ([112.64.61.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fbd3eb67sm5109895b3a.19.2024.05.27.07.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 07:24:05 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 27 May 2024 22:21:52 +0800
-Subject: [PATCH v5 6/6] drm/msm/dsi: add a comment to explain pkt_per_line
- encoding
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BF215EFAE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716819815; cv=fail; b=J22kBztMbLIjjqutNntTmWYRCDS4aEh8fAfexHFXFqMiuWWerBDGU6gVGNaWFd/2vppOmvTYcIYipC0c7oAjI8ALi+5acXtOd/MFxdY2L5CuSRbqlQnxv03l4J5m8HDCY+cdcCwrZtUBGvnlFAMQtSWdMGPDPiUcm9H9TtCgVbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716819815; c=relaxed/simple;
+	bh=qgfcBEMdoezaaogkcGZvzlNSX8qkKbLKUg3J1jwG1Gc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H7yPgMKyns+BcW5gELFWcEBW0M8tYRY0N2ilPpUEmLqGkIW599V0+h0PBrRm+PGMn8TxQoOYA0QQx8katmDadGOIlNAPsRWHWuHTSLVtrd0F0zXv+VZGTar6R6C7VxqOO/uTX3f5t6O5mBem5JPDt/Yyv25kD9r3Kr8XhuoRuDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2qNMAeQj; arc=fail smtp.client-ip=40.107.243.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B7uorN/ISrpSUwgDQwvvnuVAEWU2p+tP8ay3HDkCxqET/NNA6bQrcb+2qqTnVWwHd3CY+RrXgA+6RRXLyIkd0FvTaFtYaLPlueSO1PJa+Kh+Hna9gBazyVkVb902QbL0IWq7Ug3Ojw1BH29nECww2UUEWglHFMC7HcG8LHuDVG49XKn19jeXqQd3FRksAs885I1NarpWwQgd5uCIN64PdW7XPA3w8rRQcmls4c185lDQJdRZsrAezokzPQeUN34kz37sDX6D1BPAGki9jEYqgzffRXcMgENNTGbW7sbaVhHQyjiLfDIX/GjJgGUCKSJhZCiWE5Iu82NRXm0pWYl5YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=phMXJe+DHK3g7n6LlPjha+ZNbJvzU2d8pm1P7DmcJaU=;
+ b=GrgaLY2sneYDSeyzjrN+g4aEQaqPYefwftmeK76NFw58tWIgoe3dckXJ+6SFT2cNcEZPvWsv+Xp9jBEotjEM4SFgYaPncsVnMVWfR1UaqRE8SaxxrBElm5wJfnbK9OpJpqhmaUl0cDgs7Z+yLgtVo8tRyJxs990v3mK94WhMEKVRqRItEIftAzgnE84g5DYDfLrJVx0UqWilIpN6DxfxVkp0oa0tkWTdUQf5+/gwohTe4BWES7LVPGHkTxaJiDoUeJ+h560tzOBwUArcBUenaRVuVz5KMm+RaQaNSvkC1jcQQy9lvr9lmvIPto8ijFujPDKgxO7utoUUSEEzpu180g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org
+ smtp.mailfrom=amd.com; dmarc=temperror action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=phMXJe+DHK3g7n6LlPjha+ZNbJvzU2d8pm1P7DmcJaU=;
+ b=2qNMAeQjpuiHBT6YRYKUKoQsGCUZUwENAwHNeHpsF8gTLHopSvFYFI1IpwuE+w/pVoCTS0zaoiPovmUaeRPD36Dlj2ALgk9bQSbfWRBZ5oeoWhMP5o7w87MxZo1xZsRcbdrNKvmm6jlmUA8TMaMx4RxuBOoUp9ETU+hwzaE2FjM=
+Received: from BY5PR13CA0024.namprd13.prod.outlook.com (2603:10b6:a03:180::37)
+ by BY5PR12MB4228.namprd12.prod.outlook.com (2603:10b6:a03:20b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Mon, 27 May
+ 2024 14:23:30 +0000
+Received: from SJ1PEPF00002316.namprd03.prod.outlook.com
+ (2603:10b6:a03:180:cafe::5b) by BY5PR13CA0024.outlook.office365.com
+ (2603:10b6:a03:180::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.16 via Frontend
+ Transport; Mon, 27 May 2024 14:23:30 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=amd.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of amd.com: DNS Timeout)
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002316.mail.protection.outlook.com (10.167.242.170) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 14:23:29 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
+ 2024 09:23:27 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-kernel@vger.kernel.org>, Mario Limonciello
+	<mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>, "Chris
+ Bainbridge" <chris.bainbridge@gmail.com>
+Subject: [PATCH] drm/client: Detect when ACPI lid is closed during initialization
+Date: Mon, 27 May 2024 09:23:11 -0500
+Message-ID: <20240527142311.3053-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-6-f797ffba4682@linaro.org>
-References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
-In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>, Jonathan Marek <jonathan@marek.ca>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716819804; l=1190;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=hsA6cTh9A+abQ7dtFiITzQof1AHhT8P4eUkFfENrPaA=;
- b=DmbDrlVs3esyebwnhCPWbFsy+3uwdGxILFetgc/uTTqgEnXQ4scfPZdp9cpq2OPCVEMiCYALa
- kYkngMR3pH8CTp6Ev9lolCotIye0Vm+rDHwrPIy1FkaaCunqMdtsjC0
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002316:EE_|BY5PR12MB4228:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61704e10-a7bd-4a3d-5dce-08dc7e5894e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|376005|82310400017|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tztx4y1ickvl4tjpOt27ld5+/szlep+iKC13uDGobgcjqLm4Ojy19/9ROWuY?=
+ =?us-ascii?Q?0U0ZiXFKoEuWyExehVvbtt9kNq1MHArsvg8evkinflqwVfRBqr9f8ahRObEK?=
+ =?us-ascii?Q?nJ/cmEZGA2Z58O6kUr7ddNIl9jFElvVCs+L6xLVoiHR9aX8CNc2GQVJCPRnO?=
+ =?us-ascii?Q?8a5nVnk/6752WcTrfsc+0svksEVOQviFy2ggjN+WCprqKubJHBzzTPVBZ35R?=
+ =?us-ascii?Q?uSzGf6QZLQmCekGtB+FXCcsrz2PKuUqkOE9Se777FeJaKMUWnxyVZABICisR?=
+ =?us-ascii?Q?TXCiRe59VoG86YRhPhAihspULXdYtVXA+WvWxP8AtCT1YBiZmb+iS5WEWytw?=
+ =?us-ascii?Q?iuKCJUMXtlhQ6m0xj0k0hZJkPIftJrmolPm+J7f6zQmNK/Hm+nLwtWChj49I?=
+ =?us-ascii?Q?nmDPpIEmwRla4Pyq0ifVd3999J7QMkO1IY8FmOCOM6sCjNnAM2oKEC/UtxIp?=
+ =?us-ascii?Q?XjtLuDqTLjeOVcjQeBTwZwHosLdMGvjmWg3rPdfxovps10x9isiqdqnIqfCQ?=
+ =?us-ascii?Q?O1xtKeuEfy2Z90brcX/31GR/V+grJQdE1x1XjIgDdzl03V+uxsaqKjbTvWYx?=
+ =?us-ascii?Q?MJPtR4DM1l7wwsEVNHbUuNW2ObAgDjh5zBp6QXlvOOwgTBBcklMcxoouC/GY?=
+ =?us-ascii?Q?F8nu8FKalI7aYJms/HSxVLl+d8MRU+Q8qACMHEggl7DvtBJs6fX+m6DULnfr?=
+ =?us-ascii?Q?ogu9gtci6BDD4KPSUEiNAtdbPB1bOudUmPPODTfUTaEjCIrhgSMnRkxtVaJI?=
+ =?us-ascii?Q?Q9ClpVd/GdbtaheBLbPPQmOR1swanp0esmZlVhxR+USNKdJqg//shqmKzM60?=
+ =?us-ascii?Q?wwvKA7FmfJz0lq8nSYUEIl9DrmupRhb1nyq62G1L1iPIUipvvErKLL9Jj1rp?=
+ =?us-ascii?Q?guTN3dG43mgvAzW/OgNrcLmOxwExRtVHd0gDXiTOF7SLI0rPe46QBRHCAeeo?=
+ =?us-ascii?Q?NuP4P9aEkezbsjz7MfcWeCTcwkFT6qdzoJy+cAGnmRvKXU1opITlWaBbrbYd?=
+ =?us-ascii?Q?H5JblxC9dfk8Vvin4SZUEonzNo7/v0p9h+bFka3C5ubbUPPfgVIN1tIdt0Wb?=
+ =?us-ascii?Q?m6RizSkvH5UmURKzVONRBpDdGQjOaVroMQ/N5eokGTRpjfdDJVn089+wVtVR?=
+ =?us-ascii?Q?KSPSMOj9bk9RP3CxHd7Z31j4zyhZBOi4edcqNH7RIiXVayjM7zKLdySdA6Nj?=
+ =?us-ascii?Q?rep9K0FsNvN70CT3fWqNeM++TAkgkqdcS+YzTHlht+3Zd0Ti8dInq2UL0010?=
+ =?us-ascii?Q?poVv0Aatk/r8fyr7M6i9iBtvbgr0lTtggvjTorWqKTNrSbsqpsPmzB2XoRX6?=
+ =?us-ascii?Q?9l6m+mVGHpjYwtcj1yI1EKsD?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400017)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 14:23:29.8668
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61704e10-a7bd-4a3d-5dce-08dc7e5894e3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002316.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4228
 
-From: Jonathan Marek <jonathan@marek.ca>
+If the lid on a laptop is closed when eDP connectors are populated
+then it remains enabled when the initial framebuffer configuration
+is built.
 
-Make it clear why the pkt_per_line value is being "divided by 2".
+When creating the initial framebuffer configuration detect the ACPI
+lid status and if it's closed disable any eDP connectors.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 ---
- drivers/gpu/drm/msm/dsi/dsi_host.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/drm_client_modeset.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 7252d36687e6..4768cff08381 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -885,7 +885,11 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
- 	/* DSI_VIDEO_COMPRESSION_MODE & DSI_COMMAND_COMPRESSION_MODE
- 	 * registers have similar offsets, so for below common code use
- 	 * DSI_VIDEO_COMPRESSION_MODE_XXXX for setting bits
-+	 *
-+	 * pkt_per_line is log2 encoded, >>1 works for supported values (1,2,4)
- 	 */
-+	if (pkt_per_line > 4)
-+		drm_warn_once(msm_host->dev, "pkt_per_line too big");
- 	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_PKT_PER_LINE(pkt_per_line >> 1);
- 	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EOL_BYTE_NUM(eol_byte_num);
- 	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EN;
-
+diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+index 31af5cf37a09..b76438c31761 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include "drm/drm_modeset_lock.h"
++#include <acpi/button.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+@@ -257,6 +258,27 @@ static void drm_client_connectors_enabled(struct drm_connector **connectors,
+ 		enabled[i] = drm_connector_enabled(connectors[i], false);
+ }
+ 
++static void drm_client_match_edp_lid(struct drm_device *dev,
++				     struct drm_connector **connectors,
++				     unsigned int connector_count,
++				     bool *enabled)
++{
++	int i;
++
++	for (i = 0; i < connector_count; i++) {
++		struct drm_connector *connector = connectors[i];
++
++		if (connector->connector_type != DRM_MODE_CONNECTOR_eDP || !enabled[i])
++			continue;
++
++		if (!acpi_lid_open()) {
++			drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
++				    connector->base.id, connector->name);
++			enabled[i] = false;
++		}
++	}
++}
++
+ static bool drm_client_target_cloned(struct drm_device *dev,
+ 				     struct drm_connector **connectors,
+ 				     unsigned int connector_count,
+@@ -844,6 +866,7 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
+ 		memset(crtcs, 0, connector_count * sizeof(*crtcs));
+ 		memset(offsets, 0, connector_count * sizeof(*offsets));
+ 
++		drm_client_match_edp_lid(dev, connectors, connector_count, enabled);
+ 		if (!drm_client_target_cloned(dev, connectors, connector_count, modes,
+ 					      offsets, enabled, width, height) &&
+ 		    !drm_client_target_preferred(dev, connectors, connector_count, modes,
 -- 
-2.34.1
+2.43.0
 
 
