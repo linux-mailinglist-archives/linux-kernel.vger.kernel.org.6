@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-191402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA598D0EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:49:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD538D0EC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67FBBB21505
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F812824F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68346453;
-	Mon, 27 May 2024 20:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k1hpGlmK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e8UZkJAo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0184AECE;
+	Mon, 27 May 2024 20:54:57 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1087717BB6;
-	Mon, 27 May 2024 20:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740FD1DA58;
+	Mon, 27 May 2024 20:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716842979; cv=none; b=SKuMjZnj3uUWtPIgRzRo6KPUazTThoAIgzOZn03nbZLd8uEC8zIk17G61cqONvFAI24Dvkqk2FTcQ08tIiyFfqoXsi7zcY2fCY12c+Ys/ecn1MIKmYnK4x8FJ/CWRKfOLSRGn4O8Tl8xjVqIHAer+BwCVU4PEJSv1M+QQPFYbqQ=
+	t=1716843297; cv=none; b=Tl6hTogLmQIRcHduLnMceG2SJTz8lQVu0IrlzBUHhzAkW8ZimazujHBpxWno0YbPgVLMfr15RIVOshbBBvcGzAQSfXdZy3zhDxtKKVxGYR7u+aVDr7ZXZmYlE4DC4xiRvft4UdGOjB2REVPJZlFb7M8XcMtuGkHceHO4Z+B5Orw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716842979; c=relaxed/simple;
-	bh=1TtjTvNzEXUXPyQiA9CkznwxyYdBavkdx3z+BpYnphk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=akcu/r0GFW8hYwHEHwBD9JxVGeUx0jWr6OM1p0UeX6hvIz2kivtBFGtDz4I9RgYJ9DALVAVcjAmexRnW+cZV1gGw2INMDZPrXqQeo8BVphcE+UtBqjzU5qfPyzVX3J4bGnRRfe2kGmuS5LGybeDyQmrY3A0w5tiqP1cK0AcDfl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k1hpGlmK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e8UZkJAo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716842976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d55mR4mLG4ZKoYbFrQEL2qAY0vQyIJjzMV7kq4W9+pk=;
-	b=k1hpGlmKHicTsuKs9CRBMBCPmwXtEw2+TBhEYTsjHophh4cpDYx66q8raClDrQTDc/JybU
-	vE2fYr3nkCvuJMWOxuo5ldisV4rbUSBlSLUfY6jNJelXW7Wmx/52pxoPte5RN1uw52LpZ1
-	ZkRUJK90Gg0TKv6X7GeQG6nI3h4IqyvttZs7ERbgJVolPMJtTrKlOMQQ6is+vkfJS7ocjd
-	+uw63dHv53fGej4ZwvrsL9APk+jfIeS6lE7nec0E5CjmgNcUSIOtyXlW8MQmdwJmy+VcRn
-	z47K8VhWLvCCAm325sayi48nXIIVgmC2omCORcAjPiqXoXSOF7FTKCCdd8F+ng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716842976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d55mR4mLG4ZKoYbFrQEL2qAY0vQyIJjzMV7kq4W9+pk=;
-	b=e8UZkJAoOXa81pKWl4+SgcO6Q+tpFAkUGJatzGo92GnGsqOhHBlswxHHMw8xi8+7wr7+xd
-	a4uwhkujyOF65SCA==
-To: Peter Schneider <pschneider1968@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <877cffcs7h.ffs@tglx>
-References: <877cffcs7h.ffs@tglx>
-Date: Mon, 27 May 2024 22:49:35 +0200
-Message-ID: <87jzjfaskg.ffs@tglx>
+	s=arc-20240116; t=1716843297; c=relaxed/simple;
+	bh=qD4hGUyI+cMK31VDk1eSbNSrXXBbMKsY+o+vhgOE3qE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CXwdDp1ssGyNdSgyDTP+IP3iqX1eLZTRVyNzj18YgF/MLVhdimvwUoz/F7/mK9Q6gpEihSTcf1LMb1rlPDm45M3dRRls5W9P03vTG9Pi6PXXtVCiAtAQqJXFQLxS88TKJJXeN3FLougr3TBMW1vaHhziz9g/RQJy3GRkuFDmlMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e86193d.versanet.de ([94.134.25.61] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sBhMi-0004Xw-Qy; Mon, 27 May 2024 22:54:44 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Kropatsch <seb-dev@web.de>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add CM3588 NAS board
+Date: Mon, 27 May 2024 22:54:43 +0200
+Message-ID: <3609340.LM0AJKV5NW@diego>
+In-Reply-To: <9f40c748-691b-4a03-bbd6-54870f46bf05@kwiboo.se>
+References:
+ <20240526214340.8459-1-seb-dev@web.de> <20240526214820.9381-1-seb-dev@web.de>
+ <9f40c748-691b-4a03-bbd6-54870f46bf05@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, May 27 2024 at 15:14, Thomas Gleixner wrote:
-> On Mon, May 27 2024 at 09:29, Peter Schneider wrote:
->> This is coming from an older server machine: 2-socket Ivy Bridge Xeon E5-2697 v2 (24C/48T) 
->> in an Asus Z9PE-D16/2L motherboard (Intel C-602A chipset); BIOS patched to the latest 
->> available from Asus. All memory slots occupied, so 256 GB RAM in total.
->>
->>  From a "good boot", e.g. kernel 6.8.11, dmesg output looks like this:
->>
->> [    1.823797] smpboot: x86: Booting SMP configuration:
->> [    1.823799] .... node  #0, CPUs:        #1  #2  #3  #4  #5  #6  #7  #8  #9 #10 #11
->> [    1.827514] .... node  #1, CPUs:   #12 #13 #14 #15 #16 #17 #18 #19 #20 #21 #22 #23
->> [    0.011462] smpboot: CPU 12 Converting physical 0 to logical die 1
->>
->> [    1.875532] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
->> [    1.882453] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
->> [    1.887532] MDS CPU bug present and SMT on, data leak possible. See 
->> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.
->> [    1.933640] smp: Brought up 2 nodes, 48 CPUs
->> [    1.933640] smpboot: Max logical packages: 2
->> [    1.933640] smpboot: Total of 48 processors activated (259199.61 BogoMIPS)
->>
->>
->>  From a "bad" boot, e.g. kernel 6.9.2, dmesg output has these messages in it:
->>
->> [    1.785937] smpboot: x86: Booting SMP configuration:
->> [    1.785939] .... node  #0, CPUs:        #4
->> [    1.786215] .... node  #1, CPUs:   #12 #16
->
-> Yuck. That does not make any sense.
->
->> [    1.797547] .... node  #0, CPUs:    #1  #2  #3  #5  #6  #7  #8  #9 #10 #11
->> [    1.801858] .... node  #1, CPUs:   #13 #14 #15 #17 #18 #19 #20 #21 #22 #23
->> [    1.804687] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
->> [    1.810728] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
->
->> However the machine boots, and except from these strange messages, I cannot detect any 
->> other abnormal behaviour. It is running ~15 QEMU/KVM virtual machines just fine. Because 
->> these messages look unusual and a bit scary though, I have bisected the issue, to be able 
->> to report it here. The first bad commit I found is this one:
->
-> Ok. So as the machine is booting, can you please provide the output of:
->
->  cat /sys/kernel/debug/x86/topo/cpus/*
->
-> on the 6.9 kernel and 
->
->  cat /proc/cpuinfo
->
-> for both 6.8 and 6.9?
+Am Montag, 27. Mai 2024, 21:02:02 CEST schrieb Jonas Karlman:
+> Hi Sebastian,
+> 
+> On 2024-05-26 23:48, Sebastian Kropatsch wrote:
+> > The CM3588 NAS by FriendlyElec pairs the CM3588 compute module, based on
+> > the Rockchip RK3588 SoC, with the CM3588 NAS Kit carrier board.
+> > 
+> > Hardware features:
+> >     - Rockchip RK3588 SoC
+> >     - 4GB/8GB/16GB LPDDR4x RAM
+> >     - 64GB eMMC
+> >     - MicroSD card slot
+> >     - 1x RTL8125B 2.5G Ethernet
+> >     - 4x M.2 M-Key with PCIe 3.0 x1 (via bifurcation) for NVMe SSDs
+> >     - 2x USB 3.0 (USB 3.1 Gen1) Type-A, 1x USB 2.0 Type-A
+> >     - 1x USB 3.0 Type-C with DP AltMode support
+> >     - 2x HDMI 2.1 out, 1x HDMI in
+> >     - MIPI-CSI Connector, MIPI-DSI Connector
+> >     - 40-pin GPIO header
+> >     - 4 buttons: power, reset, recovery, MASK, user button
+> >     - 3.5mm Headphone out, 2.0mm PH-2A Mic in
+> >     - 5V Fan connector, PWM buzzer, IR receiver, RTC battery connector
+> > 
+> > PCIe bifurcation is used to handle all four M.2 sockets at PCIe 3.0 x1
+> > speed. Data lane mapping in the DT is done like described in commit
+> > f8020dfb311d ("phy: rockchip-snps-pcie3: fix bifurcation on rk3588").
+> > 
+> > This device tree includes support for eMMC, SD card, ethernet, all USB2
+> > and USB3 ports, all four M.2 slots, GPU, RTC, buzzer, UART debugging as
+> > well as the buttons and LEDs.
+> > The GPIOs are labeled according to the schematics.
+> > 
+> > Signed-off-by: Sebastian Kropatsch <seb-dev@web.de>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+> >  .../boot/dts/rockchip/rk3588-cm3588-nas.dts   | 1269 +++++++++++++++++
+> >  2 files changed, 1270 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-cm3588-nas.dts
+> 
+> Because the CM3588 is a SoM and the NAS is a carrier board this should
+> probably be split in two, cm3588.dtsi and cm3588-nas.dts.
 
-And once the output of:
+also, because of that way too generic name "cm", please incorporate the
+company name in the filename as well. For the same reason we named
+the rk3568-wolfvision-pf5.dts that way ;-) [Wolfvision being the company]
 
-  cpuid -r
+So maybe:
+rk3588-friendlyelec-cm3588.dtsi and rk3588-friendlyelec-cm3588-nas.dts
 
-no matter on which kernel please?
+ 
+> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> > index c544ff507d20..f1ff58bdf2cd 100644
+> > --- a/arch/arm64/boot/dts/rockchip/Makefile
+> > +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> > @@ -114,6 +114,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
+> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-cm3588-nas.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-coolpi-cm5-evb.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-io.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-wifi.dtbo
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-cm3588-nas.dts b/arch/arm64/boot/dts/rockchip/rk3588-cm3588-nas.dts
+> > new file mode 100644
+> > index 000000000000..6c45b376d001
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-cm3588-nas.dts
+> > @@ -0,0 +1,1269 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright (c) 2021 Rockchip Electronics Co., Ltd.
+> > + * Copyright (c) 2023 FriendlyElec Computer Tech. Co., Ltd.
+> > + * Copyright (c) 2023 Thomas McKahan
+> > + * Copyright (c) 2024 Sebastian Kropatsch
+> > + *
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/input/input.h>
+> > +#include <dt-bindings/pinctrl/rockchip.h>
+> > +#include <dt-bindings/soc/rockchip,vop2.h>
+> > +#include <dt-bindings/usb/pd.h>
+> > +#include "rk3588.dtsi"
+> > +
+> > +/ {
+> > +	model = "FriendlyElec CM3588 NAS";
+> > +	compatible = "friendlyarm,cm3588-nas", "rockchip,rk3588";
+> 
+> Maybe this should be something like:
+> 
+>   "friendlyarm,cm3588-nas", "friendlyarm,cm3588", "rockchip,rk3588";
 
-Thanks,
+This also needs an update of the binding document. Please use a similar
+notion as the other som + baseboard entries
+(const for the som + enum with one entry with the baseboard)
 
-        tglx
+[...]
+
+
+> > +/* Connected to 5V Fan */
+> > +&pwm1 {
+> > +	pinctrl-0 = <&pwm1m1_pins>;
+> 
+> pinctrl-names is missing, should typically always be defined together
+> with pinctrl-X props, same for multiple nodes.
+
+A rationale being that you don't want the soc dtsi in a later stage adding
+a possible pinctrl-1 with the board only overriding the pinctrl-0.
+When you set the pinctrl-names as well, you get independent from that.
+
+
+Thanks
+Heiko
+
+
 
