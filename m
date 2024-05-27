@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-191235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539188D0880
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:29:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63A68D088B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E00D2826BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7D91F226EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3FA17D2;
-	Mon, 27 May 2024 16:28:59 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0F361FF4;
+	Mon, 27 May 2024 16:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JThKJZTS"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B62717E91C;
-	Mon, 27 May 2024 16:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988CD155C8C;
+	Mon, 27 May 2024 16:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827338; cv=none; b=qgdjkc8HHx64Z0bQdG3+OqdvZcs60IhvRmBE8BC4XZmVHHJWSXIniArdOOY7UL60vZaj7AeO49OxnSTNM7gSc5JCNCXk72DAQ+G24l2OY8cWdiBt0HUPB6gUpT3Hf8cgIrWWrOUU4CHHFkd0wNh3NaspTMicQxItKeInsGIgDtM=
+	t=1716827374; cv=none; b=LDE7pIDDSCFVaibGPARlzQKFq/4PlK7ls6u9z3w52VYHOA897HA3MHQE79PfAbOcxSp2pu0RPU9dUUvOPWgLHTgtUQEcXhp2qA98ECEdcSpm398d8TvOf41oYX47y/gI6gHKgZ17cnvDIF2Dx+rcAiwSnG60+w1qbWM09XKdGSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827338; c=relaxed/simple;
-	bh=tenOVureWXg27A/BRhhEdtjSgdb2iCP2DVRnVahKpPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrP0jS29tFOXumDl4OaoyTRmLKvo90ractauoZAzC+9FNAcGeTxoVvIiSxJzf0uFDYUB52A15LryV62PvmLeDRf9z0IW3qNgQoU7Ph1m+9pRQV/yuG+Iq5T0Qu33JG5UFtsgtkBmxE6VstkgCQjcPZujb2Hf16UHRldQXRuv2Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: 3kOW+QshRp2cQBpvXH/mbw==
-X-CSE-MsgGUID: 4bRUBYHhTRKlFm67aVp6Hw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23821203"
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="23821203"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 09:28:56 -0700
-X-CSE-ConnectionGUID: u7ozXfdDQlyZg0xj64Fwpg==
-X-CSE-MsgGUID: 6BCTSqMYT8SubiDMHSGfnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="34694966"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 09:28:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1sBdDN-0000000BJxg-3Sai;
-	Mon, 27 May 2024 19:28:49 +0300
-Date: Mon, 27 May 2024 19:28:49 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] hwmon: (ltc2992) Use
- fwnode_for_each_available_child_node_scoped()
-Message-ID: <ZlS0wcbBXvSS26Qz@smile.fi.intel.com>
-References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
- <20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
- <20240526144851.493dd3f2@jic23-huawei>
- <ZlSY8tjYm5g9bEJ_@surfacebook.localdomain>
- <20240527155717.58292509@jic23-huawei>
+	s=arc-20240116; t=1716827374; c=relaxed/simple;
+	bh=ZIrLwguLCcWL9NbjO5PeAwKzODMb0QfIDnQF87pLD5g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d/opsGCvROPrI3qNpY1U9b6vEE9/lSlPR6bVt+M7tOuXu/ssFjmfqMME2bvL+ToO7kOcCHl9o/r9jYwJL+59jFQ8Zf+Ailf/v0e1FSiooZadmjVM9VODAH5JO4hTlJg1WPFF2QpNpF5QZC5LJxdQ8hTc+VuRvHEKbvRWcfox6HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JThKJZTS; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 52C3B240002;
+	Mon, 27 May 2024 16:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716827365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=l4JMQmm16LQ4vza9Usv2p7EkveNlgJJeDpkhkQyzzXY=;
+	b=JThKJZTSgvNMB1GQSiRo3fgxkot5wMMGOenXzv5ehnRi4U1fIXhzDmpxoPTl8sVCg8yXtW
+	QA+gOPypaID0Z04NPWV1hxQNXTe/oN4eD+MUGrkKDc8EYw6z1RxQ3FcFP2jdPgxdlgv4h3
+	7NukpUbT2rX8r1XhP00XokO4dFNI6mmbmBMXgv4PeviW2Yeh6L3ElS4kKWlEYpOlUppw0J
+	5/69P/pNFbEE51uFD+pVusOGwC7t93fagfI+dpUhctkdPGH0UFrwLtw0nSOPA1JLw8UTxB
+	AYoci1FnA5hS5vh5qERz441W9co5QTQH+7xQucPbASz4kbArKQKpeXqrA2DR2Q==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Mon, 27 May 2024 18:29:17 +0200
+Subject: [PATCH] dmaengine: xilinx: xdma: Fixes possible threading issue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527155717.58292509@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240527-xdma-fixes-v1-1-f31434b56842@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIANy0VGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyNz3YqU3ETdtMyK1GJdc5OkpFSjlOSk1CQLJaCGgqJUsARQfXRsbS0
+ AOI9bh1wAAAA=
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
+ Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
+ Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1022;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=ZIrLwguLCcWL9NbjO5PeAwKzODMb0QfIDnQF87pLD5g=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmVLTkuJyOqjUA7AHg9fbdvDWSyOUooke9+evHq
+ a2C61iZlfSJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZlS05AAKCRAgrS7GWxAs
+ 4kOjD/9D5YRTDgMxefAtrP0NOPdBSUBsC4gsY+kxNvOPfbefXs2D3bITZCvqRfCrX4Y7skq1S1d
+ Org1xM115JmTQNkiqzzX/aSsCIFAxbQj0GvRlp432D4QL9AJmAdpcAYyi56U+hbUdwMbprGTNHu
+ d1x2wDCe5S0f8dkWZ8B2LzioiyiMDvxJ3kcMawQpWOMm4UIgl5iXPoEjcYF14eF4Nk77zht4MC9
+ UsGYG4Ry/vPvu4i2YLWsoqynelkBWy15zItik9GUxEsI4G0ms+EwMwmw61DhNzdwABZrmiMhiz+
+ ug3TAfQnuzqyhYx6jkDNtt+tZS/5Zw40HNmhZ+uVLF1e0KKs3yprZ0upvQh5GbNdcSWRGMuNs/u
+ 9kVTj/HGWkX3E6R3meDV+htA8y94IRXxoI5SfNOGthWX+n33wBpABuj/P+q4486OcGdi3cLFH/l
+ m57JI2GxMYlZYXxwVgtS5fusIRoZe9EyBBbu4kZSgfYOW2OLxpyUmNbuOe3wHVkQhkBLzQvj1bY
+ w5VkbnQTUaWflHQWkQPB2cmjD4rqmAFTl6nrLegNI3UOIoI0FXsEYmSshwszWGJJwmfaLvKAQe4
+ Q3KizdRIYQhJIx+0u9eDj/S3ECdTLvRT2Kpt3brF/Im5ZQwhm1ql/9rvKO01OXgtTHd8Di9DnDj
+ UmKS08MEVTcqI+w==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Mon, May 27, 2024 at 03:57:17PM +0100, Jonathan Cameron wrote:
-> On Mon, 27 May 2024 17:30:10 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > Sun, May 26, 2024 at 02:48:51PM +0100, Jonathan Cameron kirjoitti:
-> > > On Thu, 23 May 2024 17:47:16 +0200
-> > > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+The current interrupt handler in xdma.c was using xdma->stop_request
+before locking the vchan lock.
 
-..
+Fixes: 6a40fb824596 ("dmaengine: xilinx: xdma: Fix synchronization issue")
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+ drivers/dma/xilinx/xdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > > This looks like another instances of the lack of clarify about 
-> > > what device_for_each_child_node[_scoped]() guarantees about node availability.
-> > > On DT it guarantees the node is available as ultimately calls
-> > > of_get_next_available_child()
-> > > 
-> > > On ACPI it doesn't (I think).
-> > > For swnode, there isn't an obvious concept of available.
-> > > 
-> > > It would be much better if we reached some agreement on this and
-> > > hence could avoid using the fwnode variants just to get the _available_ form
-> > > as done here.  
-> > 
-> > > Or just add the device_for_each_available_child_node[_scoped]()
-> > > and call that in almost all cases.  
-> > 
-> > device_for_each*() _implies_ availability. You need to talk to Rob about all
-> > this. The design of the device_for_each*() was exactly done in accordance with
-> > his suggestions...
-> 
-> Does it imply that for ACPI? I can't find a query of _STA in the callbacks
-> (which is there for the for fwnode_*available calls.
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index e143a7330816..718842fdaf98 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -885,11 +885,11 @@ static irqreturn_t xdma_channel_isr(int irq, void *dev_id)
+ 	u32 st;
+ 	bool repeat_tx;
+ 
++	spin_lock(&xchan->vchan.lock);
++
+ 	if (xchan->stop_requested)
+ 		complete(&xchan->last_interrupt);
+ 
+-	spin_lock(&xchan->vchan.lock);
+-
+ 	/* get submitted request */
+ 	vd = vchan_next_desc(&xchan->vchan);
+ 	if (!vd)
 
-IIRC for ACPI/swnode the availability is always "yes" as long as property can
-be found. Basically it means the fwnode_*() == fwnode_*available() for these
-back-ends.
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240527-xdma-fixes-74bbe2dcbeb8
 
-AFAIU ACPI concept here is that once parsed and namespaced (in terms of putting
-the respective part of description table into ACPI namespace) it's lways
-available. Otherwise it's not, but at the same time the respective child node
-(property) may not be found
-
-> Mind you it wouldn't be the first time I've missed something in the ACPI parsing
-> code, so maybe it is there indirectly.
-
-I might have a weak memory, but see my understanding above.
-
-> I know from previous discussions that the DT version was intentional, but
-> I'm nervous that the same assumptions don't apply to ACPI.
-> 
-> > > In generic code, do we ever want to walk unavailable child nodes?  
-> > 
-> > ...which are most likely like your question here, i.e. why we ever need to
-> > traverse over unavailable nodes.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
