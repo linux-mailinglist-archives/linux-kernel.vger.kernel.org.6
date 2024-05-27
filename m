@@ -1,193 +1,89 @@
-Return-Path: <linux-kernel+bounces-191523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C9B8D10A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CA68D10AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA9C1C21796
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498E01C21965
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2EB13B783;
-	Mon, 27 May 2024 23:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l1pdGKFL"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8A8139D11;
+	Mon, 27 May 2024 23:57:42 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A910A1E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9341817E912
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716853880; cv=none; b=AJExOLHw+VdlWXc9T3mdm7T4SbrvdXwnLJoDb7b0hdNKjG4lgVZKK8RChmMQKUibjK7sKiiSoAPGwA+lVukBYz2rV7OwH+oOVVDuVE0fOW9LBJbIuO0kudbC4YTUTnHYu3o9/t6xa7ExjpWvKaio7PpKZu+Srg3KqqWKSIT7aUE=
+	t=1716854261; cv=none; b=L0J04w5DXepgBfXtDTMIRoh4aYh6Dzexf8n3KAOeHSvLcInjvDzlnIgFUSX4DMvtSgSmew8wyhcTqXAncdr8RorfKLeQApfDkFCJDDDqAVtfJF2Jmo2GNvGzjhT/UHmQ7OaR7Rx8dMHnNZRBXfO5gZf1DHf1EydDdF2OYYx0inE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716853880; c=relaxed/simple;
-	bh=tI9NBeK3FA4hVFn/PTMTjI//Pvzk9b2OpSVaf+DnJp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4oVJke89Gcn5ZB85R16riTh4442tDseXV7WWsutnLhun3ABLgnxnfkD2ETAFAF5MVlmM+4Hk/ZVGeOhAtg6eNBP/Immw8VuDu7VNo6ENS6BNwBW2vf9i79ZB/06GTGINaMEA+SlY9O98NZktaHQ939ag5Ie0uxS0XqhxXJarxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l1pdGKFL; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: f.weber@proxmox.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716853870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0fpWO7udVhwAzpQwUrBlzWeCLVvMJ31xIxpXuSXcUbY=;
-	b=l1pdGKFL7C3+FBQCwK3MPAziwcUlVq3vi28NG03hjzuwaww5Xx4cevfnA5pvQWdf5M1ERm
-	V4JoaXQ2pbBd2oV7DZ/4tWEDocd/B4IVO8LrLy70e1ChsScfwiT7WL2WsVpOr28/GG15sQ
-	TwgTuoIHjH2Uui5XmTwCIVJ/IH/1CPo=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: hch@lst.de
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-Message-ID: <8b1400e6-b35e-486b-8ea0-de76270267c0@linux.dev>
-Date: Tue, 28 May 2024 07:50:58 +0800
+	s=arc-20240116; t=1716854261; c=relaxed/simple;
+	bh=eBy7/C2nvx6ptlpgjMKipDZUULm3tHFWinQpj/iOXzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mFJCx/pic6rOhCrDNvoQwEpvEuKFRaEFa53uB7/f6esunqhWDFTfqf09VXQ0rJy1IvTwNdXFTlqI1luM5H+EBHUo53Ng5nPMsVa2U+qcBVHsGDFjYXPomeFm04fj6u4G0/zeGvfeCQBmrRQGT7i6zytC8T0B2O/MlztgurNxah4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.66.255])
+	by sina.com (172.16.235.24) with ESMTP
+	id 66551DEA000074B0; Mon, 28 May 2024 07:57:33 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 12261845089259
+X-SMAIL-UIID: 3EDD15FBE5E74D039590144CA24D506A-20240528-075733-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+Date: Tue, 28 May 2024 07:57:21 +0800
+Message-Id: <20240527235721.2643-1-hdanton@sina.com>
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 4/4] blk-flush: reuse rq queuelist in flush state
- machine
-Content-Language: en-US
-To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
- ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20230717040058.3993930-1-chengming.zhou@linux.dev>
- <20230717040058.3993930-5-chengming.zhou@linux.dev>
- <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
- <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
- <4d799672-378b-42b1-896b-38df2c5e9c84@proxmox.com>
- <0783d367-4608-4b16-9b88-6eaf5d5706eb@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <0783d367-4608-4b16-9b88-6eaf5d5706eb@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/28 07:34, Chengming Zhou wrote:
-> On 2024/5/28 00:04, Friedrich Weber wrote:
->> Hi Chengming,
->>
->> Thank you for taking a look at this!
->>
->> On 27/05/2024 07:09, Chengming Zhou wrote:
->>>> I've used this reproducer for a bisect, which produced
->>>>
->>>>  81ada09cc25e (blk-flush: reuse rq queuelist in flush state machine)
->>>>
->>>> as the first commit with which I can reproduce the crashes. I'm not 100%
->>>> sure it is this one because the reproducer is a bit flaky. But it does
->>>> sound plausible, as the commit is included in our 6.8 kernel, and
->>>> touches `queuelist` which is AFAICT where blk_flush_complete_seq
->>>> dereferences the NULL pointer.
->>>
->>> Ok, it will be better that I can reproduce it locally, will try later.
->>
->> Interestingly, so far I haven't been able to reproduce the crash when
->> generating IO on the host itself, I only got crashes when generating IO
->> in a QEMU VM.
->>
->> The reproducer in more detail:
-> 
-> Thanks for these details, I will try to setup and reproduce when I back to work.
-> 
->>
->> - Compile Linux 6.9 with CONFIG_FAULT_INJECTION,
-> [...]
->>>
->>> BUG shows it panic on 0000000000000008, not sure what it's accessing then,
->>> does it means rq->queuelist.next == 0 or something? Could you use add2line
->>> to show the exact source code line that panic? I use blk_flush_complete_seq+0x296/0x2e0
->>> and get block/blk-flush.c:190, which is "fq->flush_data_in_flight++;",
->>> obviously fq can't be NULL. (I'm using the v6.9 kernel)
->>
->> Sorry for the confusion, the crash dump was from a kernel compiled at
->> 81ada09cc25e -- with 6.9, the offset seems to be different. See [2] for
->> a kernel 6.9 crash dump.
->>
->> I don't know too much about kernel debugging, but I tried to get
->> something useful out of addr2line:
->>
->> # addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-debug2
->> blk_flush_complete_seq+0x291/0x2d0
->> __list_del
->> /[...]./include/linux/list.h:195
->>
->> I tried to find the relevant portions in `objdump -SD blk-flush.o`, see
->> [3]. If I'm not mistaken, blk_flush_complete_seq+0x291 should point to
->>
->> 351:   48 89 4f 08             mov    %rcx,0x8(%rdi)
->>
->> To me this looks like part of
->>
->> 	list_move_tail(&rq->queuelist, pending);
->>
->> What do you think?
-> 
-> Yeah, it seems correct, so the rq->queuelist.next == NULL. It can't be NULL
-> if went through REQ_FSEQ_POSTFLUSH, so it must be REQ_FSEQ_PREFLUSH. It means
-> we allocated a request but its queuelist is not initialized or corrupted?
-> 
-> Anyway, I will use below changes for debugging when reproduce, and you could
-> also try this to see if we could get something useful. :)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 3b4df8e5ac9e..6e3a6cd7739d 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -2989,6 +2989,8 @@ void blk_mq_submit_bio(struct bio *bio)
->                 blk_mq_use_cached_rq(rq, plug, bio);
->         }
-> 
-> +       BUG_ON(rq->queuelist.next == NULL);
-> +
->         trace_block_getrq(bio);
-> 
->         rq_qos_track(q, rq, bio);
-> @@ -3006,6 +3008,8 @@ void blk_mq_submit_bio(struct bio *bio)
->         if (bio_zone_write_plugging(bio))
->                 blk_zone_write_plug_init_request(rq);
-> 
-> +       BUG_ON(rq->queuelist.next == NULL);
-> +
->         if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
->                 return;
-> 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-Ah, I forgot to change to your kernel version, then should be:
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index d98654869615..908fdfb62132 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2963,6 +2963,8 @@ void blk_mq_submit_bio(struct bio *bio)
-                        return;
-        }
-
-+       BUG_ON(rq->queuelist.next == NULL);
-+
-        trace_block_getrq(bio);
-
-        rq_qos_track(q, rq, bio);
-@@ -2977,6 +2979,8 @@ void blk_mq_submit_bio(struct bio *bio)
-                return;
-        }
-
-+       BUG_ON(rq->queuelist.next == NULL);
-+
-        if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
-                return;
-
+--- x/fs/open.c
++++ y/fs/open.c
+@@ -907,6 +907,7 @@ static int do_dentry_open(struct file *f
+ 	static const struct file_operations empty_fops = {};
+ 	struct inode *inode = f->f_path.dentry->d_inode;
+ 	int error;
++	struct super_block *sb = inode->i_sb;
+ 
+ 	path_get(&f->f_path);
+ 	f->f_inode = inode;
+@@ -929,6 +930,7 @@ static int do_dentry_open(struct file *f
+ 		f->f_mode |= FMODE_WRITER;
+ 	}
+ 
++	down_read(&sb->s_umount);
+ 	/* POSIX.1-2008/SUSv4 Section XSI 2.9.7 */
+ 	if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))
+ 		f->f_mode |= FMODE_ATOMIC_POS;
+@@ -956,6 +958,7 @@ static int do_dentry_open(struct file *f
+ 		if (error)
+ 			goto cleanup_all;
+ 	}
++	up_read(&sb->s_umount);
+ 	f->f_mode |= FMODE_OPENED;
+ 	if ((f->f_mode & FMODE_READ) &&
+ 	     likely(f->f_op->read || f->f_op->read_iter))
+--
 
