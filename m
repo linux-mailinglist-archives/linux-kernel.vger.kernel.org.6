@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-189976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB728CF7F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:08:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7444B8CF7F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3E6B21701
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E86828158E
 	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAEDF59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F08DF78;
 	Mon, 27 May 2024 03:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1MuILI/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCIa6hWK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5379F5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0379EA;
 	Mon, 27 May 2024 03:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716779226; cv=none; b=MhZS4zgcJfmQsrD2VWDrOuldlqRRcVrQ2kKeHiiTNMD1gU3VZZZsF+d51/r9SeE5lyM0FebCmnCOm1LWQP6SD7OeMKQsUxAc4hF9Ab9qEY32VHx6Go2fcrLbf+JIiBeSFuOr3PDGEMo8v6vBYmnEwa2UDKm6Z3T3kGJK2lOTscs=
+	t=1716779226; cv=none; b=hyGA+8G+drV+Lwk6fokcwP9dfdywC0C9/QFcr1unT/BCY3ebdrPzuxZtftC86qs/VE2XrGhFBUcCEnHn6md8aDbgT5R+ZRTJ125XSI1c+OoKtELDxvYayI5lZM9IBlhpU7G3tMBPKW/SdTxg+DEZYeULuw1V7RsC1xhlltj5X+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716779226; c=relaxed/simple;
-	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
+	bh=y45Na4LBDYUvhYaEwJT8HcEr8Rv3sz8j5bWUCZh9Kxs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m5iE5OnWyPDkHFWuAj8Tro3cwocbPa+82mXB/uYiwCgoZVNUXK/H4DlZPC6X+PM2Fim2TxtaHDQPq/1VVEDjYSrKA6pk6z1j+95RX4GHWQ+gHozwqyNTgWduBixLsjHdEEop7HQrurOTQL8ZKzU1UigXzvbw4N0VjUxppcAa0XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1MuILI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09702C4AF0B;
-	Mon, 27 May 2024 03:07:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ErXWTO2lefwvBJm0N8i0byE/H/BD9eJl9+BiX6IQ3sIevs/0jEd/W7ipSHveE98PAB2MmA4lIc16VNJ0d7QwyEF5IqWbUqNiNoxcEtYjVG1cUiGyCwRWb73uYlKr/D1juXh0tToWjUjoaaMEo5LnDj3gxVq6OEgmmL7xnF1To2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCIa6hWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E51ACC32789;
+	Mon, 27 May 2024 03:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716779226;
-	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
+	s=k20201202; t=1716779225;
+	bh=y45Na4LBDYUvhYaEwJT8HcEr8Rv3sz8j5bWUCZh9Kxs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=s1MuILI/d20Z7r2wAbDepbguQer2hhl+fXrJiYW9S6ABVevaZXgV70GpB5Uw9nYIc
-	 7DtuE7pWhbvOBAOugNN9HwSCayO4A3Kt1aak+xsBhM9gd+DeQQOZUgWw+rrEsoRrQi
-	 9d2G+1vAKCI5New51Elxi/1RRsYfReHmLrVesrlmVWxSi5kIFRIzGT3/a917Ugnz9V
-	 FfqVpIjt/lvJeVRRRbwxmBWOybeykpJiN5sOUFvmsDYKgKPdjVAwNjvb5mFlKFiFR6
-	 O24k9xUlVXXvlQtEplj11v43p5mPiDoq/sK0CDDGL3WnoG3HG4AQEOOQjXw9rjO/fv
-	 1/9Xy53k8eSpg==
+	b=ZCIa6hWKHlrUOMkDZUoL86dcwTXJuJo6U4UMmZFcEazw9DJsu/yFrojUodbOYo4Py
+	 0q1PnEeztBzpF1UhOMDouOCEqLXBRghTWsKivBxXSI/vybmf4daxJF3uH2djQ4/gpo
+	 wMtnXMxUmGowH49nuFSk48/jN7Re5/37uZZUxUWumvXiTYJAQ8TdnmbgpkR6h6xXBK
+	 JctDEewhwK7Az399IMHqaDowlAxE7DQNd4tVYRZVNqLKwgzaGHCL0CJGozirWpOpZb
+	 zVRh3qJ4av1GnixImMisPqVZoF/5Ai3Jz2Xjr5mAvZRbpiGWRD8lQ1GEKUQlqkyTsd
+	 9qzSozbwye/Cw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ECA59D4F15D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D52EBCF21F9;
 	Mon, 27 May 2024 03:07:05 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Input: cros_ec_keyb - Remove an unused field in struct
- cros_ec_keyb
+Subject: Re: [PATCH 0/2] firmware: coreboot: store owner from modules with
+ coreboot_driver_register()
 From: patchwork-bot+chrome-platform@kernel.org
 Message-Id: 
- <171677922596.1901.2861363430804951826.git-patchwork-notify@kernel.org>
+ <171677922587.1901.3423676427961660678.git-patchwork-notify@kernel.org>
 Date: Mon, 27 May 2024 03:07:05 +0000
-References: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dmitry.torokhov@gmail.com, bleung@chromium.org, groeck@chromium.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-input@vger.kernel.org, chrome-platform@lists.linux.dev
+References: <20240330-module-owner-coreboot-v1-0-ddba098b6dcf@linaro.org>
+In-Reply-To: <20240330-module-owner-coreboot-v1-0-ddba098b6dcf@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: tzungbi@kernel.org, briannorris@chromium.org, jwerner@chromium.org,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+This series was applied to chrome-platform/linux.git (for-next)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
 
-On Wed,  1 May 2024 08:49:47 +0200 you wrote:
-> In "struct cros_ec_keyb", the 'keymap_data' field is unused.
-> Remove it.
+On Sat, 30 Mar 2024 20:49:46 +0100 you wrote:
+> Moving the .owner setting code to the core this effectively fixes
+> missing .owner in framebuffer-coreboot, memconsole-coreboot and vpd
+> drivers.
 > 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Best regards,
+> Krzysztof
 > 
 > [...]
 
 Here is the summary with links:
-  - Input: cros_ec_keyb - Remove an unused field in struct cros_ec_keyb
-    https://git.kernel.org/chrome-platform/c/5128de84d8fc
+  - [1/2] firmware: coreboot: store owner from modules with coreboot_driver_register()
+    https://git.kernel.org/chrome-platform/c/46c6685e7e88
+  - [2/2] firmware: google: cbmem: drop driver owner initialization
+    https://git.kernel.org/chrome-platform/c/7f20f21c22aa
 
 You are awesome, thank you!
 -- 
