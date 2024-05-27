@@ -1,132 +1,244 @@
-Return-Path: <linux-kernel+bounces-190320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742A58CFCD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:28:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CB98CFCD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10DC0B2051E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E386E2822E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8A413A268;
-	Mon, 27 May 2024 09:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E52413A25E;
+	Mon, 27 May 2024 09:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="0kUi4UFF"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jJ3zRkc0"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20766139D12
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B33139D12
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802084; cv=none; b=fynLJQ2UKufbz+HNmf5dPA95xkcePULcuvct6oaW0Zi97JK5k7Ing2bPQbcVz2G2ilgawOVJOg+YaEcVtvzULP0W9LYtjNlGwkNcEJLMs5z/IAPiyuus2THveEDtQGlZleYFREVNehqV0OVyvA5q0Xz5Sl4BnTMkmm7v5m+gS6I=
+	t=1716802162; cv=none; b=AdGVqedTMZV+4CBEogzz220v/P7/GPrCqKjQ8+xv/PbbFYa+Rw5FiFE/Ztrw5cBPHpdnXimi1eUINTzo8nHEEpP2Z2W3WUKF4MJ5KskqrP+xYjzkv1YE8Dndh1GLsMSpDZhR1pCB+odYXy4Y3lukBgSlRwdSUhIMZb65ORS7OhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802084; c=relaxed/simple;
-	bh=RFn21Fc4H5utP8qCrhUdpkQgIi3UKcY8WLssi3hKpK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FbVENgBOds/CNfXEYkjeKSoEgDFqL9h53wclDU+bM+nfO06Ynd6oprsO8CPH7gMPCrA+oPnIr0GcowisS95ekL3J7naOCjhu/u/M1wOS1Z3+RD9GTrsSYg98jnjRzsGtoHUhHMbtRTlm4zlaffDZxQr3k2JQ+LVFlSMuQRvaTJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=0kUi4UFF; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6269ad71b6so336919666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:28:02 -0700 (PDT)
+	s=arc-20240116; t=1716802162; c=relaxed/simple;
+	bh=kvVFdGrNcegGGGe43bP7T/2vXbXZD1tWa+/RduW+LMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcAUvCq4DrfvCYrYKYG3IOteRRvwTXTMjE4B+H7O+GbNKROG3QTX1ucgNSklzD9knMcCCzU2/l3O0sVnkNhgDS8RF16CvgltOhLrxebITOetduBWwEnRJ0IP9O0xIEEWPdcxvqx9XyHyMBhp7zgaIO/CvhJ31lrjdtQfSuGkwMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jJ3zRkc0; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e95afec7e6so23727461fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:29:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716802081; x=1717406881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J96rqICq37jL3hvLuP8uyxwpRi/d2WtSxgJtcmDal6I=;
-        b=0kUi4UFFdeFP68VvcvnQZswt5tL6/TvhchrZNvYgfEaeKkNiGU2cBTLtjxgtQlly9u
-         eVJot28PPTENvzTRawhhAmtw5nZ5XG2d5ALJ0FNsxCrLttxKIj9TKMa1Slfg0rzmBCYa
-         RWOSamFdXM8TmYMU/sI8sYAVzXkO+GwErZT3Gr+Kf3quZphqnVScyyJ/vFDzJoAP9LM2
-         JGoUqFOvJPS9H3hRz/SsfZDQ6JN9g+iSlMviQt3NBVBgiP1WkRQj1s6NlUh23qLEJEX/
-         StwrtHdbk6wVN5cDgrSE3IFfc1eNW9UTLredtVceOYxzbhznxu18OqkifnPzKUWv2QZo
-         v9Ow==
+        d=linaro.org; s=google; t=1716802159; x=1717406959; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ChcvXVThIVG5TbcAKCOtU8ihiPd2mzmq71DfR9Nr0H0=;
+        b=jJ3zRkc0hm78tZOlN35Ri/K7Z9nKz+iySihdLsLTT40pnP41keMhP6OD2Gn2KLDt1r
+         hRsPHVzGaee/xihE4eLBUOMPwxquaKjoQGzboKjQ5RJWMiwBaZDup/hzrpyQ4PSc3iSV
+         ZC80O0Lpi0Z9ENHvf8DpG72kbj5sjw92UMtDda80KSykQhWFzR/9rxfg+jhkPEo+805p
+         4q/t4cBYsHy0Znnh35oH4hW90Owrs1c60fApGMGNgvmSqiN+ULVJ4obno92VMJwnPPrg
+         nID+CibQ77Hg80ksx9VhetChQrsIYxi3WULnpDlpRqiga1qdMkBdLj1f1NO/GKgrnvYn
+         2DYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802081; x=1717406881;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J96rqICq37jL3hvLuP8uyxwpRi/d2WtSxgJtcmDal6I=;
-        b=QLEwiUCPAsHyjcXe5MXejVJeFrg3rPe1TiFzE3jQs1xuAfzlXcjtVgzlAmicuMhc/X
-         Tnj46oTDrpojYPBSOr4KVQtmG9CmpP2wmxzFGdwlmGsLJiXXOL/ZThd8YPvrE9mNNR3X
-         T9A62r52u2XmBZ7uX/ED5ItIBfkG2WeWycIq0906HP0IOv+qJTr/VHSzOvVloZgOZzH1
-         5/qS+bbHKMVDp+u64CVo2nn/KaPa0naG2agkIjdxEchTTV6qcMH4E5MtrHCI46C6szN5
-         KpbqHHRkNk62L/OrvMWAoQoh5Ioy2c5fWfgiEv3BPWF2lXTi5u8L21u7Lvn4NSDnV457
-         JAWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKQCqVIs3oTT3+TxRzBYxxqf4PvuTn6Et7OxuM8+xEJFJu0Sdma6e7q7WlrPdKmrhfprDSbK7NhL0SQm7dlgb8NhmaUDHjhQlO4TIP
-X-Gm-Message-State: AOJu0YyiEZ+THibQ5hVg5AVmLGeVtXr5wrcriYuZmGV4Vn8ryeAFYlbl
-	wlmO9MzliGFTqLulpu/qtHc103U1u1ZcD+UKhBeGqZzV5UTgRePwt4MR/HRmwDcFucc63nQvkaR
-	0+qM=
-X-Google-Smtp-Source: AGHT+IGk2QJpSI8EZzi2K46AUSPOdebZwW7VoQsgcq+4bAfmeRjMLlMu7GmzLa3MPUPPvPUW1aOsZg==
-X-Received: by 2002:a17:906:38d4:b0:a5a:90e9:c2a7 with SMTP id a640c23a62f3a-a62645d7504mr520143966b.33.1716802081248;
-        Mon, 27 May 2024 02:28:01 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cd9fed2sm471030666b.187.2024.05.27.02.28.00
+        d=1e100.net; s=20230601; t=1716802159; x=1717406959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ChcvXVThIVG5TbcAKCOtU8ihiPd2mzmq71DfR9Nr0H0=;
+        b=xRJ18H9WgmG35tZMA0cocfSPG24i89T7O0TdblrInpwV+uM9Ezf14DerXTTd5YdIBu
+         f5L7fOqx1IKDyUf7f1i8UgQTjnfxsX7eIAb4mxzOvyNF27msUJ+XLURSv107CLM82QWz
+         vg5jgDFWFlIDC4uy4+eW7f9531ThY/8B+/1ab/itGVdKo/uZK5bgaNjVrAixMaAipRXe
+         KDVAENlfXhVkbs9MeG7SkR4ePTpgIJ9mkvH/tVbm88T+A+DuKRedmlivPVgULUsptBoj
+         vVOmtyO7ZnB2VC0udr4wuMYaS75bK8/yW4xC3wpcXTllFKJ62kAqx1X2Ej5+7yfvCsR0
+         d1tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXO/nZAQsLTDnQLfhkeTIEQumQSpqsqsHXNrv8I+Ya33YYOlyDHgBx/UnmjzFkHMhplYSlct4c8+TvZ3652DnghiPAE3vuyJvV/i1IM
+X-Gm-Message-State: AOJu0YxJYWliaStcAzlT2aKKl2zLoknVXvhSX4n0BOD/COjjRF5Z0/ZS
+	YMm1r+5kv1pR8s1rlL8ZDac0F+I/v4De5EQ6SqW4sqqbrZrVj2YkkTHNTXCiYpA=
+X-Google-Smtp-Source: AGHT+IEUQfcVQur+d8EXVuV+Z6FnGa6g3dG1LyX/QDfvUkdTANYheRA0kp5x4fUXbjvtAWsLpazd/A==
+X-Received: by 2002:a05:6512:12cc:b0:529:a76f:e172 with SMTP id 2adb3069b0e04-529a76fe18cmr1964113e87.14.1716802159079;
+        Mon, 27 May 2024 02:29:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529716df1fasm519782e87.308.2024.05.27.02.29.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:28:00 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: thorsten.blum@toblux.com
-Cc: krzk@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] w1: Add missing newline and fix typos in w1_bus_master comment
-Date: Mon, 27 May 2024 11:27:47 +0200
-Message-ID: <20240527092746.263038-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240515101150.3289-2-thorsten.blum@toblux.com>
-References: <20240515101150.3289-2-thorsten.blum@toblux.com>
+        Mon, 27 May 2024 02:29:18 -0700 (PDT)
+Date: Mon, 27 May 2024 12:29:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Alex Elder <elder@kernel.org>
+Subject: Re: [PATCH v2 3/5] remoteproc: qcom_q6v5_pas: Add support for
+ SA8775p ADSP, CDSP and GPDSP
+Message-ID: <jb2ug4gabow7v3kjxo5aszyjpsyh7nvnmsvrn57vpnvmkkr6fp@d6atdj2suaff>
+References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+ <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
 
-- Add missing newline before @return
-- s/bytes/byte/
-- s/handles/handle/
+On Mon, May 27, 2024 at 10:43:50AM +0200, Bartosz Golaszewski wrote:
+> From: Tengfei Fan <quic_tengfan@quicinc.com>
+> 
+> Add support for PIL loading on ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 on
+> SA8775p SoCs.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 92 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 54d8005d40a3..16053aa99298 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -820,6 +820,23 @@ static const struct adsp_data adsp_resource_init = {
+>  	.ssctl_id = 0x14,
+>  };
+>  
+> +static const struct adsp_data sa8775p_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- include/linux/w1.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+mbn please.
 
-diff --git a/include/linux/w1.h b/include/linux/w1.h
-index 9a2a0ef39018..064805bfae3f 100644
---- a/include/linux/w1.h
-+++ b/include/linux/w1.h
-@@ -85,7 +85,8 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  *
-  * @data: the first parameter in all the functions below
-  *
-- * @read_bit: Sample the line level @return the level read (0 or 1)
-+ * @read_bit: Sample the line level
-+ * @return the level read (0 or 1)
-  *
-  * @write_bit: Sets the line level
-  *
-@@ -95,7 +96,7 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  * touch_bit(1) = write-1 / read cycle
-  * @return the bit read (0 or 1)
-  *
-- * @read_byte: Reads a bytes. Same as 8 touch_bit(1) calls.
-+ * @read_byte: Reads a byte. Same as 8 touch_bit(1) calls.
-  * @return the byte read
-  *
-  * @write_byte: Writes a byte. Same as 8 touch_bit(x) calls.
-@@ -114,7 +115,7 @@ typedef void (*w1_slave_found_callback)(struct w1_master *, u64);
-  * @set_pullup: Put out a strong pull-up pulse of the specified duration.
-  * @return -1=Error, 0=completed
-  *
-- * @search: Really nice hardware can handles the different types of ROM search
-+ * @search: Really nice hardware can handle the different types of ROM search
-  * w1_master* is passed to the slave found callback.
-  * u8 is search_type, W1_SEARCH or W1_ALARM_SEARCH
-  *
+Other than that LGTM
+
+> +	.pas_id = 1,
+> +	.minidump_id = 5,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"lcx",
+> +		"lmx",
+> +		NULL
+> +	},
+> +	.load_state = "adsp",
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+>  static const struct adsp_data sdm845_adsp_resource_init = {
+>  	.crash_reason_smem = 423,
+>  	.firmware_name = "adsp.mdt",
+> @@ -933,6 +950,42 @@ static const struct adsp_data cdsp_resource_init = {
+>  	.ssctl_id = 0x17,
+>  };
+>  
+> +static const struct adsp_data sa8775p_cdsp0_resource = {
+> +	.crash_reason_smem = 601,
+> +	.firmware_name = "cdsp0.mdt",
+> +	.pas_id = 18,
+> +	.minidump_id = 7,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		"nsp0",
+> +		NULL
+> +	},
+> +	.load_state = "cdsp",
+> +	.ssr_name = "cdsp",
+> +	.sysmon_name = "cdsp",
+> +	.ssctl_id = 0x17,
+> +};
+> +
+> +static const struct adsp_data sa8775p_cdsp1_resource = {
+> +	.crash_reason_smem = 633,
+> +	.firmware_name = "cdsp1.mdt",
+> +	.pas_id = 30,
+> +	.minidump_id = 20,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		"nsp1",
+> +		NULL
+> +	},
+> +	.load_state = "nsp",
+> +	.ssr_name = "cdsp1",
+> +	.sysmon_name = "cdsp1",
+> +	.ssctl_id = 0x20,
+> +};
+> +
+>  static const struct adsp_data sdm845_cdsp_resource_init = {
+>  	.crash_reason_smem = 601,
+>  	.firmware_name = "cdsp.mdt",
+> @@ -1074,6 +1127,40 @@ static const struct adsp_data sm8350_cdsp_resource = {
+>  	.ssctl_id = 0x17,
+>  };
+>  
+> +static const struct adsp_data sa8775p_gpdsp0_resource = {
+> +	.crash_reason_smem = 640,
+> +	.firmware_name = "gpdsp0.mdt",
+> +	.pas_id = 39,
+> +	.minidump_id = 21,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		NULL
+> +	},
+> +	.load_state = "gpdsp0",
+> +	.ssr_name = "gpdsp0",
+> +	.sysmon_name = "gpdsp0",
+> +	.ssctl_id = 0x21,
+> +};
+> +
+> +static const struct adsp_data sa8775p_gpdsp1_resource = {
+> +	.crash_reason_smem = 641,
+> +	.firmware_name = "gpdsp1.mdt",
+> +	.pas_id = 40,
+> +	.minidump_id = 22,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		NULL
+> +	},
+> +	.load_state = "gpdsp1",
+> +	.ssr_name = "gpdsp1",
+> +	.sysmon_name = "gpdsp1",
+> +	.ssctl_id = 0x22,
+> +};
+> +
+>  static const struct adsp_data mpss_resource_init = {
+>  	.crash_reason_smem = 421,
+>  	.firmware_name = "modem.mdt",
+> @@ -1315,6 +1402,11 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
+>  	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
+>  	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
+> +	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
+> +	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
+> +	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
+> +	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
+> +	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
+>  	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
+>  	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
+>  	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
+> 
+> -- 
+> 2.43.0
+> 
+
 -- 
-2.45.1
-
+With best wishes
+Dmitry
 
