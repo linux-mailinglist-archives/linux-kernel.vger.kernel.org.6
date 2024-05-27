@@ -1,153 +1,111 @@
-Return-Path: <linux-kernel+bounces-189910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BD08CF6F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:10:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52478CF6FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19591F219D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F3F281744
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445E863D;
-	Mon, 27 May 2024 00:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9298801;
+	Mon, 27 May 2024 00:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qvc25599"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=orange.com header.i=@orange.com header.b="GA0pocAe"
+Received: from smtp-out.orange.com (smtp-out.orange.com [80.12.126.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA23BA33;
-	Mon, 27 May 2024 00:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C766B6FB0;
+	Mon, 27 May 2024 00:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.126.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716768596; cv=none; b=oEw12SUXVQTdJsGEX9hw7zywC0yPoAM0fhorF2vtqFKYcCvnEyl6jGxwSWsItpMBLC5Gccya4Lix7qvGn4TCDX6CTzAT/UEZSGuEmI2DFbPmyMXpoAs724tX/98RRteWXeZDfi0zK+6BijOwZ61843ux8Ei5zPc+Gt7hvrmK9h8=
+	t=1716769181; cv=none; b=soxg8xa860dajiHnMs3/pYkgoJyxtght1XfbSpndyCwP0L5bj78hEEUq42c1v9ZT74r9xKP7g9hNv4uQw9QM/VYemjukjR6hX7dvNcIJHYPZT5xjlBInemSVo8pW1TTEsbq1v7azeZ8B9XaIjI56wYpRGDJ/jGBMCHaM1OcIufo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716768596; c=relaxed/simple;
-	bh=nl9oLr8Xc4c24Mq1utQNIikN4+8tQIWkxiS58d/4E84=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rcgfo+4BKh3aZE+z7Nig4nQtRP1mqhvT3UeSzi0GI/yCuByezPNubHFm7EH6wSrB5u9f5F0tQM1qiVeXIL9Q9mf0u6hGqo7kW5fOiKzjS5r2uW6qS4Ii0pobzbuM/c1GbsSlJgC+tN7W7k0nccYD8wTp25ObSCw1Yqv3i3BbAJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qvc25599; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8193AC2BD10;
-	Mon, 27 May 2024 00:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716768596;
-	bh=nl9oLr8Xc4c24Mq1utQNIikN4+8tQIWkxiS58d/4E84=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qvc25599Y15SqQsaZIBOMO66Htbhp9Yu10mOr0OOQLB3WSuRTRG0f0lsUDGFyNfnK
-	 D4uO923onj/cs+zUTI26yvNrkgL7K0Vacsup9WL4N0cwkIuXxZRL9Mt1LEOTCq0FhQ
-	 gaZBSl6bV8wULBhFfWA/zbTaGlKJ7fVMLfvnb474juMjUW6bkkKso53g7gDkxZ4giM
-	 ygvNee0gHhiDXMdiAPOoQg9eZG4vvquZX37QYJmgFy7p17MdPktpA+jwiC7TGjqZIG
-	 uKkhMopQCAk8APld1fVF+WzHRSTlbGy5TvG+bPcZBj2GXZ9AIdrusO+qfyzJmV/Y2p
-	 bzCa4/7nyq9HA==
-Date: Mon, 27 May 2024 09:09:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH 20/20] function_graph: Use bitmask to loop on fgraph
- entry
-Message-Id: <20240527090949.70151ecb2e7d98d4f284c2c8@kernel.org>
-In-Reply-To: <20240525023744.390040466@goodmis.org>
-References: <20240525023652.903909489@goodmis.org>
-	<20240525023744.390040466@goodmis.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716769181; c=relaxed/simple;
+	bh=8c4ilwGABuwhx4/FiUe+6pqox6IKYVl2IVng+0WGpvg=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UzLjWT+aMRrUBimfydSsqSurYc+dWwAmXIgqaBopGS8fU/wIdrJ19uxVV3ZrZspzj4EBtbS3jXl6ncKoQrEo09Vvy8yjqm4CBWStq9c7NoNw1RPE6ans1v8IkxwgGyqhLEzPdJmUqjMs18zi19Ut1uVrBWc7ENgalSTocFt6A/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=orange.com; spf=pass smtp.mailfrom=orange.com; dkim=pass (2048-bit key) header.d=orange.com header.i=@orange.com header.b=GA0pocAe; arc=none smtp.client-ip=80.12.126.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=orange.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=orange.com; i=@orange.com; q=dns/txt; s=orange002;
+  t=1716769178; x=1748305178;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   in-reply-to:content-transfer-encoding:from;
+  bh=8c4ilwGABuwhx4/FiUe+6pqox6IKYVl2IVng+0WGpvg=;
+  b=GA0pocAerad0U6VlOW0t03iBjE1L0XKAh0UUZHD+4NrC/tD9OXuaUOl2
+   q4ACfEDwWyobQC4FkMfnDBESe7H4qpmpsJYLI0R9GFK5SWOJ8PgmCr+d7
+   u1bnN7gKx9AQgALz6uQMwytxTqDv1Fk5128vTql+qtV7dI1WJD6m264Ka
+   OJXYFCnrRT3+f+QApwf3Hc+EGKvc1x5a1BFNhrAbxknFGLgDV0AoBz+Fb
+   CxPDEkiJoGgd6L3KCBx8bpKMML1s3sxpGe9prE6LsE4LDUHBXuz90Md+p
+   Ml6/zDT6B/gtH2jD0xsO8HzyabvAr/9CxesVJ4c+fmqxji9kjEj+6TjeW
+   Q==;
+Received: from unknown (HELO opfedv1rlp0e.nor.fr.ftgroup) ([x.x.x.x]) by
+ smtp-out.orange.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 May 2024 02:18:26 +0200
+Received: from mailhost.rd.francetelecom.fr (HELO l-mail-int) ([x.x.x.x]) by
+ opfedv1rlp0e.nor.fr.ftgroup with ESMTP; 27 May 2024 02:18:28 +0200
+Received: from lat6466.rd.francetelecom.fr ([x.x.x.x])	by l-mail-int with esmtp (Exim
+ 4.94.2)	(envelope-from <alexandre.ferrieux@orange.com>)	id 1sBO49-009Ocm-Gi;
+ Mon, 27 May 2024 02:18:26 +0200
+From: alexandre.ferrieux@orange.com
+X-IronPort-AV: E=Sophos;i="6.08,191,1712613600"; 
+   d="scan'208";a="145223146"
+Message-ID: <5bbaf136-5409-4256-b4a4-1ac8ba501b26@orange.com>
+Date: Mon, 27 May 2024 02:18:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH] af_packet: Handle outgoing VLAN packets without hardware
+ offloading
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Chengen Du <chengen.du@canonical.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240520070348.26725-1-chengen.du@canonical.com>
+ <664f5938d2bef_1b5d2429467@willemb.c.googlers.com.notmuch>
+ <CAPza5qc+m6aK0hOn8m1OxnmNVibJQn-VFXBAnjrca+UrcmEW4g@mail.gmail.com>
+ <66520906120ae_215a8029466@willemb.c.googlers.com.notmuch>
+ <3acef339-cdeb-407c-b643-0481bfbe3c80@orange.com>
+ <6653547768757_23ef3529455@willemb.c.googlers.com.notmuch>
+Content-Language: fr, en-US
+In-Reply-To: <6653547768757_23ef3529455@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: base64
 
-On Fri, 24 May 2024 22:37:12 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+T24gMjYvMDUvMjAyNCAxNzoyNSwgV2lsbGVtIGRlIEJydWlqbiB3cm90ZToKPiBJIGRvbid0IHRo
+aW5rIGEgbmV3IERMVF9MSU5VWF9TTEwzIGlzIGEgc29sdXRpb24uIFRoZSBhcHBsaWNhdGlvbgo+
+IGp1c3Qgd2FudHMgdG8gcmVjZWl2ZSB0aGUgZnVsbCBMMi41IGhlYWRlciwgbm90IHlldCBhbm90
+aGVyIHBhcnNlZAo+IHZlcnNpb24KClllcywgSSBkaWQgbm90IGludGVuZCBhbnkgcGFyc2luZyBl
+aXRoZXI6IHRoZSBTTEx2eCBzaG91bGQgZW5kIHdpdGggdGhlIGV0aHR5cGUgCih0aGUgb25lIHRo
+YXQgb2NjdXJzIHJpZ2h0IGFmdGVyIHRoZSBNQUMgYWRkcmVzc2VzIGluIEV0aGVybmV0KS4gQnV0
+IEkgd2FzIGp1c3QgCnBvaW50aW5nIG91dCB0aGF0IGl0IGlzIGEgcGl0eSB0aGF0IFNTTHYxIGFu
+ZCBTU0x2MiBvbmx5IGtlZXAgdGhlIHNvdXJjZSBNQUMgCmFkZHJlc3Mgd2hlbiBhbGwgcGh5c2lj
+YWwgaW50ZXJmYWNlcyBpbiBhIHN5c3RlbSBhcmUgRXRoZXJuZXQuIFdoeSBub3Qga2VlcCB0aGUg
+Cndob2xlIE1BQyBoZWFkZXIgPwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18NCkNlIG1lc3NhZ2UgZXQgc2VzIHBpZWNlcyBqb2ludGVzIHBldXZlbnQg
+Y29udGVuaXIgZGVzIGluZm9ybWF0aW9ucyBjb25maWRlbnRpZWxsZXMgb3UgcHJpdmlsZWdpZWVz
+IGV0IG5lIGRvaXZlbnQgZG9uYw0KcGFzIGV0cmUgZGlmZnVzZXMsIGV4cGxvaXRlcyBvdSBjb3Bp
+ZXMgc2FucyBhdXRvcmlzYXRpb24uIFNpIHZvdXMgYXZleiByZWN1IGNlIG1lc3NhZ2UgcGFyIGVy
+cmV1ciwgdmV1aWxsZXogbGUgc2lnbmFsZXINCmEgbCdleHBlZGl0ZXVyIGV0IGxlIGRldHJ1aXJl
+IGFpbnNpIHF1ZSBsZXMgcGllY2VzIGpvaW50ZXMuIExlcyBtZXNzYWdlcyBlbGVjdHJvbmlxdWVz
+IGV0YW50IHN1c2NlcHRpYmxlcyBkJ2FsdGVyYXRpb24sDQpPcmFuZ2UgZGVjbGluZSB0b3V0ZSBy
+ZXNwb25zYWJpbGl0ZSBzaSBjZSBtZXNzYWdlIGEgZXRlIGFsdGVyZSwgZGVmb3JtZSBvdSBmYWxz
+aWZpZS4gTWVyY2kuDQoNClRoaXMgbWVzc2FnZSBhbmQgaXRzIGF0dGFjaG1lbnRzIG1heSBjb250
+YWluIGNvbmZpZGVudGlhbCBvciBwcml2aWxlZ2VkIGluZm9ybWF0aW9uIHRoYXQgbWF5IGJlIHBy
+b3RlY3RlZCBieSBsYXc7DQp0aGV5IHNob3VsZCBub3QgYmUgZGlzdHJpYnV0ZWQsIHVzZWQgb3Ig
+Y29waWVkIHdpdGhvdXQgYXV0aG9yaXNhdGlvbi4NCklmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMg
+ZW1haWwgaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBhbmQgZGVsZXRlIHRoaXMg
+bWVzc2FnZSBhbmQgaXRzIGF0dGFjaG1lbnRzLg0KQXMgZW1haWxzIG1heSBiZSBhbHRlcmVkLCBP
+cmFuZ2UgaXMgbm90IGxpYWJsZSBmb3IgbWVzc2FnZXMgdGhhdCBoYXZlIGJlZW4gbW9kaWZpZWQs
+IGNoYW5nZWQgb3IgZmFsc2lmaWVkLg0KVGhhbmsgeW91Lgo=
 
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> Instead of looping through all the elements of fgraph_array[] to see if
-> there's an gops attached to one and then calling its gops->func(). Create
-> a fgraph_array_bitmask that sets bits when an index in the array is
-> reserved (via the simple lru algorithm). Then only the bits set in this
-> bitmask needs to be looked at where only elements in the array that have
-> ops registered need to be looked at.
-> 
-> Note, we do not care about races. If a bit is set before the gops is
-> assigned, it only wastes time looking at the element and ignoring it (as
-> it did before this bitmask is added).
-
-This is OK because anyway we check gops == &fgraph_stub.
-By the way, shouldn't we also make "if (gops == &fgraph_stub)"
-check unlikely()?
-
-This change looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/fgraph.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 5e8e13ffcfb6..1aae521e5997 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -173,6 +173,7 @@ DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
->  int ftrace_graph_active;
->  
->  static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
-> +static unsigned long fgraph_array_bitmask;
->  
->  /* LRU index table for fgraph_array */
->  static int fgraph_lru_table[FGRAPH_ARRAY_SIZE];
-> @@ -197,6 +198,8 @@ static int fgraph_lru_release_index(int idx)
->  
->  	fgraph_lru_table[fgraph_lru_last] = idx;
->  	fgraph_lru_last = (fgraph_lru_last + 1) % FGRAPH_ARRAY_SIZE;
-> +
-> +	clear_bit(idx, &fgraph_array_bitmask);
->  	return 0;
->  }
->  
-> @@ -211,6 +214,8 @@ static int fgraph_lru_alloc_index(void)
->  
->  	fgraph_lru_table[fgraph_lru_next] = -1;
->  	fgraph_lru_next = (fgraph_lru_next + 1) % FGRAPH_ARRAY_SIZE;
-> +
-> +	set_bit(idx, &fgraph_array_bitmask);
->  	return idx;
->  }
->  
-> @@ -632,7 +637,8 @@ int function_graph_enter(unsigned long ret, unsigned long func,
->  	if (offset < 0)
->  		goto out;
->  
-> -	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
-> +	for_each_set_bit(i, &fgraph_array_bitmask,
-> +			 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
->  		struct fgraph_ops *gops = fgraph_array[i];
->  		int save_curr_ret_stack;
->  
-> -- 
-> 2.43.0
-> 
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
