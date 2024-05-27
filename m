@@ -1,229 +1,140 @@
-Return-Path: <linux-kernel+bounces-191404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673DC8D0ECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48AB8D0ED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF631C20CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87569282575
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A840161904;
-	Mon, 27 May 2024 20:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0146B5380F;
+	Mon, 27 May 2024 20:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MgT3Hug8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SA5aB+ZS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xk/9zLJs"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7304C1DA58;
-	Mon, 27 May 2024 20:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FBA1DA58
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716843303; cv=none; b=Y72VuEVhedgKoRx7hdfWfThICLpdZvahf5Swxebxtb6KKVtaFCVtfUDvQsbwhDxydlgALGtOs6cVafsj86eq/HG6BlkhBFnGNo4YDxRLSPaN/d6YHhk4daMBe3C943jGmisqN/rwISJivLK2PJ5hmV8aNVOcELE1uU8tHGrtESM=
+	t=1716843441; cv=none; b=N6ySzHcdMyxYsINriazj7I6+fCaMoknOW40jTcqWlfBDBxsfHgN14n/FQlbd3x8C/p0f0fuLzV4F1MYRltW8NAL5LgsjzaWF5HBPK8gTAN6YJzMmVoJPvBFf5G73ZRBTTVNgtIiEOs1cUGWaqQT/5MIHbMLMwmbH8lDua0VyyoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716843303; c=relaxed/simple;
-	bh=PeTQPue/126RRk2XEbMW7nbOvogEjizFdhoD4CmtnVg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p/BPaSnRNm10wDWjv5ZEefiRAIqqFU9A9kJMmQ67zmG4aJwOJpPJASxuw6RoqgYdInuBXyIfUqX4wjhiVyw6SAZRSKtn391nxn4RD9JEpjscdU8Kh8JTPafJcc9ks/ybTGuwwYbaoEzq3tTkzwI9Y+s2wmCM5glsHqOxaWAK7j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MgT3Hug8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SA5aB+ZS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 49DC3221BE;
-	Mon, 27 May 2024 20:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
-	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
-	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716843299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
-	pztfQZtu9Syu52DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716843299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=MgT3Hug8e+KVU6O4LMN/a0d3ULjFYJIS6qIFRuvLdwgwMve5voXhllyWCKVR1BCCex9LiK
-	VY9CxK3g0JtRjfOFKogaXimv8HWCuBoExAXI44uI6IE84HE3+Ofq+nFLueuKNCPST+9k12
-	LIoN3elEntuU4dSw4nDsQT2cJ5Fh/rc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716843299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1F/wXLo9doe6bC7o3BMJeghui7DJB78U6JuX0/mydHs=;
-	b=SA5aB+ZSsX4CYLFpeEMg4W4HMB5T2Ew9XdF4wVMMMr+fuexZ9VunrqaH9Lk51EVj3UAqM9
-	pztfQZtu9Syu52DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05BE313A6B;
-	Mon, 27 May 2024 20:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NsewNiLzVGY2SQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 27 May 2024 20:54:58 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,  tytso@mit.edu,
-  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-In-Reply-To: <92b56554-3415-46fe-99b4-99258d8a496c@collabora.com> (Eugen
-	Hristev's message of "Sun, 26 May 2024 14:49:42 +0300")
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
-	<20240405121332.689228-4-eugen.hristev@collabora.com>
-	<20240510013330.GI1110919@google.com>
-	<875xviyb3f.fsf@mailhost.krisman.be>
-	<9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
-	<87ttipqwfn.fsf@mailhost.krisman.be>
-	<92b56554-3415-46fe-99b4-99258d8a496c@collabora.com>
-Date: Mon, 27 May 2024 16:54:53 -0400
-Message-ID: <87ttijnffm.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716843441; c=relaxed/simple;
+	bh=dAU5llq+VJ28lxxQTUliN3NMu/FYRlPYmr6Zg5lTeRw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fWfzJrE7sphORuASl6TcmmX437Smrp0oX51O+IHIHy5Ne1k04OqHsughWJcD1xvpJQtMMx/OEk+hCnYPnlch8xxY25Uxu/QUewX0qt/endzM3I/Psy7GwUwK/dR2gVpBqEmDpMt893sJbLkoOIdAWmNV7fw05HlKbFVxLFinjdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xk/9zLJs; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-794ab1bafedso9615685a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716843437; x=1717448237; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8bs9EbhcdQK3rxulMupHjqyar0ItbldeLVgIYJXmjo=;
+        b=xk/9zLJsYTdy5GboBJBk1PckN7qbHsJ28bSv94nGlbu4vNHE1KgSbbI/zHJSEO2PM2
+         HR59YbS+iiNv5SDz8EnHmqjsJyuDjHrNc8agtfcGqQYRkd80j5D+XIPWn9j4nNNaWcUi
+         un4xBingd9aE2h9SQwviCLc0/eHbCWq+TfkQPbResU27InRA9/4t/3KJg0O8PAN6FwZl
+         6J/w3dQxyR4PS1rY7dQjGqv6Ei/QIvhaHeaChQVUQuG9w5hkJ9Vv7NRvzVkhmGJTv9uQ
+         xJAUlQU/0c5txpRVm18n2lpuZ+VWhIBM5oU/nHLcPxNlZHyX+dKkUVSZXzSpiAvCXPUM
+         cQ0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716843437; x=1717448237;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8bs9EbhcdQK3rxulMupHjqyar0ItbldeLVgIYJXmjo=;
+        b=Qi/dK8LM07jQR8jOH8xkvAYtzFvMIRxccy5PlHWqynnu7BYZSciqG2jeJU9bHvEnpu
+         i+Ha7sdSmZrOK99nosci9vX10a6cpcvkEgQOXjLja1Nwb9PL3pXZ+QiijFYlTAZ2nVfb
+         tZbcx1S3wPiRDvyHVls5UE+oWDtpFwrEfFsJWn9BcpPP8ykFRvY1sxMRZA4VgKV6gMy6
+         lcM0353SYzCFVAXrMW9zROGI8RD/HkFS+vjO8Y/Zz3wJk1NM8GoKugRzNZHcjTjv6qbW
+         xTO+o2TFcE0/VljSZ7OcoOlQ+Z5kjWUXDAg7LOClEMRPFXTsPnGIdQw9n+/bteyH3QRo
+         U7xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsa/RwQJiqDwzu9wbBqzcPKL8TH+U6kwWwj3tQs+Bpad2txeKu6VTKUC76xSk80DgeUWO4gx7wW4U1+m0hMlW3XlTI6reZfdDlJc67
+X-Gm-Message-State: AOJu0YyC2mfHXbo7rdXbtpWQXVXvv1zUjds8cmfXFxyA+aYzpohy4+FY
+	jgZ3yhdSMYoCVq4S2ljWwyYft92GE8XIFVPZye1EvQIroMww5aWCWOmAdOngSQk=
+X-Google-Smtp-Source: AGHT+IEFA5Xl71Sl0vHc2fZVv9T+NoQ5HUfuJTzWManJsQ0IRn5ypl+K46w3nAeESk2lSwtK276CTA==
+X-Received: by 2002:a05:620a:4548:b0:792:e0b0:7219 with SMTP id af79cd13be357-794ab1130a1mr1438768185a.77.1716843437229;
+        Mon, 27 May 2024 13:57:17 -0700 (PDT)
+Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abd4406esm325258085a.128.2024.05.27.13.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 13:57:16 -0700 (PDT)
+Date: Mon, 27 May 2024 16:57:15 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Conor Dooley <conor@kernel.org>
+cc: Julien Panis <jpanis@baylibre.com>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, 
+    Matthias Brugger <matthias.bgg@gmail.com>, 
+    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+    Lukasz Luba <lukasz.luba@arm.com>, devicetree@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] dt-bindings: thermal: mediatek: Rename thermal
+ zone definitions for MT8186 and MT8188
+In-Reply-To: <20240527-wife-dress-3ecaf1509506@spud>
+Message-ID: <r9q3n5n4-4pqn-53so-4n65-33p432530793@onlyvoer.pbz>
+References: <20240524-mtk-thermal-mt818x-dtsi-v5-0-56f8579820e7@baylibre.com> <20240524-mtk-thermal-mt818x-dtsi-v5-1-56f8579820e7@baylibre.com> <20240524-concerned-fritter-262f5e16293e@spud> <20240524-clatter-antivirus-b1939900ee58@spud>
+ <61a1be10-7df3-4ba7-b7b4-ccc7f0379656@baylibre.com> <20240527-wife-dress-3ecaf1509506@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=US-ASCII
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On Mon, 27 May 2024, Conor Dooley wrote:
 
-> On 5/23/24 02:05, Gabriel Krisman Bertazi wrote:
->> Eugen Hristev <eugen.hristev@collabora.com> writes:
->> 
->>> On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
->>>> Eric Biggers <ebiggers@kernel.org> writes:
->>>>
->>>>> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
->>>>
->>>>>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
->>>>>> +			return -EINVAL;
->>>>>> +
->>>>>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
->>>>>> +		if (!decrypted_name.name)
->>>>>> +			return -ENOMEM;
->>>>>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
->>>>>> +						&decrypted_name);
->>>>>> +		if (res < 0)
->>>>>> +			goto out;
->>>>>
->>>>> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
->>>>> then this function returns 0 (indicating no match) instead of the error code
->>>>> (indicating an error).  Is that the correct behavior?  I would think that
->>>>> strict_encoding should only have an effect on the actual name
->>>>> comparison.
->>>>
->>>> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
->>>> wouldn't matter since the error is not visible outside of ext4_match,
->>>> but f2fs does the right thing and stops the lookup.
->>>
->>> In the previous version which I sent, you told me that the error should be
->>> propagated only in strict_mode, and if !strict_mode, it should just return no match.
->>> Originally I did not understand that this should be done only for utf8_strncasecmp
->>> errors, and not for all the errors. I will change it here to fix that.
->> 
->> Yes, it depends on which error we are talking about. For ENOMEM and
->> whatever error fscrypt_fname_disk_to_usr returns, we surely want to send
->> that back, such that f2fs can handle it (i.e abort the lookup).  Unicode
->> casefolding errors don't need to stop the lookup.
->> 
->> 
->>>> Thinking about it, there is a second problem with this series.
->>>> Currently, if we are on strict_mode, f2fs_match_ci_name does not
->>>> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
->>>> is found during lookup, it will be considered not-a-match but the lookup
->>>> will continue.  This allows some lookups to succeed even in a corrupted
->>>> directory.  With this patch, we will abort the lookup on the first
->>>> error, breaking existing semantics.  Note that these are different from
->>>> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
->>>> makes sense to abort.
->>>
->>> So , in the case of f2fs , we must not propagate utf8 errors ? It should just
->>> return no match even in strict mode ?
->>> If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
->>> Or we are no longer able to commonize the code altogether ?
->> 
->> We can have a common handler.  It doesn't matter for Ext4 because it
->> ignores all errors. Perhaps ext4 can be improved too in a different
->> patchset.
->> 
->>>> My suggestion would be to keep the current behavior.  Make
->>>> generic_ci_match only propagate non-unicode related errors back to the
->>>> filesystem.  This means that we need to move the error messages in patch
->>>> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
->>>> itself fails.
->>>>
->>>
->>> So basically unicode errors stop here, and print the error message here in that case.
->>> Am I understanding it correctly ?
->> 
->> Yes, that is it.  print the error message - only in strict mode - and
->> return not-a-match.
->> 
->> Is there any problem with this approach that I'm missing?
->
-> As the printing is moved here, in the common code, we cannot use either of
-> f2fs_warn nor EXT4_ERROR_INODE . Any suggestion ? Would have to be something
-> meaningful for the user and ratelimited I guess.
->
+> On Mon, May 27, 2024 at 05:25:35PM +0200, Julien Panis wrote:
+> > On 5/24/24 20:27, Conor Dooley wrote:
+> > > On Fri, May 24, 2024 at 07:24:47PM +0100, Conor Dooley wrote:
+> > > > On Fri, May 24, 2024 at 11:04:34AM +0200, Julien Panis wrote:
+> > > > > Use thermal zone names that make more sense.
+> > > > > 
+> > > > > Signed-off-by: Julien Panis <jpanis@baylibre.com>
+> > > > Removing the defines is an ABI break. If these are all the same devices,
+> > > > but with more accurate naming, then keep the old defines and add new
+> > > > ones. However, the GPU1 define changes in the course of this patch which
+> > > > is more problematic.
+> > > > > [RFC] When PATCH 1/6 and 2/6 are squashed, checkpatch raises this WARNING:
+> > > > > "DT binding docs and includes should be a separate patch." That's why I
+> > > > > split them in this v5. The problem is that the driver can't be compiled
+> > > > > any more at PATCH 1/6. It needs PATCH 2/6 to be compiled. Should the
+> > > > > checkpatch warning be ignored here ? Should I finally squash PATCH 1/6
+> > > > > and PATCH 2/6 ?
+> > > Heh, and there's just one of the issues caused by your ABI break...
+> > 
+> > Conor,
+> > 
+> > Would Russell's suggestion be acceptable for you ?
+> > I mean, this one:
+> > https://lore.kernel.org/all/ZlDMNkdE2jmFgD8B@shell.armlinux.org.uk/
+> > 
+> > I could implement it, but before submitting it I would like to make
+> > sure that it suits everyone.
+> 
+> How's that going to work? MT8188_AP_GPU1 currently means 1, after your
+> series it means 2.
+> You're gonna need to pick a different naming for the new defines to
+> avoid that. Additionally, why even delete the old ones? Just define
+> new names with the same numbering and you don't need to worry about
+> any compatibility issues.
 
-Ah, that is not great, since EXT4_ERROR_INODE does more things like
-annotating the error in the sb and sending a FAN_FS_ERROR to any
-watchers. But still, this is a rare error and I'm not really sure we
-care, nor that it should gate the rest of the series.
+Isn't this making a mountain out of a molehill here?
 
-I'd say just use pr_err and be done with it.
+Seriously... none of this was present in a released kernel. The naming 
+can be adjusted "atomically" so compilation doesn't break, and 
+it is within maintainers' discretion to bypass the checkpatch warning in 
+such particular case.
 
 
--- 
-Gabriel Krisman Bertazi
+Nicolas
 
