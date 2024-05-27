@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-191206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A0F8D0843
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:24:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E488D0807
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6142B27297
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583081F21A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2ABF15F41D;
-	Mon, 27 May 2024 16:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DB7155C82;
+	Mon, 27 May 2024 16:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nRhYPpcP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sQGeqTFF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VgylFGwG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CD417E8EC;
-	Mon, 27 May 2024 16:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6587C61FC6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716826313; cv=none; b=ZN5HyfUmrQVN1SnIg/EZL/5Nx4QBYuSpej1kW/dBGQ6S27j9KkxU3SLsQKtcfS4YEuVE03nfOfyVtY+2G5AdmFZ/bCpXPVLKFTlMrhm1Sz13ZOsu4wUkFBCLT2M8R9Qagu/aBak8FnkAxS++7vyH9LFkSWuyo1aiWnITtGoS0Yg=
+	t=1716826384; cv=none; b=DrMG2uyjN3o/vFBMkfH3ic8g2ELJB6MJs/Xvjs7F3QfwwUIKyG38EY790pKq5Bo3IEq3XZxOH2meSS/6jKU3xgSii0iKWSiF9DpG6uiyCvxA0+YylxQ0drundnOrVmtAF9Ww5qDwr5i/GO81/s1ry0OMnc9/bZ28iXxRKfOMoN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716826313; c=relaxed/simple;
-	bh=AZo4vcTw7yyS0pCRmU4gDq31dsX62WYBOqt2MYCWD7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0a5qqS93y51OFCCpd08NS6yuVNRgmZBzUe/ccUT7mWULtUvh+ydMIz3jzddGUut1t/wNpzoeXDHiMay9TIZSkwaIvTDaJfsyElM58kXfLStKAlSMzhXstTjgODIAZyFflKLkVJIi/rHffFoqQP4sCx15tWwtzVabvBb83igOz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=nRhYPpcP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716826306;
-	bh=AZo4vcTw7yyS0pCRmU4gDq31dsX62WYBOqt2MYCWD7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nRhYPpcP7rG/gEdPcMFKZYWZAh9R+swqfkZKG0mtRm1aOZwm117RbCYKdV0tBwAVR
-	 wjyOfSTCgVvo6Svp5YI9IoYKrjEdKSS7jLH6upNC8xnolkNd9nUxoVV0f1DNQsJ51H
-	 86eMSDeWIIveKZS3/W3aEIvdEBqanlqLrji8GL/E=
-Date: Mon, 27 May 2024 18:11:46 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Shuah Khan <shuah@kernel.org>
-Cc: Willy Tarreau <w@1wt.eu>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: kselftest: also use strerror() on nolibc
-Message-ID: <56ea48ee-e278-4f37-a80f-9fd70d9d8d3b@t-8ch.de>
-References: <20240426-nolibc-strerror-v1-0-76a4c9c5271d@weissschuh.net>
- <20240426-nolibc-strerror-v1-3-76a4c9c5271d@weissschuh.net>
+	s=arc-20240116; t=1716826384; c=relaxed/simple;
+	bh=a42e2Xf1GNWvhAY2Tj1SM4zxAQkbkwQelk3WLmIr/5o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Lja99RKKYWTHpK2uMbzbg0xUjg4c0BtMZTT9lYeiakSwazQN7EcAyFsOpFDw77Ga0rKBQJR0MNrZb/bremA74346Vv1oS8NBuhu8FkWpKCogQLYrVYqCWgpAb87aSMZ/ZETKqMzQ0RVxVm8L0rhoz6sPztWUVkRJSzmuxT2wPGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sQGeqTFF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VgylFGwG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716826381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JLmwJM6hz9qUhzixzSAK8wDdiZKr1mPFgk7wH20IjSI=;
+	b=sQGeqTFFGqacG2PsRz8fGw0+8mic2QYWoIZ9ucj6an5Xiak8g2kMoMQWCNZpfBpyEYQJJp
+	VsVT8pZBpJpFE1IbCMmuheAqm6aP4WKm+G/cMGB2Z6Sj7DVetRvPr1YY5Ap8tqXNFlwwJ/
+	JhxMzd5w2hNvk4q7U5XX7qOJptxE63XnKqjp5rugFTHwz7xsPk4/nK7z3owiwb1YxuHNuB
+	6gHBs/cWycEmYBjWDIfJUach9z+fTnS7lIN/YdcMBVURMRWPCQqoEmQ67t7c7jJ6bsBMyH
+	XzhYs/MOhEWhIb1oW/s805tDRepDQDB7bnJBjueoEURKS5vNbwKMc2NwOoeSJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716826381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JLmwJM6hz9qUhzixzSAK8wDdiZKr1mPFgk7wH20IjSI=;
+	b=VgylFGwG/P1iLaaGO4rlmPXtyUJL5LUo+ljv1SrAmvbj8PXreAqWAx3l6DV2/ohqrufjJP
+	/egz2oBJ0lIWAsCg==
+To: Nicholas Piggin <npiggin@gmail.com>, Oleg Nesterov <oleg@redhat.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Phil Auld
+ <pauld@redhat.com>, Chris von Recklinghausen <crecklin@redhat.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+In-Reply-To: <D1KDJILBPEKS.27MVR6A44NMX8@gmail.com>
+References: <20240522151742.GA10400@redhat.com>
+ <20240523132358.GA1965@redhat.com> <87h6eneeu7.ffs@tglx>
+ <ZlCwKk65-eL0FrKX@pavilion.home> <20240524183700.GA17065@redhat.com>
+ <87v832dfw1.ffs@tglx> <20240526192758.GA21193@redhat.com>
+ <D1KDJILBPEKS.27MVR6A44NMX8@gmail.com>
+Date: Mon, 27 May 2024 18:13:01 +0200
+Message-ID: <87plt7b5de.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240426-nolibc-strerror-v1-3-76a4c9c5271d@weissschuh.net>
+Content-Type: text/plain
 
-Hi Shuah,
+On Mon, May 27 2024 at 21:01, Nicholas Piggin wrote:
+> On Mon May 27, 2024 at 5:27 AM AEST, Oleg Nesterov wrote:
+>> The more I grep the more I confused.
+>>
+>> On 05/25, Thomas Gleixner wrote:
+>> >
+>> > Right. It does not happen because the kernel starts with jiffies as
+>> > clocksource except on S390. The jiffies clocksource is not qualified to
+>> > switch over to NOHZ mode for obvious reasons.
+>>
+>> Not obvious for those who never looked at this code ;)
+>>
+>> OK, clocksource_jiffies doesn't have CLOCK_SOURCE_VALID_FOR_HRES,
+>
+> jiffies clocksource requires a timer to run it I suppose.
 
-Could you Ack the patch below to kselftest.h?
+Yes, but it's all periodic (nohz disabled) mode until
+clocksource_done_booting() selects a high resolution clocksource and
+kicks the NOHZ stuff alive. That's a fs_initcall() and happens late in
+the boot process.
 
 Thanks,
-Thomas
 
-On 2024-04-26 13:08:58+0000, Thomas Weißschuh wrote:
-> nolibc gained an implementation of strerror() recently.
-> Use it and drop the ifdeffery.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->  tools/testing/selftests/kselftest.h | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-> index 541bf192e30e..f4bfe98c31e4 100644
-> --- a/tools/testing/selftests/kselftest.h
-> +++ b/tools/testing/selftests/kselftest.h
-> @@ -161,15 +161,7 @@ static inline __printf(1, 2) void ksft_print_msg(const char *msg, ...)
->  
->  static inline void ksft_perror(const char *msg)
->  {
-> -#ifndef NOLIBC
->  	ksft_print_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
-> -#else
-> -	/*
-> -	 * nolibc doesn't provide strerror() and it seems
-> -	 * inappropriate to add one, just print the errno.
-> -	 */
-> -	ksft_print_msg("%s: %d)\n", msg, errno);
-> -#endif
->  }
->  
->  static inline __printf(1, 2) void ksft_test_result_pass(const char *msg, ...)
-> 
-> -- 
-> 2.44.0
-> 
+        tglx
 
