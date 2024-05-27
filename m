@@ -1,179 +1,121 @@
-Return-Path: <linux-kernel+bounces-190031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721C38CF892
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:56:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3FA8CF894
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0264F1F21F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:56:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C40B21BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C23DC2C8;
-	Mon, 27 May 2024 04:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5430D266;
+	Mon, 27 May 2024 04:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HoebKqr/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MiO3Ekd3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HoebKqr/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MiO3Ekd3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elDlVemc"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAEA184E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7932F2B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716785797; cv=none; b=dPDUthHJ5p7UtNhW/3/RQcY+WWpn8D8UJZrT7ESLoxDqRAdsAO/D4PFObfMlGzMldJNAiJk5uqKD8CA3jZkY3TUeXPYBFq1IwmOSZaUMamUdzxoq6GkY6pWzAs9Ui0i2ofo9oU78YFcc6ghwtcjTYSU28Zawsb9/wjsh9Djxjy8=
+	t=1716785962; cv=none; b=Wn4CC1g/BB6zRAeXDabiDL1uLu+73q/YMXZ+7vqnu60VX2eFZe4X7Al3j0VhCNfLuTglHGr0DZNYYqw6+YnY3lx6YvtmMAqmnZpvkkln3j76gYsQSzzDETyBnl1BpNg6AMF3rnpUcr4RJ2eHPXmYWFN0cvbaailXBxNb8saz1CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716785797; c=relaxed/simple;
-	bh=u0BFX3WzfF3eNC8msFtDptgSqPVeS3JoT1DDuV+cmtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvKA7OY/f2IX2BjvMSLik+DRqYc1jH5mjv5cT7XyM++znDfGfyAteJs9QbS+y0QD2qHfnhsgpzQMEZRN7RNJ6uLb7QtYMQ1gEIL9hc7P4ynE0mHOlbh7uniTQlBi5W2yoJk+0HQFdQ4rpH2MgQ33yWe8jI6/PpPKaFyDg7+Y6Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HoebKqr/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MiO3Ekd3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HoebKqr/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MiO3Ekd3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9492D21C20;
-	Mon, 27 May 2024 04:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716785794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpjZvuybnZOPV0Sin/gwYjM8aUTQBvD2n8uPNDZdxaE=;
-	b=HoebKqr/EdRAPAXhMZWVhgMUSAbqBg9tjRfij74soQ5TGD4UfC62oEsXyBhZCpUNdKC26z
-	+UYJzf2K/6u7oijDULZJ8A7Zx/yY2HXWyxJxvfxyr6gCfKq4oKzsyJMHSk29L/LeRylJFb
-	xonCLLZerZd6d8jP8iVl7sWUK4ATl24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716785794;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpjZvuybnZOPV0Sin/gwYjM8aUTQBvD2n8uPNDZdxaE=;
-	b=MiO3Ekd3jJ1FR62PkwVmq3cV+yckpwZ6SOoI5/42HWPpmfD0rq+t7W2UaxMoGq6MPv4Iit
-	AbM8aVYr4E2BBCCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="HoebKqr/";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MiO3Ekd3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716785794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpjZvuybnZOPV0Sin/gwYjM8aUTQBvD2n8uPNDZdxaE=;
-	b=HoebKqr/EdRAPAXhMZWVhgMUSAbqBg9tjRfij74soQ5TGD4UfC62oEsXyBhZCpUNdKC26z
-	+UYJzf2K/6u7oijDULZJ8A7Zx/yY2HXWyxJxvfxyr6gCfKq4oKzsyJMHSk29L/LeRylJFb
-	xonCLLZerZd6d8jP8iVl7sWUK4ATl24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716785794;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpjZvuybnZOPV0Sin/gwYjM8aUTQBvD2n8uPNDZdxaE=;
-	b=MiO3Ekd3jJ1FR62PkwVmq3cV+yckpwZ6SOoI5/42HWPpmfD0rq+t7W2UaxMoGq6MPv4Iit
-	AbM8aVYr4E2BBCCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1088813A6B;
-	Mon, 27 May 2024 04:56:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CFN5AYISVGY1fgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 27 May 2024 04:56:34 +0000
-Date: Mon, 27 May 2024 06:56:28 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v3 07/16] powerpc/8xx: Fix size given to
- set_huge_pte_at()
-Message-ID: <ZlQSfOh0pQ2kE5D1@localhost.localdomain>
-References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
- <c459a02141c4e24b204ef76c489a63ce67c9dbbb.1716714720.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1716785962; c=relaxed/simple;
+	bh=qdQ520WYRB6dXPFOnS961CjC3BWpc8ad5xZiBOfFKIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HhXp/7ubh8Xu/wjkCcrL5/0A5Skan1jX0ZTwerJVsbgJoN4f6ojrEDeZW3xBarSPIAkHk0ro8B/dVmbGi9MuYqIbcVP4lVaLCedkwGoueW6lp7A7hMuJAxwih61SsWqg5YhOdjQmHLsk/oq8tXr3g8nPGIA1d0qt5p1ZXhTkJaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elDlVemc; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f4a52b9589so2792275ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716785960; x=1717390760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6KvdvQaSGvfhx7HMn7VzdtxXHAGgtD6sRHh0aCS+qE=;
+        b=elDlVemcYLaNJ6Dsr9oxofs0gxdxgwVRTep2wO+aCJAy2ywkvgdc91QO9K3bKuEZTz
+         uLvrFjge71NvPDnY0j6qNOo7JsveQdhaM5bwQLDjogtScL0zE0yT2s3kwgmExdkBcPXS
+         jE6J6Kkye03nqdm1VZVIx+K5Cpq+sxKwHTYbC9nxWQiKeBeNbsq5zRffHqO/uXa0W2ok
+         tA2aAPoGptd/UE2MbADEWWQWaT+g1sRmSAc9ra5UiK3j+sCLINStxbMonwBpI+5KzK6I
+         C4RFy1NLZDDsr4L69R3KufPP8Y7WFRVHde+P6XDviqqQefrSqyyXDJ+CzCXddNj1+if2
+         G0cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716785960; x=1717390760;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A6KvdvQaSGvfhx7HMn7VzdtxXHAGgtD6sRHh0aCS+qE=;
+        b=ws3xpRBIprxdZHULIdSHx6MY5qp3djX8rd8ZRWuJ2LJ3p6JNVCv9IJQncU3gQoPvZH
+         8xzqDQ2sR9nD1WPVNfcDNLBW0LhgpS9J5mrNKH0BXiwcVvf7zNinZxjYfxLn2PXwy5oi
+         nosrD2Pu9NQf1roH7m8o6agLVBdughHLeYk97khIS+VuEQg/kKjmiErGQ12dX+pnh2uA
+         MjtNRn9w+bNhntt8DIkT5cDkD1NvTBoKU7MMwhcoRsOd7jPQuj6f4Sdknvx4L1Ih5nRt
+         /n+8qmzZDyZ1t0xT9bp0sw1TuFkpP42WmaRkELjtyOSnjcX6266/8vxJYQK8k6TnPtT2
+         +sug==
+X-Forwarded-Encrypted: i=1; AJvYcCW7eYCV/YVtsgLXe7UxHwSL2T2s6Qm08LS87byz8ofewCIPC+ccb/iwh+DIxAwDvtzD9qNEOTi6//sxQjABsQQe8nTDNzqom63AJ7oN
+X-Gm-Message-State: AOJu0Yyw1x6z30HIjKRQCMerGKkgLQm7G3eIPxjKZtt5KPP4WKcHr6r/
+	zxuafcWSnUiHSDwtV165gKKIKYDtwAjQryEStiH3MZ9rHe6BlrXlM7yIvVN5
+X-Google-Smtp-Source: AGHT+IFNa0PpZQzqfaYhweaVAzKkOHkpJwdzLdGBNQGpG9i83v5TmzpdBOcqCxEVzJ8DWt+I0GljcA==
+X-Received: by 2002:a17:902:cecd:b0:1f3:266b:ea23 with SMTP id d9443c01a7336-1f4486d1f6amr96091525ad.13.1716785959565;
+        Sun, 26 May 2024 21:59:19 -0700 (PDT)
+Received: from ubuntukernelserver.. ([110.44.116.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f489e1a2e3sm17549435ad.184.2024.05.26.21.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 21:59:19 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: gregkh@linuxfoundation.org,
+	colin.i.king@gmail.com,
+	ruanjinjie@huawei.com,
+	hi@atinb.me,
+	bragathemanick0908@gmail.com
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: hal: Fix spelling mistakes in rtl8723b_cmd.c
+Date: Mon, 27 May 2024 10:43:56 +0545
+Message-Id: <20240527045856.72996-1-topofeverest8848@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c459a02141c4e24b204ef76c489a63ce67c9dbbb.1716714720.git.christophe.leroy@csgroup.eu>
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 9492D21C20
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.986];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 26, 2024 at 11:22:27AM +0200, Christophe Leroy wrote:
-> set_huge_pte_at() expects the size of the hugepage as an int, not the
-> psize which is the index of the page definition in table mmu_psize_defs[]
-> 
-> Fixes: 935d4f0c6dc8 ("mm: hugetlb: add huge page size param to set_huge_pte_at()")
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+This patch fixes misspelled words to increase code readability and
+searching.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  arch/powerpc/mm/nohash/8xx.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/mm/nohash/8xx.c b/arch/powerpc/mm/nohash/8xx.c
-> index 43d4842bb1c7..d93433e26ded 100644
-> --- a/arch/powerpc/mm/nohash/8xx.c
-> +++ b/arch/powerpc/mm/nohash/8xx.c
-> @@ -94,7 +94,8 @@ static int __ref __early_map_kernel_hugepage(unsigned long va, phys_addr_t pa,
->  		return -EINVAL;
->  
->  	set_huge_pte_at(&init_mm, va, ptep,
-> -			pte_mkhuge(pfn_pte(pa >> PAGE_SHIFT, prot)), psize);
-> +			pte_mkhuge(pfn_pte(pa >> PAGE_SHIFT, prot)),
-> +			1UL << mmu_psize_to_shift(psize));
->  
->  	return 0;
->  }
-> -- 
-> 2.44.0
-> 
-
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+index a59ae622f05e..d1ac2f44939c 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+@@ -700,7 +700,7 @@ void rtl8723b_download_rsvd_page(struct adapter *padapter, u8 mstatus)
+ 		rtw_write8(padapter, REG_BCN_CTRL, val8);
+ 
+ 		/*  To make sure that if there exists an adapter which would like to send beacon. */
+-		/*  If exists, the origianl value of 0x422[6] will be 1, we should check this to */
++		/*  If exists, the original value of 0x422[6] will be 1, we should check this to */
+ 		/*  prevent from setting 0x422[6] to 0 after download reserved page, or it will cause */
+ 		/*  the beacon cannot be sent by HW. */
+ 		/*  2010.06.23. Added by tynli. */
+@@ -964,7 +964,7 @@ void rtl8723b_download_BTCoex_AP_mode_rsvd_page(struct adapter *padapter)
+ 	rtw_write8(padapter, REG_BCN_CTRL, val8);
+ 
+ 	/*  To make sure that if there exists an adapter which would like to send beacon. */
+-	/*  If exists, the origianl value of 0x422[6] will be 1, we should check this to */
++	/*  If exists, the original value of 0x422[6] will be 1, we should check this to */
+ 	/*  prevent from setting 0x422[6] to 0 after download reserved page, or it will cause */
+ 	/*  the beacon cannot be sent by HW. */
+ 	/*  2010.06.23. Added by tynli. */
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
