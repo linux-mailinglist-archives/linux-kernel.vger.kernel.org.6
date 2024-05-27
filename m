@@ -1,163 +1,114 @@
-Return-Path: <linux-kernel+bounces-190184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A472F8CFAD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:01:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D531F8CFACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6024F281C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 732221F23348
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23183A8D0;
-	Mon, 27 May 2024 08:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5932EAF7;
+	Mon, 27 May 2024 08:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="glRPCfaZ"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VZGFnL1n"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2594594D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2B5210E9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796907; cv=none; b=Do2mtFBgeUYL7i58Etpqbck6Axl3r/pEEi50MIEJvWiepf0PNWJklLoYo+8yysx+gYHX52i8od9tZlMhvBJwQfQsDxoUldd+cSzXyWfO8ACe3r4aqWoUX8I+yaWXGuDOVne9VUCyWAQu2JlGPtk/upbWd6gy7FwkuFKThmqRTVE=
+	t=1716796877; cv=none; b=DwOqgvAE2GS2vNQvvVZHkbnXVQSukfHfGcg2+IHiGa3xpq6kX7avLfROR3GeZCFwCqR+W8gXAA9RlLaIik3yzur6FAxwfMgHXt/PhopqJs3AmPLT+nrDPayuTUamtMltahGpa0e2bo+PKnTm4w7gMxvr9BdSDaMeJmVUJ0qEDhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796907; c=relaxed/simple;
-	bh=Jkpr43X/qDFxJGmKqmQgShXrBkBVcEw/3bJPwmjpF7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1yTW8888gSMM8ZKlMOaZTDsDPv8DpZU/AiKUZe4IePuUlGFAuygsZbYF1nk2e/JGWotkJ5rwY7T2t2RBpOGa/zxLYBxLWWuvE7E7QWcMQJSe+SC/eK0M+OnoJoZLoYLTvNs6gePq/zuQC7CPzKiDgjdeGCnjZKQH1m3lm7aumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=glRPCfaZ; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: val@packett.cool
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1716796901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eMc9oQ4YVYpAx8gh5q0mqb2/rcNUyELqBXOxKDT4IhA=;
-	b=glRPCfaZfsOQk2KMlum9Ys/c4ChI8IwVLsJNQknIDDSL9PnDCpjjeDtaJddOebaIYhpOYa
-	oup6lF4RomW3VH/pX8fFHODKQHMEASOv9awbgimT88yAndaMKXLoaXIuTps3iO0RoogLqU
-	ENBT8geFuYNp8PtI2qDeMDraUTHUSTJviDv6+bKfV9pXAIR8x5ey54+4eQsbz3YFHhWyw4
-	NoZKFTS8Z1DqbLGUqlKiNdYF3KrFDteqlBVu+Fayj08F2VwEgIqDDyn+U2aNPCW1BXD1Mj
-	myVpATMESHA+nXhQjYzCb/65azOOXRpzyr2MCASdj0pyRi5A7tQCK1lm2n0L9g==
-X-Envelope-To: jic23@kernel.org
-X-Envelope-To: lars@metafoo.de
-X-Envelope-To: sfr@canb.auug.org.au
-X-Envelope-To: linux-iio@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-To: 
-Cc: Val Packett <val@packett.cool>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: accel: mma7660: add mount-matrix support
-Date: Mon, 27 May 2024 05:00:18 -0300
-Message-ID: <20240527080043.2709-1-val@packett.cool>
+	s=arc-20240116; t=1716796877; c=relaxed/simple;
+	bh=KGYzo0d4ydTiDRoHwUaveUva4TGHCiqn07mQdn+93U8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mia0AYPrC9jYQsd5pGX1/qBCJmQqUkR3k1f4VvvRaTfoYTs1Km+yNVoBPyXUuBbXJXFsoHwAQKZ3bzm7JOhzY095dpDcpLtd7y+eoH7JKG5esJAWlxbci3GeJR716zCuZaasGrYhPHgKdOuiTZnuVQnJCPE3ZzNOt3Z/NQFyG64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VZGFnL1n; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-578517cab9eso3369446a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716796874; x=1717401674; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JVF2aDiAwuR8zQRgdtvjMogqVM3XbukgpjZURs9F6bg=;
+        b=VZGFnL1nRoZOHkGqlMC5Cq295VlfVXIKQwieBkvr8Jrx/6OdVmn/sXBIyqOFQDElu2
+         t4LL1pXLg4Zc00coi0ct4iOolMU0xKEOGYqHDng7o/0M7iozNK32kDT1I58xYTdLFxfN
+         UEBstTxBAPIoU9vkgLbvbItBIY1JQ4+ajqj95Vy3V5eYN6fkCUrGYhe8o0vGWN9dRjqw
+         /gk6jrXeH2FZ+vYHj5fY09Hopcm+zxs95Qgxb2w7S2HXsqPZgPwkGbdCuLaMlK4jiqb9
+         ZMGn12lSJPT4/LJHBvQerCH+FLxLO0Z3VIpC7vuHbum0o6pudGhjtMvh0NRF7VA/uvNp
+         jhcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716796874; x=1717401674;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVF2aDiAwuR8zQRgdtvjMogqVM3XbukgpjZURs9F6bg=;
+        b=qcOZXpwQzF1vpJVDWQmgMbEJSfsnUYTm4fna1ENSQv7bEL+4XOfwaNIEUrhHBr0SR1
+         doXKIH6Oxg0HhSXS8vwgfOGBVDGQwI6v7ouo8CYzXW+TofqR0yrx8o+xOg6WeernWcRv
+         M3IV0Y5/TqCOLrPjO9QEzm+4BCLaT+ojzrEav77VGeWAe8Txf0Z+gvE81ECdGctE6Ygx
+         0K7Y2SRLaoM5gVYDZUkzU/Iqco5mL8tvvFj1chiT2wNgJhwfdG98Kn4m4CERWOnhso/b
+         +XdNJrLzroqxAFBsVfAf3h9ITlrSpi23+jFOcDVEylJRnlL4Dw4PcdeeBMCXfBZZtH5W
+         MskA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP+ONCnbhO4sJzUUv0aoQmtjbx4294hdH8JOrGLbOF21Fy3kwGoG9EFVjBuwExxrOr1rRMLVsFiBLXCMZPFYeBOOKi9wEU1XVkAVw0
+X-Gm-Message-State: AOJu0YydPUhGFqJJiuuXbT5bUCMEZmjV0Fd/Uq4nAc8jBkMYuveU8D4k
+	mCXsMi9yy/RBaQKpmQt/MoKMr0B0wHfJ4CsPKDuWgrd2WvOIWFFBnkz2uc2m29s=
+X-Google-Smtp-Source: AGHT+IFQsIh5kK+9ePczG/hmYzE323NUpoIVFMaCMZbZuQdBUucEYG/RX82tMtIPJFmuC6hg8bvxxw==
+X-Received: by 2002:a50:a417:0:b0:579:c442:3684 with SMTP id 4fb4d7f45d1cf-579c44238e4mr2204315a12.24.1716796873691;
+        Mon, 27 May 2024 01:01:13 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578523d2507sm5443603a12.40.2024.05.27.01.01.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:01:13 -0700 (PDT)
+Date: Mon, 27 May 2024 11:01:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Frank Li <Frank.li@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, marex@denx.de,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
+Message-ID: <7ee00c15-ed39-4092-be79-d4683d1c3ee2@moroto.mountain>
+References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
+ <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com>
+ <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
+ <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
 
-Allow using the mount-matrix device tree property to align the
-accelerometer relative to the whole device.
+On Fri, May 24, 2024 at 09:49:08AM +0800, Shengjiu Wang wrote:
+> On Fri, May 24, 2024 at 4:36 AM Frank Li <Frank.li@nxp.com> wrote:
+> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+> > > +                                                      struct clk_imx8mp_audiomix_priv *priv)
+> > > +{
+> > > +     struct auxiliary_device __free(kfree) * adev = NULL;
+> >
+> > nit:  *adev = NULL;
+> 
+> Actually,  the checkpatch.pl told me need to have space after '*'...
 
-Signed-off-by: Val Packett <val@packett.cool>
----
- drivers/iio/accel/mma7660.c | 50 ++++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 15 deletions(-)
+Someone should fix checkpatch so that it knows that __free() is an
+attribute, not a function call.  (The cleanup.h stuff is quite new).
 
-diff --git a/drivers/iio/accel/mma7660.c b/drivers/iio/accel/mma7660.c
-index 260cbceaa..9d23f28d5 100644
---- a/drivers/iio/accel/mma7660.c
-+++ b/drivers/iio/accel/mma7660.c
-@@ -38,21 +38,6 @@
- 
- static const int mma7660_nscale = 467142857;
- 
--#define MMA7660_CHANNEL(reg, axis) {	\
--	.type = IIO_ACCEL,	\
--	.address = reg,	\
--	.modified = 1,	\
--	.channel2 = IIO_MOD_##axis,	\
--	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
--	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
--}
--
--static const struct iio_chan_spec mma7660_channels[] = {
--	MMA7660_CHANNEL(MMA7660_REG_XOUT, X),
--	MMA7660_CHANNEL(MMA7660_REG_YOUT, Y),
--	MMA7660_CHANNEL(MMA7660_REG_ZOUT, Z),
--};
--
- enum mma7660_mode {
- 	MMA7660_MODE_STANDBY,
- 	MMA7660_MODE_ACTIVE
-@@ -62,6 +47,21 @@ struct mma7660_data {
- 	struct i2c_client *client;
- 	struct mutex lock;
- 	enum mma7660_mode mode;
-+	struct iio_mount_matrix orientation;
-+};
-+
-+static const struct iio_mount_matrix *
-+mma7660_get_mount_matrix(const struct iio_dev *indio_dev,
-+			const struct iio_chan_spec *chan)
-+{
-+	struct mma7660_data *data = iio_priv(indio_dev);
-+
-+	return &data->orientation;
-+}
-+
-+static const struct iio_chan_spec_ext_info mma7660_ext_info[] = {
-+	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, mma7660_get_mount_matrix),
-+	{ }
- };
- 
- static IIO_CONST_ATTR(in_accel_scale_available, MMA7660_SCALE_AVAIL);
-@@ -75,6 +75,22 @@ static const struct attribute_group mma7660_attribute_group = {
- 	.attrs = mma7660_attributes
- };
- 
-+#define MMA7660_CHANNEL(reg, axis) {	\
-+	.type = IIO_ACCEL,	\
-+	.address = reg,	\
-+	.modified = 1,	\
-+	.channel2 = IIO_MOD_##axis,	\
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-+	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-+	.ext_info = mma7660_ext_info,				\
-+}
-+
-+static const struct iio_chan_spec mma7660_channels[] = {
-+	MMA7660_CHANNEL(MMA7660_REG_XOUT, X),
-+	MMA7660_CHANNEL(MMA7660_REG_YOUT, Y),
-+	MMA7660_CHANNEL(MMA7660_REG_ZOUT, Z),
-+};
-+
- static int mma7660_set_mode(struct mma7660_data *data,
- 				enum mma7660_mode mode)
- {
-@@ -187,6 +203,10 @@ static int mma7660_probe(struct i2c_client *client)
- 	mutex_init(&data->lock);
- 	data->mode = MMA7660_MODE_STANDBY;
- 
-+	ret = iio_read_mount_matrix(&client->dev, &data->orientation);
-+	if (ret)
-+		return ret;
-+
- 	indio_dev->info = &mma7660_info;
- 	indio_dev->name = MMA7660_DRIVER_NAME;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
--- 
-2.45.1
+regards,
+dan carpenter
 
 
