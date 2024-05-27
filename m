@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-190961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516998D04E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:56:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4EF8D05B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078ED1F21C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A89EEB2E32B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1828317084E;
-	Mon, 27 May 2024 14:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2B9172BCE;
+	Mon, 27 May 2024 14:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrTFd1KC"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9346zTe"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0C2161914
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC0171660;
+	Mon, 27 May 2024 14:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819976; cv=none; b=QMlF+GCcmQFVf+08sFGTADir72E7cMm+nriWSuDXFXTq/L+yt4I3ughOpYaI/vYEdUHojFW7PZAWdM79KGLDbCvWGljHDbaDE6c80bh/7DC0mLgLwiNDrJxIDgoxq87HFV1NlElXofx46ZSWtSVgNeoZZqZMevAKepzoPnk1pjo=
+	t=1716819987; cv=none; b=ebj/RR/PrukfBUtxYCwQihz2OFQS4ydcaLF9frcq9EvzXLvI1oZncLshQZbA95seoSIfgeAyWqI/kjpXYAikA0NIO1c1MIdJzvi4UhwiGmRSf1jPok3YK4fzwn1ukQwdLi68zFy76/xnoqpH1NHEwy7xr5RsFb9LK7taeg5HoWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819976; c=relaxed/simple;
-	bh=mIexTCXVeUPx/vSiQvIkN6fMNuyrTcPp/6jeHHlIuU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSydpB1HySZAQ7yb0hC6lK4SmWrv4g/5Jw37TETFzvibXyQeWs8U7QcqQ69j2ckbMAc6qg0wzkhQMJFkAHpbedR73q/QIGQORpFBroeeRXZ7iSaWGnLyRrqfUeTk5Ug0mlaPC+L1UYbD54L5b1jxNjtrAmNNUz03K+eqn/RupbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrTFd1KC; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57822392a0dso8499128a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:26:12 -0700 (PDT)
+	s=arc-20240116; t=1716819987; c=relaxed/simple;
+	bh=CfLh9yu54xuTSwlbf9xMLzFnPHFmKJW9PS9bvEukrAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q1qb2Rr+ITthtxxSGoTh8gfFpehYeQH9XJ0+omLSgmgyYkSHovzhjjFgrnl2rzPtcg35Wgu7goNIEg7pbl1kw66M4xf7HnYE6djr5ENBECVUdPQah3Qg6jlsoYQz6h9VOJzdJHHJtyuRcJWNWwUfvINF7BQmiIGiJB4z24wW97Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9346zTe; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295f012748so3686094e87.1;
+        Mon, 27 May 2024 07:26:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716819971; x=1717424771; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v7c0ZrJPynvxMLH92Q3X2WTOon5tSRNZ2c7KU9q10EA=;
-        b=nrTFd1KCvlLfA//4I+gCqd8ZcWdfnLCJ3ucTz510/Os2KxkVEy/PwsXga90ubfXQiS
-         belfAJa7pFpPIqeygLzvUlwUdW2WNMOQ8lfAfJmPXVjRIA86bfTA0ilOc7YnsFuGgDWN
-         LRAATof3mgk1AQ5AQuHKGxCpFx9t8LDjCMeBja5hVF1GZR6stDUd62+RZfK8K9MNcQJB
-         VuiXxiZbZkawFldGGq667R7AdA6X7gsuhZCaIptDCeUJ8v5w4LLNuJ3Tjng1IqZ+MD5l
-         GTCDzY4+w5YJzZ6eIhqM1CtveMyzWcA5AQxGHLWQWASQWZrWfIv14ZhuNm91OSu2KKvv
-         7nhA==
+        d=gmail.com; s=20230601; t=1716819984; x=1717424784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rk4/vnQZ81wjUO4Em5QwJ+7FetQF6/nmn1oakCi33wg=;
+        b=m9346zTeTEu9OVZca01hweNTgXqw95kl1ORfCalGgBtY12qVJFglyZHTD+PvWBtO1s
+         TCf3ms3g998t8JMq34cdfzC2bFICRhytpV9r5mv3jltSTjKSarjymNBQhYCFdChAjKXK
+         xQVYlrLr8UqQuk7WSelLk86+ZIvMBhvPk4sxP59VTQfSgieH/SECSeHJDhHS74XcaiZ3
+         j8yLHBjCFoNKXv5OxwTA6yzZBlKq5Tf7/HcPbm5OCkZMwO8L78WAyfnKcLGI59I3Y1tx
+         gXiZnYU8IptbLUFkMJ7jw/UnLbBGDRwryZaks+OanjJin5Fek8DbVFwDE78JLwkmshi5
+         s5Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716819971; x=1717424771;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v7c0ZrJPynvxMLH92Q3X2WTOon5tSRNZ2c7KU9q10EA=;
-        b=IfqBBgNOJg8NDFhj5A8T2scjt0BSX6sBdkJLDLgpEMVOHDr6gpIBUqH7a9TY3DtnyQ
-         VBOpTqoMKBCYaTaKRG7yO/OnPIbAdfUd2JNhXizKlTvDivGoTjbsBzi4pJ36mjeJbX2m
-         uuH9F1ODNIuD9teosdqFf+4rQXHFODk4CIIldwtF1gSSdQWKLtyS7Jwmc9kWLqMxjHb+
-         qNLph5OHI7osXRDlfWX41v1Nvq5Mp5r7Q32DF4LYRWaTMLMSPFeiWprkIhfLEZvECW/V
-         exYeO+7DQGetzHAHip8pGKYaC1w2H1h5M51xIlhXK0nZPll+N81GXTnbwxQezaIeHcmo
-         hTow==
-X-Forwarded-Encrypted: i=1; AJvYcCXUbfP0MBm85YpeeTdhBoKYEa0FDAvuvRp1VHkyhGrrB4GnS/J5OgZLoZzkFWSsPawJRAB5YnygxHVAHi3jJRPHrAtmq1UZupg4moi9
-X-Gm-Message-State: AOJu0YwedEVHsHW8BblE6nUleQBt4TC7z/sJTjdSiTAO0RYbvl9QHL5s
-	31F4C5QoOPeyiS9XcPWq7J8ZH6AVzJdgPt4Bjhhh8OiSjbTwvZAtYPKVNGaLocM=
-X-Google-Smtp-Source: AGHT+IGDy6lBIZRlSXWUHrbdvlDpDLY1u7lkMBWjrjOr4cWf2ElMKM1ipIguJpApXRrP72OijJSLjA==
-X-Received: by 2002:a17:906:3614:b0:a62:8116:cb59 with SMTP id a640c23a62f3a-a628116cbf3mr535401266b.30.1716819970946;
-        Mon, 27 May 2024 07:26:10 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6283119b12sm420845566b.192.2024.05.27.07.26.10
+        d=1e100.net; s=20230601; t=1716819984; x=1717424784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rk4/vnQZ81wjUO4Em5QwJ+7FetQF6/nmn1oakCi33wg=;
+        b=Hbbusj8Dziu2CnTjDsIVo+HEPOxLOGzzUgdQ4kxsiD7IKjEL5XQxuMNWCvdHtjOT1o
+         F5RrduayoXssFm+EojSGyicv9L8s+vsUdHWazq3b0F5oJ+iWWYRXQhtwIYqBUFSyNM+v
+         weWsbkhTrDXOpAd3ipiNIK+y3RGUytQdQKIS+cW9WEViMhFHj0T/4daxPGTnjmcuEWr6
+         Q0CbxP8r29U+AJTW7JcY9Mh9abq0Rf1B/U2J2+IDkjB6dy6HDRoJ8IvNNgzgkBetSPF+
+         0k9aZAcWlYXW5Pb2bhzLJw9grVLJPKVWVwvZDscQbBjvbngzh3KCciA+XOV5OG8m0y7b
+         iePA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBmRYJM78mFCLwe4dbwbv1Bc0L42RCzx1bUqFv7G6ebmr/ohwM9Vlpy+qYt3kVUlL7gpvFg8kxppFSGHgyz4z3GjZAKhyErprbIKWxXqjAT9p9HbYR/+aygVyaCRaA23egatdxlQ==
+X-Gm-Message-State: AOJu0YzdvhslMzP9rxUJV7YBVVLPXxuP1d06ksrnita9ti8O9LdzYEKS
+	4JeDyDeU/uWkwPV58keWcPDa6cPAVcsEKYGQQpbnAM2/QdU/dVC//cMHadJ/Px4=
+X-Google-Smtp-Source: AGHT+IH9aeVp4nH4rJ8R5xTCubFecyNbrZ4z7lTqCru+xj6DucdB6UUebshpKC+AjuP0+S43uco8yQ==
+X-Received: by 2002:a05:6512:94b:b0:51d:d4e8:c71c with SMTP id 2adb3069b0e04-5296556f23amr5575585e87.36.1716819983682;
+        Mon, 27 May 2024 07:26:23 -0700 (PDT)
+Received: from rbolboac.. ([2a02:2f0e:350b:4500:9c9:f6ef:e79b:45ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ae976sm110537875e9.38.2024.05.27.07.26.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 07:26:10 -0700 (PDT)
-Date: Mon, 27 May 2024 17:26:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to
- errnos
-Message-ID: <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
-References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
- <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
- <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
+        Mon, 27 May 2024 07:26:23 -0700 (PDT)
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org,
+	nuno.sa@analog.com
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Subject: [PATCH v5 0/9] adis16501 and adis1657x support
+Date: Mon, 27 May 2024 17:26:09 +0300
+Message-Id: <20240527142618.275897-1-ramona.bolboaca13@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
 
-On Mon, May 27, 2024 at 05:11:32PM +0300, Ilpo Järvinen wrote:
-> On Mon, 27 May 2024, Dan Carpenter wrote:
-> 
-> > On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo Järvinen wrote:
-> > > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-> > > index 6f3ded619c8b..3377667a28de 100644
-> > > --- a/drivers/gpio/gpio-amd8111.c
-> > > +++ b/drivers/gpio/gpio-amd8111.c
-> > > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
-> > >  
-> > >  found:
-> > >  	err = pci_read_config_dword(pdev, 0x58, &gp.pmbase);
-> > > -	if (err)
-> > > +	if (err) {
-> > > +		err = pcibios_err_to_errno(err);
-> > 
-> > The patch is correct, but is the CC to stable necessary?  Is this a real
-> > concern?
-> > 
-> > Most callers don't check.  Linus Torvalds, once said something to the
-> > effect that if your PCI bus starts failing, there isn't anything the
-> > operating system can do, so checking is pointless.  The only fix is to
-> > buy new hardware.  There was a hotpluggable PCI back in the day but I
-> > don't think it exists any more.
-> 
-> I don't mind if the CC stable isn't there.
+Add adis16501 and adis1657x support in adis16475.
 
-I don't mind either way.  I was hoping you were going to say it was for
-some new hotswap hardware Intel was working on.
+Ramona Gradinariu (9):
+  dt-bindings: iio: imu: Add ADIS16501 compatibles
+  drivers: iio: imu: Add support for ADIS16501
+  iio: imu: adis_buffer: Add buffer setup API with buffer attributes
+  iio: imu: adis16475: Create push single sample API
+  drivers: iio: imu: adis16475: generic computation for sample rate
+  iio: imu: adis_trigger: Allow level interrupts for FIFO readings
+  iio: imu: adis16475: Re-define ADIS16475_DATA
+  dt-bindings: iio: imu: Add ADIS1657X family devices compatibles
+  drivers: iio: imu: Add support for adis1657x family
 
-Smatch deletes all the failure paths from the pci_read_ functions
-because otherwise you end up with a lot of warnings that no one cares
-about.  Uninitialized variables mostly?
+ .../bindings/iio/imu/adi,adis16475.yaml       |  31 +
+ drivers/iio/imu/Kconfig                       |   4 +-
+ drivers/iio/imu/adis16475.c                   | 807 +++++++++++++++---
+ drivers/iio/imu/adis_buffer.c                 |  32 +-
+ drivers/iio/imu/adis_trigger.c                |  37 +-
+ include/linux/iio/imu/adis.h                  |  21 +-
+ 6 files changed, 792 insertions(+), 140 deletions(-)
 
-regards,
-dan carpenter
+--
+2.34.1
+
 
