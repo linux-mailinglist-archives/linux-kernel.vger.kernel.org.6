@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-189921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7A08CF712
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897EB8CF732
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0343C1F218F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4078D28177F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0B74A29;
-	Mon, 27 May 2024 00:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39952905;
+	Mon, 27 May 2024 00:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="SK6lhW9A"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSBEmYo7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A921854
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81E64D;
+	Mon, 27 May 2024 00:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716770934; cv=none; b=MFFZYlaH28aIDVG79jFXqaNBbQOCP6geFV0ErxTSeUs9woA6klelCaNykYWMZvBvxbO7fueEeqlENluLeUdW2PkkkesM61QI5xz6cC5Og+peS4djz7XwPNnMWh8qj2/Ivtm50j5IKPozi1rYk4lXKWC2kGlsqwlwPBGKeoeDV40=
+	t=1716771457; cv=none; b=bJ1Fxrp6F0lLVmZrBGnAqf/rBYHtiwHs1VqjHmM7g0Aoa5DJpglOVYQBhvxNbF3LjJXYELhOS0dp2XX7DLpStrdwoBhF7ldPZmP7kATVEVKMkmK5mLz5DvDXxFo4rc/RJBFkR06fq2KsEnFzv9PwhD2lbG3LxucoZYg/kLP/JVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716770934; c=relaxed/simple;
-	bh=hioMBOZdyR1QV8XdN/+RNK+wt7kZa2b3j/k6NWmv97A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkBICKJR47m586j9bU9wu5cMEHdS8uhm62rS7lkDPjoy1CSb0/4M+rWuFQq0MbvQxudl6qBNfBaN/j+OuRZTgmZ2/nUYvZ2CjFafcUdvyQhizLzW6Lz4xkJ4GejXIx//gMczGNirHcwDW1hyO2TBbqFbh27tq2N7GnvnY0mh8kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=SK6lhW9A; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-68195b58daeso2010146a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 17:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716770932; x=1717375732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XuaJD1aUatqwF4qjWia2A1AlcKfhTGao9KmR227W0ZE=;
-        b=SK6lhW9ApZC3MSgqUOYeJL/b/rW1HH3TTOOg3btgc4vdqymNvrzypYfjpqD8XZTJFU
-         SV2didnjIQI528ApqLV9YP/D2HU2dVx4gogIHXUoxDsNwPeC2ILd2b3dQHW0GKv81RTz
-         5quPnGBOnmK46QyaHlksEqU7s1mdNk4yS2AukTatCIBn0JYJTVJAiipy19/Ty72zgH4t
-         esQOCSWDdCinoeTySSEPwON/aBBwgAJmp8NBsD+dP09JGV4vVQRV/xSVgH0c1rLoRfPV
-         /M76k0SSGNKO2yYcTZ6j8HDaG4F8iHouKzQ/5El3N6Zs0IdQF/gyftaO+bqLsHgoIimX
-         tS4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716770932; x=1717375732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XuaJD1aUatqwF4qjWia2A1AlcKfhTGao9KmR227W0ZE=;
-        b=SJXQvcGPnz2+wqkin22ku/kD8/z1lHMlEMff18CWCzUXzd3pbTCzWVqFftbGZhXSyF
-         7yodk2t0JH7Zn/akEcvQgfp3xzHM4Rxwq8K4yqWyCIdPcnkbeB7Qca6kJGj8OeATvneq
-         z01g3IgHsuwbqdBoReCDAbSaGyDOtbIeZeaLVBOgvciDduWFk7pItyP31cecMv0hE6W7
-         O9bUe802ceFB3xsaK4ArGJTPLZvrQtXVnJcd0OT3IPvfNGH6axSmoTNQcwuO51Xx7HVp
-         JYKvAVlfPqGNMLuvu4jSpmoJW9CJpcqrcRcT64z4UWGi7AaZENNQKVsP6cUOVl8LSvMa
-         IICw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIzFs9qNy0CkY/83+m+oioycKEphyKF99mH060BFtV+dkLFDFvlKczyiyMsk+xV+O9Ev3iZL9W/awoF7nrhiL2ZDrtuSa6iTlrEQMg
-X-Gm-Message-State: AOJu0YyMHy2IOdU1vGc4akECrSFMWEd8jLq/SUeREWJz2lW6liIO22MQ
-	2d8XIXAdLho+YaBnY233D5ypdFTUzWR9DzhOrBfxFj8XKLcvLzTfUxwsBVOsnzk=
-X-Google-Smtp-Source: AGHT+IHbQl7/lkOzeGOau08dTp2POnpUQMA13Xqx5nrdWWiCDRBVRFXztGICisDEDkOgIzzbItS24A==
-X-Received: by 2002:a05:6a20:6a1f:b0:1b1:e7de:4d39 with SMTP id adf61e73a8af0-1b212d054b5mr8807904637.16.1716770931879;
-        Sun, 26 May 2024 17:48:51 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6fc06c6e5acsm2858016b3a.109.2024.05.26.17.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 17:48:51 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sBOXg-00Bjiz-37;
-	Mon, 27 May 2024 10:48:48 +1000
-Date: Mon, 27 May 2024 10:48:48 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-Message-ID: <ZlPYcPLZBh7h9cCq@dread.disaster.area>
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
- <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
- <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
- <20240524-ahnden-danken-02a2e9b87190@brauner>
- <20240524.154429-smoked.node.sleepy.dragster-w2EokFBsl7RC@cyphar.com>
+	s=arc-20240116; t=1716771457; c=relaxed/simple;
+	bh=rsK1IsML/UxFu1xXGLPPqKz0eHkBTwAPomJ3dUFEjqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yu3LfPZoI8CDsP74ATuAnhQmTWIwSkaRRDktW5acIhJpQPoRtR4LGQWVXsk9fccjLZHd9zVzxLl2VUhM/NGbysl0H/CR2MLbGEjXxrCmdKUObine4Wyo/M2sySik5lJ9F3xot4RUCLbL5c2KUHarnMhwLPlfP9aB4lz7zU0hJws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSBEmYo7; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716771455; x=1748307455;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rsK1IsML/UxFu1xXGLPPqKz0eHkBTwAPomJ3dUFEjqk=;
+  b=nSBEmYo7d7zbnXPcgUAUYgto3cMUZrZW8kjLUaRAcqJp32EdNgXksCUg
+   o/8iUmi5raQKl7tHZAmmc8lpn7E1uMXv9YdCqneo+q52KBM8IFnFRE+py
+   XZc7lz0YHyvU8k6+uc2GnWBcjZy++CV6i/1qVJKC724oCowvDINr1CbBi
+   3rPKZzBkEVc5wivme7wMuImHOGyPhdo+7YU3i1hMLWM+M8nJiZddCCkYv
+   VEnJtEKpGvFFlc85wRZIhLW5eVc4R0hlhHMTUs9UbyqpUpXvFaORgJf//
+   yUdNQ+/cE1vI66Q+ynnan8SCGVEg5cm/BCZECh+dWXajEcHfCEAGRaoNo
+   g==;
+X-CSE-ConnectionGUID: Lm5m4kXsQ423fiQbQh1/4A==
+X-CSE-MsgGUID: HUF8mqFGTjq3mnhxW3FI7A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="30598555"
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="30598555"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 17:57:34 -0700
+X-CSE-ConnectionGUID: FRvCXjwUSQW/K585oeZSCw==
+X-CSE-MsgGUID: lYDdnMVtSFGieYRfZHKRzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="34503825"
+Received: from unknown (HELO [10.238.8.173]) ([10.238.8.173])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 17:57:30 -0700
+Message-ID: <6a7b865f-9513-4dd2-9aff-e8f19dea6d90@linux.intel.com>
+Date: Mon, 27 May 2024 08:57:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524.154429-smoked.node.sleepy.dragster-w2EokFBsl7RC@cyphar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 105/130] KVM: TDX: handle KVM hypercall with
+ TDG.VP.VMCALL
+To: Isaku Yamahata <isaku.yamahata@intel.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+ erdemaktas@google.com, Sagi Shahar <sagis@google.com>,
+ Kai Huang <kai.huang@intel.com>, chen.bo@intel.com, hang.yuan@intel.com,
+ tina.zhang@intel.com, isaku.yamahata@linux.intel.com
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <ab54980da397e6e9b7b8d6636dc88c11c303364f.1708933498.git.isaku.yamahata@intel.com>
+ <ZgvHXk/jiWzTrcWM@chao-email>
+ <20240404012726.GP2444378@ls.amr.corp.intel.com>
+ <8d489a08-784b-410d-8714-3c0ffc8dfb39@linux.intel.com>
+ <20240417070240.GF3039520@ls.amr.corp.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240417070240.GF3039520@ls.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 08:58:55AM -0700, Aleksa Sarai wrote:
-> 
-> Though, regardless of the attack you are worried about, I guess we are
-> in agreement that a unique mount id from name_to_handle_at() would be a
-> good idea if we are planning for userspace to use file handles for
-> everything.
 
-I somewhat disagree - the information needed to validate and
-restrict the scope of the filehandle needs to be encoded into the
-filehandle itself. Otherwise we've done nothing to reduce the
-potential abuse scope of the filehandle object itself, nor prevented
-users from generating their own filehandles to objects they don't
-have direct access to that are still accessible on the given "mount
-id" that are outside their direct path based permission scope.
 
-IOWs, the filehandle must encode the restrictions on it's use
-internally so that random untrusted third parties cannot use it
-outside the context in which is was intended for...
+On 4/17/2024 3:02 PM, Isaku Yamahata wrote:
+> On Wed, Apr 17, 2024 at 02:16:57PM +0800,
+> Binbin Wu <binbin.wu@linux.intel.com> wrote:
+>
+>>
+>> On 4/4/2024 9:27 AM, Isaku Yamahata wrote:
+>>> On Tue, Apr 02, 2024 at 04:52:46PM +0800,
+>>> Chao Gao <chao.gao@intel.com> wrote:
+>>>
+>>>>> +static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
+>>>>> +{
+>>>>> +	unsigned long nr, a0, a1, a2, a3, ret;
+>>>>> +
+>>>> do you need to emulate xen/hyper-v hypercalls here?
+>>> No. kvm_emulate_hypercall() handles xen/hyper-v hypercalls,
+>>> __kvm_emulate_hypercall() doesn't.
+>> So for TDX, kvm doesn't support xen/hyper-v, right?
+>>
+>> Then, should KVM_CAP_XEN_HVM and KVM_CAP_HYPERV be filtered out for TDX?
+> That's right. We should update kvm_vm_ioctl_check_extension() and
+> kvm_vcpu_ioctl_enable_cap().  I didn't pay attention to them.
+Currently, QEMU checks the capabilities for Hyper-v/Xen via 
+kvm_check_extension(), which is the global version.
+Only modifications in KVM can't hide these capabilities. It needs 
+userspace to use VM or vCPU version to check the capabilities for 
+Hyper-v and Xen.
+Is it a change of ABI when the old global version is still workable, but 
+userspace switches to use VM/vCPU version to check capabilities for 
+Hyper-v and Xen?
+Are there objections if both QEMU and KVM are modified in order to 
+hide Hyper-v/Xen capabilities for TDX?
 
-Whether that internal encoding is a mount ID, and mount namespace
-identifier or something else completely different is just a detail.
-I suspect that the creation of a restricted filehandle should be
-done by a simple API flag (e.g. AT_FH_RESTRICTED), and the kernel
-decides entirely what goes into the filehandle to restrict it to the
-context that the file handle has been created within.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+
 
