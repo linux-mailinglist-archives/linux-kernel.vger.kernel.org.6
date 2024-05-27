@@ -1,256 +1,227 @@
-Return-Path: <linux-kernel+bounces-190255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E27A8CFC0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A128CFC54
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892101F22341
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:47:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC331F2281E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB60613D899;
-	Mon, 27 May 2024 08:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BE36A357;
+	Mon, 27 May 2024 08:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rWGpU9n/"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fHwgV9di"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E7F13AA27
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A1A6BB26
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799458; cv=none; b=O1QcOkcuuET4NzcRcACc3CF1zAtRgDyRGPFLUND9/Ik0+WnGCXmy7zmkO4ej1/0vVtbqEb91dkTrir/qRA8P1D2ZLmu6SgWgI+zYi7ccs3iAGq1mOwiCaxV14+hgCVIbr6Q9sBrYt5qbEiNYua2Wlx9y8NOEYhdZRZ23+kWp/hE=
+	t=1716800396; cv=none; b=Wpu5vO3zeHT6iYZ2ReWtIahkhZa28AaQUNigd2/3jTpEKGE4vpmnveapPcAc8lqVul9CBMXEplAbbwx+U7Hg+5PxODPli8Ak74pPtRTzhg15TWCfxSOBcQ/Yx1T8h2/9UswXB5PlgXRfKh58PBdE/Zr6akZmQhT3A1dQG0nqccs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799458; c=relaxed/simple;
-	bh=WC5t9WJX9lXcwGywBsZysQERtwOQQGRD77DNGgPmsMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Etx+RjYsORwDG04U7jfJW3bVk/4nPo4zrZP7EvKKtOyhmjqd96/0zdZiXE+pvyKDdrvaEVpI1YMyT1MMZtBQ1KkOo8j0c2SZBTOkICFeIprvA8RnGPeMEzzs8JzkC9vpnhdlscX+jW1YThEk80jwzOYJ273i24YMlIhglPnCKao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rWGpU9n/; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e73359b979so79761931fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:44:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799455; x=1717404255; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Whg0Dc1FYMXBytTq0QfKHAfxqeAkThzFIKkCrZ14fSk=;
-        b=rWGpU9n/Dct9b+w6SmnETXuD4DPPWt9f+DUPsaPNn1d1MX2/iuZnTyRIidjyVRzxaA
-         fc054S8b3ltzcyKZV3bxyn0wxpMqOFMJspqsXp3UnVG8iI+GXajlsoDRaVld8DQh92Gl
-         pCqSUlGjA/DBqxAr+JePE7HlacBv/pFpw5oc8jpFvuOJDtCDWx1g61p+/Az0JjVFIR3E
-         hNbCBdaSwYywy8cWH8US+NInPH3JSijpdmy6EPjr4eWTCwTZgA4or/HFAVZvtzaP2nDr
-         JpvjBu2iIhj/hSdqdNm8xze+pMa+6C0oJLzULtOD6mhf3TEKcfVTj+mWEWpncdLQngjX
-         tOLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716799455; x=1717404255;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Whg0Dc1FYMXBytTq0QfKHAfxqeAkThzFIKkCrZ14fSk=;
-        b=GXgZExOSTvAbZeEwQVr6DKZVDZ0Xw5mnX7t26Er7LipPRUyN/aOc/AeNXg3YrTTh2w
-         O7Vi+3/T2KSWLqkQMG+J2tzM0EA3iTsmrng2XsoO54/rUJpk9Zt3APjpfVyF95+cTwfp
-         XcvOWDhoSve1cdippLky9V0hUuwzjK/lFY+1uDek9DX77UQwB5rvK+UsmEcDdrTAUMEU
-         Uq2mFW8s2w2f+GffL7qH8y3WThCz3PST6GFdGIA8n/+z+ff3P3QFF24ro8Q3gdYfHOHZ
-         wOjY7DLiuHEdjSLjf5nI03qRo1bmvBCpUTitkP8Bh6QisO4HKiCL4bnM54HvSEKln0vZ
-         l12g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Ixgtidax4DrSxjMTw0OutYkEvjicEf7A/RNbyFNq7Ros2d8dLnBPPQ4MjusHPfrKLY/yIY+YUV7dvxv4m9kG8kCDhfXluNFLp+6V
-X-Gm-Message-State: AOJu0YwN/RypJA1LcXlHG6UuyFKHs9r5lK83QfSzo4J6zMM0yMEhAi9+
-	g+J1yjRFC8RZk0/7GoeQqdth4oxen+CUJg78z1WN0g1ELEwKiZO4qDQLxS4Q5UI=
-X-Google-Smtp-Source: AGHT+IEWt0u/t8Qaa5BYXiEFGNwc5PwERsRrwFb9KhoDMobp9TEkf9v4PF3TQDi0k2waH4ei6Goz6A==
-X-Received: by 2002:a2e:90d5:0:b0:2e7:2d1f:edc2 with SMTP id 38308e7fff4ca-2e95b242205mr50404141fa.38.1716799454709;
-        Mon, 27 May 2024 01:44:14 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:44:13 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 May 2024 10:43:50 +0200
-Subject: [PATCH v2 3/5] remoteproc: qcom_q6v5_pas: Add support for SA8775p
- ADSP, CDSP and GPDSP
+	s=arc-20240116; t=1716800396; c=relaxed/simple;
+	bh=8/wfd20QEm2KLvHAdA7Pa90xMSDfPYbqPMRi1cwgZ4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=cOker9Uv+bmdHvKrnwwCvtxOOUZfSWz7iJ8efTR39M0IXjACH4gXpdMkWlO2B4GlOFULhz80GFhLtsjkg354+2KYmIXqWvBj92Op4G3/PDmwc+jc84G3kD/WXxLPmsYXM3nu8Rw5rZCofEei6vHhDlIlWBOALMB+K3LPs2B+fPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fHwgV9di; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240527085952epoutp0210e42353c8ace6ad32cd54d80a399223~TTNxLw3fS2508725087epoutp02k
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:59:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240527085952epoutp0210e42353c8ace6ad32cd54d80a399223~TTNxLw3fS2508725087epoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716800392;
+	bh=CQEl5Odrn2gxp6sQ0rwKylnsdnwf7SZr6c5IE4f2Nnw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fHwgV9dicOrvtK0z8lmz68358uiMntn47nnmXsHF1ZQTEmbfH0FzFwD53GAQMBi2R
+	 Eu4oBOqzSmsscZA6OF/9iDm7p1QakySlP1XhEB4f+1cLbe4PYmZBWdrrp5xwyKNGB8
+	 oxGFiy0QNEq2uwzy1rNKgS36ypTUhbBO7553kvP8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240527085951epcas5p49def0d875e71e6e2715f7a999b37eaf1~TTNwdHmqw1010910109epcas5p4v;
+	Mon, 27 May 2024 08:59:51 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VnqN46xXZz4x9Q5; Mon, 27 May
+	2024 08:59:48 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5C.51.10035.48B44566; Mon, 27 May 2024 17:59:48 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240527085054epcas5p2be182df41a889b664ebc3edab8daf981~TTF84VBY20347303473epcas5p2Y;
+	Mon, 27 May 2024 08:50:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240527085054epsmtrp2f1618382f9787da1f2681bcab59eaba5~TTF83Cwh92271122711epsmtrp2r;
+	Mon, 27 May 2024 08:50:54 +0000 (GMT)
+X-AuditID: b6c32a4b-8afff70000002733-3e-66544b84bb3f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.7A.08336.E6944566; Mon, 27 May 2024 17:50:54 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240527085050epsmtip1de5e35f4122e1db93f8daa490f6e562d~TTF5UwrDI2589625896epsmtip1Y;
+	Mon, 27 May 2024 08:50:50 +0000 (GMT)
+Date: Mon, 27 May 2024 08:43:51 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, bvanassche@acm.org, hare@suse.de,
+	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 06/12] fs, block: copy_file_range for def_blk_ops
+ for direct block device
+Message-ID: <20240527084351.g2m7jt4xirj4elle@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZlJvp47RSFKkbwRJ@dread.disaster.area>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUZRjG+c7ZPRxsVo8LDB9sGG7UJAYucvGDQGog5jAwCqZNWok77OES
+	sLvtLglMk1wkLnKXsl1AV0DlkmCAtCA4gnItI7kZNEARIIIBcbHMQdr1QON/v3ne55nv/d53
+	XhLnXzK2IiOkKkYhFUcJiS2chtu77OxP+x8OFRUk70M1PR04Sspdw1HVaA6B5m4vAfT14hMc
+	Td5KBejp3V4c1XeMAaQtKeag4VuNGGouycdQRVU7hgrPJWOoff1PAuW3DQE0NajBUMvIbnTx
+	yzIOam7p5qD+piICXbg8ZYyudD7DUF7aIIZ0k4kAVc8tcFDXiAD1rnVy3xbQ/QP+dE8JpBs1
+	o8Z079h3HLr/bgxdW5lO0HVlp+iZOjWgbwwnEHRp9lkunZU8T9CNKeNc+q+pEQ69cHOQoLPr
+	KwH9o/aOcaDpsUiPcEYsYRQ2jDREJomQhnkK/d8L9g52cRU52ju6oX1CG6k4mvEU+gQE2vtG
+	ROmHI7T5TBwVo5cCxUqlcM9+D4UsRsXYhMuUKk8hI5dEyZ3lDkpxtDJGGuYgZVTujiLRXhe9
+	8URkeM31Kq5cZxHb+c91PAEUmmYAExJSzvAXdRM3A2wh+dQNACsSHgJDgU8tAfgoOZAtPAYw
+	5XIqsZmo7q/jsqYWAL9plbGmZQAfl01hhgKHeg1mas/pmSQJajf8YZ00yGbU6zA/X4cb/Dil
+	JWBGYvVzjykVAtvLaYOHR3nD7K4GwPJ22K2e5BjYhHKCpcm5wJCFVJ8JTL3fw2Eb8oFnxqsB
+	y6ZwtrPemGUruDzfstH0SVhRUE6w4dMAau5rNgJeMKUnBzcwToXBR2lDGwFr+FVPNcbqW2HW
+	00mM1XlQd36TX4Xf1mg3/JZw6O/EDabh6PcDGDuVaQAT2tRYLtiheeFHmhfeY9kdpi8mcTX6
+	YeCUAF55RrK4C9Y07dECbiWwZOTK6DBG6SJ3kjIn/19yiCy6Fjy/Fzt/HZj4bdGhDWAkaAOQ
+	xIVmPLPzQaF8nkQcF88oZMGKmChG2QZc9AvKw63MQ2T6g5Oqgh2d3UTOrq6uzm5Oro5CC95c
+	SrGET4WJVUwkw8gZxWYOI02sEjB+yuHOgWNVbboHM5+fMH+IgbTZDx84TYp0Ywffumn/aW3N
+	78E5sVc/1tzJKtq6t+iAbXEhXz0w0WwWNBOUUxxZ/G6/d3L8R0WrK4Ly5b6A6SS/l4+o+xIP
+	/HyqOcOcxI86vHL8X120Z1zfvfT9C62zw5UXhB2VOxuHtzX5WBT/mvmFR4Qk4U1S9NPSarWo
+	yEt1RHpUMOfncJaKXZ3xu+frNb0jzT3n2h/WL6FL7xyvaYLdefXb1/2truK+w6XzsfEtKx2t
+	JYOZh1xCr31i1MAvfb9gm5FJaP4h0cLgG0YyS+9xnm3X0NpFi+a4CfP4Nb/ekABh4brg4AfU
+	E1sCn7c+Y7YSgAs5ynCxox2uUIr/A35YaGK4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUxTWRiGPfdcbi91mlxK1YMkmDQqqUSgavDEZRxHjRdX3GJiTLTSC5Sl
+	YgsuEw3VBtRKESvStCxWICAlKSqKIIhaUMCtUUQjKuhMsRVUpNEERltmCpmM/568y/f++Wgo
+	dJHTaYUyg1MpZaliik/Wt4rD5ipjtyZEl3yU4Nr79yA+lu+FuObNaQoPtnoALvwyCrHz9nGA
+	vz9yQHz1Xi/AlrISEr+83Ujg5jIDgatr7hK4yKgl8N2xTxQ22J8D3N9tJvDNngh8IaeCxM03
+	O0ncdaOYwucr+3m4qt1H4DMnugnc4DwKsG1wiMQdPaHY4W0P+C2U7Xq2lr1fhthG8xse6+i9
+	TLJdjzLZK9aTFFtXkcW660yAbXqpodjyvLMBrF77mWIbs/sC2OH+HpIdaumm2LyrVsA+tLTx
+	4oJ38JfIuVTFfk4V9etuftIr7ykq/ZPoYIHzGakBA4wOBNKIWYBsXXUBfhYyTQBVFs2f0ENQ
+	pbcNTnAwqva5eDrA/zczDNDbD27Kb5DMLJRrMRI6QNMUE4EejNF+WcTMRgZDA/TnIVNBIdPT
+	p+MDwUw8cpQ2j7OAWYHyOurBxNH3AA1/OAUnjCDUaXKSfoZMDCqtewf9A5AJRVW+8YFAZj4q
+	1+aDfMCYf2qYf2qY/29YALSCEC5dnZaYppamS5XcgUi1LE2dqUyMjN+bdgWM/8IcSQO4bv0S
+	aQcEDewA0VAsEohKNyUIBXLZoT841d5dqsxUTm0HoTQpniaY5tbLhUyiLINL4bh0TvWfS9CB
+	0zWEWff7LX7uL0vjcrbq14zETPb92WIf2bcnKzdjp9zwl3xl9FtHgTwOFhlvKFvK3UnLIprC
+	s+0DhxPdq9fqNUSMWWHaFFsuTJDWO/NsYSmrZvTauhUxk9xjnTrPuSqBxGV6vvni8r6D9Hub
+	Y7Qvs16YvD1upOzO8jXWktdwYbRYmVwce0xSLXOBx4Pi05xz3xHj/pTCrKh5DZ2+DTntvIjC
+	8F3O9TPbNj9ZUhsfFC7t3/Z3z+qvCcrW4tHab68vefTGi71g6m6jVq2dvGWWSINfhDwcenWh
+	apsl27u44/LxsYp1i5I9Uao9nzMOv9gSpJpd8+OaIkwy4Dnyndo45asrSEyqk2TSOVCllv0D
+	5ojMDHoDAAA=
+X-CMS-MailID: 20240527085054epcas5p2be182df41a889b664ebc3edab8daf981
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102929epcas5p2f4456f6fa0005d90769615eb2c2bf273
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102929epcas5p2f4456f6fa0005d90769615eb2c2bf273@epcas5p2.samsung.com>
+	<20240520102033.9361-7-nj.shetty@samsung.com>
+	<ZlJvp47RSFKkbwRJ@dread.disaster.area>
+
+------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 26/05/24 09:09AM, Dave Chinner wrote:
+>On Mon, May 20, 2024 at 03:50:19PM +0530, Nitesh Shetty wrote:
+>> For direct block device opened with O_DIRECT, use blkdev_copy_offload to
+>> issue device copy offload, or use splice_copy_file_range in case
+>> device copy offload capability is absent or the device files are not open
+>> with O_DIRECT.
+>>
+>> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>> ---
+>>  block/fops.c | 26 ++++++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>
+>> diff --git a/block/fops.c b/block/fops.c
+>> index 376265935714..5a4bba4f43aa 100644
+>> --- a/block/fops.c
+>> +++ b/block/fops.c
+>> @@ -17,6 +17,7 @@
+>>  #include <linux/fs.h>
+>>  #include <linux/iomap.h>
+>>  #include <linux/module.h>
+>> +#include <linux/splice.h>
+>>  #include "blk.h"
+>>
+>>  static inline struct inode *bdev_file_inode(struct file *file)
+>> @@ -754,6 +755,30 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>  	return ret;
+>>  }
+>>
+>> +static ssize_t blkdev_copy_file_range(struct file *file_in, loff_t pos_in,
+>> +				      struct file *file_out, loff_t pos_out,
+>> +				      size_t len, unsigned int flags)
+>> +{
+>> +	struct block_device *in_bdev = I_BDEV(bdev_file_inode(file_in));
+>> +	struct block_device *out_bdev = I_BDEV(bdev_file_inode(file_out));
+>> +	ssize_t copied = 0;
+>> +
+>> +	if ((in_bdev == out_bdev) && bdev_max_copy_sectors(in_bdev) &&
+>> +	    (file_in->f_iocb_flags & IOCB_DIRECT) &&
+>> +	    (file_out->f_iocb_flags & IOCB_DIRECT)) {
+>> +		copied = blkdev_copy_offload(in_bdev, pos_in, pos_out, len,
+>> +					     NULL, NULL, GFP_KERNEL);
+>> +		if (copied < 0)
+>> +			copied = 0;
+>> +	} else {
+>> +		copied = splice_copy_file_range(file_in, pos_in + copied,
+>> +						 file_out, pos_out + copied,
+>> +						 len - copied);
+>> +	}
+>
+>This should not fall back to a page cache copy.
+>
+>We keep being told by application developers that if the fast
+>hardware/filesystem offload fails, then an error should be returned
+>so the application can determine what the fallback operation should
+>be.
+>
+>It may well be that the application falls back to "copy through the
+>page cache", but that is an application policy choice, not a
+>something the kernel offload driver should be making mandatory.
+>
+>Userspace has to handle copy offload failure anyway, so they a
+>fallback path regardless of whether copy_file_range() works on block
+>devices or not...
+>
+Makes sense, We will remove fallback part in next version.
+
+Thank you,
+Nitesh Shetty
+
+------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
-References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
-In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tengfei Fan <quic_tengfan@quicinc.com>, 
- Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
- Alex Elder <elder@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4035;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=8QckCTJd4Kk+SVsJgULozGfhpAdR9WlTYPz4JkRMW+0=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfZEPjkG7EDeDr+8Cja21yKzpf1H0zSGheZi
- pYtKf2PX26JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH2QAKCRARpy6gFHHX
- ctdwEACK3txeA+4QXB3RGBWW4+2bCJftoYBQkfd2qqyVmadFu3lp+Zi+1sw6Y7BctzTcpTObEby
- NaquBekLgZVRRg8AFCOwBxUA9OEHvd+V2TByairVxO4BjfIiz0GfmDbmzxKWJJ+Dr4P1RwFE78O
- SO9QqQ2cbFz/28Av8nqau8rUysBkKCuYHaU21nf4LY/5VxYgYF9kCNDg+aPIhI/1sW0Sl64gMEE
- ZgL7tqfbVRFdBixpjsGhMB0GkOAf3XpXbHg0Yv/k3k86yunCl5eSfIDxtmkwPac4NvF+W2Udk9D
- +iNirb8iq+0GhckhaO7AUQkyCjPlQag89wy+CioCd7OFDkVe9ZQeoCbIuk86IxVPy9W6bUKV/YU
- T/uHTRoYchG6fdWw3paMgYQz+ANL1iA0XwrkyP121Eb8JzHHXi8wrzh6ulP2rPDdHocViQmzKmN
- 2pnuskqMFAVengJ5yLttkAgQ3SDOH8YBHVsJTYExXE4mNj+wE1yFd8HHuSg3JW+keEsmCZRliCT
- lZWqAh7EoqEDRQWMrrrukZilIOrJKYFCJdxh5o9ppTTq1k1gOnVxkEEgZcVus8Lw4cYlJJz4TUk
- +UsT95XiwPQ+zQIp9oKXBYJFfUEMfNJBFnY6w283LrYBwLO6tfyrpIBuovyf1fgBlejqyufSf6+
- MqzTX7CdxqDBgCw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-From: Tengfei Fan <quic_tengfan@quicinc.com>
 
-Add support for PIL loading on ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 on
-SA8775p SoCs.
-
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 92 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 54d8005d40a3..16053aa99298 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -820,6 +820,23 @@ static const struct adsp_data adsp_resource_init = {
- 	.ssctl_id = 0x14,
- };
- 
-+static const struct adsp_data sa8775p_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.minidump_id = 5,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
-+
- static const struct adsp_data sdm845_adsp_resource_init = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
-@@ -933,6 +950,42 @@ static const struct adsp_data cdsp_resource_init = {
- 	.ssctl_id = 0x17,
- };
- 
-+static const struct adsp_data sa8775p_cdsp0_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp0.mdt",
-+	.pas_id = 18,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp0",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
-+
-+static const struct adsp_data sa8775p_cdsp1_resource = {
-+	.crash_reason_smem = 633,
-+	.firmware_name = "cdsp1.mdt",
-+	.pas_id = 30,
-+	.minidump_id = 20,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp1",
-+		NULL
-+	},
-+	.load_state = "nsp",
-+	.ssr_name = "cdsp1",
-+	.sysmon_name = "cdsp1",
-+	.ssctl_id = 0x20,
-+};
-+
- static const struct adsp_data sdm845_cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
-@@ -1074,6 +1127,40 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.ssctl_id = 0x17,
- };
- 
-+static const struct adsp_data sa8775p_gpdsp0_resource = {
-+	.crash_reason_smem = 640,
-+	.firmware_name = "gpdsp0.mdt",
-+	.pas_id = 39,
-+	.minidump_id = 21,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "gpdsp0",
-+	.ssr_name = "gpdsp0",
-+	.sysmon_name = "gpdsp0",
-+	.ssctl_id = 0x21,
-+};
-+
-+static const struct adsp_data sa8775p_gpdsp1_resource = {
-+	.crash_reason_smem = 641,
-+	.firmware_name = "gpdsp1.mdt",
-+	.pas_id = 40,
-+	.minidump_id = 22,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "gpdsp1",
-+	.ssr_name = "gpdsp1",
-+	.sysmon_name = "gpdsp1",
-+	.ssctl_id = 0x22,
-+};
-+
- static const struct adsp_data mpss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1315,6 +1402,11 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
-+	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
-+	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
-+	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
-+	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
- 	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
- 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
-
--- 
-2.43.0
-
+------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_--
 
