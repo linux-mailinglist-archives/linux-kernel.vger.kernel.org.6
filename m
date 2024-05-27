@@ -1,82 +1,92 @@
-Return-Path: <linux-kernel+bounces-189973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F338CF7E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:07:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB728CF7F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B7F1F21A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3E6B21701
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C713D521;
-	Mon, 27 May 2024 03:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAEDF59;
+	Mon, 27 May 2024 03:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKad2anY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1MuILI/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13A513D260;
-	Mon, 27 May 2024 03:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5379F5;
+	Mon, 27 May 2024 03:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716778883; cv=none; b=a26GYLL1jMY3UdR1RqY5LP3fmpzHzd+GeQBiqMGOAC7wWpTyJgD2G8lJbPciYBVAuf4/Yags5bk7Vp8Gt3KhJ5OQjuTTcROk2CTIt1YZZHf9dives6b2rea6t+saU00AdoqkdB1x3Q0qs5tP9xs1WQ1k2lRFMdpr6fArIwgdLl8=
+	t=1716779226; cv=none; b=MhZS4zgcJfmQsrD2VWDrOuldlqRRcVrQ2kKeHiiTNMD1gU3VZZZsF+d51/r9SeE5lyM0FebCmnCOm1LWQP6SD7OeMKQsUxAc4hF9Ab9qEY32VHx6Go2fcrLbf+JIiBeSFuOr3PDGEMo8v6vBYmnEwa2UDKm6Z3T3kGJK2lOTscs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716778883; c=relaxed/simple;
-	bh=5BfxkhujCg/EybUvYnTYa0ntOh9c5oP1K3sKp7Ab+mI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NuNZP5UKTZQi/E6Z1g5V9cr2qD2jm8sat4IOhfbGA5Wfche8mdvqpYU82EIn2R2OT9rc6vvEL6A0U2oSiy87H6fjgpERYHWmb1Ayar/2WOgR1gwXpNaldqPoRbh2xU+q8sQ8nYmFq/VPmHZUgUGhbYYHn6nw9kzPp6Pd2dY92xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKad2anY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E38C4AF08;
-	Mon, 27 May 2024 03:01:22 +0000 (UTC)
+	s=arc-20240116; t=1716779226; c=relaxed/simple;
+	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=m5iE5OnWyPDkHFWuAj8Tro3cwocbPa+82mXB/uYiwCgoZVNUXK/H4DlZPC6X+PM2Fim2TxtaHDQPq/1VVEDjYSrKA6pk6z1j+95RX4GHWQ+gHozwqyNTgWduBixLsjHdEEop7HQrurOTQL8ZKzU1UigXzvbw4N0VjUxppcAa0XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1MuILI/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 09702C4AF0B;
+	Mon, 27 May 2024 03:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716778882;
-	bh=5BfxkhujCg/EybUvYnTYa0ntOh9c5oP1K3sKp7Ab+mI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bKad2anYgmXXqQZFYKb0ievGAGIB8O4vBNUzeOJ97RilQKUGOLVmz3VTG5BMQ/L1e
-	 CKp923pYTulqR1Cya5CwQbHUkEZJtTwCmuyW72vHDiyTi+Xn0v+I3xaaCxbSfT4Qys
-	 gt0f56W5XQual6bvjcwWj17G3NCKc2yKQ8C7To6exOkDKlsonCZRFA70tmT7mIidM1
-	 qQMGtMFkFRtip/gbvxIQFRadRHGgtv1soHTJVfhauOGvwUoKwAw5adnKMP2pnq8hEo
-	 RIDCM8AfU/p6yiike0fgwWb7cmPhbq68SholQLVw1EFHrw3qLd4LTyx5W2DK1BvaTR
-	 iYsGP+w/INJSw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: msm8996: add reset for display subsystem
-Date: Sun, 26 May 2024 22:00:46 -0500
-Message-ID: <171677884193.490947.12306600950596489908.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
-References: <20240525-mdss-reset-v1-1-c0489e8be0d0@gmail.com>
+	s=k20201202; t=1716779226;
+	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=s1MuILI/d20Z7r2wAbDepbguQer2hhl+fXrJiYW9S6ABVevaZXgV70GpB5Uw9nYIc
+	 7DtuE7pWhbvOBAOugNN9HwSCayO4A3Kt1aak+xsBhM9gd+DeQQOZUgWw+rrEsoRrQi
+	 9d2G+1vAKCI5New51Elxi/1RRsYfReHmLrVesrlmVWxSi5kIFRIzGT3/a917Ugnz9V
+	 FfqVpIjt/lvJeVRRRbwxmBWOybeykpJiN5sOUFvmsDYKgKPdjVAwNjvb5mFlKFiFR6
+	 O24k9xUlVXXvlQtEplj11v43p5mPiDoq/sK0CDDGL3WnoG3HG4AQEOOQjXw9rjO/fv
+	 1/9Xy53k8eSpg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ECA59D4F15D;
+	Mon, 27 May 2024 03:07:05 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Input: cros_ec_keyb - Remove an unused field in struct
+ cros_ec_keyb
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171677922596.1901.2861363430804951826.git-patchwork-notify@kernel.org>
+Date: Mon, 27 May 2024 03:07:05 +0000
+References: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dmitry.torokhov@gmail.com, bleung@chromium.org, groeck@chromium.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-input@vger.kernel.org, chrome-platform@lists.linux.dev
 
+Hello:
 
-On Sat, 25 May 2024 16:08:57 +0200, Barnabás Czémán wrote:
-> Add reset for display subsystem, make sure it gets
-> properly reset.
+This patch was applied to chrome-platform/linux.git (for-next)
+by Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+
+On Wed,  1 May 2024 08:49:47 +0200 you wrote:
+> In "struct cros_ec_keyb", the 'keymap_data' field is unused.
+> Remove it.
 > 
+> Found with cppcheck, unusedStructMember.
 > 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-Applied, thanks!
+Here is the summary with links:
+  - Input: cros_ec_keyb - Remove an unused field in struct cros_ec_keyb
+    https://git.kernel.org/chrome-platform/c/5128de84d8fc
 
-[1/1] arm64: dts: qcom: msm8996: add reset for display subsystem
-      commit: b3f8cdef8a5c0bc89ceb1095856f64ba7445c6b9
-
-Best regards,
+You are awesome, thank you!
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
