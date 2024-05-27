@@ -1,119 +1,303 @@
-Return-Path: <linux-kernel+bounces-190659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93378D0106
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296C88D010F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AB01C21F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FFF2858BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB5515E5CC;
-	Mon, 27 May 2024 13:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3590115EFC6;
+	Mon, 27 May 2024 13:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V80RB05h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jtOYQRC/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="PWUcrWnw"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AFA1E868;
-	Mon, 27 May 2024 13:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542715ECE7;
+	Mon, 27 May 2024 13:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815670; cv=none; b=oeeYnr/dK/ovKG2DRaZH6FxWBuyuP8gL9nYv0q1VQpC03jo9tRowbTU1DnUQd3hCMJlSpilGm3miviGB1wfJy0BL63rjG6/DN+BlTibovXOsyM71ivLh6jP73LprugU2G9uPQq1Qsz6VIrCX+E8ldLl1mYzQImulOzCVEwsmlU4=
+	t=1716815738; cv=none; b=gGNZ1GuV9JSiQluH6q4k8kEDr5LTdVhfg500UQRE0q1P05JQlw+rRG9HJ5bkRdp2CjFoKiH8kxrzP0pSd7Ior3BmMG6v6yOgcrGADyh3nbYe05zRVmHPpDXQF/QOYMcx0kKDgptzGRECIgJaew9NzflXuOGO4fQBO+Cdjn70aXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815670; c=relaxed/simple;
-	bh=WBeKzcT7QA+/fnXDXCYwSNn0meQBV2vn6l/XT5ZZpA0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=I3D5BREaN2ZR9UfpEtbGoFfcuBTtJXI0Y6jST5HmWywtmbKC+7KIaeQHP+JDevmSLB3n5TFLSdeDvPDPFbeFk+9cvB3BNlO3nsev9buDuocryw2EWyL4Pq6KQtZdEb6CoiiACPZEGM+bRG3yYr7VeZ0jvzE4czib9PPezW6fTC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V80RB05h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jtOYQRC/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716815667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=xxElKbcPssOZBHxdC0FuLluzRnaZ3UGv1xVFtotYrBE=;
-	b=V80RB05hjUNqEEzn6JhW7xc7+8gSWxKv9i9A9HJU9ZySeQri124ZZBoGVaL5RmBogjaQpX
-	65WjB7+UJaK/dr75fpkQcuONFVZ2+nI3NvJ+2WAk392GLt5zHVJxxkHijMtSSO5otac4bZ
-	AMME10WCzK0NxoBR5B+JYQjbkGgGkGQTvuWGQg8JcB1BFAavHvpi4oDHjQTdvLRPLeR7HE
-	Z4SJMgpdew+DUwSXA0zKdrEkAedqv1t769Eyn1qpbtnjdD/AIuZeUSN9w5kGtSCntDZhU2
-	RXDMuzu0POfT9+BnKv/rZbr40fCcJe+bxW4iMkefgKwrFfKarT+x712+pkPb7g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716815667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=xxElKbcPssOZBHxdC0FuLluzRnaZ3UGv1xVFtotYrBE=;
-	b=jtOYQRC/13Ol3nCO2Koaj9xvH+YrhVuRSyKPNHuyHVm4SwMHpTsChefXpEqQwH70mSw6GH
-	WKEOhzVOOfMh33DA==
-To: Peter Schneider <pschneider1968@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <fd3f73dc-a86f-4bcf-9c60-43556a21eb42@googlemail.com>
-Date: Mon, 27 May 2024 15:14:26 +0200
-Message-ID: <877cffcs7h.ffs@tglx>
+	s=arc-20240116; t=1716815738; c=relaxed/simple;
+	bh=B8cYOtpeE0HUjZd9NR4Eg7T92wexYwy2k7m+8psPL18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NSHT2VApfxO3F+OKQvhzbEyAKxGdOjxSSzY+nht5JyVk2FKP54bNAiNdeg3M0Flq4a/RV+tSrq+0Bbv7zvyY7DXaottuFy7xeMlif9H0yluEgcPAUuwJl+iAD/8gfLCH7Ipgjoev5R1JKEVvkA+SrnqMMoOoZN3Xp+q0VOvsFso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=PWUcrWnw; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RCGrF3017304;
+	Mon, 27 May 2024 15:15:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6U3S0nhV1fvnOXy1Abo104qBpad6fsNBZGWtsNvzJD0=; b=PWUcrWnwrzPB4SX6
+	I0yJEZrdYnIwZKHRTorsJQsiiUj34EB/DLx5GZzqH3WxpwDGGeO14cybCpBBljDs
+	Cbvvz0wizV4skWlvNuqDHxMVuRFeBNMv8veRiqO4z5h03/OdqUwx/kNRdIhzaXSF
+	RQJ9FZD66Q8EnqnnFtWApDiFwFefvDDWar1mILM0fY3PjRbQbCcUWIH22h9HzcfX
+	oJkILm9FWFVunvlrhwDti+D6LSsZU+ITe5Al79DgskokmQV/FhN3GxaubWoaIIlR
+	sRL/+Hh7tMZtPKWeQ6qu3WrlTXCc8MmDNDjZ4uDs/0pJMIXU1JM/LqiRVFZOr5Vh
+	6yJEYw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yb9yj7e3r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 15:15:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5B35C4002D;
+	Mon, 27 May 2024 15:15:15 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4710A215BD5;
+	Mon, 27 May 2024 15:14:37 +0200 (CEST)
+Received: from [10.131.140.24] (10.131.140.24) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
+ 2024 15:14:36 +0200
+Message-ID: <77fa3ed3-2341-4106-adf2-ec8bd9de91ff@foss.st.com>
+Date: Mon, 27 May 2024 15:14:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
+ binding
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <benjamin.mugnier@foss.st.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, Sakari Ailus
+	<sakari.ailus@iki.fi>
+CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
+ <20240521162950.6987-2-sylvain.petinot@foss.st.com>
+ <2110ba34-658e-4d60-b524-2f5ead6c8d3e@linaro.org>
+Content-Language: en-US
+From: Sylvain Petinot <sylvain.petinot@foss.st.com>
+In-Reply-To: <2110ba34-658e-4d60-b524-2f5ead6c8d3e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_02,2024-05-24_01,2024-05-17_01
 
-On Mon, May 27 2024 at 09:29, Peter Schneider wrote:
-> This is coming from an older server machine: 2-socket Ivy Bridge Xeon E5-2697 v2 (24C/48T) 
-> in an Asus Z9PE-D16/2L motherboard (Intel C-602A chipset); BIOS patched to the latest 
-> available from Asus. All memory slots occupied, so 256 GB RAM in total.
->
->  From a "good boot", e.g. kernel 6.8.11, dmesg output looks like this:
->
-> [    1.823797] smpboot: x86: Booting SMP configuration:
-> [    1.823799] .... node  #0, CPUs:        #1  #2  #3  #4  #5  #6  #7  #8  #9 #10 #11
-> [    1.827514] .... node  #1, CPUs:   #12 #13 #14 #15 #16 #17 #18 #19 #20 #21 #22 #23
-> [    0.011462] smpboot: CPU 12 Converting physical 0 to logical die 1
->
-> [    1.875532] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
-> [    1.882453] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
-> [    1.887532] MDS CPU bug present and SMT on, data leak possible. See 
-> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.
-> [    1.933640] smp: Brought up 2 nodes, 48 CPUs
-> [    1.933640] smpboot: Max logical packages: 2
-> [    1.933640] smpboot: Total of 48 processors activated (259199.61 BogoMIPS)
->
->
->  From a "bad" boot, e.g. kernel 6.9.2, dmesg output has these messages in it:
->
-> [    1.785937] smpboot: x86: Booting SMP configuration:
-> [    1.785939] .... node  #0, CPUs:        #4
-> [    1.786215] .... node  #1, CPUs:   #12 #16
+Hi Krzysztof,
 
-Yuck. That does not make any sense.
+Thanks for the review.
 
-> [    1.797547] .... node  #0, CPUs:    #1  #2  #3  #5  #6  #7  #8  #9 #10 #11
-> [    1.801858] .... node  #1, CPUs:   #13 #14 #15 #17 #18 #19 #20 #21 #22 #23
-> [    1.804687] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
-> [    1.810728] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
+On 5/21/2024 7:37 PM, Krzysztof Kozlowski wrote:
+> On 21/05/2024 18:29, Sylvain Petinot wrote:
+>> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
+>> sensors. Update MAINTAINERS file.
+>>
+> 
+> A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+> prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
 
-> However the machine boots, and except from these strange messages, I cannot detect any 
-> other abnormal behaviour. It is running ~15 QEMU/KVM virtual machines just fine. Because 
-> these messages look unusual and a bit scary though, I have bisected the issue, to be able 
-> to report it here. The first bad commit I found is this one:
+Ok, fixed in V3.
 
-Ok. So as the machine is booting, can you please provide the output of:
+> 
+>> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
+>> ---
+>>  .../bindings/media/i2c/st,st-vd56g3.yaml      | 132 ++++++++++++++++++
+>>  MAINTAINERS                                   |   9 ++
+>>  2 files changed, 141 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
+>> new file mode 100644
+>> index 000000000000..22cb2557e311
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
+> 
+> Why duplicated 'st'?
 
- cat /sys/kernel/debug/x86/topo/cpus/*
+Legacy : our first st-mipid02 driver was upstream this way few years back.
 
-on the 6.9 kernel and 
+We have 3 options :
 
- cat /proc/cpuinfo
+1- keep this unpleasant naming to keep consistency with st-mipid02 [1]
+and st-vgxy61 [2]
+2- rename this driver properly ('vd56g3') and keep the two others the
+old way (I personally don't like this option)
+3- rename this driver properly ('vd56g3') and in a second patch rename
+the two others drivers.
 
-for both 6.8 and 6.9?
+I would be interested to get Sakari's opinion on this subject.
 
-Thanks,
+[1]:
+https://elixir.bootlin.com/linux/v6.9.1/source/drivers/media/i2c/st-mipid02.c
 
-        tglx
+[2]:
+https://elixir.bootlin.com/linux/v6.9.1/source/drivers/media/i2c/st-vgxy61.c
+
+> 
+>> @@ -0,0 +1,132 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +# Copyright (c) 2024 STMicroelectronics SA.
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/i2c/st,st-vd56g3.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: STMicroelectronics VD56G3 Global Shutter Image Sensor
+>> +
+>> +maintainers:
+>> +  - Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>> +  - Sylvain Petinot <sylvain.petinot@foss.st.com>
+>> +
+>> +description: |-
+>> +  The STMicroelectronics VD56G3 is a 1.5 M pixel global shutter image sensor
+> 
+> This claims device is VD56G3, not ST-VD56G3.
+
+Sure, linked with previous point.
+
+> 
+>> +  with an active array size of 1124 x 1364 (portrait orientation). It is
+>> +  programmable through I2C, the address is fixed to 0x10. The sensor output is
+>> +  available via CSI-2, which is configured as either 1 or 2 data lanes. The
+>> +  sensor provides 8 GPIOS that can be used for external LED signal
+>> +  (synchronized with sensor integration periods)
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - st,st-vd56g3
+>> +      - st,st-vd66gy
+>> +    description:
+>> +      Two variants are availables; VD56G3 is a monochrome sensor while VD66GY
+>> +      is a colour variant.
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  vcore-supply:
+>> +    description: Digital core power supply (1.15V)
+>> +
+>> +  vddio-supply:
+>> +    description: Digital IO power supply (1.8V)
+>> +
+>> +  vana-supply:
+>> +    description: Analog power supply (2.8V)
+>> +
+>> +  reset-gpios:
+>> +    description: Sensor reset active low GPIO (XSHUTDOWN)
+>> +    maxItems: 1
+>> +
+>> +  st,leds:
+>> +    description:
+>> +      Sensor's GPIOs used for external LED control. Signal being the enveloppe
+>> +      of the integration time.
+> 
+> More information is needed. GPIOs coming from LED or SoC? What's the
+> meaning of values?
+
+The vd56g3 image sensor provides 8 GPIOS that can be used for different
+use cases (external led controls, synchronization between master/slave
+sensors, external sensor trigger, etc.). This submission supports only
+the first use case: the control of one(or multiple) external LED.
+
+The vd56g3 sensor family are optimized for visible and near infrared
+scenes. In NIR, external IR leds are generally used for illumination.
+
+With such use case, a led (or a led driver) can be connected directly to
+one of the 8 GPIOs of the sensor. On the driver side, when a led is
+configured in the dt, the driver will configure the sensor accordingly.
+It will also offer an optional "V4L2_FLASH_LED_MODE_FLASH" control to
+start/stop the external control.
+
+Different signal modes are supported by the HW, but the default
+(implemented) one is a "strobe" mode where signal is the envelope of the
+integration time (IR led is on while image sensor is integrating).
+
+> 
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 8
+>> +    items:
+>> +      minimum: 0
+>> +      maximum: 7
+>> +
+>> +  port:
+>> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> 
+> missing additionalProperties: false
+
+Ok, fixed in V3.
+
+> 
+>> +
+>> +    properties:
+>> +      endpoint:
+>> +        $ref: /schemas/media/video-interfaces.yaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          data-lanes:
+>> +            minItems: 1
+>> +            maxItems: 2
+>> +            items:
+>> +              enum: [1, 2]
+> 
+> 
+>> +
+>> +          link-frequencies:
+>> +            minItems: 1
+> 
+> maxItems is enough
+
+Ok, fixed in V3.
+
+> 
+>> +            maxItems: 1
+>> +            items:
+>> +              enum: [402000000, 750000000]
+>> +
+>> +          lane-polarities:
+>> +            minItems: 1
+>> +            maxItems: 3
+>> +            description: Any lane can be inverted or not.
+>> +
+>> +        required:
+>> +          - data-lanes
+>> +          - link-frequencies
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - vcore-supply
+>> +  - vddio-supply
+>> +  - vana-supply
+>> +  - reset-gpios
+>> +  - port
+>> +
+> 
+> 
+> Not a video-interface-device.yaml type of device?
+
+Good point, something I'll consider in V3
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+--
+Sylvain
 
