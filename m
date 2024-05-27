@@ -1,93 +1,173 @@
-Return-Path: <linux-kernel+bounces-190753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A8C8D0226
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87F88D0238
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C511C2147B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5198528337B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8BA15F309;
-	Mon, 27 May 2024 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED99E15EFAA;
+	Mon, 27 May 2024 13:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KRzARuGC"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bp8r3jv1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpx9EAtY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bp8r3jv1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dpx9EAtY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF6A13BC3B;
-	Mon, 27 May 2024 13:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8111640B;
+	Mon, 27 May 2024 13:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817823; cv=none; b=VZca92Jvn/yS4LZugnakPQIpyPdKx2uxP94N7oA+7fZMLNEptKs3GQVRW5JWeUZ5hCUTFnc+ejLVOVlHoLCdzah8OL2d2l/v22GaaX+fVCP+EKIMDAUtL2sSw7qQxx3C4b0gGtdi18eIVSUjbxlCDOYJoCeyucpZ4xMgmeSVn1Q=
+	t=1716817930; cv=none; b=lU/wrLRZtJ+SmYBcoN7H2IjMpISUmNUXWOmGcoOHCJ6t0xekUDgfpSDBCK2Gi3dqbVZl0R3sYVv2Cl35m/JSS7avHsW6hKq1xoDnOhbYFnX2aUNgJ0F2NehQjaK5ATbUlK0VXSmHaCllD2sAYmWs8u3IwfZNh9ErBqSU4JAfThw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817823; c=relaxed/simple;
-	bh=+nP0nFvWQTGmKN1h8mBWXPdJ/NyR49065Fmlx0vf/hE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ijWs+N+I/PQttu9/4q+dtMLt/P9/gwRtBh+Ez6R7D4tVuALxE2h4udhsx8VU/vZC8pCextsW7SGB0JN83zEYHpGnA9XeDJPiAoBA0SZatVlEf0ZGC97lyC3Og3qN88kvuEKfBloGVnVGZMSNvUdUh32ZK8yiikL/IhVHaV9lVgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KRzARuGC; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 44AC247C39
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1716817818; bh=JskqYYyNz3dMD01WU+7KptXTcnGKmuo6XobKIxRvLCk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KRzARuGChKTGCcbDUHYk3ELS9q4KssOknufzQxGTvfXOYWjW45Z5x8qzsjfzSsh2a
-	 xQsNZcSAkOz3vRGzBnu1c9h9405N7mTbZSH97gBrvdKAJ5zbPrqJ0LRXGFWCyI4bhy
-	 FDHUfk9nkcQZ/AGfp+4zLcGA/t2njvkxCwpjVYm6w9ZdQraiWGHxDutSh87SC7Ldwj
-	 Me4QJzwPCFh1rk6BeYpfckdQM63R5O4KCec53FY8sYM3V8/1HQ/ZktC0rcnVtOt3Nj
-	 QJdNEEAkl8Yt3KLdp3nrBaUKQm9IA5Y/BN+bEOqnB5DhUknVa0icYvVTEeUPuKrb5D
-	 hv3NM+N13yIqg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	s=arc-20240116; t=1716817930; c=relaxed/simple;
+	bh=eFC+zHb3oIvVuWejIQTPDJ18pZsvb0KL90MlIxZI+JA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=H/A2kxkTP93AX3zfTiyxv7xidpyqFzsfiJj7Y+24MY/gF2NiwHsAkAuTpGgIQLm0APh2hhmKFZa8Q5r/SSQdQeiuV4C1RCWTIthj0YDF108l/p346fahcRhBMzxGR6HCK1p9oSzJs53MSqc6knk8s1GeLUfPGOGlKM5mT3Ur8uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bp8r3jv1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpx9EAtY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bp8r3jv1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dpx9EAtY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 44AC247C39;
-	Mon, 27 May 2024 13:50:18 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Yunseong Kim <yskelg@gmail.com>
-Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>, Austin Kim
- <austindh.kim@gmail.com>, shjy180909@gmail.com, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v3] Documentation: cve Korean translation
-In-Reply-To: <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
-References: <20240527103003.29318-1-yskelg@gmail.com>
- <87ikyzpgqz.fsf@meer.lwn.net>
- <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
-Date: Mon, 27 May 2024 07:50:17 -0600
-Message-ID: <87o78rnz3a.fsf@meer.lwn.net>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B4ED021F2B;
+	Mon, 27 May 2024 13:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716817926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0DlpYZBKGdCoQoP2XdcpMMy4YA8iCzQ3r0sqemNzJWs=;
+	b=Bp8r3jv1lf9v9SBj5hPeeikio3tNBZRNUquox2ZKLCbE18CZ06d9TMc2cOSBOc0ikQEc5q
+	EtllrXgXTaNyEL7HX3F7s97EpwirsJuYtXJrQSZdtd2JfJNZA/JT6Z0DbcxOpIhsIz+W9/
+	tutJhbSU2XpyYcyqN4b/wuCcpFu4Ioo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716817926;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0DlpYZBKGdCoQoP2XdcpMMy4YA8iCzQ3r0sqemNzJWs=;
+	b=Dpx9EAtYenuy8ORW58pQszD35YCrXuIQNPNkJlFakZOK5GyBYKN7zyJZJVNz3AVSgjD8tX
+	hn+G7O96Fd3QOKDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716817926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0DlpYZBKGdCoQoP2XdcpMMy4YA8iCzQ3r0sqemNzJWs=;
+	b=Bp8r3jv1lf9v9SBj5hPeeikio3tNBZRNUquox2ZKLCbE18CZ06d9TMc2cOSBOc0ikQEc5q
+	EtllrXgXTaNyEL7HX3F7s97EpwirsJuYtXJrQSZdtd2JfJNZA/JT6Z0DbcxOpIhsIz+W9/
+	tutJhbSU2XpyYcyqN4b/wuCcpFu4Ioo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716817926;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0DlpYZBKGdCoQoP2XdcpMMy4YA8iCzQ3r0sqemNzJWs=;
+	b=Dpx9EAtYenuy8ORW58pQszD35YCrXuIQNPNkJlFakZOK5GyBYKN7zyJZJVNz3AVSgjD8tX
+	hn+G7O96Fd3QOKDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0520213A6B;
+	Mon, 27 May 2024 13:52:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GSjFOQWQVGZFYwAAD6G6ig
+	(envelope-from <clopez@suse.de>); Mon, 27 May 2024 13:52:05 +0000
+From: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>
+To: linux-s390@vger.kernel.org
+Cc: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] s390/dasd: fix error checks in dasd_copy_pair_store()
+Date: Mon, 27 May 2024 15:50:45 +0200
+Message-Id: <20240527135044.27427-1-clopez@suse.de>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.20
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.20 / 50.00];
+	BAYES_HAM(-2.90)[99.58%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-Yunseong Kim <yskelg@gmail.com> writes:
+dasd_add_busid() can return an error via ERR_PTR() if an allocation
+fails. However, two callsites in dasd_copy_pair_store() do not check
+the result, potentially resulting in a NULL pointer dereference. Fix
+this by checking the result with IS_ERR() and returning the error up
+the stack.
 
->> 1) Why do I have three versions of it in my mailbox, sent over a period
->>    of 13 minutes?  What changed between the versions?
->
-> Sorry, I forgot the name of the reviewer when I first sent the
-> documentation content related patch version 2.
+Fixes: a91ff09d39f9b ("s390/dasd: add copy pair setup")
+Signed-off-by: Carlos López <clopez@suse.de>
+---
+ drivers/s390/block/dasd_devmap.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Which is fine, but...
+diff --git a/drivers/s390/block/dasd_devmap.c b/drivers/s390/block/dasd_devmap.c
+index 0316c20823ee..6adaeb985dde 100644
+--- a/drivers/s390/block/dasd_devmap.c
++++ b/drivers/s390/block/dasd_devmap.c
+@@ -2248,13 +2248,19 @@ static ssize_t dasd_copy_pair_store(struct device *dev,
+ 
+ 	/* allocate primary devmap if needed */
+ 	prim_devmap = dasd_find_busid(prim_busid);
+-	if (IS_ERR(prim_devmap))
++	if (IS_ERR(prim_devmap)) {
+ 		prim_devmap = dasd_add_busid(prim_busid, DASD_FEATURE_DEFAULT);
++		if (IS_ERR(prim_devmap))
++			return PTR_ERR(prim_devmap);
++	}
+ 
+ 	/* allocate secondary devmap if needed */
+ 	sec_devmap = dasd_find_busid(sec_busid);
+-	if (IS_ERR(sec_devmap))
++	if (IS_ERR(sec_devmap)) {
+ 		sec_devmap = dasd_add_busid(sec_busid, DASD_FEATURE_DEFAULT);
++		if (IS_ERR(sec_devmap))
++			return PTR_ERR(sec_devmap);
++	}
+ 
+ 	/* setting copy relation is only allowed for offline secondary */
+ 	if (sec_devmap->device)
+-- 
+2.35.3
 
->>    Normally, you want to wait for reviews to come in on one version
->>    before posting the next, and you should put a comment after the "---"
->>    line saying what changed.
->> 
->> 2) When did this review from Jinwoo Park happen?  I was not copied on
->>    that.
-
-You did not answer this question.  Reviews should generally be done in
-public, but that does not seem to have happened here?
-
-Thanks,
-
-jon
 
