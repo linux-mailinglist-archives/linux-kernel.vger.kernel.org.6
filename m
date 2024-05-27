@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-191097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086A48D0760
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F328D069A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3E79B2807A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC221F237FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32CF73459;
-	Mon, 27 May 2024 15:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C9761FFB;
+	Mon, 27 May 2024 15:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxbKH5C2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U98CLGit"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2A17E90A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F2E17E8E2;
+	Mon, 27 May 2024 15:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716824949; cv=none; b=taT28WgjIpo+O2pu7erR4wnRqJLb5DAI4+Tb+aWdPoodl5+gPvvHiNbTDG5ZFTBaNiHZRESjZ7dMXvW5cUU/XguZ1MxpnnW+WvP7rs8Hp216nYA/yxn6pNqlBcjDWMagpq7oTcfLQGnazKVG1MGTd2pEDBK4G9+sRD7wV+Lt5e0=
+	t=1716825098; cv=none; b=YUYhmBHgiSRMD7KKCWL4n9d8PcMVt8e93zKF0+baCJQx9JdscrKPzaf4KuXUky55BKXtfv4YLiupz8YY/eflGLnTODMieBgs3mwUgMfYLjxAWgsX8xboB/0n/9fFDRBcaTbgXX/ScdE2B6aJn2laL3iSDhYbibUg96voS8+BjKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716824949; c=relaxed/simple;
-	bh=PTOD43twZezS1LaJReRCBTqZRcQpJg3FNX+Bc7pvXxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XkRXPuXo2PeWM/Rfi5ksVzAfYMf7mXC1eiOMeWr0RTM7iPzAEhwBdUxRmt3AaYbYsBx1UTSC9ao+izFHOrpVWcLVf3K9e2ChHV3ZnwDLZfeQFrj034/sitP2aUYRCaWymZOb2tAPipANg1sEuLoMmTszHnnq4yiZnXf47I6iMeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxbKH5C2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11313C4AF07;
-	Mon, 27 May 2024 15:49:07 +0000 (UTC)
+	s=arc-20240116; t=1716825098; c=relaxed/simple;
+	bh=X5KGBxxFXxnv3x0Ob+GF5Asew3YBonDrWe3a4Pa7rZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cpEglXhCm3v1zJ3iixgCcD9AVIZHCel4mFq0/K5FFoEHRaYwfTmwEDYfWvy8LtUcMERN7Yl3i92oCBEpUrR3oGZ3nvuwZs1/0NBwLHbRbe26kiyt5a7fBnmX5MKJb1A66mVHEHSpjLymqZvi0+Rsc2I58Fe1x4q235fl3O4B6B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U98CLGit; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88D2C2BBFC;
+	Mon, 27 May 2024 15:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716824948;
-	bh=PTOD43twZezS1LaJReRCBTqZRcQpJg3FNX+Bc7pvXxE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IxbKH5C2BwSP+iOUIKaBS1SI3wXJKhKcDFUkIG4T9t9UPywfcjK5Ljk/qO0lPp55t
-	 217DLLh6BUR0hOyEtCUHB0lf7exkGCiKr+9YxJmGO5fLPA34hVX8VImzpAQCBR6CoX
-	 3dDifS/1vT/4ds3hUzCA3lkPy08MkQ6tSjCW8ySmYv3SeWfh3s8Ci8J5rsYJT1Ous9
-	 BNuunDrH+Rx8SdQ6ny8IQbh0QkTc0TD/Co53IIuU4MpiEGueDMJXqkBJ7VI6p9hmlf
-	 Aj3MOPUvSlG4SrPPa1gfFTwQturO3j1vm3XP/0PNgnwLybrgKjeddRuqUkpLBNsHrV
-	 M9f6khanAmVbg==
-Date: Mon, 27 May 2024 12:49:05 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jens Axboe <axboe@kernel.dk>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1 fyi] perf beauty: Update copy of linux/socket.h with the
- kernel sources
-Message-ID: <ZlSrceExgjrUiDb5@x1>
+	s=k20201202; t=1716825098;
+	bh=X5KGBxxFXxnv3x0Ob+GF5Asew3YBonDrWe3a4Pa7rZs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U98CLGitS+2ZMQaflueQm7lxxUVRkffEOjmyQRpiX1nnuirGGe3goS8OIeBrUaAP+
+	 Z8oSVx70fKCVqPTCfPG7x4F3d1yNYB+Lh1rOhl4A9TbtoEc+PgaBdXn40X9xn2Hcvc
+	 /DEcBdnz4q7fxY2AGbAhklafjoX3tw09rW2dJTK+bGAL1ADaVuB6m4KXKY99GHu7Rx
+	 wW/OUzJp5a7XTDWBiTtqti22LxcZh7ATTV7F/4vMcoalZJlaQI3uJISb7HGiABChai
+	 0iC/gVevaQvwFXMtfoNdos4owkFFSPik8jdjHEX9ax9Ny9WPHFIvaF3k8EJ/Pm5z8I
+	 svNgRHyw022sg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Charlene Liu <charlene.liu@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Sasha Levin <sashal@kernel.org>,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	martin.leung@amd.com,
+	wayne.lin@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.9 01/23] drm/amd/display: Exit idle optimizations before HDCP execution
+Date: Mon, 27 May 2024 11:50:02 -0400
+Message-ID: <20240527155123.3863983-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.2
+Content-Transfer-Encoding: 8bit
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-Full explanation:
+[ Upstream commit f30a3bea92bdab398531129d187629fb1d28f598 ]
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+[WHY]
+PSP can access DCN registers during command submission and we need
+to ensure that DCN is not in PG before doing so.
 
-The way these headers are used in perf are not restricted to just
-including them to compile something.
+[HOW]
+Add a callback to DM to lock and notify DC for idle optimization exit.
+It can't be DC directly because of a potential race condition with the
+link protection thread and the rest of DM operation.
 
-There are sometimes used in scripts that convert defines into string
-tables, etc, so some change may break one of these scripts, or new MSRs
-may use some different #define pattern, etc.
-
-E.g.:
-
-  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
-  tools/perf/trace/beauty/arch_errno_names.sh
-  tools/perf/trace/beauty/drm_ioctl.sh
-  tools/perf/trace/beauty/fadvise.sh
-  tools/perf/trace/beauty/fsconfig.sh
-  tools/perf/trace/beauty/fsmount.sh
-  $
-  $ tools/perf/trace/beauty/fadvise.sh
-  static const char *fadvise_advices[] = {
-        [0] = "NORMAL",
-        [1] = "RANDOM",
-        [2] = "SEQUENTIAL",
-        [3] = "WILLNEED",
-        [4] = "DONTNEED",
-        [5] = "NOREUSE",
-  };
-  $
-
-The tools/perf/check-headers.sh script, part of the tools/ build
-process, points out changes in the original files.
-
-So its important not to touch the copies in tools/ when doing changes in
-the original kernel headers, that will be done later, when
-check-headers.sh inform about the change to the perf tools hackers.
-
-To pick up the fixes in:
-
-  0645fbe760afcc53 ("net: have do_accept() take a struct proto_accept_arg argument")
-
-That just changes a function prototype, not touching things used by the
-perf scrape scripts such as:
-
-  $ tools/perf/trace/beauty/sockaddr.sh | head -5
-  static const char *socket_families[] = {
-  	[0] = "UNSPEC",
-  	[1] = "LOCAL",
-  	[2] = "INET",
-  	[3] = "AX25",
-  $
-
-This addresses this perf tools build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/perf/trace/beauty/include/linux/socket.h include/linux/socket.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lore.kernel.org/lkml/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Charlene Liu <charlene.liu@amd.com>
+Acked-by: Alex Hung <alex.hung@amd.com>
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/trace/beauty/include/linux/socket.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/modules/hdcp/hdcp.c    | 10 ++++++++++
+ drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h |  8 ++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/include/linux/socket.h b/tools/perf/trace/beauty/include/linux/socket.h
-index 139c330ccf2c3bf9..89d16b90370bd412 100644
---- a/tools/perf/trace/beauty/include/linux/socket.h
-+++ b/tools/perf/trace/beauty/include/linux/socket.h
-@@ -16,6 +16,7 @@ struct cred;
- struct socket;
- struct sock;
- struct sk_buff;
-+struct proto_accept_arg;
+diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.c
+index 5e01c6e24cbc8..9a5a1726acaf8 100644
+--- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.c
++++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.c
+@@ -88,6 +88,14 @@ static uint8_t is_cp_desired_hdcp2(struct mod_hdcp *hdcp)
+ 			!hdcp->connection.is_hdcp2_revoked;
+ }
  
- #define __sockaddr_check_size(size)	\
- 	BUILD_BUG_ON(((size) > sizeof(struct __kernel_sockaddr_storage)))
-@@ -433,7 +434,7 @@ extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
- extern int __sys_sendto(int fd, void __user *buff, size_t len,
- 			unsigned int flags, struct sockaddr __user *addr,
- 			int addr_len);
--extern struct file *do_accept(struct file *file, unsigned file_flags,
-+extern struct file *do_accept(struct file *file, struct proto_accept_arg *arg,
- 			      struct sockaddr __user *upeer_sockaddr,
- 			      int __user *upeer_addrlen, int flags);
- extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
++static void exit_idle_optimizations(struct mod_hdcp *hdcp)
++{
++	struct mod_hdcp_dm *dm = &hdcp->config.dm;
++
++	if (dm->funcs.exit_idle_optimizations)
++		dm->funcs.exit_idle_optimizations(dm->handle);
++}
++
+ static enum mod_hdcp_status execution(struct mod_hdcp *hdcp,
+ 		struct mod_hdcp_event_context *event_ctx,
+ 		union mod_hdcp_transition_input *input)
+@@ -543,6 +551,8 @@ enum mod_hdcp_status mod_hdcp_process_event(struct mod_hdcp *hdcp,
+ 	memset(&event_ctx, 0, sizeof(struct mod_hdcp_event_context));
+ 	event_ctx.event = event;
+ 
++	exit_idle_optimizations(hdcp);
++
+ 	/* execute and transition */
+ 	exec_status = execution(hdcp, &event_ctx, &hdcp->auth.trans_input);
+ 	trans_status = transition(
+diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h b/drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h
+index a4d344a4db9e1..cdb17b093f2b8 100644
+--- a/drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h
++++ b/drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h
+@@ -156,6 +156,13 @@ struct mod_hdcp_ddc {
+ 	} funcs;
+ };
+ 
++struct mod_hdcp_dm {
++	void *handle;
++	struct {
++		void (*exit_idle_optimizations)(void *handle);
++	} funcs;
++};
++
+ struct mod_hdcp_psp {
+ 	void *handle;
+ 	void *funcs;
+@@ -272,6 +279,7 @@ struct mod_hdcp_display_query {
+ struct mod_hdcp_config {
+ 	struct mod_hdcp_psp psp;
+ 	struct mod_hdcp_ddc ddc;
++	struct mod_hdcp_dm dm;
+ 	uint8_t index;
+ };
+ 
 -- 
-2.45.1
+2.43.0
 
 
