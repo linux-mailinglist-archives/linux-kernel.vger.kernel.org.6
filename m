@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-190692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F99F8D016F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B03C8D0175
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C022228AEFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFDAE1F24E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FFF15EFBF;
-	Mon, 27 May 2024 13:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3934B15EFAD;
+	Mon, 27 May 2024 13:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S8B7pcjp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoPsV5/f"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2BE15ECFD;
-	Mon, 27 May 2024 13:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F3215EFAC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816436; cv=none; b=B+0lG6r+XZqPj2fZ/ZfmJZ46sn1sFPEjnDNPYFLvOgt0GG8JvybMJpjkVr1H1dkETiP0QSo8rBftfN0aAFsmkO6Eq2uZxr2BjSfkLTh7ica2NnMztN7d/9kOUcwsKOpPp2LvuwP5vSJJ+MSGK1gEGreZBGhoV7Lw13A8Kh1veDY=
+	t=1716816465; cv=none; b=AS0ZoWA/sp08qd2ajKWnBfVIe/1Po61ySz3xJi2tZg3T33A4HAcjZAdNYzE6nX6V2BKcbL8NW+4pQIxdlQ/JzoDPrj51TOblqynSRcf4XfSZ3MIDGIRH+9H0t5yoRLQbU/SsCaV5JoLTfjWvANSFhkAsGodG94APcHSfS6IVfC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816436; c=relaxed/simple;
-	bh=wvKfF7CTGkILCYXaRxLo0BRYhRmTr1qU9enaps1pCtI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=l1qjkTjE1WY3ETsYMSBANzDwNMF/sFat3/5oFiPPmfvjjC8iaRY5SxElZr8AEZVJSykrvnafLd2V/khlSZk00jADq6Sif13Du6MYSfg6LMuqzRy5uiIQtsm7HGSSfrFrctIE1HSK+g3QgiDTdigXQ48GBb6ZaoBml9aZ4xbaUmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S8B7pcjp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716816435; x=1748352435;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wvKfF7CTGkILCYXaRxLo0BRYhRmTr1qU9enaps1pCtI=;
-  b=S8B7pcjpn/vYnLpnbZpyta0K6D1GEvMUuLZ5q7FHtyHWCN/g4LwzU8jT
-   I8XiFRRuFx7tcTc8Z/AArcnIyEwC2Lu45R9K6vvH9zoZHEmEh31q4GXyH
-   rYvL19AWULEpSeqwlW3dFKm73cc9KnU4ZfnXCUy50XMa+H56qvntOCb/W
-   0NeOpCfnk203brSmBw88DXCsZuG7Uo8qkmmaCf4ZyRPgXhPbn149OA2WV
-   B/inU7fUzAk/OQzYbPgHDEPBRoNey+sNouTlM0tngq2ke8dnp/2x8CThq
-   EMHAcmencl4D/of/85NtYcKUZX2LuhfwfX+DG/NK7Aojsc5tECJM+8Fn3
-   Q==;
-X-CSE-ConnectionGUID: 9VjXVEgHTxycoXmeR3L1HA==
-X-CSE-MsgGUID: wQekaMZDS26Q6ONroRgW1w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13360158"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="13360158"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:27:14 -0700
-X-CSE-ConnectionGUID: /os+K9DuQBOnhPvFbYJ2mw==
-X-CSE-MsgGUID: 4kE1KxpaTKW4Su4ifoDNdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="39558544"
-Received: from unknown (HELO localhost) ([10.245.247.140])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:27:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Dave Hansen <dave@sr71.net>,
-	Richard Purdie <rpurdie@linux.intel.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] leds: ss4200: Convert PCIBIOS_* return codes to errnos
-Date: Mon, 27 May 2024 16:27:00 +0300
-Message-Id: <20240527132700.14260-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716816465; c=relaxed/simple;
+	bh=TuIFBfTPCEqP6bHPkoDibmXslNfsgD9MX9uClz3Xr40=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tlMryzpvae0P2ZikrfPyq20PQOX7qWStu7CZr4YEoku8RjraqV7xjEg2EAr1s0pNFENz6+YPIDpsqb4R34FLRZ/NlZlc06A8aKgIDlYorBPqlsfS9tt/yc/zC2KAHtmq6cVuDFrTS6sInmpFOe+Rq6nqGu/6PIKrt9sNjS7894g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZoPsV5/f; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5788eaf5366so2079637a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716816462; x=1717421262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2PiCS/M86gUVosiM8K3s52DAeVhft4izSu+PTRcDU+c=;
+        b=ZoPsV5/fEBCGdFIQuKCZyTCUDWfXaZPDkOUAgGApiJ5ZmaOW9+pwDKQ6M+HEzDhu0B
+         KKIjUqgCtgA7qqmjsxTheYGDIg+MsDkYhlYM228qsu4HsStkOfE3IsDw9B6cZtiN6Th1
+         GN92T1N0h4rKDQ+nPEzxmw6chh/PEW1J+AK6GMq6S26bS/KcsAVMxTCaqtBUAgnCYFLe
+         2RDzfa0bPegmk8hQTsAe487HFQmwBz61t/DnlMmzxJ7XxWmD247lBv8dFEMxWcsfqn+K
+         vaK8bJOM2gKHuaYFx4arOk5xoA3/lhuXMgA90ywczx1hGZawyHiiD/KzyFWzyKrj/FPw
+         0hrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816462; x=1717421262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2PiCS/M86gUVosiM8K3s52DAeVhft4izSu+PTRcDU+c=;
+        b=phxMIQli41NyEyTrbJ3X25tXX2fqYTTJ26mtGv3HiynWZnT/2P/E+1VAxtZnhNWN1v
+         BLg79xKCYwaxDufRUpDFv2QPMvjZOdwSvVpL2V2UCMS/XJ16QXInWSFQ3kyH97nDaieq
+         AII2UpdJDp3eD5RMz4rADNAW7sOAHLFdWVVXdBG6RZM0hAsK+TVQ9Sb2HbofB4olmMaE
+         7M1FMNDQJ3+JhkBBLHTjWk/YaGYk2gnva0yNtyjZJ8i88LhOKUke5iQc+Hf249xtvCSb
+         ntKc9rUOjQytRsAVLyLm9N2zRv81QNUMHz/yIk5vGRVt9jVgzdJ2TN82Vae9oMJGcQqt
+         PhgA==
+X-Gm-Message-State: AOJu0YxDIHP+PtXkhp31C9deCkbK41x8AET31X1RlmiQeRQP238DiPuw
+	h2nZEc1F5U6vPPyiPSflkgCi8T5WqzpOUSCvf+5MU8n2jN0AzXXAPH7ZEYl5qkz5fHZxxe89uFC
+	/86CmD2UNkiEAuE6tW0KM7clK7z8=
+X-Google-Smtp-Source: AGHT+IFVnPcxnn20cR6Msa0tnRriAja6yhiHKtdshVA25MZLyQu648CM9lajmEybbVLSk/Zbf87ADoFMy1T7v8HuJeI=
+X-Received: by 2002:a17:906:7f15:b0:a62:e9c:f621 with SMTP id
+ a640c23a62f3a-a6265148c46mr662007966b.58.1716816462000; Mon, 27 May 2024
+ 06:27:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240527094320.2653177-1-jani.nikula@intel.com>
+In-Reply-To: <20240527094320.2653177-1-jani.nikula@intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 27 May 2024 16:27:05 +0300
+Message-ID: <CAHp75VcWXCeQo4n67cfq0VQaO-+YW-=iqKx+r4NtFfYnJBTBFA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] string: add mem_is_zero() helper to check if memory
+ area is all zeros
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, Kees Cook <keescook@chromium.org>, 
+	Andy Shevchenko <andy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ich7_lpc_probe() uses pci_read_config_dword() that returns PCIBIOS_*
-codes. The error handling code assumes incorrectly it's a normal errno
-and checks for < 0. The return code is returned from the probe function
-as is but probe functions should return normal errnos.
+On Mon, May 27, 2024 at 12:43=E2=80=AFPM Jani Nikula <jani.nikula@intel.com=
+> wrote:
+>
+> Almost two thirds of the memchr_inv() usages check if the memory area is
+> all zeros, with no interest in where in the buffer the first non-zero
+> byte is located. Checking for !memchr_inv(s, 0, n) is also not very
+> intuitive or discoverable. Add an explicit mem_is_zero() helper for this
+> use case.
 
-Remove < 0 from the check and convert PCIBIOS_* returns code using
-pcibios_err_to_errno() into normal errno before returning it.
+..
 
-Fixes: a328e95b82c1 ("leds: LED driver for Intel NAS SS4200 series (v5)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/leds/leds-ss4200.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> +static inline bool mem_is_zero(const void *s, size_t n)
+> +{
+> +       return !memchr_inv(s, 0, n);
+> +}
 
-diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-index fcaa34706b6c..2ef9fc7371bd 100644
---- a/drivers/leds/leds-ss4200.c
-+++ b/drivers/leds/leds-ss4200.c
-@@ -356,8 +356,10 @@ static int ich7_lpc_probe(struct pci_dev *dev,
- 
- 	nas_gpio_pci_dev = dev;
- 	status = pci_read_config_dword(dev, PMBASE, &g_pm_io_base);
--	if (status)
-+	if (status) {
-+		status = pcibios_err_to_errno(status);
- 		goto out;
-+	}
- 	g_pm_io_base &= 0x00000ff80;
- 
- 	status = pci_read_config_dword(dev, GPIO_CTRL, &gc);
-@@ -369,8 +371,9 @@ static int ich7_lpc_probe(struct pci_dev *dev,
- 	}
- 
- 	status = pci_read_config_dword(dev, GPIO_BASE, &nas_gpio_io_base);
--	if (0 > status) {
-+	if (status) {
- 		dev_info(&dev->dev, "Unable to read GPIOBASE.\n");
-+		status = pcibios_err_to_errno(status);
- 		goto out;
- 	}
- 	dev_dbg(&dev->dev, ": GPIOBASE = 0x%08x\n", nas_gpio_io_base);
--- 
-2.39.2
+There are potential users for the 0xff check as well. Hence the
+following question:
+Are we going to have a new function per byte in question, or do we
+come up with a common denominator, like mem_is_all_of(mem, byte)?
 
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
