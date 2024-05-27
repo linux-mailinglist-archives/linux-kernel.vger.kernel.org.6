@@ -1,138 +1,237 @@
-Return-Path: <linux-kernel+bounces-190676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB608D0145
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:22:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A908D0146
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D261DB23676
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48F01F21E5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB0215EFC0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A98A15EFC6;
 	Mon, 27 May 2024 13:22:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEEA15ECFA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D8C15ECF4
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816150; cv=none; b=YHCs37d+uuKYWVBKdYBUSdZxH+2slJtZ0m1BNGBWUrGFD0vM+IgnE6njmcF63IqxL47mrbFnDIVGC8fi3T5q/MBwmJrAIvTm8nVyKwHJ7CqqV0eSUx5qG4bu+MFwBqr8mDoUsDzvWsaPc4/hLI9+uyhlf7leRJExF2li5+kfvbo=
+	t=1716816150; cv=none; b=dwAUpS60KJN1VFnbLZjPJpo6ohSjoV5v8xIrwerUtyuBNNs2ZI4D74AQj4QPa0DyihClfdNISz/zjhAG1b1STDt7PSTi0omaimEaqBGcUUtkWo46Zga84f9o0qie0oxqR4y6plOMCGqj9DQDuJ4Sa52sf7Q3sV8K6PJZaPLJ9HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716816150; c=relaxed/simple;
-	bh=l4cYYvTuGJTCQAXcG6jFJSb2OefKYqz1SCBoseZVUns=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XGUjY6Y0yfz8MBcTXOC/Nj/IuhX2WbDeIyZ5IUzpulhOK5tRfy7SoDUqxV8xdVRySXRFfz5nL4AmBhqhJYR5OREtrFdRwiiZKfmz2Dxp6OasN+o8LiDYf+35wAoOJEkLquzhaE/NZ4DZtb2a3dXOeu4MdyvFHGyh3BKu9cJit5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	bh=h2EjNcRnOdSV3DrRyQsiknvlwZNQpE3YDPF0q0Tuz+Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ix7U7sGOFhCKu0aNWiJgYcbYQ0DBjPOw0+8uBw1frAtrvIemyqkp0OKJhVffTBNsxWPJEhYDYyfH0sIAFEifAh2kpU3FKtuetiguXrVZP4dWO2s6C7wdbo980oXOdhnIYavShOIQK3Fp+baItJLtXvFsoUCsaM23l4MmyLt/vJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3738db5b07dso18518705ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:22:29 -0700 (PDT)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3738732f988so23544715ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:22:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1716816148; x=1717420948;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/qhmbTQ4F0jLVtDtoVk681gByJJZtXvPAOYim6+cLZE=;
-        b=tfdCyl7LQHDjTreZGXEna7bHqvxgzMArodiLF1HK37xqt5b3QcPg8cn8sW4sXLFkph
-         1e9f3ypJqF6ayOTsj/yfUsT9CyFVO2vtrCqEuonyV0eDjUDhW+zw9EorLbKShQvZTDUt
-         +CII5GzYDvEOnUC9sh4e5i/hl/eS9Gxixx7K8hcs8z+HUWQ+P1Xq35ioINUViACM9XtC
-         dV4FJ/aLqIubWliW70OhGDGt03Odi3AuCMSUqMh6P6UsPW97mMa624BoQD3WA3oVSpNx
-         fNDjXEOxTX5Np29APsHqhlWwommfz9wbQq89+kgAP2u/UUUh1+q96pEXvMoytC5IMuff
-         ropA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw/JxdwU+yCoSw2CtNu9WRgQHzP0vhqDEVv+C++WmfVak/lXn7tleKRpAm89h+a0YDUmvJZ0UwFwMqFbCZgX9BKQTsJVaA+q226BnB
-X-Gm-Message-State: AOJu0YzFKIRe3N61a/gXB1FqAV89y1ButR23Htv4jNdlFJhAAJXv0nvG
-	nvQ4+CmBFqgLDLHO1IAaQBVSqRitl+kTOKE9gH/JT7NafRqQ6QOsx577a3HzYa/RUFfYzyF8Pj6
-	XcARn6bfSxIKb9jmJFxW1IWkNT1hEk6BB/FYLGp5g8p2y/gxxEaXcVcU=
-X-Google-Smtp-Source: AGHT+IEWiodKgU8o7O1h9yGWtTo/R1nGfBJ3VP+NBaqZy7bxNCatxqKr698IrVTTW8Zz1Lpq5lic2HoFa0yiw29chSGTWr3ilD7J
+        bh=+vmoO/Nv+2txm2yPb4KYAH+uAveGcGWYNX2XgXKPZCM=;
+        b=NAzptMGbqilCuSOVE7Pp2MohRsc0mnXgBRvgF97fPhf0GoKtWrUu26lFt0wNoqDi3l
+         BZHluNtLLUaP772aCSf/z40ydkhl0bugl4lgjYHuYoq03vv1RY3AoVPma0uWjlzIj4U2
+         GSgul4kt8wm4Ws1V8yb3gBvpOxv9Iy6Pn6/yQ1xNAAS3OkWjdQofKH+I5voJ9EqybSnN
+         KfXiQ7TXqQ4cFwVzd+cB27g0uAWQAKkFXJHHtgrEhsTFM29HkOsFvJTfXMCtWu4durS9
+         T5rhnt8SlqEwjofwDeQnch7aFtdbyF47bUZTX2Jn0dzp617jTE80gRAYSLo/kL9s+rwB
+         IyzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Ic7FwpoVVZRn125eXvalkJxdiGufj9Z/z5CW1IMDKaqB7uWpBoM68ml/j9b1v8lvATMdsu+Premv3hcC1MFbBwCQzacYuFWHjA9g
+X-Gm-Message-State: AOJu0YxWTNnvcIb7uXPjNzSWPD6vu5LocBfpv7mlXb7i8zcXN5uIt+FV
+	+6SwTywUOfj+pwj9oC1iy5Fzw6IvJvbFq2OmMbHWJb4drdzKZXbrzmVru+MqL3gCZzHvau+YUX7
+	trWIFCXE+mHNxfLg4jNb5I75ziPfabslxg8q7GRiFXNPDInu8D/O8Lz4=
+X-Google-Smtp-Source: AGHT+IGHCy6gagCt/fKN9YxjO56/wZM/jeyns5XEXri714QY6R7SBKw1sUI9XotZOrKtP7bQkAUMcon3fNja/K9ulgrmnyDyuIlw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216e:b0:36b:2731:4084 with SMTP id
- e9e14a558f8ab-3737b2bdafemr5797905ab.2.1716816148564; Mon, 27 May 2024
+X-Received: by 2002:a05:6e02:1a27:b0:374:529a:dfd3 with SMTP id
+ e9e14a558f8ab-374529ae1c8mr3359065ab.4.1716816148327; Mon, 27 May 2024
  06:22:28 -0700 (PDT)
 Date: Mon, 27 May 2024 06:22:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae186106196f6894@google.com>
-Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_issue_sqe
-From: syzbot <syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000aa7cb106196f6883@google.com>
+Subject: [syzbot] [bcachefs?] possible deadlock in bch2_gc_mark_key
+From: syzbot <syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+HEAD commit:    9b62e02e6336 Merge tag 'mm-hotfixes-stable-2024-05-25-09-1..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b9b972980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=b1647099e82b3b349fbf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e3fb34980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3e73beba72b96506
+dashboard link: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+disk image: https://storage.googleapis.com/syzbot-assets/61b507f6e56c/disk-9b62e02e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6991f1313243/vmlinux-9b62e02e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/65f88b96d046/bzImage-9b62e02e.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com
+Reported-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
 
-=====================================================
-BUG: KMSAN: uninit-value in io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
-BUG: KMSAN: uninit-value in io_req_complete_post io_uring/io_uring.c:937 [inline]
-BUG: KMSAN: uninit-value in io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
- io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
- io_req_complete_post io_uring/io_uring.c:937 [inline]
- io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
- io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
- io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
- io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+bcachefs (loop4): alloc_read... done
+bcachefs (loop4): stripes_read... done
+bcachefs (loop4): snapshots_read... done
+bcachefs (loop4): check_allocations...
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller-12393-g9b62e02e6336 #0 Not tainted
+------------------------------------------------------
+syz-executor.4/6744 is trying to acquire lock:
+ffff888025c00988 (&c->sb_lock){+.+.}-{3:3}, at: bch2_gc_mark_key+0x9f6/0xd90 fs/bcachefs/btree_gc.c:599
 
-Uninit was stored to memory at:
- io_req_set_res io_uring/io_uring.h:215 [inline]
- io_recv_finish+0xf10/0x1560 io_uring/net.c:861
- io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
- io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
- io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
- io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
- io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+but task is already holding lock:
+ffff888025c01a50 (&c->btree_root_lock){+.+.}-{3:3}, at: bch2_gc_btree.constprop.0+0x106/0x11e0 fs/bcachefs/btree_gc.c:643
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3877 [inline]
- slab_alloc_node mm/slub.c:3918 [inline]
- __do_kmalloc_node mm/slub.c:4038 [inline]
- __kmalloc+0x6e4/0x1060 mm/slub.c:4052
- kmalloc include/linux/slab.h:632 [inline]
- io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
- io_msg_alloc_async io_uring/net.c:166 [inline]
- io_recvmsg_prep_setup io_uring/net.c:725 [inline]
- io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
- io_init_req io_uring/io_uring.c:2135 [inline]
- io_submit_sqe io_uring/io_uring.c:2182 [inline]
- io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
- __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
- __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
- x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+which lock already depends on the new lock.
 
-CPU: 1 PID: 7410 Comm: iou-wrk-7408 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&c->btree_root_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       bch2_btree_roots_to_journal_entries+0x93/0x570 fs/bcachefs/btree_update_interior.c:2633
+       bch2_fs_mark_clean+0x31b/0x470 fs/bcachefs/sb-clean.c:376
+       bch2_fs_read_only+0x88a/0xf10 fs/bcachefs/super.c:381
+       __bch2_fs_stop+0xfc/0x540 fs/bcachefs/super.c:613
+       generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+       bch2_kill_sb+0x3b/0x50 fs/bcachefs/fs.c:2026
+       deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+       deactivate_super+0xde/0x100 fs/super.c:506
+       cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+       task_work_run+0x14e/0x250 kernel/task_work.c:180
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&c->sb_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       bch2_gc_mark_key+0x9f6/0xd90 fs/bcachefs/btree_gc.c:599
+       bch2_gc_btree.constprop.0+0x394/0x11e0 fs/bcachefs/btree_gc.c:647
+       bch2_gc_btrees+0x442/0x8c0 fs/bcachefs/btree_gc.c:697
+       bch2_check_allocations+0x98f/0x2670 fs/bcachefs/btree_gc.c:1217
+       bch2_run_recovery_pass+0x8e/0x1a0 fs/bcachefs/recovery_passes.c:182
+       bch2_run_recovery_passes+0x33b/0x710 fs/bcachefs/recovery_passes.c:225
+       bch2_fs_recovery+0x259f/0x3db0 fs/bcachefs/recovery.c:807
+       bch2_fs_start+0x2e9/0x600 fs/bcachefs/super.c:1031
+       bch2_fs_open+0xfa0/0x1110 fs/bcachefs/super.c:2123
+       bch2_mount+0xdcc/0x1130 fs/bcachefs/fs.c:1917
+       legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+       vfs_get_tree+0x8f/0x380 fs/super.c:1780
+       do_new_mount fs/namespace.c:3352 [inline]
+       path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+       do_mount fs/namespace.c:3692 [inline]
+       __do_sys_mount fs/namespace.c:3898 [inline]
+       __se_sys_mount fs/namespace.c:3875 [inline]
+       __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&c->btree_root_lock);
+                               lock(&c->sb_lock);
+                               lock(&c->btree_root_lock);
+  lock(&c->sb_lock);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor.4/6744:
+ #0: ffff888025c00278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_start+0x3e/0x600 fs/bcachefs/super.c:1001
+ #1: ffff888025c268d8 (&c->gc_lock){++++}-{3:3}, at: bch2_check_allocations+0xf1/0x2670 fs/bcachefs/btree_gc.c:1202
+ #2: ffff888025c042d0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:116 [inline]
+ #2: ffff888025c042d0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:215 [inline]
+ #2: ffff888025c042d0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x656/0xf20 fs/bcachefs/btree_iter.c:3204
+ #3: ffff888025c01a50 (&c->btree_root_lock){+.+.}-{3:3}, at: bch2_gc_btree.constprop.0+0x106/0x11e0 fs/bcachefs/btree_gc.c:643
+
+stack backtrace:
+CPU: 0 PID: 6744 Comm: syz-executor.4 Not tainted 6.9.0-syzkaller-12393-g9b62e02e6336 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ bch2_gc_mark_key+0x9f6/0xd90 fs/bcachefs/btree_gc.c:599
+ bch2_gc_btree.constprop.0+0x394/0x11e0 fs/bcachefs/btree_gc.c:647
+ bch2_gc_btrees+0x442/0x8c0 fs/bcachefs/btree_gc.c:697
+ bch2_check_allocations+0x98f/0x2670 fs/bcachefs/btree_gc.c:1217
+ bch2_run_recovery_pass+0x8e/0x1a0 fs/bcachefs/recovery_passes.c:182
+ bch2_run_recovery_passes+0x33b/0x710 fs/bcachefs/recovery_passes.c:225
+ bch2_fs_recovery+0x259f/0x3db0 fs/bcachefs/recovery.c:807
+ bch2_fs_start+0x2e9/0x600 fs/bcachefs/super.c:1031
+ bch2_fs_open+0xfa0/0x1110 fs/bcachefs/super.c:2123
+ bch2_mount+0xdcc/0x1130 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1780
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f743727e5ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7437fb6ef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f7437fb6f80 RCX: 00007f743727e5ea
+RDX: 0000000020005b00 RSI: 0000000020000000 RDI: 00007f7437fb6f40
+RBP: 0000000020005b00 R08: 00007f7437fb6f80 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
+R13: 00007f7437fb6f40 R14: 0000000000005b46 R15: 00000000200000c0
+ </TASK>
+bucket 0:26 gen 0 data type btree has wrong cached_sectors: got 458752, should be 0, shutting down
+bcachefs (loop4): inconsistency detected - emergency read only at journal seq 8
+bcachefs (loop4): bch2_gc_alloc_done(): error fsck_errors_not_fixed
+bcachefs (loop4): bch2_check_allocations(): error fsck_errors_not_fixed
+bcachefs (loop4): bch2_fs_recovery(): error fsck_errors_not_fixed
+bcachefs (loop4): bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
+bcachefs (loop4): shutting down
+bcachefs (loop4): shutdown complete
 
 
 ---
