@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-190607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30F68D0064
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:49:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FBE8D0065
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B057A2840CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C221F2396A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161EF15E5CD;
-	Mon, 27 May 2024 12:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1IaD3ke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA9015E5C7;
+	Mon, 27 May 2024 12:50:03 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501484D5A2;
-	Mon, 27 May 2024 12:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459194D5A2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814190; cv=none; b=lAvBW5Nkalq+dHCoKMbe54Yc6fRY9hDm1ER3RGG575FJbGevmw4O4wjp8DwEj1ov0BsSbAfYRpd/nZIoDSQ6htkEjhDyOOnglowDm6x/xOyr+p4ozWtFgaD0uRAOnAODDDdo23NaJa183qMegUxQygUHLr8YbjR24A3bEMTWR1g=
+	t=1716814203; cv=none; b=VOzkATnwKfsAecOVchNRnqZwWBEBk/Ir+1Bfx0b/CUUmycaagUuD/ZoWTnWZd7a/2x74UeUUEds5HNuC055lXLkO8BNuQZpD0K3iFUx6x3nWDtyv38/XvIqp4oz9pkAkhhXeY1KNSt2OlC+37jUxmZ8khw3FpaxGg4iCio+qtik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814190; c=relaxed/simple;
-	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgAeHwrk6jKtNV6ESFbki9+OcEweBiH00U7qY7jflVgLQB6c7YggvcJsAtN68lce7s1IEhEgwSqkU83fZo+DfY3lc8OR8ZClfnOyojUdYFMf++aaiA/NBN/0vdKwuN8Z8fJ3SmQ8x54hF1lYkfxU251/OIIsX0anGRYgBJ6AshQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1IaD3ke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58186C2BBFC;
-	Mon, 27 May 2024 12:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716814189;
-	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n1IaD3ke/1U9fQO7YdI8TsMSLanSmv+uyhSacUc/+ri475UKL25Jb4wR+C+JenB/y
-	 5q8RbYOz9pjYTFAg1cb7pjjEAbNbCP4g2ddLMf6XxckbIqVkYymyAcPkmHtPJp0v1s
-	 AVOMAFuTUF8jDJKVwo5Fmx+ymbynbXx9QnYqB2d4AQ9Ji+ixTTAarLwRbVmgh9vzgI
-	 1B4v7cWarbmPVk9+6pV8ITgfRXjRetwVte51AChQ97U1OIvN1ttJ1+4Q9HIcFyPhZ2
-	 HBeNfEZ+gs8qBIKoagkIVNWwNf5BNCM8Jkp/LBm8MVPFikQ63Ur9Ht3XHyV1MoXSb9
-	 WZqxGOZ6gBjbA==
-Date: Mon, 27 May 2024 13:49:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, heiko@sntech.de,
-	u.kleine-koenig@pengutronix.de, geert+renesas@glider.be,
-	rafael@kernel.org, linux-pm@vger.kernel.org, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com,
-	frank.li@nxp.com, mkl@pengutronix.de, linus.walleij@linaro.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up
- handshake
-Message-ID: <a04b3939-081a-49e0-a063-5b50d3321ca7@sirena.org.uk>
-References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
- <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
+	s=arc-20240116; t=1716814203; c=relaxed/simple;
+	bh=qmoXTNHUYcQhTTkK7zjwu5RydcbhSzwSS0Qq7JNAFmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PF98EFvBs2ndHOOFVEOynoCy4Gm3sd3PGvhzU3RMHWptQPshkEX7ub077gZl1jc5nMzNb935RFL8iLJ2ktOEKyPTkIfK8KNmEwveaNcIJ9V1gqsWK+RRA4mH1MyLKmgtcDb3WJS3NrjJzb/H94ChK5ZHI7pIFlugjPOFLh8vBhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2EE121C000C;
+	Mon, 27 May 2024 12:49:57 +0000 (UTC)
+Message-ID: <187d7992-e2a7-446c-9f53-d0e7bf6a5843@ghiti.fr>
+Date: Mon, 27 May 2024 14:49:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Oj5O7UC7qaae2W5K"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
-X-Cookie: The Moral Majority is neither.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] riscv: drop the use of XIP_OFFSET in
+ kernel_mapping_va_to_pa()
+Content-Language: en-US
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1715286093.git.namcao@linutronix.de>
+ <5439a181cdd7ba185d55457200ddda2d2efa5eb1.1715286093.git.namcao@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <5439a181cdd7ba185d55457200ddda2d2efa5eb1.1715286093.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
 
---Oj5O7UC7qaae2W5K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/05/2024 08:28, Nam Cao wrote:
+> XIP_OFFSET is the hard-coded offset of writable data section within the
+> kernel.
+>
+> By hard-coding this value, the read-only section of the kernel (which is
+> placed before the writable data section) is restricted in size.
+>
+> As a preparation to remove this hard-coded macro XIP_OFFSET entirely,
+> remove the use of XIP_OFFSET in kernel_mapping_va_to_pa(). The macro
+> XIP_OFFSET is used in this case to check if the virtual address is mapped
+> to Flash or to RAM. The same check can be done with kernel_map.xiprom_sz.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+>   arch/riscv/include/asm/page.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+> index 14d0de928f9b..bcd77df15835 100644
+> --- a/arch/riscv/include/asm/page.h
+> +++ b/arch/riscv/include/asm/page.h
+> @@ -159,7 +159,7 @@ phys_addr_t linear_mapping_va_to_pa(unsigned long x);
+>   #ifdef CONFIG_XIP_KERNEL
+>   #define kernel_mapping_va_to_pa(y) ({						\
+>   	unsigned long _y = (unsigned long)(y);					\
+> -	(_y < kernel_map.virt_addr + XIP_OFFSET) ?				\
+> +	(_y < kernel_map.virt_addr + kernel_map.xiprom_sz) ?			\
+>   		(_y - kernel_map.va_kernel_xip_pa_offset) :			\
+>   		(_y - kernel_map.va_kernel_data_pa_offset);			\
+>   	})
 
-On Tue, May 21, 2024 at 12:22:41PM +0200, Ulf Hansson wrote:
-> On Sat, 11 May 2024 at 05:15, Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
 
-> > The BLK-CTL module needs to add delay to wait for a handshake request finished.
-> > For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS clk-en
-> > bit, it is better to add delay in this driver, as the BLK-CTL module doesn't
-> > need to care about how it is powered up.
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-> Sorry for the delay!
+Thanks,
 
-> Applied for fixes, thanks!
+Alex
 
-I see this is in -next but mainline is currently broken for i.MX8
-platforms - could we get it in for -rc2?
-
---Oj5O7UC7qaae2W5K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZUgWUACgkQJNaLcl1U
-h9CSQQf+Mt9Bm1J3SOUbg3E3YrGKe269u9XMPX2/8mjaeJaQ4JKJOwfRqxjeiayG
-zthEIjLn5LqjBsaPDa7CgLfYSxfXOdpUmJ/DkebqpiUag367dyoxubuz8AizQass
-E4jD+KxnfFQR0KIo3WbQsgCJSiEmAVuwZvba8BA/DCLFe4QKXwv0g4j3J0zyqIWO
-PqWekRXAONlr0LF42HC9+dj+Y4hQvxaWCNL95ipKvTKKSJTPo6MIH/5Jt5S7OUQ9
-QqTMceS9gH90lhFt37utufxqQKEGPYR4qeceIlymtl2Ce0GqL/Nzd17VO7kCU13i
-6E9s7rzLOTFU9/eH1N87gf4Z0XnDfw==
-=u0Mu
------END PGP SIGNATURE-----
-
---Oj5O7UC7qaae2W5K--
 
