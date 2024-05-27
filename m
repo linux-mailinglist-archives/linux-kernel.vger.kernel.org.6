@@ -1,156 +1,160 @@
-Return-Path: <linux-kernel+bounces-191058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DF28D0606
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C207C8D0605
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EB929805E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBE61C21524
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7531B73457;
-	Mon, 27 May 2024 15:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHYJIEpH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB461FF8;
-	Mon, 27 May 2024 15:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE30C155CA0;
+	Mon, 27 May 2024 15:20:36 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 7961B155C9C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716823216; cv=none; b=cAeEDnhIyaOqoHRcp1eb5NUtk6mlkhYcsbHIe+KfcESECVcKQ3HjTngNix6MbmBWBLwQFdwebMiFdEnp+3EHa1fPNv6VZgYa+Q2MsNovree1MiUmJ/kMesuw4QSy0LASOmj0sVR4WDrwPrvTjP3kT1E7vF2TxlCPLYlaMM1Cac0=
+	t=1716823236; cv=none; b=U1b5F0YNUjWPp0zT0ix+703/YFXNb/74KNmjEzMg23z25CAE0ZS4a8e+Y5fiaLZYPKQaU/sla1iR8Lj+Dw/z5N3/CA4z3awxwziCAJDamH2AbbQD03iGrstORiebgDP4RDSPODh1xc7oUPFhCIvbRxFA/yeQbpkwbZmGsfsFoOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716823216; c=relaxed/simple;
-	bh=mZR6WGjhBRIUp1DvjTSkTj6PBfk83HjEYD3dZJuI26A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tW2Tt7cUkIC7K4BcG/USjoag/YO8+ssuvLMjwAh+Iflr9eH+BkLX8jro047tS0HM7AUc8lTc+4B6xFyXH0OMTdk9DUtpNv4O2sn2H31eHmuEDBBtSVkFOpPtHuhGxaKqgd5ZUxe4+crJDBSrv/B9x8Ca43Cpfc5SdYvxSUul8n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHYJIEpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 506EEC4AF0D;
-	Mon, 27 May 2024 15:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716823216;
-	bh=mZR6WGjhBRIUp1DvjTSkTj6PBfk83HjEYD3dZJuI26A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=EHYJIEpHL9/OS7TpqIGL2FxGYrTF2vS0D3WQ3bxVTERqeuTY2gbLocbZp1y8ZBKOn
-	 vYdi22cSzu6QTBe5IlKJFeKisgrdWGUBNkXuWublMwSeBh4uo3J3p5R1hAbPeo4QX9
-	 7QZJMTUuST7FXcnnn6Y2JX8Pr/0JJf7zQFtM3IxBKbaxZ44D/uR4y7CkXtWCOuFWsm
-	 MjSMk3Q+5GRGuFRraOODpmnEhm+vFDb2dRlCNpG0WwH//rRBqlfsjCd01HI6ob/dEi
-	 NKS4orJzbrufTybXcN5XljFdD22BmMDN4H+OWj4iz7pQkV+gZ+rJaREVjsea3Ez4Ka
-	 7tHVDek/OXwkA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4361FC27C44;
-	Mon, 27 May 2024 15:20:16 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 27 May 2024 18:19:53 +0300
-Subject: [PATCH v2 5/5] iio: adc: ad7173: Fix sampling frequency setting
+	s=arc-20240116; t=1716823236; c=relaxed/simple;
+	bh=bE0HQufswAxv3T+Fq+LbBkckUaBwmisMgO+tUoa1gKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhcbjzEE2v9mGbvxpk15SfwMHwF3Q8kN7i47P4+jgHRaEc0dxUXtOzmdK7MTcciXOKy06RNtAlZShhftKKMvOkfPFbEfJ3jjr939zW5EFrqlWMgpBgHt5+bXfh7IGDe5pptBwUTBmdEpxXA5g3ESVCE79iNSTFoHr8uMk4caoS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 662485 invoked by uid 1000); 27 May 2024 11:20:33 -0400
+Date: Mon, 27 May 2024 11:20:33 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: Shichao Lai <shichaorai@gmail.com>, gregkh@linuxfoundation.org,
+  Markus.Elfring@web.de, linux-usb@vger.kernel.org,
+  usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
+  xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
+Subject: Re: [PATCH v6] usb-storage: alauda: Check whether the media is
+ initialized
+Message-ID: <5a3057a5-8d20-4fc1-92d7-932c0f2b6c92@rowland.harvard.edu>
+References: <20240526012745.2852061-1-shichaorai@gmail.com>
+ <8176c55f-980c-4dcb-9e17-8c9c948ce216@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-ad7173-fixes-v2-5-8501b66adb1f@analog.com>
-References: <20240527-ad7173-fixes-v2-0-8501b66adb1f@analog.com>
-In-Reply-To: <20240527-ad7173-fixes-v2-0-8501b66adb1f@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dumitru Ceclan <dumitru.ceclan@analog.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716823214; l=2927;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=dDdO/qAAabV229bpLivTobOOzjAvKF9w+JcEWlTFL1A=;
- b=Zw+lJaM6gZoTMI1/Op0Dk7w4FE9AeHkL1i4oQWUL3o5t+R9U1ne7LfEQH4kpwYJexmE2EyO0A
- EPwv+MDC4d5B1cRV7azZWwQgG9JO+LVQadmgeChUvsbiJPvi+bv604o
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8176c55f-980c-4dcb-9e17-8c9c948ce216@suse.com>
 
-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+On Mon, May 27, 2024 at 05:01:13PM +0200, Oliver Neukum wrote:
+> On 26.05.24 03:27, Shichao Lai wrote:
+> 
+> Hi,
+> 
+> 
+> > The member "uzonesize" of struct alauda_info will remain 0
+> > if alauda_init_media() fails, potentially causing divide errors
+> > in alauda_read_data() and alauda_write_lba().
+> 
+> This means that we can reach those functions.
+> 
+> > - Add a member "media_initialized" to struct alauda_info.
+> > - Change a condition in alauda_check_media() to ensure the
+> >    first initialization.
+> > - Add an error check for the return value of alauda_init_media().
+> > 
+> > Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
+> > Reported-by: xingwei lee <xrivendell7@gmail.com>
+> > Reported-by: yue sun <samsun1006219@gmail.com>
+> > Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+> > Signed-off-by: Shichao Lai <shichaorai@gmail.com>
+> > ---
+> > Changes since v5:
+> > - Check the initialization of alauda_check_media()
+> >    which is the root cause.
+> > 
+> >   drivers/usb/storage/alauda.c | 9 ++++++---
+> >   1 file changed, 6 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+> > index 115f05a6201a..40d34cc28344 100644
+> > --- a/drivers/usb/storage/alauda.c
+> > +++ b/drivers/usb/storage/alauda.c
+> > @@ -105,6 +105,8 @@ struct alauda_info {
+> >   	unsigned char sense_key;
+> >   	unsigned long sense_asc;	/* additional sense code */
+> >   	unsigned long sense_ascq;	/* additional sense code qualifier */
+> > +
+> > +	bool media_initialized;
+> >   };
+> >   #define short_pack(lsb,msb) ( ((u16)(lsb)) | ( ((u16)(msb))<<8 ) )
+> > @@ -476,11 +478,12 @@ static int alauda_check_media(struct us_data *us)
+> >   	}
+> >   	/* Check for media change */
+> > -	if (status[0] & 0x08) {
+> > +	if (status[0] & 0x08 || !info->media_initialized) {
+> 
+> If we take this branch due to !info->media_initialized and only due
+> to this condition, alauda_check_media() will return an error
+> 
+> (Quoting the current state):
+>         /* Check for media change */
+>         if (status[0] & 0x08) {
+>                 usb_stor_dbg(us, "Media change detected\n");
+>                 alauda_free_maps(&MEDIA_INFO(us));
+>                 alauda_init_media(us);
+> 
+>                 info->sense_key = UNIT_ATTENTION;
+>                 info->sense_asc = 0x28;
+>                 info->sense_ascq = 0x00;
+>                 return USB_STOR_TRANSPORT_FAILED;
 
-This patch fixes two issues regarding the sampling frequency setting:
--The attribute was set as per device, not per channel. As such, when
- setting the sampling frequency, the configuration was always done for
- the slot 0, and the correct configuration was applied on the next
- channel configuration call by the LRU mechanism.
--The LRU implementation does not take into account external settings of
- the slot registers. When setting the sampling frequency directly to a
- slot register in write_raw(), there is no guarantee that other channels
- were not also using that slot and now incorrectly retain their config
- as live.
+Indeed.  That's what would happen with a properly functioning device, as 
+opposed to a malicious one or a purposely defective fuzzing emulation.  
+The point of the patch is to make the system treat these other things in 
+the same way as it treats normal devices.
 
-Set the sampling frequency attribute as separate in the channel templates.
-Do not set the sampling directly to the slot register in write_raw(),
-just mark the config as not live and let the LRU mechanism handle it.
-As the reg variable is no longer used, remove it.
+> >   		usb_stor_dbg(us, "Media change detected\n");
+> >   		alauda_free_maps(&MEDIA_INFO(us));
+> > -		alauda_init_media(us);
+> > -
+> > +		rc = alauda_init_media(us);
+> > +		if (rc == USB_STOR_TRANSPORT_GOOD)
+> > +			info->media_initialized = true;
+> >   		info->sense_key = UNIT_ATTENTION;
+> >   		info->sense_asc = 0x28;
+> >   		info->sense_ascq = 0x00;
+> 
+> It seems to that we need to evaluate the reasons for taking this branch
+> and the result of alauda_init_media() to compute the correct return
+> of this function.
 
-Fixes: 8eb903272f75 ("iio: adc: ad7173: add AD7173 driver")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7173.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+The return value is what it should be.  With a normal device:
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index e66a137a76be..ebacdacf64b9 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -717,7 +717,7 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
- {
- 	struct ad7173_state *st = iio_priv(indio_dev);
- 	struct ad7173_channel_config *cfg;
--	unsigned int freq, i, reg;
-+	unsigned int freq, i;
- 	int ret;
- 
- 	ret = iio_device_claim_direct_mode(indio_dev);
-@@ -733,16 +733,7 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
- 
- 		cfg = &st->channels[chan->address].cfg;
- 		cfg->odr = i;
--
--		if (!cfg->live)
--			break;
--
--		ret = ad_sd_read_reg(&st->sd, AD7173_REG_FILTER(cfg->cfg_slot), 2, &reg);
--		if (ret)
--			break;
--		reg &= ~AD7173_FILTER_ODR0_MASK;
--		reg |= FIELD_PREP(AD7173_FILTER_ODR0_MASK, i);
--		ret = ad_sd_write_reg(&st->sd, AD7173_REG_FILTER(cfg->cfg_slot), 2, reg);
-+		cfg->live = false;
- 		break;
- 
- 	default:
-@@ -804,7 +795,7 @@ static const struct iio_chan_spec ad7173_channel_template = {
- 	.type = IIO_VOLTAGE,
- 	.indexed = 1,
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
--		BIT(IIO_CHAN_INFO_SCALE),
-+		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.scan_type = {
- 		.sign = 'u',
-@@ -819,7 +810,8 @@ static const struct iio_chan_spec ad7173_temp_iio_channel_template = {
- 	.channel = AD7173_AIN_TEMP_POS,
- 	.channel2 = AD7173_AIN_TEMP_NEG,
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
--		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET),
-+		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET) |
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.scan_type = {
- 		.sign = 'u',
+	We see that the device reports a media change.  We read the
+	characteristics of the new media and report a UNIT ATTENTION
+	error, notifyng the SCSI layer about the new media and forcing
+	it to retry the command.
 
--- 
-2.43.0
+With the defective syzbot emulation and the original code:
 
+	We don't see a report of a media change, so we try to carry
+	out a READ or WRITE operation without knowing any of the
+	media characteristics.  Result: division by zero.
 
+With the defective syzbot emulation and the patched code:
+
+	We don't see a report of a media change, but we do see that
+	the media hasn't been initialized, so we try to read the
+	characteristics of the media.  This fails, so the
+	media_initialized flag remains clear and the command continues 
+	to fail until the SCSI layer gives up.  (Although maybe it would 
+	be better to report a different error to the SCSI layer when
+	this happens; UNIT ATTENTION with 0x28: Media May Have Changed 
+	doesn't seem right.)
+
+Alan Stern
 
