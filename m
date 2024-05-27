@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-191312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D668D09B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:02:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2D28D09BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A166B24B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:02:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD3B2B2241D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825F615F414;
-	Mon, 27 May 2024 18:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8615F403;
+	Mon, 27 May 2024 18:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vkj85MON"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="GlJDVE5q"
+Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2E361FE9;
-	Mon, 27 May 2024 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBFB15F41F;
+	Mon, 27 May 2024 18:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716832955; cv=none; b=vDLoIlly27Y122iRE8mRISwmhFcQuQ/xiN3h+kVohFqHsYCEpaQes4HoJ8BiyjtYpURlm/K6+hOFE2VpI1PQWvF4fIjRyCgfFN08nH9Xl0gFFbLJ7KLFNCHvCjox5JcvEMhsH20NH03IVbn/koj3ZMw0RDpvtL4ovjX8vjJaJf8=
+	t=1716833344; cv=none; b=Ihr65HHIXuYQ2nHJgn2PK6MPJHFdbv5yCygCei01QkXc5XliuPLMK2PXZx/WBAfT4m49mG5O3El1XCEobOJsXgOREjDcONJh17IUhjWpC0Oy6VI9/E9XzEa3eClpESkBI7qIH3wAWi/AWO3mlYZubAkiHfUmdJ1VXoNV62aFM/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716832955; c=relaxed/simple;
-	bh=wa1L9VoauTTKHEa6vX1CApzuEJe1DfRB/MC0GiWaPWc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=M9GTDlR49vbNOeTn6JcQqWOGd+qa0ISMaVZ9pccI5LdNSGUjQ6oK9MwgOftqShHKbI+PhiiIAasFJLWoyV7Wi4Rg0WKC/pxTRVfIqMr5QHYnsaEGnbPBNgrkbiv1i+6ulEnIX9dealAeTvuoNpkBzQ/CIApwth+nDMKcpkDsfQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vkj85MON; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RAlher030409;
-	Mon, 27 May 2024 18:02:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+smRZOrjGfOTzzOqwIb7JZ
-	geZcDu6DdS6uzLgh10RxI=; b=Vkj85MONbnI3KwdC9ctoucvC0gMyVzmHy2Ccp7
-	6ZATlXZXYj7hpQwIl7jvg9aEnezOSFCVWFCykgXS+tN5K5SPcrOt66cpqCgRzLVp
-	+7Rrp3hl4FiEgSeq+fHl1DUCTkzBAO/Whrpn9W1ZeKuZLpPbwEFVHt1C1TkGQQzJ
-	nZIlz/OgofJq1/cXzwgCgn7kRXszWmwpNShEqFG4jkZuYC76zkTdnpnCeE+qbQ9G
-	odNXeBDSykxEwQkZo+jNAnrh05Dnm8LBaWBI/0O2pXffENtbY9TqdY4LyCoE4MqF
-	MgFjd0ENeavY5jRvYYvSkKIOXvzIsGgV6NqGl6Bx1212orTQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yj4dh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 18:02:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RI2UJM009567
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 18:02:30 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 11:02:29 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 27 May 2024 11:02:29 -0700
-Subject: [PATCH] fs: ext4: add missing MODULE_DESCRIPTION()
+	s=arc-20240116; t=1716833344; c=relaxed/simple;
+	bh=9MFvsjCLOxLQUeqYvox4UAHsYgXHt0OZSILjh79XzQw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=vDTQQZUobltKkfAF6+0HEj8ClHHBUZvuSn2O4Su6ayTxk17270vWo/5GiE8Vm0gDmuLjukZ2iX943gI8m27xn9y1aeXjnJ2O795WErlOsYtJftOXQl1GvZYiseQhvtBVIrsbotOxg7pZrAAagbf8bRBw0zTHmoTZVGxnA0+Q5oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=GlJDVE5q; arc=none smtp.client-ip=193.238.174.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mg.ssi.bg (localhost [127.0.0.1])
+	by mg.ssi.bg (Proxmox) with ESMTP id 407A635F2B;
+	Mon, 27 May 2024 20:59:49 +0300 (EEST)
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mg.ssi.bg (Proxmox) with ESMTPS;
+	Mon, 27 May 2024 20:59:48 +0300 (EEST)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id D5E36900442;
+	Mon, 27 May 2024 20:59:44 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
+	t=1716832785; bh=9MFvsjCLOxLQUeqYvox4UAHsYgXHt0OZSILjh79XzQw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References;
+	b=GlJDVE5qpBrmHj8Z7pNUmlXavoobwPcF5d7zxzCGcQWybi8S1fjopwnoyX98Renzd
+	 qWdR0ZtM1u12YRrPg1pIBADW5aDGd3UbL1dWGClQALNXt5ZXlgaYmEEbOHAcrbm3ki
+	 UWj5BGB2BvgMu3SLeh7y2Y5biZdAZp6xqZv7WXzA=
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 44RHxb7L058509;
+	Mon, 27 May 2024 20:59:37 +0300
+Date: Mon, 27 May 2024 20:59:37 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: Ismael Luceno <iluceno@suse.de>
+cc: linux-kernel@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        =?UTF-8?Q?Michal_Kube=C4=8Dek?= <mkubecek@suse.com>,
+        Simon Horman <horms@verge.net.au>, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: Re: [PATCH] ipvs: Avoid unnecessary calls to skb_is_gso_sctp
+In-Reply-To: <20240523165445.24016-1-iluceno@suse.de>
+Message-ID: <16cacbcd-2f4c-1dc1-ecf7-8c081c84c6aa@ssi.bg>
+References: <20240523165445.24016-1-iluceno@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALTKVGYC/x3MQQqDMBBA0avIrDtgg1HSq5QuEjPRgZqWGZWAe
- HfTLt/i/wOUhEnh0RwgtLPyJ1fcbw2Ms88TIcdqMK3pWmsGXCImRSprhy5aE3tnXQo91OArlLj
- 8Z89XdfBKGMTncf4t3py3govXlQTO8wIB9cznewAAAA==
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Z1wj6_RaWP8OBYbPW8270hS66Edy0niW
-X-Proofpoint-ORIG-GUID: Z1wj6_RaWP8OBYbPW8270hS66Edy0niW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_04,2024-05-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=882 spamscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405270148
+Content-Type: multipart/mixed; boundary="-1463811672-159640941-1716832778=:3498"
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- fs/ext4/inode-test.c | 1 +
- 1 file changed, 1 insertion(+)
+---1463811672-159640941-1716832778=:3498
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/fs/ext4/inode-test.c b/fs/ext4/inode-test.c
-index f0c0fd507fbc..749af7ad4e09 100644
---- a/fs/ext4/inode-test.c
-+++ b/fs/ext4/inode-test.c
-@@ -279,4 +279,5 @@ static struct kunit_suite ext4_inode_test_suite = {
- 
- kunit_test_suites(&ext4_inode_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit test of ext4 inode timestamp decoding");
- MODULE_LICENSE("GPL v2");
 
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240527-md-fs-ext4-9d52d6959fb6
+	Hello,
+
+On Thu, 23 May 2024, Ismael Luceno wrote:
+
+> In the context of the SCTP SNAT/DNAT handler, these calls can only
+> return true.
+> 
+> Ref: e10d3ba4d434 ("ipvs: Fix checksumming on GSO of SCTP packets")
+
+	checkpatch.pl prefers to see the "commit" word:
+
+Ref: commit e10d3ba4d434 ("ipvs: Fix checksumming on GSO of SCTP packets")
+
+> Signed-off-by: Ismael Luceno <iluceno@suse.de>
+
+	Looks good to me for nf-next, thanks!
+
+Acked-by: Julian Anastasov <ja@ssi.bg>
+
+> CC: Pablo Neira Ayuso <pablo@netfilter.org>
+> CC: Michal Kubeček <mkubecek@suse.com>
+> CC: Simon Horman <horms@verge.net.au>
+> CC: Julian Anastasov <ja@ssi.bg>
+> CC: lvs-devel@vger.kernel.org
+> CC: netfilter-devel@vger.kernel.org
+> CC: netdev@vger.kernel.org
+> CC: coreteam@netfilter.org
+> ---
+>  net/netfilter/ipvs/ip_vs_proto_sctp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_proto_sctp.c b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+> index 1e689c714127..83e452916403 100644
+> --- a/net/netfilter/ipvs/ip_vs_proto_sctp.c
+> +++ b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+> @@ -126,7 +126,7 @@ sctp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>  	if (sctph->source != cp->vport || payload_csum ||
+>  	    skb->ip_summed == CHECKSUM_PARTIAL) {
+>  		sctph->source = cp->vport;
+> -		if (!skb_is_gso(skb) || !skb_is_gso_sctp(skb))
+> +		if (!skb_is_gso(skb))
+>  			sctp_nat_csum(skb, sctph, sctphoff);
+>  	} else {
+>  		skb->ip_summed = CHECKSUM_UNNECESSARY;
+> @@ -175,7 +175,7 @@ sctp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>  	    (skb->ip_summed == CHECKSUM_PARTIAL &&
+>  	     !(skb_dst(skb)->dev->features & NETIF_F_SCTP_CRC))) {
+>  		sctph->dest = cp->dport;
+> -		if (!skb_is_gso(skb) || !skb_is_gso_sctp(skb))
+> +		if (!skb_is_gso(skb))
+>  			sctp_nat_csum(skb, sctph, sctphoff);
+>  	} else if (skb->ip_summed != CHECKSUM_PARTIAL) {
+>  		skb->ip_summed = CHECKSUM_UNNECESSARY;
+> -- 
+> 2.44.0
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+---1463811672-159640941-1716832778=:3498--
 
 
