@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-191194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3D08D07D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F17B8D07D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE25F1F21A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4FA2A4C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0025E1607A2;
-	Mon, 27 May 2024 16:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BF6169AF3;
+	Mon, 27 May 2024 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dm9QvyP8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="j9SWpHo0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="o2Hw3g8U"
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81CE155C91;
-	Mon, 27 May 2024 16:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFA7155C91;
+	Mon, 27 May 2024 16:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825640; cv=none; b=Tq0cVepPbk3rQ5MaXfbiATs+TVLXyL1Mibhy3CbMnl36dCWiBmf0nqIehQpm1ndckGTE0NSP7K6toWKxJ9y5GnMHi0iFO12xSXTYd7SVEWolW+a9d2kHiZUFdR3g00f8RqeZJFEMBYo450B22fI7bBk5egrVnYER7nA2pm205L4=
+	t=1716825655; cv=none; b=bI8JJ/LrYCqEillvDiKOi5Z+gWMN2fqHVth6bhQH2VuCv+m6iYZ3XzZJ8wyAjNvpD4yin/fPddoZArirZWgV0kHwXWnjMP14wB3XbYbCHBFihHRE2lmBUwB2wUiqnS7hK4yrTrAHp6QFBDc8ieLYU3xKanV6LqlODa3oiZivj4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825640; c=relaxed/simple;
-	bh=9mYmjRBk0P5Q0AObg6ek9rZm4zLIX9lqhsl2xATV73U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qxpe0b2KiW3TAeVDzywjQsUpNd0/sy0cyrJCiHvIolCYupRVsDUbZosqyXiHzxaXnwapt4DjILf0qtlmWI3K0vndMqJ/zsDY4POqxsrdXNiJBgPjoaLxY/mjYfQ4T22ISq4lWukbYQFS8rH9y5Pl6YQp8svIACLV6+BbsSmLQJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dm9QvyP8; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42102c51524so24643595e9.1;
-        Mon, 27 May 2024 09:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716825637; x=1717430437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GnnpD0FzpzbYfq1ngxZSbacY0kBYXWsANl4BUlAOofU=;
-        b=dm9QvyP8eUBJ50JdJhIcaV0rurpq3CkNMH3uVVK/7FK9fiM7MlitSillV4unV1JWbh
-         lG08OsNcqTZB1bFfSol2uBGUDwDS25nC+IkHclg6xabQ76vAQAnw7GEtKcVXTirys2WX
-         hQCSUokD+723uni2SWLCTu5U9mRB8UXERKBK0fueZdQlvExSryqxoGZCLX3JcZAQlUe1
-         eKHBUEIj4qMRyzrdI2ZPQiOPHLqXbPYi9LDAEFQ2LCB69qgfY5upZvX+P1D/vHO90Fti
-         I1kUVVHft2hZOySIzSxTwjJ5EfdLYud7KZ1Wdrevpk9HOoImSrY1NzGJ51ouXfmGqcYj
-         pIng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716825637; x=1717430437;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GnnpD0FzpzbYfq1ngxZSbacY0kBYXWsANl4BUlAOofU=;
-        b=E0u/pb2SqeLgpE7KLaV91/VmN7y2XqC+21JcnSI9AHsjuZods9ORiuQfwShuoxPKb5
-         +WXvk8oyyV8HRwYICNjhcDevmyFkWhEdPSBNGN5D/Eyd0HAw5Qd8B0mzWtojjZrDw3Q6
-         r550HuJy8H4NQ65TfozOwa7U3KhvWA4Sah8IVIXIqNnTD5eYqOb62RJ4pGup+1nMuXiQ
-         CDBHVvOK7facgVFX7y5KHhbtBu5MYEj/a54Z+DKhVX+l0MEJgEbkfZdIhIN5Lly4HhvY
-         qF7nMdffkECDcnBQuFGHMt9oXvynU8EdsM9PRmBqfM+kjH+kgJOdR/7VSKeP1mX9pE+p
-         Jc7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqqaoK8dZr/AMRiMEGoX+hspt9sTSwUADRp0XzHHg+s4Ad8YmeSmXMT5n+AxiCP7CGDRjU6jGKj5FvDvP+eLMFdpfyDqzhHEztwPdD5XTX0jpQW1y0ldxm69cvo4mnvVAb
-X-Gm-Message-State: AOJu0YzCeXYuD+8KA5WM/vhFmv/KXgi6JqWdAIIv35RSChi6nBZECmej
-	RCAHtYdfrMEA+7BEyPqVlOKLsGQxEg7/Q4D3v0NgIGxSAVhrUIhir8xLLA==
-X-Google-Smtp-Source: AGHT+IGtO7+X98RuvpMG2dActz0xWJmVguWHzph/jBeY6LMcG/4HZrsbQNDsc+iimhUZE7+DFXGchw==
-X-Received: by 2002:a05:600c:450a:b0:41a:8035:af77 with SMTP id 5b1f17b1804b1-421015c7259mr107577395e9.12.1716825636675;
-        Mon, 27 May 2024 09:00:36 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089667fbsm113219105e9.9.2024.05.27.09.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 09:00:36 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 27 May 2024 18:00:34 +0200
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH -fixes] bpf: resolve_btfids: Fix integer overflow when
- calling elf_update()
-Message-ID: <ZlSuIu1aFLzAiH_1@krava>
-References: <20240527153137.271933-1-alexghiti@rivosinc.com>
+	s=arc-20240116; t=1716825655; c=relaxed/simple;
+	bh=eu9ERRY2/2tzbNM7/sRA/5PblbcpQRZ7jEKvETm7HZ8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=G5UY9Iwh6e+/cx6XiC1FdwxekhDSMZIXH81fQkCx61iPcouR2qqnZn0EeuCwsL2PZrFotZUn21QosagWvB9aV12ahMkhdM5REu+/kba9flWTpdeEdW+W/TbwbgM+1oMusfULdBeo9jVLiJxuy4rHDDRYk82z0fTAaPvPOxPZ1m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=j9SWpHo0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=o2Hw3g8U; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D87B61800114;
+	Mon, 27 May 2024 12:00:51 -0400 (EDT)
+Received: from imap47 ([10.202.2.97])
+  by compute1.internal (MEProxy); Mon, 27 May 2024 12:00:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1716825651; x=1716912051; bh=JR/OInhF2POmXtVueCyiCaZ7btN5anbT
+	nKy85NzXzCk=; b=j9SWpHo0SpO6FNmBkyvG5sFOOUyDv1WMR2oQv2fxilgGy2Cz
+	4f2tYinh11rf1j9bOmjX3pdmOboFrKCih6tbvrq2nx8TREF8IjTYxCvLHg0i7fCL
+	neay14nDKND8yud/+lr+gNVjXlce+LeLzmvuk1HjVTat/rb0WMfS4AUSiQp4JRB3
+	0ZGLYRMxvwnq7a02yuCZf4+2Xwl0b/8610IU5RboRdwSwNsLeXju7jiUKjyaQzTa
+	1ZEI9dGgQGd5breYjYSKzQ0ieeY+uhusK3sf0n4b5BqyZeR3L/OQfQHjudkBM0tw
+	FtRm5HTCYcadMLMnxvacMsSHVXyK90f/8CwgOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716825651; x=
+	1716912051; bh=JR/OInhF2POmXtVueCyiCaZ7btN5anbTnKy85NzXzCk=; b=o
+	2Hw3g8UFyT1ekXk3sYpkq0UJ38uCCtoe2QUqKq+b/BjKv/S/YEdtZqAMSmnfMcqu
+	V9/R3YUapZebOpEdQhwCC0kQTNVpJxksWt7oGyKBoiEPZx3bPR0baZR598HD0c0G
+	u2ai5oCETQZNJp4Bko6w7nGNslRgJ0P5mJ06YRQHqunEP5Z3Y9O2UOMG7WNucwE8
+	26IJz/d4s/lHSNcB3p5UvLoo0SAa965+C2Dqt9Nm84Z5U5YJ7+HoI0C3Ku4EOxU/
+	GMfMYwwvacfEE6BV12j5dUGQ/xwf2ooyxdrOn/XGZW5GeveB8xmEf+phXyxOOBOu
+	12r7VP1GO3ImTvdDzChUg==
+X-ME-Sender: <xms:Ma5UZmQuy-i7mX6L06GVoRd2VLkTKPolKUU_x3OPFiWYcxr3Bb0jhQ>
+    <xme:Ma5UZry0Vm6vxZne454ZX-BC2ZBU8gfOzfRMU2Y_gto4eCJCP1OFCORWJZpOEnkrc
+    1bjBS1k4hCO2FYOFGg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejgedgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfu
+    vhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtf
+    frrghtthgvrhhnpeevhedthffgffelhedujefgueduudeutdefleevvdetudelhfeihfdv
+    ffelteeuudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvh
+X-ME-Proxy: <xmx:Ma5UZj00_H1qR9w4vNWL9M_6pIXmLsII72HV6qQbzbYRGzhS9hh2uQ>
+    <xmx:Ma5UZiB4cI4yxcQowNiIp_nPK9Ce4JOh7_qmaTNC4sn1-kaZcMRJxw>
+    <xmx:Ma5UZvipk2uz2ScAWr7uJfyrZWyfsnnLzj16Ckdnqp_EZr0QM7YbFA>
+    <xmx:Ma5UZurKGro4gjMlGxRsfZGiZCRm5tPQq5Z9RNQKxorsa-_K4h9Iyg>
+    <xmx:M65UZuPgE5e-z5REWRseR6dWHAIVjDn9O4Ue5F5UMNbZiiMJVTyEPJMe>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 68666A60078; Mon, 27 May 2024 12:00:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527153137.271933-1-alexghiti@rivosinc.com>
+Message-Id: <adedfb49-a66c-4e8c-ac4f-bd137c20ec7a@app.fastmail.com>
+In-Reply-To: <20240527132552.14119-1-ilpo.jarvinen@linux.intel.com>
+References: <20240527132552.14119-1-ilpo.jarvinen@linux.intel.com>
+Date: Mon, 27 May 2024 18:00:48 +0200
+From: "Sven Peter" <sven@svenpeter.dev>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Hector Martin" <marcan@marcan.st>,
+ "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
+ "Marcel Holtmann" <marcel@holtmann.org>,
+ "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] Bluetooth: hci_bcm4377: Convert PCIBIOS_* return codes to
+ errnos
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 05:31:37PM +0200, Alexandre Ghiti wrote:
-> The following error was encoutered in [1]:
-> 
-> FAILED elf_update(WRITE): no error
+Hi,
 
-hi,
-this fix got already in, check this patch:
-  https://patchwork.kernel.org/project/netdevbpf/patch/20240514070931.199694-1-friedrich.vock@gmx.de/
 
-thanks,
-jirka
+On Mon, May 27, 2024, at 15:25, Ilpo J=C3=A4rvinen wrote:
+> bcm4377_init_cfg() uses pci_{read,write}_config_dword() that return
+> PCIBIOS_* codes. The return codes are returned into the calling
+> bcm4377_probe() which directly returns the error which is of incorrect
+> type (a probe should return normal errnos).
 
-> 
-> elf_update() returns the total size of the file which here happens to be
-> a ~2.5GB vmlinux file: this size overflows the integer used to hold the
-> return value of elf_update() and is then interpreted as being negative.
-> 
-> So fix this by using the correct type expected by elf_update() which is
-> off_t.
-> 
-> Fixes: fbbb68de80a4 ("bpf: Add resolve_btfids tool to resolve BTF IDs in ELF object")
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218887 [1]
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  tools/bpf/resolve_btfids/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
-> index d9520cb826b3..af393c7dee1f 100644
-> --- a/tools/bpf/resolve_btfids/main.c
-> +++ b/tools/bpf/resolve_btfids/main.c
-> @@ -728,7 +728,7 @@ static int sets_patch(struct object *obj)
->  
->  static int symbols_patch(struct object *obj)
->  {
-> -	int err;
-> +	off_t err;
->  
->  	if (__symbols_patch(obj, &obj->structs)  ||
->  	    __symbols_patch(obj, &obj->unions)   ||
-> -- 
-> 2.39.2
-> 
+Good catch!
+
+>
+> Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
+> errno before returning it from bcm4377_init_cfg. This conversion is the
+> easiest by adding a label next to return and doing the conversion there
+> once rather than adding pcibios_err_to_errno() into every single return
+> statement.
+
+Given that bcm4377_init_cfg is only called at one place from bcm4377_pro=
+be
+we could also just do something like
+
+	ret =3D bcm4377_init_cfg(bcm4377);
+	if (ret)
+		return pcibios_err_to_errno(ret);
+
+there, but either way is fine with me.
+
+
+Best,
+
+
+Sven
+
 
