@@ -1,157 +1,136 @@
-Return-Path: <linux-kernel+bounces-191081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA188D064A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC9E8D0651
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1411C22229
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2302C1F238C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1230D1E880;
-	Mon, 27 May 2024 15:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D18D529;
+	Mon, 27 May 2024 15:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F9BvcxNL"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TXEariW8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A493717E8E2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3711640B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716824191; cv=none; b=cZrTblb+sTQ/tQJuPOR9KH8ZLElxJK7avnu+9AYJLXMYGY1RYHxxKPq7JPwOXz3HBdfAIA8VqD4fSdVH1OBP6aBiMvFsyNEJnM5WXY7a6Qs5bPU6XTFpr5g0URdjWlKWOxMTHR63YKlwhG6TzoqPvQ+JEIZL+sR/xWUnM5WWH74=
+	t=1716824277; cv=none; b=Le0XDqxfYb/28g5mw+xU9SP0oaYeL9PjkqKYdjm+dS7kwugMFWajHflBcK2O+EWIcdaryaLfmaMKogvC2TtPFiiWj3/PtIi1d9dU/UVkducB6suNQuP4RtTEf+fBb6Kj8dvfACmShY28EcssSeYPd0a1DdEEpNn5O7X3Q4pd7ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716824191; c=relaxed/simple;
-	bh=tL9SRFm+QXGfjo5/k/kK7X/HFQKtJRXpCoX7gFPiXKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1T9FQBLE5ldCBeal3HJFvhUV+tUp5QOghDtBJSdwaDuzKTVJrwZeEiL+wikLotFdG6d+390r6RWFxanvuiOddlXl2m5cdafwZ/MdstOz/8kxSsuPnAZUIfG1aZQESfaBWzM5A4exEvZSuO64tbQkEmY9lFf8DJRUJafKGpeqsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F9BvcxNL; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4c043d2f6so35095ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716824187; x=1717428987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=;
-        b=F9BvcxNLHbFCL5XfHLnGTxQs/kbGpALZnSl2DYjNA/21xx0FBmmySwAJN/5dtkPhZV
-         IwwKjcqRB9pV10OOLL6wHdu5znp/6PE86Vas57cBS/wuAbBw2UZndM8t2ducr7YYWm6Y
-         qK9hMREyXKjeBhZWSjTI2InCbzAtbz3PLAwXmX2LUbmD27CV84Ld62XttJh+nGQRapAs
-         b070pptuUluTj7BrbyTY7tkobVJKFo/9qxvErZHnOMlm8wItNpZuLUNC8RDdtzThAB2N
-         KMJsW+YN/2uWpInjYvnpvDqSoW6Kn8DylQoMu4CqVNrueusLUWYFZNSZk1pdxY03zMc1
-         k2IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716824187; x=1717428987;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=;
-        b=CPhMhbHOK9YffoFiKDtV0Khpu+NfyscXGdbauR7ikW2SVhyGiJpw4+uaH2oTdxcQJp
-         8n4PLLZijcpA7uhY6eSngYbNg9W0N8GVCb0k+Es5NqFIDwRGN5hQ53IWyAuavf8MxoPQ
-         gyf/CMAUI2l4mRd6ebTUPSgYTPvl+YPTsWJWI6RVFTvYrWMlXaDm72KLOUADWEQhAvtZ
-         wIQt3RivAEe6aaeIkaFXSlkvu3/TkmFqvry2kOWIMCJuavmmBTFM+6Jm8zt1wOhuvRDX
-         KeT9zlF1L0CSx7G6Eu0CQqpNUPji9HMjieOGHhgPLFFXAc1685CBAslFxHZSSIx3CZi6
-         rypw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMOG1hqfcAj8O+U8OYJhDCzufVhCbdgAbARsyGquOUCPGzb4/qlUWfi1GmEWjyNPXVWjcnOAIwkpkfqK1b0Rr2kWyMri0yOsSYAgLj
-X-Gm-Message-State: AOJu0YzKpYHq7uA5B37LhUsrmqqOlmSrPE30ly9kbznTlXurSaloSBil
-	CUW6yqJdNri6W8/hPsAPPODhw+jVKov//aV6VQLQxPVoTmgOmj9khDGcyWUQ8lk=
-X-Google-Smtp-Source: AGHT+IHTxIPNAK3HsNoC9uItVsCnZCK8MD3ThRKVvVNi4TwdQa2YRFJqyU+MaLPmqStXfF6Dl3dotQ==
-X-Received: by 2002:a17:902:e810:b0:1f2:fd9a:dbf8 with SMTP id d9443c01a7336-1f449907a09mr116945035ad.5.1716824186842;
-        Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c970058sm64280955ad.121.2024.05.27.08.36.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Message-ID: <c66ca795-da93-437c-bb11-718801f8114a@kernel.dk>
-Date: Mon, 27 May 2024 09:36:24 -0600
+	s=arc-20240116; t=1716824277; c=relaxed/simple;
+	bh=1FHv8VqjTK+OQiuHJUmQHzqF2Yzw88THTiswU3Z+Hu4=;
+	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=biBbE/6ko7o9HBKUVy4DdByLhHXdNP4IpdNWDPgqEEPVI2JVKWQUKirQP294CuKeb+lJF/AEkadBro2dOH23uk1vITadhnEXkn0dQeZCA+5/pmAJ9v+ymmIzPypO21nubjxFyeYH9SqCqBnjPG5foeoAe3zO9NaTljbWzpmzzWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TXEariW8; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716824275; x=1748360275;
+  h=date:from:cc:subject:message-id:mime-version;
+  bh=1FHv8VqjTK+OQiuHJUmQHzqF2Yzw88THTiswU3Z+Hu4=;
+  b=TXEariW821Nl+Xjwddnwqka/zLcneG7X0rxIX93uz2VtgXZ68ymdg5Ly
+   xHC3A1Yz3QvYfKDiNe+hw0K5iBTivoTdBAz9JDKEfoJtBb2oTxrUAGXDM
+   cV01mvKzNSdBuU+dtPd8A/9VmX7fsbBWJsui53jv/tAMsEUlDoUvck9Cf
+   cRCByHbpps4OGnb4oSrUJGiwTv8TpMeBC9v9bcDRZliclXAtDKVcq9HdZ
+   E/Tgk1ZS2okNlXxk0XuoWq1/afdH8k9VtbHUtLkdzpq/N6AEyhLMJMdSl
+   U08s3U+5fFPKkZbpFdaVqaOZMU8WSAYMisu6JFh1rwocc0n1dbmSMG0k4
+   A==;
+X-CSE-ConnectionGUID: jdNERxuESV6ym2pddcEWFg==
+X-CSE-MsgGUID: IgrqxyisTy2jLnlF4WfEhg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="16103320"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="16103320"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 08:37:55 -0700
+X-CSE-ConnectionGUID: rnhvKdY+RAGcX+08y8ASGg==
+X-CSE-MsgGUID: AhzGe1mfRVyhOixuFB+PTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="39199054"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 27 May 2024 08:37:53 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBcQ3-000An9-1w;
+	Mon, 27 May 2024 15:37:51 +0000
+Date: Mon, 27 May 2024 23:37:17 +0800
+From: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: drivers/md/dm-vdo/int-map.c:85: error: Cannot parse struct or union!
+Message-ID: <202405272334.ExNaB8F6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io
- with IOCB_NOWAIT
-To: Liu Wei <liuwei09@cestc.cn>
-Cc: akpm@linux-foundation.org, hch@lst.de, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- rgoldwyn@suse.com, willy@infradead.org
-References: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
- <20240527100908.49913-1-liuwei09@cestc.cn>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240527100908.49913-1-liuwei09@cestc.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 5/27/24 4:09 AM, Liu Wei wrote:
-> I am a newer, thanks for the reminder.
-> 
->>
->>>> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
->>>> process context will not be blocked.
->>>>
->>>> However, if the device already has page cache in memory, EAGAIN will be
->>>> returned. And even when trying to reissue the AIO with direct I/O and
->>>> IOCB_NOWAIT again, we consistently receive EAGAIN.
->>
->> -EAGAIN doesn't mean "just try again and it'll work".
->>
->>>> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
->>>> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
->>>> the same time.
->>>>
->>>> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
->>>> ---
->>>>  mm/filemap.c | 9 ++++++++-
->>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 30de18c4fd28..1852a00caf31 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
->>>>  
->>>>  	if (iocb->ki_flags & IOCB_NOWAIT) {
->>>>  		/* we could block if there are any pages in the range */
->>>> -		if (filemap_range_has_page(mapping, pos, end))
->>>> +		if (filemap_range_has_page(mapping, pos, end)) {
->>>> +			if (mapping_needs_writeback(mapping)) {
->>>> +				__filemap_fdatawrite_range(mapping,
->>>> +						pos, end, WB_SYNC_NONE);
->>>> +			}
->>
->> I don't think WB_SYNC_NONE tells it not to block, it just says not to
->> wait for it... So this won't work as-is.
-> 
-> Yes, but I think an asynchronous writex-back is better than simply
-> return EAGAIN. By using __filemap_fdatawrite_range to trigger a
-> writeback, subsequent retries may have a higher chance of success. 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+commit: 0d21364c6e8dc1f62c34bbc49d49935c8b01844c Merge drm/drm-next into drm-misc-next
+date:   8 weeks ago
+config: sparc64-allyesconfig (https://download.01.org/0day-ci/archive/20240527/202405272334.ExNaB8F6-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240527/202405272334.ExNaB8F6-lkp@intel.com/reproduce)
 
-And what's the application supposed to do, just hammer on the same
-IOCB_NOWAIT submission until it then succeeds? The only way this can
-reasonably work for that would be if yo can do:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405272334.ExNaB8F6-lkp@intel.com/
 
-1) Issue IOCB_NOWAIT IO
-2) Get -EAGAIN
-3) Sync kick off writeback, wait for it to be done
-4) Issue IOCB_NOWAIT IO again
-5) Success
+All errors (new ones prefixed by >>):
 
-If you just kick it off, then you'd repeat steps 1..2 ad nauseam until
-it works out, not tenable.
+>> drivers/md/dm-vdo/int-map.c:85: error: Cannot parse struct or union!
+   drivers/md/dm-vdo/int-map.c:103: warning: Function parameter or struct member 'bucket_count' not described in 'int_map'
+   drivers/md/dm-vdo/int-map.c:328: warning: Function parameter or struct member '__always_unused' not described in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:328: warning: Excess function parameter 'map' description in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:459: warning: Function parameter or struct member '__always_unused' not described in 'move_empty_bucket'
+   drivers/md/dm-vdo/int-map.c:459: warning: Excess function parameter 'map' description in 'move_empty_bucket'
 
-And this doesn't even include the other point I mentioned, which is
-__filemap_fdatawrite_range() IO issue blocking in the first place.
 
-So no, NAK on this patch.
+vim +85 drivers/md/dm-vdo/int-map.c
+
+cc46b9554b3f6d Matthew Sakai 2023-11-16  64  
+cc46b9554b3f6d Matthew Sakai 2023-11-16  65  /**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  66   * struct bucket - hash bucket
+cc46b9554b3f6d Matthew Sakai 2023-11-16  67   *
+cc46b9554b3f6d Matthew Sakai 2023-11-16  68   * Buckets are packed together to reduce memory usage and improve cache efficiency. It would be
+cc46b9554b3f6d Matthew Sakai 2023-11-16  69   * tempting to encode the hop offsets separately and maintain alignment of key/value pairs, but
+cc46b9554b3f6d Matthew Sakai 2023-11-16  70   * it's crucial to keep the hop fields near the buckets that they use them so they'll tend to share
+cc46b9554b3f6d Matthew Sakai 2023-11-16  71   * cache lines.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  72   */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  73  struct __packed bucket {
+cc46b9554b3f6d Matthew Sakai 2023-11-16  74  	/**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  75  	 * @first_hop: The biased offset of the first entry in the hop list of the neighborhood
+cc46b9554b3f6d Matthew Sakai 2023-11-16  76  	 *             that hashes to this bucket.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  77  	 */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  78  	u8 first_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  79  	/** @next_hop: The biased offset of the next bucket in the hop list. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  80  	u8 next_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  81  	/** @key: The key stored in this bucket. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  82  	u64 key;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  83  	/** @value: The value stored in this bucket (NULL if empty). */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  84  	void *value;
+cc46b9554b3f6d Matthew Sakai 2023-11-16 @85  };
+cc46b9554b3f6d Matthew Sakai 2023-11-16  86  
+
+:::::: The code at line 85 was first introduced by commit
+:::::: cc46b9554b3f6d2f09b1111386b2706e5b4f56c8 dm vdo: add basic hash map data structures
+
+:::::: TO: Matthew Sakai <msakai@redhat.com>
+:::::: CC: Mike Snitzer <snitzer@kernel.org>
 
 -- 
-Jens Axboe
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
