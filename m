@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-190658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C0D8D0102
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93378D0106
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D681F23CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AB01C21F11
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685A15E5CC;
-	Mon, 27 May 2024 13:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB5515E5CC;
+	Mon, 27 May 2024 13:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KX2FzKAK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V80RB05h";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jtOYQRC/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706111E868
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AFA1E868;
+	Mon, 27 May 2024 13:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815614; cv=none; b=sXU+AVaoDrSAIb2Oy/YMKxfImhP06MWrPJEq3Q5tEqbyrmqvc1V/4xrYie3m+uYvAPbSHGEK3iMiCuXg2cv5r06I8Rl9UuXjnYB5318D/cOcds3G/NYgwXjddDsVLwAIbMnwb6FYoSkw4D0m7qrpWQL8QFCDrJdJ27/L9fxo3f4=
+	t=1716815670; cv=none; b=oeeYnr/dK/ovKG2DRaZH6FxWBuyuP8gL9nYv0q1VQpC03jo9tRowbTU1DnUQd3hCMJlSpilGm3miviGB1wfJy0BL63rjG6/DN+BlTibovXOsyM71ivLh6jP73LprugU2G9uPQq1Qsz6VIrCX+E8ldLl1mYzQImulOzCVEwsmlU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815614; c=relaxed/simple;
-	bh=3DuU6HAXXUEpFj1/CbH0w2NMI18Jg5p4m14poKJ7EVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9PTR4eAsFMFgxwT8TdI0H26E2NZIMaHKUNYCHXFzKvO54XCRbfgBipLCuG1p7IDXBbyUjgW2i/oNAJBC4NP1BwxNGJP7eQ28641SSZ+2bBh0579W5Iw99CDqqz0eFSgze16V5X0k8c+CsLE4828Bza5ScQOxQRYpbbA8MSK+Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KX2FzKAK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716815610;
+	s=arc-20240116; t=1716815670; c=relaxed/simple;
+	bh=WBeKzcT7QA+/fnXDXCYwSNn0meQBV2vn6l/XT5ZZpA0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=I3D5BREaN2ZR9UfpEtbGoFfcuBTtJXI0Y6jST5HmWywtmbKC+7KIaeQHP+JDevmSLB3n5TFLSdeDvPDPFbeFk+9cvB3BNlO3nsev9buDuocryw2EWyL4Pq6KQtZdEb6CoiiACPZEGM+bRG3yYr7VeZ0jvzE4czib9PPezW6fTC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V80RB05h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jtOYQRC/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716815667;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ug/+QrBJ1fn4jt7nmsB6WVOTnZkvl361r4prquvMN4U=;
-	b=KX2FzKAKCIppUMn8sHNK37jv0U6mCYBK3emN5QtgkbVv6uZygVBlu2LgV4/JLZnP8BwwCt
-	x8ZHYBKw+BIow3pR0XlBfECvsdgAFH6NohyLam+ROAng5KMGqRb/aEq6ASxUTjmy+IKro4
-	oRPTlSV0aWhmT4NynXDuJq1yNpa3P0E=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-UT4dNCUTOGixSJohHuKbXg-1; Mon, 27 May 2024 09:13:29 -0400
-X-MC-Unique: UT4dNCUTOGixSJohHuKbXg-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ab9e08d5f9so51732676d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:13:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716815608; x=1717420408;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ug/+QrBJ1fn4jt7nmsB6WVOTnZkvl361r4prquvMN4U=;
-        b=LT/qVoTYl7p7yd5xn32D60jGJ1qCXXVVdms2LuiOJA5wJN8po/5chS8NuskPa7KKcW
-         wD/k1l8w+BRD8UEmXqQk1s2YGWXGWqKiReOlxVZ0STL262on/6LCSHmaevV/rhZz6Qdx
-         DBmLJrqOE/OoEGEUfQbUs+8TLY7HRGN1p/5B/wqHqK9UlCRSG+QUsKPJIlTCyeExo5Qu
-         mw0LYvi4MbPX0tAaUDr0YjQov39DxB0+o5GHEtw86oe0zCsWwtboLNLZk3d5pFyxSUGp
-         H6LFS8mf4gimL3W9o3DzWbPx3k9LT6qhKJEXQ6AIBiMrEqfEJv032dYcsEUorGl0tRFD
-         2xlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCKsLXWw25+Y+QXAEPiZKzyvNXTTiS9cFFU6WIJVpKPmXPQn+YBoQmuWvQ/Lg6pK0vyhUWtfv5EREoOGCvp/T0REcD9D7yPoJAUyTT
-X-Gm-Message-State: AOJu0YzPuYCU1e+dk7PZnVLtKy0vFxpEgBSWLIhmaccZZAqqWJ2VXyM4
-	XS7IrttyFBOq8pXpSQcsD7Kd177WmMsbY87TOhXEKyxXvvJOA9fulmEzyv3ALBL9PHvQBLVBIaA
-	uH57ooSKLqIEy7o1e6SMjXe84MhijV7AlENAPIrDZyuao+qIjC8Emxc3hgVj7iw==
-X-Received: by 2002:a05:6214:76b:b0:6ab:7ab4:f309 with SMTP id 6a1803df08f44-6ab8f327f9fmr190114686d6.1.1716815608539;
-        Mon, 27 May 2024 06:13:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFvp62B55LpZG06oDjDs9C9JeEguHSawvpfFEUQJhPnKmdJaNhFrrUX9ZGDUsNJSeBscO1kA==
-X-Received: by 2002:a05:6214:76b:b0:6ab:7ab4:f309 with SMTP id 6a1803df08f44-6ab8f327f9fmr190114306d6.1.1716815608133;
-        Mon, 27 May 2024 06:13:28 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:833c:88f3:25a9:d641])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad742b3663sm19273786d6.60.2024.05.27.06.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 06:13:27 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
-	Petr Tesarik <petr@tesarici.cz>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] Documentation/core-api: correct reference to SWIOTLB_DYNAMIC
-Date: Mon, 27 May 2024 15:13:14 +0200
-Message-ID: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.1
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=xxElKbcPssOZBHxdC0FuLluzRnaZ3UGv1xVFtotYrBE=;
+	b=V80RB05hjUNqEEzn6JhW7xc7+8gSWxKv9i9A9HJU9ZySeQri124ZZBoGVaL5RmBogjaQpX
+	65WjB7+UJaK/dr75fpkQcuONFVZ2+nI3NvJ+2WAk392GLt5zHVJxxkHijMtSSO5otac4bZ
+	AMME10WCzK0NxoBR5B+JYQjbkGgGkGQTvuWGQg8JcB1BFAavHvpi4oDHjQTdvLRPLeR7HE
+	Z4SJMgpdew+DUwSXA0zKdrEkAedqv1t769Eyn1qpbtnjdD/AIuZeUSN9w5kGtSCntDZhU2
+	RXDMuzu0POfT9+BnKv/rZbr40fCcJe+bxW4iMkefgKwrFfKarT+x712+pkPb7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716815667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=xxElKbcPssOZBHxdC0FuLluzRnaZ3UGv1xVFtotYrBE=;
+	b=jtOYQRC/13Ol3nCO2Koaj9xvH+YrhVuRSyKPNHuyHVm4SwMHpTsChefXpEqQwH70mSw6GH
+	WKEOhzVOOfMh33DA==
+To: Peter Schneider <pschneider1968@googlemail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
+In-Reply-To: <fd3f73dc-a86f-4bcf-9c60-43556a21eb42@googlemail.com>
+Date: Mon, 27 May 2024 15:14:26 +0200
+Message-ID: <877cffcs7h.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Mon, May 27 2024 at 09:29, Peter Schneider wrote:
+> This is coming from an older server machine: 2-socket Ivy Bridge Xeon E5-2697 v2 (24C/48T) 
+> in an Asus Z9PE-D16/2L motherboard (Intel C-602A chipset); BIOS patched to the latest 
+> available from Asus. All memory slots occupied, so 256 GB RAM in total.
+>
+>  From a "good boot", e.g. kernel 6.8.11, dmesg output looks like this:
+>
+> [    1.823797] smpboot: x86: Booting SMP configuration:
+> [    1.823799] .... node  #0, CPUs:        #1  #2  #3  #4  #5  #6  #7  #8  #9 #10 #11
+> [    1.827514] .... node  #1, CPUs:   #12 #13 #14 #15 #16 #17 #18 #19 #20 #21 #22 #23
+> [    0.011462] smpboot: CPU 12 Converting physical 0 to logical die 1
+>
+> [    1.875532] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
+> [    1.882453] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
+> [    1.887532] MDS CPU bug present and SMT on, data leak possible. See 
+> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.
+> [    1.933640] smp: Brought up 2 nodes, 48 CPUs
+> [    1.933640] smpboot: Max logical packages: 2
+> [    1.933640] smpboot: Total of 48 processors activated (259199.61 BogoMIPS)
+>
+>
+>  From a "bad" boot, e.g. kernel 6.9.2, dmesg output has these messages in it:
+>
+> [    1.785937] smpboot: x86: Booting SMP configuration:
+> [    1.785939] .... node  #0, CPUs:        #4
+> [    1.786215] .... node  #1, CPUs:   #12 #16
 
-Commit c93f261dfc39 ("Documentation/core-api: add swiotlb documentation")
-accidentally refers to CONFIG_DYNAMIC_SWIOTLB in one place, while the
-config is actually called CONFIG_SWIOTLB_DYNAMIC.
+Yuck. That does not make any sense.
 
-Correct the reference to the intended config option.
+> [    1.797547] .... node  #0, CPUs:    #1  #2  #3  #5  #6  #7  #8  #9 #10 #11
+> [    1.801858] .... node  #1, CPUs:   #13 #14 #15 #17 #18 #19 #20 #21 #22 #23
+> [    1.804687] .... node  #0, CPUs:   #24 #25 #26 #27 #28 #29 #30 #31 #32 #33 #34 #35
+> [    1.810728] .... node  #1, CPUs:   #36 #37 #38 #39 #40 #41 #42 #43 #44 #45 #46 #47
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- Documentation/core-api/swiotlb.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> However the machine boots, and except from these strange messages, I cannot detect any 
+> other abnormal behaviour. It is running ~15 QEMU/KVM virtual machines just fine. Because 
+> these messages look unusual and a bit scary though, I have bisected the issue, to be able 
+> to report it here. The first bad commit I found is this one:
 
-diff --git a/Documentation/core-api/swiotlb.rst b/Documentation/core-api/swiotlb.rst
-index 5ad2c9ca85bc..cf06bae44ff8 100644
---- a/Documentation/core-api/swiotlb.rst
-+++ b/Documentation/core-api/swiotlb.rst
-@@ -192,7 +192,7 @@ alignment larger than PAGE_SIZE.
- 
- Dynamic swiotlb
- ---------------
--When CONFIG_DYNAMIC_SWIOTLB is enabled, swiotlb can do on-demand expansion of
-+When CONFIG_SWIOTLB_DYNAMIC is enabled, swiotlb can do on-demand expansion of
- the amount of memory available for allocation as bounce buffers. If a bounce
- buffer request fails due to lack of available space, an asynchronous background
- task is kicked off to allocate memory from general system memory and turn it
--- 
-2.45.1
+Ok. So as the machine is booting, can you please provide the output of:
 
+ cat /sys/kernel/debug/x86/topo/cpus/*
+
+on the 6.9 kernel and 
+
+ cat /proc/cpuinfo
+
+for both 6.8 and 6.9?
+
+Thanks,
+
+        tglx
 
