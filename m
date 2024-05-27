@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-190020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4248CF872
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F758CF876
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60EA52832D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2A928376E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1247D512;
-	Mon, 27 May 2024 04:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E640D518;
+	Mon, 27 May 2024 04:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EFeOnbg2"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CjRSnw3K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BDCC129
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA68FBEF;
+	Mon, 27 May 2024 04:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716784646; cv=none; b=NQA6nc3lQczwm4GalxMSiQy/bIO03I8Hd2AzHbnbYvi+XhlLgwfZxwyr/9Z0eJ3PGunmGIYGhqIEZv+NmlALJHDYnaKiCtNmgvpnY+qfqzx9WzjnJKkVRfSx8GpKpT+xKM6nPUJ66duicFrPJqd8lNGlRdma2GFtrQrAN4ZVRrI=
+	t=1716784673; cv=none; b=QbW+gyrZrHYFCMCmVIV/7WB2Q652TCZhe9ZvM08p6lQHv175pehM/PY4yCxxDyhH0yCgGmUWy1LEdfXmcTZCuCtQAtN3h4QD6yrRTmoddAiz9+x4qJ5uTgtCa9BQerfxss4j38IO2NYSwH0IM2I/44o1f5IjBzBuxD6hlaq1CBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716784646; c=relaxed/simple;
-	bh=7+pDpRVpWCQHFQ4LB1/gB/N6+V++iFlL7uGocdiOfEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UAgxEjnIHcqaV3Uoq+CBiTSTNwulcFlMJFL9FOFpe0r7sYqHxkcyx26GxOpzU6ebCTjoBFXci1EUWURNmDYmT17V9EUX4AQFZ6rsDNrMlzujeevGH9W6DukbqhtLyvHoDuPhnDgSsbzzjJQzehwRw9tUFB1ZbLibFWuXOt1z4mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EFeOnbg2; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: david@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716784641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQyD8u11NrOanpKOcWnKj72z9MQcFgIv9avWEkfCemo=;
-	b=EFeOnbg2XZXpvVldwuyvIr1GkjGfEao2bYAagv7mmzP6845rsFBQU0mi4apVb1cJ1d+quj
-	++n6mC1Fedu86yjZb3A8McObuIUxU41Lj8Rj8x5JUGEORDtVRU5EX/3XfQwJCnaOpJjNCt
-	Fk5a38k9L+jkIUbDHKU4mwGcM29pBRU=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: aarcange@redhat.com
-X-Envelope-To: hughd@google.com
-X-Envelope-To: shr@devkernel.io
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-Message-ID: <36d4f3a6-c426-4455-b5be-2ab503d380ad@linux.dev>
-Date: Mon, 27 May 2024 12:36:49 +0800
+	s=arc-20240116; t=1716784673; c=relaxed/simple;
+	bh=EHD2w19epTrPQq3vs3G/tNDyHmNlskVxhDpFLuv7B+o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=TNxYV+y0exRQhSuAFOS3NYkYHCXay+v7VmXbpwRmOQoti2DcQk4Esg2shoWZpOKwuW3J8cCChFK2R+xl0Ve0QDDF8QIVcb1wAfAeQvZYauTQihC1zJlRqnIDo3yieU2MkLo5YvAfM4VE+TXDC7OZ+emkIukuZYTlWcJiYTSS4Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CjRSnw3K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QNo1KU028483;
+	Mon, 27 May 2024 04:37:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Jo+UMF3sWeB2kB1ai6K+FjyeSvcvmLSN/FfrBDQ51OM=; b=CjRSnw3KfKd6ZE8N
+	bC5f2O4581r6KLBwma4Oyh546tsct2ggUUbKudah79zYNney4j6BtvfngXanvaIY
+	le4Wm9GxEJ8gILJrTrTMC9ZAVfzzAmShLS4vUXnUWtC3jISrFlYonJp91+Zu2cPK
+	fvn7mE3qL8BGvkZByRaPJgV+ApsH41fvpx4L11367OBoSPv53k6s07rCLbJuhKE2
+	n9SA/7FAK8xSxBHh/azfnyiURD5XG5k+Yi6R4dXr8pS2xt6BnfT5Ypuc8UZcnCQ+
+	hPiyD8LYJ0jOVu3JSf+hUADoOaPH7B6cYNNMzXaOWi2pG0l6QZt82jrPnqYwWahy
+	OJhXiQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k2kku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 04:37:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44R4beFM010202
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 04:37:40 GMT
+Received: from [10.152.207.84] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
+ 2024 21:37:35 -0700
+Message-ID: <aeb32037-4e06-4b6a-8b4d-7b8ef0a0ad16@quicinc.com>
+Date: Mon, 27 May 2024 10:07:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] mm/ksm: refactor out try_to_merge_with_zero_page()
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, aarcange@redhat.com,
- hughd@google.com, shr@devkernel.io
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240524-b4-ksm-scan-optimize-v1-0-053b31bd7ab4@linux.dev>
- <20240524-b4-ksm-scan-optimize-v1-1-053b31bd7ab4@linux.dev>
- <18259f7c-d57e-4504-91ec-90b7c87aad01@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Add support for the IPQ5321 SoC
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        Mukesh Ojha
+	<quic_mojha@quicinc.com>
+References: <20240325-ipq5321-sku-support-v2-0-f30ce244732f@quicinc.com>
+ <12e5708a-ea6e-4798-a487-f2465c848278@quicinc.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <18259f7c-d57e-4504-91ec-90b7c87aad01@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <12e5708a-ea6e-4798-a487-f2465c848278@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gmELGD-OxZ65chYRS6wUeLh0mE56IFwI
+X-Proofpoint-GUID: gmELGD-OxZ65chYRS6wUeLh0mE56IFwI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405270035
 
-On 2024/5/24 23:12, David Hildenbrand wrote:
-> On 24.05.24 10:56, Chengming Zhou wrote:
->> In preparation for later changes, refactor out a new function called
->> try_to_merge_with_zero_page(), which tries to merge with zero page.
+
+
+On 4/6/2024 8:18 PM, Kathiravan Thirumoorthy wrote:
+> 
+> 
+> On 3/25/2024 9:19 PM, Kathiravan Thirumoorthy wrote:
+>> IPQ5321 SoC belong to IPQ5332 family. Add the SoC ID and the cpufreq
+>> support. Maximum cpufreq for IPQ5321 is 1.1GHZ, which is determined
+>> based on the eFuse.
 >>
->> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+>> Viresh is okay to merge the cpufreq change via qcom tree[1] and provided
+>> his Ack.
+>>
+>> [1]
+>> https://lore.kernel.org/linux-arm-msm/20240306053200.6iwrviltwt3pnfnt@vireshk-i7/
+> 
+> 
+> Gentle Reminder...
+
+
+Bjorn,
+
+Can this series picked up for v6.11?
+
+I applied this series on top of qcom/for-next and it's applying cleanly. 
+Do let me know if I have to send V3 in any case.
+
+Thanks,
+Kathiravan.
+
+
+> 
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 >> ---
->>   mm/ksm.c | 67 +++++++++++++++++++++++++++++++++++-----------------------------
->>   1 file changed, 37 insertions(+), 30 deletions(-)
+>> Changes in v2:
+>>     - rebase on next-20240325
+>>     - pick up the tags
+>>     - Link to v1:
+>>       
+>> https://lore.kernel.org/linux-arm-msm/20240228-ipq5321-sku-support-v1-0-14e4d4715f4b@quicinc.com/
 >>
->> diff --git a/mm/ksm.c b/mm/ksm.c
->> index 4dc707d175fa..cbd4ba7ea974 100644
->> --- a/mm/ksm.c
->> +++ b/mm/ksm.c
->> @@ -1531,6 +1531,41 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
->>       return err;
->>   }
->>   +/* This function returns 0 if the pages were merged, -EFAULT otherwise. */
-> 
-> No it doesn't. Check the "err = 0" case.
-> 
-
-Right, how about this: This function returns 0 if the page were merged or the vma
-is out of date, which means we don't need to continue, -EFAULT otherwise.
+>> ---
+>> Kathiravan Thirumoorthy (3):
+>>        dt-bindings: arm: qcom,ids: Add SoC ID for IPQ5321
+>>        soc: qcom: socinfo: Add SoC ID for IPQ5321
+>>        cpufreq: qcom-nvmem: add support for IPQ5321
+>>
+>>   drivers/cpufreq/qcom-cpufreq-nvmem.c | 1 +
+>>   drivers/soc/qcom/socinfo.c           | 1 +
+>>   include/dt-bindings/arm/qcom,ids.h   | 1 +
+>>   3 files changed, 3 insertions(+)
+>> ---
+>> base-commit: 1fdad13606e104ff103ca19d2d660830cb36d43e
+>> change-id: 20240228-ipq5321-sku-support-bd07056d5e01
+>>
+>> Best regards,
 
