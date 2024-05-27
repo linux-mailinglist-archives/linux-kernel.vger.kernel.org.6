@@ -1,121 +1,177 @@
-Return-Path: <linux-kernel+bounces-190199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD398CFB16
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4768CFB19
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07778281884
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB4C1F2155A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFA33FB9F;
-	Mon, 27 May 2024 08:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6654C44C9E;
+	Mon, 27 May 2024 08:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/2UJLHD"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kSPol2IA"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7128D3BBE1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246BC3EA72
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716797664; cv=none; b=N0P10PyLqEKLP87GFPSe0nAtLmQtqC3iMryBWY/b4ytcGlxLUsIORdGQgRSUEXlsb/WtvGN/+MNnYqLHAZedenCAg6CT172P2Yy7MbH8zPFZ4YazYZWR3oGxuLBhRcI4P4X6U5yY4CInL+GzQfpTJIu9aJoCtnxnjRfwLj/cZto=
+	t=1716797689; cv=none; b=OrD7pD2azpObrvOiMgLc0otnll0pDsvb5D+a64Yghv9P/PaiYpRMDH8NAytymvP3eyBkFG9wQ+Ic0iFmmEdPtkh1GMuDp4bRFTH4FfgdFK9Omrf73qnScOkYtdCMz4mM04V5UKFtFXKPTriPQcd6Rf+XQzDdx+s9RxHw63qALwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716797664; c=relaxed/simple;
-	bh=nwYaraCxggBDKnVnYzLQQW0XR3XO/+s4UMrvkMG2ZYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YB9vERkcud0xwkCs7tyD/3cga2+TNA70D+JuiIpFt2+SHhQBQ8yyf3RB3Wh42UOBmq9Eh6U8qWGpvOoz4TWN2IIAHZC2SapfUis+nyxH3SXh/GE/NdXJDIior6RJHiNqZAascbF+TDNXhb8rcFncJeAxwl3LUWsQEqSABoszTEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K/2UJLHD; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5788eaf5366so1709299a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:14:22 -0700 (PDT)
+	s=arc-20240116; t=1716797689; c=relaxed/simple;
+	bh=lsx7EwUwBi3NvHqO1utE290g0jz7B/NyZB8DGC2Ks9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pEpSUox2cEQkT6wXezf32rDHQWSlOp6s6i33ObLEfTftv170j+suKb0tUEUUz4hgIkHmEGlrdm5eGQl+lLppewj6McP9/96t8Cs8i06gatUV3hVu1dJF+OR01Mo3eG+g60QiKtJsMGRtlqTBsXMCFtVhjTTqq1I6eQkW8/UjaHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kSPol2IA; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e719bab882so104409911fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716797661; x=1717402461; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2gOfFJLDZFM1NLZoeu2fRwYilxYpWgEWWcHQQR/WPKs=;
-        b=K/2UJLHDKW68eL9idw8EEEp8naRe7lSMEvpaCj6OZwGtuC561mk3rm0O5xGycLE+8Y
-         GCFq9BSSZ9mN5sjpL/wSz+4aPufi02V5CzFs2Hkh5dHcWKBcdljP+gOW0kLpF11HcE5Z
-         /xgaj11Nqsex5mL36G578m9+HwsrPs78Ejd33tp/H3jwMqtH2D0T0QApD4NqEX1QQHNI
-         z1V+ovtNmJq6yQ8/+O5VOqlGLTUXqUsvmCwfZfxD35Ft+qP3j0LacJR2Qc2AkEW/l0Qc
-         u2WxnpAb+T+izEzRRtB9i2//Y76sXce/+mlcVMxN13BbuSMj4EQCm4Y7jD0HNufmtctp
-         7QCQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716797685; x=1717402485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U9TONvTEWThGczkgWTi4O6+TwYpFpcfs3Yxs9Jjw9zo=;
+        b=kSPol2IA2xiMjgdGFJhhfMWXFP/aXTGwmOwGXnjbVObp2W5nj48gH9f2ejpCb29crH
+         zEEkQoc3E4tdkbeQVIyJcsE75ZZkSwz3mdW7N4Ez48hBnBxm9ExAcGUtPNT+1Gq1ktEw
+         S0qRofu48vzmkt3utEjyMXjdmQMhsLWjfi/akKenyyGWMH+pe+belC60EpRcR+Uq0Z6m
+         HSIIQ6sFs90QPhuMF1AcT/myDDBowxZ8EvP9z6u4pTRXuSdMjJoDYmYPW+rGspShd8ql
+         MjePuEGAFPJPXVwCB+zvq6k48hg2SCw1k97UEx6JPjm2llQ+xPmZgxuuSC6sbzx7w80P
+         E44g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716797661; x=1717402461;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1716797685; x=1717402485;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2gOfFJLDZFM1NLZoeu2fRwYilxYpWgEWWcHQQR/WPKs=;
-        b=Ozo+4ZJTMV0rRKC3kNmf6R84SgVNxgeeh+CC/Up/113pA3UNs6shs75vKVZgpJVk4j
-         AOB2W+hy9GvHoopxfvxpqPCZ+AA7/HruYFCKyuUYEopilYMx2amWe9nmPpirKAtCJHSe
-         Q3oe0ihjh8MMqNVGvgDE3gkmb0gPg7zbvWl+22zlGK5mUae33rthRCG/OPAidP7aIetP
-         UbTDuiKdkjGKq2+yQtX+VM5GGqkdbrAgpDJpe/kWE6IKQk85ZGJ9Wd6LlkP+SXF2mPT4
-         MXwAgGT5IrQM+NHtlxE6VPZbJuFvmLoouAWqX1t5MX2AclCb/Co0F9Sn35hGoZ2i2OZF
-         qZSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGj/7FlrKCSeEEeMaMxULyfpetPn843EiNEQB1Yy9IlgnuZBLyXjVVYac2mqPbk2mUqzR9QPSX48YV9bthxX5hR6UwUQi9sxfF0a3i
-X-Gm-Message-State: AOJu0YxG5ySkRk2QshvGxQSJ/IYm9bq9+J+O7q8YvkJPOfR3mc0K4GZd
-	V7RHvFHhQF4L74IP0G/u+FljxdC8L58YwIurUDrJUhkyl8K56T8mpSJZRZ50HvI=
-X-Google-Smtp-Source: AGHT+IHYnL+hf/PaVRs5w2cBRVnHz4XxYlxeikqwWQlJyhXrjPG34g7ILif/Bx2s4uuxLU41DeUKtQ==
-X-Received: by 2002:a17:906:7f15:b0:a62:e9c:f621 with SMTP id a640c23a62f3a-a6265148c46mr601649666b.58.1716797660675;
-        Mon, 27 May 2024 01:14:20 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8dcbdsm472629966b.175.2024.05.27.01.14.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:14:20 -0700 (PDT)
-Date: Mon, 27 May 2024 11:14:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: oe-kbuild@lists.linux.dev, Yasin Lee <yasin.lee.x@outlook.com>,
-	jic23@kernel.org, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	lars@metafoo.de, swboyd@chromium.org, nuno.a@analog.com,
-	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com
-Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
- driver
-Message-ID: <6f479ca6-cd6d-4a28-8afe-8b74c4d171d4@moroto.mountain>
-References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
- <59869d5f-3d97-48a2-8a96-127f7b46c0e8@moroto.mountain>
- <CAHp75VcTxXsnKVR5EQYTNhokHeXrOxQPe9gAkWFRr0yZT1KTPA@mail.gmail.com>
+        bh=U9TONvTEWThGczkgWTi4O6+TwYpFpcfs3Yxs9Jjw9zo=;
+        b=YNxg+Dp5zgTlFSOb6sz8WvhyzSZ0ZhpC0f5pYhulnvDUuD8JFsSurLTMZzt8HtGIYk
+         GVGes4gu+TkhnxvyHsTCB+GM7TxfDHU5b1ZiKw250UOH4PlxuCalmKNtIDCuWHSKy/Nu
+         DlllMH1NNiU83REKEL+zBxbfzuhbymVc668oKy/i5X697jHICRHjscWk3ZKGn1gecAZQ
+         TRUDzeTmwSLndfywwYDHDZbfO8XoujOfPsz1kw1Gyr5CSaTZ7Q1n26sMxi2dIw46toSC
+         ZoIHTE2p0VBzl+QWTTHk5mlZ8UNXXKm20mz5YfRFqnN95B0yIMDOmxwBm13GKfv/DIy/
+         5+Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVjaYMPjm/n7Bhoq16ObDfkZAnE+8kPc1ZTFx80JDY2RX47rmJwyWdn5mJYETVyrV6hbS0rEU7oL4SmvH6bcI17k4CV3t+2qgKkpbdr
+X-Gm-Message-State: AOJu0YwkhvHMkX05gZvHaDVMd48kpURtQpkYiqlTXV2/QHi29dmjuBqq
+	IOTgbwNipkrcMNBpV7/Qh9VdhVXrRd9nBcZZZOlZHtJP0mRudzqeAhgAWiJE62I=
+X-Google-Smtp-Source: AGHT+IE5hwvA+dnXZp0Ce0d7BlZoXZS8BtrFd0HTMRigsC5U6EqzAEtorNHmX+hus94f/jH5p+ygFg==
+X-Received: by 2002:a2e:9819:0:b0:2e9:6d3e:e91f with SMTP id 38308e7fff4ca-2e96d3ee9b2mr28178891fa.52.1716797685169;
+        Mon, 27 May 2024 01:14:45 -0700 (PDT)
+Received: from [192.168.27.173] ([77.205.21.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210896fc8asm100562585e9.13.2024.05.27.01.14.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 01:14:44 -0700 (PDT)
+Message-ID: <bb07e774-ba80-4fc5-a57e-ad5ef6360c32@baylibre.com>
+Date: Mon, 27 May 2024 10:14:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VcTxXsnKVR5EQYTNhokHeXrOxQPe9gAkWFRr0yZT1KTPA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/6] dt-bindings: thermal: mediatek: Rename thermal
+ zone definitions for MT8186 and MT8188
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Nicolas Pitre <npitre@baylibre.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
+References: <20240524-mtk-thermal-mt818x-dtsi-v5-0-56f8579820e7@baylibre.com>
+ <20240524-mtk-thermal-mt818x-dtsi-v5-1-56f8579820e7@baylibre.com>
+ <20240524-concerned-fritter-262f5e16293e@spud>
+Content-Language: en-US
+From: Julien Panis <jpanis@baylibre.com>
+In-Reply-To: <20240524-concerned-fritter-262f5e16293e@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 25, 2024 at 05:00:59PM +0300, Andy Shevchenko wrote:
-> On Thu, May 23, 2024 at 3:42 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> 
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1110  static ssize_t hx9031as_raw_data_show(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1111  {
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1112       char buf[BUF_SIZE] = {0};
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1113       char *p = buf;
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1114       int ii = 0;
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1115
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1116       hx9031as_sample();
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10  1117       for (ii = 0; ii < HX9031AS_CH_NUM; ii++) {
-> > 5e5a419c9407f6 Yasin Lee 2024-05-10 @1118               p += snprintf(p, PAGE_SIZE, "ch[%d]: DIFF=%-8d, RAW=%-8d, OFFSET=%-8d, BL=%-8d, LP=%-8d\n",
-> >                                                                          ^^^^^^^^^
-> 
-> 
-> > Also use scnprintf() instead of snprintf() unless you need to check the
-> > results.
-> 
-> This is incorrect advice. You should recommend sysfs_emit() /
-> sysfs_emit_at() in this kind of case.
+On 5/24/24 20:24, Conor Dooley wrote:
+> On Fri, May 24, 2024 at 11:04:34AM +0200, Julien Panis wrote:
+>> Use thermal zone names that make more sense.
+>>
+>> Signed-off-by: Julien Panis <jpanis@baylibre.com>
+> Removing the defines is an ABI break. If these are all the same devices,
+> but with more accurate naming, then keep the old defines and add new
+> ones. However, the GPU1 define changes in the course of this patch which
+> is more problematic.
+>
+> Why do these names even make more sense? Where did the old names come
+> from and where do the new?
+>
+> Thanks,
+> Conor.
 
-No, this is not sysfs code.  It's debugfs.  The API is completely
-different.
+Thanks for your comment.
 
-regards,
-dan carpenter
+For mt8188, the old name 'soc' came from a document by MTK, which is not
+public: MT8188G Functional Specification. This document does not explain
+what 'soc' are/do exactly, it just says that some temperature sensors are
+located on them.
+
+Then, there was a comment about these 'soc' names:
+https://lore.kernel.org/all/ff12e104-da8b-4800-bfbe-a006ffe1b840@collabora.com/
+
+So, I had a discussion with MTK to understand what these 'soc1/2/3'
+are/do. The new names comes from this discussion and were given by MTK.
+
+For the other SoC of this series (mt8186), the same kind of document exists
+(MT8186G Functional Specification) and explains what 'soc' are/do exactly:
+('cam', 'dsp', 'nna'...which are used in 'mt8186.dtsi').
+Using the same logic in 'mt8188.dtsi' would be more consistent. Besides,
+these names are more explicit.
+
+Julien
+
+>
+>> ---
+>>   include/dt-bindings/thermal/mediatek,lvts-thermal.h | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/include/dt-bindings/thermal/mediatek,lvts-thermal.h b/include/dt-bindings/thermal/mediatek,lvts-thermal.h
+>> index bf95309d2525..ddc7302a510a 100644
+>> --- a/include/dt-bindings/thermal/mediatek,lvts-thermal.h
+>> +++ b/include/dt-bindings/thermal/mediatek,lvts-thermal.h
+>> @@ -24,7 +24,7 @@
+>>   #define MT8186_BIG_CPU1	5
+>>   #define MT8186_NNA		6
+>>   #define MT8186_ADSP		7
+>> -#define MT8186_MFG		8
+>> +#define MT8186_GPU		8
+>>   
+>>   #define MT8188_MCU_LITTLE_CPU0	0
+>>   #define MT8188_MCU_LITTLE_CPU1	1
+>> @@ -34,11 +34,11 @@
+>>   #define MT8188_MCU_BIG_CPU1	5
+>>   
+>>   #define MT8188_AP_APU		0
+>> -#define MT8188_AP_GPU1		1
+>> -#define MT8188_AP_GPU2		2
+>> -#define MT8188_AP_SOC1		3
+>> -#define MT8188_AP_SOC2		4
+>> -#define MT8188_AP_SOC3		5
+>> +#define MT8188_AP_GPU0		1
+>> +#define MT8188_AP_GPU1		2
+>> +#define MT8188_AP_ADSP		3
+>> +#define MT8188_AP_VDO		4
+>> +#define MT8188_AP_INFRA		5
+>>   #define MT8188_AP_CAM1		6
+>>   #define MT8188_AP_CAM2		7
+>>   
+>>
+>> -- 
+>> 2.37.3
+>>
+
 
