@@ -1,242 +1,236 @@
-Return-Path: <linux-kernel+bounces-191283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65B08D0938
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D28D0941
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51255B27815
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466E8B228C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74840161933;
-	Mon, 27 May 2024 17:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7696315EFBD;
+	Mon, 27 May 2024 17:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GncH9LIh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UqEHkVvt"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A1A160787;
-	Mon, 27 May 2024 17:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648EF1DA58;
+	Mon, 27 May 2024 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716829494; cv=none; b=e2R4OY4KHWtO8nHYfBO4FGarGi+/+30noOoC95fTK0mBj+6PqBEBd1LWg0IGlwJM//Qq3X6AR2ociT1sdo0Cj8v5+ZcHDZPUmrGP9AgbcN0d9Bmfd5Tjf4qAgJfhD++2F5mlig2dWjnDiSpIUGhgJye5aE9Yb5Hw9DnwKqRsVSE=
+	t=1716830142; cv=none; b=Na84P9U1yQR9rtAVzuZPKhfLkZjJUB7GjOuB3eWMYkBDZboOgfmQuaPSGmNwnChxkB49HYEQF1pJA8IJ65HxBVOtQkZj2Ycnchx8jpfidio6BmfEK6rDS4r46YgKLQl4OcK4fJviVf3axrO3zqFb8ACFfDBBS0ozUrFwoc7/gcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716829494; c=relaxed/simple;
-	bh=Ss96GuXy17v7Th+HNM1BpRAXEUSk/pcAonNE3D3kaZw=;
+	s=arc-20240116; t=1716830142; c=relaxed/simple;
+	bh=pt31EGsdEkZo53lwke3HcCRzxGGuWyxitKe94ccVdnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWxE0+YfiZQf/cK+7DhgRxSS7Lxc/cMxp7QnNVrv2pKyQ+aA/RACWvxDhk4DUQ5vFsLMEVYOHyvzp9p8zRjgE61kIgKhtCox2wfJMw+yfp2Hm7CoA5k5iIuM2y4slq2pBr5ih1V3ixHum+A/IY0oZtqKHXATWzEhGhIZySrALtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GncH9LIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC0CAC2BBFC;
-	Mon, 27 May 2024 17:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716829494;
-	bh=Ss96GuXy17v7Th+HNM1BpRAXEUSk/pcAonNE3D3kaZw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqwtRQGWtsX2y7Hd5szTU0/3skq47uNHB+JFgz0/ToGtqYHrQJASBDf3lvw3e+GmXQPAJSCuGforz9TghXWpUBUEcLcr6Mwh36o2SOzZ9J9WWkxKCy/NU/2zffDm/m+oIqMckJfAR0stL/taGZ0lQANWDdC2Jgy/i3u9KYP+Ouc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UqEHkVvt; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4533540E01E8;
+	Mon, 27 May 2024 17:08:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bimxyUlM5shO; Mon, 27 May 2024 17:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716829686; bh=zzMPJ6U6LHHCwo8zSeCN578JvIc5clkBHFvMwav3ulA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GncH9LIhVMuBXkdZI8ut7QZTK0zxcl9o5ju1sEqnvvUoPfx9XGha0V5R/BIbph6pM
-	 Mmtx5XEi0gzLQATWJuyQDZnMGxx3v1aZqRvrVf66Wbi21vB73GNbLU0CBj6+JAS7fV
-	 acJht0baNC4wwFbkicKbErtGFoaU+m8OUfM3waZZTS4m0L6LzdoVnOvXwuU0uLPSah
-	 KyWaZYhP24YK2v5hcGDnC9IIgTiLNWWZEoIk0huDTN+bj/sYOKEDzRjfR8K7BE/G+a
-	 ieiuMeu33VZAsJ98Zbm+vF+BGaUM96p0WDGBc/QOmCfBFsji1DuuVsJDYKyNkhb+l3
-	 oAfA1YkB3s9KA==
-Date: Mon, 27 May 2024 14:04:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Artem Savkov <asavkov@redhat.com>
-Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf record: add a shortcut for metrics
-Message-ID: <ZlS9M1vcxZ3Qsx_B@x1>
-References: <20240527101519.356342-1-asavkov@redhat.com>
- <ZlS8pc39t2c1WFye@x1>
+	b=UqEHkVvtmndf7yBXhPjClvB23jAwbCH2y9mrqWuQVDLzPL5LKRkma5X0WAIXAslDI
+	 OWVmIJ6/GQh6MyHgNXH12gJzDPwF0OdhwM57t/S13aSva8RZqSNOaZBXycdRifKOfv
+	 0nvKCVZHTyaWAw7nHg6JeCT936cjd8IHWbDZetP9R64GkqGGbhn/Rq2o5O1lyk3xV/
+	 nYbgRJAb6ONjxRmC5hUl9xcu+okxrmSuyhHurHx00V4k20COwpr6rwpzQwAnyXHLMV
+	 m+czfkJWEL1NjV2TVhDcJ7mBL7mIdcM1fI5dycnLvxv1o9EI8YpByQh6R2sDWMk4An
+	 cyNP5dzV8x2tieKXMH4ReySNhZogLEwuhTGWdRnt928uQUmNRt4zprDoIAHQL2n21X
+	 lXVQ8ULIoVGrW3v4XqisVCko5CYOCA7b7kJ3zZKQ0w+pU8jRgndQBA4PekevN9v4C/
+	 w3YVJhZ84GxfQ2Jik3lPfedBlRPhMRAq2l2f+Vcoqu4HBD5/+MgUTgLY61H9GyG6+u
+	 foPRRlYX+NMMmBytfFA9fURUfzSdFIQaPgb/IPIcecIx2VtLoNK4Odm8q386PsdDba
+	 yPB0wl/TmUP+FPiUpIIrpy1wELmaq/xXv7yeZPb769FOhG57ozS+Z17YhfsAIYc+rJ
+	 8LVjMkN2N08NqOt51W4fqTAo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2CF0E40E016A;
+	Mon, 27 May 2024 17:07:41 +0000 (UTC)
+Date: Mon, 27 May 2024 19:07:34 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+	tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
+	richardcochran@gmail.com, linux-input@vger.kernel.org,
+	dmitry.torokhov@gmail.com, zackr@vmware.com,
+	linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+	timothym@vmware.com, akaher@vmware.com,
+	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com, horms@kernel.org,
+	kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v10 1/8] x86/vmware: Introduce VMware hypercall API
+Message-ID: <20240527170734.GCZlS91uXD68HRN1na@fat_crate.local>
+References: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
+ <20240523191446.54695-2-alexey.makhalov@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZlS8pc39t2c1WFye@x1>
+In-Reply-To: <20240523191446.54695-2-alexey.makhalov@broadcom.com>
 
-On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
-> > Add -M/--metrics option to perf-record providing a shortcut to record
-> > metrics and metricgroups. This option mirrors the one in perf-stat.
-> > 
-> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> 
-> Not building for me, I needed to add the rblist.h header and also I
-> think we need to use metricgroup__rblist_init(&mevents), right?
+On Thu, May 23, 2024 at 12:14:39PM -0700, Alexey Makhalov wrote:
+> +#define VMWARE_HYPERCALL						\
+> +	ALTERNATIVE_3("",						\
+> +		      "jmp .Lport_call%=", X86_FEATURE_HYPERVISOR,	\
+> +		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
+> +		      "vmmcall\n\t"					\
+> +		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
+> +		      "cmpb $"						\
+> +			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
+> +			", %[mode]\n\t"					\
+> +		      "jg .Lvmcall%=\n\t"				\
+> +		      "je .Lvmmcall%=\n\t"				\
+> +		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
+> +		      "inl (%%dx), %%eax\n\t"				\
+> +		      "jmp .Lend%=\n\t"					\
+> +		      ".Lvmmcall%=: vmmcall\n\t"			\
+> +		      "jmp .Lend%=\n\t"					\
+> +		      ".Lvmcall%=: vmcall\n\t"				\
+> +		      ".Lend%=:"
 
-Argh, that is a static function, it seems we trigger it by having
-nr_entries = 0, so the following should do the trick:
+So applied (and with minor fixups for the proper indentation, see end of
+this mail) this looks like this:
 
-  struct rblist mevents = { .nr_entries = 0, }
+pushsection .altinstructions,"a"
+ .long 661b - .
+ .long 6641f - .
+ .4byte ( 4*32+31)
+ .byte 663b-661b
+ .byte 6651f-6641f
+ .long 661b - .
+ .long 6642f - .
+ .4byte ( 8*32+18)
+ .byte 663b-661b
+ .byte 6652f-6642f
+ .long 661b - .
+ .long 6643f - .
+ .4byte ( 8*32+19)
+ .byte 663b-661b
+ .byte 6653f-6643f
+popsection
+pushsection .altinstr_replacement, "ax"
+# ALT: replacement 1
+6641:
+        jmp .Lport_call72
+6651:
+# ALT: replacement 2
+6642:
+        jmp .Lvmcall72
+6652:
+# ALT: replacement 3
+6643:
+        vmmcall
+        jmp .Lend72
+6653:
+popsection
+        cmpb $((((1UL))) << (0)), vmware_hypercall_mode(%rip)   # vmware_hypercall_mode
+        jg .Lvmcall72
+        je .Lvmmcall72
+Lport_call72:
+        movw $22104, %dx        #
+        inl (%dx), %eax
+        jmp .Lend72
+Lvmmcall72:
+        vmmcall
+        jmp .Lend72 
+Lvmcall72:
+        vmcall
+Lend72:
 
-So that we don't depend on the compiler zeroing that field, which for
-local variables it should not.
+---
 
-- Arnaldo
+so AFAICT, you want three things:
+
+1. X86_FEATURE_HYPERVISOR - that is always set when running as a guest.
+   For that it should do:
+
+        movw $22104, %dx        #
+        inl (%dx), %eax
+
+2. X86_FEATURE_VMCALL:
+
+	vmcall
+
+3. X86_FEATURE_VMW_VMMCALL:
+
+	vmmcall
+
+So why don't you simply do that?
+
+vmware_set_capabilities() sets vmware_hypercall_mode *and* those feature
+flags at the same time.
+
+And you either support VMCALL or VMMCALL so the first thing should be the
+fallback for some ancient crap.
+
+IOW, your hypercall alternative should simply be:
+
+	ALTERNATIVE_2("vmcall", "vmmcall", X86_FEATURE_VMW_VMMCALL, "movw %[port], %%dx; "inl (%%dx), %%eax", X86_FEATURE_HYPERVISOR);
+
+without any more silly dance?
+
+Hmmm?
+
+---
+
+Fixup indentation for proper .s output:
+
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index 5114f4c75c54..8be877d8bb7c 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -70,17 +70,18 @@ extern u8 vmware_hypercall_mode;
+ 		      "jmp .Lvmcall%=", X86_FEATURE_VMCALL,		\
+ 		      "vmmcall\n\t"					\
+ 		      "jmp .Lend%=", X86_FEATURE_VMW_VMMCALL)		\
+-		      "cmpb $"						\
+-			__stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL)	\
+-			", %[mode]\n\t"					\
++		      "\tcmpb $" __stringify(CPUID_VMWARE_FEATURES_ECX_VMMCALL) ", %[mode]\n\t" \
+ 		      "jg .Lvmcall%=\n\t"				\
+-		      "je .Lvmmcall%=\n\t"				\
+-		      ".Lport_call%=: movw %[port], %%dx\n\t"		\
++		      "je .Lvmmcall%=\n"				\
++		      ".Lport_call%=:\n\t"				\
++		      "movw %[port], %%dx\n\t"				\
+ 		      "inl (%%dx), %%eax\n\t"				\
+-		      "jmp .Lend%=\n\t"					\
+-		      ".Lvmmcall%=: vmmcall\n\t"			\
+-		      "jmp .Lend%=\n\t"					\
+-		      ".Lvmcall%=: vmcall\n\t"				\
++		      "jmp .Lend%=\n"					\
++		      ".Lvmmcall%=:\n\t"				\
++		      "vmmcall\n\t"					\
++		      "jmp .Lend%=\n"					\
++		      ".Lvmcall%=:\n\t"					\
++		      "vmcall\n"					\
+ 		      ".Lend%=:"
  
-> Testing it now.
-> 
-> - Arnaldo
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 18da3ce380152ad1..5d67b0711c166fae 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -27,6 +27,7 @@
->  #include "util/session.h"
->  #include "util/tool.h"
->  #include "util/symbol.h"
-> +#include "util/rblist.h"
->  #include "util/record.h"
->  #include "util/cpumap.h"
->  #include "util/thread_map.h"
-> @@ -4017,6 +4018,7 @@ int cmd_record(int argc, const char **argv)
->  	set_nobuild('\0', "off-cpu", "no BUILD_BPF_SKEL=1", true);
->  # undef set_nobuild
->  #endif
-> +	metricgroup__rblist_init(&mevents);
->  
->  	/* Disable eager loading of kernel symbols that adds overhead to perf record. */
->  	symbol_conf.lazy_load_kernel_maps = true;
-> 
-> > ---
-> >  tools/perf/Documentation/perf-record.txt |  7 +++-
-> >  tools/perf/builtin-record.c              | 43 ++++++++++++++++++++++++
-> >  2 files changed, 49 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> > index 6015fdd08fb63..ebb560d137e62 100644
-> > --- a/tools/perf/Documentation/perf-record.txt
-> > +++ b/tools/perf/Documentation/perf-record.txt
-> > @@ -18,7 +18,6 @@ from it, into perf.data - without displaying anything.
-> >  
-> >  This file can then be inspected later on, using 'perf report'.
-> >  
-> > -
-> >  OPTIONS
-> >  -------
-> >  <command>...::
-> > @@ -216,6 +215,12 @@ OPTIONS
-> >  	  na, by_data, by_addr (for mem_blk)
-> >  	  hops0, hops1, hops2, hops3 (for mem_hops)
-> >  
-> > +-M::
-> > +--metrics::
-> > +Record metrics or metricgroups specified in a comma separated list.
-> > +For a group all metrics from the group are added.
-> > +See perf list output for the possible metrics and metricgroups.
-> > +
-> >  --exclude-perf::
-> >  	Don't record events issued by perf itself. This option should follow
-> >  	an event selector (-e) which selects tracepoint event(s). It adds a
-> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > index 66a3de8ac6618..5828051ff2736 100644
-> > --- a/tools/perf/builtin-record.c
-> > +++ b/tools/perf/builtin-record.c
-> > @@ -40,6 +40,7 @@
-> >  #include "util/trigger.h"
-> >  #include "util/perf-hooks.h"
-> >  #include "util/cpu-set-sched.h"
-> > +#include "util/metricgroup.h"
-> >  #include "util/synthetic-events.h"
-> >  #include "util/time-utils.h"
-> >  #include "util/units.h"
-> > @@ -188,6 +189,7 @@ static volatile int done;
-> >  static volatile int auxtrace_record__snapshot_started;
-> >  static DEFINE_TRIGGER(auxtrace_snapshot_trigger);
-> >  static DEFINE_TRIGGER(switch_output_trigger);
-> > +static char *metrics;
-> >  
-> >  static const char *affinity_tags[PERF_AFFINITY_MAX] = {
-> >  	"SYS", "NODE", "CPU"
-> > @@ -200,6 +202,25 @@ static inline pid_t gettid(void)
-> >  }
-> >  #endif
-> >  
-> > +static int append_metric_groups(const struct option *opt __maybe_unused,
-> > +			       const char *str,
-> > +			       int unset __maybe_unused)
-> > +{
-> > +	if (metrics) {
-> > +		char *tmp;
-> > +
-> > +		if (asprintf(&tmp, "%s,%s", metrics, str) < 0)
-> > +			return -ENOMEM;
-> > +		free(metrics);
-> > +		metrics = tmp;
-> > +	} else {
-> > +		metrics = strdup(str);
-> > +		if (!metrics)
-> > +			return -ENOMEM;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> >  static int record__threads_enabled(struct record *rec)
-> >  {
-> >  	return rec->opts.threads_spec;
-> > @@ -3382,6 +3403,9 @@ static struct option __record_options[] = {
-> >  		     parse_events_option),
-> >  	OPT_CALLBACK(0, "filter", &record.evlist, "filter",
-> >  		     "event filter", parse_filter),
-> > +	OPT_CALLBACK('M', "metrics", &record.evlist, "metric/metric group list",
-> > +		     "monitor specified metrics or metric groups (separated by ,)",
-> > +		     append_metric_groups),
-> >  	OPT_CALLBACK_NOOPT(0, "exclude-perf", &record.evlist,
-> >  			   NULL, "don't record events from perf itself",
-> >  			   exclude_perf),
-> > @@ -3984,6 +4008,7 @@ int cmd_record(int argc, const char **argv)
-> >  	int err;
-> >  	struct record *rec = &record;
-> >  	char errbuf[BUFSIZ];
-> > +	struct rblist mevents;
-> >  
-> >  	setlocale(LC_ALL, "");
-> >  
-> > @@ -4153,6 +4178,23 @@ int cmd_record(int argc, const char **argv)
-> >  	if (record.opts.overwrite)
-> >  		record.opts.tail_synthesize = true;
-> >  
-> > +	if (metrics) {
-> > +		const char *pmu = parse_events_option_args.pmu_filter ?: "all";
-> > +		int ret = metricgroup__parse_groups(rec->evlist, pmu, metrics,
-> > +						false, /* metric_no_group */
-> > +						false, /* metric_no_merge */
-> > +						false, /* metric_no_threshold */
-> > +						rec->opts.target.cpu_list,
-> > +						rec->opts.target.system_wide,
-> > +						false, /* hardware_aware_grouping */
-> > +						&mevents);
-> > +		if (ret) {
-> > +			err = ret;
-> > +			goto out;
-> > +		}
-> > +		zfree(&metrics);
-> > +	}
-> > +
-> >  	if (rec->evlist->core.nr_entries == 0) {
-> >  		bool can_profile_kernel = perf_event_paranoid_check(1);
-> >  
-> > @@ -4264,6 +4306,7 @@ int cmd_record(int argc, const char **argv)
-> >  out_opts:
-> >  	record__free_thread_masks(rec, rec->nr_threads);
-> >  	rec->nr_threads = 0;
-> > +	metricgroup__rblist_exit(&mevents);
-> >  	evlist__close_control(rec->opts.ctl_fd, rec->opts.ctl_fd_ack, &rec->opts.ctl_fd_close);
-> >  	return err;
-> >  }
-> > -- 
-> > 2.45.1
+ static inline
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
