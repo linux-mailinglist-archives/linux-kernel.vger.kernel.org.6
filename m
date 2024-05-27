@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-190264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BF88CFC32
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4F58CFC34
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6201C21F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB74A283AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA2F6A33D;
-	Mon, 27 May 2024 08:51:00 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4BC12FF9F;
+	Mon, 27 May 2024 08:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezABXKOK"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D64200A9;
-	Mon, 27 May 2024 08:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08EA12F5A6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799860; cv=none; b=sJ1Bd0FLg72Hjf3ERwvMUaFWL6crWeMiLX1WzFYTWLybZJBJ01S4AbZ93szxAtShX+kj3mTGbNJI8XLL+FeNZ2huVCXRjtYXntxZRFffXhceK6Q8S2Ky3QR2VOmp/TrtG8Zl5PmGx8RSyt+V9V5cbiKr05yFZ/EP0QWPUknqbBw=
+	t=1716799866; cv=none; b=QI2r//GikD9H+Ty0rHzEYVpsPzuBdCOLMR6umwWb1K1iWfRhyDIyMGmjZdiShQhlGuVJiftlg00b7nj8zW3vrojGTHwDdSCcpXBWOu4mLZbpZcpfDCrl9R1P/BYPsBhSnb3ILmkDfIHOIYuOfwoFaWYwjbuO7oi9KWka+iaPgnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799860; c=relaxed/simple;
-	bh=qXqUDFPMgEqJdlRNZ8WO6HftsW7XpxjeTbHSU5QdQeE=;
+	s=arc-20240116; t=1716799866; c=relaxed/simple;
+	bh=VWIWAz/C36z3ejzKqZpM6Ta9/KsBCD/qHV4r6Ufeiwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BAURNfnaFvWXEfsPYDg7/pHX3Jd7lSwWqS+CEOq9uPcserc2w0fDqyPPTqPK9DtfR6xewJyqcnDtt2x0vhaFN1H62+PFmTQEwnuPrjeOygtgu6BK/T9Cs9bRifVf1uKP3liqUunp9FLXNvjUGSuP8JTEQJclFp/CScA7dIIQisE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4B04E100DE9DE;
-	Mon, 27 May 2024 10:50:48 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 196C65194CF; Mon, 27 May 2024 10:50:48 +0200 (CEST)
-Date: Mon, 27 May 2024 10:50:48 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: yaoma <yaoma@linux.alibaba.com>
-Cc: bhelgaas@google.com, weirongguang@kylinos.cn, kanie@linux.alibaba.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Use appropriate conditions to check the
- hotplug controller status
-Message-ID: <ZlRJaEEGEMsyxXqm@wunner.de>
-References: <20240524063023.77148-1-yaoma@linux.alibaba.com>
- <ZlBHjbmjjSEnXCMp@wunner.de>
- <7855600C-4BB6-417B-8F91-24F4F7E0820E@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qn5jZe6DNcZMnzhrpJWsV0OfB9zDfE4xUj8DDAsRQ3CX8vzXyc9H4H2d5RB8uL6jPxgdjsXzye7FpyEoyY5RkoV9egToULvgCSoSsltRZUk2kQ2wKxHWVtjGOM8aQ+o/i/p6WYT5coB9Mqisg8XLMsmByWi0O0AYNEvDuYDk+gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezABXKOK; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so1041757266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716799863; x=1717404663; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IngHvuVJ+qy5kq3ZL0tayX0b+UVqjmY0nRoaAshOXto=;
+        b=ezABXKOKLGX0jjJ10068nEoXL5ajIOQDXfrcClolrN/HJYAGaCgB2H3UWiOlFt/NEx
+         iqpllyGEyaoaYcEtLPLU5RROxdfScdZ9rcyItDZnZSwId5P2n7H7JaqkEXnNlSznmdUU
+         hZOgOQGwwTwm4UKd9C3PxQtfFUxQDcTPhGaizkQEvm2IJehlM0RL8q6NtpOVYxTW8iAB
+         AA50ucWMQCVTkpZ5XNqZ7ZSsvIQeDFigJxldKTGNF/YlMtvZd6T5gSb9VnZJrFYedEQM
+         hHhZ8Ftnvl7qwSLci7WAUYb7QZsMx40TN7RrjXzACK3yZJo8i+OAUfqBlKKhb82iCCnE
+         5OaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799863; x=1717404663;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IngHvuVJ+qy5kq3ZL0tayX0b+UVqjmY0nRoaAshOXto=;
+        b=tIl80gchP5rt20KiFclk8jACre5ZTg23qQ0dDmpxiGbU4wQtLsUgPfgRW4hxbOuR9v
+         LDAnFoQO7uGjoC/HyckrlINN8hLEi7gs5sl33sFtoTkwzM/rax2zQiMOCrQN6AMS5CXo
+         WtncSyO1iN7Il83P0GbGczT/3HSBoGNi91tQfnuWsv+IoOumhybxLCAJFV9N6YrHauK3
+         YGGeqPjAWoxdQ3p8QRZdaBB1RoNu3gPS5Judkzdjh0Yl42HHAzF8GwcLgxcZ6OUH0AAg
+         ODSbdvtcICeTIRcerPgbVD7F5oJG5l344dBY6vbs0KjOyaHFXOkfibmtU20ca0Re6Y6N
+         0EEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVc3rLSb2gc3+V1spi/9HHOkS7Kp0K6DJ7GwEsuIw1OF+UqnegSRUOh3FMfAv2Gu/vxakz0uzPl7AdKO5Xs5NNVUuLd9M2M1x/2hCe
+X-Gm-Message-State: AOJu0Yzd/gzEI33jEHvCh1rFl/Rn997jFs4zDgI/MP4O9gf3vmiZz3zq
+	STFOUDaXSCWrrhqwJp7q0lUBG/o725SwcR9DmHQ3qwwQYl8nHJUE2faczxeH7zA=
+X-Google-Smtp-Source: AGHT+IGCA1HNlfKaJ/l7+h/ehh9h7+FLYF0FcNG522umKz/7ymLJE0wk2XH+LOhyNYPx0n/gIfzzKg==
+X-Received: by 2002:a17:906:f353:b0:a55:9dec:355f with SMTP id a640c23a62f3a-a626511604fmr475369266b.70.1716799863000;
+        Mon, 27 May 2024 01:51:03 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc519f5sm471282566b.98.2024.05.27.01.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:51:02 -0700 (PDT)
+Date: Mon, 27 May 2024 11:50:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	ye xingchen <ye.xingchen@zte.com.cn>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: oe-kbuild@lists.linux.dev, Yasin Lee <yasin.lee.x@outlook.com>,
+	jic23@kernel.org, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	lars@metafoo.de, swboyd@chromium.org, nuno.a@analog.com,
+	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com
+Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
+ driver
+Message-ID: <16a63a13-4c98-4eea-82b7-68213bff61bc@moroto.mountain>
+References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+ <59869d5f-3d97-48a2-8a96-127f7b46c0e8@moroto.mountain>
+ <CAHp75VcTxXsnKVR5EQYTNhokHeXrOxQPe9gAkWFRr0yZT1KTPA@mail.gmail.com>
+ <6f479ca6-cd6d-4a28-8afe-8b74c4d171d4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7855600C-4BB6-417B-8F91-24F4F7E0820E@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6f479ca6-cd6d-4a28-8afe-8b74c4d171d4@moroto.mountain>
 
-On Sun, May 26, 2024 at 10:45:36PM +0800, yaoma wrote:
-> > 2024 5 24 15:53 Lukas Wunner <lukas@wunner.de>
-> > On Fri, May 24, 2024 at 02:30:23PM +0800, Bitao Hu wrote:
-> > > The values of 'present' and 'link_active' have similar meanings:
-> > > the value is %1 if the status is ready, and %0 if it is not. If the
-> > > hotplug controller itself is not available, the value should be
-> > > %-ENODEV. However, both %1 and %-ENODEV are considered true, which
-> > > obviously does not meet expectations. 'Slot(xx): Card present' and
-> > > 'Slot(xx): Link Up' should only be output when the value is %1.
-> > [...]
-> > > --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> > > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> > > @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
-> > > 	case OFF_STATE:
-> > > 		ctrl->state = POWERON_STATE;
-> > > 		mutex_unlock(&ctrl->state_lock);
-> > > -		if (present)
-> > > +		if (present > 0)
-> > > 			ctrl_info(ctrl, "Slot(%s): Card present\n",
-> > > 				  slot_name(ctrl));
-> > > -		if (link_active)
-> > > +		if (link_active > 0)
-> > > 			ctrl_info(ctrl, "Slot(%s): Link Up\n",
-> > > 				  slot_name(ctrl));
-> > > 		ctrl->request_result = pciehp_enable_slot(ctrl);
+Mauro, Hans,
+
+The debugfs code in drivers/media/common/siano/smsdvb-debugfs.c is
+completely broken.  No one has tested it since Dec 2022.  Can we just
+remove it?
+
+On Mon, May 27, 2024 at 11:14:16AM +0300, Dan Carpenter wrote:
+> On Sat, May 25, 2024 at 05:00:59PM +0300, Andy Shevchenko wrote:
+> > On Thu, May 23, 2024 at 3:42 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
 > > 
-> > We already handle the "<= 0" case immediately above this code excerpt:
 > > 
-> > 	if (present <= 0 && link_active <= 0) {
-> > 	...
-> > 	}
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1110  static ssize_t hx9031as_raw_data_show(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1111  {
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1112       char buf[BUF_SIZE] = {0};
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1113       char *p = buf;
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1114       int ii = 0;
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1115
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1116       hx9031as_sample();
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10  1117       for (ii = 0; ii < HX9031AS_CH_NUM; ii++) {
+> > > 5e5a419c9407f6 Yasin Lee 2024-05-10 @1118               p += snprintf(p, PAGE_SIZE, "ch[%d]: DIFF=%-8d, RAW=%-8d, OFFSET=%-8d, BL=%-8d, LP=%-8d\n",
+> > >                                                                          ^^^^^^^^^
+> > 
+> > 
+> > > Also use scnprintf() instead of snprintf() unless you need to check the
+> > > results.
+> > 
+> > This is incorrect advice. You should recommend sysfs_emit() /
+> > sysfs_emit_at() in this kind of case.
 > 
-> I'm not sure if the following scenarios would occur in actual production
-> environment, but from the code level, there is the possibility of
-> "present <= 0 && link_active > 0" or "present > 0 && link_active <= 0".
-> In these cases, the "<= 0" conditions will not be properly handled,
-> and "ctrl_info" will output incorrect prompt messages.
+> No, this is not sysfs code.  It's debugfs.  The API is completely
+> different.
 
-I see, that makes sense.
+I was going to say that if you find yourself calling sysfs_emit_at()
+then you're already in trouble because sysfs is supposed to be one thing
+per file.
 
-"present" and "link_active" can be -ENODEV if reading the config space
-of the hotplug port failed.  That's typically the case if the hotplug
-port itself was hot-removed, which happens all the time with
-Thunderbolt/USB4.
+But then I searched and we call it almost 1000 times.
 
-E.g. pciehp_card_present() may return 1 and pciehp_check_link_active()
-may return -ENODEV because the hotplug port was hot-removed in-between
-the two function calls.  In that case we'll emit both "Card present"
-*and* "Link Up".  The latter is uncalled for and is supressed by your
-patch.
+The first caller I looked at was drivers/media/common/siano/smsdvb-debugfs.c
+from commit 2f7d0c94396e ("media: siano: Convert to use sysfs_emit_at()
+API") which changes debugfs code to use sysfs_emit().  And it so clearly
+has never been tested because debug_data->stats_data does not point to
+the start of a page.  sysfs_emit() will refuse to print anything unless
+it's given a pointer to the start of a page.  Ugh...
 
-So your code change is
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+regards,
+dan carpenter
 
-..but it would be good if you could respin the patch and explain the
-rationale of the code change in the commit message more clearly.
-Basically summarize what you and I have explained above.
-
-Also, the percent sign % in front of 0, 1, -ENODEV is unnecessary in
-commit messages. It only has special meaning in kernel-doc.
-
-Thanks,
-
-Lukas
 
