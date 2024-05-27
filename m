@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-190826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFC98D0326
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:19:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BDD8D02D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D3629EC2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503F128F1ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D6516EBF7;
-	Mon, 27 May 2024 14:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D0715EFAB;
+	Mon, 27 May 2024 14:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDJ9xO3n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btIVkH8V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C4D15FA6E;
-	Mon, 27 May 2024 14:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2479F1640B;
+	Mon, 27 May 2024 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819186; cv=none; b=VFIH+jYAf3tz9ZSkLjM3tAuaZKWFB4OtenuafVBdawW0RMwmcEbx7HeuiTZZikCMnIvMRdOrbSFeWgpNG2F7K2c+oCHn40pLBMJzJETTWSsERZj8wDUPTcEY9t29HWXDs9f7Xaf+9BIuRve6Go3q3HA4/1lVXTnmWFPY6uvRcmI=
+	t=1716819100; cv=none; b=RMPKH1+r8XvfeZ8c3ZNE1/leElgf6g6e/HMrgmASf9q1H3Az8+lHKbkIlQ7iTqQwVNKONGluiPuHZ2LdLjQIylRby5IuDrgJVqsGkO0Y8nP0fqmiJpAJatK8SQh7wC241UaKMTIWnk74qqqFmozyc1o83hxQOwkKKqUZrPRhcjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819186; c=relaxed/simple;
-	bh=1xfgRIVTjnEJ9mqKKZUTuPHwr2AWg4Eieq31YncZaKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NE+dxWeMfA0oEtAH7HQucV9UBFG+iXxITxZ2+FXYY/aiQmVdsI2J1My2+altW9V9kA05Gi2ACymsNYXNwTMmgN+ddqpCvLxrn8EvBlqFAlA6lY74heHntKEGQoIWxd2KAM/Lm3pB0AecRWhAgjp0+kgGScgEoP3sGo0Jo2wsqc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDJ9xO3n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C86DC32781;
-	Mon, 27 May 2024 14:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716819186;
-	bh=1xfgRIVTjnEJ9mqKKZUTuPHwr2AWg4Eieq31YncZaKI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HDJ9xO3njbHrPDgzhxOJxurzQk3yMsynCbtZ05wr10SnEUAlKDu2xBfnorU+rI/0n
-	 LjKfv90AHwgZ/uS0R/gB2sta4IaEw9hJorVDCHBr7ctxqlz6uTVtkk9b65cO/rYFrs
-	 p/iKRxrZ1zJwwOkE1cx8Geul3NB8HpcDhMEa/BkXDG27aeb9y4WqgrO9rCA+BSlged
-	 Y7BMExpsZUagyyugVLwVNpHmvyOfH4GTGJR4H6yvUyoW4R6tK1hAX+ydaCKKGa0JmN
-	 j2Czq5oisQ++itGMmHOeinyTGB2bKDuNbi247a90Oxlr0Z4TWkVwZGQoxAtD6m8U6/
-	 l2mCnNKcH9Wcg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Lingbo Kong <quic_lingbok@quicinc.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Kalle Valo <quic_kvalo@quicinc.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kvalo@kernel.org,
-	jjohnson@kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.9 26/35] wifi: ath12k: fix the problem that down grade phy mode operation
-Date: Mon, 27 May 2024 10:11:31 -0400
-Message-ID: <20240527141214.3844331-26-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527141214.3844331-1-sashal@kernel.org>
-References: <20240527141214.3844331-1-sashal@kernel.org>
+	s=arc-20240116; t=1716819100; c=relaxed/simple;
+	bh=o5hbqwBIk7hbVfK+3GoDhFtKqh6k+H303kYL9/uP8BU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bxRUPK9iJVCtXIUwrGuOpyQ8vj9QgU8SKS51PQAc2GoAubCUBlfKs4N5WeFmjfOaiNM1fnjEM4y4J0ofn6QAqxhm94PRZbFagRoq6cAqt8PUzUI0II2aIda5rkVqDImSoGO5MGDMqRxrexVLCSDZTaR940W6aKlEJB5eg6mI7GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btIVkH8V; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716819100; x=1748355100;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=o5hbqwBIk7hbVfK+3GoDhFtKqh6k+H303kYL9/uP8BU=;
+  b=btIVkH8VG3nLkoluYtHKtpqtNocofhWbTYqn3SSi5k0AsqkdNY2Y6Mdx
+   mavajyB6uW31yeGxAk70SJdJOQbNzqWoIGLQhr40pxLerX4TAO5dI+BGO
+   gELXg3nRlcc21gDfrCOfTLPK05eHDIaCtI5bEDB/0hprbcih2aptPZTKP
+   ftvXweCQgTLHiNIEPStlqU1Ms5xEYPxEcJ4V0CPjKbLieUfswm4JOV2pY
+   w1HvMUsGjWMMbuZzlBywKieM19hGlPlg/RfKXSkoh4ScMmW31QhqqXafK
+   ItNqdplFIwaoaYK9Q11stCDjv5bYPmhJj1FXPMHQA8TlYQMxDTmghbLyR
+   w==;
+X-CSE-ConnectionGUID: Zd8Ki25gTKOdKGmKgylV0g==
+X-CSE-MsgGUID: sVVEbBwxQ8SPHSAbEMIciQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13085578"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="13085578"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:11:39 -0700
+X-CSE-ConnectionGUID: Zhuq5rPFQmKHqU+Ja7y81A==
+X-CSE-MsgGUID: CZN/hKapTWO683lguzJlNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="65990651"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.140])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:11:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 27 May 2024 17:11:32 +0300 (EEST)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Linus Walleij <linus.walleij@linaro.org>, 
+    Bartosz Golaszewski <brgl@bgdev.pl>, 
+    Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to
+ errnos
+In-Reply-To: <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
+Message-ID: <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
+References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com> <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.2
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1881005345-1716819092=:1006"
 
-From: Lingbo Kong <quic_lingbok@quicinc.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[ Upstream commit bf76b144fe53c7f0de9e294947d903fc7724776f ]
+--8323328-1881005345-1716819092=:1006
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Currently, when using WCN7850 or QCN9274 as AP, ath12k always performs down
-grade phy mode operation regardless of whether the firmware supports EHT
-capability or not and then vdev will start in HE mode. When stations that
-support EHT capability try to connect to the AP, the AP will set phy mode
-to EHT after receiving the association request packet, and then send
-WMI_PEER_ASSOC_CMDID command to firmware, AP’s firmware will crash.
+On Mon, 27 May 2024, Dan Carpenter wrote:
 
-This is because when the ath12k_mac_copy_sband_iftype_data() function
-handles EHT capability, it does not copy the EHT capability into the
-iftype[band][type] array according to the interface type. So, interface
-type should not be used as an index to get eht_cap in
-ath12k_mac_check_down_grade_phy_mode() function.
+> On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo J=E4rvinen wrote:
+> > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+> > index 6f3ded619c8b..3377667a28de 100644
+> > --- a/drivers/gpio/gpio-amd8111.c
+> > +++ b/drivers/gpio/gpio-amd8111.c
+> > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
+> > =20
+> >  found:
+> >  =09err =3D pci_read_config_dword(pdev, 0x58, &gp.pmbase);
+> > -=09if (err)
+> > +=09if (err) {
+> > +=09=09err =3D pcibios_err_to_errno(err);
+>=20
+> The patch is correct, but is the CC to stable necessary?  Is this a real
+> concern?
+>=20
+> Most callers don't check.  Linus Torvalds, once said something to the
+> effect that if your PCI bus starts failing, there isn't anything the
+> operating system can do, so checking is pointless.  The only fix is to
+> buy new hardware.  There was a hotpluggable PCI back in the day but I
+> don't think it exists any more.
 
-To address this issue, use types_mask to select the eht_cap in
-ath12k_mac_check_down_grade_phy_mode() function.
+I don't mind if the CC stable isn't there.
 
-This patch affects QCN9274 and WCN7850 because they have the same issue.
 
-Hostapd log:
-wlo1: STA 02:03:7f:37:12:34 IEEE 802.11: Could not set STA to kernel driver
+--=20
+ i.
 
-Kernel log:
-[270894.816076] ath12k_pci 0000:03:00.0: failed to send WMI_PEER_SET_PARAM cmd
-[270894.816111] ath12k_pci 0000:03:00.0: failed to setup peer SMPS for vdev 0: -108
-[270894.816122] ath12k_pci 0000:03:00.0: Failed to associate station: 02:03:7f:37:12:34
-[270894.843389] ieee80211 phy5: Hardware restart was requested
-[270894.843517] ath12k_pci 0000:03:00.0: failed to lookup peer 02:03:7f:37:12:34 on vdev 0
-[270894.843616] ath12k_pci 0000:03:00.0: failed to send WMI_PEER_DELETE cmd
-[270894.843650] ath12k_pci 0000:03:00.0: failed to delete peer vdev_id 0 addr 02:03:7f:37:12:34 ret -108
-[270894.843663] ath12k_pci 0000:03:00.0: Failed to delete peer: 02:03:7f:37:12:34 for VDEV: 0
-
-Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.0.1-00029-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Lingbo Kong <quic_lingbok@quicinc.com>
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
-Link: https://msgid.link/20240425083837.5340-1-quic_lingbok@quicinc.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/ath/ath12k/mac.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index 52a5fb8b03e9a..82ef4d4da681e 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -6286,14 +6286,24 @@ ath12k_mac_check_down_grade_phy_mode(struct ath12k *ar,
- 				     enum nl80211_band band,
- 				     enum nl80211_iftype type)
- {
--	struct ieee80211_sta_eht_cap *eht_cap;
-+	struct ieee80211_sta_eht_cap *eht_cap = NULL;
- 	enum wmi_phy_mode down_mode;
-+	int n = ar->mac.sbands[band].n_iftype_data;
-+	int i;
-+	struct ieee80211_sband_iftype_data *data;
- 
- 	if (mode < MODE_11BE_EHT20)
- 		return mode;
- 
--	eht_cap = &ar->mac.iftype[band][type].eht_cap;
--	if (eht_cap->has_eht)
-+	data = ar->mac.iftype[band];
-+	for (i = 0; i < n; i++) {
-+		if (data[i].types_mask & BIT(type)) {
-+			eht_cap = &data[i].eht_cap;
-+			break;
-+		}
-+	}
-+
-+	if (eht_cap && eht_cap->has_eht)
- 		return mode;
- 
- 	switch (mode) {
--- 
-2.43.0
-
+--8323328-1881005345-1716819092=:1006--
 
