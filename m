@@ -1,92 +1,160 @@
-Return-Path: <linux-kernel+bounces-191371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648B38D0DA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:32:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9A88D0E5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952E61C215DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B91CB20C41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E4916079A;
-	Mon, 27 May 2024 19:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C4F161308;
+	Mon, 27 May 2024 19:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="EhWrLL+w"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mY4WexIp"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E0717727;
-	Mon, 27 May 2024 19:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A3517E8FC;
+	Mon, 27 May 2024 19:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716838326; cv=none; b=t9pvZRSVOxeVsaXYO5CtljDAq5cbnBk+l8aiSVDvLCMWUU2ceC8JAndMSJLi83kJR6Cffd603RGcloFpTsl3q6+L3vS89gEdajh8gSdU5oyQQe6bOiplqFxS7fUEldU0TPowvZaIPV1uPR+lCxRx6DyjEnEw2+5qQrmYCliia2c=
+	t=1716839079; cv=none; b=sDKMltONTNYwdF/TBrJc12ev92S3Su49hF2+YQO9vWQCbcqtEanpq+Yh55jBGNd5Op+Y2WBEFWzYw0Pt+6diBwAIGRxtiQzJ1LCXjMOulUrZzWCdNd9hGFaheIHlJWxZVGtYS0bloDC+ikq+OtJR4rju6a7n3jVea5kDdjIkcuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716838326; c=relaxed/simple;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=E2xoTA0mbUF8sVMXThMwGRYJksLPufCKU+4TDlbFykAl+lRlkSTdbIkdDJWRhpjpu2f/sfvZP5ZQkb/21lcxC/BEo3d2Sewo2iZLDdtm8yJJ3PQja+HpOdLtsx7a4nl5U4ApWacqbC1f4QI8G0PuxCthP4Uy96QNVcWSehF6zKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=EhWrLL+w; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1716838321; x=1717443121; i=rwarsow@gmx.de;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EhWrLL+w9hdZQZdx4s7O1D3zvuJYvwzmMl2ay3OOHGuKJvioHl/10FvbHPg6LkuR
-	 DhczJXL5gpBCcaSdvWqem5eOfIBAhMiA3SpuxGvSf1Py+HIzF7uiXK2BKBAfaRwv2
-	 HdvusuTXSSjQpJGP+mIvmIh+3K8jpRPISoZ1kF+oJsJLwvwPmZhgJGeyMRXUPPqkR
-	 pCJznmDGOuPxOxq8cKfMqUCh40GbaVAg1AAYLhk+Tmn3GWg2E/oeqiMgatDY7Ex2R
-	 5F5BciJ1mb7PCRky6u0SqAqdseAKR4QrUKStfwhB/UF5JNom1vS5n62ya5D9OXS0l
-	 L60bamqA072GiiRxCA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.34.221]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLQxX-1rupe60hRD-00IX7S; Mon, 27
- May 2024 21:32:01 +0200
-Message-ID: <4b594156-38ca-47f4-ad9b-8f988b632b22@gmx.de>
-Date: Mon, 27 May 2024 21:32:00 +0200
+	s=arc-20240116; t=1716839079; c=relaxed/simple;
+	bh=HLBysQ19YFHo8F8KB4gsrAUlc0wV9Cj9zKghrvonL+A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WgkBAQ1GXq5gEJjvqkfFj/7fOv+jKM0s5xmcqJmv19Y+JJN6r/lsQeFWwNI1FjdPB51wCXnRXNo07lqmTauHkLOQeioxcsgQbkH07aUYsKfJar4a5U5IC3+kWvV1YlAlc5g0fAc+eqasCtTbiXNQMzRFdyZEtaEWEXCLjPfsQBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mY4WexIp; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-794cbdca425so11863385a.0;
+        Mon, 27 May 2024 12:44:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716839076; x=1717443876; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjq5tjwzvdH+BRd/8f1cet9dJrekncN/7BkMFy2h8t8=;
+        b=mY4WexIpSKX9O4zJPv6zvaKgPZynocHG2LDji+3r+5xV59kNlYTxG3fRMAe/naiDZN
+         Gijr4xJy3VxUmU11IHqZRTsLIQUMMRQRJpUiE1sgGJ28gbiCGjuSvAFB+7uVbaUiwcYt
+         i3s5DTMJNdQuQnRyjqxJtCO9/ito4AFj1FG70nu4FY/p2drZ7B2FJAs336L5JubgVZM+
+         UXlmTzHmzigz0BscNcFd3lmxJ6PBV1TXOUu6dK1IhGOzbRovQP5sQt6n8Z8pDYibfzz9
+         8wGUjCltH1vWlv3aUF1bGtkeeCK1DDdvQM2d/mMR1kWFSfVNXyxWLreLKMAOWfsnl5Ep
+         DSWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716839076; x=1717443876;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qjq5tjwzvdH+BRd/8f1cet9dJrekncN/7BkMFy2h8t8=;
+        b=L7ggcIhgIjzKWqatwCCcEEaydpZ9IBi/cOWsS6xg1iGwbYpFxo1eCYKKMkxakl0tbw
+         vrU6MFimFnEA0uIxjGZZVd13/Jyp0Ps+N6oeQ7N6je0C/mA7x7+yubOmd1KeLPN3zgN/
+         e2xslsp4bZk6nEYo5wung8f5ktjFv5Lwqh89D89xyJdqSsMjpaDuMueHOZSwfnsocKIZ
+         G03NQ5rQkaWGKXeQd04NpUD+PcBTaArFmw4qqrMzY1LtKNGxkmnWzM1Jy2N957oOTg02
+         7nvzftt2SI4KSyzevynpZVA96/7r9At3HvU9weXfk7K4bPw2+gf2U2YgPUhahJMQ//CJ
+         1Qfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc2ImRKqrIkB+iPPFTbDsmWlXEpFAm5NS2EvBh22Y3as8N1Z6CGIaqjXCpupHPxaJYPMWBH0DhLAp5xb2By599lTezXf2Zvi7BijRKHEh7JQ8JZlAgNX4uWNnTmhWzfp+YOkRoL6bNtqhD
+X-Gm-Message-State: AOJu0YylgwqMkWwJpL4qiGISa1vy7dJ4CzXE+DDOBTVb7Ld8ftBgQERa
+	r/g6ZvFBfJBTWrIzKyTMfBPb4aAx9ToK8f7wne3YmS0/ozEJIOI=
+X-Google-Smtp-Source: AGHT+IEHEOkzsUc9ks53aRMP1DcBgMp4Mq7pnTVsKtvBheCkdD8g1Y0IiL00nKH1Edxq8CxrZsPx0w==
+X-Received: by 2002:a05:620a:1270:b0:790:ed57:1354 with SMTP id af79cd13be357-794ab08d7c4mr1156185485a.6.1716839076381;
+        Mon, 27 May 2024 12:44:36 -0700 (PDT)
+Received: from [120.7.1.23] (198-84-205-203.cpe.teksavvy.com. [198.84.205.203])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abd0740csm320873385a.81.2024.05.27.12.44.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 12:44:35 -0700 (PDT)
+Subject: Kernel 6.10-rc1 b,Build error with [PATCH v5 2/3] serial: port: Add
+ support of PNP IRQ
+To: Guanbing Huang <albanhuang@outlook.com>, gregkh@linuxfoundation.org,
+ andriy.shevchenko@intel.com, rafael.j.wysocki@intel.com
+Cc: linux-acpi@vger.kernel.org, tony@atomide.com, john.ogness@linutronix.de,
+ yangyicong@hisilicon.com, jirislaby@kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ lvjianmin@loongson.cn, albanhuang@tencent.com, tombinfan@tencent.com
+References: <cover.1712472167.git.albanhuang@tencent.com>
+ <PSAPR06MB4952C4112E75D882AC61CA5EC9002@PSAPR06MB4952.apcprd06.prod.outlook.com>
+From: Woody Suwalski <terraluna977@gmail.com>
+Message-ID: <cc8a93b2-2504-9754-e26c-5d5c3bd1265c@gmail.com>
+Date: Mon, 27 May 2024 15:44:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 SeaMonkey/2.53.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
+In-Reply-To: <PSAPR06MB4952C4112E75D882AC61CA5EC9002@PSAPR06MB4952.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BTtreE723VMNG9RwL8Pr7Ps9zjM0Q+pvQGTSlnlIzsPh71BFNrK
- gV6vc2nmb+myl40r2zaZSkhsOulpoDSMrIhTgEqOCI8KWTJ9uKTBORZmohL6MYtVsJmu15h
- 4xNHF8T3N656wmBCnpMqGxx27v9xPlOy8yHHULZgdHnoUrJQdK/YTpKnvUe5j6NtF/C2W4h
- 76h2L/tgtSTxu4pRyje1A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1Li2LL8TlFE=;1aq23OSFp0xtYjKKLeB35DKTOU1
- Cnwxp3y0VCwPt0ngMT3QCo+PkNEgFQDJw3BEqONL2dPb6XxwJKgCyYs4FQBQf5dvxjC0PIDgT
- 5mJkoefmQqqVbg279s1qX/nprIKXYus5jScqeU9a6lPKOVW5Aa4EDK4UL95p2KUI/7fnR+Kks
- gOtLorEvkkxmou7xzoWmGxFFvMNzFQtkPiIrdtnQjLJdcng1RUat8F1gLSZ3VBuicVS2m0zRC
- sICuf5GkM0HK2DqimONBjeJ96yN9mOpsMBPRLevikTqnVN5Zi9zlZ8GBOE72uqj2Z4QhJl62f
- tE1CyQUbMrNmYE2H1ISrNorjBPWiXlXsvpUqR3TDWACQFp75aAiQnu+yw0t3xcdRdt9cm3O1A
- MtEIBhm3GulPD5yhyE0sOD+jmtepoWC1jthKrj51Y+ND0VXBvwTE4ZTFPEJWNLZNGAz3jzj4x
- vMQwg3HNBvqO5QCmp+JF/lHlKSfPg/evW86DXGGA83cLdHsNZ942BANB1tQGJ7JAFzeBrb1AT
- ZzCA6wxMAyB5pBvKoweFmPcSgvdqx8A997QCCo1LWoGABPxN0cdk3izCnbaz4gbfWSajE4kwE
- 5Tcx8iT0hEFqFSQMMbR3nD2dmzpB2rRRts1R7TfyZXqcO2IV8sIaLeNTDvasRucWsfsEkiQFH
- AaTKUiD9TlfVQCINCu843hxDXSCQBFY6SHBPh0IFw6SER6UKox1p+8pKQIWv6SK4ZusmFtld/
- +Or/P/TG/kTVObGal1Tolae89MSyEe2xDZ+zBfz4vYfY2YzrXLYjbNOyVPQOAKn/yjrsMFZkb
- 6MibWL47PzchaSo6sdT76a85NnXBRPdrOMtNZrZ086CTA=
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
+Guanbing Huang wrote:
+> From: Guanbing Huang <albanhuang@tencent.com>
+>
+> The function __uart_read_properties doesn't cover PNP devices, so add IRQ
+> processing for PNP devices in the branch.
+>
+> Signed-off-by: Guanbing Huang <albanhuang@tencent.com>
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Reviewed-by: Bing Fan <tombinfan@tencent.com>
+> Tested-by: Linheng Du <dylanlhdu@tencent.com>
+> ---
+> v4 -> v5: change "pnp" and "irq" in the commit message to uppercase, modify the subject
+>            to start with "serial: port:", modify the location of the header file pnp.h
+>
+>   drivers/tty/serial/serial_port.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/serial/serial_port.c b/drivers/tty/serial/serial_port.c
+> index 22b9eeb23e68..8504bae1d2c9 100644
+> --- a/drivers/tty/serial/serial_port.c
+> +++ b/drivers/tty/serial/serial_port.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/of.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/pm_runtime.h>
+> +#include <linux/pnp.h>
+>   #include <linux/property.h>
+>   #include <linux/serial_core.h>
+>   #include <linux/spinlock.h>
+> @@ -221,7 +222,11 @@ static int __uart_read_properties(struct uart_port *port, bool use_defaults)
+>   
+>   	if (dev_is_platform(dev))
+>   		ret = platform_get_irq(to_platform_device(dev), 0);
+> -	else
+> +	else if (dev_is_pnp(dev)) {
+> +		ret = pnp_irq(to_pnp_dev(dev), 0);
+> +		if (ret < 0)
+> +			ret = -ENXIO;
+> +	} else
+>   		ret = fwnode_irq_get(dev_fwnode(dev), 0);
+>   	if (ret == -EPROBE_DEFER)
+>   		return ret;
 
-*no* regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Hello all, trying to build 6.10-rc1 fails for me in serial_base.o:
+   CALL    scripts/checksyscalls.sh
+   DESCEND objtool
+   INSTALL libsubcmd_headers
+   CC [M]  drivers/tty/serial/serial_port.o
+   LD [M]  drivers/tty/serial/serial_base.o
+   MODPOST Module.symvers
+ERROR: modpost: "pnp_bus_type" [drivers/tty/serial/serial_base.ko] 
+undefined!
+make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+make[1]: *** 
+[/woody/src/kernels/linux-6.10-pingu/work/linux-6.10/Makefile:1892: 
+modpost] Error 2
+make: *** [Makefile:246: __sub-make] Error 2
 
-Thanks
+Reversing the patch "fixes" the problem :-(
+I am building on a Debian bookworm system, gcc 12.2
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Any suggestions  how to make it work?
+
+Thanks, Woody
+
 
 
