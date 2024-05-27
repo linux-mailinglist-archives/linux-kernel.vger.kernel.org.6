@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-190421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6A88CFE08
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084BC8CFE11
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7311F22017
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE521C21E2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F511327E5;
-	Mon, 27 May 2024 10:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mj6ofQMe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZdQUltaV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD95D13BC2B;
+	Mon, 27 May 2024 10:25:40 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451513AD19;
-	Mon, 27 May 2024 10:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2CF13B2A4;
+	Mon, 27 May 2024 10:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716805476; cv=none; b=n4MJYVofsT0ph53fQQYrUDDfPqVcea/fTRyMBwlAcSGfZGug66jZdg3YV9Y5J5W84F9PmnI5jPsSAod3oVtr3GrTGRYbytCho0129QAhldzyXnCokyka6FZXinfgatO3mfm4UgvABXEbA+4CfCJtmenTs3dLKXxRIDrIUOQT2eU=
+	t=1716805540; cv=none; b=LkqSJR9H+Nx3XOTvlWt9aai9N4Q3byrpARvLJFt62wvhakE+/aWFQBD8Zu57pcf1UV1CTmYoRUwzMmoGMZXrTYo/tiQS5x01WTx9yo573LuRAC2ybW1DFRSFbvIvXiSlIjIHVtfdB6L3UCRCe2iiBu7AvhwdmMHl2wneZjq1PP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716805476; c=relaxed/simple;
-	bh=25UaZIn7YTbKRxYS+FlAhRZQaXoz0d3DkJA/s6olNCQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=WWmt7q7DVacmD4gWqvyDUVT/SN5Bc36Kz+eW72IRfXjkjeTpu3QpbYDaMC8VuTfUYIU3UQhE42nKMk0AA8h7e2BbtuKO9roMDZBAgiOQTLi0JglA0UeGcQ9EzciGM4FWiTUqUGl402wUQghpo5hD5y8P9q9MxRzlp4TKLaxEBWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mj6ofQMe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZdQUltaV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 27 May 2024 10:24:32 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716805473;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eRzXPz6BNdvjCKefY1GIKXo0nmr+7vk6qac9ciJA2ds=;
-	b=Mj6ofQMeknKZ6howsJ4SKT2+dj7LyLu54fXiNRJtirz2nWwN0b0Zvi3bIJvkjW2lUgu2e0
-	ghmc5f5mnI7KY0ImXfCqXecHc/Uli4tYFYcCc9VLU/NPYKXB8m3+v28bm1PPsAzNV6V7jk
-	iHB9Kr8ucayjkz/I4mdYQMtzTQnrWTQfVAxwl+OAfEBMrm0L4u8AFQ8ZLkY0zJSk/yp/KA
-	TZ5Lq2LrenBmhf4IDn1B3S0FTtaiuJ2PpfLnEvb1xYUCwQ3D+NLBS3tqpKAdwlYQtLOqPw
-	zWmH8+8EwGYMFQSpbDW3UF/1AMWZ6Zg/LR/ctIww+9zU/+QKq47VIvllq4RW0Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716805473;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eRzXPz6BNdvjCKefY1GIKXo0nmr+7vk6qac9ciJA2ds=;
-	b=ZdQUltaV4PUPmQ1GUCz+KvRqAnT4z/MhTpfvnZLIHEjLvkl6gguhjzYppvbluwffZxOmUF
-	Ug4Zp9u3uLy6gkBg==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/core] cleanup: Standardize the header guard define's name
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <171664113181.10875.8784434350512348496.tip-bot2@tip-bot2>
-References: <171664113181.10875.8784434350512348496.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1716805540; c=relaxed/simple;
+	bh=IZP9GwLFHYwsUxISgzy2RcJobADfDP06LD39FBZVelc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bbXOLTpKH4QJ70egzY+NlMkLfEphLfaMLwsbH4Ixcd7b8AMtBEHmwRYhVFUiBvisklbJ6SS2XJ1VUUmSFPyzDq4ze6S8XqPMrcabFesb6MLQi2iiQXOt3Od6WXmzNEtpaHRcLiu1X0ZQjE1J8SGYDKuEayNIv3cDo2awjauj1DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.56] (g56.guest.molgen.mpg.de [141.14.220.56])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5A5E861E5FE01;
+	Mon, 27 May 2024 12:25:00 +0200 (CEST)
+Message-ID: <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
+Date: Mon, 27 May 2024 12:24:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171680547261.10875.14861972090119187819.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
+To: Kalle Valo <kvalo@kernel.org>, Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+ James Prestwood <prestwoj@gmail.com>
+References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
+ <e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
+ <87sey38vte.fsf@kernel.org>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <87sey38vte.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the locking/core branch of tip:
+Dear Kalle, dear Baochen,
 
-Commit-ID:     c80c4490c280a1678e47d34d2a335a58f1318615
-Gitweb:        https://git.kernel.org/tip/c80c4490c280a1678e47d34d2a335a58f1318615
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Sat, 25 May 2024 12:45:31 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 27 May 2024 12:19:55 +02:00
 
-cleanup: Standardize the header guard define's name
+Am 27.05.24 um 11:10 schrieb Kalle Valo:
+> Baochen Qiang writes:
+> 
+>> On 5/27/2024 4:42 PM, Paul Menzel wrote:
 
-At some point during early development, the <linux/cleanup.h> header
-must have been named <linux/guard.h>, as evidenced by the header
-guard name:
+>>> On the Intel Kaby Lake notebook Dell XPS 13 with
+>>>
+>>>      3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter [168c:003e] (rev 32)
+>>>
+>>> with at least a self-built Linux 6.9-rc5, on April 26th, 2024, and
+>>> Linux 6.8.11, today, May 27th, 2024, the error below happened, and
+>>> the device couldn’t authenticate to a WiFi network until reloading
+>>> the module *ath10k_core* and *ath10k_pci* (didn’t check just
+>>> *ath10k_pci*):
+>>>
+>>>      $ sudo modprobe -r ath10k_pci
+>>>      $ sudo modprobe -r ath10k_core
+>>>      $ sudo modprobe ath10k_pci
+>>>
+>>> ```
+>>> [   49.441618] ath10k_pci 0000:3a:00.0: wmi service ready event not received
+>>> [   49.523814] ath10k_pci 0000:3a:00.0: Could not init core: -110
+> 
+> [...]
+> 
+>> Are you using a distro kernel?
 
-  #ifndef __LINUX_GUARDS_H
-  #define __LINUX_GUARDS_H
+The 6.8.11 is Debian’s current Linux kernel in the suite *unstable/sid*
+(*linux-image-6.8.11-amd64* 6.8.11-1).
 
-It ended up being <linux/cleanup.h>, but the old guard name for
-a file name that was never upstream never changed.
+>> Could you check if below patch merged in your kernel? if not can
+>> you merge it and try again?
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/wireless/ath/ath10k?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
+> 
+> Paul, if you are feeling brave to try out an -rc this commit is in just
+> released v6.10-rc1.
 
-Do that now - and while at it, also use the canonical _LINUX prefix,
-instead of the less common __LINUX prefix.
+Thank you. I haven’t found out yet, how to reproduce this. I’ll keep an 
+eye on it.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/171664113181.10875.8784434350512348496.tip-bot2@tip-bot2
----
- include/linux/cleanup.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+As the commit message says:
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index c2d09bc..cef68e8 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __LINUX_GUARDS_H
--#define __LINUX_GUARDS_H
-+#ifndef _LINUX_CLEANUP_H
-+#define _LINUX_CLEANUP_H
- 
- #include <linux/compiler.h>
- 
-@@ -247,4 +247,4 @@ __DEFINE_LOCK_GUARD_0(_name, _lock)
- 	{ return class_##_name##_lock_ptr(_T); }
- 
- 
--#endif /* __LINUX_GUARDS_H */
-+#endif /* _LINUX_CLEANUP_H */
+> This results in timeout issue if the interrupt is not fired, due to
+> some unknown reasons.
+
+There are reports from 2016 to 2021 with similar symptoms. These were 
+supposedly fixed with 
+`/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin` [1][2]:
+
+     $ md5sum /usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin 
+/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
+     cb37c63d9ca28f53fea1ff09ad7c7a82 
+/usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin
+     651e921b372848b3928621e6f1d34b01 
+/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://github.com/kvalo/ath10k-firmware/pull/2
+[2]: https://github.com/linux-surface/linux-surface/issues/41
 
