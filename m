@@ -1,176 +1,276 @@
-Return-Path: <linux-kernel+bounces-191239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111378D088C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:30:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FDA8D0892
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147AF2836A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D351F23705
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1487344E;
-	Mon, 27 May 2024 16:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D2673458;
+	Mon, 27 May 2024 16:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WXOvQ+bP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glMXHRXu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D773441
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C9415A844;
+	Mon, 27 May 2024 16:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827379; cv=none; b=oTainxIr1nA3xClaodxpe9t/p9CZRUAPJL00q8TAsUUthhUDoLmOAjoyJckuwfFhVuNog+TmTw7K6PLUw0o99mo7e9W2oWigm9w0Kof17X0p8bye8c27WMlA8fwcMFph7TjR7kJtI0SZidAY1YYIt5vH2NP2NYBR9FGButjna70=
+	t=1716827382; cv=none; b=fIknklZflanjNaGxI05b1Kf2n/E59cXYDy/nJ83npF3lvC3tEeRvJAuy9vjhkVEbfAlkvfyOS/AzP8yjdbcbFkbi5LrtQ/AFSaR4tqgVZ31hKkDa9Ta9YC5hoRr+eHSS9yNAASFgwkuluAnB4q3y9Nav291/xR6KCYh++Qp9Q/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827379; c=relaxed/simple;
-	bh=rk2XezkAzS5gUv8DwWyuJeBuEahdoVMELENJgT+Z7VQ=;
+	s=arc-20240116; t=1716827382; c=relaxed/simple;
+	bh=7pj/XCLGDOEGfoe0oU0fc4KA6+ZTDkriw3sFEhW+RVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzrxI0EJi9cM3LbYmuJb+IwFpO+Zrrw0XZylTiyXf8Sm2T4XNVTfKXpj09T8JNCnw0+msdRhNE30GqnH5sZZYwgwZPFRd2gWT6BAH8XbohU12eklWx8uieQw80PLU9nzlzzqk2QiTs5FxDptD3FdGQ1DyyGGrm6ZU8H4KU4SlBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WXOvQ+bP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-420180b5898so80523495e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1716827376; x=1717432176; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CUR9tjUj2iCuKOML1r+nyycL1s+FksIs6kJ9krg7rYI=;
-        b=WXOvQ+bPyuPJqHwU4+icL8ySqXFsBfKb6V7+Fr1Z5DYSVcuU2KQIR+PT0kjUr7tJoj
-         3ACAtlM+p62nYlhjqDTf7brKkgvhKm/g6g6BdzfW793OIIx+iOi5cfxUv+B7JeFHbczP
-         T5kOye6/JNCkTBa7dYGKjWRPzp51/2q0OGD3/9airPAWnOXaJM8uwUs0xi3TlSDYh91Y
-         ob5d3H95pg+Qt8aFfEqvzV0/qtLqVSjqgnnC5Bf61NyCHBQJl1G67GnML5uQWPl4C/v7
-         8CwngJyq9vhlsNZbGVLRFHsW61z92Db+n5ss6sHCFPtTXIkQKWJT+uTkzp0Y350YRyM/
-         TGRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716827376; x=1717432176;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CUR9tjUj2iCuKOML1r+nyycL1s+FksIs6kJ9krg7rYI=;
-        b=Svu2sct9vn4IQBc/IE/2FQcG+09Z83shJ/fF+mMeyGzkHWGG6Kk+FTd+hrUnwwzl4K
-         9FRWcN/0P/zUx36OEDJIkNrUuPzqQuNL1oC718vDa9GKj3RDgZNLqDwDVSmLqIUddR0t
-         KIP0gl8XJpvBCsithMWV4uo5XeQDrzXt2AfXF+OLF0w//aXkkst81eFzQ7dCrIR5z5eo
-         Qz5vjApMVr3chYG9I3YIPVLx+94y+o74O3JA7dRCavvI/376PfRXMCVQdr1xpyCXvshj
-         Fj9TvqNi8WyXABl86fqQl0zKN5AgpDQvjXvalnzWltzSdMYuY6bSHqNiB5sp9TwFbm2g
-         4R8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUpzw7hLFRaPBnULSKF6JvNziI5FrG7gT+1SE637wHs6z7UVGV7ZASgnSFO1PNtpEO4NKLorP/oyWFugmjFBqDjmLsjZf5zHzjYfi2I
-X-Gm-Message-State: AOJu0Yw2P8/hhrOckgyInnu5Squlw53OgJzawWF1KY4FnHnFNPyRy4Uf
-	rSL6aClWlrGNZT2t3iU6vLLfbQF+CqhHdYwdAXlszCKei67PWm95DdbqiYUSddA=
-X-Google-Smtp-Source: AGHT+IGfCJZo4LZWWLpRRKTEPYlRJOgjNRulCbrg6HUczWdUKveycFMLbxR2PpHYqvUCkagZop+Nww==
-X-Received: by 2002:a05:600c:1d22:b0:418:2b26:47a3 with SMTP id 5b1f17b1804b1-421089ffc9emr76330215e9.32.1716827376450;
-        Mon, 27 May 2024 09:29:36 -0700 (PDT)
-Received: from localhost ([176.74.158.132])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089b0410sm113439735e9.29.2024.05.27.09.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 09:29:36 -0700 (PDT)
-Date: Mon, 27 May 2024 18:29:35 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	cleger@rivosinc.com, alex@ghiti.fr, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 4/5] RISC-V: KVM: add support for
- SBI_FWFT_PTE_AD_HW_UPDATING
-Message-ID: <20240527-cd06bb4215d05129f4793dd6@orel>
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-5-yongxuan.wang@sifive.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RvfBzEUzKcSk71w1aWt6sE2+l/41jdlfXJ0Ru6a42pQcAv501wF1QMaXEPyEzr4J9Z+SSnlDR73nicQUX44YMFa+2KkVTCFYUKkNYgCyN9daGaHeyoOixzp0BBVON1EC71IsOwnflrMB4o20Xrk6Dws6cX63cTYDiSO3Dr72948=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glMXHRXu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BC91C2BBFC;
+	Mon, 27 May 2024 16:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716827381;
+	bh=7pj/XCLGDOEGfoe0oU0fc4KA6+ZTDkriw3sFEhW+RVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=glMXHRXuglCtiUTeVFEbFc9v/xeuPPUw5UmRugqMGpQdELUc3uUQ3DArHs3+amVKv
+	 dt7xpbHboS0lxyQW04SZc6i+LbHkWzTgkxS9ZJXCdT/+alufGI3EXQZIzmkETwgeLa
+	 7/YUrCXdorrfbtl53ErUvGiinyS8em0aDsTK3ESLnjJs7gM/T7y4rKgac0DPzJqZtE
+	 SOwEkictvfJejCTyYjlbvtPhOEuCqXM0ZbN3ckqbEzEHTNlU6A9qLA6PDJrCP5rJIA
+	 +IooP9jdfK+9X3v4jUpn91HaB7TsrFidB0/NnezdEl47lcu90wCa8Y3YtmESodk4wa
+	 RgvVQiDiog+ng==
+Date: Mon, 27 May 2024 17:29:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: add ti,ads1119
+Message-ID: <20240527-ecosystem-mountable-d9a6eebc7607@spud>
+References: <20240527154050.24975-1-francesco@dolcini.it>
+ <20240527154050.24975-2-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zNG+bgDFF3VuTFdF"
 Content-Disposition: inline
-In-Reply-To: <20240524103307.2684-5-yongxuan.wang@sifive.com>
+In-Reply-To: <20240527154050.24975-2-francesco@dolcini.it>
 
-On Fri, May 24, 2024 at 06:33:04PM GMT, Yong-Xuan Wang wrote:
-> Add support for SBI_FWFT_PTE_AD_HW_UPDATING to set the PTE A/D bits
-> updating behavior for Guest/VM.
-> 
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+
+--zNG+bgDFF3VuTFdF
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, May 27, 2024 at 05:40:49PM +0200, Francesco Dolcini wrote:
+> From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+>=20
+> Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
+> with I2C interface.
+>=20
+> Datasheet: https://www.ti.com/lit/gpn/ads1119
+> Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 > ---
->  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  2 +-
->  arch/riscv/kvm/vcpu_sbi_fwft.c             | 38 +++++++++++++++++++++-
->  2 files changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> index 7b7bcc5c8fee..3614a44e0a4a 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> @@ -11,7 +11,7 @@
->  
->  #include <asm/sbi.h>
->  
-> -#define KVM_SBI_FWFT_FEATURE_COUNT	1
-> +#define KVM_SBI_FWFT_FEATURE_COUNT	2
->  
->  struct kvm_sbi_fwft_config;
->  struct kvm_vcpu;
-> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> index 89ec263c250d..14ef74023340 100644
-> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
-> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> @@ -71,6 +71,36 @@ static int kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
->  	return SBI_SUCCESS;
->  }
->  
-> +static int kvm_sbi_fwft_adue_supported(struct kvm_vcpu *vcpu)
-> +{
-> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
-> +		return SBI_ERR_NOT_SUPPORTED;
+>  .../bindings/iio/adc/ti,ads1119.yaml          | 122 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 129 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1119.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml b/=
+Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> new file mode 100644
+> index 000000000000..ab4f01199dbe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> @@ -0,0 +1,122 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1119.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	return 0;
-> +}
+> +title: Texas Instruments ADS1119 ADC
 > +
-> +static int kvm_sbi_fwft_set_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
-> +				 unsigned long value)
-> +{
-> +	if (value)
-> +		vcpu->arch.cfg.henvcfg |= ENVCFG_ADUE;
-> +	else
-> +		vcpu->arch.cfg.henvcfg &= ~ENVCFG_ADUE;
+> +maintainers:
+> +  - Jo=E3o Paulo Gon=E7alves <jpaulo.silvagoncalves@gmail.com>
 > +
-> +	return SBI_SUCCESS;
-> +}
-> +
-> +static int kvm_sbi_fwft_get_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
-> +				 unsigned long *value)
-> +{
-> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
-> +		return SBI_ERR_NOT_SUPPORTED;
-> +
-> +	*value = !!(vcpu->arch.cfg.henvcfg & ENVCFG_ADUE);
-> +
-> +	return SBI_SUCCESS;
-> +}
-> +
->  static struct kvm_sbi_fwft_config *
->  kvm_sbi_fwft_get_config(struct kvm_vcpu *vcpu, enum sbi_fwft_feature_t feature)
->  {
-> @@ -177,7 +207,13 @@ static const struct kvm_sbi_fwft_feature features[] = {
->  		.supported = kvm_sbi_fwft_misaligned_delegation_supported,
->  		.set = kvm_sbi_fwft_set_misaligned_delegation,
->  		.get = kvm_sbi_fwft_get_misaligned_delegation,
-> -	}
-> +	},
-> +	{
-> +		.id = SBI_FWFT_PTE_AD_HW_UPDATING,
-> +		.supported = kvm_sbi_fwft_adue_supported,
-> +		.set = kvm_sbi_fwft_set_adue,
-> +		.get = kvm_sbi_fwft_get_adue,
-> +	},
->  };
->  
->  static_assert(ARRAY_SIZE(features) == KVM_SBI_FWFT_FEATURE_COUNT);
-> -- 
-> 2.17.1
-> 
->
+> +description: |
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Most of the |s you have in this file are not needed - you don't have any
+formatting to preserve in all but the channels.
+
+> +  The TI ADS1119 is a precision 16-bit ADC over I2C that offers single-e=
+nded and
+> +  differential measurements using a multiplexed input. It features a pro=
+grammable
+> +  gain, a programmable sample rate, an internal oscillator and voltage r=
+eference,
+> +  and a 50/60Hz rejection filter.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,ads1119
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  vref-supply:
+> +    description:
+> +      ADC external reference voltage (VREF).
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +patternProperties:
+> +  "^channel@([0-6])$":
+> +    $ref: adc.yaml
+> +    type: object
+> +    description: |
+> +      ADC channels.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          0: Voltage over AIN0 and AIN1.
+> +          1: Voltage over AIN2 and AIN3.
+> +          2: Voltage over AIN1 and AIN2.
+> +          3: Voltage over AIN0 and GND.
+> +          4: Voltage over AIN1 and GND.
+> +          5: Voltage over AIN2 and GND.
+> +          6: Voltage over AIN3 and GND.
+
+Take a look at diff-channels.
+
+> +        items:
+> +          - minimum: 0
+> +            maximum: 6
+> +
+> +      ti,gain:
+
+What makes this a property of the hardware?
+Also, missing unit.
+
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          PGA gain value.
+> +        enum: [1, 4]
+> +        default: 1
+> +
+> +      ti,datarate:
+
+Ditto here, why's this a property of the hardware? Usually this gets set
+=66rom sysfs..
+
+Thanks,
+Conor.
+
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Data acquisition rate in samples per second.
+> +        enum: [20, 90, 330, 1000]
+> +        default: 20
+> +
+> +    required:
+> +      - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        adc@40 {
+> +            compatible =3D "ti,ads1119";
+> +            reg =3D <0x40>;
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +            #io-channel-cells =3D <1>;
+> +
+> +            channel@0 {
+> +                reg =3D <0>;
+> +                ti,gain =3D <4>;
+> +                ti,datarate =3D <330>;
+> +            };
+> +
+> +            channel@4 {
+> +                reg =3D <4>;
+> +                ti,datarate =3D <1000>;
+> +            };
+> +
+> +            channel@5 {
+> +                reg =3D <5>;
+> +                ti,gain =3D <4>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6c90161c7bf..f1b2c4b815e2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22380,6 +22380,13 @@ M:	Robert Richter <rric@kernel.org>
+>  S:	Odd Fixes
+>  F:	drivers/gpio/gpio-thunderx.c
+> =20
+> +TI ADS1119 ADC DRIVER
+> +M:	Francesco Dolcini <francesco@dolcini.it>
+> +M:	Jo=E3o Paulo Gon=E7alves <jpaulo.silvagoncalves@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> +
+>  TI ADS7924 ADC DRIVER
+>  M:	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+>  L:	linux-iio@vger.kernel.org
+> --=20
+> 2.39.2
+>=20
+
+--zNG+bgDFF3VuTFdF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlS08AAKCRB4tDGHoIJi
+0tuwAP9bAJ1q8cEi8wbDHJNK175XRR6DiVvTUcizd1Y7Psac1gEAhAHM9ucMk9u/
+Q74H0LG4aMVAbRpYeu1qFSZ8etUsYwQ=
+=LjsF
+-----END PGP SIGNATURE-----
+
+--zNG+bgDFF3VuTFdF--
 
