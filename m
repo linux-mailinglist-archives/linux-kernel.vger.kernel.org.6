@@ -1,137 +1,89 @@
-Return-Path: <linux-kernel+bounces-191471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2793C8D0FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298708D0FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4D4B21BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AA91C219D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFE71667C9;
-	Mon, 27 May 2024 21:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83111667E4;
+	Mon, 27 May 2024 22:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lc7AvNri"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4gz2wLZF"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7FC179A8;
-	Mon, 27 May 2024 21:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3B1754B;
+	Mon, 27 May 2024 22:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716847138; cv=none; b=dcq6tLvXfNiBYxRu75Cp242DBiNAz6Z/k1HpdaLd8n2s/dRKLtvh3i+7M+qIZtcE0YLX41mtsHb774MAkEdbq+kxMEvlonLgHwnBLwx5ON8KiOyjBeMCeQCg92Rqtlb+Uyp5Ubv/aYvSnLWWYMjEI1ZDnURyIipj7+hk27mGlt4=
+	t=1716847489; cv=none; b=mn7mTV7J8kGKgFPZFvmaFcCcMLulOuWvDPh4kUdUcRwKm0AmNP38MvCkCMV0ylwmR3wWRwPt1n4V4ox3JZY5qF+0B2uaDttsxhyK5BpqBKMUwzjaMMi4+oCUXeTqK2o89zOf/w3gi+IGMvvR7GAXoovwaZCyUmVD7gnXo1AP61k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716847138; c=relaxed/simple;
-	bh=27X3OpWXeYz+3UvmmbSLZOSMgK7993GPNRHShnJDtmM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Rf/96AMjEoXB6NehDT1qbAv7g+XW8SzHAxXoQ2lysJplawgcgrS4u6SmuAoHmAjOt0jC0hjnW2B8/3qtMtYSxsOSbQ8CEVt3JYVvvwXhXog+64tOm62aRPC9V3WzbPaYrFZzBGxxaMrWV51VL5TnPLJ4dsK3BPaKMJKv078HzAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lc7AvNri; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B06ECC32781;
-	Mon, 27 May 2024 21:58:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716847138;
-	bh=27X3OpWXeYz+3UvmmbSLZOSMgK7993GPNRHShnJDtmM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lc7AvNriCWXUeeaK4Agj0Lff3GY0cqORFdpn522SmV+GYYxrWcPHMcjTCFJoTLS5V
-	 chcUSdF8PN+B9XFfpShK9JuXtuM0WdFV1SPWXV0rqxFBxmGkh7WcWb6kEiRyNZDDPF
-	 V3XfUCbiGkQkFtMLNUEK1IhPJ7C0YCU9jBIIfwgGjTcCurHx3tlL5lnSqPA8ikUo/p
-	 JsvqKuAisIjgIUAtDF/DlFdig8orS8I5VYZaSq06NZL+ggOPbiIrHoUlXekxBX7Fts
-	 DbswiVwyQs/OPEJGghUgf+x1b7xWDP+8m870tWn3Kt4yFuuKOUZqNpEMRm0n9CkMil
-	 BZDVRdR3iO9rw==
+	s=arc-20240116; t=1716847489; c=relaxed/simple;
+	bh=4id6nwrH30cfb7kbRwgCZMpR9t+BkTu7eYCDXgeizbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQm7Rug8brAOXyO4cM3f+dObK/lclerygxYF/f9Udp6w1xWwWSTmAq6zGveAWQBAwjrs1LToQCxqfCBH6suKhvZots9NrHy1E8h9oOA2ZL/OzhlAJ+dBMYzSmNUVpUm386CQSkZyfuVo9pIw2oKHgz+d+xeX++gg3CVG8ze2J8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4gz2wLZF; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ViXsFVHEpafS5EmxmYJWnIhjbXPQX8peMdEzB/gglf8=; b=4gz2wLZFxJ9C3AfaGWJjrdQYr6
+	y4xNFz4d1B8KdxB3BRdDWFj5GuKH0kegvFgevXQ0Rnh3eb8IZTm7y8IWGz1Xiup07Jr0ieeiQPr5L
+	9GIK/NxNVSiQ7AOsMIuuoFdfVlUtuJiHFLvJrg9OW/9AanlkFGXMhhJHvVqEAPr6/7YU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sBiS9-00G6lY-7V; Tue, 28 May 2024 00:04:25 +0200
+Date: Tue, 28 May 2024 00:04:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Simon Horman <horms@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
+	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v5 1/3] net: ti: icssg-prueth: Add helper
+ functions to configure FDB
+Message-ID: <3cf97632-4d77-4f28-bed6-7d40d61d958f@lunn.ch>
+References: <20240527052738.152821-1-danishanwar@ti.com>
+ <20240527052738.152821-2-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 May 2024 00:58:54 +0300
-Message-Id: <D1KRILI1KRQ8.2CNPU7PFES0VI@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>
-Cc: <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
- "Stefan Berger" <stefanb@linux.ibm.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
-X-Mailer: aerc 0.17.0
-References: <20240527202840.4818-1-jarkko@kernel.org>
- <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
-In-Reply-To: <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527052738.152821-2-danishanwar@ti.com>
 
-On Tue May 28, 2024 at 12:05 AM EEST, Jarkko Sakkinen wrote:
-> On Mon May 27, 2024 at 11:28 PM EEST, Jarkko Sakkinen wrote:
-> > Public key blob is not just x and y concatenated. It follows RFC5480
-> > section 2.2. Address this by re-documenting the function with the
-> > correct description of the format.
-> >
-> > Link: https://datatracker.ietf.org/doc/html/rfc5480
-> > Fixes: 4e6602916bc6 ("crypto: ecdsa - Add support for ECDSA signature v=
-erification")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > It is a bug fix that does not really need a stable backport. Still
-> > categorizes as a bug because by following the existing documentation
-> > you end up with an error code.
-> >  crypto/ecdsa.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
-> > index 258fffbf623d..55114146ff84 100644
-> > --- a/crypto/ecdsa.c
-> > +++ b/crypto/ecdsa.c
-> > @@ -215,9 +215,8 @@ static int ecdsa_ecc_ctx_reset(struct ecc_ctx *ctx)
-> >  }
-> > =20
-> >  /*
-> > - * Set the public key given the raw uncompressed key data from an X509
-> > - * certificate. The key data contain the concatenated X and Y coordina=
-tes of
-> > - * the public key.
-> > + * Set the public ECC key as defined by RFC5480 section 2.2 "Subject P=
-ublic
-> > + * Key". Only the uncompressed format is supported.
-> >   */
-> >  static int ecdsa_set_pub_key(struct crypto_akcipher *tfm, const void *=
-key, unsigned int keylen)
-> >  {
->
-> Based on this, is this now along the lines of correct format":
->
->        *ptr++ =3D 0x04; /* uncompressed */
->        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)], &x[0], =
-x_size);
->        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)], &x[x_si=
-ze + 2], x_size);
->        in_len =3D ptr - in;
->        ret =3D crypto_akcipher_set_pub_key(tfm, in, in_len);
+> +struct mgmt_cmd {
+> +	u8 param;
+> +	u8 seqnum;
+> +	u8 type;
+> +	u8 header;
+> +	u32 cmd_args[3];
+> +} __packed;
 
+There is a general dislike for __packed. Since your structures are
+naturally well aligned, it is probably not needed. You could be
+paranoid and add BUILD_BUG_ON(sizeof(struct mgmt_cmd) != 16);
 
-I fixed up the above as it should be only single octect string to this:
-
-	ptr =3D &in[0];
-        *ptr++ =3D 0x04; /* uncompressed */
-        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)],
-                                       &data[0], 2 * x_size);
-        in_len =3D ptr - in;
-        pr_info("in_len=3D%u\n", in_len);
-        ret =3D crypto_akcipher_set_pub_key(tfm, in, in_len);
-        crypto_free_akcipher(tfm);
-
-It fails in:
-
-	ndigits =3D DIV_ROUND_UP(digitlen, sizeof(u64));
-	if (ndigits !=3D ctx->curve->g.ndigits)
-		return -EINVAL;
-
-I checked that in_len=3D67.
-
-The tfm is deleted at instant because the above code is part of *_query.
-TPM2 ECDSA asymmetric key that way that signature verification will work
-when it is needed. The key type signs with TPM and verifies with the
-software cipher.
-
-BR, Jarkko
+	 Andrew
 
