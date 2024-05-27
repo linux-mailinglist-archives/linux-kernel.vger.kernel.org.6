@@ -1,64 +1,44 @@
-Return-Path: <linux-kernel+bounces-190663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296C88D010F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3752E8D0109
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FFF2858BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9948DB260C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3590115EFC6;
-	Mon, 27 May 2024 13:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="PWUcrWnw"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B76A15ECE3;
+	Mon, 27 May 2024 13:15:21 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542715ECE7;
-	Mon, 27 May 2024 13:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9176315E5DD;
+	Mon, 27 May 2024 13:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815738; cv=none; b=gGNZ1GuV9JSiQluH6q4k8kEDr5LTdVhfg500UQRE0q1P05JQlw+rRG9HJ5bkRdp2CjFoKiH8kxrzP0pSd7Ior3BmMG6v6yOgcrGADyh3nbYe05zRVmHPpDXQF/QOYMcx0kKDgptzGRECIgJaew9NzflXuOGO4fQBO+Cdjn70aXo=
+	t=1716815721; cv=none; b=NXswnXU1R5ohu3+5uKpDXuVbW+ZFJCmMIJAxQMAA/5jZUgzKA55YHg742nxkCoB+EWP2Hdgsy8V7ZMTrWqy/QFDGdxTXngX1wn6hSib7aLJUBJPvJgby7VEKbD+f1XP0xYn7CrCENEVd6CJrS5nxieOCsQiZGG7mZN4OnM93hqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815738; c=relaxed/simple;
-	bh=B8cYOtpeE0HUjZd9NR4Eg7T92wexYwy2k7m+8psPL18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NSHT2VApfxO3F+OKQvhzbEyAKxGdOjxSSzY+nht5JyVk2FKP54bNAiNdeg3M0Flq4a/RV+tSrq+0Bbv7zvyY7DXaottuFy7xeMlif9H0yluEgcPAUuwJl+iAD/8gfLCH7Ipgjoev5R1JKEVvkA+SrnqMMoOoZN3Xp+q0VOvsFso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=PWUcrWnw; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RCGrF3017304;
-	Mon, 27 May 2024 15:15:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	6U3S0nhV1fvnOXy1Abo104qBpad6fsNBZGWtsNvzJD0=; b=PWUcrWnwrzPB4SX6
-	I0yJEZrdYnIwZKHRTorsJQsiiUj34EB/DLx5GZzqH3WxpwDGGeO14cybCpBBljDs
-	Cbvvz0wizV4skWlvNuqDHxMVuRFeBNMv8veRiqO4z5h03/OdqUwx/kNRdIhzaXSF
-	RQJ9FZD66Q8EnqnnFtWApDiFwFefvDDWar1mILM0fY3PjRbQbCcUWIH22h9HzcfX
-	oJkILm9FWFVunvlrhwDti+D6LSsZU+ITe5Al79DgskokmQV/FhN3GxaubWoaIIlR
-	sRL/+Hh7tMZtPKWeQ6qu3WrlTXCc8MmDNDjZ4uDs/0pJMIXU1JM/LqiRVFZOr5Vh
-	6yJEYw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yb9yj7e3r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 15:15:20 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5B35C4002D;
-	Mon, 27 May 2024 15:15:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4710A215BD5;
-	Mon, 27 May 2024 15:14:37 +0200 (CEST)
-Received: from [10.131.140.24] (10.131.140.24) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
- 2024 15:14:36 +0200
-Message-ID: <77fa3ed3-2341-4106-adf2-ec8bd9de91ff@foss.st.com>
-Date: Mon, 27 May 2024 15:14:35 +0200
+	s=arc-20240116; t=1716815721; c=relaxed/simple;
+	bh=h6jP6IddeCizaqoE9jp2cmuBloJpEnUogauaN3oACqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pcfk1t5KO4ZD9gUN3HhoVgfj0xjzENHvn47KsGn79Imi4wTNEJiRDw9KkilzBfv52TsoYFWVlejlIb8m2f0KvwWm9HkzHsd5f7Mq5/nODaIX/n7WBAKP3fSrZA/PixPGgTW0YTTpn/98eOvFEcv4k9Bneaphl0ZA8j02CI22fvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VnwYK53M7z9v7Jb;
+	Mon, 27 May 2024 20:53:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 7F8CB140113;
+	Mon, 27 May 2024 21:15:15 +0800 (CST)
+Received: from [10.206.134.102] (unknown [10.206.134.102])
+	by APP1 (Coremail) with SMTP id LxC2BwCXjhdWh1RmqDwFCQ--.43980S2;
+	Mon, 27 May 2024 14:15:14 +0100 (CET)
+Message-ID: <747c6690-5314-4c23-b48d-1b463d058e0d@huaweicloud.com>
+Date: Mon, 27 May 2024 15:14:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,238 +46,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
- binding
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <benjamin.mugnier@foss.st.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, Sakari Ailus
-	<sakari.ailus@iki.fi>
-CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-2-sylvain.petinot@foss.st.com>
- <2110ba34-658e-4d60-b524-2f5ead6c8d3e@linaro.org>
-Content-Language: en-US
-From: Sylvain Petinot <sylvain.petinot@foss.st.com>
-In-Reply-To: <2110ba34-658e-4d60-b524-2f5ead6c8d3e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_02,2024-05-24_01,2024-05-17_01
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+ Andrea Parri <parri.andrea@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
+Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+ npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+ luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+ dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1c6d4146-86f8-4fd5-a23e-a95ba2464c9e@rowland.harvard.edu>
+ <ZlC5q7bcdCAe7xPp@andrea>
+ <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <b7365700-a983-b787-e22a-7526621d4c18@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwCXjhdWh1RmqDwFCQ--.43980S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYw7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aV
+	CY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxG
+	xcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Hi Krzysztof,
 
-Thanks for the review.
 
-On 5/21/2024 7:37 PM, Krzysztof Kozlowski wrote:
-> On 21/05/2024 18:29, Sylvain Petinot wrote:
->> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
->> sensors. Update MAINTAINERS file.
+Am 5/27/2024 um 2:25 PM schrieb Hernan Ponce de Leon:
+> On 5/24/2024 6:00 PM, Andrea Parri wrote:
+>>> What's the difference between R and R*, or between W and W*?
 >>
+>> AFAIU, herd7 uses such notation, "*", to denote a load or a store which
+>> is also in RMW.
 > 
-> A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-> prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> I also got confused with this. What about the following notation?
 > 
-
-Ok, fixed in V3.
-
+>      R[once,RMW] ->rmw W[once,RMW]
 > 
->> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
->> ---
->>  .../bindings/media/i2c/st,st-vd56g3.yaml      | 132 ++++++++++++++++++
->>  MAINTAINERS                                   |   9 ++
->>  2 files changed, 141 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
 >>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
->> new file mode 100644
->> index 000000000000..22cb2557e311
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
-> 
-> Why duplicated 'st'?
-
-Legacy : our first st-mipid02 driver was upstream this way few years back.
-
-We have 3 options :
-
-1- keep this unpleasant naming to keep consistency with st-mipid02 [1]
-and st-vgxy61 [2]
-2- rename this driver properly ('vd56g3') and keep the two others the
-old way (I personally don't like this option)
-3- rename this driver properly ('vd56g3') and in a second patch rename
-the two others drivers.
-
-I would be interested to get Sakari's opinion on this subject.
-
-[1]:
-https://elixir.bootlin.com/linux/v6.9.1/source/drivers/media/i2c/st-mipid02.c
-
-[2]:
-https://elixir.bootlin.com/linux/v6.9.1/source/drivers/media/i2c/st-vgxy61.c
-
-> 
->> @@ -0,0 +1,132 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +# Copyright (c) 2024 STMicroelectronics SA.
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/i2c/st,st-vd56g3.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: STMicroelectronics VD56G3 Global Shutter Image Sensor
->> +
->> +maintainers:
->> +  - Benjamin Mugnier <benjamin.mugnier@foss.st.com>
->> +  - Sylvain Petinot <sylvain.petinot@foss.st.com>
->> +
->> +description: |-
->> +  The STMicroelectronics VD56G3 is a 1.5 M pixel global shutter image sensor
-> 
-> This claims device is VD56G3, not ST-VD56G3.
-
-Sure, linked with previous point.
-
-> 
->> +  with an active array size of 1124 x 1364 (portrait orientation). It is
->> +  programmable through I2C, the address is fixed to 0x10. The sensor output is
->> +  available via CSI-2, which is configured as either 1 or 2 data lanes. The
->> +  sensor provides 8 GPIOS that can be used for external LED signal
->> +  (synchronized with sensor integration periods)
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - st,st-vd56g3
->> +      - st,st-vd66gy
->> +    description:
->> +      Two variants are availables; VD56G3 is a monochrome sensor while VD66GY
->> +      is a colour variant.
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  vcore-supply:
->> +    description: Digital core power supply (1.15V)
->> +
->> +  vddio-supply:
->> +    description: Digital IO power supply (1.8V)
->> +
->> +  vana-supply:
->> +    description: Analog power supply (2.8V)
->> +
->> +  reset-gpios:
->> +    description: Sensor reset active low GPIO (XSHUTDOWN)
->> +    maxItems: 1
->> +
->> +  st,leds:
->> +    description:
->> +      Sensor's GPIOs used for external LED control. Signal being the enveloppe
->> +      of the integration time.
-> 
-> More information is needed. GPIOs coming from LED or SoC? What's the
-> meaning of values?
-
-The vd56g3 image sensor provides 8 GPIOS that can be used for different
-use cases (external led controls, synchronization between master/slave
-sensors, external sensor trigger, etc.). This submission supports only
-the first use case: the control of one(or multiple) external LED.
-
-The vd56g3 sensor family are optimized for visible and near infrared
-scenes. In NIR, external IR leds are generally used for illumination.
-
-With such use case, a led (or a led driver) can be connected directly to
-one of the 8 GPIOs of the sensor. On the driver side, when a led is
-configured in the dt, the driver will configure the sensor accordingly.
-It will also offer an optional "V4L2_FLASH_LED_MODE_FLASH" control to
-start/stop the external control.
-
-Different signal modes are supported by the HW, but the default
-(implemented) one is a "strobe" mode where signal is the envelope of the
-integration time (IR led is on while image sensor is integrating).
-
-> 
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->> +    minItems: 1
->> +    maxItems: 8
->> +    items:
->> +      minimum: 0
->> +      maximum: 7
->> +
->> +  port:
->> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> 
-> missing additionalProperties: false
-
-Ok, fixed in V3.
-
-> 
->> +
->> +    properties:
->> +      endpoint:
->> +        $ref: /schemas/media/video-interfaces.yaml#
->> +        unevaluatedProperties: false
->> +
->> +        properties:
->> +          data-lanes:
->> +            minItems: 1
->> +            maxItems: 2
->> +            items:
->> +              enum: [1, 2]
-> 
-> 
->> +
->> +          link-frequencies:
->> +            minItems: 1
-> 
-> maxItems is enough
-
-Ok, fixed in V3.
-
-> 
->> +            maxItems: 1
->> +            items:
->> +              enum: [402000000, 750000000]
->> +
->> +          lane-polarities:
->> +            minItems: 1
->> +            maxItems: 3
->> +            description: Any lane can be inverted or not.
->> +
->> +        required:
->> +          - data-lanes
->> +          - link-frequencies
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - vcore-supply
->> +  - vddio-supply
->> +  - vana-supply
->> +  - reset-gpios
->> +  - port
->> +
-> 
-> 
-> Not a video-interface-device.yaml type of device?
-
-Good point, something I'll consider in V3
-
-> 
-> Best regards,
-> Krzysztof
+>>    Andrea
 > 
 
---
-Sylvain
+
+
+Note that the * is also what herd will show in its graphs.
+
+   jonas
+
 
