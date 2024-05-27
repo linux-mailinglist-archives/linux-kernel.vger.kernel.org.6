@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-190115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4578CF9AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6D18CF9AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A731F2149D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD601C20E25
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661132207A;
-	Mon, 27 May 2024 07:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F3017BBF;
+	Mon, 27 May 2024 07:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A1Mdf7No"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DiIoeJ90"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A141BC3C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D12717BA7;
+	Mon, 27 May 2024 07:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716793336; cv=none; b=Nfk9ys8HHUeIYyx7T9aOOtHkufHpv1TwL6YcWjaPbnZjEXaNECwD7UMVXeKYHiyWmdNtAl4UawA2gf+7FuHOgqJnvSoGtz3XXJ5K3LcQOljN5n4/QV72/tPwYp+u3ez9JxmMlme3fWgMmAqDIpJ0kYeEGLUut4erHCpnmHGXhvk=
+	t=1716793380; cv=none; b=E1F+A4+Uwspux26KdPgZ2a0+DgD1LpksKgZa8eVWlfA4q4Sf/byzomP7k+JqEmbjJ0fugX0gEvPr9AkvdGULRUrw70i48gTLbklUWbt96NY8o1PH3fQDhhFyk5XG6oXVoBHY3yGB8AvRUjgAPVu0TIHSWtBsBUYFp/BgvKNhf/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716793336; c=relaxed/simple;
-	bh=ajmuBU8NEYgZvZcyeXhACXwISAspaNIqOJpgLEmIEJg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=A8uoOootTn4QsSNwhm0WAT/6DveOGBuVf8hJWadZ2h3IcxIYyC4svhq34OYqA4wYnaVsTJozTTG49XUYgHwic2w0QXQkJqbn4MgFcwn8jnjgErTkjZAX5rxUmZ1YehafcsiWPg8Yh9rRoTxc9BG0pUERxyzjw/VY71s2z4CTXVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A1Mdf7No; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-578972defb3so1782011a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:02:14 -0700 (PDT)
+	s=arc-20240116; t=1716793380; c=relaxed/simple;
+	bh=BCgQibrhwKD5TsoLszllSZGNYp6Y69BDG+Y5zL9rukc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ii2ZhhKSNVvJ8gJT0rS0ShqHM2KY6dox50aMxtRWWDuadCOBjuewYJcRCh4Bms+ICb24oSNs2Vc/V2lbZcT1lIx1MlaMv+DL0ZPr3CXkkLd6bO+xYuhHMhUIeOy+fXugDpLRU9BCSB23H2snARGz8KYUt3gUylgEUIAqauhWsx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DiIoeJ90; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-354de3c5d00so2405255f8f.1;
+        Mon, 27 May 2024 00:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716793333; x=1717398133; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HDVkgZOBY2Ju7MirHdefJO2Dq3agcHKAwL90ZDsI39g=;
-        b=A1Mdf7Novp/NQP1Soc0zF6QcdpeMtaSWnjBfAeQbCKjVrrH0nP0ZvkoJDJGZqzgKmC
-         WGEkl8l8DZdZAuS2eiQ2s4WcVQJy6rT9+yKUpWl0otcLkvQKKgcGuX4qoXz2Rf/3xjgq
-         3t5SCPw+IZPR9px4ZbQDNEfnme6H3YA/Bu8a575jFMJcKSk3I3sLqvpGOiQsNEu1+pOj
-         VzoxN7tvjLsP1ZQJRgd2tJybdhXJ+ogS30SGdxx3IcWNYbiWVk9Lz8hkr3KWcpyrhw2e
-         AwuuWjjJxd4AnkLdjbB0me0oJ16Mfg/JCDQdR7xcivL6C4Sktfjz/FjLzHGc8iokvpy5
-         5ePQ==
+        d=gmail.com; s=20230601; t=1716793378; x=1717398178; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RhTDv/X2MzeaoxY9UlTupOqZ4dzoGfDZJ1jJv+dJqEs=;
+        b=DiIoeJ90qi4SMzLoiTSHvjRiryjrcB9WQ4qL2MW/E4yTZ+uPhDpgMtd1DEpxQThtqj
+         F/Of/c9/ji6GBDZHQJ19BzKbozaBPZQuhQpbfUkBfwnmS6M1AE095/ykOH48EkzgER57
+         PnyXDawNEHT+omyhi0H/wmj2CoJwBf3iEGs9XRAQjR8wN4SlJozPqU+FU6UYchSbMHsL
+         BMGHXk2vIi4cDFKgbp3t0bAhFGz92l3bctLW3nB0pme0+JGir5NFk1dCxu39cE6+OuXh
+         AJ81DvewKBHDdv/oheoEFdNU8EmLGtvivIvxGu5lZxG+HKKaIkY7HfIdI3+WgjQEC6De
+         XYDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716793333; x=1717398133;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HDVkgZOBY2Ju7MirHdefJO2Dq3agcHKAwL90ZDsI39g=;
-        b=BUOHdsmBND8EIbNXnZeDiJ0LyhwW/eKpnNTMYhAwEfNNwspP/OG535SqMFra6OVJET
-         VRCmRDDu30qDPYqR38bIPzMbu7qcLYV8nxov2DP3YueIgPNcQyerk7Tb7mnrxrgUfkCQ
-         aNevjERMSjFmWOL9d9On68i3bVOqOCGq62xt12yfL2TPVhB/9LaHI6M1IQoVRuwpBcBJ
-         YMNWDVfzxBqZHEUDhgE7lQ+eW7XJN44jNOCAFZgi7F/d5MyJ5RKs/Igq1P4vMrK3ITo8
-         1NvE5hIsEaBamqJq6n1cTSSfmE4xb2+wmIqxyrSG1m2SU2I/8B/iHW4koLIUwjw1XjX5
-         3mcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJnXKqJUv0C9fNDN4S1ZZFedX4sKG/NHXM0SWAyLlROYKLFx3prGpsUUioYfJx1c6l0mtX3dTyTy3k7/ZG7asAUBZmCxskXJJw0Qxm
-X-Gm-Message-State: AOJu0YyR7mcqdyhxYgJNzS4ndKckcLrKUGCETQeUb6FJFBYVAw1aclv+
-	or6Zdyiw8PKuwP3yfZZZj0XgbtLVISha6YEyGkoqUDb2MvYN2nbkXV82DMg2OqM=
-X-Google-Smtp-Source: AGHT+IEhAmEq5fUBmvnsYx1wE5qAeBjBbMstVg009LHAt5ChBbwxUWqgWM/46OPuefPSTQdqK/dOug==
-X-Received: by 2002:a17:906:a082:b0:a5a:15b6:25ab with SMTP id a640c23a62f3a-a6264f16065mr542470366b.61.1716793333016;
-        Mon, 27 May 2024 00:02:13 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c936facsm458543666b.49.2024.05.27.00.02.11
+        d=1e100.net; s=20230601; t=1716793378; x=1717398178;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RhTDv/X2MzeaoxY9UlTupOqZ4dzoGfDZJ1jJv+dJqEs=;
+        b=w/+3ABXYHJRoq31eUzoJnliN6sMexPbCeXw9hzngqMypz6opaSxegYlW0rXou/BJQo
+         3V7zgoDJk6NQ2V2mBTfgKCuQ7ZWNzASmgHjf0Mbo5M9bnUiaEJQm2Qth/nvNKWsMwPZF
+         SJSkp7BmoQAFnnX9LcO5D3QjDYVOXtUFMvkJTXJRRIObexfy5iE+OiZ5Oz+84gg64Gmg
+         /nek1IWTbmGknAW3iecIyXuLIRP4BMCztgoDw979Fz/aui14HPPTb0M98J5DJHOwNPsD
+         fw1rat54kVxQTKtL9XffATOz6O+bXo6aBzkm/eGHbfGSbxButYrr4+F4Ye0YTJfvJTlz
+         n4kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtORGAoszL2Bs7An8aMwkMgV3/zQxJh4vDfBEndafLjkJQah73PNBVgbij7Zxt3DHgFbAyS/iyJWC6+icfZb0NqcC50IURaco4ZlE=
+X-Gm-Message-State: AOJu0Yw7YaAc70yfy/EDnJtRi+mmZbT4J5ypbX2tjD7BAFAxCDOhDVbb
+	fLdBnjselN21/8eN0bt7OeGNrAQHxcf9RFVRobFzN2moLMCWu9mR
+X-Google-Smtp-Source: AGHT+IFMEQcPgs6+ChlvQyh9qDP2U9NYMEM8C1RNoY8/vGGrII0iOFxxNC1K3BaB2DJMg89FFSCHqA==
+X-Received: by 2002:a5d:4d85:0:b0:354:ed11:a20a with SMTP id ffacd0b85a97d-354f75a0adbmr10598776f8f.29.1716793377308;
+        Mon, 27 May 2024 00:02:57 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a08aba8sm8089705f8f.42.2024.05.27.00.02.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 00:02:12 -0700 (PDT)
-Message-ID: <ec830d15-c717-4b81-bda8-6018a4c84258@linaro.org>
-Date: Mon, 27 May 2024 09:02:11 +0200
+        Mon, 27 May 2024 00:02:56 -0700 (PDT)
+Message-ID: <0b04b587-77a4-4ac4-8b15-6cde0f0c5f5a@gmail.com>
+Date: Mon, 27 May 2024 09:02:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,94 +75,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] thermal: Add support of multi sensors to
- thermal_core
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Alexandre Bailon <abailon@baylibre.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240524143150.610949-1-abailon@baylibre.com>
- <20240524143150.610949-3-abailon@baylibre.com>
- <834e18c7-21b6-400e-aa61-a4f591027620@linaro.org>
+Subject: Re: [Linaro-mm-sig] [PATCH] dma-buf/sw-sync: don't enable IRQ from
+ sync_print_obj()
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ syzbot <syzbot+a225ee3df7e7f9372dbe@syzkaller.appspotmail.com>,
+ syzkaller-bugs@googlegroups.com, Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Christian Konig <christian.koenig@amd.com>, Sean Paul
+ <seanpaul@chromium.org>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org
+References: <0000000000000946190610bf7bd5@google.com>
+ <c2e46020-aaa6-4e06-bf73-f05823f913f0@I-love.SAKURA.ne.jp>
+ <8980975d-87db-4d57-9e23-4fb7fbb62e7d@gmail.com>
+ <0204a827-ca88-4cb6-839b-f4a637bcbf71@I-love.SAKURA.ne.jp>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <834e18c7-21b6-400e-aa61-a4f591027620@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <0204a827-ca88-4cb6-839b-f4a637bcbf71@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 27/05/2024 09:00, Krzysztof Kozlowski wrote:
-> On 24/05/2024 16:31, Alexandre Bailon wrote:
->> This adds support of multi sensors to thermal.
->> Currently, this only support the get_temp operation.
->> This returns an average temperature of all the sensors.
->> If defined, a coefficient is applied to the value read from the sensor
->> before computing the average.
->>
->> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
->> ---
->>  drivers/thermal/Makefile        |   1 +
->>  drivers/thermal/thermal_core.h  |  15 ++
->>  drivers/thermal/thermal_multi.c | 332 ++++++++++++++++++++++++++++++++
->>  include/uapi/linux/thermal.h    |   5 +
->>  4 files changed, 353 insertions(+)
->>  create mode 100644 drivers/thermal/thermal_multi.c
-> 
-> This does not really build...
-> 
-> 
-> ../drivers/thermal/thermal_multi.c:249:38: error: initialization of ‘struct thermal_trip *’ from incompatible pointer type ‘struct thermal_trip_desc *’ [-Werror=incompatible-pointer-types]
+Am 24.05.24 um 15:26 schrieb Tetsuo Handa:
+> On 2024/05/07 22:09, Christian König wrote:
+>> Am 05.05.24 um 16:08 schrieb Tetsuo Handa:
+>>> Since commit a6aa8fca4d79 ("dma-buf/sw-sync: Reduce irqsave/irqrestore from
+>>> known context") by error replaced spin_unlock_irqrestore() with
+>>> spin_unlock_irq() for both sync_debugfs_show() and sync_print_obj() despite
+>>> sync_print_obj() is called from sync_debugfs_show(), lockdep complains
+>>> inconsistent lock state warning.
+>>>
+>>> Use plain spin_{lock,unlock}() for sync_print_obj(), for
+>>> sync_debugfs_show() is already using spin_{lock,unlock}_irq().
+>>>
+>>> Reported-by: syzbot <syzbot+a225ee3df7e7f9372dbe@syzkaller.appspotmail.com>
+>>> Closes: https://syzkaller.appspot.com/bug?extid=a225ee3df7e7f9372dbe
+>>> Fixes: a6aa8fca4d79 ("dma-buf/sw-sync: Reduce irqsave/irqrestore from known context")
+>>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+> Thank you. Who can take this patch?
 
-and there are other warnings:
+I pushed it to drm-misc-fixes.
 
-warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+Thanks,
+Christian.
 
-
-Best regards,
-Krzysztof
+>
+>>> ---
+>>>    drivers/dma-buf/sync_debug.c | 4 ++--
+>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+>>> index 101394f16930..237bce21d1e7 100644
+>>> --- a/drivers/dma-buf/sync_debug.c
+>>> +++ b/drivers/dma-buf/sync_debug.c
+>>> @@ -110,12 +110,12 @@ static void sync_print_obj(struct seq_file *s, struct sync_timeline *obj)
+>>>          seq_printf(s, "%s: %d\n", obj->name, obj->value);
+>>>    -    spin_lock_irq(&obj->lock);
+>>> +    spin_lock(&obj->lock); /* Caller already disabled IRQ. */
+>>>        list_for_each(pos, &obj->pt_list) {
+>>>            struct sync_pt *pt = container_of(pos, struct sync_pt, link);
+>>>            sync_print_fence(s, &pt->base, false);
+>>>        }
+>>> -    spin_unlock_irq(&obj->lock);
+>>> +    spin_unlock(&obj->lock);
+>>>    }
+>>>      static void sync_print_sync_file(struct seq_file *s,
 
 
