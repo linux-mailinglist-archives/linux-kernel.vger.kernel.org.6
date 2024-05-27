@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-190936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7ED8D05AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FDD8D049A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F35EBB33C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F98B1F21104
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DB516939A;
-	Mon, 27 May 2024 14:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97E4169AC2;
+	Mon, 27 May 2024 14:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVA0uv9Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSdJ+ycd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEA4169378;
-	Mon, 27 May 2024 14:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C3E15FA70;
+	Mon, 27 May 2024 14:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819582; cv=none; b=bwaVNF9dMIyMQEt6LZ2HW7z7mcBcYeXhXblLD3mvzjMe7hfMmFjPMwaKsXe0qGYWQsL2sRz9s2PlIJcZPzznQbNruSDA/qChpyKKeGvp+0rX/1HHNbSZ+kSX2fX/j3SOOyscf//2+kvH0GceuUYYerbicWKnpkqcPPD7Z8omNqw=
+	t=1716819584; cv=none; b=tRH5O4FK07n1jmcRT6U+KvqRN7T6yJBFFMbsw9l7vV+yKIO38+yp/lFBkQUOx6WpNG6YLu5BDBlHiRIVPsI/9vkUeh6M0wn7zR6u3WDcnjWfA3vrQf+FMeAipFz4nkYC9z8H9XIxlUbVkLhf0h4KeOWQmyTl2+LhAjXZdmT4Cv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819582; c=relaxed/simple;
-	bh=HksO7wi2Tu4etRYRKkyII0g6QFyH1LvtCOoKVJ36MLg=;
+	s=arc-20240116; t=1716819584; c=relaxed/simple;
+	bh=Z5T0gu59/dQrO1Cfehp1ybI1Sur9v7U7wxLbsRARcmA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XsL8COQW1KP+4OxvmiTGBxDF23HWExodGYfs3CgExrmO/hqJ2GANy9/IrdHUHCcts2R3Y9WOf26y+6Lb1vzigaRYZC95Rz0oSYgvHRHUkLG/8c4FSoYT/h015ME4ZWg/VjvdxrvHkh9PQmzADg57i1kTEiRUifez61r4HbSdV0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVA0uv9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EFDC32781;
-	Mon, 27 May 2024 14:19:41 +0000 (UTC)
+	 MIME-Version; b=gutGe14iFGzAGn8/nPuOS3hf+OLChfwZbO/3aOCtGJbCDaw3YvDG1+s2SFRqPaWGkCpLakwLT2YN6AgW5aho1yEZ5aonjPmZlMO3dpXV5nGkavSJDNTXtMWyC7vbPoaOkNYKIJCTp53taSRG6Ss7cEgFmhSZJhSpS2W8PN7s+Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSdJ+ycd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B30FC4AF07;
+	Mon, 27 May 2024 14:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716819582;
-	bh=HksO7wi2Tu4etRYRKkyII0g6QFyH1LvtCOoKVJ36MLg=;
+	s=k20201202; t=1716819583;
+	bh=Z5T0gu59/dQrO1Cfehp1ybI1Sur9v7U7wxLbsRARcmA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tVA0uv9Qm+44cXSkHStDJy0zM89Kpe8CmrF9swBuwJz0240yLv7l3IWWSIYtq8Mdo
-	 BKBa/xirAQeUnc0j53L6J/SUujcV8oSMJKxD1csNW9qUEn7mlpv/7bofUrLuHdZunU
-	 vD6ohsC6RjEmKAmmf24iP8OJTwwbwFV3x9dzyXRZRpo0e9wBHD2oDXBw9s5yO/tHYK
-	 EnIQgNEJlBQbzq0rq6CdnPAwtCQ17nWqkbaHizdPGRbIuyYY95qH0/5z8sAcWks2Q/
-	 vvsGz+wV8Ws1z9kT+Lz69mofonKcVQFyZnrhiQeQcgUXqXVQVz9sLSAaKZCczvMlQH
-	 uuj7eZeI69TBA==
+	b=qSdJ+ycdrkohU4p+nzSryBxVHc6uo0gVNfssofwruSG4jLoY8/hLSGWKPOoDWgo8S
+	 PqF6yQtgGEYBSZSgHr5lkB5fV3jdJFdFapHaQr/+m2MG2hyd2gDwadIWZD+dP8f2Ag
+	 6sT/BrvdsF7MHjUjr1q38tQeIiBdFFvbwmRohvymry907NvBxIxpvjI0CIFb/o6k/x
+	 WsrQx4KgaNwvIC+owUclQI7/PSpRunQik99cWVFP7EfZkiacfPPynex0ukPFQsFZRc
+	 xq80pqORXn3uFkaGCBITKS7QgEavbTsRHDD2MezpsO3ZaWIAyIXNSm8lFoDaZWqvNf
+	 2rh3JkTUsD5KQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Benjamin Tissoires <bentiss@kernel.org>,
-	Peter Hutterer <peter.hutterer@who-t.net>,
+Cc: Uri Arev <me@wantyapps.xyz>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 12/13] HID: bpf: add in-tree HID-BPF fix for the HP Elite Presenter Mouse
-Date: Mon, 27 May 2024 10:18:49 -0400
-Message-ID: <20240527141901.3854691-12-sashal@kernel.org>
+	marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 13/13] Bluetooth: ath3k: Fix multiple issues reported by checkpatch.pl
+Date: Mon, 27 May 2024 10:18:50 -0400
+Message-ID: <20240527141901.3854691-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240527141901.3854691-1-sashal@kernel.org>
 References: <20240527141901.3854691-1-sashal@kernel.org>
@@ -66,92 +66,188 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.10.218
 Content-Transfer-Encoding: 8bit
 
-From: Benjamin Tissoires <bentiss@kernel.org>
+From: Uri Arev <me@wantyapps.xyz>
 
-[ Upstream commit 4e6d2a297dd5be26ad409b7a05b20bd033d1c95e ]
+[ Upstream commit 68aa21054ec3a1a313af90a5f95ade16c3326d20 ]
 
-Duplicate of commit 0db117359e47 ("HID: add quirk for 03f0:464a HP Elite
-Presenter Mouse"), but in a slightly better way.
+This fixes some CHECKs reported by the checkpatch script.
 
-This time we actually change the application collection, making clearer
-for userspace what the second mouse is.
+Issues reported in ath3k.c:
+-------
+ath3k.c
+-------
+CHECK: Please don't use multiple blank lines
++
++
 
-Note that having both hid-quirks fix and this HID-BPF fix is not a
-problem at all.
+CHECK: Blank lines aren't necessary after an open brace '{'
++static const struct usb_device_id ath3k_blist_tbl[] = {
++
 
-Link: https://lore.kernel.org/r/20240410-bpf_sources-v1-4-a8bf16033ef8@kernel.org
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+CHECK: Alignment should match open parenthesis
++static int ath3k_load_firmware(struct usb_device *udev,
++                               const struct firmware *firmware)
+
+CHECK: Alignment should match open parenthesis
++               err = usb_bulk_msg(udev, pipe, send_buf, size,
++                                       &len, 3000);
+
+CHECK: Unnecessary parentheses around 'len != size'
++               if (err || (len != size)) {
+
+CHECK: Alignment should match open parenthesis
++static int ath3k_get_version(struct usb_device *udev,
++                       struct ath3k_version *version)
+
+CHECK: Alignment should match open parenthesis
++static int ath3k_load_fwfile(struct usb_device *udev,
++               const struct firmware *firmware)
+
+CHECK: Alignment should match open parenthesis
++               err = usb_bulk_msg(udev, pipe, send_buf, size,
++                                       &len, 3000);
+
+CHECK: Unnecessary parentheses around 'len != size'
++               if (err || (len != size)) {
+
+CHECK: Blank lines aren't necessary after an open brace '{'
++       switch (fw_version.ref_clock) {
++
+
+CHECK: Alignment should match open parenthesis
++       snprintf(filename, ATH3K_NAME_LEN, "ar3k/ramps_0x%08x_%d%s",
++               le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
+
+CHECK: Alignment should match open parenthesis
++static int ath3k_probe(struct usb_interface *intf,
++                       const struct usb_device_id *id)
+
+CHECK: Alignment should match open parenthesis
++                       BT_ERR("Firmware file \"%s\" not found",
++                                                       ATH3K_FIRMWARE);
+
+CHECK: Alignment should match open parenthesis
++               BT_ERR("Firmware file \"%s\" request failed (err=%d)",
++                                               ATH3K_FIRMWARE, ret);
+
+total: 0 errors, 0 warnings, 14 checks, 540 lines checked
+
+Signed-off-by: Uri Arev <me@wantyapps.xyz>
+Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../hid/bpf/progs/HP__Elite-Presenter.bpf.c   | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+ drivers/bluetooth/ath3k.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
-new file mode 100644
-index 0000000000000..3d14bbb6f2762
---- /dev/null
-+++ b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2023 Benjamin Tissoires
-+ */
-+
-+#include "vmlinux.h"
-+#include "hid_bpf.h"
-+#include "hid_bpf_helpers.h"
-+#include <bpf/bpf_tracing.h>
-+
-+#define VID_HP 0x03F0
-+#define PID_ELITE_PRESENTER 0x464A
-+
-+HID_BPF_CONFIG(
-+	HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_GENERIC, VID_HP, PID_ELITE_PRESENTER)
-+);
-+
-+/*
-+ * Already fixed as of commit 0db117359e47 ("HID: add quirk for 03f0:464a
-+ * HP Elite Presenter Mouse") in the kernel, but this is a slightly better
-+ * fix.
-+ *
-+ * The HP Elite Presenter Mouse HID Record Descriptor shows
-+ * two mice (Report ID 0x1 and 0x2), one keypad (Report ID 0x5),
-+ * two Consumer Controls (Report IDs 0x6 and 0x3).
-+ * Prior to these fixes it registers one mouse, one keypad
-+ * and one Consumer Control, and it was usable only as a
-+ * digital laser pointer (one of the two mouses).
-+ * We replace the second mouse collection with a pointer collection,
-+ * allowing to use the device both as a mouse and a digital laser
-+ * pointer.
-+ */
-+
-+SEC("fmod_ret/hid_bpf_rdesc_fixup")
-+int BPF_PROG(hid_fix_rdesc, struct hid_bpf_ctx *hctx)
-+{
-+	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
-+
-+	if (!data)
-+		return 0; /* EPERM check */
-+
-+	/* replace application mouse by application pointer on the second collection */
-+	if (data[79] == 0x02)
-+		data[79] = 0x01;
-+
-+	return 0;
-+}
-+
-+SEC("syscall")
-+int probe(struct hid_bpf_probe_args *ctx)
-+{
-+	ctx->retval = ctx->rdesc_size != 264;
-+	if (ctx->retval)
-+		ctx->retval = -EINVAL;
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
+diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
+index 759d7828931d9..56ada48104f0e 100644
+--- a/drivers/bluetooth/ath3k.c
++++ b/drivers/bluetooth/ath3k.c
+@@ -3,7 +3,6 @@
+  * Copyright (c) 2008-2009 Atheros Communications Inc.
+  */
+ 
+-
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+@@ -129,7 +128,6 @@ MODULE_DEVICE_TABLE(usb, ath3k_table);
+  * for AR3012
+  */
+ static const struct usb_device_id ath3k_blist_tbl[] = {
+-
+ 	/* Atheros AR3012 with sflash firmware*/
+ 	{ USB_DEVICE(0x0489, 0xe04e), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0489, 0xe04d), .driver_info = BTUSB_ATH3012 },
+@@ -203,7 +201,7 @@ static inline void ath3k_log_failed_loading(int err, int len, int size,
+ #define TIMEGAP_USEC_MAX	100
+ 
+ static int ath3k_load_firmware(struct usb_device *udev,
+-				const struct firmware *firmware)
++			       const struct firmware *firmware)
+ {
+ 	u8 *send_buf;
+ 	int len = 0;
+@@ -238,9 +236,9 @@ static int ath3k_load_firmware(struct usb_device *udev,
+ 		memcpy(send_buf, firmware->data + sent, size);
+ 
+ 		err = usb_bulk_msg(udev, pipe, send_buf, size,
+-					&len, 3000);
++				   &len, 3000);
+ 
+-		if (err || (len != size)) {
++		if (err || len != size) {
+ 			ath3k_log_failed_loading(err, len, size, count);
+ 			goto error;
+ 		}
+@@ -263,7 +261,7 @@ static int ath3k_get_state(struct usb_device *udev, unsigned char *state)
+ }
+ 
+ static int ath3k_get_version(struct usb_device *udev,
+-			struct ath3k_version *version)
++			     struct ath3k_version *version)
+ {
+ 	return usb_control_msg_recv(udev, 0, ATH3K_GETVERSION,
+ 				    USB_TYPE_VENDOR | USB_DIR_IN, 0, 0,
+@@ -272,7 +270,7 @@ static int ath3k_get_version(struct usb_device *udev,
+ }
+ 
+ static int ath3k_load_fwfile(struct usb_device *udev,
+-		const struct firmware *firmware)
++			     const struct firmware *firmware)
+ {
+ 	u8 *send_buf;
+ 	int len = 0;
+@@ -311,8 +309,8 @@ static int ath3k_load_fwfile(struct usb_device *udev,
+ 		memcpy(send_buf, firmware->data + sent, size);
+ 
+ 		err = usb_bulk_msg(udev, pipe, send_buf, size,
+-					&len, 3000);
+-		if (err || (len != size)) {
++				   &len, 3000);
++		if (err || len != size) {
+ 			ath3k_log_failed_loading(err, len, size, count);
+ 			kfree(send_buf);
+ 			return err;
+@@ -426,7 +424,6 @@ static int ath3k_load_syscfg(struct usb_device *udev)
+ 	}
+ 
+ 	switch (fw_version.ref_clock) {
+-
+ 	case ATH3K_XTAL_FREQ_26M:
+ 		clk_value = 26;
+ 		break;
+@@ -442,7 +439,7 @@ static int ath3k_load_syscfg(struct usb_device *udev)
+ 	}
+ 
+ 	snprintf(filename, ATH3K_NAME_LEN, "ar3k/ramps_0x%08x_%d%s",
+-		le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
++		 le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
+ 
+ 	ret = request_firmware(&firmware, filename, &udev->dev);
+ 	if (ret < 0) {
+@@ -457,7 +454,7 @@ static int ath3k_load_syscfg(struct usb_device *udev)
+ }
+ 
+ static int ath3k_probe(struct usb_interface *intf,
+-			const struct usb_device_id *id)
++		       const struct usb_device_id *id)
+ {
+ 	const struct firmware *firmware;
+ 	struct usb_device *udev = interface_to_usbdev(intf);
+@@ -506,10 +503,10 @@ static int ath3k_probe(struct usb_interface *intf,
+ 	if (ret < 0) {
+ 		if (ret == -ENOENT)
+ 			BT_ERR("Firmware file \"%s\" not found",
+-							ATH3K_FIRMWARE);
++			       ATH3K_FIRMWARE);
+ 		else
+ 			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
+-							ATH3K_FIRMWARE, ret);
++			       ATH3K_FIRMWARE, ret);
+ 		return ret;
+ 	}
+ 
 -- 
 2.43.0
 
