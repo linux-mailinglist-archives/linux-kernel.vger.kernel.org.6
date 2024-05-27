@@ -1,231 +1,333 @@
-Return-Path: <linux-kernel+bounces-189924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8038CF73B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8973E8CF73E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D58ABB20E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B889D281C86
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADDB8BE7;
-	Mon, 27 May 2024 01:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ebDHfQL4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1295B323D;
+	Mon, 27 May 2024 01:16:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604A98828;
-	Mon, 27 May 2024 01:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716772127; cv=fail; b=k/7/zNZXekWG/Ts5yeCHlrGTZrZe+J0oxwefEL5nrwwfEe+AK+UKoh3ZeiCqV+RbhX2dWQXi9SddX7WDDzFjOtMYzj4OLk2IUTl66mr9JB0PGQSUYhRzn0OcX6NF/UKi9qrhcIvC5LFKjyc01OYVrH6l1SVvXVzyQP/d+ZAfmO4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716772127; c=relaxed/simple;
-	bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FMW4xUe1G5+ZE093SyX9oa106HROqbtuMC4Uz2BWhPxnguABUhEei6UDzCa/zCg322CN82yTAyGfFvPo8kf7s2tLWCP0gsJTIsMwgkHRWWUf6HaNrmTBHnAqIHHGFIIofz/3TEDYjfcatkpRbX7jKoXY4FYySMk2EQ91tJfyns0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ebDHfQL4; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716772127; x=1748308127;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
-  b=ebDHfQL4tI/+Se3BdxcgcfPIwjKqW37Ceq9WkqXu6L2lE0G7Ab3VJFdi
-   bm//W6Zma/LExgsC0g4opxcrpjti3aZKOUoAHnGzVodsvHgSJHgo3bMv5
-   poZWddTa6fzzzkam3UL0xZTe2gkdId6m8FtAfeuUajG7ag27sExGV4iEH
-   1aXBS3PoxJ/sWwVsDwkvqcGOGxVJKTnTeLfqAzK6npCaEkBxgJwTaJLjb
-   gopSe+ZOSwzx7eKPfIz7xfkyvo3f43WOzPRPucppC/up2TpCwNXPnuSXF
-   HCsJlD8af1VNWIZbU2EPxkAhuao/I3K45NQ+yaQzyILWN9LekSFtoqdz9
-   w==;
-X-CSE-ConnectionGUID: jrAOPFcATwicppusa6QENA==
-X-CSE-MsgGUID: czHxLUGhQDyFSeqEFHyudg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="30582608"
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="30582608"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 18:08:46 -0700
-X-CSE-ConnectionGUID: mrwM64xyTAKQ7haV3ZHrFg==
-X-CSE-MsgGUID: ElZXpbjjST2D5E0a42eSdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="34574885"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 May 2024 18:08:45 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 26 May 2024 18:08:44 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 26 May 2024 18:08:44 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 26 May 2024 18:08:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sy/WvNyMfAyVLyhOtElSWRymha7/T9iYI17apWAL6VxVJryvwiXpesvnllvY5z2cgLh8IDgqgcGs/co+x1pk7GU6DdU5vKoRlz+En52ApwRlVduRiU/PYG93FNsIywuMcM9oRzkHAw2wBSUnyJfcfw1iY5njKsPzn/7omMaM3nEerAD1afh6nkHT60vtHq2E2hv3B2ADz+zQ4vSzSrj91ulMuvWqXW21/8IrDUFwmQCtF9Etyb5RoElPCKLfN/d5oe8uoTZeF5q7eryL09Rxltl/tz0auWRt5RakFzpX7G5PvnF+kKltHDsJfW2trcCSpYXGYdL+Pcr4O6+KyIUC1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
- b=iXjpsuBPPBk7/qDRArSGpLAmXtU//DPvNcIU3fG5GmSPQwe0zDf3+QIrs+mEbW5fpjQxx6E1vDNbrpl70Cz9TAfY0S4V8yRpCm7+WQ6nm3Qse1cD37eC1IaYaKi+5Z3I92C/2nhyU/SwDzc4oZXDKywFfv78GuT1gqGXVNr84EomTtE/otCUHQYGOSUw9kCkzB/h2LbmW0QT52w0OQg4vaFg+d7Veo86tBMKwr3E+AZuRvvkRhaC7d1pdfiI9eCffRUIRI+v6bguLI+S6dJD1aXZAg64qO1Vmz16t/TN4Wi5NKCBCI26ixDNYlzRM8GzKvubaaKjxMmfwvXUfVwk0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by BL1PR11MB5255.namprd11.prod.outlook.com (2603:10b6:208:31a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
- 2024 01:08:43 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7611.025; Mon, 27 May 2024
- 01:08:43 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: RE: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Thread-Topic: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Thread-Index: AQHajVVl26WkVBqVE0qDV+tml8yTY7Gkmr6AgAGEQoCAABbGEIAAaX4AgAPpupA=
-Date: Mon, 27 May 2024 01:08:43 +0000
-Message-ID: <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
- <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlAoN3s96HL7ROth@nvidia.com>
- <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240524131912.GT20229@nvidia.com>
-In-Reply-To: <20240524131912.GT20229@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|BL1PR11MB5255:EE_
-x-ms-office365-filtering-correlation-id: 97060423-90b7-4c16-af88-08dc7de98d43
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?tsshlSvA9C4g4yRd1a1qaKJT6hFXB6bPsonEI2AhftHtWvJdfXgwnSYmRy30?=
- =?us-ascii?Q?ozt5H7iwZ0gxTalTVMQZT6lbIm3oNd7QGpTh2yGmgoDvnppdfzFXxG1AB2T/?=
- =?us-ascii?Q?dR7U2zleGQZpyg6sOpGnSrEaaV+WdBwaWgJt4nqHYtYAdxevmvY5m6OKbhWs?=
- =?us-ascii?Q?SiBV80A3E9DNNnwOratNXKg6gcuO2RGN0HqoU3mwtTpUcGOAuZwuWXyqUuzX?=
- =?us-ascii?Q?thPfKIFQVrpWFJlleVkbqCcYJ50X11X9FHMlavM9lagWCls6YX3mvpbZwC3B?=
- =?us-ascii?Q?6EnHMgIPdtQG1ummdKZlmMNZTn9Wcof9VJBJP7gmyEoKZW9TdTwgO974/SDq?=
- =?us-ascii?Q?dF/ON4ycZlYUUzDJwWnAN9ZhAVz9nSw77UfqkgKwRvYR5pYbWZf7S3RWLUA+?=
- =?us-ascii?Q?qR0jF3tjnspOdbWnYXRINXC2DZZqz03/OO2MfXZmdpQEFRP8lZ5yC559sxab?=
- =?us-ascii?Q?Juj30D+rKfp5R3TtOw2qUxB6KP1326rqy/Xr4mk2c9EYUIVrCu5b/rsNb1Re?=
- =?us-ascii?Q?njPxpsaIbQe7sFTlaZzg6WG8cCwkgq2vYmkiaF1kQ3WIg06qGPC9ANKFACHT?=
- =?us-ascii?Q?Ww7ks0t1/26uaQUVY8SWwdr2FOxHeflLHYxDRiiHOS2+q1p2QHBLCPScDheZ?=
- =?us-ascii?Q?yGpnmwGX50vNA3CqQboAglkC4HCULxumPAFDOX88RdKMSG7UkjjLrLsoX8qq?=
- =?us-ascii?Q?p7o7uk/Wc1z5cqYJ1nDOSn1ohud3vywruVMtbtctB3Q9m8LNjeTQfbsyy/W6?=
- =?us-ascii?Q?gPyNM7o+d55rj3xZWw+t+AT7TXifYT3oB2EU05IuECckswpH0WmEXI3tHlv9?=
- =?us-ascii?Q?OzOTsRGxHRXmkbu5Sv03PvGsyxrFVu9piyWx36v27ADegyNkdqDPPvbdJ9L3?=
- =?us-ascii?Q?74SitvQP4HQ+Al6rRpVk7McSxtl7tYduf7FUxj+AmXMOKf+2bNi1qIMkCveY?=
- =?us-ascii?Q?ewhwdVRz3esgp+gdueJe8ybdVMpwpkOA37HkxOSi4WM/oBfEqoa+Fkcl3ril?=
- =?us-ascii?Q?N473cBbJRd+rjWeItSRvskGIUF/eHWNMMUwM9bza/QdOwf03ajuUAPpO/1k2?=
- =?us-ascii?Q?TCD8h+sPuzV70zWP93jSO4B6kWoz2elWvbx13QzAPbIBmYq7ejhCKNuov1pK?=
- =?us-ascii?Q?KMugl47J6fA47pse+BRfKe2qxzVeq1Qn0QQyJ9kZV0tWtFKLReNkPKw4gQfB?=
- =?us-ascii?Q?ThbeNHEOOxqyQrbJOaoAcL8PNEw33aOuE13O7JsffSxMHhAm3O16Zfmd6Q0c?=
- =?us-ascii?Q?fKePSR32ErGO8bVF59y26OmSoEQLd4OCHs3O9A113MhpopDFF4uwMRbiWNk+?=
- =?us-ascii?Q?X2OWV1UeG/sCPnRsziIodw/dHS3qARFCfWJuVNa6Z8tSEQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gNC0wMOdjkQGNUyIrJsmYwQZFOyVO0JYjqqbHbxxp+224dfNU6xM0f2u1Srf?=
- =?us-ascii?Q?5GAP3Foy3AtL34KLzR5gWLyuzunDl2sPUGWjhALqs0/KR8aagzmxpxv8PbAU?=
- =?us-ascii?Q?T1lR+H2w1vPA+4FZwcz6Z1GoL1MccuRfkUk3askrpbIco+EtpMmg+0Ku0f0H?=
- =?us-ascii?Q?YsqbW0zCqKZ48lHdz50jTMfIv6llDWhAOASpdNfFAErR6cO58GRoKwQ2BMmB?=
- =?us-ascii?Q?ZNYXoDoo3uxc6rYkuSY3P8sLN7U1UN6ZiCrZRRBZazvInym/fvrJfQtOvYvK?=
- =?us-ascii?Q?s4Qfy7OF9CCrfrzFPr5P2sZejyi/io/r2bC9jp31mHWSJ913ZjmcRwnIEakC?=
- =?us-ascii?Q?0QfXkRu8ayNe6Qfxpou6fzaTKbGLJLE3maIMaZJ5FU6AiKSEpuMJjH62eH1K?=
- =?us-ascii?Q?1Vxv78QVZoK0ZAmR/lmXNyn38TgN6BgDId0zqNtuhfPU3jDuyZOBZsZgrZxw?=
- =?us-ascii?Q?TLKQ9Ua/1Z/BO4OAfoL/X5vpWDx/hilgWe9c9e7oRC5uVPmruNinVP5CpIx3?=
- =?us-ascii?Q?U2Bd7O6QiREzdZ0n8o9o13jA9sdMUW1B3/yPVeGC1TXcgKHKD5FvafIQN2jk?=
- =?us-ascii?Q?zqjYNlnPGb11U7G90a3zi8U+/hjFfFdn6Dwq2ACRS7eCq8PCi7DbepCWWswy?=
- =?us-ascii?Q?D5nB+HWbEj7rPUKW3ZJNRhM4H/CpaZsZmEZCQUp2o6MIdwq906+XZJO5ijV0?=
- =?us-ascii?Q?NkGqh8MtJicJQbMHGMuAZ97Ahzprt6KOt1lN1YZLfmr7GWop3SO556aMXUM+?=
- =?us-ascii?Q?QK/Z1syMPQ+0ppR6/V01pSNyzxHQZ/ztANhiaPhgNJMFePnw1GsF839Lp/V2?=
- =?us-ascii?Q?8PmODYHw5Ay27qxeW59k2yaIsNTyYE4Bp+Ya5BViACMNhheoyUW+45+WimIV?=
- =?us-ascii?Q?2pLc4mwU27jQFlNCT6TfRz8Ivft411jtIzlFB7sA54u7Icm+UW2BG/rldu96?=
- =?us-ascii?Q?eBIIL3sNtWjDIMUftH3goLuzjRd3eIqQT7VlrWB301NegEjEO2MW8y5k5W9L?=
- =?us-ascii?Q?kNgzdUVNyktVGv0YIKwHOwDBiU1G+bpuIYh+uXEOcfDOA8IZmF1HdcsQiyCV?=
- =?us-ascii?Q?pWj6oXYYohuP2q1V01+KTmfRS/wrqWgPXJZ3XNADiokb77Ef5IdHSZYF/k6e?=
- =?us-ascii?Q?yVcjF1Ds534Y6HpZC2KP83x5QVuY0Rj1KCkP5i6rrckv4pB1MaYHAy0bEFh5?=
- =?us-ascii?Q?jLfYEB6x7QtM+dhIMMO1s5xs+nRd6LMv8Q/0HHjLqtKZz6rZavbYIaUgLLPQ?=
- =?us-ascii?Q?F+1ElmeVliD7dJMsVjKLS0aDktdbCTHbYjkHLwPtT68qg+FqLt3XsSEK84xo?=
- =?us-ascii?Q?D8LQqUDPP4z92iyf27WuLx5yBT/F1nA6UuEQ6EYEYTulVjeasYdW7qgzIPnx?=
- =?us-ascii?Q?hWzcV8w+e+2Q0vjhHQXCgg7gbFPJx2Cyp0wezRkVLlNaPWicZUAdwI+6gcJH?=
- =?us-ascii?Q?5vQC9mD7uUhwJdxsIxvwX6vWUzTR8OZ4yT++ZX8cTahOIFNiqmYGB24l7qME?=
- =?us-ascii?Q?kgxrNAeIbFb+Lh/EeASyYuLDZRIkzYf7f9xcywvq1c0pZeT8ZgR+RLiOSBjS?=
- =?us-ascii?Q?XdgssO0IezxSAMODB2/R1Rna6N1IlawX811MUgid?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642C038C;
+	Mon, 27 May 2024 01:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716772590; cv=none; b=ZRqYFAlwl0+GtTa3jJUtIBUGA2nplMz7RVFi/FmnSY11EvIjRXS42THK5jmzbxKOo5eiCMG6viApPGcI1xG45m23/lgoLBFwU/eWtx+IahqOhbMQfq3gRM8+/RGV2j4ZM5AYTU7oc+FXcKOUzkawf46ozCS+osLEf2JJEBrD89g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716772590; c=relaxed/simple;
+	bh=hgb0zfnLV7BoxmFrRxX+n/XHKuKXwMbq4hFC46FTxtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YmEKI64PTyMaqduvJwWyWcfoKSAq2UCHzx+hw3BbS8ui+2h1XI5M+ytrv10NbnwJ3TZ8WFDYxHTpnUE3oUvalum0iE/cGOyoqePkHXNTTClhLIXca5ofJ5wVIaXD5n4t6LtHrn11sLaw+qjCh+keiJXHaoeARoGc+m3JY44Zx88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8F26C2BD10;
+	Mon, 27 May 2024 01:16:27 +0000 (UTC)
+Date: Sun, 26 May 2024 21:17:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH 04/20] function_graph: Allow multiple users to attach to
+ function graph
+Message-ID: <20240526211719.0c4c2835@gandalf.local.home>
+In-Reply-To: <20240527093436.7060d358a64cc2ea3213b07b@kernel.org>
+References: <20240525023652.903909489@goodmis.org>
+	<20240525023741.836661178@goodmis.org>
+	<20240527093436.7060d358a64cc2ea3213b07b@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97060423-90b7-4c16-af88-08dc7de98d43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 01:08:43.0298
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OjfRpUfv0o3hGu2bMj6nRJft+EWdsWClWZVnzk2yhZI72ELopuCX/jMaPs6eg7+dXBNVATwDWgAfaiYs/1jNOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5255
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Friday, May 24, 2024 9:19 PM
->=20
-> On Fri, May 24, 2024 at 07:13:23AM +0000, Tian, Kevin wrote:
-> > I'm curious to learn the real reason of that design. Is it because you
-> > want to do certain load-balance between viommu's or due to other
-> > reasons in the kernel smmuv3 driver which e.g. cannot support a
-> > viommu spanning multiple pSMMU?
->=20
-> Yeah, there is no concept of support for a SMMUv3 instance where it's
-> command Q's can only work on a subset of devices.
->=20
-> My expectation was that VIOMMU would be 1:1 with physical iommu
-> instances, I think AMD needs this too??
->=20
+On Mon, 27 May 2024 09:34:36 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Yes this part is clear now regarding to VCMDQ.
+> > @@ -110,11 +253,13 @@ void ftrace_graph_stop(void)
+> >  /* Add a function return address to the trace stack on thread info.*/
+> >  static int
+> >  ftrace_push_return_trace(unsigned long ret, unsigned long func,
+> > -			 unsigned long frame_pointer, unsigned long *retp)
+> > +			 unsigned long frame_pointer, unsigned long *retp,
+> > +			 int fgraph_idx)  
+> 
+> We do not need this fgraph_idx parameter anymore because this removed
+> reuse-frame check.
 
-But Nicoline said:
+Agreed. Will remove.
 
-"
-One step back, even without VCMDQ feature, a multi-pSMMU setup
-will have multiple viommus (with our latest design) being added
-to a viommu list of a single vSMMU's. Yet, vSMMU in this case
-always traps regular SMMU CMDQ, so it can do viommu selection
-or even broadcast (if it has to).
-"
+> 
+> >  {
+> >  	struct ftrace_ret_stack *ret_stack;
+> >  	unsigned long long calltime;
+> > -	int index;
+> > +	unsigned long val;
+> > +	int offset;
+> >  
+> >  	if (unlikely(ftrace_graph_is_dead()))
+> >  		return -EBUSY;
+> > @@ -124,24 +269,57 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+> >  
+> >  	BUILD_BUG_ON(SHADOW_STACK_SIZE % sizeof(long));
+> >  
+> > +	/* Set val to "reserved" with the delta to the new fgraph frame */
+> > +	val = (FGRAPH_TYPE_RESERVED << FGRAPH_TYPE_SHIFT) | FGRAPH_FRAME_OFFSET;
+> > +
+> >  	/*
+> >  	 * We must make sure the ret_stack is tested before we read
+> >  	 * anything else.
+> >  	 */
+> >  	smp_rmb();
+> >  
+> > -	/* The return trace stack is full */
+> > -	if (current->curr_ret_stack >= SHADOW_STACK_MAX_INDEX) {
+> > +	/*
+> > +	 * Check if there's room on the shadow stack to fit a fraph frame
+> > +	 * and a bitmap word.
+> > +	 */
+> > +	if (current->curr_ret_stack + FGRAPH_FRAME_OFFSET + 1 >= SHADOW_STACK_MAX_OFFSET) {
+> >  		atomic_inc(&current->trace_overrun);
+> >  		return -EBUSY;
+> >  	}
+> >  
+> >  	calltime = trace_clock_local();
+> >  
+> > -	index = current->curr_ret_stack;
+> > -	RET_STACK_INC(current->curr_ret_stack);
+> > -	ret_stack = RET_STACK(current, index);
+> > +	offset = READ_ONCE(current->curr_ret_stack);
+> > +	ret_stack = RET_STACK(current, offset);
+> > +	offset += FGRAPH_FRAME_OFFSET;
+> > +
+> > +	/* ret offset = FGRAPH_FRAME_OFFSET ; type = reserved */
+> > +	current->ret_stack[offset] = val;
+> > +	ret_stack->ret = ret;
+> > +	/*
+> > +	 * The unwinders expect curr_ret_stack to point to either zero
+> > +	 * or an offset where to find the next ret_stack. Even though the
+> > +	 * ret stack might be bogus, we want to write the ret and the
+> > +	 * offset to find the ret_stack before we increment the stack point.
+> > +	 * If an interrupt comes in now before we increment the curr_ret_stack
+> > +	 * it may blow away what we wrote. But that's fine, because the
+> > +	 * offset will still be correct (even though the 'ret' won't be).
+> > +	 * What we worry about is the offset being correct after we increment
+> > +	 * the curr_ret_stack and before we update that offset, as if an
+> > +	 * interrupt comes in and does an unwind stack dump, it will need
+> > +	 * at least a correct offset!
+> > +	 */
+> >  	barrier();
+> > +	WRITE_ONCE(current->curr_ret_stack, offset + 1);
+> > +	/*
+> > +	 * This next barrier is to ensure that an interrupt coming in
+> > +	 * will not corrupt what we are about to write.
+> > +	 */
+> > +	barrier();
+> > +
+> > +	/* Still keep it reserved even if an interrupt came in */
+> > +	current->ret_stack[offset] = val;
+> > +
+> >  	ret_stack->ret = ret;
+> >  	ret_stack->func = func;
+> >  	ret_stack->calltime = calltime;
+> > @@ -151,7 +329,7 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+> >  #ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
+> >  	ret_stack->retp = retp;
+> >  #endif
+> > -	return 0;
+> > +	return offset;
+> >  }
+> >  
+> >  /*
+> > @@ -168,49 +346,67 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+> >  # define MCOUNT_INSN_SIZE 0
+> >  #endif
+> >  
+> > +/* If the caller does not use ftrace, call this function. */
+> >  int function_graph_enter(unsigned long ret, unsigned long func,
+> >  			 unsigned long frame_pointer, unsigned long *retp)
+> >  {
+> >  	struct ftrace_graph_ent trace;
+> > +	unsigned long bitmap = 0;
+> > +	int offset;
+> > +	int i;
+> >  
+> >  	trace.func = func;
+> >  	trace.depth = ++current->curr_ret_depth;
+> >  
+> > -	if (ftrace_push_return_trace(ret, func, frame_pointer, retp))
+> > +	offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
+> > +	if (offset < 0)
+> >  		goto out;
+> >  
+> > -	/* Only trace if the calling function expects to */
+> > -	if (!fgraph_array[0]->entryfunc(&trace))
+> > +	for (i = 0; i < fgraph_array_cnt; i++) {
+> > +		struct fgraph_ops *gops = fgraph_array[i];
+> > +
+> > +		if (gops == &fgraph_stub)
+> > +			continue;
+> > +
+> > +		if (gops->entryfunc(&trace))
+> > +			bitmap |= BIT(i);
+> > +	}
+> > +
+> > +	if (!bitmap)
+> >  		goto out_ret;
+> >  
+> > +	/*
+> > +	 * Since this function uses fgraph_idx = 0 as a tail-call checking
+> > +	 * flag, set that bit always.
+> > +	 */  
+> 
+> This comment is also out-of-date.
+> 
+> > +	set_bitmap(current, offset, bitmap | BIT(0));  
+> 
+> And we do not need to set BIT(0) anymore.
 
-I don't think there is an arch limitation mandating that?
+Right. When looking at your first comment, I did a search for fgraph_idx
+and noticed this code, and realized it should be removed too. And of
+course, you noticed it too ;-)
+
+
+> 
+> > +
+> >  	return 0;
+> >   out_ret:
+> > -	RET_STACK_DEC(current->curr_ret_stack);
+> > +	current->curr_ret_stack -= FGRAPH_FRAME_OFFSET + 1;
+> >   out:
+> >  	current->curr_ret_depth--;
+> >  	return -EBUSY;
+> >  }
+> >  
+> >  /* Retrieve a function return address to the trace stack on thread info.*/
+> > -static void
+> > +static struct ftrace_ret_stack *
+> >  ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+> > -			unsigned long frame_pointer)
+> > +			unsigned long frame_pointer, int *offset)
+> >  {
+> >  	struct ftrace_ret_stack *ret_stack;
+> > -	int index;
+> >  
+> > -	index = current->curr_ret_stack;
+> > -	RET_STACK_DEC(index);
+> > +	ret_stack = get_ret_stack(current, current->curr_ret_stack, offset);
+> >  
+> > -	if (unlikely(index < 0 || index > SHADOW_STACK_MAX_INDEX)) {
+> > +	if (unlikely(!ret_stack)) {
+> >  		ftrace_graph_stop();
+> > -		WARN_ON(1);
+> > +		WARN(1, "Bad function graph ret_stack pointer: %d",
+> > +		     current->curr_ret_stack);
+> >  		/* Might as well panic, otherwise we have no where to go */
+> >  		*ret = (unsigned long)panic;
+> > -		return;
+> > +		return NULL;
+> >  	}
+> >  
+> > -	ret_stack = RET_STACK(current, index);
+> >  #ifdef HAVE_FUNCTION_GRAPH_FP_TEST
+> >  	/*
+> >  	 * The arch may choose to record the frame pointer used
+> > @@ -230,26 +426,29 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+> >  		ftrace_graph_stop();
+> >  		WARN(1, "Bad frame pointer: expected %lx, received %lx\n"
+> >  		     "  from func %ps return to %lx\n",
+> > -		     current->ret_stack[index].fp,
+> > +		     ret_stack->fp,
+> >  		     frame_pointer,
+> >  		     (void *)ret_stack->func,
+> >  		     ret_stack->ret);
+> >  		*ret = (unsigned long)panic;
+> > -		return;
+> > +		return NULL;
+> >  	}
+> >  #endif
+> >  
+> > +	*offset += FGRAPH_FRAME_OFFSET;
+> >  	*ret = ret_stack->ret;
+> >  	trace->func = ret_stack->func;
+> >  	trace->calltime = ret_stack->calltime;
+> >  	trace->overrun = atomic_read(&current->trace_overrun);
+> > -	trace->depth = current->curr_ret_depth--;
+> > +	trace->depth = current->curr_ret_depth;
+> >  	/*
+> >  	 * We still want to trace interrupts coming in if
+> >  	 * max_depth is set to 1. Make sure the decrement is
+> >  	 * seen before ftrace_graph_return.
+> >  	 */
+> >  	barrier();
+> > +
+> > +	return ret_stack;
+> >  }
+> >  
+> >  /*
+> > @@ -287,30 +486,47 @@ struct fgraph_ret_regs;
+> >  static unsigned long __ftrace_return_to_handler(struct fgraph_ret_regs *ret_regs,
+> >  						unsigned long frame_pointer)
+> >  {
+> > +	struct ftrace_ret_stack *ret_stack;
+> >  	struct ftrace_graph_ret trace;
+> > +	unsigned long bitmap;
+> >  	unsigned long ret;
+> > +	int offset;
+> > +	int i;
+> > +
+> > +	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> > +
+> > +	if (unlikely(!ret_stack)) {
+> > +		ftrace_graph_stop();
+> > +		WARN_ON(1);
+> > +		/* Might as well panic. What else to do? */
+> > +		return (unsigned long)panic;
+> > +	}
+> >  
+> > -	ftrace_pop_return_trace(&trace, &ret, frame_pointer);
+> > +	trace.rettime = trace_clock_local();
+> >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> >  	trace.retval = fgraph_ret_regs_return_value(ret_regs);
+> >  #endif
+> > -	trace.rettime = trace_clock_local();
+> > -	fgraph_array[0]->retfunc(&trace);
+> > +
+> > +	bitmap = get_bitmap_bits(current, offset);
+> > +	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
+> > +		struct fgraph_ops *gops = fgraph_array[i];
+> > +
+> > +		if (!(bitmap & BIT(i)))
+> > +			continue;
+> > +		if (gops == &fgraph_stub)  
+> 
+> nit: here, we can make this check unlikely() because the above
+> bitmap check already filtered. (Some sleepable functions leave
+> the return frame on shadow stack after gops is unregistered. But it
+> also rare compared with living time.)
+
+Sure.
+
+Thanks for the review.
+
+-- Steve
+
 
