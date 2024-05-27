@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-190669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6EC8D0127
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DAF8D0132
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0374B26ED4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02D00B2731D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F1F15E5CF;
-	Mon, 27 May 2024 13:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FC215E5DD;
+	Mon, 27 May 2024 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tyPfJ8mH"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erq9wBZ+"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DB215DBC1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A5E4EB55
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815921; cv=none; b=uHXgLpqiTDhNbXa0I79bY7+/zQBaG8u8Yvhd3adpAxdSQgOC8KHyrATLBkLhpFoxbKd4j0PW5Ia8qnBmXFjo5M7adx56sWIQolT7Tn3qc1QEM1hBbgK10bZb4CPP8xxJKzMNtIHptfLgJBnxAKbWUIE/TwRVXRxf9NWgwHh8XkU=
+	t=1716816015; cv=none; b=FSbGLMqG14iqaJqduOCASIwYWi4F+J2Axt9kj8vMD4TBlGQ7u8DWyRWY2um/5VxALwPP4wuuQ3f55/oDlPU5hcqWQrhL8cn/geM3JUlwU5kyB8PfT/cklbf0f3fp5KTJXsHd48H0beeUq8KLHhcWDISw5KU7eM6JY7YAmItT4rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815921; c=relaxed/simple;
-	bh=HHPtZewEdArswaj9i7nFE9lFFfBh+aXtFZT3WxjsDNE=;
+	s=arc-20240116; t=1716816015; c=relaxed/simple;
+	bh=S6iL6oDWFaJR+E/+A1MILtVvh7HVUlIMKSpUEQQGFBs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cVwklssI3kKFZ/H9eiT55uqSAhvFKodo7gtH8bSsGuFoOsVyFvnbT1lZDK80q1oNrMiDeNA0ItALgSaagWgbIZDqU3DXl2WAKDjQBmhxPel2VCiQaLxat0xKeML+9uhI0I8XDW8LIrOkzPO8mO7ZNAf1EYYMbtLWc0tErJD3D08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tyPfJ8mH; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-df771bddc0dso3165384276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:18:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=JuPfyumtkRXR007Rz1ucUr/KF2iHdex1LKUfgXMFkmRm9aisKW1x6VYfVfwoDszEErpM1ib7RC0rPx/Xoz/PIuJZ0z3C2bCUOO0rCUz+tHNNnfcTx/uA5E9h6yGkw4AT+J+dofJ7K2MS3OtbJPUcKx+8cyxvnX661b4wK/4j4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erq9wBZ+; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a61b70394c0so924084466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:20:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716815919; x=1717420719; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716816012; x=1717420812; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HHPtZewEdArswaj9i7nFE9lFFfBh+aXtFZT3WxjsDNE=;
-        b=tyPfJ8mHUUolwLE4p8wFCRTN5seiD+QfuBxWSEqffSbmJXpA1AlvlyXe6mezOVnD9i
-         LDPzsMc9ldRUXSWwshyI8kT61A4n33U8yFDbyAsifS62M95cyiKv9pUlScC891GuZqKX
-         sYysuD1J5eXYkOQ6Ax4PLY/jNl5U4t9yPyPmjm6dcTrS21p7f+Da9aVwhLPhvZO9zjUz
-         EZSEeGltXt1DA8/qj0+e4f4wtOwCisHxO53rpy78QF3ztY4DuXb/KE6VDbicgIyQaDum
-         pyvHMpKT6ykyn3wQmsgP3IWH8UXosqepQpr0X1lzu5bcwJfLwZGZC2GZ9rqf38FqjpVY
-         JmgA==
+        bh=583OMcuKvHNT1Ww+Sb5JEHcYkO2V/RPQQEiPPcbZRAU=;
+        b=erq9wBZ+Ucd45vJa+noeO47HMVHyxRGR6NDAaciHIewkNaCmpj4HObFbZHAUNe4UBQ
+         qQ4i/86zgVqVVuaicCWaO1PqhUROduYhtgsNPojBecG5OiE/J9TJMQ/ezJmIb2GSXdMn
+         vzCMxcnEq9+5t1OlOk9UeGf1rYwB2t+3iAeX3qzYKlTMY0spqB/3IFEkV2qv8B2WCLHJ
+         37cesqQ9xlPX7tnNxXoGzyY5b7UjwoAwDl34/plI9kB753O66aVpz5H+gP+zohSMCcVH
+         qEwwPxAMVnrrAKLFxUjamFcSfIvnD2nUY/QijfzJFLDFjRJoXMbbHKvJGxmQJW6fwjjv
+         D5oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716815919; x=1717420719;
+        d=1e100.net; s=20230601; t=1716816012; x=1717420812;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HHPtZewEdArswaj9i7nFE9lFFfBh+aXtFZT3WxjsDNE=;
-        b=SprJYKc8SdxxHtRrMtzL+5QbeosOzXw9Vt2FTnwF59CShxi5ZhLl8fYsIeZvF2u94i
-         ZmLIkhLT05vSDb3B874qae3u51lGreFCoJUi0SUou/0g7rAihnvOKambitfgV5sg6u+Z
-         qO9tsBPYSvVg5IN+8Vcu5OAZenUXZ/ACYzQuSQiqdkm5xV6JBM4d/VdB3WXxLdLKD6MH
-         rp/MNiX/jyU8qLMq+1ua+TDFblabUFlppmYWP06XiTNlZteVQ7ywTbi5ia2AadZx5ws6
-         JdWxU7ncYGRHIqcfvRXPSuxq+PXieCdiR65VQSzPcpxHH5BeRTd8Q6OMIlFg/z0oWR4d
-         JxLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUauKUsnkQLaxbWr579JIBnt/B+ZBYUFREX4pH7ObpeaCirTAGB7/++YBVzvI2Sk/ku3pCT1nfiOjVcQ30yhhJzXCv3JqfuAWtWDykB
-X-Gm-Message-State: AOJu0YyrSNXhS6b6KOkCgno7TbLNaldGsAN82gQN9YzEn+bEoPCLHmCK
-	ifmAStUPJiaA0m6Kf2231yQijhRsAvAHD0QZeWSI4mU3PBxMhs6EV/Z3aYwZzEs5pPb6Cf1tkNj
-	LcQWuUlmn9QaQfUJ4jArNAFtr5PrJpXnxabFdFQ==
-X-Google-Smtp-Source: AGHT+IEWBm9xDu/Cz3b9NCuTVLp6qM1g8Y7CxSoghLcfStpWinN4h04/tXY/Cqdm0kMUWihSrCsNEnUUmBfStRasc5M=
-X-Received: by 2002:a25:ac14:0:b0:dee:61ce:3b62 with SMTP id
- 3f1490d57ef6-df7722327damr9321143276.53.1716815918928; Mon, 27 May 2024
- 06:18:38 -0700 (PDT)
+        bh=583OMcuKvHNT1Ww+Sb5JEHcYkO2V/RPQQEiPPcbZRAU=;
+        b=vDYaXGX4IJFm/4Ao65F0DR15JP7sF16uGb6qmLCeA0ddHqdt5DFy7MipPtFF5kWaNV
+         fwzIyU1/mlJ54nG5g8S5ncSs0KsUeUHy6q2td8eHAdhwwragQXFv7z7h6hV6wVKcotu0
+         OjJi9MjtZczlJrOebjjr6mGlxwqANjnZTSOh/v32mXGOc2/7PLHbHIgk2tv6yud8UDrC
+         0xh8KdJbiNDra3+A+mNHHLgqjj7KXFYzsZPZSgTQj+UJr+5qhOVKGuH4dWhOq65SxN3t
+         n1+S2wv0o2zBJc6OcYvOUqAuhtu+yVYc5mhX+sjuV8KRHi2TltuH90aAqVGPbV2mQfH7
+         M3LQ==
+X-Gm-Message-State: AOJu0YyXmxgjsgmnDYmQndomBn9diQ3iaciRGLX/WMQYtsaSwWRedCyK
+	RkGdg68CKkyxZqjoajpVfDzCv5zqoSwlONvR+1TV88sYFVIAMyoQdT4I+Jdh6iodLIEZ2leVR0D
+	o/K6vV4QE7pLVAyhevv5/dnP6hcg=
+X-Google-Smtp-Source: AGHT+IFAU5YkoQQCpo2YBJF5cZ7P9SUOU+cK1hlCD0x11A8DdQnGvCOJ3WRTYFceD3JkPIeraFXM9GsH58VbgH3clsU=
+X-Received: by 2002:a17:907:971c:b0:a62:cecd:26e3 with SMTP id
+ a640c23a62f3a-a62cecd2767mr357363566b.39.1716816012441; Mon, 27 May 2024
+ 06:20:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508150406.1378672-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240508150406.1378672-1-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 May 2024 15:18:28 +0200
-Message-ID: <CACRpkdZsLYPEBL-Lk25r3WU-b-7x+qT+ELQ+ZHbUu40_zSkqOQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] usb: fotg210: Use *-y instead of *-objs in Makefile
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240527094320.2653177-1-jani.nikula@intel.com> <20240527094320.2653177-2-jani.nikula@intel.com>
+In-Reply-To: <20240527094320.2653177-2-jani.nikula@intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 27 May 2024 16:19:35 +0300
+Message-ID: <CAHp75Ve0vyOv3KNY_7286wLKd8u6HOvu0Trm17rs46h-BOGsfA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm: use mem_is_zero() instead of !memchr_inv(s, 0, n)
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, Kees Cook <keescook@chromium.org>, 
+	Andy Shevchenko <andy@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 8, 2024 at 5:04=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-
-> *-objs suffix is reserved rather for (user-space) host programs while
-> usually *-y suffix is used for kernel drivers (although *-objs works
-> for that purpose for now).
+On Mon, May 27, 2024 at 12:43=E2=80=AFPM Jani Nikula <jani.nikula@intel.com=
+> wrote:
 >
-> Let's correct the old usages of *-objs in Makefiles.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Use the mem_is_zero() helper where possible.
 
-I haven't examined the claim in detail but I trust you so:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+..
 
-Yours,
-Linus Walleij
+> -       if (memchr_inv(guid, 0, 16) =3D=3D NULL) {
+> +       if (mem_is_zero(guid, 16)) {
+>                 tmp64 =3D get_jiffies_64();
+>                 memcpy(&guid[0], &tmp64, sizeof(u64));
+>                 memcpy(&guid[8], &tmp64, sizeof(u64));
+
+What is the type of guid? Shouldn't it be guid_t with the respective
+guid_is_null()
+
+..
+
+> -       if (memchr_inv(guid, 0, 16))
+> +       if (!mem_is_zero(guid, 16))
+>                 return true;
+
+Ditto.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
