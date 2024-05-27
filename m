@@ -1,197 +1,326 @@
-Return-Path: <linux-kernel+bounces-190734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C699B8D01D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:39:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576028D01D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE551F2727C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:39:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA27293D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E74916D317;
-	Mon, 27 May 2024 13:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E44161B6B;
+	Mon, 27 May 2024 13:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWHHjC18";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ebz/lCbV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWHHjC18";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ebz/lCbV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D8/J2B2v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069A163A97;
-	Mon, 27 May 2024 13:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FF161B7C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816882; cv=none; b=AbS/QlzHYNNI2a+VOP3UpMrl9/Pn5gJeeeFUPuKP6foZ+Zfre5qWFcNkao/X9GSxQWnbjTXYva9lyIQBc1vZspk4iR6teC/mLzUMkYRXT+Y286xuNW936cJ+isxWv8rDtKkUzmLFLl5vR0qVw1zTN1zAZqij5fsop3h1YAuSwZ4=
+	t=1716816881; cv=none; b=Xem+8nHGkpLkAzNXX/5c1NG0YJ0BnX6VcHTkyluALjSHA74/hQtwLo7U0TGx6IToc4pcFMc+zcT1jDCzUjxWMM7Rt2HABsL9MQnFGogbwNqIJTfd78Yr0l35e512UuxFnoJjIrsNy+Iu6o/F6Nj86FrnySa4X584FA2Vl57MPEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816882; c=relaxed/simple;
-	bh=kjPMXvkFqzalBmpVhNBchX/CPQKSHros1W9m/q220mE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOxyJLaIT3O9ugB7kJ6hmT2bMLxS68azG92nZAPxpdanFbZDPWYeUfYgItln2jImKhhRzj4KaN/bU2da9fIDD0pijUN4IeiclW5ER8qu1l5CovdDUIg+zTaDqaYjbIcVjKdmw/737d7x9Wa5NyotZw2sQ90bcsfGmL3dP2mt0jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWHHjC18; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ebz/lCbV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWHHjC18; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ebz/lCbV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D6DFB21F12;
-	Mon, 27 May 2024 13:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716816878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1716816881; c=relaxed/simple;
+	bh=pVZXZ4SnOn6a3GICI9IGpGA0qsKuFWtHWCsMI500MGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kA/+FOllX1HpZTv45MeLCSZgHOOH7sFG87nVtS/ey57Js/ztekkV4g2oJk5ME+YpWIdijd86yPwiT1JA8FZvEfODuVbzgVodj1cuFRafFko8jPx6m18IiNzWLfAyDutwRFgeiYt1Yfamhr1fT5XpY9dEDHFOq++EmvClM9rACjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D8/J2B2v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716816878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1ewvVR78G9pjMmK37NXlCXasArwryOCz8cfNZq/3WtE=;
-	b=jWHHjC180CR+Ukk3jtzt5IqdirLv2nEqDUj05vuEPLTMgLez3U8AxbYLdntRVc3l1RNAzn
-	Rmow8EHzMLJ6z9CBW8RO7ZyFddUXumxNJPpgX1Teshnwqg8Xq0CObxV2sdHyDySPs5X/kw
-	cYX0MIFbZvZJkBrUhBIHNF0+kR4O9AM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716816878;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ewvVR78G9pjMmK37NXlCXasArwryOCz8cfNZq/3WtE=;
-	b=ebz/lCbVJM6wF+e6Yfu0bG7UBmNCy1P68u5tnl+BckaYJztXjVfuP4hYJBkLv6rsNjNGxK
-	Mxv4tSLuUcWG3fCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716816878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ewvVR78G9pjMmK37NXlCXasArwryOCz8cfNZq/3WtE=;
-	b=jWHHjC180CR+Ukk3jtzt5IqdirLv2nEqDUj05vuEPLTMgLez3U8AxbYLdntRVc3l1RNAzn
-	Rmow8EHzMLJ6z9CBW8RO7ZyFddUXumxNJPpgX1Teshnwqg8Xq0CObxV2sdHyDySPs5X/kw
-	cYX0MIFbZvZJkBrUhBIHNF0+kR4O9AM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716816878;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ewvVR78G9pjMmK37NXlCXasArwryOCz8cfNZq/3WtE=;
-	b=ebz/lCbVJM6wF+e6Yfu0bG7UBmNCy1P68u5tnl+BckaYJztXjVfuP4hYJBkLv6rsNjNGxK
-	Mxv4tSLuUcWG3fCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8FF913A6B;
-	Mon, 27 May 2024 13:34:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NBYOMe6LVGYJHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 27 May 2024 13:34:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 487F0A07D0; Mon, 27 May 2024 15:34:30 +0200 (CEST)
-Date: Mon, 27 May 2024 15:34:30 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <20240527133430.ifjo2kksoehtuwrn@quack3>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
- <ZlRy7EBaV04F2UaI@infradead.org>
+	bh=lDEFX4Rwrocpmk1yMTSH1aYuyP5K1qPmVR60vlP0ECY=;
+	b=D8/J2B2vMWq7GilXyEYTjzwR4QhDRlaNrZXtOsZlzmsQWVZanNC7Tpwoh4uxFbAA5XdXZP
+	5iuNHkkZW5HfCy9T082Z01u+MxezBd1tziZ7Vd/LCSD2zvfXS+QR2GXAva8DC146nbFuuC
+	A/d5EMdt9SJSIcjvP9R5GmZDYHB0WjQ=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-V56R9VIzNNGllPg_t6baGw-1; Mon, 27 May 2024 09:34:37 -0400
+X-MC-Unique: V56R9VIzNNGllPg_t6baGw-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2e734caac3bso36383251fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:34:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816875; x=1717421675;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDEFX4Rwrocpmk1yMTSH1aYuyP5K1qPmVR60vlP0ECY=;
+        b=Xj2rwi7M0vlHepSXw73awsU3xbYg4ZC2gxDUm8ftdidpTV4zl5jeBzkKrENoAEBDM5
+         2p43vD7JuGVHRInfNyWb5mrsu7w+s4O2SswsTSfhUyRulYh+MoblZ2Jbc/zZIg3QruwY
+         n6UB7wXu0pUJU+Wgojqf4ZsEGQixiD3eD6LSJQxetUlgsau3mxzTkaxJKMFc87u04ZJI
+         HOmaxuq11vFpuHB8+OG9shGjWivikb8qzMLd3sAKLub9waUFOk9IIRFu8v0c/iEBuL4u
+         1pSJkZBeC07POxKyXOaMv3DMbMdmXAPjGR8yvJNCWSdqPz+N97sBYpsxmJAa/ODpYTeC
+         Kaxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXccxqf83KnytcdGdcXn9UqEpRG4SDHzVWa39xuTFue3wpW/PNCCPyUEligTrZKyJ7r6AjrPpysnSoAbZ1b3uXt0bLMUUoYaGIxaH5I
+X-Gm-Message-State: AOJu0Yz6+zVSj3IYkia3QWyJ/jpHNfQfrwPDHg/wU5IF4hfFbUK9yYOa
+	OilIEjd5lKC2HYiMO4+WehHibSJz5FKRE9hcZnK5I37smcBhB6zzGIXpkgWGhn81T/J8g0zBuEa
+	HZSIjGPhKrl+mwivFYCofKKntXIVcaO6/VfBkA2S4TgrmDSb9+LRUNEGdc8efbzdrLAb7QQ==
+X-Received: by 2002:a2e:968c:0:b0:2e0:4cbb:858a with SMTP id 38308e7fff4ca-2e95b0c093bmr51745411fa.27.1716816875624;
+        Mon, 27 May 2024 06:34:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhrNV6UN10MPlEkyX5Wt+TB73NepJi/OagUtHe4JM4L/f5UfWJW/uYUEbLaQ03g8LNnZTS7A==
+X-Received: by 2002:a2e:968c:0:b0:2e0:4cbb:858a with SMTP id 38308e7fff4ca-2e95b0c093bmr51745181fa.27.1716816875047;
+        Mon, 27 May 2024 06:34:35 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf03acsm9229340f8f.103.2024.05.27.06.34.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 06:34:34 -0700 (PDT)
+Message-ID: <2c943e16-e8f1-4311-b707-1be94d883948@redhat.com>
+Date: Mon, 27 May 2024 15:34:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlRy7EBaV04F2UaI@infradead.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[cyphar.com,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, tglx@linutronix.de
+Cc: linux-mm@kvack.org
+References: <20240521111958.2384173-1-Jason@zx2c4.com>
+ <20240521111958.2384173-2-Jason@zx2c4.com>
+From: David Hildenbrand <dhildenb@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20240521111958.2384173-2-Jason@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 27-05-24 04:47:56, Christoph Hellwig wrote:
-> On Sun, May 26, 2024 at 12:01:08PM -0700, Aleksa Sarai wrote:
-> > The existing interface already provides a mount ID which is not even
-> > safe without rebooting.
+
+
+Am 21.05.24 um 13:18 schrieb Jason A. Donenfeld:
+> The vDSO getrandom() implementation works with a buffer allocated with a
+> new system call that has certain requirements:
 > 
-> And that seems to be a big part of the problem where the Linux by handle
-> syscall API deviated from all know precedence for no good reason.  NFS
-> file handles which were the start of this do (and have to) encode a
-> persistent file system identifier.  As do the xfs handles (although they
-> do the decoding in the userspace library on Linux for historic reasons),
-> as do the FreeBSD equivalents to these syscalls.
-
-So I was wondering how this is actually working in practice. Checking the
-code, NFS server is (based on configuration in /etc/exports) either using
-device number as the filesystem identifier or fsid / uuid as specified in
-/etc/exports.
-
-> > An alternative would be to return something unique to the filesystem
-> > superblock, but as far as I can tell there is no guarantee that every
-> > Linux filesystem's fsid is sufficiently unique to act as a globally
-> > unique identifier. At least with a 64-bit mount ID and statmount(2),
-> > userspace can decide what information is needed to get sufficiently
-> > unique information about the source filesystem.
+> - It shouldn't be written to core dumps.
+>    * Easy: VM_DONTDUMP.
+> - It should be zeroed on fork.
+>    * Easy: VM_WIPEONFORK.
 > 
-> Well, every file system that supports export ops already needs a
-> globally unique ID for NFS to work properly.  We might not have good
-> enough interfaces for that, but that shouldn't be too hard.
+> - It shouldn't be written to swap.
+>    * Uh-oh: mlock is rlimited.
+>    * Uh-oh: mlock isn't inherited by forks.
+> 
+> - It shouldn't reserve actual memory, but it also shouldn't crash when
+>    page faulting in memory if none is available
+>    * Uh-oh: MAP_NORESERVE respects vm.overcommit_memory=2.
+>    * Uh-oh: VM_NORESERVE means segfaults.
+> 
+> It turns out that the vDSO getrandom() function has three really nice
+> characteristics that we can exploit to solve this problem:
+> 
+> 1) Due to being wiped during fork(), the vDSO code is already robust to
+>     having the contents of the pages it reads zeroed out midway through
+>     the function's execution.
+> 
+> 2) In the absolute worst case of whatever contingency we're coding for,
+>     we have the option to fallback to the getrandom() syscall, and
+>     everything is fine.
+> 
+> 3) The buffers the function uses are only ever useful for a maximum of
+>     60 seconds -- a sort of cache, rather than a long term allocation.
+> 
+> These characteristics mean that we can introduce VM_DROPPABLE, which
+> has the following semantics:
+> 
+> a) It never is written out to swap.
+> b) Under memory pressure, mm can just drop the pages (so that they're
+>     zero when read back again).
+> c) If there's not enough memory to service a page fault, it's not fatal.
+> d) It is inherited by fork.
+> e) It doesn't count against the mlock budget, since nothing is locked.
+> 
+> This is fairly simple to implement, with the one snag that we have to
+> use 64-bit VM_* flags, but this shouldn't be a problem, since the only
+> consumers will probably be 64-bit anyway.
+> 
+> This way, allocations used by vDSO getrandom() can use:
+> 
+>      VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
+> 
+> And there will be no problem with OOMing, crashing on overcommitment,
+> using memory when not in use, not wiping on fork(), coredumps, or
+> writing out to swap.
+> 
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>   fs/proc/task_mmu.c             | 3 +++
+>   include/linux/mm.h             | 8 ++++++++
+>   include/trace/events/mmflags.h | 7 +++++++
+>   mm/Kconfig                     | 3 +++
+>   mm/memory.c                    | 4 ++++
+>   mm/mempolicy.c                 | 3 +++
+>   mm/mprotect.c                  | 2 +-
+>   mm/rmap.c                      | 5 +++--
+>   8 files changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index e5a5f015ff03..b5a59e57bde1 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -706,6 +706,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>   #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+>   #ifdef CONFIG_X86_USER_SHADOW_STACK
+>   		[ilog2(VM_SHADOW_STACK)] = "ss",
+> +#endif
+> +#ifdef CONFIG_NEED_VM_DROPPABLE
+> +		[ilog2(VM_DROPPABLE)]	= "dp",
+>   #endif
+>   	};
+>   	size_t i;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 9849dfda44d4..5978cb4cc21c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -321,12 +321,14 @@ extern unsigned int kobjsize(const void *objp);
+>   #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
+>   #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
+>   #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
+> +#define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
+>   #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+>   #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+>   #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+>   #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+>   #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+>   #define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+> +#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
+>   #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+>   
+>   #ifdef CONFIG_ARCH_HAS_PKEYS
+> @@ -357,6 +359,12 @@ extern unsigned int kobjsize(const void *objp);
+>   # define VM_SHADOW_STACK	VM_NONE
+>   #endif
+>   
+> +#ifdef CONFIG_NEED_VM_DROPPABLE
+> +# define VM_DROPPABLE		VM_HIGH_ARCH_6
+> +#else
+> +# define VM_DROPPABLE		VM_NONE
+> +#endif
+> +
+>   #if defined(CONFIG_X86)
+>   # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+>   #elif defined(CONFIG_PPC)
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> index e46d6e82765e..fab7848df50a 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -165,6 +165,12 @@ IF_HAVE_PG_ARCH_X(arch_3)
+>   # define IF_HAVE_UFFD_MINOR(flag, name)
+>   #endif
+>   
+> +#ifdef CONFIG_NEED_VM_DROPPABLE
+> +# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+> +#else
+> +# define IF_HAVE_VM_DROPPABLE(flag, name)
+> +#endif
+> +
+>   #define __def_vmaflag_names						\
+>   	{VM_READ,			"read"		},		\
+>   	{VM_WRITE,			"write"		},		\
+> @@ -197,6 +203,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,	"softdirty"	)		\
+>   	{VM_MIXEDMAP,			"mixedmap"	},		\
+>   	{VM_HUGEPAGE,			"hugepage"	},		\
+>   	{VM_NOHUGEPAGE,			"nohugepage"	},		\
+> +IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,	"droppable"	)		\
+>   	{VM_MERGEABLE,			"mergeable"	}		\
+>   
+>   #define show_vma_flags(flags)						\
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index b4cb45255a54..6cd65ea4b3ad 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1056,6 +1056,9 @@ config ARCH_USES_HIGH_VMA_FLAGS
+>   	bool
+>   config ARCH_HAS_PKEYS
+>   	bool
+> +config NEED_VM_DROPPABLE
+> +	select ARCH_USES_HIGH_VMA_FLAGS
+> +	bool
+>   
+>   config ARCH_USES_PG_ARCH_X
+>   	bool
+> diff --git a/mm/memory.c b/mm/memory.c
+> index b5453b86ec4b..57b03fc73159 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5689,6 +5689,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>   
+>   	lru_gen_exit_fault();
+>   
+> +	/* If the mapping is droppable, then errors due to OOM aren't fatal. */
+> +	if (vma->vm_flags & VM_DROPPABLE)
+> +		ret &= ~VM_FAULT_OOM;
+> +
+>   	if (flags & FAULT_FLAG_USER) {
+>   		mem_cgroup_exit_user_fault();
+>   		/*
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index aec756ae5637..a66289f1d931 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -2300,6 +2300,9 @@ struct folio *vma_alloc_folio_noprof(gfp_t gfp, int order, struct vm_area_struct
+>   	pgoff_t ilx;
+>   	struct page *page;
+>   
+> +	if (vma->vm_flags & VM_DROPPABLE)
+> +		gfp |= __GFP_NOWARN | __GFP_NORETRY;
+> +
+>   	pol = get_vma_policy(vma, addr, order, &ilx);
+>   	page = alloc_pages_mpol_noprof(gfp | __GFP_COMP, order,
+>   				       pol, ilx, numa_node_id());
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 94878c39ee32..88ff3ecc08a1 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -622,7 +622,7 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
+>   				may_expand_vm(mm, oldflags, nrpages))
+>   			return -ENOMEM;
+>   		if (!(oldflags & (VM_ACCOUNT|VM_WRITE|VM_HUGETLB|
+> -						VM_SHARED|VM_NORESERVE))) {
+> +				  VM_SHARED|VM_NORESERVE|VM_DROPPABLE))) {
+>   			charged = nrpages;
+>   			if (security_vm_enough_memory_mm(mm, charged))
+>   				return -ENOMEM;
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index e8fc5ecb59b2..f23b9f796aae 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1397,7 +1397,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+>   	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+>   	VM_BUG_ON_VMA(address < vma->vm_start ||
+>   			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+> -	__folio_set_swapbacked(folio);
+> +	if (!(vma->vm_flags & VM_DROPPABLE))
+> +		__folio_set_swapbacked(folio);
+>   	__folio_set_anon(folio, vma, address, true);
+>   
+>   	if (likely(!folio_test_large(folio))) {
+> @@ -1841,7 +1842,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>   				 * plus the rmap(s) (dropped by discard:).
+>   				 */
+>   				if (ref_count == 1 + map_count &&
+> -				    !folio_test_dirty(folio)) {
+> +				    (!folio_test_dirty(folio) || (vma->vm_flags & VM_DROPPABLE))) {
+>   					dec_mm_counter(mm, MM_ANONPAGES);
+>   					goto discard;
+>   				}
 
-So as my research above shows, this ID is either manually configured in
-/etc/exports or NFS server uses device number which is not guaranteed to be
-persistent. Filesystems, at least currently, have no obligation to provide
-anything (and some of them indeed don't provide any uuid or persistent
-fsid). I guess that's the reason why mount ID is reported with
-name_to_handle_at().
+If there is any unexpected temporary folio reference (ref_count != 1 + 
+map_count), you'll end up calling folio_set_swapbacked() and the next swapout 
+round will write that folio to swap.
 
-Don't get me wrong, I agree with your reservations towards mount ID (per
-mount instead of per-sb, non-persistent) and I agree the properties you
-describe are the golden standard we should strive for but I mainly wanted
-to point out this is not reality today and in particular providing the
-"persistency" guarantee of the filesystem ID may require on disk format
-changes for some filesystems.
-
-So returning the 64-bit mount ID from name_to_handle_at() weasels out of
-these "how to identify arbitrary superblock" problems by giving userspace a
-reasonably reliable way to generate this superblock identifier itself. I'm
-fully open to less errorprone API for this but at this point I don't see it
-so changing the mount ID returned from name_to_handle_at() to 64-bit unique
-one seems like a sane practical choice to me...
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+
+David / dhildenb
+
 
