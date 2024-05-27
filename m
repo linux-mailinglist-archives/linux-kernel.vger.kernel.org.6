@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-191017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F43A8D05B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C9E8D059A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F583B371AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:13:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061D81F26FC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BC016B74D;
-	Mon, 27 May 2024 14:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DCF15FA8A;
+	Mon, 27 May 2024 14:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Z8z/9WSs"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oe4kgmTI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A0116B731
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7EE15EFAE;
+	Mon, 27 May 2024 14:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821608; cv=none; b=ADnV27d3w2u+37sWE+cqdgtWN50XvcDE0z+CdH0c31ImXlPLJa7EBKDONhNSSUQyePbSlSQtRxwmweKvJf1YdFa24iVG2Wnx3J88YgUaqs38tce/Tjr/zjsBgH85VGuXJIyIDoi3jg9PUPl1osyh6L6vZjWbGW3UxGpV/TCkaoo=
+	t=1716821687; cv=none; b=VzCUEHGe5HVKm+VKjlHXY8kprTw1OoBfKeOAw/ozmnGMdnGn4mIdOb4QgXRJ6Yjd7f6zU8UaQ0KOOw1iTX1GWyP0AilUPctPSiNGJFolzjBaazAlg/P7ynX4a2vmGhSIdFfWFLHkbf8Ti108/oSQuCK9HdRobMtu6M3YmEhBr3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821608; c=relaxed/simple;
-	bh=YC0GySOBJKaQBQBOvF1uhc+50t8E3hxcqr5ZtTfM9T8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PbKN6WfC1k5F4Oi3SI1r9b7WEMi6CjQuhyNOzQNvikTCrYGryLBfiQ1R7gKfKa1M1kw7pmurymiKDcGE0032GiM1m4TKjtSMSnaodApNPYhwkXufL12TJ3SBYt1PNCBQamMJy9aDQJabJj0btsg05ICFrdwX2mLUawlrfYJpL+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Z8z/9WSs; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6265d3ccf7so400993866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716821604; x=1717426404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hna0WN7JjlKVki9CKW7L0dNcuFoKFDF6IdzoULKxqX4=;
-        b=Z8z/9WSsLlX1UV9qLQoCZkSKTo6lGvXxsDUg9Yuw3KLoFbSi0o7aWSL9AvoQS3Ivh7
-         2nLAvIowtIWa0D9XeV5sNtuo2LGZcvRfu0BTGuF1cUe7QGMlYW04ThbBRrKdSTriXYiI
-         kRC9DsKPbB6y/TCizYNICggLOymSAoJGJv3FzOxbetT2+iIQjNXyQa+7QcLz/JK1A9Hv
-         wBzbI90oWwOct2vagDwXqYIn8KYAe3oh9i9tiP0mXk/UZOgsOl55cIMOZ0E2q874nmuj
-         a2a7xubUqUUd8VK1dFJKDZYAV/Q6DL4UsNg4G8Bmi0gu2p8eYJaYtI2fKprdO88U/DEu
-         eLew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821604; x=1717426404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hna0WN7JjlKVki9CKW7L0dNcuFoKFDF6IdzoULKxqX4=;
-        b=SCkvSMVLS+t+tBT4DN2Xay4HVXQ4bMriX597+pn+KPC0aOMm9IkRAhHOGEsIPybFgy
-         X8AHqvhi+IPMrzhXZPpGc5tqejkw6PdP3jdOteYa3psFakY/5wk89tqbu8aLxLFNc+xv
-         q4/ZSXzmllpI7KfoPtKrKMlchAtH2QYpxXk9w+7bJ1KnpJitqfptZPj8zxwtCiV6Vc4R
-         Zpk9+aOnyFMTsNcfq3arU+bXclTd66lh4j1aWd2auOrcSf7iZlV7cUP5c/xURwB79XGZ
-         bePX8oyWnj/LvOx7XtFqq9HObxHfJSiE0JimxNKzYlPrGTjLn51/KqV4Zdcy+aeO9AQ2
-         TJEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNUX87clAX8eHf3VJSCUVLnGuz3zBs/al8K/d/AXzmg2n/e8bKsKFnEwwuMOw0xnn0E2phkTlcQPCE5m/azojng97axerfD5NcWf4c
-X-Gm-Message-State: AOJu0Yx751c1FgnIzCmb+SathldeVxL2YyF8V4dvZZ7gHCd7WIWACSaD
-	CPfYCZDBb/BaH3OsE64FzBarz+NC2VoWil1DyYizoB/xRxRkJsBP/T7TM/mB2t0=
-X-Google-Smtp-Source: AGHT+IF0cBRnqOxCG5tbMSyKBE410khljOPfZUZyo5RRnH39akZSBsPRH0RsV2L6AMGFjz3XyzjUsQ==
-X-Received: by 2002:a17:906:a0a:b0:a5a:4683:e961 with SMTP id a640c23a62f3a-a6264f0eeaemr626181766b.52.1716821603593;
-        Mon, 27 May 2024 07:53:23 -0700 (PDT)
-Received: from [192.168.1.70] ([84.102.31.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c97a029sm502902966b.93.2024.05.27.07.53.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 07:53:22 -0700 (PDT)
-Message-ID: <f553b3f2-d895-446a-a741-7a151ebeb3ed@baylibre.com>
-Date: Mon, 27 May 2024 16:53:20 +0200
+	s=arc-20240116; t=1716821687; c=relaxed/simple;
+	bh=4xj/rMp795VJ8/WUQaQhFExsGLZLPZOia5IoxkqhSvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N0bEn7n33a3o+lUkn3DSpLHQP0WLASirS2ce0IounSoEip+ZcokJIhulztA2JwRYRVLPCDDfC/V2K6P/M4XfOdgfNv1wJaBovsa8nuPD+NCnpov+jMnox7GjMZ9+JmdurG+tAgPTk5Ly5ivLCiHVruCJiEbEMmrMc0RVywRVCqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oe4kgmTI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2384C2BBFC;
+	Mon, 27 May 2024 14:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716821687;
+	bh=4xj/rMp795VJ8/WUQaQhFExsGLZLPZOia5IoxkqhSvY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Oe4kgmTIPvDetWrECerAh6AODF0QPzEu8znSjprVX/Qw234hajLABOpEpu7tA11gr
+	 oAkctYszlt1OxW/ILDSrC7IaiH81bc5xbi0mfTMN35fheBO/pUGryGfcU4dFzF66hQ
+	 7+ipQdSi6ipXbIBjFexRuX0U5iDHbRVI4hACoqdqX7/pTg3avV7sfDVRlX21yjY6SY
+	 WWRxSmt3ZC3pW29dSnDGskA/zMWAtgreerkJJ3gvitTOVIEkhDnaYbK4OGYInV3MT3
+	 cYclWCuJK+5fIa7T0KP+RQhHPaJFHRGI0JjJVY8IWv75aMW5QBe4uOIA5ivqX5p8zf
+	 LrEnR58Sn9j2Q==
+Date: Mon, 27 May 2024 16:54:41 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Eric Woudstra
+ <ericwouds@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, "David S
+ . Miller" <davem@davemloft.net>, linux@armlinux.org.uk, andrew@lunn.ch,
+ hkallweit1@gmail.com, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.9 12/35] net: sfp: add quirk for another
+ multigig RollBall transceiver
+Message-ID: <20240527165441.2c5516c9@dellmb>
+In-Reply-To: <20240527141214.3844331-12-sashal@kernel.org>
+References: <20240527141214.3844331-1-sashal@kernel.org>
+	<20240527141214.3844331-12-sashal@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8188: Add support for Mali
- GPU on Panfrost
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, mandyjh.liu@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20240527093908.97574-1-angelogioacchino.delregno@collabora.com>
- <20240527093908.97574-6-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <20240527093908.97574-6-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 5/27/24 11:39, AngeloGioacchino Del Regno wrote:
-> Add the necessary OPP table for the GPU and also add a GPU node
-> to enable support for the Valhall-JM G57 MC3 found on this SoC,
-> using the Panfrost driver.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Sasha,
+
+This requires the whole series from which it came:
+
+  https://lore.kernel.org/netdev/20240409073016.367771-1-ericwouds@gmail.co=
+m/
+
+It was merged in
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Dc31bd5b6ff6f70f016e66c0617e0b91fd7aafca4
+
+I don't think this can be easily applied to older kernels, the series
+has some dependencies.
+
+Marek
+
+On Mon, 27 May 2024 10:11:17 -0400
+Sasha Levin <sashal@kernel.org> wrote:
+
+> From: Marek Beh=C3=BAn <kabel@kernel.org>
+>=20
+> [ Upstream commit 1c77c721916ae108c2c5865986735bfe92000908 ]
+>=20
+> Add quirk for another RollBall copper transceiver: Turris RTSFP-2.5G,
+> containing 2.5g capable RTL8221B PHY.
+>=20
+> Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
+> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+>=20
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
-
-[...]
-
->   
-> +		gpu: gpu@13000000 {
-> +			compatible = "mediatek,mt8188-mali", "arm,mali-valhall-jm";
-> +			reg = <0 0x13000000 0 0x4000>;
-> +
-> +			clocks = <&mfgcfg CLK_MFGCFG_BG3D>;
-> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH 0>,
-> +				     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH 0>,
-> +				     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH 0>;
-> +			interrupt-names = "job", "mmu", "gpu";
-> +			operating-points-v2 = <&gpu_opp_table>;
-> +			power-domains = <&spm MT8188_POWER_DOMAIN_MFG2>,
-> +					<&spm MT8188_POWER_DOMAIN_MFG3>,
-> +					<&spm MT8188_POWER_DOMAIN_MFG4>;
-> +			power-domain-names = "core0", "core1", "core2";
-
-Hi Angelo,
-
-I think you should add something like that here:
-#cooling-cells = <2>;
-(the warning is raised when I run 'make dtbs_check')
-
-Julien
+>  drivers/net/phy/sfp.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+> index f75c9eb3958ef..6e7639fc64ddc 100644
+> --- a/drivers/net/phy/sfp.c
+> +++ b/drivers/net/phy/sfp.c
+> @@ -506,6 +506,7 @@ static const struct sfp_quirk sfp_quirks[] =3D {
+>  	SFP_QUIRK_M("OEM", "SFP-2.5G-T", sfp_quirk_oem_2_5g),
+>  	SFP_QUIRK_F("OEM", "RTSFP-10", sfp_fixup_rollball_cc),
+>  	SFP_QUIRK_F("OEM", "RTSFP-10G", sfp_fixup_rollball_cc),
+> +	SFP_QUIRK_F("Turris", "RTSFP-2.5G", sfp_fixup_rollball),
+>  	SFP_QUIRK_F("Turris", "RTSFP-10", sfp_fixup_rollball),
+>  	SFP_QUIRK_F("Turris", "RTSFP-10G", sfp_fixup_rollball),
+>  };
 
 
