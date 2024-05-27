@@ -1,81 +1,60 @@
-Return-Path: <linux-kernel+bounces-190298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1428CFC8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0AF8CFC96
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AC0AB20FCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FF811F22839
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6C912F398;
-	Mon, 27 May 2024 09:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KGJ/1+qU"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D613A3EB;
+	Mon, 27 May 2024 09:16:07 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA1643AC1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AE1139D19;
+	Mon, 27 May 2024 09:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801240; cv=none; b=cIu3//vaLQR+SVU7uVVrfdK1AQjsRynn1L1GCU0Fe/4+ZjQ90ekSzzWerBy/ffNmHENVMexdhkD6ZVYTEQWGZLS2VTIkOTDudkZ8OPkmj1+BMJCFtx+WfrzEsZM6Hy9xHz+r/CbT6nfa/qQLGg/xmo5nt0oKrZGNkhmHdHlqG+U=
+	t=1716801366; cv=none; b=s05GTmtsBFxQG6031gcZBfN3QaX5H46ZxUI6KUZe9BqEA2LthGg8clpekryN2m5H8zSaK28gd70tIKtFGuthvMLQKjKV5VUIUJJVT2LY2GqIMvqTcsh8vj2sb8+wHRtj28jTn84d/GyvLdfHyZNX+QGv/Pu7dAZV3r+AiMkWfRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801240; c=relaxed/simple;
-	bh=JsRHev1Ql+06KUhRx46fWyhIYNRL9SDHIC1akpSgRY4=;
+	s=arc-20240116; t=1716801366; c=relaxed/simple;
+	bh=d3uQngngBfNufpxglkK1GJu8oc6gX6vT4+Q0gAUGrYw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TVyW3rBS20xO+sV5hxeXekIEisJdOEr6yGpsmwipm1iReQ4b8pO3H4TC5jRj1piT0RLI4xPqHYBWh9kdZDwOh1q+H9Rhcksj25gPJJ5GC55Z+KCjqxRyVNvUiB6YLl8dxbgvNlgRTAQQyCXhyCbMoMdfT0kMcdmEJoj1oiz0iXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KGJ/1+qU; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-529597d77b4so2935553e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716801236; x=1717406036; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fU7wt3RoJ/ZRhVzR1OvMGpUkhRA7vQQ7+ZvSLIkQePg=;
-        b=KGJ/1+qUKQdBNzF9JckUusqTx1HeNcYOaHewHYClltozMuVmv1UT72zlzwOjOFIkxu
-         vxghFXG9U3FNuzfTpCo6LrnmunwUy9arI8SUgiFu0Zo1NbCvf7UKrT3h1Erui/H8cz6C
-         DR1wXro6IN9J9hdU+iSxKrqbQijqGyQu6E8p1r6Gz/OeeRb2W+H7z4Cp2VO6NQxa3k3i
-         NzEIfI+VL6LPBA7NaxxsTCDhFxJt8I2DM6sNiZhn/dB3aRe/BZCKHXFD0P409G1jujdj
-         hjF/4y3ZsJeJG46aMZ78niI4eShy30uZAWcSB1b4+Rs32CPcV8C+4SpkyqnngCGX/IgF
-         2rOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716801236; x=1717406036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fU7wt3RoJ/ZRhVzR1OvMGpUkhRA7vQQ7+ZvSLIkQePg=;
-        b=wNa3Q3eUgKL3k5u6vZMAp2LeVQlbatytBX1TwYhLwwAZRFsGsSEnfIkzib1q0Cx7Mq
-         fJp/iUyIdAiYuXuQTlMXjuruSPZz76sPSrQp35sJBXh2s7z3R/32M0KYtvzln9/RlnpQ
-         5S77eYgh7ZL1QfNBx/TjtiH/e8hpCyA1d0Y4Cu7Gs+qFSHH+vXISEiNK/d1/ULSuuKmi
-         pDz3oZlYSqRcHNhj51DnYkpKLiWz7EhlUNwl6DdyKQ4hYriMPO6PkIpmWcnx997SjtO9
-         s1rWjubDRcdi3ikSSaKOdiGt/xmRufEUxpjg0Qs2wPrlqTdtid89FdUpv/cvBzyAuRt/
-         IOcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVekSGJP2Fy/xZxRPMWcCoOqbWDW6QqmnabVjxaAHgT1jq5Nj0F40XsiN5pzgiAOPI42VDkh+KpHm3kKungoikkE6UPOSQedUIV6wP1
-X-Gm-Message-State: AOJu0YzweJ00wjbyQ+LuBiHjqPG2fpIGJpCBV8GX/65iasDD618bsyZl
-	ATJ3dnj+iwHIfjmPbFy4X0jOolVnvrdpYs+R7VhIJTrDIO/3pjQ6FgA1GhnK2WI=
-X-Google-Smtp-Source: AGHT+IFVa65amKWg0sDvxcneN95XLq2oAjYgTo5y33Nlr/ZBV8Jie8NEAzCjb5dV3ztVi9w84Tah4A==
-X-Received: by 2002:a19:7502:0:b0:524:68f8:9566 with SMTP id 2adb3069b0e04-52964bb2c9dmr4994304e87.30.1716801236570;
-        Mon, 27 May 2024 02:13:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296ee4ad1asm500411e87.95.2024.05.27.02.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:13:56 -0700 (PDT)
-Date: Mon, 27 May 2024 12:13:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Kuogee Hsieh <quic_khsieh@quicinc.com>
-Subject: Re: [PATCH 3/3] phy: qcom: qmp-combo: Switch from V6 to V6 N4
- register offsets
-Message-ID: <zbveo2mdozzumc3gekvochcemfhy3e4eo4dc3sgyfivlxpjbzx@if6svye4wvhz>
-References: <20240527-x1e80100-phy-qualcomm-combo-fix-dp-v1-0-be8a0b882117@linaro.org>
- <20240527-x1e80100-phy-qualcomm-combo-fix-dp-v1-3-be8a0b882117@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aw3f2/rQ9sXK7f5ffEYR0q6XKnevQaKcAwVxQjNE7kdxLIPCMjHKOJygG6u/tdreqPCzph6uBN1DBep7E4WB2dLPbvyXvBF4i3+RtB4BjVFDcy0oDtfInTsDpXCpqvbKSX/1MKv1IFigeAmDOL+SRegtJEPq8/AkFQeHDoR55l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 6D22D3000A383;
+	Mon, 27 May 2024 11:15:55 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 55F962F5E1; Mon, 27 May 2024 11:15:55 +0200 (CEST)
+Date: Mon, 27 May 2024 11:15:55 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Abort hot-plug if
+ pci_hp_add_bridge() fails
+Message-ID: <ZlRPS9TCYjccpNLr@wunner.de>
+References: <cover.1714838173.git.namcao@linutronix.de>
+ <f3db713f4a737756782be6e94fcea3eda352e39f.1714838173.git.namcao@linutronix.de>
+ <Zjcc6Suf5HmmZVM9@wunner.de>
+ <20240505071451.df3l6mdK@linutronix.de>
+ <20240506083701.NZNifFGn@linutronix.de>
+ <ZjkxTGaAc48jPzqC@wunner.de>
+ <20240507142738.wyj19VVh@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,31 +63,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527-x1e80100-phy-qualcomm-combo-fix-dp-v1-3-be8a0b882117@linaro.org>
+In-Reply-To: <20240507142738.wyj19VVh@linutronix.de>
 
-On Mon, May 27, 2024 at 10:20:37AM +0300, Abel Vesa wrote:
-> Currently, none of the X1E80100 supported boards upstream have enabled
-> DP. As for USB, the reason it is not broken when it's obvious that the
-> offsets are wrong is because the only difference with respect to USB is
-> the difference in register name. The V6 uses QPHY_V6_PCS_CDR_RESET_TIME
-> while V6 N4 uses QPHY_V6_N4_PCS_RX_CONFIG. Now, in order for the DP to
-> work, the DP serdes tables need to be added as they have different
-> values for V6 N4 when compared to V6 ones, even though they use the same
-> V6 offsets. While at it, switch swing and pre-emphasis tables to V6 as
-> well.
+On Tue, May 07, 2024 at 04:27:38PM +0200, Nam Cao wrote:
+> On Mon, May 06, 2024 at 09:36:44PM +0200, Lukas Wunner wrote:
+> > Remind me, how exactly does the NULL pointer deref occur?  I think it's
+> > because no struct pci_bus was allocated for the subordinate bus of the
+> > hot-plugged bridge, right?  Because AFAICS that would happen in
+> > 
+> > pci_hp_add_bridge()
+> >   pci_can_bridge_extend()
+> >     pci_add_new_bus()
+> >       pci_alloc_child_bus()
+> > 
+> > but we never get that far because pci_hp_add_bridge() bails out with -1.
+> > So the subordinate pointer remains a NULL pointer.
 > 
-> Fixes: d7b3579f84f7 ("phy: qcom-qmp-combo: Add x1e80100 USB/DP combo phys")
-> Co-developed-by: Kuogee Hsieh <quic_khsieh@quicinc.com>
-> Signed-off-by: Kuogee Hsieh <quic_khsieh@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 189 +++++++++++++++++++++++++-----
->  drivers/phy/qualcomm/phy-qcom-qmp.h       |   2 +
->  2 files changed, 162 insertions(+), 29 deletions(-)
+> This is correct. NULL deference happens due to subordinate pointer being
+> NULL.
+> 
+> > Or check for a NULL subordinate pointer instead of crashing.
+> 
+> I think this is a possible solution, but it is a bit complicated: all usage
+> of subordinate pointers will need to be looked at.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+We already check for a NULL subordinate pointer in various places.
+See e.g. commit 62e4492c3063 ("PCI: Prevent NULL dereference during
+pciehp probe").
 
--- 
-With best wishes
-Dmitry
+If we're missing such checks, I'd suggest to add those.
+
+If you believe having a NULL subordinate pointer is wrong and the
+bridge should be de-enumerated altogether, I think you would have
+to remove these NULL pointer checks as they'd otherwise become
+pointless with your change.
+
+Just adding missing NULL pointer checks seems to be the most
+straightforward solution to me.
+
+Thanks,
+
+Lukas
 
