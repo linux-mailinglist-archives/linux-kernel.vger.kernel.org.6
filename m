@@ -1,100 +1,198 @@
-Return-Path: <linux-kernel+bounces-191376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BB48D0E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A988D0E74
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87DDEB21314
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AA01F21FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120B6262A8;
-	Mon, 27 May 2024 19:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE94224D1;
+	Mon, 27 May 2024 19:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F8MvD/na"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USf5Xh2X"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1611BC59;
-	Mon, 27 May 2024 19:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C98161336;
+	Mon, 27 May 2024 19:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716839835; cv=none; b=BoV/KYCjgPzmfiAqVhQikvvdR88ogaBZTa2I2ZyFM1HhlWMDa4DRX5qn6XbeoY/k9NMyglhRthCJdkG792pgROTjZ9aF5DN19yhNAoxvCwZlOKJVyJrkkQMewTX9wVB/vfl0m/jvZwI6VkWHMqP9ZIUYFvPOuKaVCuBXWb8d5CA=
+	t=1716839943; cv=none; b=e3X4hWUJKvyc0fgWZcbX1W8NwuepHmieiAoK+UtI7BpfMHWVNcNwBQzZdbWY6Kf4WLtIbFaNZj/3wgirPeWalq6+mxNiZYnzNACd6ChhpytSBmCVl+1m0i51RImz4mAc/4YXGm8evyHGBJ93XB88QkSxUrkXZwTNi85wifYS5ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716839835; c=relaxed/simple;
-	bh=z3pBLhTXeWyJ4ntRf/6D2WXOYB/+fMCypeJjEMjWUwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzK815AcG8miJCguOxyk89QiORgUoX6fnZQisEbMBiiKZ7y+UgPkgb+LiKnLxL5OkrHZQ3hqYj2OGf/YPPybBfmUtTkChbUh0AM1bC1dblCKkWJElZB+5FCchTX/yk4vODs8W3nOUUrcnthwqrKAmHpttzer2JLKCFSAvSYNL7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F8MvD/na; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716839833; x=1748375833;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=z3pBLhTXeWyJ4ntRf/6D2WXOYB/+fMCypeJjEMjWUwM=;
-  b=F8MvD/naFh/W3HXVBO2gqqB1hA4f/0vfaSgXWPL51rcC3jb0R7mwuHgV
-   Qx0kaZ6XLI7OKP4SL8Y37uAW7YnJFscsIzyKsg/Fax7cvQyuO+v7RSwhM
-   1Vlu6LYHft9iS1G8g9pPLvyRbqSn11ejIJ+4XF1tY9/tqoIGxyQ1xTDqB
-   LRlBbfuOfnFT4iOdN64RtPmo9npO5LEzQpmMRxxsSgvcpqnI60vIdtyBz
-   BRI+jAIy5SjJaob5tE64lIjHdAM5kxAUEtyYPwhxzM7Z/j8lzk10I8SEy
-   +Rlkz/tqA72ioMrgX/LvNBiUbp9X9Sbcl0c4Eqt5ufJiB8BzY0J4Kp9u8
-   w==;
-X-CSE-ConnectionGUID: +n8pOiTFQxCyHSRWopzvbg==
-X-CSE-MsgGUID: h5FwC0cWStSIQMauN6+0cw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="38551442"
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="38551442"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 12:57:13 -0700
-X-CSE-ConnectionGUID: TzUF9euaQ2qTdrrbu1VfsA==
-X-CSE-MsgGUID: zRS0ZPKLRUeibPAtWsvaXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="39388351"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 12:57:11 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 041F111F965;
-	Mon, 27 May 2024 22:57:09 +0300 (EEST)
-Date: Mon, 27 May 2024 19:57:08 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Genes Lists <lists@sapience.com>
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
-	wentong.wu@intel.com, linux-media@vger.kernel.org
-Subject: Re: 6.10-rc1 : crash in mei_csi_probe
-Message-ID: <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
-References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
+	s=arc-20240116; t=1716839943; c=relaxed/simple;
+	bh=7HwlJsTk7wTCHlcGXASmOSkMO2SL/hHsk/04XDmFPUs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UTiONIIttninCRJxR/0Qf4FbrtSJCsWCyLTW4W8RNZi+OKT3lQaRun/f4SK5At9daJNy+CXIJUV8IqdPxcHPKL3xSJpUofvem3tDI0gleCyGIs67JYl1dmo3pZuDXqvaO7v6X+VTTvg3BscJ5fNpmHDJIT+Vi5OJJWLd+YQDWUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USf5Xh2X; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f44b5b9de6so1075725ad.3;
+        Mon, 27 May 2024 12:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716839942; x=1717444742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aZbVHWf8PRPM9u8We9otI6H/hby/EBBNdp17XPutA0=;
+        b=USf5Xh2X9HOs7GftdY9No9RwUnyBY1YGDhlcudTAxxNFAvoyICGFlTyqdHuYINzXzD
+         kxYQ+t3IZezEFccakPmZ77hajVz0NYFjiSJpAAlvu/lLrWaj0QwbKWTBHpCQymyf+G9t
+         Ww3pZHOzThpBAfBgP7yjOJqifmRc1lps+xhj0nmjdIa6MZ2OWwkzZe35L9UmaE/ct8VW
+         179xQE2ehS54XecoBee/jK+wXIQVzGlI87I0rwz6BaNCqjtG1zEGCMB/XoC/JKU29bSE
+         2eU5dH+QM5kgCIsVb6dH605K+L4OMAOy/cxpERGCydClIon87/CNUWEd42OaR47RHXU3
+         kTwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716839942; x=1717444742;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7aZbVHWf8PRPM9u8We9otI6H/hby/EBBNdp17XPutA0=;
+        b=N4BKbibrcq51tSatdOdcq+TCHl+nTZmTokboYe3Bnx4rkwgUAAry5IMkwdpg4x9qtl
+         TC/D5y79vVtYLWLjqEyIfggs/HqtBZ+Xkx3cY0hWh4g8jxDDykHkZpDUB2R8aqv/wrGO
+         7zGzjQnSn9j35ocR2uF8vzmOqDl18idnZUok6S6HPg2MxghoHZzmFN43/J3gkIja/AZp
+         ENniJCasiKzj7SRRgb2M4Rs86lVYzI3pmb2jVCdrv5wfVWESuMVGgIqy6xAvm5y3iDCk
+         8FyoZtxKJdO9WBeAhPqiN3PUBGcJSNKs1PSE7a2sygnQCz0V11gvoaIO3ofqLo/qmsY3
+         Ujrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZCufx/uchB13l2rX2Mjw+ElnHV/J24aZxL44+IDUarEzwakkdkrdpqBHJaAXZ3Nn8HUBseMUvwSGGaqGUXZPfi+sHK+kjyuLxPbC0wsiQMyf6Posapnin+vBLMJ9l+ko4uYuB3Ip9uw==
+X-Gm-Message-State: AOJu0YwVgFyMLsbBcmXwtmtCBe6whbOxia1m/5syvNHDFKl76tcKq6ym
+	glK/4hsrKb30vpR+ggZSr3AHwWxWSpCcKrN/+DHsJC3fGwTlztnjuNQz5+ta
+X-Google-Smtp-Source: AGHT+IH3tzAQC/TIgpUDvGmWELBAnrpcUfWvKnZ7GZyTlAe8ndO1lQPxLG4foCxI+yL6T0kjVP8/oQ==
+X-Received: by 2002:a17:903:41cd:b0:1f4:a45b:8429 with SMTP id d9443c01a7336-1f4a45b8a85mr30853005ad.27.1716839941631;
+        Mon, 27 May 2024 12:59:01 -0700 (PDT)
+Received: from shresth-aspirea71576g.abesec.ac.in ([117.55.241.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f47596cae0sm42664875ad.237.2024.05.27.12.58.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 12:59:01 -0700 (PDT)
+From: Shresth Prasad <shresthprasad7@gmail.com>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Shresth Prasad <shrestprasad7@gmail.com>
+Subject: [PATCH v2] dt-bindings: watchdog: img,pdc-wdt: Convert to dtschema
+Date: Tue, 28 May 2024 01:28:12 +0530
+Message-ID: <20240527195811.7897-2-shresthprasad7@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
 
-Hi,
+Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
+for validation.
 
-Thanks for reporting this.
+Signed-off-by: Shresth Prasad <shrestprasad7@gmail.com>
+---
+Changes in v2:
+    - Remove blank space
+    - Add item list with description for clocks
+    - Drop description for interrupts
+    - Drop properties assigned-clocks and assigned-clock-rates
+---
+ .../bindings/watchdog/img,pdc-wdt.yaml        | 55 +++++++++++++++++++
+ .../bindings/watchdog/imgpdc-wdt.txt          | 19 -------
+ 2 files changed, 55 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
 
-On Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:
-> 
-> First happened in 6.10-rc1 (6.9.2 stable is fine)  
-
-Do you happen to have .config available? A full dmesg would also be
-helpful.
-
-Does the system crash after the warning or not?
-
+diff --git a/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml b/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
+new file mode 100644
+index 000000000000..a88a27354505
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/img,pdc-wdt.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/img,pdc-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ImgTec PowerDown Controller (PDC) Watchdog Timer (WDT)
++
++maintainers:
++  - Shresth Prasad <shresthprasad7@gmail.com>
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    enum:
++      - img,pdc-wdt
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: watchdog counter clock
++      - description: register interface clock
++
++  clock-names:
++    items:
++      - const: wdt
++      - const: sys
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    watchdog@18102100 {
++      compatible = "img,pdc-wdt";
++      reg = <0x18102100 0x100>;
++      clocks = <&pdc_wdt_clk>, <&sys_clk>;
++      clock-names = "wdt", "sys";
++      interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
++    };
+diff --git a/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt b/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
+deleted file mode 100644
+index b2fa11fd43de..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/imgpdc-wdt.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-*ImgTec PowerDown Controller (PDC) Watchdog Timer (WDT)
+-
+-Required properties:
+-- compatible : Should be "img,pdc-wdt"
+-- reg : Should contain WDT registers location and length
+-- clocks: Must contain an entry for each entry in clock-names.
+-- clock-names: Should contain "wdt" and "sys"; the watchdog counter
+-               clock and register interface clock respectively.
+-- interrupts : Should contain WDT interrupt
+-
+-Examples:
+-
+-watchdog@18102100 {
+-	compatible = "img,pdc-wdt";
+-	reg = <0x18102100 0x100>;
+-	clocks = <&pdc_wdt_clk>, <&sys_clk>;
+-	clock-names = "wdt", "sys";
+-	interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
+-};
 -- 
-Regards,
+2.45.1
 
-Sakari Ailus
 
