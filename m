@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-191195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F17B8D07D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FE28D07D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4FA2A4C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4971F214BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BF6169AF3;
-	Mon, 27 May 2024 16:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577B2155CB2;
+	Mon, 27 May 2024 16:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="j9SWpHo0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="o2Hw3g8U"
-Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="DBXdpju4"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFA7155C91;
-	Mon, 27 May 2024 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C7C155C8D;
+	Mon, 27 May 2024 16:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825655; cv=none; b=bI8JJ/LrYCqEillvDiKOi5Z+gWMN2fqHVth6bhQH2VuCv+m6iYZ3XzZJ8wyAjNvpD4yin/fPddoZArirZWgV0kHwXWnjMP14wB3XbYbCHBFihHRE2lmBUwB2wUiqnS7hK4yrTrAHp6QFBDc8ieLYU3xKanV6LqlODa3oiZivj4U=
+	t=1716825684; cv=none; b=bZMq1utBtVKRD/RdlYUqg9szHSm8r0Lk5zh8H0yPXzwludSM4yx9higoAYP02lf12mw4L/7EPpb36SmpB+cN8+cRDGHYG1TxFQ1zEmd9htqxIf5pYuhxLua4GVJ5Y8tW5FwvbwBX+J4P4Q1x3jty1X5TJ9dej/xYM/NPLF6zmco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825655; c=relaxed/simple;
-	bh=eu9ERRY2/2tzbNM7/sRA/5PblbcpQRZ7jEKvETm7HZ8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=G5UY9Iwh6e+/cx6XiC1FdwxekhDSMZIXH81fQkCx61iPcouR2qqnZn0EeuCwsL2PZrFotZUn21QosagWvB9aV12ahMkhdM5REu+/kba9flWTpdeEdW+W/TbwbgM+1oMusfULdBeo9jVLiJxuy4rHDDRYk82z0fTAaPvPOxPZ1m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=j9SWpHo0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=o2Hw3g8U; arc=none smtp.client-ip=64.147.123.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.west.internal (Postfix) with ESMTP id D87B61800114;
-	Mon, 27 May 2024 12:00:51 -0400 (EDT)
-Received: from imap47 ([10.202.2.97])
-  by compute1.internal (MEProxy); Mon, 27 May 2024 12:00:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1716825651; x=1716912051; bh=JR/OInhF2POmXtVueCyiCaZ7btN5anbT
-	nKy85NzXzCk=; b=j9SWpHo0SpO6FNmBkyvG5sFOOUyDv1WMR2oQv2fxilgGy2Cz
-	4f2tYinh11rf1j9bOmjX3pdmOboFrKCih6tbvrq2nx8TREF8IjTYxCvLHg0i7fCL
-	neay14nDKND8yud/+lr+gNVjXlce+LeLzmvuk1HjVTat/rb0WMfS4AUSiQp4JRB3
-	0ZGLYRMxvwnq7a02yuCZf4+2Xwl0b/8610IU5RboRdwSwNsLeXju7jiUKjyaQzTa
-	1ZEI9dGgQGd5breYjYSKzQ0ieeY+uhusK3sf0n4b5BqyZeR3L/OQfQHjudkBM0tw
-	FtRm5HTCYcadMLMnxvacMsSHVXyK90f/8CwgOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716825651; x=
-	1716912051; bh=JR/OInhF2POmXtVueCyiCaZ7btN5anbTnKy85NzXzCk=; b=o
-	2Hw3g8UFyT1ekXk3sYpkq0UJ38uCCtoe2QUqKq+b/BjKv/S/YEdtZqAMSmnfMcqu
-	V9/R3YUapZebOpEdQhwCC0kQTNVpJxksWt7oGyKBoiEPZx3bPR0baZR598HD0c0G
-	u2ai5oCETQZNJp4Bko6w7nGNslRgJ0P5mJ06YRQHqunEP5Z3Y9O2UOMG7WNucwE8
-	26IJz/d4s/lHSNcB3p5UvLoo0SAa965+C2Dqt9Nm84Z5U5YJ7+HoI0C3Ku4EOxU/
-	GMfMYwwvacfEE6BV12j5dUGQ/xwf2ooyxdrOn/XGZW5GeveB8xmEf+phXyxOOBOu
-	12r7VP1GO3ImTvdDzChUg==
-X-ME-Sender: <xms:Ma5UZmQuy-i7mX6L06GVoRd2VLkTKPolKUU_x3OPFiWYcxr3Bb0jhQ>
-    <xme:Ma5UZry0Vm6vxZne454ZX-BC2ZBU8gfOzfRMU2Y_gto4eCJCP1OFCORWJZpOEnkrc
-    1bjBS1k4hCO2FYOFGg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejgedgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfu
-    vhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtf
-    frrghtthgvrhhnpeevhedthffgffelhedujefgueduudeutdefleevvdetudelhfeihfdv
-    ffelteeuudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvh
-X-ME-Proxy: <xmx:Ma5UZj00_H1qR9w4vNWL9M_6pIXmLsII72HV6qQbzbYRGzhS9hh2uQ>
-    <xmx:Ma5UZiB4cI4yxcQowNiIp_nPK9Ce4JOh7_qmaTNC4sn1-kaZcMRJxw>
-    <xmx:Ma5UZvipk2uz2ScAWr7uJfyrZWyfsnnLzj16Ckdnqp_EZr0QM7YbFA>
-    <xmx:Ma5UZurKGro4gjMlGxRsfZGiZCRm5tPQq5Z9RNQKxorsa-_K4h9Iyg>
-    <xmx:M65UZuPgE5e-z5REWRseR6dWHAIVjDn9O4Ue5F5UMNbZiiMJVTyEPJMe>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 68666A60078; Mon, 27 May 2024 12:00:49 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716825684; c=relaxed/simple;
+	bh=Sruv/YZzitcj90qjhIXuqnC3K/lFTcB08gnVoO8Fw4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=st/TgUmLP4/Y6MhXfX2R4Dhgg1xsO3Z0fpMVH2KRTB9KKtaIpUsFoe6AKsZcaFAWgLwZRKug2gp4T1Em0WiMW5MtgKi8GxCRCs5r0ZeAHgz9mbFLmYPv9q4lMdVTZt6pRkzFU5UnDS5jUyhV8TNSXYfbCoBN7ENUbJvp/8SFGzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=DBXdpju4; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=EE/8qcrliFALaEnFXnUHoU1iKIRNcEvm7lqw9z40qcA=; b=DBXdpju4st9B9+Cc
+	W6gFQZ4eLH4oO1AqKct7nLtPJ8HeA2egQ0H2RQTcj12j7U/f0BWWTEFyuCy+F25l2HUGWCumLkMhO
+	LDQXmmSflhFpw4k5826B3xai+aPottcakuhoxQBZ1I1YNQapEb+QtY1tre0AKpUjsMkUpUjK3Sw+B
+	n9UI+iFZHd1DBI/6HZK2eGvTyS9zBUIqF6FiapOsR7dLvx5K9fKa0zCpDPVxs6YH0iW6cta/Swlay
+	vJR96ciWcgIIWswK4bCMb7Iy2PKRXUbWiuoX/5U5OWa+Vuu+VR7J16WTm1TBbJUAQxKIvVuYr4qNi
+	BiEp6JmWksse6z8IRw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sBcmk-002m9X-2V;
+	Mon, 27 May 2024 16:01:19 +0000
+From: linux@treblig.org
+To: lpieralisi@kernel.org,
+	robh@kernel.org,
+	thierry.reding@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] PCI: tegra: remove unused struct 'tegra_pcie_soc'
+Date: Mon, 27 May 2024 17:01:18 +0100
+Message-ID: <20240527160118.37069-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <adedfb49-a66c-4e8c-ac4f-bd137c20ec7a@app.fastmail.com>
-In-Reply-To: <20240527132552.14119-1-ilpo.jarvinen@linux.intel.com>
-References: <20240527132552.14119-1-ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 May 2024 18:00:48 +0200
-From: "Sven Peter" <sven@svenpeter.dev>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Hector Martin" <marcan@marcan.st>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Marcel Holtmann" <marcel@holtmann.org>,
- "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] Bluetooth: hci_bcm4377: Convert PCIBIOS_* return codes to
- errnos
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
+'tegra_pcie_soc' has been unused since the initial
+commit 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support").
 
-On Mon, May 27, 2024, at 15:25, Ilpo J=C3=A4rvinen wrote:
-> bcm4377_init_cfg() uses pci_{read,write}_config_dword() that return
-> PCIBIOS_* codes. The return codes are returned into the calling
-> bcm4377_probe() which directly returns the error which is of incorrect
-> type (a probe should return normal errnos).
+Remove it.
 
-Good catch!
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
->
-> Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
-> errno before returning it from bcm4377_init_cfg. This conversion is the
-> easiest by adding a label next to return and doing the conversion there
-> once rather than adding pcibios_err_to_errno() into every single return
-> statement.
-
-Given that bcm4377_init_cfg is only called at one place from bcm4377_pro=
-be
-we could also just do something like
-
-	ret =3D bcm4377_init_cfg(bcm4377);
-	if (ret)
-		return pcibios_err_to_errno(ret);
-
-there, but either way is fine with me.
-
-
-Best,
-
-
-Sven
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 93f5433c5c55..076f040ccc34 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -308,10 +308,6 @@ static inline u32 appl_readl(struct tegra_pcie_dw *pcie, const u32 reg)
+ 	return readl_relaxed(pcie->appl_base + reg);
+ }
+ 
+-struct tegra_pcie_soc {
+-	enum dw_pcie_device_mode mode;
+-};
+-
+ static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
+ {
+ 	struct dw_pcie *pci = &pcie->pci;
+-- 
+2.45.1
 
 
