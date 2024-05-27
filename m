@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-191349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081B48D0A27
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C2D8D0A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE201F21C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D83282700
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B020415FA80;
-	Mon, 27 May 2024 18:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D827B15FA68;
+	Mon, 27 May 2024 18:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAayaDuZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hk+MU0ud"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E737D2F2B;
-	Mon, 27 May 2024 18:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BA626AD7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835660; cv=none; b=NfU5EVa04H3UcAqrDoa+i1IHs+xZ/p/L4Cb1IUtnNpWmVIVs51B/p3RAaXgOe82SYURRjyKnQIYBTBIR4SD2RjeDxtu7/16/paukKfACgiAPHkXl9Jj6ijoo7TYNCVKvOBGMg1a+NFsRJN6CUkR/622cSqVPVso9Djbcma8U+LY=
+	t=1716835777; cv=none; b=Mcp212wSKgh0iynXokNGYDZtp1eXNd/fqkWiWrksCETKRPmx2jjKCdW9f7qsnsCoi9PIOhQOoMt0+5LhSt5sAYZBDBSzOJy+BtYlumMGsvWlIsh0wm/6mBNIKXK//YZesSrbHJeG6FzyYicSutrfAkN+GM3/+gSwUgJTLfS6Ttg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835660; c=relaxed/simple;
-	bh=jaAoKf72h+215Gu9ulvjMVI1NhGGhE2JKDwTraDASZ4=;
+	s=arc-20240116; t=1716835777; c=relaxed/simple;
+	bh=RV9sRnDDHhotfIfV02JE6OLot8Q0FP7qvqbKBZju/0Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RfthTNauqosx4ONd/9Lrz0lbJhPAaO4Njbg5Ihno0JPR+EsEBzM6pSjaBhI/AGa7zvN2ZkInCO5pR7w1MC6+3uIN5F2CunTkrrhRwLUUX5Yzubim5qJMeYTqqSTLwtanjnvMKMTSjVEVUfdTMEypy9p3KDf3vc8fOIm8jwDOiq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAayaDuZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751D7C2BBFC;
-	Mon, 27 May 2024 18:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835659;
-	bh=jaAoKf72h+215Gu9ulvjMVI1NhGGhE2JKDwTraDASZ4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GAayaDuZk01U74xR9K61NwMiyHx3NoudtEmBggOSVErOq3RZ80ZGrv7lpMjntA6TP
-	 o06x5yz1cLrc1z52lVTX9dFiiZ0xcwKCBpsJxaUciJKTAn2YopCxn/XDLTSzbx36kU
-	 pDkvQCPLUQswqqdvcVlft3k3xb6OPJifkqFifmT5Q/5aJKmDh3BW+a0Ra45qaDhyxU
-	 Dn/APVC9o3P0nvUTlOq1A+6g7iAOQ6NSDi5MYC7WYJNQdjcbJRGpTp6r/yj2rvtq5u
-	 GvwY/yrX9KXi+NkPccBQuUQ6QAGgva2EB7ypMbA3Tcf1V5Fwzr9yE5Jb3cm7jPxHu/
-	 lREGgxim74ESg==
-Message-ID: <771db1ec-115f-4b96-916f-3975ca302f55@kernel.org>
-Date: Mon, 27 May 2024 20:47:34 +0200
+	 In-Reply-To:Content-Type; b=nzXKAQ3vBY7l11Y8ZwEDhCkZdZKJHhfuWS1JP2fRyhaO/QDBqEebm1/EKajQxliKg0LPIewJ5mlwm0LJBad0zW0cvv3YDxhCMLG5Do/HjKewzxvmywmEczNIlbhJnM+xj7Bj8/ZEwLsVVfJrk2xrvtjpzHBFbon+IwV30IqL6KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hk+MU0ud; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716835774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=er9zpPdeV49PUDKJxQuU67Pcm6GfUTc6DyJ/Kh2n3Ps=;
+	b=hk+MU0udtr0HNChCNQLJcx3cTkWPHUFGSke4cqDnMaAinZCfeglVkoXFrCkgHKIPcj/vS8
+	5+suSvrGX/yBUQkJAYhpM9bZzfxk+BXKmwN6+x1fzE9loFKa+NCep4SzGeX6ZDPeDjPoVD
+	nJPNl3W/6vLpHus+aEwdoiNWkiXGr7Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-WduY7cVbMhqgpZNhrAhrsw-1; Mon, 27 May 2024 14:49:32 -0400
+X-MC-Unique: WduY7cVbMhqgpZNhrAhrsw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-354fc1122baso35510f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:49:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716835771; x=1717440571;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=er9zpPdeV49PUDKJxQuU67Pcm6GfUTc6DyJ/Kh2n3Ps=;
+        b=acSjkYgx4/jKmWJXm5hxsrPwsXonA1i5/DtpBCGydsD5w3V9gP93lCahTP0XMYiG3L
+         S51y5Goubi9vh9BGHOcpMbhEFRNPny1PpJGiiJflKwRBADPAhQwEy4Oc+x0275WINXIz
+         7zEEGZohuEEa2ZV8vElUnnfk8rgXW2RVfal6rmDd2/WBjnBfHOuWqCJAPeb7XRpCYJkR
+         RqLifB0SdTMD0Czr7nazyzUOhsh7Y8J0HJnTtgZ8dK2jnlZ1bmUw5XVd6RC5ZMzOO2pr
+         ErbmpTWQmCKjjp8q6O64AOCAV1Mzfp40wzD3j5l9LvkHX/BWdNLS0KA4IEkKW2BlqYKC
+         BqGA==
+X-Gm-Message-State: AOJu0Yz/lGTSavKGlZuDdjHTQLNtBhzhiXgtQgU+PS8BDVQzNKHQvPuC
+	tCRTbAcn1dhKir+KqUQl7heamdzbdv52mxV9roPwcmAr8idg8dIWA3ffjaYX+GKqudu5aD0q6Ur
+	byOVYQ5d9rrroMrpagHKdIfz7NTD3GgVs9rw+DqYh6zHDpQ2EoiYLMdEW0oBzyQ==
+X-Received: by 2002:a5d:498a:0:b0:354:f57f:7bdd with SMTP id ffacd0b85a97d-3552fe0292fmr6791882f8f.45.1716835771319;
+        Mon, 27 May 2024 11:49:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnQ45GrmOD8w4iBJnqvAdq3EeerBIwdqkHXyVUjWg4x+oSG0Q4szUswefeawEbDqXjYy0Dsw==
+X-Received: by 2002:a5d:498a:0:b0:354:f57f:7bdd with SMTP id ffacd0b85a97d-3552fe0292fmr6791871f8f.45.1716835770904;
+        Mon, 27 May 2024 11:49:30 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817c81sm516319366b.28.2024.05.27.11.49.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 11:49:30 -0700 (PDT)
+Message-ID: <00ba1dff-7c05-46e8-b0d9-a78ac1cfc198@redhat.com>
+Date: Mon, 27 May 2024 20:49:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,135 +80,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: watchdog: img,pdc-wdt: Convert to dtschema
-To: Shresth Prasad <shresthprasad7@gmail.com>, wim@linux-watchdog.org,
- linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- javier.carrasco.cruz@gmail.com
-References: <20240527062102.3816-2-shresthprasad7@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 2/6] mm: allow reuse of the lower 16 bit of the page
+ type with an actual type
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+References: <20240527141454.113132-1-david@redhat.com>
+ <20240527141454.113132-3-david@redhat.com>
+ <ZlSmNzgkeYaCrPWc@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240527062102.3816-2-shresthprasad7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <ZlSmNzgkeYaCrPWc@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/05/2024 08:21, Shresth Prasad wrote:
-> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
-> for validation.
+Am 27.05.24 um 17:26 schrieb Matthew Wilcox:
+> On Mon, May 27, 2024 at 04:14:50PM +0200, David Hildenbrand wrote:
+>> As long as the owner sets a page type first, we can allow reuse of the
+>> lower 18 bit: sufficient to store an offset into a 64 KiB page, which
 > 
-> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
-> ---
-> The binding has been checked and tested against `img/pistachio_marduk.dts`
-> with no errors or warnings.
-> ---
+> You say 18 here and 16 below.
 
+Thanks, missed to fixup one instance after going back and forth.
 
-Thank you for your patch. There is something to discuss/improve.
+> 
+>> is the maximum base page size in *common* configurations (ignoring the
+>> 256 KiB variant). Restrict it to the head page.
+>>
+>> We'll use that for zsmalloc next, to set a proper type while still
+>> reusing that field to store information (offset into a base page) that
+>> cannot go elsewhere for now.
+>>
+>> Fear of running out of bits for storing the actual type? Actually, we
+>> don't need one bit per type, we could store a single value instead.
+>> Further, we could likely limit PAGE_TYPE_BASE to a single (highest) bit.
+> 
+> We could, but it's more instructions to check.
 
+Maybe, and maybe not sufficient more that we care.
 
-> +
-> +maintainers:
-> +  - Shresth Prasad <shresthprasad7@gmail.com>
-> +
-> +
+I was thinking of something like the following (probably broken but you should 
+get the idea):
 
-Just one blank line.
+/*
+  * If the _mapcount is negative, we might store a page type. The
+  * page_type field corresponds to the most significant byte of the
+  * _mapcount field. As the mapcount is initialized to -1, we have no
+  * type as defaults. We have plenty of room to underflow the mapcount
+  * before we would end up indicating a valid page_type.
+  */
+#define PAGE_TYPE_BASE	0x80
+enum page_type {
+	PT_buddy = PAGE_TYPE_BASE,
+	PT_offline,
+	PT_table,
+	PT_guard,
+	PT_hugetlb,
+	PT_slab,
+	/* we must forbid page_type == -1 */
+	PT_unusable = 0xff
+};
 
-> +allOf:
-> +  - $ref: watchdog.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - img,pdc-wdt
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 2
+In struct page:
 
-Instead of maxItems please list items with description so the items will
-be described.
+union {
+	atomic_t _mapcount;
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: wdt
-> +      - const: sys
-> +
-> +  interrupts:
-> +    description:
-> +      Should contain WDT interrupt
+#if __BYTE_ORDER == __BIG_ENDIAN
+	struct {
+		uint16_t page_type_data;
+		uint8_t page_type_reserved;
+		uint8_t page_type;
+	};
+#else
+	struct {
+		uint8_t page_type;
+		uint8_t page_type_reserved;
+		uint16_t page_type_data;
+	};
+#end
+};
 
-Drop description, redundant.
+#define PageType(page, type) (page->page_type == type)
 
-> +    maxItems: 1
-> +
-> +  assigned-clocks:
-> +    maxItems: 2
+Once could maybe also change page_has_type to simply work on the
+fact that the highest bit must be set and any other bit of the type must be clear:
 
-Drop property
+static inline int page_has_type(const struct page *page)
+{
+	return (page->page_type & PAGE_TYPE_BASE) &&
+		page->page_type != 0xffff;
+}
 
-> +
-> +  assigned-clock-rates:
-> +    maxItems: 2
+But just some thought.
 
-Drop property
+> 
+>> +++ b/include/linux/page-flags.h
+>> @@ -945,14 +945,18 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
+>>    */
+>>   
+>>   #define PAGE_TYPE_BASE	0xf0000000
+>> -/* Reserve		0x0000007f to catch underflows of _mapcount */
+>> -#define PAGE_MAPCOUNT_RESERVE	-128
+>> -#define PG_buddy	0x00000080
+>> -#define PG_offline	0x00000100
+>> -#define PG_table	0x00000200
+>> -#define PG_guard	0x00000400
+>> -#define PG_hugetlb	0x00000800
+>> -#define PG_slab		0x00001000
+>> +/*
+>> + * Reserve		0x0000ffff to catch underflows of _mapcount and
+>> + * allow owners that set a type to reuse the lower 16 bit for their own
+>> + * purposes.
+>> + */
+>> +#define PAGE_MAPCOUNT_RESERVE	-65536
+> 
+> I think my original comment was misleading.  This should be:
+> 
+>   * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflow.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-Best regards,
-Krzysztof
+Makes sense.
+
+> 
+> How about we start at the top end and let people extend down?  ie:
+> 
+> #define PAGE_TYPE_BASE	0x80000000
+> #define PG_buddy	0x40000000
+> #define PG_offline	0x20000000
+> #define PG_table	0x10000000
+> #define PG_guard	0x08000000
+> #define PG_hugetlb	0x04000000
+> #define PG_slab		0x02000000
+> #define PAGE_MAPCOUNT_RESERVE	(~0x0000ffff)
+> 
+> Now we can see that we have 9 flags remaining, which should last until
+> we can have proper memdesc typing.
+
+Also works for me.
+
+Thanks!
+
+-- 
+Thanks,
+
+David / dhildenb
 
 
