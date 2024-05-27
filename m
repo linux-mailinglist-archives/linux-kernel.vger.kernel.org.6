@@ -1,177 +1,342 @@
-Return-Path: <linux-kernel+bounces-190176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863CE8CFA98
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9AD8CFA9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1415D1F213B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15E231F217D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296FA3C463;
-	Mon, 27 May 2024 07:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140C3C152;
+	Mon, 27 May 2024 07:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZPk5ff3e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cyVRqE2X"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F17381D5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AF5481D3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796435; cv=none; b=rLd7DjNrzily6cdt+8Y/gxmKw1lJc7pAAQRkoincn93x/lortkriRFjbL7Mo25tTjV8RgWhU6FBYI9f1bnUPvaVfinMzHPlIq8f6lAudLs3H1QbOwRzpR5qOHilEyWKpcBGSCEV1LahmyC4r8/7+JJA055db0kpM7/ezhaKKL5Q=
+	t=1716796457; cv=none; b=k0PHrgnKBESdDU7pH0QzLX7qXOjW4+XT0bynIlz+A8q0q22GCwB2YEgXNRIOlR/6HGL4TylidINTB2/yustLNn8v9PMkkdinJMtguHXne+9IBkfAx+L4BMK2zzBeNofARcoTta+IXJOptKMFaSsHJZlCmkJt3oqrNE2YE9HHyek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796435; c=relaxed/simple;
-	bh=fpYNTSg0sOLbnS+sAN/5LNQ/1717jIrVECRrIyAB/6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YYQDBY9WWCuknLUEPLOyRATaCrkkNX3aNdBCTtHOogZas5l3Mr0I9vtUniuIH6WuzibZ/8/EEAmuXXnBmuyE1MwnDi2DkVbJ9XJJHVhIUFkdQDO6e/YoySj30WKk5qxKbeOUkIRH7uQ9Kx0KvNXjbypGU/Wja0pydqqt5h7uAco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZPk5ff3e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716796433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94Nn+gDWguFMQFL1W0OycJxi9V0LL/+VpNzMqcw5SdI=;
-	b=ZPk5ff3eP4gDXiCNJI4RnQOpfQw3knBMQD3gtSpUhCBBrVviYFoWaAbmO8oLpBypITxq3b
-	PQrwh8KuRgzSCovHhwEn0DaCFz3tErFAEClf7T8+D0dPIY36oYeo7c2pJKHbNMUmy5Nq3c
-	a6cx7zRmVd2XPF9KuTw9H4YKOrQhQgI=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-649-THHCDxFjOr-tAHPSWPAorg-1; Mon, 27 May 2024 03:53:50 -0400
-X-MC-Unique: THHCDxFjOr-tAHPSWPAorg-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e97c6f1a74so2932741fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:53:50 -0700 (PDT)
+	s=arc-20240116; t=1716796457; c=relaxed/simple;
+	bh=DxNxoHKKKKV/YA60keklUJxbnrSoPWjFw855DmcjX2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIShCcjf/iFPqmiaIIurxC2t/xrh8t8CUNJkFbCZWCGdMFbWt3Lb/E5vF0fjwYN40DJ6Ez643SkGG5EfIgtIYYgi//L7HV8OCDasD05f49uzVEAvHYoVwjLatxowL/6M14Q+bv5g4kxMNROJ4GlbQ2dxPzQvSLEP/z6Ru32DO0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cyVRqE2X; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5241b49c0daso8981392e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716796453; x=1717401253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ZV/h6vQsdHCKRsoJtSYQORaM3AAsx3HRHL7zmr/VbI=;
+        b=cyVRqE2XIEEZwz/i4KXgo+9UdCdVoxfTStjcTs+V669O3iEWWgQ4uNOXuL8Y6Sut3Y
+         ewDY1k4si78czBF5hNNPt3WqO+TJe/wRtx0gO900jy4k29ijdupJnMi7WrF2sbSN47sb
+         eZ3vs6S3gxziZu2d5nBOzrQokQtfAovMneQs0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716796429; x=1717401229;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94Nn+gDWguFMQFL1W0OycJxi9V0LL/+VpNzMqcw5SdI=;
-        b=mCzHsBp/ZtYs/SlXwxd8qnip4+TrFBFpy9nMkv45LvIwbIMmS8QMMYTjnVKmhm6Ewq
-         BrDocPC51QxueXEwfNmU77CKfduiveGd+WvWlvI1M00z3WMqMe4buEWi6Vw1M9GHCq1B
-         /FOhlWZQ8eq0L4EI4gJ+rpqsfWw968AIPPkNdMGGjCfJxVXCpKQXZyQVuFLDRDVpiH13
-         XKYEIB9frRe1LFRiKcq9kii3DdXBrumsdCovqBDMhDh9KsnbMRa6v2mhYafSSpAuEYEu
-         xt6rwLTfmEtKO7yzhyg0IcmGYe/aPO7+PyeraMa1zpAS05S0rGkdhxrT8n+rytHQe2gA
-         RiOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk/ORaYLYNoAnBQT7a6sNzKi4iLo+hN+bFK1wqdSMJjr7EZTw/56QWMLMlzqp4+FGKBvbAPSIld08+k/gu9YjOyHdbFofBqmpJOmfq
-X-Gm-Message-State: AOJu0YwElOnz7DQFZ20AFuwqC2ZzU/qZ2UuC/0xB/TuUfmELCc+jLBSY
-	1OtnxYm3QO6xWkTyUvZvr3NKI8AnZi1hDxUGNl73qdJ+9FYfrncKCdgU6VK105YyaN8cXBiB8Vk
-	SqRD+ogYjFfBosZ+0SDnkEENu+oqRx5TaYQSziI77sXIR9UyrXETGJQbmwOLM2w==
-X-Received: by 2002:a2e:9bc6:0:b0:2e9:7417:bb0a with SMTP id 38308e7fff4ca-2e97417bbe0mr18593031fa.3.1716796429006;
-        Mon, 27 May 2024 00:53:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7UsmrWTRpKTMmDwSTymTCt/+SN36zCsBuKQO3VhRHcXruZ8UCSn/4VhRRIuJyyC4L2SEuhw==
-X-Received: by 2002:a2e:9bc6:0:b0:2e9:7417:bb0a with SMTP id 38308e7fff4ca-2e97417bbe0mr18592911fa.3.1716796428423;
-        Mon, 27 May 2024 00:53:48 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm132541905e9.4.2024.05.27.00.53.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 00:53:48 -0700 (PDT)
-Message-ID: <8201bd1d-f617-491b-a10d-1fe689e9eb9b@redhat.com>
-Date: Mon, 27 May 2024 09:53:45 +0200
+        d=1e100.net; s=20230601; t=1716796453; x=1717401253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ZV/h6vQsdHCKRsoJtSYQORaM3AAsx3HRHL7zmr/VbI=;
+        b=BWJff3l+Tx12jkXlci3AVOZC2XK+PMeF8+ALXuCLPmQCqKrnFqJI6ajEHDNRcx8EKU
+         lohSXR/iKb8N9UDcD+yeSS6ChAXX6E33p+HUjUN36RzDC8B7lua6bSuNWPH/6aXuS8QU
+         65uUcgtQYC2VBb6XmI/NPgW86oDBec4JOA0P3wtZ1RDx6XT6iAX/NlXCSj6lOe1NWMC0
+         S95JfruNc/SNYKbc8It6WO/iE1QgXQa44C1Bilbm4aF7LOJ48a1FjRHMQTY070K0Ur82
+         nYvhr+fTiahEmkWt8hM3/+x6A7dmWTd5wswAOM+tSSHnt/43aTMTp+G2vWbN+7H6sMap
+         vNgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzclmnZ2Wyimo4SkRI6IUl2mKDApl789Y3Lw/RFgWb/gkLXrgaY1/oQu4Lq+DPJcAuewiphopzJdAAq994lfp4f+SvxqUZmG1GxBu1
+X-Gm-Message-State: AOJu0YzWGZMlVB+c2upC/bFuz5Fz0t3zRtHghuGub6GkJi63eaTamY2D
+	gwAFlkg0n2ZNCLVmUcZdQUuB69ONivgSp3VGnzCVsf7MY1iOTJ3i7EvLuSMUYxBgaF+As6Tth41
+	3DJHO2DU75ohMM50cXZiJ9s+cCCQUyK2S7yRm
+X-Google-Smtp-Source: AGHT+IEr6BRhzwQNd70coArCp9R36H5Sfgvu1jqLEpaNgVYG5JEtSZ3QSk58bvLscssV5LNqg4qreFKps/AUod4hV0I=
+X-Received: by 2002:ac2:4548:0:b0:51c:348:3ba9 with SMTP id
+ 2adb3069b0e04-52964baf3ebmr4816022e87.22.1716796453243; Mon, 27 May 2024
+ 00:54:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm,memory_hotplug: Remove un-taken lock
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
- Michal Hocko <mhocko@suse.com>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
- Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240521-mm-hotplug-sync-v1-0-6d53706c1ba8@google.com>
- <20240521-mm-hotplug-sync-v1-1-6d53706c1ba8@google.com>
- <78e646af-e8b5-4596-8fbf-17b139cfdddd@redhat.com>
- <Zk4AwwX7x426KU7H@google.com>
- <0506ae4e-e17d-4c3c-aa3e-1cea04909e5a@redhat.com>
- <ZlCB5bFnafw_zE8Z@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <ZlCB5bFnafw_zE8Z@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com> <20240516122102.16379-25-yunfei.dong@mediatek.com>
+In-Reply-To: <20240516122102.16379-25-yunfei.dong@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 27 May 2024 15:54:02 +0800
+Message-ID: <CAGXv+5EdwQMCPu7ksshCQ_FQZ460TFrxQN4TE2t=LEOK-rNU5g@mail.gmail.com>
+Subject: Re: [PATCH v6, 24/24] media: mediatek: vcodec: support vp9 svp
+ decoder for mt8188
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: Jeffrey Kardatzke <jkardatzke@google.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Nathan Hebert <nhebert@chromium.org>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, Tomasz Figa <tfiga@chromium.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 24.05.24 um 14:02 schrieb Brendan Jackman:
-> On Wed, May 22, 2024 at 05:24:17PM +0200, David Hildenbrand wrote:
->> On 22.05.24 16:27, Brendan Jackman wrote:
->>> On Wed, May 22, 2024 at 04:09:41PM +0200, David Hildenbrand wrote:
-> 
->>> By the way, some noob questions: am I OK with my assumption that it's
->>> fine for reader code to operate on zone spans that are both stale and
->>> "from the future"? thinking abstractly I guess that seeing a stale
->>> value when racing with offline_pages is roughly the same as seeing a
->>> value "from the future" when racing with online_pages?
->>
->> Right. PFN walkers should be using pfn_to_online_page(), where races are
->> possible but barely seen in practice.
->>
->> zone handlers like mm/compaction.c can likely deal with races, although it
->> might all be cleaner (and safer?) when using start+end. I recall it also
->> recalls on pfn_to_online_page().
->>
->> Regarding page_outside_zone_boundaries(), it should be fine if we can read
->> start+end atomically, that way we would not accidentally report "page
->> outside ..." when changing the start address. I think with your current
->> patch that might happen (although likely extremely hard to trigger) when
->> growing the zone at the start, reducing zone_start_pfn.
-> 
-> Thanks a lot, this is very helpful
-> 
->>> Also, is it ever possible for pages to get removed and then added back
->>> and end up in a different zone than before?
->>
->> Yes. Changing between MOVABLE and NORMAL is possible and can easily be
->> triggered by offlining+re-onlining memory blocks.
-> 
-> So, even if we make it impossible to see a totally bogus zone span,
-> you can observe a stale/futuristic span which currently contains pages
-> from a different zone?
+On Thu, May 16, 2024 at 8:21=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek.c=
+om> wrote:
+>
+> From: Yilong Zhou <yilong.zhou@mediatek.com>
+>
+> Change vp9 driver to support secure video playback(svp) for
+> mt8188. Need to map shared memory with optee interface and
+> wait interrupt in optee-os.
+>
+> Signed-off-by: Yilong Zhou <yilong.zhou@mediatek.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>  .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 91 ++++++++++++-------
+>  1 file changed, 59 insertions(+), 32 deletions(-)
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp=
+9_req_lat_if.c
+> index cf48d09b78d7..9f64661800af 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> @@ -141,6 +141,7 @@ struct vdec_vp9_slice_frame_counts {
+>   * @skip:      skip counts.
+>   * @y_mode:    Y prediction mode counts.
+>   * @filter:    interpolation filter counts.
+> + * @mv_joint:  motion vector joint counts.
+>   * @sign:      motion vector sign counts.
+>   * @classes:   motion vector class counts.
+>   * @class0:    motion vector class0 bit counts.
+> @@ -804,6 +805,9 @@ static void vdec_vp9_slice_setup_frame_ctx(struct vde=
+c_vp9_slice_instance *insta
+>         error_resilient_mode =3D HDR_FLAG(ERROR_RESILIENT);
+>         reset_frame_context =3D uh->reset_frame_context;
+>
+> +       if (instance->ctx->is_secure_playback)
+> +               return;
+> +
+>         /*
+>          * according to "6.2 Uncompressed header syntax" in
+>          * "VP9 Bitstream & Decoding Process Specification",
+> @@ -818,8 +822,7 @@ static void vdec_vp9_slice_setup_frame_ctx(struct vde=
+c_vp9_slice_instance *insta
+>                  * 2 resets just the context specified in the frame heade=
+r
+>                  * 3 resets all contexts
+>                  */
+> -               if (key_frame || error_resilient_mode ||
+> -                   reset_frame_context =3D=3D 3) {
+> +               if (key_frame || error_resilient_mode || reset_frame_cont=
+ext =3D=3D 3) {
+>                         /* use default table */
+>                         for (i =3D 0; i < 4; i++)
+>                                 instance->dirty[i] =3D 0;
+> @@ -1042,6 +1045,9 @@ static void vdec_vp9_slice_setup_seg_buffer(struct =
+vdec_vp9_slice_instance *inst
+>  {
+>         struct vdec_vp9_slice_uncompressed_header *uh;
+>
+> +       if (instance->ctx->is_secure_playback)
+> +               return;
+> +
+>         /* reset segment buffer */
+>         uh =3D &vsi->frame.uh;
+>         if (uh->frame_type =3D=3D 0 ||
+> @@ -1172,15 +1178,16 @@ static int vdec_vp9_slice_setup_lat(struct vdec_v=
+p9_slice_instance *instance,
+>
+>         vdec_vp9_slice_setup_seg_buffer(instance, vsi, &instance->seg[0])=
+;
+>
+> -       /* setup prob/tile buffers for LAT */
+> -
+> -       ret =3D vdec_vp9_slice_setup_prob_buffer(instance, vsi);
+> -       if (ret)
+> -               goto err;
+> +       if (!instance->ctx->is_secure_playback) {
+> +               /* setup prob/tile buffers for LAT */
+> +               ret =3D vdec_vp9_slice_setup_prob_buffer(instance, vsi);
+> +               if (ret)
+> +                       goto err;
+>
+> -       ret =3D vdec_vp9_slice_setup_tile_buffer(instance, vsi, bs);
+> -       if (ret)
+> -               goto err;
+> +               ret =3D vdec_vp9_slice_setup_tile_buffer(instance, vsi, b=
+s);
+> +               if (ret)
+> +                       goto err;
+> +       }
+>
+>         return 0;
+>
+> @@ -1599,7 +1606,8 @@ static int vdec_vp9_slice_update_single(struct vdec=
+_vp9_slice_instance *instance
+>                        pfc->seq, vsi->state.crc[4], vsi->state.crc[5],
+>                        vsi->state.crc[6], vsi->state.crc[7]);
+>
+> -       vdec_vp9_slice_update_prob(instance, vsi);
+> +       if (!instance->ctx->is_secure_playback)
+> +               vdec_vp9_slice_update_prob(instance, vsi);
+>
+>         instance->width =3D vsi->frame.uh.frame_width;
+>         instance->height =3D vsi->frame.uh.frame_height;
+> @@ -1632,7 +1640,8 @@ static int vdec_vp9_slice_update_lat(struct vdec_vp=
+9_slice_instance *instance,
+>                 return -EAGAIN;
+>         }
+>
+> -       vdec_vp9_slice_update_prob(instance, vsi);
+> +       if (!instance->ctx->is_secure_playback)
+> +               vdec_vp9_slice_update_prob(instance, vsi);
+>
+>         instance->width =3D vsi->frame.uh.frame_width;
+>         instance->height =3D vsi->frame.uh.frame_height;
+> @@ -1694,8 +1703,13 @@ static int vdec_vp9_slice_setup_core_buffer(struct=
+ vdec_vp9_slice_instance *inst
+>                 return -EINVAL;
+>
+>         /* update internal buffer's width/height */
+> -       instance->dpb[vb->index].width =3D w;
+> -       instance->dpb[vb->index].height =3D h;
+> +       for (i =3D 0; i < vq->num_buffers; i++) {
 
-Yes. Note that zones/nodes can easily overlap, so a page being spanned by 
-another zones is common and supported already.
+Starting in v6.10-rc1 with the introduction of REMOVE_BUFS, vq->num_buffers
+was removed. There is now vq->max_num_buffers.
 
-> 
-> That seems to imply you could look up a page page from a PFN within
-> zone A's apparent span, lock zone A and assume you can safely modify
-> the freelist the page is on, but actually that page is now in zone B.
+> +               if (vb =3D=3D vq->bufs[i]) {
 
-That's why we obtain the zone/node always from the page itself (stored in page 
-flags). This data can only change when offlining+reonlining memory (and 
-pfn_to_online_page() would refuse to hand out the page while temporarily online).
+This should probably use the helper "vb2_get_buffer(vq, i)".
 
-There were discussions around using RCU to improve pfn_to_online_page() racing 
-with memory offlining, but the motivation to do that has been rather small: we 
-barely see such races in practice. Memory offlining+re-onlining simply takes too 
-long.
+ChenYu
 
-> 
-> So for example:
-> 
-> 1. compact_zone() sets cc->free_pfn based on zone_end_pfn
->    2. isolate_freepages() sets isolate_start_pfn = cc->free_pfn
->      3. isolate_freepages_block() looks up a page based on that PFN
->      3. ... then takes the cc->zone lock
->      4. ... then calls __isolate_free_page which removes the page from
->         whatever freelist it's on.
-> 
-> Is anything stopping part 4 from modifying a zone that wasn't locked
-> in part 3?
-
-Likely that overlapping zones already exist and are handled accordingly.
-
--- 
-Thanks,
-
-David / dhildenb
-
+> +                       instance->dpb[i].width =3D w;
+> +                       instance->dpb[i].height =3D h;
+> +                       break;
+> +               }
+> +       }
+>
+>         /*
+>          * get buffer's width/height from instance
+> @@ -1779,7 +1793,8 @@ static int vdec_vp9_slice_setup_core(struct vdec_vp=
+9_slice_instance *instance,
+>         if (ret)
+>                 goto err;
+>
+> -       vdec_vp9_slice_setup_seg_buffer(instance, vsi, &instance->seg[1])=
+;
+> +       if (!instance->ctx->is_secure_playback)
+> +               vdec_vp9_slice_setup_seg_buffer(instance, vsi, &instance-=
+>seg[1]);
+>
+>         return 0;
+>
+> @@ -1874,19 +1889,31 @@ static int vdec_vp9_slice_init(struct mtk_vcodec_=
+dec_ctx *ctx)
+>                 goto error_vsi;
+>         }
+>         instance->init_vsi =3D vsi;
+> -       instance->core_vsi =3D mtk_vcodec_fw_map_dm_addr(ctx->dev->fw_han=
+dler,
+> -                                                      (u32)vsi->core_vsi=
+);
+> -       if (!instance->core_vsi) {
+> -               mtk_vdec_err(ctx, "failed to get VP9 core vsi\n");
+> -               ret =3D -EINVAL;
+> -               goto error_vsi;
+> -       }
+>
+> -       instance->irq =3D 1;
+> +       if (ctx->is_secure_playback) {
+> +               instance->core_vsi =3D
+> +                       mtk_vcodec_dec_get_shm_buffer_va(ctx->dev->optee_=
+private, MTK_VDEC_CORE,
+> +                                                        OPTEE_DATA_INDEX=
+);
+> +               if (!instance->core_vsi) {
+> +                       mtk_vdec_err(ctx, "failed to get VP9 svp core vsi=
+\n");
+> +                       ret =3D -EINVAL;
+> +                       goto error_vsi;
+> +               }
+> +               instance->irq =3D 0;
+> +       } else {
+> +               instance->core_vsi =3D mtk_vcodec_fw_map_dm_addr(ctx->dev=
+->fw_handler,
+> +                                                              (u32)vsi->=
+core_vsi);
+> +               if (!instance->core_vsi) {
+> +                       mtk_vdec_err(ctx, "failed to get VP9 normal core =
+vsi\n");
+> +                       ret =3D -EINVAL;
+> +                       goto error_vsi;
+> +               }
+> +               instance->irq =3D 1;
+>
+> -       ret =3D vdec_vp9_slice_init_default_frame_ctx(instance);
+> -       if (ret)
+> -               goto error_default_frame_ctx;
+> +               ret =3D vdec_vp9_slice_init_default_frame_ctx(instance);
+> +               if (ret)
+> +                       goto error_default_frame_ctx;
+> +       }
+>
+>         ctx->drv_handle =3D instance;
+>
+> @@ -2101,9 +2128,12 @@ static int vdec_vp9_slice_lat_decode(void *h_vdec,=
+ struct mtk_vcodec_mem *bs,
+>                        (unsigned long)pfc->vsi.trans.dma_addr,
+>                        (unsigned long)pfc->vsi.trans.dma_addr_end);
+>
+> -       vdec_msg_queue_update_ube_wptr(&ctx->msg_queue,
+> -                                      vsi->trans.dma_addr_end +
+> -                                      ctx->msg_queue.wdma_addr.dma_addr)=
+;
+> +       if (!instance->ctx->is_secure_playback) {
+> +               vsi->trans.dma_addr_end +=3D ctx->msg_queue.wdma_addr.dma=
+_addr;
+> +               mtk_vdec_debug(ctx, "core dma_addr_end 0x%lx\n",
+> +                              (unsigned long)pfc->vsi.trans.dma_addr_end=
+);
+> +       }
+> +       vdec_msg_queue_update_ube_wptr(&ctx->msg_queue, vsi->trans.dma_ad=
+dr_end);
+>         vdec_msg_queue_qbuf(&ctx->msg_queue.core_ctx, lat_buf);
+>
+>         return 0;
+> @@ -2183,9 +2213,6 @@ static int vdec_vp9_slice_core_decode(struct vdec_l=
+at_buf *lat_buf)
+>                 goto err;
+>         }
+>
+> -       pfc->vsi.trans.dma_addr_end +=3D ctx->msg_queue.wdma_addr.dma_add=
+r;
+> -       mtk_vdec_debug(ctx, "core dma_addr_end 0x%lx\n",
+> -                      (unsigned long)pfc->vsi.trans.dma_addr_end);
+>         vdec_msg_queue_update_ube_rptr(&ctx->msg_queue, pfc->vsi.trans.dm=
+a_addr_end);
+>         ctx->dev->vdec_pdata->cap_to_disp(ctx, 0, lat_buf->src_buf_req);
+>
+> --
+> 2.25.1
+>
 
