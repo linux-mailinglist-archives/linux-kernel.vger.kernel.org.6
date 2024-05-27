@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-191253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE018D08B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:34:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A488D080B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A5F1F224DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A693E1F213E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A1F73470;
-	Mon, 27 May 2024 16:34:41 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B058155C8B;
+	Mon, 27 May 2024 16:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UhN+Upbx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5E861FE1;
-	Mon, 27 May 2024 16:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A2D26ACC;
+	Mon, 27 May 2024 16:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827681; cv=none; b=RnH2PesfDUpGQuaTfl/c/WCgWnOmoYnZ+PSJu3cLRDn4rwuasOmo/uLf555+A2fmFVzm7xZyeUK7mq/aaGImtWNA/cTYsfAZMhtZ9Hc6AtQX/Xd5v5Vi67Eg+9vlCbKCthvlNZmObjMdvtbIUjVoH131NdkPCnSCT0FqtcLgrz0=
+	t=1716826449; cv=none; b=i8+iBV1suxEZdjL9FlOFSYfsjU2BWDPNQVMcjGAulA7sFq7svhw1KHweyxrBWZ3243sgZ/HCZT20FmvfVF9WtgZddECDvzMwZATP0ppjDmx3eK3KDgn5iERZgAhUpy9Q+a5Jj7MAmLAGSn3Do/zI9BeCCAxTVj2ZR7wVbwNf2RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827681; c=relaxed/simple;
-	bh=YnPCfmPlSjFb9s0kuzVRNjS5wB0T6GQWiLt+H7w4WXk=;
+	s=arc-20240116; t=1716826449; c=relaxed/simple;
+	bh=QPrw8v5oiECiQO1YuKcA45PIH9PAQOCn3cbaoRZpgYw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yq8nqOJb8hL7ffbkeuhfUrEmKxuJ976E13DxmU5Z0ALJ7penz2ZC//rB4bRE1fy3UYwY5jt6kTdZp2ihzI7bU2S2b//fD+/w2rZGqiQO6h8Iw79u60SaE0JOMEqrW643hPLrcvjKuKGEYOphGTqv2rfqaoqRuDTXD2JMShSx44M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sBcyu-000000007MD-3VgY;
-	Mon, 27 May 2024 16:13:52 +0000
-Date: Mon, 27 May 2024 17:13:42 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Sunil Kovvuri Goutham <sgoutham@marvell.com>
-Cc: Sam Shih <Sam.Shih@mediatek.com>, 
-	SkyLake Huang <SkyLake.Huang@mediatek.com>, Steven Liu <steven.liu@mediatek.com>, 
-	Frank Wunderlich <linux@fw-web.de>, Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
-	Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Wunderlich <frank-w@public-files.de>, 
-	John Crispin <john@phrozen.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
-Subject: Re: [net v2] net: ethernet: mtk_eth_soc: handle dma buffer size soc
- specific
-Message-ID: <kbzsne4rm4232w44ph3a3hbpgr3th4xvnxazdq3fblnbamrloo@uvs3jyftecma>
-References: <20240527142142.126796-1-linux@fw-web.de>
- <BY3PR18MB4737D0ED774B14833353D202C6F02@BY3PR18MB4737.namprd18.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXVU4JNXQx16rzYb01FSAQqrDNCo8VyTo3bcepaz2M0NVjp/oOgym9nSTRaC7fjoJCkrGkYcbPk+0sCyb+19oEOBghGyteewZBVwzyODrTGtIoup1wI9KGkVuCyNXf3NmbMUvziH0IIC425hE39PHjr3pMtLmRRw11scUM9KIG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UhN+Upbx; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716826448; x=1748362448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=QPrw8v5oiECiQO1YuKcA45PIH9PAQOCn3cbaoRZpgYw=;
+  b=UhN+UpbxYrncfoNK54cJykC44mza6SWo9mYuPifdQD3NNCx/3XmT9FoD
+   P1GFApQ5xEQgsuduUEaLIcF6Df+DpMdJ5s+flLsqVihHQ1/fPSnHKKJdz
+   du/BI3RJ71TiW7hJhNtLWrj1yiFWt1FmZXE4A8sGv09LfEqkED8IF3WSa
+   KZ8X8pgOHSRjJt/yR800Pb3ChgSopQpFHClAwLmjJpm4JMciJHqvxszGg
+   wmRqBnF1j9RJk+n1spoUsjQxK1jD0RquuGw48yhh4nO5A/3EnM7Upjvkx
+   Fc01hVgmd3A6k4vSD2WAvf7sl4nl0Mom3MMwdmo7xCE/2QKGRzkN6Q1XW
+   Q==;
+X-CSE-ConnectionGUID: tXQbHrgtRSyhSM56EabZOg==
+X-CSE-MsgGUID: CCgiFtWDTB+6XpQnc/zcJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="16943372"
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="16943372"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 09:14:07 -0700
+X-CSE-ConnectionGUID: xoYtQbIjSxKmqmVpcnFMkQ==
+X-CSE-MsgGUID: 51xVZ1ebRXux+wD1YnPhFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="39650545"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 09:14:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sBcz3-0000000BJmk-3UXd;
+	Mon, 27 May 2024 19:14:01 +0300
+Date: Mon, 27 May 2024 19:14:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] x86/pci/intel_mid_pci: Fix PCIBIOS_* return code
+ handling
+Message-ID: <ZlSxSVUu4zxYh82g@smile.fi.intel.com>
+References: <20240527125538.13620-1-ilpo.jarvinen@linux.intel.com>
+ <20240527125538.13620-2-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <BY3PR18MB4737D0ED774B14833353D202C6F02@BY3PR18MB4737.namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240527125538.13620-2-ilpo.jarvinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, May 27, 2024 at 03:55:55PM GMT, Sunil Kovvuri Goutham wrote:
+On Mon, May 27, 2024 at 03:55:36PM +0300, Ilpo Järvinen wrote:
+> intel_mid_pci_irq_enable() uses pci_read_config_byte() that returns
+> PCIBIOS_* codes. The error handling, however, assumes the codes are
+> normal errnos because it checks for < 0.
 > 
+> intel_mid_pci_irq_enable() also returns the PCIBIOS_* code back to the
+> caller but the function is used as the (*pcibios_enable_irq) function
+> which should return normal errnos.
 > 
-> > -----Original Message-----
-> > From: Frank Wunderlich <linux@fw-web.de>
-> > Sent: Monday, May 27, 2024 7:52 PM
-> > To: Felix Fietkau <nbd@nbd.name>; Sean Wang <sean.wang@mediatek.com>;
-> > Mark Lee <Mark-MC.Lee@mediatek.com>; Lorenzo Bianconi
-> > <lorenzo@kernel.org>; David S. Miller <davem@davemloft.net>; Eric Dumazet
-> > <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
-> > <pabeni@redhat.com>; Matthias Brugger <matthias.bgg@gmail.com>;
-> > AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > Cc: Frank Wunderlich <frank-w@public-files.de>; John Crispin
-> > <john@phrozen.org>; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; linux-mediatek@lists.infradead.org;
-> > Daniel Golle <daniel@makrotopia.org>
-> > Subject: [net v2] net: ethernet: mtk_eth_soc: handle dma buffer size soc specific
-> > 
-> > From: Frank Wunderlich <frank-w@public-files.de>
-> > 
-> > The mainline MTK ethernet driver suffers long time from rarly but annoying tx
-> > queue timeouts. We think that this is caused by fixed dma sizes hardcoded for
-> > all SoCs.
-> > 
-> > Use the dma-size implementation from SDK in a per SoC manner.
-> > 
-> > Fixes: 656e705243fd ("net-next: mediatek: add support for MT7623
-> > ethernet")
-> > Suggested-by: Daniel Golle <daniel@makrotopia.org>
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> 
-> ..............
-> > 
-> > diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > index cae46290a7ae..f1ff1be73926 100644
-> > --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> 
-> .............
-> > @@ -1142,40 +1142,46 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
-> >  						       cnt * soc->tx.desc_size,
-> >  						       &eth->phy_scratch_ring,
-> >  						       GFP_KERNEL);
-> 
-> ..............
-> > -	for (i = 0; i < cnt; i++) {
-> > -		dma_addr_t addr = dma_addr + i * MTK_QDMA_PAGE_SIZE;
-> > -		struct mtk_tx_dma_v2 *txd;
-> > +		dma_addr = dma_map_single(eth->dma_dev,
-> > +					  eth->scratch_head[j], len *
-> > MTK_QDMA_PAGE_SIZE,
-> > +					  DMA_FROM_DEVICE);
-> > 
-> 
-> As per commit msg, the fix is for transmit queue timeouts.
-> But the DMA buffer changes seems for receive pkts.
-> Can you please elaborate the connection here.
+> Convert the error check to plain non-zero check which works for
+> PCIBIOS_* return codes and convert the PCIBIOS_* return code using
+> pcibios_err_to_errno() into normal errno before returning it.
 
-*I guess* the memory window used for both, TX and RX DMA descriptors
-needs to be wisely split to not risk TX queue overruns, depending on the
-SoC speed and without hurting RX performance...
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Maybe someone inside MediaTek (I've added to Cc now) and more familiar
-with the design can elaborate in more detail.
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
