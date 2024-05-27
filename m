@@ -1,233 +1,122 @@
-Return-Path: <linux-kernel+bounces-190749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0C48D021A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046EA8D0237
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7D41C2188D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:46:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2D2B266C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2808D15ECF9;
-	Mon, 27 May 2024 13:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dh3q594G"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB4A15ECFE;
+	Mon, 27 May 2024 13:47:49 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AB31DDEB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7024E1DDEB;
+	Mon, 27 May 2024 13:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817561; cv=none; b=TqblwKepBop81falpxZQUnyGcy4UIo8d6/GHNEz0Z9Y4l/acqDT79IWcoPRj99oImeWVLlq6cRYIqxwEi/8KnxK0VukaeBsu36uEL1zcg4MPrGGXWIHSNXn2SiVYxQXL5cB6ZGW9DFP2j47fQ9ES8iohHPaeKWdDt6MoUQJpbYU=
+	t=1716817669; cv=none; b=npjo9fd4rrOciJ6cDBGOQjdJX/+ewBT2AcxxuYKIYEYEF8HLCbCMob1jzqwSeKhf4okEck8xl8+RMsPzCCWyp9Ao3T2ei+9i1uzR1jGP1i+AS0f5BGQyNKZ14Irtf/mh9n4W2nyct9tTZlbDIVOcyDRtUGXU31BkitwS1GfKXyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817561; c=relaxed/simple;
-	bh=Nx5foiiBazlvj8RTv+u3oP8WZFmgrmmxvx/kNpkqBf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7Tp+zpjNJyNxJ2susS8gMiJWJsg93GnUN6ZKUIdnLjdHG++aqU5zc7Kwf5pJMQeefCkALiOVpwlzAP6hN391mB4uj5D3I+pccj+uahhlb4AbbIO2eCpx1elo69QKWxxl13ZWBy/aNRxNZexmvzYSbG2KIhlBIKCYka+szwYBMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dh3q594G; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57857e0f464so3667983a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716817558; x=1717422358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnjb6Mi3KXzRc2VXrdqyF2tyiKaAQ8iuOBdqH9Khxzw=;
-        b=dh3q594GS8C3uXWyTuQMAt1l5khR1D0do1T/jKPGV0LnnfYtC6R8wBgobzPp0vWOed
-         xJj1NPyeJ4obihELNM4z86OD9cmbK5hMct/CIpcaVyutKKYvXSR31qESzCYDeTOfL9Sm
-         9fm0aQjHtnWj5oCw94MSKMs9v42kiJbIx+89/qqKx33YXuxkkVe0/k6Bjhru+la4g9XF
-         CjMNMGyyPjffHHG+ySFhp6u/XXrV/NPer5F812+ZJqdb8Hp/xM6AI38ozuE4Ui7VlMZ5
-         y3ATyVQPOhovSByt61yaVFi6AM88OMIS1LdFcL4rBSh9qWtX+7yT7bUwgS3TKUSGXz4g
-         dEiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716817558; x=1717422358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnjb6Mi3KXzRc2VXrdqyF2tyiKaAQ8iuOBdqH9Khxzw=;
-        b=VjeDUhmjkqKUI/z2Vv+GYnVnWV6piU3JTx4q0PNwkp6DSzJBS90+Lt/BNx29f6r5Bs
-         Dec7mXjY2mXwScucin2bqpgFFyvfeCTZ448qtHgTnJwPND80GB1Ca8edjT2S4T9TTbSy
-         I22svOFjNBhTQw4NIgR7Q5rSvCXRyx8UZH49xriU9QxRfZ4M+zg/CCKglorgZFUn0uSt
-         svOd/+OVQDKoIjXxLJroaTpxXB3v7Ie7W77X0+WmUvv5UC0Eu13QmeCs79FZyWz/dZr1
-         KDZVw/awO+bB2QGfSNTftX5il89RtBfkk8OwmESnLjnG8WPIWeLMimbD46wj81sjBI7o
-         Zj6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMVrz/d0seTvTK109flTPP/KgmFi+ott3Fn7GwRCWNPPxrRTezyeluGMX2ZULo/CUGLFlXSpqLf43Cn4QM6RopGcYbifO1Ubar8qjC
-X-Gm-Message-State: AOJu0YwJZTF90WXlEk9/Vpnw2CC1yZWY1iSDaGydAG6bfayeR6OKNWnj
-	FyuiKsVEIP5i/P+MQ7snvd9BLH8s9Jnv7Qm9zlzg0p1ViY0XwAPTy2xlhUAn5MY=
-X-Google-Smtp-Source: AGHT+IGdJpB2qTzwGXzLhMxon+AJ6tq5ZCNAau0hwx6X7VTFF/HWjMsGQ/gVTXasBRtVDHE1rHySpA==
-X-Received: by 2002:a50:999b:0:b0:579:c28f:6d10 with SMTP id 4fb4d7f45d1cf-579c28f6f3dmr3030589a12.24.1716817557564;
-        Mon, 27 May 2024 06:45:57 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d1f94e72sm1661623a12.24.2024.05.27.06.45.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 06:45:57 -0700 (PDT)
-Date: Mon, 27 May 2024 15:45:55 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Tony Lindgren <tony.lindgren@linux.intel.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dhruva Gole <d-gole@ti.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Johan Hovold <johan@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] printk: Save console options for
- add_preferred_console_match()
-Message-ID: <ZlSOc5mtbf4DdI8O@pathway.suse.cz>
-References: <20240327110021.59793-1-tony@atomide.com>
- <20240327110021.59793-2-tony@atomide.com>
- <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
- <ZlRqz2b0ZrtkxScL@tlindgre-MOBL1>
+	s=arc-20240116; t=1716817669; c=relaxed/simple;
+	bh=8xcCsB+EROXGp8PmzD+b1rGd0T94KqkDNPuU4A2t/a4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bw9OpHri7YNL2g9TQN1iWpss+eNFE88HP619jLyRXF5aboSgDU0fD7hMgPNgLzu33aoO5IemBBk8WD5d0edepv6lbM0c28KKVcBGcE4YwFKYE2565bAg1hqZjbZTKn2PP/pbZvUctVfCnJKXDMXUAf9XI2O+4jd/BsNLvItAgmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VnxNH6XmZz9v7Hm;
+	Mon, 27 May 2024 21:30:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 7BF971404F0;
+	Mon, 27 May 2024 21:47:35 +0800 (CST)
+Received: from [10.206.134.102] (unknown [10.206.134.102])
+	by APP2 (Coremail) with SMTP id GxC2BwDn0ibqjlRm4I0BCQ--.41868S2;
+	Mon, 27 May 2024 14:47:34 +0100 (CET)
+Message-ID: <7f5a586f-f4b6-4d70-b121-3d82daf54865@huaweicloud.com>
+Date: Mon, 27 May 2024 15:47:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlRqz2b0ZrtkxScL@tlindgre-MOBL1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Andrea Parri <parri.andrea@gmail.com>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+ will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+ npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+ luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+ dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
+ <ZlSKYA/Y/daiXzfy@andrea>
+ <79b55c10-dd06-4947-8545-20ffeb324bc6@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <79b55c10-dd06-4947-8545-20ffeb324bc6@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwDn0ibqjlRm4I0BCQ--.41868S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZry7Gw1Uuw17Jw48ZrWfuFg_yoW8JrWDpF
+	ZFga1xKw1DJay093yUGa9IvasY9an3XF1rW3s0yrs2ya1Yyw1xJryYvFW2gFyxtrn7A3WU
+	Jw4Yv3yxXayDAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI
+	0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyU
+	JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon 2024-05-27 14:13:19, Tony Lindgren wrote:
-> Hi,
+
+
+Am 5/27/2024 um 3:37 PM schrieb Alan Stern:
+> On Mon, May 27, 2024 at 03:28:00PM +0200, Andrea Parri wrote:
+>>>> +    |                smp_store_mb | W[once] ->po F[mb]                        |
+>>>
+>>> I expect this one to be hard-coded in herd7 source code, but I cannot find
+>>> it. Can you give me a pointer?
+>>
+>> smp_store_mb() is currently mapped to { __store{once}(X,V); __fence{mb}; } in
+>> the .def file, so it's semantically equivalent to "WRITE_ONCE(); smp_mb();".
 > 
-> On Fri, May 24, 2024 at 06:06:21PM +0200, Petr Mladek wrote:
-> > I have finally found time to looks at this again.
-> 
-> Great good to hear.
-> 
-> > First, about breaking the preferred console:
-> > 
-> > The patchset still causes the regression with /dev/console association
-> > as already reported for v3, see
-> > https://lore.kernel.org/r/ZWnvc6-LnXdjOQLY@alley
-> 
-> Thanks and sorry for missing this issue. I thought I had this issue
-> already handled, but looking at what I tested with earlier, looks like
-> I had the console options the wrong way around.
->  
-> > I used the following kernel command line:
-> > 
-> >    earlycon=uart8250,io,0x3f8,115200 console=ttyS0,115200 console=tty0 ignore_loglevel log_buf_len=1M
-> > 
-> > The patchset caused that /dev/console became associated with
-> > ttyS0 instead of tty0, see the "C" flag:
-> > 
-> > 	original # cat /proc/consoles
-> > 	tty0                 -WU (EC    )    4:1
-> > 	ttyS0                -W- (E  p a)    4:64
-> > 
-> >    vs.
-> > 
-> > 	patched # cat /proc/consoles
-> > 	ttyS0                -W- (EC p a)    4:64
-> > 	tty0                 -WU (E     )    4:1
-> 
-> OK
-> 
-> > I have added some debugging messages which nicely show the reason.
-> > In the original code, __add_preferred_console() is called twice
-> > when processing the command line:
-> > 
-> > [    0.099312] __add_preferred_console[0]: ttyS, 0 (preferrred_console == 0)
-> > [    0.099982] __add_preferred_console[1]: tty, 0 (preferrred_console == 1)
-> 
-> OK thanks for tracking down where things go wrong.
-> 
-> > The code thinks that "ttyS0" has been mentioned on the command line
-> > once again. And preferred_console is _wrongly_ set back to '0'.
-> > 
-> > My view:
-> > 
-> > The delayed __add_preferred_console() is a way to hell.
-> > 
-> > The preferences are defined by the ordering on the command line.
-> > All entries have to be added when the command line options are
-> > being proceed to keep the order.
-> 
-> To me it seems we can fix this by keeping track of the console position
-> in the kernel command line. I'll send a fix for this to discuss.
-
-Honestly, I would prefer some alternative solution of the whole
-problem. From my POV, the current patchset is a kind of a hack.
-
-  1. It hides console=DEVNAME:X.Y options so that register_console()
-     does not know about them.
-
-  2. But wait, register_console() might then enable any random console
-     by default when there are not console= options. For this the 3rd patch
-     added @console_set_on_cmdline variable which would tell
-     register_console(): "Hey, I have hidden some user preferences.
-     I'll tell you about them when the right time comes."
-
-  3. When port init matches the pattern, it adds the preferred console
-     so that the register_console() would know about it.
-
-  4. But wait, the ordering of preferred consoles is important.
-     Which would require more hacks to preserve the ordering.
-
-  5. Also serial_base_add_prefcon() adds the preferred console
-     with the generic name "ttyS" which is not specific
-     for the matched device. It just hopes that the very next
-     "register_console()" call will be the one related to
-     the matching device. Is this really guaranteed on SMP system?
+> Why don't we use this approach for all the value-returning full-barrier
+> RMW operations?  That would immediately solve the issue of the
+> special-purpose code in herd7, leaving only the matter of how to
+> annotate failed RMW operations.
 
 
-IMHO, the only solution would be to add a function which would
-return "ttySX" for the fiven device name.
+I experimented with that the other day. My idea was to use a new 
+__fence{mb-successful-rmw} which would have
 
-Honestly, I do not know the hiearachy of the structures in detail.
-But the documentation in the 7th patch says:
+   Mb = Mb | Mb-successful-rmw & (domain((po\(po;po));rmw) | 
+range(rmw;(po\(po;po)))
 
-+			The mapping of the serial ports to the tty instances
-+			can be viewed with:
-+
-+			$ ls -d /sys/bus/serial-base/devices/*:*.*/tty/*
-+			/sys/bus/serial-base/devices/00:04:0.0/tty/ttyS0
+to turn only the ordering effect of fences around cmpxchg off (and the 
+existance of these fences around unsuccessful cmpxchg would be the only 
+difference to the current representation).
 
-BTW: I get on my test system:
+Unfortunately I didn't manage to get my changes to the .def file to 
+compile (FWIW I'm on herd 7.56+03).
 
-# ls -1 -d /sys/bus/serial-base/devices/*:*.*/tty/*
-/sys/bus/serial-base/devices/00:00:0.0/tty/ttyS0
-/sys/bus/serial-base/devices/serial8250:0.1/tty/ttyS1
-/sys/bus/serial-base/devices/serial8250:0.2/tty/ttyS2
-/sys/bus/serial-base/devices/serial8250:0.3/tty/ttyS3
-..
+Maybe someone wiser with herd can figure out how to work the .def file.
 
-It looks like it should be possible to provide a function which would
-return:
+Best wishes,
+    jonas
 
-   "ttyS0" for "00:00:0.0"
-   "ttyS1" for "serial8250:0.1"
-   ...
-
-
-This function might then be used in "register_console()"
-to convert "console=DEVNAME:0.0" option to "ttyS" + "index".
-
-The advantage would be that the relation between "DEVNAME:0.0"
-and "ttyS0" will be clear. And the code would see the same hiearachy
-as the user in /sys/bus/serial-base/devices/.
-
-Of course, I might be too naive. Maybe, the sysfs hieararchy is
-created too late. Maybe, it is not easy to go throught the
-hiearachy...
-
-But still. I wonder if there is a straightforard way which would
-allow translation between "ttySX" and "DEVNAME:0.0" naming schemes.
-
-Best Regards,
-Petr
 
