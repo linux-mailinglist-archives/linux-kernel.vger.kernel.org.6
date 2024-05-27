@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-190732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB868D0217
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B40E8D0181
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B56BEB28DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:38:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AFB0B29311
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E6016C876;
-	Mon, 27 May 2024 13:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3383215ECFA;
+	Mon, 27 May 2024 13:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gCcEuM12"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="PqcNajA2"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A847215F3E1;
-	Mon, 27 May 2024 13:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E7A15E5CC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816869; cv=none; b=PPaX0tg1rBE/9AAgw0HKmkL5HyuMZX6ZtHSWDcSSPmB/G31NfZaODPJJY0qiL+OBMy3uQYiCMRrOp75Phh6FWHMvv6mDPUVz60Rg8twSN/4fufu6io3dyEjHqJrNgK57eb4Pd5n43sJJe7oz8vP2N4BxzPhvGESlh5n2hOYoT8M=
+	t=1716816598; cv=none; b=Pb9IDw4SX7QKzMfWeyNcsx+UVroIMcLeb3VOUWERZMh43X/wwuEyyPq7FwoiEhjSqk243UYaOB1QjD5Q0MVv9ozxcbn0DirbIVYAnCWd+sr/XT+S9tj3WrfuMNpBgyeXtp395V/uk7zDJF0/et0j88+RAS9/6l72CYqWtF93h/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816869; c=relaxed/simple;
-	bh=iTlDdyiKhoyna/uHFGje4GTY2u++2TAwP7nva17NFYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kmJIlBv+ECHhyk3trsgGjn/Bl2VhwMECNjY1jJchOBNCBie9P1J9KSKLw/q8m9BnnNDSvlougchxsbkpMG9R/OcN9pr0ePK/c2q2ze6RgXTQMf8rg9DdSCklE/1GEIKroS8/LFNDU9IyhD5GomZcATsoh/jPELgZWQAUgfMoBQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gCcEuM12; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716816868; x=1748352868;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iTlDdyiKhoyna/uHFGje4GTY2u++2TAwP7nva17NFYM=;
-  b=gCcEuM1283zoAbAOI97KCtsABGXjeUHO//bRP8tx9M9hLHZz52aJH4cx
-   6+szpU2YyVMzxza3hSTyzueG1zpdVLvh2Ka306guWFW70VF8zqWKN7yVg
-   JQkgiMpyjbDU4hf9c590Za+YTto1TRC1BfQ4UZ1/z5VV/cgpu4s9YWXsT
-   +dF0ZhiXUJgB+X9Ss8z0FEkwfjFwXsdsark/uJajVKhJuXjZC7IUpRtOJ
-   PodpEJFgX5/EW49RebbYI5YNzsZo/Pu5FpmmAAqyu+lb+1C1WSplxxUgM
-   bvqbPrn3xIu/Yj0HAW6uDqWp+WDuEwfP1yWmJb7PP2fm2NtbJ5j7GFwjR
-   Q==;
-X-CSE-ConnectionGUID: uj1OQ02fT8OSwW80lXabbw==
-X-CSE-MsgGUID: dpsjCCY+Sn+TF0iwGDdDTw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="11714389"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="11714389"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:34:27 -0700
-X-CSE-ConnectionGUID: axpFrTVRQO+EGYwBLLktFg==
-X-CSE-MsgGUID: j5S16x/hRLKZwKmmk3XM1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="34848010"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.180])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:34:25 -0700
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: srinivas.pandruvada@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 6/6] doc: TPMI: Add entry for Performance Limit Reasons
-Date: Mon, 27 May 2024 16:29:38 +0300
-Message-ID: <20240527133400.483634-7-tero.kristo@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527133400.483634-1-tero.kristo@linux.intel.com>
-References: <20240527133400.483634-1-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1716816598; c=relaxed/simple;
+	bh=LWDWRx2hI9lviIuJZ1uHrq2MbJn9S35DQwXdtkJC0eg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YDjVG+nVEupEvdKI/eEbRakv7csIEviqVYGcU3kns9o4KH5nJKJVmp1BOp2Numk/OiQaSv+J5NA8jyYfZ1VaAF8GJYWHzDsDQehXyYVrAAaafcqYsViytDphJAEwv6yO5NAxKG4CMNuzUzudxEX7Hv6/jHZASdCy/kAk5TGjpIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=PqcNajA2; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-523b017a5c6so15748715e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716816595; x=1717421395; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LWDWRx2hI9lviIuJZ1uHrq2MbJn9S35DQwXdtkJC0eg=;
+        b=PqcNajA2iqlK3KMa9mVZYuvbDiRjnslRyUtPk8TZ+FMpEUMj0eH9wPhVEmRdbWy6qh
+         EyfmhY7EbxCqnSxsSd75mnYxhXxlljNpXhLwaVcPNoqGu2SqLSJwMrh5X4ZlPBhj7cjZ
+         +MziJcHgXm1SaR+znqudJ5yKxS8vqzaJpFuT+76C0B+UpeGyK1ieWaiK9prPvPcl0niJ
+         DyfRPbcz/iCWDIdsxYoF1babh993DbpccnvTA2cuJwqOHllqxoMZNPcfTdbxAxfFiDTs
+         7iQXFYdEuBV0X+j9mg5vgUeyixEO89TeISt6Zbp0y+uDXFJwH06J16HFAk1reyp41zc6
+         IcEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816595; x=1717421395;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LWDWRx2hI9lviIuJZ1uHrq2MbJn9S35DQwXdtkJC0eg=;
+        b=PIh2PSBIkasyvuf1cuJ2nfCyBC1iTni05NsP3x1QIZvAeQh/K90XX/th7iP1Jp8auw
+         wlF+e07DWANa4eUpms2JgDJtteCuFIypi0P3AFryufFAA/khSKQMLwFAyYK4bMEJvlui
+         28cihc06IlUsR4+iWoJrUh36DhpzKG0InYj2mFrGaC2ez4ZFyAXUNdq4j85hqey5rkph
+         VboF2nyUN5+BxYkTCFY1/Mju3Ghsmbb7gu5Gx+DVC+eWD8JMJnv5lO5XM3ueN5WJrwbi
+         NI1FFZDjdS9M6FFWLNvOk+qseWZc1BbDp+KQ8jJi7PyQJoXLMKDG9zNuM5JMq0+jZ6jM
+         f5gw==
+X-Gm-Message-State: AOJu0YxPWCkQdGPL0sG7pFQOt/mCcAhMTO1qoqbcKu7WZTYfSk4Fu9iD
+	VIU6DnuhG1pGVD4BXYuyACl2dnDRHDgLA22S3xixJeZ4AevZQ10vsb5B12GLoxE=
+X-Google-Smtp-Source: AGHT+IEm2szHWhY0KHxywC8YT1CC8IO/Es5s4I3Im5uDaIxIxINP0zGehUOvCCebefhTuKU5HDEysA==
+X-Received: by 2002:a05:6512:1305:b0:529:b6d2:2550 with SMTP id 2adb3069b0e04-529b6d22971mr375297e87.36.1716816594877;
+        Mon, 27 May 2024 06:29:54 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:aa3:5c01:f57b:72f9:7de2:6b32])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93a828sm493860566b.83.2024.05.27.06.29.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2024 06:29:54 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] w1: Fix number of bytes in error message
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <98f19584-9851-46f0-a9dc-8dbae1793b72@kernel.org>
+Date: Mon, 27 May 2024 15:29:43 +0200
+Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C3C8C8AE-C5F8-45CE-8319-0985A78DA91F@toblux.com>
+References: <20240513154354.185974-3-thorsten.blum@toblux.com>
+ <98f19584-9851-46f0-a9dc-8dbae1793b72@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-Describe the new 'plr' (Performance Limit Reasons) directory contents under
-the main TPMI debugfs folder.
+On 27. May 2024, at 13:51, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 13/05/2024 17:43, Thorsten Blum wrote:
+>> Fix the number of bytes that failed to be allocated for a new w1 =
+device.
+>>=20
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>> ---
+>> drivers/w1/w1_int.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
+>> index 3a71c5eb2f83..677e7167806c 100644
+>> --- a/drivers/w1/w1_int.c
+>> +++ b/drivers/w1/w1_int.c
+>> @@ -34,7 +34,7 @@ static struct w1_master *w1_alloc_dev(u32 id, int =
+slave_count, int slave_ttl,
+>> dev =3D kzalloc(sizeof(struct w1_master) + sizeof(struct =
+w1_bus_master), GFP_KERNEL);
+>> if (!dev) {
+>> pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+>> - sizeof(struct w1_master));
+>> + sizeof(struct w1_master) + sizeof(struct w1_bus_master));
+>=20
+> No, instead error message should be dropped. Core handles printing
+> memory allocation failures.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
----
- Documentation/ABI/testing/debugfs-tpmi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/Documentation/ABI/testing/debugfs-tpmi b/Documentation/ABI/testing/debugfs-tpmi
-index 597f0475fe6e..4daa9ecd7918 100644
---- a/Documentation/ABI/testing/debugfs-tpmi
-+++ b/Documentation/ABI/testing/debugfs-tpmi
-@@ -29,3 +29,12 @@ Example:
- echo 0,0x20,0xff > mem_write
- echo 1,64,64 > mem_write
- Users:		Debugging, any user space test suite
-+
-+What:		/sys/kernel/debug/tpmi-<n>/plr/domain<n>/status
-+Date:		Aug 2024
-+KernelVersion:	6.11
-+Contact:	Tero Kristo <tero.kristo@linux.intel.com>
-+Description:
-+Shows the currently active Performance Limit Reasons for die level and the
-+individual CPUs under the die. The contents of this file are sticky, and
-+clearing all the statuses can be done by writing "0\n" to this file.
--- 
-2.43.1
-
+Ok, I'll submit a v2 shortly.
 
