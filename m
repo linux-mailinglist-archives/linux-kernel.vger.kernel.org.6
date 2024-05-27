@@ -1,102 +1,157 @@
-Return-Path: <linux-kernel+bounces-190580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2E68D0007
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2128D0008
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9227B1F23306
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56ADA283929
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77D015E5B8;
-	Mon, 27 May 2024 12:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NK53lCa6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0415E5AD;
+	Mon, 27 May 2024 12:29:29 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E221581E2;
-	Mon, 27 May 2024 12:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB0915DBC0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812949; cv=none; b=gOM4LO6LKcNsCzNI+mHALYIRewyWzV4UORiEwI9JclF7JBPzszFqaYYpd77BqhgELvewEBP035OrmNvB0A8LuJaJsCNGkc3lMsZrgHXz48u2kc0WkRWFkH9p2gJkL/3NYZ7XDqrZlc7eUdkLq+HEBEl4BcqCsUCnUdK1Jjp1DzQ=
+	t=1716812968; cv=none; b=lgu49XOjGx/XBfVv9TPl7CAuUeE/AdbZu11cm88RjcS7zUustW+tL3BGBMFBePdb5dGUiZezXxOMA9QX24LFE3hnlNheYaGpx7RuIx9xenzZV1BSCjQcAKQBZGTtANpKPPAOFG2+O8454dfxqDS8A2J/gVr0ELWVScQYowU4W8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812949; c=relaxed/simple;
-	bh=tjvtAIJXWm20T+mGM7vsATeimzw31eut/UyatyIrsoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pptXKHl/62JOMooRPtu1ikR7ZRQ1D9iy+ds1BScwz9+036/H5HuOEqHjQR/oCcRcFmRq5gCkpQ8cD6HamGP4jCpZpGWeev+WigjsHap3mdIQOABvUi4uGxiC0rybO3kIV+cUDJiNQk5F+Gad+65BMd/8ZSmrtrGAPa60PWQ8xXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NK53lCa6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8C4C2BBFC;
-	Mon, 27 May 2024 12:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716812948;
-	bh=tjvtAIJXWm20T+mGM7vsATeimzw31eut/UyatyIrsoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NK53lCa6WM6ArMzjNGHzERvdmx3V5wpFDOMpAWjptfLLF7t3XUh+U4oByIOKr8I3+
-	 JPNvKleNc/6bJGuoIhdx2tbR4E5XF8NcXRmhnvHx0Q1BTSCKCKz9QRr836h6JpOFRd
-	 sA+eyZyhLxG9dUNv4NSR/U5nbgFCnz4GKayN3O4vniNJuDBhXMJXAbf1AZcARzbdg0
-	 auowumcTOLtNoqoCqJW055EaWjpUw8SMu4+tNzelkPSI8OjYt3x0fiCfclDX/57DTn
-	 mLBOVYfahi9I2LZ5GYrDamvXwaTV5v6Xm5DHgVBJyZ0OwexeuaXwacdNl3jAqraBS8
-	 wMkvK8SXhdlyw==
-Date: Mon, 27 May 2024 14:29:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <20240527-hagel-thunfisch-75781b0cf75d@brauner>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
- <ZlRy7EBaV04F2UaI@infradead.org>
+	s=arc-20240116; t=1716812968; c=relaxed/simple;
+	bh=ms9VXN8D1NATqDWtwOpSreufyoC7PyZATKQgJfLKKkU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GWGfhA2SWYqeXmWy218qv3mGd/NCztKQFQUyl7clQLOpgtFcRDnXZXuxGSRN8JsqT9H9OptzmM6YmIi+oL2We43YlxSLgYTa3GqrUwCMMQ0aNiR0xaiXDXKY5mp8Y8Tg4ddVhHgyCR4QVJuIFq5RAJeDWzPUeJ+5wdyM6/Wiiq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eac3b73a53so165168239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:29:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716812966; x=1717417766;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPzW7UX5wznXxQBLpB5LbS3U4R1DB+9hPgb7NPzC2Io=;
+        b=uLgby+0+WOSmVFigaRmKMbZGoky+OvSa1llIaOnWdJ6Nqh/jlTOsdJtLbeST8MdLxE
+         XlghWjQpyjeZgwyGScmpC1U+05eRDJiybx80+cnrXleqfcXLFPxXz8YHtrs5Tyjg6Voy
+         m3J7BswpuEv1iemLZANvHY7mbb8wyd7KCYv8zreeEvGqX3g9vZV5GBa4F/yuAaio1ncX
+         4K6mhXG3W44nvch0t6LQQZiWP4Qc2d1uqOM3Q6/aLkEWwWQIZBngdEqDELpGnAz6sfBT
+         /J4vndeSLN/oxkcmBk1AzKEU0CnjBTwLbNHPZTFobkOr3ctVn5r3rwyMAz5C6iJvQgWF
+         6VEA==
+X-Gm-Message-State: AOJu0YzchlwXXf6S/H05Lo5hOLlIBescdAiRg3xW8i5TexpsHVd2HYsm
+	tklopFrHqW3opXRvGMu923WIAYWrYgghIVrwxqRs4Wh9C7qFZdwMkffFOqzo8ZLxb9TzbwC6Z6k
+	FyeHr0X+m0ibTgH1Wl7qO4FA+tu2asLYr+2Kki9887Aw2tiesk6I3wmk=
+X-Google-Smtp-Source: AGHT+IFMuOQbvKl+uejf1nm3Nnf+yfAB8DraI9mE+91WF5Q9V3BwymwmL4ZASQG7nGOeMzp9RYgyuEBd48FcPvsNhtZNjKW5C+13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZlRy7EBaV04F2UaI@infradead.org>
+X-Received: by 2002:a02:cd2c:0:b0:48a:37e1:a545 with SMTP id
+ 8926c6da1cb9f-4b03fccefbamr154311173.6.1716812965144; Mon, 27 May 2024
+ 05:29:25 -0700 (PDT)
+Date: Mon, 27 May 2024 05:29:25 -0700
+In-Reply-To: <00000000000089427c0614c18cf4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eef89706196eaad4@google.com>
+Subject: Re: [syzbot] Test
+From: syzbot <syzbot+c4c6c3dc10cc96bcf723@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 27, 2024 at 04:47:56AM -0700, Christoph Hellwig wrote:
-> On Sun, May 26, 2024 at 12:01:08PM -0700, Aleksa Sarai wrote:
-> > The existing interface already provides a mount ID which is not even
-> > safe without rebooting.
-> 
-> And that seems to be a big part of the problem where the Linux by handle
-> syscall API deviated from all know precedence for no good reason.  NFS
-> file handles which were the start of this do (and have to) encode a
-> persistent file system identifier.  As do the xfs handles (although they
-> do the decoding in the userspace library on Linux for historic reasons),
-> as do the FreeBSD equivalents to these syscalls.
-> 
-> > An alternative would be to return something unique to the filesystem
-> > superblock, but as far as I can tell there is no guarantee that every
-> > Linux filesystem's fsid is sufficiently unique to act as a globally
-> > unique identifier. At least with a 64-bit mount ID and statmount(2),
-> > userspace can decide what information is needed to get sufficiently
-> > unique information about the source filesystem.
-> 
-> Well, every file system that supports export ops already needs a
-> globally unique ID for NFS to work properly.  We might not have good
-> enough interfaces for that, but that shouldn't be too hard.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I see not inherent problem with exposing the 64 bit mount id through
-name_to_handle_at() as we already to expose the old one anyway.
+***
 
-But I agree that it is useful if we had the guarantee that file handles
-are unique in the way you describe. As it currently stands that doesn't
-seem to be the case and userspace doesn't seem to have a way of figuring
-out if the handle provided by name_to_handle_at() is indeed unique as
-you describe and can be reliably passed to open_by_handle_at().
+Subject: Test
+Author: radoslaw.zielonek@gmail.com
 
-Yes, we should fix it but that's really orthogonal to the mount id. It
-is separately useful and we already do expose it anyway.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 71b1543c83d65af8215d7558d70fc2ecbee77dcf
+
+---
+ net/sched/sch_taprio.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index a0d54b422186..41add4a1d407 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -44,6 +44,8 @@ static struct static_key_false taprio_have_working_mqprio;
+ 	(TCA_TAPRIO_ATTR_FLAG_TXTIME_ASSIST | TCA_TAPRIO_ATTR_FLAG_FULL_OFFLOAD)
+ #define TAPRIO_FLAGS_INVALID U32_MAX
+ 
++#define TAPRIO_MAX_NUM_SCHEDULES_BEFORE_NOW 10
++
+ struct sched_entry {
+ 	/* Durations between this GCL entry and the GCL entry where the
+ 	 * respective traffic class gate closes
+@@ -62,6 +64,8 @@ struct sched_entry {
+ 	u32 gate_mask;
+ 	u32 interval;
+ 	u8 command;
++	/* Used to skip some cycles to prevent other tasks from starving */
++	u8 num_schedules_before_now;
+ };
+ 
+ struct sched_gate_list {
+@@ -111,6 +115,9 @@ struct __tc_taprio_qopt_offload {
+ 	struct tc_taprio_qopt_offload offload;
+ };
+ 
++static void setup_txtime(struct taprio_sched *q,
++			 struct sched_gate_list *sched, ktime_t base);
++
+ static void taprio_calculate_gate_durations(struct taprio_sched *q,
+ 					    struct sched_gate_list *sched)
+ {
+@@ -919,6 +926,7 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
+ 	struct sched_entry *entry, *next;
+ 	struct Qdisc *sch = q->root;
+ 	ktime_t end_time;
++	ktime_t basenow;
+ 	int tc;
+ 
+ 	spin_lock(&q->current_entry_lock);
+@@ -977,6 +985,23 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
+ 	taprio_set_budgets(q, oper, next);
+ 
+ first_run:
++	basenow = ktime_get();
++	if (ktime_before(end_time, basenow))
++	{
++		next->num_schedules_before_now++;
++		if (next->num_schedules_before_now >= TAPRIO_MAX_NUM_SCHEDULES_BEFORE_NOW)
++		{
++			end_time = ktime_add_ns(basenow, oper->cycle_time);
++			next->end_time = end_time;
++			next->num_schedules_before_now = 0;
++			setup_txtime(q, oper, basenow);
++		}
++	}
++	else
++	{
++		next->num_schedules_before_now = 0;
++	}
++
+ 	rcu_assign_pointer(q->current_entry, next);
+ 	spin_unlock(&q->current_entry_lock);
+ 
+@@ -1074,6 +1099,7 @@ static int parse_sched_entry(struct taprio_sched *q, struct nlattr *n,
+ 	}
+ 
+ 	entry->index = index;
++	entry->num_schedules_before_now = 0;
+ 
+ 	return fill_sched_entry(q, tb, entry, extack);
+ }
+-- 
+2.43.0
+
+
 
