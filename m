@@ -1,103 +1,224 @@
-Return-Path: <linux-kernel+bounces-190569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C394E8CFFE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:21:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA898CFFE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 661FB1F23035
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:21:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D05B2393C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CA715F418;
-	Mon, 27 May 2024 12:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C6D15DBDD;
+	Mon, 27 May 2024 12:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="chXcKfC1"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pViCnqJv"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880A15DBDD;
-	Mon, 27 May 2024 12:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309AB15DBC0
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812350; cv=none; b=Kg5ZekjI9QAT35i+2dAnJuhzfw65h0+UD0UGv1BqAcbbZ04/Y5YSgeaShoq9huLmZGrWh7J60yJO4s9MmBJDUFwxd9kF1Pq6vJB/DEP5q5HVX5Ig7Owq5wB7Uuy/m2SeR5A0GvtVXZUkrZT7CLGeNAhO6CZlSbeHv8t96dlITkE=
+	t=1716812420; cv=none; b=YOvBgWylGtV7TwmFMG7cweICGtv8AE+/9rcXcEKo4aSv45lgcPmyoB/BQ5lyUmCXHOykuT/PWA1uIpiElM8DzEqKIY3Jmrl4G7IGmVXmVH2lXIKb0HAjqnQamkhtbI3SF0q3G5It/AgXPgIj3pCNKHWHWZxeeoekIrSjJr654lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812350; c=relaxed/simple;
-	bh=5G2XQeKlbaBhjT2RsAL0QgWuhM7y5OA4zXW32p+VlFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WoA75zrBh0oyc1iTMyo7bDjsc51qzw1jvK+VidnJh+jryL5vJ1rRE7ZTqYLC/bis8fez4PjS/5pb1hA4xK5in0fQK2IZxPOtjoD4UOWWTPoR0VaxqHO+4mZLGOnwYjlKzbvOecAx78SG8VljMebooPUX2FC/Isblnc/BSQVB1H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=chXcKfC1; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 18FB8C0008;
-	Mon, 27 May 2024 12:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716812347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BHNpEdPAzLabYPq0SKzj1VaD6s28qVaQXn92xL+zHtk=;
-	b=chXcKfC1F14nrThICBClXHAqo6TG3TKiMQu4Vp82sTG/R/e4KEhWbct2POcDlWTucShJdO
-	XovJzQzhSTsGTSEKM+O6EI+9fPO0+VuYKcB3DA43S493y2Ld1bg9j6Z6utpafbIci0XAcf
-	tfa2c9qewL2WHxqnCL+m+wmwKncTLjVBqIQxy9+6qvr/EQEuxbKOjdmJTF+3EbzON7wM+I
-	YZ52a2NBYviI2lFZo8w7ACY4RbslMXqG6nSu0ND7p9lv8b+b5zTTg1b8Hf4ow4DHhzMPgd
-	6/LFhFf9kR0C3HHBnLvZNZoef1tQOho4HWMoHIumRh1VoinHtbX+DYhJ5gSEpQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	oxffffaa@gmail.com,
-	kernel@sberdevices.ru
-Subject: Re: [PATCH v6 1/3] dt-bindings: mtd: amlogic,meson-nand: support fields for boot ROM code
-Date: Mon, 27 May 2024 14:19:05 +0200
-Message-Id: <20240527121905.178683-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240507230903.3399594-2-avkrasnov@salutedevices.com>
-References: 
+	s=arc-20240116; t=1716812420; c=relaxed/simple;
+	bh=JORPMngvobZc4VwXSAHwmLVdN+mISEnwWhTtVXqckK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sLXxSeJQO5s4mz8UijhekbpNLGI6lC7n+uUj7UVH79jJAGBhXazjMoRzgyno7IllSut2mNxhjpTBlj18cIitMpAUnHv5aD/1mEUY3tNcAFoonJI0b6I65vISc4UlaD9qSwA7W9CJAX39O1HFtbKz0EjTmABrpcI2LIYTBl40pVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pViCnqJv; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a5cec2c2981so653820466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716812416; x=1717417216; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rbkau0elypGQ8gua5kPGlwsAuXIezMiLROfFecqvTt8=;
+        b=pViCnqJveqcEQVxKNyNKak4DatC41RKolvhagFyZ95vE4Rle9miF3rAU/seN6caNj+
+         wpp8/jtYmglx10aBj0u07ceXbNXahyVtxkxAyFNACF1jqrBuPnKsMo2xqOlgVpJ3I7Q8
+         TKqn5cOZZRVDkMMv80rNXCgIWe2RYLrODWTRfymVyxZEfXKCOpvr5DQTruI4Y2iCjz91
+         XQAgjsurwE7dA/aMAm2ty+0njo8aA0ZDLofJFQnX5/v3m4OAAn/M1GFTpkrpG/21TciS
+         +mQ+ZNStO8keQDFzyIM+VZsvj1MLBIBNq0IEC3ggBrpRIrXN9h667s/1Cw8CCw+BtpTt
+         7NnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716812416; x=1717417216;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rbkau0elypGQ8gua5kPGlwsAuXIezMiLROfFecqvTt8=;
+        b=SuLiQKm81Advya73dnhn6oCUXRo4cX1/Q9U1lqsISCErYKy8KsIaIDeQDhaMLABiBp
+         JEnQbX3QYzH49q0yuldeLZIVg3OUmuqX1j+Nrm/gR/lCES2MW9hz6Y4bPKNFguDfW4+W
+         dGxauElzku5u5Bhu0FhUbpS1uQswKxBjmGp4wnctwId+TuGZQuyZrDN9WUOHcYq+hYXB
+         7mVf5y1x7CWokrG1kFgCnqbrH2Ifhb4fokT4pNF+3ytqm3CfRzcrEs0dLa9v6SzaadOM
+         V57+25hMh83kNrJYAmWeGinEkq4MePon9dmbeUYwdcJzLSaM9LUSrKxHCpTBtcDJ8eBz
+         7LVw==
+X-Gm-Message-State: AOJu0YwM6YDXeKtd03Cl5WhV+U3G8/RlsYwbcW9SW6vLkQegQCWA3PRA
+	VHEvnUvS74oVcRUQnqDXSBNPdL79aacUU94juUeHGTR66h7UUjdgznQpVCP+dxU=
+X-Google-Smtp-Source: AGHT+IEmX8jP9vhuFMUdD2fM7U214Wh5sWN4iEtg9z3ZkQrLLr308V35uKjmX8VURGnfvbjCW4ob5w==
+X-Received: by 2002:a50:d55b:0:b0:578:631b:3090 with SMTP id 4fb4d7f45d1cf-578631b3ad1mr5848685a12.33.1716812416487;
+        Mon, 27 May 2024 05:20:16 -0700 (PDT)
+Received: from [192.168.69.100] ([176.176.152.134])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785233a96esm5738532a12.5.2024.05.27.05.20.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 05:20:16 -0700 (PDT)
+Message-ID: <8f6d2408-cada-4f03-aa95-31bd234aa47d@linaro.org>
+Date: Mon, 27 May 2024 14:20:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'4e976b1521ca5e19fc2c0ba2bae0b97877ad0ef4'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for
+ MIPS/Loongson64
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+In-Reply-To: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-05-07 at 23:09:01 UTC, Arseniy Krasnov wrote:
-> Boot ROM code on Meson requires that some pages on NAND must be written
-> in special mode: "short" ECC mode where each block is 384 bytes and
-> scrambling mode is on. Such pages are located on the chip in the
-> following way (for example):
-> 
-> [ p0 ][ p1 ][ p2 ][ p3 ][ p4 ][ p5 ][ p6 ][ p7 ] ... [ pN ]
->   ^           ^           ^           ^
-> 
-> pX is page number "X". "^" means "special" page used by boot ROM - e.g.
-> every 2nd page in the range of [0, 7]. Step (2 in example is set by
-> 'amlogic,boot-page-step' field. Last page in range (7 in example) is
-> set by 'amlogic,boot-pages' field.
-> 
-> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Jiaxun,
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+On 17/5/24 19:13, Jiaxun Yang wrote:
+> Node counter is a timer presents on many Loongson-3 series CPUs.
+> It is maintained on every node in system. To avoid synchronisation
+> complexity we only access the copy from first node in system.
+> 
+> It also has many ways to be accessed, on latest Loongson-3 CPU with
+> IOCSR instruction support it should be accessed with a IOCSR request,
+> while on earlier Loongson-3 CPUs it is attached to a 32 bits MMIO bus.
+> For QEMU's Loongson-3 virt system it is mapped to a 64 bit MMIO location.
+> 
+> On some rare case the counter is disabled by firmware or not present
+> on chip, so we need to perform a lightweight test to ensure it is
+> running before actually use it.
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Changes in v2:
+> - Fix build failure when it's not enabled.
+> - Link to v1: https://lore.kernel.org/r/20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com
+> ---
+>   MAINTAINERS                                      |   1 +
+>   arch/mips/include/asm/mach-loongson64/loongson.h |   3 +
+>   arch/mips/loongson64/time.c                      |   3 +
+>   drivers/clocksource/Kconfig                      |   8 ++
+>   drivers/clocksource/loongson-nodecnt.c           | 112 +++++++++++++++++++++++
+>   5 files changed, 127 insertions(+)
 
-Miquel
+
+> diff --git a/drivers/clocksource/loongson-nodecnt.c b/drivers/clocksource/loongson-nodecnt.c
+> new file mode 100644
+> index 000000000000..3cea4045ce75
+> --- /dev/null
+> +++ b/drivers/clocksource/loongson-nodecnt.c
+
+
+> +#define NODECNT_REGBASE		0x3ff00408
+> +
+> +static void __iomem *nodecnt_reg;
+> +static u64 (*nodecnt_read_fn)(void);
+> +
+> +static u64 notrace nodecnt_read_2x32(void)
+> +{
+> +	unsigned int hi, hi2, lo;
+> +
+> +	do {
+> +		hi = readl_relaxed(nodecnt_reg + 4);
+> +		lo = readl_relaxed(nodecnt_reg);
+> +		hi2 = readl_relaxed(nodecnt_reg + 4);
+> +	} while (hi2 != hi);
+> +
+> +	return (((u64) hi) << 32) + lo;
+> +}
+> +
+> +static u64 notrace nodecnt_read_64(void)
+> +{
+> +	return readq_relaxed(nodecnt_reg);
+> +}
+
+
+> +int __init nodecnt_clocksource_init(void)
+> +{
+> +	int err;
+> +	uint64_t delta;
+> +
+> +	if (!cpu_clock_freq)
+> +		return -ENODEV;
+> +
+> +	if (cpu_has_csr() && csr_readl(LOONGSON_CSR_FEATURES) & LOONGSON_CSRF_NODECNT) {
+> +		nodecnt_read_fn = nodecnt_read_csr;
+> +	} else if (loongson_sysconf.bridgetype == VIRTUAL) {
+> +		nodecnt_reg = ioremap(NODECNT_REGBASE, 8);
+> +		if (!nodecnt_reg)
+> +			return -ENOMEM;
+> +		nodecnt_read_fn = nodecnt_read_64;
+> +	} else {
+> +		switch (boot_cpu_data.processor_id & (PRID_IMP_MASK | PRID_REV_MASK)) {
+> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R2_0:
+> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R2_1:
+> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R3_0:
+> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R3_1:
+> +			break;
+> +		default:
+> +			return -ENODEV;
+> +		}
+> +		nodecnt_reg = ioremap(NODECNT_REGBASE, 8);
+> +		if (!nodecnt_reg)
+> +			return -ENOMEM;
+> +		nodecnt_read_fn = nodecnt_read_2x32;
+> +	}
+> +
+> +	/* Test if nodecnt is usable */
+> +	delta = nodecnt_read_fn();
+> +	udelay(10);
+> +	delta = nodecnt_read_fn() - delta;
+> +
+> +	if (!delta) {
+> +		pr_info("nodecnt: clocksource unusable\n");
+> +		err = -ENODEV;
+> +		goto out;
+> +	}
+> +
+> +	err = clocksource_register_hz(&nodecnt_clocksource, cpu_clock_freq);
+> +	if (err) {
+> +		pr_err("nodecnt: clocksource register failed\n");
+> +		goto out;
+> +	}
+> +
+> +	/* It fits for sched_clock if we don't suffer from cross node access */
+> +	if (loongson_sysconf.bridgetype == VIRTUAL || loongson_sysconf.nr_nodes <= 1)
+> +		sched_clock_register(nodecnt_read_fn, 64, cpu_clock_freq);
+
+return 0; ? ...
+
+> +
+> +out:
+
+.. or:
+
+   if (err) ?
+
+> +	if (nodecnt_reg)
+> +		iounmap(nodecnt_reg);
+> +	return err;
+> +}
+> 
+> ---
+> base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+> change-id: 20240512-loongson_nodecnt-0704f76bc959
+> 
+> Best regards,
+
 
