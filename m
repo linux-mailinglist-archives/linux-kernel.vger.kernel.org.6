@@ -1,175 +1,100 @@
-Return-Path: <linux-kernel+bounces-191375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257408D0E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:55:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BB48D0E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8F91F21FEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87DDEB21314
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160CC1BC59;
-	Mon, 27 May 2024 19:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120B6262A8;
+	Mon, 27 May 2024 19:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsDg2wqT"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F8MvD/na"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADA91E888;
-	Mon, 27 May 2024 19:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1611BC59;
+	Mon, 27 May 2024 19:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716839717; cv=none; b=XlRj6+kWuMJqQVfYdgFkFa6XoxKdRvjtr8P7Gdg0uhMKmD+pYLOUAi00enjDQIOo8cUaxNd/C1FBhJGwMHksfjm9C7Nt11n9akURInR9mhxEl1IhbJYAIPz5WIloRxPizZkeQ1Dt4/Iz/2bM3aIZdvmJxXH74GfZ+003pV9YZSE=
+	t=1716839835; cv=none; b=BoV/KYCjgPzmfiAqVhQikvvdR88ogaBZTa2I2ZyFM1HhlWMDa4DRX5qn6XbeoY/k9NMyglhRthCJdkG792pgROTjZ9aF5DN19yhNAoxvCwZlOKJVyJrkkQMewTX9wVB/vfl0m/jvZwI6VkWHMqP9ZIUYFvPOuKaVCuBXWb8d5CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716839717; c=relaxed/simple;
-	bh=CBEYxiqpwGu0lFDgZVYcDx7jyV76ErM0r3EGkJnKlgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BvaKQthoFyUk7LrIP5OS4IPLJKfQzwtUjNUaR3900hiI4NzWBhxOqwmd23cAmK1ui7l9XGtbS86KnlIwYZKxhcu2wWA2VXpBm7kxh7qhsH/HR75HT+V0gDAc9L3ba3f8vV0zxnX04NjolAF1wospKeyHYfCIQMFJzOqYDC2TGPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hsDg2wqT; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-66629f45359so120685a12.3;
-        Mon, 27 May 2024 12:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716839715; x=1717444515; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ZG1HwOVbpyB8VcDuQJ+Et/cl6rWUv4pX2AyPqNrrH8=;
-        b=hsDg2wqTvhsGFPcgK1ufQKYSJGqjsihY9Orp4F7im6f5wYZ8UdBYbsr2Te9qOMM1fE
-         9Qoq4TO9Ep7wttryV43gRWGMWvxq42kQCqaFkVX4TsJ4FMFrEibUhEbDDwYaefIFzs0j
-         qScVi4SAZhzwE4hQcb0SXQ9uPoQAxC9u9XoLICpYkaKholPc4U1ScT598EPX1AhrUFEg
-         wmtH9JaMDo0CjpwXRah8P3G/puJL/2hZkOc6zHp+cazztjZklddbwH8wTUTannD35DTA
-         R+X7jMGjyDaYof0391+cjwDahPpT6MsMZx8jguOPV7gRxQXgGTi1L77o1Yb4AG1c1NWi
-         WBEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716839715; x=1717444515;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ZG1HwOVbpyB8VcDuQJ+Et/cl6rWUv4pX2AyPqNrrH8=;
-        b=sh5d0uGJMSILIpHRzEghjohdnRhCvsZYHWsEUH+Ec7MFa4DWm+WKBfTfZ2gn57zacz
-         t/6N0v4LLcdXkPc66x4BbGYTlr/IYLeHttvO3dnt4KxD4tKovF5vroWZGE6d2TjINOnF
-         fsok1sRNxCP5kWlp73h2QkYHDABBhMa4pg+ORoMpkqBUhLWfGy3Y+4rB2V9cxv0bRQBH
-         tGXmMkfCwLdCc7upb1O7iFVncxt4K6TC1j4jHNYYSZ9+szVqI7pbqFXVUs8qe0tdNbGE
-         aHb+1us35HLPQwvWtpgyeSevSRVvqcrbh2oL5H2rbZz1DxGC2kgqlzxNv9Uzi0Z+CnmE
-         5SWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4419+rnPbNlDxY7o7gE1p21nl6pdtugJmQj4Tb6vg6dTvPhvOYRBTjVWia3mymHz5jWLO/nK8oMYssea7aW1sPQrCF6U/kE6eCWbjSBzh0iFt7k3O9S2pacIrp/EONhbvKw7EyTyATFsYyrK4CQLdSbF5jE8DR/lp4LDSz3hPc4ZooBPEqbVT
-X-Gm-Message-State: AOJu0YwJ6TFp0m6N92zKt+YJQloFWX1lCJIfN5gjDmRk6J8oIzIXiwjf
-	sYk597soV9QKXahss6InsWwt16eojyvw2YrURU6h8EnrIg+NOEDL+F/DigITHVZfJRMr2apJSkL
-	NJQ7rc6D5m5R6T+b5zpWRz+qtc7o=
-X-Google-Smtp-Source: AGHT+IGs3GTgR1SK7v+836KzUgTjgC61L+TjLdHM4mK6KubTVhvj98VtFsqSoWZez08mML7cwFHLbQmOv7n5Dj+NCAY=
-X-Received: by 2002:a17:90b:201:b0:2bd:82c9:bd40 with SMTP id
- 98e67ed59e1d1-2bf5f408a4amr8962904a91.48.1716839715179; Mon, 27 May 2024
- 12:55:15 -0700 (PDT)
+	s=arc-20240116; t=1716839835; c=relaxed/simple;
+	bh=z3pBLhTXeWyJ4ntRf/6D2WXOYB/+fMCypeJjEMjWUwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzK815AcG8miJCguOxyk89QiORgUoX6fnZQisEbMBiiKZ7y+UgPkgb+LiKnLxL5OkrHZQ3hqYj2OGf/YPPybBfmUtTkChbUh0AM1bC1dblCKkWJElZB+5FCchTX/yk4vODs8W3nOUUrcnthwqrKAmHpttzer2JLKCFSAvSYNL7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F8MvD/na; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716839833; x=1748375833;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=z3pBLhTXeWyJ4ntRf/6D2WXOYB/+fMCypeJjEMjWUwM=;
+  b=F8MvD/naFh/W3HXVBO2gqqB1hA4f/0vfaSgXWPL51rcC3jb0R7mwuHgV
+   Qx0kaZ6XLI7OKP4SL8Y37uAW7YnJFscsIzyKsg/Fax7cvQyuO+v7RSwhM
+   1Vlu6LYHft9iS1G8g9pPLvyRbqSn11ejIJ+4XF1tY9/tqoIGxyQ1xTDqB
+   LRlBbfuOfnFT4iOdN64RtPmo9npO5LEzQpmMRxxsSgvcpqnI60vIdtyBz
+   BRI+jAIy5SjJaob5tE64lIjHdAM5kxAUEtyYPwhxzM7Z/j8lzk10I8SEy
+   +Rlkz/tqA72ioMrgX/LvNBiUbp9X9Sbcl0c4Eqt5ufJiB8BzY0J4Kp9u8
+   w==;
+X-CSE-ConnectionGUID: +n8pOiTFQxCyHSRWopzvbg==
+X-CSE-MsgGUID: h5FwC0cWStSIQMauN6+0cw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="38551442"
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="38551442"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 12:57:13 -0700
+X-CSE-ConnectionGUID: TzUF9euaQ2qTdrrbu1VfsA==
+X-CSE-MsgGUID: zRS0ZPKLRUeibPAtWsvaXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
+   d="scan'208";a="39388351"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 12:57:11 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 041F111F965;
+	Mon, 27 May 2024 22:57:09 +0300 (EEST)
+Date: Mon, 27 May 2024 19:57:08 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Genes Lists <lists@sapience.com>
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
+	wentong.wu@intel.com, linux-media@vger.kernel.org
+Subject: Re: 6.10-rc1 : crash in mei_csi_probe
+Message-ID: <ZlTllJeZBiGapHwZ@kekkonen.localdomain>
+References: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527062102.3816-2-shresthprasad7@gmail.com> <771db1ec-115f-4b96-916f-3975ca302f55@kernel.org>
-In-Reply-To: <771db1ec-115f-4b96-916f-3975ca302f55@kernel.org>
-From: Shresth Prasad <shresthprasad7@gmail.com>
-Date: Tue, 28 May 2024 01:25:03 +0530
-Message-ID: <CAE8VWiLbxeKKtW051nPxagRq6xqZ+J1SHrG=AhOx+NALv7-GGA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: watchdog: img,pdc-wdt: Convert to dtschema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 28, 2024 at 12:17=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 27/05/2024 08:21, Shresth Prasad wrote:
-> > Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allo=
-w
-> > for validation.
-> >
-> > Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
-> > ---
-> > The binding has been checked and tested against `img/pistachio_marduk.d=
-ts`
-> > with no errors or warnings.
-> > ---
->
->
-> Thank you for your patch. There is something to discuss/improve.
->
->
-> > +
-> > +maintainers:
-> > +  - Shresth Prasad <shresthprasad7@gmail.com>
-> > +
-> > +
->
-> Just one blank line.
->
-> > +allOf:
-> > +  - $ref: watchdog.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - img,pdc-wdt
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 2
->
-> Instead of maxItems please list items with description so the items will
-> be described.
->
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: wdt
-> > +      - const: sys
-> > +
-> > +  interrupts:
-> > +    description:
-> > +      Should contain WDT interrupt
->
-> Drop description, redundant.
->
-> > +    maxItems: 1
-> > +
-> > +  assigned-clocks:
-> > +    maxItems: 2
->
-> Drop property
->
-> > +
-> > +  assigned-clock-rates:
-> > +    maxItems: 2
->
-> Drop property
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - interrupts
-> > +
-> Best regards,
-> Krzysztof
->
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel@sapience.com>
 
 Hi,
 
-Thank you for the feedback.
-I'll address these and resend the patch.
+Thanks for reporting this.
 
+On Mon, May 27, 2024 at 12:34:41PM -0400, Genes Lists wrote:
+> 
+> First happened in 6.10-rc1 (6.9.2 stable is fine)  
+
+Do you happen to have .config available? A full dmesg would also be
+helpful.
+
+Does the system crash after the warning or not?
+
+-- 
 Regards,
-Shresth
+
+Sakari Ailus
 
