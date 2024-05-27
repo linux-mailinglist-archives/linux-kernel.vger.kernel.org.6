@@ -1,72 +1,100 @@
-Return-Path: <linux-kernel+bounces-191380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7468D0E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902FE8D0E81
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D8F1F21EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DBE1F21E9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A6A16086C;
-	Mon, 27 May 2024 20:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6FE161309;
+	Mon, 27 May 2024 20:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HttzYzSD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tdo1ZylV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HRwLNDEZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F5uE1kNs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5RG8Llgl"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2398A10A0C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E686117E8FC;
+	Mon, 27 May 2024 20:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716840179; cv=none; b=LKz4MkX4ipELWoXdoq+QI9dbZvnI+gh8+bYaYg1u8eztvF4+vGaBxj/+Plm3lYDNwYdX16RqPWlbg7DyY9mc7uCwECsZb1tb+CL92jpBYurIHCRRM2tZBPbZcl6/h0WDsU9KO6QXz1ybRk2urXrpiNyWD1PC+WZQV/KPlsfvgrw=
+	t=1716840372; cv=none; b=pswC3+26hFK7VVIduqfdsJExbmjkKDsN4gtbw1pXWSzAfhbfVIDNuSDCwAe/JkGj3C8BYNz4Rd1eww1ulSlScEM0Abcw5YkL7ieRsgVxqiFTCGWbDG/YQx69DMC3GSNWA9MH9TU4cZ1UsNIZG2eyq7YBw4eqap60SIus7rROXv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716840179; c=relaxed/simple;
-	bh=cal7mG0qUZDbQaDkg8S5M7WXgm8vuqmTCMSvfQjBd84=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CIbO9v95+qI3xJ0QultGXonORvAYGJcAimgiljm0vZ+w6OfHnbg1kttXlfugS1kaLtL9tWfkPfj9Wb2CGI3j6a4oanGMoCzE02kix99ZOsNGh0xC9rrMnZBH/WfboTTMJp673eJ0X4Vuty6QAJCN0gYEOMMHLHnlYUO1cOA7aIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HttzYzSD; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716840177; x=1748376177;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=cal7mG0qUZDbQaDkg8S5M7WXgm8vuqmTCMSvfQjBd84=;
-  b=HttzYzSD2+JV+JpxljWFkW0rMJySdd0Un7/bY+Uq2JOGK1CE9Ue7nOr4
-   dBK5EDBT85xqsS4HUnfEvZ99ar8WCSom+5OtH5cCv5RBsnQp1com0iY5B
-   7iaMBU0U0pvrmJ5RiiLzWKaHOjv24B4b6D/OoxAX/Juq+Hx1GCrUzXuif
-   NEMykNxnKIy8UzPa2vJJRcVRzI5z2iHOBL6fbT2d8Q+8o6mmD5udeXhMu
-   ErV05LgefSSYymbHVIn9R670BJrqxA5H+udAgDwoasJHFncQF2ENFSxd3
-   S6qCg13PHvh7jl7mFqf307SDnabLmEZcnuRCWlSacOT84S5YYJ+7+yz47
-   g==;
-X-CSE-ConnectionGUID: 5hk7/ydWToeqDRl0wUUPtw==
-X-CSE-MsgGUID: JKMQQKvDQmWKkA5zULz8Vw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="38551854"
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="38551854"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 13:02:56 -0700
-X-CSE-ConnectionGUID: OvQQXpLfRQuX6VE8i4kLfQ==
-X-CSE-MsgGUID: 7hyXouXUT0eYX5P46h8/3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="34737795"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 27 May 2024 13:02:55 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sBgYV-000B2t-36;
-	Mon, 27 May 2024 20:02:52 +0000
-Date: Tue, 28 May 2024 04:02:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Matthew Sakai <msakai@redhat.com>
-Subject: drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
-Message-ID: <202405280322.DuFLX7rb-lkp@intel.com>
+	s=arc-20240116; t=1716840372; c=relaxed/simple;
+	bh=YG6JpafUpKZIOm1IA0t/WDwX2UK1c74J8DESS7+7oTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnwUJ3PlIbcPVKHTrHginDm5THVFdUHJgsvGwD9z5ejTRhMTOGz42BVLZKdOfmAKKiXQ6gOlRweFJdtCDoOmSLsA/ADDXdgsKpwnfVqYFJhnnLBY7IrhWEb/eqGZ7lXiTA7nQlvVVPPPFb58qKFpzS63I+EoN/f4Z4BbtBRe4Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tdo1ZylV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HRwLNDEZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F5uE1kNs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5RG8Llgl; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 16C501F798;
+	Mon, 27 May 2024 20:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716840367;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZvKRBOS5lmai+swz8tUdyTy4cTgsbuctR3BprEOuAuo=;
+	b=tdo1ZylVlZ1jpH4UqpYkmpIJjViahurrTV7Bmhc01WQIvxhflEyu3i2RCYdqdWn2H5yL8o
+	koJcQ9E53CFu2NTxxDUtEZGWswAFs3/Pnhc0R2eeTI8pTFJHlkIiEFkkm9C5Oo2w+T7DhY
+	Ug0C6Go0GRVdmSfAhuq/OXd+mbKFzuw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716840367;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZvKRBOS5lmai+swz8tUdyTy4cTgsbuctR3BprEOuAuo=;
+	b=HRwLNDEZIdowwt8ggtJETkmMrR7rwZlZBlMEWkIS5GwmdIbJaRoJofDBee50CSUumlrKKB
+	APpt3C0Sz4lz5vAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716840366;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZvKRBOS5lmai+swz8tUdyTy4cTgsbuctR3BprEOuAuo=;
+	b=F5uE1kNsabpjx8moGo6T37piosLwXQZbbaqB7UE/JnsdqUczJkPA5YK7wSVOc6SgGtpSZO
+	nt8jgZN/LVCotUioIYyqAwWIf7qdzuFrVpaGBV8/kBFBB7kVlJTX3V3cAl6XI4qsiCb/85
+	HJ9ShNAIj9vxXV64RI828xeVPtQpGVE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716840366;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZvKRBOS5lmai+swz8tUdyTy4cTgsbuctR3BprEOuAuo=;
+	b=5RG8LlglGU4PXd738B6Zp9OPBi6nV+ZiokrI0Covp1V0vmTFK7yw8eoTFVNLRjVW3FhC7E
+	TlfS2e1GTg/vvJCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 04F5513A6B;
+	Mon, 27 May 2024 20:06:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /hgJAa7nVGagOgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 27 May 2024 20:06:06 +0000
+Date: Mon, 27 May 2024 22:05:56 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs: btrfs: add MODULE_DESCRIPTION()
+Message-ID: <20240527200556.GC8631@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240527-md-fs-btrfs-v1-1-9a8732bf2a70@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,67 +103,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240527-md-fs-btrfs-v1-1-9a8732bf2a70@quicinc.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto]
 
-Hi Mike,
+On Mon, May 27, 2024 at 10:56:59AM -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/btrfs/btrfs.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-First bad commit (maybe != root cause):
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-commit: f36b1d3ba533d21b5b793623f05761b0297d114e dm vdo: use a proper Makefile for dm-vdo
-date:   3 months ago
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240528/202405280322.DuFLX7rb-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405280322.DuFLX7rb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405280322.DuFLX7rb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
-   drivers/md/dm-vdo/int-map.c:105: warning: Function parameter or struct member 'bucket_count' not described in 'int_map'
-   drivers/md/dm-vdo/int-map.c:330: warning: Function parameter or struct member '__always_unused' not described in 'search_hop_list'
-   drivers/md/dm-vdo/int-map.c:330: warning: Excess function parameter 'map' description in 'search_hop_list'
-   drivers/md/dm-vdo/int-map.c:461: warning: Function parameter or struct member '__always_unused' not described in 'move_empty_bucket'
-   drivers/md/dm-vdo/int-map.c:461: warning: Excess function parameter 'map' description in 'move_empty_bucket'
-
-
-vim +87 drivers/md/dm-vdo/int-map.c
-
-cc46b9554b3f6d Matthew Sakai 2023-11-16  66  
-cc46b9554b3f6d Matthew Sakai 2023-11-16  67  /**
-cc46b9554b3f6d Matthew Sakai 2023-11-16  68   * struct bucket - hash bucket
-cc46b9554b3f6d Matthew Sakai 2023-11-16  69   *
-cc46b9554b3f6d Matthew Sakai 2023-11-16  70   * Buckets are packed together to reduce memory usage and improve cache efficiency. It would be
-cc46b9554b3f6d Matthew Sakai 2023-11-16  71   * tempting to encode the hop offsets separately and maintain alignment of key/value pairs, but
-cc46b9554b3f6d Matthew Sakai 2023-11-16  72   * it's crucial to keep the hop fields near the buckets that they use them so they'll tend to share
-cc46b9554b3f6d Matthew Sakai 2023-11-16  73   * cache lines.
-cc46b9554b3f6d Matthew Sakai 2023-11-16  74   */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  75  struct __packed bucket {
-cc46b9554b3f6d Matthew Sakai 2023-11-16  76  	/**
-cc46b9554b3f6d Matthew Sakai 2023-11-16  77  	 * @first_hop: The biased offset of the first entry in the hop list of the neighborhood
-cc46b9554b3f6d Matthew Sakai 2023-11-16  78  	 *             that hashes to this bucket.
-cc46b9554b3f6d Matthew Sakai 2023-11-16  79  	 */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  80  	u8 first_hop;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  81  	/** @next_hop: The biased offset of the next bucket in the hop list. */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  82  	u8 next_hop;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  83  	/** @key: The key stored in this bucket. */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  84  	u64 key;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  85  	/** @value: The value stored in this bucket (NULL if empty). */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  86  	void *value;
-cc46b9554b3f6d Matthew Sakai 2023-11-16 @87  };
-cc46b9554b3f6d Matthew Sakai 2023-11-16  88  
-
-:::::: The code at line 87 was first introduced by commit
-:::::: cc46b9554b3f6d2f09b1111386b2706e5b4f56c8 dm vdo: add basic hash map data structures
-
-:::::: TO: Matthew Sakai <msakai@redhat.com>
-:::::: CC: Mike Snitzer <snitzer@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Added to for-next, thanks.
 
