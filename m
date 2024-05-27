@@ -1,173 +1,118 @@
-Return-Path: <linux-kernel+bounces-190557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D598CFFCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FC78D002F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19CD31F2311D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E09F1C210DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F7015DBC7;
-	Mon, 27 May 2024 12:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D415E5B6;
+	Mon, 27 May 2024 12:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVO2pEnD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cSOTj1+6"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B6613C3CA;
-	Mon, 27 May 2024 12:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145CE15DBD1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812230; cv=none; b=S9OWYQaf4uUHE+1lXKMLVhMNKhsvDgfpH/KUqvJXUj3YGxDOcXvt7CYpv2puqftjJL+7PQt89Utaby2OrhaJqcap2NE+ddiCmfReLJ7pnLoX0Qs+fBMb2uxpf8h9Bgu0Qs+0T/9Jzd8QGzsg3bmwiU5sErYrKanXIT38huTxjoI=
+	t=1716813523; cv=none; b=mjGa891maaty9tL2rZXqqj2Xo/2KPXBAZxP4YK9W0LyJyurXkBMC8q6ScrrmjFF68Pc56fjc0fvOVITWe0tJlAZIq0+CNT39ZLULFZ1s/wFsVtiMvnCF1nd5G4aWUzDC/bsINMwvyClqfE1pb+Fe5BdsAI1wQCLFDxk3UrH3BBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812230; c=relaxed/simple;
-	bh=v7mwebxOX/a1s/ML0ZEls3SJ4IPgSe8KPM9vsKrPK9I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FS8xG5enWKMHCZkFqaXpAKqx8u0ZyY5RScgXgiksNxpVbEMk7kvuJw4AJdlDf0/acfLIWO2TMV1u/g6qi3bgCoQe80UYKPzhf8/6To54i7Gz2zhxnVhUjDk5i+7JulmYlxQp+e5m0+90Du90npW53LrOmRxLJgfQVaI0vlJbCas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVO2pEnD; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716812228; x=1748348228;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=v7mwebxOX/a1s/ML0ZEls3SJ4IPgSe8KPM9vsKrPK9I=;
-  b=kVO2pEnDjK9x6TH/ykKA6NnsnfD4DDNcIfUHHsP7VECYWIw74hhX/4b6
-   kRZq2VwflOUlrrPVjL4hP1pL6tciwyIfN/yVpd+/PWjewCsXAndy4TzHy
-   EkzL5YvgvkME2ilE/eOPAMUXpFLLWwgltsnUj/yPKI2EXd8l3XCFMk/wg
-   YRzNvW42nNAzMdKDK4GzGaUtgrOZ3f7HZOQmaOIuiBoGfUI7Msgr4cLVq
-   /dpocrA4oku7upUFQC//9x5JvReZbISm0+47Jfatmc8wTJGRej61Pdubv
-   J0lJC8Hp20B6cNaWdITb1mTgOb+YNJ0HT4sXpmPeHuQ6pm2x0HwffR9vD
-   g==;
-X-CSE-ConnectionGUID: 57/v2V0xRy6xdyc7HNT0UA==
-X-CSE-MsgGUID: SOu1kKn8RUOUKHA7hloO1A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="24253945"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="24253945"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 05:17:08 -0700
-X-CSE-ConnectionGUID: r5jiZ86jQhaITYpFAWV54g==
-X-CSE-MsgGUID: mgrFYRFzR2iM6Xu4Hio2ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="39289986"
-Received: from wentongw-optiplex-8070.sh.intel.com ([10.239.154.12])
-  by fmviesa004.fm.intel.com with ESMTP; 27 May 2024 05:17:05 -0700
-From: Wentong Wu <wentong.wu@intel.com>
-To: sakari.ailus@linux.intel.com,
-	tomas.winkler@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Wentong Wu <wentong.wu@intel.com>,
-	stable@vger.kernel.org,
-	Hao Yao <hao.yao@intel.com>,
-	Jason Chen <jason.z.chen@intel.com>
-Subject: [PATCH v3] mei: vsc: Don't stop/restart mei device during system suspend/resume
-Date: Mon, 27 May 2024 20:38:35 +0800
-Message-Id: <20240527123835.522384-1-wentong.wu@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716813523; c=relaxed/simple;
+	bh=KUPmkaVNi0PLQviM9npC6+ISIfhFnQySeRNyLrPRQXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJLRVeJ0yrW3oUb9Wfu0Qr6M/iZYx9F3VLVK5P+3wRz50Qf8y4Wk2QtugovJta606sbCA5oKyklXwPvlUUTydICemtYDsmRO3EKFvvzNmz1rnkJ0WcJ7LqEcwKZgT9yh0AGIDYRmyNBA/IqipXWAYeW+TPugcdvM5X/IHuX2B9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cSOTj1+6; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-529614b8c29so4833871e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716813519; x=1717418319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U0MksHKwBICLwuSG6OgSnqATRY+MnKcyIIXC1UuoUb4=;
+        b=cSOTj1+6tgggUjBV+F0I/iX9/C7/h5mRFTUWEaHczTBlPedAmFhH9/HhLde6D2s5yb
+         CpjoEvD2hdnHecfwb88IpdMYmGpfpuH6j23Q+9MarOkkgnYFqwelGfe7HXuUfMWoclUF
+         NaML2RsFSS36ZuAy2Dp4ppQmHETjJ+UPDbTa7OohaJVRkhdYgeEmWVqKq5JL7Ps3C2Zv
+         d9IYyCVVSXpr9YTUt4csDcEP3D5Ij1h3DNH6W4xW2Vvf7ZO3O4E8Reg3bhdwqsQgVZaW
+         IZmo0D4u9L2Ry7+dyxQJDgDBYGRmqYSmkH8Dho/T+euE8YEP14bQjket9kNpHk7C0YDz
+         oCGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716813519; x=1717418319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0MksHKwBICLwuSG6OgSnqATRY+MnKcyIIXC1UuoUb4=;
+        b=ckadfMGGQbIe0K8wSduh3SW3T6t+rl4cV+V7gFcZBtY1WvYdftx/PjOZ8x62Ir/uVU
+         fFiXfmkUfRsYalnqFVIQz1Dr8hy8p8vQ+Fb1jesmJGzRl0IjJjhR3+lfwuKAWUT9LGCZ
+         uTnnRlX2eUtOX5jGppEJA9EG5avj7afqHYdtJHe2RHMGH9b+PMRxEYqDZ7EbQFmyqSIj
+         flnLH2JTtjhgRSUID8RNtmsdBW4YTfFPhwkAFKOk3iQKBSKdNIiBFGWw5GdZmqJM2C74
+         lhEMRxf5xNrImM7dZAY/cKtCLZ57+mckRQ/96jm0HXXt0GMqshu5Y+5ZneyyXat2BBSJ
+         mXrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpoqZSRrWYqkmdal9fZhulidh0j8XHThOMpzaBUeanEmbsjD+W9xzundTn8XjjDf8hZ8Wl9zLtaUt0t/481AYMB/ZwhJ+7Sn5XTNii
+X-Gm-Message-State: AOJu0YwpwEWGOTITGWEtd3vOp6cUGjDKvRV6OCsa3DMi7pMZAkSjOvxU
+	rvzVMEIR0TFo0jdMzSYk1rSoKmjtFhGFg11CVfRABTy9sNuiSVGc3rxFKR/ScV8E5fPd7qtXdy7
+	uEU4=
+X-Google-Smtp-Source: AGHT+IG1nhVnExbK4ShBNQp8AOL1BeyHFQcVZ25huQqTJip9CI8Tg0co5jAULq+rDZ4Vc1qdUlRr3g==
+X-Received: by 2002:ac2:43b9:0:b0:523:ae99:b333 with SMTP id 2adb3069b0e04-52967a26df9mr6335447e87.64.1716813519261;
+        Mon, 27 May 2024 05:38:39 -0700 (PDT)
+Received: from [192.168.69.100] ([176.176.152.134])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c818139sm491740266b.35.2024.05.27.05.38.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 05:38:38 -0700 (PDT)
+Message-ID: <e3cc1552-4f96-4aa0-a375-a5582094c1ae@linaro.org>
+Date: Mon, 27 May 2024 14:38:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MIPS: Implement ieee754 NAN2008 emulation mode
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+In-Reply-To: <20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The dynamically created mei client device (mei csi) is used as one V4L2
-sub device of the whole video pipeline, and the V4L2 connection graph is
-built by software node. The mei_stop() and mei_restart() will delete the
-old mei csi client device and create a new mei client device, which will
-cause the software node information saved in old mei csi device lost and
-the whole video pipeline will be broken.
+On 7/5/24 14:34, Jiaxun Yang wrote:
+> Implement ieee754 NAN2008 emulation mode.
+> 
+> When this mode is enabled, kernel will accept ELF file
+> compiled for both NaN 2008 and NaN legacy, but if hardware
+> does not have capability to match ELF's NaN mode, __own_fpu
+> will fail for corresponding thread and fpuemu will then kick
+> in.
+> 
+> This mode trade performance for corretness, while maintaining
 
-Removing mei_stop()/mei_restart() during system suspend/resume can fix
-the issue above and won't impact hardware actual power saving logic.
+"correctness"
 
-Fixes: f6085a96c973 ("mei: vsc: Unregister interrupt handler for system suspend")
-Cc: stable@vger.kernel.org # for 6.8+
-Reported-by: Hao Yao <hao.yao@intel.com>
-Signed-off-by: Wentong Wu <wentong.wu@intel.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Tested-by: Jason Chen <jason.z.chen@intel.com>
-Tested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> support for both NaN mode regardless of hardware capability.
+> It is useful for multilib installation that have both types
+> of binary exist in system.
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>   Documentation/admin-guide/kernel-parameters.txt |  4 +++-
+>   arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
+>   arch/mips/kernel/elf.c                          |  4 ++++
+>   arch/mips/kernel/fpu-probe.c                    | 10 +++++++++-
+>   4 files changed, 31 insertions(+), 2 deletions(-)
 
----
-Changes since v2:
- - add change log which is not covered by v2, and no code change
-
-Changes since v1:
- - correct Fixes commit id in commit message, and no code change
-
----
- drivers/misc/mei/platform-vsc.c | 39 +++++++++++++--------------------
- 1 file changed, 15 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
-index b543e6b9f3cf..1ec65d87488a 100644
---- a/drivers/misc/mei/platform-vsc.c
-+++ b/drivers/misc/mei/platform-vsc.c
-@@ -399,41 +399,32 @@ static void mei_vsc_remove(struct platform_device *pdev)
- 
- static int mei_vsc_suspend(struct device *dev)
- {
--	struct mei_device *mei_dev = dev_get_drvdata(dev);
--	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
-+	struct mei_device *mei_dev;
-+	int ret = 0;
- 
--	mei_stop(mei_dev);
-+	mei_dev = dev_get_drvdata(dev);
-+	if (!mei_dev)
-+		return -ENODEV;
- 
--	mei_disable_interrupts(mei_dev);
-+	mutex_lock(&mei_dev->device_lock);
- 
--	vsc_tp_free_irq(hw->tp);
-+	if (!mei_write_is_idle(mei_dev))
-+		ret = -EAGAIN;
- 
--	return 0;
-+	mutex_unlock(&mei_dev->device_lock);
-+
-+	return ret;
- }
- 
- static int mei_vsc_resume(struct device *dev)
- {
--	struct mei_device *mei_dev = dev_get_drvdata(dev);
--	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
--	int ret;
--
--	ret = vsc_tp_request_irq(hw->tp);
--	if (ret)
--		return ret;
--
--	ret = mei_restart(mei_dev);
--	if (ret)
--		goto err_free;
-+	struct mei_device *mei_dev;
- 
--	/* start timer if stopped in suspend */
--	schedule_delayed_work(&mei_dev->timer_work, HZ);
-+	mei_dev = dev_get_drvdata(dev);
-+	if (!mei_dev)
-+		return -ENODEV;
- 
- 	return 0;
--
--err_free:
--	vsc_tp_free_irq(hw->tp);
--
--	return ret;
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(mei_vsc_pm_ops, mei_vsc_suspend, mei_vsc_resume);
--- 
-2.34.1
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
 
 
