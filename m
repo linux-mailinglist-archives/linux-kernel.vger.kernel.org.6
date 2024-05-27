@@ -1,162 +1,188 @@
-Return-Path: <linux-kernel+bounces-190054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7114A8CF8DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:47:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292288CF8E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6921C20DB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB0D1F213A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CABED53C;
-	Mon, 27 May 2024 05:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE3FFC12;
+	Mon, 27 May 2024 05:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjMKekyt"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IyhJkyL/"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9842E15E88;
-	Mon, 27 May 2024 05:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847B98F40;
+	Mon, 27 May 2024 05:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716788853; cv=none; b=tlIF6JwbBNcV67Um/hQRCxuHGeTNy/1JXok5WhLciXw6f0WLiiFOA4MyrEOiVWp6bsl9VHXASRMFF7Id8MMmMUqrsBR6ZZn49oFedwFcG0tEaxrL8Gzy3lgvqWJAnanmVACKN0hV2L4j+O2Xme1BmXTgbAOZz6vkLftpcokSXoE=
+	t=1716789220; cv=none; b=B5MJTjATlMFqn37gLkips/i0/eEQRNuMqssQ2Dy+5Qj7nUSGr340EAE8shSig5OobngbcuZp4q0Ibe9q/Q4QGIx40B1B1jxFztzkizMasWe1fzTx0TmidkZhMTCyLVG6UGuIRCK9rXRaC73n0gek7nlU0QoVDJ+v24A2WSVgCaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716788853; c=relaxed/simple;
-	bh=UZnhecmeXbbrEoLxOHcMOXns2/3idVK9mkljAg66e2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qx8kg1djYz7yE2l6BkFbniemUF1CZgfCsFgh6Y4vRBo4Ku8JnOEPdpSKHjeqVrSXves1nKFAESxP1qPH+2d3ZptEhwzorPxTQNOCM54jHo6IEstjMzXETv8TXVxycK4RRg0L74Qqw5zXtwosl9Dv4wYID9DQlBXy4bj4EvLkoGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjMKekyt; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a2424ecdaso11464747b3.1;
-        Sun, 26 May 2024 22:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716788850; x=1717393650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8wuQsWqcRb/ut6pFdVAgGVxlrs/eLie+IuFi3YLeBQ8=;
-        b=cjMKekyt12uTaRLfvnWyIez13l2FqX3kXSAn7HpuqYpvNPiIm0NS1oa49BK9rxv6Bd
-         8GuI5NymFg94WHDferlyKWl+RmCKRSR4tDbMdghkPzxn3kmDD0za03FTC7ECzwtwOUGF
-         1NZbKXzsPA77XiorwGVV8XdjANWNjIKXygTrQRFx5oTG8Fw0gtnxw7YF/820kj1XzAM4
-         qQ7ZqkDCavTrBU4puHl7BlSrAyew1/aDCb3PI0m2SFh29Qu7rEpdmLGyIDuVxLyU9AVE
-         ILKIgZok6Aj+RQrPA4dlF1V4/97Bv3JIDRI419iKwUvKyLaQsWC9J8eCDcIHErxXggY5
-         /nAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716788850; x=1717393650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wuQsWqcRb/ut6pFdVAgGVxlrs/eLie+IuFi3YLeBQ8=;
-        b=HiEdVUsYtSEgOXVk+pEWPzYyhH64fiQIEDGFfAO2KvuYlaIMtrNBH53ZwGtYrVOy+m
-         KXsFtvYTdOQkplvN7PLU0IKQlEmepNRDDXnqlf8uularhNhhjfDrsCnIQ8eTfoB0fSTS
-         wV1YEjyJbVXntjD4cySkS8kp86sGsJiDcnEK12lgbb+QAMrwmbuUXQyvcI63U/+wMFzy
-         rKFktnF7l8F0sS0glXJMZ71LN8ScsmE6iKavm0Lg1XYYQvtbnM1Himz0aE4fmh/Y/rJ4
-         acpU14790YZ4xzRf0Jv+OIO9AXrTxexnT4dIOOjwO0bnJ3+8gxrsqETAqnLNph7dzUsG
-         wKGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDzfxZwn29QyYr6o3u0ge1Y2kSVg+TjMjaPcyNkVtf+9I8Sxjyz0jDr5DHLkq7FCwDXx5XM7LxLPgWM7DYZZaAtMrMgAY5rlc42VlwrdAN7F/sQy8eBiKB7qHcL9nI0xFhoebxsF/jl/AlUbj+uiWr
-X-Gm-Message-State: AOJu0Ywph1v3zoijy3dF55ZE2eEtfRDswVgCMrNNXONpmQCfhXO2YEHD
-	ISsELV9XxxqU5uE1jmmCfveerP1KEMv7dANZMM3IjpS27XTqMpsQbsIxwi/3m1E=
-X-Google-Smtp-Source: AGHT+IG9cacgoozF1UpjTLhNDVVFVyz7WvORWObuiGEhegriyTd329fQxfglvwuvyjJltbUxGRoHhg==
-X-Received: by 2002:a05:690c:fcb:b0:61a:cc3c:ae69 with SMTP id 00721157ae682-62a08da023dmr102303487b3.18.1716788849758;
-        Sun, 26 May 2024 22:47:29 -0700 (PDT)
-Received: from archlinux ([240d:1a:13a:f00:f3a2:fbda:2824:ae0e])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682227f1c82sm4482817a12.47.2024.05.26.22.47.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 22:47:29 -0700 (PDT)
-Date: Mon, 27 May 2024 14:47:26 +0900
-From: Tatsuya S <tatsuya.s2862@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, mark.rutland@arm.com, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	tatsuya.s2862@gmail.com
-Subject: Re: [PATCH] ftrace: Fix stack trace entry generated by
- ftrace_pid_func()
-Message-ID: <qnjsb2h5osocwjyi6vilkohe4qzc5iwjabfhdr5iuzwyhbhdoq@tw6ymc6xyyfb>
-References: <20240526112658.46740-1-tatsuya.s2862@gmail.com>
- <202405262232.L4XH8q6O-lkp@intel.com>
- <20240527081719.a3f5b4c270d54a0453e3464f@kernel.org>
+	s=arc-20240116; t=1716789220; c=relaxed/simple;
+	bh=DD4NbWHd/XJtfazXOyZwi7TD4qNqru25JLVPRUBzj/U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PwDmsIfyx7dUM3+eK7mBkaMjz5+w+NdtGlCbfTpO0m+i01y4AEEEx6IeTp/bh0vo5aGh5JQ5ifFM5tII89+pKAQxqa4FBr6wMwg+0bOGADFR8p+CU1Wm1pX/0mRft1QTxxsrE+xonbXF18KiUJt1HJzMCvZ+ntI2DiiOQj+NGCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IyhJkyL/; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44R5r4IO008503;
+	Mon, 27 May 2024 00:53:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716789184;
+	bh=+BgsQs9G000TaSZwOdfw5wHqoPUwP8yfzBc9e/LNs9U=;
+	h=From:To:CC:Subject:Date;
+	b=IyhJkyL/AXrI83ERPjwBGdeio9VsM1xfCHB1+hm6BbfZPgrN/T0X5pMxxMomqRFht
+	 4w2FW/ynIvbzW0CeXochW+6jowmJAEf7uZUKDNI6rr/j3WqwLvrXvRfz1s36BXSUja
+	 Jd2AfG8B7xxZYCjS4YfhqOwLsnmONeblK/1ffhR4=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44R5r4c4073730
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 27 May 2024 00:53:04 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
+ May 2024 00:53:04 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 27 May 2024 00:53:04 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44R5r3I6029800;
+	Mon, 27 May 2024 00:53:03 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44R5r3Mt024838;
+	Mon, 27 May 2024 00:53:03 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Simon Horman
+	<horms@kernel.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Vladimir Oltean
+	<vladimir.oltean@nxp.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD
+ Danish Anwar <danishanwar@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>
+Subject: [PATCH net-next v7 0/2] Add TAPRIO offload support for ICSSG driver
+Date: Mon, 27 May 2024 11:22:58 +0530
+Message-ID: <20240527055300.154563-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Disposition: inline
-In-Reply-To: <20240527081719.a3f5b4c270d54a0453e3464f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, May 27, 2024 at 08:17:19AM GMT, Masami Hiramatsu wrote:
-> On Sun, 26 May 2024 22:51:53 +0800
-> kernel test robot <lkp@intel.com> wrote:
-> 
-> > Hi Tatsuya,
-> > 
-> > kernel test robot noticed the following build warnings:
-> > 
-> > [auto build test WARNING on linus/master]
-> > [also build test WARNING on rostedt-trace/for-next v6.9 next-20240523]
-> > [cannot apply to rostedt-trace/for-next-urgent]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Tatsuya-S/ftrace-Fix-stack-trace-entry-generated-by-ftrace_pid_func/20240526-193149
-> > base:   linus/master
-> > patch link:    https://lore.kernel.org/r/20240526112658.46740-1-tatsuya.s2862%40gmail.com
-> > patch subject: [PATCH] ftrace: Fix stack trace entry generated by ftrace_pid_func()
-> > config: x86_64-buildonly-randconfig-002-20240526 (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/config)
-> > compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240526/202405262232.L4XH8q6O-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202405262232.L4XH8q6O-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> kernel/trace/ftrace.c:102:6: warning: no previous prototype for function 'ftrace_pids_enabled' [-Wmissing-prototypes]
-> >      102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
-> >          |      ^
-> >    kernel/trace/ftrace.c:102:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-> >      102 | bool ftrace_pids_enabled(struct ftrace_ops *ops)
-> >          | ^
-> >          | static 
-> >    1 warning generated.
-> 
-> This is because the prototype in linux/ftrace.h is placed in the 
-> #ifdef CONFIG_DYNAMIC_FTRACE block. The prototype needs to be moved
-> outside of the block.
-> 
-> Thank you,
-> 
-> > 
-> > 
-> > vim +/ftrace_pids_enabled +102 kernel/trace/ftrace.c
-> > 
-> >    101	
-> >  > 102	bool ftrace_pids_enabled(struct ftrace_ops *ops)
-> >    103	{
-> >    104		struct trace_array *tr;
-> >    105	
-> >    106		if (!(ops->flags & FTRACE_OPS_FL_PID) || !ops->private)
-> >    107			return false;
-> >    108	
-> >    109		tr = ops->private;
-> >    110	
-> >    111		return tr->function_pids != NULL || tr->function_no_pids != NULL;
-> >    112	}
-> >    113	
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This series adds taprio offload support for ICSSG driver.
 
-I understand. Thank you.
+Patch [1/2] of the series moves some structures and API definition to .h
+files so that these can be accessed by taprio (icssg_qos.c) file.
+
+Patch [2/2] of the series intoduces the taprio support for icssg driver.
+
+Changes from v6 to v7:
+*) Rebased on 6.10-rc1.
+*) Removed RFC tag, no functional changes.
+
+Changes from v5 to v6:
+*) Added RFC tag as net-next is closed now.
+*) Created a new patch for "the struct definition move" and made this
+   series instead of single patch as suggested by
+   Paolo Abeni <pabeni@redhat.com>.
+*) Removed est_new structure as that is no longer used.
+*) Freeing qos.tas.taprio_admin using taprio_offload_free() as suggested
+   by Paolo Abeni <pabeni@redhat.com>
+*) Clearing taprio_admin and taprio in error case in emac_taprio_replace()
+   API using goto label taprio_clear.
+*) Added RB tag of Simon Horman <horms@kernel.org> 
+
+Changes from v4 to v5:
+*) Rebased on latest net-next/main [commit 5c4c0edca68a]
+*) Moved icss_iep structure to icss_iep.h file so that iep wraparound time
+   which is stored in iep->def_inc, can be accessed by qos file.
+*) Added comment about IEP wraparound time compensation in icssg_qos.c
+*) Moved icssg_qos_tas_init() to prueth_netdev_init() so that icssg_qos_tas_init()
+   gets called even if interface is down.
+*) Fixed print statements as suggested by Vladimir Oltean <vladimir.oltean@nxp.com>
+*) Added taprio_offload_get() and taprio_offload_free() in emac_taprio_replace()
+   and emac_taprio_destory() respectively.
+
+Changes from v3 to v4:
+*) Rebased on the latest next-20231005 linux-next.
+*) Addressed Roger and Vinicius' comments and moved all the validations to
+   emac_taprio_replace() API.
+*) Modified emac_setup_taprio() API to use switch case based on taprio->cmd
+   and added emac_taprio_destroy() and emac_taprio_replace() APIs.
+*) Modified the documentation of structs / enums in icssg_qos.h by using
+   the correct kdoc format.
+
+Changes from v2 to v3:
+*) Rebased on the latest next-20230928 linux-next.
+*) Retained original authorship of the patch.
+*) Addressed Roger's comments and modified emac_setup_taprio() and
+   emac_set_taprio() APIs accordingly.
+*) Removed netif_running() check from emac_setup_taprio().
+*) Addressed Vinicius' comments and added check for MIN and MAX cycle time.
+*) Added check for allocation failure of est_new in emac_setup_taprio().
+
+Changes from v1 to v2:
+*) Rebased on the latest next-20230921 linux-next.
+*) Dropped the RFC tag as merge window is open now.
+*) Splitted this patch from the switch mode series [v1].
+*) Removed TODO comment as asked by Andrew and Roger.
+*) Changed Copyright to 2023 as asked by Roger.
+
+v6: https://lore.kernel.org/all/20240515065042.2852877-1-danishanwar@ti.com/
+v5: https://lore.kernel.org/all/20240429103022.808161-1-danishanwar@ti.com/
+v4: https://lore.kernel.org/all/20231006102028.3831341-1-danishanwar@ti.com/
+v3: https://lore.kernel.org/all/20230928103000.186304-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20230921070031.795788-1-danishanwar@ti.com/
+v1: https://lore.kernel.org/all/20230830110847.1219515-1-danishanwar@ti.com/
+
+MD Danish Anwar (1):
+  net: ti: icssg: Move icss_iep structure
+
+Roger Quadros (1):
+  net: ti: icssg_prueth: add TAPRIO offload support
+
+ drivers/net/ethernet/ti/Kconfig              |   1 +
+ drivers/net/ethernet/ti/Makefile             |   3 +-
+ drivers/net/ethernet/ti/icssg/icss_iep.c     |  72 -----
+ drivers/net/ethernet/ti/icssg/icss_iep.h     |  73 ++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c |   5 +-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
+ drivers/net/ethernet/ti/icssg/icssg_qos.c    | 288 +++++++++++++++++++
+ drivers/net/ethernet/ti/icssg/icssg_qos.h    | 113 ++++++++
+ 8 files changed, 485 insertions(+), 75 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.c
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.h
+
+
+base-commit: 66ad4829ddd0b5540dc0b076ef2818e89c8f720e
+-- 
+2.34.1
+
 
