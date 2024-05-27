@@ -1,72 +1,51 @@
-Return-Path: <linux-kernel+bounces-190466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1128CFEAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552F78CFEAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3738F1C217C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B7C1F22387
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C34613B5A4;
-	Mon, 27 May 2024 11:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAF813B7A7;
+	Mon, 27 May 2024 11:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bk3cmtNh"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="euVLF9yJ"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE772CCD0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A080C13A259;
+	Mon, 27 May 2024 11:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808563; cv=none; b=AyEZFgHkNaBUH+ySsdTEKxMVOZSS6KhGUBWRc+sat87CdGrvyQtYYS0UmldmhNMi9yDJVVIKLV/EOg/1fhm0Z0JXaQC+YKj0dZRVSqvV6UZC8oIVF08XqNd8YQpRv2JL4tLz1tTCmwmrF0t6kjkyv4OLk1A776gm9hrHEGOUBj4=
+	t=1716808580; cv=none; b=HGtCGwR8Ix7YH8sl/fAYZlLbuumrp2mYHND2a3YhI4BXAgM8tfEO2yojKYr/LvJkWJA/9dFyNOVyEQTKUrNzMdHfJ2fy3rYCRJvumHQ/PvoJ+ua91vMfLra8kX+tKv9pXEcx4yIxP9S8qaVfEZcEv3CO2w08cU26NEdaPGL0MLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808563; c=relaxed/simple;
-	bh=Not5pCCjEau8XHdG6uS33ofoZFsQxMHw9AycAg5bheM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4J3gAWEiZ1dYxoAHG53jeoF8jt1CRWx9ItqotllnMi+ilNEL1QE5tx7dvJ5EP0WVJyueNPM3FEKq1AbBj34JYZBARcagZSj/mrqqXgfCBbAz11RlPHnwLB8vjmccNGZ3Y1eL/Mn97OGBzO+FkeKkBdxps+ckwDuLO3jnM0UyXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bk3cmtNh; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-354fb2d8f51so3167096f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716808560; x=1717413360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MMexEptPfSGDJVxMIGryhOEGijsTTv6Ro7p77t6MOQQ=;
-        b=Bk3cmtNhvLwktVowtvH22imzMPD8SRv7ZUVHc52G1QbZr+mpa/Z016eBpLKm7TgKgA
-         gGhgnMG1JjwEAXHy5bH4z8OkUjqquICGvwOlzY/0E4pFHgjcI5b0kqvA3oBMlTfL79RQ
-         dlfEP1dM0z7nDq9ST8ZnYYkCG4m/3o5K7r4xubawRr+HHQsOcYjyArDhqRtFmoh200/r
-         EtzWVlejH2jcUpkJVsylgiBadUUR1z9vu4gvTbiaXVi4BD570MVGZAxIHizbrIyWQErD
-         47aX3uDHx/QYSir0GsZSpWjuCioLXLoi6nmkhY6WEY8CnEMQLUJyT7k0ZQfBL9ETyb8V
-         CiQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716808560; x=1717413360;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MMexEptPfSGDJVxMIGryhOEGijsTTv6Ro7p77t6MOQQ=;
-        b=qq7IMK2t2RtCPpkxicbOJti99ZyQ08IAi8+/7LTwQxguwL78NHXqeL4TGp//GYhYVk
-         ewu02rRba2hqAE22La10McmoWFcUkxsGQmcJpphZanb7JXRpEXtrFsQ1SHSRzcfOI2iz
-         B7QIpgZlWQPKEyKnwDbYFLVLC8Yoc1E87Xw5y7cH/KVRDCxZro7/V4BxP0e3+jhoyeAq
-         UW4FTmocojqOcO3+qnW4/OogRqbDSXTf//KT64SvG1w+nPdbmwf/cmY6v9u+gWNcZA2m
-         HSmq4/c1vtGBDYQmBLoNNtLQoG1hH3Z9bwCr0lOzGPeJmhmd7P/OUA8psDi1Wm914xMR
-         TmvQ==
-X-Gm-Message-State: AOJu0Yyqfj+BW2XNLw3tJOSFpDyb3QaRMwPCATm1Nwc+avjpPsD69GDP
-	MwhwLU/m8vAFOzFdBV0BsspY8/tUh0lVdQ+1vd7kblxnejsLQ/SjFmpEOMdOhCw=
-X-Google-Smtp-Source: AGHT+IFA+HZ7ExsGyMuThHmw8iCR8SzRpKmrAB3+4Fk+tDMUdAbjEna62bP/XtsJzFOuNm6uViVNgw==
-X-Received: by 2002:adf:dd89:0:b0:354:c483:a469 with SMTP id ffacd0b85a97d-35526d68f7emr5750607f8f.1.1716808559643;
-        Mon, 27 May 2024 04:15:59 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7315:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7315:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a090d1bsm8705866f8f.60.2024.05.27.04.15.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 04:15:59 -0700 (PDT)
-Message-ID: <b77e5491-77ec-4a4f-8ea9-4842b6923bfa@suse.com>
-Date: Mon, 27 May 2024 14:15:57 +0300
+	s=arc-20240116; t=1716808580; c=relaxed/simple;
+	bh=mwCYwCCjvL4nTs5rhRxkGA0LBcbSZqOtDLfeWOP6FlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Rjqua2odXWZuydMoLZGQe9KbqILhvsz5WDr+DjRtpabSFP0D6FfbfKH8hT+8o9e0uTZzUWVnDVU0owCS19DAeZvmPyYEfEJXtmqaz7gjwnI9IIL26cfC+p2S8k/sVZgmdCH7dYUmbZG6lWL/b4ictcDLqgnWFiloYVlB5F4tPgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=euVLF9yJ; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:
+	From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=1SX+hjPO8iXzPnEmnZdrhvcBPehECadE4WnLUAtHG/s=; t=1716808578;
+	x=1717240578; b=euVLF9yJ6YWu2KNmkUZ1lyXFynOoZ3xTLXUw3AYhUJHWIIfglOx0bWpEZsmpx
+	YxRx4o4VMlsAglN6pix1mFmwEzDlLLwQEMp7/EmN8llM+AqO7tcbJU23m6sIdw4yLrD4mfNzJiMPp
+	unlWajG300Gea9yksytXZEmEJ5FXtrJUTMdnF6PUAHcD2mZNOXfKDAeMMTcS2J4licgvZYLewzjrX
+	f5xsVGDLFHJhYEayHJ4PL2vkA2mQ6LUX0lwPjUYXs3ULB4QjPxGnqslhpkgPO+nIxAC+OsTkaXrgF
+	kQkOCMLm7q1+s+B23ikP5N16YbMYstDcaSMke9rLIoIM4PIerw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sBYKk-0003Yd-SU; Mon, 27 May 2024 13:16:06 +0200
+Message-ID: <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
+Date: Mon, 27 May 2024 13:16:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,90 +53,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] x86/syscall: Mark exit[_group] syscall handlers
- __noreturn
-To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Alexandre Chartre <alexandre.chartre@oracle.com>,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sean Christopherson <seanjc@google.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>, KP Singh <kpsingh@kernel.org>,
- Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>
-References: <cover.1715059256.git.jpoimboe@kernel.org>
- <9ad251f6258adde596fb1f4d6826309b9f239ed3.1715059256.git.jpoimboe@kernel.org>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <9ad251f6258adde596fb1f4d6826309b9f239ed3.1715059256.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+To: Ron Economos <re@w6rz.net>, Guenter Roeck <linux@roeck-us.net>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ regressions@lists.linux.dev, linux-clk@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>
+References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716808578;bfb9d9e0;
+X-HE-SMSGID: 1sBYKk-0003Yd-SU
 
+On 27.05.24 12:45, Ron Economos wrote:
+> On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
+>>
+>> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+>> > Report an error when an attempt to register a clkdev entry results in a
+>> > truncated string so the problem can be easily spotted.
+>> >
+>> > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+>> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>
+>> With this patch in the mainline kernel, I get
+>> [...]
+>> when trying to boot sifive_u in qemu.
+>>
+>> Apparently, "10000000.clock-controller" is too long. Any suggestion on
+>> how to solve the problem ? I guess using dev_name(dev) as dev_id
+> parameter
+>> for clk_hw_register_clkdev() is not or no longer a good idea.
+>> What else should be used instead ?
+> 
+> This issue causes a complete boot failure on real hardware (SiFive
+> Unmatched).
 
+Hmmm. That and because nobody afaics has time/motivation to fix this
+anytime soon (or am I mistaken there?) makes me wonder if we should
+revert this change for now (and remerge it later once the problem this
+change exposed was fixed). Or is another solution in sight somewhere?
 
-On 7.05.24 г. 8:30 ч., Josh Poimboeuf wrote:
-> The direct-call syscall dispatch function doesn't know that the exit()
-> and exit_group() syscall handlers don't return, so the call sites aren't
-> optimized accordingly.
-> 
-> Fix that by marking those exit syscall declarations __noreturn.
-> 
-> Fixes the following warnings:
-> 
->    vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
->    vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
-> 
-> Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
-> Tested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->   arch/x86/entry/syscall_32.c            | 10 ++++++----
->   arch/x86/entry/syscall_64.c            |  9 ++++++---
->   arch/x86/entry/syscall_x32.c           |  7 +++++--
->   arch/x86/entry/syscalls/syscall_32.tbl |  6 +++---
->   arch/x86/entry/syscalls/syscall_64.tbl |  6 +++---
->   arch/x86/um/sys_call_table_32.c        | 10 ++++++----
->   arch/x86/um/sys_call_table_64.c        | 11 +++++++----
->   scripts/syscalltbl.sh                  | 18 ++++++++++++++++--
->   tools/objtool/noreturns.h              |  4 ++++
->   9 files changed, 56 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-> index c2235bae17ef..8cc9950d7104 100644
-> --- a/arch/x86/entry/syscall_32.c
-> +++ b/arch/x86/entry/syscall_32.c
-> @@ -14,9 +14,12 @@
->   #endif
->   
->   #define __SYSCALL(nr, sym) extern long __ia32_##sym(const struct pt_regs *);
-> -
-> +#define __SYSCALL_NORETURN(nr, sym) extern long __noreturn __ia32_##sym(const struct pt_regs *);
->   #include <asm/syscalls_32.h>
-> -#undef __SYSCALL
-> +#undef  __SYSCALL
-> +
-> +#undef  __SYSCALL_NORETURN
-> +#define __SYSCALL_NORETURN __SYSCALL
->   
->   /*
->    * The sys_call_table[] is no longer used for system calls, but
-> @@ -28,11 +31,10 @@
->   const sys_call_ptr_t sys_call_table[] = {
->   #include <asm/syscalls_32.h>
->   };
-> -#undef __SYSCALL
-> +#undef  __SYSCALL
+Ciao, Thorsten
 
-nit: Am I blind or all the __SYSCALL lines have an extra whitespace?
+> The boot only gets as far as "Starting kernel ..." with no
+> other indication of what's going on.
+> 
+> Guenter's suggested patch solves the issue.
+> 
+> diff --git a/drivers/clk/sifive/sifive-prci.c
+> b/drivers/clk/sifive/sifive-prci.c
+> index 25b8e1a80ddc..20cc8f42d9eb 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device
+> *dev, struct __prci_data *pd,
+>                          return r;
+>                  }
+> 
+> -               r = clk_hw_register_clkdev(&pic->hw, pic->name,
+> dev_name(dev));
+> +               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
+>                  if (r) {
+>                          dev_warn(dev, "Failed to register clkdev for
+> %s: %d\n",
+>                                   init.name, r);
+> 
+> 
+> 
 
-<snip>
+#regzbot dup:
+https://lore.kernel.org/lkml/7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net/
 
