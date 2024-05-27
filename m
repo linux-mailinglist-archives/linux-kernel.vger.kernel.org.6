@@ -1,109 +1,184 @@
-Return-Path: <linux-kernel+bounces-190217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE2D8CFB65
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E6E8CFB71
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9CA281679
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E368E281C1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDC35490F;
-	Mon, 27 May 2024 08:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2925380F;
+	Mon, 27 May 2024 08:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EaDrhefw"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iTO5yAa5"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E72F46453
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9223A46453
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716798500; cv=none; b=h9At1SW2qs0qDUXjp8rHNJOwofgdnfko/xkMWCxoYZuyM0xEb0OjZ6GaHcRH8SCBaIfxgawwgN9uuyITWCnm0zQmRUlWA0c0F+sLMoIu8dfzKDNoBG6qX88lduMcU7arXUPpQohujRlPburNpRA5x8R69jExbeqr6pCeSxq8S/k=
+	t=1716798590; cv=none; b=NZA1zD8YxzTLtDVZHUeOk30jYTrWkrTxaYBQT+BtI74Z01rHR2Z2bDlLKUCaM1tjCX/OfHo5m4zkKYU3vlVbPHLQE1M7F6JLO6qaBKML0sYyAHurEt8V0o8VnruGqqFyrWera/sAjPeV2SNfPMM//BpSwfLDIof5rgHDB5vvVSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716798500; c=relaxed/simple;
-	bh=I2dFfh26l+6htx4A2es4uMpapQ+YgW1iGGGPGSM5nX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gHseAOAeLov2vrFnjzblIFgR0AWBkIl3gSYuPd6bj+4MocDVim6Ch54yDkoORDZRXnXhg4U6AKEzJ63G99yk0/pj4SO3w9OHAZh0l4Gx32Bzs4YXKzjeG3HPRqRb8akBdG7hd8AwQJU3Ak0suhBw66yA1B9viSHfatIyJT45tgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EaDrhefw; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57863a8f4b2so2494109a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716798497; x=1717403297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nD9laAvbqQPSf4T3VBuD4yAtj5SB6o2Jvt0/iLt+t+k=;
-        b=EaDrhefwIaG00q4eN9sxH+Nrep9893hsQJLzbxaK5Jtx8UKjbfYrAMV2dKKbD4iRZl
-         9VEwy4XDq+5tLsxkcNShQdw2MIEYc+3iYcfhwKKTaT7DXQu0R6rmBsK67Mdm0GjrHPTy
-         2/CzBnVYBqbs7UtolIsMXW42c7XnUpyJMHcBnZQUxpq9Xx+sG29rjufM6wniWt0tiBCG
-         uouGa/w3A+OKaiLROEtrBgTja4YrvEgMIPDhhrC976OEAu3U0/gWr3WNT7dJweLfk+TZ
-         c8i/FXXwtfv7XF3l5Apy2SwX62ibPJEwRDGpdlDazlVYWQNMc9wwHmooR6CAUi6piwFz
-         El3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716798497; x=1717403297;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nD9laAvbqQPSf4T3VBuD4yAtj5SB6o2Jvt0/iLt+t+k=;
-        b=dsIf6tLXANgrld3lg8bQeYzEs0shGJwMgG7y6plLwB8lWA+24PSLbWQAywe7vx7cxP
-         E3g5c+7WULkiDSUkcNlfm+R6yikYrS1F6RNX5aVcy1EkZkwqCF0tzrKiPPAhaSrZbOn0
-         Dz26RMnZuiNXxsffZ6d239wFn0JMRgHR7SqTgUZYX+JhH7SOoiFlAEl+iwh5GOM3sIwp
-         StnZpe2CpEeJ88oW8GFFkcFk/Ujw9+m1RPETVFX92TWTgMWGPLoN5YjbbG7hiCt8qIaR
-         wS1y6DiOjnYUO/2+BGFJBq2q8fISl3etLqg8DCDka10PAcbQicSYUehAaAz/noW2x9Qq
-         Bm6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWM/rPy+hdvQhpbou4JW7+e7Wn+wMIND4u8ek6KYdPK9AzfDhVtpiVuxwofbtF1jbkbA+O8OS8+Sks59KaCeDVS2wEVl/DenQjD8FHW
-X-Gm-Message-State: AOJu0YzgITEFtLJ9ExdT6agcX3WeNu7FRMPeiwZDVTP5Bo2s8f1ozucX
-	o9hDTOV9tuXftUpg2jNdjnBgfv6hswfjea9on1C2VTeidPrQ53RTgWkY/x6406E=
-X-Google-Smtp-Source: AGHT+IGhqSO1/rhzuiLgEOL9XfioS/OqMt1YxNJMb8zzs18KkPeun1uTzC/uLpw3ICBDu9lEfl2Qzw==
-X-Received: by 2002:a17:906:3105:b0:a59:bfab:b25a with SMTP id a640c23a62f3a-a6265116f69mr550448566b.63.1716798496875;
-        Mon, 27 May 2024 01:28:16 -0700 (PDT)
-Received: from ?IPV6:2001:a61:139b:bf01:e8eb:4d8f:8770:df82? ([2001:a61:139b:bf01:e8eb:4d8f:8770:df82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817b15sm464678366b.40.2024.05.27.01.28.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 01:28:16 -0700 (PDT)
-Message-ID: <a6c93527-fc78-4182-9341-97e2fe0d1ace@suse.com>
-Date: Mon, 27 May 2024 10:28:15 +0200
+	s=arc-20240116; t=1716798590; c=relaxed/simple;
+	bh=IRg1ZnY4ad7Grky6EACnYJ/1e7/wYjNVqwNwgDIfrEc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WFuTUlaoil3Xu/++1ocAlVuYaOVxCHbBDbMd1QAC4jiL8n1V+erEKYoIf2uRLfDVokS6AAZINxxlDAhZpPJYZLJodpKAaCbTT1OmEBdc9riVMOHvVHOTlsJwWhsi+EeF6IUy3liaFX6a+sIAgSWe6s5BKViAjbrEkA7h2SIjFt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iTO5yAa5; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: adilger@dilger.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716798585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RheZsmz5aig038SHC8M9U7tuJQE9AcezfFpXh6dMu0A=;
+	b=iTO5yAa52j7cLFdsYMo7r2TiUkCcvzagZW+5ym6yCwLkyom22AOZUgDaOyflKWIJjWBWx/
+	4XTyTmk+XdwWtZR/PUWpQuigNUM4Z8en53nC2KdtvgWlRdRvOlwwFn0ewFe8SIOn5S0H6D
+	tmeeYR1uC8tA8mm+YokANQH5fJdOd/A=
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: luis.henriques@linux.dev
+X-Envelope-To: tytso@mit.edu
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Harshad Shirwadkar
+ <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+In-Reply-To: <20240524162231.l5r4niz7awjgfju6@quack3> (Jan Kara's message of
+	"Fri, 24 May 2024 18:22:31 +0200")
+References: <20240523111618.17012-1-luis.henriques@linux.dev>
+	<20240524162231.l5r4niz7awjgfju6@quack3>
+Date: Mon, 27 May 2024 09:29:40 +0100
+Message-ID: <87h6ej64jv.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: usb: smsc95xx: configure external LEDs function for
- EVB-LAN8670-USB
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
- steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240522140817.409936-1-Parthiban.Veerasooran@microchip.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20240522140817.409936-1-Parthiban.Veerasooran@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On 22.05.24 16:08, Parthiban Veerasooran wrote:
+On Fri 24 May 2024 06:22:31 PM +02, Jan Kara wrote;
 
-Hi,
+> On Thu 23-05-24 12:16:18, Luis Henriques (SUSE) wrote:
+>> When a full journal commit is on-going, any fast commit has to be enqueu=
+ed
+>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueue=
+ing
+>> is done only once, i.e. if an inode is already queued in a previous fast
+>> commit entry it won't be enqueued again.  However, if a full commit star=
+ts
+>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs=
+ to
+>> be done into FC_Q_STAGING.  And this is not being done in function
+>> ext4_fc_track_template().
+>>=20
+>> This patch fixes the issue by flagging an inode that is already enqueued=
+ in
+>> either queues.  Later, during the fast commit clean-up callback, if the
+>> inode has a tid that is bigger than the one being handled, that inode is
+>> re-enqueued into STAGING and the spliced back into MAIN.
+>>=20
+>> This bug was found using fstest generic/047.  This test creates several =
+32k
+>> bytes files, sync'ing each of them after it's creation, and then shutting
+>> down the filesystem.  Some data may be loss in this operation; for examp=
+le a
+>> file may have it's size truncated to zero.
+>>=20
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>
+> Thanks for the fix. Some comments below:
+>
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 983dad8c07ec..4c308c18c3da 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -1062,9 +1062,18 @@ struct ext4_inode_info {
+>>  	/* Fast commit wait queue for this inode */
+>>  	wait_queue_head_t i_fc_wait;
+>>=20=20
+>> -	/* Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len */
+>> +	/*
+>> +	 * Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len,
+>> +	 * i_fc_next
+>> +	 */
+>>  	struct mutex i_fc_lock;
+>>=20=20
+>> +	/*
+>> +	 * Used to flag an inode as part of the next fast commit; will be
+>> +	 * reset during fast commit clean-up
+>> +	 */
+>> +	tid_t i_fc_next;
+>> +
+>
+> Do we really need new tid in the inode? I'd be kind of hoping we could use
+> EXT4_I(inode)->i_sync_tid for this - I can see we even already set it in
+> ext4_fc_track_template() and used for similar comparisons in fast commit
+> code.
 
-however you solve this, the descriptors are stored in wire order.
+Ah, true.  It looks like it could be used indeed.  We'll still need a flag
+here, but a simple bool should be enough for that.
 
-> +	if (dev->udev->descriptor.idVendor == 0x184F &&
-> +	    dev->udev->descriptor.idProduct == 0x0051)
-> +		write_buf |= LED_GPIO_CFG_LED_SEL;
+>
+>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>> index 87c009e0c59a..bfdf249f0783 100644
+>> --- a/fs/ext4/fast_commit.c
+>> +++ b/fs/ext4/fast_commit.c
+>> @@ -402,6 +402,8 @@ static int ext4_fc_track_template(
+>>  				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
+>>  				&sbi->s_fc_q[FC_Q_STAGING] :
+>>  				&sbi->s_fc_q[FC_Q_MAIN]);
+>> +	else
+>> +		ei->i_fc_next =3D tid;
+>>  	spin_unlock(&sbi->s_fc_lock);
+>>=20=20
+>>  	return ret;
+>> @@ -1280,6 +1282,15 @@ static void ext4_fc_cleanup(journal_t *journal, i=
+nt full, tid_t tid)
+>>  	list_for_each_entry_safe(iter, iter_n, &sbi->s_fc_q[FC_Q_MAIN],
+>>  				 i_fc_list) {
+>>  		list_del_init(&iter->i_fc_list);
+>> +		if (iter->i_fc_next =3D=3D tid)
+>> +			iter->i_fc_next =3D 0;
+>> +		else if (iter->i_fc_next > tid)
+> 			 ^^^ careful here, TIDs do wrap so you need to use
+> tid_geq() for comparison.
+>
 
-This needs to be
+Yikes!  Thanks, I'll update the code to do that.
 
-if (dev->udev->descriptor.idVendor == cpu_to_le16(0x184F) &&
-	dev->udev->descriptor.idProduct == cpu_to_le16(0x0051))
+>> +			/*
+>> +			 * re-enqueue inode into STAGING, which will later be
+>> +			 * splice back into MAIN
+>> +			 */
+>> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+>> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+>>  		ext4_clear_inode_state(&iter->vfs_inode,
+>>  				       EXT4_STATE_FC_COMMITTING);
+>>  		if (iter->i_sync_tid <=3D tid)
+> 				     ^^^ and I can see this is buggy as
+> well and needs tid_geq() (not your fault obviously).
 
-	HTH
-		Oliver
+Yeah, good point.  I can that too in v3.
+
+Again, thanks a lot for your review!
+
+Cheers,
+--=20
+Lu=C3=ADs
 
