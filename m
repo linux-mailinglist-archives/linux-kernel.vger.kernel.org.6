@@ -1,324 +1,144 @@
-Return-Path: <linux-kernel+bounces-189939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0398CF76C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:21:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9D88CF774
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB5B1C20F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7A61F21582
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E8B323D;
-	Mon, 27 May 2024 02:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1DC23D7;
+	Mon, 27 May 2024 02:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksYQ7rkd"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j2IykAlW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A090E38C;
-	Mon, 27 May 2024 02:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A36D10E5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716776462; cv=none; b=JkX0PD+qLpLLNHaxTVE+bwa9BoRPt2wQZRmcW/+yLZttHC/7HgkYoiy2dyGCetba/jgPqoXo0dNb+aWWuCdFedDLUK9r3rBxbumClH08W08/wUWheo1Zlyo2r4NadKtQCRUutmgZ4WMN566nAMogrBIG2opdBe5n8PiZ7e+Rwco=
+	t=1716777794; cv=none; b=F77Tmc/MnElPCb/chS7R/cpdXFDrsKk+OCEQaSPHLr/p0y66du4f53BQDbYgQCuJ4GcLLDhc5mv9PV0OZRewcv3f1nfPMr5ZwPOaSM1HCJF0668/cIv229zs6IGE0Ts/R0kD/zlDb1VOVoCcwfH913e2YJDwBfkAEZ05EJfuMXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716776462; c=relaxed/simple;
-	bh=8xvabG6/BcJ5K1hea946q4r4qo0WFZdduPQJhPCnuzE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DTJnp6V7OVd9bSnE0q9MujxN1cjZwb3aKwgT1rdmdqwduiXc4u6VrcLAMcnqCYoIXBYxpgzu9E6+iJz4qN32/zLS7Qqgors6O+2eYohRhv1hSQECCsmuIERctM3sZy9kgiMMfQjw6QnJe7Uft+7z6PlqR12+kwsiwzEFrwmRql0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksYQ7rkd; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f6bddf57f6so5993811b3a.0;
-        Sun, 26 May 2024 19:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716776460; x=1717381260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTCB9YMJ5c3P04qp9UfuZvhdVWxo9nPAMP6wDm7zFWI=;
-        b=ksYQ7rkdFyptdrIG/G9PMKTJw/avs8M5F3bUzJx2D+sVcsAyDu17K516PAovP34fFq
-         yw5eeZqXuXVw4ZxJkA0ATuUAIDbcGaFmE63OaKR0gfaEEkLdHzGIiTs8jx4ndxvcEYsy
-         1nYMC/A0s0REjKY/EwZbp7yl6YWjbLskvh6w28f35TAdGXoFyFhonQEI0KeOc0/E5g4c
-         1iXeUSZW8ZaBTIJ8XRjFuyajL+vmytI1VSnG9JMrrFJAPbCLiWwry7hwRry8SDZhfEkI
-         kDsQvHn22ZL+VqZQj7xSt5BXmy0Mk7+rZ5zlFlUKwdE5/khWpVSFOwgoWaLa78EcAWtD
-         504A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716776460; x=1717381260;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kTCB9YMJ5c3P04qp9UfuZvhdVWxo9nPAMP6wDm7zFWI=;
-        b=nHcIr3nT8RxP0zIzsSeO3xdH9vmXcAZ/Ht8wOIiP83O6D3yY3SnPv8btR7v6z6AB7u
-         WTBNFPhPLuzNjsPRtNr4H2Tuia6Xu6VVlXXN+dhz6uRgvejYhjdeX5r+0E4/wfwej0I7
-         +pw3/flitSI5vGvqNloBJ1JpZ23JfmQ1mcim+i68KUOiUp09BG0mpKAyavbi+cSOxqHI
-         22AY6TxVdjlHpQCi9kbQgJFWIzw/UhTA70P9aTYmy4hxZDUoqMQc4ePLKbKM6bhLYwbv
-         2fICrYq6b59SY80WZHPuw3cjC/k+lS2+99Z5fhkOfQmGmkHODM7WM9edc677u95JH4CO
-         VCdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXUf7wz9WtL4oHiovimU6w/jakABiuZMrcOsQpIeac+vL062MU8peLiBsatVE8ozJQwqyKWYiIRKHE3Qdxed9XrMztQCSR67MVR8qBfifcCxpIMkrLhaNDNa+de5vRdJV4mAiBntNbdw==
-X-Gm-Message-State: AOJu0YwNYltSC+QBx9AzXQ+Zk7zo0vwKZAJNvPJTjWmeX+rKtVcYZkVF
-	3FeA5zZyWzUBSKdRzPsiaaYB55yEeLjw1JwrJaR/d7EqeeJpbn4N
-X-Google-Smtp-Source: AGHT+IHIpbifuhRbtMptst2IR+v5hq6qg/hEKOC0HACV/2qiQJwQlm1FgP1fRHAPgl4u3HkI4dBG/A==
-X-Received: by 2002:aa7:9302:0:b0:6f3:f30a:19b with SMTP id d2e1a72fcca58-6f8f38010f7mr7553576b3a.18.1716776459707;
-        Sun, 26 May 2024 19:20:59 -0700 (PDT)
-Received: from localhost.localdomain ([36.112.179.1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822198a705sm5004137a12.36.2024.05.26.19.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 19:20:59 -0700 (PDT)
-From: liweihao <cn.liweihao@gmail.com>
-X-Google-Original-From: liweihao <liweihao@loongson-pc>
-To: arinc.unal@arinc9.com,
-	sergio.paracuellos@gmail.com,
-	sean.wang@kernel.org,
-	linus.walleij@linaro.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Weihao Li <cn.liweihao@gmail.com>
-Subject: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
-Date: Mon, 27 May 2024 10:20:36 +0800
-Message-Id: <20240527022036.31985-1-user@blabla>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1716777794; c=relaxed/simple;
+	bh=aijCroK+skSmbErBZD/QtaAfhNydV0Ttjd10juiMJWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DhGoKist4XXowdVX/6zNmtQ8Ve13nidz0ZSCgvaRrPNnLKDlTQcrloybojdyFAi/j8IuNGCOhiEhmJHmN4SptrDxJ4+T0tF57Roza61iwqk5AgAboKiXEpC6E/6zTi8aXA5yKghFlHWVhA2IDCUA2iiLoMvptiZj/JoJSbEqksA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j2IykAlW; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716777792; x=1748313792;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aijCroK+skSmbErBZD/QtaAfhNydV0Ttjd10juiMJWA=;
+  b=j2IykAlW2o4Pg4txrSh2DANp2mWYp08W5KaKe8y+8pHpxn/L5r0cNlNl
+   kOQQ/EwPwM9Cl9YwrgNC+P7ggfbe87DN8Wg/I9Ynv+6Ti49AJsCEhcbzp
+   pXo4mZr9zE36RC+a+1S0hhxEmMftwflM+THkpFag6YLLvHimlu7B8iTYa
+   ab48fqe3EZEmBicaNPwaHa8+z/NkJwj8bwH4mSl6uJ6T+EjGZZZdYe0KJ
+   rYhz/iPq1G5S8/ZETHTZn+r5TExxu+sikRnjFB9Ck2zCAsau4pPGjHD+I
+   c4cGxiXu2xU8aAsH2iBpzl5eOZrNWS4pKpePLEmr1HhUgNwu1kbzwY8/a
+   w==;
+X-CSE-ConnectionGUID: jzOZlxQDRQOHdNVBpxdcZQ==
+X-CSE-MsgGUID: 6XDZSrKfQZmiWF156kk/bQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13194000"
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="13194000"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 19:43:12 -0700
+X-CSE-ConnectionGUID: GN87OtXBQdaU1xN+QmUOzw==
+X-CSE-MsgGUID: Nn//7A8sQU2AZ6HuU2jAjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="34593873"
+Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.200]) ([10.125.110.200])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 19:43:11 -0700
+Message-ID: <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
+Date: Sun, 26 May 2024 19:43:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers over
+ 90%
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com,
+ vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
+ willy@infradead.org, david@redhat.com, peterz@infradead.org,
+ luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, rjgolo@gmail.com
+References: <20240510065206.76078-1-byungchul@sk.com>
+ <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
+ <20240527015732.GA61604@system.software.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240527015732.GA61604@system.software.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Weihao Li <cn.liweihao@gmail.com>
+On 5/26/24 18:57, Byungchul Park wrote:
+..
+> Plus, I will add another give-up at code changing the permission of vma
+> to writable.
 
-The current version of the pinctrl driver has some issues:
+I suspect you have a much more general problem on your hands. Just
+tweaking the VFS or mmap() code likely isn't going to cut it.
 
-1. Duplicated "gpio" pmx function
+I guess we'll see what you come up with next, but this email was really
+just the result of Vlastimil and I chatting on IRC for five minutes
+about this set.
 
-The common code will add a "gpio" pmx functon to every pin group, so
-it's not necessary to define a separate "gpio" pmx function in pin
-groups.
-
-2. Duplicated pmx function name
-
-There are some same function name in different pin groups, which will
-cause some problems. For example, when we want to use PAD_GPIO0 as
-refclk output function, the common clk framework code will search the
-entire pin function lists, then return the first one matched, in this
-case the matched function list only include the PAD_CO_CLKO pin group
-because there are three "refclk" pin function, which is added by
-refclk_grp, spi_cs1_grp and gpio_grp.
-
-To solve this problem, a simple way is just add a pingrp refix to
-function name like mt7620 pinctrl driver does.
-
-3. Useless "-" or "rsvd" functon
-
-It's really unnecessary to add a reserved pin mux function to the
-function lists, because we never use it.
-
-Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt76x8.c | 88 +++++++----------------
- 1 file changed, 27 insertions(+), 61 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt76x8.c b/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-index e7d6ad2f62e4e..2bc8d4409ca27 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-@@ -37,36 +37,30 @@
- 
- static struct mtmips_pmx_func pwm1_grp[] = {
- 	FUNC("sdxc d6", 3, 19, 1),
--	FUNC("utif", 2, 19, 1),
--	FUNC("gpio", 1, 19, 1),
-+	FUNC("pwm1 utif", 2, 19, 1),
- 	FUNC("pwm1", 0, 19, 1),
- };
- 
- static struct mtmips_pmx_func pwm0_grp[] = {
- 	FUNC("sdxc d7", 3, 18, 1),
--	FUNC("utif", 2, 18, 1),
--	FUNC("gpio", 1, 18, 1),
-+	FUNC("pwm0 utif", 2, 18, 1),
- 	FUNC("pwm0", 0, 18, 1),
- };
- 
- static struct mtmips_pmx_func uart2_grp[] = {
- 	FUNC("sdxc d5 d4", 3, 20, 2),
--	FUNC("pwm", 2, 20, 2),
--	FUNC("gpio", 1, 20, 2),
-+	FUNC("uart2 pwm", 2, 20, 2),
- 	FUNC("uart2", 0, 20, 2),
- };
- 
- static struct mtmips_pmx_func uart1_grp[] = {
- 	FUNC("sw_r", 3, 45, 2),
--	FUNC("pwm", 2, 45, 2),
--	FUNC("gpio", 1, 45, 2),
-+	FUNC("uart1 pwm", 2, 45, 2),
- 	FUNC("uart1", 0, 45, 2),
- };
- 
- static struct mtmips_pmx_func i2c_grp[] = {
--	FUNC("-", 3, 4, 2),
- 	FUNC("debug", 2, 4, 2),
--	FUNC("gpio", 1, 4, 2),
- 	FUNC("i2c", 0, 4, 2),
- };
- 
-@@ -76,128 +70,100 @@ static struct mtmips_pmx_func wdt_grp[] = { FUNC("wdt", 0, 38, 1) };
- static struct mtmips_pmx_func spi_grp[] = { FUNC("spi", 0, 7, 4) };
- 
- static struct mtmips_pmx_func sd_mode_grp[] = {
--	FUNC("jtag", 3, 22, 8),
--	FUNC("utif", 2, 22, 8),
--	FUNC("gpio", 1, 22, 8),
-+	FUNC("sdxc jtag", 3, 22, 8),
-+	FUNC("sdxc utif", 2, 22, 8),
- 	FUNC("sdxc", 0, 22, 8),
- };
- 
- static struct mtmips_pmx_func uart0_grp[] = {
--	FUNC("-", 3, 12, 2),
--	FUNC("-", 2, 12, 2),
--	FUNC("gpio", 1, 12, 2),
- 	FUNC("uart0", 0, 12, 2),
- };
- 
- static struct mtmips_pmx_func i2s_grp[] = {
- 	FUNC("antenna", 3, 0, 4),
- 	FUNC("pcm", 2, 0, 4),
--	FUNC("gpio", 1, 0, 4),
- 	FUNC("i2s", 0, 0, 4),
- };
- 
- static struct mtmips_pmx_func spi_cs1_grp[] = {
--	FUNC("-", 3, 6, 1),
--	FUNC("refclk", 2, 6, 1),
--	FUNC("gpio", 1, 6, 1),
-+	FUNC("spi refclk", 2, 6, 1),
- 	FUNC("spi cs1", 0, 6, 1),
- };
- 
- static struct mtmips_pmx_func spis_grp[] = {
- 	FUNC("pwm_uart2", 3, 14, 4),
--	FUNC("utif", 2, 14, 4),
--	FUNC("gpio", 1, 14, 4),
-+	FUNC("spis utif", 2, 14, 4),
- 	FUNC("spis", 0, 14, 4),
- };
- 
- static struct mtmips_pmx_func gpio_grp[] = {
- 	FUNC("pcie", 3, 11, 1),
--	FUNC("refclk", 2, 11, 1),
--	FUNC("gpio", 1, 11, 1),
--	FUNC("gpio", 0, 11, 1),
-+	FUNC("gpio refclk", 2, 11, 1),
- };
- 
- static struct mtmips_pmx_func p4led_kn_grp[] = {
--	FUNC("jtag", 3, 30, 1),
--	FUNC("utif", 2, 30, 1),
--	FUNC("gpio", 1, 30, 1),
-+	FUNC("p4led_kn jtag", 3, 30, 1),
-+	FUNC("p4led_kn utif", 2, 30, 1),
- 	FUNC("p4led_kn", 0, 30, 1),
- };
- 
- static struct mtmips_pmx_func p3led_kn_grp[] = {
--	FUNC("jtag", 3, 31, 1),
--	FUNC("utif", 2, 31, 1),
--	FUNC("gpio", 1, 31, 1),
-+	FUNC("p3led_kn jtag", 3, 31, 1),
-+	FUNC("p3led_kn utif", 2, 31, 1),
- 	FUNC("p3led_kn", 0, 31, 1),
- };
- 
- static struct mtmips_pmx_func p2led_kn_grp[] = {
--	FUNC("jtag", 3, 32, 1),
--	FUNC("utif", 2, 32, 1),
--	FUNC("gpio", 1, 32, 1),
-+	FUNC("p2led_kn jtag", 3, 32, 1),
-+	FUNC("p2led_kn utif", 2, 32, 1),
- 	FUNC("p2led_kn", 0, 32, 1),
- };
- 
- static struct mtmips_pmx_func p1led_kn_grp[] = {
--	FUNC("jtag", 3, 33, 1),
--	FUNC("utif", 2, 33, 1),
--	FUNC("gpio", 1, 33, 1),
-+	FUNC("p1led_kn jtag", 3, 33, 1),
-+	FUNC("p1led_kn utif", 2, 33, 1),
- 	FUNC("p1led_kn", 0, 33, 1),
- };
- 
- static struct mtmips_pmx_func p0led_kn_grp[] = {
--	FUNC("jtag", 3, 34, 1),
--	FUNC("rsvd", 2, 34, 1),
--	FUNC("gpio", 1, 34, 1),
-+	FUNC("p0led_kn jtag", 3, 34, 1),
- 	FUNC("p0led_kn", 0, 34, 1),
- };
- 
- static struct mtmips_pmx_func wled_kn_grp[] = {
--	FUNC("rsvd", 3, 35, 1),
--	FUNC("rsvd", 2, 35, 1),
--	FUNC("gpio", 1, 35, 1),
- 	FUNC("wled_kn", 0, 35, 1),
- };
- 
- static struct mtmips_pmx_func p4led_an_grp[] = {
--	FUNC("jtag", 3, 39, 1),
--	FUNC("utif", 2, 39, 1),
--	FUNC("gpio", 1, 39, 1),
-+	FUNC("p4led_an jtag", 3, 39, 1),
-+	FUNC("p4led_an utif", 2, 39, 1),
- 	FUNC("p4led_an", 0, 39, 1),
- };
- 
- static struct mtmips_pmx_func p3led_an_grp[] = {
--	FUNC("jtag", 3, 40, 1),
--	FUNC("utif", 2, 40, 1),
--	FUNC("gpio", 1, 40, 1),
-+	FUNC("p3led_an jtag", 3, 40, 1),
-+	FUNC("p3led_an utif", 2, 40, 1),
- 	FUNC("p3led_an", 0, 40, 1),
- };
- 
- static struct mtmips_pmx_func p2led_an_grp[] = {
--	FUNC("jtag", 3, 41, 1),
--	FUNC("utif", 2, 41, 1),
--	FUNC("gpio", 1, 41, 1),
-+	FUNC("p2led_an jtag", 3, 41, 1),
-+	FUNC("p2led_an utif", 2, 41, 1),
- 	FUNC("p2led_an", 0, 41, 1),
- };
- 
- static struct mtmips_pmx_func p1led_an_grp[] = {
--	FUNC("jtag", 3, 42, 1),
--	FUNC("utif", 2, 42, 1),
--	FUNC("gpio", 1, 42, 1),
-+	FUNC("p1led_an jtag", 3, 42, 1),
-+	FUNC("p1led_an utif", 2, 42, 1),
- 	FUNC("p1led_an", 0, 42, 1),
- };
- 
- static struct mtmips_pmx_func p0led_an_grp[] = {
--	FUNC("jtag", 3, 43, 1),
--	FUNC("rsvd", 2, 43, 1),
--	FUNC("gpio", 1, 43, 1),
-+	FUNC("p0led_an jtag", 3, 43, 1),
- 	FUNC("p0led_an", 0, 43, 1),
- };
- 
- static struct mtmips_pmx_func wled_an_grp[] = {
--	FUNC("rsvd", 3, 44, 1),
--	FUNC("rsvd", 2, 44, 1),
--	FUNC("gpio", 1, 44, 1),
- 	FUNC("wled_an", 0, 44, 1),
- };
- 
--- 
-2.39.2
-
+It has absolutely not been tested nor reviewed enough.  <fud>I hope the
+performance gains stick around once more of the bugs are gone.</fud>
 
