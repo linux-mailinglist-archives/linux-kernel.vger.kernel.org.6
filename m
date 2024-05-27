@@ -1,157 +1,102 @@
-Return-Path: <linux-kernel+bounces-191178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A1D8D07A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D22B8D0798
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21806297146
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F941F2179D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAA316F85A;
-	Mon, 27 May 2024 15:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6H+pw8+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D8B167299;
-	Mon, 27 May 2024 15:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7947015F41D;
+	Mon, 27 May 2024 15:58:04 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 46B4516F0DC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825510; cv=none; b=n90w5xtpmWMwvnohATnyp6G9DJzFPj1fOBpWzBx/GaHrecdV5fQOOZ9Y45+xSrI5uzai/edKP/BoOAKUUEw0PiWUbAfe/KlZz/Gen4VcnP18W1xpF4LeNPumUSp4XMEKtDDTajdR5VSAYt0tjFHwmDN8g+Ash9HosNC2apkZYFY=
+	t=1716825484; cv=none; b=LTWceDW77P3adxyPhLCpXasXGhVN0WEvu2OQMRW5MC2uwOdT6sroa38n/LfOejTWyCfMqISjM0kS+D31Cu3nDwwb1aTMNqLtdq9/T5hNuJ243KM6w5U76qTDw6DvFLToH2eHORCI0ivH03cW0PK8vCfn/l41IBX/W5rEuiBRgN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825510; c=relaxed/simple;
-	bh=1K2NBI0Y7/fYJW/usZ6Ws/DhvePpAOIipLG6PE2fSsU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QwOSoB9t2DKTHoqSNmLalvKtdzdRecRokC4HSdqsQ5987nYpkNxUN+EanMf5n7SCoFLrk8daWPKCCy6hRdKjkphUO321z8dqr62HzkREKPAx1CfSAD/4ioQdgrlbXo7qd8VgDYVvpLUXlh8XL3wdtSq1pQwcKiIXpmt63lBZtZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6H+pw8+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1802C32781;
-	Mon, 27 May 2024 15:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716825510;
-	bh=1K2NBI0Y7/fYJW/usZ6Ws/DhvePpAOIipLG6PE2fSsU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q6H+pw8+kNMLJKxdZKpQDp5WAQFH2ddmzMl/DZzK8EqvDfDG1Lot2XiKRAk+Bny9h
-	 xzg9ueA+L9InZdFbcI/Hz1UiBaiqg6AagugNsDSgw6dY7BpO3UUxti4rILzyeRnZao
-	 0NNu1LbzrKr0rFYL/OHMx7xQH4hMvf9JMT3f+NQklyCRnDUnqlS1+XQtBi0fju+d+I
-	 0paDJJFfcRdSRhmD/3QBZh4t59PA8rcB0YX62HjFL1xF/dBwx32txQlhquTdAyHirE
-	 LMPb56XKNFThONuolrvXzC23U1TmW6nd9oTU6XGlF5HzwESdT1z21ni9koFaf3eETw
-	 X2MFL5ZMSHz3w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	nathan@kernel.org,
-	arnd@arndb.de,
-	bhe@redhat.com,
-	geert@linux-m68k.org,
-	rppt@kernel.org,
-	bhelgaas@google.com,
-	christophe.leroy@csgroup.eu,
-	stanislav.kinsburskii@gmail.com,
-	wangkefeng.wang@huawei.com,
-	linuxppc-dev@lists.ozlabs.org,
-	llvm@lists.linux.dev
-Subject: [PATCH AUTOSEL 5.15 6/6] powerpc/io: Avoid clang null pointer arithmetic warnings
-Date: Mon, 27 May 2024 11:57:56 -0400
-Message-ID: <20240527155808.3866107-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527155808.3866107-1-sashal@kernel.org>
-References: <20240527155808.3866107-1-sashal@kernel.org>
+	s=arc-20240116; t=1716825484; c=relaxed/simple;
+	bh=k6N9dn7iRJq8ZaIqt4CaMWQZbxwAmp4kdB6ZdQ6EO1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdnUZ752tsTPUmxR4EAmwWGYmvP7VJ8NV9Y3Ef0kTF9b/MCnBpYgSk++RElrDLlKhGcqZWUNB9Pm3+GneBUuGmNrvXFhhq8RTjeooEjG/Gq5y1DGMRpDB0yM/+TPmHV39p26B4+NXiI0CgVWF3mW8G00hYChkhbkxD6SU60jqAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 663299 invoked by uid 1000); 27 May 2024 11:58:01 -0400
+Date: Mon, 27 May 2024 11:58:01 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 1/4] tools/memory-model: Legitimize current use of
+ tags in LKMM macros
+Message-ID: <aacd17e1-15b3-4bd9-9052-9c7e309fb2d8@rowland.harvard.edu>
+References: <20240527152253.195956-1-jonas.oberhauser@huaweicloud.com>
+ <20240527152253.195956-2-jonas.oberhauser@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.160
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527152253.195956-2-jonas.oberhauser@huaweicloud.com>
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+On Mon, May 27, 2024 at 05:22:50PM +0200, Jonas Oberhauser wrote:
+> The current macros in linux-kernel.def reference instructions such as
+> __xchg{mb} or __cmpxchg{acquire}, which are invalid combinations of tags
+> and instructions according to the declarations in linux-kernel.bell.
+> This works with current herd7 because herd7 removes these tags anyways
+> and does not actually enforce validity of combinations at all.
+> 
+> If a future herd7 version no longer applies these hardcoded
+> transformations, then all currently invalid combinations will actually
+> appear on some instruction.
+> 
+> We therefore adjust the declarations to make the resulting combinations
+> valid, by adding the 'mb tag to the set of Accesses and allowing all
+> Accesses to appear on all read, write, and RMW instructions.
+> 
+> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+> ---
+>  tools/memory-model/linux-kernel.bell | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index ce068700939c..1b2444cdf8d1 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -16,10 +16,11 @@
+>  enum Accesses = 'once (*READ_ONCE,WRITE_ONCE*) ||
+>  		'release (*smp_store_release*) ||
+>  		'acquire (*smp_load_acquire*) ||
+> -		'noreturn (* R of non-return RMW *)
+> -instructions R[{'once,'acquire,'noreturn}]
+> -instructions W[{'once,'release}]
+> -instructions RMW[{'once,'acquire,'release}]
+> +		'noreturn (* R of non-return RMW *) ||
+> +		'mb (*xchg(),compare_exchange(),...*)
 
-[ Upstream commit 03c0f2c2b2220fc9cf8785cd7b61d3e71e24a366 ]
+It would be better to write cmpxchg() instead of compare_exchange().
 
-With -Wextra clang warns about pointer arithmetic using a null pointer.
-When building with CONFIG_PCI=n, that triggers a warning in the IO
-accessors, eg:
+Alan
 
-  In file included from linux/arch/powerpc/include/asm/io.h:672:
-  linux/arch/powerpc/include/asm/io-defs.h:23:1: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     23 | DEF_PCI_AC_RET(inb, u8, (unsigned long port), (port), pio, port)
-        | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ...
-  linux/arch/powerpc/include/asm/io.h:591:53: note: expanded from macro '__do_inb'
-    591 | #define __do_inb(port)          readb((PCI_IO_ADDR)_IO_BASE + port);
-        |                                       ~~~~~~~~~~~~~~~~~~~~~ ^
-
-That is because when CONFIG_PCI=n, _IO_BASE is defined as 0.
-
-Although _IO_BASE is defined as plain 0, the cast (PCI_IO_ADDR) converts
-it to void * before the addition with port happens.
-
-Instead the addition can be done first, and then the cast. The resulting
-value will be the same, but avoids the warning, and also avoids void
-pointer arithmetic which is apparently non-standard.
-
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Closes: https://lore.kernel.org/all/CA+G9fYtEh8zmq8k8wE-8RZwW-Qr927RLTn+KqGnq1F=ptaaNsA@mail.gmail.com
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240503075619.394467-1-mpe@ellerman.id.au
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/powerpc/include/asm/io.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index a4fe1292909e6..56eb8ac443930 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -556,12 +556,12 @@ __do_out_asm(_rec_outl, "stwbrx")
- #define __do_inw(port)		_rec_inw(port)
- #define __do_inl(port)		_rec_inl(port)
- #else /* CONFIG_PPC32 */
--#define __do_outb(val, port)	writeb(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_outw(val, port)	writew(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_outl(val, port)	writel(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_inb(port)		readb((PCI_IO_ADDR)_IO_BASE + port);
--#define __do_inw(port)		readw((PCI_IO_ADDR)_IO_BASE + port);
--#define __do_inl(port)		readl((PCI_IO_ADDR)_IO_BASE + port);
-+#define __do_outb(val, port)	writeb(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_outw(val, port)	writew(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_outl(val, port)	writel(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_inb(port)		readb((PCI_IO_ADDR)(_IO_BASE + port));
-+#define __do_inw(port)		readw((PCI_IO_ADDR)(_IO_BASE + port));
-+#define __do_inl(port)		readl((PCI_IO_ADDR)(_IO_BASE + port));
- #endif /* !CONFIG_PPC32 */
- 
- #ifdef CONFIG_EEH
-@@ -577,12 +577,12 @@ __do_out_asm(_rec_outl, "stwbrx")
- #define __do_writesw(a, b, n)	_outsw(PCI_FIX_ADDR(a),(b),(n))
- #define __do_writesl(a, b, n)	_outsl(PCI_FIX_ADDR(a),(b),(n))
- 
--#define __do_insb(p, b, n)	readsb((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_insw(p, b, n)	readsw((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_insl(p, b, n)	readsl((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_outsb(p, b, n)	writesb((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
--#define __do_outsw(p, b, n)	writesw((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
--#define __do_outsl(p, b, n)	writesl((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
-+#define __do_insb(p, b, n)	readsb((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_insw(p, b, n)	readsw((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_insl(p, b, n)	readsl((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_outsb(p, b, n)	writesb((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
-+#define __do_outsw(p, b, n)	writesw((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
-+#define __do_outsl(p, b, n)	writesl((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
- 
- #define __do_memset_io(addr, c, n)	\
- 				_memset_io(PCI_FIX_ADDR(addr), c, n)
--- 
-2.43.0
-
+> +instructions R[Accesses]
+> +instructions W[Accesses]
+> +instructions RMW[Accesses]
+>  
+>  enum Barriers = 'wmb (*smp_wmb*) ||
+>  		'rmb (*smp_rmb*) ||
+> -- 
+> 2.34.1
+> 
 
