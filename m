@@ -1,184 +1,115 @@
-Return-Path: <linux-kernel+bounces-190605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0678D005E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718F58D004A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49227282C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116671F23868
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE815E5CA;
-	Mon, 27 May 2024 12:47:39 +0000 (UTC)
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1258815E5CA;
+	Mon, 27 May 2024 12:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mROal7UP"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B6C13AD12
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE35B15E5A9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814058; cv=none; b=OMDqyoiy/lCFu7gwlLBJDQjWFn6vxhw5dJbiBZzsQDhiw8emoOgDgCNzOd0REZza7kWvm0UmhUcDu9VjY7ZdgKMazKGJy6WpWyDpQIgT01TM5QJWaBeFEJ72fLQxJyy2oO8AhG++911ma2DVyT4QdaR7jsgkp+y40ydt1Yjlq80=
+	t=1716813744; cv=none; b=sPJDrP0t4+jtIokhdLbGZM7+sWq8ddoeUVNvNo3o0++wAEnqZDpDzsuHoXXR7S5SbRJ4NQi4mq42m9Yzzafi7fRC1KTJDa9Tr4Zwzt2gVDqgfG+HFDGpTEIJiy7kJNzKzVi8MuATqMJb+1ay7sP9+CsuuLY+6y2RqaCaH6+Hl4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814058; c=relaxed/simple;
-	bh=/6WTDSc5iLDDk2l/Y6xCKmU+DGYC5Ga9O6+yrTK+INs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PrL8QGthbSEQQhexYjH2gbvgSGVkhumSbyofSH+GOhYLvXHavy+vGQqYGBx/dAfeVVBw8mdN3gu8VLMmfRJFXv4StPpalIzQW1IOpP6SVy5PJkLlrKA/gv5zToXXzDAF1Phpawl9MwTJN3xLiVERNu0SmJbm7lkSdRjg6F0eTCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4VnwHq25NSz4x728
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:41:27 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c993:5573:f894:7353])
-	by michel.telenet-ops.be with bizsmtp
-	id UChF2C0022nC7mg06ChFXw; Mon, 27 May 2024 14:41:19 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sBZeD-00CfTk-6G;
-	Mon, 27 May 2024 14:41:15 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sBZf8-003hdh-UO;
-	Mon, 27 May 2024 14:41:14 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCHPATCH 3/3] pmdomain: renesas: rmobile-sysc: Remove serial console handling
-Date: Mon, 27 May 2024 14:41:13 +0200
-Message-Id: <f7e9a5e163046511ed63f6832eac4474beea6513.1716811405.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1716811405.git.geert+renesas@glider.be>
-References: <cover.1716811405.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1716813744; c=relaxed/simple;
+	bh=gvmIvei/evck27eAyXPfMfAUpIW//VOl8Dual8yqM7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b3tj+wLJ1pldLxyBKf2U8RlHUQmCfslIQQZlRJJJuh3QLUpeJZL5QDszv54s7aETEWf4lRYbRFeuYr1wV3mNyVnJBULKWb42QfiKuVLH7mN8vaw9+XQUDI2e4VVAIAMlyPTnoDYOiaQtSZo8LUrxO3mjyeXF3k0jalmrQjONpPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mROal7UP; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dee72970df8so4113941276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716813742; x=1717418542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RreWtAd7Wi7xpCgHNvoy0257vlpp2GBbsNvbWW0dsCg=;
+        b=mROal7UPeV2+tDOeg7vELm3fdnAOS2UtsxNIQR93+IGkKg2PeHQ4YyjhmoAj1aa3/r
+         A2yFsVPYqHOfW9WEXIA4MbOetgHi+ea1yB20ZLG1PmNmtQIDaQwDPsvbcPYe99ayKRIX
+         VJZmoV4mFCM4bOFV/bWoNX8qfELEM2p2r7jBu4tiITj0KXXrxcPSaiA1MV/G4vjTM0lB
+         mVlC9FSYngw4/VlTY5UqiDFXSESXuteL3bfKTpkB5dekpP7+G3DSPHGc6F0MBO3Jvn8d
+         JterMso9fM9vfabEGXWrp+WvMOLCpmhal/pNqcJ/vHju21Z3joHdTpUD/tmLzcUO+skT
+         sbDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716813742; x=1717418542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RreWtAd7Wi7xpCgHNvoy0257vlpp2GBbsNvbWW0dsCg=;
+        b=mlU+A9F5Xy3AhlMHymgtNKRmnOtFMTaZtWOJMnE24TWNLxDvVuH6Mb/wqvN2nYmIE/
+         2ngMAHensKl00zpAMjgJ8Hzp9mAwqq1e/Ty5qmw11nTHwwCVH+xn8/ig5XoBuuJWHBF9
+         HMsZwz0+yF8ReobtaHfJ4DcJV2iHqCxlqlfy6TmdhoNt5m6Uta58e/IkWhO7F7Bm7pXC
+         RqH6jPYW95cDfeeaRr9qk1vNwkfbZI59N3Rqg9QIUYH1WwEdtVYeTgOdD2HtkqDXWkHI
+         kSlzHZS8TwiH9FaM9w0yXg8K8p4yqmdmKHfP8oos6zIiMHuZm5Ue8TYgNhNqNBEU3/2Q
+         UuWA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1qJtm8Iw4+Ok8eaYwEKFqs/JrSpSFUq3/UJdRuj6elFynXcCCE5iuy2ptmsYG29eSJsi0bwtJhcw5IdaNzYPu5Z8Jhe7Qf0kaZ2M/
+X-Gm-Message-State: AOJu0YzGhvuJ6xR0BqEOdabbdNZgsbwGUTEMIRoDOjdDryKf09Io19yu
+	nXYvrBUBmOR/hjGQsNyGOP7mIKEMHE/ng732gwH5zYwjE3OQGHFruks6AtSN0k5pDvKn2Lcq+Ls
+	Fmg2B4cW4MKl2LGucb/gfNHgsRKWC854uNNXQcw==
+X-Google-Smtp-Source: AGHT+IGnKKyNaK0erydWgd+7egLyO1LEZVbwIGZL84HNMIAWKZun14kUnLhTrRDtqLO6jO06aGMtpPufyBXFe4UUfcs=
+X-Received: by 2002:a25:c302:0:b0:df4:d98d:3e4f with SMTP id
+ 3f1490d57ef6-df5422399dfmr8673203276.12.1716813741865; Mon, 27 May 2024
+ 05:42:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240513-imx91-pinctrl-v1-0-c99a23c6843a@nxp.com>
+In-Reply-To: <20240513-imx91-pinctrl-v1-0-c99a23c6843a@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 May 2024 14:42:10 +0200
+Message-ID: <CACRpkdYP1Tp6Cxn7xMNusZi=DP6LPUUTaKOPzW4FChu3oEbkFQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: freescale: support i.MX91 pinctrl
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since commit a47cf07f60dcb02d ("serial: core: Call
-device_set_awake_path() for console port"), the serial driver properly
-handles the case where the serial console is part of the awake path, so
-the special serial console handling can be removed from the R-Mobile
-SYSC PM Domain driver.
+On Mon, May 13, 2024 at 11:12=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.c=
+om> wrote:
 
-The PM Domain containing the serial port can now be powered down when
-none of its devices are in use.  Before, it was only powered down during
-s2ram without no_console_suspend.
+> Add i.MX91 IOMUXC binding doc and driver.
+> i.MX91 IOMUXC has similar design as i.MX93 IOMUXC, so reuse the
+> i.MX93 binding.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pmdomain/renesas/rmobile-sysc.c | 33 +------------------------
- 1 file changed, 1 insertion(+), 32 deletions(-)
+Patches applied for v6.11.
 
-diff --git a/drivers/pmdomain/renesas/rmobile-sysc.c b/drivers/pmdomain/renesas/rmobile-sysc.c
-index 0b77f37787d58f48..cc1f6f8b7a746850 100644
---- a/drivers/pmdomain/renesas/rmobile-sysc.c
-+++ b/drivers/pmdomain/renesas/rmobile-sysc.c
-@@ -10,7 +10,6 @@
-  *  Copyright (C) 2011 Magnus Damm
-  */
- #include <linux/clk/renesas.h>
--#include <linux/console.h>
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-@@ -31,8 +30,6 @@
- 
- struct rmobile_pm_domain {
- 	struct generic_pm_domain genpd;
--	struct dev_power_governor *gov;
--	int (*suspend)(void);
- 	void __iomem *base;
- 	unsigned int bit_shift;
- };
-@@ -49,13 +46,6 @@ static int rmobile_pd_power_down(struct generic_pm_domain *genpd)
- 	unsigned int mask = BIT(rmobile_pd->bit_shift);
- 	u32 val;
- 
--	if (rmobile_pd->suspend) {
--		int ret = rmobile_pd->suspend();
--
--		if (ret)
--			return ret;
--	}
--
- 	if (readl(rmobile_pd->base + PSTR) & mask) {
- 		writel(mask, rmobile_pd->base + SPDCR);
- 
-@@ -98,7 +88,6 @@ static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
- static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- {
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
--	struct dev_power_governor *gov = rmobile_pd->gov;
- 
- 	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mstp_attach_dev;
-@@ -110,22 +99,12 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 		__rmobile_pd_power_up(rmobile_pd);
- 	}
- 
--	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
--}
--
--static int rmobile_pd_suspend_console(void)
--{
--	/*
--	 * Serial consoles make use of SCIF hardware located in this domain,
--	 * hence keep the power domain on if "no_console_suspend" is set.
--	 */
--	return console_suspend_enabled ? 0 : -EBUSY;
-+	pm_genpd_init(genpd, &simple_qos_governor, false);
- }
- 
- enum pd_types {
- 	PD_NORMAL,
- 	PD_CPU,
--	PD_CONSOLE,
- 	PD_DEBUG,
- 	PD_MEMCTL,
- };
-@@ -184,10 +163,6 @@ static void __init get_special_pds(void)
- 	for_each_of_cpu_node(np)
- 		add_special_pd(np, PD_CPU);
- 
--	/* PM domain containing console */
--	if (of_stdout)
--		add_special_pd(of_stdout, PD_CONSOLE);
--
- 	/* PM domains containing other special devices */
- 	for_each_matching_node_and_match(np, special_ids, &id)
- 		add_special_pd(np, (uintptr_t)id->data);
-@@ -227,12 +202,6 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
--	case PD_CONSOLE:
--		pr_debug("PM domain %s contains serial console\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_console;
--		break;
--
- 	case PD_DEBUG:
- 		/*
- 		 * This domain contains the Coresight-ETM hardware block and
--- 
-2.34.1
+I haven't heard much from the i.MX maintainers for a while I guess they
+are busy.
 
+Should Peng Fan be added to this list?
+
+PIN CONTROLLER - FREESCALE
+M:      Dong Aisheng <aisheng.dong@nxp.com>
+M:      Fabio Estevam <festevam@gmail.com>
+M:      Shawn Guo <shawnguo@kernel.org>
+M:      Jacky Bai <ping.bai@nxp.com>
+
+Maybe someone should be subtracted?
+
+Yours,
+Linus Walleij
 
