@@ -1,85 +1,80 @@
-Return-Path: <linux-kernel+bounces-190306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FD78CFCAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:21:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50138CFC1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6458D281C70
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:21:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A491C21DE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392C2139D0A;
-	Mon, 27 May 2024 09:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09FC132494;
+	Mon, 27 May 2024 08:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="lhb1blKM"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OYyES5c1"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101B0139CFC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DB76CDB1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801691; cv=none; b=tWkvb/xZ8QMpgMXhZcLMLyQ3O0h/CF3KZ/RiO9S27i1V5Cqm+Wf8R/l1pU5NTzKnwotHuflI+lTaqTabqwD80yjf1vtbmz3+BgfcUD/MxXMn5huIqrCgoYtluGmwDCTdXf16SvkSQGzDL+ObZwn60p8sQHYQ8ym2uEJP/DGQd24=
+	t=1716799587; cv=none; b=CJHBIb2uTR2VucvyKaMrIQVOL1YVouKXYCXhMJEGIj/69gc3pAWUG6hUTS+aVfhZUY05dTOw/9zfVrUjJdDP8tkMPmzJC7eregKBfGgejoNedbmJp09a1dn2RtEO3w9SHXLoRRK9JHHwm9dT3Tgo2AizLAR7XPsQtFu11FjL/xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801691; c=relaxed/simple;
-	bh=JLG5Tk9lIFQ73u9cPu+K2CKr/ghX4j48CAQjKF0wPkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IFfWLo9zxkwlFRQ/2pWQNy2HlIkmrVEv73DCQbIUV+bAOsQViCFMPJ64gziyUW48J7APd/4L0fodKbslDL3mcFFhQdjXmPoySi4fyanSRSxLLE4vlltgA9NuV1xUsuTihbiGjkCTjsBiXR8U1FPAH1pPojp89YgW0gALCH3MN5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=lhb1blKM; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6269ad71b6so336084566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716801688; x=1717406488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ipebK9m7PVqqulwRzxjF0xLM7H0wET0JcbhhBU7VBX0=;
-        b=lhb1blKMjE9t/5U7UIWt/Wb6Bv3ILu1Tk74m7YZ/qrkjtEtq2/+OteOV8LtzIoV2wl
-         9idRXoPIpZRxAkEWdC8FQIoiBeSvfNQ3iaYdDgSFFAuswM6f9Oeq7Fyj6etbOQ37Qmvb
-         Tiv+qtxmG1EPI77SkNgZ333/cbRRcQbY49Yvyuvnnm5IfA89tX7gt/1p69K4urWWygmj
-         pSCFWdMEtmyqo8fQ7oj+IISMUemuA8NXKC5xlN/mVzv1opwIH+ECCfcDOiAyTtJ4JASN
-         C+yiaaLmfIHUhYCxuLyn6H3wCHx3YhF8xiQ3SwiC7zKT7rb2ud3bTCCrXhJtKadjXuZU
-         4xaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716801688; x=1717406488;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipebK9m7PVqqulwRzxjF0xLM7H0wET0JcbhhBU7VBX0=;
-        b=TowOy8MTHkAoFi1rOP7jQ9Hi5Zik2gVDtspnHeGRRksT8PQ0pFYdRFR2wG+hkffCjd
-         a2TRygM1M5DK3jgV+GI0TiI374b1U6YXZr9qbcVeyk4CVjOR8lSEDGGekZfTBmM2JXeG
-         iCnbnvAn2/Obm3ucwtLQQEYfJW9gyLvhkfvn4EnVf3NF5Ih0ySw2btaPxarknImhil80
-         9tOaIDA6uCi+N9OldUHX5HbdktHU56hzRT3CPC+AsmLAx44lpmFPo1aNaQ5sDM3d0egi
-         hbWCGNfVScOFrk1q0YUN4Wef1bsJ0fzgpOPqxn7VJg2cFVL1HTjzFHM+YuHTcZLRuFLM
-         AxHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpbbgSTiU4OLzWYxB8yIX5FIZBx2ruFKG0sPIJkEoCKSPb6+pH3DiIWUJFUhw1GmeWdIpDVvJd3iV6jKtPanenJWDXUaqJGYTK9Ar+
-X-Gm-Message-State: AOJu0YyIaKERp7UNGkUBkVCexx4gbmnEa02RByxByyQrXDmLVcTdKIlx
-	7bZVNbUSkCfXWWit8mZRTvq/Fa6miFPSSBEHLhrg9tcS4PDrrRq6PQZ2XjLoMVk=
-X-Google-Smtp-Source: AGHT+IG2dVBnBfud8TgPZ/tj+z3XZoHB5psvFY/1rOOuSv9EEWfGPcFvymolbCJRBeiPqhCXxo+6vQ==
-X-Received: by 2002:a17:906:3cea:b0:a59:a3ef:21f4 with SMTP id a640c23a62f3a-a626511491amr503991366b.53.1716801688140;
-        Mon, 27 May 2024 02:21:28 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cd83a1csm466087466b.182.2024.05.27.02.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:21:27 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: thorsten.blum@toblux.com
-Cc: amahesh@qti.qualcomm.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	srinivas.kandagatla@linaro.org
-Subject: [RESEND PATCH v2] misc: fastrpc: Use memdup_user()
-Date: Mon, 27 May 2024 10:44:30 +0200
-Message-ID: <20240527084428.246396-3-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240507222226.288074-2-thorsten.blum@toblux.com>
-References: <20240507222226.288074-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1716799587; c=relaxed/simple;
+	bh=1TfGGOPQIJAxfW9bXXbGkAy29+61DNQCFn6EEoU1vc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=fOzXW90zvSfD+XK9qoVI5SYiJSUur6ayiiPy8fTBzJWrsPOZflcBeZQEqzm4uvrdViCYSdIFOA3TujTvToY5CEPNlsXwTlnZJRf0FvCiNMJPC3Fo86Q3ppg6hW7hWne21dz98bPJtLTyVCGIhMakcpFOqYSYbeGGmqdDdOKyZIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OYyES5c1; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240527084622epoutp03b77a034f8254cc7ffe3afe4df3f2b71c~TTB-G0SN11542815428epoutp03L
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:46:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240527084622epoutp03b77a034f8254cc7ffe3afe4df3f2b71c~TTB-G0SN11542815428epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716799582;
+	bh=wQVGpATxrdqStkwdOGFt1J4r37xmzkXgq1XbQORwUDo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=OYyES5c1nqkP+dh+Dg2rOA4nl/E0ZbI4UMZ3kXRmPPVTOcPyAtCW17RsFMsCtMJ67
+	 77qPh6UUioVD6AucTXe49Y9LnaAexwTGlSZRsiPOG7ThIy9eZbrGcvVKkG9iZ2OAgq
+	 ioJy0X2TyRHA0xHTThhjAW35ugiqwszLOrx/0Q+A=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240527084621epcas5p22fb6319772dabebfc723f9409a5bd8fa~TTB_rt7wO0432704327epcas5p22;
+	Mon, 27 May 2024 08:46:21 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vnq4X1Y5dz4x9QB; Mon, 27 May
+	2024 08:46:20 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1F.0E.10035.95844566; Mon, 27 May 2024 17:46:17 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6~TTBZR9KYk2501925019epcas5p12;
+	Mon, 27 May 2024 08:45:41 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240527084541epsmtrp29911fbf77cd490add8293e7885e2fe52~TTBZRJpLW1959819598epsmtrp2b;
+	Mon, 27 May 2024 08:45:41 +0000 (GMT)
+X-AuditID: b6c32a4b-8afff70000002733-9f-66544859fb86
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	60.D9.08336.53844566; Mon, 27 May 2024 17:45:41 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240527084540epsmtip2a05b7057b1a6b4748ceab0bb9460fcc9~TTBYN4CjE1034210342epsmtip2Q;
+	Mon, 27 May 2024 08:45:40 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v2] block: delete redundant function declarations
+Date: Mon, 27 May 2024 16:45:33 +0800
+Message-Id: <20240527084533.1485210-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,52 +82,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsWy7bCmum6kR0iawadeDovVd/vZLH5132W0
+	2HtL2+LyrjlsFmcnfGC16Lpwis2BzePy2VKPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvOT8nM
+	S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wB2qqkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM44c3M6c8En1orVt3+xNTD+
+	Zuli5OSQEDCRmLvyE5DNxSEksJtR4v6hK6wgCSGBT4wSv2cWQyS+MUrM3b+DGabjyN4DzBCJ
+	vYwSS59/Y4JwfjBK7Dw4BWwum4CSxP4tHxhBbBEBYYn9Ha1gcWaBWImjyx6AxYUFHCWud+1n
+	A7FZBFQlZrfsBovzClhLrPt3BmqbvMTNrv3MEHFBiZMzn0DNkZdo3job7AoJgU3sEj9mtjFC
+	NLhILF62jx3CFpZ4dXwLlC0l8fndXjYIO19i8vf1UPU1Eus2v4MGhrXEvyt7gGwOoAWaEut3
+	6UOEZSWmnlrHBLGXT6L39xMmiDivxI55MLaSxJIjK6BGSkj8nrCIFcL2kNjx7AYzJEhjJfb9
+	62GfwCg/C8k7s5C8Mwth8wJG5lWMkqkFxbnpqcWmBcZ5qeXwiE3Oz93ECE58Wt47GB89+KB3
+	iJGJg/EQowQHs5IIr8i8wDQh3pTEyqrUovz4otKc1OJDjKbAMJ7ILCWanA9MvXkl8YYmlgYm
+	ZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTA5bHv6jretSXLy388vFt0qPHub
+	73OWoOayWIut5xmLDvCuuqt0cdualounZHcK5If8nsYVXKY7eUXd/TRW/9yg3Vr2Ofp3vhQG
+	PSnc6du86+zNwERJ1bu90ZoTHiat5Ww3YoyxahXjf+pxv/ZFnNfz+0tSroUE38l3UDye4CEf
+	l+DPLsZZFyzSvinqirrBtiMenIlS8fKikj8u77o/S+yLTyPP+7s7eKryTu0r2XWrK3vRmwNh
+	k//dSJtVoX9cuLbyRPfjgAsSibvni5wSrjsstHNObWnN3+qjbr6H3S9lepzYL9/gnhoQrRK4
+	5kbs+q3HZ0fI9rRnLyiM55t8Say0rzmVy3tv3lrDdmexSUosxRmJhlrMRcWJAA8k0ysFBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsWy7bCSvK6pR0iawaH56har7/azWfzqvsto
+	sfeWtsXlXXPYLM5O+MBq0XXhFJsDm8fls6UefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlXHm
+	5nTmgk+sFatv/2JrYPzN0sXIySEhYCJxZO8B5i5GLg4hgd2MEvfPXGGFSEhI7Hj0B8oWllj5
+	7zk7RNE3RomOV4fYQBJsAkoS+7d8YASxRYCK9ne0gk1lFoiXuDT1PDOILSzgKHG9az9YPYuA
+	qsTslt1g9bwC1hLr/p1hhlggL3Gzaz8zRFxQ4uTMJ1Bz5CWat85mnsDINwtJahaS1AJGplWM
+	kqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMFBqKW5g3H7qg96hxiZOBgPMUpwMCuJ8IrM
+	C0wT4k1JrKxKLcqPLyrNSS0+xCjNwaIkziv+ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwJT8muHf
+	pLyPE3r+sk7pTO1Zppz2OYt38f5km6bnpX4XhaMZZt8XPWXhN+3xG4tzDRdfefGcsHAIuvrN
+	2+TBw7bUnHnXHkoHNRQevbbtfwLLKy6f0y8ledZ67ODcq+XLUf8ovm1Oto/sSYMw3qNP7bpm
+	Vpct3Vw+MWP18T3pnHdYFqr4nnSK3q5bo9Nxdo7j+ofbxPJyPzvItrkvtDav9ZGM31twq7r8
+	772Ft9I3LY8S28kb+HPevP2Oi9uc+q7uSn6fMs/bkPn4447PD/R8tJbybRd9whHQUXBb5Hfc
+	v/0nDn3nlrQ7waZy59/aGfF/7dK0uNqNzEy+u+VtruN8+4s3P2P7Ww9PtrpTB2cwOiqxFGck
+	GmoxFxUnAgBkR5LSsQIAAA==
+X-CMS-MailID: 20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6
+References: <CGME20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6@epcas5p1.samsung.com>
 
-Switching to memdup_user() overwrites the allocated memory only once,
-whereas kzalloc() followed by copy_from_user() initializes the allocated
-memory to zero and then immediately overwrites it.
+blk_stats_alloc_enable is used in block hybrid poll, the related function
+definitions have been removed by patch:
+commit 54bdd67d0f88 ("blk-mq: remove hybrid polling")
+but the function declaration was not deleted.
 
-Fixes the following Coccinelle/coccicheck warning reported by
-memdup_user.cocci:
-
-	WARNING opportunity for memdup_user
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: hexue <xue01.he@samsung.com>
 ---
-Changes in v2:
-- Use u64_to_user_ptr() as suggested by Arnd Bergmann (thanks!)
-- Preserve Acked-by: tag
----
- drivers/misc/fastrpc.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ block/blk-stat.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 4c67e2c5a82e..694fc083b1bd 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -1259,17 +1259,12 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
- 		goto err;
- 	}
+diff --git a/block/blk-stat.h b/block/blk-stat.h
+index 17e1eb4ec7e2..5d7f18ba436d 100644
+--- a/block/blk-stat.h
++++ b/block/blk-stat.h
+@@ -64,7 +64,6 @@ struct blk_stat_callback {
  
--	name = kzalloc(init.namelen, GFP_KERNEL);
--	if (!name) {
--		err = -ENOMEM;
-+	name = memdup_user(u64_to_user_ptr(init.name), init.namelen);
-+	if (IS_ERR(name)) {
-+		err = PTR_ERR(name);
- 		goto err;
- 	}
+ struct blk_queue_stats *blk_alloc_queue_stats(void);
+ void blk_free_queue_stats(struct blk_queue_stats *);
+-bool blk_stats_alloc_enable(struct request_queue *q);
  
--	if (copy_from_user(name, (void __user *)(uintptr_t)init.name, init.namelen)) {
--		err = -EFAULT;
--		goto err_name;
--	}
--
- 	if (!fl->cctx->remote_heap) {
- 		err = fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.memlen,
- 						&fl->cctx->remote_heap);
+ void blk_stat_add(struct request *rq, u64 now);
+ 
 -- 
-2.45.1
+2.40.1
 
 
