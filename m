@@ -1,180 +1,230 @@
-Return-Path: <linux-kernel+bounces-191268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288AC8D08FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:02:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A398D08FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 356E9B2154E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3B72837E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC9F15DBC8;
-	Mon, 27 May 2024 17:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4E015DBBB;
+	Mon, 27 May 2024 17:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtuqOepR"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVW4j5yn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7934E6FB0;
-	Mon, 27 May 2024 17:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7F0155CA5;
+	Mon, 27 May 2024 17:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716829340; cv=none; b=O8inGWK38CV4M5zMd5nDPlOhh/YiRpwDLd1FUkpHBRS0t18Fn32A1bpU6PJ8NXkgxrEO9qg0UjvO9YpTs7z9bQph4Y+cW2yk/mWchaaOcctDvHCcNJ59t9krBnTWch7Pb10My1bJajwj5jOu//XPeiuK+gGNn1wnQ7k9jFxwg/8=
+	t=1716829353; cv=none; b=u3aR4fR8Q1y8NHu+zbOaG52UEnTw3qbND7pW75nOMxuwQzVyZcIJedxWyhj0cLN8Z2V10NO/OTR3k3z3nwtbcEziUxKj4FFSVsH9tcy8pjbRO9j/W7zG4FBPrdCxGbYtG5eGQrKUl9iVv+u4Jl4dqNH60A8CLHsbZTtT78ISkoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716829340; c=relaxed/simple;
-	bh=UH5jbQ1ExU6rF0ycNuWGeiHpq0CHgcaCU5amH+tnEzo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S0Uc7g5e1aLzh+jdU82nB/AS7ebRCu5GqQ7E87bxpX33G7HSOQ0iXO+OqCVccAas+oNVySowO9y+2vKE7ndATnFhoxEhk9IOyKCFtzJgsyuFo3RNnNKmP9XK7WISMlqiTXtabosX6TOAh5LYqe0ZvyETd74ppAaujCpFIg8tiNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtuqOepR; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-529661f2552so3324045e87.2;
-        Mon, 27 May 2024 10:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716829336; x=1717434136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ke2wFmW7lwdlJUKXnCszi5dmNPopJyhPXGzvDznThNk=;
-        b=BtuqOepRcnq6erBpDC556K6VkX3PtzhkGMO2kfD5CN7bQ0aUvRBXGiKU7UxHM9tH0t
-         byA3X6FO7wQtZkXYHOu/6lX0slJaQLhKYyr6Hhyq8q41ZcjIAQ3FIv5PWz8n4n8DTUZF
-         YzuKMfL66fuftOYAAvGD5KQhpeHcV+dbPQhOv+9ZzhVns+IyNX907UKcES2sHcdQYV+H
-         LqA/FUUjFRK889t/OgBSxsWVKKABv2yFlbm+A3YIvQsNQQ9NtaZMTL+V8Bq/35OSb1Ql
-         i1HJF2lPLdIutdOdtK2vb5G1XHJC3wqU8OjSSROkulzVuqTI1KJhhF/JCu8egQXsAtm4
-         opmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716829336; x=1717434136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ke2wFmW7lwdlJUKXnCszi5dmNPopJyhPXGzvDznThNk=;
-        b=GgVvxLao+tcwgSvXPeB7C5yTETTnLbTBRykSgWw7qrgxTmnKYtbnx7Ezx7d2o7RHNJ
-         QbanQnOPPem/zTQVc+lW50ljXhurjKrvRbEHik1p/tUz+iZy30L0KAwlGftW5ZIbTAUJ
-         xv33LZgzG/LWfGMYvcxRT6tXj1yBLnqZPxY4NvYzWfGrnmXZBHGITjGdz4WAT4XIwfCq
-         5Ccu0MwHu6XgV34pVteM+09kSqG/pRTxd9RHVHtNyLJE/vpy0DXS+dHNsLbiSKDlvKM9
-         Xqn8BxsTtNSFSZSKFda/+r+E1wc5Lya7oGI7LY23tY0tr+LH5wDFmeVP2QcQu8wnwYQp
-         H8Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWoeiur/pCsk5AdWjzBuEiaWHX7kJnRQ5LizM8+5StwDLJ9WO/M/PBZxqP8T9zVteCqAH9jYlN2VleBZFOe+eVhaeM44z6gQndKrP1
-X-Gm-Message-State: AOJu0Yz04bMX7q11Yvvv4drp3I1zwIZqjiEurd9Tlj23EaauGHk49rmJ
-	g1uFaM9g5SWbJ1e+9x5zQMjNcE+gXB659FeztT0oDRNRbKYKnlb+vGaF92yf
-X-Google-Smtp-Source: AGHT+IEcr5JzU5aF4BzGeMHHDb9m3TkWG32KGUvLhVqaPVtwcZzBrcVd8yipPSLiup6xzM3AzX+dFQ==
-X-Received: by 2002:ac2:4214:0:b0:525:502a:acc6 with SMTP id 2adb3069b0e04-529668c9e48mr5908436e87.52.1716829335955;
-        Mon, 27 May 2024 10:02:15 -0700 (PDT)
-Received: from mslusarz-hyperv.mshome.net (1779df417e104.rev.snt.net.pl. [213.192.104.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817a98sm512017466b.37.2024.05.27.10.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 10:02:15 -0700 (PDT)
-From: marcin.slusarz@gmail.com
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Marcin=20=C5=9Alusarz?= <mslusarz@renau.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Kalle Valo <kvalo@kernel.org>,
+	s=arc-20240116; t=1716829353; c=relaxed/simple;
+	bh=SoPNNcQJU/WARnhqi0z5qyLrCN4ZSeS1BBrqpTsWDng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSebe4c0scENc8yPuk/kxETlfRT3OgKjYO0omENTkwIDOZRRYKvbjOvCpVfED86dBYdLb/XMgq+IKFozJ4e9UvEG+RBJHCcvSQYhZU154PpCwWVpORuU3kRphEm6dWzhMoOLThUThuyCtBIobE6aXkyME2xV+rMYcKPsUqa1gFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVW4j5yn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C76C2BBFC;
+	Mon, 27 May 2024 17:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716829352;
+	bh=SoPNNcQJU/WARnhqi0z5qyLrCN4ZSeS1BBrqpTsWDng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MVW4j5ynC3Ogm5B6QS6b4ihm5MF2lwJGkeO8yICfqfholNoc+deobWG9T2nNv8iOR
+	 xmlK4Aqk7NpyCWx16hQ9bJymTZjHO+lyFc0GeE9r0GetTODCxCwYKmQkxGrUY7Vc8z
+	 qRPobGIVjqAarHgAETTcjR64y1faFnj9kTIvjB/2IPwx+Hx4+NNEkxJqEBpGUzp+lL
+	 gQLXQm4Kph6ePjmIg4DBREa8iEkZOctohfEcONWFtZm0lHwx9ZVYg+LcQg6pvsFT9H
+	 JhrXcmNffuU0/QFpQEz3jEqmLZ4/eWeVokRyPg0M1uVPsbkPoapPLRNy/dyntikfJ8
+	 k50e/l2K4VxGg==
+Date: Mon, 27 May 2024 14:02:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Artem Savkov <asavkov@redhat.com>
+Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: rtw88: schedule rx work after everything is set up
-Date: Mon, 27 May 2024 19:01:37 +0200
-Message-Id: <20240527170137.455671-1-marcin.slusarz@gmail.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH] perf record: add a shortcut for metrics
+Message-ID: <ZlS8pc39t2c1WFye@x1>
+References: <20240527101519.356342-1-asavkov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527101519.356342-1-asavkov@redhat.com>
 
-From: Marcin Ślusarz <mslusarz@renau.com>
+On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
+> Add -M/--metrics option to perf-record providing a shortcut to record
+> metrics and metricgroups. This option mirrors the one in perf-stat.
+> 
+> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Signed-off-by: Artem Savkov <asavkov@redhat.com>
 
-Right now it's possible to hit NULL pointer dereference in
-rtw_rx_fill_rx_status on hw object and/or its fields because
-initialization routine can start getting USB replies before
-rtw_dev is fully setup.
+Not building for me, I needed to add the rblist.h header and also I
+think we need to use metricgroup__rblist_init(&mevents), right?
 
-The stack trace looks like this:
+Testing it now.
 
-rtw_rx_fill_rx_status
-rtw8821c_query_rx_desc
-rtw_usb_rx_handler
-..
-queue_work
-rtw_usb_read_port_complete
-..
-usb_submit_urb
-rtw_usb_rx_resubmit
-rtw_usb_init_rx
-rtw_usb_probe
+- Arnaldo
 
-So while we do the async stuff rtw_usb_probe continues and calls
-rtw_register_hw, which does all kinds of initialization (e.g.
-via ieee80211_register_hw) that rtw_rx_fill_rx_status relies on.
-
-Fix this by moving the first usb_submit_urb after everything
-is set up.
-
-For me, this bug manifested as:
-[    8.893177] rtw_8821cu 1-1:1.2: band wrong, packet dropped
-[    8.910904] rtw_8821cu 1-1:1.2: hw->conf.chandef.chan NULL in rtw_rx_fill_rx_status
-because I'm using Larry's backport of rtw88 driver with the NULL
-checks in rtw_rx_fill_rx_status.
-
-This should fix:
-https://marc.info/?l=linux-wireless&m=167907688311943&w=2
-
-Signed-off-by: Marcin Ślusarz <mslusarz@renau.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/wireless/realtek/rtw88/usb.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
-index a0188511099a..98f81e3ae13e 100644
---- a/drivers/net/wireless/realtek/rtw88/usb.c
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c
-@@ -740,7 +740,6 @@ static struct rtw_hci_ops rtw_usb_ops = {
- static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
- {
- 	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
--	int i;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 18da3ce380152ad1..5d67b0711c166fae 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -27,6 +27,7 @@
+ #include "util/session.h"
+ #include "util/tool.h"
+ #include "util/symbol.h"
++#include "util/rblist.h"
+ #include "util/record.h"
+ #include "util/cpumap.h"
+ #include "util/thread_map.h"
+@@ -4017,6 +4018,7 @@ int cmd_record(int argc, const char **argv)
+ 	set_nobuild('\0', "off-cpu", "no BUILD_BPF_SKEL=1", true);
+ # undef set_nobuild
+ #endif
++	metricgroup__rblist_init(&mevents);
  
- 	rtwusb->rxwq = create_singlethread_workqueue("rtw88_usb: rx wq");
- 	if (!rtwusb->rxwq) {
-@@ -752,13 +751,19 @@ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
- 
- 	INIT_WORK(&rtwusb->rx_work, rtw_usb_rx_handler);
- 
-+	return 0;
-+}
-+
-+static void rtw_usb_setup_rx(struct rtw_dev *rtwdev)
-+{
-+	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
-+	int i;
-+
- 	for (i = 0; i < RTW_USB_RXCB_NUM; i++) {
- 		struct rx_usb_ctrl_block *rxcb = &rtwusb->rx_cb[i];
- 
- 		rtw_usb_rx_resubmit(rtwusb, rxcb);
- 	}
--
--	return 0;
- }
- 
- static void rtw_usb_deinit_rx(struct rtw_dev *rtwdev)
-@@ -895,6 +900,8 @@ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		goto err_destroy_rxwq;
- 	}
- 
-+	rtw_usb_setup_rx(rtwdev);
-+
- 	return 0;
- 
- err_destroy_rxwq:
--- 
-2.25.1
+ 	/* Disable eager loading of kernel symbols that adds overhead to perf record. */
+ 	symbol_conf.lazy_load_kernel_maps = true;
 
+> ---
+>  tools/perf/Documentation/perf-record.txt |  7 +++-
+>  tools/perf/builtin-record.c              | 43 ++++++++++++++++++++++++
+>  2 files changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+> index 6015fdd08fb63..ebb560d137e62 100644
+> --- a/tools/perf/Documentation/perf-record.txt
+> +++ b/tools/perf/Documentation/perf-record.txt
+> @@ -18,7 +18,6 @@ from it, into perf.data - without displaying anything.
+>  
+>  This file can then be inspected later on, using 'perf report'.
+>  
+> -
+>  OPTIONS
+>  -------
+>  <command>...::
+> @@ -216,6 +215,12 @@ OPTIONS
+>  	  na, by_data, by_addr (for mem_blk)
+>  	  hops0, hops1, hops2, hops3 (for mem_hops)
+>  
+> +-M::
+> +--metrics::
+> +Record metrics or metricgroups specified in a comma separated list.
+> +For a group all metrics from the group are added.
+> +See perf list output for the possible metrics and metricgroups.
+> +
+>  --exclude-perf::
+>  	Don't record events issued by perf itself. This option should follow
+>  	an event selector (-e) which selects tracepoint event(s). It adds a
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 66a3de8ac6618..5828051ff2736 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -40,6 +40,7 @@
+>  #include "util/trigger.h"
+>  #include "util/perf-hooks.h"
+>  #include "util/cpu-set-sched.h"
+> +#include "util/metricgroup.h"
+>  #include "util/synthetic-events.h"
+>  #include "util/time-utils.h"
+>  #include "util/units.h"
+> @@ -188,6 +189,7 @@ static volatile int done;
+>  static volatile int auxtrace_record__snapshot_started;
+>  static DEFINE_TRIGGER(auxtrace_snapshot_trigger);
+>  static DEFINE_TRIGGER(switch_output_trigger);
+> +static char *metrics;
+>  
+>  static const char *affinity_tags[PERF_AFFINITY_MAX] = {
+>  	"SYS", "NODE", "CPU"
+> @@ -200,6 +202,25 @@ static inline pid_t gettid(void)
+>  }
+>  #endif
+>  
+> +static int append_metric_groups(const struct option *opt __maybe_unused,
+> +			       const char *str,
+> +			       int unset __maybe_unused)
+> +{
+> +	if (metrics) {
+> +		char *tmp;
+> +
+> +		if (asprintf(&tmp, "%s,%s", metrics, str) < 0)
+> +			return -ENOMEM;
+> +		free(metrics);
+> +		metrics = tmp;
+> +	} else {
+> +		metrics = strdup(str);
+> +		if (!metrics)
+> +			return -ENOMEM;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int record__threads_enabled(struct record *rec)
+>  {
+>  	return rec->opts.threads_spec;
+> @@ -3382,6 +3403,9 @@ static struct option __record_options[] = {
+>  		     parse_events_option),
+>  	OPT_CALLBACK(0, "filter", &record.evlist, "filter",
+>  		     "event filter", parse_filter),
+> +	OPT_CALLBACK('M', "metrics", &record.evlist, "metric/metric group list",
+> +		     "monitor specified metrics or metric groups (separated by ,)",
+> +		     append_metric_groups),
+>  	OPT_CALLBACK_NOOPT(0, "exclude-perf", &record.evlist,
+>  			   NULL, "don't record events from perf itself",
+>  			   exclude_perf),
+> @@ -3984,6 +4008,7 @@ int cmd_record(int argc, const char **argv)
+>  	int err;
+>  	struct record *rec = &record;
+>  	char errbuf[BUFSIZ];
+> +	struct rblist mevents;
+>  
+>  	setlocale(LC_ALL, "");
+>  
+> @@ -4153,6 +4178,23 @@ int cmd_record(int argc, const char **argv)
+>  	if (record.opts.overwrite)
+>  		record.opts.tail_synthesize = true;
+>  
+> +	if (metrics) {
+> +		const char *pmu = parse_events_option_args.pmu_filter ?: "all";
+> +		int ret = metricgroup__parse_groups(rec->evlist, pmu, metrics,
+> +						false, /* metric_no_group */
+> +						false, /* metric_no_merge */
+> +						false, /* metric_no_threshold */
+> +						rec->opts.target.cpu_list,
+> +						rec->opts.target.system_wide,
+> +						false, /* hardware_aware_grouping */
+> +						&mevents);
+> +		if (ret) {
+> +			err = ret;
+> +			goto out;
+> +		}
+> +		zfree(&metrics);
+> +	}
+> +
+>  	if (rec->evlist->core.nr_entries == 0) {
+>  		bool can_profile_kernel = perf_event_paranoid_check(1);
+>  
+> @@ -4264,6 +4306,7 @@ int cmd_record(int argc, const char **argv)
+>  out_opts:
+>  	record__free_thread_masks(rec, rec->nr_threads);
+>  	rec->nr_threads = 0;
+> +	metricgroup__rblist_exit(&mevents);
+>  	evlist__close_control(rec->opts.ctl_fd, rec->opts.ctl_fd_ack, &rec->opts.ctl_fd_close);
+>  	return err;
+>  }
+> -- 
+> 2.45.1
 
