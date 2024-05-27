@@ -1,179 +1,147 @@
-Return-Path: <linux-kernel+bounces-190149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A58CFA3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:35:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696A28CFA41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFD311F22959
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:35:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08E4CB21043
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E732561D;
-	Mon, 27 May 2024 07:35:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B4F2561D;
+	Mon, 27 May 2024 07:37:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425681F5FA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BD517BCA;
+	Mon, 27 May 2024 07:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716795328; cv=none; b=WGpNGlvN5nNPZSZzSsyrIZaP7vWhzx2Hsk68ODsolPO2gtoQ6VrGIWqGjsmef3Z2bWN/qm55vV4vPPCmr96POUMX3U7Pjkx5p7Lpn654G9vycZ3IpVC9MYyWdmjYqU1jDeZV+tay34Dsd0d5djceHxzQkyp0swWdU/YBunMxlvc=
+	t=1716795421; cv=none; b=GO7c7ff9+97K5RpxOSxXF6uyZAs6QlUgiPTMxzwwz/K20Te4X8N82JRdezcDSOXcMIYhYyPJH4f2P0kJXk489VEpghkN7Vl4K6b4LVrxrXNxVzX7+Tord7cuDcTOKiJ/bPS2w6Im6UzxQYPy2IjwVK/bn2r0VF2PUBfz+KQUq6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716795328; c=relaxed/simple;
-	bh=eeICZKVVAQUBqBHwuxMALdSG+JLYmVgNYaWcBlcDvwA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BgXFX2gfvAPTSNoxsMO10azICx17jxRta8/4IJYnYOVRqvfZQ6q8Y9bqtGcWI83xXdQMvkxr8u+oaDsA8qNpEahEFZQW3nkuc6IOpGJUL1ryn5jj20eeUgvOBPXVWml6Ys0a8X5TD9JQCTwWX6nBTJi3peb/lk9xW+L09tjlDco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3738db5b07dso16135175ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:35:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716795326; x=1717400126;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=79abVKmLZyi5X7rHFzMKI0vkfiXQgcvpYZSqXcUWH4Q=;
-        b=cld3n5q2vy5PtSyTdpAwm4nPUaWwfj7RdJ0ZZ6wN38mVDhItHIBkQM3zsmwSF43RDA
-         qz/wg4nlW6Fu1pQRAdS2s/pqj3zpU/XoUw7gux0d7bAA09p+rFH4McZ8aBSvIF+miJX1
-         C1mt+rU/pkicdBNJyqAyoZG03BQk7SxKELnh5sSUa88+Gb/10lD0FpwMSNxcYhk6NK0L
-         G3Tkp3jh46m3vjAZIa2PKFZUn81ySPz4lYqX3RLjjbcerJ5u2dyJmh0EuPxd8guaTCi+
-         AkXH/XXNORFuC6s1hEzfj6sOVKT8N5Vzu3ipX7qJEuIF+pC/nMlnECzXcyCufQkt+CSG
-         5+Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeeYJeDdrZ+CN/2Jmu4hdSogYESJlYsDjiLZzhdqQz+1l1XcrYxMLLBJO3lNB0nl8zDNzpeFl5sByWfhT3gCFWfIeOwoqRNg+uN4lm
-X-Gm-Message-State: AOJu0Yw3mz5EVAtB3LyWHkOPWOU2UR3q5iW5tWxjoCSNbkipeM+UJ+NO
-	duEPx8004ZE5g7PCEOzpTnlDzRMW24tM1WBOf0oEGXuHgXaa3RZr6dh6sYvxKGoNrmE5t3i7JVT
-	wq9dRQWVGuDjwauXV+wK11CX2ZWDg54fm0jFG9oDWbF8VXO4ZCIeCyKM=
-X-Google-Smtp-Source: AGHT+IEZ40ydocE6/9QamDqGIURiJPf/WWQlDbNFNA6RWdOGgOwv0xkSMcZ0tSV4YMUdS3sB+LclCE9VJ2H0bpXFVx4I0sXz9W07
+	s=arc-20240116; t=1716795421; c=relaxed/simple;
+	bh=Tps1WcBqzODmDeBQ5rvvGnK4LLWmDVbt14aJ/jjiKe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WucXtLktDGMHeGSgg9wz5yudGS+RZSy4MjGBanQ5p/Nuf4wQSA5Z1fJrEY1qkSmqPHjTg4SvTw9xcHP2kVvBipYBoOX8uFi8MatC7pdUO4F44ZroiMEDcsdymiwsUq15WTunr1MhM0+V4QzFOcNnqqMcsRlcTpvq1nwuufEj/Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3517C4AF0E;
+	Mon, 27 May 2024 07:36:59 +0000 (UTC)
+Message-ID: <785a3e80-7cc8-40e6-8e4f-f741a8f343af@xs4all.nl>
+Date: Mon, 27 May 2024 09:36:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8f:b0:36d:d06c:5c10 with SMTP id
- e9e14a558f8ab-3737b3ca0aemr6186765ab.4.1716795326502; Mon, 27 May 2024
- 00:35:26 -0700 (PDT)
-Date: Mon, 27 May 2024 00:35:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000096a88206196a8f03@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
-From: syzbot <syzbot+8cb7ea0ddb1cdc8a21fc@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: mgb4: Fix double debugfs remove
+To: tumic@gpxsee.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Martin_T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+References: <20240521162254.3025-1-tumic@gpxsee.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20240521162254.3025-1-tumic@gpxsee.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Martin,
 
-syzbot found the following issue on:
+On 21/05/2024 18:22, tumic@gpxsee.org wrote:
+> From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+> 
+> Fixes an error where debugfs_remove_recursive() is called first on a parent
+> directory and then again on a child which causes a kernel panic.
 
-HEAD commit:    5f16eb0549ab Merge tag 'char-misc-6.10-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c46072980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7f4625418c9ed5c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=8cb7ea0ddb1cdc8a21fc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+I accepted this patch for v6.10, but I would appreciate it if you can
+make an additional patch for v6.11 that removes the #ifdef CONFIG_DEBUG_FS
+lines where possible.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Most debugfs functions have a dummy implementation when that define is not
+set, so it would clean up the driver if these unnecessary #ifdefs are removed.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-5f16eb05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20ac83ea5f8c/vmlinux-5f16eb05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/31519c4f23c8/bzImage-5f16eb05.xz
+Regards,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8cb7ea0ddb1cdc8a21fc@syzkaller.appspotmail.com
+	Hans
 
-------------[ cut here ]------------
-==================================================================
-BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:646 [inline]
-BUG: KASAN: global-out-of-bounds in string+0x398/0x3d0 lib/vsprintf.c:728
-Read of size 1 at addr ffffffff8b2e4842 by task kswapd0/111
+> 
+> Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+> ---
+>  drivers/media/pci/mgb4/mgb4_core.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/pci/mgb4/mgb4_core.c b/drivers/media/pci/mgb4/mgb4_core.c
+> index 60498a5abebf..ab4f07e2e560 100644
+> --- a/drivers/media/pci/mgb4/mgb4_core.c
+> +++ b/drivers/media/pci/mgb4/mgb4_core.c
+> @@ -642,9 +642,6 @@ static void mgb4_remove(struct pci_dev *pdev)
+>  	struct mgb4_dev *mgbdev = pci_get_drvdata(pdev);
+>  	int i;
+>  
+> -#ifdef CONFIG_DEBUG_FS
+> -	debugfs_remove_recursive(mgbdev->debugfs);
+> -#endif
+>  #if IS_REACHABLE(CONFIG_HWMON)
+>  	hwmon_device_unregister(mgbdev->hwmon_dev);
+>  #endif
+> @@ -659,6 +656,10 @@ static void mgb4_remove(struct pci_dev *pdev)
+>  		if (mgbdev->vin[i])
+>  			mgb4_vin_free(mgbdev->vin[i]);
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +	debugfs_remove_recursive(mgbdev->debugfs);
+> +#endif
+> +
+>  	device_remove_groups(&mgbdev->pdev->dev, mgb4_pci_groups);
+>  	free_spi(mgbdev);
+>  	free_i2c(mgbdev);
+> 
+> base-commit: 8771b7f31b7fff91a998e6afdb60650d4bac59a5
 
-CPU: 3 PID: 111 Comm: kswapd0 Not tainted 6.9.0-syzkaller-11919-g5f16eb0549ab #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- string_nocheck lib/vsprintf.c:646 [inline]
- string+0x398/0x3d0 lib/vsprintf.c:728
- vsnprintf+0xc67/0x1870 lib/vsprintf.c:2824
- vprintk_store+0x3a2/0xbb0 kernel/printk/printk.c:2225
- vprintk_emit kernel/printk/printk.c:2326 [inline]
- vprintk_emit+0xac/0x5a0 kernel/printk/printk.c:2300
- vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:45
- __warn_printk+0x181/0x350 kernel/panic.c:740
- look_up_lock_class+0x132/0x140 kernel/locking/lockdep.c:932
- register_lock_class+0xb1/0x1230 kernel/locking/lockdep.c:1284
- __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
- _raw_spin_trylock+0x63/0x80 kernel/locking/spinlock.c:138
- spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:373 [inline]
- srcu_gp_start_if_needed+0x75e/0xf00 kernel/rcu/srcutree.c:1233
- bkey_cached_free fs/bcachefs/btree_key_cache.c:90 [inline]
- bch2_btree_key_cache_scan+0xb90/0x1820 fs/bcachefs/btree_key_cache.c:886
- do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
- shrink_slab+0x18a/0x1310 mm/shrinker.c:662
- shrink_one+0x493/0x7c0 mm/vmscan.c:4790
- shrink_many mm/vmscan.c:4851 [inline]
- lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
- shrink_node mm/vmscan.c:5910 [inline]
- kswapd_shrink_node mm/vmscan.c:6720 [inline]
- balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
- kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-The buggy address belongs to the variable:
- str__rcu__trace_system_name+0x922/0xb40
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xb2e4
-flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002000 ffffea00002cb908 ffffea00002cb908 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff8b2e4700: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
- ffffffff8b2e4780: 00 00 00 00 00 00 01 f9 f9 f9 f9 f9 00 00 00 07
->ffffffff8b2e4800: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 06
-                                           ^
- ffffffff8b2e4880: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
- ffffffff8b2e4900: 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 00 01 f9 f9
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
