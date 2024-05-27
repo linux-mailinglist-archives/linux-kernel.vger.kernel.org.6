@@ -1,183 +1,282 @@
-Return-Path: <linux-kernel+bounces-190070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E506B8CF92A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 498148CF93D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF38281EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D562814B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC4315E96;
-	Mon, 27 May 2024 06:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FZCvON5z"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4338116415;
+	Mon, 27 May 2024 06:36:29 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53650125BA
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7451078F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716791517; cv=none; b=qNUiDENE74HchGZk+lMsDSr5XBbswGnQzhqFIAwhd2RB/GJrUWpBgeJ7bUeYT23mXKyiTBpa+ZWAIgyfl1RNVr85NWxyljSG1xrtwsnLvHxAroL9e4C+KN1122E+BIkIWAhkPNH4z3+dDZpiT3OfgLIu/qUL8EeE1yNkh2zN7tA=
+	t=1716791788; cv=none; b=i41dmOfuGwbXD6hvx0JEhchQ+DTg4wlDH4ztdTAClhOe30VkfRgv7NViwNwpWQz4UyJo3Jse3m4+b4jsl0Nm3RPpL30ghtc81dSxbK+6QfoaGG9ZrtaEmlUvpnJI+XU1XcovDNWiu9xdguSl9ty9eGNrCC7CLIy6qXUBJJp/Q9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716791517; c=relaxed/simple;
-	bh=GiX/F6U+4AhQxOl6Y7hnIeCCOl0QPSSAqz7DQ9FqL6k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ACccpnKupLrbh/rAA5KyBgeBsekExPTij5TEysWQY6/q4iOH8SylmOGM7d39i/QN0TkZadVk5EECixLnJtUrGd7MxQI3bQnLu753G1hEfZcgbbgtMQyLAqrA5s9664EpBLyWn3XUuHdtBa0wodcv74419qcFcQeJhBl1rf08cZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FZCvON5z; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ED82141203
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1716791511;
-	bh=MbnK7btCma2THOpFcDrHSellO+iE5ad9pZfYFL7rGkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=FZCvON5zGdX1O61DfHue+fp4tvnVGxUiYe86rxSls6BF36m4Ndlkd6pLaW+7i3AdG
-	 HKAx/ltGkSVzCGe3zPtLcThaLBnXH0HzkCVYdgtUviTFzYt6lOORIte6ki19Rgaf4B
-	 jVUcMulGwEYJIlkOUg3XyMKrF/zn5DYEXLd1/LMCBjrk2+LWZ3qK3lIu4SM26ie68m
-	 Zv9BxCHiIr/PNr02TnWQSUCx+MtgpewHDWAxRvjKJuGOAZYWtMhOTren+oh+QRsVW5
-	 Rj3gJG0JVb7rXDwLToptnPFT12GdjksGE6LlQHnga2G2pVf/X1PyJihboPvqjGevR6
-	 ZiSWwu0jt/xaA==
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1f2fbeba024so21329045ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 23:31:51 -0700 (PDT)
+	s=arc-20240116; t=1716791788; c=relaxed/simple;
+	bh=xmP3VhOCd1AxLXN6BJ6CxuRnTmdIHaFhFfmv9IZmsqk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OGVO8Pw+bbA5c2PNCgJg/utTSPmMWQ8VMnGSL9TtlRr8VO+pPoQqxr1GdQDogBxM3+eiy0oSRNhDeioGyvaIQPkKu3yUcyz0bEZZLj5m9Kbi9Nb68WWOH3qemXSd69qk+RoOsvbqYAx3Fc0BaZ0rjMM/Xro0XQdYmVmsBgxYbAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eaccb5a928so89268239f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 23:36:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716791510; x=1717396310;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MbnK7btCma2THOpFcDrHSellO+iE5ad9pZfYFL7rGkU=;
-        b=gcNsLzONpRcku4AOcBpjeaEit4sLuQmzOX7OlRaLIUXtB54IN53RxyglYzYdkekDmt
-         Jlu+fy8RiPBp+36DRyeqiLwFxq8gGQlAyTP36ALT+14PoJCdx/v56wtyWecIuD1C/LW5
-         XGbZaHVPlOdVyfQWrAkkHZ1SLNb2wbrXfTMEnohBV4Kp44fJwdHG/iBoAse3lHc7cCw6
-         XFnQ0r1/56SNIoTu4XwOUX2WMw8EF9OST30GiA7rHgPbUfCIVM4E5oOApyLE4uyeNmHs
-         0oYL1RFD+g/VZHor4QRZM/Th4du1W0i39XlK7rCDMkaTxWbO8nRzYT21E9HMTwT/rh7W
-         NPzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCi+QwQZjfWtaYhTcY5yQbQzZNIgfmZAir1UiICCMsCvhUnVI5Cd5VBER3ZTPQ+0kEkpEZKsY8RZYFntfIKHtaGTsKC3l1SXLEGqIB
-X-Gm-Message-State: AOJu0Yy94SkfQJX/VR3x32al+9uc17UUmQqumW0wZC5x64qOxefPhqb2
-	xJmm+de+KtwEh0B25dfaVNVzIJBSXwXoEc+asZyTlwWW0qP0g4mW6PiiFkRraQNrXLkY3olBt5y
-	Ze36zYQ8Tj2KxZV4fHCfOjs6btN+iRch4vx1H3Ts4jBEzf4OynN22nJeMvylAtxgXt8NYMtQDaZ
-	ZOuA==
-X-Received: by 2002:a17:902:f684:b0:1f3:5ca:4200 with SMTP id d9443c01a7336-1f448126212mr124732225ad.2.1716791510241;
-        Sun, 26 May 2024 23:31:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFUziuMR/5+E+Q+QV57THPE3WYQpjvV0wcM+chWabofAbbVJ71xH4WrYKvxXh9Yk8XM+0QQw==
-X-Received: by 2002:a17:902:f684:b0:1f3:5ca:4200 with SMTP id d9443c01a7336-1f448126212mr124731835ad.2.1716791509744;
-        Sun, 26 May 2024 23:31:49 -0700 (PDT)
-Received: from chengendu.. (36-227-176-221.dynamic-ip.hinet.net. [36.227.176.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f4aa742215sm5895275ad.289.2024.05.26.23.31.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 May 2024 23:31:49 -0700 (PDT)
-From: Chengen Du <chengen.du@canonical.com>
-To: willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	loke.chetan@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Chengen Du <chengen.du@canonical.com>
-Subject: [PATCH v2] af_packet: Handle outgoing VLAN packets without hardware offloading
-Date: Mon, 27 May 2024 14:31:36 +0800
-Message-Id: <20240527063136.159616-1-chengen.du@canonical.com>
-X-Mailer: git-send-email 2.40.1
+        d=1e100.net; s=20230601; t=1716791786; x=1717396586;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i+PKiPkBJYaEPjN/V2rVFav0UrCBiisVA2iYobVu1oU=;
+        b=PbkG/oZkEGw6kkagiq9XuRM+ww9N9Ix4Ggxzq7IJoBU2i1Jd2WScBOI2C5w7tnN735
+         Y5YLLvgqNMHaHeaq81vdqqnSW4fcPP2oQbUbzOnLaIqa8QvaxRlewfYnXc4dJdXbD62T
+         yaDhEoAsLN0jnKL8yQoT8xJI8fnB5Bo3o/OZs1h8b5Ge80SwOzoKm3xfxDoc6Jo93mi9
+         Ttl4CuFoYUrhck0aNxGhBpetED/Fa9kbIquy5P5J0LcE1wBaX4z0EzCnGvQnoISgbSmn
+         WM1Pd/e9r+K4T2QA3du3W42RQ2EajJUjFSaHY/dfsE0I2RlqjsAlYZf2bf1zDM75zi2r
+         +9sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF47mK1PqCgrRCTgVp6kUu9HHS/px5KjHgOJ9VZ/2grbdTsz6sjTn3nACvCqYPopB82JTs5f3rWjSHBCfeiQs+Hkb0ue80dCzDm//9
+X-Gm-Message-State: AOJu0YzOTfYzJn7CdkuiaYFbF+PAzrJqzjFV929cQntSnxZJD172uqrF
+	2ERUagV2C8tuegURQaTzQzuKF9FLjbgrgkZ5psvplyzK2I/QR+F1zVJwmeY2UenBF+1KWnZZbkp
+	MH+aqPdYnesnZzueohlH1ubPzZkLYo+FF9Ml1NCnOsCO+hB0SdHvcIM8=
+X-Google-Smtp-Source: AGHT+IFlCk4We9U1hMljv5jcIhJt2gDy+B+1W6leAYrzBpnLGJLUh0ZC/7SS5kyvM2peHimZV5yc/uuLOybLt6kNCVp4rdfLFZ/p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:a883:0:b0:4b0:278e:96d8 with SMTP id
+ 8926c6da1cb9f-4b03f637e66mr200616173.1.1716791786114; Sun, 26 May 2024
+ 23:36:26 -0700 (PDT)
+Date: Sun, 26 May 2024 23:36:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000909ea8061969bce5@google.com>
+Subject: [syzbot] [bpf?] KASAN: slab-use-after-free Read in bpf_link_free (2)
+From: syzbot <syzbot+1989ee16d94720836244@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@google.com, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-The issue initially stems from libpcap [1]. In the outbound packet path,
-if hardware VLAN offloading is unavailable, the VLAN tag is inserted into
-the payload but then cleared from the sk_buff struct. Consequently, this
-can lead to a false negative when checking for the presence of a VLAN tag,
-causing the packet sniffing outcome to lack VLAN tag information (i.e.,
-TCI-TPID). As a result, the packet capturing tool may be unable to parse
-packets as expected.
+Hello,
 
-The TCI-TPID is missing because the prb_fill_vlan_info() function does not
-modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
-payload and not in the sk_buff struct. The skb_vlan_tag_present() function
-only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
-is stripped, preventing the packet capturing tool from determining the
-correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
-which means the packet capturing tool cannot parse the L3 header correctly.
+syzbot found the following issue on:
 
-[1] https://github.com/the-tcpdump-group/libpcap/issues/1105
+HEAD commit:    6fbf71854e2d Merge tag 'perf-tools-fixes-for-v6.10-1-2024-..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173e822c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62be2ac813b33670
+dashboard link: https://syzkaller.appspot.com/bug?extid=1989ee16d94720836244
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Signed-off-by: Chengen Du <chengen.du@canonical.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eab66bf09e4e/disk-6fbf7185.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/232ac0545252/vmlinux-6fbf7185.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2820e679b0ee/bzImage-6fbf7185.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1989ee16d94720836244@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_link_free+0x234/0x2d0 kernel/bpf/syscall.c:3078
+Read of size 8 at addr ffff888011469b10 by task syz-executor.1/6398
+
+CPU: 0 PID: 6398 Comm: syz-executor.1 Not tainted 6.9.0-syzkaller-12400-g6fbf71854e2d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bpf_link_free+0x234/0x2d0 kernel/bpf/syscall.c:3078
+ bpf_link_put_direct kernel/bpf/syscall.c:3106 [inline]
+ bpf_link_release+0x7b/0x90 kernel/bpf/syscall.c:3113
+ __fput+0x408/0x8b0 fs/file_table.c:422
+ task_work_run+0x251/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe75847cee9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe75916f0c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007fe7585ac120 RCX: 00007fe75847cee9
+RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000004
+RBP: 00007fe7584c949e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007fe7585ac120 R15: 00007ffe4ae3abc8
+ </TASK>
+
+Allocated by task 6385:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ kmalloc_trace_noprof+0x19c/0x2c0 mm/slub.c:4152
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ bpf_raw_tp_link_attach+0x2a0/0x6e0 kernel/bpf/syscall.c:3858
+ bpf_raw_tracepoint_open+0x1c2/0x240 kernel/bpf/syscall.c:3905
+ __sys_bpf+0x3c0/0x810 kernel/bpf/syscall.c:5729
+ __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6399:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2195 [inline]
+ slab_free mm/slub.c:4436 [inline]
+ kfree+0x149/0x360 mm/slub.c:4557
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0xaff/0x1830 kernel/rcu/tree.c:2809
+ handle_softirqs+0x2c6/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3072 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
+ bpf_link_free+0x1f8/0x2d0 kernel/bpf/syscall.c:3076
+ bpf_link_put_direct kernel/bpf/syscall.c:3106 [inline]
+ bpf_link_release+0x7b/0x90 kernel/bpf/syscall.c:3113
+ __fput+0x408/0x8b0 fs/file_table.c:422
+ task_work_run+0x251/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888011469b00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 16 bytes inside of
+ freed 128-byte region [ffff888011469b00, ffff888011469b80)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11469
+anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000000 ffff888015041a00 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080100010 00000001ffffefff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 2897, tgid 2897 (kworker/u8:8), ts 84640710621, free_ts 84523372123
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2264
+ allocate_slab+0x5a/0x2e0 mm/slub.c:2427
+ new_slab mm/slub.c:2480 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
+ __slab_alloc+0x58/0xa0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmalloc_trace_noprof+0x1d5/0x2c0 mm/slub.c:4147
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ __hw_addr_create net/core/dev_addr_lists.c:60 [inline]
+ __hw_addr_add_ex+0x1a8/0x610 net/core/dev_addr_lists.c:118
+ __dev_mc_add net/core/dev_addr_lists.c:867 [inline]
+ dev_mc_add+0xa3/0x110 net/core/dev_addr_lists.c:885
+ igmp6_group_added+0x1a4/0x710 net/ipv6/mcast.c:680
+ __ipv6_dev_mc_inc+0x8b8/0xa90 net/ipv6/mcast.c:949
+ addrconf_join_solict net/ipv6/addrconf.c:2240 [inline]
+ addrconf_dad_begin net/ipv6/addrconf.c:4101 [inline]
+ addrconf_dad_work+0x448/0x16f0 net/ipv6/addrconf.c:4226
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+page last free pid 5243 tgid 5242 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_folios+0xf23/0x19e0 mm/page_alloc.c:2614
+ folios_put_refs+0x93a/0xa60 mm/swap.c:1024
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x44f/0xc80 mm/mmap.c:3354
+ __mmput+0x115/0x3c0 kernel/fork.c:1346
+ exit_mm+0x220/0x310 kernel/exit.c:565
+ do_exit+0x9aa/0x27e0 kernel/exit.c:861
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888011469a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+ ffff888011469a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888011469b00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff888011469b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888011469c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- net/packet/af_packet.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index ea3ebc160e25..82b36e90d73b 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -1011,6 +1011,10 @@ static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
- 		ppd->hv1.tp_vlan_tci = skb_vlan_tag_get(pkc->skb);
- 		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->vlan_proto);
- 		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+	} else if (eth_type_vlan(pkc->skb->protocol)) {
-+		ppd->hv1.tp_vlan_tci = ntohs(vlan_eth_hdr(pkc->skb)->h_vlan_TCI);
-+		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->protocol);
-+		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 	} else {
- 		ppd->hv1.tp_vlan_tci = 0;
- 		ppd->hv1.tp_vlan_tpid = 0;
-@@ -2428,6 +2432,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
- 			h.h2->tp_vlan_tci = skb_vlan_tag_get(skb);
- 			h.h2->tp_vlan_tpid = ntohs(skb->vlan_proto);
- 			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+		} else if (eth_type_vlan(skb->protocol)) {
-+			h.h2->tp_vlan_tci = ntohs(vlan_eth_hdr(skb)->h_vlan_TCI);
-+			h.h2->tp_vlan_tpid = ntohs(skb->protocol);
-+			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 		} else {
- 			h.h2->tp_vlan_tci = 0;
- 			h.h2->tp_vlan_tpid = 0;
-@@ -2457,7 +2465,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
- 	sll->sll_halen = dev_parse_header(skb, sll->sll_addr);
- 	sll->sll_family = AF_PACKET;
- 	sll->sll_hatype = dev->type;
--	sll->sll_protocol = skb->protocol;
-+	sll->sll_protocol = (skb->protocol == htons(ETH_P_8021Q)) ?
-+		vlan_eth_hdr(skb)->h_vlan_encapsulated_proto : skb->protocol;
- 	sll->sll_pkttype = skb->pkt_type;
- 	if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
- 		sll->sll_ifindex = orig_dev->ifindex;
-@@ -3482,7 +3491,8 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 		/* Original length was stored in sockaddr_ll fields */
- 		origlen = PACKET_SKB_CB(skb)->sa.origlen;
- 		sll->sll_family = AF_PACKET;
--		sll->sll_protocol = skb->protocol;
-+		sll->sll_protocol = (skb->protocol == htons(ETH_P_8021Q)) ?
-+			vlan_eth_hdr(skb)->h_vlan_encapsulated_proto : skb->protocol;
- 	}
- 
- 	sock_recv_cmsgs(msg, sk, skb);
-@@ -3539,6 +3549,10 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 			aux.tp_vlan_tci = skb_vlan_tag_get(skb);
- 			aux.tp_vlan_tpid = ntohs(skb->vlan_proto);
- 			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+		} else if (eth_type_vlan(skb->protocol)) {
-+			aux.tp_vlan_tci = ntohs(vlan_eth_hdr(skb)->h_vlan_TCI);
-+			aux.tp_vlan_tpid = ntohs(skb->protocol);
-+			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 		} else {
- 			aux.tp_vlan_tci = 0;
- 			aux.tp_vlan_tpid = 0;
--- 
-2.40.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
