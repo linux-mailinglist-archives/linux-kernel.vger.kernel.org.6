@@ -1,267 +1,396 @@
-Return-Path: <linux-kernel+bounces-190499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F390E8CFF46
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:49:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E208CFF54
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237F71C222C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:49:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA9D5B23C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E850715ECCA;
-	Mon, 27 May 2024 11:48:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DD215F40A;
+	Mon, 27 May 2024 11:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bRgGz1RI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8569115E5CE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716810486; cv=none; b=EQPpN9nxikfo76mMTEdhOg121Yrpz00qWyOFFYW2JPHihC5hFNbXbWvD/DMcirw+Dkux+MzRF757XDhfgG6yjR/8f4HUrEtXskticru2gnPczGfnyJdbWvqI3gwslxgJA86Q2eQQzKwSOR2IlD8QphzeC5nGhc06waCdbya0hdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716810486; c=relaxed/simple;
-	bh=X4eStoHGKPNDbN3uHOCtPGZHzO2t2ipCA5maGQLWAWE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Gff0IC+kxPUfAkc8+A9FmXYZSV05y85347AjIgfem4hibCyBn3zQa7lkaDs7I9FYFdDdzDtkznKnuWMq58vtAcTC+ZjJ8p18igJJ7dXfOdhYTW9oI/ktoqyN5Y3rbeZW8ZoO8sYIjI6Tp8ow2FRXG3t91es+wVk8KTUHpwj/O/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1ea8608afso546604539f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:48:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716810483; x=1717415283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0RP1N2gYDPbAEzJ+dxnfId0QFiJ91EZiMV5boeOnTDQ=;
-        b=xCdCxlF8v4ZLtD9cfxWQ613w9/Pp6JKm0WB16nvCA59FGCdG4TA1dJvw6MChiSfMK3
-         vQrsxBkX06dS6knb4YwyFlrbs/Fqz0TPUmY2rRVX3uGHC+uJaAfLI0aUaB55O6xy/8eZ
-         tPV7kc85tIJn91JDEU19uUdS9bGbHAP3SfOfU4gyz7k6Y2u++tN0g9fhQR/V9pjJYj2q
-         5V2gP3fmtoz7jDizAok0w7biNXicLODJbjADohYg++vrl1I5eCMhmNxbNmDO+WTVVxfy
-         OWUjDpHRa5BES6vr5X5K/RfxLiNfXOwM5qMIbShmEcUULywBwd1H21ZpKnEUuDF4sqzH
-         /vvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUbSzMrWrX/dVB0vJPCsqTld67rpzkkeoB6EwMdrGUuBzZOxLTmXf7KIMQmX/xl9Er4Gyzb91qaL0P/WyQTm4VK2E857W1w3v4m02J
-X-Gm-Message-State: AOJu0YxX5FfH/bCjYbiuocj+XUrb1LoUifQu3S+eqGD3ZoCzyzYIzskc
-	LbXShKNU1buA8ht0FOWHEIEs4R1kesmVNMHeCrZoiFzHXWfMW7qh5TetD0K5V+B/6JPqi6G3JfN
-	6xqOpr5gRwj7jr8CSyLUguRm1kcYF2QMWPjB/EFK22xqmG6hQQXhl2dM=
-X-Google-Smtp-Source: AGHT+IFHiB7ZZWWc1m/OJaIwnyyvdLmG31gTeXsmwI7YFgXuDGRyVBSr1L0KBqKxNhN4ssbYEh8usXL9GNC6AHVdfEuv85OqXHoS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D056C15ECCA;
+	Mon, 27 May 2024 11:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716810543; cv=fail; b=TnxHzCm7/baZ9f+r3Pxip9y2EV+KSxdhsKOkTG0b7mrwVk0GRs4XSI40lpnTvWZShcoJDGTdKkOL6qgdFr92i7j0WDCG3YsTCGxsIg7UER3uCz9oPzpuYIfF9mU6nEi9sHsvyu9oPx+miS/OmK3gMBI7Nxq8sNgTOwk0qEt12gs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716810543; c=relaxed/simple;
+	bh=Ml2hz5nMoNW0Uzw5N+S4/PwZN7R65gzD4+OoVB5d28w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=T38GiShPSV8iXpQjDEDWKB0x5J5dgRfg6gczNddBWP/mG89xRbMk1LSxsMQCyJDrGyZZd6gAo7XIorsSihKhKQnTIajxlTmm3Hc0jn/+zflP3TA08yy8JdnIHv6Cb7KHo+tO7DchDMRuIiCGj4HY8NydwxD92A1U28TC8HfTPAQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bRgGz1RI; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716810542; x=1748346542;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Ml2hz5nMoNW0Uzw5N+S4/PwZN7R65gzD4+OoVB5d28w=;
+  b=bRgGz1RI7RQBoRsOQmpsKgJe1ma6kUZjSrwzxtmNo+jvCd3pKMvqa9KY
+   Dst2luvO1rX7Xz8IBW3BAY0YaQPkcv7wwxnwTFtdJ1Hn4oyXaCz5Hshrd
+   c49gXoOtCg7wf2RVjYRAbyT3CU5apaE5+XxL4jJRmQFZHoghJ5ZxNvwN0
+   FqrCRxQ9qQA43ToZjOU1CmYNIS0S9eJHPfFNkyk3Ojvujwd8uMvVli7aU
+   CpBvGGbixbJAy8LhQZVmbHEEblykZ3o/953MqmWJhcd/fh0a2d0wuhryU
+   2EuEvTF5KFx+2HaMTXG/IcPlhEIBC9WRqyvpVJaypc2XgTCweR1BxdX+2
+   g==;
+X-CSE-ConnectionGUID: cEgybqwATdaokBiW1qg1rw==
+X-CSE-MsgGUID: MOhTu65zSMqPURULLX/ALA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="16072612"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="16072612"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 04:49:01 -0700
+X-CSE-ConnectionGUID: tioTmhUjQG2VYumr2+NIEQ==
+X-CSE-MsgGUID: ueyZYOB+Tiuy2wh4Mt+eIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="39521069"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 May 2024 04:49:00 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 27 May 2024 04:48:59 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 27 May 2024 04:48:59 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 27 May 2024 04:48:59 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 27 May 2024 04:48:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K7zA83bSRC1OTC9qWfZtXWHxKq4EwR6KApICaFTv2OoPdGpWpmsA01NE63sGxbxgArrkfSMLeMzh/pdhCizEhaqzlXz5hFcnQ7jEr+b9amdkAPVxdcfQWAaAi7AlZ2mUP90RgxRMMG06sIbCrF42rEQA0MycUQbCtZGLJXfWbaNPEZ56sxFi/2Bib31EH5bmek3aNwwbdfAmzUPdW6a8jb33TM1W/67l3J3vbxgBNNDgan5Wut7FrQ6dqNzMVvpue7wbaecA/44Lf4fttWtNWtr7151rJI2HUkI6caG1f76+yD5iBbCyPoajGSI4DxLGpBSl+v71inYZArJJlnXt9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TGAbVLtiV4MA4imP85PWNDLxyoBUIf7750F4rwxDBGg=;
+ b=cigvNP50jS2p86bMtnxDDS+aCVN1TuOSMH8o0li7lpqCw7ALx7jziGFX5scqQo+Ta03P3MTugX0Z9mvSc8a0N6M3kZiGCDATn/jr5jsbK5z+oZZZhDhMUD6T0JX3Q+6QEiryhnf/Hv0kHhjB7bSPzyRD6hq9cwzaCD7p3SuNAygeUU3+ggkfQFLekSBgai9Ifwrv4ybSkW13+CbVdm8u4FuFf47XVHUTscBw7xIXcaqTPvDb0uuI4z5fTL2rjAJJAzg20Wlf8+qFNBpjP6JBDvcQNrD5Nd1TKTJoczrkG6NK1MO/UQPSZ+MbPjC8ZZcXEqw5HcoBPXg3ApGWevb+pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7364.namprd11.prod.outlook.com (2603:10b6:930:87::14)
+ by CY8PR11MB7798.namprd11.prod.outlook.com (2603:10b6:930:77::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 11:48:54 +0000
+Received: from CY8PR11MB7364.namprd11.prod.outlook.com
+ ([fe80::1fe:535e:7c0e:1d67]) by CY8PR11MB7364.namprd11.prod.outlook.com
+ ([fe80::1fe:535e:7c0e:1d67%3]) with mapi id 15.20.7587.035; Mon, 27 May 2024
+ 11:48:54 +0000
+From: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "jstultz@google.com"
+	<jstultz@google.com>, "giometti@enneenne.com" <giometti@enneenne.com>,
+	"corbet@lwn.net" <corbet@lwn.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Dong,
+ Eddie" <eddie.dong@intel.com>, "Hall, Christopher S"
+	<christopher.s.hall@intel.com>, "Brandeburg, Jesse"
+	<jesse.brandeburg@intel.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+	"joabreu@synopsys.com" <joabreu@synopsys.com>, "mcoquelin.stm32@gmail.com"
+	<mcoquelin.stm32@gmail.com>, "perex@perex.cz" <perex@perex.cz>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, "Nguyen, Anthony
+ L" <anthony.l.nguyen@intel.com>, "peter.hilber@opensynergy.com"
+	<peter.hilber@opensynergy.com>, "N, Pandith" <pandith.n@intel.com>, "Mohan,
+ Subramanian" <subramanian.mohan@intel.com>, "T R, Thejesh Reddy"
+	<thejesh.reddy.t.r@intel.com>
+Subject: RE: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
+Thread-Topic: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
+Thread-Index: AQHapSHXUIkwGaeDCkGimvlL+UU2cbGVBGIAgBXrFfA=
+Date: Mon, 27 May 2024 11:48:54 +0000
+Message-ID: <CY8PR11MB7364D1C85099E4337408EBAFC4F02@CY8PR11MB7364.namprd11.prod.outlook.com>
+References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
+ <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com>
+ <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
+In-Reply-To: <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7364:EE_|CY8PR11MB7798:EE_
+x-ms-office365-filtering-correlation-id: 7c090394-6c0c-47bc-091c-08dc7e42fc61
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info: =?us-ascii?Q?ebx3msG2kyO4XNrbESakasfmF7F7MMYeYaWjrdNU51DbW3cFp8cJ0uGBjbCu?=
+ =?us-ascii?Q?0H6pwSVIK0Yhco+lUAj4331JmmqUUOlYsAzYazsaeeRdyTnK0LPAQx5d4c9r?=
+ =?us-ascii?Q?i2OlIFpNhDzhKdJ3ooCaE370skA14C3dcCX2VTJzW6t0GorG/NqsF3Iqk+qD?=
+ =?us-ascii?Q?fLoj+Aq9f9eyuzijsbOecsfKHm8+xdM3s6YZWjGbXHcXRWICVlrP2tNv0nl0?=
+ =?us-ascii?Q?BJElRkEU+JfQoc07/SfUDPgxms0y5YjMC6Osv6A1Lu0N9uAbZ7YLB1wi8T62?=
+ =?us-ascii?Q?juJGGsJoFh5F8Ko1LkLffESlOnbPKPgFy9USL7SRT9bLhGFC5PKTQ087uih3?=
+ =?us-ascii?Q?hl6os8AwzOiMdXXPQP41ddQuWEhfWxK4QGYIcbh1YtC5WVHseYQDWve/E93Y?=
+ =?us-ascii?Q?iWlSCNMuWi0ic68OrOOnYXeCdaO3cfcWteuvdshfMjrmk8CDg8aiOnN6VcK8?=
+ =?us-ascii?Q?8AyRUjFH5hBy7ym8F8nd9IRH2WwGVlPadbzK7Xxg7T28hmlz7zpG8+ZlH8d1?=
+ =?us-ascii?Q?k3V6236QPBjyskfAFFzqaZDr/1fLjenxwXRIzBrMTZ1Y3U3L3s5HfpnSrnM5?=
+ =?us-ascii?Q?HOISseMc3Cuczk29h736+QSGOIOSRouJI/vFPmw+B2m1/9YIU7QL2DZY6OJ5?=
+ =?us-ascii?Q?7ofME3Zw4pgAxX2GzOpkSKgZhxUgAvJeoQsO7TA8kpN11kF5kr+VPff+m/8j?=
+ =?us-ascii?Q?/8xMVUEl76kyo6vsvrOcpFNz7Q3QtSltlhFYnGjyL9aTbj5haJK+HHD24xmd?=
+ =?us-ascii?Q?dKv6MLNLDP318RoZH5OuTH6xT1eiso7z2yuC+xBAKQtDxiMu+vc8h5APifCT?=
+ =?us-ascii?Q?t7WdGzo5IaSK6BMaOm4DqU+ZN/H45SgQoZpHGUQaURvvoSPXRv7bwlauMZ4l?=
+ =?us-ascii?Q?6tTuybnCGiHIBGgu410wm+8+P3CKf9cVe2z9uzTNSguxPEdYQhlDNgQdqCrA?=
+ =?us-ascii?Q?XrdKfn3vcVtZzZmjzU7jTzb9oRH6zNN3Z2O8G4zPOcVPG8W3o7re9uhnXYqQ?=
+ =?us-ascii?Q?iKFBjo9FSEagFyMvz3XSy8NeCEbUAYT7qx8cx8vuM2B78Hjr3bl8Rf4ziMyy?=
+ =?us-ascii?Q?IiV+N1+Kn2gcukW3zLNRJmZ0v1dMr/g1Bwf9IN/ygDDOHBCKPw6H2vCEJwhi?=
+ =?us-ascii?Q?EnP1nScS+127T1wzuVN+YynApH0ECgcu/SJr5p7Tg+jX8sCezyZ7FLwhTqWO?=
+ =?us-ascii?Q?oF2uMgT8GumrTznieof/YIoNu/0fLTZBYKonF8ny2vpzJrz5CJTGcG8jWVMd?=
+ =?us-ascii?Q?R6jYXEVZN4Ljq15tWgwR7GDihETjQWsTwB7VcB0WxOhZ2Lx6CrcMEfgEl6Xx?=
+ =?us-ascii?Q?dnHXhGuDlvmMGCLefnmAEXHXpYtddJpNCKolroM/6UiwSw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7364.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?bjjOO8wz9xxq1DFgGMoWH5tb6Tne1BpDXMOz7G6ZS9c2SYuQEPN4Jtk7Byxv?=
+ =?us-ascii?Q?fH3cYK0haIU1EOgaSwrCrEVprI/+em1QTq+8GA442jbj0ouH48V/r6Sl9DGI?=
+ =?us-ascii?Q?8fzcJYC5rUbRjnlEAe2MMS9T+Kc0IIBBfr8skyiRLfaatbNsnBRat3lpKOSs?=
+ =?us-ascii?Q?oq1ZcGDjtwO6sfTLRsRFnV4arfWY3HMMHcYJIAKXVgFX8D/99ZuUGC/bzsaf?=
+ =?us-ascii?Q?ivcDhpviELjwDVhrjpwJnQ5n50k+8ISxA2PUfMiSs7SJBkZ1L0/Xq/90u6C2?=
+ =?us-ascii?Q?BHb07CG6ILrOgsbs7i308ft9hhQHOvTP8XvjeCn1ZHZiO93zOsTfYOb1QXp2?=
+ =?us-ascii?Q?qTvSze9Nb2PlBFHk+HBCy6iuZXJPRU1yRMCltp9/1RjvdEt27iFum9CnmpXH?=
+ =?us-ascii?Q?lMkPiODDGmU/8jKZxYN1/M6ylRD5+MdMcB3XbMhbWCfnwb7bKsRoPDb7tRLS?=
+ =?us-ascii?Q?PMIGWe0+WCQdTiLo36YVK6zjdA30OVoWlttNH9jbu2Uh1wlejlAYxdbs6GX+?=
+ =?us-ascii?Q?BNwt7emC6ocuPuyVnyoHxAmMYiwDp+nqBozIIFe9XAE+qYo4Df3w1Rmi4jk6?=
+ =?us-ascii?Q?FX1FZQHpJ8s8RDZVpGu4yZ+u5MfX0mAiUPw8354aPXLBpvtoBYOkZamuq3gL?=
+ =?us-ascii?Q?CxxAndg65s6nGKH1Y2c4ACUm8OB0Rv5iRc7R5Ztt8MkEZbYps/QdQdi5nuhp?=
+ =?us-ascii?Q?gItFhqs4MSVMHuA3z5viC+MgHattLLuXiJXJ8FPaUgAgneZeow/RteG+CJJd?=
+ =?us-ascii?Q?7/Z1JiLDvWrChcO5o+5pVi0fJk3YgaKQJZaXJRn3N9cAvkdZVcUuQMdFtuFv?=
+ =?us-ascii?Q?cP3C1GUvadeex0m1NQSS8NQwWXT7b4KJK+zPv5aUGJmzFMSh2skjlAofKDAd?=
+ =?us-ascii?Q?XxeLJ33r71z+PbclExWu79/+M0YZiHR5s3FvK7uG60OI77PC8sYqdYj0QSvv?=
+ =?us-ascii?Q?wA6n3woko8oU0useM+/QOFWt7/MhlwS3C1zNYOjFQ7vqL1/KNjuUN13c+wsa?=
+ =?us-ascii?Q?dkah/OfihRhhcwBXGfmwsX4dhiD0yuQX+Ug0TrUcHH03pB0OMCSNZcXau/pW?=
+ =?us-ascii?Q?d6jQI2O6jS5KiO0Ech0b6kberid2FalxxT/DgYNZMqLM0gt+7acLhoYjAbTc?=
+ =?us-ascii?Q?9ZZwQrYaTFeLNVrQ2YVnYzUrTvbHpXE3ojV2fO++LXBpsbAp/IA/Zg6x6hzP?=
+ =?us-ascii?Q?OY0oMpDyBgBcT5GH9hG95Vv2Ryu0ZH1VoujzDgAOfRfAPtbOHmIYb3Fwfxkb?=
+ =?us-ascii?Q?EFO/SNmz4IDrEEQeG+g2uKJelMLLWr8W4i2BiwmrRha4AzIizenzn5MU+awL?=
+ =?us-ascii?Q?+D5EWzy396irxIg9PML70bZ4a5izEB6kCwMqvZu51Q/YQvABrOq2fGD+58gJ?=
+ =?us-ascii?Q?6CzRKFpJfMThXWpalnioMCmUQVIyfdo8MsNtrBa/ESqOi0yb+X9K7IGY9HC2?=
+ =?us-ascii?Q?7fTVQZQs1cRZ0aihKyFdvnIxbDT8avYFrXWo7L/um4H+8XuuYSmpOjotA/Lg?=
+ =?us-ascii?Q?1xIGbLMrOkM+5dIaoOVlwM6xWJmPROq3KnlpysFBbyqsakCekJN17ubkB7w7?=
+ =?us-ascii?Q?ypqTDWmCKOtyAWe/ghi2wIwrr0AKLBgLQVHiDtVu3GdK4YhQHQBe4GVsrbwL?=
+ =?us-ascii?Q?fA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:158d:b0:7e2:b00:2277 with SMTP id
- ca18e2360f4ac-7e8c6933fa2mr46561839f.2.1716810483639; Mon, 27 May 2024
- 04:48:03 -0700 (PDT)
-Date: Mon, 27 May 2024 04:48:03 -0700
-In-Reply-To: <0a7a190a-edcf-492a-9ba2-868ea50c2cde@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000635f606196e1726@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in chrdev_open
-
-loop0: detected capacity change from 0 to 4096
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
-Read of size 8 at addr ffff88807efaede8 by task syz-executor.0/5465
-
-CPU: 1 PID: 5465 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-g1613e604df0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- chrdev_open+0x2a9/0x630 fs/char_dev.c:396
- do_dentry_open+0x95a/0x1720 fs/open.c:955
- do_open fs/namei.c:3650 [inline]
- path_openat+0x289f/0x3280 fs/namei.c:3807
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_openat fs/open.c:1436 [inline]
- __se_sys_openat fs/open.c:1431 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcb3347dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fcb341700c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fcb335abf80 RCX: 00007fcb3347dea9
-RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
-RBP: 00007fcb334ca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fcb335abf80 R15: 00007ffeb2c1f828
- </TASK>
-
-Allocated by task 5450:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4000 [inline]
- kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4019
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
- new_inode+0x22/0x1d0 fs/inode.c:1033
- ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
- ntfs_create_inode+0x5f1/0x3680 fs/ntfs3/inode.c:1347
- ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:122
- vfs_mknod+0x36d/0x3b0 fs/namei.c:4009
- do_mknodat+0x3ec/0x5b0
- __do_sys_mknodat fs/namei.c:4087 [inline]
- __se_sys_mknodat fs/namei.c:4084 [inline]
- __x64_sys_mknodat+0xa9/0xc0 fs/namei.c:4084
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 0:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2195 [inline]
- slab_free mm/slub.c:4436 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4511
- rcu_do_batch kernel/rcu/tree.c:2535 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- __call_rcu_common kernel/rcu/tree.c:3072 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
- __dentry_kill+0x20d/0x630 fs/dcache.c:603
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
- shrink_dcache_parent+0xcb/0x3b0
- do_one_tree+0x23/0xe0 fs/dcache.c:1538
- shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1555
- generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
- kill_block_super+0x44/0x90 fs/super.c:1676
- ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1798
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88807efae740
- which belongs to the cache ntfs_inode_cache of size 1760
-The buggy address is located 1704 bytes inside of
- freed 1760-byte region [ffff88807efae740, ffff88807efaee20)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7efa8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff888028ddcf01
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffefff(slab)
-raw: 00fff00000000040 ffff888019749c80 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000110011 00000001ffffefff ffff888028ddcf01
-head: 00fff00000000040 ffff888019749c80 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000110011 00000001ffffefff ffff888028ddcf01
-head: 00fff00000000003 ffffea0001fbea01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5450, tgid 5448 (syz-executor.0), ts 83046102188, free_ts 16881244327
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
- prep_new_page mm/page_alloc.c:1476 [inline]
- get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2264
- allocate_slab+0x5a/0x2e0 mm/slub.c:2427
- new_slab mm/slub.c:2480 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
- __slab_alloc+0x58/0xa0 mm/slub.c:3756
- __slab_alloc_node mm/slub.c:3809 [inline]
- slab_alloc_node mm/slub.c:3988 [inline]
- kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4019
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- iget5_locked+0xa4/0x280 fs/inode.c:1235
- ntfs_iget5+0xd5/0x3b10 fs/ntfs3/inode.c:532
- ntfs_fill_super+0x2cab/0x4a20 fs/ntfs3/super.c:1275
- get_tree_bdev+0x3f7/0x570 fs/super.c:1615
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6619
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1038
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1418
- do_one_initcall+0x248/0x880 init/main.c:1267
- do_initcall_level+0x157/0x210 init/main.c:1329
- do_initcalls+0x3f/0x80 init/main.c:1345
- kernel_init_freeable+0x435/0x5d0 init/main.c:1578
- kernel_init+0x1d/0x2b0 init/main.c:1467
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff88807efaec80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88807efaed00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88807efaed80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                          ^
- ffff88807efaee00: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807efaee80: fc fc fc fc fa fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7364.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c090394-6c0c-47bc-091c-08dc7e42fc61
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 11:48:54.6334
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: o1B3QJYS3NSBASYtWpStprIt9cvT9vioPRtaDKH9UjaOqh1PZBPw7qIwvIQGsMascAGjf1d296hx55vE9z3gc9HHo67fik48FQdF3F3sitA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7798
+X-OriginatorOrg: intel.com
 
 
-Tested on:
 
-commit:         1613e604 Linux 6.10-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d05b3f180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> -----Original Message-----
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Sent: Monday, May 13, 2024 4:49 PM
+> To: D, Lakshmi Sowjanya <lakshmi.sowjanya.d@intel.com>
+> Cc: tglx@linutronix.de; jstultz@google.com; giometti@enneenne.com;
+> corbet@lwn.net; linux-kernel@vger.kernel.org; x86@kernel.org;
+> netdev@vger.kernel.org; linux-doc@vger.kernel.org; intel-wired-
+> lan@lists.osuosl.org; Dong, Eddie <eddie.dong@intel.com>; Hall, Christoph=
+er
+> S <christopher.s.hall@intel.com>; Brandeburg, Jesse
+> <jesse.brandeburg@intel.com>; davem@davemloft.net;
+> alexandre.torgue@foss.st.com; joabreu@synopsys.com;
+> mcoquelin.stm32@gmail.com; perex@perex.cz; linux-
+> sound@vger.kernel.org; Nguyen, Anthony L <anthony.l.nguyen@intel.com>;
+> peter.hilber@opensynergy.com; N, Pandith <pandith.n@intel.com>; Mohan,
+> Subramanian <subramanian.mohan@intel.com>; T R, Thejesh Reddy
+> <thejesh.reddy.t.r@intel.com>
+> Subject: Re: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driv=
+er
+>=20
+> On Mon, May 13, 2024 at 04:08:11PM +0530, lakshmi.sowjanya.d@intel.com
+> wrote:
+> > From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> >
+> > The Intel Timed IO PPS generator driver outputs a PPS signal using
+> > dedicated hardware that is more accurate than software actuated PPS.
+> > The Timed IO hardware generates output events using the ART timer.
+> > The ART timer period varies based on platform type, but is less than
+> > 100 nanoseconds for all current platforms. Timed IO output accuracy is
+> > within 1 ART period.
+> >
+> > PPS output is enabled by writing '1' the 'enable' sysfs attribute. The
+> > driver uses hrtimers to schedule a wake-up 10 ms before each event
+> > (edge) target time. At wakeup, the driver converts the target time in
+> > terms of CLOCK_REALTIME to ART trigger time and writes this to the
+> > Timed IO hardware. The Timed IO hardware generates an event precisely
+> > at the requested system time without software involvement.
+>=20
+> ...
+>=20
+> > +static ssize_t enable_store(struct device *dev, struct device_attribut=
+e
+> *attr, const char *buf,
+> > +			    size_t count)
+> > +{
+> > +	struct pps_tio *tio =3D dev_get_drvdata(dev);
+> > +	bool enable;
+> > +	int err;
+>=20
+> (1)
+>=20
+> > +	err =3D kstrtobool(buf, &enable);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	guard(spinlock_irqsave)(&tio->lock);
+> > +	if (enable && !tio->enabled) {
+>=20
+> > +		if (!timekeeping_clocksource_has_base(CSID_X86_ART)) {
+> > +			dev_err(tio->dev, "PPS cannot be started as clock is
+> not related
+> > +to ART");
+>=20
+> Why not simply dev_err(dev, ...)?
+>=20
+> > +			return -EPERM;
+> > +		}
+>=20
+> I'm wondering if we can move this check to (1) above.
+> Because currently it's a good question if we are able to stop PPS which w=
+as
+> run by somebody else without this check done.
 
-Note: no patches were applied.
+Do you mean can someone stop the signal without this check?=20
+Yes, this check is not required to stop.  So, I feel it need not be moved t=
+o (1).
+
+Please, correct me if my understanding is wrong.
+
+>=20
+> I.o.w. this sounds too weird to me and reading the code doesn't give any =
+hint
+> if it's even possible. And if it is, are we supposed to touch that since =
+it was
+> definitely *not* us who ran it.
+
+Yes, we are not restricting on who can stop/start the signal.=20
+
+>=20
+> > +		pps_tio_direction_output(tio);
+> > +		hrtimer_start(&tio->timer, first_event(tio),
+> HRTIMER_MODE_ABS);
+> > +		tio->enabled =3D true;
+> > +	} else if (!enable && tio->enabled) {
+> > +		hrtimer_cancel(&tio->timer);
+> > +		pps_tio_disable(tio);
+> > +		tio->enabled =3D false;
+> > +	}
+> > +	return count;
+> > +}
+>=20
+> ...
+>=20
+> > +static int pps_tio_probe(struct platform_device *pdev) {
+>=20
+> 	struct device *dev =3D &pdev->dev;
+>=20
+> > +	struct pps_tio *tio;
+> > +
+> > +	if (!(cpu_feature_enabled(X86_FEATURE_TSC_KNOWN_FREQ) &&
+> > +	      cpu_feature_enabled(X86_FEATURE_ART))) {
+> > +		dev_warn(&pdev->dev, "TSC/ART is not enabled");
+>=20
+> 		dev_warn(dev, "TSC/ART is not enabled");
+>=20
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	tio =3D devm_kzalloc(&pdev->dev, sizeof(*tio), GFP_KERNEL);
+>=20
+> 	tio =3D devm_kzalloc(dev, sizeof(*tio), GFP_KERNEL);
+>=20
+>=20
+> > +	if (!tio)
+> > +		return -ENOMEM;
+> > +
+> > +	tio->dev =3D &pdev->dev;
+>=20
+> 	tio->dev =3D dev;
+>=20
+> > +	tio->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(tio->base))
+> > +		return PTR_ERR(tio->base);
+>=20
+> > +	pps_tio_disable(tio);
+>=20
+> This...
+>=20
+> > +	hrtimer_init(&tio->timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
+> > +	tio->timer.function =3D hrtimer_callback;
+> > +	spin_lock_init(&tio->lock);
+>=20
+> > +	tio->enabled =3D false;
+>=20
+> ...and this should go together, which makes me look at the enabled flag o=
+ver
+> the code and it seems there are a few places where you missed to sync it
+> with the reality.
+>=20
+> I would think of something like this:
+>=20
+> 	pps_tio_direction_output() =3D=3D> true
+> 	pps_tio_disable(tio) =3D=3D> false
+>=20
+> where "=3D=3D> X" means assignment of enabled flag.
+>=20
+> And perhaps this:
+>=20
+> 	tio->enabled =3D pps_generate_next_pulse(tio, expires +
+> SAFE_TIME_NS);
+> 	if (!tio->enabled)
+> 		...
+>=20
+> But the above is just thinking out loudly, you may find the better
+> approach(es).
+
+Yeah, makes sense.
+
+Will add enable counterpart.
+Will update tio->enabled in disable and enable functions.
+
+>=20
+> > +	platform_set_drvdata(pdev, tio);
+> > +
+> > +	return 0;
+> > +}
+>=20
+> --
+> With Best Regards,
+> Andy Shevchenko
+>=20
+
+Regards,
+Lakshmi Sowjanya
+
 
