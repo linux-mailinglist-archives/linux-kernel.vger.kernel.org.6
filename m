@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-190175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91C98CFA97
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863CE8CFA98
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FE7281A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1415D1F213B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4F839AD6;
-	Mon, 27 May 2024 07:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296FA3C463;
+	Mon, 27 May 2024 07:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="af4ADy7j"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZPk5ff3e"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C432E40E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F17381D5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796433; cv=none; b=swUNzdC/4WgQ/7dbcaXzOITl2CHxdX1GUV3XNg6uiAOpS7bgvY/xDLrC4uCNKsFL/pgXA/eWDVWj9TmNXDNj5L3sKntYgxEFwftZtCIDGo7+PmivE9MOb1TopSliuHMI9SNWrljiEZ1CBN40hyA1tD0Bt+NExtCYCdtM/N7mirU=
+	t=1716796435; cv=none; b=rLd7DjNrzily6cdt+8Y/gxmKw1lJc7pAAQRkoincn93x/lortkriRFjbL7Mo25tTjV8RgWhU6FBYI9f1bnUPvaVfinMzHPlIq8f6lAudLs3H1QbOwRzpR5qOHilEyWKpcBGSCEV1LahmyC4r8/7+JJA055db0kpM7/ezhaKKL5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796433; c=relaxed/simple;
-	bh=AWDlsUuU3fzJ88Pnde1vxfBNUMwQ9EQS+ojm3Zkxj0Q=;
+	s=arc-20240116; t=1716796435; c=relaxed/simple;
+	bh=fpYNTSg0sOLbnS+sAN/5LNQ/1717jIrVECRrIyAB/6s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skoD3gb9m6zzVdSBwjCCqtwvU82FUNCm65MFZiWOwA9fGl5cw8Ju0O7Uv4t4DoTV/5BFjNZ5iQ1D3hCUyyjm70EpSQsLk41UTCzreRyCRgUVF9LtYlBKf1KIv/xKKtSYk8z5u3MdNt3o6fxgi/axMLLV6xUY2hryAHBW7p0S238=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=af4ADy7j; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=YYQDBY9WWCuknLUEPLOyRATaCrkkNX3aNdBCTtHOogZas5l3Mr0I9vtUniuIH6WuzibZ/8/EEAmuXXnBmuyE1MwnDi2DkVbJ9XJJHVhIUFkdQDO6e/YoySj30WKk5qxKbeOUkIRH7uQ9Kx0KvNXjbypGU/Wja0pydqqt5h7uAco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZPk5ff3e; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716796431;
+	s=mimecast20190719; t=1716796433;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yJjt/5eGKxcl58g00wlGk6b60hoVQeRf0JP1mWdixGc=;
-	b=af4ADy7jVB7V5Qu2lnN2gVEVOagguWmhe4vm8DcivckyaiMSHi4TLnt1WtOWdkm5ZXY4Cz
-	XT8zWrjTuHUtG3pYLSYKzmaLwTnIoxsP4D24R7qr1n9pTy4+Vg1b1x0tohmq5WRYTneqTy
-	w6HkxVPNoHrkZZOthg8hHFE074x97DE=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=94Nn+gDWguFMQFL1W0OycJxi9V0LL/+VpNzMqcw5SdI=;
+	b=ZPk5ff3eP4gDXiCNJI4RnQOpfQw3knBMQD3gtSpUhCBBrVviYFoWaAbmO8oLpBypITxq3b
+	PQrwh8KuRgzSCovHhwEn0DaCFz3tErFAEClf7T8+D0dPIY36oYeo7c2pJKHbNMUmy5Nq3c
+	a6cx7zRmVd2XPF9KuTw9H4YKOrQhQgI=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-483-8ZmvauevOOCbRxErjhi0Mw-1; Mon, 27 May 2024 03:53:47 -0400
-X-MC-Unique: 8ZmvauevOOCbRxErjhi0Mw-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5798d7ed735so664575a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:53:47 -0700 (PDT)
+ us-mta-649-THHCDxFjOr-tAHPSWPAorg-1; Mon, 27 May 2024 03:53:50 -0400
+X-MC-Unique: THHCDxFjOr-tAHPSWPAorg-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e97c6f1a74so2932741fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:53:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716796426; x=1717401226;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1716796429; x=1717401229;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJjt/5eGKxcl58g00wlGk6b60hoVQeRf0JP1mWdixGc=;
-        b=jYuydropryf8TvtePea7CrY6ONuwLB167LzJvk/P0cKrRCDZA4HBfOy8+lm+G1y83/
-         OI0qhK6bWgSOaQFKrhF3VrtzhZObOjRcPu3ljUojINsa7u8k2SJGBYTsHWR9FRsR6q7I
-         a6tzu3n/0mSRhzIzfRa58vHqM4q5kf0KIytyp7FFjqBefB4hIyPflPjW3dNz/9lCvJBC
-         ZzUEMW0QqHMPoG6DusDQGDbCkSs7dfQ4vB//g7aFQUElSH7Yb4SylZwbIKZ4863v+cch
-         kE7HUSRx7RGrCrnidVOm/CnnD1GZ7BZfh8WPU5DL0kKgyEcic+86Id4ozsvxsVh1RxHQ
-         /ieQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMbsFu0tMZwxch2pXCO++r1cfPgh4fM+3VttUkcr5kA6hUvUMYxaAlidgwov02QbL9eyDgUPeTaGgEMFqL3uolxfLwUinMJ/l4TUaz
-X-Gm-Message-State: AOJu0YzFUHlJy5IMOR/Sat5wl6i0A1yqN3AaqnSOutGs8PqocXxCtQzi
-	20plre7XpUiqHSn6EUvyM7hUQPq0A5ZFGnfWFrunbl0+KlN/m4UvOP9StWYoq+hx502lAlsf+2R
-	WJBS843NNpKcu9snK2/TcOhlPJA0mLB71i0As/Ph8CNECs78vJGbf++hOoOcFYWOCodQFlrEQ
-X-Received: by 2002:a50:a402:0:b0:572:cfa4:3ccb with SMTP id 4fb4d7f45d1cf-578519160c0mr5264441a12.8.1716796426435;
-        Mon, 27 May 2024 00:53:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYComI9Zs83TUUKd5sk4qJypKkiyjT/f+YVwWOi2cC0zev/7gmccLbH/HmGbUWT9nHKsPWgA==
-X-Received: by 2002:a50:a402:0:b0:572:cfa4:3ccb with SMTP id 4fb4d7f45d1cf-578519160c0mr5264429a12.8.1716796425953;
-        Mon, 27 May 2024 00:53:45 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785234b3e3sm5408865a12.19.2024.05.27.00.53.44
+        bh=94Nn+gDWguFMQFL1W0OycJxi9V0LL/+VpNzMqcw5SdI=;
+        b=mCzHsBp/ZtYs/SlXwxd8qnip4+TrFBFpy9nMkv45LvIwbIMmS8QMMYTjnVKmhm6Ewq
+         BrDocPC51QxueXEwfNmU77CKfduiveGd+WvWlvI1M00z3WMqMe4buEWi6Vw1M9GHCq1B
+         /FOhlWZQ8eq0L4EI4gJ+rpqsfWw968AIPPkNdMGGjCfJxVXCpKQXZyQVuFLDRDVpiH13
+         XKYEIB9frRe1LFRiKcq9kii3DdXBrumsdCovqBDMhDh9KsnbMRa6v2mhYafSSpAuEYEu
+         xt6rwLTfmEtKO7yzhyg0IcmGYe/aPO7+PyeraMa1zpAS05S0rGkdhxrT8n+rytHQe2gA
+         RiOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk/ORaYLYNoAnBQT7a6sNzKi4iLo+hN+bFK1wqdSMJjr7EZTw/56QWMLMlzqp4+FGKBvbAPSIld08+k/gu9YjOyHdbFofBqmpJOmfq
+X-Gm-Message-State: AOJu0YwElOnz7DQFZ20AFuwqC2ZzU/qZ2UuC/0xB/TuUfmELCc+jLBSY
+	1OtnxYm3QO6xWkTyUvZvr3NKI8AnZi1hDxUGNl73qdJ+9FYfrncKCdgU6VK105YyaN8cXBiB8Vk
+	SqRD+ogYjFfBosZ+0SDnkEENu+oqRx5TaYQSziI77sXIR9UyrXETGJQbmwOLM2w==
+X-Received: by 2002:a2e:9bc6:0:b0:2e9:7417:bb0a with SMTP id 38308e7fff4ca-2e97417bbe0mr18593031fa.3.1716796429006;
+        Mon, 27 May 2024 00:53:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7UsmrWTRpKTMmDwSTymTCt/+SN36zCsBuKQO3VhRHcXruZ8UCSn/4VhRRIuJyyC4L2SEuhw==
+X-Received: by 2002:a2e:9bc6:0:b0:2e9:7417:bb0a with SMTP id 38308e7fff4ca-2e97417bbe0mr18592911fa.3.1716796428423;
+        Mon, 27 May 2024 00:53:48 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm132541905e9.4.2024.05.27.00.53.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 00:53:45 -0700 (PDT)
-Message-ID: <0fdc6519-5d34-4191-a41d-13f49463ad17@redhat.com>
-Date: Mon, 27 May 2024 09:53:43 +0200
+        Mon, 27 May 2024 00:53:48 -0700 (PDT)
+Message-ID: <8201bd1d-f617-491b-a10d-1fe689e9eb9b@redhat.com>
+Date: Mon, 27 May 2024 09:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,73 +81,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] Input: novatek-nvt-ts: replace generic i2c device
- id with specific IC variant
-To: joelselvaraj.oss@gmail.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com>
- <20240526-nvt-ts-devicetree-regulator-support-v3-1-aa88d10ccd9a@gmail.com>
+Subject: Re: [PATCH 1/2] mm,memory_hotplug: Remove un-taken lock
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ Michal Hocko <mhocko@suse.com>, Anshuman Khandual
+ <anshuman.khandual@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240521-mm-hotplug-sync-v1-0-6d53706c1ba8@google.com>
+ <20240521-mm-hotplug-sync-v1-1-6d53706c1ba8@google.com>
+ <78e646af-e8b5-4596-8fbf-17b139cfdddd@redhat.com>
+ <Zk4AwwX7x426KU7H@google.com>
+ <0506ae4e-e17d-4c3c-aa3e-1cea04909e5a@redhat.com>
+ <ZlCB5bFnafw_zE8Z@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240526-nvt-ts-devicetree-regulator-support-v3-1-aa88d10ccd9a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <ZlCB5bFnafw_zE8Z@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 5/27/24 5:26 AM, Joel Selvaraj via B4 Relay wrote:
-> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Am 24.05.24 um 14:02 schrieb Brendan Jackman:
+> On Wed, May 22, 2024 at 05:24:17PM +0200, David Hildenbrand wrote:
+>> On 22.05.24 16:27, Brendan Jackman wrote:
+>>> On Wed, May 22, 2024 at 04:09:41PM +0200, David Hildenbrand wrote:
 > 
-> This is done in preparation to introduce other variants of the Novatek NVT
-> touchscreen controller that can be supported by the driver.
+>>> By the way, some noob questions: am I OK with my assumption that it's
+>>> fine for reader code to operate on zone spans that are both stale and
+>>> "from the future"? thinking abstractly I guess that seeing a stale
+>>> value when racing with offline_pages is roughly the same as seeing a
+>>> value "from the future" when racing with online_pages?
+>>
+>> Right. PFN walkers should be using pfn_to_online_page(), where races are
+>> possible but barely seen in practice.
+>>
+>> zone handlers like mm/compaction.c can likely deal with races, although it
+>> might all be cleaner (and safer?) when using start+end. I recall it also
+>> recalls on pfn_to_online_page().
+>>
+>> Regarding page_outside_zone_boundaries(), it should be fine if we can read
+>> start+end atomically, that way we would not accidentally report "page
+>> outside ..." when changing the start address. I think with your current
+>> patch that might happen (although likely extremely hard to trigger) when
+>> growing the zone at the start, reducing zone_start_pfn.
 > 
-> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-> ---
->  drivers/input/touchscreen/novatek-nvt-ts.c       | 2 +-
->  drivers/platform/x86/x86-android-tablets/other.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Thanks a lot, this is very helpful
 > 
-> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-> index 1a797e410a3fa..224fd112b25a9 100644
-> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
-> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-> @@ -278,7 +278,7 @@ static int nvt_ts_probe(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id nvt_ts_i2c_id[] = {
-> -	{ "NVT-ts" },
-> +	{ "NT11205-ts" },
-
-I know this was my own suggestion, but it would be better to make this lower case ("nt11205-ts"),
-I'll explain why in my review of patch 3/3.
- 
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-> diff --git a/drivers/platform/x86/x86-android-tablets/other.c b/drivers/platform/x86/x86-android-tablets/other.c
-> index eb0e55c69dfed..5ecee6e66fb4d 100644
-> --- a/drivers/platform/x86/x86-android-tablets/other.c
-> +++ b/drivers/platform/x86/x86-android-tablets/other.c
-> @@ -40,7 +40,7 @@ static const struct x86_i2c_client_info acer_b1_750_i2c_clients[] __initconst =
->  	{
->  		/* Novatek NVT-ts touchscreen */
->  		.board_info = {
-> -			.type = "NVT-ts",
-> +			.type = "NT11205-ts",
-
-This then also needs to belower case.
-
->  			.addr = 0x34,
->  			.dev_name = "NVT-ts",
->  		},
+>>> Also, is it ever possible for pages to get removed and then added back
+>>> and end up in a different zone than before?
+>>
+>> Yes. Changing between MOVABLE and NORMAL is possible and can easily be
+>> triggered by offlining+re-onlining memory blocks.
 > 
+> So, even if we make it impossible to see a totally bogus zone span,
+> you can observe a stale/futuristic span which currently contains pages
+> from a different zone?
 
-Regards,
+Yes. Note that zones/nodes can easily overlap, so a page being spanned by 
+another zones is common and supported already.
 
-Hans
+> 
+> That seems to imply you could look up a page page from a PFN within
+> zone A's apparent span, lock zone A and assume you can safely modify
+> the freelist the page is on, but actually that page is now in zone B.
+
+That's why we obtain the zone/node always from the page itself (stored in page 
+flags). This data can only change when offlining+reonlining memory (and 
+pfn_to_online_page() would refuse to hand out the page while temporarily online).
+
+There were discussions around using RCU to improve pfn_to_online_page() racing 
+with memory offlining, but the motivation to do that has been rather small: we 
+barely see such races in practice. Memory offlining+re-onlining simply takes too 
+long.
+
+> 
+> So for example:
+> 
+> 1. compact_zone() sets cc->free_pfn based on zone_end_pfn
+>    2. isolate_freepages() sets isolate_start_pfn = cc->free_pfn
+>      3. isolate_freepages_block() looks up a page based on that PFN
+>      3. ... then takes the cc->zone lock
+>      4. ... then calls __isolate_free_page which removes the page from
+>         whatever freelist it's on.
+> 
+> Is anything stopping part 4 from modifying a zone that wasn't locked
+> in part 3?
+
+Likely that overlapping zones already exist and are handled accordingly.
+
+-- 
+Thanks,
+
+David / dhildenb
 
 
