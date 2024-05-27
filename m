@@ -1,420 +1,134 @@
-Return-Path: <linux-kernel+bounces-191342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93748D0A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:42:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0098D0A11
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3526D1F22ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFC1C22156
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630B0169AD2;
-	Mon, 27 May 2024 18:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBB15FA86;
+	Mon, 27 May 2024 18:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cd0Rn0Sw"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0+7Qr01"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F086168C29;
-	Mon, 27 May 2024 18:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330F15FA6B;
+	Mon, 27 May 2024 18:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835112; cv=none; b=epAMUYbjWsOo0fXtOpo91vhfWQgQgj+gwC9InHxpVSzv2FUAKboXG3CG77XoPaTAqruffP4M8KGlB9X0/lUWwXB/f2o+kQQym3jvh7uEQKRooHx0SIcFJ3AcA2oQsKz3/HinDb8OLr71wxCHZUOWC3dCkjBw0rHNDZgQAnRh8Dg=
+	t=1716835310; cv=none; b=etYKBcaPb2Vqw+FMRfGNzmk01zkkVYtD8AelbaHUK1f3t5iAFplTamn7pgTIwiBHYBOzl0ataGgkKwmMs2lUetRiUxXwtJw2cs4ml9le8f/ZittydF5x5mZebEvWd5jgB1ChMD8Z9yszsjIND7ahPrHSGvkrlmRFwMZWxzl36D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835112; c=relaxed/simple;
-	bh=Q2PlA0hiHKYNxsXSB+MV8bzWdduB4sQHpHLyCbabfZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EEVWZO0LI+hTkxyi4LM9MCivr1nmMbFed+NCv3lcVps+3ED4wH+Pwp93hqj4rTvvuJtlyuqP6aHunP/T//4Wv/YAwiH7lmDtUK4S3KGyM19nVnVmv5ZY+ouE4VMBKZpXt88qqnWda8E6o665SGKkTKCgARo/f64JomSJs7lofdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cd0Rn0Sw; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5a89787ea4so7555466b.2;
-        Mon, 27 May 2024 11:38:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716835109; x=1717439909; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zx/kAsdeMiTjNQrNc9mf98y9EcqJqfG2NikyGa/ZpqY=;
-        b=Cd0Rn0Sw7CutXsCY7mWmg0tEiBiWuok9AJ7Xp6equk5V3Ds9Aug4tfIoYSVeIS4bu3
-         AS+nryGYWPU7t3rfMACpDrsPgF8klr1mfGHDeNdeRSt099C7UIuVJxMFBZdHKOIsdHrb
-         L7XeX49BYahiMsWuWZ07YuBRw0qqmmF2eCeOTBQ/791+xY3uI61SMuoE/6L277/5u1ED
-         PP4sKJ6Id+e79lCqW+60mOWvOtGh8d72iHtuyUI+2wv/koKviAczbbkoNaLDLjGM/dbb
-         aU7NOyFbMWlYegmLt+hg9c1RITcJTus6PlJ9/ailUzV4zhU3B5WHEmgmXIeDo5kml9Id
-         9C/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716835109; x=1717439909;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zx/kAsdeMiTjNQrNc9mf98y9EcqJqfG2NikyGa/ZpqY=;
-        b=XjTsYnvCzPib6ZsgE4FjwA8pqvkWWtdEdrOZJen4EQOlF3ctZLFs7kyw9JeMYR00L0
-         eL+3o5KNYreCqt9fqLQeC1NqRvaennc7K3DEv7mIaBJS76f7OrOPjnRnhbbfLkpSxbWa
-         czsXw/0BBML+cWZoVzXctx8Q6yDGIEkN8/r4D9ptDjqx9ET4tzGA9A5DjBOaQ4/PUOew
-         OqD6oam8H0Mo4RD6B/8PlAaHIle2WgTbZNMOoEzrUZFIjuZolpNCWLiqASu7b5GAgImC
-         yhyEf2Dp1/immPl/dV2rD0I0TT0IXoVDTtS9GAQTw5+UkQJPnW/3q8rLwWRvkkcaiksl
-         DvTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuJBlOIU1Vk0lTVdhifR1hN83qB7HoU9jpSVgxx1fSao7fymbe01KgPuS0XlmX2uLhKv7fC7+o7MnlbIuBLYhORCSJij51rpi+l7q7MySZFmQPE4fs8KKOo1ELXEF5lIPquLd/kg1r
-X-Gm-Message-State: AOJu0YwD/FfQSBKGWNWYuSuSxjxJG75PEH4VIN3ksPN37W+Vs/OqQ7et
-	lSgvrquMRQg+WYPtJ7vV7dX5gWSHtQRt+d904h2SM6+VYmeOnD+PkMj/tw==
-X-Google-Smtp-Source: AGHT+IE1tKzJqbfjBH26TaM1koLxePkYTkuUtXN4w2h0H1fvC6I15wD2F+0d57Y/rydbL0hbWVPhew==
-X-Received: by 2002:a17:906:6b1b:b0:a59:ee81:fd68 with SMTP id a640c23a62f3a-a626525cd08mr688673366b.71.1716835108688;
-        Mon, 27 May 2024 11:38:28 -0700 (PDT)
-Received: from localhost.localdomain ([2a04:ee41:82:7577:4b45:3774:6be0:a177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc52398sm513825266b.105.2024.05.27.11.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 11:38:28 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de
-Cc: himanshujha199640@gmail.com,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vasileios Amoiridis <vassilisamir@gmail.com>
-Subject: [PATCH v1 17/17] iio: chemical: bme680: Refactorize reading functions
-Date: Mon, 27 May 2024 20:38:05 +0200
-Message-Id: <20240527183805.311501-18-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240527183805.311501-1-vassilisamir@gmail.com>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
+	s=arc-20240116; t=1716835310; c=relaxed/simple;
+	bh=ZAYWwfV1OEyqXzGdLDzfV5BVTmztV5SWkMzCbWrY1TQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwrwfzkyMRlDEt8w6SqcSTspnEgkMecGGer1toZxkGwulyoLlMYi+/Lmak0ldB6ieZc+a0SDwd4jPYWpkONT9E4q7QP1JtRi8LFbE/mnL4tKUKBX+MeJFYVcSwidgvCZzxaHpmvnuIAU+8rxVC29VfV/FqUjplXfMFyfGKziHoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0+7Qr01; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C95E8C32782;
+	Mon, 27 May 2024 18:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716835309;
+	bh=ZAYWwfV1OEyqXzGdLDzfV5BVTmztV5SWkMzCbWrY1TQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y0+7Qr01/p8fLq0J4RkroNtYjuG0DDqOmttOKEUULhWOLBm5q7DBVuhjWRtJLtaPt
+	 31HokXwENc6DdrxTGow+L3KOCZGCoDgUsNsGjCqYjEB99tatMQfGIxGFETcvVJhqZm
+	 cqMi/uTHaDED63KV9iXAv/ccpK6i7rCOK7UtZM5WD0BRr9sJQcRUWBCzZksyDTXaUD
+	 4OJgFaT/SjBSCbwqfQC1+pimW2IVZVsazdk5+PPuIrqRQGfrinqH42OevzPDh8Q/i3
+	 oxH3i/ZlkbGT4WKC+9e/2fnGhhEmTIXa7B/F0hOpGlKXnrHXoVzgiTPpXvL0hqHwES
+	 rItjTPKdvXNGw==
+Message-ID: <28187208-1cf6-4bee-af2f-f1f1d6e6da3d@kernel.org>
+Date: Mon, 27 May 2024 20:41:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 01/15] dt-bindings: firmware: qcom,scm: add
+ memory-region for sa8775p
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Marko <robimarko@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, Elliot Berman <quic_eberman@quicinc.com>,
+ Alex Elder <elder@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@quicinc.com
+References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
+ <20240527-shm-bridge-v10-1-ce7afaa58d3a@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240527-shm-bridge-v10-1-ce7afaa58d3a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The reading of the pressure and humidity value, requires an update
-of the t_fine variable which happens by reading the temperature
-value.
+On 27/05/2024 14:54, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Document a new property (currently only for sa8775p) that describes the
+> memory region reserved for communicating with the TrustZone.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-So the bme680_read_{press/humid}() functions of the above sensors
-are internally calling the equivalent bme680_read_temp() function
-in order to update the t_fine value. By just looking at the code
-this relation is a bit hidden and is not easy to understand why
-those channels are not independent.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-This commit tries to clear these thing a bit by splitting the
-bme680_{read/compensate}_{temp/press/humid}() to the following:
-
-i. bme680_read_{temp/press/humid}_adc(): read the raw value from
-the sensor.
-
-ii. bme680_calc_t_fine(): calculate the t_fine variable.
-
-iii. bme680_get_t_fine(): get the t_fine variable.
-
-iv. bme680_compensate_{temp/press/humid}(): compensate the adc
-values and return the calculated value.
-
-v. bme680_read_{temp/press/humid}(): combine calls of the
-aforementioned functions to return the requested value.
-
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
----
- drivers/iio/chemical/bme680_core.c | 192 +++++++++++++++++------------
- 1 file changed, 116 insertions(+), 76 deletions(-)
-
-diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-index 8f977667249b..cfcb6f791517 100644
---- a/drivers/iio/chemical/bme680_core.c
-+++ b/drivers/iio/chemical/bme680_core.c
-@@ -104,11 +104,6 @@ struct bme680_data {
- 	u8 oversampling_humid;
- 	u16 heater_dur;
- 	u16 heater_temp;
--	/*
--	 * Carryover value from temperature conversion, used in pressure
--	 * and humidity compensation calculations.
--	 */
--	s32 t_fine;
- 
- 	/*
- 	 * DMA (thus cache coherency maintenance) may require the
-@@ -241,6 +236,31 @@ static int bme680_read_calib(struct bme680_data *data,
- 	return 0;
- }
- 
-+static int bme680_read_temp_adc(struct bme680_data *data, u32 *adc_temp)
-+{
-+	struct device *dev = regmap_get_device(data->regmap);
-+	u32 value_temp;
-+	int ret;
-+
-+	ret = regmap_bulk_read(data->regmap, BME680_REG_TEMP_MSB,
-+			       data->buf, BME680_TEMP_NUM_BYTES);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read temperature\n");
-+		return ret;
-+	}
-+
-+	value_temp = FIELD_GET(BME680_MEAS_TRIM_MASK,
-+			       get_unaligned_be24(data->buf));
-+	if (value_temp == BME680_MEAS_SKIPPED) {
-+		/* reading was skipped */
-+		dev_err(dev, "reading temperature skipped\n");
-+		return -EINVAL;
-+	}
-+	*adc_temp = value_temp;
-+
-+	return 0;
-+}
-+
- /*
-  * Taken from Bosch BME680 API:
-  * https://github.com/BoschSensortec/BME680_driver/blob/63bb5336/bme680.c#L876
-@@ -248,12 +268,10 @@ static int bme680_read_calib(struct bme680_data *data,
-  * Returns temperature measurement in DegC, resolutions is 0.01 DegC. Therefore,
-  * output value of "3233" represents 32.33 DegC.
-  */
--static s16 bme680_compensate_temp(struct bme680_data *data,
--				  u32 adc_temp)
-+static s32 bme680_calc_t_fine(struct bme680_data *data, u32 adc_temp)
- {
- 	struct bme680_calib *calib = &data->bme680;
- 	s64 var1, var2, var3;
--	s16 calc_temp;
- 
- 	/* If the calibration is invalid, attempt to reload it */
- 	if (!calib->par_t2)
-@@ -263,10 +281,52 @@ static s16 bme680_compensate_temp(struct bme680_data *data,
- 	var2 = (var1 * calib->par_t2) >> 11;
- 	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
- 	var3 = (var3 * ((s32)calib->par_t3 << 4)) >> 14;
--	data->t_fine = var2 + var3;
--	calc_temp = (data->t_fine * 5 + 128) >> 8;
-+	return var2 + var3; /* t_fine = var2 + var3 */
-+}
- 
--	return calc_temp;
-+static int bme680_get_t_fine(struct bme680_data *data, s32 *t_fine)
-+{
-+	u32 adc_temp;
-+	int ret;
-+
-+	ret = bme680_read_temp_adc(data, &adc_temp);
-+	if (ret)
-+		return ret;
-+
-+	*t_fine = bme680_calc_t_fine(data, adc_temp);
-+
-+	return 0;
-+}
-+
-+static s16 bme680_compensate_temp(struct bme680_data *data,
-+				  u32 adc_temp)
-+{
-+	return (bme680_calc_t_fine(data, adc_temp) * 5 + 128) / 256;
-+}
-+
-+static int bme680_read_press_adc(struct bme680_data *data, u32 *adc_press)
-+{
-+	struct device *dev = regmap_get_device(data->regmap);
-+	u32 value_press;
-+	int ret;
-+
-+	ret = regmap_bulk_read(data->regmap, BME680_REG_PRESS_MSB,
-+			       data->buf, BME680_PRESS_NUM_BYTES);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read pressure\n");
-+		return ret;
-+	}
-+
-+	value_press = FIELD_GET(BME680_MEAS_TRIM_MASK,
-+				get_unaligned_be24(data->buf));
-+	if (value_press == BME680_MEAS_SKIPPED) {
-+		/* reading was skipped */
-+		dev_err(dev, "reading pressure skipped\n");
-+		return -EINVAL;
-+	}
-+	*adc_press = value_press;
-+
-+	return 0;
- }
- 
- /*
-@@ -277,12 +337,12 @@ static s16 bme680_compensate_temp(struct bme680_data *data,
-  * 97356 Pa = 973.56 hPa.
-  */
- static u32 bme680_compensate_press(struct bme680_data *data,
--				   u32 adc_press)
-+				   u32 adc_press, s32 t_fine)
- {
- 	struct bme680_calib *calib = &data->bme680;
- 	s32 var1, var2, var3, press_comp;
- 
--	var1 = (data->t_fine >> 1) - 64000;
-+	var1 = (t_fine >> 1) - 64000;
- 	var2 = ((((var1 >> 2) * (var1 >> 2)) >> 11) * calib->par_p6) >> 2;
- 	var2 = var2 + (var1 * calib->par_p5 << 1);
- 	var2 = (var2 >> 2) + ((s32)calib->par_p4 << 16);
-@@ -310,6 +370,30 @@ static u32 bme680_compensate_press(struct bme680_data *data,
- 	return press_comp;
- }
- 
-+static int bme680_read_humid_adc(struct bme680_data *data, u32 *adc_humidity)
-+{
-+	struct device *dev = regmap_get_device(data->regmap);
-+	u32 value_humidity;
-+	int ret;
-+
-+	ret = regmap_bulk_read(data->regmap, BME680_REG_HUMIDITY_MSB,
-+			       &data->be16, BME680_HUMID_NUM_BYTES);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read humidity\n");
-+		return ret;
-+	}
-+
-+	value_humidity = be16_to_cpu(data->be16);
-+	if (value_humidity == BME680_MEAS_SKIPPED) {
-+		/* reading was skipped */
-+		dev_err(dev, "reading humidity skipped\n");
-+		return -EINVAL;
-+	}
-+	*adc_humidity = value_humidity;
-+
-+	return 0;
-+}
-+
- /*
-  * Taken from Bosch BME680 API:
-  * https://github.com/BoschSensortec/BME680_driver/blob/63bb5336/bme680.c#L937
-@@ -318,12 +402,12 @@ static u32 bme680_compensate_press(struct bme680_data *data,
-  * value of "43215" represents 43.215 %rH.
-  */
- static u32 bme680_compensate_humid(struct bme680_data *data,
--				   u16 adc_humid)
-+				   u16 adc_humid, s32 t_fine)
- {
- 	struct bme680_calib *calib = &data->bme680;
- 	s32 var1, var2, var3, var4, var5, var6, temp_scaled, calc_hum;
- 
--	temp_scaled = (data->t_fine * 5 + 128) >> 8;
-+	temp_scaled = (t_fine * 5 + 128) >> 8;
- 	var1 = (adc_humid - (((s32)calib->par_h1 * 16))) -
- 		(((temp_scaled * calib->par_h3) / 100) >> 1);
- 	var2 = (calib->par_h2 *
-@@ -555,68 +639,35 @@ static int bme680_gas_config(struct bme680_data *data)
- 
- static int bme680_read_temp(struct bme680_data *data, int *val)
- {
--	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	u32 adc_temp;
- 	s16 comp_temp;
- 
--	ret = regmap_bulk_read(data->regmap, BME680_REG_TEMP_MSB,
--			       data->buf, BME680_TEMP_NUM_BYTES);
--	if (ret < 0) {
--		dev_err(dev, "failed to read temperature\n");
-+	ret = bme680_read_temp_adc(data, &adc_temp);
-+	if (ret)
- 		return ret;
--	}
- 
--	adc_temp = FIELD_GET(BME680_MEAS_TRIM_MASK,
--			     get_unaligned_be24(data->buf));
--	if (adc_temp == BME680_MEAS_SKIPPED) {
--		/* reading was skipped */
--		dev_err(dev, "reading temperature skipped\n");
--		return -EINVAL;
--	}
- 	comp_temp = bme680_compensate_temp(data, adc_temp);
--	/*
--	 * val might be NULL if we're called by the read_press/read_humid
--	 * routine which is called to get t_fine value used in
--	 * compensate_press/compensate_humid to get compensated
--	 * pressure/humidity readings.
--	 */
--	if (val) {
--		*val = comp_temp * 10; /* Centidegrees to millidegrees */
--		return IIO_VAL_INT;
--	}
--
--	return ret;
-+	*val = comp_temp * 10; /* Centidegrees to millidegrees */
-+	return IIO_VAL_INT;
- }
- 
- static int bme680_read_press(struct bme680_data *data,
- 			     int *val, int *val2)
- {
--	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	u32 adc_press;
-+	s32 t_fine;
- 
--	/* Read and compensate temperature to get a reading of t_fine */
--	ret = bme680_read_temp(data, NULL);
--	if (ret < 0)
-+	ret = bme680_get_t_fine(data, &t_fine);
-+	if (ret)
- 		return ret;
- 
--	ret = regmap_bulk_read(data->regmap, BME680_REG_PRESS_MSB,
--			       data->buf, BME680_PRESS_NUM_BYTES);
--	if (ret < 0) {
--		dev_err(dev, "failed to read pressure\n");
-+	ret = bme680_read_press_adc(data, &adc_press);
-+	if (ret)
- 		return ret;
--	}
- 
--	adc_press = FIELD_GET(BME680_MEAS_TRIM_MASK,
--			      get_unaligned_be24(data->buf));
--	if (adc_press == BME680_MEAS_SKIPPED) {
--		/* reading was skipped */
--		dev_err(dev, "reading pressure skipped\n");
--		return -EINVAL;
--	}
--
--	*val = bme680_compensate_press(data, adc_press);
-+	*val = bme680_compensate_press(data, adc_press, t_fine);
- 	*val2 = 1000;
- 	return IIO_VAL_FRACTIONAL;
- }
-@@ -624,30 +675,19 @@ static int bme680_read_press(struct bme680_data *data,
- static int bme680_read_humid(struct bme680_data *data,
- 			     int *val, int *val2)
- {
--	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
--	u16 adc_humidity;
--	u32 comp_humidity;
-+	u32 adc_humidity, comp_humidity;
-+	s32 t_fine;
- 
--	/* Read and compensate temperature to get a reading of t_fine */
--	ret = bme680_read_temp(data, NULL);
--	if (ret < 0)
-+	ret = bme680_get_t_fine(data, &t_fine);
-+	if (ret)
- 		return ret;
- 
--	ret = regmap_bulk_read(data->regmap, BME680_REG_HUMIDITY_MSB,
--			       &data->be16, BME680_HUMID_NUM_BYTES);
--	if (ret < 0) {
--		dev_err(dev, "failed to read humidity\n");
-+	ret = bme680_read_humid_adc(data, &adc_humidity);
-+	if (ret)
- 		return ret;
--	}
- 
--	adc_humidity = be16_to_cpu(data->be16);
--	if (adc_humidity == BME680_MEAS_SKIPPED) {
--		/* reading was skipped */
--		dev_err(dev, "reading humidity skipped\n");
--		return -EINVAL;
--	}
--	comp_humidity = bme680_compensate_humid(data, adc_humidity);
-+	comp_humidity = bme680_compensate_humid(data, adc_humidity, t_fine);
- 
- 	*val = comp_humidity;
- 	*val2 = 1000;
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
