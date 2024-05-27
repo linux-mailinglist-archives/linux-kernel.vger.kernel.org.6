@@ -1,153 +1,148 @@
-Return-Path: <linux-kernel+bounces-190744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED848D0210
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21F18D0201
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64E0EB2C72A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C92B28C990
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C8B15FA60;
-	Mon, 27 May 2024 13:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54CC15EFD1;
+	Mon, 27 May 2024 13:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="E+YWuJqJ"
-Received: from out187-21.us.a.mail.aliyun.com (out187-21.us.a.mail.aliyun.com [47.90.187.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEDZjgd8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3EA15F402
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E6815EFBF;
+	Mon, 27 May 2024 13:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817259; cv=none; b=KjIxbJ7QFVFPDVmBRqShSdknzTRUtdXFAzPZkDakOPYydUbII8txA0AG5zpIyZfdMUHEgXPq6pG66Fg5Qi5Ct6oVhwJ4TRxzI7uMZ5PV6ZeH15uJpHouikxkCNcH72Telj08t2e9cumzhf7R7TUXJ+XWhjW0PT5ZITJwXUxaLHA=
+	t=1716817335; cv=none; b=HxB0wlTpbofxJwy18S4/HE+SeHhBgJkLlM9skAkZHfZ7HPPsS6MldVWR/JRH5QUU+t/cWIADkao15GTD3PBFQf1yCg7/aGBEN1CWUCVn/jx49hyKtC5fg/m0UkQM7cYgskINnETOBLsuRIoALgwgyOqgNRRCfBANHsefvjRCZ4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817259; c=relaxed/simple;
-	bh=BBlh1DPns5C2oAF8vnyB3bE/HFKCbRe/Qz+OCUEIZe4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ealgT3l5RLvv/DjHlNB6WH5g+LmLmB0BM3gmRh4Ao6rsL6B7zAuYRUb+HCZGUE+7LLilChpMvVPBZdEtbFJQNRzJtTwHufmexMe5mYJnVonIsjY3QCEOouE2wUqMo1I2pE6uClIjWiK4AR1s6FLUIVtD47tv05OLbM1tlK6NFmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=E+YWuJqJ; arc=none smtp.client-ip=47.90.187.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1716817239; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=aPhgJtNbevvD4n484o242Ca+ulgY/TKUr1VEB8WBEMY=;
-	b=E+YWuJqJOgnlDsb5yAqrhFikW4MPZtR/A5qpE4Ns+YZ2jeMjMqrbsVJEhfSqGBO0ppb0lvPmxTk79Celpw9sy+gbIn68i0ccBrbO0uAwmIL59d4YeWfZhtrN+ji/nB1bBFB8gqoyZhj7j+4un+rFHxLMbeJQ+ok85w/0YaMmhJY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033070021168;MF=tiwei.btw@antgroup.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---.XofsrHN_1716817238;
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.XofsrHN_1716817238)
-          by smtp.aliyun-inc.com;
-          Mon, 27 May 2024 21:40:38 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH 2/2] um: Remove /proc/sysemu support code
-Date: Mon, 27 May 2024 21:40:24 +0800
-Message-Id: <20240527134024.1539848-3-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240527134024.1539848-1-tiwei.btw@antgroup.com>
-References: <20240527134024.1539848-1-tiwei.btw@antgroup.com>
+	s=arc-20240116; t=1716817335; c=relaxed/simple;
+	bh=cHdLFNG7QdO/v0uCoRD5sykZrNWbsVKGxrYwZl/Gm2I=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=VstlXPsEs+3ujHkjvdzL5j/sNVa96OD2oI3xXFheJy567Z6o4iIaSoQx6dzgNZVhNIGKLQwKHbJgAPBtxup2cq8gETCOM/I9SQqM2xLbkyEQvse9YDZ6YGWDZX73YNKyseFe6+edFutjS0I2uXMDqq5N8i0/M4Vj+eJHUfF+Kl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEDZjgd8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4212C2BBFC;
+	Mon, 27 May 2024 13:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716817334;
+	bh=cHdLFNG7QdO/v0uCoRD5sykZrNWbsVKGxrYwZl/Gm2I=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=vEDZjgd8DAMhfS2OaiAJd2CijDT/iN7Xx2TV20FxpdqzX21MTy1203CgyyhSYahHG
+	 dBP6g+ga7MWEZP3QQeGa3TcBOXDAEyY/iHcvZiaFMkNXdg8vwbZhQmlPxjTyOTNs1C
+	 X+gtNeajxlStK0bLkZay7GELUUAiSde2vHdJFDlNb4tu6N032q79seFK/7k3xJBj+3
+	 cZEfHKff/1dx87vhGkW3ug5WJ5H7zqrH3eRXkTP0VUhgtnagtUcbOjSZJep8vgTesL
+	 snV1uXiwUYSIiacJWWElX53EUpQiEniY4pFHJj7V/XsvFKZ/iWv4z1xIltRlhGn3y9
+	 w4evBhrDdhNWw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
+  linux-wireless@vger.kernel.org,  ath10k@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  Hans de Goede <hdegoede@redhat.com>,
+  James Prestwood <prestwoj@gmail.com>
+Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
+References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
+	<e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
+	<87sey38vte.fsf@kernel.org>
+	<96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
+Date: Mon, 27 May 2024 16:42:10 +0300
+In-Reply-To: <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de> (Paul
+	Menzel's message of "Mon, 27 May 2024 12:24:59 +0200")
+Message-ID: <87o78r8j7x.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Currently /proc/sysemu will never be registered, as sysemu_supported
-is initialized to zero implicitly and no code updates it. And there is
-also nothing to configure via sysemu in UML anymore.
+Paul Menzel <pmenzel@molgen.mpg.de> writes:
 
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/kernel/process.c | 67 ----------------------------------------
- 1 file changed, 67 deletions(-)
+> Dear Kalle, dear Baochen,
+>
+>
+> Am 27.05.24 um 11:10 schrieb Kalle Valo:
+>> Baochen Qiang writes:
+>>=20
+>>> On 5/27/2024 4:42 PM, Paul Menzel wrote:
+>
+>>>> On the Intel Kaby Lake notebook Dell XPS 13 with
+>>>>
+>>>>  =C2=A0=C2=A0=C2=A0 3a:00.0 Network controller [0280]: Qualcomm Athero=
+s QCA6174
+>>>> 802.11ac Wireless Network Adapter [168c:003e] (rev 32)
+>>>>
+>>>> with at least a self-built Linux 6.9-rc5, on April 26th, 2024, and
+>>>> Linux 6.8.11, today, May 27th, 2024, the error below happened, and
+>>>> the device couldn=E2=80=99t authenticate to a WiFi network until reloa=
+ding
+>>>> the module *ath10k_core* and *ath10k_pci* (didn=E2=80=99t check just
+>>>> *ath10k_pci*):
+>>>>
+>>>>  =C2=A0=C2=A0=C2=A0 $ sudo modprobe -r ath10k_pci
+>>>>  =C2=A0=C2=A0=C2=A0 $ sudo modprobe -r ath10k_core
+>>>>  =C2=A0=C2=A0=C2=A0 $ sudo modprobe ath10k_pci
+>>>>
+>>>> ```
+>>>> [=C2=A0=C2=A0 49.441618] ath10k_pci 0000:3a:00.0: wmi service ready ev=
+ent not received
+>>>> [=C2=A0=C2=A0 49.523814] ath10k_pci 0000:3a:00.0: Could not init core:=
+ -110
+>> [...]
+>>=20
+>>> Are you using a distro kernel?
+>
+> The 6.8.11 is Debian=E2=80=99s current Linux kernel in the suite *unstabl=
+e/sid*
+> (*linux-image-6.8.11-amd64* 6.8.11-1).
+>
+>>> Could you check if below patch merged in your kernel? if not can
+>>> you merge it and try again?
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/drivers/net/wireless/ath/ath10k?id=3De57b7d62a1b2f496caf0beba81cec3c90fa=
+d80d5
+>> Paul, if you are feeling brave to try out an -rc this commit is in
+>> just
+>> released v6.10-rc1.
+>
+> Thank you. I haven=E2=80=99t found out yet, how to reproduce this. I=E2=
+=80=99ll keep
+> an eye on it.
+>
+> As the commit message says:
+>
+>> This results in timeout issue if the interrupt is not fired, due to
+>> some unknown reasons.
+>
+> There are reports from 2016 to 2021 with similar symptoms. These were
+> supposedly fixed with
+> `/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin` [1][2]:
+>
+>     $ md5sum /usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin
+>     /usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
+>     cb37c63d9ca28f53fea1ff09ad7c7a82
+>     /usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin
+>     651e921b372848b3928621e6f1d34b01
+>     /usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
 
-diff --git a/arch/um/kernel/process.c b/arch/um/kernel/process.c
-index d2134802f6a8..79f41f06a98f 100644
---- a/arch/um/kernel/process.c
-+++ b/arch/um/kernel/process.c
-@@ -237,73 +237,6 @@ int copy_from_user_proc(void *to, void __user *from, int size)
- 	return copy_from_user(to, from, size);
- }
- 
--static atomic_t using_sysemu = ATOMIC_INIT(0);
--int sysemu_supported;
--
--static void set_using_sysemu(int value)
--{
--	if (value > sysemu_supported)
--		return;
--	atomic_set(&using_sysemu, value);
--}
--
--static int get_using_sysemu(void)
--{
--	return atomic_read(&using_sysemu);
--}
--
--static int sysemu_proc_show(struct seq_file *m, void *v)
--{
--	seq_printf(m, "%d\n", get_using_sysemu());
--	return 0;
--}
--
--static int sysemu_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, sysemu_proc_show, NULL);
--}
--
--static ssize_t sysemu_proc_write(struct file *file, const char __user *buf,
--				 size_t count, loff_t *pos)
--{
--	char tmp[2];
--
--	if (copy_from_user(tmp, buf, 1))
--		return -EFAULT;
--
--	if (tmp[0] >= '0' && tmp[0] <= '2')
--		set_using_sysemu(tmp[0] - '0');
--	/* We use the first char, but pretend to write everything */
--	return count;
--}
--
--static const struct proc_ops sysemu_proc_ops = {
--	.proc_open	= sysemu_proc_open,
--	.proc_read	= seq_read,
--	.proc_lseek	= seq_lseek,
--	.proc_release	= single_release,
--	.proc_write	= sysemu_proc_write,
--};
--
--static int __init make_proc_sysemu(void)
--{
--	struct proc_dir_entry *ent;
--	if (!sysemu_supported)
--		return 0;
--
--	ent = proc_create("sysemu", 0600, NULL, &sysemu_proc_ops);
--
--	if (ent == NULL)
--	{
--		printk(KERN_WARNING "Failed to register /proc/sysemu\n");
--		return 0;
--	}
--
--	return 0;
--}
--
--late_initcall(make_proc_sysemu);
--
- int singlestepping(void)
- {
- 	return test_thread_flag(TIF_SINGLESTEP);
--- 
-2.34.1
+Most likely that's a different issue from yours, just with same symptoms
+(firmware crashing during firmware initialisation). I have seen also
+cases when the firmware crashes when using a wrong board file, but I
+suspect your board file is correct.
 
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
