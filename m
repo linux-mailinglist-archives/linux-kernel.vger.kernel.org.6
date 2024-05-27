@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-190752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822598D0224
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:50:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A8C8D0226
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FC9285334
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C511C2147B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4F015EFA7;
-	Mon, 27 May 2024 13:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8BA15F309;
+	Mon, 27 May 2024 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="D6Nsjc8M"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KRzARuGC"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D961640B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF6A13BC3B;
+	Mon, 27 May 2024 13:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817821; cv=none; b=oCPsG1dBsOhm7l/3Nj2HSgLCAK9FP20LxBQ8i9BcOUyGs70Ld20462c5rdhe+tkQGh4QqmpA81Nu2lb/yW9RORQvJsGhlhW0s46kaRjREZQV+1fFuCSoT3Ft+jaY9BuWro0R32TVnpB93KVGnns8GRrzxSGGoylsY9ncJCuqxKk=
+	t=1716817823; cv=none; b=VZca92Jvn/yS4LZugnakPQIpyPdKx2uxP94N7oA+7fZMLNEptKs3GQVRW5JWeUZ5hCUTFnc+ejLVOVlHoLCdzah8OL2d2l/v22GaaX+fVCP+EKIMDAUtL2sSw7qQxx3C4b0gGtdi18eIVSUjbxlCDOYJoCeyucpZ4xMgmeSVn1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817821; c=relaxed/simple;
-	bh=SlXdApCylnQr8N4neH0zBYcckEuMSS9hVMXK7hRZ0Ao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2ztFAMUUl8kp5et8Sow2femhP3qpCzcTSXz7OAXXdMyL/75Tn3hRT9qtV7aj7Yg2aPqd/joZ0azWyIy4px++9RfEMtYfaMkWOzC2EtfjyOTlidGAhg93MHj36iluPCiFVilaVRKYTZ+Cq6GKrzvOtFcdNyGVff6E8jqXJiG6CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=D6Nsjc8M; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52742fdd363so4740476e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:50:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716817818; x=1717422618; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIOT9wvexJ79HNlrDmaPIby9uyeD/58/CsVvVIRo/Pk=;
-        b=D6Nsjc8M+mozp/1Yt+GtPtqPBNmvMQwHHnB3qJdGlaIf8/8cHyJzmqEeKiQoHBE8yI
-         Gc8X0OQzJRYEivdCq4uCi168JDSVQMLd+3LV2UbCuSbWmlavsHBd5SQ5PFhg9eWrsRQN
-         07BdIVb7CzPkIvK2LuldHc9lqSESnwjVzoJGW/B+Kk26LIZUJv8eAOp40JdNDLNddTBX
-         wI8pLXjFmgsNx/7yl5J/F0QBSNnQePk9zu/QTAZQZcHIvpZaW2HYwIyHYH0xQKCZM3nJ
-         UlKFzYcsfd6acOSs9TSAYcrYzpoSOdF5vW2LFLDpmvly7VuthTwgzUvzDCULEWA3n7zx
-         iuNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716817818; x=1717422618;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tIOT9wvexJ79HNlrDmaPIby9uyeD/58/CsVvVIRo/Pk=;
-        b=UONoMVh2p0pI6HWA4FuEKTtvrZnN8dPFAL/+hIg42SEiHraOugbM1kofX69qq6vsUF
-         aTisG3sflkS5SX5309bL2OhOm1UTosmIxYmJIhpaQS9XkG7+yFAJGnRsaRbpUKdJbnq6
-         kamKoX+b01zDYCrfjf+uju+rlXcSNwClnP6hKSLp9SBAhuqkis2HlN4C7fh44qO8Xba9
-         VBl0sZb0xTEXZqn3UGl+X2VEiJQNBMLBIj6QJ2jvIcWpn9xQlM0DJkmEG17qy+HrNQfm
-         1MiRs+mp85CnFKpWDTbJd+V4WgdHh5kTzAh2HIi8IYgmIL5QBRIyo/QrHZDE7O82bTnn
-         hXIQ==
-X-Gm-Message-State: AOJu0YwO2pWwg9jRj9M2gTB9mU2AwH2NGJQUqiFDjgp6jhELAXyhpE8G
-	Bg+kYdkORCa8VxSjo8Wps6gnpMbeHZ0mGGeYKptK7rA3BH6upiJWLvZFUOL6Bh7qwHEx7WNpJXZ
-	4Kr4=
-X-Google-Smtp-Source: AGHT+IEgARaZR+bIcjTK+/X0WoYnEvM7h0HHZFhNHPDwp9UyqUv1nbtDit7XTXMaV1EI/AddrP1s2A==
-X-Received: by 2002:a19:7705:0:b0:521:a96:bf1a with SMTP id 2adb3069b0e04-52966bad0eamr5027540e87.61.1716817817617;
-        Mon, 27 May 2024 06:50:17 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524b9e80sm5802279a12.85.2024.05.27.06.50.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 06:50:17 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH v2] w1: Drop allocation error message
-Date: Mon, 27 May 2024 15:49:47 +0200
-Message-ID: <20240527134946.338398-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716817823; c=relaxed/simple;
+	bh=+nP0nFvWQTGmKN1h8mBWXPdJ/NyR49065Fmlx0vf/hE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ijWs+N+I/PQttu9/4q+dtMLt/P9/gwRtBh+Ez6R7D4tVuALxE2h4udhsx8VU/vZC8pCextsW7SGB0JN83zEYHpGnA9XeDJPiAoBA0SZatVlEf0ZGC97lyC3Og3qN88kvuEKfBloGVnVGZMSNvUdUh32ZK8yiikL/IhVHaV9lVgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KRzARuGC; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 44AC247C39
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1716817818; bh=JskqYYyNz3dMD01WU+7KptXTcnGKmuo6XobKIxRvLCk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=KRzARuGChKTGCcbDUHYk3ELS9q4KssOknufzQxGTvfXOYWjW45Z5x8qzsjfzSsh2a
+	 xQsNZcSAkOz3vRGzBnu1c9h9405N7mTbZSH97gBrvdKAJ5zbPrqJ0LRXGFWCyI4bhy
+	 FDHUfk9nkcQZ/AGfp+4zLcGA/t2njvkxCwpjVYm6w9ZdQraiWGHxDutSh87SC7Ldwj
+	 Me4QJzwPCFh1rk6BeYpfckdQM63R5O4KCec53FY8sYM3V8/1HQ/ZktC0rcnVtOt3Nj
+	 QJdNEEAkl8Yt3KLdp3nrBaUKQm9IA5Y/BN+bEOqnB5DhUknVa0icYvVTEeUPuKrb5D
+	 hv3NM+N13yIqg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 44AC247C39;
+	Mon, 27 May 2024 13:50:18 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Yunseong Kim <yskelg@gmail.com>
+Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>, Austin Kim
+ <austindh.kim@gmail.com>, shjy180909@gmail.com, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v3] Documentation: cve Korean translation
+In-Reply-To: <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
+References: <20240527103003.29318-1-yskelg@gmail.com>
+ <87ikyzpgqz.fsf@meer.lwn.net>
+ <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
+Date: Mon, 27 May 2024 07:50:17 -0600
+Message-ID: <87o78rnz3a.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Drop the custom error message because kzalloc() already prints
-allocation failures.
+Yunseong Kim <yskelg@gmail.com> writes:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
-Changes in v2:
-- Drop the error message instead of fixing it as suggested by Krzysztof
-  Kozlowski
-- Link to v1: https://lore.kernel.org/linux-kernel/20240513154354.185974-3-thorsten.blum@toblux.com/
----
- drivers/w1/w1_int.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+>> 1) Why do I have three versions of it in my mailbox, sent over a period
+>>    of 13 minutes?  What changed between the versions?
+>
+> Sorry, I forgot the name of the reviewer when I first sent the
+> documentation content related patch version 2.
 
-diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
-index 3a71c5eb2f83..19a0ea28e9f3 100644
---- a/drivers/w1/w1_int.c
-+++ b/drivers/w1/w1_int.c
-@@ -32,12 +32,8 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
- 	 * We are in process context(kernel thread), so can sleep.
- 	 */
- 	dev = kzalloc(sizeof(struct w1_master) + sizeof(struct w1_bus_master), GFP_KERNEL);
--	if (!dev) {
--		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
--			sizeof(struct w1_master));
-+	if (!dev)
- 		return NULL;
--	}
--
- 
- 	dev->bus_master = (struct w1_bus_master *)(dev + 1);
- 
--- 
-2.45.1
+Which is fine, but...
 
+>>    Normally, you want to wait for reviews to come in on one version
+>>    before posting the next, and you should put a comment after the "---"
+>>    line saying what changed.
+>> 
+>> 2) When did this review from Jinwoo Park happen?  I was not copied on
+>>    that.
+
+You did not answer this question.  Reviews should generally be done in
+public, but that does not seem to have happened here?
+
+Thanks,
+
+jon
 
