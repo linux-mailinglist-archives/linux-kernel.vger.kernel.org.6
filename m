@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9025E8D0A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5DD8D0A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B177283102
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199351C21B5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC18915FA8F;
-	Mon, 27 May 2024 18:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5639715FCF0;
+	Mon, 27 May 2024 18:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sm9oViYk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3DpXNtI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACFD2629F;
-	Mon, 27 May 2024 18:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B315FA68;
+	Mon, 27 May 2024 18:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835520; cv=none; b=D5RaUT3LbvAEaq1SxAq4Dgoy67un0wPwBgU574vVoT7DgI0qy2GZt6r9pF0CIiwqig8TSH1A1CIX4mvRDCxSS2sj39A/tAX6OlNTnUOG/ZPvpxBlmGtnsQ0+LSNgiSrMlJlDRqoAWLqs9C0QWWj3ftN44AqtH9gKmmreDbD6kp0=
+	t=1716835545; cv=none; b=BwfA1zAw4hw7yjAQ9AV8a0VU2n0xbyZ/W6GM0WND/rN3ikYSepfpYoNmG00Zk+VdGOgtoNBVnwt/bYerMGs1w8pEIqlf46U8ZW16W2C7qaLbG7SlvbpM+YzI5NnRxebku+gDgBJ9nk7jxJxgkJLgaZTY75B++BhKwcW2fVCKBrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835520; c=relaxed/simple;
-	bh=SM9Cgv6POlLLQAXlBqWkW/mfTBcw7BGIqnN/OhWaUZ8=;
+	s=arc-20240116; t=1716835545; c=relaxed/simple;
+	bh=+lgrcWv2d5hUELgZXgg1mfyLgMa4f/KFrKkgNaGJNuQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RCQQ1/paK2UCB7SZ6C4klbARKjiI293FF9M1p2yTaYmp94aNCmwdXNNEO87LQbtpmmm9e7wQqiQbrGtBYZ14lnhhS3zfEv8IJ+aI4odI/YgbSRAdYj0BovYtwu1xHY5FIJRCDHt+5p2oFTtV/1HVibSzP+8s/fS0k/RSLE4cWmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sm9oViYk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97CD2C2BBFC;
-	Mon, 27 May 2024 18:45:16 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XZop6injbm39CXbQcfAFd7plMsVl34zTvBUQLW12cG/1IGcop/a98drdoKwU73Wkd3628ncdHKZ3J2CughWorHCZuhFpDBh3ltAEXeDIpqcXRtVKHU4S4fBzRcTtd5eGLFTVfBwTFd3x3gdnglzf4CfCjdxodBxLWRpaQi2zJHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3DpXNtI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491AAC2BBFC;
+	Mon, 27 May 2024 18:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835519;
-	bh=SM9Cgv6POlLLQAXlBqWkW/mfTBcw7BGIqnN/OhWaUZ8=;
+	s=k20201202; t=1716835545;
+	bh=+lgrcWv2d5hUELgZXgg1mfyLgMa4f/KFrKkgNaGJNuQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sm9oViYkIC8rr4zo6yHq7peSug465xBAEugP/KKUTP5y+Am6pM6/Y2YpTAivNzYvu
-	 1ZW+QtEQ8yFLLtv+QUH3bO8Hwbm1sCUXlmhp/JSj1KgdKHl/ebelObJkeo24EjatB3
-	 c1pXDCoorRcBLctbySa84qvFTjQGdBY4vuF0buGzF6fVicRWsmSsXK3pZvvkbEuK15
-	 wzjHGYpIIziEoxihmJHAoAShhQsf+u34+4C4NypATs+tl3VWK6RTgyriE44M8+Nolm
-	 NFmwigiuJE8top0yr29/upwxtyrfeMos42fIjed4ztMzF74cEfYtpjwoJ7Ovr1GbEy
-	 Oh10gAGo0R0bA==
-Message-ID: <a1f60c29-e499-4c24-a5fb-5f44aaeee555@kernel.org>
-Date: Mon, 27 May 2024 20:45:14 +0200
+	b=i3DpXNtIrd5v+Z8Ur5+KWtRQFBJAQkv9ZL5bUvwTzo7nqEAG+JqXvdGCcONP2Qjgb
+	 wlHab3Q/Lw/v5zS9ES9cvjgaG3RCBWtcIHKtodbhU5n/1KcfQ6KiL/J4BXkeyJLRtf
+	 6RzwpZhSVYGMT9YlqLOPujBs54waFiG/BlbOlQTGEj5dA/5GJ/x4HNuPMzzZLysIry
+	 aM7NYs/pEHKAXRurkF2iu0nmAyz1RE5HrMungZoyJAweidcX8YXXmGBlda3tVXLRpZ
+	 AndwDnK/LpeBjbVr+f9jMk28Dvl1/HFMiGoPKitVlnmwk0zC9OvO+9Zva2nLcPUMjp
+	 nQl+v43sSFQkw==
+Message-ID: <6aac1fce-887b-4ace-bd74-b4e1e5d98517@kernel.org>
+Date: Mon, 27 May 2024 20:45:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: qcom-spmi-pmic: Document SMB2360 PMIC
-To: Abel Vesa <abel.vesa@linaro.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240527-smb2360-bindings-mfd-qcom-spmi-pmic-v1-1-31a2c051529c@linaro.org>
+Subject: Re: [PATCH] dt-bindings: thermal: qcom-tsens: Document the X1E80100
+ Temperature Sensor
+To: Abel Vesa <abel.vesa@linaro.org>, Amit Kucheria <amitk@kernel.org>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,16 +105,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240527-smb2360-bindings-mfd-qcom-spmi-pmic-v1-1-31a2c051529c@linaro.org>
+In-Reply-To: <20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/05/2024 09:02, Abel Vesa wrote:
-> Add bindings for SMB2360 PMIC. This PMIC is found in boards like
-> X1 Elite CRD and QCP.
+On 27/05/2024 08:52, Abel Vesa wrote:
+> Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-
+> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
