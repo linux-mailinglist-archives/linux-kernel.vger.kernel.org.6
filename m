@@ -1,171 +1,110 @@
-Return-Path: <linux-kernel+bounces-190740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20078D01EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:41:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8FF8D0221
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD01F2890C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1B31C21438
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D515EFC4;
-	Mon, 27 May 2024 13:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F346915EFAF;
+	Mon, 27 May 2024 13:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGp+ZBcN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="tkh5WiiA"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC58E13A250;
-	Mon, 27 May 2024 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32D51640B;
+	Mon, 27 May 2024 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817201; cv=none; b=OZMc9tDnxk/VTdXXp34Ds4MI9T4db1RbqkcCrc4DJn/VtestzPxP8mmBQ6CpbM75cFYWEw8BPAdAAygmZ8atvs3iV03KEtxLZVo0wVJu4bRBTjL3yELCFL4Qps/a0K3QAD6b48etQJZhOY0RANBxKi8L2w11fIhqNc1tYNS0BJ0=
+	t=1716817762; cv=none; b=OntCHm80soi0razQjh3UM6D0Fs0qsPp0AVVk1jNEWDKbzCV10WLVaT/qAodd+8RVMxEV+eMUIvqvcKZnmEVOhGrymWQquVeiwfaAlEPnd0ReSe5UhWpkjZzlICv/Q4DFquuHdKhbfTnuva0oMtNCvqJ+3zhNEmOYtsReMDgrvxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817201; c=relaxed/simple;
-	bh=dF2ZzgaKg2vMrKZIaefq9VEnRZs4KJRRMNz57D6zwKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nAtXs4IKUjW3mhG7oe+OO1zUGafqH2oJz1equl8weS7KNC7ad810voFtZcy8ThwffUuyy/cIkal8m1jtDl12YiV2tSoKCphaoccFP7RYIklyQ2yTgvhxJnorzWI12n6HKHy8XycG3pxz07/l1PPwWPHuiAMhzHTbYY9i8O1DRrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGp+ZBcN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D5DC2BBFC;
-	Mon, 27 May 2024 13:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716817201;
-	bh=dF2ZzgaKg2vMrKZIaefq9VEnRZs4KJRRMNz57D6zwKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dGp+ZBcNyK7f+t1nE7TeiScwZzH5IFtX+LazgSy4P1qj+gppbSaDt3V0+g+sew8Jr
-	 xhZAoyJhGJ55b03eIvmbJnKaQZT2SmbnR69f0uChcDZd9LiV1I2VU74A4qL1Q7t27N
-	 CbhImB7hi5lTKV4VDIP0noMG+BBekBlhyXR3qvHa9Bz+ezWVvBT8FIyEtosupQCeLw
-	 lvazQ4PPAXO9lpTBFMpYagaZaBpF/2FwNdcyWTV9tpevfEjqrGLE/ZgVPQoUQpRRTf
-	 CeanqsWwlk8HzX+smLgLzG6aS5b+GfvM0suLa+RNcxtEo9GOifE44MIImCIsk5NsxD
-	 UljyDXVsD30CA==
-Date: Mon, 27 May 2024 15:39:55 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-Message-ID: <20240527-paare-holzhammer-8c3a32eaf6b1@brauner>
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
- <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
- <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
- <20240524-ahnden-danken-02a2e9b87190@brauner>
- <ZlPOd0p7AUn7JqLu@dread.disaster.area>
+	s=arc-20240116; t=1716817762; c=relaxed/simple;
+	bh=gqza+53r5VdbcAND+Hi9YfxVDyGCS9djsD4wSOb5XXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tNygDAISHlSJrueL2AvgWRcFtE7f/pMEKFfXZjUD61Skv11MBM1dUNVznL82BbCy0RntATNB8l9q8inMuCFFNm2n7vsy9KUQfsDVdplXn/w7O8CEGJi+o3C9HB3DRLRrv0IbZxabO9CrTEmEJJsTzQWMmCl38NoCLXeAbLJtBRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=tkh5WiiA; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 8D9221D2C84;
+	Mon, 27 May 2024 15:40:05 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1716817205; bh=vzQMaKe8PWq8/rJIUTZI8C7BenHzVSRhtEQYf/oFXl0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tkh5WiiAboiiWDCmRyyPkyqW3L3y4BGcfr2IVSnE000zAnqBVehCthCdnt5HF//Sf
+	 czWPcJDgPtMJeXWAkPQwwXCxQQYI4WGwg+p5mOVXBF+GkXoUOfuVV9qY3AoaiJXLxs
+	 e9GUxse0caC3zHiaONykC3nFyUL3lg53epva4av26V9xw0s1SBYvTDo7Qji/wa2IoI
+	 fumT5hlRv1YqUyyTPtH7ewdcG1PbAgqKxLwSAYNmZNiPFdvzI9Lv55koPkJ4oesE5v
+	 JAFFt/4bY8BqC4KrocxDMv8WX9CSCk/Hqqqufv854ToBcEuh8x4I+eO5TCCW/o9CYY
+	 QOtkOYjfT/2CA==
+Date: Mon, 27 May 2024 15:40:04 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
+ iommu@lists.linux.dev, Michael Kelley <mhklinux@outlook.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] Documentation/core-api: correct reference to
+ SWIOTLB_DYNAMIC
+Message-ID: <20240527154004.41a41caf@meshulam.tesarici.cz>
+In-Reply-To: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
+References: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZlPOd0p7AUn7JqLu@dread.disaster.area>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 27, 2024 at 10:06:15AM +1000, Dave Chinner wrote:
-> On Fri, May 24, 2024 at 02:25:30PM +0200, Christian Brauner wrote:
-> > On Thu, May 23, 2024 at 09:52:20AM -0600, Aleksa Sarai wrote:
-> > > On 2024-05-21, Christian Brauner <brauner@kernel.org> wrote:
-> > > > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
-> > > > > Now that we have stabilised the unique 64-bit mount ID interface in
-> > > > > statx, we can now provide a race-free way for name_to_handle_at(2) to
-> > > > > provide a file handle and corresponding mount without needing to worry
-> > > > > about racing with /proc/mountinfo parsing.
-> > > > > 
-> > > > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
-> > > > > that doesn't make sense for name_to_handle_at(2).
-> > > > > 
-> > > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > > ---
-> > > > 
-> > > > So I think overall this is probably fine (famous last words). If it's
-> > > > just about being able to retrieve the new mount id without having to
-> > > > take the hit of another statx system call it's indeed a bit much to
-> > > > add a revised system call for this. Althoug I did say earlier that I
-> > > > wouldn't rule that out.
-> > > > 
-> > > > But if we'd that then it'll be a long discussion on the form of the new
-> > > > system call and the information it exposes.
-> > > > 
-> > > > For example, I lack the grey hair needed to understand why
-> > > > name_to_handle_at() returns a mount id at all. The pitch in commit
-> > > > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is that
-> > > > the (old) mount id can be used to "lookup file system specific
-> > > > information [...] in /proc/<pid>/mountinfo".
-> > > 
-> > > The logic was presumably to allow you to know what mount the resolved
-> > > file handle came from. If you use AT_EMPTY_PATH this is not needed
-> > > because you could just fstatfs (and now statx(AT_EMPTY_PATH)), but if
-> > > you just give name_to_handle_at() almost any path, there is no race-free
-> > > way to make sure that you know which filesystem the file handle came
-> > > from.
-> > > 
-> > > I don't know if that could lead to security issues (I guess an attacker
-> > > could find a way to try to manipulate the file handle you get back, and
-> > > then try to trick you into operating on the wrong filesystem with
-> > > open_by_handle_at()) but it is definitely something you'd want to avoid.
-> > 
-> > So the following paragraphs are prefaced with: I'm not an expert on file
-> > handle encoding and so might be totally wrong.
-> > 
-> > Afaiu, the uniqueness guarantee of the file handle mostly depends on:
-> > 
-> > (1) the filesystem
-> > (2) the actual file handling encoding
-> > 
-> > Looking at file handle encoding to me it looks like it's fairly easy to
-> > fake them in userspace (I guess that's ok if you think about them like a
-> > path but with a weird permission model built around them.) for quite a
-> > few filesystems.
-> 
-> This is a feature specifically used by XFS utilities like xfs_fsr
-> and xfsdump to take pathless inode information retrieved by bulkstat
-> operations to a file handle to enable arbitrary inodes in the
-> filesystem to be opened.
-> 
-> i.e. they scan the filesystem by walking the filesystem's internal
-> inode index, not by walking paths to scan the filesytsem. This is
-> *much* faster than path walking, especially on seek-limited storage
-> hardware.
-> 
-> Knowing the inode number, generation and fs uuid, we can
-> construct a valid filehandle for that inode, and then do whatever
-> operations we need to do (defrag, backup, move offline (HSM), etc)
-> without needing to know the path to that inode....
+On Mon, 27 May 2024 15:13:14 +0200
+Lukas Bulwahn <lbulwahn@redhat.com> wrote:
 
-Yeah, I think you mentioned this in another context before.
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit c93f261dfc39 ("Documentation/core-api: add swiotlb documentation")
+> accidentally refers to CONFIG_DYNAMIC_SWIOTLB in one place, while the
+> config is actually called CONFIG_SWIOTLB_DYNAMIC.
+> 
+> Correct the reference to the intended config option.
 
-> > The problem is with what name_to_handle_at() returns imho. A mnt_id
-> > doesn't pin the filesystem and the old mnt_id isn't unique. That means
-> > the filesystem can be unmounted and go away and the mnt_id can be
-> > recycled almost immediately for another mount but the file handle is
-> > still there.
-> 
-> This is no different to the NFS server unexporting a filesystem -
-> all attempts to resolve the file handle the client holds for that
-> export must now fail. Hence the filehandle itself must have a
-> superblock specific identifier in it.
-> 
-> > So to guarantee that a (weakly encoded) file handle is interpreted in
-> > the right filesystem the file handle must either be accompanied by a
-> > file descriptor that pins the relevant mount or have any other guarantee
-> > that the filesystem doesn't go away (Or of course, the file handle
-> > encodes the uuid of the filesystem or something or uses some sort of
-> > hashing scheme.).
-> 
-> Yes, it does, and that's the superblock based identifier, not
-> something that is mount based. i.e.  the handle is valid regardless
-> of where the filesystem is mounted, even if the application does not
-> have visibility or permitted access to the given mount. And the
-> filehandle is persistent - it must work across unmount/mount,
-> reboots, change of mount location, etc.
+Good catch!
 
-Agreed, and no one is disputing that. The old mount id as exposed by
-name_to_handle_at() is one means to get to a persisent identifier and
-that is racy. But we do have a 64bit non-recyled mount id and
-statmount() since v6.7 now which allow to get a persistent identifier
-for the filesystem in a race-free manner.
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+
+Reviewed-by: Petr Tesarik <petr@tesarici.cz>
+
+Petr T
+
+> ---
+>  Documentation/core-api/swiotlb.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/core-api/swiotlb.rst b/Documentation/core-api/swiotlb.rst
+> index 5ad2c9ca85bc..cf06bae44ff8 100644
+> --- a/Documentation/core-api/swiotlb.rst
+> +++ b/Documentation/core-api/swiotlb.rst
+> @@ -192,7 +192,7 @@ alignment larger than PAGE_SIZE.
+>  
+>  Dynamic swiotlb
+>  ---------------
+> -When CONFIG_DYNAMIC_SWIOTLB is enabled, swiotlb can do on-demand expansion of
+> +When CONFIG_SWIOTLB_DYNAMIC is enabled, swiotlb can do on-demand expansion of
+>  the amount of memory available for allocation as bounce buffers. If a bounce
+>  buffer request fails due to lack of available space, an asynchronous background
+>  task is kicked off to allocate memory from general system memory and turn it
+
 
