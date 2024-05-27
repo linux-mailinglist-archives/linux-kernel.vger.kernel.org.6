@@ -1,159 +1,130 @@
-Return-Path: <linux-kernel+bounces-191022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60BE8D0675
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF558D05AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB62AB2BE52
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9A31C221C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA96916938A;
-	Mon, 27 May 2024 14:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6392C16EBF3;
+	Mon, 27 May 2024 14:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1E/BMBm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tutg1n3c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C948161331;
-	Mon, 27 May 2024 14:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902A115F30F;
+	Mon, 27 May 2024 14:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821831; cv=none; b=AvcrPTYp0bTk96pqUoRp8us78JCdP0PwYo6WZYCZ7FbsGFMfGeoxtnmZsxZGy65KrrikDEmTFK8PzJTFDHxra9dKonqycYo5f1n4PR668kCXxRs2tjR6/7Hh40DNIcXzEntrvhv8n8hNhl61m3dycAY+rAaPO07jSmaI+7zyQy0=
+	t=1716821851; cv=none; b=BffvnzxLRjsmMWG1lhzi+bYLo1WZZeEBQZGKv3uANukEbxG2cJPinzCxqnfSkHZ/ShTOl0bRWlf5BTXeQEwV1IM0nHoVFdmGSF5G6+CHTPgHluYzRzmgSJKK68tO4+s1E1dZ26147qrJVY5ORVF7AxQoUnGh1/ac9qCI/NyUBq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821831; c=relaxed/simple;
-	bh=anwxSewuYppnpNpMRH71PAQfXd/+GYXNJoF3P+nqe34=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TVfBFcW+unspPzadjFhNIhhP9sC1ZRMXRGSRH20N5asQB7J6Jh74CqHs9F30l4516hK1Nl1IEl3d8mpmw5VqwL0kfl829Yh4EMU0fI1awiTF57K/aaozjAI3WAEHwX3jhw8Xdymi/942dTNploHutpwnKeeXay9R65AQiXlkKdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1E/BMBm; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716821830; x=1748357830;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=anwxSewuYppnpNpMRH71PAQfXd/+GYXNJoF3P+nqe34=;
-  b=Z1E/BMBmxrBTKdRBoV5tpn3pusSVRNufrrzHWQKPNRXEVuoW2e0gTFHA
-   Fee8haKSKuqcEILJNVapHsVB6sgQ8Tyv7HVhrTE8oJ/pAcAUdDGbTmAw0
-   IvyMmGeSdrazB9HJTF6Rgad+IXmsqHrzfo2dSAZza7NSGqyK1oOzqWUWD
-   baSkMbASxV48viiCQzfg3AXEFUW7BR1RCs9GALfpN/IFnMwEiKmTXv/i3
-   Hl5vaW9Uoo5lINCqdcVx+tPFfbmIFpNfMauXRGp08662NYCtvy+F0VqQe
-   k97dDmJA1hFSXlFc9mYq+Tx8Mze3rra2zzJS2FZHNPdye8UsBKfE27GOv
-   g==;
-X-CSE-ConnectionGUID: 82zxdn2xTxeP/c20Epnsvg==
-X-CSE-MsgGUID: i5XIEIwgRSCaMzU2xsCY9w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="11715418"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="11715418"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:57:09 -0700
-X-CSE-ConnectionGUID: vIoPr/bnQ+mlO+fYA48sLw==
-X-CSE-MsgGUID: tyWK4F2TR2GXjCyiin5UKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="39192759"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.140])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:57:05 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 May 2024 17:57:02 +0300 (EEST)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Linus Walleij <linus.walleij@linaro.org>, 
-    Bartosz Golaszewski <brgl@bgdev.pl>, 
-    Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to
- errnos
-In-Reply-To: <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
-Message-ID: <8ca1b7a8-5abb-e7b7-2e08-ec8c8edccdcb@linux.intel.com>
-References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com> <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain> <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com> <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
+	s=arc-20240116; t=1716821851; c=relaxed/simple;
+	bh=TPj1Ua3MXLPcEqd+42ujWJSzWinRENwbYJnUHrLZ/64=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZpW6gEDKe9UM6mUNMmod1S4ykIURFtlPXx49JZ5j3XeofRWbF2t7nLNzby3rhzUZoRz8sGY19V0QRxM45VIG05MtJr5G6XFahZqAQgjLkjj3x7Fdya3dworZ4L6vPdL0AYhMLScql5asxBeGF/gm31s6D7p16NevkgoJhoXNx1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tutg1n3c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2C1C2BBFC;
+	Mon, 27 May 2024 14:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716821850;
+	bh=TPj1Ua3MXLPcEqd+42ujWJSzWinRENwbYJnUHrLZ/64=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tutg1n3cW99Gf9udjFbpM6/iRV4wVDFisFeoqKaOCXPbaZ13Pi3oxi5ZeWdmPGHSf
+	 MVrKQiOqhVmxCg7nd4nIjojJAiCSKj0tKxqILXaFAPH7ZxNly3lDsZA/gFkzgxesAI
+	 1Vhuq/Zoua4NmUmCveOXlkBp8s5QWrrAoPlQl+FKUQIcre0W2N0kNq1rAuVEqd1XZZ
+	 mObSxfsldL1eBZAaMOeO3yg0uhv6aztch2dVVDTeHnHJzodsuA6g57zCFVgr1QeyVS
+	 G9a5NzKofDDpdoQVcb9RnXaHspVl9K0FMi/CsQ5hO62JGQpLFCWDMeNVgaiYWKHQlG
+	 QnTcRagqL9ENg==
+Date: Mon, 27 May 2024 15:57:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, Rob Herring
+ <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] hwmon: (ltc2992) Use
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <20240527155717.58292509@jic23-huawei>
+In-Reply-To: <ZlSY8tjYm5g9bEJ_@surfacebook.localdomain>
+References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
+	<20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
+	<20240526144851.493dd3f2@jic23-huawei>
+	<ZlSY8tjYm5g9bEJ_@surfacebook.localdomain>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2079346626-1716821822=:1006"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 27 May 2024 17:30:10 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
---8323328-2079346626-1716821822=:1006
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> Sun, May 26, 2024 at 02:48:51PM +0100, Jonathan Cameron kirjoitti:
+> > On Thu, 23 May 2024 17:47:16 +0200
+> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >   
+> > > The scoped version of the fwnode_for_each_available_child_node() macro
+> > > automates object recfount decrement, avoiding possible memory leaks
+> > > in new error paths inside the loop like it happened when
+> > > commit '10b029020487 ("hwmon: (ltc2992) Avoid division by zero")'
+> > > was added.
+> > > 
+> > > The new macro removes the need to manually call fwnode_handle_put() in
+> > > the existing error paths and in any future addition. It also removes the
+> > > need for the current child node declaration as well, as it is internally
+> > > declared.
+> > > 
+> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> > 
+> > This looks like another instances of the lack of clarify about 
+> > what device_for_each_child_node[_scoped]() guarantees about node availability.
+> > On DT it guarantees the node is available as ultimately calls
+> > of_get_next_available_child()
+> > 
+> > On ACPI it doesn't (I think).
+> > For swnode, there isn't an obvious concept of available.
+> > 
+> > It would be much better if we reached some agreement on this and
+> > hence could avoid using the fwnode variants just to get the _available_ form
+> > as done here.  
+> 
+> > Or just add the device_for_each_available_child_node[_scoped]()
+> > and call that in almost all cases.  
+> 
+> device_for_each*() _implies_ availability. You need to talk to Rob about all
+> this. The design of the device_for_each*() was exactly done in accordance with
+> his suggestions...
+> 
 
-On Mon, 27 May 2024, Dan Carpenter wrote:
-> On Mon, May 27, 2024 at 05:11:32PM +0300, Ilpo J=E4rvinen wrote:
-> > On Mon, 27 May 2024, Dan Carpenter wrote:
-> >=20
-> > > On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo J=E4rvinen wrote:
-> > > > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd811=
-1.c
-> > > > index 6f3ded619c8b..3377667a28de 100644
-> > > > --- a/drivers/gpio/gpio-amd8111.c
-> > > > +++ b/drivers/gpio/gpio-amd8111.c
-> > > > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
-> > > > =20
-> > > >  found:
-> > > >  =09err =3D pci_read_config_dword(pdev, 0x58, &gp.pmbase);
-> > > > -=09if (err)
-> > > > +=09if (err) {
-> > > > +=09=09err =3D pcibios_err_to_errno(err);
-> > >=20
-> > > The patch is correct, but is the CC to stable necessary?  Is this a r=
-eal
-> > > concern?
-> > >=20
-> > > Most callers don't check.  Linus Torvalds, once said something to the
-> > > effect that if your PCI bus starts failing, there isn't anything the
-> > > operating system can do, so checking is pointless.  The only fix is t=
-o
-> > > buy new hardware.  There was a hotpluggable PCI back in the day but I
-> > > don't think it exists any more.
-> >=20
-> > I don't mind if the CC stable isn't there.
->=20
-> I don't mind either way.  I was hoping you were going to say it was for
-> some new hotswap hardware Intel was working on.
+Does it imply that for ACPI? I can't find a query of _STA in the callbacks
+(which is there for the for fwnode_*available calls.
+Mind you it wouldn't be the first time I've missed something in the ACPI parsing
+code, so maybe it is there indirectly.
 
-That's not exactly the correct answer but I'm auditing all these because=20
-I have a sinister plan to convert the PCI accessors away from returning=20
-PCIBIOS_* codes and push the conversion down into real PCIBIOS interface=20
-under arch/x86/pci where they'd be immediately converted into errnos.
+I know from previous discussions that the DT version was intentional, but
+I'm nervous that the same assumptions don't apply to ACPI.
 
-As the by-product of the audit, I see all these cases where the return
-type is incorrect so I've created a fix for each where the return type=20
-confusion propagates.
+> > In generic code, do we ever want to walk unavailable child nodes?  
+> 
+> ...which are most likely like your question here, i.e. why we ever need to
+> traverse over unavailable nodes.
+> 
 
-> Smatch deletes all the failure paths from the pci_read_ functions
-> because otherwise you end up with a lot of warnings that no one cares
-> about.  Uninitialized variables mostly?
+Jonathan
 
-Please note that there's a difference between ignoring errors entirely and=
-=20
-returning wrong value (type) on errors.
-
-At this point, I've already ignored many many cases where the value type=20
-confusion does not propagate because of my main goal which is anyway to=20
-eventually get rid of having to deal with PCIBIOS_* codes in any generic=20
-code.
-
-If a PCIBIOS_* return code somehow leaks into userspace where errno would=
-=20
-be expected, it could confuse userspace (e.g., one case unrelated to=20
-module init functions I found is sysfs show function returning positive in=
-=20
-case of error which has obviously different meaning from the caller's=20
-point of view).
-
-In case of module init, do_module_init() checks for ret > 0 and prints=20
-warning + stacktrace, however, it does not attempt to correct the return=20
-code so I think the positive code still leaks into userspace.
-
---=20
- i.
-
---8323328-2079346626-1716821822=:1006--
 
