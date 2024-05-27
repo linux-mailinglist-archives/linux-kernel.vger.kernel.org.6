@@ -1,200 +1,183 @@
-Return-Path: <linux-kernel+bounces-190996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1608D054D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:06:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BA48D0541
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9165F1C21D06
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493F51F21174
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684CE7344D;
-	Mon, 27 May 2024 14:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9461FCD;
+	Mon, 27 May 2024 14:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IpmKBUOR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFrRUiES"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CCC17BB0A;
-	Mon, 27 May 2024 14:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6C561FC0;
+	Mon, 27 May 2024 14:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821063; cv=none; b=qBKJOW4JysZN3YSteQZ7MPztKly3wzL6EVfTR6mUsVV4WFJuTkgB+H1wP6NBNimP/2q7qrBYKHj9K4+oLZEi2YoGPRLGxT2he/PlsBM47/5Inrt0Edo0m/DxL1xALrgnU3x8Pmc+L0zFocNto02yoGrtwa4uW8u8LxtCoW+53+M=
+	t=1716821037; cv=none; b=EdzGczlsohjVPgiOX70rn8Gv1JQAqHCenzGASbXiyZyzze4uSnvQXdte4Fz9gb0tM30tKgeSF3uyLRVHeJdX6edGdgm5tkix/K7N0YBzczPeqDufaUQilX6SOgehwDOP5v5hkaOQtQDQAAdOCHavP2be+8nMRj68AMdBkjt69dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821063; c=relaxed/simple;
-	bh=IXQy/KWuSXcucpOdFBz5dgMWJsMiQUwKZC+1vOSlerM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dQol1s9+U1d4tySCb7p1IkxVz0TLwJZAKomqGdD097N/Nscw8Lqa/Lvs8sKXgV1gUek7BCjTgmodueqYCQp5P7x+mf9XnFZIgC+E8P6IEv3wwIkFer5swKrUiKI2BMjlcUOlroM+MNyn/SceUEisOWBVfsh0M7mm6JQkRbTxJrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IpmKBUOR; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716821062; x=1748357062;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=IXQy/KWuSXcucpOdFBz5dgMWJsMiQUwKZC+1vOSlerM=;
-  b=IpmKBUOR44jZBSZF+upHdf6C3a5SoFnUx0FHEBMOmVi4MFgh6ryedYe7
-   CFMtibam7rKVZoM4y+xVBGQmAix8kuyt4qjPdKvrCC8WybqetxpODDSXG
-   tTVz47gMkSQhKbhATVrLNELQ5xGP734OgeBMFC28fexgPOVibfSE7mE++
-   /wLnQrCiBqbOgW33G6GLxsf6iYRrzF+CGRDwYFggIrk9kGfv1o1e1WxrD
-   Kq0HLWAh1ZDMTofwuO64rtClBdKT2AtK+IpK291T4F7hzlllJGfnV+PT9
-   8pO/0fY7rfDWDPqG5RnRNCY8GlP6A64q6LMoJCPDCWheLu/X+hyHNg4GX
-   Q==;
-X-CSE-ConnectionGUID: UFHMTjbLR1OOH/NWUUFwXw==
-X-CSE-MsgGUID: VvXJXk6sSp+Zdy9hf4Dtjw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13269766"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="13269766"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:44:22 -0700
-X-CSE-ConnectionGUID: GtWvV7ORS/qh9CPqqni7Jg==
-X-CSE-MsgGUID: s5kI9NZRS9OyA+a/ogKfhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="35279810"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.246.214])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:44:18 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	"Oliver O'Halloran" <oohall@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pci@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Fabio M . De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: [PATCH 2/2] ACPI: extlog: Trace CPER PCI Express Error Section
-Date: Mon, 27 May 2024 16:43:41 +0200
-Message-ID: <20240527144356.246220-3-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240527144356.246220-1-fabio.m.de.francesco@linux.intel.com>
-References: <20240527144356.246220-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1716821037; c=relaxed/simple;
+	bh=yZ54pHZc8pZ1llQjTF214XGFVmGuCbN++WoTXje+y18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZksmdWSXS0ebi2UsvlIpsUiOdrFzgqJJAkpvIHiRZiNxJ6JEXog8Ajhv13CDuyLHA+8B0w9rfAgWqJZWd3FJbOEh/fc1ok/84u0T6DwYJe+81Y2Qv69TYA4cp3bGhb6bU7LepAlG4qINzup+JIGzAqvKWKwLJPmu82Mbk6Bho4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AFrRUiES; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f44b45d6abso26651935ad.0;
+        Mon, 27 May 2024 07:43:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716821035; x=1717425835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rEv9TOl2VcsNK97lEGFpOwkx9V8aOFfBaXbVSYVjqbk=;
+        b=AFrRUiES+BLBq7fGesvxpV+3Q+vgoqYbMRIhLPSdzru3X9Au92uP4BO12u3WixselN
+         pfqPVpKaENtKvdkF2exM+yMXH5w5OXilNzicuYNc1PO+0u1TbV8LpYWfsUelchsNAXzn
+         FGwDQv6cGPfAJsnXI+L9mZWkdvliPqkDuxuKIB1Kq1QlvKHKznk/wRJjAwJ6ijkB075l
+         6eEI4hxksH9Lmutwh5+/sM6arzFUVDBikCl508K/uCfqDYDPsQmu3lKi7YCcfpkY0Z7T
+         CXacCb43oBpgfClYhjfslcgGLKqgNk3D9f3alDVmROBaQTHqDj4vIfM+fFyxyn9CGogu
+         TXNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716821035; x=1717425835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rEv9TOl2VcsNK97lEGFpOwkx9V8aOFfBaXbVSYVjqbk=;
+        b=fB5LayQ1Y294GfAjhJiyTZEr6ztm8UszeLT/sj+t8nQ9X/nXboLO1F46i7o71CZbCZ
+         zV9CRGSm12Rv9QAhSqE98gl6vDG6jlUKvM8TUVfkU6/o3/k/EezU1YZx+L2giudlFVPp
+         /hw/o/8V+CY/W3rjq9pHGDM2c9Ms/jahX/j0HZcNBLRSqU45559iHAYXex7MubncWeRB
+         1EI1dhPagdBOLUBxC6g0yAe3rnJ+7OENRRXeDo7GjR2jqX0lXqOap2O7RvkqrLnXCFdF
+         Ya9gQs7kDmqbSU7Avc/objEmb+jFNxOorMfpJrPXczZ+SfrI4ZH44MRyQe2qRb6VJy+J
+         ZLQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUK5WH4xpeTCImY6p9LqahPdG2FXEamJULAFyk/TMxzai8iLTHpda3aVrmzOg431JL10s1hqjC5mIfvXx7LOv1pBVOiV1nUQ7kc//0FyIrNOYcV3ShWFHG6bRY6pP6jVpdUd7XRrmVvuVJ1MyC9JHVihJTG7MOL0BNBxqf4U4sBnf+C
+X-Gm-Message-State: AOJu0YzBIL396jpnU9wH3CjxPZv2CxnBQIQH+WyreNWFOvSHTNIon0RA
+	KK5EgS29CqGIcwrMNzVLmCogY100bVp8Yog2yaVwEoQ6hkw0C4vo
+X-Google-Smtp-Source: AGHT+IGnAR9vdm6Qy/DLqPuX3AD8gKj8qNo/aOyJuE1HPXJCL3Up+L+CWGvNzE959PkXuAs62RPlEQ==
+X-Received: by 2002:a17:902:f68b:b0:1f4:8372:db24 with SMTP id d9443c01a7336-1f48372df16mr43806395ad.38.1716821034998;
+        Mon, 27 May 2024 07:43:54 -0700 (PDT)
+Received: from [192.168.50.95] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f481d5a77bsm30101805ad.298.2024.05.27.07.43.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 07:43:54 -0700 (PDT)
+Message-ID: <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
+Date: Mon, 27 May 2024 23:43:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] Documentation: cve Korean translation
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>,
+ Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240527103003.29318-1-yskelg@gmail.com>
+ <87ikyzpgqz.fsf@meer.lwn.net>
+ <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
+ <87o78rnz3a.fsf@meer.lwn.net>
+Content-Language: en-US
+From: Yunseong Kim <yskelg@gmail.com>
+In-Reply-To: <87o78rnz3a.fsf@meer.lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Currently, extlog_print() (ELOG) only reports CPER PCIe section (UEFI
-v2.10, Appendix N.2.7) to the kernel log via print_extlog_rcd(). Instead,
-the similar ghes_do_proc() (GHES) prints to kernel log and calls
-pci_print_aer() to report via the ftrace infrastructure.
 
-Add support to report the CPER PCIe Error section also via the ftrace
-infrastructure by calling pci_print_aer() to make ELOG act consistently
-with GHES.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
- drivers/acpi/acpi_extlog.c | 30 ++++++++++++++++++++++++++++++
- drivers/pci/pcie/aer.c     |  2 +-
- include/linux/aer.h        | 13 +++++++++++--
- 3 files changed, 42 insertions(+), 3 deletions(-)
+On 5/27/24 10:50 오후, Jonathan Corbet wrote:
+> Yunseong Kim <yskelg@gmail.com> writes:
+> 
+>>> 1) Why do I have three versions of it in my mailbox, sent over a period
+>>>    of 13 minutes?  What changed between the versions?
+>>
+>> Sorry, I forgot the name of the reviewer when I first sent the
+>> documentation content related patch version 2.
+> 
+> Which is fine, but...
+> 
+>>>    Normally, you want to wait for reviews to come in on one version
+>>>    before posting the next, and you should put a comment after the "---"
+>>>    line saying what changed.
+>>>
+>>> 2) When did this review from Jinwoo Park happen?  I was not copied on
+>>>    that.
+> 
+> You did not answer this question.  Reviews should generally be done in
+> public, but that does not seem to have happened here?
 
-diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-index e025ae390737..007ce96f8672 100644
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@ -131,6 +131,32 @@ static int print_extlog_rcd(const char *pfx,
- 	return 1;
- }
- 
-+static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
-+			      int severity)
-+{
-+	struct aer_capability_regs *aer;
-+	struct pci_dev *pdev;
-+	unsigned int devfn;
-+	unsigned int bus;
-+	int aer_severity;
-+	int domain;
-+
-+	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
-+	    pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO) {
-+		aer_severity = cper_severity_to_aer(severity);
-+		aer = (struct aer_capability_regs *)pcie_err->aer_info;
-+		domain = pcie_err->device_id.segment;
-+		bus = pcie_err->device_id.bus;
-+		devfn = PCI_DEVFN(pcie_err->device_id.device,
-+				  pcie_err->device_id.function);
-+		pdev = pci_get_domain_bus_and_slot(domain, bus, devfn);
-+		if (!pdev)
-+			return;
-+		pci_print_aer(pdev, aer_severity, aer);
-+		pci_dev_put(pdev);
-+	}
-+}
-+
- static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			void *data)
- {
-@@ -179,6 +205,10 @@ static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			if (gdata->error_data_length >= sizeof(*mem))
- 				trace_extlog_mem_event(mem, err_seq, fru_id, fru_text,
- 						       (u8)gdata->error_severity);
-+		} else if (guid_equal(sec_type, &CPER_SEC_PCIE)) {
-+			struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
-+
-+			extlog_print_pcie(pcie_err, gdata->error_severity);
- 		} else {
- 			void *err = acpi_hest_get_payload(gdata);
- 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index ac6293c24976..794aa15527ba 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -801,7 +801,7 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
- 	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
- 			aer_severity, tlp_header_valid, &aer->header_log);
- }
--EXPORT_SYMBOL_NS_GPL(pci_print_aer, CXL);
-+EXPORT_SYMBOL_GPL(pci_print_aer);
- 
- /**
-  * add_error_device - list device to be handled
-diff --git a/include/linux/aer.h b/include/linux/aer.h
-index 4b97f38f3fcf..fbc82206045c 100644
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@ -42,17 +42,26 @@ int pcie_read_tlp_log(struct pci_dev *dev, int where, struct pcie_tlp_log *log);
- #if defined(CONFIG_PCIEAER)
- int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
- int pcie_aer_is_native(struct pci_dev *dev);
-+void pci_print_aer(struct pci_dev *dev, int aer_severity,
-+		   struct aer_capability_regs *aer);
- #else
- static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
- {
- 	return -EINVAL;
- }
-+
- static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
-+static inline void pci_print_aer(struct pci_dev *dev, int aer_severity,
-+				 struct aer_capability_regs *aer)
-+{ }
- #endif
- 
--void pci_print_aer(struct pci_dev *dev, int aer_severity,
--		    struct aer_capability_regs *aer);
-+#if defined(CONFIG_ACPI_APEI_PCIEAER)
- int cper_severity_to_aer(int cper_severity);
-+#else
-+static inline int cper_severity_to_aer(int cper_severity) { return 0; }
-+#endif
-+
- void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
- 		       int severity, struct aer_capability_regs *aer_regs);
- #endif //_AER_H_
--- 
-2.45.1
+Oops, sorry about that, Jonathan.
 
+Jinwoo Park sent me the review below, and I've updated some of ambiguous
+words in patch version 2.
+
+https://lore.kernel.org/linux-doc/57f0d90c-4cc6-4418-ab79-6ae026d8ae09@gmail.com/T/#t
+
+>> Thanks for translating new Documentation/process/cve document to Korean
+>> Language. Most of the Korean sentences are looks good to me. But only
+>> one sentence seemed unnatural.
+>
+> Thank you for the review Jinwoo.
+>
+>>> 잘못된 CVE 항목들
+>>> =================
+>>>
+>>> -해당 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상
+>>> kernel.org
+>>> +특정 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상
+>>> kernel.org
+>>> 지원 릴리스가 아닌 커널 버전을 지원하기 때문에 Linux 배포판에서만
+지원되는
+>>> Linux 커널에서 보안 문제가 발견되는 경우 Linux 커널 CVE 팀에서 CVE를
+할당할
+>>> 수 없으며 해당 Linux 배포판 자체에서 요청해야 합니다.
+>>
+>> When the first modifier "해당" is first used in a Korean sentence, like
+>> "the", there needs to be an explanation of what it is targeting.
+>
+>
+> You're right, that phrase was awkward in the direct translation. Thanks
+> for catching that.
+>
+>> However, in the process of literal translation, it seems that "the"
+>> became "해당" due to the difference in word order between Korean and
+>> English, And since the translated sentence did not describe which "Linux
+>> distributor" is being described, it would be very difficult if
+>> "특정(specific)" were used instead. It seems natural.
+>
+> I will send version 2 patch. Thank you!
+>
+> Warm Regards,
+>
+> Yunseong Kim
+
+And I added Jinwoo as a reviewer to the documentation on patch version 3.
+
+On 5/27/24 10:21 오후, Yunseong Kim wrote:
+> I added Jinwoo's name here on version 3.
+>
+>> +:감수: 박진우 <pmnxis@gmail.com>
+> Warm Regards,
+
+Thank you for guiding me Jonathan.
+
+I'll keep the process in mind and use them to help the next person who
+translates to Korean.
+
+> Thanks,
+> 
+> jon
+
+
+Warn Regards,
+
+Yunseong Kim
 
