@@ -1,166 +1,145 @@
-Return-Path: <linux-kernel+bounces-190518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906D98CFF64
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6738CFF71
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D22B24823
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDECE283912
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C5115DBB9;
-	Mon, 27 May 2024 11:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA615DBC5;
+	Mon, 27 May 2024 11:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tcQoCWGi";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tcQoCWGi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p87k6Xro"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB11E13AA31;
-	Mon, 27 May 2024 11:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECB313AA31;
+	Mon, 27 May 2024 11:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716810875; cv=none; b=ee9KnL9vwAwU2pxMnwu3Enqlko2FNZpsk9nEZMjgGX8s3+cZIwhF77/Fdqh6LXTwD9+YXt6ttjvRPhhtVpD9hIEE4cyANdIjun4IfLOS1JnidShpjPLBin6lH+/LfoxRrpgSDtha5kl9fWTUIzAZekJy1iYYBa5aOO7pq1bGODQ=
+	t=1716810986; cv=none; b=kGa+yhOlZXkYEPa/0RBjxYraZ2GCMvcP5guPeTW3Nw/PbK9Pa1y3pFoaHxeMyFllx0Ps+4C+0Gbat+BdKAdn+oEnsOhhNgy0m7BnfEi6PAgobK9ZmiBHgmBwL9Gdw4Rv8vwH9RBLRKGVwoNWmNMSftjmw89fJTHjNJ5IkT7+gM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716810875; c=relaxed/simple;
-	bh=MDDwVaq/e+nPokPn9D9X4IiCzdTxBX+6Ef8nUisB89c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdhOrPp6HgksPkZR6PCwSBk7XV1iLGZFfS0QbyC8o95dvnA79yLboXCNY8E+XD2LW4+gISulF/HKYdaGp9Os/JP6FN1pQVV5io2vCPb+t1p2IekFCwCSoQuXkXm9zHvN/zdxhcfTaBj7y+kqq4N1Ogy5MM0iDyPkO8cQj2k9gLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tcQoCWGi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tcQoCWGi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A510D21E65;
-	Mon, 27 May 2024 11:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716810870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MDDwVaq/e+nPokPn9D9X4IiCzdTxBX+6Ef8nUisB89c=;
-	b=tcQoCWGiJMkdjzenPniPoa+2BxfFCBsze4QDFAlezPqq1UsGrDznOqDLOBOE1vdBtkkGxe
-	hSXRvJXtXPkFSGvVmbkkhKcHDBb9KkjRqd3cZJZWRnU5xiED9dYs/3gjf1erAGQsqTw0qZ
-	unPSV8FVgAo/OS22d4xBCu74Wt7P0Eo=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=tcQoCWGi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716810870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MDDwVaq/e+nPokPn9D9X4IiCzdTxBX+6Ef8nUisB89c=;
-	b=tcQoCWGiJMkdjzenPniPoa+2BxfFCBsze4QDFAlezPqq1UsGrDznOqDLOBOE1vdBtkkGxe
-	hSXRvJXtXPkFSGvVmbkkhKcHDBb9KkjRqd3cZJZWRnU5xiED9dYs/3gjf1erAGQsqTw0qZ
-	unPSV8FVgAo/OS22d4xBCu74Wt7P0Eo=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99DD213A56;
-	Mon, 27 May 2024 11:54:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PL1hJXZ0VGaCJgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Mon, 27 May 2024 11:54:30 +0000
-Date: Mon, 27 May 2024 13:54:29 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
+	s=arc-20240116; t=1716810986; c=relaxed/simple;
+	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tR7QwZScSbvzw06KGGnNCFrtPxPTZDmbpH0Nt8pj7WP6P+4DCIig9SoGjPqegChLlwm9z51QgIilBE+sqcVW6gtezaEuBMfoYqN5LYfKGneQWxayFVw6s2f36FwY1UEzpqYEK4zu2WcJhzS3PWtkqgJmpDsBpFggmsjGWVvzdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p87k6Xro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB89C2BBFC;
+	Mon, 27 May 2024 11:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716810985;
+	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p87k6XroMqATDsUBvJyUqe9q5lavadM/gv1KHuYzxpMfiUkGCe8jSrkO56TiVtXMH
+	 ZJ6KUkXLl9hVz2/xzrPLirHk7IfDWZnGbCaZZ8kvB8KUfDw5j+VIl+g0CyE8a0vLk5
+	 ZPvAo2fiVb7MV9cR8hYrcM1Qm77UMKbO8vAJ/tdg8IfN9vcDUGuiFC10ZVA139be+U
+	 5mjx0nMrVZl0pW1HZS3hpihNooBpeiN5TRbgFeUxANxOKsxyY23Ej1Xv67XJYG6vp/
+	 p/w28ym6kLVKIwOde7ZyQOMTXciQkmIx6YZJWssG69RRzPCAkGmpAsqMJUV31lxT5l
+	 OeXtGPugeBzPg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] cgroup: Fix /proc/cgroups count for v2
-Message-ID: <rwb5lqorevlmywo6da623oc4vacy3wjfxaokfx3it52fkvhrvx@qyef5cmd5sgr>
-References: <20240519174650.559538-1-tjmercier@google.com>
- <h5xdtfh7dc4rjh74b4cwkpjszro73hfbxzdobwtivyx4hl4hyn@p5lp5h5gzjuj>
- <CABdmKX149mbOkjo6fwZdx1LKX+xXH1TicUx+92Ud99RS9hSy7A@mail.gmail.com>
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 27 May 2024 13:55:56 +0200
+Message-ID: <20240527-vfs-fixes-96860426ed27@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ypbevvviesi2cei"
-Content-Disposition: inline
-In-Reply-To: <CABdmKX149mbOkjo6fwZdx1LKX+xXH1TicUx+92Ud99RS9hSy7A@mail.gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.11 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A510D21E65
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -8.11
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3021; i=brauner@kernel.org; h=from:subject:message-id; bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFlJwPvfXEoezmieigy2xbxXrc332x31mft05U3oP9r ZHnUpeNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5dI3hD9dZkbx3E+/smhly 2PHn33lfz4QUXPmtWD1h/yJlxVkWXpUM/7Qcptu6L3r/XCZxl926sE8zXi0tXT/1t83s/Mk7nj9 ynswGAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+Hey Linus,
 
---7ypbevvviesi2cei
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+/* Summary */
+This contains a few small fixes for this merge window:
 
-On Fri, May 24, 2024 at 10:36:45AM GMT, "T.J. Mercier" <tjmercier@google.co=
-m> wrote:
-> On Fri, May 24, 2024 at 7:23=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.=
-com> wrote:
-> Sometimes? Take freezer as an example. If you don't mount it on v1
-> then /proc/cgroups currently advertises the total number of v2
-> cgroups. I thought that was reasonable since there exists a
-> cgroup.freeze in every cgroup, but does freezer really count as a
-> controller in this case?
+* Fix io_uring based write-through after converting cifs to use the netfs
+  library.
+* Fix aio error handling when doing write-through via netfs library.
+* Fix performance regression in iomap when used with non-large folio mappings.
+* Fix signalfd error code.
+* Remove obsolete comment in signalfd code.
+* Fix async request indication in netfs_perform_write() by raising BDP_ASYNC
+  when IOCB_NOWAIT is set.
+* Yield swap device immediately to prevent spurious EBUSY errors.
+* Don't cross a .backup mountpoint from backup volumes in afs to avoid infinite
+  loops.
+* Fix a race between umount and async request completion in 9p after 9p was
+  converted to use the netfs library.
 
-v1 freezer controller and freezing implementation in v2 are different
-things.
-Before v1 mounting, the freezer* entry points to the v2 hierarchy (which
-causes listing it as realized for each (v2) cgroup but that's not true).
+/* Testing */
+clang: Debian clang version 16.0.6 (27)
+gcc: (Debian 13.2.0-25) 13.2.0
 
-> There's no freezer css for each cgroup=20
+All patches are based on mainline. No build failures or warnings were observed.
 
-Exactly.
+/* Conflicts */
+No known conflicts.
 
-> so I guess the better answer is just to report 1 like you suggest.
+The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6:
 
-It matches better the reality of alloc'd css objects.
+  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/jlawall/linux (2024-05-20 16:00:04 -0700)
 
-Michal
+are available in the Git repository at:
 
-*) Same for any v1-only controller.
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc2.fixes
 
---7ypbevvviesi2cei
-Content-Type: application/pgp-signature; name="signature.asc"
+for you to fetch changes up to f89ea63f1c65d3e93b255f14f9d9e05df87955fa:
 
------BEGIN PGP SIGNATURE-----
+  netfs, 9p: Fix race between umount and async request completion (2024-05-27 13:12:13 +0200)
 
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZlR0agAKCRAGvrMr/1gc
-jrqRAP9TQP6j5DmHoxLheRwnbqIY6gmYi7uqeFtypt2h0JJDPgEA+TjFacW3QA0k
-c8Uy1NUReoZDyx4nhMhOQXRT2wFcygQ=
-=Vtbf
------END PGP SIGNATURE-----
+Please consider pulling these changes from the signed vfs-6.10-rc2.fixes tag.
 
---7ypbevvviesi2cei--
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.10-rc2.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      swap: yield device immediately
+
+David Howells (4):
+      netfs: Fix io_uring based write-through
+      netfs: Fix AIO error handling when doing write-through
+      netfs: Fix setting of BDP_ASYNC from iocb flags
+      netfs, 9p: Fix race between umount and async request completion
+
+Fedor Pchelkin (2):
+      signalfd: fix error return code
+      signalfd: drop an obsolete comment
+
+Marc Dionne (1):
+      afs: Don't cross .backup mountpoint from backup volume
+
+Xu Yang (2):
+      filemap: add helper mapping_max_folio_size()
+      iomap: fault in smaller chunks for non-large folio mappings
+
+ fs/9p/vfs_inode.c         |  1 +
+ fs/afs/inode.c            |  1 +
+ fs/afs/mntpt.c            |  5 +++++
+ fs/iomap/buffered-io.c    |  2 +-
+ fs/netfs/buffered_write.c |  2 +-
+ fs/netfs/direct_write.c   |  2 +-
+ fs/netfs/objects.c        |  5 +++++
+ fs/netfs/write_collect.c  |  7 ++++---
+ fs/netfs/write_issue.c    |  9 +++++++--
+ fs/signalfd.c             |  6 +-----
+ fs/smb/client/cifsfs.c    |  1 +
+ include/linux/netfs.h     | 18 ++++++++++++++++++
+ include/linux/pagemap.h   | 34 +++++++++++++++++++++-------------
+ kernel/power/swap.c       |  2 +-
+ 14 files changed, 68 insertions(+), 27 deletions(-)
 
