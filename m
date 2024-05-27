@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-190670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DAF8D0132
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9718D0139
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02D00B2731D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF313284CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FC215E5DD;
-	Mon, 27 May 2024 13:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1270015ECF1;
+	Mon, 27 May 2024 13:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erq9wBZ+"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sFq33a0l"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A5E4EB55
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF6243AC1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816015; cv=none; b=FSbGLMqG14iqaJqduOCASIwYWi4F+J2Axt9kj8vMD4TBlGQ7u8DWyRWY2um/5VxALwPP4wuuQ3f55/oDlPU5hcqWQrhL8cn/geM3JUlwU5kyB8PfT/cklbf0f3fp5KTJXsHd48H0beeUq8KLHhcWDISw5KU7eM6JY7YAmItT4rA=
+	t=1716816073; cv=none; b=dpR2o6DCdyFKkXaO1i4NPL8yjcJ+3EhytHtnGKWpsb/Lhw0HO3xlJbkM4NMXmYLO1lfGpLVt6Dub72ab832fVtbeD4V+chdMzqLO3kQcQNUNk+4oJEAsA4Q394Dc1y6leD06ieriB7ckimjaUdFf81KaeotqnlH9jHM1mDo/iJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816015; c=relaxed/simple;
-	bh=S6iL6oDWFaJR+E/+A1MILtVvh7HVUlIMKSpUEQQGFBs=;
+	s=arc-20240116; t=1716816073; c=relaxed/simple;
+	bh=A5oLEapcgP37aYCcmTzxVsLxRtwo1Khvk/g3fb46GnQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JuPfyumtkRXR007Rz1ucUr/KF2iHdex1LKUfgXMFkmRm9aisKW1x6VYfVfwoDszEErpM1ib7RC0rPx/Xoz/PIuJZ0z3C2bCUOO0rCUz+tHNNnfcTx/uA5E9h6yGkw4AT+J+dofJ7K2MS3OtbJPUcKx+8cyxvnX661b4wK/4j4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erq9wBZ+; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a61b70394c0so924084466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:20:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=mPhrlv+UPsxr/MwDKnfnNW94/o8QExPvHyr/XAKGZNv8xdp81vIMFe32nc3d0hsNv7tPJSTQBYsBRHW66Ou1/HQ93uDDnuZ8Bc/lLD2ebESH65wa6waqTrlqLLknrhTN/prM7zsKcoRaj82cu1iKAFSJzTpZWWmMP0serCY8Rmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sFq33a0l; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df771b6cf71so3446577276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:21:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716816012; x=1717420812; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716816071; x=1717420871; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=583OMcuKvHNT1Ww+Sb5JEHcYkO2V/RPQQEiPPcbZRAU=;
-        b=erq9wBZ+Ucd45vJa+noeO47HMVHyxRGR6NDAaciHIewkNaCmpj4HObFbZHAUNe4UBQ
-         qQ4i/86zgVqVVuaicCWaO1PqhUROduYhtgsNPojBecG5OiE/J9TJMQ/ezJmIb2GSXdMn
-         vzCMxcnEq9+5t1OlOk9UeGf1rYwB2t+3iAeX3qzYKlTMY0spqB/3IFEkV2qv8B2WCLHJ
-         37cesqQ9xlPX7tnNxXoGzyY5b7UjwoAwDl34/plI9kB753O66aVpz5H+gP+zohSMCcVH
-         qEwwPxAMVnrrAKLFxUjamFcSfIvnD2nUY/QijfzJFLDFjRJoXMbbHKvJGxmQJW6fwjjv
-         D5oQ==
+        bh=A5oLEapcgP37aYCcmTzxVsLxRtwo1Khvk/g3fb46GnQ=;
+        b=sFq33a0ljSEPw2bBgB1oc4GdtGuAEC8UMpXQYehPesrv4+k9RqO+MnKe8zSsc+yvTH
+         PV5DFscWuM2G9eGFlJ5qxeMjD5AWHzOr+QnUCr1c8n0k/suOWYq3c64gznCpwDnqk9Q6
+         FCkyHfMl+JDnrO9CWInUCrHV2SbQtvVfXsABAJkEDyigskb5QPoNbJIuQgLWJQAMg1z3
+         d6HAnVoJlCOr0Civhr/Dcs24V+2gCQycqfzjc58WsGPwsbwu3mlHSagr8Fi1Ee8/pc7p
+         CWkJTaES8L9krufMwAqq5SmSARD8afBOEzVTWgrPZrrftGFBM6Bmpofiz1JnH68dFxxr
+         oHNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716816012; x=1717420812;
+        d=1e100.net; s=20230601; t=1716816071; x=1717420871;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=583OMcuKvHNT1Ww+Sb5JEHcYkO2V/RPQQEiPPcbZRAU=;
-        b=vDYaXGX4IJFm/4Ao65F0DR15JP7sF16uGb6qmLCeA0ddHqdt5DFy7MipPtFF5kWaNV
-         fwzIyU1/mlJ54nG5g8S5ncSs0KsUeUHy6q2td8eHAdhwwragQXFv7z7h6hV6wVKcotu0
-         OjJi9MjtZczlJrOebjjr6mGlxwqANjnZTSOh/v32mXGOc2/7PLHbHIgk2tv6yud8UDrC
-         0xh8KdJbiNDra3+A+mNHHLgqjj7KXFYzsZPZSgTQj+UJr+5qhOVKGuH4dWhOq65SxN3t
-         n1+S2wv0o2zBJc6OcYvOUqAuhtu+yVYc5mhX+sjuV8KRHi2TltuH90aAqVGPbV2mQfH7
-         M3LQ==
-X-Gm-Message-State: AOJu0YyXmxgjsgmnDYmQndomBn9diQ3iaciRGLX/WMQYtsaSwWRedCyK
-	RkGdg68CKkyxZqjoajpVfDzCv5zqoSwlONvR+1TV88sYFVIAMyoQdT4I+Jdh6iodLIEZ2leVR0D
-	o/K6vV4QE7pLVAyhevv5/dnP6hcg=
-X-Google-Smtp-Source: AGHT+IFAU5YkoQQCpo2YBJF5cZ7P9SUOU+cK1hlCD0x11A8DdQnGvCOJ3WRTYFceD3JkPIeraFXM9GsH58VbgH3clsU=
-X-Received: by 2002:a17:907:971c:b0:a62:cecd:26e3 with SMTP id
- a640c23a62f3a-a62cecd2767mr357363566b.39.1716816012441; Mon, 27 May 2024
- 06:20:12 -0700 (PDT)
+        bh=A5oLEapcgP37aYCcmTzxVsLxRtwo1Khvk/g3fb46GnQ=;
+        b=r4FUHAA3E5H7larLhJOErFeDaO17gdoV8fSRLQ6uMA8eTJ9LvibXlQH4cb6vo5bNYO
+         OG1yz8aWvVxwZ/HGBb9mhEIcQHAkWL3ul1HvIdYjAoWQcGTJCNPzTu03Zh1obWuyGuv6
+         wW00Sa6eldkhEflYVXftYNae8Z9/KwAJi4QiBfFf4rYCz88wxnCDfqwRfSV04Hyk16x6
+         +QcLJ6idAjJm99s9kpWtZ4IyWbek7h6dqfKkHOWd29RmxDIge+hAZlJNIKpGLPTTIEfP
+         FPUkoBPLdYQZIp7N9DmkokgKYBNcZTni3V7NEgmf+A9dOJ+DpR50Y9UISfpy/0xpToQx
+         V8hg==
+X-Gm-Message-State: AOJu0Yzqgu3U++c9Fy5oznpCe/lOQEuzqy50gn/nbP0CebASD2mJ1pdu
+	WVryiY7eB2/WIxTppRUHjc5QbDweIZKH1r1uPJdvDMqT7ZQiOyOtCDdH8GwMjkjjhK0P/8N0ClV
+	3ohVCgwYH7OcRDk7c7S1o4UyJTWxpk/Jh8PFtBA==
+X-Google-Smtp-Source: AGHT+IG2fUIYlwOTAQHjIZDJHL1+p7r/HhFOGyIZRHukArpnfwiG3MrekBB9kwdL/jOJkM1EBFXBjWodbdGUvkKTZJc=
+X-Received: by 2002:a25:6809:0:b0:df4:d367:6bd6 with SMTP id
+ 3f1490d57ef6-df7721a7909mr9597567276.29.1716816070788; Mon, 27 May 2024
+ 06:21:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527094320.2653177-1-jani.nikula@intel.com> <20240527094320.2653177-2-jani.nikula@intel.com>
-In-Reply-To: <20240527094320.2653177-2-jani.nikula@intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 27 May 2024 16:19:35 +0300
-Message-ID: <CAHp75Ve0vyOv3KNY_7286wLKd8u6HOvu0Trm17rs46h-BOGsfA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm: use mem_is_zero() instead of !memchr_inv(s, 0, n)
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, Kees Cook <keescook@chromium.org>, 
-	Andy Shevchenko <andy@kernel.org>
+References: <20240508184905.2102633-1-andriy.shevchenko@linux.intel.com> <20240508184905.2102633-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240508184905.2102633-2-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 May 2024 15:21:00 +0200
+Message-ID: <CACRpkdYMwoj9fc0MUPn8ytqSUrbnsRt5rf5s=YE4_9rQ-AC0tQ@mail.gmail.com>
+Subject: Re: [PATCH v1 01/10] misc: eeprom_93xx46: Make use of device properties
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 12:43=E2=80=AFPM Jani Nikula <jani.nikula@intel.com=
-> wrote:
+On Wed, May 8, 2024 at 8:49=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+
+> Convert the module to be property provider agnostic and allow
+> it to be used on non-OF platforms.
 >
-> Use the mem_is_zero() helper where possible.
+> Include mod_devicetable.h explicitly to replace the dropped of.h
+> which included mod_devicetable.h indirectly.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-..
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> -       if (memchr_inv(guid, 0, 16) =3D=3D NULL) {
-> +       if (mem_is_zero(guid, 16)) {
->                 tmp64 =3D get_jiffies_64();
->                 memcpy(&guid[0], &tmp64, sizeof(u64));
->                 memcpy(&guid[8], &tmp64, sizeof(u64));
-
-What is the type of guid? Shouldn't it be guid_t with the respective
-guid_is_null()
-
-..
-
-> -       if (memchr_inv(guid, 0, 16))
-> +       if (!mem_is_zero(guid, 16))
->                 return true;
-
-Ditto.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
 
