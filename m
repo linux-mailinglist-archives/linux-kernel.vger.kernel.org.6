@@ -1,194 +1,169 @@
-Return-Path: <linux-kernel+bounces-190138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FBD8CFA05
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:25:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F108CFA04
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42E2280F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0BA1F213AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB194376E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456902836A;
 	Mon, 27 May 2024 07:24:32 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BFD22615
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E68224D1
 	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716794672; cv=none; b=YWJ1s67c+k3lOD+54JuF0rhdTyYledo/I+W+vjtKVBWDdbVFn6RV7MxlcEBIZwqYWqczovrKJH+qaiPq3f/U3mAxEMfApt1hkqkGC4hZ1dPWpRkc3C1ih00qLbhItTtcH2NxAeZAbCNcyD7tAZxLnH0r26vG5FXx67KYqRWTuGY=
+	t=1716794671; cv=none; b=KJJcQI2tLQSQzL3YiIWuPJneYeU0DVf5lXUkoaIyg37eFQfSOzSNRyxwUKDcfT7axpxvbFGvszmVYRp3jGxkCGye6gQrZ8nrDKR6UjxeUZlSRF2X+ZJohGp7zv7ybUPO0OV7N/Y8t76pN7VWBxhsFqimMZIBXDojFNNdmqkKXQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716794672; c=relaxed/simple;
-	bh=t1WMwtWHD1eE7edCg6VwTMBC5IohTUF4FgdcQgiJ7EM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cDpxFA8IKKNJqj8Gp5+YrUW/i7B2DrL7ibY4rDM15gDTa1jHz+feLB1IJ/oPS8r+UDdiDy9swT8hfb9l4W85CoB0E45IRVUYl1uofnibmlCy3cNl1hWjBVVcke7ai7Umgf65tHAXaxBYxE38STHowxp3jlC7g2csf1136Sj4wwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+	s=arc-20240116; t=1716794671; c=relaxed/simple;
+	bh=lw8KkLJUAe8zbtM6WWDBVTxtolCUjkKLl/X460mypOo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aH7r7eQsUiVo2mchONSvqWba8F78IFYwb/QEYD+K/J/KFq7iGtZSgbLCAhUFBIXTryT/WmnrbeQ/EtoBnLA8zzaDMiJfnqU0ou5djip7efVnWhtjFIQKHkxXeWOb8ad0adT+haqiGNFlPNVlj9S9gb3vIrLHmh5isTH7R55kjMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1e409d1f4so562527439f.0
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3713862bcefso38490935ab.0
         for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:24:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1716794669; x=1717399469;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NWFUzUHCi9dLgq8/JAwYKdKMCUezO6W78gjgnHoq7Sk=;
-        b=HShsuc4eTB2ZwmX+LNaD5p9QfFyIKRYzs1Hgg3uvmgc3tMAY52jvEZnzLWaTIudfkM
-         gQOnfyJkp3F+OPIEwV1D+DKDZEmZEajUFKq5y+fwO0sLPSTE3s9NGfnj0N4NQSoLvUPI
-         SFnMC4z1JjnTbavtE3ULACqPcRcp+DTgjuLv26KAT15p84w2ydl7AsEIz4n4Ay/X6zLw
-         H5cmBI59Z87T/L6Q119z4v0x8WhN3qD9Rj/5yQScTsYKyyTRdB1M9NH9EAI3Sh0PGHR2
-         bGa/5p3mdZEFerM2hR4TWKHGcn1DLdrAzQC2d0+iimZm8tBPDAI1yZFzdbGJMC0iva9y
-         XBpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBTBNqt1KspUbGcAqmGkjfA/XTrs4WQ/Pns+nNUkD7q/bvE9oIW7w4b1Lyaw7OA7MQ1MHFJ39FCoBw6I8qsjCX4lwDfXt++TC9mpeb
-X-Gm-Message-State: AOJu0YyozPNVpVaTOLN8CpcnJj0dL1Nit7ORM4UTov0oBRc2AHmZwmUh
-	orL3jg88Y8uTKcrvWeFVGTv9V8RUqyrEuq6VFLkFWRnuvDg2VHmW10E08o63X2AqlLja9j0jeyn
-	KTJG333kL+0EeqC4BrgNvw/uwswG3HQeCvBLzvTdw3cJ9cfmc3An4uGA=
-X-Google-Smtp-Source: AGHT+IF3zEtmKdKFUFfnTGXoZLon2AJbVRqW1PjJnTKM8yMkzNttssiBdckyMyd7m9o2FVSJ4BgtwCwJDissD+PY9rKN2iEZO1ED
+        bh=Lmfp46OXIt859MZHaU6A+z3GBHDbs4UP5Lz/+uglPoE=;
+        b=fX2P/Hc/L+6fNNx7WI3nk7YZFY339qqpzMmAO2iMpT3egezMxYDWiuoofAxKrd/nnE
+         g3Cv73kEPRUdElu/YtARpydsEMINh9WBsE1t0/HCsgLY6N5OceSfes4kndZomwNzg3Kf
+         Pss9WcGDe6UkXRwONmoeZyFIf8vrTk0/4BzzX0SFEyUcviiToLm4XfKDnGBhJkTevgav
+         OSHh8DUJzAO/c2MXfbay2u7KjaPyHvRW1inOMPXQiYFHgCq15R3nUtneuSDkN96HGmKm
+         99tlm3iuWeir3i+oH1whAjQK4DxLgqI9x1vRqAhinzbFKtAKoznid15npsQo/OLfpSJP
+         sCNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXf78r2ix8Q8HUWyruYLbDxpdr+PbrW69P2V7TtomV5HZkAnWw9RaxV6Yl8ODbAgemWCBeWQD0cBTtqz9jWzbqOGhbA/OiWgAj40w2L
+X-Gm-Message-State: AOJu0YwraPzdOUwfYweHIMCQuqGbxLcJPX+FizVRDXHLMpDIxchFktP8
+	g6aUHYsRsa2eO/SFi6fpspEC0F2BoZtjNNg3SzlQjFOSSQo3naUqwf+PuWjA+NTTDB7Fq0kvPZ5
+	2VBUUebzGI9LztIYk96o6E3rJOW51XNl9T0iHmJtykZRENblcJbBMx+E=
+X-Google-Smtp-Source: AGHT+IF0D+SBEAfyHXY+f4w4IB0XaBM88nfJbwNbHgX23hmzt65xUjYOd40kaT7dEqVkbrz5bV7Vw8VDxkExQNd9oKktnsBAmjgW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8a:b0:374:5b18:28c8 with SMTP id
- e9e14a558f8ab-3745b182b34mr1461115ab.3.1716794669715; Mon, 27 May 2024
+X-Received: by 2002:a05:6e02:1d83:b0:36c:6080:753d with SMTP id
+ e9e14a558f8ab-37347c2e5a9mr5061585ab.1.1716794669425; Mon, 27 May 2024
  00:24:29 -0700 (PDT)
 Date: Mon, 27 May 2024 00:24:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000070dbbd06196a68ea@google.com>
-Subject: [syzbot] [wireguard?] general protection fault in wg_packet_receive
-From: syzbot <syzbot+470d70be7e9ee9f22a01@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Message-ID: <0000000000006c777106196a68c1@google.com>
+Subject: [syzbot] [kvm?] KASAN: wild-memory-access Read in __timer_delete_sync
+From: syzbot <syzbot+d74d6f2cf5cb486c708f@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, kvm@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
+HEAD commit:    1613e604df0c Linux 6.10-rc1
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10263a34980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
-dashboard link: https://syzkaller.appspot.com/bug?extid=470d70be7e9ee9f22a01
+console output: https://syzkaller.appspot.com/x/log.txt?x=10672b3f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d74d6f2cf5cb486c708f
 compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1613e604.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdfe02141e4c/vmlinux-1613e604.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9e655c2629f1/bzImage-1613e604.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+470d70be7e9ee9f22a01@syzkaller.appspotmail.com
+Reported-by: syzbot+d74d6f2cf5cb486c708f@syzkaller.appspotmail.com
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc001ffff113: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: probably user-memory-access in range [0x00000000ffff8898-0x00000000ffff889f]
-CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
+bcachefs (loop0): shutting down
+bcachefs (loop0): shutdown complete
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+BUG: KASAN: wild-memory-access in __lock_acquire+0xeba/0x3b30 kernel/locking/lockdep.c:5107
+Read of size 8 at addr 1fffffff8763e898 by task syz-executor.0/11675
+
+CPU: 0 PID: 11675 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller #0
 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: wg-kex-wg1 wg_packet_handshake_receive_worker
-RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
-Code: 11 00 00 39 05 b3 cf 1f 12 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 3d e3 92 0f 84 98 f2
-RSP: 0018:ffffc90000007500 EFLAGS: 00010002
-
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 000000001ffff113 RSI: ffff888015f20000 RDI: 00000000ffff8898
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8fe29817 R11: 0000000000000004 R12: 00000000ffff8898
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c0016a3000 CR3: 000000005dcac000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- <IRQ>
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ __lock_acquire+0xeba/0x3b30 kernel/locking/lockdep.c:5107
  lock_acquire kernel/locking/lockdep.c:5754 [inline]
  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- __queue_work+0x39e/0x1020 kernel/workqueue.c:2319
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2410
- wg_packet_receive+0x13ea/0x2350 drivers/net/wireguard/receive.c:570
- wg_receive+0x74/0xc0 drivers/net/wireguard/socket.c:326
- udp_queue_rcv_one_skb+0xad1/0x18b0 net/ipv4/udp.c:2131
- udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2209
- udp_unicast_rcv_skb+0x165/0x3b0 net/ipv4/udp.c:2369
- __udp4_lib_rcv+0x2636/0x3550 net/ipv4/udp.c:2445
- ip_protocol_deliver_rcu+0x30c/0x4e0 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
- dst_input include/net/dst.h:460 [inline]
- ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_rcv+0x2c5/0x5d0 net/ipv4/ip_input.c:569
- __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5624
- __netif_receive_skb+0x1d/0x160 net/core/dev.c:5738
- process_backlog+0x133/0x760 net/core/dev.c:6067
- __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6721
- napi_poll net/core/dev.c:6790 [inline]
- net_rx_action+0x9b6/0xf10 net/core/dev.c:6906
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- do_softirq kernel/softirq.c:455 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:442
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
- wg_socket_send_skb_to_peer+0x14c/0x220 drivers/net/wireguard/socket.c:184
- wg_socket_send_buffer_to_peer+0x12b/0x190 drivers/net/wireguard/socket.c:200
- wg_packet_send_handshake_response+0x297/0x310 drivers/net/wireguard/send.c:103
- wg_receive_handshake_packet+0x248/0xbf0 drivers/net/wireguard/receive.c:154
- wg_packet_handshake_receive_worker+0x17f/0x3a0 drivers/net/wireguard/receive.c:213
- process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ __timer_delete_sync+0x152/0x1b0 kernel/time/timer.c:1647
+ del_timer_sync include/linux/timer.h:185 [inline]
+ cleanup_srcu_struct+0x124/0x520 kernel/rcu/srcutree.c:659
+ bch2_fs_btree_iter_exit+0x46e/0x630 fs/bcachefs/btree_iter.c:3410
+ __bch2_fs_free fs/bcachefs/super.c:556 [inline]
+ bch2_fs_release+0x11b/0x810 fs/bcachefs/super.c:603
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x1fa/0x5b0 lib/kobject.c:737
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+ task_work_run+0x14e/0x250 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+ __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf731b579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000ffc4e538 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
+RAX: 0000000000000000 RBX: 00000000ffc4e5e0 RCX: 0000000000000009
+RDX: 00000000f7471ff4 RSI: 00000000f73c2361 RDI: 00000000ffc4f684
+RBP: 00000000ffc4e5e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
-Code: 11 00 00 39 05 b3 cf 1f 12 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 3d e3 92 0f 84 98 f2
-RSP: 0018:ffffc90000007500 EFLAGS: 00010002
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 000000001ffff113 RSI: ffff888015f20000 RDI: 00000000ffff8898
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8fe29817 R11: 0000000000000004 R12: 00000000ffff8898
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c0016a3000 CR3: 000000005dcac000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+==================================================================
 ----------------
-Code disassembly (best guess):
-   0:	11 00                	adc    %eax,(%rax)
-   2:	00 39                	add    %bh,(%rcx)
-   4:	05 b3 cf 1f 12       	add    $0x121fcfb3,%eax
-   9:	0f 82 be 05 00 00    	jb     0x5cd
-   f:	ba 01 00 00 00       	mov    $0x1,%edx
-  14:	e9 e4 00 00 00       	jmp    0xfd
-  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  20:	fc ff df
-  23:	4c 89 e2             	mov    %r12,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 82 1f 00 00    	jne    0x1fb6
-  34:	49 81 3c 24 a0 3d e3 	cmpq   $0xffffffff92e33da0,(%r12)
-  3b:	92
-  3c:	0f                   	.byte 0xf
-  3d:	84                   	.byte 0x84
-  3e:	98                   	cwtl
-  3f:	f2                   	repnz
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
 ---
