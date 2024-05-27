@@ -1,101 +1,145 @@
-Return-Path: <linux-kernel+bounces-190660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CB28D0107
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6D58D010C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20156288684
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184E31C222C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A6B15E5D0;
-	Mon, 27 May 2024 13:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B5215ECD3;
+	Mon, 27 May 2024 13:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bg34lXVZ"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyHO7WSO"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31015DBC1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872D115DBC1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815719; cv=none; b=E6hdvxRXOYCXUsYJeJQUy+QWobn/de5UMA7DuwAOgBof6r4JgqTQC6R8185x0gt1m9ABJV8vknlxfY8XuwK5fBko36+rOtf2iUFynbAk7fB9NPvlbBCuEtMyIW/Gw5gaQjV/W6MUywjqW+HZeW4bEyeqDCogWJ6BDytQupHOm2Y=
+	t=1716815733; cv=none; b=cqMXjB8bffYs1s5nXKnMiqXkQNCC5/UsyCPhqHhI3KEdGcPu2Hq3xSkJd/7PSCn+cm0p0kKCq1e86PGRoLbCOS7zyYxQSivFYFC8AI/uDoJkZM9f4/7BH/NXBZIcMHxF1eDHn3wuRCo8PeCArAKkL+/Zdo+xfShWa/MHaZENZWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815719; c=relaxed/simple;
-	bh=0Edaju5pGvykmoU4M2lpA68ncguVXLIcSKHtJCJSkOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZHHZmRAmjSJIyRFtapkAfcQu42DR68z1RJLGoeQWi7W8C+BPlo60Jf+HkOT8tItW5gVyhogiLJOq/X4uswkJo0GWM7+0apd4qplTYWOtjtTeeSXgaTsf7Tm95+1sShMTGdtswLdzbzcDKczjpwKeOQmI8KcSoT4f6c1eH+5vos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bg34lXVZ; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716815714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fAbpqHYArlgEA4jndUz59wBOUYS1i0aiS/4KxphB4UI=;
-	b=bg34lXVZhV597vXyWDG4RuvE8RbwP3Lwxz6YxhMDRmvdkRdQ9zgF/aLMSysVqr3vIk0XXR
-	Gl7GlJa2JfxJLxT93Qf5EGxprVZuKjkPdnMvHnZdTW+x2+5yCkX/mTlIAoKjnOLWiYVP/N
-	k1No0gau4uhxJvwiIcwpHCuAhrT+8SQ=
-X-Envelope-To: cl@linux.com
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: surenb@google.com
-X-Envelope-To: keescook@chromium.org
-Date: Mon, 27 May 2024 09:15:10 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] mm, slab: don't wrap internal functions with
- alloc_hooks()
-Message-ID: <gwbfutyz24pjzweivq7zhj6e3o3yngjcyk3zy4kletxskiizbg@nskn7qkayfig>
-References: <20240527090127.21979-2-vbabka@suse.cz>
+	s=arc-20240116; t=1716815733; c=relaxed/simple;
+	bh=K247tM0uRG0BEBi0QtYli0dAiX2cPA2+pN50KQ+XwJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ta/dJPMNfdKLcSx0W6w5Sq8K1Iu3OZk7Ry+7vWj5zrJRVBINaAa9/QV3OVyr7YoOLihshf9ddNitW1GCP5zy8TDeg7ZE7qTAc7XfhVx+qlEAQA2g+wIiLMClDacig+HSVwf+pOPl272PVNRxufl1JTOkVg57CMp0W36d/muU5r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyHO7WSO; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a145e0bb2so25701287b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716815730; x=1717420530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ORWWAV5DFVa1AMsT2HoJ2yL9cgtTVCQWr4c970t4N2A=;
+        b=SyHO7WSObKi/9vVbWpFY6Iyi/jPD3vlvvL2Qk6liuyQAxH2aO220Y1WYbahv1/dan6
+         09NGErKxptysMMj+46h15XI65RhX+UsWq2UIEL4waYEsdm599mD/XZCbSGMjGtg6RxPz
+         h9eI5jS6jDdR6uMZUITLr5j96bji46XXFOwEIB2XweALj095/cSqImxFmxPSi7iiweNX
+         fOm+Tyz2NksN5ul5WLE6EgdFGXbbaQok5YCvUnOtaHHO+L+n6w0F175mAFyYpHJt3ZwC
+         57APHQ7Sq7sbOEj5Y8mLhpBED+N3a8WPC+OQrDaMW1HfMUMvqxB6E1q/e7F1n77SPB2b
+         hlhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716815730; x=1717420530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ORWWAV5DFVa1AMsT2HoJ2yL9cgtTVCQWr4c970t4N2A=;
+        b=rQIuJheKJnZc7FfWdI6AJtTl8XomJ0Q0WX89Znkrmi1Yyx+4IzW9CDYE9QBww2JH6J
+         2Y0dhf5sb31FWDVGhWJmtuAKc6ixL3FbS3DzCEGz6eilYQQn1AssBj7BmtothXarvxR7
+         jPjvrYsuhz7bQEOFePqfiPqRR1H5/SeemJrDCop+cUvHm+5UCJbq89h+qL29ma4s7sFI
+         z/AbD80aoQxN9Qs3WAVlt3HmZaUSJah/vWS9pXweMvQN9kcw6jTnQ6NEOCoEHD0PnN1/
+         9kSR20/PX56yOQnmBxZKtdo6qKt1iG0SzY1Crt6nTsrTfM0C7DE8EDvtbUDmI5RCMyti
+         MONw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnXJmnuuZNhoiqF4bdGhYWZGv/qba0rkwqRrs5C9ucX4VIRF8cq5uNdI7nvAP1dj1Hl/a830xXYMCsLONleFaesRArxW5kHicMhzBY
+X-Gm-Message-State: AOJu0YzjfkkG1dg5vxKoP01KmeWN19cd1WANi3eIaZahKWjCn+ACQQWM
+	ych6DCKhmAWP9HaaUHiKBD6gvWCJTDoZzsHaxooEwH4tl0flmZEsn06oKEB1JpjuLEgOlASLiha
+	jDSE/gFU1q6gbvyNGSKfu1d3iyjFVVLRVy/IMQg==
+X-Google-Smtp-Source: AGHT+IFLnsaD839+3qfvvjKNYcPNIoZukpexfAQJweynlTmE92arqErfYxJaJwjE2NjnD3ByeP9B2Eef7aVU5QowlBM=
+X-Received: by 2002:a25:bc0a:0:b0:df4:ece5:2712 with SMTP id
+ 3f1490d57ef6-df7721c416bmr9545693276.39.1716815730399; Mon, 27 May 2024
+ 06:15:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527090127.21979-2-vbabka@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+References: <20240503162217.1999467-1-sean.anderson@linux.dev>
+ <CACRpkdbOAoSDNFhXfz3djUZh1_MQ_T75CC+-LmojRXvyCbUusA@mail.gmail.com> <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
+In-Reply-To: <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 May 2024 15:15:19 +0200
+Message-ID: <CACRpkdbSsgxtKqF6ORXubufTaegjysHU7zH-tJfDfKNd=Kdoeg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: zynqmp: Support muxing individual pins
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
+	Krishna Potthuri <sai.krishna.potthuri@amd.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 11:01:28AM +0200, Vlastimil Babka wrote:
-> The functions __kmalloc_noprof(), kmalloc_large_noprof(),
-> kmalloc_trace_noprof() and their _node variants are all internal to the
-> implementations of kmalloc_noprof() and kmalloc_node_noprof() and are
-> only declared in the "public" slab.h and exported so that those
-> implementations can be static inline and distinguish the build-time
-> constant size variants. The only other users for some of the internal
-> functions are slub_kunit and fortify_kunit tests which make very
-> short-lived allocations.
-> 
-> Therefore we can stop wrapping them with the alloc_hooks() macro.
-> Instead add a __ prefix to all of them and a comment documenting these
-> as internal. Also rename __kmalloc_trace() to __kmalloc_cache() which is
-> more descriptive - it is a variant of __kmalloc() where the exact
-> kmalloc cache has been already determined.
-> 
-> The usage in fortify_kunit can be removed completely, as the internal
-> functions should be tested already through kmalloc() tests in the
-> test variant that passes non-constant allocation size.
-> 
-> Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+On Mon, May 6, 2024 at 4:45=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
+ev> wrote:
 
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Then we realize that not everyone need all the modem
+> > control signals provided. What to do. Well this:
+> >
+> > uart0_rxtx_grp =3D pin_rx, pin_tx:
+> > uart0_modem_grp =3D pin_cts, pin_dts, pin_dcd;
+> >
+> > mux0:
+> >     function =3D "uart0";
+> >     groups =3D "uart0_rxtx_grp";
+> >
+> > Now the CTS, DTS, DCD pins can be reused for something
+> > else such as GPIO.
+> >
+> > I *know* that this breaks ABI: the driver group definitions change
+> > and the device tree needs to be changed too.
+
+Actually I didn't think that over, it is possible to add new groups
+and retain the old ones.
+
+I.e. retain uart0_grp, but additionally add and use
+uart0_rxtx and uart0_modem_grp and use one or the
+other approach.
+
+> Well, the pin groups are actually defined in the PMU firmware.
+
+Is that firmware written in such an helpful way that the groups
+can be extracted from the firmware then, as with SCMI? Or is it
+a matter of duplicating the info from the PMU in the software-defined
+groups.
+
+> And
+> frankly, I don't see the point of pin "groups" when there are not actual
+> pin groups at the hardware level. The pins can all be muxed
+> individually, so there's no point in adding artificial groups on top.
+> Just mux the pins like the hardware allows and everything is easy. Cuts
+> down on the absurd number of strings too.
+
+So are you going to switch all of Xilinx devicetrees over to using exclusiv=
+ely
+the new method (muxing individual pins)?
+
+I'm fine with one (string identified groups) which I encourage, but I
+let individual pin control pass as well on several occasions.
+
+What I don't want to see is a Franken-solution that mixes the two
+approaches, even less so on the same system. Someone is going to
+have to maintain the resulting mess. And this looks like exactly that.
+
+If you want to mux individual pins instead of groups and functions, by
+all means, but please do not mix the two approaches in the same
+driver, I'm just trying to save Xilinx from themselves here.
+
+Yours,
+Linus Walleij
 
