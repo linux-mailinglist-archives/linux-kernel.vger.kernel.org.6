@@ -1,312 +1,170 @@
-Return-Path: <linux-kernel+bounces-190267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F2D8CFC38
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:53:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546988CFC3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 253BA1C21DFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89521F22F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B903626DF;
-	Mon, 27 May 2024 08:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B36130482;
+	Mon, 27 May 2024 08:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="luIE/lyj"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e42BB/8s"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2080.outbound.protection.outlook.com [40.107.236.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B1B130482
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716800014; cv=none; b=k2Vmkwy8NDXxBmv4SgPXYEgSW5sY3ebeG42V60MhLemHnflj8N1J6OypgqRv6mgUQnhSFtAwvKMrq64GX85nOGopKiMaXinHu/SsQdGGT01lceqDoXToQyfstzfqMAShWTW3rARHGaXk1Is979fqL0o2gNeXVriXygDidKeY6x4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716800014; c=relaxed/simple;
-	bh=YydZI2byttztf02/9moN2/RK0Mx/ONRzJ5Vy7ocEhjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Re80pa0Umcc0jddEk+yoxEeQ5haGSlde5V0wI0QfAOLDUWnyqPoktUnwjLasT4uUhnbmCGnBVOunG+9GJLgR2SMSAabC2lDkHR/+VxLLCYJW8Tw7Q4Chg5UN3hWWWANjVm4UJ9KLuaRRqN82mEJG32fM57nqqAnbcJz3ssZUd8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=luIE/lyj; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e968e77515so22524661fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716800010; x=1717404810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPQUqFdtvvs2dAPHMtj4XC01+ObsZNB1T1TqSRk+bE4=;
-        b=luIE/lyj7me6vWYfFJt9sjBt/8QFk+1MIjYnQwJjK9e6vcwqtDcT7p5nKpeZfPWySF
-         zPuH9J/Ez72WyvqZKwTXxMqTbm/uCH35fg2GHnTMOSdGQsDrc0hVuGnJ0jF3k8g3IrW+
-         gbsBd1XwHeGNJ/NoSz90HhjvJ/Ibv/AqTEbYTKuVX7p6lwsmcWdQGiek26cblBz/zgGL
-         aT6W8JuK2dJtM0J3swMvuzg+AwcsoL0px4e1UoFr7BT1ln335UXBGjd6yXDuO95LfCwR
-         5wa50v0K7JnsDZc63FMj92pgCA2lzFYB4/u1Zq+c1jcNSSUtwJoibGvln6o/YQanD2e3
-         1b2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716800010; x=1717404810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XPQUqFdtvvs2dAPHMtj4XC01+ObsZNB1T1TqSRk+bE4=;
-        b=eUTfCLQFWwfggIbghicAAbZ2CZjTSvsBVkxUeuuOLTN+Oe2XDLbu+SLEhM2DJLzk6q
-         9aNYJAo1y2W/MlY7T4w2KMbH16OcC94Bkka8Xg0zMkABQyWZYsZVyIR9CcA+shYFXhaB
-         +I5fPW9vxxkg1pV9RC3zZLyry77sFSr67WzDnWxDwOv7MMar/nByFF8w+j4UwBTFyEHh
-         s7cLZCNn+U22/Oyp0CJC+znHxdBm4xp0gOM3wQZ6fbq7aUuovjRV3uYquHSKbT6k2kGb
-         m2yNzN9EMOC/v+xTV1PdCbJzi97As2JfQry8KlGke9xjarLQxVh5awj5fb+xTSKFcjy8
-         ZxWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt9weJfqGBL459XdgcjFDVn+pQHPWbld4gORxb2UL1MWJenDeXQEaKFwJbvRNL2HC7EPREbr4bWEaI8oOyxW4kI3LMyKyKmJ0XEZbI
-X-Gm-Message-State: AOJu0YzW3AinQNTgZUfKupKNbs3QaCOggdJF+LIbgahBgI2RZ2aYUpTt
-	G3RotBMPG0pJXAOQm9beoLfov9v7W5Nj8UEBXxX5W+l9lzp1agP1YObqano+q6zoTnIr5lxjOye
-	aaty5FIG4mlX8LR0Y5lJpjaqzMwk=
-X-Google-Smtp-Source: AGHT+IERp7IqRCjE8aPqlYlScps/l99oFB5iGtsmTHDPYdN/H8aVfauctLbdIjZ9Q9UfECy7IquFpYZT0PlNUFYU6ss=
-X-Received: by 2002:a2e:9b08:0:b0:2de:73b5:427c with SMTP id
- 38308e7fff4ca-2e95b096cdfmr53444831fa.9.1716800009908; Mon, 27 May 2024
- 01:53:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC2369953;
+	Mon, 27 May 2024 08:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716800044; cv=fail; b=FbiHtrylZKggG1fWd0ppemT5KpuAe7js1yNxV4ligv4bEvMC4sRZSjtbwj8GiZbtNcAQo/5Xngel8umP4yB4Gt7BXBqy0ws2QCWRdTQ0M98N9tGpB2fBbmiUPZ9X8lpzAnzSVlvhMQraDdELywqzNn9L9R+Oc7AhjbpnDkwmzD8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716800044; c=relaxed/simple;
+	bh=gFofoEZ8QAhzdFT7ARyCb7CBuv/Q/YorY6ZCpVjYI2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KBPjh6w1LMozTc16I5fK3kUn90aUouil2nWI6/c+AlfCUp+9gv5YvVGPg+7MSsFIaGRepvYMn2IJxtcZiF2B1Lb1/JvrnxgJhKWO7+CwOi9jtD8MeLkWziQxB87nCi7LPV5l7Y/iLxk0zf/B/NanyaScHx4p8pjP9w+6ht2ndYY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e42BB/8s; arc=fail smtp.client-ip=40.107.236.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LXBIJhn6mIJB8SzCuq6UEW7xm4wQ23bpGJ5MwXAd6HELYtnc8WB+SYsddbE+TeaIflhV/+VW8i9vHXuzykZh6RbtOrReghTKLBxDox82XhxDieadKISl4j8OTxYx2odJjaY16uYejou2xeJ1f/+zZ76dmUZeFEFFThEw1z3mvzOhPEaXBiGc9mwgHhz3rrEBZPZVywdXK8Gm/0KHzSsguQbLnx69xfWh7mWuI8FX1bdTkIjIFmYQCffP9znaIwFZ3HFkV2b2bFwGIEQNDsOOzyv2PRcTRwbYbdicwc1+u8Ipl3YpgHzGwWS6lZJSHR1DpCQrfiOZWrlNqV2FDCbiTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=beWWMYxrLH3vPvywfuo2sJ7NsrSn6NeYmDTteSrmONA=;
+ b=P+NX9ouGPlFi5Lznvz6pdTzmCpR+jIo74jnD/jw9Y3XZCYdfdVFhjSiqJIATx3BpRuT2q+9Bej18Wr53Icx8bIb223S7rDr2evWCiwwmlsNVG70XMbbc/5PScJRC129CRa6b9jLZoQ7zzG4LieCu3t5F1lrxbiEF2swtUPf/uG2y8yvTN0ZMCRtx19GNhhtHqGlA8Or+97MO+4YOTJICca0aa84q9ObTcS72x5W/RhE+FkgDru9mYX1ltkzo5ajBatkhP4H5jeql2QDOFa6RGZ44zLu7mQGBeQwt1Dh1KcTD874/oTDAMfEi/MAhiva3krS6vZh2fg1gtOtJZ2P+6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=beWWMYxrLH3vPvywfuo2sJ7NsrSn6NeYmDTteSrmONA=;
+ b=e42BB/8sqDO7KwPEGwwp7s2pjcqAnwX64G4nrErPPUGnkYdRqfsgGYcKi5r3lx4TrngRb/R6uf7DSsZL0xMoy2asjklnQnfHuSsta6qIJAmn4Tqt8veyH4bzkfEIhJO7aiRhTcZh8Eynt2jcum3Q9JHOUD3nd17kG2u+v6iwi3Y=
+Received: from BL0PR03CA0027.namprd03.prod.outlook.com (2603:10b6:208:2d::40)
+ by SJ1PR12MB6242.namprd12.prod.outlook.com (2603:10b6:a03:457::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 08:53:57 +0000
+Received: from MN1PEPF0000ECD9.namprd02.prod.outlook.com
+ (2603:10b6:208:2d:cafe::d0) by BL0PR03CA0027.outlook.office365.com
+ (2603:10b6:208:2d::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29 via Frontend
+ Transport; Mon, 27 May 2024 08:53:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD9.mail.protection.outlook.com (10.167.242.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 08:53:57 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
+ 2024 03:53:55 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Kalyani Akula <kalyani.akula@amd.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, "Praveen Teja
+ Kundanala" <praveen.teja.kundanala@amd.com>, Rob Herring <robh@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] dt-bindings: nvmem: Use soc-nvmem node name instead of nvmem
+Date: Mon, 27 May 2024 10:53:50 +0200
+Message-ID: <42c21f3bcd75f821061d047730dbbcd40233e256.1716800023.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240412064353.133497-1-zhaoyang.huang@unisoc.com>
- <20240412143457.5c6c0ae8f6df0f647d7cf0be@linux-foundation.org>
- <CAGWkznHRyZDuumF=70DncgPHFM0+pgxuONh98Bykz5b-=rCjCQ@mail.gmail.com>
- <ZhxwIh2M8jr6IZaF@dread.disaster.area> <CAGWkznHDpw5Sw5pAfB=TdgRqsf=bmwUQ6+kvvLht3=wumNNo6Q@mail.gmail.com>
- <d9f7c779-acc0-4b8b-993e-e56e9475438e@marcinwanat.pl> <CAGWkznESMXeOhWnK93q1JJxhP0r4wR16cRJxiVzKZmM47GiEWw@mail.gmail.com>
- <CAGWkznEG78ppUXyoM2HKoo9MCOBJQaW=vSdSKDYXJj6kWH6zjA@mail.gmail.com>
- <2652f0c1-acc9-4288-8bca-c95ee49aa562@marcinwanat.pl> <CAGWkznE0psiqZYSRjF+Joq73--Yo-xUhGD0gnBa42fYC55BFdA@mail.gmail.com>
- <b4883f83-9f5d-46b2-b30e-f2e78506bf30@marcinwanat.pl> <5f989315-e380-46aa-80d1-ce8608889e5f@marcinwanat.pl>
-In-Reply-To: <5f989315-e380-46aa-80d1-ce8608889e5f@marcinwanat.pl>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Mon, 27 May 2024 16:53:18 +0800
-Message-ID: <CAGWkznEg_AgYS9OvjhgigxAM5700iSRs_ZYCWdEfHfzighXivQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: protect xa split stuff under lruvec->lru_lock
- during migration
-To: Marcin Wanat <private@marcinwanat.pl>
-Cc: Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Alex Shi <alexs@kernel.org>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=michal.simek@amd.com; h=from:subject:message-id; bh=gFofoEZ8QAhzdFT7ARyCb7CBuv/Q/YorY6ZCpVjYI2g=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhrQQL3HzOrO+wv3Pi67PrJfME3284Ijts23J89jzIvuLp jJaKV7uiGVhEGRikBVTZJG2uXJmb+WMKcIXD8vBzGFlAhnCwMUpABNhu8Qwz0Qy+kaJJ0+rxadX 2YHP5Q+lfzB+zDBP9bqac2D450bNdevn7V+es3HxJ7+fAA==
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD9:EE_|SJ1PR12MB6242:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1c61917-95a6-42da-28bc-08dc7e2a8b51
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|376005|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?99Ox0hx+om2LKrVQcgM1pGK6E9lZhj/nyPCtxDzoljPA5nhGIZXxguQsuss6?=
+ =?us-ascii?Q?ImryiX7gNuYZOcVQVHTAgxGwcQFzTQxNz9fGhcd8yyEyDGVWLyOPh1F2l6zn?=
+ =?us-ascii?Q?HAS6W3nr4+F56qy/gAkxWA0YLy+j/kOjSbKbbYxlo8fxIfSFRX06dKpAM7ZS?=
+ =?us-ascii?Q?l1KO4Yjbs9mJfwtAqngbZviKivXODLqLVniAV5XBePwCf5yl88GsjhIIV230?=
+ =?us-ascii?Q?MEAFjtybmiVBuJQG18sNMCiW92pmmDIM18caB+JYEukjXYzI3BeIrJne18Dh?=
+ =?us-ascii?Q?hnc76Ef2hwmR5JqXsuKsjh8xurg6PTkUpSe/kynU9ICJDPO6gD8aRQLg4jx0?=
+ =?us-ascii?Q?hrp5u4qyG5AoupAnLzZWvFJpFg4Bq2qNNGlYyLf6rQYdDFcbOAvUUwwzlojT?=
+ =?us-ascii?Q?Gd5uljukf+n1VLC5wP0BxW7XOYEl6+hb0hFyBlLzAhLVmMaK/HAOLM3OAwwj?=
+ =?us-ascii?Q?J2Ewyxa+795GHaPQcc15ijXZ37Wm7x05dhjfD5R1GSi9NQN7dGnXseed7dnK?=
+ =?us-ascii?Q?ISRQOqCDwLaMJjRBWuQCo3rPRc5ggNmA/D9F+P/uvsKaxXx3MFrqRAeSQFC5?=
+ =?us-ascii?Q?Ieix5M0FO8rbBek25sfHwRi8hF4cPU4IRT1y6ogl1f6WhwSXE6jKby0u/5Ha?=
+ =?us-ascii?Q?E2/SJiiehcrWx2s976bdgxE+0pZOFdTb233yFTbsZBbvMZguGyGQHm3rHKFr?=
+ =?us-ascii?Q?RIZ7UbOJcGh2AtiRBTvBYhdCRNA2qCRePc23wG1yTMs/WsGm5Nl1CMosPar5?=
+ =?us-ascii?Q?t/1PwE5eFlllQmDcVW0VOLdeJosthbMYjx3d2H/+G3mTScoA19iMns5P8xgS?=
+ =?us-ascii?Q?uJvQtwclbpipe0RYVp2Ic/q41UO6f6M3ws5vgww/9EJv/jhbBU2unC+04Jmd?=
+ =?us-ascii?Q?T7u4GtXHHgC33vZ41MKZp/pPYyrWdUrudigyLeh5vq8bEfZ0y/s/V5+KQweu?=
+ =?us-ascii?Q?MiOs/wkkFqClP67QF95YR10438aNNDGMzEPlrHW5dAJyXbGntAzccC0fg7WP?=
+ =?us-ascii?Q?gOfmh9kAIYAfwKvZxAWyFr9sAXSTDv2iflXY6R92UxcmGGBjSHlJRnEnwVNt?=
+ =?us-ascii?Q?Cy0uEfLcNBQMdhjvxy26iqzF5G3HekEUAuS2hbaCdySXum4GXGmCZY+8K4U7?=
+ =?us-ascii?Q?/YDqyRXBfDGKSN6cjbv5Cp7wpX/psK6X/eVQrgyxSY+AjDhngt2CM5E8BlbG?=
+ =?us-ascii?Q?PPKLTPhh7d3xjfcnQc5aFUv1SPQl0zYknxh2MbJB++OLxMNqgWwkqFnCsbWH?=
+ =?us-ascii?Q?eQuPGhVg5zJakXBkpz+AsehGZOkBN46mF2KhvO7cSqKTNQzOXhT2d1y2Ly5g?=
+ =?us-ascii?Q?xdovSIRRKOh39ASmW5Ztx39OOOgWGGNe40gGY4Vk2cm4u6chxtjf6b+/ASnJ?=
+ =?us-ascii?Q?vYvEiBMxV17PsuX0ylv1jA//FDj/?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 08:53:57.0377
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1c61917-95a6-42da-28bc-08dc7e2a8b51
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6242
 
-On Mon, May 27, 2024 at 4:22=E2=80=AFPM Marcin Wanat <private@marcinwanat.p=
-l> wrote:
->
-> On 22.05.2024 12:13, Marcin Wanat wrote:
-> > On 22.05.2024 07:37, Zhaoyang Huang wrote:
-> >> On Tue, May 21, 2024 at 11:47=E2=80=AFPM Marcin Wanat <private@marcinw=
-anat.pl>
-> >> wrote:
-> >>>
-> >>> On 21.05.2024 03:00, Zhaoyang Huang wrote:
-> >>>> On Tue, May 21, 2024 at 8:58=E2=80=AFAM Zhaoyang Huang
-> >>>> <huangzhaoyang@gmail.com> wrote:
-> >>>>>
-> >>>>> On Tue, May 21, 2024 at 3:42=E2=80=AFAM Marcin Wanat
-> >>>>> <private@marcinwanat.pl> wrote:
-> >>>>>>
-> >>>>>> On 15.04.2024 03:50, Zhaoyang Huang wrote:
-> >>>>>> I have around 50 hosts handling high I/O (each with 20Gbps+ uplink=
-s
-> >>>>>> and multiple NVMe drives), running RockyLinux 8/9. The stock RHEL
-> >>>>>> kernel 8/9 is NOT affected, and the long-term kernel 5.15.X is NOT
-> >>>>>> affected.
-> >>>>>> However, with long-term kernels 6.1.XX and 6.6.XX,
-> >>>>>> (tested at least 10 different versions), this lockup always appear=
-s
-> >>>>>> after 2-30 days, similar to the report in the original thread.
-> >>>>>> The more load (for example, copying a lot of local files while
-> >>>>>> serving 20Gbps traffic), the higher the chance that the bug will
-> >>>>>> appear.
-> >>>>>>
-> >>>>>> I haven't been able to reproduce this during synthetic tests,
-> >>>>>> but it always occurs in production on 6.1.X and 6.6.X within 2-30
-> >>>>>> days.
-> >>>>>> If anyone can provide a patch, I can test it on multiple machines
-> >>>>>> over the next few days.
-> >>>>> Could you please try this one which could be applied on 6.6
-> >>>>> directly. Thank you!
-> >>>> URL: https://lore.kernel.org/linux-mm/20240412064353.133497-1-
-> >>>> zhaoyang.huang@unisoc.com/
-> >>>>
-> >>>
-> >>> Unfortunately, I am unable to cleanly apply this patch against the
-> >>> latest 6.6.31
-> >> Please try below one which works on my v6.6 based android. Thank you
-> >> for your test in advance :D
-> >>
-> >> mm/huge_memory.c | 22 ++++++++++++++--------
-> >>   1 file changed, 14 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >
-> > I have compiled 6.6.31 with this patch and will test it on multiple
-> > machines over the next 30 days. I will provide an update after 30 days
-> > if everything is fine or sooner if any of the hosts experience the same
-> > soft lockup again.
-> >
->
-> First server with 6.6.31 and this patch hang today. Soft lockup changed
-> to hard lockup:
->
-> [26887.389623] watchdog: Watchdog detected hard LOCKUP on cpu 21
-> [26887.389626] Modules linked in: nft_limit xt_limit xt_hashlimit
-> ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_connlimit
-> nf_conncount tls xt_set ip_set_hash_net ip_set xt_CT xt_conntrack
-> nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables
-> nfnetlink rfkill intel_rapl_msr intel_rapl_common intel_uncore_frequency
-> intel_uncore_frequency_common isst_if_common skx_edac nfit libnvdimm
-> x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass
-> rapl intel_cstate ipmi_ssif irdma ext4 mbcache ice iTCO_wdt jbd2 mgag200
-> intel_pmc_bxt iTCO_vendor_support ib_uverbs i2c_algo_bit acpi_ipmi
-> intel_uncore mei_me drm_shmem_helper pcspkr ib_core i2c_i801 ipmi_si
-> drm_kms_helper mei lpc_ich i2c_smbus ioatdma intel_pch_thermal
-> ipmi_devintf ipmi_msghandler acpi_pad acpi_power_meter joydev tcp_bbr
-> drm fuse xfs libcrc32c sd_mod t10_pi sg crct10dif_pclmul crc32_pclmul
-> crc32c_intel ixgbe polyval_clmulni ahci polyval_generic libahci mdio
-> i40e libata megaraid_sas dca ghash_clmulni_intel wmi
-> [26887.389682] CPU: 21 PID: 264 Comm: kswapd0 Kdump: loaded Tainted: G
->       W          6.6.31.el9 #3
-> [26887.389685] Hardware name: FUJITSU PRIMERGY RX2540 M4/D3384-A1, BIOS
-> V5.0.0.12 R1.22.0 for D3384-A1x                    06/04/2018
-> [26887.389687] RIP: 0010:native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389696] Code: 08 0f 92 c2 8b 45 00 0f b6 d2 c1 e2 08 30 e4 09 d0
-> a9 00 01 ff ff 0f 85 ea 01 00 00 85 c0 74 12 0f b6 45 00 84 c0 74 0a f3
-> 90 <0f> b6 45 00 84 c0 75 f6 b8 01 00 00 00 66 89 45 00 5b 5d 41 5c 41
-> [26887.389698] RSP: 0018:ffffb3e587a87a20 EFLAGS: 00000002
-> [26887.389700] RAX: 0000000000000001 RBX: ffff9ad6c6f67050 RCX:
-> 0000000000000000
-> [26887.389701] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-> ffff9ad6c6f67050
-> [26887.389703] RBP: ffff9ad6c6f67050 R08: 0000000000000000 R09:
-> 0000000000000067
-> [26887.389704] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000046
-> [26887.389705] R13: 0000000000000200 R14: 0000000000000000 R15:
-> ffffe1138aa98000
-> [26887.389707] FS:  0000000000000000(0000) GS:ffff9ade20340000(0000)
-> knlGS:0000000000000000
-> [26887.389708] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [26887.389710] CR2: 000000002912809b CR3: 000000064401e003 CR4:
-> 00000000007706e0
-> [26887.389711] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [26887.389712] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [26887.389713] PKRU: 55555554
-> [26887.389714] Call Trace:
-> [26887.389717]  <NMI>
-> [26887.389720]  ? watchdog_hardlockup_check+0xac/0x150
-> [26887.389725]  ? __perf_event_overflow+0x102/0x1d0
-> [26887.389729]  ? handle_pmi_common+0x189/0x3e0
-> [26887.389735]  ? set_pte_vaddr_p4d+0x4a/0x60
-> [26887.389738]  ? flush_tlb_one_kernel+0xa/0x20
-> [26887.389742]  ? native_set_fixmap+0x65/0x80
-> [26887.389745]  ? ghes_copy_tofrom_phys+0x75/0x110
-> [26887.389751]  ? __ghes_peek_estatus.isra.0+0x49/0xb0
-> [26887.389755]  ? intel_pmu_handle_irq+0x10b/0x230
-> [26887.389756]  ? perf_event_nmi_handler+0x28/0x50
-> [26887.389759]  ? nmi_handle+0x58/0x150
-> [26887.389764]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389768]  ? default_do_nmi+0x6b/0x170
-> [26887.389770]  ? exc_nmi+0x12c/0x1a0
-> [26887.389772]  ? end_repeat_nmi+0x16/0x1f
-> [26887.389777]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389780]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389784]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389787]  </NMI>
-> [26887.389788]  <TASK>
-> [26887.389789]  __raw_spin_lock_irqsave+0x3d/0x50
-> [26887.389793]  folio_lruvec_lock_irqsave+0x5e/0x90
-> [26887.389798]  __page_cache_release+0x68/0x230
-> [26887.389801]  ? remove_migration_ptes+0x5c/0x80
-> [26887.389807]  __folio_put+0x24/0x60
-> [26887.389808]  __split_huge_page+0x368/0x520
-> [26887.389812]  split_huge_page_to_list+0x4b3/0x570
-> [26887.389816]  deferred_split_scan+0x1c8/0x290
-> [26887.389819]  do_shrink_slab+0x12f/0x2d0
-> [26887.389824]  shrink_slab_memcg+0x133/0x1d0
-> [26887.389829]  shrink_node_memcgs+0x18e/0x1d0
-> [26887.389832]  shrink_node+0xa7/0x370
-> [26887.389836]  balance_pgdat+0x332/0x6f0
-> [26887.389842]  kswapd+0xf0/0x190
-> [26887.389845]  ? balance_pgdat+0x6f0/0x6f0
-> [26887.389848]  kthread+0xee/0x120
-> [26887.389851]  ? kthread_complete_and_exit+0x20/0x20
-> [26887.389853]  ret_from_fork+0x2d/0x50
-> [26887.389857]  ? kthread_complete_and_exit+0x20/0x20
-> [26887.389859]  ret_from_fork_asm+0x11/0x20
-> [26887.389864]  </TASK>
-> [26887.389865] Kernel panic - not syncing: Hard LOCKUP
-> [26887.389867] CPU: 21 PID: 264 Comm: kswapd0 Kdump: loaded Tainted: G
->       W          6.6.31.el9 #3
-> [26887.389869] Hardware name: FUJITSU PRIMERGY RX2540 M4/D3384-A1, BIOS
-> V5.0.0.12 R1.22.0 for D3384-A1x                    06/04/2018
-> [26887.389870] Call Trace:
-> [26887.389871]  <NMI>
-> [26887.389872]  dump_stack_lvl+0x44/0x60
-> [26887.389877]  panic+0x241/0x330
-> [26887.389881]  nmi_panic+0x2f/0x40
-> [26887.389883]  watchdog_hardlockup_check+0x119/0x150
-> [26887.389886]  __perf_event_overflow+0x102/0x1d0
-> [26887.389889]  handle_pmi_common+0x189/0x3e0
-> [26887.389893]  ? set_pte_vaddr_p4d+0x4a/0x60
-> [26887.389896]  ? flush_tlb_one_kernel+0xa/0x20
-> [26887.389899]  ? native_set_fixmap+0x65/0x80
-> [26887.389902]  ? ghes_copy_tofrom_phys+0x75/0x110
-> [26887.389906]  ? __ghes_peek_estatus.isra.0+0x49/0xb0
-> [26887.389909]  intel_pmu_handle_irq+0x10b/0x230
-> [26887.389911]  perf_event_nmi_handler+0x28/0x50
-> [26887.389913]  nmi_handle+0x58/0x150
-> [26887.389916]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389920]  default_do_nmi+0x6b/0x170
-> [26887.389922]  exc_nmi+0x12c/0x1a0
-> [26887.389923]  end_repeat_nmi+0x16/0x1f
-> [26887.389926] RIP: 0010:native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389930] Code: 08 0f 92 c2 8b 45 00 0f b6 d2 c1 e2 08 30 e4 09 d0
-> a9 00 01 ff ff 0f 85 ea 01 00 00 85 c0 74 12 0f b6 45 00 84 c0 74 0a f3
-> 90 <0f> b6 45 00 84 c0 75 f6 b8 01 00 00 00 66 89 45 00 5b 5d 41 5c 41
-> [26887.389931] RSP: 0018:ffffb3e587a87a20 EFLAGS: 00000002
-> [26887.389933] RAX: 0000000000000001 RBX: ffff9ad6c6f67050 RCX:
-> 0000000000000000
-> [26887.389934] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-> ffff9ad6c6f67050
-> [26887.389935] RBP: ffff9ad6c6f67050 R08: 0000000000000000 R09:
-> 0000000000000067
-> [26887.389936] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000046
-> [26887.389937] R13: 0000000000000200 R14: 0000000000000000 R15:
-> ffffe1138aa98000
-> [26887.389940]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389943]  ? native_queued_spin_lock_slowpath+0x6e/0x2c0
-> [26887.389946]  </NMI>
-> [26887.389947]  <TASK>
-> [26887.389947]  __raw_spin_lock_irqsave+0x3d/0x50
-> [26887.389950]  folio_lruvec_lock_irqsave+0x5e/0x90
-> [26887.389953]  __page_cache_release+0x68/0x230
-> [26887.389955]  ? remove_migration_ptes+0x5c/0x80
-> [26887.389958]  __folio_put+0x24/0x60
-> [26887.389960]  __split_huge_page+0x368/0x520
-> [26887.389963]  split_huge_page_to_list+0x4b3/0x570
-> [26887.389967]  deferred_split_scan+0x1c8/0x290
-> [26887.389971]  do_shrink_slab+0x12f/0x2d0
-> [26887.389974]  shrink_slab_memcg+0x133/0x1d0
-> [26887.389978]  shrink_node_memcgs+0x18e/0x1d0
-> [26887.389982]  shrink_node+0xa7/0x370
-> [26887.389985]  balance_pgdat+0x332/0x6f0
-> [26887.389991]  kswapd+0xf0/0x190
-> [26887.389994]  ? balance_pgdat+0x6f0/0x6f0
-> [26887.389997]  kthread+0xee/0x120
-> [26887.389998]  ? kthread_complete_and_exit+0x20/0x20
-> [26887.390000]  ret_from_fork+0x2d/0x50
-> [26887.390003]  ? kthread_complete_and_exit+0x20/0x20
-> [26887.390004]  ret_from_fork_asm+0x11/0x20
-> [26887.390009]  </TASK>
->
-ok, thanks for the information. That should be generated by lock's
-contention. I will check the code and keep you posted.
+Based on commit d8764d347bd7 ("dt-bindings: firmware: xilinx: Describe
+soc-nvmem subnode") soc-nvmem should be used instead of simple nvmem that's
+why also update example to have it described correctly everywhere.
+
+Fixes: a0cfd5e99782 ("dt-bindings: nvmem: Convert xlnx,zynqmp-nvmem.txt to yaml")
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+---
+
+ Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml b/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
+index 917c40d5c382..1cbe44ab23b1 100644
+--- a/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
++++ b/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
+@@ -28,7 +28,7 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    nvmem {
++    soc-nvmem {
+         compatible = "xlnx,zynqmp-nvmem-fw";
+         nvmem-layout {
+             compatible = "fixed-layout";
+-- 
+2.40.1
+
 
