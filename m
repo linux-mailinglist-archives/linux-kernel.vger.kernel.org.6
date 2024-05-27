@@ -1,270 +1,237 @@
-Return-Path: <linux-kernel+bounces-190494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C048CFF32
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AA68CFF37
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16C11F237AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841DE1F21B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E4B15D5D2;
-	Mon, 27 May 2024 11:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B89515DBAF;
+	Mon, 27 May 2024 11:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nyx/MeDg"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d7861i/q"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DCF13AD28
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8CF15D5CF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716810138; cv=none; b=U7CGbonKihtidyHBjR5gxghITBU2kuAi8D683ys86GJBlN3ykPGWDpWJPKur7dhlKVZ989Q4klCLpnYLyPGrfRhoeDHX9+MoMEMuYGmKjwPb2dFdPrWLqHOk2jw+iSFKEGPs1TzrNA0/diAT88PxszPZQ/RtuKZHuwWRTB7RYQ0=
+	t=1716810178; cv=none; b=I09McXqQD+GICvaRoLpp7bCxC7TCQJekcWy2lqRYxEkGVMLtONLugqF+vEOw/oCbQxcQNiFW4Kg+T/Kl+o3Zvodozc0C1x/CyuBKbIEDENkqVmJ8bXYVKQmQZlN5uYxg/An4fXuf9Y/PHaTtUYGpBPNUjZ2UFaGxBu+Cw/fNAFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716810138; c=relaxed/simple;
-	bh=W9k0BmIHyn2MJjOZIKvOW1YY7kqid4ihPr/22yJ4bvg=;
+	s=arc-20240116; t=1716810178; c=relaxed/simple;
+	bh=EOsL7NiepwoktnPHVm7DC3r9sxjI4Vg8cl11xkZfn/w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BqNuB4Z5qsiFwwYciYDvxLvPnIxhk7FTXBVPCXYj2LMSq8JP0iLfUKuGGv21uzJc6SiiE5vQz5LJ+EPP5F8w/YKQUeIyU/2BoMSHjD6kl8TPw7zO7zysHOaeQs9X2C2+aF3l/Vk4Jgpjz17LrxrCQKTyTsFTPRTlznohxmJ3jdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nyx/MeDg; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-421140314d5so7013495e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:42:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=gpIxs0YgAeRkiDyfwWNH1RUEgy+xR58fLZ/2xDIJquvaC3vzhUX2KK+PxLKpthvbUZ8sMPAP5vRwFK9qsV5zsheIeUJimBKYp2r4rxmHVrNcukchrxJpzWHqEDiqG4zFE8pi2uQrqLA9Q3WshaAD3Mx5xX9F59S/U1gdmWCkF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d7861i/q; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df4e0d8fa10so5165437276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:42:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716810135; x=1717414935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3a0IwIbKiun5ZjFq+aihsDppfHB3sjCXZbCHtC5Ys0k=;
-        b=nyx/MeDgKKERkccBb8krpG9Zcn51T8/wtu+tMFcA7w749z9aNlDwVM8w/w/UAS3Omk
-         758YFkShJPxJR5ABY8VEnROnHc5XoelAUQKjB9WSmi6gc9ArfFYYWCT8AtvoyEhHywXG
-         6b2+PWval2bDSwxD2UGeLS1lxMKOOfcfz0P2TqVFDg33det/0BR5FMdBM2o3Sa7gAicV
-         LDp8i0NeNh/0tHqROhUZKFy0/AMQD9v1OepuIzH2t9YhoT0qB5UmNZ3ootX57bKYOsb6
-         x6141u8jsB2WqQKoMi64pPGHUkJozG4CrqjArFcOabj5/na44h5ko5bX6OT9KL6JoVKi
-         cJag==
+        d=linaro.org; s=google; t=1716810176; x=1717414976; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=32DpmCz616oJj3sZ30ujufGqTcF/NmhflobLHv+4XM8=;
+        b=d7861i/qM8mmHt9KUfU21uZAfNVNoYbH4rxjOZpXcq38zqoiduEENgsSIH1mF6uQdP
+         nRu87lIPLcmnKZlm6IKD5ZZUZXlsvxhkDwyTDYGu8ICwe8UOXAe4gFSw6LMClChr++w9
+         BTCeZ12IThw0xQMUHUV7LXgrdfi7kGrlkUM9imCjA0BgAdWodaG2JrAVDYjsz6ya0yiu
+         ORHTGkKDRBRo+vBYh6o7JTv0zqKoQHmbei/vAATnkJLXqyxbWPyj7NL5r38L7Wn6o5s3
+         vU7Dyh72oS0Wzd6Q0DHJ0o8nJgahNaY9pIBsYKNdxkX5EtB8eLivSLrhdw/ZpV29J/B0
+         k7OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716810135; x=1717414935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3a0IwIbKiun5ZjFq+aihsDppfHB3sjCXZbCHtC5Ys0k=;
-        b=N94Veipv+6iwMZ2RATDb+MbEhNB+W6dbmt5eIo1lIksx/nTQmRaIIWNNdNEPczlNix
-         qu/TfvNFIyNWNS2afF6J0FCFB8lt23Jnlpo/zP4R7QYe+bqNQbz38PiopmMhbtBb/1u0
-         kvEYaqDr4DzSzHKTDD54AibXQh/Ui3KkuXnobk9LksqpGckpjrCgPsY9mzteQa62JCFl
-         21FpIt9f56RGwt5ZA8dSHH/lG31r0Gpl8mTGlE46awynF+Iaf1W8V/03KLQzK3ZznleU
-         07aSENvXUMC0pfJoGsV+FdVo1H4vgOdpSn+g0WXPeYeOyUV37F1Wc7+dBzjFbzsUjV9N
-         vDtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFU19QvasfkboEZeijX4FOdG1NiHIGJn+ESnQP1ZOp3NYckEKquuRIfFVVk/WA7PijekPwEnAlz68xeJJgEIMa870NtuCspNS53W41
-X-Gm-Message-State: AOJu0YwpQldJqAOAqvi1OyVexWbkCC9GeygA0kAkiDgpSBW6bHcJeY+c
-	wNsSTN8m+Y5/xenVs758DLnBPb3CRUdMsJKUUH2CxNPKTE0spJFOeUO+I9rdGemxbnIKua4Y/mR
-	EyUudAoVNEZ3Ytdy8Rq/b8ypZX0SH1kwdTiIm
-X-Google-Smtp-Source: AGHT+IEvpaRfqMw/sKzNNtB4iVjDlASFoCmySrw4aSwM/P8O6KFd2w0EJJJKBGrH4vKAXtoiorMDYk9QNOejAdn6UG8=
-X-Received: by 2002:a05:600c:4589:b0:41c:503:9a01 with SMTP id
- 5b1f17b1804b1-42108a00012mr73225675e9.25.1716810135124; Mon, 27 May 2024
- 04:42:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716810176; x=1717414976;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=32DpmCz616oJj3sZ30ujufGqTcF/NmhflobLHv+4XM8=;
+        b=FtZrR8rJQ65TNNHkW1Q16p/FdeqG7IrygbK1m0mD5CQdE1JXFvGdj8qE/sa8Nnz8nx
+         PJznkef6ryFeEFItb9r2D8PN6IhmR7qDyGdUrrVeRYhgpOIlvunCajTD54wfE4LcoMFh
+         Cgcf/F6CTw/poYXcJcvZXA7uewYY8a4E258BPIou6HONsC2VDU8/o7RlD8nQuHMNwOEH
+         Jx7QWCm00nW2ki6AfXR2Y04BHKJaU4UztItEfYtvXn0otSPUzTipdtz7fdCfQQC1eN8U
+         htMZK9K8qIPwnrzc0bmTUqvD7inlaxX29K54IF9foNeqSGxV/C9rrZj5tIdrSZViqTgQ
+         MA0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXmd1Er+UsTcRnzJlwhlf2O1idewh2Y/KZX+z+xzTwRX+EdrH/L4prwRJky1AUdsMv+FV1wPhTba1jm+HZT859uA2Wy8j11j6/LlId4
+X-Gm-Message-State: AOJu0YxbPOiGO4fu3DAwng75JJpKmX3Gc7+1SLo4g69ewlYuouBz1HMq
+	eCM9fsL/bZFl61lo58ENd4q4rILebOr6VK69p8k2UUut+KqCJazFBbsbVuADmdprQd9Vh1+6Lry
+	TgvXKNJ60CFLJzZ2xEW5upWe3hsrSaeJw2wIehs4h3KYWAFUz
+X-Google-Smtp-Source: AGHT+IFHwGY0a+7rv/7KMXy9+d+MKKeKjUaKRmg/b92ApME6fLHQGJOLc1NGnxd/PGhiSwgle60+hRRnygz1Kpak1qw=
+X-Received: by 2002:a25:e310:0:b0:de5:4b1f:7e00 with SMTP id
+ 3f1490d57ef6-df77215f566mr8579337276.15.1716810175995; Mon, 27 May 2024
+ 04:42:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-linked-list-v2-0-7b910840c91f@google.com>
- <20240506-linked-list-v2-3-7b910840c91f@google.com> <82220d9b-3f4f-43ba-ad15-412ceb349a56@proton.me>
-In-Reply-To: <82220d9b-3f4f-43ba-ad15-412ceb349a56@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 27 May 2024 13:42:00 +0200
-Message-ID: <CAH5fLghoHiU928pCzMy3DRZzbw7J_HUVMObGXGtX-0ncVJnP3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] rust: list: add struct with prev/next pointers
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, 
-	Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
+References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
+ <20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
+ <a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org> <CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
+ <878r03csxn.fsf@kernel.org> <CAA8EJpqkgpCb57DGka0ckbPz=2YiaHzxmiNzG39ad5y6smgO5A@mail.gmail.com>
+ <Zk52IHqAfOnVDm50@hu-bjorande-lv.qualcomm.com>
+In-Reply-To: <Zk52IHqAfOnVDm50@hu-bjorande-lv.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 27 May 2024 14:42:44 +0300
+Message-ID: <CAA8EJpogG5wW2mUUkYFtnnZLMVuneU4Wie6GBfYytSYe0zQ77Q@mail.gmail.com>
+Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Kalle Valo <kvalo@kernel.org>, neil.armstrong@linaro.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 11:58=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
+On Thu, 23 May 2024 at 01:48, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
 >
-> On 06.05.24 11:53, Alice Ryhl wrote:
-> > Define the ListLinks struct, which wraps the prev/next pointers that
-> > will be used to insert values into a List in a future patch. Also
-> > define the ListItem trait, which is implemented by structs that have a
-> > ListLinks field.
+> On Tue, May 21, 2024 at 03:08:31PM +0200, Dmitry Baryshkov wrote:
+> > On Tue, 21 May 2024 at 13:20, Kalle Valo <kvalo@kernel.org> wrote:
+> > >
+> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
+> > >
+> > > > On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
+> > > >>
+> > > >> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
+> > > >> > Qualcomm platforms have different sets of the firmware files, which
+> > > >> > differ from platform to platform (and from board to board, due to the
+> > > >> > embedded signatures). Rather than listing all the firmware files,
+> > > >> > including full paths, in the DT, provide a way to determine firmware
+> > > >> > path based on the root DT node compatible.
+> > > >>
+> > > >> Ok this looks quite over-engineered but necessary to handle the legacy,
+> > > >> but I really think we should add a way to look for a board-specific path
+> > > >> first and fallback to those SoC specific paths.
+> > > >
+> > > > Again, CONFIG_FW_LOADER_USER_HELPER => delays.
+> > >
+> > > To me this also looks like very over-engineered, can you elaborate more
+> > > why this is needed? Concrete examples would help to understand better.
 > >
-> > The ListItem trait provides four different methods that are all
-> > essentially container_of or the reverse of container_of. Two of them ar=
-e
-> > used before inserting/after removing an item from the list, and the two
-> > others are used when looking at a value without changing whether it is
-> > in a list. This distinction is introduced because it is needed for the
-> > patch that adds support for heterogeneous lists, which are implemented
-> > by adding a third pointer field with a fat pointer to the full struct.
-> > When inserting into the heterogeneous list, the pointer-to-self is
-> > updated to have the right vtable, and the container_of operation is
-> > implemented by just returning that pointer instead of using the real
-> > container_of operation.
+> > Sure. During the meeting last week Arnd suggested evaluating if we can
+> > drop firmware-name from the board DT files. Several reasons for that:
+> > - DT should describe the hardware, not the Linux-firmware locations
+> > - having firmware name in DT complicates updating the tree to use
+> > different firmware API (think of mbn vs mdt vs any other format)
+> > - If the DT gets supplied by the vendor (e.g. for
+> > SystemReady-certified devices), there should be a sync between the
+> > vendor's DT, linux kernel and the rootfs. Dropping firmware names from
+> > DT solves that by removing one piece of the equation
 > >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/list.rs | 116 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 116 insertions(+)
+> > Now for the complexity of the solution. Each SoC family has their own
+> > firmware set. This includes firmware for the DSPs, for modem, WiFi
+> > bits, GPU shader, etc.
+> > For the development boards these devices are signed by the testing key
+> > and the actual signature is not validated against the root of trust
+> > certificate.
+> > For the end-user devices the signature is actually validated against
+> > the bits fused to the SoC during manufacturing process. CA certificate
+> > (and thus the fuses) differ from vendor to vendor (and from the device
+> > to device)
 > >
-> > diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-> > index c5caa0f6105c..b5cfbb96a392 100644
-> > --- a/rust/kernel/list.rs
-> > +++ b/rust/kernel/list.rs
-> > @@ -4,7 +4,123 @@
+> > Not all of the firmware files are a part of the public linux-firmware
+> > tree. However we need to support the rootfs bundled with the firmware
+> > for different platforms (both public and vendor). The non-signed files
+> > come from the Adreno GPU and can be shared between platforms. All
+> > other files are SoC-specific and in some cases device-specific.
 > >
-> >  //! A linked list implementation.
+> > So for example the SDM845 db845c (open device) loads following firmware files:
+> > Not signed:
+> > - qcom/a630_sqe.fw
+> > - qcom/a630_gmu.bin
 > >
-> > +use crate::init::PinInit;
-> > +use crate::types::Opaque;
-> > +use core::ptr;
-> > +
-> >  mod arc;
-> >  pub use self::arc::{
-> >      impl_list_arc_safe, AtomicListArcTracker, ListArc, ListArcSafe, Tr=
-yNewListArc,
-> >  };
-> > +
-> > +/// Implemented by types where a [`ListArc<Self>`] can be inserted int=
-o a `List`.
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Implementers must ensure that they provide the guarantees document=
-ed on the three methods
+> > Signed, will work for any non-secured sdm845 device:
+> > - qcom/sdm845/a630_zap.mbn
+> > - qcom/sdm845/adsp.mbn
+> > - qcom/sdm845/cdsp.mbn
+> > - qcom/sdm485/mba.mbn
+> > - qcom/sdm845/modem.mbn
+> > - qcom/sdm845/wlanmdsp.mbn (loaded via TQFTP)
+> > - qcom/venus-5.2/venus.mbn
+> >
+> > Signed, works only for DB845c.
+> > - qcom/sdm845/Thundercomm/db845c/slpi.mbn
+> >
+> > In comparison, the SDM845 Pixel-3 phone (aka blueline) should load the
+> > following firmware files:
+> > - qcom/a630_sqe.fw (the same, non-signed file)
+> > - qcom/a630_gmu.bin (the same, non-signed file)
+> > - qcom/sdm845/Google/blueline/a630_zap.mbn
 >
-> I would not mention the number of methods, since it is difficult to
-> maintain and doesn't actually provide any value (it already is incorrect =
-:)
+> How do you get from "a630_zap.mbn" to this? By extending the lookup
+> table for every target, or what am I missing?
 
-I will remove the mention of a number.
+More or less so. Matching the root OF node gives us the firmware
+location, then it gets prepended to all firmware targets. Not an ideal
+solution, as there is no fallback support, but at least it gives us
+some points to discuss (and to decide whether to move to some
+particular direction or to abandon the idea completely, making Arnd
+unhappy again).
 
-> > +    /// This is called when an item is inserted into a `List`.
-> > +    ///
-> > +    /// # Guarantees
-> > +    ///
-> > +    /// The caller is granted exclusive access to the returned [`ListL=
-inks`] until `post_remove` is
-> > +    /// called.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// * The provided pointer must point at a valid value in an [`Arc=
-`].
-> > +    /// * Calls to `prepare_to_insert` and `post_remove` on the same v=
-alue must alternate.
 >
-> Are there any synchronization requirements? Am I allowed to call
-> `prepare_to_insert` and `post_remove` on different threads without
-> synchronizing?
-
-No, if you call them at the same time, then they aren't alternating.
-
-> > +    /// * The caller must own the [`ListArc`] for this value.
-> > +    /// * The caller must not give up ownership of the [`ListArc`] unl=
-ess `post_remove` has been
-> > +    ///   called after this call to `prepare_to_insert`.
-> > +    ///
-> > +    /// [`Arc`]: crate::sync::Arc
-> > +    unsafe fn prepare_to_insert(me: *const Self) -> *mut ListLinks<ID>=
-;
-> > +
-> > +    /// This undoes a previous call to `prepare_to_insert`.
-> > +    ///
-> > +    /// # Guarantees
-> > +    ///
-> > +    /// The returned pointer is the pointer that was originally passed=
- to `prepare_to_insert`.
-> > +    ///
-> > +    /// The caller is free to recreate the `ListArc` after this call.
+> Regards,
+> Bjorn
 >
-> As I read the requirements on `prepare_to_insert`, the caller is not
-> required to deconstruct the `ListArc`. For example the caller is allowed
-> to `clone_arc()` and then `into_raw()` and then pass that pointer to
-> `prepare_to_insert`.
-> So I would just remove this sentence.
-
-I will remove it.
-
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The provided pointer must be the pointer returned by the previ=
-ous call to
->
-> Does "most recent call" make more sense? I find previous call a bit
-> weird. (also in the requirements above)
-
-Sure, I can say "most recent".
-
-Alice
-
-> ---
-> Cheers,
-> Benno
->
-> > +    /// `prepare_to_insert`.
-> > +    unsafe fn post_remove(me: *mut ListLinks<ID>) -> *const Self;
-> > +}
-> > +
-> > +#[repr(C)]
-> > +#[derive(Copy, Clone)]
-> > +struct ListLinksFields {
-> > +    next: *mut ListLinksFields,
-> > +    prev: *mut ListLinksFields,
-> > +}
-> > +
-> > +/// The prev/next pointers for an item in a linked list.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// The fields are null if and only if this item is not in a list.
-> > +#[repr(transparent)]
-> > +pub struct ListLinks<const ID: u64 =3D 0> {
-> > +    #[allow(dead_code)]
-> > +    inner: Opaque<ListLinksFields>,
-> > +}
-> > +
-> > +// SAFETY: The next/prev fields of a ListLinks can be moved across thr=
-ead boundaries.
-> > +unsafe impl<const ID: u64> Send for ListLinks<ID> {}
-> > +// SAFETY: The type is opaque so immutable references to a ListLinks a=
-re useless. Therefore, it's
-> > +// okay to have immutable access to a ListLinks from several threads a=
-t once.
-> > +unsafe impl<const ID: u64> Sync for ListLinks<ID> {}
-> > +
-> > +impl<const ID: u64> ListLinks<ID> {
-> > +    /// Creates a new initializer for this type.
-> > +    pub fn new() -> impl PinInit<Self> {
-> > +        // INVARIANT: Pin-init initializers can't be used on an existi=
-ng `Arc`, so this value will
-> > +        // not be constructed in an `Arc` that already has a `ListArc`=
-.
-> > +        ListLinks {
-> > +            inner: Opaque::new(ListLinksFields {
-> > +                prev: ptr::null_mut(),
-> > +                next: ptr::null_mut(),
-> > +            }),
-> > +        }
-> > +    }
-> > +}
+> > - qcom/sdm845/Google/blueline/adsp.mbn
+> > - qcom/sdm845/Google/blueline/cdsp.mbn
+> > - qcom/sdm845/Google/blueline/ipa_fws.mbn
+> > - qcom/sdm845/Google/blueline/mba.mbn
+> > - qcom/sdm845/Google/blueline/modem.mbn
+> > - qcom/sdm845/Google/blueline/venus.mbn
+> > - qcom/sdm845/Google/blueline/wlanmdsp.mbn
+> > - qcom/sdm845/Google/blueline/slpi.mbn
+> >
+> > The Lenovo Yoga C630 WoS laptop (SDM850 is a variant of SDM845) uses
+> > another set of files:
+> > - qcom/a630_sqe.fw (the same, non-signed file)
+> > - qcom/a630_gmu.bin (the same, non-signed file)
+> > - qcom/sdm850/LENOVO/81JL/qcdxkmsuc850.mbn
+> > - qcom/sdm850/LENOVO/81JL/qcadsp850.mbn
+> > - qcom/sdm850/LENOVO/81JL/qccdsp850.mbn
+> > - qcom/sdm850/LENOVO/81JL/ipa_fws.elf
+> > - qcom/sdm850/LENOVO/81JL/qcdsp1v2850.mbn
+> > - qcom/sdm850/LENOVO/81JL/qcdsp2850.mbn
+> > - qcom/sdm850/LENOVO/81JL/qcvss850.mbn
+> > - qcom/sdm850/LENOVO/81JL/wlanmdsp.mbn
+> > - qcom/sdm850/LENOVO/81JL/qcslpi850.mbn
+> >
+> > If we look at one of the recent platforms, e.g. SM8650-QRD, this list
+> > also grows up:
+> > - qcom/gen70900_sqe.fw (generic, non-signed)
+> > - qcom/gmu_gen70900.bin (generic, non-signed)
+> > - qcom/sm8650/gen70900_zap.mbn
+> > - qcom/sm8650/adsp.mbn
+> > - qcom/sm8650/adsp_dtb.mbn
+> > - qcom/sm8650/cdsp.mbn
+> > - qcom/sm8650/cdsp_dtb.mbn
+> > - qcom/sm8650/ipa_fws.mbn
+> > - qcom/sm8650/modem.mbn
+> > - qcom/sm8650/modem_dtb.mbn
+> > - qcom/sm8650/vpu33_4v.mbn (or maybe qcom/vpu-33/vpu_4v.mbn)
 > >
 > > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
+> > With best wishes
+> > Dmitry
 > >
->
->
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+
+
+
+-- 
+With best wishes
+Dmitry
 
