@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-190628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D178D00A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:58:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755418D00A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 486F2B2396E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63991F2468B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F9C15F303;
-	Mon, 27 May 2024 12:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD6815EFD5;
+	Mon, 27 May 2024 12:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BwN7a7pB"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="us2JMFZf"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF815F324
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDAE15F3EF
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814611; cv=none; b=kro/7kZclY1SNHVMXURQkh0uUaE4fP4IUlW17Ir+aLG4Q4zjOPesrmQl59o4d3hI55mvu26rmdeMayZCPTwx5/2iuBXGnDmyciQxZooxwG8j7F2RYCXxaiW49GZ2E4AqGSQ2aklsgHom8sJbJ6QJDAo9wAUNwXGGGvCVQYXiv9o=
+	t=1716814612; cv=none; b=gxHRdojeN5Mg3TDhQ1CzH4uXZTWJ4Xi2DaUvoOasGmPQhMX5khv3pw56XbQstKpNwe53gQSV0Ep9aAu8sxWhu6HdyFBowLtT4HIqu07eucUhPXqe+FNYGNOnStg4zeo4dRrqEXcJfMU5JfjUOACBIxMt5dZIAMeF1mxSkJ1ge4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814611; c=relaxed/simple;
-	bh=IA1NluuyWIC8/XotvFbpj4DqgZjTYuJun/bo3v6zFBI=;
+	s=arc-20240116; t=1716814612; c=relaxed/simple;
+	bh=H7pseenH3L02JxfV7omW/31iV86Lwn0PZV9E6T5f71c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HzcPEUE8KmM9nbn6t2G4E0Zzmz1/6ZZA9vFUbC7LGqqKekoVxULGgihBLq2+KyRI3UhKHcSXAGi0hlfGA3QHzzGnp5UNmKDjzFt6k33dfgn/zVXXOt0AG8viVnkSEatil2yvRjzrBCyKzlb35wDC3pPMFJmqyCinZ+rORB89Yu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BwN7a7pB; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:To:Cc; b=seVKHpJCxgLNTEUkqrqanRC7i3M+66vXM0i5Z4ar6NUd/9dcf7Fx+bEGosfiGyo/i7/pqFzLHoug2lX8ViJECSeQ0NLTVpNcqmB5yM9fjZ/vqD8cJrSyOBQdKjE/vGghgBdyyVHJ8z39Mi4FEZNSvBNEuK0La/+4ZCPiqV1gwSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=us2JMFZf; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421124a04d6so9549775e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:56:49 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso48381155e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:56:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716814608; x=1717419408; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716814609; x=1717419409; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WF/896sdGC2fcFcBLtp8Wafg57BR7Ezd4qNrSg9FQvk=;
-        b=BwN7a7pBxyMNT2BPrOB6//1t4gazuGS0ola5489MnPgkYFfHLf/LayfkbNmsaJ9NHz
-         qL6mY09AnVwYf+/GpbTTN55+vsHFpFDzKDjav/oETT3mDaY7dar6jVikQr6UEL96IY5K
-         jJ0Jod2BqYtcwi1W44/8nU+VVneU79Qu0nohZbQlc0/wBGoHuJruU+GGSUrsjvIpsl//
-         kigZYE8gPVcQSMvfyPicbbae8yDTbD6b75fD7KTeOyntJCBt2RMgE/5IM0xDJBlBfunL
-         mfxOQbXzYmgoFkwtXmeLY15wNNacsOJeasMv5YUM1SHkesOqkAqFOcROCLC6a3T+6ic1
-         ycdg==
+        bh=F2tGSXM64q5CkEofoukaYDnOH1U7xvQ9rdr6WJfwwYM=;
+        b=us2JMFZfcCsrXbXu+DgepLB03hPwvWVNaes8P+gZZvWmtnI2hALbF80CgWNS+SZX++
+         Wgj/+fHXbpdhKaiYRUJSAyjlfE8FosBGfqirA775Pdmkoq13AvtUQ+RQTxoi+0PsxHlv
+         gu/3zMa9h/UGxDkxxst1e2/m8JRZbE0epJzDQpjJ84B5k1vx5OCjK+TMjfafxSqImOWU
+         lVoeYJtVk+LWjBRqLhB2GCpVmNuRVK88jiePIXChPIYMDvD7sqL4fte6MvDHgQduq7EK
+         x1niuLBz6N7tXXRl9jU4ADIcWJpleWqhC1lNZ4QBFA8M/4rNRi9OJog7kX4Q9zmv2fDj
+         xNGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716814608; x=1717419408;
+        d=1e100.net; s=20230601; t=1716814609; x=1717419409;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WF/896sdGC2fcFcBLtp8Wafg57BR7Ezd4qNrSg9FQvk=;
-        b=pUdWk0snbWRnsZrGjMwqGbQ3FvjvvSmyaEKfVC7Fxh7V6Ws/ipRpaoA2vrvju4deve
-         bBULQfVBL5jKhDIhftUNGOQ3myC4acodT1uKHOGt8uVJIVsl3otOaQszHqD4XYowAJsy
-         tPtluTwMgQEtO5Nuuov/2pnFU/yyCgKC+8dgsHYQvT1yGPVXq9bu+f08iANCgHSBehEv
-         jTvLEZmMbvzbAPAFrp1X05z2EJ0tFym5ivB+Nv5GnIPqwKkZXJW2VnYdvaLp/JS2fMPZ
-         9ickyGB8rCIhshFXfiIc7x2ZSP0jvUoRrJJZC7ixn0skuHDJ3KhQc6fE8wSAxHPEa5wH
-         XBtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNIyPSgon3l16VU1yqcQrlfMzinz6ASSAVu/lWHe0skuXY+sms3G4QKeByDm8HM8FA5sn0Qo+izxHNhxnVF3DEXPghTCg3/zW09YjQ
-X-Gm-Message-State: AOJu0YwqYWD8WQif5MmMuK/TxLS9/xffld6MJnHaRLihQh5JsRqpF6L3
-	MAlG1tjGycvfoBnFT5ZaPzTzXGe5heOAT47ctJYbjVTX1A1qJxnrKLWD4iNK9Y4=
-X-Google-Smtp-Source: AGHT+IH6VchPULTEGSRUUO5sOippxyiBXFHEUeCEq0xBz+JEny96RRYZTpf8xbzdHO8n6U/xPBWnGg==
-X-Received: by 2002:a05:600c:5103:b0:420:1a3:dd04 with SMTP id 5b1f17b1804b1-421089eeb0emr77231195e9.24.1716814608651;
-        Mon, 27 May 2024 05:56:48 -0700 (PDT)
+        bh=F2tGSXM64q5CkEofoukaYDnOH1U7xvQ9rdr6WJfwwYM=;
+        b=sXz+bq9sohUuK/7Xv5pQINPB5ruivWqpHsam8OAdaV3qx3BDYRrXolAhqtBtWYCJL8
+         HpFG0St7QcITsgkox5DvcIGSDuaobAx4bTcMSUgUPMwfXTChEk+vkDhB3nLVl7CSKCom
+         Y9hA+TtSvGOoppBH5JB2WYEg0LBtzGAfn0zGEWsVQYPqxcmLBg2+Ge2MFGP4Ch7Y9cYl
+         s80hufycY7Xb2BupZqtqLFbSslenBu+oPImHMMa6O0nnmBNaQ9R4mKNJBnvNo0a5XiWe
+         vRckdKITZce1zueoM6V7t0UfhFowBCfqMeGAccoLZYy6Yro7Q5aHnxfdnyB4SKHxJr05
+         nCnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7cq4CQt1RpmmLzvJmXYG0w/nHh2iUHzuQcrE0cb/0I1wPdaUE6OUUhP+y2pYeVkTNrgEybjihiNZEW4ehlxbUxl32TkdjPmAAH8lO
+X-Gm-Message-State: AOJu0Yyo1DKlDkyhyW+O6N+D9I3DGjP/ITR0KwaPpDW3DhwvvvnzcILu
+	d2dmVIZa3VqD34bs7XBt7hm4CgeGuGVdDM7XQd6nLFRBU45FLWqgTspdTBNvs7Q=
+X-Google-Smtp-Source: AGHT+IFiFkZN2ztJz4aq4ARQTndSRHhYuJJSLUpwf/uPp1OX4TcFw1jCbi8J6K1zQHHsp2lLkGM7tw==
+X-Received: by 2002:a05:600c:6b0e:b0:41b:285:8417 with SMTP id 5b1f17b1804b1-42108a2e796mr66785555e9.40.1716814609554;
+        Mon, 27 May 2024 05:56:49 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f64f98sm138753635e9.24.2024.05.27.05.56.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f64f98sm138753635e9.24.2024.05.27.05.56.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 05:56:48 -0700 (PDT)
+        Mon, 27 May 2024 05:56:49 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 May 2024 14:54:54 +0200
-Subject: [PATCH v10 04/15] firmware: qcom: scm: smc: switch to using the
- SCM allocator
+Date: Mon, 27 May 2024 14:54:55 +0200
+Subject: [PATCH v10 05/15] firmware: qcom: scm: make qcom_scm_assign_mem()
+ use the TZ allocator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-shm-bridge-v10-4-ce7afaa58d3a@linaro.org>
+Message-Id: <20240527-shm-bridge-v10-5-ce7afaa58d3a@linaro.org>
 References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
 In-Reply-To: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -97,34 +97,28 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  kernel@quicinc.com, Andrew Halaney <ahalaney@redhat.com>, 
  Deepti Jaggi <quic_djaggi@quicinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4759;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2241;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=h5olK4FER0ASPIH9I24ILYd6rhf4aQB9nxqDbU4jzPQ=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVIMIyg5jo/L/Pq/AFrA6tqCdM/FV+kOCl9Jvh
- 9x10vovHz6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlSDCAAKCRARpy6gFHHX
- crPBEADcf+aTOBUDz3TteutQQXSR2p0IkTWki6VzWv78A4/keZyujHuYKtncGvbAuj+6ZKyKgMS
- 5sf+bvySqH8yFjx+92RWsjsEuaT8zZyFPs3sBnXGP/gzvhaGOZCAQwALHTFhJMfTbnuULIadXGf
- N3EmwU+nq+C5C1tA83qr2bTIc8GD8SiJMKzuT/POGAeNEKIR8EBl3n0D7U1Sna2uL/cBPltdlRi
- AQ5rjhLsVBGP0ISuAbA9E9EyoMFXaJVKwneZPh/yaApP/DPuFyf5BrBGautvBjPmmjXcaDV9D7X
- DixeVaP0uwD6B8H781xIIqrGw7HQ5Hhdm9cbXUK2fJ662TFXbBpTE7mowYiM7iV1hgIm6FkT+jC
- pS0IihiMPowRhrZevczmdsNs5UrIyOf/qb/i//WOiH/DPE1cYUCX3H4XPo+I7oumnPyOBmNrXuo
- MSUV4PhrBjHIG+pYM4Ums4XpuATvQn5gXYMLY1gGxYO/4Etxz8qpk8gzBjLxKn9a98ZpgOkTw+y
- kTM8l7VDe34XO/aAnTgqAmwpdnuKeUJYxHQpfBooNwgqjlzpxHEcrF3X1iE5NZjQQ3sSi6Rh94r
- 0B0M4JW0ase1UWp3zIvpA77sIH0nohTmnHDT6n/hiaOwAURP0yXY1yhP5WMdY+DhiWxXjBYH2xG
- A5JGP5lDbaY1dIQ==
+ bh=9Erqvqgiad5rjTJsNR0YSbu/CRguRxvgVp+lpYCpIVk=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVIMIKOO9v8eTMGirexp87ho1NlUlhkeO/Hz9j
+ WAf+2zXRZeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlSDCAAKCRARpy6gFHHX
+ crGMD/0YS7UnmIE3KqMGN3f/lgIUFTePpK9qvRMHBPLj2Dpag/edaQyVnec1ocNJlO8pz/bNR03
+ UdWI8Po0hrZN8wLxgwxiAytFfl+Sa/aJ99bbZjwnd7nk9o8icNvkBmE6wtg3OFHSx4rJspet0cf
+ tD7cJ93DyEg8nVqzSw4anW94zC0NczKotQmHBvEmXzuITPwUmAsIVjey3it0QaXigk3k1LN4yLj
+ pQmOTt0CINtQexASpTZAFvC++O0u708QBAU12SjPXB+9vNWpd/9OHS/P1Sp3ISzJqQP37QH+Ozz
+ opcFF0t5siyZ5FgdRvui5YOcoIMdAmy1i4XhIqlAo5+UlhqsOqrAvV218vnNdsJFooB8Mm162Ga
+ lqRB/8qrODadaf4jJY/5k2/mkL7jcCOZw9eFJQfnDNN8VMZdry4pcX/nnYDGMwgPV2I/1/xxCm3
+ qbbCV1RsuS56M2JZtdWxrbPwwvxPlAdCaRm9nmC7rPuKHPg38FoEglA7uz8iLYLSSSvw7CdUVP0
+ L0KLtJGnM6v8AFX0lR0wQ6ka+np8QNJYiU2/rLCL7QWAEXNgTDe2MIICEUkrR/RH05lP3cGml7a
+ x6R0LfAwyWSeue/g49j07ahDu21bvrhvd/+tgJ63nVLSILaYCqg0v2LVevZbxkLcYmL99Ifhy3L
+ 6DqEfDKi8bRUI8Q==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We need to allocate, map and pass a buffer to the trustzone if we have
-more than 4 arguments for a given SCM call. Let's use the new TrustZone
-allocator for that memory and shrink the code in process.
-
-As this code lives in a different compilation unit than the rest of the
-SCM code, we need to provide a helper in the form of
-qcom_scm_get_tzmem_pool() that allows the SMC low-level routines to
-access the SCM memory pool.
+Let's use the new TZ memory allocator to obtain a buffer for this call
+instead of using dma_alloc_coherent().
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
@@ -132,122 +126,60 @@ Tested-by: Andrew Halaney <ahalaney@redhat.com> # sc8280xp-lenovo-thinkpad-x13s
 Tested-by: Deepti Jaggi <quic_djaggi@quicinc.com> #sa8775p-ride
 Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
 ---
- drivers/firmware/qcom/qcom_scm-smc.c | 30 ++++++++----------------------
- drivers/firmware/qcom/qcom_scm.c     |  5 +++++
- drivers/firmware/qcom/qcom_scm.h     |  3 +++
- 3 files changed, 16 insertions(+), 22 deletions(-)
+ drivers/firmware/qcom/qcom_scm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/qcom/qcom_scm-smc.c b/drivers/firmware/qcom/qcom_scm-smc.c
-index 16cf88acfa8e..dca5f3f1883b 100644
---- a/drivers/firmware/qcom/qcom_scm-smc.c
-+++ b/drivers/firmware/qcom/qcom_scm-smc.c
-@@ -2,6 +2,7 @@
- /* Copyright (c) 2015,2019 The Linux Foundation. All rights reserved.
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/io.h>
- #include <linux/errno.h>
- #include <linux/delay.h>
-@@ -9,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/firmware/qcom/qcom_scm.h>
-+#include <linux/firmware/qcom/qcom_tzmem.h>
- #include <linux/arm-smccc.h>
- #include <linux/dma-mapping.h>
- 
-@@ -150,11 +152,10 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 		   enum qcom_scm_convention qcom_convention,
- 		   struct qcom_scm_res *res, bool atomic)
- {
-+	struct qcom_tzmem_pool *mempool = qcom_scm_get_tzmem_pool();
- 	int arglen = desc->arginfo & 0xf;
- 	int i, ret;
--	dma_addr_t args_phys = 0;
--	void *args_virt = NULL;
--	size_t alloc_len;
-+	void *args_virt __free(qcom_tzmem) = NULL;
- 	gfp_t flag = atomic ? GFP_ATOMIC : GFP_KERNEL;
- 	u32 smccc_call_type = atomic ? ARM_SMCCC_FAST_CALL : ARM_SMCCC_STD_CALL;
- 	u32 qcom_smccc_convention = (qcom_convention == SMC_CONVENTION_ARM_32) ?
-@@ -172,9 +173,9 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 		smc.args[i + SCM_SMC_FIRST_REG_IDX] = desc->args[i];
- 
- 	if (unlikely(arglen > SCM_SMC_N_REG_ARGS)) {
--		alloc_len = SCM_SMC_N_EXT_ARGS * sizeof(u64);
--		args_virt = kzalloc(PAGE_ALIGN(alloc_len), flag);
--
-+		args_virt = qcom_tzmem_alloc(mempool,
-+					     SCM_SMC_N_EXT_ARGS * sizeof(u64),
-+					     flag);
- 		if (!args_virt)
- 			return -ENOMEM;
- 
-@@ -192,25 +193,10 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 						      SCM_SMC_FIRST_EXT_IDX]);
- 		}
- 
--		args_phys = dma_map_single(dev, args_virt, alloc_len,
--					   DMA_TO_DEVICE);
--
--		if (dma_mapping_error(dev, args_phys)) {
--			kfree(args_virt);
--			return -ENOMEM;
--		}
--
--		smc.args[SCM_SMC_LAST_REG_IDX] = args_phys;
-+		smc.args[SCM_SMC_LAST_REG_IDX] = qcom_tzmem_to_phys(args_virt);
- 	}
- 
--	/* ret error check follows after args_virt cleanup*/
- 	ret = __scm_smc_do(dev, &smc, &smc_res, atomic);
--
--	if (args_virt) {
--		dma_unmap_single(dev, args_phys, alloc_len, DMA_TO_DEVICE);
--		kfree(args_virt);
--	}
--
- 	if (ret)
- 		return ret;
- 
 diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index 0e7b1813e4a7..1d207c14afc8 100644
+index 1d207c14afc8..ea4d71bb0ad3 100644
 --- a/drivers/firmware/qcom/qcom_scm.c
 +++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -204,6 +204,11 @@ static void qcom_scm_bw_disable(void)
- enum qcom_scm_convention qcom_scm_convention = SMC_CONVENTION_UNKNOWN;
- static DEFINE_SPINLOCK(scm_query_lock);
+@@ -6,6 +6,7 @@
+ #include <linux/arm-smccc.h>
+ #include <linux/bitfield.h>
+ #include <linux/bits.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/cpumask.h>
+@@ -1019,14 +1020,13 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	struct qcom_scm_mem_map_info *mem_to_map;
+ 	phys_addr_t mem_to_map_phys;
+ 	phys_addr_t dest_phys;
+-	dma_addr_t ptr_phys;
++	phys_addr_t ptr_phys;
+ 	size_t mem_to_map_sz;
+ 	size_t dest_sz;
+ 	size_t src_sz;
+ 	size_t ptr_sz;
+ 	int next_vm;
+ 	__le32 *src;
+-	void *ptr;
+ 	int ret, i, b;
+ 	u64 srcvm_bits = *srcvm;
  
-+struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void)
-+{
-+	return __scm->mempool;
-+}
+@@ -1036,10 +1036,13 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
+ 			ALIGN(dest_sz, SZ_64);
+ 
+-	ptr = dma_alloc_coherent(__scm->dev, ptr_sz, &ptr_phys, GFP_KERNEL);
++	void *ptr __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
++							ptr_sz, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 
++	ptr_phys = qcom_tzmem_to_phys(ptr);
 +
- static enum qcom_scm_convention __get_convention(void)
- {
- 	unsigned long flags;
-diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
-index 4532907e8489..aa7d06939f8e 100644
---- a/drivers/firmware/qcom/qcom_scm.h
-+++ b/drivers/firmware/qcom/qcom_scm.h
-@@ -5,6 +5,7 @@
- #define __QCOM_SCM_INT_H
+ 	/* Fill source vmid detail */
+ 	src = ptr;
+ 	i = 0;
+@@ -1068,7 +1071,6 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
  
- struct device;
-+struct qcom_tzmem_pool;
- 
- enum qcom_scm_convention {
- 	SMC_CONVENTION_UNKNOWN,
-@@ -78,6 +79,8 @@ int scm_legacy_call_atomic(struct device *dev, const struct qcom_scm_desc *desc,
- int scm_legacy_call(struct device *dev, const struct qcom_scm_desc *desc,
- 		    struct qcom_scm_res *res);
- 
-+struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void);
-+
- #define QCOM_SCM_SVC_BOOT		0x01
- #define QCOM_SCM_BOOT_SET_ADDR		0x01
- #define QCOM_SCM_BOOT_TERMINATE_PC	0x02
+ 	ret = __qcom_scm_assign_mem(__scm->dev, mem_to_map_phys, mem_to_map_sz,
+ 				    ptr_phys, src_sz, dest_phys, dest_sz);
+-	dma_free_coherent(__scm->dev, ptr_sz, ptr, ptr_phys);
+ 	if (ret) {
+ 		dev_err(__scm->dev,
+ 			"Assign memory protection call failed %d\n", ret);
 
 -- 
 2.43.0
