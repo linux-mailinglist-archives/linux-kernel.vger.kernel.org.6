@@ -1,163 +1,185 @@
-Return-Path: <linux-kernel+bounces-190415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE038CFDFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:20:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA388CFE24
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21021C217BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A5228385C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1164113AD37;
-	Mon, 27 May 2024 10:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0D413B794;
+	Mon, 27 May 2024 10:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6vhFTQT"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="ridocHYy"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9562E572
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7036113D281;
+	Mon, 27 May 2024 10:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716805212; cv=none; b=Qijl+T6cqFinqH5URKEsYtWHJCxZCXTn4g1jgk9C09RpP2+F0hU1GbPHJ+l4PtXY+BhcuVY7usALCqeX6dMK/pZG8H0Q1sLnVns6QGQGiaiIl141YggmxPrvp40/aVvjWdvwLr2vrBQYSkpWGmRgAV6jw8YQXms25MpLqRXP+Vg=
+	t=1716805746; cv=none; b=OSsvU8tBvfoDNniP2ZOqoWdE8ZPdcgtDZfu8YDRC37kcbtRe084CRI5kK9N70o0dRToG8qMJXR9Tw5dlwwVbNMQYnypTD3Bo5BPZ43NT4w/M1kyZZczW0X0FrBKGZ8ozdx1e0pEEVuZNSLd0eeicGTAht/XFymNQzpgmtDaR+3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716805212; c=relaxed/simple;
-	bh=gihBiJIcw8sj9dmTxq/+XnN6tPPEclWQ5/Nm62Ns3cA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dXTOEbY7eK1pOj/FbsomnxDjqbH15qBwGOHpHqV3I5OvuTf+1jnnwE/DAKkm4Yi/Fpta1slRK/G0SKSq7z2FW1rQuMkjcTamiaTTrGVvI9SRS4TbDw/bnyjI3tGnrH1DBwGg4v9ddDiaRqThZ/1J/vADrXbKE8EZ+JaNjkcUwPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6vhFTQT; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6265d3ccbdso281317866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 03:20:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716805209; x=1717410009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zqVLy4BqKCVpGMmzuIy6L9HtarmoOn7AYrsMEQ/kn+0=;
-        b=D6vhFTQT4pVJpD0HcF4lk7i7sXx6KInXDajLVgNelMBsE6mj7hRP26QGDc/DpADuI3
-         k8ogJZ3umw4jqn4WqK3W4NaoAPB03mZxwqtw+XxBFhwtqpBAhv7s1+VAF5puFZEESDEv
-         aa74tjXEzGDJyWOsqXqQxvxjaPDIlXzh++RePGRkRm7In/2hBCNGR3EVMNX2moDAptDF
-         Itb9vSqJwEpk2S7219Ftf5bojKKp5DiOH25KHtfUG1PSm9FUBESmDBxYH92dqbQDTru4
-         JUwJ75DJNl/iM4AVCUaTH5r4A3zv+RVElIVbkMlkzDwrPYEtSwok4hBJObkgJHsjUQuG
-         ri0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716805209; x=1717410009;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqVLy4BqKCVpGMmzuIy6L9HtarmoOn7AYrsMEQ/kn+0=;
-        b=it2iMsfmomauG6PoBFiYeBU0CQiY0qzBDuYhpX2Z2xQlxbEtxZMuQY7oN0u6xHWgMc
-         X8eX9bK2g+f/DRj8XFiTCynkft1zpm4C7PRF32NELQAx+Ro3GzAMfKp7QyhcfY9d1Uji
-         j+0JG9b1IBvJv+KUODGaK6dxGOLgH91Gh/D7CoF9neS9awrp62fDFjpP+jX9/v57x2Ss
-         O+OhdsZzFLO4LGZRoBQ0ZictRd2w79R7V7UIyN7nq6Nwfdv15tg/L9ebVQPnPf5k+fBA
-         cb4exVX0/METbOH9ihcblOwMUqSGWXC7GnE01HGJpyRnWIgJjdD3W1KkNek+SAhGJyCU
-         lHaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAZQWlBqz/ey6C3b7a+wCClKRsmdGmc0xrnTs29M7XpLnMCe+lzN1iMeM4nYeXVPoQ1Lc7PIhaPokr/u4gJjxmEeqrY7fDWhJqgtS6
-X-Gm-Message-State: AOJu0YwAcahtxa4bHSHDMCxRi977szJy6g1Dbra6Q4edfqC9mSU8z9dv
-	W6tzGGveDjcOXTZuj/PZ2VwtWlnY3AA/dofOQv0Y4k3lBfaqsZLB2+PTaz3pvzg=
-X-Google-Smtp-Source: AGHT+IHA6kbBM7DLzQFaJIfNbRorrDAEIb7Dgj2UwsEP2QpYVZYp06UjiYss3m+wTKNBel/jSCfvYQ==
-X-Received: by 2002:a17:906:aada:b0:a59:9eab:1630 with SMTP id a640c23a62f3a-a6265134cc0mr548260966b.69.1716805209019;
-        Mon, 27 May 2024 03:20:09 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda843fsm474092966b.220.2024.05.27.03.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 03:20:08 -0700 (PDT)
-Message-ID: <56345d8d-ec1c-4ff3-b278-f66f2a1f9f84@linaro.org>
-Date: Mon, 27 May 2024 12:20:07 +0200
+	s=arc-20240116; t=1716805746; c=relaxed/simple;
+	bh=ZAOnZNIPCZ/gjfi2EqP8pXMwOx3RdNya75v5ylcZQ6c=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=TzUkMy8KbiZqGKPaBsljkj4zUVQ6zbSgFqpcN8INnsSQX316PJny4+iP6hD2FPKlm3ZRcqcQVc1Byr59WOqnqK7OEeoDd5DU4AgVwT66dufy84LcRspznnXpMH+LSe/j+y6oQs/0iArj9rCB9flonL0MxqHkkGw5ZLZKk2sV41Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=ridocHYy; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 283C2401B5;
+	Mon, 27 May 2024 15:21:31 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1716805292; bh=ZAOnZNIPCZ/gjfi2EqP8pXMwOx3RdNya75v5ylcZQ6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ridocHYydGXxMzSw/4pmPPWYPapNbiLLDE25aOUH1yhRhqE9IxNCaygl7dmOhLvCu
+	 kfM7xS/lbMNMw/2UJ4se499cJTUropO7SxQVqXnkeEQlQxRyp/9VTqXzg16bnEijfs
+	 IHYiHStZPIA1pcEPsCINtqdueHIA969sfhk+BuCikO7BTUkWycZCY7+n8gtorHnkX2
+	 eP+FnETfN6HL4lc3uPpUFXCKQS/zMBU9tgpYlkXroBji92nHZAhM9HryJhvB71Gki/
+	 FZJx0S/x/EDP/GwgU+gPPxFGMOAJPq1Y2u8OF9T7RO7heMsl0piZ0PpjYNH+vqNXFf
+	 +sKjYJVMEd4Rw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 0/7] Cleanup Tegra210 EMC frequency scaling
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
- jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
- <scjwzfj3jiyqh2hgomlfpdxjpyurkhiyy5bks3damficnn3bc3@vogn5wp5exoc>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <scjwzfj3jiyqh2hgomlfpdxjpyurkhiyy5bks3damficnn3bc3@vogn5wp5exoc>
+Date: Mon, 27 May 2024 15:21:27 +0500
+From: Nikita Travkin <nikita@trvn.ru>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/6] dt-bindings: power: supply: Add Lenovo Yoga C630
+ EC
+In-Reply-To: <20240527-yoga-ec-driver-v3-1-327a9851dad5@linaro.org>
+References: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
+ <20240527-yoga-ec-driver-v3-1-327a9851dad5@linaro.org>
+Message-ID: <f05953c74f2bf58256306eb3d554ae0b@trvn.ru>
+X-Sender: nikita@trvn.ru
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/05/2024 12:15, Diogo Ivo wrote:
-> Hello,
+Dmitry Baryshkov писал(а) 27.05.2024 15:03:
+> From: Bjorn Andersson <andersson@kernel.org>
 > 
-> On Tue, May 07, 2024 at 10:30:43AM GMT, Diogo Ivo wrote:
->> Hello,
->>
->> This patch series consists of a general cleanup of the Tegra210 EMC
->> frequency scaling code for revision 7.
->>
->> Currently the code is relying heavily on a function, update_clock_tree_delay(),
->> that is responsible for too many things, making it long and confusing.
->> The general idea with these patches is to simplify this function and its
->> surrounding code, making it more modular.
->>
->> The motivation behind these changes (besides improving readability and
->> maintainability) is to make it simpler to add support in the future for
->> frequency change revisions other than 7, where we can reuse a large
->> portion of the modularized code rather than essentially repeating 2k
->> lines of code with minimal changes.
+> Add binding for the Embedded Controller found in the Qualcomm
+> Snapdragon-based Lenovo Yoga C630.
 > 
-> Gentle ping on this patch series. I think this version addressed all of
-> the review comments, is there anything missing?
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/power/supply/lenovo,yoga-c630-ec.yaml | 83 ++++++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/lenovo,yoga-c630-ec.yaml b/Documentation/devicetree/bindings/power/supply/lenovo,yoga-c630-ec.yaml
+> new file mode 100644
+> index 000000000000..52a302850743
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/lenovo,yoga-c630-ec.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/lenovo,yoga-c630-ec.yaml#
 
-I think I explained you the process. Merge window finished yesterday
-(today for this timezone), so why pinging the same day? Give some time...
+Should this binding join aspire1 one in bindings/platform ?
 
-Best regards,
-Krzysztof
+Nikita
 
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lenovo Yoga C630 Embedded Controller.
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +
+> +description:
+> +  The Qualcomm Snapdragon-based Lenovo Yoga C630 has an Embedded Controller
+> +  (EC) which handles things such as battery and USB Type-C. This binding
+> +  describes the interface, on an I2C bus, to this EC.
+> +
+> +properties:
+> +  compatible:
+> +    const: lenovo,yoga-c630-ec
+> +
+> +  reg:
+> +    const: 0x70
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '^connector@[01]$':
+> +    $ref: /schemas/connector/usb-connector.yaml#
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |+
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c1 {
+> +        clock-frequency = <400000>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        embedded-controller@70 {
+> +            compatible = "lenovo,yoga-c630-ec";
+> +            reg = <0x70>;
+> +
+> +            interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            connector@0 {
+> +                compatible = "usb-c-connector";
+> +                reg = <0>;
+> +                power-role = "source";
+> +                data-role = "host";
+> +            };
+> +
+> +            connector@1 {
+> +                compatible = "usb-c-connector";
+> +                reg = <1>;
+> +                power-role = "source";
+> +                data-role = "host";
+> +            };
+> +        };
+> +    };
+> +...
 
