@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-191369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814688D0D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E748F8D0D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABB01F2061D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE911F20D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE9B1607A4;
-	Mon, 27 May 2024 19:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC816079A;
+	Mon, 27 May 2024 19:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWwI9mCG"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6atOexS"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB1515FD01;
-	Mon, 27 May 2024 19:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F416079B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 19:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716837946; cv=none; b=szDGwibaNz+cLFIZxNAoM1F6RQGIYua9GL4n5KpEkATH63Dj+ooTcih0Qp55Cql4ewXHXp7M/+eY8jBJCRq2MeMUm5pICENFTzGFeqNM3csZJpY6Tvu5siMyScQZd5sR2AzGbvcV5rt3Eemc3RK8H6aXGNF6OMnVBVhMOtamkmY=
+	t=1716838126; cv=none; b=Zr+HIyCU3mdEbkjKe6N0I4hTmLbQIu74vd/XRHc+6U0WoEQa1WKnCYkpL/ypcyyCS1zTfNd5sveAG2rhkDQX5IB1kT8/I0BoyRj99vuAZqohKrLO8hG869NsuFPEEZh8UZax7HdgGH/x0wDkbA2sCg6PY/LSsLw7StfIdpllk0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716837946; c=relaxed/simple;
-	bh=UWZElWnD/lEhDgW78Wemug8QZpdfZGoVTj/8LI3lFiw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qi++BucriJPGrskLB7LC01AWeVHykaNmNYCvQRY3ZwLoUYXJ19/qMfWDKjrwXjG3lgD8K1vCtF09Xl1xTOmYukx/+NTG3HnNjPpWw0A/Pw8A1ms9jfh6tCAyPhHl15MLBEUOemvDyzYiNr7Sl4yiKxskYzLsFl0i100SE6TGTLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWwI9mCG; arc=none smtp.client-ip=209.85.161.50
+	s=arc-20240116; t=1716838126; c=relaxed/simple;
+	bh=oUfOHq9Rlb0a7D4l3Lqx6FtCvm34YuPLn0oskocY6Bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKnSts2qD/uJHoGDboIIjq3gRdCTYQH7LHKs0tdgRqJSOT3+r9UYWSTAPlQNCxGbtRV0wYMgIygn+GaFTKnk5LrrVL0i7lkirMzsCiohRamS9h/ru0BFGwmCWOD4oG6+IIDwIYoJ7c3Z0A/QRQwrFp+7Ol9kG7XkANWgw3ApZo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6atOexS; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b5254f9c32so39071eaf.0;
-        Mon, 27 May 2024 12:25:45 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6265d48d3fso2007266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:28:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716837944; x=1717442744; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6CNvLtiL3EHElRY2cknRBZ6IFenXiy2KNmFEpcwP0s=;
-        b=NWwI9mCGgbC5NQlCMUqQcFUXLBR1XfUurHsfEFN6zT+4oTof4+NwvTOHRKzOtdNTUh
-         +F9AbzIpSjmudKeB71sxD/dmY0vHHazsAY7Flmhv4DQHwziePxyUylhEs9vsPejN+Qcf
-         2QwSqmI35I+XmE4JUM2VfcDaVFzBd2sWo7I0dcy9kh6KGp0Sk8As17/qnSrX+dxFxIjs
-         rhi3ch5NiKXhvbDyy5ctTD9hzO3irpSK9wxlp6Zi6GmNJNiZ9nQKefrEesCANys3pt0f
-         AaWQ7Swl/2b53485kt+gTE0uORDvTLWwneDKHY1KAh2d/9twj64bGlX3HHjLNoDBDEOw
-         8TqA==
+        d=gmail.com; s=20230601; t=1716838122; x=1717442922; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bcDYDHXFbJ6D+vBSxtRFYbaH4Amc09bTylRzwYEhBfs=;
+        b=S6atOexSYD8O0oBaBfXbcphGXFIF4KY3JFkpea+96zeqvA1qRbs/Si84df+KnYnYhB
+         p9IoYgqGtdkGfS8BuvwMHwf6MNmkhMNvqDNSqe1OAl5bD1oiHyJURQFmJ0Gjfzdo/rLw
+         6ralvLgIKKgz1ad+xFMx0pbMwj//uVfKQ+mH5kealk/ElCSrmjl4UDK2d3PCeSkTtPP2
+         yaIFzdNPToqJeKXGF8JOoY4U0A8sG5kw3rbIvtIPd2/odv8XJpUnfuZYVfkklp2LyC6p
+         +m0oKrgIz3EzDOJblKHjrpVQHgZfQ+KqHabA94hCcJOaFB4lGA2v2SLA0XM65s+SYwDY
+         H53w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716837944; x=1717442744;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6CNvLtiL3EHElRY2cknRBZ6IFenXiy2KNmFEpcwP0s=;
-        b=EIJyCCmDU3ugycdvZRHEV0Fk130DpK0XDRuqmM7bqA3XdXZPRx9zuPiu8S78/BVnA1
-         sAiOSM/ZlXn1tU+PDAGrsPChRX8hh8B6agK8BhbPc8si7QUWpvMfYkpQjpEk+fTc+h6a
-         N+SUPuSwwkGxnGLlZPFX+1Px6Actxj4DoGAtVXqYF+8eZTnqMXI41sFLQVEc8Lapvv75
-         8nwTtVJ3z4jB1j8netRqnrtObUYGl2nylSr7FqAVcilb4sx3pcgs6TQ5fv5lwjnXfuD5
-         rncTbpPktvOPao8KSk3eg7FM9equGGUO9D4EoeqyLEMyaXxjoB4Mkl0G2YMa486Xzh4M
-         JYSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0EOqRfflKHQ04G4sPxA22YRvsUbWF22P0N+YMFnO7Zign2yfdo2zsStLRSIgZ3bFLbFEdv+YFvvuW3nDUQExbl9ZJNrYNdkjBNtIaQGQ8ImcdPW/U/wys+fGYCn7cL+QHB7ITiPgTB5epkQM=
-X-Gm-Message-State: AOJu0YwG+30p4mdWNA8co7DD53KbLvSstXzeFNcicQzYQrmcookbD2/g
-	kurOtj6rBn6Ez1MqDepykN/yw5Qko8jJUH6oOGEGKQWGnU6wJ3Er
-X-Google-Smtp-Source: AGHT+IE58+7Q47AWd+tVl2XmoD/fm6I4o4+xbJG/gABpSkQz1T6eU1JQ6xwfdK4Bk16/DZzkGI9nyw==
-X-Received: by 2002:a05:6358:2826:b0:194:6301:a71c with SMTP id e5c5f4694b2df-197e510cd08mr1282664855d.16.1716837944145;
-        Mon, 27 May 2024 12:25:44 -0700 (PDT)
-Received: from [192.168.7.110] ([190.196.103.34])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822189158bsm6269634a12.24.2024.05.27.12.25.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 12:25:43 -0700 (PDT)
-From: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
-X-Google-Original-From: Camila Alvarez Inostroza <calvarez@macbook-pro-de-camila.local>
-Date: Mon, 27 May 2024 15:25:39 -0400 (-04)
-To: Camila Alvarez <cam.alvarez.i@gmail.com>
-cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-    Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 
-    syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] bcachefs: fix last_seq and last_empty_seq in
- bch2_fs_journal_start()
-In-Reply-To: <20240520025733.688425-1-cam.alvarez.i@gmail.com>
-Message-ID: <cf7d1a86-b1e4-08ee-0d99-0b3f2823fb47@macbook-pro-de-camila.local>
-References: <20240520025733.688425-1-cam.alvarez.i@gmail.com>
+        d=1e100.net; s=20230601; t=1716838122; x=1717442922;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcDYDHXFbJ6D+vBSxtRFYbaH4Amc09bTylRzwYEhBfs=;
+        b=Zme9DRA2zbN5hIqufQjxxMJ32ktEThhJk1v3oUmDJ8ARwZOtplspeYmxuzhGeyqwW6
+         h/wlW/bqL8zdUG06YT+9xzRe/QjKklyU3qJJuzHxlGVrGELFXMG3diTUiFq+fesxA2Mr
+         eqzMScwQNdWDPFWyv9JbM4nJuNWemlaNBydEQ7oTGbk9MwEBQ0Ba5dtNR+rSa/qsmvLG
+         9tRQuS3wq1Q3ya9z7Zt4u9H4eMNljkSZU8XPUNN/hQQ7N7cZLviWwSJUznBomb6UvuyZ
+         Oy0KToYvcVqwEO4coOqsnhYasce7vsq/CKySQjsXmTJO0P6TVrcAUyJZsOUlSXHBTSg1
+         6V/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUlhhTVGtlXNApbRkVtP4sw/VJoakbUZLQP1xFxR7Q69CtZq2Leo5x95YhQVJ9LLXisKWLBc7GrKEh+rOgim6g+ZlnIw4SQYY6w97+u
+X-Gm-Message-State: AOJu0YyOeIGq6k6GbTbz6doGRGRCrsffUNwHw+CFPm7zgAOXbK9+Kc1q
+	tASKrY98Afyn+cWR9KoLBQDts14k0rcpaYc9vHFlCT6WGUyhZpxCRH5fsw==
+X-Google-Smtp-Source: AGHT+IEO5J9zAQ03jtP8nl1KN6YZvtcvzBWdNgZZ17Xg+gIBBgIGTqclMf1CStrUOqVQCRc0hmbJFw==
+X-Received: by 2002:a50:d718:0:b0:578:6263:727f with SMTP id 4fb4d7f45d1cf-5786263763fmr5664377a12.4.1716838122044;
+        Mon, 27 May 2024 12:28:42 -0700 (PDT)
+Received: from [192.168.8.103] (dynamic-176-005-137-056.176.5.pool.telefonica.de. [176.5.137.56])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57852495de0sm6047812a12.61.2024.05.27.12.28.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 12:28:41 -0700 (PDT)
+Message-ID: <f1e18696-8602-40ff-be90-d232c58693ca@gmail.com>
+Date: Mon, 27 May 2024 21:28:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8723bs: hal: Fix spelling mistakes in
+ rtl8723b_cmd.c
+To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org,
+ colin.i.king@gmail.com, ruanjinjie@huawei.com, hi@atinb.me,
+ bragathemanick0908@gmail.com
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240527045856.72996-1-topofeverest8848@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240527045856.72996-1-topofeverest8848@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
-I was wondering if you had had the time to take a look at this.
-Please let me know if there's something I'm missing.
-
-Thanks!
-
-On Sun, 19 May 2024, Camila Alvarez wrote:
-
-> Values were left as the next possible sequence number when there were no
-> entries.
->
-> The fix involves updating the last_seq initial value and
-> setting last_empty_seq to cur_seq - 1.
->
-> Reported-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+On 27.05.24 06:58, Roshan Khatri wrote:
+> This patch fixes misspelled words to increase code readability and
+> searching.
+> 
+> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
 > ---
-> Changes in v2:
-> - Introduce a new variable to distinguish the last sequence number, from
->  the last written sequence number
-> - Abstract `cur_seq - 1` into a variable named `last_seq`
-> - Reference to the last sequence number are changed from `cur_seq - 1`
->  to `last_seq`
-> ---
-> fs/bcachefs/journal.c | 22 +++++++++++-----------
-> 1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-> index adec8e1ea73e..99fc32f0382d 100644
-> --- a/fs/bcachefs/journal.c
-> +++ b/fs/bcachefs/journal.c
-> @@ -1195,8 +1195,8 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
-> 	struct journal_entry_pin_list *p;
-> 	struct journal_replay *i, **_i;
-> 	struct genradix_iter iter;
-> -	bool had_entries = false;
-> -	u64 last_seq = cur_seq, nr, seq;
-> +	bool had_entries = false;
-> +	u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
->
-> 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
-> 		i = *_i;
-> @@ -1204,11 +1204,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
-> 		if (journal_replay_ignore(i))
-> 			continue;
->
-> -		last_seq = le64_to_cpu(i->j.last_seq);
-> +		last_written_seq = le64_to_cpu(i->j.last_seq);
-> 		break;
-> 	}
->
-> -	nr = cur_seq - last_seq;
-> +	nr = cur_seq - last_written_seq;
->
-> 	if (nr + 1 > j->pin.size) {
-> 		free_fifo(&j->pin);
-> @@ -1219,14 +1219,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
-> 		}
-> 	}
->
-> -	j->replay_journal_seq	= last_seq;
-> +	j->replay_journal_seq	= last_written_seq;
-> 	j->replay_journal_seq_end = cur_seq;
-> -	j->last_seq_ondisk	= last_seq;
-> -	j->flushed_seq_ondisk	= cur_seq - 1;
-> -	j->seq_ondisk		= cur_seq - 1;
-> -	j->pin.front		= last_seq;
-> +	j->last_seq_ondisk	= last_written_seq;
-> +	j->flushed_seq_ondisk	= last_seq;
-> +	j->seq_ondisk		= last_seq;
-> +	j->pin.front		= last_written_seq;
-> 	j->pin.back		= cur_seq;
-> -	atomic64_set(&j->seq, cur_seq - 1);
-> +	atomic64_set(&j->seq, last_seq);
->
-> 	fifo_for_each_entry_ptr(p, &j->pin, seq)
-> 		journal_pin_list_init(p, 1);
-> @@ -1256,7 +1256,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
-> 	}
->
-> 	if (!had_entries)
-> -		j->last_empty_seq = cur_seq;
-> +		j->last_empty_seq = last_seq;
->
-> 	spin_lock(&j->lock);
->
-> -- 
-> 2.34.1
->
->
+>   drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> index a59ae622f05e..d1ac2f44939c 100644
+> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> @@ -700,7 +700,7 @@ void rtl8723b_download_rsvd_page(struct adapter *padapter, u8 mstatus)
+>   		rtw_write8(padapter, REG_BCN_CTRL, val8);
+>   
+>   		/*  To make sure that if there exists an adapter which would like to send beacon. */
+> -		/*  If exists, the origianl value of 0x422[6] will be 1, we should check this to */
+> +		/*  If exists, the original value of 0x422[6] will be 1, we should check this to */
+>   		/*  prevent from setting 0x422[6] to 0 after download reserved page, or it will cause */
+>   		/*  the beacon cannot be sent by HW. */
+>   		/*  2010.06.23. Added by tynli. */
+> @@ -964,7 +964,7 @@ void rtl8723b_download_BTCoex_AP_mode_rsvd_page(struct adapter *padapter)
+>   	rtw_write8(padapter, REG_BCN_CTRL, val8);
+>   
+>   	/*  To make sure that if there exists an adapter which would like to send beacon. */
+> -	/*  If exists, the origianl value of 0x422[6] will be 1, we should check this to */
+> +	/*  If exists, the original value of 0x422[6] will be 1, we should check this to */
+>   	/*  prevent from setting 0x422[6] to 0 after download reserved page, or it will cause */
+>   	/*  the beacon cannot be sent by HW. */
+>   	/*  2010.06.23. Added by tynli. */
+
+Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
