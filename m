@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-191243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0A08D089C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27FC8D089E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FC12882F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E111F23F96
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0B61FF4;
-	Mon, 27 May 2024 16:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8E913A25E;
+	Mon, 27 May 2024 16:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHPfZ2mb"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsah57Hz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3184026AF2
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A911173451;
+	Mon, 27 May 2024 16:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827448; cv=none; b=dGBh6jcQr8cVhcZyoZhe7FNCEG4o/MQWNvpIZMLjmAG3UQJsHkJBZTcwQBEV+UYJrYJeONn4exfLyrHe9KOLW1mrFbJgo4ZVCE19dPN5986n2R5dLwtNoHkm0VSL0WIZ7tlO/na+xcMZ8h9liuaWPk4cRqDzsz8Von/0JdA/tlo=
+	t=1716827450; cv=none; b=fiPmSgsrB8f70B5gDfMwKdvw8/93sh8LZeel5T2TyZKKYcGykhIQ0MIT4u63GXPzqdmri59OI/SVmL0bO9hIsQvLQtfplfEpGSYr0ajIiiQz6xGPptCYLjipsCD3H2u852ZSqsFlx4dPk8s3E9qV4PRs5YMmU9wnM5N+3nLXgoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827448; c=relaxed/simple;
-	bh=R2+/Bqc+r5OlJN22CbB/Ce+CH8yiRz/LGoONUjCnr70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Or4PtKP7GFXvEN6lZkPC/lWmhH5Z93L0d+/f47hdwrlS6cgITwuhiN0+yIrjjzZybHsIp0UmD9tRUPWf5smw1xHZkrl2STQpZwyjdIrkapw8qJpNvaESZPhOESAz8ye9+3OoplovkMrsHcax+8tv5DbmsyO/UU9qqwB7Z9BhRYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHPfZ2mb; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62a087bc74bso32889217b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716827446; x=1717432246; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TooJjYc9+ZvZldvvOeHGVx6l39vdG5OagEP3ueKAv+g=;
-        b=mHPfZ2mbxNqerKtTu3vdgXIJ3o4cayKRQPPVD/27C28ROWOIqrcRngD6ksa56Cyjol
-         ciK0aQkuFIL4PtB+GEdQhn24BPj4vJhMIPqV4Q6IqTKgAPDYkcFLd7k4SRoXCsztEabP
-         cL1Eoo5PZJNN9CDG5/mCZcg65UqNM3mqVMg4JyN5XhmQRTLO/qHoQUOYXNpWhx3DsoAW
-         wcac+FYLhDgGBH45rPEgyXM1WGgSjVvQO+iYtj3CIvLm8uFcBvBLs9R0upnchcusDd2P
-         Bh1MDFgCrc/dMvw3pbSW6lEBT3P+VU+bW0Pzfgi/F9HpEvGM0ak+1YdtswM4Tzuh4L0G
-         ihww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716827446; x=1717432246;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TooJjYc9+ZvZldvvOeHGVx6l39vdG5OagEP3ueKAv+g=;
-        b=wFo5JO0hhVP21S/b17rOJtvJtswyoqQMogzA7TVQ+y+cvVtO81iSnII/x/uCNdtK9t
-         D9jOse7PDycOHrXl1DUe2EMSTZA+nUCoF8hihgH5Ofz4PvQo+Xlpxu6cnkXKhHakXbNl
-         79dxE743Zm5KFipYIYbGeUf8egeMmcaTqWAR9f4kDzR9Fua+9Yv2YvY546q6uy5ARM2r
-         mZ0+5gHqUtWBM/yg8j0SxmFV4DfXOg99dhsGwJi89RyQXsBmNqTRVUf2nLtBQSRbudzW
-         7KI6wun2S4WdjIr7UnBEqU6ZAjdm7UpDlvJhXCN4nuSYRwyGiNzK4MgTtD5oD/bAkrIj
-         G9fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoNUTST7VsO1v7wDV8jGAcCesaTFHHyb0FUNjbWJqaJ+OkKEE6tkInAb0Xuf+YqPMdB/qvo18HGCGRJbSL5W/AMTEqvgpHyJxqZStu
-X-Gm-Message-State: AOJu0YwcVK21H4faHBaoUAcHnLi60zsLda7dOyHZOWrtkuTNzR41TTLw
-	i2Kmcc175cbkW4oW0ObnO//atJnK75UGu5qdr3q98wRNTPQV2rbANuFkeC2j3SFwZXadIwjk0mR
-	UQfWKCWaYp2OFPRNwWNHQ7qmiRPc=
-X-Google-Smtp-Source: AGHT+IEM4bi95EaTV8h1FgKgrzX448W7L+5D5l7ZUOFNS+/Ko7+gOTIRnKVdNXvixhChnUcRfqjaRN0leGF0t/i2Sxw=
-X-Received: by 2002:a81:4ed1:0:b0:622:ccd5:3fa1 with SMTP id
- 00721157ae682-62a08d8871fmr100295777b3.12.1716827446031; Mon, 27 May 2024
- 09:30:46 -0700 (PDT)
+	s=arc-20240116; t=1716827450; c=relaxed/simple;
+	bh=b7bgwRLi1QVwtqQdf6LMJT1yHV4WWN3TjLr0JQuI8D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFLqWg1tiWU98GIrAASvLv6l8Y4Ht8MTRTrZ7YKfVZR60hrHRCrM5ASX/tXql8Wg1ZxDLmgh31VuVzN5B87c5SaZMNV+TdXm2Al1xzNejiKUmwNLVAXiAJYu3PqGtRXfvA0mLvbckkDU2NO0oNBXYIdoxeeTAkVsElV0BqA7MzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsah57Hz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6253DC32789;
+	Mon, 27 May 2024 16:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716827450;
+	bh=b7bgwRLi1QVwtqQdf6LMJT1yHV4WWN3TjLr0JQuI8D4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bsah57HzN2qYj+/na64i4iC3vUpjaM41VXU8sc/M0mbP0oAFMooXrV+WgGVpsRGYj
+	 0vCjreZlhE0gWOX3PhPgR/iBpZ9he7OM3vDiaOcvjsyBbSl3NF/poHCZyOVYps5HOj
+	 Glm8EOWt2xC2dlB4den79sJcQ9CRXAku5dSu85Re+KpcxRJIujO3Bu7o+URc+qtEyi
+	 CtKMC9hSingpfKquPSfHqM0byf+Ipos8+yUmeQCn4cHXbMsRZtD09lFPPkFacw1EYs
+	 FAi5MGHw/E5fxfMB97YeVtfHvoA3kT898px8TnsxMGhiiebyCOkqfePOVdJQ6jL6ik
+	 eZZxJXhd2OdGQ==
+Date: Mon, 27 May 2024 17:30:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: arthur.becker@sentec.com
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: iio: light: add VEML6040 RGBW-LS
+ bindings
+Message-ID: <20240527-effort-hungry-c7bbb0b0e36b@spud>
+References: <20240527-veml6040-v3-0-6f3bbfd42960@sentec.com>
+ <20240527-veml6040-v3-2-6f3bbfd42960@sentec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527142311.3053-1-mario.limonciello@amd.com>
-In-Reply-To: <20240527142311.3053-1-mario.limonciello@amd.com>
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-Date: Mon, 27 May 2024 17:30:34 +0100
-Message-ID: <CAP-bSRadDh0=WPepQUC3QhZf5x6Y1DdDT=qcEGwRrHXkOD8zmw@mail.gmail.com>
-Subject: Re: [PATCH] drm/client: Detect when ACPI lid is closed during initialization
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1Iu929YBt0ECJpdr"
+Content-Disposition: inline
+In-Reply-To: <20240527-veml6040-v3-2-6f3bbfd42960@sentec.com>
 
-On Mon, 27 May 2024 at 15:23, Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> If the lid on a laptop is closed when eDP connectors are populated
-> then it remains enabled when the initial framebuffer configuration
-> is built.
->
-> When creating the initial framebuffer configuration detect the ACPI
-> lid status and if it's closed disable any eDP connectors.
->
-> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/gpu/drm/drm_client_modeset.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
 
-Thanks. Works for me.
-Note that I tested against mainline commit f0cd69b8cca6 due to
-regression https://lore.kernel.org/all/CABXGCsN1z2gj99zSdhQWynpTXBymrqHejDfF8axxxoiZ_0g_-g@mail.gmail.com/
+--1Iu929YBt0ECJpdr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, May 27, 2024 at 05:12:09PM +0200, Arthur Becker via B4 Relay wrote:
+> From: Arthur Becker <arthur.becker@sentec.com>
+>=20
+> Device tree bindings for the vishay VEML6040 RGBW light sensor iio
+> driver
+>=20
+> Signed-off-by: Arthur Becker <arthur.becker@sentec.com>
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--1Iu929YBt0ECJpdr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlS1NgAKCRB4tDGHoIJi
+0gb8APwJWEHJYeTg86kAgqTRwFhNoJZO6TLLYpvDKkohxiOn7gEAsJTbrGISCElz
+x0wNOXCDMjotKoDKzFrLEay2Y4tZEQ4=
+=GyS3
+-----END PGP SIGNATURE-----
+
+--1Iu929YBt0ECJpdr--
 
