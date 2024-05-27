@@ -1,170 +1,135 @@
-Return-Path: <linux-kernel+bounces-190165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E268CFA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:49:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB688CFA52
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0D71F2119D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCF11F21831
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FDD3FB9F;
-	Mon, 27 May 2024 07:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49692E40D;
+	Mon, 27 May 2024 07:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="tnoW2b8c"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z29yhp09"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C638E2E40E;
-	Mon, 27 May 2024 07:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796091; cv=pass; b=A//MkmnD1A+qOLgVFot7YMq9bJJFu8SMwH3Cn36vmWGx7GYOEAWhucyIqBfbve+WMkP/YsKz7LlLxoCR43Xl5uUrxfu1xd6QoxaXH3xSh3E2nX33P7+H5caBrbuXawAdER4mhA8EJ52Ft91gjf6qNjQz4fCqCWV/VxEWeIhwNZU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796091; c=relaxed/simple;
-	bh=keh5W7U3dzsEif6ksUmuqn4x55o5x9L/8HfBAVTKtxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+xJwJO79JJLhVjmTP62k1C5ibd263pZKLdvK6tyCujG+xx+yLlC6dYxsKsq/XcHkSJC+ebjdqq95jPHzw6oFmT+TrhwkTrxGCZUkSKaBUDsEViStK4bmeRWYd1mM7W9yMVagnyt+RkcAGjNLG5mp8FfDoqNBA8x6gF//1kmrJw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=tnoW2b8c; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4VnnnK2tg0z49Pyk;
-	Mon, 27 May 2024 10:48:05 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1716796085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hfBVpEPdEi/Ida+CmoF5UCxGqdboIgH47sljlECVuIs=;
-	b=tnoW2b8cLuTt8UKe7iN88sAtOeI9i9K2vjv+XJXvAFA0t+4SNnMdmEDOUNijRlBK/NsJ0h
-	uUzotMwRH1EZz/t8mO9ijz+S/7DK39MDXNuajhj2/pVrcw1FbQUFm1efCA+znDx5VUrQ2G
-	/Ckj+uOBdsRD3W7SQvwbU0OYwhqhDqe53nmjNs0kOUr4FWUBosMN3z2vTKFzjX5w+jA9eZ
-	WjVAdqkt78csYJcQauRuyhlh/Q511gsxo/tBueLhJmJme3coht+pvaDT57d6gx2qOO600D
-	T51rObGuRPWqyN6gkM7ngnh1VolzFWzQmgALHO7NLhTQyoHuH+dGj4MJrkem8A==
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1716796085; a=rsa-sha256;
-	cv=none;
-	b=b7Jkeh351bThPsf2iZpujuWgqn01uSvebMT9Sm79zb6zO7o8ADi4MBXktkYRJisQ81cmBN
-	2yNpNO/MogsTWcb7ojhfw2aa1VPohy94WOHYCRKyBB1KAQR72kJhaGleppzN90qKjyKMpt
-	EVxKZdZkxXGzWTPnxj0+JCR2MU6D576G7EjSK5lFTNAE+y1xCXLlMS7eV8tYP+T8zU6qkg
-	sFHZ2GDoqq5qP+lEjLsZYFHpOCLlSCFV2FyDhxKx2cBXLLtLrdvXWAyU2lBh/SE9Zhm7Sg
-	vWJge4WryhijygAjn/gfO72Hox/pBZSo66UdKAdAotNxXniwyKMww1XdmUamHg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1716796085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hfBVpEPdEi/Ida+CmoF5UCxGqdboIgH47sljlECVuIs=;
-	b=Mj58O8gZ3WhdDHzNm1zQxgpvo0+yrIqPafXCEkJnp4xgLIKznp8Mb05Wq7bBUv/2h5M1sz
-	XQFR+g2iuFKzKDEQ9i6hxOWi5GYpK1zkeG/7IE6Kc3jnx1qba0BxVqgYpYTNAzCeSsAxYp
-	YWkVcQ+mmbFshgC0FGVJdeXuIYJz5acZb4S27vVG9mZ7rmEJCqJEsOrN37YU/CUVr8/mcp
-	92JWYZG9vhTQHJntmDhQhl0jBiEp6zK8npQYo17R71X3BLV25hkLzj931GxFE+q/tMgJLD
-	/kI+AdMiu8amxFplZLJ5xPosR65k7oNWFqs35AnZHEJbGLVHt4vAYu/gWPNYmA==
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 25730634C93;
-	Mon, 27 May 2024 10:45:10 +0300 (EEST)
-Date: Mon, 27 May 2024 07:45:09 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>, mchehab@kernel.org,
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hdegoede@redhat.com, laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
-Message-ID: <ZlQ6BV2sEw8PioBS@valkosipuli.retiisi.eu>
-References: <20240417133453.17406-1-sylvain.petinot@foss.st.com>
- <20240417133453.17406-3-sylvain.petinot@foss.st.com>
- <Zil1wiCcCdwZs5Df@valkosipuli.retiisi.eu>
- <d45a2ea1-bc2d-441a-b036-1da40290c6b3@foss.st.com>
- <c9b35dc4-6f52-48e2-8952-5a43c500f819@foss.st.com>
- <ZlQ2zymJguCipLMl@valkosipuli.retiisi.eu>
- <864dc1d3-2478-46a2-84a5-c7c51f96268f@foss.st.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5A010A0D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716795937; cv=none; b=MoBwej0UhZgCiDxh7NCh7Xc/OhrEfCM064/SxiX5mcNh/Oc9QFgEb9+BjiQXQhXzQaoOsecb2LRMR/Z5Ke9dDoi/yDWLtwkE03wU59QnPF6SYJegHLWMLPHapKZyL81Et3YZcmEBy41d81Rb/QiyoDVO/Lpj/orKlDNakZZLvyE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716795937; c=relaxed/simple;
+	bh=L25LeAJvksa9NHLEzSxruzChrK53a1cBjhUfyi0GPpI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W1FsKck+Q7BGy+139jzWBhP3GQ3tc0WWR8JqT/U2iCqp/9CeLy+342muWhR3JGzh6YoNWHo//aeCwmQTGQ5x/PK7jIOtqbIxaFqxFNS2/iqVi26nVjxVWGDQDaaUkxfMVywXyUF+0oWthoXXP/pHsARTZPTCvRSt0SRboL6mOko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z29yhp09; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3588cb76276so399090f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716795934; x=1717400734; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3W0IRzbYrdpGZO/IX0+cL20f8hz6Rtqdx3NFjQ6cU0=;
+        b=Z29yhp09xiVc6+Lpj9OvByrDJjANJ4nF8Kx45ea4z4lOTl4FMNl3J4I67jFiqer8m6
+         UYPeiSS4FDJ0Hc+8sn+fUxoJEJoEQFasrW6W4PGtYopUk1+KLu2UHns2rmVeftYGT0aH
+         Cnxb+o22ezB14mPpfNduj6U/5lftZhrf6bQ3fn4JL9zsXMHqbVE9CW/ntuorlECGKNDl
+         cR3SLgJC7K9AuTrlKzkGF4caX0IHKv7szpnkP0W4Q69QDSIWoYBbMD/ejlX8L/QcpHNR
+         7sKJdN4EzgW0KPWYu8PaadkvO5rIHBclW6LBY2ppIEvruK1sfLh8N99lsrZUiGMLzYy9
+         Bdsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716795934; x=1717400734;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r3W0IRzbYrdpGZO/IX0+cL20f8hz6Rtqdx3NFjQ6cU0=;
+        b=YojUnDNYnufZy9HBuuEukdAOY8pZZutjP0pEqOsDifvwvZF2fglfULdWwUB/60RSPN
+         zLwWN2H2YxlNws59JM8Qa7Us2WwOA8CNH9nF4uQ6EGyYL+s3NbO/M8FaUzaqxZ3aQHg9
+         05ZIvj1GTm7idoElVMj6GV2+OrcdnZD/ScibC3WJoxrkXgk94ZV4RI8yYDaqN4BghYLK
+         2h4bOUq2xfhzsy2Gv/hvJKz4RbdfiuIcHjoX3TuakuuoRPXBZHYa/i6CnIDKqqh9kRlU
+         6Viz96e75IqyzaZip3UH0sJobcqFoWHEU7IAAF+QXiM+BamfIWJHA7zHGFennorPOdyI
+         Al6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKwpVA4sV7qdHILQKCAYP76a/EgvZ0G2/qO79GT2Nx1YIvDUzZgZWD2eUcNPKLXqHsrUhTPXPVMaqc/tIJr0EpNMZqqYRkP3MpB18K
+X-Gm-Message-State: AOJu0YxqoGuicOeVMG9kKJwN6vG/DwA++f8KZzI6fhIbGvEp7gq6hwH8
+	Zew7PIyxUruf84RLfbuBUuY2MudGWRgKiCLkRkiXJko6baEQmqcQzyraVjypLRZ2RN/tfHU4fxO
+	8uUA=
+X-Google-Smtp-Source: AGHT+IEewCQaS2JXdMuRvuS5ujtjvCFY3WzcrznMhPgggMKCeN4AQiw2HzeSuItoWxarSft/mG7ZXg==
+X-Received: by 2002:adf:db49:0:b0:34c:600b:b016 with SMTP id ffacd0b85a97d-35506dc5898mr7269721f8f.27.1716795933614;
+        Mon, 27 May 2024 00:45:33 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7d96fsm8293353f8f.12.2024.05.27.00.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 00:45:33 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/2] usb: typec-mux: broadcast typec state to next mux for
+ ptn36502 & nb7vpq904m retimers
+Date: Mon, 27 May 2024 09:45:28 +0200
+Message-Id: <20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <864dc1d3-2478-46a2-84a5-c7c51f96268f@foss.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABg6VGYC/x3NQQ7CIBBA0as0s3YSRCmNVzEuKEx1FhQyg6ZJ0
+ 7uXuHyb/3dQEiaFx7CD0I+Vy9pxvQwQP2F9E3LqBmvs3TjrsZXKETVPmzP4rdqEQkahxpkEZyk
+ hxaANc0mEfnTW+HEK8bZAT1ahhbf/7vk6jhMC9fVpfgAAAA==
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+ Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1122;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=L25LeAJvksa9NHLEzSxruzChrK53a1cBjhUfyi0GPpI=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmVDobN1E65KFEsCOFpO948mxbN9rt74AlIlIzWnLp
+ /r7tDV2JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZlQ6GwAKCRB33NvayMhJ0eemEA
+ CjdAr8cskG36GuOGrPp/Z5zZ3qN3RkJjH27XcPdWxw/+LKZNoSpyD2nxSDXXgIHn2mEPAOwNUy5dO1
+ LPoGPM8xdng3JK7/dt++JVHJLPR4EH4gw827tWHsFTf6y6GIiZhPqQZcsSdQ+N8Y/4bp/6SUORE2Uo
+ eYMebd1p8JX23qUfDJ/LKh42iB2fJF06wDCuuoCipDYvrUnmRCGHkGMhrProSsm65E5olPIj9GR/wL
+ djUx+2E0xvjHN/SXy9Oz1NAelstFXvBFoLtLiLXH2QwAWWDkoWrzemJcxBWldqvjq7xL+d/y6kIYhp
+ G4pavDoPm1aSoLa7lz/eX1ejryvkkS1kSssb0jao+CVaAnmyxuM96hA2eWEv6+mQg43bXR9HvIaNSr
+ q3vhbOnnvmp24+cDIhCqtdWMKw8NRGp3cd9q6cHUNqAYx8DnFJyw5VwOCI+UYCWCGlZ2GRKhpYPOOG
+ WUf2gwttxXMzpWHlViZN8yLpKeO4hMMgLkx9KKyZNAkpaF3NxbI3IfG4jtUG47maMPt5dXVtsckR5W
+ jO+ysITtwnIXD8yz7SEuFaRNK2fd+zf1PMNNqyHewD4ZKU7QWlMOb/A+SUsC0jwNWDteGJPZ/JY8hb
+ x5UVZyq2LDlzPdgylzV+rEGbai0fRhpXYG5PRHucYqWcWsW4foII+mODNJQA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi Benjamin,
+In the Type-C graph, a retimer is usually in between the USB-C
+connector and the USB3/DP combo PHY, and this PHY also requires the
+USB-C mode events to properly set-up the SuperSpeed Lanes functions
+to setup USB3-only, USB3 + DP Altmode or DP Altmode only on the 4 lanes.
 
-On Mon, May 27, 2024 at 09:44:15AM +0200, Benjamin Mugnier wrote:
-> Hi Sakari,
-> 
-> On 5/27/24 09:31, Sakari Ailus wrote:
-> > Hi Benjamin,
-> > 
-> > On Mon, May 13, 2024 at 03:37:25PM +0200, Benjamin Mugnier wrote:
-> >>>>> +static int vd56g3_read_expo_cluster(struct vd56g3 *sensor, bool force_cur_val)
-> >>>>> +{
-> >>>>> +	u64 exposure = 0;
-> >>>>> +	u64 again = 0;
-> >>>>> +	u64 dgain = 0;
-> >>>>
-> >>>> Do you need the assignments? The values are assigned by cci_read() below,
-> >>>> right?
-> >>>
-> >>> Well initially, I didn't have those assignments and some checker
-> >>> complains (Honestly I didn't investigate the warning).
-> >>> I will double check and see if they are necessary.
-> >>>
-> >>
-> >> Since I have smatch ready, I ran it without these initialization against
-> >> the latest media tree. I got these :
-> >>
-> >> drivers/media/i2c/st-vd56g3.c:403 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'exposure'.
-> >> drivers/media/i2c/st-vd56g3.c:404 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'again'.
-> >> drivers/media/i2c/st-vd56g3.c:405 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'dgain'.
-> >> drivers/media/i2c/st-vd56g3.c:407 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'exposure'.
-> >> drivers/media/i2c/st-vd56g3.c:408 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'again'.
-> >> drivers/media/i2c/st-vd56g3.c:409 vd56g3_read_expo_cluster() error:
-> >> uninitialized symbol 'dgain'.
-> >>
-> >> cci_read() is indeed not modifying its 'var' argument in the default
-> >> case of the switch [1]. Spawning these errors.
-> >> Adding a '*val = 0' in the default case would also fix it, but will
-> >> change the function behavior.
-> > 
-> > I think I'd add the assignment to cci_read(). This isn't the only driver
-> > that's affected. In the best case smatch would be fixed to figure this out.
-> > 
-> > Any thoughts?
-> 
-> IMHO adding the assignment to cci_read() is the cleanest way to handle it.
+Update the nb7vpq904m & ptn36502 retimers to get an optional type-c mux
+on the next endpoint, and broadcast the received mode to it.
 
-A fix in smatch would be the best in my opinion as it could catch the use
-of the value in case of an error. But it's not going to be a short term
-solution, hence I'd also assign *val to 0 now.
+This makes it possible to support 4-lanes DP altmode on Qualcomm platforms.
 
-> 
-> > 
-> > Cc also Hans and Laurent.
-> > 
-> 
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (2):
+      usb: typec-mux: ptn36502: broadcast typec state to next mux
+      usb: typec-mux: nb7vpq904m: broadcast typec state to next mux
 
+ drivers/usb/typec/mux/nb7vpq904m.c | 29 +++++++++++++++++++++++++++--
+ drivers/usb/typec/mux/ptn36502.c   | 33 ++++++++++++++++++++++++++++++---
+ 2 files changed, 57 insertions(+), 5 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240527-topic-sm8x50-upstream-retimer-broadcast-mode-76520768ac3f
+
+Best regards,
 -- 
-Regards,
+Neil Armstrong <neil.armstrong@linaro.org>
 
-Sakari Ailus
 
