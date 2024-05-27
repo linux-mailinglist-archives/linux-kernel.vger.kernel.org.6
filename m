@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-190118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8778CF9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:05:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB8E8CF9B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74512814F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:05:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7409B20DC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EC917BB6;
-	Mon, 27 May 2024 07:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5988D17996;
+	Mon, 27 May 2024 07:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxMgO9TZ"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TbfDjzsr"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A45A1426C;
-	Mon, 27 May 2024 07:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C948168A9
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716793541; cv=none; b=VCcIc3sDaWzMDfy135DD/4tIwMpXWjU5e9enAe1M7pzxDzl1NOxC+Xm+vs4mfBwVE3FWIqS2TwRWYk1akIALnm0cLQcc0Ukmg3Ss7y+CPr4tjpzKemVzpF/rSCKBXvFgpenXAHMgULoguK1o0Qs3Tau7hAxJrcayTciI7++SJvw=
+	t=1716793589; cv=none; b=TuQN/riw+ch9nuAVEEvxTmna5bMAtd8xPUjEfDL/aFnkOfXX+lWTcIaRn/KK4qg4uE4S1OYnT/Q4oyhlqC6ta63fjp4ftI4EVL5yLX7rJSV33B5SqY/aaMEmOm1+eDhqcQlm5mBtXs+jRPcGhA/OoGZt2exXOLr8qjuJdm2GRhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716793541; c=relaxed/simple;
-	bh=waWFDIqHc6f9ZTq0mX02kYkS8bmFi6Uo0RTqroajRbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=PgxE0BogmOyMuwNIkbRDe73xOoCz5R1p0BREO3qFET20r5DewJ8bsf3pbjKV9IRvZxfD3YNgEzeizzKl87xd+W3ngviREAJMorMDEgzTJ5ksSYB3b14Jp4BFiOmE7AOG/R0adscRSFpgMLFi1kxJqqQu0JFndf3bgVeWN0HTm68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxMgO9TZ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso3170148a12.1;
-        Mon, 27 May 2024 00:05:39 -0700 (PDT)
+	s=arc-20240116; t=1716793589; c=relaxed/simple;
+	bh=vD/fI/si68FnOskGxoweJMK9vp7Gw+FaLiLMBcj+XIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZ3kE/RgyKuzx7KIhAXpvTXNg6k/XaJRQQ4vIXey1YQ62I5q6xiCymgl2XaJFk9hNP+ur6SaAhGfgSjUJvkh517POdNKNM49UAzfqO+/D8kLoud2NxoM63UUAyGA2bvG+XnBZlXHZ8PnKuxyMmF0EtPSZYlOl29c4AI+qEBnK/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TbfDjzsr; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a609dd3fso880635466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716793537; x=1717398337; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cuwKjSLQaKbx6in6zzTevv0Oz4E78rNc3iEadRtQmSM=;
-        b=ZxMgO9TZhuSpieak+wq9ORzUEnw6IkTs4pgtL5Mzb7riTIydbDO7IQajCi8d564+0F
-         HkHJfgUG3xwsmpYsiTxEr0MvdHy5OiMwrq9zln8JtkmxQ9p8faIl12eQakef8Hjmk9B1
-         Vzny3ZZasJZJju9tRGPLdIEtRLNdg5nEweYO9DIWH3Oc9kJHkqiCwAl4ezpeOKKDqVaN
-         BixHtQB9HBue2/7zIrz5O9ccyYMxZUiwsIyrBDor3SvvFvn7EJYtuw2FcJnq18MlHVM9
-         cStsk+HsDHBN8TkzIOyzUdyw7FsJFLPbjoE2kgSMtwZmK1ZSH/wj977RX/8jHVWMUmGu
-         vQqg==
+        d=linaro.org; s=google; t=1716793586; x=1717398386; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9iiWAsBL4sUAAyXN1wW7ThRR/ve5l1Ot65zaK9TenVg=;
+        b=TbfDjzsrsw4GRTuu7QPj+vyd6u9vkxRR6RLRbas+yr11UjySiarwsiz98XEuwWab3G
+         Aey2XYrBAcr6ox5QIPwW8tgf95sbqsALQc/FC4ii9NmHtb8ulY4KIz/yetJx+gKZFPoL
+         J5idHrSnJiZcBZCryAeW5Hn9PAlYUKpE27eDIp5eYPAwymbvbFeRyOavmC9QimuIUOjt
+         AGi4kA3w8uK2k/XoHsf6TEcYnOypq2Q+/BZwrSXVzRpo9jSfcOJxSJXH7Oz4XXZML236
+         sbBxTKs6AMqcUZ1BZ8mgqvvglqB7GGynERAjCbirN+HrKbUK2qanHoZOOs/4pYkvva7d
+         Pj1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716793537; x=1717398337;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cuwKjSLQaKbx6in6zzTevv0Oz4E78rNc3iEadRtQmSM=;
-        b=dY43YWhwlYZCXhiCdV6VQg79Y2cj/NRyuc5S2W30dpQCe2KBI94RovFUMKXeal9sld
-         vC6MxXIPdQHi/t5xTqAYGF5SffecPaakrBvPqo6BpTVqMzsz4PcUnhT/MMMETjYRcNWj
-         /qoB64lojOnehYbTIPahjpmKDAQgAtus+QVqkvl7gDLw6Fy+VZC4fA1XCo6ZWpwdBjO2
-         Val/vTlIsxD/gOohqotgT0iufOrxFH0QohsHvdHdi5gpr+OjtguwmTx55r/XHzw1GVgk
-         ADm+o+8L7dWiroPQOzeBNXEwWVA41g8TBVQJaI6AiESVY7jTlJqo1mPsE0aRcwJaXtQc
-         WnHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfBsQ0x4WIl8YHje8I9whIgWWJLTm82GEjQA77t11Zh3jbhPr8NDDJ9kwZFhjFNUENZ+dScnUaeFFgocpo+a+M3xKNheXT//2ElWNDsPIyLSPqRED5wY0ZHt4IGa613MoC1JqIkBHxKuF+vR7X8YZxxgkZg2FIK7F69w4EMPve4cIjsg==
-X-Gm-Message-State: AOJu0YxSuDeL1CRhGHrHxjuW9VekvTKsCXB++EFpqY2FJ9jDvAHvbXKD
-	8dXI6b5OuNmhbIW0sP+Dy7LlKjwrGCmyT+9wLxAslLCMOBEmNm3NXj1MbfaKrqKHjUlkP/w6Qx1
-	bQif130VEwEk7gV6RKVjvbvR2UXU=
-X-Google-Smtp-Source: AGHT+IGeYBYP/clZS12weWp/XG22q1opoNsiXc6Csg6HUYMQMqdCn6+EKVCyXGWIFI5qoXT55hslsI6cypKv/6/WXvE=
-X-Received: by 2002:a50:d716:0:b0:578:c168:e513 with SMTP id
- 4fb4d7f45d1cf-578c168e634mr4135861a12.3.1716793537404; Mon, 27 May 2024
- 00:05:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716793586; x=1717398386;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9iiWAsBL4sUAAyXN1wW7ThRR/ve5l1Ot65zaK9TenVg=;
+        b=dnzQvw0kapalZC+j7nJfUH5ZjnAuAhl+YNsDgQBpdE2HgQORTYyBhCmNyx2zRHNH5o
+         99qj4HjtdL3hMfg2PJtZ2eGZzfphRVP8R3BdvnM22Kyms/hOQ7X+QKig7xjw/CZA6bqc
+         71ABpXvRUa5k2hlShN7igAvs2mjqpa+MnRrL8XUj8qd0zvpnghWIv0PzdyuF/WFOlu86
+         2IWPkSjExim0Ijv5HeLJ81O5rNBdBmJzoedPMS/73Bm0KNEVXKYwQIqMKcUI6nuadrVL
+         dG0M3A60Yud0fuuzFjOybKDpZyWKqUl7VH0FqfPUPDRQBk9WJ5wpImdqoJhmS24IFhht
+         p1tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVy/GKtuz6XlI1dV4DoZ/rx1H1OqU6vRL6nFxSayvvdII36LuIPJsK56g0Mzh0BnCKWDYDdFCYmlLN6vhChKonkGcHgD/y4zUHi3zKi
+X-Gm-Message-State: AOJu0Yxm1KQN+tccZtzitC8lL6BKONgTtYoLCL2IsIYhm5ZH6AqMX4IO
+	JwC7XlycAMfs8ZUU25Fj1navpAXr9txyQKuAOF51WhfcCDQks5Jlr5qsqvWugRU=
+X-Google-Smtp-Source: AGHT+IHyaeq4wv1RvLBXozqFAsVhATzJUUONek4ppAnjG7f+qKPIvRzF6NbSHVgqGiOXrsqQqZ6oKw==
+X-Received: by 2002:a17:906:459:b0:a5a:8896:73de with SMTP id a640c23a62f3a-a623e9d51f2mr923081066b.26.1716793586266;
+        Mon, 27 May 2024 00:06:26 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc514f4sm457491966b.108.2024.05.27.00.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 00:06:26 -0700 (PDT)
+Date: Mon, 27 May 2024 10:06:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+	Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com
+Subject: Re: [PATCH] staging: rtl8712: remove unnecessary alignment of
+ pxmitpriv->pxmitbuf
+Message-ID: <92412c38-8fb0-4a81-9205-7735ae21459c@moroto.mountain>
+References: <20240525073229.4144612-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514041223.800811-1-foxhoundsk.tw@gmail.com>
-In-Reply-To: <20240514041223.800811-1-foxhoundsk.tw@gmail.com>
-From: Huichun Feng <foxhoundsk.tw@gmail.com>
-Date: Mon, 27 May 2024 15:05:26 +0800
-Message-ID: <CAFbkdV175LdW_r04DhhG7pkE4xs9W5305Unk6RK06SiudvnzFQ@mail.gmail.com>
-Subject: Re: [PATCH] docs: gpio: prefer pread(2) for interrupt reading
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240525073229.4144612-1-namcao@linutronix.de>
 
-Kindly ping.
+On Sat, May 25, 2024 at 09:32:29AM +0200, Nam Cao wrote:
+> This driver wants pxmitpriv->pxmitbuf to be 4-byte aligned. This is ensured
+> by allocating 4 more bytes than required with kmalloc(), then do the
+> p = p + 4 - (p & 3) trick to make sure the pointer is 4-byte aligned.
+> 
+> This is unnecessary. Pointers from kmalloc() are already at least
+> 8-byte-aligned.
+> 
+> Remove this alignment trick to simplify the code, and also to stop wasting
+> 4 extra bytes of dynamic memory allocator.
+> 
+> This also gets rid of a (false) warning from kmemleak. This 4-byte-aligned
+> buffer is used to store pointers from kmalloc(). For 64-bit platforms,
+> pointer size is 8 bytes and kmemleak only scans for pointers in 8-byte
+> blocks, thus it misses the pointers stored in this 4-byte-aligned buffer
+> and thinks that these pointers have been leaked. This is just a false
+> warning, not a real problem. But still, it would be nice to get rid of
+> these warnings.
 
-Sorry that the last ping wasn't sent in plain text.
+Are you sure it's a false positive?  I've always wondered what happens
+when you do:
 
+	p = kmalloc();
+	kfree((char *)p + 4);
 
-Huichun Feng <foxhoundsk.tw@gmail.com> =E6=96=BC 2024=E5=B9=B45=E6=9C=8814=
-=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=8812:12=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> In legacy sysfs GPIO, when using poll(2) on the sysfs GPIO value for
-> state change awaiting, a subsequent read(2) is required for consuming
-> the event, which the doc recommends the use of lseek(2) or
-> close-and-reopen to reset the file offset afterwards.
->
-> The recommendations however, require at least 2 syscalls to consume
-> the event. Gladly, use of pread(2) require only 1 syscall for the
-> consumption. Let's advertise this usage by prioritizing its placement.
->
-> Signed-off-by: Huichun Feng <foxhoundsk.tw@gmail.com>
-> ---
->  Documentation/driver-api/gpio/legacy.rst   | 6 ++++--
->  Documentation/userspace-api/gpio/sysfs.rst | 7 ++++---
->  2 files changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/dri=
-ver-api/gpio/legacy.rst
-> index b6505914791c..c1a083444b0c 100644
-> --- a/Documentation/driver-api/gpio/legacy.rst
-> +++ b/Documentation/driver-api/gpio/legacy.rst
-> @@ -648,8 +648,10 @@ and have the following read/write attributes:
->                 poll(2) will return whenever the interrupt was triggered.=
- If
->                 you use poll(2), set the events POLLPRI. If you use selec=
-t(2),
->                 set the file descriptor in exceptfds. After poll(2) retur=
-ns,
-> -               either lseek(2) to the beginning of the sysfs file and re=
-ad the
-> -               new value or close the file and re-open it to read the va=
-lue.
-> +               use pread(2) to read the value at offset zero. Alternativ=
-ely,
-> +               either lseek(2) to the beginning of the sysfs file and re=
-ad
-> +               the new value or close the file and re-open it to read th=
-e
-> +               value.
->
->         "edge" ... reads as either "none", "rising", "falling", or
->                 "both". Write these strings to select the signal edge(s)
-> diff --git a/Documentation/userspace-api/gpio/sysfs.rst b/Documentation/u=
-serspace-api/gpio/sysfs.rst
-> index 116921048b18..bd64896de91a 100644
-> --- a/Documentation/userspace-api/gpio/sysfs.rst
-> +++ b/Documentation/userspace-api/gpio/sysfs.rst
-> @@ -97,9 +97,10 @@ and have the following read/write attributes:
->                 poll(2) will return whenever the interrupt was triggered.=
- If
->                 you use poll(2), set the events POLLPRI and POLLERR. If y=
-ou
->                 use select(2), set the file descriptor in exceptfds. Afte=
-r
-> -               poll(2) returns, either lseek(2) to the beginning of the =
-sysfs
-> -               file and read the new value or close the file and re-open=
- it
-> -               to read the value.
-> +               poll(2) returns, use pread(2) to read the value at offset
-> +               zero. Alternatively, either lseek(2) to the beginning of =
-the
-> +               sysfs file and read the new value or close the file and
-> +               re-open it to read the value.
->
->         "edge" ...
->                 reads as either "none", "rising", "falling", or
-> --
-> 2.34.1
->
+regards,
+dan carpenter
+
 
