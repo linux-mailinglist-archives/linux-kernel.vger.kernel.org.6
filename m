@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-191164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7531D8D077F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332D08D0796
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476DE283941
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC6F1F22294
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A359216D9CF;
-	Mon, 27 May 2024 15:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F339167277;
+	Mon, 27 May 2024 15:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLkf/YLC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PUTkJtv+"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E643116D9C1;
-	Mon, 27 May 2024 15:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC4E15F403;
+	Mon, 27 May 2024 15:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825454; cv=none; b=VJsPJBQ/NdGUmkcbWw/RffwpbtKzYXUiJbqgnaoW1DNADY1K7fD9S8xRRauGLVl/3MGQuDTKK+GOEQCCvaSMC61UjPmbS/4EAjXnOjOxAx445oiGh2WyBL0iuaLH81trdxHIPV3WlK0Vm1V6PxP9tpAFwNJOYJPFUqo8Ij0cNhw=
+	t=1716825478; cv=none; b=CPZ7Ryc/Lfir5ydAEsgd/+yKs0eeG7+7Mgc0AH/IPQpUg8aIkIb4rQSJ5h5RR8g67a+QAzImhQFft7jZ+IsjDQevCwcFDVW/oIevaTwvnETWpWNTGZW23esEWk5GG49Cs0LSeG32sSLnY+vfTJqsFg4BK2D78k4yz087wjnqMI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825454; c=relaxed/simple;
-	bh=pU0k4zj4MNdv7vYcsEMmXA75qhocy+uPOGELsKNHRv4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h5Ocham1AxoRJwhX0ALdTxd9aylyNRsoznhyB+/dPMih7VElWqkIeXKjOl2D4O+WE9ChfNOtlLvlgy5Sh7qZy2zfuUhjpp6npECB3qLLN13npkHnp7f96pYNM5J8MCmiosBnX/yNKb6raRfAtlV5CJdctHNt6ykswmG97+uIJ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLkf/YLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267F0C2BBFC;
-	Mon, 27 May 2024 15:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716825453;
-	bh=pU0k4zj4MNdv7vYcsEMmXA75qhocy+uPOGELsKNHRv4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pLkf/YLCTQHrLbHOnQ8UcrH1mEE+SjjrBOFCxKlkAyf6A8mw3qWLM6MNdopc9gNT6
-	 g9ERsQfzWqVqeH28Qw+dz1OPSgaHk5P8EaLQwxLBxhhSDd+avgwaU+ln8Dj7Wnb51M
-	 LG+FKi7gLBi9pEh4qu+PKQFv0XWwKdzCOiV9E90//xCy40QhhY2kWsG+Bp0AHit00l
-	 NCYv1kPtSmYS3SWNSKxp2rXgRFsJi7B2taAcqiaeW1ThPbpvX7uSDm1MAF/orLrSl9
-	 S15S4bP6n+CdsgPv0uH8fL/RYKLKum9F0PS9Cob0/L+ZtnoXcK+0KmhAjeyDopOkkt
-	 sj01cGGbJuoHw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Erico Nunes <nunes.erico@gmail.com>,
-	Qiang Yu <yuq825@gmail.com>,
-	Sasha Levin <sashal@kernel.org>,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	lima@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 05/11] drm/lima: mask irqs in timeout path before hard reset
-Date: Mon, 27 May 2024 11:56:42 -0400
-Message-ID: <20240527155710.3865826-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527155710.3865826-1-sashal@kernel.org>
-References: <20240527155710.3865826-1-sashal@kernel.org>
+	s=arc-20240116; t=1716825478; c=relaxed/simple;
+	bh=LyY89JJGjC8Y+DxaXq1cHlE/nuU3X/RNIGtC1yqhUhI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I5fZtjOlAibwg1RSKhXPaAlotrpGEvsSEs6qcNILhQoLk2btVRRYMt0o/XnjjHzWypnteuu/q9vQaq1Irq4d7yhOCZk2NuzsiV05bdJbN+rD4A9Rci5EFvO9PNQ6YwcMyMm/aqCuTjWI6knF3IWjF+OugN7kKY5moK+FbkR8i+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PUTkJtv+; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716825410; x=1717430210; i=markus.elfring@web.de;
+	bh=cCQzbMHV0uZw8ARZF6tyJxZsTWRc/buEbEqLjIXSnlw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PUTkJtv+17tmHPSwdj2hf899Cxz87JZtpAv6Jc/t460ErK6rIZ1XjrMEwjT/IL5e
+	 u6asEjjbaWV05EEJOrnLlJNLso+bKJ6JUhoe+vAQmYcyr1mOVJ9CmwVzJFYdsDjWk
+	 lhH7BRvhFBzVj6hnFHPSxBLuofy8FnxnuGCzKVh06VXSoykW9+Z5sNppeifyGBhS7
+	 Tbby0eXDkzEd3ur+rXCvlZhYwOhxY2j+kjNeQE+m/gaI7bzpQ3HVkzXeOYg+oIyfZ
+	 hv0kSHTDq7XWjQmMF+X+gAfIYHkN5y02reNDf+/pFuI1uzraU+ayvVz08dwXuor0H
+	 +gQ8lygtBMIj/W0VNQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1sa0Ai3q9J-016inV; Mon, 27
+ May 2024 17:56:50 +0200
+Message-ID: <aa58efd3-b502-4bed-8c84-e5d78da23fbe@web.de>
+Date: Mon, 27 May 2024 17:56:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.92
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Peng Fan <peng.fan@nxp.com>, soc@kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chester Lin <chester62515@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>,
+ Dvorkin Dmitry <dvorkin@tibbo.com>, Emil Renner Berthing <kernel@esmil.dk>,
+ Fabio Estevam <festevam@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ Hal Feng <hal.feng@starfivetech.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Jacky Bai <ping.bai@nxp.com>,
+ Jianlong Huang <jianlong.huang@starfivetech.com>,
+ Joel Stanley <joel@jms.id.au>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Orson Zhai
+ <orsonzhai@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Sean Wang <sean.wang@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>,
+ Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Viresh Kumar <vireshk@kernel.org>, Wells Lu <wellslutw@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
+ openbmc@lists.ozlabs.org, kernel@pengutronix.de,
+ Peng Fan <peng.fan@oss.nxp.com>
+References: <20240504-pinctrl-cleanup-v2-18-26c5f2dc1181@nxp.com>
+Subject: Re: [PATCH v2 18/20] pinctrl: freescale: mxs: Fix refcount of child
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-18-26c5f2dc1181@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fY28vuOzSy7D3myo+NUo+Q8h4MAB+DMYH6x54XY9zacr23bFm3Z
+ XEU1mqywgExmQK1yZjuU6En9jXs1HgcwzsaQZ+4suTC5BPEjIf/Fg4o0HdX3AuRpQZI2yac
+ KrkniKWThKnQbs96+yLl/Dm5E5NsImhOyFs1ksUAetHBWVW2WfIWoOdGSaoQFZRJLEXutYy
+ iCHwBxLqQsK9Mq+39k2DQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TjeN7uyFccs=;bjTTRHq6gIBTOMFXSFUogBWSZuQ
+ ZTwgZq2VnppV1aZlnrDYMmOmytXyq0JrjEzIfy/yH2myRvZFwVxrMpYgtVdN++fuf8ainJk/t
+ uFkTD8huhpK+v/6sd6lXCGtTOMoxBExDvHrzfiIvMwNnj5vJaD78bXrOpQIviBkrbo/dpouOC
+ Ln7QFnEpQNN9tfIRGg8gaddFRITCsPb8eIY2ZjqdGWqcC0mpb+GXVonl0LzMFBCnUIrGNucUB
+ JyF0gcU5WkAg6RJMxI6bQbphTn5At4z7kJpzYsMNnHFABhVCUal+gm0247pr1mpjl/KiGECTR
+ XNTX442NdkykPvhiMNWp17M35HW0J6oLENbsSL8PyhGQHAW5h5EnpFB5SuC+MkmcW7VQwxd36
+ lCdpZmXrsZsRJ7AbJhptgf/dByjHu/LOLAj4+ethb/xC2SLDH84JLTDzzYCw43EzHk/09K8p9
+ cDEpfpl8+VPFN35SSlqs/3lTQxU1UurqQF96DxIJCZdCGRE3icPsCoTwZMOJqDYJkYsmztQRH
+ YW541Ftvhar9wZSgE19Bcj1s0L3HXu9Xp3pkz7IcX+lrc7RPJuNoPC+xc48ucMhoGmNSMI5WK
+ RVp1WSoLoJahSt7/mjjyxqyly6XzUtnKE6um1tWMAR0vojK8hQcOOL84UbAmXM7tbS+2QyuCj
+ LkzuEZ/KIlY89jP9+dNMuuSCCwKeQJA7ykttwUV0aQte1rS7POYfJSX2aeTAa8Z7rWLzt7kHc
+ AmtJvjHPIr4iMol58kTZo18kQbOqJQsi9qx7qS9pObTVMxyOiWt4lPdDW0vYOWO4MOmC4QlIy
+ k96VHg44SU3OMjnGBpPp4v6EScAmUEUHJaYg/CdI/NGc8=
 
-From: Erico Nunes <nunes.erico@gmail.com>
+How do you think about to use the summary phrase =E2=80=9CFix reference co=
+unting for children in mxs_pinctrl_probe_dt()=E2=80=9D?
 
-[ Upstream commit a421cc7a6a001b70415aa4f66024fa6178885a14 ]
 
-There is a race condition in which a rendering job might take just long
-enough to trigger the drm sched job timeout handler but also still
-complete before the hard reset is done by the timeout handler.
-This runs into race conditions not expected by the timeout handler.
-In some very specific cases it currently may result in a refcount
-imbalance on lima_pm_idle, with a stack dump such as:
+=E2=80=A6
+> of_get_next_child() will increase refcount =E2=80=A6
 
-[10136.669170] WARNING: CPU: 0 PID: 0 at drivers/gpu/drm/lima/lima_devfreq.c:205 lima_devfreq_record_idle+0xa0/0xb0
-..
-[10136.669459] pc : lima_devfreq_record_idle+0xa0/0xb0
-..
-[10136.669628] Call trace:
-[10136.669634]  lima_devfreq_record_idle+0xa0/0xb0
-[10136.669646]  lima_sched_pipe_task_done+0x5c/0xb0
-[10136.669656]  lima_gp_irq_handler+0xa8/0x120
-[10136.669666]  __handle_irq_event_percpu+0x48/0x160
-[10136.669679]  handle_irq_event+0x4c/0xc0
+                                    the reference counter?
 
-We can prevent that race condition entirely by masking the irqs at the
-beginning of the timeout handler, at which point we give up on waiting
-for that job entirely.
-The irqs will be enabled again at the next hard reset which is already
-done as a recovery by the timeout handler.
 
-Signed-off-by: Erico Nunes <nunes.erico@gmail.com>
-Reviewed-by: Qiang Yu <yuq825@gmail.com>
-Signed-off-by: Qiang Yu <yuq825@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20240405152951.1531555-4-nunes.erico@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/lima/lima_sched.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Per current implementation, 'child' will be override by
 
-diff --git a/drivers/gpu/drm/lima/lima_sched.c b/drivers/gpu/drm/lima/lima_sched.c
-index e82931712d8a2..9e836fad4a654 100644
---- a/drivers/gpu/drm/lima/lima_sched.c
-+++ b/drivers/gpu/drm/lima/lima_sched.c
-@@ -402,6 +402,13 @@ static enum drm_gpu_sched_stat lima_sched_timedout_job(struct drm_sched_job *job
- 	struct lima_sched_task *task = to_lima_task(job);
- 	struct lima_device *ldev = pipe->ldev;
- 
-+	/*
-+	 * The task might still finish while this timeout handler runs.
-+	 * To prevent a race condition on its completion, mask all irqs
-+	 * on the running core until the next hard reset completes.
-+	 */
-+	pipe->task_mask_irq(pipe);
-+
- 	if (!pipe->error)
- 		DRM_ERROR("lima job timeout\n");
- 
--- 
-2.43.0
+                                              overridden?
 
+
+> for_each_child_of_node(np, child), so use of_get_child_count to avoid
+> refcount leakage.
+
+Another wording suggestion:
+  for_each_child_of_node(np, child). Thus use an of_get_child_count() call
+  to avoid reference counting leakage.
+
+
+Regards,
+Markus
 
