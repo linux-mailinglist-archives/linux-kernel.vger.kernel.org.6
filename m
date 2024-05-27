@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-191122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539098D06F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D79C78D0696
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703781C211F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E591C22355
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C508C1667DA;
-	Mon, 27 May 2024 15:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF65261FF9;
+	Mon, 27 May 2024 15:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJYh+veD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I4v0fBz3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2OWIUhQr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D15F1667E3;
-	Mon, 27 May 2024 15:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2FD17E8E2;
+	Mon, 27 May 2024 15:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825182; cv=none; b=tM5oQYNnyhiRuHHijDMykjD7pXZHGM7eRaXJqbqDJxM67Xqr8QnDpSu1bp4d+p9ILvRPg6yN/MKZLXkKqBua2uVdwj7CM18gqeidYzMmdl2/RouHloQyit7KuKbSjJKfSpHn6jcDKWABPp8rGskGl+8KWWCJEKvC7GtcFXU5Xyk=
+	t=1716825088; cv=none; b=ZMapQBCGkFxJTnIge/3A0Wv6rOBJ3nN8nfsmq7OB/xkIgFkxKjKZvCWLiVHUhej9q+NZvfg5++MHypnqx1d8DZ+OvMkwQnsj2wrPf9HoWywIyXyH2A0u9tYPcQgqJjexr8JdxEiqNybB3qUC8l1UoYW95TI5fc5HChjXpSoKONg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825182; c=relaxed/simple;
-	bh=9O1/9N+pW9u9GQ2iwg/POokNTzd/48jaP6RProOYYSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SeaniQC3qv4hY306cBh7JtdneSeHn8i5k3rpIWxtScXlHjnXHbPk10N6WUaYyR4uxXQDTQk50gRduNHgSEa13Kz3rbq6/TyDsPAmcmkVe6M78VkrFZAFO6/3RCy6pOwANkeu0xOuRodo7tfYD44BUBh7S9zmZg/2IOpxIf44oaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJYh+veD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CEF2C4AF08;
-	Mon, 27 May 2024 15:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716825181;
-	bh=9O1/9N+pW9u9GQ2iwg/POokNTzd/48jaP6RProOYYSk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qJYh+veD6vhQBJz9+nLjnSnUhjjCUo3R/bMVErZj4rGep8SzcHVQ0zvQHU8BGhs9Q
-	 Y1b/aXM5KkZLPmfV1Ba/GE0tj8jiLSlUZv/MEbQINXAKAUVATOVztUNABUoFJ/x6w4
-	 leGK072Bf97OE6C4lbZ8K3rIM4Beg3EJDCX/8Qn0ubULicReqEo4vo5roKHjAfRzdd
-	 FE5hJpoxuD4B1neS6L/McWzVM4Ih+agU+frnTsI4e62AZbEqvfDuJbO/1ENtYlqT2U
-	 XPYWTSIq+34q++MNIw6IsdiBvnuJbxjU/OMMCWeQ+qFmmhxt8NTrWrH9l/YvHuCtAa
-	 MrcqBHAeojnXw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ben Fradella <bfradell@netapp.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Klara Modin <klarasmodin@gmail.com>,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sasha Levin <sashal@kernel.org>,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 23/23] platform/x86: p2sb: Don't init until unassigned resources have been assigned
-Date: Mon, 27 May 2024 11:50:24 -0400
-Message-ID: <20240527155123.3863983-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527155123.3863983-1-sashal@kernel.org>
-References: <20240527155123.3863983-1-sashal@kernel.org>
+	s=arc-20240116; t=1716825088; c=relaxed/simple;
+	bh=6i4gd8J4KRT2ZQgVgP185Z+O7p9xL8wu8xsohxPyeKE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ItXQE/X3kprV177f6u5VmCps07gMNWS3VvGI3aneBGiAuJuS8VfbGxHjuPBYGvilcVEVR/PAVQSJQs3M8WEB2Nf9IlCYdqUt60TgOUU+0Zrh1kP5SuP6I/KgRDrUSS1XEqt3Nl2VS9Dudady42wAGYeS6usen4BOZTuodctRi6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I4v0fBz3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2OWIUhQr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716825085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iWrH8s0HgipnxikmiKvoWS+Y3TJn/3HsJ/qkGf8lcaY=;
+	b=I4v0fBz3bJImtrw8YX/tQPY9d4C5qdDuLZprK7pfqNybqDRHzCnieIVcSjCMdqOIsNlddX
+	WpOw2tBHYLf4PoiS4h1BZf84hHuTknyjIXU6XbaORSLV3ii0jA2KulQpeOWNynLGgr97qo
+	/44IQ+8OakKxfiHvKJNcEfsZsLM11sKNu2O9TKSCAR8qWntmTAWlek3WVnP+hn9ifbmQvx
+	mElh4VMht95N2BZV2zek9zR/XhZRzS1Hh46sP5Gv6D/3nUcmReEfwdYV1SICHnD0o63TqX
+	ZRuIbjv8DskE9DvtSisIdFp9/u6rrrrVwDjvDQlBDs1BmHnQXMl6oU1M2jWTxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716825085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iWrH8s0HgipnxikmiKvoWS+Y3TJn/3HsJ/qkGf8lcaY=;
+	b=2OWIUhQrmt1EzQTNsZ0eAKLiptoz2yrlLQPIZ/7qyCJA5MmeIct02qNJuqlW2weJszwd1j
+	alAOtzRCAixG/oBg==
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for
+ MIPS/Loongson64
+In-Reply-To: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+Date: Mon, 27 May 2024 17:51:25 +0200
+Message-ID: <87sey3b6de.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.2
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Ben Fradella <bfradell@netapp.com>
+Jiaxun!
 
-[ Upstream commit 2c6370e6607663fc5fa0fd9ed58e2e01014898c7 ]
+On Fri, May 17 2024 at 18:13, Jiaxun Yang wrote:
 
-The P2SB could get an invalid BAR from the BIOS, and that won't be fixed
-up until pcibios_assign_resources(), which is an fs_initcall().
+> +static void __iomem *nodecnt_reg;
+> +static u64 (*nodecnt_read_fn)(void);
+> +
+> +static u64 notrace nodecnt_read_2x32(void)
+> +{
+> +	unsigned int hi, hi2, lo;
+> +
+> +	do {
+> +		hi = readl_relaxed(nodecnt_reg + 4);
+> +		lo = readl_relaxed(nodecnt_reg);
+> +		hi2 = readl_relaxed(nodecnt_reg + 4);
+> +	} while (hi2 != hi);
+> +
+> +	return (((u64) hi) << 32) + lo;
+> +}
+> +
+> +static u64 notrace nodecnt_read_64(void)
+> +{
+> +	return readq_relaxed(nodecnt_reg);
+> +}
+> +
+> +static u64 notrace nodecnt_read_csr(void)
+> +{
+> +	return csr_readq(LOONGSON_CSR_NODECNT);
+> +}
+> +
+> +static u64 nodecnt_clocksource_read(struct clocksource *cs)
+> +{
+> +	return nodecnt_read_fn();
 
-- Move p2sb_fs_init() to an fs_initcall_sync(). This is still early
-  enough to avoid a race with any dependent drivers.
+What's this indirection for? Why dont you update 
 
-- Add a check for IORESOURCE_UNSET in p2sb_valid_resource() to catch
-  unset BARs going forward.
+> +static struct clocksource nodecnt_clocksource = {
+> +	.name	= "nodecnt",
+> +	.read	= nodecnt_clocksource_read,
 
-- Return error values from p2sb_fs_init() so that the 'initcall_debug'
-  cmdline arg provides useful data.
+the read function pointer here and spare the indirection?
 
-Signed-off-by: Ben Fradella <bfradell@netapp.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Klara Modin <klarasmodin@gmail.com>
-Reviewed-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Link: https://lore.kernel.org/r/20240509164905.41016-1-bcfradella@proton.me
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/platform/x86/p2sb.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Thanks
 
-diff --git a/drivers/platform/x86/p2sb.c b/drivers/platform/x86/p2sb.c
-index 3d66e1d4eb1f5..1ac30034f3e59 100644
---- a/drivers/platform/x86/p2sb.c
-+++ b/drivers/platform/x86/p2sb.c
-@@ -56,12 +56,9 @@ static int p2sb_get_devfn(unsigned int *devfn)
- 	return 0;
- }
- 
--static bool p2sb_valid_resource(struct resource *res)
-+static bool p2sb_valid_resource(const struct resource *res)
- {
--	if (res->flags)
--		return true;
--
--	return false;
-+	return res->flags & ~IORESOURCE_UNSET;
- }
- 
- /* Copy resource from the first BAR of the device in question */
-@@ -220,16 +217,20 @@ EXPORT_SYMBOL_GPL(p2sb_bar);
- 
- static int __init p2sb_fs_init(void)
- {
--	p2sb_cache_resources();
--	return 0;
-+	return p2sb_cache_resources();
- }
- 
- /*
-- * pci_rescan_remove_lock to avoid access to unhidden P2SB devices can
-- * not be locked in sysfs pci bus rescan path because of deadlock. To
-- * avoid the deadlock, access to P2SB devices with the lock at an early
-- * step in kernel initialization and cache required resources. This
-- * should happen after subsys_initcall which initializes PCI subsystem
-- * and before device_initcall which requires P2SB resources.
-+ * pci_rescan_remove_lock() can not be locked in sysfs PCI bus rescan path
-+ * because of deadlock. To avoid the deadlock, access P2SB devices with the lock
-+ * at an early step in kernel initialization and cache required resources.
-+ *
-+ * We want to run as early as possible. If the P2SB was assigned a bad BAR,
-+ * we'll need to wait on pcibios_assign_resources() to fix it. So, our list of
-+ * initcall dependencies looks something like this:
-+ *
-+ * ...
-+ * subsys_initcall (pci_subsys_init)
-+ * fs_initcall     (pcibios_assign_resources)
-  */
--fs_initcall(p2sb_fs_init);
-+fs_initcall_sync(p2sb_fs_init);
--- 
-2.43.0
-
+        tglx
 
