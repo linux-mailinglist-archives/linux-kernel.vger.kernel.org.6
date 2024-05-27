@@ -1,334 +1,200 @@
-Return-Path: <linux-kernel+bounces-191073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B964A8D0635
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8898D0601
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD06B298794
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848362970A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59D215F415;
-	Mon, 27 May 2024 15:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A073661FC7;
+	Mon, 27 May 2024 15:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="4TokxJqA";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="c3Q2o8Ib"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhySuJg7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D8615F3ED
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716823651; cv=fail; b=Xa9wdNDmUWj3VPBXeH0zk/l3oorPrbbwYfOmCPMlGc+XCZAHJ3b5+KBRRY93CxJdmun9YIjHRLnAl+JsW8LnRnX4AbCI0/ug9gX/RCv8G2KfV2RFPtb8Ld61LaAbgq/ko9Pucl+D9K/XEgUUHo5Ec9ZTjdK5OOnRd4zFXxdtXxU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716823651; c=relaxed/simple;
-	bh=HfZ5gooltC89g/K1T0aYc+4c6iZfH9c9sIwTYbOCbmQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kt+/YPs52dyvspa4X4+9a3GYNm0GUID5NTtmdJ25TTJnuMfvWETYLAnPlEYtIGE/uObcnYY1BEl/NuqCXeD2d9t4+FUXOkRQ3EuR4gdzjdPBxyxlXGIrBagUiRYr0p8IjfF7g5Zjs0ahNWhXmcyY6kjBcQPMPvzlpqI4xsZUOU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=4TokxJqA; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=c3Q2o8Ib; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 76747480A04;
-	Mon, 27 May 2024 11:18:04 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1716823084;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=HfZ5gooltC89g/K1T0aYc+4c6iZfH9c9sIwTYbOCbmQ=;
- b=4TokxJqAzy9MDEG/vIH3LAGqjj/x6b1KUidFVHdlHL5mgaWC6wgCCHxtd3ocS4wbQUvqa
- b0Go1ch3blJi0jUCQ==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1716823084;
-	cv=none; b=LxpjGO04ppTPV2c3T0EXmxcXUZRyOlLIKsrQR/Nv1OT9i6meoNsjdyhGmmbWxtaUGOdhk/umP3w7k4ydJ3dj0oaT0kt2D9pDiJe2cy/19OmOgYzu2S8bSuL1zLqJcP6jj41ROKUIFtvLuG1d98SpXzuJs6ZR1COUk3EeLpghJA+F+gXiMxGH31/rQ+GEeSJt0W6L6zeRHvo/FQLBgGrGYfcuOjID0XuOnp/JySnrYP8q/sZwbvg7On7LdLEZoB8mvPw9UunSZX2RaWraT5XyMM0IRcGdFifzCk7pJEDpGWbi4s6INMC/0W4pHtOSR1IdrUYS4YRHlp7RpWfymhVI5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1716823084; c=relaxed/simple;
-	bh=HfZ5gooltC89g/K1T0aYc+4c6iZfH9c9sIwTYbOCbmQ=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=jNPUuRWei9Q2WVUdrYM9KkYmOwPy94aVLyoAgYhTkGYmU/l8QNMM91JpE8a1Z7up/XqRO/QUUDLtS6kH+60CvKmNbeNnJhQ9qmU1mch092Tp6o/Ay0hHhOjQE7RduS2vU/VPLg3dEHybzKeH46ig2fuY01/ApkrCFuMB2E1aCOABEvYPOCnTlqI/hT0l4P97nTxxhDimFpbghIODYBiBsHjxHdP9pWCsFAsgAORtK+6N3Tg6U2sbmSWnXDuZJGvvkVKXd9Kt1MeO+tjJuCb748MHmVMSW5POciUMTe6rk19i8Fs/eoidDOV5uz8O0uK9NRWoTmUdVoeRB1hUiGiTbg==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1716823084;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=HfZ5gooltC89g/K1T0aYc+4c6iZfH9c9sIwTYbOCbmQ=;
- b=c3Q2o8IbhMNwnPKO9QZm80N1uYwzcc4Lfk9t/uvQ35UQQtxSqrbrKXvoSqL4HQi7CG7qx
- arnPwlkKPUbY2AtOElAey9LRivCPtC7EDDi9RDnvyexRsyxDfEf3krKOSG9j2kye57WhmPO
- P0PI9di/XGO2JAF7fVyFjylXpZEu3/q7iNxT1pbR6wr1nLzKN3omd3wNVTOcHIpAfT3br1h
- SJxpz4V8slFQwjtuNgVXvAuGGhWPJ7hhsXuBh8IbvMNXU72n3GA8qpAqsocx2monh+MBgdv
- viBGoseNVt83TEeF5z0cUxxY1uFBlQkWxYQfN9x0jvN96dwTGri4ol2jFwsQ==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 4AB1B28001B;
-	Mon, 27 May 2024 11:18:04 -0400 (EDT)
-Message-ID: <8fee69cc8fdd67fd265790c0fa287cb9566c2349.camel@sapience.com>
-Subject: Re: Intermittent inability to type in graphical Plymouth on UEFI
- VMs since kernel 6.9
-From: Genes Lists <lists@sapience.com>
-To: Adam Williamson <awilliam@redhat.com>, linux-kernel@vger.kernel.org
-Cc: jforbes@redhat.com, rstrode@redhat.com
-Date: Mon, 27 May 2024 11:18:03 -0400
-In-Reply-To: <75c17881-68e9-40e7-821c-5655d49d7c0f@redhat.com>
-References: <75c17881-68e9-40e7-821c-5655d49d7c0f@redhat.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-f0XXcEf7TIkgHko5AbZX"
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D585261FC3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716823191; cv=none; b=qHiWeH/GtdXMBfPaKrpLXTDhd7IJ5s6tlucPFZEkuRkJRE6CaslJ8OrQCMz+79cl9G0lAXjbHOE2lJQS3QnC+q6GcmA7TLD3H0HjdzhUlBmtrLtVcAhRnK5R6QkB4+OQG6xaL34DskI9rMoBuQIGUl1Z2GxMlDTQrlJItwxtXDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716823191; c=relaxed/simple;
+	bh=2gbAwopo2HWIN0N1R10t5TTB9HarOofSo6zOGB+sApM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UD8slnuJpFdgLuRmZ1oA40LxRj1xGK2fLUgkOHQrbV6oSCPIXToRcszKCSjSVCu3PlRucLeQyLI5/fXUQ32NCaVjceDVmSEtuJJBuRfRmqQ12L7E+5EiCM9IthBACxUVlizm8uQyX4AN85UigCpm6CygAY8rwsCrNrucfE3k1bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhySuJg7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3353C2BBFC;
+	Mon, 27 May 2024 15:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716823191;
+	bh=2gbAwopo2HWIN0N1R10t5TTB9HarOofSo6zOGB+sApM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VhySuJg7GbfoSkGyENYDL/fLRHo8O1m6nDsBi8Q5RppPqREZwt/Nxl77Rd7AWqvC6
+	 u5jbUU1Gyo1M9/Yy/+Vkowk9/nINMrPCt7aIZS9AOVlH1pC0e8LQ55PjsfuJP2Rwcr
+	 1WWzEA0Lt+uhFpZ22pWiKbUbmLlkTX3byeDtl93oOLYEiYdaKyT2h7VZ5PLJ3bIgfG
+	 JX2368IzDjik/t6IvRvoWXW7LXlrN414v/V5ZZfbTU2AB3LqAcppzwShQI3s3xPAvR
+	 QHJfKQwtQiLAAo1oeI5zjDEWyIfXqjK/9tMYq/xZDREWrwtaqs4h2QA9pr2qShQuT1
+	 FLRkOO2Mpk31w==
+Date: Mon, 27 May 2024 12:19:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH 1/1 fyi] tools headers UAPI: Sync linux/prctl.h with the
+ kernel sources
+Message-ID: <ZlSklGWp--v_Ije7@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
---=-f0XXcEf7TIkgHko5AbZX
-Content-Type: multipart/mixed; boundary="=-7Aj2cm6LLHeCcn9Gfjcw"
+Full explanation:
 
---=-7Aj2cm6LLHeCcn9Gfjcw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-On Fri, 2024-05-24 at 09:08 -0700, Adam Williamson wrote:
-> Hi, folks. Please CC me on replies, I'm not subscribed to the list.
-> The=20
-> downstream bug report for this is=20
-> https://bugzilla.redhat.com/show_bug.cgi?id=3D2274770=C2=A0.
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
-1) FYI : I see same thing booting dell xps 13 9320 laptop (no VM) on
-mainline 6.10-rc1 (started sometime early 6.9 as far as I recall)
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
 
-=C2=A0 =C2=A0 bios 2.11.0
+E.g.:
 
-=C2=A0 =C2=A0 cpu i9-12900K =C2=A0/ Raptor Lake-P [Iris Xe Graphics]
-=C2=A0 =C2=A0 Boot using systemd-boot
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
 
-dmesg (trimmed) attached.=C2=A0
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
 
-2) Note there is a crash later in boot (in mei_csi_probe). Assume this
-crash is a separate issue.
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
 
-gene
+To pick the changes in:
 
+  628d701f2de5b9a1 ("powerpc/dexcr: Add DEXCR prctl interface")
+  6b9391b581fddd85 ("riscv: Include riscv_set_icache_flush_ctx prctl")
 
+That adds some PowerPC and a RISC-V specific prctl options:
 
---=-7Aj2cm6LLHeCcn9Gfjcw
-Content-Disposition: attachment; filename="6.10-rc1.mei_csi"
-Content-Type: text/plain; name="6.10-rc1.mei_csi"; charset="UTF-8"
-Content-Transfer-Encoding: base64
+  $ tools/perf/trace/beauty/prctl_option.sh > before
+  $ cp include/uapi/linux/prctl.h tools/perf/trace/beauty/include/uapi/linux/prctl.h
+  $ tools/perf/trace/beauty/prctl_option.sh > after
+  $ diff -u before after
+  --- before	2024-05-27 12:14:21.358032781 -0300
+  +++ after	2024-05-27 12:14:32.364530185 -0300
+  @@ -65,6 +65,9 @@
+   	[68] = "GET_MEMORY_MERGE",
+   	[69] = "RISCV_V_SET_CONTROL",
+   	[70] = "RISCV_V_GET_CONTROL",
+  +	[71] = "RISCV_SET_ICACHE_FLUSH_CTX",
+  +	[72] = "PPC_GET_DEXCR",
+  +	[73] = "PPC_SET_DEXCR",
+   };
+   static const char *prctl_set_mm_options[] = {
+   	[1] = "START_CODE",
+  $
 
-Ci4uLgpbICArMC4xMzU4OTZdIEFDUEkgQklPUyBFcnJvciAoYnVnKTogRmFpbHVyZSBjcmVhdGlu
-ZyBuYW1lZCBvYmplY3QgW1xfU0IuUEMwMC5UWEhDLlJIVUIuU1MwMS5fRFNNXSwgQUVfQUxSRUFE
-WV9FWElTVFMgKDIwMjQwMzIyL2Rzd2xvYWQyLTMyNikKWyAgKzAuMDAwMDA5XSBBQ1BJIEVycm9y
-OiBBRV9BTFJFQURZX0VYSVNUUywgRHVyaW5nIG5hbWUgbG9va3VwL2NhdGFsb2cgKDIwMjQwMzIy
-L3Bzb2JqZWN0LTIyMCkKWyAgKzAuMDAwMDAzXSBBQ1BJOiBTa2lwcGluZyBwYXJzZSBvZiBBTUwg
-b3Bjb2RlOiBNZXRob2QgKDB4MDAxNCkKWyAgKzAuMDAwMDE1XSBBQ1BJIEJJT1MgRXJyb3IgKGJ1
-Zyk6IEZhaWx1cmUgY3JlYXRpbmcgbmFtZWQgb2JqZWN0IFtcX1NCLlBDMDAuVFhIQy5SSFVCLlNT
-MDMuX0RTTV0sIEFFX0FMUkVBRFlfRVhJU1RTICgyMDI0MDMyMi9kc3dsb2FkMi0zMjYpClsgICsw
-LjAwMDAwNF0gQUNQSSBFcnJvcjogQUVfQUxSRUFEWV9FWElTVFMsIER1cmluZyBuYW1lIGxvb2t1
-cC9jYXRhbG9nICgyMDI0MDMyMi9wc29iamVjdC0yMjApClsgICswLjAwMDAwMl0gQUNQSTogU2tp
-cHBpbmcgcGFyc2Ugb2YgQU1MIG9wY29kZTogTWV0aG9kICgweDAwMTQpClsgICswLjAwMzA3Nl0g
-QUNQSTogMTcgQUNQSSBBTUwgdGFibGVzIHN1Y2Nlc3NmdWxseSBhY3F1aXJlZCBhbmQgbG9hZGVk
-CgouLi4KClsgICswLjAwMDA1M10gc3lzdGVtZFsxXTogcGx5bW91dGgtc3dpdGNoLXJvb3Quc2Vy
-dmljZTogRGVhY3RpdmF0ZWQgc3VjY2Vzc2Z1bGx5LgpbICArMC4wMDAwNTJdIHN5c3RlbWRbMV06
-IFN0b3BwZWQgUGx5bW91dGggc3dpdGNoIHJvb3Qgc2VydmljZS4KLi4uCgpbICArMC4wMDEwMTRd
-IGludGVsLWlwdTYgMDAwMDowMDowNS4wOiBlbmFibGluZyBkZXZpY2UgKDAwMDAgLT4gMDAwMikK
-WyAgKzAuMDAwNDY5XSBpbnRlbC1pcHU2IDAwMDA6MDA6MDUuMDogSVBVNiBpbiBub24tc2VjdXJl
-IG1vZGUgdG91Y2ggMHgwIG1hc2sgMHhmZgpbICArMC4wMDM3MDldIEVEQUMgTUMwOiBHaXZpbmcg
-b3V0IGRldmljZSB0byBtb2R1bGUgaWdlbjZfZWRhYyBjb250cm9sbGVyIEludGVsX2NsaWVudF9T
-b0MgTUMjMDogREVWIDAwMDA6MDA6MDAuMCAoSU5URVJSVVBUKQpbICArMC4wMDE2NTNdIGludGVs
-LWlwdTYgMDAwMDowMDowNS4wOiBGVyB2ZXJzaW9uOiAyMDIzMDkyNQpbICArMC4wMDE5MDVdIGlu
-dGVsLWlwdTYgMDAwMDowMDowNS4wOiBJUFU2LXYzW2E3NWRdIGhhcmR3YXJlIHZlcnNpb24gNQpb
-ICArMC4wMDQ3MTNdIEVEQUMgTUMxOiBHaXZpbmcgb3V0IGRldmljZSB0byBtb2R1bGUgaWdlbjZf
-ZWRhYyBjb250cm9sbGVyIEludGVsX2NsaWVudF9Tb0MgTUMjMTogREVWIDAwMDA6MDA6MDAuMCAo
-SU5URVJSVVBUKQpbICArMC4wMDAwMjldIEVEQUMgaWdlbjYgTUMxOiBIQU5ETElORyBJQkVDQyBN
-RU1PUlkgRVJST1IKWyAgKzAuMDAwMDAxXSBFREFDIGlnZW42IE1DMTogQUREUiAweDFmZmZmZmZm
-ZmZmIApbICArMC4wMDAwMDFdIEVEQUMgaWdlbjYgTUMwOiBIQU5ETElORyBJQkVDQyBNRU1PUlkg
-RVJST1IKWyAgKzAuMDAwMDAxXSBFREFDIGlnZW42IE1DMDogQUREUiAweDFmZmZmZmZmZmZmIApb
-ICArMC4wMDE1MTVdIEVEQUMgaWdlbjY6IHYyLjUuMQpbICArMC4wMDY4NjFdIG1laV9tZSAwMDAw
-OjAwOjE2LjA6IGVuYWJsaW5nIGRldmljZSAoMDAwMCAtPiAwMDAyKQoKWyAgKzAuMDAyMzMyXSBt
-ZWlfcHhwIDAwMDA6MDA6MTYuMC1mYmY2ZmNmMS05NmNmLTRlMmUtYTZhNi0xYmFiOGNiZTM2YjE6
-IGJvdW5kIDAwMDA6MDA6MDIuMCAob3BzIGk5MTVfcHhwX3RlZV9jb21wb25lbnRfb3BzIFtpOTE1
-XSkKWyAgKzAuMDAxOTA3XSBtZWlfaGRjcCAwMDAwOjAwOjE2LjAtYjYzOGFiN2UtOTRlMi00ZWEy
-LWE1NTItZDFjNTRiNjI3ZjA0OiBib3VuZCAwMDAwOjAwOjAyLjAgKG9wcyBpOTE1X2hkY3Bfb3Bz
-IFtpOTE1XSkKWyAgKzAuMDcxOTIzXSBBQ1BJIFdhcm5pbmc6IFxfU0IuUEMwMC5TUEkxLlNQRkQu
-Q1ZGRC5TSUQ6IEluc3VmZmljaWVudCBhcmd1bWVudHMgLSBDYWxsZXIgcGFzc2VkIDAsIG1ldGhv
-ZCByZXF1aXJlcyAxICgyMDI0MDMyMi9uc2FyZ3VtZW50cy0yMzIpCi4uClsgICswLjAxNTQ3Nl0g
-aW50ZWxfdGNjX2Nvb2xpbmc6IFRDQyBPZmZzZXQgbG9ja2VkClsgICswLjAwNDc5NF0gaXdsd2lm
-aSAwMDAwOjAwOjE0LjM6IERldGVjdGVkIEludGVsKFIpIFdpLUZpIDZFIEFYMjExIDE2ME1Ieiwg
-UkVWPTB4MzcwClsgICswLjAwMDA0NF0gdGhlcm1hbCB0aGVybWFsX3pvbmUxMDogZmFpbGVkIHRv
-IHJlYWQgb3V0IHRoZXJtYWwgem9uZSAoLTYxKQpbICArMC4wMDgwNjVdIGl3bHdpZmkgMDAwMDow
-MDoxNC4zOiBXUlQ6IEludmFsaWQgYnVmZmVyIGRlc3RpbmF0aW9uClsgICswLjAxMTgwNF0gLS0t
-LS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tClsgICswLjAwMDAwMV0gV0FSTklORzog
-Q1BVOiAxIFBJRDogNTg4IGF0IGRyaXZlcnMvbWVkaWEvcGNpL2ludGVsL2l2c2MvbWVpX2NzaS5j
-OjY4MiBtZWlfY3NpX3Byb2JlKzB4NGRlLzB4NTIwIFtpdnNjX2NzaV0KWyAgKzAuMDAwMDA1XSBN
-b2R1bGVzIGxpbmtlZCBpbjogaXZzY19hY2UoKykgaXZzY19jc2koKykgc25kX3NvY19hdnMoKykg
-c25kX3NvY19oZGFfY29kZWMgc25kX2hkYV9leHRfY29yZSBwYWRsb2NrX2FlcygtKSBzbmRfc29j
-X2NvcmUgaW50ZWxfdGNjX2Nvb2xpbmcoLSkgc25kX2NvbXByZXNzIGNiYyBlbmNyeXB0ZWRfa2V5
-cygrKSB4ODZfcGtnX3RlbXBfdGhlcm1hbCBhYzk3X2J1cyBpbnRlbF9wb3dlcmNsYW1wIGl3bG12
-bSgrKSBzbmRfcGNtX2RtYWVuZ2luZSB0cnVzdGVkIHNuZF9oZGFfaW50ZWwgY29yZXRlbXAgYXNu
-MV9lbmNvZGVyIHRlZSBzbmRfY3RsX2xlZCBtZWlfdnNjIHNuZF9pbnRlbF9kc3BjZmcgaW50ZWxf
-aXB1Nl9pc3lzIG1hYzgwMjExIHNuZF9pbnRlbF9zZHdfYWNwaSBrdm1faW50ZWwgdmlkZW9idWYy
-X2RtYV9jb250aWcgc25kX2hkYV9jb2RlYyBkZWxsX2xhcHRvcCBzcGlfbm9yIGlUQ09fd2R0IHZm
-YXQgdmlkZW9idWYyX21lbW9wcyBoaWRfc2Vuc29yX2FscyBoaWRfc2Vuc29yX2N1c3RvbV9pbnRl
-bF9oaW5nZSBidHVzYiBpbnRlbF9wbWNfYnh0IHNuZF9oZGFfY29yZSBkZWxsX3dtaSB2aWRlb2J1
-ZjJfdjRsMiBsaWJhcmM0IG1laV9weHAgbWVpX2hkY3AgZ3Bpb19samNhIG10ZCBoaWRfc2Vuc29y
-X3RyaWdnZXIgdHlwZWNfZGlzcGxheXBvcnQgaTJjX2xqY2Egc3BpX2xqY2EgaVRDT192ZW5kb3Jf
-c3VwcG9ydCBidHJ0bCBmYXQgdmlkZW9idWYyX2NvbW1vbgpbICArMC4wMDAwMThdIHNuZF9zb2Nf
-YXZzIDAwMDA6MDA6MWYuMzogRFNQIGRldGVjdGVkIHdpdGggUENJIGNsYXNzL3N1YmNsYXNzL3By
-b2ctaWYgaW5mbyAweDA0MDEwMApbICArMC4wMDAwMDFdICBpbnRlbF9yYXBsX21zciBzbmRfaHdk
-ZXAgaW5kdXN0cmlhbGlvX3RyaWdnZXJlZF9idWZmZXIgYnRpbnRlbCBrdm0gaXdsd2lmaSBidGJj
-bSBrZmlmb19idWYgZGVsbF9zbWJpb3MgcHJvY2Vzc29yX3RoZXJtYWxfZGV2aWNlX3BjaSBzbmRf
-cGNtIGRlbGxfd21pX3N5c21hbiBwcm9jZXNzb3JfdGhlcm1hbF9kZXZpY2UgYnRtdGsgaGlkX3Nl
-bnNvcl9paW9fY29tbW9uIGRjZGJhcyBwcm9jZXNzb3JfdGhlcm1hbF93dF9oaW50IHJhcGwgaW50
-ZWxfY3N0YXRlIGludGVsX3VuY29yZSBwY3Nwa3IgZGVsbF93bWlfZGR2IGRlbGxfc21tX2h3bW9u
-IGZpcm13YXJlX2F0dHJpYnV0ZXNfY2xhc3Mgd21pX2Jtb2YgYmx1ZXRvb3RoIGRlbGxfd21pX2Rl
-c2NyaXB0b3IgdXNiaGlkIHVzYl9samNhIGluZHVzdHJpYWxpbyBzbmRfdGltZXIgY2ZnODAyMTEg
-cHJvY2Vzc29yX3RoZXJtYWxfcmZpbSBpMmNfaTgwMSBtZWlfbWUgcHJvY2Vzc29yX3RoZXJtYWxf
-cmFwbCBpMmNfc21idXMgc3BpX2ludGVsX3BjaSBzbmQgaW50ZWxfcmFwbF9jb21tb24gaTJjX211
-eCBzb3VuZGNvcmUgc3BpX2ludGVsIG92MDFhMTAgbWVpIHByb2Nlc3Nvcl90aGVybWFsX3d0X3Jl
-cSBpbnRlbF9za2xfaW50MzQ3Ml90cHM2ODQ3MCByZmtpbGwgaW50ZWxfaXB1NiB2NGwyX2Z3bm9k
-ZSBwcm9jZXNzb3JfdGhlcm1hbF9wb3dlcl9mbG9vciB0cHM2ODQ3MF9yZWd1bGF0b3IgdGh1bmRl
-cmJvbHQgaWdlbjZfZWRhYyBpcHVfYnJpZGdlIHByb2Nlc3Nvcl90aGVybWFsX21ib3ggY2xrX3Rw
-czY4NDcwClsgICswLjAwMDAxOV0gc25kX3NvY19hdnMgMDAwMDowMDoxZi4zOiBTb3VuZFdpcmUg
-ZW5hYmxlZCBvbiBDYW5ub25MYWtlKyBwbGF0Zm9ybSwgdXNpbmcgU09GIGRyaXZlcgpbICArMC4w
-MDAwMDFdICB2NGwyX2FzeW5jClsgICswLjAwMDAwMF0gIGludGVsX3BtY19jb3JlIGludDM0MDNf
-dGhlcm1hbCBpbnQzNDB4X3RoZXJtYWxfem9uZSBtZWlfdnNjX2h3IHZpZGVvZGV2IGludGVsX3Zz
-ZWMgaW50MzQwMF90aGVybWFsIG1jIHBtdF90ZWxlbWV0cnkgYWNwaV90YWQgYWNwaV90aGVybWFs
-X3JlbCBhY3BpX3BhZCBpbnRlbF9oaWQgcG10X2NsYXNzIGludGVsX3NrbF9pbnQzNDcyX2Rpc2Ny
-ZXRlIGpveWRldiBzcGFyc2Vfa2V5bWFwIG1vdXNlZGV2IG1hY19oaWQgZnVzZSBkbV9tb2QgbmZu
-ZXRsaW5rIGlwX3RhYmxlcyB4X3RhYmxlcyBleHQ0IGNyYzMyY19nZW5lcmljIGNyYzE2IG1iY2Fj
-aGUgamJkMiBoaWRfc2Vuc29yX2N1c3RvbSB4ZSBoaWRfc2Vuc29yX2h1YiBkcm1fdHRtX2hlbHBl
-ciBpbnRlbF9pc2h0cF9oaWQgZ3B1X3NjaGVkIGRybV9zdWJhbGxvY19oZWxwZXIgZHJtX2dwdXZt
-IGRybV9leGVjIG52bWUgbnZtZV9jb3JlIHNwaV9weGEyeHhfcGxhdGZvcm0gODI1MF9kdyBoaWRf
-bXVsdGl0b3VjaCBkd19kbWFjIGk5MTUgY3JjdDEwZGlmX3BjbG11bCBjcmMzMl9wY2xtdWwgY3Jj
-MzJjX2ludGVsIHBvbHl2YWxfY2xtdWxuaSBwc21vdXNlIHBvbHl2YWxfZ2VuZXJpYyBnZjEyOG11
-bCBnaGFzaF9jbG11bG5pX2ludGVsIHNlcmlvX3JhdyBzaGE1MTJfc3NzZTMgYXRrYmQgbGlicHMy
-IHNoYTI1Nl9zc3NlMyB2aXZhbGRpX2ZtYXAgaTJjX2FsZ29fYml0IHNoYTFfc3NzZTMgZHJtX2J1
-ZGR5IGFlc25pX2ludGVsIHVjc2lfYWNwaSB0dG0gY3J5cHRvX3NpbWQgaW50ZWxfbHBzc19wY2kg
-dHlwZWNfdWNzaSBpbnRlbF9ndHQgY3J5cHRkIGludGVsX2lzaF9pcGMgeGhjaV9wY2kgcm9sZXMg
-aW50ZWxfbHBzcyBkcm1fZGlzcGxheV9oZWxwZXIgaW50ZWxfaXNodHAgaWRtYTY0IHhoY2lfcGNp
-X3JlbmVzYXMgdm1kIHZpZGVvIHR5cGVjIGNlYyBpMmNfaGlkX2FjcGkgaTgwNDIgaTJjX2hpZCB3
-bWkgc2VyaW8gcGtjczhfa2V5X3BhcnNlciB3aXJlZ3VhcmQgY3VydmUyNTUxOV94ODZfNjQgbGli
-Y2hhY2hhMjBwb2x5MTMwNQpbICArMC4wMDAwMzNdICBjaGFjaGFfeDg2XzY0IHBvbHkxMzA1X3g4
-Nl82NCBpcDZfdWRwX3R1bm5lbCB1ZHBfdHVubmVsIGxpYmN1cnZlMjU1MTlfZ2VuZXJpYyBsaWJj
-aGFjaGEgbG9vcCBzZyBjcnlwdG9fdXNlcgpbICArMC4wMDAwMDRdIENQVTogMSBQSUQ6IDU4OCBD
-b21tOiAodWRldi13b3JrZXIpIE5vdCB0YWludGVkIDYuMTAuMC1yYzEtY3VzdG9tLTIgIzEgOTQz
-MDc4MTRhNzFlZDk0ZmVmNjRjNmUwZDIxNGU5ZTI1NzEwY2Y0YgpbICArMC4wMDAwMDJdIEhhcmR3
-YXJlIG5hbWU6IERlbGwgSW5jLiBYUFMgOTMyMC8wQ1I2TkMsIEJJT1MgMi4xMS4wIDAzLzA2LzIw
-MjQKWyAgKzAuMDAwMDAyXSBSSVA6IDAwMTA6bWVpX2NzaV9wcm9iZSsweDRkZS8weDUyMCBbaXZz
-Y19jc2ldClsgICswLjAwMDAwMl0gQ29kZTogODUgYzAgNzggMzMgNDggODkgZGYgNDggYzcgYzYg
-YzAgZjEgNGIgYzEgZTggYzkgMmUgYjkgZmYgODkgYzMgODUgYzAgNzggMjYgNDggOGIgYmQgNjgg
-ZmYgZmYgZmYgZTggNTcgNDIgMjkgZGMgZTkgODggZmUgZmYgZmYgPDBmPiAwYiA0MSBiZiBmYSBm
-ZiBmZiBmZiBlOSA3YiBmZSBmZiBmZiA0MSA4OSBjNyBlOSA1MyBmZSBmZiBmZiA0OApbICArMC4w
-MDAwMDFdIFJTUDogMDAxODpmZmZmYjJhZmMwOWI3NzgwIEVGTEFHUzogMDAwMTAyNDYKWyAgKzAu
-MDAwMDAzXSBSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmZmZmZmMxNTA0Njg4IFJDWDog
-MDAwMDAwMDAwMDAwMDAwMApbICArMC4wMDAwMDFdIFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6
-IGZmZmY5NjVkMDE3OTEwZTggUkRJOiBmZmZmOTY1ZDBmNjkxYzE4ClsgICswLjAwMDAwMF0gUkJQ
-OiBmZmZmYjJhZmMwOWI3ODQwIFIwODogMDAwMDAwMDAwMDAwMDIyOCBSMDk6IGZmZmY5NjVkMDAx
-ZDY1MTAKWyAgKzAuMDAwMDAxXSBSMTA6IGZmZmZiMmFmYzA5Yjc4NjAgUjExOiAwMDAwMDAwMDAw
-MDAwMDQwIFIxMjogZmZmZjk2NWQwZjY5MWMwMApbICArMC4wMDAwMDFdIFIxMzogZmZmZjk2NWQw
-ZjY5MWMwMCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAwClsgICsw
-LjAwMDAwMV0gRlM6ICAwMDAwN2ZlNDEyYTRkODgwKDAwMDApIEdTOmZmZmY5NjY0NmYyODAwMDAo
-MDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbICArMC4wMDAwMDFdIENTOiAgMDAxMCBEUzog
-MDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKWyAgKzAuMDAwMDAxXSBDUjI6IDAw
-MDA1NWMxNDE3MWMwNzggQ1IzOiAwMDAwMDAwMTBhZDkwMDAwIENSNDogMDAwMDAwMDAwMGY1MGVm
-MApbICArMC4wMDAwMDFdIFBLUlU6IDU1NTU1NTU0ClsgICswLjAwMDAwMV0gQ2FsbCBUcmFjZToK
-WyAgKzAuMDAwMDAxXSAgPFRBU0s+ClsgICswLjAwMDAwMV0gID8gbWVpX2NzaV9wcm9iZSsweDRk
-ZS8weDUyMCBbaXZzY19jc2kgMzcxYjNjNDkzZDkwOGUyMjg4YWRlODU3NWFjZmE2MWJjM2EwNjky
-Y10KWyAgKzAuMDAwMDAyXSAgPyBfX3dhcm4uY29sZCsweDhlLzB4ZTgKWyAgKzAuMDAwMDAzXSAg
-PyBtZWlfY3NpX3Byb2JlKzB4NGRlLzB4NTIwIFtpdnNjX2NzaSAzNzFiM2M0OTNkOTA4ZTIyODhh
-ZGU4NTc1YWNmYTYxYmMzYTA2OTJjXQpbICArMC4wMDAwMDNdICA/IHJlcG9ydF9idWcrMHhmZi8w
-eDE0MApbICArMC4wMDAwMDFdICA/IGhhbmRsZV9idWcrMHgzYy8weDgwClsgICswLjAwMDAwMl0g
-ID8gZXhjX2ludmFsaWRfb3ArMHgxNy8weDcwClsgICswLjAwMDAwMl0gID8gYXNtX2V4Y19pbnZh
-bGlkX29wKzB4MWEvMHgyMApbICArMC4wMDAwMDJdICA/IG1laV9jc2lfcHJvYmUrMHg0ZGUvMHg1
-MjAgW2l2c2NfY3NpIDM3MWIzYzQ5M2Q5MDhlMjI4OGFkZTg1NzVhY2ZhNjFiYzNhMDY5MmNdClsg
-ICswLjAwMDAwMl0gID8ga21hbGxvY190cmFjZV9ub3Byb2YrMHgxMWMvMHgzMTAKWyAgKzAuMDAw
-MDAyXSAgPyBrZXJuZnNfYWN0aXZhdGUrMHg4Mi8weGQwClsgICswLjAwMDAwMl0gID8ga2VybmZz
-X2FkZF9vbmUrMHgxNDEvMHgxNTAKWyAgKzAuMDAwMDAyXSAgPyBtZWlfY2xfZGV2aWNlX3Byb2Jl
-KzB4NzMvMHhjMCBbbWVpIGZhOTkwOGQ4NDc0NTFkMGM4MDhkYmY2MzZjMWYxMjY0MjcxNWY5ZmFd
-ClsgICswLjAwMDAwOF0gIG1laV9jbF9kZXZpY2VfcHJvYmUrMHg3My8weGMwIFttZWkgZmE5OTA4
-ZDg0NzQ1MWQwYzgwOGRiZjYzNmMxZjEyNjQyNzE1ZjlmYV0KWyAgKzAuMDAwMDA3XSAgcmVhbGx5
-X3Byb2JlKzB4ZGIvMHgzNDAKWyAgKzAuMDAwMDAzXSAgPyBwbV9ydW50aW1lX2JhcnJpZXIrMHg1
-NC8weDkwClsgICswLjAwMDAwMl0gID8gX19wZnhfX19kcml2ZXJfYXR0YWNoKzB4MTAvMHgxMApb
-ICArMC4wMDAwMDJdICBfX2RyaXZlcl9wcm9iZV9kZXZpY2UrMHg3OC8weDExMApbICArMC4wMDAw
-MDJdICBkcml2ZXJfcHJvYmVfZGV2aWNlKzB4MWYvMHhhMApbICArMC4wMDAwMDJdICBfX2RyaXZl
-cl9hdHRhY2grMHhiYS8weDFjMApbICArMC4wMDAwMDJdICBidXNfZm9yX2VhY2hfZGV2KzB4OGMv
-MHhlMApbICArMC4wMDAwMDJdICBidXNfYWRkX2RyaXZlcisweDExMi8weDFmMApbICArMC4wMDAw
-MDJdICBkcml2ZXJfcmVnaXN0ZXIrMHg3Mi8weGQwClsgICswLjAwMDAwMl0gIF9fbWVpX2NsZGV2
-X2RyaXZlcl9yZWdpc3RlcisweDJjLzB4NzAgW21laSBmYTk5MDhkODQ3NDUxZDBjODA4ZGJmNjM2
-YzFmMTI2NDI3MTVmOWZhXQpbICArMC4wMDAwMDddICA/IF9fcGZ4X21laV9jc2lfZHJpdmVyX2lu
-aXQrMHgxMC8weDEwIFtpdnNjX2NzaSAzNzFiM2M0OTNkOTA4ZTIyODhhZGU4NTc1YWNmYTYxYmMz
-YTA2OTJjXQpbICArMC4wMDAwMDJdICA/IF9fcGZ4X21laV9jc2lfZHJpdmVyX2luaXQrMHgxMC8w
-eDEwIFtpdnNjX2NzaSAzNzFiM2M0OTNkOTA4ZTIyODhhZGU4NTc1YWNmYTYxYmMzYTA2OTJjXQpb
-ICArMC4wMDAwMDFdICBkb19vbmVfaW5pdGNhbGwrMHg1OC8weDMxMApbICArMC4wMDAwMDNdICBk
-b19pbml0X21vZHVsZSsweDYwLzB4MjIwClsgICswLjAwMDAwM10gIGluaXRfbW9kdWxlX2Zyb21f
-ZmlsZSsweDg5LzB4ZTAKWyAgKzAuMDAwMDAzXSAgaWRlbXBvdGVudF9pbml0X21vZHVsZSsweDEy
-MS8weDJiMApbICArMC4wMDAwMDNdICBfX3g2NF9zeXNfZmluaXRfbW9kdWxlKzB4NWUvMHhiMApb
-ICArMC4wMDAwMDJdICBkb19zeXNjYWxsXzY0KzB4ODIvMHgxNjAKWyAgKzAuMDAwMDAyXSAgPyBz
-eXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4NzUvMHgyMTAKWyAgKzAuMDAwMDAxXSAgPyBkb19z
-eXNjYWxsXzY0KzB4OGUvMHgxNjAKWyAgKzAuMDAwMDAyXSAgPyB2ZnNfc3RhdHgrMHg5My8weDFj
-MApbICArMC4wMDAwMDJdICA/IHZmc19mc3RhdGF0KzB4OTQvMHhiMApbICArMC4wMDAwMDJdICA/
-IF9fZG9fc3lzX25ld2ZzdGF0YXQrMHgzYy8weDgwClsgICswLjAwMDAwMl0gID8gX19zZWNjb21w
-X2ZpbHRlcisweDMwMy8weDUyMApbICArMC4wMDAwMDNdICA/IHN5c2NhbGxfZXhpdF90b191c2Vy
-X21vZGUrMHg3NS8weDIxMApbICArMC4wMDAwMDFdICA/IGRvX3N5c2NhbGxfNjQrMHg4ZS8weDE2
-MApbICArMC4wMDAwMDBdICA/IHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHg3NS8weDIxMApb
-ICArMC4wMDAwMDJdICA/IGRvX3N5c2NhbGxfNjQrMHg4ZS8weDE2MApbICArMC4wMDAwMDBdICA/
-IHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHg3NS8weDIxMApbICArMC4wMDAwMDJdICA/IGRv
-X3N5c2NhbGxfNjQrMHg4ZS8weDE2MApbICArMC4wMDAwMDBdICA/IGRvX3N5c2NhbGxfNjQrMHg4
-ZS8weDE2MApbICArMC4wMDAwMDFdICA/IGRvX3VzZXJfYWRkcl9mYXVsdCsweDM2Yy8weDYyMApb
-ICArMC4wMDAwMDJdICA/IGV4Y19wYWdlX2ZhdWx0KzB4N2UvMHgxODAKWyAgKzAuMDAwMDAxXSAg
-ZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzYvMHg3ZQpbICArMC4wMDAwMDNdIFJJ
-UDogMDAzMzoweDdmZTQxMjUyN2U5ZApbICArMC4wMDAwMjNdIENvZGU6IGZmIGMzIDY2IDJlIDBm
-IDFmIDg0IDAwIDAwIDAwIDAwIDAwIDkwIGYzIDBmIDFlIGZhIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4
-IDg5IGQ2IDQ4IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0
-OD4gM2QgMDEgZjAgZmYgZmYgNzMgMDEgYzMgNDggOGIgMGQgNjMgZGUgMGMgMDAgZjcgZDggNjQg
-ODkgMDEgNDgKWyAgKzAuMDAwMDAxXSBSU1A6IDAwMmI6MDAwMDdmZmQ3NWM0Yjk0OCBFRkxBR1M6
-IDAwMDAwMjQ2IE9SSUdfUkFYOiAwMDAwMDAwMDAwMDAwMTM5ClsgICswLjAwMDAwMV0gUkFYOiBm
-ZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDU1YzE0MTY5MThlMCBSQ1g6IDAwMDA3ZmU0MTI1Mjdl
-OWQKWyAgKzAuMDAwMDAxXSBSRFg6IDAwMDAwMDAwMDAwMDAwMDQgUlNJOiAwMDAwN2ZlNDEyMmY2
-Mzc2IFJESTogMDAwMDAwMDAwMDAwMDAxYgpbICArMC4wMDAwMDFdIFJCUDogMDAwMDdmZTQxMjJm
-NjM3NiBSMDg6IDAwMDAwMDAwMDAwMDAwMDMgUjA5OiAwMDAwN2ZmZDc1YzRiOTkwClsgICswLjAw
-MDAwMF0gUjEwOiAwMDAwMDAwMDAwMDAwMDA3IFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAw
-MDAwMDAwMDAwMjAwMDAKWyAgKzAuMDAwMDAxXSBSMTM6IDAwMDA1NWMxNDE2OTBlMDAgUjE0OiAw
-MDAwMDAwMDAwMDAwMDAwIFIxNTogMDAwMDU1YzE0MTcxODkyMApbICArMC4wMDAwMDJdICA8L1RB
-U0s+ClsgICswLjAwMDAwMF0gLS0tWyBlbmQgdHJhY2UgMDAwMDAwMDAwMDAwMDAwMCBdLS0tCi4u
-LgoKW01heTI3IDA3OjQ5XSB3YXJuaW5nOiBgVGhyZWFkUG9vbEZvcmVnJyB1c2VzIHdpcmVsZXNz
-IGV4dGVuc2lvbnMgd2hpY2ggd2lsbCBzdG9wIHdvcmtpbmcgZm9yIFdpLUZpIDcgaGFyZHdhcmU7
-IHVzZSBubDgwMjExCltNYXkyNyAwODozOF0gYmxvY2sgbnZtZTBuMTogdGhlIGNhcGFiaWxpdHkg
-YXR0cmlidXRlIGhhcyBiZWVuIGRlcHJlY2F0ZWQuCg==
+That now will be used to decode the syscall option and also to compose
+filters, for instance:
 
+  [root@five ~]# perf trace -e syscalls:sys_enter_prctl --filter option==SET_NAME
+       0.000 Isolated Servi/3474327 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23f13b7aee)
+       0.032 DOM Worker/3474327 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23deb25670)
+       7.920 :3474328/3474328 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23e24fbb10)
+       7.935 StreamT~s #374/3474328 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23e24fb970)
+       8.400 Isolated Servi/3474329 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23e24bab10)
+       8.418 StreamT~s #374/3474329 syscalls:sys_enter_prctl(option: SET_NAME, arg2: 0x7f23e24ba970)
+  ^C[root@five ~]#
 
---=-7Aj2cm6LLHeCcn9Gfjcw--
+This addresses this perf build warning:
 
---=-f0XXcEf7TIkgHko5AbZX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+  Warning: Kernel ABI header differences:
+    diff -u tools/include/uapi/linux/prctl.h include/uapi/linux/prctl.h
 
------BEGIN PGP SIGNATURE-----
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Benjamin Gray <bgray@linux.ibm.com>
+Cc: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../trace/beauty/include/uapi/linux/prctl.h   | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZlSkKwAKCRA5BdB0L6Ze
-26hIAPwMlSSDPpBhQpMXjZQN/USoiJngQ5cARhDMYEDciOcAZgD+L59m5+i22co3
-ci3V4AAJgJ77pPU9RS2FJIv1uEqTpAo=
-=Pfbj
------END PGP SIGNATURE-----
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/prctl.h b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+index 370ed14b1ae0928c..35791791a879b288 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/prctl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+@@ -306,4 +306,26 @@ struct prctl_mm_map {
+ # define PR_RISCV_V_VSTATE_CTRL_NEXT_MASK	0xc
+ # define PR_RISCV_V_VSTATE_CTRL_MASK		0x1f
+ 
++#define PR_RISCV_SET_ICACHE_FLUSH_CTX	71
++# define PR_RISCV_CTX_SW_FENCEI_ON	0
++# define PR_RISCV_CTX_SW_FENCEI_OFF	1
++# define PR_RISCV_SCOPE_PER_PROCESS	0
++# define PR_RISCV_SCOPE_PER_THREAD	1
++
++/* PowerPC Dynamic Execution Control Register (DEXCR) controls */
++#define PR_PPC_GET_DEXCR		72
++#define PR_PPC_SET_DEXCR		73
++/* DEXCR aspect to act on */
++# define PR_PPC_DEXCR_SBHE		0 /* Speculative branch hint enable */
++# define PR_PPC_DEXCR_IBRTPD		1 /* Indirect branch recurrent target prediction disable */
++# define PR_PPC_DEXCR_SRAPD		2 /* Subroutine return address prediction disable */
++# define PR_PPC_DEXCR_NPHIE		3 /* Non-privileged hash instruction enable */
++/* Action to apply / return */
++# define PR_PPC_DEXCR_CTRL_EDITABLE	 0x1 /* Aspect can be modified with PR_PPC_SET_DEXCR */
++# define PR_PPC_DEXCR_CTRL_SET		 0x2 /* Set the aspect for this process */
++# define PR_PPC_DEXCR_CTRL_CLEAR	 0x4 /* Clear the aspect for this process */
++# define PR_PPC_DEXCR_CTRL_SET_ONEXEC	 0x8 /* Set the aspect on exec */
++# define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
++# define PR_PPC_DEXCR_CTRL_MASK		0x1f
++
+ #endif /* _LINUX_PRCTL_H */
+-- 
+2.45.1
 
---=-f0XXcEf7TIkgHko5AbZX--
 
