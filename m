@@ -1,764 +1,273 @@
-Return-Path: <linux-kernel+bounces-190043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7588CF8C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:28:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8538A8CF8C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C79281916
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CAC1F219AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6870617BBE;
-	Mon, 27 May 2024 05:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9096376E5;
+	Mon, 27 May 2024 05:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AVGN3Jpf"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="My6y2ZSc"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756C710A01;
-	Mon, 27 May 2024 05:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94C12E634
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716787698; cv=none; b=VFrl/lCwOdQ9J+aKIxuFf04KaSIhPav8eG5NfCWo+bnkpXhrCQtH3c2APPATSUYfilpInnYCRylLhctZQZZlnQWDO5babmh1H0Rm39mBvOvWbL/tgAivgeERvh4zsO0b0AZ6vTWeXsY/TInhvzz22oh9xyLm0oeHrQjQBXJrxLg=
+	t=1716787720; cv=none; b=rIGso4fG7EREMA0ihF08dQU4LlZFxjH00ku5YCMfYMJNqHKgH0WXCaYVTZs9dlNKGQxrZyAZ+kQPLjMUF7p4+PHiqwX4j8KFOuV5qJ4bOU4S7f279UgvezHOqeyN5S0fZcHB1Vjk8oRvs3NbBfVUDKh+C1+Eqqa0Qm3s4IFZ0pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716787698; c=relaxed/simple;
-	bh=UQKjSraH1QqjdWQCZ/aJyivROENUJqc9ag78CYuXcLA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tlTwdzFyJX6+QEY/HROOUbByeVcdF9QzbmErgF5QrjE/ClqKCeoXNdXJ2MqbEFe1jLlIv/2WVNSSvtsHWQi4mAQ8IYxfGP7beA/7W8w5rG7+o2zeE8KvHx9oHDoeh2a3TUo+7HCXejhd25AtW29lk8hLaTpZX8Rp7kFeUXbe4oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AVGN3Jpf; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44R5RljL110480;
-	Mon, 27 May 2024 00:27:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716787668;
-	bh=iZodA0rIoyqTqMVlOe7wSw8+1nGLOpZMbO+hFAi7Xdc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=AVGN3JpfaoI0ZodvNtJzGIj/XM1OArGjUwzt3/AvkLwAL9IVVB5ZntWmXCKmPuyaE
-	 TaSYpa4F3YN7LJl/cXCG5kZamAGoTrn3kim3XRs1FcX4x0CR3UUogeP4rENh/quRcs
-	 +RZRHyn1KNTlkXkyIv1sfI61fsZmBeZi/dUMewBs=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44R5RlKg119855
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 May 2024 00:27:47 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
- May 2024 00:27:47 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 27 May 2024 00:27:47 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44R5Rls1117475;
-	Mon, 27 May 2024 00:27:47 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44R5Rk3r013500;
-	Mon, 27 May 2024 00:27:47 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
-        Andrew Lunn
-	<andrew@lunn.ch>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
-        Roger
- Quadros <rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>, Paolo
- Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-Subject: [PATCH net-next v5 3/3] net: ti: icssg-prueth: Add support for ICSSG switch firmware
-Date: Mon, 27 May 2024 10:57:38 +0530
-Message-ID: <20240527052738.152821-4-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240527052738.152821-1-danishanwar@ti.com>
-References: <20240527052738.152821-1-danishanwar@ti.com>
+	s=arc-20240116; t=1716787720; c=relaxed/simple;
+	bh=f0xxC3rKEssxCtI8vmhE0Q6d3WT/58Fo2rj64NjKYD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RNd4A/LspljAqvTIa4tQrUAhL08tWXbMW5SsoNj3sYUJkYbANJgk7QxFrmCa39zLaWLs6E8C6QlUfvxx5b2rmVeW4/zohxobFgxoguiH9HkJ22oXtGJsjqBARm/CqhNbr/psjQZMcjVM+wfWlqrY1c6BltFPOw86U8qoFLzb1V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=My6y2ZSc; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5295eb47b48so2887163e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 22:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716787717; x=1717392517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HS/q+5B/lHN3GpC5brMPX120YuCJjay08ll9bVANbnw=;
+        b=My6y2ZSchqqp8+92oNHF9yFVjYIFhWyYrov9MB+Ban8hTZkrbQb8T2rBrS6o/CCq5a
+         XddLl6IOX2nh/5bY0VZg1jRZmkRvvV+vqqP2KW26LkqaaLoaoHkTXUFkrSgbPL7iwiWp
+         u0tdlrnQxNmeX74ZbwlQLsXNDgBua0GQMDZ8M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716787717; x=1717392517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HS/q+5B/lHN3GpC5brMPX120YuCJjay08ll9bVANbnw=;
+        b=IYF1bR5fIzaQpJFN4IGiPjK/qEGXjlFWfPomhqA8zdr2nj+ECG3wtHsdxdH/F5mVMX
+         ghDY9FIuPUO6rpwfIg/vGrdSXs1ff9FJOrz2kiSxx9OUv/K07bY9z+guFPlDzDjSlzbk
+         N8UQlb/pJnbpetHm6JC6qTkFN9Y3anT/VsmFeR7QpWoDnqYWAIrYDXOmxg2XELxT06IM
+         OdCJHZfo1HEK2th40B9tkdmaWcsi6sXJ5pwBRrqp1vrhINyXUEYeZUkVfPEyGojnD2Bd
+         3Mr/DSS0EkdF/FP68PeYlXDEc3xk6/kKJ7/kj3cSpjmZDWccIg7s2QwIGjccoAeECeyE
+         EA3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDoCX4aQfxdeLr3WjlfliP1+AxykgEilyyV4/7yWbpZmKi2rzyO9j6cHCYrQOnXEgzU02IHF+LzI4nEvbiytrBNgmRYZDkMgC6she3
+X-Gm-Message-State: AOJu0YzBBCVMg52lV+dxiTZ5WoouwdO0UsqaBV9ko2jA9RiRrrx4HWyB
+	B6ifiepU97UUnlrK2W8sdNU/dq3yif27gH2R2WfwiTgIdb7AHepVGbyE2NhUOHU/uiENHSqgYFb
+	c8BaMVg0c9owFn4671ryZAtcFLr1GWQVtTIT5
+X-Google-Smtp-Source: AGHT+IEsHSmiiXQvoDBh4HgceuFqJ+anCd8E7q1lvKuF22p0eNxhQ85JLw6yLNL5oKFNhigmMgRwhIFYqARVxyb3t9I=
+X-Received: by 2002:a05:6512:21c:b0:529:37be:ffad with SMTP id
+ 2adb3069b0e04-52966ca6460mr4315742e87.49.1716787716995; Sun, 26 May 2024
+ 22:28:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240502103848.5845-1-shawn.sung@mediatek.com>
+ <20240502103848.5845-6-shawn.sung@mediatek.com> <CAC=S1ngUh-o107YM8zEu-ebaP7+eaO1x6SsZ6OeRxrH5YgFKxw@mail.gmail.com>
+ <CAGb2v67TZSoQnEMhUNKhnbkwK2=9yCPcwnLD-iHuRp6=Y2ez2Q@mail.gmail.com> <CAC=S1nhKPo5BUYJ_cHGz3OoPrWNh5eO8rhdyikLimsqSOrZ5Xg@mail.gmail.com>
+In-Reply-To: <CAC=S1nhKPo5BUYJ_cHGz3OoPrWNh5eO8rhdyikLimsqSOrZ5Xg@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 27 May 2024 13:28:26 +0800
+Message-ID: <CAGXv+5FbJ=LzV25=-tmm8zFGgecSSa2Zib7G-pUuYUK9ytyfsw@mail.gmail.com>
+Subject: Re: [PATCH v7 05/18] drm/mediatek: Set DRM mode configs accordingly
+To: Fei Shao <fshao@chromium.org>
+Cc: wens@kernel.org, Shawn Sung <shawn.sung@mediatek.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Bibby Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
+	"Nancy . Lin" <nancy.lin@mediatek.com>, Sean Paul <sean@poorly.run>, 
+	Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for ICSSG switch firmware using existing Dual EMAC driver
-with switchdev.
+On Mon, May 27, 2024 at 12:54=E2=80=AFPM Fei Shao <fshao@chromium.org> wrot=
+e:
+>
+> On Mon, May 27, 2024 at 12:38=E2=80=AFPM Chen-Yu Tsai <wens@kernel.org> w=
+rote:
+> >
+> > On Mon, May 27, 2024 at 12:34=E2=80=AFPM Fei Shao <fshao@chromium.org> =
+wrote:
+> > >
+> > > Hi Shawn,
+> > >
+> > > On Thu, May 2, 2024 at 6:39=E2=80=AFPM Shawn Sung <shawn.sung@mediate=
+k.com> wrote:
+> > > >
+> > > > From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+> > > >
+> > > > Set DRM mode configs limitation according to the hardware capabilit=
+ies
+> > > > and pass the IGT checks as below:
+> > > >
+> > > > - The test "graphics.IgtKms.kms_plane" requires a frame buffer with
+> > > >   width of 4512 pixels (> 4096).
+> > > > - The test "graphics.IgtKms.kms_cursor_crc" checks if the cursor si=
+ze is
+> > > >   defined, and run the test with cursor size from 1x1 to 512x512.
+> > > >
+> > > > Please notice that the test conditions may change as IGT is updated=
+.
+> > > >
+> > > > Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+> > > > ---
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 22 ++++++++++++++++++++++
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++++
+> > > >  2 files changed, 26 insertions(+)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/d=
+rm/mediatek/mtk_drm_drv.c
+> > > > index 8e047043202b4..c9cad3a827376 100644
+> > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > > @@ -294,6 +294,9 @@ static const struct mtk_mmsys_driver_data mt818=
+8_vdosys0_driver_data =3D {
+> > > >         .conn_routes =3D mt8188_mtk_ddp_main_routes,
+> > > >         .num_conn_routes =3D ARRAY_SIZE(mt8188_mtk_ddp_main_routes)=
+,
+> > > >         .mmsys_dev_num =3D 2,
+> > > > +       .max_width =3D 8191,
+> > > > +       .min_width =3D 1,
+> > > > +       .min_height =3D 1,
+> > > >  };
+> > > >
+> > > >  static const struct mtk_mmsys_driver_data mt8192_mmsys_driver_data=
+ =3D {
+> > > > @@ -308,6 +311,9 @@ static const struct mtk_mmsys_driver_data mt819=
+5_vdosys0_driver_data =3D {
+> > > >         .main_path =3D mt8195_mtk_ddp_main,
+> > > >         .main_len =3D ARRAY_SIZE(mt8195_mtk_ddp_main),
+> > > >         .mmsys_dev_num =3D 2,
+> > > > +       .max_width =3D 8191,
+> > > > +       .min_width =3D 1,
+> > > > +       .min_height =3D 1,
+> > > >  };
+> > > >
+> > > >  static const struct mtk_mmsys_driver_data mt8195_vdosys1_driver_da=
+ta =3D {
+> > > > @@ -315,6 +321,9 @@ static const struct mtk_mmsys_driver_data mt819=
+5_vdosys1_driver_data =3D {
+> > > >         .ext_len =3D ARRAY_SIZE(mt8195_mtk_ddp_ext),
+> > > >         .mmsys_id =3D 1,
+> > > >         .mmsys_dev_num =3D 2,
+> > > > +       .max_width =3D 8191,
+> > > > +       .min_width =3D 2, /* 2-pixel align when ethdr is bypassed *=
+/
+> > > > +       .min_height =3D 1,
+> > > >  };
+> > > >
+> > > >  static const struct of_device_id mtk_drm_of_ids[] =3D {
+> > > > @@ -493,6 +502,15 @@ static int mtk_drm_kms_init(struct drm_device =
+*drm)
+> > > >                 for (j =3D 0; j < private->data->mmsys_dev_num; j++=
+) {
+> > > >                         priv_n =3D private->all_drm_private[j];
+> > > >
+> > > > +                       if (priv_n->data->max_width)
+> > > > +                               drm->mode_config.max_width =3D priv=
+_n->data->max_width;
+> > > > +
+> > > > +                       if (priv_n->data->min_width)
+> > > > +                               drm->mode_config.min_width =3D priv=
+_n->data->min_width;
+> > > > +
+> > > > +                       if (priv_n->data->min_height)
+> > > > +                               drm->mode_config.min_height =3D pri=
+v_n->data->min_height;
+> > > > +
+> > > >                         if (i =3D=3D CRTC_MAIN && priv_n->data->mai=
+n_len) {
+> > > >                                 ret =3D mtk_crtc_create(drm, priv_n=
+->data->main_path,
+> > > >                                                       priv_n->data-=
+>main_len, j,
+> > > > @@ -520,6 +538,10 @@ static int mtk_drm_kms_init(struct drm_device =
+*drm)
+> > > >                 }
+> > > >         }
+> > > >
+> > > > +       /* IGT will check if the cursor size is configured */
+> > > > +       drm->mode_config.cursor_width =3D drm->mode_config.max_widt=
+h;
+> > > > +       drm->mode_config.cursor_height =3D drm->mode_config.max_hei=
+ght;
+> > >
+> > > I think you shouldn't set the cursor size to the maximum plane size.
+> > > As you mentioned in the commit message, IGT tests the cursor sizes
+> > > from 1x1 to 512x512, so just setting them to 512 (with a macro) shoul=
+d
+> > > be enough.
+> > >
+> > > Currently this tells the userspace "the supported cursor plane size i=
+s
+> > > up to 4096x8191" on MT8195 and MT8188.
+> > > That means the userspace may allocate a buffer with 4096*8191*4 ~=3D
+> > > 128MB for the cursor plane in the worst case, and most of the buffer
+> > > will be wasted.
+> > > Note that the default value for DRM_CAP_CURSOR_WIDTH is 64.
+> > >
+> > > In practice, when applying this on the MT8188 Chromebook, I see the
+> > > userspace allocates two 64MB buffers for the cursor plane.
+> > > But if I limit the cursor size to 512, the userspace only allocates
+> > > two 1MB buffers i.e. 126MB is optimized for the DMA buffer allocation=
+.
+> >
+> > That seems more like an issue of ChromeOS not doing the most optimal
+> > thing though?
+>
+> I agree that we need to fix this on the ChromeOS side too, but I still
+> think the driver doesn't need to set the capabilities like this
+> because a full-screen size cursor is not practical anyway.
+> The default cursor plane size is just 64x64.
 
-Limitations:
-VLAN offloading is limited to 0-256 IDs.
-MDB/FDB static entries are limited to 511 entries and different FDBs can
-hash to same bucket and thus may not completely offloaded
+Seems like a better solution was merged:
 
-Example assuming ETH1 and ETH2 as ICSSG2 interfaces:
+https://patchwork.freedesktop.org/patch/583298/
 
-Switch to ICSSG Switch mode:
- ip link add name br0 type bridge
- ip link set dev eth1 master br0
- ip link set dev eth2 master br0
- ip link set dev br0 up
- bridge vlan add dev br0 vid 1 pvid untagged self
 
-Going back to Dual EMAC mode:
+ChenYu
 
- ip link set dev br0 down
- ip link set dev eth1 nomaster
- ip link set dev eth2 nomaster
- ip link del name br0 type bridge
-
-By default, Dual EMAC firmware is loaded, and can be changed to switch
-mode by above steps
-
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-NOTE: The second interface can be added before / after the bridge is up
-      and still forwarding would work. Similarly the second interface can
-      be removed before / after bringing the bridge down and driver will
-      transition back into dual emac mode.
-
-      As we are not restarting the interfaces, the DRAM, SMEM and MSMC RAM
-      doesn't get cleared. As a result with this approach all
-      configurations will be saved.
-
- drivers/net/ethernet/ti/Kconfig               |   1 +
- drivers/net/ethernet/ti/Makefile              |   3 +-
- .../net/ethernet/ti/icssg/icssg_classifier.c  |   2 +-
- drivers/net/ethernet/ti/icssg/icssg_common.c  |   2 +
- drivers/net/ethernet/ti/icssg/icssg_config.c  | 152 +++++++++--
- drivers/net/ethernet/ti/icssg/icssg_config.h  |   7 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 238 +++++++++++++++++-
- 7 files changed, 386 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 1729eb0e0b41..f160a3b71499 100644
---- a/drivers/net/ethernet/ti/Kconfig
-+++ b/drivers/net/ethernet/ti/Kconfig
-@@ -204,6 +204,7 @@ config TI_ICSSG_PRUETH_SR1
- 	select TI_ICSS_IEP
- 	select TI_K3_CPPI_DESC_POOL
- 	depends on PRU_REMOTEPROC
-+	depends on NET_SWITCHDEV
- 	depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
- 	help
- 	  Support dual Gigabit Ethernet ports over the ICSSG PRU Subsystem.
-diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index 6e086b4c0384..59cd20a38267 100644
---- a/drivers/net/ethernet/ti/Makefile
-+++ b/drivers/net/ethernet/ti/Makefile
-@@ -39,7 +39,8 @@ icssg-prueth-y := icssg/icssg_prueth.o \
- 		  icssg/icssg_config.o \
- 		  icssg/icssg_mii_cfg.o \
- 		  icssg/icssg_stats.o \
--		  icssg/icssg_ethtool.o
-+		  icssg/icssg_ethtool.o \
-+		  icssg/icssg_switchdev.o
- obj-$(CONFIG_TI_ICSSG_PRUETH_SR1) += icssg-prueth-sr1.o
- icssg-prueth-sr1-y := icssg/icssg_prueth_sr1.o \
- 		      icssg/icssg_common.o \
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_classifier.c b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-index 79ba47bb3602..8dee737639b6 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
-@@ -455,7 +455,7 @@ void icssg_ft1_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac_addr)
- {
- 	const u8 mask_addr[] = { 0, 0, 0, 0, 0, 0, };
- 
--	rx_class_ft1_set_start_len(miig_rt, slice, 0, 6);
-+	rx_class_ft1_set_start_len(miig_rt, slice, 6, 6);
- 	rx_class_ft1_set_da(miig_rt, slice, 0, mac_addr);
- 	rx_class_ft1_set_da_mask(miig_rt, slice, 0, mask_addr);
- 	rx_class_ft1_cfg_set_type(miig_rt, slice, 0, FT1_CFG_TYPE_EQ);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-index 088ab8076db4..873126dfc173 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-@@ -581,6 +581,8 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
- 	} else {
- 		/* send the filled skb up the n/w stack */
- 		skb_put(skb, pkt_len);
-+		if (emac->prueth->is_switch_mode)
-+			skb->offload_fwd_mark = emac->offload_fwd_mark;
- 		skb->protocol = eth_type_trans(skb, ndev);
- 		napi_gro_receive(&emac->napi_rx, skb);
- 		ndev->stats.rx_bytes += pkt_len;
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index 2213374d4d45..6f4756a8cda7 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -107,28 +107,49 @@ static const struct map hwq_map[2][ICSSG_NUM_OTHER_QUEUES] = {
- 	},
- };
- 
-+static void icssg_config_mii_init_switch(struct prueth_emac *emac)
-+{
-+	struct prueth *prueth = emac->prueth;
-+	int mii = prueth_emac_slice(emac);
-+	u32 txcfg_reg, pcnt_reg, txcfg;
-+	struct regmap *mii_rt;
-+
-+	mii_rt = prueth->mii_rt;
-+
-+	txcfg_reg = (mii == ICSS_MII0) ? PRUSS_MII_RT_TXCFG0 :
-+				       PRUSS_MII_RT_TXCFG1;
-+	pcnt_reg = (mii == ICSS_MII0) ? PRUSS_MII_RT_RX_PCNT0 :
-+				       PRUSS_MII_RT_RX_PCNT1;
-+
-+	txcfg = PRUSS_MII_RT_TXCFG_TX_ENABLE |
-+		PRUSS_MII_RT_TXCFG_TX_AUTO_PREAMBLE |
-+		PRUSS_MII_RT_TXCFG_TX_IPG_WIRE_CLK_EN;
-+
-+	if (emac->phy_if == PHY_INTERFACE_MODE_MII && mii == ICSS_MII1)
-+		txcfg |= PRUSS_MII_RT_TXCFG_TX_MUX_SEL;
-+	else if (emac->phy_if != PHY_INTERFACE_MODE_MII && mii == ICSS_MII0)
-+		txcfg |= PRUSS_MII_RT_TXCFG_TX_MUX_SEL;
-+
-+	regmap_write(mii_rt, txcfg_reg, txcfg);
-+	regmap_write(mii_rt, pcnt_reg, 0x1);
-+}
-+
- static void icssg_config_mii_init(struct prueth_emac *emac)
- {
--	u32 rxcfg, txcfg, rxcfg_reg, txcfg_reg, pcnt_reg;
- 	struct prueth *prueth = emac->prueth;
- 	int slice = prueth_emac_slice(emac);
-+	u32 txcfg, txcfg_reg, pcnt_reg;
- 	struct regmap *mii_rt;
- 
- 	mii_rt = prueth->mii_rt;
- 
--	rxcfg_reg = (slice == ICSS_MII0) ? PRUSS_MII_RT_RXCFG0 :
--				       PRUSS_MII_RT_RXCFG1;
- 	txcfg_reg = (slice == ICSS_MII0) ? PRUSS_MII_RT_TXCFG0 :
- 				       PRUSS_MII_RT_TXCFG1;
- 	pcnt_reg = (slice == ICSS_MII0) ? PRUSS_MII_RT_RX_PCNT0 :
- 				       PRUSS_MII_RT_RX_PCNT1;
- 
--	rxcfg = MII_RXCFG_DEFAULT;
- 	txcfg = MII_TXCFG_DEFAULT;
- 
--	if (slice == ICSS_MII1)
--		rxcfg |= PRUSS_MII_RT_RXCFG_RX_MUX_SEL;
--
- 	/* In MII mode TX lines swapped inside ICSSG, so TX_MUX_SEL cfg need
- 	 * to be swapped also comparing to RGMII mode.
- 	 */
-@@ -137,7 +158,6 @@ static void icssg_config_mii_init(struct prueth_emac *emac)
- 	else if (emac->phy_if != PHY_INTERFACE_MODE_MII && slice == ICSS_MII1)
- 		txcfg |= PRUSS_MII_RT_TXCFG_TX_MUX_SEL;
- 
--	regmap_write(mii_rt, rxcfg_reg, rxcfg);
- 	regmap_write(mii_rt, txcfg_reg, txcfg);
- 	regmap_write(mii_rt, pcnt_reg, 0x1);
- }
-@@ -257,6 +277,66 @@ static int emac_r30_is_done(struct prueth_emac *emac)
- 	return 1;
- }
- 
-+static int prueth_switch_buffer_setup(struct prueth_emac *emac)
-+{
-+	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
-+	struct icssg_rxq_ctx __iomem *rxq_ctx;
-+	struct prueth *prueth = emac->prueth;
-+	int slice = prueth_emac_slice(emac);
-+	u32 addr;
-+	int i;
-+
-+	addr = lower_32_bits(prueth->msmcram.pa);
-+	if (slice)
-+		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+
-+	if (addr % SZ_64K) {
-+		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
-+		return -EINVAL;
-+	}
-+
-+	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
-+	/* workaround for f/w bug. bpool 0 needs to be initilalized */
-+	for (i = 0; i <  PRUETH_NUM_BUF_POOLS; i++) {
-+		writel(addr, &bpool_cfg[i].addr);
-+		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
-+		addr += PRUETH_EMAC_BUF_POOL_SIZE;
-+	}
-+
-+	if (!slice)
-+		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+	else
-+		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
-+
-+	for (i = PRUETH_NUM_BUF_POOLS;
-+	     i < 2 * PRUETH_SW_NUM_BUF_POOLS_HOST + PRUETH_NUM_BUF_POOLS;
-+	     i++) {
-+		/* The driver only uses first 4 queues per PRU so only initialize them */
-+		if (i % PRUETH_SW_NUM_BUF_POOLS_HOST < PRUETH_SW_NUM_BUF_POOLS_PER_PRU) {
-+			writel(addr, &bpool_cfg[i].addr);
-+			writel(PRUETH_SW_BUF_POOL_SIZE_HOST, &bpool_cfg[i].len);
-+			addr += PRUETH_SW_BUF_POOL_SIZE_HOST;
-+		} else {
-+			writel(0, &bpool_cfg[i].addr);
-+			writel(0, &bpool_cfg[i].len);
-+		}
-+	}
-+
-+	if (!slice)
-+		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
-+	else
-+		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
-+	for (i = 0; i < 3; i++)
-+		writel(addr, &rxq_ctx->start[i]);
-+
-+	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	writel(addr - SZ_2K, &rxq_ctx->end);
-+
-+	return 0;
-+}
-+
- static int prueth_emac_buffer_setup(struct prueth_emac *emac)
- {
- 	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
-@@ -321,25 +401,63 @@ static void icssg_init_emac_mode(struct prueth *prueth)
- 	/* When the device is configured as a bridge and it is being brought
- 	 * back to the emac mode, the host mac address has to be set as 0.
- 	 */
-+	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
-+	int i;
- 	u8 mac[ETH_ALEN] = { 0 };
- 
- 	if (prueth->emacs_initialized)
- 		return;
- 
--	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1,
--			   SMEM_VLAN_OFFSET_MASK, 0);
--	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, 0);
-+	/* Set VLAN TABLE address base */
-+	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
-+			   addr <<  SMEM_VLAN_OFFSET);
-+	/* Set enable VLAN aware mode, and FDBs for all PRUs */
-+	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, (FDB_PRU0_EN | FDB_PRU1_EN | FDB_HOST_EN));
-+	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
-+			    EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET);
-+	for (i = 0; i < SZ_4K - 1; i++) {
-+		prueth->vlan_tbl[i].fid = i;
-+		prueth->vlan_tbl[i].fid_c1 = 0;
-+	}
- 	/* Clear host MAC address */
- 	icssg_class_set_host_mac_addr(prueth->miig_rt, mac);
- }
- 
-+static void icssg_init_switch_mode(struct prueth *prueth)
-+{
-+	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
-+	int i;
-+
-+	if (prueth->emacs_initialized)
-+		return;
-+
-+	/* Set VLAN TABLE address base */
-+	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
-+			   addr <<  SMEM_VLAN_OFFSET);
-+	/* Set enable VLAN aware mode, and FDBs for all PRUs */
-+	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, FDB_EN_ALL);
-+	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
-+			    EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET);
-+	for (i = 0; i < SZ_4K - 1; i++) {
-+		prueth->vlan_tbl[i].fid = i;
-+		prueth->vlan_tbl[i].fid_c1 = 0;
-+	}
-+
-+	if (prueth->hw_bridge_dev)
-+		icssg_class_set_host_mac_addr(prueth->miig_rt, prueth->hw_bridge_dev->dev_addr);
-+	icssg_set_pvid(prueth, prueth->default_vlan, PRUETH_PORT_HOST);
-+}
-+
- int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
- {
- 	void __iomem *config = emac->dram.va + ICSSG_CONFIG_OFFSET;
- 	struct icssg_flow_cfg __iomem *flow_cfg;
- 	int ret;
- 
--	icssg_init_emac_mode(prueth);
-+	if (prueth->is_switch_mode)
-+		icssg_init_switch_mode(prueth);
-+	else
-+		icssg_init_emac_mode(prueth);
- 
- 	memset_io(config, 0, TAS_GATE_MASK_LIST0);
- 	icssg_miig_queues_init(prueth, slice);
-@@ -353,7 +471,10 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
- 	regmap_update_bits(prueth->miig_rt, ICSSG_CFG_OFFSET,
- 			   ICSSG_CFG_DEFAULT, ICSSG_CFG_DEFAULT);
- 	icssg_miig_set_interface_mode(prueth->miig_rt, slice, emac->phy_if);
--	icssg_config_mii_init(emac);
-+	if (prueth->is_switch_mode)
-+		icssg_config_mii_init_switch(emac);
-+	else
-+		icssg_config_mii_init(emac);
- 	icssg_config_ipg(emac);
- 	icssg_update_rgmii_cfg(prueth->miig_rt, emac);
- 
-@@ -376,7 +497,10 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
- 	writeb(0, config + SPL_PKT_DEFAULT_PRIORITY);
- 	writeb(0, config + QUEUE_NUM_UNTAGGED);
- 
--	ret = prueth_emac_buffer_setup(emac);
-+	if (prueth->is_switch_mode)
-+		ret = prueth_switch_buffer_setup(emac);
-+	else
-+		ret = prueth_emac_buffer_setup(emac);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-index 9d8558bd0f15..57206662d5c5 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-@@ -35,6 +35,13 @@ struct icssg_flow_cfg {
- 	(2 * (PRUETH_EMAC_BUF_POOL_SIZE * PRUETH_NUM_BUF_POOLS + \
- 	 PRUETH_EMAC_RX_CTX_BUF_SIZE * 2))
- 
-+#define PRUETH_SW_BUF_POOL_SIZE_HOST	SZ_4K
-+#define PRUETH_SW_NUM_BUF_POOLS_HOST	8
-+#define PRUETH_SW_NUM_BUF_POOLS_PER_PRU 4
-+#define MSMC_RAM_SIZE_SWITCH_MODE \
-+	(MSMC_RAM_SIZE + \
-+	(2 * PRUETH_SW_BUF_POOL_SIZE_HOST * PRUETH_SW_NUM_BUF_POOLS_HOST))
-+
- #define PRUETH_SWITCH_FDB_MASK ((SIZE_OF_FDB / NUMBER_OF_FDB_BUCKET_ENTRIES) - 1)
- 
- struct icssg_rxq_ctx {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 1db67a8107cc..6e65aa0977d4 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -27,6 +27,7 @@
- #include <linux/remoteproc/pruss.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-+#include <net/switchdev.h>
- 
- #include "icssg_prueth.h"
- #include "icssg_mii_rt.h"
-@@ -35,6 +36,10 @@
- 
- #define PRUETH_MODULE_DESCRIPTION "PRUSS ICSSG Ethernet driver"
- 
-+#define DEFAULT_VID		1
-+#define DEFAULT_PORT_MASK	1
-+#define DEFAULT_UNTAG_MASK	1
-+
- /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
- #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
- 
-@@ -113,6 +118,19 @@ static irqreturn_t prueth_tx_ts_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static struct icssg_firmwares icssg_switch_firmwares[] = {
-+	{
-+		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
-+		.rtu = "ti-pruss/am65x-sr2-rtu0-prusw-fw.elf",
-+		.txpru = "ti-pruss/am65x-sr2-txpru0-prusw-fw.elf",
-+	},
-+	{
-+		.pru = "ti-pruss/am65x-sr2-pru1-prusw-fw.elf",
-+		.rtu = "ti-pruss/am65x-sr2-rtu1-prusw-fw.elf",
-+		.txpru = "ti-pruss/am65x-sr2-txpru1-prusw-fw.elf",
-+	}
-+};
-+
- static struct icssg_firmwares icssg_emac_firmwares[] = {
- 	{
- 		.pru = "ti-pruss/am65x-sr2-pru0-prueth-fw.elf",
-@@ -132,7 +150,10 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
- 	struct device *dev = prueth->dev;
- 	int slice, ret;
- 
--	firmwares = icssg_emac_firmwares;
-+	if (prueth->is_switch_mode)
-+		firmwares = icssg_switch_firmwares;
-+	else
-+		firmwares = icssg_emac_firmwares;
- 
- 	slice = prueth_emac_slice(emac);
- 	if (slice < 0) {
-@@ -446,9 +467,8 @@ static int emac_ndo_open(struct net_device *ndev)
- 	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
- 
- 	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
--	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
--
- 	icssg_class_default(prueth->miig_rt, slice, 0, false);
-+	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
- 
- 	/* Notify the stack of the actual queue counts. */
- 	ret = netif_set_real_num_tx_queues(ndev, num_data_chn);
-@@ -845,6 +865,203 @@ bool prueth_dev_check(const struct net_device *ndev)
- 	return false;
- }
- 
-+static void prueth_offload_fwd_mark_update(struct prueth *prueth)
-+{
-+	int set_val = 0;
-+	int i;
-+
-+	if (prueth->br_members == (BIT(PRUETH_PORT_MII0) | BIT(PRUETH_PORT_MII1)))
-+		set_val = 1;
-+
-+	dev_dbg(prueth->dev, "set offload_fwd_mark %d\n", set_val);
-+
-+	for (i = PRUETH_MAC0; i < PRUETH_NUM_MACS; i++) {
-+		struct prueth_emac *emac = prueth->emac[i];
-+
-+		if (!emac || !emac->ndev)
-+			continue;
-+
-+		emac->offload_fwd_mark = set_val;
-+	}
-+}
-+
-+static void prueth_emac_restart(struct prueth *prueth)
-+{
-+	struct prueth_emac *emac0 = prueth->emac[PRUETH_MAC0];
-+	struct prueth_emac *emac1 = prueth->emac[PRUETH_MAC1];
-+
-+	/* Detach the net_device for both PRUeth ports*/
-+	if (netif_running(emac0->ndev))
-+		netif_device_detach(emac0->ndev);
-+	if (netif_running(emac1->ndev))
-+		netif_device_detach(emac1->ndev);
-+
-+	/* Disable both PRUeth ports */
-+	emac_set_port_state(emac0, ICSSG_EMAC_PORT_DISABLE);
-+	emac_set_port_state(emac1, ICSSG_EMAC_PORT_DISABLE);
-+
-+	/* Stop both pru cores for both PRUeth ports*/
-+	prueth_emac_stop(emac0);
-+	prueth->emacs_initialized--;
-+	prueth_emac_stop(emac1);
-+	prueth->emacs_initialized--;
-+
-+	/* Start both pru cores for both PRUeth ports */
-+	prueth_emac_start(prueth, emac0);
-+	prueth->emacs_initialized++;
-+	prueth_emac_start(prueth, emac1);
-+	prueth->emacs_initialized++;
-+
-+	/* Enable forwarding for both PRUeth ports */
-+	emac_set_port_state(emac0, ICSSG_EMAC_PORT_FORWARD);
-+	emac_set_port_state(emac1, ICSSG_EMAC_PORT_FORWARD);
-+
-+	/* Attache net_device for both PRUeth ports */
-+	netif_device_attach(emac0->ndev);
-+	netif_device_attach(emac1->ndev);
-+}
-+
-+static void icssg_enable_switch_mode(struct prueth *prueth)
-+{
-+	struct prueth_emac *emac;
-+	int mac;
-+
-+	prueth_emac_restart(prueth);
-+
-+	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
-+		emac = prueth->emac[mac];
-+		if (netif_running(emac->ndev)) {
-+			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
-+					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-+					  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
-+					  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
-+					  ICSSG_FDB_ENTRY_BLOCK,
-+					  true);
-+			icssg_vtbl_modify(emac, emac->port_vlan | DEFAULT_VID,
-+					  BIT(emac->port_id) | DEFAULT_PORT_MASK,
-+					  BIT(emac->port_id) | DEFAULT_UNTAG_MASK,
-+					  true);
-+			icssg_set_pvid(prueth, emac->port_vlan, emac->port_id);
-+			emac_set_port_state(emac, ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE);
-+		}
-+	}
-+}
-+
-+static int prueth_netdevice_port_link(struct net_device *ndev,
-+				      struct net_device *br_ndev,
-+				      struct netlink_ext_ack *extack)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	struct prueth *prueth = emac->prueth;
-+	int err;
-+
-+	if (!prueth->br_members) {
-+		prueth->hw_bridge_dev = br_ndev;
-+	} else {
-+		/* This is adding the port to a second bridge, this is
-+		 * unsupported
-+		 */
-+		if (prueth->hw_bridge_dev != br_ndev)
-+			return -EOPNOTSUPP;
-+	}
-+
-+	err = switchdev_bridge_port_offload(br_ndev, ndev, emac,
-+					    &prueth->prueth_switchdev_nb,
-+					    &prueth->prueth_switchdev_bl_nb,
-+					    false, extack);
-+	if (err)
-+		return err;
-+
-+	prueth->br_members |= BIT(emac->port_id);
-+
-+	if (!prueth->is_switch_mode) {
-+		if (prueth->br_members & BIT(PRUETH_PORT_MII0) &&
-+		    prueth->br_members & BIT(PRUETH_PORT_MII1)) {
-+			prueth->is_switch_mode = true;
-+			prueth->default_vlan = 1;
-+			emac->port_vlan = prueth->default_vlan;
-+			icssg_enable_switch_mode(prueth);
-+		}
-+	}
-+
-+	prueth_offload_fwd_mark_update(prueth);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static void prueth_netdevice_port_unlink(struct net_device *ndev)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	struct prueth *prueth = emac->prueth;
-+
-+	prueth->br_members &= ~BIT(emac->port_id);
-+
-+	if (prueth->is_switch_mode) {
-+		prueth->is_switch_mode = false;
-+		emac->port_vlan = 0;
-+		prueth_emac_restart(prueth);
-+	}
-+
-+	prueth_offload_fwd_mark_update(prueth);
-+
-+	if (!prueth->br_members)
-+		prueth->hw_bridge_dev = NULL;
-+}
-+
-+/* netdev notifier */
-+static int prueth_netdevice_event(struct notifier_block *unused,
-+				  unsigned long event, void *ptr)
-+{
-+	struct netlink_ext_ack *extack = netdev_notifier_info_to_extack(ptr);
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct netdev_notifier_changeupper_info *info;
-+	int ret = NOTIFY_DONE;
-+
-+	if (ndev->netdev_ops != &emac_netdev_ops)
-+		return NOTIFY_DONE;
-+
-+	switch (event) {
-+	case NETDEV_CHANGEUPPER:
-+		info = ptr;
-+
-+		if (netif_is_bridge_master(info->upper_dev)) {
-+			if (info->linking)
-+				ret = prueth_netdevice_port_link(ndev, info->upper_dev, extack);
-+			else
-+				prueth_netdevice_port_unlink(ndev);
-+		}
-+		break;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int prueth_register_notifiers(struct prueth *prueth)
-+{
-+	int ret = 0;
-+
-+	prueth->prueth_netdevice_nb.notifier_call = &prueth_netdevice_event;
-+	ret = register_netdevice_notifier(&prueth->prueth_netdevice_nb);
-+	if (ret) {
-+		dev_err(prueth->dev, "can't register netdevice notifier\n");
-+		return ret;
-+	}
-+
-+	ret = prueth_switchdev_register_notifiers(prueth);
-+	if (ret)
-+		unregister_netdevice_notifier(&prueth->prueth_netdevice_nb);
-+
-+	return ret;
-+}
-+
-+static void prueth_unregister_notifiers(struct prueth *prueth)
-+{
-+	prueth_switchdev_unregister_notifiers(prueth);
-+	unregister_netdevice_notifier(&prueth->prueth_netdevice_nb);
-+}
-+
- static int prueth_probe(struct platform_device *pdev)
- {
- 	struct device_node *eth_node, *eth_ports_node;
-@@ -972,6 +1189,9 @@ static int prueth_probe(struct platform_device *pdev)
- 	}
- 
- 	msmc_ram_size = MSMC_RAM_SIZE;
-+	prueth->is_switchmode_supported = prueth->pdata.switch_mode;
-+	if (prueth->is_switchmode_supported)
-+		msmc_ram_size = MSMC_RAM_SIZE_SWITCH_MODE;
- 
- 	/* NOTE: FW bug needs buffer base to be 64KB aligned */
- 	prueth->msmcram.va =
-@@ -1077,6 +1297,14 @@ static int prueth_probe(struct platform_device *pdev)
- 		phy_attached_info(prueth->emac[PRUETH_MAC1]->ndev->phydev);
- 	}
- 
-+	if (prueth->is_switchmode_supported) {
-+		ret = prueth_register_notifiers(prueth);
-+		if (ret)
-+			goto netdev_unregister;
-+
-+		sprintf(prueth->switch_id, "%s", dev_name(dev));
-+	}
-+
- 	dev_info(dev, "TI PRU ethernet driver initialized: %s EMAC mode\n",
- 		 (!eth0_node || !eth1_node) ? "single" : "dual");
- 
-@@ -1146,6 +1374,8 @@ static void prueth_remove(struct platform_device *pdev)
- 	struct device_node *eth_node;
- 	int i;
- 
-+	prueth_unregister_notifiers(prueth);
-+
- 	for (i = 0; i < PRUETH_NUM_MACS; i++) {
- 		if (!prueth->registered_netdevs[i])
- 			continue;
-@@ -1187,10 +1417,12 @@ static void prueth_remove(struct platform_device *pdev)
- static const struct prueth_pdata am654_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_MESSAGE,
- 	.quirk_10m_link_issue = 1,
-+	.switch_mode = 1,
- };
- 
- static const struct prueth_pdata am64x_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_RING,
-+	.switch_mode = 1,
- };
- 
- static const struct of_device_id prueth_dt_match[] = {
--- 
-2.34.1
-
+> Regard,
+> Fei
+>
+>
+>
+> >
+> > > Regards,
+> > > Fei
+> > >
+> > >
+> > > >
+> > > > +
+> > > >         /* Use OVL device for all DMA memory allocations */
+> > > >         crtc =3D drm_crtc_from_index(drm, 0);
+> > > >         if (crtc)
+> > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/d=
+rm/mediatek/mtk_drm_drv.h
+> > > > index 78d698ede1bf8..6cfa790e8df5c 100644
+> > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > > > @@ -46,6 +46,10 @@ struct mtk_mmsys_driver_data {
+> > > >         bool shadow_register;
+> > > >         unsigned int mmsys_id;
+> > > >         unsigned int mmsys_dev_num;
+> > > > +
+> > > > +       int max_width;
+> > > > +       int min_width;
+> > > > +       int min_height;
+> > > >  };
+> > > >
+> > > >  struct mtk_drm_private {
+> > > > --
+> > > > 2.18.0
+> > > >
 
