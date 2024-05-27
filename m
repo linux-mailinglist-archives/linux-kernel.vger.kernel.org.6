@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-190674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFE68D0144
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8F38D0149
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04368284F77
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA481C2311A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2D115EFB3;
-	Mon, 27 May 2024 13:22:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D852415E5D4;
+	Mon, 27 May 2024 13:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pt8k4UTl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC50015ECF3
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386D13BAC2;
+	Mon, 27 May 2024 13:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816150; cv=none; b=pgYEIuMbLkQhhA0qzJ2ufybTw1KAOgVeAfE7hOo7pQJte1kLUOdSxOkovKVVcvtidDx5ZISKdFnu2NzRL5vdxt9v0lYlNYa+jnd2S8OhAL1aOhTQ0eSfJV6M4Ylyjywd30LqWHuI8+t7bTnPCivMuJqDVDioRdk0aWuxXvPIB3Q=
+	t=1716816168; cv=none; b=LGQyQTLMIWZCsN18/5w2JESDyNDR0z52mVLGArr0sPVrLnPaCB+Hr33KkFCkQ8JBprBOIl/qoC5voWEkXa7RI2FPzcRa6p36JVsPraULBR4AJuETtKKltw8Gw/SzkfTFwUn4R4KZxZ1rika0I2zKyVPWvlVGPxU78wtpa5PijuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816150; c=relaxed/simple;
-	bh=JWtt6Abdjck7XIpEK9UwFhE+Pqmzep9TYpawW/MOpSA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Q3T9s67oCwE1rKxp3O/9aEC0Kwx6EwIoOnTO1a+0ACNXlkl+MmKboScwU0Ze7C4dxaW0ZSMbpuO5gR8ImvZ2zZweeHfQkqNrxWAnQpPKgPOEq7AWVuaEc4UOXLrmJQt7Gdz+9NgIo2faWcVcX9u7tWBXyUiykv9UQHaK+7tjU80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3737b3db665so34321115ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716816148; x=1717420948;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7WZIq4G9PtxcmkzMzsJUrrOotpdeCmbsOBz+DCbbDC4=;
-        b=pjHDXy1SxnPIKfJPjQuReTGvZ2OvbFZx7g/5I7cDQqGl2koUVm7A6nGroVnErAaU5f
-         AK2lF4xwxMrsGE8Y4/yZOohRl7nTIfGwxSYPrG6TfLfy7j4k2HsmdbsI5naiCEx41JQb
-         gC8R6xzRNj8G/F3xS7ZLvyjeIj4MngVdpzAHGGjp1Djmbs/dG1fjUAchhCf3DezB7ChX
-         BNI7y6+caBBL6HaUf5lpn/xkQFUnOHfLIk0z4GVOIAUj740a6+pwDNpmRE8Ve2FK0CYc
-         WTRebqpnXFpoL8FNocgViqgoiEERynOQQ5RfItp91vRAC8CH0rP3Qv6nQBq3+RTCxjvJ
-         n2KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSg0yO85mUd3am49pmjLszZMr4pg3F+33XIGo/HZp0xuZ8tiiKmeV9kZ6FJixVWETTgX8/y1Zb66z4juL9aWM7VnsDLDqKTiMzxAQc
-X-Gm-Message-State: AOJu0YxnJHWz+Sau4suD38y2dytuFduoQwXYThBv6Wjzu3ko2zhx8S+v
-	xWiCIy2SNDEO8w9aAW4L60JhLmXLG3bC1zIfaBCVrYekfSn8IqVdFi1j2YiIiB7h2OOnGVYRx0/
-	o8le++Ma4XNb2wAkz/GrtYKZN9vA+3Ky0Wwe11XmkqO5rSbFEiI55hDo=
-X-Google-Smtp-Source: AGHT+IFiWnPYmjdm2RumhlqnAvIc6i8X7o4JX9hPFntNVse2StehRurPUlpwZ49d6cXFfVIK/zrPQ8sqyhs59oml4q1WMusuwZZH
+	s=arc-20240116; t=1716816168; c=relaxed/simple;
+	bh=1fUsgjmy0HwSjUNwgAEgVrkX83AtUHExHKTskQldwu8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D82wnb3RVIdip6zHpddHnKzZlWti2EB+TQJD1AlVBByJAtW4ozGYMaVQW1m/TVHwZyzoWLQTsmm5sDTg1fBaF6/67xJ0SSh0M0YBJhPvBfeMT1pjHVHdY9fgZAWAAf3A1cC2SspvuGttaRMMcbVWQ6vIsILLGbZEIMz6oOGF0xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pt8k4UTl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716816166; x=1748352166;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1fUsgjmy0HwSjUNwgAEgVrkX83AtUHExHKTskQldwu8=;
+  b=Pt8k4UTlbnlaFgonvn609LfYBebOhaT2boSzng0U7qXIv8DF7Kp2ped/
+   E4NxIza4/BePtCUU4WLZOOczLn4zu0Ig2KTTwo9s20hgmOSYG/X8QEOvN
+   mfhXQ/268DkX7t++pHlOVHWAeRMLyN5TkJB91BfsAYl96xqkOcmg1xYW/
+   C7Ek/WR6ibawdE8VI0F80OClGzE8gSxTuzAE/8uH1sB1l6971LADz+Yoz
+   XA0wt0ejj6gVeIgmFOEUXINZXaXeB3ngwSHao+ClCE6hP3TnkYJYxgRb3
+   ZzaRQ2OIHczOgbxTP3tNzy+31Xg0bhxxq6VXPAJGFOKPb06As6w5NC+Ef
+   w==;
+X-CSE-ConnectionGUID: eAoe8qImTCiyjspxLRHPBw==
+X-CSE-MsgGUID: Lg3NhQjYTi+AVJkPd2xD0g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13006467"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="13006467"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:22:45 -0700
+X-CSE-ConnectionGUID: V+Sj+DB6RGiufqFct8CSyw==
+X-CSE-MsgGUID: uvfdAZLMSSOZkgYtaStOvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="34787283"
+Received: from unknown (HELO localhost) ([10.245.247.140])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:22:43 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Yazen Ghannam <yazen.ghannam@amd.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Muralidhara M K <muralidhara.mk@amd.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] EDAC/amd64: Convert PCIBIOS_* return codes to errnos
+Date: Mon, 27 May 2024 16:22:34 +0300
+Message-Id: <20240527132236.13875-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a41:b0:36d:d38e:3520 with SMTP id
- e9e14a558f8ab-3737b33d769mr8047805ab.4.1716816148086; Mon, 27 May 2024
- 06:22:28 -0700 (PDT)
-Date: Mon, 27 May 2024 06:22:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6d9f506196f6826@google.com>
-Subject: [syzbot] [net?] divide error in taprio_update_queue_max_sdu
-From: syzbot <syzbot+233e6e0ea2ba2c86fa79@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
-	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	vinicius.gomes@intel.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+gpu_get_node_map() uses pci_read_config_dword() that returns PCIBIOS_*
+codes. The return code is then returned all the way into the module
+init function amd64_edac_init() that returns it as is. The module init
+functions, however, should return normal errnos.
 
-syzbot found the following issue on:
+Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
+errno before returning it from gpu_get_node_map().
 
-HEAD commit:    4b377b4868ef kprobe/ftrace: fix build error due to bad fun..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ab31a4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=17ffd15f654c98ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=233e6e0ea2ba2c86fa79
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+For consistency, convert also the other similar cases which return
+PCIBIOS_* codes even if they do not have any bugs at the moment.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6f4c61bc9252/disk-4b377b48.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/841f1b24d3a1/vmlinux-4b377b48.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/017b655dca3d/bzImage-4b377b48.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+233e6e0ea2ba2c86fa79@syzkaller.appspotmail.com
-
-Oops: divide error: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 15391 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-08544-g4b377b4868ef #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:div_u64_rem include/linux/math64.h:29 [inline]
-RIP: 0010:div_u64 include/linux/math64.h:130 [inline]
-RIP: 0010:duration_to_length net/sched/sch_taprio.c:259 [inline]
-RIP: 0010:taprio_update_queue_max_sdu+0x287/0x870 net/sched/sch_taprio.c:288
-Code: be 08 00 00 00 e8 99 5b 6a f8 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 13 59 6a f8 48 8b 03 89 c1 48 89 e8 31 d2 <48> f7 f1 48 89 c5 48 83 7c 24 50 00 4c 8b 74 24 30 74 47 e8 c1 19
-RSP: 0018:ffffc9000506eb38 EFLAGS: 00010246
-RAX: 0000000000001f40 RBX: ffff88802f3562e0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88802f3562e0
-RBP: 0000000000001f40 R08: ffff88802f3562e7 R09: 1ffff11005e6ac5c
-R10: dffffc0000000000 R11: ffffed1005e6ac5d R12: 00000000ffffffff
-R13: dffffc0000000000 R14: ffff88801ef59400 R15: 00000000003f0008
-FS:  00007fee340bf6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2c524000 CR3: 0000000024a52000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- taprio_change+0x2dce/0x42d0 net/sched/sch_taprio.c:1911
- taprio_init+0x9da/0xc80 net/sched/sch_taprio.c:2112
- qdisc_create+0x9d4/0x11a0 net/sched/sch_api.c:1355
- tc_modify_qdisc+0xa26/0x1e40 net/sched/sch_api.c:1777
- rtnetlink_rcv_msg+0x89b/0x10d0 net/core/rtnetlink.c:6595
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
- netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
- netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
- netlink_sendmsg+0x8e1/0xcb0 net/netlink/af_netlink.c:1905
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2584
- ___sys_sendmsg net/socket.c:2638 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2667
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fee3327cee9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fee340bf0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fee333abf80 RCX: 00007fee3327cee9
-RDX: 0000000000000000 RSI: 00000000200007c0 RDI: 000000000000000e
-RBP: 00007fee332c949e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fee333abf80 R15: 00007fff3d596598
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:div_u64_rem include/linux/math64.h:29 [inline]
-RIP: 0010:div_u64 include/linux/math64.h:130 [inline]
-RIP: 0010:duration_to_length net/sched/sch_taprio.c:259 [inline]
-RIP: 0010:taprio_update_queue_max_sdu+0x287/0x870 net/sched/sch_taprio.c:288
-Code: be 08 00 00 00 e8 99 5b 6a f8 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 13 59 6a f8 48 8b 03 89 c1 48 89 e8 31 d2 <48> f7 f1 48 89 c5 48 83 7c 24 50 00 4c 8b 74 24 30 74 47 e8 c1 19
-RSP: 0018:ffffc9000506eb38 EFLAGS: 00010246
-RAX: 0000000000001f40 RBX: ffff88802f3562e0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88802f3562e0
-RBP: 0000000000001f40 R08: ffff88802f3562e7 R09: 1ffff11005e6ac5c
-R10: dffffc0000000000 R11: ffffed1005e6ac5d R12: 00000000ffffffff
-R13: dffffc0000000000 R14: ffff88801ef59400 R15: 00000000003f0008
-FS:  00007fee340bf6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b31424000 CR3: 0000000024a52000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	be 08 00 00 00       	mov    $0x8,%esi
-   5:	e8 99 5b 6a f8       	call   0xf86a5ba3
-   a:	48 89 d8             	mov    %rbx,%rax
-   d:	48 c1 e8 03          	shr    $0x3,%rax
-  11:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  16:	74 08                	je     0x20
-  18:	48 89 df             	mov    %rbx,%rdi
-  1b:	e8 13 59 6a f8       	call   0xf86a5933
-  20:	48 8b 03             	mov    (%rbx),%rax
-  23:	89 c1                	mov    %eax,%ecx
-  25:	48 89 e8             	mov    %rbp,%rax
-  28:	31 d2                	xor    %edx,%edx
-* 2a:	48 f7 f1             	div    %rcx <-- trapping instruction
-  2d:	48 89 c5             	mov    %rax,%rbp
-  30:	48 83 7c 24 50 00    	cmpq   $0x0,0x50(%rsp)
-  36:	4c 8b 74 24 30       	mov    0x30(%rsp),%r14
-  3b:	74 47                	je     0x84
-  3d:	e8                   	.byte 0xe8
-  3e:	c1                   	.byte 0xc1
-  3f:	19                   	.byte 0x19
-
-
+Fixes: 4251566ebc1c ("EDAC/amd64: Cache and use GPU node map")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/edac/amd64_edac.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 1f3520d76861..a17f3c0cdfa6 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -81,7 +81,7 @@ int __amd64_read_pci_cfg_dword(struct pci_dev *pdev, int offset,
+ 		amd64_warn("%s: error reading F%dx%03x.\n",
+ 			   func, PCI_FUNC(pdev->devfn), offset);
+ 
+-	return err;
++	return pcibios_err_to_errno(err);
+ }
+ 
+ int __amd64_write_pci_cfg_dword(struct pci_dev *pdev, int offset,
+@@ -94,7 +94,7 @@ int __amd64_write_pci_cfg_dword(struct pci_dev *pdev, int offset,
+ 		amd64_warn("%s: error writing to F%dx%03x.\n",
+ 			   func, PCI_FUNC(pdev->devfn), offset);
+ 
+-	return err;
++	return pcibios_err_to_errno(err);
+ }
+ 
+ /*
+@@ -1025,8 +1025,10 @@ static int gpu_get_node_map(struct amd64_pvt *pvt)
+ 	}
+ 
+ 	ret = pci_read_config_dword(pdev, REG_LOCAL_NODE_TYPE_MAP, &tmp);
+-	if (ret)
++	if (ret) {
++		ret = pcibios_err_to_errno(ret);
+ 		goto out;
++	}
+ 
+ 	gpu_node_map.node_count = FIELD_GET(LNTM_NODE_COUNT, tmp);
+ 	gpu_node_map.base_node_id = FIELD_GET(LNTM_BASE_NODE_ID, tmp);
+-- 
+2.39.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
