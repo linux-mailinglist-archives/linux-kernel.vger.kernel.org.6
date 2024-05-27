@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-190367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE308CFD5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8478CFD66
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9BADB249D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F85B282923
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAACA13AA5E;
-	Mon, 27 May 2024 09:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B41A13A87E;
+	Mon, 27 May 2024 09:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HhAdJh5E"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HeujMHhK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DdcUi/st";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HeujMHhK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DdcUi/st"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D00213A41F;
-	Mon, 27 May 2024 09:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63CB13A868;
+	Mon, 27 May 2024 09:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716803017; cv=none; b=VFbTy/zfc8SLASX81TMz8nwoJvsTEwklnaETLki2C/GaVGD1aMScdTcjGbPNnV+tDOVzFubkogtVIJxdwjkRzgsJopSQixdzC2wsdv34alwjBd8zagv34v9gqFuzZIEsk8X0f7kURprTt2zaAGoL8j5BxtG8SKx+FrEqBP6ybMM=
+	t=1716803193; cv=none; b=Gqnb+bRg4HB+/0VgHgbVF6RkB58Pu/Xx6nT1DFWYcN4thS7NumNpB4AAzJIVsxIF6Yr2xEjjDAjLSh/VLn0eqP1vTWoP9PUCH9Ai19zuse2Xim0ccNm8N4NtKGoXNTrq9qiTcVtBPrj6Mq49r4yI4KMafIFzuS4Y5LtpuWjKUek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716803017; c=relaxed/simple;
-	bh=fR/7T0+UMrJxQIZjcCXXJxLYwy8xIHBULjjM6TiMdVc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=j75TQJ9QiUxHvflHEEolvSx8sUztu3X2HTWSBrtyga0C+WyGDmBdTCf+5Jez3y8yfwj7O/1JoAwfqT1wafaf9HrkBoTqjt8vW68RqbdKBt2akFXLbHdmyFh6WegFLVrfRPQmlDLMk152xu06e9EmRBNlf51TLo7pUeNxipvU4sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HhAdJh5E; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716803011; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	bh=7W1h1ik6qEQ2iCv0XMWvvUeCypjHJwVIOEdS4xSBGuU=;
-	b=HhAdJh5E1WJm1KUgUaK8y699Wc1SyVdfkxFG3428pt0r0b8KjQGeRgJ+pwzTaLpdZihdhrDDSDjmDcQbW2wd4IhlQJ6xNPMX7rvHFCHoFOAT5OxsF/ylpAu5mAbwyCDHGxYcqZpF/dto3R6sY355jyZl0xQc03fr87ZiaE40KbQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R921e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=yaoma@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7J2E4N_1716803009;
-Received: from smtpclient.apple(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0W7J2E4N_1716803009)
-          by smtp.aliyun-inc.com;
-          Mon, 27 May 2024 17:43:31 +0800
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1716803193; c=relaxed/simple;
+	bh=0J7Goas7XfaqrjeDmO5xbFVdnXoNnA0rtt90fCBrbeE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NQ8Boc2qv/2dW/3P8P05JAFa6I8GUoTRTCdgWdBjugFG4Xe6UVcjtkFv/ivhrhiEzKdRkx/gYWhHQxv8A48LHSC1XzJ2z4DmYMzZNdQ/1HLgLhnN4693M4j3yNogbqp470IrLtIY70m8rUaP/y+twf5Tp/08ouZG/XW3xC9cKYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HeujMHhK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DdcUi/st; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HeujMHhK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DdcUi/st; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C498621DB1;
+	Mon, 27 May 2024 09:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716803189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KEUi4RnVMGp2yzXFYg94XEmXhdXc3uYod367qTqvHLo=;
+	b=HeujMHhKEh9k7Wq0LmbWESKvLSF0TDTZ5zNjby8npHd/FTS5/G8/SITXFFZm+NxFtKFBbY
+	CEGxz1TTMquajfB3TzkRBIjL0hn9l625MeziS7nm5XY6m+Rtf2g0X5wz7CsJegPeHhrKjA
+	R3hpLjtvCQksAlaadSCZIKUCIrZpqlk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716803189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KEUi4RnVMGp2yzXFYg94XEmXhdXc3uYod367qTqvHLo=;
+	b=DdcUi/stZ6t5oll9CD1/ztqfZB4JkNGXBp9c9bZ0jUrXjp8G4Q281stfFE5E3vwAqeNs6T
+	XLw5HGCwodaepECQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HeujMHhK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="DdcUi/st"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716803189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KEUi4RnVMGp2yzXFYg94XEmXhdXc3uYod367qTqvHLo=;
+	b=HeujMHhKEh9k7Wq0LmbWESKvLSF0TDTZ5zNjby8npHd/FTS5/G8/SITXFFZm+NxFtKFBbY
+	CEGxz1TTMquajfB3TzkRBIjL0hn9l625MeziS7nm5XY6m+Rtf2g0X5wz7CsJegPeHhrKjA
+	R3hpLjtvCQksAlaadSCZIKUCIrZpqlk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716803189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KEUi4RnVMGp2yzXFYg94XEmXhdXc3uYod367qTqvHLo=;
+	b=DdcUi/stZ6t5oll9CD1/ztqfZB4JkNGXBp9c9bZ0jUrXjp8G4Q281stfFE5E3vwAqeNs6T
+	XLw5HGCwodaepECQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4717E13A6B;
+	Mon, 27 May 2024 09:46:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jC6MDXVWVGa7NQAAD6G6ig
+	(envelope-from <clopez@suse.de>); Mon, 27 May 2024 09:46:29 +0000
+From: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>
+To: linux-trace-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org (open list:TRACING)
+Subject: [PATCH v2] tracing/probes: fix error check in parse_btf_field()
+Date: Mon, 27 May 2024 11:43:52 +0200
+Message-Id: <20240527094351.15687-1-clopez@suse.de>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH] PCI: pciehp: Use appropriate conditions to check the
- hotplug controller status
-From: yaoma <yaoma@linux.alibaba.com>
-In-Reply-To: <ZlRJaEEGEMsyxXqm@wunner.de>
-Date: Mon, 27 May 2024 17:43:29 +0800
-Cc: yaoma <yaoma@linux.alibaba.com>,
- bhelgaas@google.com,
- weirongguang@kylinos.cn,
- kanie@linux.alibaba.com,
- linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D917498A-BF19-42EF-8E15-CDB25B96254D@linux.alibaba.com>
-References: <20240524063023.77148-1-yaoma@linux.alibaba.com>
- <ZlBHjbmjjSEnXCMp@wunner.de>
- <7855600C-4BB6-417B-8F91-24F4F7E0820E@linux.alibaba.com>
- <ZlRJaEEGEMsyxXqm@wunner.de>
-To: Lukas Wunner <lukas@wunner.de>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.58 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	BAYES_HAM(-1.07)[87.92%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: C498621DB1
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.58
 
-Hi,
+btf_find_struct_member() might return NULL or an error via the
+ERR_PTR() macro. However, its caller in parse_btf_field() only checks
+for the NULL condition. Fix this by using IS_ERR() and returning the
+error up the stack.
 
-> 2024=E5=B9=B45=E6=9C=8827=E6=97=A5 16:50=EF=BC=8CLukas Wunner =
-<lukas@wunner.de> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Sun, May 26, 2024 at 10:45:36PM +0800, yaoma wrote:
->>> 2024 5 24 15:53 Lukas Wunner <lukas@wunner.de>
->>> On Fri, May 24, 2024 at 02:30:23PM +0800, Bitao Hu wrote:
->>>> The values of 'present' and 'link_active' have similar meanings:
->>>> the value is %1 if the status is ready, and %0 if it is not. If the
->>>> hotplug controller itself is not available, the value should be
->>>> %-ENODEV. However, both %1 and %-ENODEV are considered true, which
->>>> obviously does not meet expectations. 'Slot(xx): Card present' and
->>>> 'Slot(xx): Link Up' should only be output when the value is %1.
->>> [...]
->>>> --- a/drivers/pci/hotplug/pciehp_ctrl.c
->>>> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
->>>> @@ -276,10 +276,10 @@ void =
-pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 =
-events)
->>>> 	case OFF_STATE:
->>>> 		ctrl->state =3D POWERON_STATE;
->>>> 		mutex_unlock(&ctrl->state_lock);
->>>> -		if (present)
->>>> +		if (present > 0)
->>>> 			ctrl_info(ctrl, "Slot(%s): Card present\n",
->>>> 				  slot_name(ctrl));
->>>> -		if (link_active)
->>>> +		if (link_active > 0)
->>>> 			ctrl_info(ctrl, "Slot(%s): Link Up\n",
->>>> 				  slot_name(ctrl));
->>>> 		ctrl->request_result =3D pciehp_enable_slot(ctrl);
->>>=20
->>> We already handle the "<=3D 0" case immediately above this code =
-excerpt:
->>>=20
->>> 	if (present <=3D 0 && link_active <=3D 0) {
->>> 	...
->>> 	}
->>=20
->> I'm not sure if the following scenarios would occur in actual =
-production
->> environment, but from the code level, there is the possibility of
->> "present <=3D 0 && link_active > 0" or "present > 0 && link_active <=3D=
- 0".
->> In these cases, the "<=3D 0" conditions will not be properly handled,
->> and "ctrl_info" will output incorrect prompt messages.
->=20
-> I see, that makes sense.
->=20
-> "present" and "link_active" can be -ENODEV if reading the config space
-> of the hotplug port failed.  That's typically the case if the hotplug
-> port itself was hot-removed, which happens all the time with
-> Thunderbolt/USB4.
->=20
-> E.g. pciehp_card_present() may return 1 and pciehp_check_link_active()
-> may return -ENODEV because the hotplug port was hot-removed in-between
-> the two function calls.  In that case we'll emit both "Card present"
-> *and* "Link Up".  The latter is uncalled for and is supressed by your
-> patch.
->=20
-> So your code change is
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
->=20
-> ...but it would be good if you could respin the patch and explain the
-> rationale of the code change in the commit message more clearly.
-> Basically summarize what you and I have explained above.
->=20
-> Also, the percent sign % in front of 0, 1, -ENODEV is unnecessary in
-> commit messages. It only has special meaning in kernel-doc.
->=20
+Fixes: c440adfbe3025 ("tracing/probes: Support BTF based data structure field access")
+Signed-off-by: Carlos López <clopez@suse.de>
+---
+v2: added call to trace_probe_log_err()
 
-Thanks for your analysis. I will make the the rationale of the code =
-change
-more clearly in next patch.
+ kernel/trace/trace_probe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best Regards,
-
-	Bitao Hu
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 5e263c141574..39877c80d6cb 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -554,6 +554,10 @@ static int parse_btf_field(char *fieldname, const struct btf_type *type,
+ 			anon_offs = 0;
+ 			field = btf_find_struct_member(ctx->btf, type, fieldname,
+ 						       &anon_offs);
++			if (IS_ERR(field)) {
++				trace_probe_log_err(ctx->offset, BAD_BTF_TID);
++				return PTR_ERR(field);
++			}
+ 			if (!field) {
+ 				trace_probe_log_err(ctx->offset, NO_BTF_FIELD);
+ 				return -ENOENT;
+-- 
+2.35.3
 
 
