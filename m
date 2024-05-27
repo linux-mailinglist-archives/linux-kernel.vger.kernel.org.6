@@ -1,88 +1,154 @@
-Return-Path: <linux-kernel+bounces-190979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBDC8D0594
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:13:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B374E8D0516
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6C4B34A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56371C219F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E900416C685;
-	Mon, 27 May 2024 14:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzAdraRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CE016C840;
+	Mon, 27 May 2024 14:35:32 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3391E15F3EE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB6216C6A3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716820409; cv=none; b=GrMA7ZgTt09JbtkpPs4OEt9J0yV/yOKYvisXRdY78Tefd9kTOBoU8PJUMVIEv8p6Tn6W3FMlkN+Rm5ksdLaC2naN5642XZLHEDv4hj/okpdM0NQ8SGyhSMBTCLDUs6ErPGPPhuRr/0cZu1z0xcv52ssBnnHZInolcw8wgFY+hRM=
+	t=1716820532; cv=none; b=LNtrU2zgP9j65DS0T6s3QpkRGfYSmDeMWD1Ll+HeY3QMni6vr3jzL5osIrFFIqqsavr5bwLtOvMcBHEIRtCq7aZbtb4ehA+ox8X4Gm2H6OkDrFlx10ybd5ovHvuZBzJPOYihPclH8rmyX5QKIjldFCym9KuI4eT3cNnnni9zVKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716820409; c=relaxed/simple;
-	bh=S0TBfxjUtfuVEbYgXZOiLFontODzcJL+M7Q4Hl3IXRg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fgvv0iWGZzYcJpdZa4guiPSbE3k0B8hQKmJW+l7lR7WXEuEtD8aIC+ZCEqs205+fWmXfVEnMqXyFmFbpxPV6DFZRDBkAuAbsoffMtE/bsXbSOgw65WA88PIJjTDhr88DQeb1xYebTTQlvYqWd3QTwT+Ghq4Qmawl9dVVrnawsGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzAdraRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778C7C2BBFC;
-	Mon, 27 May 2024 14:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716820408;
-	bh=S0TBfxjUtfuVEbYgXZOiLFontODzcJL+M7Q4Hl3IXRg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=bzAdraRGohEIH3y+D1Vl5PXrkEGVsueuZciQhCH0pHkrz1zTJoJ9c+AfE/p1ZH7Wy
-	 1UVDEP11Z89Zbrj/a2XL5PDFU1PD8j0lMO64aR6Li76qX8X4WvZZEHfeK+vxixENPw
-	 ROFu6qkY6rxmaZeD0fYzoBF1ccjMsMfsUaGccNTjOTe5f4q4eVhjaeB3qXDhfyYfSR
-	 8ab6Us7ChKC8p4lrShwl70/46ZlhxFYaQ5tNcOTuYnnyvmLbLcxs2d+hvk12H71jTO
-	 IBWtXH+SaJznQsDR/0uQBmSEmXkymZXicM56gE95nL/L0iYR42Q93aCc+KxwVuH1Pq
-	 yL21heGWNLkkw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Michael Walle <mwalle@kernel.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Ricardo Ribalda <ribalda@kernel.org>,
-  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 4/6] mtd: spi-nor: get rid of SPI_NOR_NO_FR
-In-Reply-To: <494daaab-a93c-44cd-a437-d306a8269251@linaro.org> (Tudor
-	Ambarus's message of "Mon, 22 Apr 2024 06:59:56 +0100")
-References: <20240419141249.609534-1-mwalle@kernel.org>
-	<20240419141249.609534-5-mwalle@kernel.org>
-	<494daaab-a93c-44cd-a437-d306a8269251@linaro.org>
-Date: Mon, 27 May 2024 16:33:26 +0200
-Message-ID: <mafs0ttij1g09.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716820532; c=relaxed/simple;
+	bh=HaAgE/aZ3JdMthdhWf9VMNdA6SlrHtpI51bJIvG36Bs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfpHQC8j297lGwr1x7+4PgRysKuUtdESwE6shnf6IRAh+m6rKm4oVxeeXZrOaLLND+y2o+VTTCJj26eHKHfX2GjWumHUwBZbGv7XokA4InRyJCrRMIyUpLUe5HbVuv3MAjRxxu+dvTtAbMeB9enUoJ8DGFOPEq6uWwaF2lIZ2Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 33d59d03-1c36-11ef-80bb-005056bdfda7;
+	Mon, 27 May 2024 17:34:20 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 27 May 2024 17:34:19 +0300
+To: "D, Lakshmi Sowjanya" <lakshmi.sowjanya.d@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"jstultz@google.com" <jstultz@google.com>,
+	"giometti@enneenne.com" <giometti@enneenne.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"Dong, Eddie" <eddie.dong@intel.com>,
+	"Hall, Christopher S" <christopher.s.hall@intel.com>,
+	"Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+	"joabreu@synopsys.com" <joabreu@synopsys.com>,
+	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+	"perex@perex.cz" <perex@perex.cz>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"peter.hilber@opensynergy.com" <peter.hilber@opensynergy.com>,
+	"N, Pandith" <pandith.n@intel.com>,
+	"Mohan, Subramanian" <subramanian.mohan@intel.com>,
+	"T R, Thejesh Reddy" <thejesh.reddy.t.r@intel.com>
+Subject: Re: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
+Message-ID: <ZlSZ63ST-Pj9CwCh@surfacebook.localdomain>
+References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
+ <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com>
+ <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
+ <CY8PR11MB7364D1C85099E4337408EBAFC4F02@CY8PR11MB7364.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR11MB7364D1C85099E4337408EBAFC4F02@CY8PR11MB7364.namprd11.prod.outlook.com>
 
-On Mon, Apr 22 2024, Tudor Ambarus wrote:
+Mon, May 27, 2024 at 11:48:54AM +0000, D, Lakshmi Sowjanya kirjoitti:
+> > -----Original Message-----
+> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Sent: Monday, May 13, 2024 4:49 PM
+> > On Mon, May 13, 2024 at 04:08:11PM +0530, lakshmi.sowjanya.d@intel.com
+> > wrote:
 
-> On 4/19/24 15:12, Michael Walle wrote:
->> The evervision FRAM devices are the only user of the NO_FR flag. Dro
->
-> everspin is evervision?
+..
 
-Looks like a typo to me. Evervision seems to only create display panels.
-I can do s/evervision/everspin/, both in commit message and in code when
-applying.
+> > > +static ssize_t enable_store(struct device *dev, struct device_attribute
+> > *attr, const char *buf,
+> > > +			    size_t count)
+> > > +{
+> > > +	struct pps_tio *tio = dev_get_drvdata(dev);
+> > > +	bool enable;
+> > > +	int err;
+> > 
+> > (1)
+> > 
+> > > +	err = kstrtobool(buf, &enable);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > > +	guard(spinlock_irqsave)(&tio->lock);
+> > > +	if (enable && !tio->enabled) {
+> > 
+> > > +		if (!timekeeping_clocksource_has_base(CSID_X86_ART)) {
+> > > +			dev_err(tio->dev, "PPS cannot be started as clock is
+> > not related
+> > > +to ART");
+> > 
+> > Why not simply dev_err(dev, ...)?
+> > 
+> > > +			return -EPERM;
+> > > +		}
+> > 
+> > I'm wondering if we can move this check to (1) above.
+> > Because currently it's a good question if we are able to stop PPS which was
+> > run by somebody else without this check done.
+> 
+> Do you mean can someone stop the signal without this check? 
+> Yes, this check is not required to stop.  So, I feel it need not be moved to (1).
+> 
+> Please, correct me if my understanding is wrong.
 
->
->> the global flag and instead use a manufacturer fixup for the evervision
->> flashes to drop the fast read support.
->> 
->> Signed-off-by: Michael Walle <mwalle@kernel.org>
-[...]
+So, there is a possibility to have a PPS being run (by somebody else) even if
+there is no ART provided?
+
+If "yes", your check is wrong to begin with. If "no", my suggestion is correct,
+i.e. there is no need to stop something that can't be started at all.
+
+> > I.o.w. this sounds too weird to me and reading the code doesn't give any hint
+> > if it's even possible. And if it is, are we supposed to touch that since it was
+> > definitely *not* us who ran it.
+> 
+> Yes, we are not restricting on who can stop/start the signal. 
+
+See above. It's not about this kind of restriction.
+
+> > > +		pps_tio_direction_output(tio);
+> > > +		hrtimer_start(&tio->timer, first_event(tio),
+> > HRTIMER_MODE_ABS);
+> > > +		tio->enabled = true;
+> > > +	} else if (!enable && tio->enabled) {
+> > > +		hrtimer_cancel(&tio->timer);
+> > > +		pps_tio_disable(tio);
+> > > +		tio->enabled = false;
+> > > +	}
+> > > +	return count;
+> > > +}
 
 -- 
-Regards,
-Pratyush Yadav
+With Best Regards,
+Andy Shevchenko
+
+
 
