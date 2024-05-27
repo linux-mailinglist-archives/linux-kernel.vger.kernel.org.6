@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-191516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5558D1099
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A548D109B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A282A283191
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E821F22108
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDF0152E02;
-	Mon, 27 May 2024 23:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38CD13C674;
+	Mon, 27 May 2024 23:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LfLWhYiZ";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PsAJcFYL"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="zi77ixl2"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDBB45C14;
-	Mon, 27 May 2024 23:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C857110A1E
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716853483; cv=none; b=quslUQOja8EzGXdgd2l3g0eR9OyEPwkAi15YE7NsRkK7QC6nZPibSNJ7MPfH1+P/Vb29v0tuqcEhEBNkD6CMVEoa/Lq/DsAcCcKFMe2yKh237M6tiQSUEi9tVAz/M5XngryT2rGyKbq1wJqFXgytpAM3zoW9LZ8EVFS7EdHRWPk=
+	t=1716853521; cv=none; b=NFwPlFrqQnkwsx8p91/bZLCqrIJ3IUaTZ5/uDXrJaCpttm5fx5qGSGWx/jKfBsIbGBC5WhzsAOhiVxrICBj72T14KitL2KPy7x3pEqCuqrtF2tfVwvD7UWVjuF3WeLcLuvTXjmAvrQ9MPiKeHhl75gMb1FJWUevQ7SMjLrUqgHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716853483; c=relaxed/simple;
-	bh=EdBpJBA58UcDomxKHuYzuX9Ow/+7jqpFZIh974Rr9ZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gecd9PS9xp8UfYALVexZkMbnU1+mmsqdrYHVzD4xMZ2tip71S1nwC6iOI1gSJxpD5SE2D5NNY1OugZAz+as4elRVd67NHBr10XGQS0i1Hl34almrwdQKwaWkxuMrIC/6soV1izOBvW5MzLwDZaqlaglzOR6jE7nt6UHM2MYxpAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=LfLWhYiZ; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PsAJcFYL; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716853481;
-	bh=EdBpJBA58UcDomxKHuYzuX9Ow/+7jqpFZIh974Rr9ZQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=LfLWhYiZXlMHZ/97dfDfPTo6UdmMq8D7jX7cZxYHuIQC35snsYIoSAyIW+Q8Ar6Y0
-	 /oMDhlLJSlfnhgHNkRorcUfNsrwk5U4VFOCN4fxWdcvQbOkYh2zVI6jAomQalGJluV
-	 XCYD8NKEBCoGLUdh/0VuMkORCvcxN5TDoklhmnQs=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 263001286C7A;
-	Mon, 27 May 2024 19:44:41 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id z9z6VeenUfAD; Mon, 27 May 2024 19:44:41 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716853480;
-	bh=EdBpJBA58UcDomxKHuYzuX9Ow/+7jqpFZIh974Rr9ZQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=PsAJcFYL58leUIBRjUDZOYXixrtVw6qx4tLzqK7De4ddlx+gfZr/MAE5rdH7rxvv+
-	 D4VTWU+BRSZm034erdkHkdAGRhm81Omowp8zCgCI1NrlVErQbdxAjZ5akO4YIe0Pon
-	 vnQbK/zphsepj1tf73k3qm6xBG2bzh1xmS2/Z8lY=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EA9B312869EC;
-	Mon, 27 May 2024 19:44:39 -0400 (EDT)
-Message-ID: <439c3a66a995429f6c8603640477580e17d03104.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Vitor Soares <ivitro@gmail.com>, 
-	linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Mon, 27 May 2024 19:44:38 -0400
-In-Reply-To: <D1KT71LIUIPC.33KKNF1H2SX94@kernel.org>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
-	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-	 <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
-	 <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
-	 <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
-	 <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
-	 <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
-	 <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
-	 <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
-	 <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
-	 <D1KJBXOPFWT7.1F14BWQJO29FC@kernel.org>
-	 <ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com>
-	 <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
-	 <6e326fa73968839199378694d4e7cc2544326fa6.camel@HansenPartnership.com>
-	 <D1KT71LIUIPC.33KKNF1H2SX94@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1716853521; c=relaxed/simple;
+	bh=ilnFqztr6YvKOP1wiWFQn72ziqayuZkyKp9feAbsV5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ezxU0lQQWfWNjjJc9gqqf6OCmkmdt0lF26T0HEZt4Np79b4jmncJlmr70Jwc2KH0/uN/rNc6SPMKc3u1lDXs/MOH3GJrN/gHoLGZgVCOYaXoDkiq2sQi9QiHP4/cdK/kRvWRCkaDHfHAo7uafcYqFOCQZ9+8vWBEaxgsV5vcQ20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=zi77ixl2; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-356c4e926a3so164306f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716853517; x=1717458317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sRO/CnRPtpBsbl7nBhwPcIaynZHQudWyGgLN4ebnUfQ=;
+        b=zi77ixl2RElbuX0WbF4Yz3H/D0XISXLJIh7v0bUM8mDk8K7gUaIlsNk+wG+CeoIc+i
+         HZuO8hKnRr7arFfxPo+/KGIq/EJeJ8KJnsIye1XqISfn9SfFo2U+uw/re6ceeHVekQx2
+         d/yJsVbBNxatKEZ5ot/gJP5Zncn+bkIQrCUmoc5zTvTNUNq7l0eBEnSHmQPBYVd1VDHw
+         3KV+aYaR09ptHGgGvRu6lVw12cecdMdWSFHu2LioFVJwI8WpyQj+v2uadESWA8ySo1Ub
+         9Tf/9vfIA8knJto9G2xmoGxBoayMXSrW0c59xAdv2Z7BNTW0xxYxxICnlW2xLMY43N5J
+         mXCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716853517; x=1717458317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sRO/CnRPtpBsbl7nBhwPcIaynZHQudWyGgLN4ebnUfQ=;
+        b=xC2SgyEksYF/HCW/w0COeP2ExUSu7iegL97OZ0bKzagV0Tef3Yjz5InxqTwcEGKaPo
+         r1E80RJm4hGRzyg05wNWHmHFsv4RxumGlxCfXsfhiyFu1Y3U0DsXmBFxoVliOZCdRG38
+         acx/mAOtHxTsgSvD21nSjcS55OngFhqb8/S9ELcE6bm7w4reHfMSJ/OE/1qBQ5ySu27g
+         vZrIi+PRiqoJWmDmXStIV/VlmivpXeK6mv/HdeoINux+wLhsif60yumHnWu9JkifNp1V
+         hoyYLxpFAMx1Xe5YW1jBG5n+yNEgtq/yueMLBchzumTYo8LSXOdy5I9vwYn29LeJ6AsY
+         C/1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4/SbhpG9WqEvmYfLCoC9NBfXmsVSJoOzksVLNcbD6tO7EmGgObyQ8p62NUA9SZyJAmoPogc6siA1ZOOkAwu538PhOqKc+FAU5fqps
+X-Gm-Message-State: AOJu0YwiItqFig00YxZksHnbKbyWu7UxTB+mw65B2bf2o7ApQpZDEeKa
+	DXHsIW3c3eB3AgwrwDzYV1eR2YMLnpt5gJqPX8ShktOkRjsb0SnHUSp4zE0H9d4=
+X-Google-Smtp-Source: AGHT+IH9cpBoOavUU39BKyiX5ZVVtYqsyiD57pc9wsnRSAnUTzf+Xg02xdlAzGi0KOkEJdwOY+claQ==
+X-Received: by 2002:a05:600c:6b04:b0:41f:e7ac:cc72 with SMTP id 5b1f17b1804b1-421089f9a09mr75891875e9.40.1716853516966;
+        Mon, 27 May 2024 16:45:16 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108970967sm123535515e9.17.2024.05.27.16.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 16:45:16 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v3 0/3] Clean up usage of rt_task()
+Date: Tue, 28 May 2024 00:45:05 +0100
+Message-Id: <20240527234508.1062360-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,54 +94,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-05-28 at 02:17 +0300, Jarkko Sakkinen wrote:
-> On Tue May 28, 2024 at 12:36 AM EEST, James Bottomley wrote:
-> > On Mon, 2024-05-27 at 22:53 +0300, Jarkko Sakkinen wrote:
-> > > On Mon May 27, 2024 at 8:57 PM EEST, James Bottomley wrote:
-> > > > On Mon, 2024-05-27 at 18:34 +0300, Jarkko Sakkinen wrote:
-> > [...]
-> > > > > While looking at code I started to wanted what was the
-> > > > > reasoning for adding *undocumented* "TPM2_OA_TMPL" in
-> > > > > include/linux/tpm.h.It should really be in tpm2-sessions.c
-> > > > > and named something like TPM2_NULL_KEY_OA or similar.
-> > > > 
-> > > > Well, because you asked for it. I originally had all the flags
-> > > > spelled out and I'm not a fan of this obscurity, but you have
-> > > > to do stuff like this to get patches accepted:
-> > > > 
-> > > > https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@suppilovahvero/
-> > > 
-> > > I still think the constant does make sense.
-> > 
-> > I'm not so sure.  The TCG simply defines it as a collection of
-> > flags and every TPM tool set I've seen simply uses a list of flags
-> > as well.  The original design was that the template would be in
-> > this one place and everything else would call into it.  I think the
-> > reason all template construction looks similar is for ease of
-> > auditing (it's easy to get things, particularly the flags, wrong).
-> > 
-> > If it only has one use case, it should be spelled out but if
-> > someone else would use it then it should be in the tpm.h shared
-> > header.
-> 
-> It is used only in tpm2-sessions.c and for the null key so there it
-> should be. And it is also lacking the associated documentation. Now
-> both name and context it is used is lost.
+Make rt_task() return true only for RT class and add new realtime_task() to
+return true for RT and DL classes to avoid some confusion the old API can
+cause.
 
-The comment above the whole thing says what it is and where it comes
-from:
+No functional changes intended in patch 1. Patch 2 changes hrtimer users as
+suggested by Sebastian. Patch 3 cleans up the return type as suggested by
+Steve.
 
-	/*
-	 * create the template.  Note: in order for userspace to
-	 * verify the security of the system, it will have to create
-	 * and certify this NULL primary, meaning all the template
-	 * parameters will have to be identical, so conform exactly to
-	 * the TCG TPM v2.0 Provisioning Guidance for the SRK ECC
-	 * key H template (H has zero size unique points)
-	 */
+Changes since v2:
 
-If we put the broken out flags back it's all fully documented.
+	* Fix one user that should use realtime_task() but remained using
+	  rt_task() (Sebastian)
+	* New patch to convert all hrtimer users to use realtime_task_policy()
+	  (Sebastian)
+	* Add a new patch to convert return type to bool (Steve)
+	* Rebase on tip/sched/core and handle a conflict with code shuffle to
+	  syscalls.c
+	* Add Reviewed-by Steve
 
-James
+Changes since v1:
+
+	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
+	* Improve commit message readability about replace some rt_task()
+	  users.
+
+v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyousef@layalina.io/
+v2 discussion: https://lore.kernel.org/lkml/20240515220536.823145-1-qyousef@layalina.io/
+
+Qais Yousef (3):
+  sched/rt: Clean up usage of rt_task()
+  hrtimer: Convert realtime_task() to realtime_task_policy()
+  sched/rt, dl: Convert functions to return bool
+
+ fs/bcachefs/six.c                 |  2 +-
+ fs/select.c                       |  2 +-
+ include/linux/ioprio.h            |  2 +-
+ include/linux/sched/deadline.h    | 10 ++++++----
+ include/linux/sched/prio.h        |  1 +
+ include/linux/sched/rt.h          | 31 ++++++++++++++++++++++++++++---
+ kernel/locking/rtmutex.c          |  4 ++--
+ kernel/locking/rwsem.c            |  4 ++--
+ kernel/locking/ww_mutex.h         |  2 +-
+ kernel/sched/core.c               |  4 ++--
+ kernel/sched/syscalls.c           |  2 +-
+ kernel/time/hrtimer.c             |  6 +++---
+ kernel/trace/trace_sched_wakeup.c |  2 +-
+ mm/page-writeback.c               |  4 ++--
+ mm/page_alloc.c                   |  2 +-
+ 15 files changed, 53 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
 
 
