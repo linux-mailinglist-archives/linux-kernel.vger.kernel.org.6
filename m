@@ -1,85 +1,108 @@
-Return-Path: <linux-kernel+bounces-191318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089098D09CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517218D09DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DFB1C22191
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0735F1F22274
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1E15F3F4;
-	Mon, 27 May 2024 18:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C9415FA83;
+	Mon, 27 May 2024 18:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TDSEdTto"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="OgmCWSW/";
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="wYP1mGPJ"
+Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B5E61FDC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405BD518;
+	Mon, 27 May 2024 18:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716833728; cv=none; b=KqIWTlRF+5kEl1d2nX7Hki7tSozC3q0wz8ICtP/Nm8pXCBicKVrGMIsuSDj+rLcttSW+GzA6jWVoRh8oOoDxhWaJ4eKntzdW38u7xrOByWn1zJvCIDC0yMTAijOkj+jlKvKGbjtW3AWoxAsgAkAUQ01ioRCxW7LR/radf4n5zBY=
+	t=1716834539; cv=none; b=J/1dpVnu9tkSY5DR3wpJLK5mDN7f6iz0o0yZrNDEZNHj1CsCpt2uzyXZR/G//oJ2T7uXe8gINbVPfZ2C/96YaSzcFoXIU5Jfmyg7iaTZ43KIXR4oLiQcS032SWfzzn8rTArTjPQ/KTAVY0GDtPQfb9SVBuDpG4XSeQCwWvKb714=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716833728; c=relaxed/simple;
-	bh=T0y8bXCJEZH+eS8ee7C5dR+fg3yTcWZMqPHkcbuqMW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oy6mx6zTP77v0FtsHk0xtXDVti8prGH2mrFLSp6GXceNbVGjzaDta0iHa0DV6JrCuTg/pfJvU0IYQvvpmnvmhTC4NGs5mL3zL7exGUo3pv8LA7IE+2jy7cl/e9OdqLC8FjkOMpRpl7+rVrelwio6BQqsrg/gC2+MmEVEdu6xkMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TDSEdTto; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C150C2BBFC;
-	Mon, 27 May 2024 18:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716833727;
-	bh=T0y8bXCJEZH+eS8ee7C5dR+fg3yTcWZMqPHkcbuqMW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TDSEdTtoC0S3ZJMeSMk9KPqlkAjTXi3rUcqk7rVmPAFLrL9j4WsjMaRbVFf90AmbS
-	 Wokuzxh+lD9Eec8KaCegxqyAugiVia6qLVXeP+ZNK9OFb8yE8UV30o0VUp4SbPTjTk
-	 sYHNDCVzX3MRsfZ4c615e2ava8rrOqUPfp3rlGag=
-Date: Mon, 27 May 2024 20:15:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [stable 6.6, 6.8, 6.9] backport 2fd3ef1b9265
-Message-ID: <2024052700-avatar-hardhead-1414@gregkh>
-References: <CAK7LNAQo43-iUhhjKNPRJmh=SeMuZCX5=FK3BKemb0Oj9S2_CA@mail.gmail.com>
+	s=arc-20240116; t=1716834539; c=relaxed/simple;
+	bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qDJoHUuFaXdXqV7tfL4P5HEOK8uT3n6EhVwEzMq/nFjnHCaDpuOB/SWlg5BzjS+WdXvl9TspClxyqPbfCPrp3UbY7sBcCyPRAaJShZxNnaqSymQlFIJh1psSm0qasRtWDMCtxzQEBa7mKWeIfXHdj/JT4Ei1SrL0U6RCylhnhBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=OgmCWSW/; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=wYP1mGPJ; arc=none smtp.client-ip=64.147.108.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id CFAC3332FE;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+	:to:cc:subject:in-reply-to:message-id:references:mime-version
+	:content-type; s=sasl; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZ
+	CU8DM=; b=OgmCWSW/T7T+Z9QhuOImpu+4MLdn14A/keuomDewXz2DU0JtMCKViK
+	1pqrWxSRHWpSumcgXDJcJt9VdOgALnIymH+8mjyoobW33RaaVE+m5CARrqQ2aovQ
+	NzhfJhVNDkrWHB5s++aelsFS2ccVnGdXlgtkK4ZQPRPQKjfTmN7nE=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id C62DA332FC;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=; b=wYP1mGPJqHWDh88S8V7+MJGODsV8ZHFrhiwdxOS4e51jJ7MsthZrFiSvEirEv9WVjl4f9tvL+N8y9RBqJdTGyiBwGsR/WXIBVAsSh293nglvPDHLdzMwiUQxxJ92HGnhB7m37GH6qb4/DD0eyIsu6YzRxUSxaxR7b64XkcAHaIQ=
+Received: from yoda.fluxnic.net (unknown [184.162.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 4097F332FB;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 291B7CCC583;
+	Mon, 27 May 2024 14:28:55 -0400 (EDT)
+Date: Mon, 27 May 2024 14:28:55 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
+In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+Message-ID: <9o69oo79-34ns-ns70-1138-79pq20436188@syhkavp.arg>
+References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQo43-iUhhjKNPRJmh=SeMuZCX5=FK3BKemb0Oj9S2_CA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID:
+ FA3D352A-1C56-11EF-9D8C-25B3960A682E-78420484!pb-smtp2.pobox.com
 
-On Mon, May 27, 2024 at 06:53:47PM +0900, Masahiro Yamada wrote:
-> Hello Greg, Sasha,
-> 
-> 
-> Do you have a plan to backport this commit?
-> 
->  2fd3ef1b9265eda7f53b9506f1ebfb67eb6435a2
-> 
->  selftests/ftrace: Fix BTFARG testcase to check fprobe is enabled correctly
-> 
-> 
-> 
-> It has a Fixes tag.
+On Mon, 27 May 2024, Jeff Johnson wrote:
 
-It also has a cc: stable@ tag, so yes, we will, give us a chance to
-catch up :)
-
-> So, maybe it is already caught by your raders.
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
 > 
-> If not, could you consider it for backporting?
-> (to 6.6.y, 6.8,y and 6.9.y)
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
+
+> ---
+>  fs/cramfs/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> With my quick test, it fixed the kselftests/ftrace issue for me.
-
-Great, I'll queue it up now, thanks.
-
-greg k-h
+> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+> index 460690ca0174..d818ed1bb07e 100644
+> --- a/fs/cramfs/inode.c
+> +++ b/fs/cramfs/inode.c
+> @@ -1003,4 +1003,5 @@ static void __exit exit_cramfs_fs(void)
+>  
+>  module_init(init_cramfs_fs)
+>  module_exit(exit_cramfs_fs)
+> +MODULE_DESCRIPTION("Compressed ROM file system support");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-cramfs-10e1276a3662
+> 
+> 
 
