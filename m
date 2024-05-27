@@ -1,103 +1,96 @@
-Return-Path: <linux-kernel+bounces-190646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131BC8D00E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8AF8D00E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5B0FB24F32
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DEAC1F260F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD4115F41B;
-	Mon, 27 May 2024 12:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4390A15FA7C;
+	Mon, 27 May 2024 12:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xyHfZBAP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ViNIMX+2"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EE115ECE4;
-	Mon, 27 May 2024 12:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D57415E5CF;
+	Mon, 27 May 2024 12:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814733; cv=none; b=kPtJ7T27rEL3d0LrY3R4I/7Sj3np0TaMpGexzkCwySCAJqaB5VIINIJTWhUtj+AnOw13bYUMspHNYg7EVI01HAyAtEfKrE+oA9SZ3NnHNUzfQM2mKAmrRBac/9DluUeh9edFRtQzC68xHEdyAIhrJT238ifLKQHrhAxnQ4ooRRM=
+	t=1716814786; cv=none; b=n/r7lePqQGCWoOyhHlkhUyeE3RGPU9AWItE7/NmrPl8nZfpC4rUVHQexl5jEuWz3x3Ov5tgM4Dln5M2t70TpsiJMPuJn1lRhXlTkgGGUAaVCSjzLfoQBYDohsY2hIi88L8INC8EuBPyZu+5z74BV0rYOZIZiTIBnSxAXRNxlIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814733; c=relaxed/simple;
-	bh=Y5EStVtK5WBwaVqJnTBpsLDGG9CDOGGAhpofJDguFsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AM9dU4cLOUMbVsGu2JLfRERJfqrcjMRpVGq205lCcPkKzJh72qeSjj2AJaUZUK0wfQwxnHj9Hc5k/Go3RfBWs78kReLwcvh0t4ILY/6ad5MUcSiqjxUgHRsFls3GRs3lPoLGW1zct9Q7ZFwCyoMY+k4gFCX15dNGhYG8YXdwsYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xyHfZBAP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LizxiP53j7D2NoPkmTsvm1+adARrQRUkvK742gCLD4s=; b=xyHfZBAP16UcddrMhJmpJz3Jd6
-	5ksXFxX2gBhXrU2IeCQijkzwenNq+TDmDH9VGK7TboOMDwG6iZxIGJNrLoqEbpsomJR8y9g+jzRFg
-	LImskVT7Q6JV9hTwFqhDDEvFt+gLbWJZ9KZ4c+Q5DSbZd3tX+TOoWMywiF6cmQKJyRlP9OlgF+jeA
-	NGJfpZJflKTevGmnksZ4mPAPSI5L/hbzRO39rLbPts2lpLKLQjz+Bd5O8SkOWimf2xJ2yoAciiMIY
-	O4QdhHFpiEX88VxN5edNdV+Kz88wcLesD3dKy2xO9CLfNB7pMt00b+vOgCjzEfI6VZ1xbgrdb9OUh
-	KO6+F1kg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBZwA-0000000EysS-0LnS;
-	Mon, 27 May 2024 12:58:50 +0000
-Date: Mon, 27 May 2024 05:58:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Sukrit.Bhatnagar@sony.com" <Sukrit.Bhatnagar@sony.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Pavel Machek <pavel@ucw.cz>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
-Message-ID: <ZlSDinoWgqLt21QD@infradead.org>
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
- <Zk+c532nfSCcjx+u@duo.ucw.cz>
- <TYAPR01MB4048D805BA4F8DEC1A12374DF6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
- <ZlRseMV1HgI4zXNJ@infradead.org>
- <TYAPR01MB40481A5A5DC3FA97917404E2F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1716814786; c=relaxed/simple;
+	bh=17Bodxl1+c9cjS7A10UizQdqZ2GkEeHiKunej54JcGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LU5aRPs8NVqyuSeD241kwSZ87BXYGZZJbxbQxEuvmLWMIRJrGKGSRoelQ9/Nitj7Wcgwq2m/dxgRy7ODHT7R5xwiZc+JbpJEbZQV3s95ZIF+lm0dUuinCR0mJ4436nvCvee6Few/8qOMOIAYtZsKfSYPugGWQkBTsE+9kvYvDOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ViNIMX+2; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 669D41C0009;
+	Mon, 27 May 2024 12:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716814783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vMkXAi7jLsL+T5OLHtStfm8lysOchXaAXldUsAmtpFg=;
+	b=ViNIMX+2BbhnsvfXM0HH8pnYiEwF2bzDPUTf5S/mCxxcZrjlEL9oCy62H/3qHWrkJ4haeW
+	yUk7TapsuJUmQp2Pa558mVe0QgPFjlLUUhzTqK1MFIa4ofPw8RkoUq2Z7bGZQ/2Z1lDC7g
+	f2dNLk7i6IFaMfRC30W2zLZjnrBHQnfygj3SwVHZvXIyDqHMuEijBw3rx9QynMoUEByjck
+	53BF7LgJdt9EIqXhoZII6t4+85moDFaqLvNWf+RcOkoPji4zP1PGxASrt6gT9rR29InORA
+	dRGU5Kc2gIXdWbxYKbaxODrX7Neci06TafHOxyHTN90Ncn81yUHF6CD8ca7s4Q==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Riku Voipio <riku.voipio@iki.fi>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	herve.codina@bootlin.com,
+	christophercordahi@nanometrics.ca,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH 0/3] leds: pca9532: Use hardware for blinking leds
+Date: Mon, 27 May 2024 14:59:37 +0200
+Message-ID: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYAPR01MB40481A5A5DC3FA97917404E2F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Mon, May 27, 2024 at 12:51:07PM +0000, Sukrit.Bhatnagar@sony.com wrote:
-> In my understanding, the resume offset in hibernate is used as follows.
-> 
-> Suspend
-> - Hibernate looks up the swap/swapfile using the details we pass in the
->   sysfs entries, in the function swsusp_swap_check():
->   * /sys/power/resume - path/uuid/major:minor of the swap partition (or
->                         non-swap partition for swapfile)
->   * /sys/power/resume_offset - physical offset of the swapfile in that
->                                partition
->   * If no resume device is specified, it just uses the first available swap!
-> - It then proceeds to write the image to the specified swap.
->   (The allocation of swap pages is done by the swapfile code internally.)
+Hi all,
 
-Where "it" is userspace code?  If so, that already seems unsafe for
-a swap device, but definitely is a no-go for a swapfile.
+This series aims to use hardware more often to blink leds.
 
-> - Hibernate gets the partition and offset values from kernel command-line
->   parameters "resume" and "resume_offset" (which must be set from
->   userspace, not ideal).
+The pca9532_set_blink() rejects asymmetric delays. So the core's software
+fallback is almost always used when we want to blink a led. Removing
+this restriction revealed some conflicts between setting brightness and
+blinking as the same PWM (PWM0) configuration is used by all leds for
+both brightness and blinking.
 
-Or is it just for these parameters?  In which case we "only" need to
-specify the swap file, which would then need code in the file system
-driver to resolve the logical to physical mapping as swap files don't
-need to be contiguous.
+Make use of the second available PWM (PWM1) to blink leds. This PWM1 was
+reserved for beepers so hardware blinking is explicitly disabled if at
+least one led is used to drive a beeper to avoid conflicts.
+
+Tested with PCA9532
+
+Bastien Curutchet (3):
+  leds: pca9532: Use PWM1 for hardware blinking
+  leds: pca9532: Explicitly disable hardware blink when PWM1 is
+    unavailable
+  leds: pca9532: Change default blinking frequency to 1Hz
+
+ drivers/leds/leds-pca9532.c | 60 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 49 insertions(+), 11 deletions(-)
+
+-- 
+2.44.0
 
 
