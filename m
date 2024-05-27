@@ -1,98 +1,192 @@
-Return-Path: <linux-kernel+bounces-191291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F69F8D0966
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2F68D0968
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049531F21F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B1541C2171C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288F15EFC5;
-	Mon, 27 May 2024 17:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144FF15EFA8;
+	Mon, 27 May 2024 17:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVXEijB8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T2PKLJt8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="roJU0M78"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13BC2628B;
-	Mon, 27 May 2024 17:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C052628B;
+	Mon, 27 May 2024 17:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716831047; cv=none; b=I3IjqSQavk1UxMDEFJ5w/jCLASD03btpafYF5SmjJCyMI+MVJ7gZKYOJV7yLmS6+fLn1DSbCj2Av59Uvz51WYQWBWl2JFMohKfYimBmHWuD72/hQQIhoyW4+Mt6qtaCPXaZJDVABAKbzmC3TBTWYSVhQmMGiQETnzCUGN5tgheE=
+	t=1716831167; cv=none; b=fZUaizmFAIubhZvyHh6/LnoBF/mr6g27GTr3ZvVjo/2it62QgkbUfORpLv6uAZ3Xn3WAA1Hpibe7s3r4JvzbNhTj6h2zATPGMg/gfJ9HpQlH/n0ne8TU40Ul0cLS+MKQJnnXxE4fFAx+DTVL1B77d8Jry4GXwShXqFH4mrsNzJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716831047; c=relaxed/simple;
-	bh=9quozKrS4U7FAPGz5BHTynZ/dNVRIPV8j95lX0IP9Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJEsldPVy3J+rigiiyexOCvMboqhRhGw6YKzA1MyEGrbFmkg9PVKmSPBHdpNZYGQDlImn4ZNMqhbtQ/4r1/CkMYqU2YjEyRv0wAjItRLP3rMAJVpf4vH7mjE61tlP8Vp4qvP0sQLAXJJOAQ1GVHRuWFZCH9Z8gszzJ9JF6VPnHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVXEijB8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F71C2BBFC;
-	Mon, 27 May 2024 17:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716831047;
-	bh=9quozKrS4U7FAPGz5BHTynZ/dNVRIPV8j95lX0IP9Ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kVXEijB8gd64dUYzLdEP7A3rGajYRg7KWRW4SB01S2amZ41qhypF4TbhbOacZly/l
-	 XeIsRw1RZX1PuPNS7VZRdM1KUFIVOZsR8UN0XUW+9dJtBQQbBKXVr3xntBMi+m769M
-	 IT/BU22MHJqj7myEWewEFt4IfSh//i+kj3v5zYE+YNGp1nD7/VUa3zlOgeRhQK8wCf
-	 EOwz3mJxRLKnEuieSinrmeY9n2bvYSQlAoQD9wyrVkf9qU/B8fFq3htXfKv9rjTx5l
-	 PNy0V+E9Iam6zU7nAoXcSdlhavyurp5h2GPrae+WYiLXTuXVglkSprHbsQXM78Znu1
-	 JKKMkmXgpzmPg==
-Date: Mon, 27 May 2024 18:30:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: hwmon: g76x: Add support for g761
-Message-ID: <20240527-chase-lavish-d83386096191@spud>
-References: <20240526184526.21010-1-ansuelsmth@gmail.com>
- <20240526184526.21010-2-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1716831167; c=relaxed/simple;
+	bh=xph9HqOHF5oSvesYzia/6qvqMq+qW1FJiEOBj3pWlwA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rZC4zVcAgnipIe89HabivevN3YMESsUxEtz2fjC3iStJAQNfOBYTSgHg3M/iM/U10lj4wfKoB8YpEE5zKKVFzLs/s/xpYALLDTwl1ODCfjJu7YfF/SKIXjfUZeuTd1DXiS8F8dI+vJIqn/Msvs7k4+YQdCyw70wmhpOnB5uj8PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T2PKLJt8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=roJU0M78; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 27 May 2024 17:32:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716831163;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZYBMdLsa9K+LrzU0iHckKHgocxEKbi3cQi6MxeWuU0=;
+	b=T2PKLJt8A0ya+cdneAJZghIMI+Ufyqy8Og5R+HoIg+TN+eo/gBw5wtKDQzEgmPudtkquNn
+	MqVNJ455ICsb/hxyybFQLLxK10ICXRRDUHsdhD87x2leR6I1eHz73TG2AMhENz4w4W/PfX
+	mqcD5Rxm2uGFHQF5PTfaYqS0aaTQysYiE++A+EL686NHnx3AEEfzQACbJ1j9RbinEQP7+Y
+	Iws/R+mdQoawi46z5+/rFG683JZTQKaxdL3GFqB7PFFtLdOv5555v8gDWJRgXAohITzWWj
+	FBfNFQFJSeoG45j5VtUiLz8YMNOOUwMi33MCEMsZ1Us8lHKV1fVNCjn9BQV/tw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716831163;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZYBMdLsa9K+LrzU0iHckKHgocxEKbi3cQi6MxeWuU0=;
+	b=roJU0M78DsrjHXvOu4z9J8gDck/c+/+ebaKBbbLtB2SAsjMKzuut/kqoHDXRGbvJNBZ/sP
+	p1Ascho7w2flNqDw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/setup: Warn when option parsing is done too early
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240409152541.GCZhVd9XIPXyTNd9vc@fat_crate.local>
+References: <20240409152541.GCZhVd9XIPXyTNd9vc@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mvSe99LM+FhBGiVI"
-Content-Disposition: inline
-In-Reply-To: <20240526184526.21010-2-ansuelsmth@gmail.com>
+Message-ID: <171683116337.10875.5456098859763818369.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/boot branch of tip:
 
---mvSe99LM+FhBGiVI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     0c40b1c7a897bd9733e72aca2396fd3a62f1db17
+Gitweb:        https://git.kernel.org/tip/0c40b1c7a897bd9733e72aca2396fd3a62f1db17
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Mon, 08 Apr 2024 19:46:03 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 27 May 2024 18:54:45 +02:00
 
-On Sun, May 26, 2024 at 08:45:24PM +0200, Christian Marangi wrote:
-> Add support for g761 PWM Fan controller. This is an exact copy of g763
-> with the difference that it does also support an internal clock
-> oscillator.
->=20
-> With clocks property not defined, the internal clock oscillator is used.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+x86/setup: Warn when option parsing is done too early
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Commit
 
-Thanks,
-Conor.
+  4faa0e5d6d79 ("x86/boot: Move kernel cmdline setup earlier in the boot process (again)")
 
---mvSe99LM+FhBGiVI
-Content-Type: application/pgp-signature; name="signature.asc"
+fixed and issue where cmdline parsing would happen before the final
+boot_command_line string has been built from the builtin and boot
+cmdlines and thus cmdline arguments would get lost.
 
------BEGIN PGP SIGNATURE-----
+Add a check to catch any future wrong use ordering so that such issues
+can be caught in time.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlTDQwAKCRB4tDGHoIJi
-0ha7AP9cIosAN3jL4HNDC5jiBxmlzzpLwTvaO19ZsBVmgxDwAwD8CrTFzshWc9/W
-MQogUCU/8P4Fu6gmJJq+ibVUQ0UlFwo=
-=hFOF
------END PGP SIGNATURE-----
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20240409152541.GCZhVd9XIPXyTNd9vc@fat_crate.local
+---
+ arch/x86/include/asm/setup.h | 8 ++++++++
+ arch/x86/kernel/setup.c      | 2 ++
+ arch/x86/lib/cmdline.c       | 8 ++++++++
+ 3 files changed, 18 insertions(+)
 
---mvSe99LM+FhBGiVI--
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index e61e68d..0667b2a 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -28,6 +28,8 @@
+ #define NEW_CL_POINTER		0x228	/* Relative to real mode data */
+ 
+ #ifndef __ASSEMBLY__
++#include <linux/cache.h>
++
+ #include <asm/bootparam.h>
+ #include <asm/x86_init.h>
+ 
+@@ -133,6 +135,12 @@ asmlinkage void __init __noreturn x86_64_start_reservations(char *real_mode_data
+ #endif /* __i386__ */
+ #endif /* _SETUP */
+ 
++#ifdef CONFIG_CMDLINE_BOOL
++extern bool builtin_cmdline_added __ro_after_init;
++#else
++#define builtin_cmdline_added 0
++#endif
++
+ #else  /* __ASSEMBLY */
+ 
+ .macro __RESERVE_BRK name, size
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 05c5aa9..728927e 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -165,6 +165,7 @@ unsigned long saved_video_mode;
+ static char __initdata command_line[COMMAND_LINE_SIZE];
+ #ifdef CONFIG_CMDLINE_BOOL
+ static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
++bool builtin_cmdline_added __ro_after_init;
+ #endif
+ 
+ #if defined(CONFIG_EDD) || defined(CONFIG_EDD_MODULE)
+@@ -765,6 +766,7 @@ void __init setup_arch(char **cmdline_p)
+ 		strscpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ 	}
+ #endif
++	builtin_cmdline_added = true;
+ #endif
+ 
+ 	strscpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
+index 80570eb..384da1f 100644
+--- a/arch/x86/lib/cmdline.c
++++ b/arch/x86/lib/cmdline.c
+@@ -6,8 +6,10 @@
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+ #include <linux/ctype.h>
++
+ #include <asm/setup.h>
+ #include <asm/cmdline.h>
++#include <asm/bug.h>
+ 
+ static inline int myisspace(u8 c)
+ {
+@@ -205,12 +207,18 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
+ 
+ int cmdline_find_option_bool(const char *cmdline, const char *option)
+ {
++	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
++		WARN_ON_ONCE(!builtin_cmdline_added);
++
+ 	return __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
+ }
+ 
+ int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
+ 			int bufsize)
+ {
++	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
++		WARN_ON_ONCE(!builtin_cmdline_added);
++
+ 	return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
+ 				     buffer, bufsize);
+ }
 
