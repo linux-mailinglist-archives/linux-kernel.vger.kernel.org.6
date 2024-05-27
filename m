@@ -1,145 +1,284 @@
-Return-Path: <linux-kernel+bounces-190523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6738CFF71
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:56:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F168CFF80
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDECE283912
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:56:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D51F234EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA615DBC5;
-	Mon, 27 May 2024 11:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10F515DBC7;
+	Mon, 27 May 2024 12:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p87k6Xro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="f97B7GHA"
+Received: from mail02.habana.ai (habanamailrelay.habana.ai [213.57.90.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECB313AA31;
-	Mon, 27 May 2024 11:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB89134B6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.57.90.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716810986; cv=none; b=kGa+yhOlZXkYEPa/0RBjxYraZ2GCMvcP5guPeTW3Nw/PbK9Pa1y3pFoaHxeMyFllx0Ps+4C+0Gbat+BdKAdn+oEnsOhhNgy0m7BnfEi6PAgobK9ZmiBHgmBwL9Gdw4Rv8vwH9RBLRKGVwoNWmNMSftjmw89fJTHjNJ5IkT7+gM8=
+	t=1716811235; cv=none; b=O9BvhIzIBQk29CPS65kfOpB1wRsKPN053IEUGW1spxq6jVk/9TVS9UZHUlG8YlDgge3TASjgONTgYI61ynpcmKIuUavXuDnNYRfnS0YAJkLIwF2msDcGjkOEFJc/EnaBhFnPzAkbRjgcdeHN532B5c0yR2SVA7x9zNzLXkUpOZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716810986; c=relaxed/simple;
-	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tR7QwZScSbvzw06KGGnNCFrtPxPTZDmbpH0Nt8pj7WP6P+4DCIig9SoGjPqegChLlwm9z51QgIilBE+sqcVW6gtezaEuBMfoYqN5LYfKGneQWxayFVw6s2f36FwY1UEzpqYEK4zu2WcJhzS3PWtkqgJmpDsBpFggmsjGWVvzdfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p87k6Xro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB89C2BBFC;
-	Mon, 27 May 2024 11:56:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716810985;
-	bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=;
+	s=arc-20240116; t=1716811235; c=relaxed/simple;
+	bh=lZAa1vX0ZWQlFyjdjKOd8LRjHTs9ZWw3R9k3zMkqW8w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CXXgZmAhDCSEYIeqpiWK3iE5WfA9MGTVrSj/iHEQMOYeW2ZSQtNpv0cEM8RTxEaV3oJQDhBIsbXuVPVFwDBjp2QIuNMpgZ+ibrVBhpvTy/yYmqqsKfvw+qzkMCGIbbd7nzy46SfN1JJQXKpeIpB0bZrnBtQe1fsN4a/DHoX++Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=f97B7GHA; arc=none smtp.client-ip=213.57.90.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
+Received: internal info suppressed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
+	t=1716811235; bh=lZAa1vX0ZWQlFyjdjKOd8LRjHTs9ZWw3R9k3zMkqW8w=;
 	h=From:To:Cc:Subject:Date:From;
-	b=p87k6XroMqATDsUBvJyUqe9q5lavadM/gv1KHuYzxpMfiUkGCe8jSrkO56TiVtXMH
-	 ZJ6KUkXLl9hVz2/xzrPLirHk7IfDWZnGbCaZZ8kvB8KUfDw5j+VIl+g0CyE8a0vLk5
-	 ZPvAo2fiVb7MV9cR8hYrcM1Qm77UMKbO8vAJ/tdg8IfN9vcDUGuiFC10ZVA139be+U
-	 5mjx0nMrVZl0pW1HZS3hpihNooBpeiN5TRbgFeUxANxOKsxyY23Ej1Xv67XJYG6vp/
-	 p/w28ym6kLVKIwOde7ZyQOMTXciQkmIx6YZJWssG69RRzPCAkGmpAsqMJUV31lxT5l
-	 OeXtGPugeBzPg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon, 27 May 2024 13:55:56 +0200
-Message-ID: <20240527-vfs-fixes-96860426ed27@brauner>
-X-Mailer: git-send-email 2.43.0
+	b=f97B7GHAdIrG3Ty/ffs5eCFJLciL/VyRaqOXuqkWt61gC696vthtYfMqVbP+EPOxd
+	 ShSDOrbnZeEjfky1cgEs1IZ0pl2EwRTifK7ALpJPTbkUVMR6AQ3MsEE0GPI6tTbyaM
+	 3oyP3hybtrwI9v5eP/reA9JIakqDRjS/uUWLWp5UZF5qSqd9tg8UWsubwbbfY+xYeS
+	 MK1B5QfUKT/jScOo59ySLze3zZbi2EYoIyurpsiwyerDonv+DPXeBchLv/7MzkaAY8
+	 PLTMjQ6ZICpUEylen0ppAH9Rm1Xd2edrsAW4NTTdA5RdGYXH9xAbASjd65tPbJEklS
+	 kz926XeiBaXZw==
+Received: from obitton-vm-u22.habana-labs.com (localhost [127.0.0.1])
+	by obitton-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 44RC0Ju31920401;
+	Mon, 27 May 2024 15:00:19 +0300
+From: Ofir Bitton <obitton@habana.ai>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Ohad Sharabi <osharabi@habana.ai>
+Subject: [PATCH] accel/habanalabs/gaudi2: use single function to compare FW versions
+Date: Mon, 27 May 2024 15:00:17 +0300
+Message-Id: <20240527120017.1920370-1-obitton@habana.ai>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3021; i=brauner@kernel.org; h=from:subject:message-id; bh=DEckiRwCpgziP0P5S6eFtBf5HVE5oC96zcHHkjDlBpY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFlJwPvfXEoezmieigy2xbxXrc332x31mft05U3oP9r ZHnUpeNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5dI3hD9dZkbx3E+/smhly 2PHn33lfz4QUXPmtWD1h/yJlxVkWXpUM/7Qcptu6L3r/XCZxl926sE8zXi0tXT/1t83s/Mk7nj9 ynswGAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hey Linus,
+From: Ohad Sharabi <osharabi@habana.ai>
 
-/* Summary */
-This contains a few small fixes for this merge window:
+Currently, the code contains 2 types of FW version comparison functions:
+- hl_is_fw_sw_ver_[below/equal_or_greater]()
+- gaudi2 specific function of the type
+  gaudi2_is_fw_ver_[below/above]x_y_z()
 
-* Fix io_uring based write-through after converting cifs to use the netfs
-  library.
-* Fix aio error handling when doing write-through via netfs library.
-* Fix performance regression in iomap when used with non-large folio mappings.
-* Fix signalfd error code.
-* Remove obsolete comment in signalfd code.
-* Fix async request indication in netfs_perform_write() by raising BDP_ASYNC
-  when IOCB_NOWAIT is set.
-* Yield swap device immediately to prevent spurious EBUSY errors.
-* Don't cross a .backup mountpoint from backup volumes in afs to avoid infinite
-  loops.
-* Fix a race between umount and async request completion in 9p after 9p was
-  converted to use the netfs library.
+Moreover, some functions use the inner FW version which shuold be only
+stage during development but not version dependencies.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (27)
-gcc: (Debian 13.2.0-25) 13.2.0
+Finally, some tests are done to deprecated FW version to which LKD
+should hold no compatibility.
 
-All patches are based on mainline. No build failures or warnings were observed.
+This commit aligns all APIs to a single function that just compares the
+version and return an integers indicator (similar in some way to
+strcmp()).
 
-/* Conflicts */
-No known conflicts.
+In addition, this generic function now considers also the sub-minor FW
+version and also remove dead code resulting in deprecated FW versions
+compatibility.
 
-The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6:
+Signed-off-by: Ohad Sharabi <osharabi@habana.ai>
+Signed-off-by: Ofir Bitton <obitton@habana.ai>
+Reviewed-by: Ofir Bitton <obitton@habana.ai>
+---
+ drivers/accel/habanalabs/common/firmware_if.c | 25 ++++++++
+ drivers/accel/habanalabs/common/habanalabs.h  | 20 +------
+ drivers/accel/habanalabs/gaudi2/gaudi2.c      | 57 +++----------------
+ 3 files changed, 34 insertions(+), 68 deletions(-)
 
-  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/jlawall/linux (2024-05-20 16:00:04 -0700)
+diff --git a/drivers/accel/habanalabs/common/firmware_if.c b/drivers/accel/habanalabs/common/firmware_if.c
+index 4bd02778a970..348418643709 100644
+--- a/drivers/accel/habanalabs/common/firmware_if.c
++++ b/drivers/accel/habanalabs/common/firmware_if.c
+@@ -40,6 +40,31 @@ static char *comms_sts_str_arr[COMMS_STS_INVLD_LAST] = {
+ 	[COMMS_STS_TIMEOUT_ERR] = __stringify(COMMS_STS_TIMEOUT_ERR),
+ };
+ 
++/**
++ * hl_fw_version_cmp() - compares the FW version to a specific version
++ *
++ * @hdev: pointer to hl_device structure
++ * @major: major number of a reference version
++ * @minor: minor number of a reference version
++ * @subminor: sub-minor number of a reference version
++ *
++ * Return 1 if FW version greater than the reference version, -1 if it's
++ *         smaller and 0 if versions are identical.
++ */
++int hl_fw_version_cmp(struct hl_device *hdev, u32 major, u32 minor, u32 subminor)
++{
++	if (hdev->fw_sw_major_ver != major)
++		return (hdev->fw_sw_major_ver > major) ? 1 : -1;
++
++	if (hdev->fw_sw_minor_ver != minor)
++		return (hdev->fw_sw_minor_ver > minor) ? 1 : -1;
++
++	if (hdev->fw_sw_sub_minor_ver != subminor)
++		return (hdev->fw_sw_sub_minor_ver > subminor) ? 1 : -1;
++
++	return 0;
++}
++
+ static char *extract_fw_ver_from_str(const char *fw_str)
+ {
+ 	char *str, *fw_ver, *whitespace;
+diff --git a/drivers/accel/habanalabs/common/habanalabs.h b/drivers/accel/habanalabs/common/habanalabs.h
+index 48f0f3eea1ef..55495861f432 100644
+--- a/drivers/accel/habanalabs/common/habanalabs.h
++++ b/drivers/accel/habanalabs/common/habanalabs.h
+@@ -3596,25 +3596,6 @@ struct hl_ioctl_desc {
+ 	hl_ioctl_t *func;
+ };
+ 
+-static inline bool hl_is_fw_sw_ver_below(struct hl_device *hdev, u32 fw_sw_major, u32 fw_sw_minor)
+-{
+-	if (hdev->fw_sw_major_ver < fw_sw_major)
+-		return true;
+-	if (hdev->fw_sw_major_ver > fw_sw_major)
+-		return false;
+-	if (hdev->fw_sw_minor_ver < fw_sw_minor)
+-		return true;
+-	return false;
+-}
+-
+-static inline bool hl_is_fw_sw_ver_equal_or_greater(struct hl_device *hdev, u32 fw_sw_major,
+-							u32 fw_sw_minor)
+-{
+-	return (hdev->fw_sw_major_ver > fw_sw_major ||
+-			(hdev->fw_sw_major_ver == fw_sw_major &&
+-					hdev->fw_sw_minor_ver >= fw_sw_minor));
+-}
+-
+ /*
+  * Kernel module functions that can be accessed by entire module
+  */
+@@ -3919,6 +3900,7 @@ void hl_mmu_dr_flush(struct hl_ctx *ctx);
+ int hl_mmu_dr_init(struct hl_device *hdev);
+ void hl_mmu_dr_fini(struct hl_device *hdev);
+ 
++int hl_fw_version_cmp(struct hl_device *hdev, u32 major, u32 minor, u32 subminor);
+ int hl_fw_load_fw_to_device(struct hl_device *hdev, const char *fw_name,
+ 				void __iomem *dst, u32 src_offset, u32 size);
+ int hl_fw_send_pci_access_msg(struct hl_device *hdev, u32 opcode, u64 value);
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index fa1c4feb9f89..ba1518f2bf5c 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -2601,6 +2601,8 @@ static int gaudi2_set_fixed_properties(struct hl_device *hdev)
+ 
+ 	prop->hbw_flush_reg = mmPCIE_WRAP_SPECIAL_GLBL_SPARE_0;
+ 
++	prop->supports_advanced_cpucp_rc = true;
++
+ 	return 0;
+ 
+ free_qprops:
+@@ -3308,8 +3310,6 @@ static int gaudi2_late_init(struct hl_device *hdev)
+ 	struct gaudi2_device *gaudi2 = hdev->asic_specific;
+ 	int rc;
+ 
+-	hdev->asic_prop.supports_advanced_cpucp_rc = true;
+-
+ 	rc = hl_fw_send_pci_access_msg(hdev, CPUCP_PACKET_ENABLE_PCI_ACCESS,
+ 					gaudi2->virt_msix_db_dma_addr);
+ 	if (rc) {
+@@ -3783,7 +3783,7 @@ static int gaudi2_sw_init(struct hl_device *hdev)
+ 	prop->supports_compute_reset = true;
+ 
+ 	/* Event queue sanity check added in FW version 1.11 */
+-	if (hl_is_fw_sw_ver_below(hdev, 1, 11))
++	if (hl_fw_version_cmp(hdev, 1, 11, 0) < 0)
+ 		hdev->event_queue.check_eqe_index = false;
+ 	else
+ 		hdev->event_queue.check_eqe_index = true;
+@@ -6314,26 +6314,6 @@ static void gaudi2_execute_hard_reset(struct hl_device *hdev)
+ 	WREG32(mmPSOC_RESET_CONF_SW_ALL_RST, 1);
+ }
+ 
+-static int gaudi2_get_soft_rst_done_indication(struct hl_device *hdev, u32 poll_timeout_us)
+-{
+-	int i, rc = 0;
+-	u32 reg_val;
+-
+-	for (i = 0 ; i < GAUDI2_RESET_POLL_CNT ; i++)
+-		rc = hl_poll_timeout(
+-			hdev,
+-			mmCPU_RST_STATUS_TO_HOST,
+-			reg_val,
+-			reg_val == CPU_RST_STATUS_SOFT_RST_DONE,
+-			1000,
+-			poll_timeout_us);
+-
+-	if (rc)
+-		dev_err(hdev->dev, "Timeout while waiting for FW to complete soft reset (0x%x)\n",
+-				reg_val);
+-	return rc;
+-}
+-
+ /**
+  * gaudi2_execute_soft_reset - execute soft reset by driver/FW
+  *
+@@ -6346,23 +6326,8 @@ static int gaudi2_get_soft_rst_done_indication(struct hl_device *hdev, u32 poll_
+ static int gaudi2_execute_soft_reset(struct hl_device *hdev, bool driver_performs_reset,
+ 						u32 poll_timeout_us)
+ {
+-	int rc;
+-
+-	if (!driver_performs_reset) {
+-		if (hl_is_fw_sw_ver_below(hdev, 1, 10)) {
+-			/* set SP to indicate reset request sent to FW */
+-			WREG32(mmCPU_RST_STATUS_TO_HOST, CPU_RST_STATUS_NA);
+-
+-			WREG32(mmGIC_HOST_SOFT_RST_IRQ_POLL_REG,
+-				gaudi2_irq_map_table[GAUDI2_EVENT_CPU_SOFT_RESET].cpu_id);
+-
+-			/* wait for f/w response */
+-			rc = gaudi2_get_soft_rst_done_indication(hdev, poll_timeout_us);
+-		} else {
+-			rc = hl_fw_send_soft_reset(hdev);
+-		}
+-		return rc;
+-	}
++	if (!driver_performs_reset)
++		return hl_fw_send_soft_reset(hdev);
+ 
+ 	/* Block access to engines, QMANs and SM during reset, these
+ 	 * RRs will be reconfigured after soft reset.
+@@ -7914,7 +7879,7 @@ static bool gaudi2_handle_ecc_event(struct hl_device *hdev, u16 event_type,
+ 	bool has_block_id = false;
+ 	u16 block_id;
+ 
+-	if (!hl_is_fw_sw_ver_below(hdev, 1, 12))
++	if (hl_fw_version_cmp(hdev, 1, 12, 0) >= 0)
+ 		has_block_id = true;
+ 
+ 	ecc_address = le64_to_cpu(ecc_data->ecc_address);
+@@ -8165,13 +8130,7 @@ static void gaudi2_ack_module_razwi_event_handler(struct hl_device *hdev,
+ 		}
+ 
+ 		hbw_rtr_id = gaudi2_tpc_initiator_hbw_rtr_id[module_idx];
+-
+-		if (hl_is_fw_sw_ver_below(hdev, 1, 9) &&
+-				!hdev->asic_prop.fw_security_enabled &&
+-				((module_idx == 0) || (module_idx == 1)))
+-			lbw_rtr_id = DCORE0_RTR0;
+-		else
+-			lbw_rtr_id = gaudi2_tpc_initiator_lbw_rtr_id[module_idx];
++		lbw_rtr_id = gaudi2_tpc_initiator_lbw_rtr_id[module_idx];
+ 		break;
+ 	case RAZWI_MME:
+ 		sprintf(initiator_name, "MME_%u", module_idx);
+@@ -10070,7 +10029,7 @@ static void gaudi2_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_ent
+ 		error_count = gaudi2_handle_pcie_drain(hdev, &eq_entry->pcie_drain_ind_data);
+ 		reset_flags |= HL_DRV_RESET_FW_FATAL_ERR;
+ 		event_mask |= HL_NOTIFIER_EVENT_GENERAL_HW_ERR;
+-		if (hl_is_fw_sw_ver_equal_or_greater(hdev, 1, 13))
++		if (hl_fw_version_cmp(hdev, 1, 13, 0) >= 0)
+ 			is_critical = true;
+ 		break;
+ 
+-- 
+2.34.1
 
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc2.fixes
-
-for you to fetch changes up to f89ea63f1c65d3e93b255f14f9d9e05df87955fa:
-
-  netfs, 9p: Fix race between umount and async request completion (2024-05-27 13:12:13 +0200)
-
-Please consider pulling these changes from the signed vfs-6.10-rc2.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.10-rc2.fixes
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      swap: yield device immediately
-
-David Howells (4):
-      netfs: Fix io_uring based write-through
-      netfs: Fix AIO error handling when doing write-through
-      netfs: Fix setting of BDP_ASYNC from iocb flags
-      netfs, 9p: Fix race between umount and async request completion
-
-Fedor Pchelkin (2):
-      signalfd: fix error return code
-      signalfd: drop an obsolete comment
-
-Marc Dionne (1):
-      afs: Don't cross .backup mountpoint from backup volume
-
-Xu Yang (2):
-      filemap: add helper mapping_max_folio_size()
-      iomap: fault in smaller chunks for non-large folio mappings
-
- fs/9p/vfs_inode.c         |  1 +
- fs/afs/inode.c            |  1 +
- fs/afs/mntpt.c            |  5 +++++
- fs/iomap/buffered-io.c    |  2 +-
- fs/netfs/buffered_write.c |  2 +-
- fs/netfs/direct_write.c   |  2 +-
- fs/netfs/objects.c        |  5 +++++
- fs/netfs/write_collect.c  |  7 ++++---
- fs/netfs/write_issue.c    |  9 +++++++--
- fs/signalfd.c             |  6 +-----
- fs/smb/client/cifsfs.c    |  1 +
- include/linux/netfs.h     | 18 ++++++++++++++++++
- include/linux/pagemap.h   | 34 +++++++++++++++++++++-------------
- kernel/power/swap.c       |  2 +-
- 14 files changed, 68 insertions(+), 27 deletions(-)
 
