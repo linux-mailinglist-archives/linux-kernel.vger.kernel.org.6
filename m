@@ -1,317 +1,150 @@
-Return-Path: <linux-kernel+bounces-190249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28F78CFBF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706488CFBFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BAD2827E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E152C1F21DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C87139D19;
-	Mon, 27 May 2024 08:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119F913A41F;
+	Mon, 27 May 2024 08:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O9ogm76/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xSG3NXNq"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880C913D50B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4E66A357
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799381; cv=none; b=B8SBL3/Cx3d3jwqwN5hm9XOK3XrqrlMrWvYfTj+RKqLMu1NBvaVJI5dp8c5yfINU+t+S1hB9IMYD4ER57RofGq/6f8igqK0yFUV7/hALYly6dNRpm97z86xH4RZ4Q2RXg3O3FpPfPBFqenGsLXFVMKOU7jd15g78+OYZV1i6Bng=
+	t=1716799454; cv=none; b=LSJhjGQnJd7YZHF+gyBSA7P6qZI553B5pnz/49YrqovLjzuF+ulmrkJi3xFQ4uzwWdXp9i/MKPF1m71r4dYtjRsDdASNh+R1utjZfhmVHlmdZdViIASaxkM1POkImE5XL+j+jwv0zI+5KP1g/sFfI8lloV6a/4aFGqQ+hdX2Zxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799381; c=relaxed/simple;
-	bh=fEUmSDxzFqNpouuhiooeqZxDVandAYpnE9D3je2aBVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aEu/XR/pqCwioye6gx3Yw+7hcpJjUyOaa0RZIZFdVATE2OOH8dwoJQcUoqKZoI7xmlowqr2yr19c3OllmBpksMTODzrxkH+zJkwZJH81O4g9GiLe8581fm/sZZPHwTFR6HkgcL6i+yQJmAUtHrbGkueR31+HAPKlME55AUJMgfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O9ogm76/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716799377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/zPmbWagXjt3BK5DMO+Xlc4098nzNpgG/Un3zJBJG8U=;
-	b=O9ogm76/UYBud5aDpfbdWeIT+MXaeXgjy638m9bBi7guO8CXzZw+nbVniltHceitOOud8S
-	c5Bpo708HASjqFNNQLV39GeLWVz0tN7PklWXRTCn+cBIsle9DHFUbJSTIt9wwyd9hzj4tD
-	mYpoVKwX4GojQP/1QuCiQjhaluwKWgM=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-195-mo5-WRJQOUaMzGJGfVgxEQ-1; Mon, 27 May 2024 04:42:55 -0400
-X-MC-Unique: mo5-WRJQOUaMzGJGfVgxEQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-578617a8335so1007548a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:42:55 -0700 (PDT)
+	s=arc-20240116; t=1716799454; c=relaxed/simple;
+	bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mb6yA/jAK5sUSavNfbqntJOz+trtnyQMy7KuivkTa1XQHQZlabOqykjryUnBFqtnV4tEC530iW47WRVNyJZ03XUXoRzDRcf1wONSaeIX0wYLctKX56yoUn9TRWX4LwRXnid2ndfBEMWVxSdXAXbx4AnPMFegFL7WtEyPpf+SIf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xSG3NXNq; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421124a0b37so5512555e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:44:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799451; x=1717404251; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
+        b=xSG3NXNq2W8HNQ6iTpkHyGRX4NPTZY9u3XgH2dev3OBXG4N4aTt258ARHYremhjE9q
+         P1luuzXMbX7BO7kKD67q3maueRIxXtvDkK7K/bMEh9qSIcVy++GONZ3Pjolt9QiGo6QL
+         F1SiZ0e1UkTH6vPYM5iGokg+EdbhtJjI3hxuZq4EprJFD1bACpGR4vRL49KAEMK4Y4DA
+         RXTzodfhvUGCFP9YDUf8RuAWHM8P05EpVV8MbVGuitL4vv1pHdrXV5KQ1YynGEMimwOM
+         Lsr0nPPAjbWYPU0Fs0L2ii4CO1jD9MoDS+KyG+7AAOITn6GqdHhfcSbsjoqeVjtaRvng
+         2XQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716799374; x=1717404174;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zPmbWagXjt3BK5DMO+Xlc4098nzNpgG/Un3zJBJG8U=;
-        b=cC06MBYYvsnA3/eQ6tXpraUzxveyUJ9K9zs7c0L6tMOkZVDQ4FXaH+ipbK8PBaOIat
-         Ab0blOemjo1WQom86HSNqBhXDpJpbBQhIM711c9sX/s1ZxXpbUy1tGp0ql9zoLMRWbmO
-         46gygmJEF100FPT8Y6E6s+pTHUmDjwK5eiNmnYKNz6qOjhTbNkGbGmxMV+NdD6QxbQTb
-         fokn1G+VpKe+w4TJXmOZtYI+W/xBlVH8n3f3LXDLc0D6584Tuf2Gu8TYYgTaaUNHNntf
-         G4Bl5Xv+x9WWYXQZnyQOcl7cV9lP1l9kES1cF1eVkEs07N1AS5AcT8EDulfqGGyuIuU9
-         dvkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVkMux6D90KkFY8EqdcMVwmALosnE7NROcI0u3nzH2UcDujEbSFKPLTxBgbiJKGchmYpviGNHCqrHZ8wio03KZph93wLEezaACtqR0
-X-Gm-Message-State: AOJu0Yz1XwkThv/bloUwNOssMg3dfwPo0ANSvuWGxf3tu4bFvqk/pY8F
-	cNAti0mPVmbD6VR/adpEXeNku63KhzG/9VAUoR/Fc19TDI+03TdXcq+qJbrQSrMBjF6W7ERUGpz
-	tXttemNylJcrnt8EOvB6/ExRS1k4qgIy/Gds/L85t3MRJwsDAvm12fPoCmEl/lw==
-X-Received: by 2002:a50:a447:0:b0:566:4aa9:7143 with SMTP id 4fb4d7f45d1cf-5785192c696mr5318276a12.14.1716799374656;
-        Mon, 27 May 2024 01:42:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHltn0qKEpPENkXILcgIlMp40NApRdKkl1amsi53GNMMEowowPh/ShWqCKsWBcarI3+5QpXng==
-X-Received: by 2002:a50:a447:0:b0:566:4aa9:7143 with SMTP id 4fb4d7f45d1cf-5785192c696mr5318250a12.14.1716799373216;
-        Mon, 27 May 2024 01:42:53 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d65934ddsm853631a12.38.2024.05.27.01.42.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 01:42:52 -0700 (PDT)
-Message-ID: <55272a3b-575d-4212-a40b-7245beed5d80@redhat.com>
-Date: Mon, 27 May 2024 10:42:52 +0200
+        d=1e100.net; s=20230601; t=1716799451; x=1717404251;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
+        b=avR4ie7poNARIUfWkF3D3eB0WFV0j6qt92V+Iyby2Hgr7b6QUEuk3cNtgn8chJhhLO
+         yGSkN/k/Fout3WRbgE9EZjWUtyW1603wsjJV6Z7FA4kKFcknG7L3/2i5yq+WhCnPFMHd
+         taWRcOQc6X7K5U1YBcYdaZa8nzeOeGl6JIqogWuq2/LSmbf6ojOk33CoW0TzuA8/7bhF
+         bhBWVbX0hQT0+959AH83rWHp6zzMpYwUti3tHxocVaqHsdTm8IFHHcZky6Tj2/NF97x4
+         qlUlZF0ne3rZCM7S11pAQJR7yI3jYIY48AXJJqdMOAj8iCgT6d+4Ycipv0SG6nb6JSzE
+         CiNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtE4nkIM3lnwLKlGpCQOis8cIbAoGn/fpQ1AydbhevCb/6GxBSEczkxbcc8YyW3bm/DXAnQYZGVsfhwogGhwEoqELb4hHLXN0Rf9HS
+X-Gm-Message-State: AOJu0Yz9Bh91Lom5TyBds7D5Mp1QFTuVUUykA5JghE6cv5i1TfTZIWyP
+	AaLDv0luCJQYM/DalVeLqQ4ODIO1ZR2PTNBASVG08YvGBI/YDM1SuqG7bIHD8sg=
+X-Google-Smtp-Source: AGHT+IFaQ0PooOmv8dR+W3Bvgay3MJRwZ6H83frgJJ4+v0ifb/G833kRttFTAQT8su8CbqpnD0plVg==
+X-Received: by 2002:a05:600c:4f4d:b0:420:ffe3:8536 with SMTP id 5b1f17b1804b1-42108a17f90mr86967745e9.37.1716799450826;
+        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/5] arm64: qcom: sa8775p: enable remoteprocs - ADSP,
+ CDSP and GPDSP
+Date: Mon, 27 May 2024 10:43:47 +0200
+Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
-To: joelselvaraj.oss@gmail.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com>
- <20240526-nvt-ts-devicetree-regulator-support-v3-3-aa88d10ccd9a@gmail.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240526-nvt-ts-devicetree-regulator-support-v3-3-aa88d10ccd9a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMNHVGYC/33NQQ6CMBCF4auQrq0pE6DqynsYFgWnMAl0yLQhG
+ sLdrcS1y/8tvrepiEIY1a3YlOBKkTjkgFOh+tGFATU9cyswUJnaWJ14oV5POLsQNXHSgjMnXIR
+ 73TSV7WoDlxJBZWER9PQ69Eebe6SYWN7H2Vp+158L8NddS22081fvOtuB9eY+UXDCZ5ZBtfu+f
+ wB+6iZ7xwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tengfei Fan <quic_tengfan@quicinc.com>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Alex Elder <elder@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1371;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfUUSoOSnd4Lg2WXapEDvJlPvhJL9WnYSNLV
+ 39XOGrG8PeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH1AAKCRARpy6gFHHX
+ co+nD/4yLxWTvxT139Y/T6PIgSgnJzMWiDpPVULWixjcf7St3IUskTd4CqVWRBzUS4IsZAU6fBl
+ TK15b4kVvCaDyyxZTKfGvpbDXci5H2IkIgLCp8Sg5KsCluJj0onru5j9pzJaGN3Q29hZqXpBYR2
+ TRJtQDBbkg9IOJBVdW8IQ6Cq2pjeGhOpQiLaW0kfWKb5QuGFvmhJ/Zv+Ab3YrHzL2kjDF4hDlqS
+ hdhZuWusgFcimvxIbsUL6sVgdRKePFTX7z2/ofq9FTwrgeVCJsBzUNjW8Sn8f3dRqvHWk8yzXaD
+ qu8kYSHZAlvupAHC1k+UBNh/q3ebCN92XSy4mxMKjUc9UoFEnErQQPWS9apR+Yj1t/o63Yt1ML4
+ gi5x7JN0R88P1P4Yy0daYJA/RYokbvuSIGBIm6tmY5WGyRwwfjWFfKj3kQXpnwFQnfvIcN3pjkc
+ Vq/3ZBi68yyvPIQhEYi5Xh5Zu2Bzp8croZzPrrW4g+R3SmSsh7mTshLSgZN5gYVbL+oHyiG6yIT
+ jj7QGyTqFWHlHYlN/I3JYEPsV3/Hd+werpeRjzP93DlRTkUdDoRlcPD/sHOv0Fueaw4lv3N7M4r
+ +uAkDdK1PC9U6hA53tZEqwWDLs7oCBjvqFsibvkqkAeLfDbViqfJ+lMdkspYJYfj0mjW8pMmoh9
+ BPcfVZlIIEzxSKQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Joel,
+Add DT bindings, relevant DT defines, DTS nodes and driver changes
+required to enable the remoteprocs on sa8775p.
 
-On 5/27/24 5:26 AM, Joel Selvaraj via B4 Relay wrote:
-> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-> 
-> Extend the novatek touchscreen driver to support NT36672A chip which
-> is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
-> Added devicetree support for the driver and used i2c chip data to handle
-> the variation in chip id and wake type. Also added vcc and iovcc
-> regulators which are used to power the touchscreen hardware.
-> 
-> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-> ---
->  drivers/input/touchscreen/novatek-nvt-ts.c | 78 +++++++++++++++++++++++++++---
->  1 file changed, 72 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-> index 224fd112b25a9..7a82a1b09f9d5 100644
-> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
-> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-> @@ -31,9 +31,6 @@
->  #define NVT_TS_PARAMS_CHIP_ID		0x0e
->  #define NVT_TS_PARAMS_SIZE		0x0f
->  
-> -#define NVT_TS_SUPPORTED_WAKE_TYPE	0x05
-> -#define NVT_TS_SUPPORTED_CHIP_ID	0x05
-> -
->  #define NVT_TS_MAX_TOUCHES		10
->  #define NVT_TS_MAX_SIZE			4096
->  
-> @@ -51,11 +48,18 @@ static const int nvt_ts_irq_type[4] = {
->  	IRQF_TRIGGER_HIGH
->  };
->  
-> +struct nvt_ts_i2c_chip_data {
-> +	u8 wake_type;
-> +	u8 chip_id;
-> +};
-> +
->  struct nvt_ts_data {
->  	struct i2c_client *client;
->  	struct input_dev *input;
->  	struct gpio_desc *reset_gpio;
-> +	struct regulator_bulk_data regulators[2];
->  	struct touchscreen_properties prop;
-> +	const struct nvt_ts_i2c_chip_data *chip;
->  	int max_touches;
->  	u8 buf[NVT_TS_TOUCH_SIZE * NVT_TS_MAX_TOUCHES];
->  };
-> @@ -139,9 +143,23 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void nvt_ts_disable_regulators(void *_data)
-> +{
-> +	struct nvt_ts_data *data = _data;
-> +
-> +	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
-> +}
-> +
->  static int nvt_ts_start(struct input_dev *dev)
->  {
->  	struct nvt_ts_data *data = input_get_drvdata(dev);
-> +	int error;
-> +
-> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-> +	if (error) {
-> +		dev_err(&data->client->dev, "failed to enable regulators\n");
-> +		return error;
-> +	}
->  
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- Move the DT bindings for sa8775p-pas into a separate file
+- Link to v1: https://lore.kernel.org/r/20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org
 
-This is weird, you already enable the regulators in probe() and
-those get disabled again on remove() by the devm action you add.
+---
+Bartosz Golaszewski (2):
+      dt-bindings: remoteproc: qcom,sa8775p-pas: Document the SA8775p ADSP, CDSP and GPDSP
+      arm64: dts: qcom: sa8775p-ride: enable remoteprocs
 
-So there is no need to enable / disable the regulators on start/stop .
+Tengfei Fan (3):
+      dt-bindings: mailbox: qcom-ipcc: Add GPDSP0 and GPDSP1 clients
+      remoteproc: qcom_q6v5_pas: Add support for SA8775p ADSP, CDSP and GPDSP
+      arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP nodes
 
-If you want the regulators to only be enabled when the touchscreen
-is on then you should disable the regulators again in probe()
-after the nvt_ts_read_data() call there (and drop the devm action).
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 177 +++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts          |  25 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 332 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  92 ++++++
+ include/dt-bindings/mailbox/qcom-ipcc.h            |   2 +
+ 5 files changed, 628 insertions(+)
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240507-topic-lemans-iot-remoteproc-6647b50281e2
 
-Or if you want to leave the regulators on all the time then you can
-drop the enable + disable calls here.
-
- 
->  	enable_irq(data->client->irq);
->  	gpiod_set_value_cansleep(data->reset_gpio, 0);
-> @@ -155,6 +173,7 @@ static void nvt_ts_stop(struct input_dev *dev)
->  
->  	disable_irq(data->client->irq);
->  	gpiod_set_value_cansleep(data->reset_gpio, 1);
-> +	nvt_ts_disable_regulators(data);
->  }
->  
->  static int nvt_ts_suspend(struct device *dev)
-> @@ -199,9 +218,37 @@ static int nvt_ts_probe(struct i2c_client *client)
->  	if (!data)
->  		return -ENOMEM;
->  
-> +	data->chip = device_get_match_data(&client->dev);
-> +	if (!data->chip)
-> +		return -EINVAL;
-> +
->  	data->client = client;
->  	i2c_set_clientdata(client, data);
->  
-> +	/*
-> +	 * VCC is the analog voltage supply
-> +	 * IOVCC is the digital voltage supply
-> +	 */
-> +	data->regulators[0].supply = "vcc";
-> +	data->regulators[1].supply = "iovcc";
-> +	error = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->regulators), data->regulators);
-> +	if (error) {
-> +		dev_err(dev, "cannot get regulators: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-> +	if (error) {
-> +		dev_err(dev, "failed to enable regulators\n");
-> +		return error;
-> +	}
-> +
-> +	error = devm_add_action_or_reset(dev, nvt_ts_disable_regulators, data);
-> +	if (error) {
-> +		dev_err(dev, "failed to install regulator disable handler\n");
-> +		return error;
-> +	}
-> +
-
-If you are going to keep this devm action (see discussion above) then please
-switch from devm_regulator_bulk_get() + regulator_bulk_enable() to
-devm_regulator_bulk_get_enable() which gets and enables the regulators for
-you in one call.
-
-You can then drop the regulator_bulk_enable() + devm_add_action_or_reset()
-calls since devm_regulator_bulk_get_enable() takes care of both for you.
-
->  	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->  	error = PTR_ERR_OR_ZERO(data->reset_gpio);
->  	if (error) {
-> @@ -225,8 +272,8 @@ static int nvt_ts_probe(struct i2c_client *client)
->  	if (width > NVT_TS_MAX_SIZE || height >= NVT_TS_MAX_SIZE ||
->  	    data->max_touches > NVT_TS_MAX_TOUCHES ||
->  	    irq_type >= ARRAY_SIZE(nvt_ts_irq_type) ||
-> -	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != NVT_TS_SUPPORTED_WAKE_TYPE ||
-> -	    data->buf[NVT_TS_PARAMS_CHIP_ID] != NVT_TS_SUPPORTED_CHIP_ID) {
-> +	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != data->chip->wake_type ||
-> +	    data->buf[NVT_TS_PARAMS_CHIP_ID] != data->chip->chip_id) {
->  		dev_err(dev, "Unsupported touchscreen parameters: %*ph\n",
->  			NVT_TS_PARAMS_SIZE, data->buf);
->  		return -EIO;
-> @@ -277,8 +324,26 @@ static int nvt_ts_probe(struct i2c_client *client)
->  	return 0;
->  }
->  
-> +static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
-> +	.wake_type = 0x05,
-> +	.chip_id = 0x05,
-> +};
-> +
-> +static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
-> +	.wake_type = 0x01,
-> +	.chip_id = 0x08,
-> +};
-> +
-> +static const struct of_device_id nvt_ts_of_match[] = {
-> +	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
-> +	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
-> +
->  static const struct i2c_device_id nvt_ts_i2c_id[] = {
-> -	{ "NT11205-ts" },
-> +	{ "NT11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-> +	{ "NT36672A-ts", (unsigned long) &nvt_nt36672a_ts_data },
-
-The i2c-subsystem will also match of compatible strings to i2c_device_ids
-by looking at the partof the compatible after the ',', so for a compatible
-of e.g. "novatek,nt36672a-ts" will match an i2c_device_id of "nt36672a-ts".
-
-So if you change these to lower-case:
-
-	{ "nt11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-	{ "nt36672a-ts", (unsigned long) &nvt_nt36672a_ts_data },
-
-Then you can drop the nvt_ts_of_match table since that is not necessary
-then.
-
-Hmm I just realized that this will break module auto-loading though since that
-does require of modaliases .
- 
-So maybe this is not such a good idea after all. Still switching to lowercase
-i2c_device_id-s would be good for consistency and you need to respin
-the patch-set for the regulator issue anyways.
-
-Regards,
-
-Hans
-
-
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-> @@ -287,6 +352,7 @@ static struct i2c_driver nvt_ts_driver = {
->  	.driver = {
->  		.name	= "novatek-nvt-ts",
->  		.pm	= pm_sleep_ptr(&nvt_ts_pm_ops),
-> +		.of_match_table = nvt_ts_of_match,
->  	},
->  	.probe = nvt_ts_probe,
->  	.id_table = nvt_ts_i2c_id,
-> 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
