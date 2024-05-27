@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-190039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6B38CF8B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC098CF841
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07FF1C211A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7941C2108F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F197101DE;
-	Mon, 27 May 2024 05:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626D479F2;
+	Mon, 27 May 2024 04:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fDpBrjaN"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcdP+Xvc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8667FBEF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4664D2E6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716787344; cv=none; b=byV8MIBhveBaJnLYxLFJG01fBnw2Lu0N7owbcqx1ALZI3usZEXD7ljZFlduSTXG/NaMj2BDGTxtI9U0YJ2zV5bEOdeNsM/aHM4TcaKkvSTmuEfkJmnRrKD5sE0D5zhYhzdEAlGKrJj2Yu/RFsx6GIoaD+UDstC2pQH46KdyxBY8=
+	t=1716782867; cv=none; b=T2S+t2HgeYgWAJIbJjUfAeAzaGrVDFlh04GuO6UvRIX+9d3nf8s5VIq0ej+pBYNc4dB8/0hmSZm4zu6nKPRnGFREh/kSdV/qY45DSKwqcLSklV/zNVQXNv3jsHwk5KygqbIMSOVuDBAb0+BFq1Mbq2azIySt0jp5SvLmIxCucl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716787344; c=relaxed/simple;
-	bh=GzrNcN+pMuO3nMQV17c8CbPgA62GGIKJYjsQXEmkLWs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=G1zX14YEeG7zk8WWigvLy1LaJpihsft557Cbf+8VRAmZBr7hjiF0EzO99MxDCCBAe8V0YlX8LjBolSIompM4eSKKJ6htbIGGrQ7w5Ou9wcpKg34Xw39xzx6+NFTyZUdr87dYzIDCiANdG/2TUAHSC/ExjYNQ6nAZZnDTLrJrYuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fDpBrjaN; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240527052219epoutp04b53cfa75d10c86c9d676414ef3bf9a1f~TQP1AgTxa0069000690epoutp040
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:22:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240527052219epoutp04b53cfa75d10c86c9d676414ef3bf9a1f~TQP1AgTxa0069000690epoutp040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716787339;
-	bh=awyLAV62P7hclJArbyXEX4hZ9QRa3kG0YZKRWaBh8rM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=fDpBrjaNjg4RKsrS4C0oJtJFyNp/bvCVdxDG5FKvRW/UfSd43KHJEtQhQmpvTQUrg
-	 Rw9AEA2M1CT7o12K3lUQYfRVNJ+x3SnGodpziV5t+snfDjo5c6PKiR0msWKi8iocDM
-	 kWSingxhDf+qmlb8Rb4Fe3IcuZXBe9CwtF54smgc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240527052219epcas5p38280c9e2b3301ec637ac6245fc76132d~TQP0o7-Yw1654916549epcas5p3_;
-	Mon, 27 May 2024 05:22:19 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VnkY518LWz4x9QB; Mon, 27 May
-	2024 05:22:17 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	00.3B.10035.78814566; Mon, 27 May 2024 14:22:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240527022944epcas5p16011e653d1f770cd11bc760f39c17ad2~TN5JPSfcD2621326213epcas5p1T;
-	Mon, 27 May 2024 02:29:44 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240527022944epsmtrp1dd3ed2e22fd8d71d7c406b471dd523f4~TN5JOc0VH2915229152epsmtrp16;
-	Mon, 27 May 2024 02:29:44 +0000 (GMT)
-X-AuditID: b6c32a4b-8afff70000002733-02-6654188746a9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	39.BD.07412.810F3566; Mon, 27 May 2024 11:29:44 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240527022943epsmtip122daa5729b4c5b2cbf3e1d7f6cc27ffd~TN5IYsvNE2193421934epsmtip1r;
-	Mon, 27 May 2024 02:29:43 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peiwei.li@samsung.com, ruyi.zhang@samsung.com, Xue He <xue01.he@samsung.com>
-Subject: [PATCH] block: delete redundant function declarations
-Date: Mon, 27 May 2024 10:29:26 +0800
-Message-Id: <20240527022926.1331950-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716782867; c=relaxed/simple;
+	bh=XQ4MRPq1YoTtlAQuO9ub+oyrZ1uUfp5edKW2XiWOGCU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JOOh6vlqBmgzENXtLI7iL6bx9SBeOMQ2Y7W097B+1pf3rIl/hbLkKtxKmhVRUuH3Rg5xUEJHk4K2i4NFrJ7KUlfS8076i0MbqZpFdbWsKrvjZWIXJIydgqeo1uiKxeIWUGEtunuYJ/yWZfsa1GBWuJ8lRZ+fmfNgii5HDWmzKDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcdP+Xvc; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716782866; x=1748318866;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XQ4MRPq1YoTtlAQuO9ub+oyrZ1uUfp5edKW2XiWOGCU=;
+  b=kcdP+Xvc0Xp+BbrN4myI7HZ0j07FSonM4HLUxBztI19G0q0icBnxQnC6
+   3gFHSCvkT4U9U2ijBU83zNO4MHvkTEJSrTByqGXVXilQG9tQLaIaY4ZIt
+   Zn6DncXQNJUf7MvPLknx4v3hFrQZStG9RWRU4i8Zb9fZztygxs0Hyir4Q
+   ZZLwV7HYFaff9rUnxMAlize16N9v4Ac7d2x3V7MAlRbtNfQE9vq31vgBo
+   0KZWNa7hXXbU0p3jak/uYI/tz5RnTjKWgDySwAK3L2mkH/XDQikGjDfac
+   Tmhga9mtH2IkYUL6iCiy5dDfKFGtihQnzdY8RNXSCH7G3v83zXA1TBU6U
+   w==;
+X-CSE-ConnectionGUID: vbIW4MsDTbOKzlI2tqwnaQ==
+X-CSE-MsgGUID: jULpbePwTsuKL6PJf3CBVQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13022636"
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="13022636"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 21:07:25 -0700
+X-CSE-ConnectionGUID: 7+Q3sbmWSFaQyLuHuPhENQ==
+X-CSE-MsgGUID: peIcVCKOTzeklGwoT/6mbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
+   d="scan'208";a="39399868"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by orviesa003.jf.intel.com with ESMTP; 26 May 2024 21:07:21 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>
+Cc: iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v6 00/10] IOMMUFD: Deliver IO page faults to user space
+Date: Mon, 27 May 2024 12:05:07 +0800
+Message-Id: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,71 +82,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmpm67REiawdP5xhar7/azWfzqvsto
-	sfeWtsXlXXPYLJ7t5bT4cvg7u8XZCR9YLbounGJz4PC4fLbUo2/LKkaPz5vkApijsm0yUhNT
-	UosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgNYrKZQl5pQChQIS
-	i4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzVnx4x15w
-	hrXi4swrLA2MV1m6GDk5JARMJI5cf83axcjFISSwm1Hi7+5HzCAJIYFPjBI/V8lCJL4xSqzr
-	/sgG07H02iOojr2MEq8W9zBBOD8YJX7s72IEqWITUJLYv+UDmC0iICyxv6OVBaSIWaCXUWLj
-	tLXsIAlhATuJBRu2gRWxCKhKvH0yFewoXgFriaVT1kKtk5e42bWfGSIuKHFy5hOwGmagePPW
-	2cwgQyUEDrFLtDy4DvWRi8T1P3OZIWxhiVfHt7BD2FISL/vboOx8icnf1zNC2DUS6za/g+q1
-	lvh3ZQ+QzQG0QFNi/S59iLCsxNRT65gg9vJJ9P5+wgQR55XYMQ/GVpJYcmQF1EgJid8TFrGC
-	jJEQ8JD4+s0ZEqSxEtfWP2GfwCg/C8k3s5B8Mwth8QJG5lWMkqkFxbnpqcWmBcZ5qeXwiE3O
-	z93ECE6FWt47GB89+KB3iJGJg/EQowQHs5IIr8i8wDQh3pTEyqrUovz4otKc1OJDjKbAIJ7I
-	LCWanA9Mxnkl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTDZnfqd
-	9a716/6Z8Vl1bVe75ufNPPRC2P/eNPcn8aZnY2R2xR1cOC3O+fuzd8e5VPguuN07uivx897S
-	ooDEVxcP7DZpMmfn2Nd3LctNsGHPtadr9GSy3V+Vhx25a7jwY2XkJC3h+ZNqNcrC61/e/P1m
-	e/akyjKvMykZ4Qksmi0r+RcxnpslvixPftERyQuzejbXNbLZ3L/Fekb9I/shfd09whYdnuY+
-	75NvT3mwTtF8ofCPyFqL6qWiOx6t2ibX+biyqDfiUq5bw85KXtst+y4o+x5ssjkZXHHxU8EH
-	eWbTdywsnR/esKgsytxw+Ek0v6et1C0lG0Uj5p/5T/9YKOtl/2lQ+3osW69EPZo7K1OJpTgj
-	0VCLuag4EQD5B1ZTDgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnK7Eh+A0g5bjEhar7/azWfzqvsto
-	sfeWtsXlXXPYLJ7t5bT4cvg7u8XZCR9YLbounGJz4PC4fLbUo2/LKkaPz5vkApijuGxSUnMy
-	y1KL9O0SuDJWfHjHXnCGteLizCssDYxXWboYOTkkBEwkll57xNrFyMUhJLCbUWJJx1xGiISE
-	xI5Hf1ghbGGJlf+es0MUfWOU2L1lETtIgk1ASWL/lg9gDSJARfs7WllAipgFJjNKnN+4Hywh
-	LGAnsWDDNjCbRUBV4u2TqWCreQWsJZZOWcsGsUFe4mbXfmaIuKDEyZlPwGqYgeLNW2czT2Dk
-	m4UkNQtJagEj0ypGydSC4tz03GTDAsO81HK94sTc4tK8dL3k/NxNjODA1NLYwXhv/j+9Q4xM
-	HIyHGCU4mJVEeEXmBaYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1ILUI
-	JsvEwSnVwPSYi/fvBhnVL5V7tv69z8VvX7rU+HX70U9ZK7dzvKv72T130pf3PxKly2POXLTN
-	Y4/RtbwmO8F+Ubi30tOVxSpX4p+tCCyaYnjT7c7ySbKvK1UWv99uF3YrY2Pc2vbLn3SEu5aa
-	WjUb3mBYXKEn8Hqa7hdL6yUb7y87F/7W/QnDoj081R+N/t1cUFKivd9BeZ7PNRUnwTjx8NVO
-	1xO1uq24BPQnPl8/b47AnJsnQkqTjqi4O94+xb9qQWyVemPdk3fb5GfP0RdoDFy5J9Tu7c68
-	kkPPnUOn79D26t2qmKZ1NM1s+5/Z2dMN2N3/+L37kxL/6uRrdb/P7PfPWLVMXHzleLl6i5Xl
-	1PWyi+NiD/kosRRnJBpqMRcVJwIAr3KfubsCAAA=
-X-CMS-MailID: 20240527022944epcas5p16011e653d1f770cd11bc760f39c17ad2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240527022944epcas5p16011e653d1f770cd11bc760f39c17ad2
-References: <CGME20240527022944epcas5p16011e653d1f770cd11bc760f39c17ad2@epcas5p1.samsung.com>
 
-From: Xue He <xue01.he@samsung.com>
+This series implements the functionality of delivering IO page faults to
+user space through the IOMMUFD framework. One feasible use case is the
+nested translation. Nested translation is a hardware feature that
+supports two-stage translation tables for IOMMU. The second-stage
+translation table is managed by the host VMM, while the first-stage
+translation table is owned by user space. This allows user space to
+control the IOMMU mappings for its devices.
 
-It is used in block hybrid poll, the related function
-definitions have been removed, but the function
-declaration has not been delelted.
+When an IO page fault occurs on the first-stage translation table, the
+IOMMU hardware can deliver the page fault to user space through the
+IOMMUFD framework. User space can then handle the page fault and respond
+to the device top-down through the IOMMUFD. This allows user space to
+implement its own IO page fault handling policies.
 
-Signed-off-by: Xue He <xue01.he@samsung.com>
----
- block/blk-stat.h | 1 -
- 1 file changed, 1 deletion(-)
+User space application that is capable of handling IO page faults should
+allocate a fault object, and bind the fault object to any domain that it
+is willing to handle the fault generatd for them. On a successful return
+of fault object allocation, the user can retrieve and respond to page
+faults by reading or writing to the file descriptor (FD) returned.
 
-diff --git a/block/blk-stat.h b/block/blk-stat.h
-index 17e1eb4ec7e2..5d7f18ba436d 100644
---- a/block/blk-stat.h
-+++ b/block/blk-stat.h
-@@ -64,7 +64,6 @@ struct blk_stat_callback {
- 
- struct blk_queue_stats *blk_alloc_queue_stats(void);
- void blk_free_queue_stats(struct blk_queue_stats *);
--bool blk_stats_alloc_enable(struct request_queue *q);
- 
- void blk_stat_add(struct request *rq, u64 now);
- 
+The iommu selftest framework has been updated to test the IO page fault
+delivery and response functionality.
+
+The series and related patches are available on GitHub:
+https://github.com/LuBaolu/intel-iommu/commits/iommufd-io-pgfault-delivery-v6
+
+Change log:
+v6:
+ - Refine the attach handle code by shifting the handle allocation to
+   the caller. The caller will then provide the allocated handle to the
+   domain attachment interfaces.
+ - Add reference counter in iommufd_fault_iopf_enable/disable() helpers.
+ - Fix the return values of fault FD's read/write fops.
+ - Add IOMMU_CAP_USER_IOASID_TABLE capability and check it before roll
+   back getting attach_handle to RID.
+ - Move the iopf respond queue from iommufd device to iommufd fault.
+ - Disallow PRI enablement on SR-IOV VF devices.
+ - Miscellaneous cleanup.
+
+v5: https://lore.kernel.org/linux-iommu/20240430145710.68112-1-baolu.lu@linux.intel.com/
+ - Removed attach handle reference count from the core. Drivers will now
+   synchronize their use of handles and domain attach/detach.
+ - Automatically responds to all outstanding faults in hwpt detach or
+   replace paths.
+ - Supports getting a domain-type specific attach handle.
+ - Reorganized the series by changing the patch order.
+ - Miscellaneous cleanup.
+
+v4: https://lore.kernel.org/linux-iommu/20240403011519.78512-1-baolu.lu@linux.intel.com/
+ - Add the iommu domain attachment handle to replace the iopf-specific
+   domain attachment interfaces introduced in the previous v3.
+ - Replace the iommu_sva with iommu domain attachment handle.
+ - Refine some fields in the fault and response message encoding
+   according to feedback collected during v3 review period.
+ - Refine and fix some problems in the fault FD implementation.
+ - Miscellaneous cleanup.
+
+v3: https://lore.kernel.org/linux-iommu/20240122073903.24406-1-baolu.lu@linux.intel.com/
+ - Add iopf domain attach/detach/replace interfaces to manage the
+   reference counters of hwpt and device, ensuring that both can only be
+   destroyed after all outstanding IOPFs have been responded to. 
+ - Relocate the fault handling file descriptor from hwpt to a fault
+   object to enable a single fault handling object to be utilized
+   across multiple domains.
+ - Miscellaneous cleanup and performance improvements.
+
+v2: https://lore.kernel.org/linux-iommu/20231026024930.382898-1-baolu.lu@linux.intel.com/
+ - Move all iommu refactoring patches into a sparated series and discuss
+   it in a different thread. The latest patch series [v6] is available at
+   https://lore.kernel.org/linux-iommu/20230928042734.16134-1-baolu.lu@linux.intel.com/
+ - We discussed the timeout of the pending page fault messages. We
+   agreed that we shouldn't apply any timeout policy for the page fault
+   handling in user space.
+   https://lore.kernel.org/linux-iommu/20230616113232.GA84678@myrica/
+ - Jason suggested that we adopt a simple file descriptor interface for
+   reading and responding to I/O page requests, so that user space
+   applications can improve performance using io_uring.
+   https://lore.kernel.org/linux-iommu/ZJWjD1ajeem6pK3I@ziepe.ca/
+
+v1: https://lore.kernel.org/linux-iommu/20230530053724.232765-1-baolu.lu@linux.intel.com/
+
+Lu Baolu (10):
+  iommu: Introduce domain attachment handle
+  iommu: Remove sva handle list
+  iommu: Add attach handle to struct iopf_group
+  iommu: Extend domain attach group with handle support
+  iommufd: Add fault and response message definitions
+  iommufd: Add iommufd fault object
+  iommufd: Fault-capable hwpt attach/detach/replace
+  iommufd: Associate fault object with iommufd_hw_pgtable
+  iommufd/selftest: Add IOPF support for mock device
+  iommufd/selftest: Add coverage for IOPF test
+
+ include/linux/iommu.h                         |  42 +-
+ drivers/iommu/iommu-priv.h                    |  11 +
+ drivers/iommu/iommufd/iommufd_private.h       |  51 ++
+ drivers/iommu/iommufd/iommufd_test.h          |   8 +
+ include/uapi/linux/iommufd.h                  | 122 +++++
+ tools/testing/selftests/iommu/iommufd_utils.h |  84 +++-
+ drivers/dma/idxd/init.c                       |   2 +-
+ drivers/iommu/io-pgfault.c                    |  61 +--
+ drivers/iommu/iommu-sva.c                     |  37 +-
+ drivers/iommu/iommu.c                         | 178 +++++--
+ drivers/iommu/iommufd/device.c                |  16 +-
+ drivers/iommu/iommufd/fault.c                 | 435 ++++++++++++++++++
+ drivers/iommu/iommufd/hw_pagetable.c          |  41 +-
+ drivers/iommu/iommufd/main.c                  |   6 +
+ drivers/iommu/iommufd/selftest.c              |  64 +++
+ tools/testing/selftests/iommu/iommufd.c       |  18 +
+ .../selftests/iommu/iommufd_fail_nth.c        |   2 +-
+ drivers/iommu/iommufd/Makefile                |   1 +
+ 18 files changed, 1060 insertions(+), 119 deletions(-)
+ create mode 100644 drivers/iommu/iommufd/fault.c
+
 -- 
-2.40.1
+2.34.1
 
 
