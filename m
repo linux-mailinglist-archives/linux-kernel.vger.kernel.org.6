@@ -1,121 +1,322 @@
-Return-Path: <linux-kernel+bounces-189903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289EB8CF6E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9FB8CF6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BED5CB211CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2024 23:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A422815D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F089B13A3F6;
-	Sun, 26 May 2024 23:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733FF2F43;
+	Mon, 27 May 2024 00:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhkSU46r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oZFZCESK"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359EF2F46;
-	Sun, 26 May 2024 23:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF0C2F24
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716767928; cv=none; b=obLl4FGX8hBfTYyP3XeKv4e1LXvMvS0kR61fBpKozdCrIXtDXZbPJYA2l7M2rmWRtUSWuBhOUgDB0O/toAj2/YrI7tNaol1Z/W+yXmqlBJ488uyK0pdDLXXzJy9IUo6OKxYxjAi59dnrN5mO+Zh6dKTSEmhsifpsdy5GvsLZ5Dg=
+	t=1716768172; cv=none; b=TR8sDzqPwEtUrwA39KuBQMaW/I48NLoV0COJWqj4/mOnHEvN7AFfADV1Z8OIH8Joa391fnoVudH3amuG4XrsENAhGY8995O17GyUl4f8elEym0rXyVyCh1iqEMspSD9CgZHf/c91GzU8yHPsdSvMRHaqS/EaFgA5DbNIanV9O8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716767928; c=relaxed/simple;
-	bh=b5DjLreslgkKOr9CzOVLysgDaJanR6GoFnpSSYrVds8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Uinj/T572ZhMG5s2kTSGAP+1tQJEC48ortG8BU4cGrFYfKSxL5BbyJWNA/Mzg+4UpbEeFFP+WOoosr+RKCsejDAVgx949uVKl8pb3r/8EQVYrJNyPLCEj6TXFzeQ9gKB5AB1+o9HGgVduo5Onzj9Fo939e8kNP67Pj371ymFNss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhkSU46r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA695C2BD10;
-	Sun, 26 May 2024 23:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716767927;
-	bh=b5DjLreslgkKOr9CzOVLysgDaJanR6GoFnpSSYrVds8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FhkSU46roOIGOu8nIldG3jCi4RxCCFFDyPlOZyPQyxBDbhepVHZ2WLgQOdF8vz3mb
-	 PW5sy69JxHdL4CbT0EG17DhGOe526wzeE8No3ViQmEjnkT1ySuAmyi8EiDeprm3WWe
-	 UEwqadlcyyAWHkDvUPWsGmQINx2acb4ZUtFdpIMKNjzsAui7P2QKF39jifsB8eYwun
-	 8H5FfVF2PNo/b7MHUkevltyd+FZ8TX338mHJ4ZFdzdiDspJnzQV6/wXQkK7AqGstGO
-	 rNSolmr21+EE5BrSmTRHZjPbbEPojScl8UKv5FwOl62Vsr6HLHis//Zq+LMOx0KiTP
-	 jNPTpY89nTgOQ==
-Date: Mon, 27 May 2024 08:58:41 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH 19/20] function_graph: Use for_each_set_bit() in
- __ftrace_return_to_handler()
-Message-Id: <20240527085841.63b97b1b1926ff9c0a21fb46@kernel.org>
-In-Reply-To: <20240525023744.231570357@goodmis.org>
-References: <20240525023652.903909489@goodmis.org>
-	<20240525023744.231570357@goodmis.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716768172; c=relaxed/simple;
+	bh=5Z/IQ1AG0LSghMA4nafETdJADGNE+D470yXbhvbV++8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QfuzmxUMyzB7OPK6SkCwtPEolk2dxrvJ9ThpYzdCLcIkQEFWxkZ+k0bSYcqtqutndHGCbmfdZwB+hYVjts0j/XzcQkBEukxzlGp1u/Ru2/a06JoW09bre12xdtYAC5wVBlj+tzK+T7FSzt7SHR+GTe4qt/l7krxIc7WN68tbcLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oZFZCESK; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: skhan@linuxfoundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716768167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VjOimlkAb10m4KMSg1DOqlHJhsmFxHSlxPO0CJcAMP4=;
+	b=oZFZCESKyh4srLsDKsx5WPsLeRrP/XrmvJbpNuyLg7+fLFuBjxhdK+JDw0N6j29Dr+ZBCF
+	QGxoL82JDx2HkkQdJifXgoczMxUfnqPhW9YNUFGfkJLNW4w1z4GR4xJ6hPpMeLGOmSUO1l
+	KndM+M6bjwFFkAM0ZuJTKax0jVq5f20=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: wen.yang@linux.dev
+X-Envelope-To: shuah@kernel.org
+X-Envelope-To: avagin@google.com
+X-Envelope-To: mathieu.desnoyers@efficios.com
+X-Envelope-To: rostedt@goodmis.org
+X-Envelope-To: dyoung@redhat.com
+X-Envelope-To: tim.bird@sony.com
+X-Envelope-To: linux-kselftest@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	SShuah Khan <shuah@kernel.org>,
+	Andrei Vagin <avagin@google.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dave Young <dyoung@redhat.com>,
+	Tim Bird <tim.bird@sony.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEDN PATCH v2] selftests: introduce additional eventfd test coverage
+Date: Mon, 27 May 2024 08:02:00 +0800
+Message-Id: <20240527000200.5615-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 24 May 2024 22:37:11 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Add several new test cases which assert corner cases on the eventfd
+mechanism, for example, the supplied buffer is less than 8 bytes,
+attempting to write a value that is too large, etc.
 
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> Instead of iterating through the entire fgraph_array[] and seeing if one
-> of the bitmap bits are set to know to call the array's retfunc() function,
-> use for_each_set_bit() on the bitmap itself. This will only iterate for
-> the number of set bits.
-> 
+	./eventfd_test
+	# Starting 9 tests from 1 test cases.
+	#  RUN           global.eventfd_check_flag_rdwr ...
+	#            OK  global.eventfd_check_flag_rdwr
+	ok 1 global.eventfd_check_flag_rdwr
+	#  RUN           global.eventfd_check_flag_cloexec ...
+	#            OK  global.eventfd_check_flag_cloexec
+	ok 2 global.eventfd_check_flag_cloexec
+	#  RUN           global.eventfd_check_flag_nonblock ...
+	#            OK  global.eventfd_check_flag_nonblock
+	ok 3 global.eventfd_check_flag_nonblock
+	#  RUN           global.eventfd_chek_flag_cloexec_and_nonblock ...
+	#            OK  global.eventfd_chek_flag_cloexec_and_nonblock
+	ok 4 global.eventfd_chek_flag_cloexec_and_nonblock
+	#  RUN           global.eventfd_check_flag_semaphore ...
+	#            OK  global.eventfd_check_flag_semaphore
+	ok 5 global.eventfd_check_flag_semaphore
+	#  RUN           global.eventfd_check_write ...
+	#            OK  global.eventfd_check_write
+	ok 6 global.eventfd_check_write
+	#  RUN           global.eventfd_check_read ...
+	#            OK  global.eventfd_check_read
+	ok 7 global.eventfd_check_read
+	#  RUN           global.eventfd_check_read_with_nonsemaphore ...
+	#            OK  global.eventfd_check_read_with_nonsemaphore
+	ok 8 global.eventfd_check_read_with_nonsemaphore
+	#  RUN           global.eventfd_check_read_with_semaphore ...
+	#            OK  global.eventfd_check_read_with_semaphore
+	ok 9 global.eventfd_check_read_with_semaphore
+	# PASSED: 9 / 9 tests passed.
+	# Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Looks good to me.
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: SShuah Khan <shuah@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Tim Bird <tim.bird@sony.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v2: use strings which indicate what is being tested, that are useful to a human
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ .../filesystems/eventfd/eventfd_test.c        | 136 +++++++++++++++++-
+ 1 file changed, 131 insertions(+), 5 deletions(-)
 
-Thanks,
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/fgraph.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 4d503b3e45ad..5e8e13ffcfb6 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -827,11 +827,10 @@ static unsigned long __ftrace_return_to_handler(struct fgraph_ret_regs *ret_regs
->  #endif
->  
->  	bitmap = get_bitmap_bits(current, offset);
-> -	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
-> +
-> +	for_each_set_bit(i, &bitmap, sizeof(bitmap) * BITS_PER_BYTE) {
->  		struct fgraph_ops *gops = fgraph_array[i];
->  
-> -		if (!(bitmap & BIT(i)))
-> -			continue;
->  		if (gops == &fgraph_stub)
->  			continue;
->  
-> -- 
-> 2.43.0
-> 
-> 
-
-
+diff --git a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+index f142a137526c..85acb4e3ef00 100644
+--- a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
++++ b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+@@ -13,6 +13,8 @@
+ #include <sys/eventfd.h>
+ #include "../../kselftest_harness.h"
+ 
++#define EVENTFD_TEST_ITERATIONS 100000UL
++
+ struct error {
+ 	int  code;
+ 	char msg[512];
+@@ -40,7 +42,7 @@ static inline int sys_eventfd2(unsigned int count, int flags)
+ 	return syscall(__NR_eventfd2, count, flags);
+ }
+ 
+-TEST(eventfd01)
++TEST(eventfd_check_flag_rdwr)
+ {
+ 	int fd, flags;
+ 
+@@ -54,7 +56,7 @@ TEST(eventfd01)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd02)
++TEST(eventfd_check_flag_cloexec)
+ {
+ 	int fd, flags;
+ 
+@@ -68,7 +70,7 @@ TEST(eventfd02)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd03)
++TEST(eventfd_check_flag_nonblock)
+ {
+ 	int fd, flags;
+ 
+@@ -83,7 +85,7 @@ TEST(eventfd03)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd04)
++TEST(eventfd_chek_flag_cloexec_and_nonblock)
+ {
+ 	int fd, flags;
+ 
+@@ -161,7 +163,7 @@ static int verify_fdinfo(int fd, struct error *err, const char *prefix,
+ 	return 0;
+ }
+ 
+-TEST(eventfd05)
++TEST(eventfd_check_flag_semaphore)
+ {
+ 	struct error err = {0};
+ 	int fd, ret;
+@@ -183,4 +185,128 @@ TEST(eventfd05)
+ 	close(fd);
+ }
+ 
++/*
++ * A write(2) fails with the error EINVAL if the size of the supplied buffer
++ * is less than 8 bytes, or if an attempt is made to write the value
++ * 0xffffffffffffffff.
++ */
++TEST(eventfd_check_write)
++{
++	uint64_t value = 1;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(0, 0);
++	ASSERT_GE(fd, 0);
++
++	size = write(fd, &value, sizeof(int));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(value));
++
++	value = (uint64_t)-1;
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	close(fd);
++}
++
++/*
++ * A read(2) fails with the error EINVAL if the size of the supplied buffer is
++ * less than 8 bytes.
++ */
++TEST(eventfd_check_read)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(1, 0);
++	ASSERT_GE(fd, 0);
++
++	size = read(fd, &value, sizeof(int));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(value));
++	EXPECT_EQ(value, 1);
++
++	close(fd);
++}
++
++
++/*
++ * If EFD_SEMAPHORE was not specified and the eventfd counter has a nonzero
++ * value, then a read(2) returns 8 bytes containing that value, and the
++ * counter's value is reset to zero.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd_check_read_with_nonsemaphore)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(uint64_t));
++	EXPECT_EQ(value, EVENTFD_TEST_ITERATIONS);
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
++/*
++ * If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value,
++ * then a read(2) returns 8 bytes containing the value 1, and the counter's
++ * value is decremented by 1.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd_check_read_with_semaphore)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_SEMAPHORE|EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = read(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++		EXPECT_EQ(value, 1);
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
+ TEST_HARNESS_MAIN
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.25.1
+
 
