@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0098D0A11
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:42:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024478D0A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFC1C22156
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93CAF1F22EB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBB15FA86;
-	Mon, 27 May 2024 18:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097A515FA8C;
+	Mon, 27 May 2024 18:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0+7Qr01"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itEZHSGG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330F15FA6B;
-	Mon, 27 May 2024 18:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B66915F41F;
+	Mon, 27 May 2024 18:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835310; cv=none; b=etYKBcaPb2Vqw+FMRfGNzmk01zkkVYtD8AelbaHUK1f3t5iAFplTamn7pgTIwiBHYBOzl0ataGgkKwmMs2lUetRiUxXwtJw2cs4ml9le8f/ZittydF5x5mZebEvWd5jgB1ChMD8Z9yszsjIND7ahPrHSGvkrlmRFwMZWxzl36D8=
+	t=1716835352; cv=none; b=YG3wpkoOJcdABLO89TmDiSTBtl1bVdIIsSGu0mRFMp+qStRK5IU1rYk7ZDZWq9G9GwVh4O8fIlig76WZ63dbTg1b13022CpByTZcLAcDS6njGxchXxuYTqZ9RlO41nw2NETKlIpkFuqaBsWBrurbsMRnsb2v6NTNlVFE3AcWf7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835310; c=relaxed/simple;
-	bh=ZAYWwfV1OEyqXzGdLDzfV5BVTmztV5SWkMzCbWrY1TQ=;
+	s=arc-20240116; t=1716835352; c=relaxed/simple;
+	bh=Rh67QaYUX6AOAR++bY+3ddLPTJ7PDZJkLa6D0bjdQ0M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RwrwfzkyMRlDEt8w6SqcSTspnEgkMecGGer1toZxkGwulyoLlMYi+/Lmak0ldB6ieZc+a0SDwd4jPYWpkONT9E4q7QP1JtRi8LFbE/mnL4tKUKBX+MeJFYVcSwidgvCZzxaHpmvnuIAU+8rxVC29VfV/FqUjplXfMFyfGKziHoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0+7Qr01; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C95E8C32782;
-	Mon, 27 May 2024 18:41:44 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=IOIsiKGPj5S0ov8A/6Qj+DcqY61w8vbEvR2gw6KroQEeWlhflHOoMjpGccbCg1qsuBeozR5WMlL0ZWN8OICz9X4RfPQ/V9NwcPn/tFDR1o2L0KU95Fz3srYBROxuKxEMddFpAUMF8bpMZGzOJFubVjLjEDhX4wNW6Ut+nPH/flY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itEZHSGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97417C2BBFC;
+	Mon, 27 May 2024 18:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835309;
-	bh=ZAYWwfV1OEyqXzGdLDzfV5BVTmztV5SWkMzCbWrY1TQ=;
+	s=k20201202; t=1716835351;
+	bh=Rh67QaYUX6AOAR++bY+3ddLPTJ7PDZJkLa6D0bjdQ0M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y0+7Qr01/p8fLq0J4RkroNtYjuG0DDqOmttOKEUULhWOLBm5q7DBVuhjWRtJLtaPt
-	 31HokXwENc6DdrxTGow+L3KOCZGCoDgUsNsGjCqYjEB99tatMQfGIxGFETcvVJhqZm
-	 cqMi/uTHaDED63KV9iXAv/ccpK6i7rCOK7UtZM5WD0BRr9sJQcRUWBCzZksyDTXaUD
-	 4OJgFaT/SjBSCbwqfQC1+pimW2IVZVsazdk5+PPuIrqRQGfrinqH42OevzPDh8Q/i3
-	 oxH3i/ZlkbGT4WKC+9e/2fnGhhEmTIXa7B/F0hOpGlKXnrHXoVzgiTPpXvL0hqHwES
-	 rItjTPKdvXNGw==
-Message-ID: <28187208-1cf6-4bee-af2f-f1f1d6e6da3d@kernel.org>
-Date: Mon, 27 May 2024 20:41:42 +0200
+	b=itEZHSGGyuf8w8JCDVOYg2mqZfPQfEj1Ri9h7bL5IbUFt4+mTaetpThx4H7CUpqiy
+	 GBLj8eIaFQ1xTTPlQps/Vkahp+1rVuv3RT4VCUvmvMnAYpWB1FFvWlJfHvhrXwxJVY
+	 SeDIvYCcsTarca5QJ2lIkGP0q7FBK6DF9QVEsoTb15CvFLA3gL5TsX8bOZAKylhysy
+	 jVthY83qvmstwPTBm5N/v3qEHvYMl5clv2kXrcLi3zr1wppCiPtCGUWNDOIEBTOmPi
+	 LVARwSjwCjR5xpKg0jH7F46lz03HHVvn9Ew5dYC2gQq+xuiq9Nc7mULktB7WliEeZn
+	 esvchSBE8NRhg==
+Message-ID: <71bb5b77-193e-4c69-8ecb-4203b0fd3c6e@kernel.org>
+Date: Mon, 27 May 2024 20:42:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/15] dt-bindings: firmware: qcom,scm: add
- memory-region for sa8775p
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Marko <robimarko@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Maximilian Luz <luzmaximilian@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, Elliot Berman <quic_eberman@quicinc.com>,
- Alex Elder <elder@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v4 1/9] ASoC: dt-bindings: samsung,midas-audio: Add
+ headset mic bias supply
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel@quicinc.com
-References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
- <20240527-shm-bridge-v10-1-ce7afaa58d3a@linaro.org>
+ linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
+ <20240525-midas-wm1811-gpio-jack-v4-1-f488e03bd8c7@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,17 +108,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240527-shm-bridge-v10-1-ce7afaa58d3a@linaro.org>
+In-Reply-To: <20240525-midas-wm1811-gpio-jack-v4-1-f488e03bd8c7@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/05/2024 14:54, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 25/05/2024 15:28, Artur Weber wrote:
+> Some devices use a separate mic bias supply (also referred to as
+> "ear mic bias") to enable/disable the headset mic.
 > 
-> Document a new property (currently only for sa8775p) that describes the
-> memory region reserved for communicating with the TrustZone.
+> Add the DT property headset-mic-bias-supply to allow for specifying
+> this supply.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
