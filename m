@@ -1,359 +1,257 @@
-Return-Path: <linux-kernel+bounces-190442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8008CFE51
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F828CFEB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F51C1C2156B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF551C2172D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124DA13B792;
-	Mon, 27 May 2024 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E0B13C3C4;
+	Mon, 27 May 2024 11:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="b7d3uGhK"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="IV0gq3sg"
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347053A8C0;
-	Mon, 27 May 2024 10:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716806776; cv=none; b=X7KWwX7zT2vJg5ZEeugYpdA6gTYDwjU5VFwhNnX1yhEwreOH8mnNSTylVRHUVtSXqvVnR2WQvogQrYb2X6rssREhSZc9z7vbUPXbzSl0DmnlCmKns4UCYz9OK8RCxb6kS4IxEBao35oZZT2pOljm/1uYyAqjOstejTp/zEBOEs8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716806776; c=relaxed/simple;
-	bh=vNmWK7T3lgZ1t26A7io73KQSEJ/cO1fbiEwR8p/kMyU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o3exJE6clPWvdUKWMW/Ii/0kbS3yAP5Z/qQIuoV8HI7ea/cq096xWeTH+U2MRT3W1Uh5xXEfSarw9XTUkz/enJTNsQuE2raLChtcDOTlgb/tg4F86tjIpmcX+Zoq6dMX9VqAhNaXQOl5m0ve1W8gB2NGmSOPH5+QBOfQWC6RpuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=b7d3uGhK; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1716806771; x=1717065971;
-	bh=nzpaKt+Rvl81xZ9AXrvQceYpiSpmIvECWBnCpPTlx14=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=b7d3uGhK/0QfLVp29lWs6sMNsBu8C584pdSXKF5VGLs1lExS1/C9jmoD3+kpU90C8
-	 JcB65lRsUHR/stArQ/ViczVYzZyDRL32RHKDI4cQDC98ySTjCvcbjRroR201mhneU3
-	 Y7BKpTwKUsjHMOa4x9uAfr5vwnkCzL2xPIXVKua3eCLVU1BcZ7ICp4DIHusVojBjjY
-	 tm9Wdeb+jCY/Uto0MscXRHSurCuHm/cRvwsnbCQD7nfFY+sqYX+CgntKZSu8IEyi8E
-	 V/dJC7bqsyRagmJdC+Bt6kf7MfULasBhDKX0D+hn4Lnq+kSNK0IlBVUUMgNoBMgflv
-	 PIyFY9NdBKGQA==
-Date: Mon, 27 May 2024 10:46:05 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 8/9] rust: list: support heterogeneous lists
-Message-ID: <97c6423b-0886-4e79-991e-c40c77452464@proton.me>
-In-Reply-To: <20240506-linked-list-v2-8-7b910840c91f@google.com>
-References: <20240506-linked-list-v2-0-7b910840c91f@google.com> <20240506-linked-list-v2-8-7b910840c91f@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 4eee7e13fdfca16d245ffc01ac7f5005560af240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24FD50263;
+	Mon, 27 May 2024 11:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716808737; cv=fail; b=Q3/WVMjXSVk0wPfczoEwpc9O5Mh6QmomLgnnCiITFaA6p6jJ1xz1PiWi+uldpWEan6qh7QFSkRytgIiflZLnGf6/9wTv0vHVBSJveqXbOqI68qflbJJoLh/bIzdmYcmYgCntb1vSqoXZiAwme3PswJgTROux/aYeGYNstJza5b0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716808737; c=relaxed/simple;
+	bh=CSfcKhBMGmqF9Y4ytXBVzCcKwd1W98MbvenbkV4VK/k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=YOVp7bdM5YHZcWSlVBHs35q+mLodSI+pNj353R7wCi1kOzT09K/vG3zFwMt8J44flfM2Tkx1OvZ+94pTrKLTlvBDUsOAPgi8bSsqh/VZaBOJd+q8CbiBdTCTolhGfWJGfkh++w1vQOV+ijMdxEX/S7DJYzoTnQuGTyaX+S0XwaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=IV0gq3sg; arc=fail smtp.client-ip=185.183.30.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209318.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RAO72J026624;
+	Mon, 27 May 2024 10:46:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from
+	:to:cc:subject:date:message-id:references:in-reply-to
+	:mime-version:content-type:content-transfer-encoding; s=S1; bh=R
+	d7ZoGnnuBqe93/OkeG9bOf4LX6GB8kqTKpjE/+uqsU=; b=IV0gq3sg+QByg+5+E
+	23VYy+5LVkc2stjDy8GStHTCLiylhd7VED9KJ+hUbn1XdsrHKdW2qJatqcswFXnz
+	z/A2maNSsQZTImmeG+GLzgaTHttLmp/i9DzsXGMIT0b02hKBtU4Y9nqwrJU20mpy
+	Gh2OFoAV0mZtwfdQlulVgKgvkMk0ijS/uWocnyIBuPQ5ucyPZEHRZhBHR695hu6P
+	2ujP052CV0vFnzLnbn6fQmg468JxH6jQ5Q5mfaOPoupil7BMpfvRhrxz+q8KjK2T
+	RkNJegH6FOWBT36fkHvs7gfgRlqxqTXZ6Jav+78ikaTrcD2YwjgxZexElGYCEvCT
+	GzIRw==
+Received: from jpn01-os0-obe.outbound.protection.outlook.com (mail-os0jpn01lp2105.outbound.protection.outlook.com [104.47.23.105])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3yb83b1h06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 May 2024 10:46:25 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g3nufA9LxdXv32+/FIff146tuaLFBk3PvPDXsCsoERNhsTLkg1ZGdP7oq6jcL6BaVcoZ1euu1Fp2VojOfKQKtwIyrc03n8OBzACXV/PEtUkMmrdzsrFqdnhm4/cOPBUoSEMVMySULpXG5KpZf0JrRsLFjeGHzBDd4SdThl8Y19dQHWjQokMQ+07weQqrb2b8xOX83pJCVMiteAIGtGcu4JGQY7+btUImrBEKWHn5Pol/D+eCd+S1NNV69RAfuILeLa2m/wwNAc4ZPqzQs1y/ycslyQnHBtzAg/U9OzIOQZGx8LK6+0g18dQyOLEmWqmPb0X6M8ezvseK42XLarRLmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rd7ZoGnnuBqe93/OkeG9bOf4LX6GB8kqTKpjE/+uqsU=;
+ b=AnbMg9osmUDZ23VVFMBFj2aQm69i5JYnBJj89ZtEKXZ8qnYNiskAJk0PWhgMrNgG8j+CVpy70f6xraJJ/6hNZqXv3Cf0NQ8Fuh2n4kIK4Y4dmLWIEudHZED8nAjrGdi50sZUDI6uOAHRfs1il9WokBehcEJJj/TvneoZyFVelxDMFN538bjNs7NJ/cjAAi8wG68dh9p8lHPbQzPwaRqrfN8fz8EgMiyVvMfQ1Xe3RCMulONEB0llfiIGE9mWu72drt5PzyJmfv1qzg3TGNYyF7fA4c2TMng6R4b1FCoNQ9Z5kraQzgJsMNY4p4Iqo3P2qeJAQN41XB9FhbfvvnE2/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from TYAPR01MB4048.jpnprd01.prod.outlook.com (2603:1096:404:c9::14)
+ by TYCPR01MB6303.jpnprd01.prod.outlook.com (2603:1096:400:7c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 10:46:19 +0000
+Received: from TYAPR01MB4048.jpnprd01.prod.outlook.com
+ ([fe80::3244:9b6b:9792:e6f1]) by TYAPR01MB4048.jpnprd01.prod.outlook.com
+ ([fe80::3244:9b6b:9792:e6f1%3]) with mapi id 15.20.7611.025; Mon, 27 May 2024
+ 10:46:19 +0000
+From: "Sukrit.Bhatnagar@sony.com" <Sukrit.Bhatnagar@sony.com>
+To: Matthew Wilcox <willy@infradead.org>
+CC: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, Christoph Lameter <cl@linux.com>,
+        Pekka
+ Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo
+ Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/2] mm: debug: print correct information for slab folios
+Thread-Topic: [PATCH 2/2] mm: debug: print correct information for slab folios
+Thread-Index: AQHarBujHL/xNkAGiUyj8nEOMN94/7GjL+8AgAe8CtA=
+Date: Mon, 27 May 2024 10:46:19 +0000
+Message-ID: 
+ <TYAPR01MB4048A7A5E95A4BB4BAE9A202F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
+References: <20240522074629.2420423-1-Sukrit.Bhatnagar@sony.com>
+ <20240522074629.2420423-3-Sukrit.Bhatnagar@sony.com>
+ <Zk3lzjVbXVrLW0XR@casper.infradead.org>
+In-Reply-To: <Zk3lzjVbXVrLW0XR@casper.infradead.org>
+Accept-Language: en-US, ja-JP, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYAPR01MB4048:EE_|TYCPR01MB6303:EE_
+x-ms-office365-filtering-correlation-id: 98b94482-785e-47e6-e855-08dc7e3a3df0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230031|366007|376005|7416005|1800799015|38070700009;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?rLzTOkzuwTvfDzj9ThsR7SkYD0bYWZ+IcrrritiaEnm8rqQ9UANr6pPQpjiC?=
+ =?us-ascii?Q?HxQOndLNYoJqXCdDcZRqav2W3ozLPRHuAcKMeF+7fJVYhdJOqGulFW0GSwug?=
+ =?us-ascii?Q?73aBzIPjc9ww/PPFc++AgsJTmwpn43L1VEXYQcxmdcSDsmr91vxFguaIEDxX?=
+ =?us-ascii?Q?pFJIw2N8gVTt9tjUhEYpui3qfXSuG8isqawjSdFOxEKxfoFdXwm8topKYfEu?=
+ =?us-ascii?Q?+j1yLgyxY4j/G0Ca2UPmeCP2CycPzbq5EypQyqT46T5c4JkJ1g43e09pHfkM?=
+ =?us-ascii?Q?q36ee/Flv5GrkQ993kzwlAlkOhcKAli0zd5ob5Z8gmuhvpxLMMqEtKTj0O96?=
+ =?us-ascii?Q?mpJGU8l+1gqLihgh+7rSyLZNSEgRtsSChj4L8AN0QQcwCBB8TZfv1po56pd9?=
+ =?us-ascii?Q?ILHqDImM+p08XnnU/ks/916lDxVI1jnyRTkBJPPFTHBb26cdOkrO0dxlzszR?=
+ =?us-ascii?Q?y/Cv4X16OiwISogSF9wJAIFP/pXGJR3Ocs1b6lwjb7V1Y8N/2YZP75Ft5gfI?=
+ =?us-ascii?Q?PVXz04JKx+TJ+5oniOSLvxdlXgZsVTVp35GvZVlhiQdvTQHAnpFBH+GQvMar?=
+ =?us-ascii?Q?atK3Hwu/T/sg2qTht62DkBLoCYrUMDl2M1Q0pshmwCy46CD6lFGcV9nE5S6q?=
+ =?us-ascii?Q?HfuH5zeFbngS7SsWp6yPNDlCmOkEwDlXEyFOpeKOGDcoq0AN6p2M8+N05UVT?=
+ =?us-ascii?Q?5FXswNWfgt94TppOJgqHNX7Gxr1QNGd1uh7pbm2vkh92V5xTsoG+wWHhGFfs?=
+ =?us-ascii?Q?fFh7WKI/qajH5jcDMFHcvWUHuBTnLd2RfNiK46RvmX7LxZbnleJaSZDtEPXY?=
+ =?us-ascii?Q?BtRGD3GeKTDxWODXQspPRW3Q2oZQEErv6TjZIgt22PK+j1HIGm4Mxf3LE5b8?=
+ =?us-ascii?Q?ZC/avnIosRmfRHGcuWvW+7LWsBF2WtXfyiAusF/GPF3zrit2Zv9gdOF4S6zl?=
+ =?us-ascii?Q?9pMQZhENRVO+Y/vOUTPzSRf/6f3w13UJM5NNPQZqLxIubnhUKBE/tOJhIIQm?=
+ =?us-ascii?Q?S55bvEdHSRF4GwKA0mOMkNYQWsHu2jM4xoEOn2tijxhFZI0M7SQO6DtbGM+Y?=
+ =?us-ascii?Q?t2DI6bgKIWmglPHjelB4NazH2y9FvP+Ps+vdhuU+uXyA71V5a0TYTtawUM21?=
+ =?us-ascii?Q?8s5hQRrREqBQ3vY88uUq8qTNcrX9BFn93ewHv3d1mGSweNb1hkjYzu+r2BJs?=
+ =?us-ascii?Q?QBZlxVmTj2cug3v3Ok5iBEVmKdnDsmL3FBOUgQhT6vZN7nGCUSodQJ5dD1zl?=
+ =?us-ascii?Q?ItrheHiZmVQ6GK8IdeBTNjQqNBsbXJalofkTXUU/9db6LL1nbmKK7c63mUw2?=
+ =?us-ascii?Q?Kd5VXTAfA8a2Orsi90ROGMLQHhI6Jm/DRgWEC3gD7+Ck4w=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB4048.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?+ajgu1Wp7E4QPELBh1Q6G79kflYCPc31zZYMKYVDu93GySK+IvJRGW8qzpga?=
+ =?us-ascii?Q?O+pr1it4+IPDHgKPTaHyi4vTBNvJ8oihUBaCVEl7WjIOp0abjXJ0y5JOBYTQ?=
+ =?us-ascii?Q?tPWpDGmrtNbhk1VyFR8wiHMGT9JcHjQ57/kbJz/N22T5VQHHpsR/h+lwLAAj?=
+ =?us-ascii?Q?IjNOmymqkMg8HEL562ckxYHeZAYcKG7icG0IBRXPHHC2AoPOVb7JsQLaQ/VV?=
+ =?us-ascii?Q?QuQIl9M8DHWv5HYzyy/+4ClmlWJVRSW04cms1J8olK5p+009vbhVJKXoN9nK?=
+ =?us-ascii?Q?w0zgdk9XMelclQv//3vlpeRsi8Zt6CkwQmxjBO42n9ZUEDcGIr6vKfwHYzIJ?=
+ =?us-ascii?Q?iFWM3j7HcHsGk2pwiEc3Pi/cIFplbq/a6s+BWCUJOFaXP6TGdyf1+w+GgJ8X?=
+ =?us-ascii?Q?AVXUczWGPy1KgPMtZ4B/qJexy5jLLvEyscyjGqHqvX5UoY/B3C0cfkobBmDn?=
+ =?us-ascii?Q?H8zcl9igcEh3my/n9HM9L74IK4vHJIIyuQHacKSyqmcqVwy/PhD5ewC7+KX1?=
+ =?us-ascii?Q?4kAHL/lMfe9Pb2Sc918mFIOIvozsp2AlhTblQD1Uvs1FUdgyoJU7kiw/DR0P?=
+ =?us-ascii?Q?r0D07LG31g7sOYR8RZbVC6Mayk8RrfHgE4gBLSPKJT3ZW/xmmX1LlftIAQLq?=
+ =?us-ascii?Q?Px90OYy29CegkkqG4y7o0OhYrtMbevUOXOnp0jwHBtAvURK8grntavmngL6S?=
+ =?us-ascii?Q?YNJOxQ3Q0gSscfmMvsQT+XgpCa+gX+XEQVO9fJFrKeDTxc6HS8S8IJ+cKI/q?=
+ =?us-ascii?Q?jrIDWDop+7d2xG+iCPRICERQZ0FAbXGcXDUg5tmn92hc2paaaKGzm6oPnlot?=
+ =?us-ascii?Q?cS/GUJZdMTnSSCv0AQUfdJgcnA/jbfBeD9l1ojQa732CoS8yq62OyalQcni4?=
+ =?us-ascii?Q?JBoEp5ZVemMb0o8r8L0uMV0o8rzoadbq2cDnA/t/9r9IrJlMsCm4O9BiF4TT?=
+ =?us-ascii?Q?wNm9CX7Bn5fLpQGlUhPtM1IFHZOJ34T/BDhLXLZgRyqpgzB16FGuK6WVShBL?=
+ =?us-ascii?Q?8YM56fdSywyyRJp6Psyj3apfUh1nReIjT4+8MikejatSGnSlvhdAbV/azz3w?=
+ =?us-ascii?Q?b2mMjKR+DIprLq9Z17FKolHGLOx0v20dZ0m4ZsLndWPXh9XufbrRzvwDAq8M?=
+ =?us-ascii?Q?HiNXuMp9rXdEouSqmi1S566HyIppU0DL6xZ8sRq1y8YI6eTEtk6Kh1RIDYqN?=
+ =?us-ascii?Q?lt0HDY83sQJ7Yy767bWaaoHzsvYjUELAW1h75e+fHAiD+DsyAbt0Dw1PPioe?=
+ =?us-ascii?Q?8NmFaxH4vDPg6h1sU6ItRw19JzPreOy7s2egSWLt1UNyB78l2OH7H7N4Q3wu?=
+ =?us-ascii?Q?mr0ijVhOrchI+CV/UhG+p4xTraabQbSYKdcn78hzU8TM42VDfag1rm4pH+xL?=
+ =?us-ascii?Q?8ibyH3S9xzKY2MiV+EhWMilePzVxuQZFBRZqFSctuWQti5VdVYMFfK0ZgeiC?=
+ =?us-ascii?Q?wO8Uts/gdBH4TihmtY9UOLOSc4ghJdmxieO8N/+FVD6mqjw6R3Tl2OADJLH3?=
+ =?us-ascii?Q?apSrUb1BsNFXYokcF2T2BGBxOfYzeXjGSlegk3lkEswv53WYUbTb1afp7sRh?=
+ =?us-ascii?Q?qHfqQwHzBtqedqycG0RzjpW/5keXlQMsXFLaS2Fj?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	knUGBC+SYWzlu/+CzFOSd616ppG6YMIvcZ5c6htfwrK4ZQXAGqUc9trFB+dIy7+zpBthXOp7fd2HlBJ0PIUw8bHjsZ7w2cvXVaeRcU6y76EDOQbJVx4WR25VEPmL9RjTz/k2ITMXUEJ/EpbY3gevBTKrJsVcB6Sw7G8/EeLCJNe06TgB8DieQ+MIgzN8Gp9F/g60YAH+dtpL1rr/1jX3w9cx3vniFs2DFsmfkknBATbcCV1d001sbWOS6uNepHSY2PoIbbAXLptaMKV2fc0wkZKwrZqZcBTqOvL/odtH/YZ54xuMFdWUTc2iBzAqXRVYzRORfK9BcftOSFGb+uBDBHtGJN58yhpRx7ymDZHYQIG7mldALw3cQa2PhtX01xc7ZsgJje9nrZC12olZsjnyxdRVmpV+kkmhDE7o9Ri2QlaX5CmdZsmcy5bGrvPw7jhVCGzODDFLtaxevHgkA5Z1+yYxYv/D89Bw5GXzS6T7zxd9uQ43TR3lPD4Th/75u62uoxfEqO5EQFbJM0RUBb0Yc/xMhAbYdqO2YvRJW65xLkitehFSKV4bkAgYlxQQf4jrZT2LO76wGpj2cy4QoHxjY/IbqssYAB3V8NFJyUqBHZY+zD5uLcRZqUEf1UocT0lS
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB4048.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98b94482-785e-47e6-e855-08dc7e3a3df0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 10:46:19.1960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZXsrT8qotow8fMUKLnRPIYhnUoVlNzBDiaHtvlPdXdqgM+AgygbV0KItH6uKjqW5FW5imvcJe5gpV4Pa2ivfUAKdEAEQKKDvqnATJRHx7+I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6303
+X-Proofpoint-ORIG-GUID: YhF108i88Es6Oa7yQSJtmFQaYIyXdSIZ
+X-Proofpoint-GUID: YhF108i88Es6Oa7yQSJtmFQaYIyXdSIZ
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+X-Sony-Outbound-GUID: YhF108i88Es6Oa7yQSJtmFQaYIyXdSIZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
 
-On 06.05.24 11:53, Alice Ryhl wrote:
-> Support linked lists that can have many different structs at once. This
+Hi Matthew,
 
-have -> hold
-
-> is generally done using trait objects. The main challenge is figuring
-> what the struct is given only a pointer to the ListLinks.
+On 2024-05-22 21:32, Matthew Wilcox wrote:
+> On Wed, May 22, 2024 at 04:46:29PM +0900, Sukrit Bhatnagar wrote:
+>> If the folio tests true for slab, do not print information that does not
+>> apply to it. Instead, print the slab flags stored in the kmem_cache fiel=
+d.
+>>=20
+>> [    7.248722] page: refcount:1 mapcount:0 mapping:0000000000000000 inde=
+x:0xffff888103e6aa87>
+>> [    7.249135] head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincoun=
+t:0
+>> [    7.249429] slab flags: 0x8000000000000840(slab|head|zone=3D2)
+>> [    7.249664] cache flags: 0x10310(HWCACHE_ALIGN|PANIC|TYPESAFE_BY_RCU|=
+CMPXCHG_DOUBLE)
+>> [    7.249999] raw: 8000000000000000 ffffea00040f9a01 ffffea00040f9bc8 d=
+ead000000000400
 >=20
-> We do this by storing a pointer to the struct next to the ListLinks
-> field. The container_of operation will then just read that pointer. When
-> the type is a trait object, that pointer will be a fat pointer whose
-> metadata is a vtable that tells you what kind of struct it is.
+> You haven't tested this against the current codebase ...
+>
+>> @@ -98,6 +101,8 @@ static void __dump_folio(struct folio *folio, struct =
+page *page,
+>>  		is_migrate_cma_folio(folio, pfn) ? " CMA" : "");
+>>  	if (page_has_type(&folio->page))
+>>  		pr_warn("page_type: %pGt\n", &folio->page.page_type);
+>> +	else if (folio_test_slab(folio))
+>> +		pr_warn("cache flags: %pGs\n", &((struct slab *)&folio->page)->slab_c=
+ache->flags);
+>>=20
 >=20
-> Heterogeneous lists are heavily used by Rust Binder. There are a lot of
-> so-called todo lists containing various events that need to be delivered
-> to userspace next time userspace calls into the driver. And there are
-> quite a few different todo item types: incoming transaction, changes to
-> refcounts, death notifications, and more.
+> ... because page_has_type() is now true for slab; there is no more
+> PG_slab.  I think you also want:
 >=20
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/list.rs                    |  47 ++++++++++++++-
->  rust/kernel/list/impl_list_item_mod.rs | 105 +++++++++++++++++++++++++++=
-++++++
->  2 files changed, 151 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-> index 641b434e3841..3e687401c6d3 100644
-> --- a/rust/kernel/list.rs
-> +++ b/rust/kernel/list.rs
-> @@ -7,12 +7,16 @@
->  use crate::init::PinInit;
->  use crate::sync::ArcBorrow;
->  use crate::types::Opaque;
-> +use core::cell::UnsafeCell;
->  use core::iter::{DoubleEndedIterator, FusedIterator};
->  use core::marker::PhantomData;
-> +use core::mem::MaybeUninit;
->  use core::ptr;
->=20
->  mod impl_list_item_mod;
-> -pub use self::impl_list_item_mod::{impl_has_list_links, impl_list_item, =
-HasListLinks};
-> +pub use self::impl_list_item_mod::{
-> +    impl_has_list_links, impl_has_list_links_self_ptr, impl_list_item, H=
-asListLinks, HasSelfPtr,
-> +};
->=20
->  mod arc;
->  pub use self::arc::{
-> @@ -180,6 +184,47 @@ unsafe fn from_fields(me: *mut ListLinksFields) -> *=
-mut Self {
->      }
->  }
->=20
-> +/// Similar to [`ListLinks`], but also contains a pointer to the full va=
-lue.
-> +///
-> +/// This type can be used instead of [`ListLinks`] to support lists with=
- trait objects.
-> +#[repr(C)]
-> +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
-> +    /// The `ListLinks` field inside this value.
-> +    ///
-> +    /// This is public so that it can be used with `impl_has_list_links!=
-`.
-> +    pub inner: ListLinks<ID>,
-> +    self_ptr: UnsafeCell<MaybeUninit<*const T>>,
+> 	folio_slab(folio)->slab_cache->flags
 
-Why don't you use `Opaque` instead?
+I didn't notice your other patch about removing PG_slab; it pretty much sol=
+ves
+this issue and much more.
+(I had created these patches a few weeks ago.)
 
-> +}
-> +
-> +// SAFETY: The fields of a ListLinksSelfPtr can be moved across thread b=
-oundaries.
-> +unsafe impl<T: ?Sized + Send, const ID: u64> Send for ListLinksSelfPtr<T=
-, ID> {}
-> +// SAFETY: The type is opaque so immutable references to a ListLinksSelf=
-Ptr are useless. Therefore,
-> +// it's okay to have immutable access to a ListLinks from several thread=
-s at once.
-> +//
-> +// Note that `inner` being a public field does not prevent this type fro=
-m being opaque, since
-> +// `inner` is a opaque type.
-> +unsafe impl<T: ?Sized + Sync, const ID: u64> Sync for ListLinksSelfPtr<T=
-, ID> {}
-> +
-> +impl<T: ?Sized, const ID: u64> ListLinksSelfPtr<T, ID> {
-> +    /// The offset from the [`ListLinks`] to the self pointer field.
-> +    pub const LIST_LINKS_SELF_PTR_OFFSET: usize =3D core::mem::offset_of=
-!(Self, self_ptr);
-> +
-> +    /// Creates a new initializer for this type.
-> +    pub fn new() -> impl PinInit<Self> {
-> +        // INVARIANT: Pin-init initializers can't be used on an existing=
- `Arc`, so this value will
-> +        // not be constructed in an `Arc` that already has a `ListArc`.
-> +        Self {
-> +            inner: ListLinks {
-> +                inner: Opaque::new(ListLinksFields {
-> +                    prev: ptr::null_mut(),
-> +                    next: ptr::null_mut(),
-> +                }),
-> +            },
-> +            self_ptr: UnsafeCell::new(MaybeUninit::zeroed()),
-> +        }
-> +    }
-> +}
-> +
->  impl<T: ?Sized + ListItem<ID>, const ID: u64> List<T, ID> {
->      /// Creates a new empty list.
->      pub const fn new() -> Self {
-> diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/im=
-pl_list_item_mod.rs
-> index 3ff483be89d1..96e90c0ec587 100644
-> --- a/rust/kernel/list/impl_list_item_mod.rs
-> +++ b/rust/kernel/list/impl_list_item_mod.rs
-> @@ -62,6 +62,49 @@ unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut $=
-crate::list::ListLinks$(<$
->  }
->  pub use impl_has_list_links;
->=20
-> +/// Declares that the `ListLinks<ID>` field in this struct is inside a `=
-ListLinksSelfPtr<T, ID>`.
-> +///
-> +/// # Safety
-> +///
-> +/// The `ListLinks<ID>` field of this struct at the offset `HasListLinks=
-<ID>::OFFSET` must be
-> +/// inside a `ListLinksSelfPtr<T, ID>`.
-> +pub unsafe trait HasSelfPtr<T: ?Sized, const ID: u64 =3D 0>
-> +where
-> +    Self: HasListLinks<ID>,
-> +{
-> +}
-> +
-> +/// Implements the [`HasListLinks`] and [`HasSelfPtr`] traits for the gi=
-ven type.
-> +#[macro_export]
-> +macro_rules! impl_has_list_links_self_ptr {
-> +    ($(impl$({$($implarg:tt)*})?
-> +       HasSelfPtr<$item_type:ty $(, $id:tt)?>
-> +       for $self:ident $(<$($selfarg:ty),*>)?
-> +       { self.$field:ident }
-> +    )*) =3D> {$(
-> +        // SAFETY: The implementation of `raw_get_list_links` only compi=
-les if the field has the
-> +        // right type.
-> +        unsafe impl$(<$($implarg)*>)? $crate::list::HasSelfPtr<$item_typ=
-e $(, $id)?> for
-> +            $self $(<$($selfarg),*>)?
-> +        {}
-> +
-> +        unsafe impl$(<$($implarg)*>)? $crate::list::HasListLinks$(<$id>)=
-? for
+> Anyway, we have print_slab_info() which is currently static in slub.c.
+> Maybe that needs to become non-static and dump_page() should call that
+> for slabs?
 
-Missing SAFETY comment.
+Thank you for the suggestions.
 
-> +            $self $(<$($selfarg),*>)?
-> +        {
-> +            const OFFSET: usize =3D ::core::mem::offset_of!(Self, $field=
-) as usize;
-> +
-> +            #[inline]
-> +            unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut $crate:=
-:list::ListLinks$(<$id>)? {
-> +                // SAFETY: The caller promises that the pointer is not d=
-angling.
-> +                let ptr: *mut $crate::list::ListLinksSelfPtr<$item_type =
-$(, $id)?> =3D
-> +                    unsafe { ::core::ptr::addr_of_mut!((*ptr).$field) };
-> +                ptr.cast()
-> +            }
-> +        }
-> +    )*};
-> +}
-> +pub use impl_has_list_links_self_ptr;
-> +
->  /// Implements the [`ListItem`] trait for the given type.
->  ///
->  /// Assumes that the type implements [`HasListLinks`].
-> @@ -95,5 +138,67 @@ unsafe fn post_remove(me: *mut $crate::list::ListLink=
-s<$num>) -> *const Self {
->              }
->          }
->      };
-> +
-> +    (
-> +        impl$({$($generics:tt)*})? ListItem<$num:tt> for $t:ty {
-> +            using ListLinksSelfPtr;
-> +        } $($rest:tt)*
-> +    ) =3D> {
-> +        unsafe impl$(<$($generics)*>)? $crate::list::ListItem<$num> for =
-$t {
+print_slab_info() has a slightly different output string format, which does=
+ not
+match with the dump_page() output style.
+Adding it as-it-is looks a bit weird to me.
+Other than that, I think it may be useful to print it (which would happen o=
+nly
+when SLAB_DEBUG is enabled).
 
-Missing SAFETY comment.
+Also: print_slab_info() is printing the folio's flags. Maybe that needs a c=
+hange?
 
----
-Cheers,
-Benno
-
-> +            unsafe fn prepare_to_insert(me: *const Self) -> *mut $crate:=
-:list::ListLinks<$num> {
-> +                // SAFETY: The caller promises that `me` points at a val=
-id value of type `Self`.
-> +                let links_field =3D unsafe { <Self as $crate::list::List=
-Item<$num>>::view_links(me) };
-> +
-> +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $nu=
-m>::LIST_LINKS_SELF_PTR_OFFSET;
-> +                // SAFETY: The constant is equal to `offset_of!(ListLink=
-sSelfPtr, self_ptr)`, so
-> +                // the pointer stays in bounds of the allocation.
-> +                let self_ptr =3D unsafe { (links_field as *const u8).add=
-(spoff) }
-> +                    as *const ::core::cell::UnsafeCell<*const Self>;
-> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
-f_ptr);
-> +
-> +                // SAFETY: This value is not accessed in any other place=
-s than `prepare_to_insert`,
-> +                // `post_remove`, or `view_value`. By the safety require=
-ments of those methods,
-> +                // none of these three methods may be called in parallel=
- with this call to
-> +                // `prepare_to_insert`, so this write will not race with=
- any other access to the
-> +                // value.
-> +                unsafe { ::core::ptr::write(cell_inner, me) };
-> +
-> +                links_field
-> +            }
-> +
-> +            unsafe fn view_links(me: *const Self) -> *mut $crate::list::=
-ListLinks<$num> {
-> +                // SAFETY: The caller promises that `me` points at a val=
-id value of type `Self`.
-> +                unsafe { <Self as HasListLinks<$num>>::raw_get_list_link=
-s(me.cast_mut()) }
-> +            }
-> +
-> +            // This function is also used as the implementation of `post=
-_remove`, so the caller
-> +            // may choose to satisfy the safety requirements of `post_re=
-move` instead of the safety
-> +            // requirements for `view_value`.
-> +            unsafe fn view_value(links_field: *mut $crate::list::ListLin=
-ks<$num>) -> *const Self {
-> +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $nu=
-m>::LIST_LINKS_SELF_PTR_OFFSET;
-> +                // SAFETY: The constant is equal to `offset_of!(ListLink=
-sSelfPtr, self_ptr)`, so
-> +                // the pointer stays in bounds of the allocation.
-> +                let self_ptr =3D unsafe { (links_field as *const u8).add=
-(spoff) }
-> +                    as *const ::core::cell::UnsafeCell<*const Self>;
-> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
-f_ptr);
-> +                // This returns the same pointer as the one passes to th=
-e previous call to
-> +                // `prepare_to_insert` since that previous call wrote th=
-at pointer to this
-> +                // location, and the value has not been modified since.
-> +                //
-> +                // SAFETY: This is not a data race, because the only fun=
-ction that writes to this
-> +                // value is `prepare_to_insert`, but by the safety requi=
-rements the
-> +                // `prepare_to_insert` method may not be called in paral=
-lel with `view_value` or
-> +                // `post_remove`.
-> +                unsafe { ::core::ptr::read(cell_inner) }
-> +            }
-> +
-> +            unsafe fn post_remove(me: *mut $crate::list::ListLinks<$num>=
-) -> *const Self {
-> +                // SAFETY: This specific implementation of `view_value` =
-allows the caller to
-> +                // promise the safety requirements of `post_remove` inst=
-ead of the safety
-> +                // requirements for `view_value`.
-> +                unsafe { <Self as $crate::list::ListItem<$num>>::view_va=
-lue(me) }
-> +            }
-> +        }
-> +    };
->  }
->  pub use impl_list_item;
->=20
-> --
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
->=20
-
-
+--
+Sukrit
 
