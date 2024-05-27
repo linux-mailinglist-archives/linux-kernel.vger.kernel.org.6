@@ -1,111 +1,115 @@
-Return-Path: <linux-kernel+bounces-190694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CAC8D0176
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E32F8D0179
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F851F21C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702121C23CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FBD15EFA7;
-	Mon, 27 May 2024 13:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920415EFB8;
+	Mon, 27 May 2024 13:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RYgC0e2C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGbJXfkV"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E9E15E5CC;
-	Mon, 27 May 2024 13:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C6715ECF0;
+	Mon, 27 May 2024 13:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816474; cv=none; b=p2AvV/3n17kDrC+q8fSTY5j78utEa4g+n40uU+EYtBywUC3QlE34wEqOgyf7Zse08psOpS39c9wAOpz3y7+rt06aTT6nWiv6eZy7Dt1c1HNo4JbaxHhuvFl451gSSVasel5Gn4RpEMAQA094W7sXiQ5HoyFE9ijl0a4pwXk1zoo=
+	t=1716816489; cv=none; b=mP/EeCf7XEKIjEyiuWxTXCN1pGBMsBgLvhrjmcyPrUY3514DLU3SaQWcVQRoh6A8UUY3WDP8Bbo/am3Izfxq2Yof1xB+vjTHTBmW2k2WDJ2JtEqIW6VNS9n+Mz5+p1c/zQJKqQGHLxVXTZCTBT3Mxu4gmvZFaYESQDMxipcT1EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816474; c=relaxed/simple;
-	bh=Ho5shzf7jamCIgddhQVHwR/5KZK8nILhb4/3nb1oQ14=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oc5w6cVNLgr7tA0Cjht699iuSRitGhKlWrmFf6wm6PCRrfME52TcUKVPpDw2g/jmPyFI407/jxgksgxiyJ34cYODJqsLjpHqrLaRiFlS+j+OmIIUfD0ZmgceBYxY2Yp9Q3yAAHJj7mnD2s6r9/tWlJMbsZgQGojUQQzhNZKvC68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RYgC0e2C; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716816473; x=1748352473;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ho5shzf7jamCIgddhQVHwR/5KZK8nILhb4/3nb1oQ14=;
-  b=RYgC0e2CRTyQBKgyA3Svs8bOaeBA3DlDRFGRlf8lYYnefwBXgeeThyG/
-   Ygk6CkwUSKmTF9fiU8AOSKpbxix75YQXoJ8OuQlADJNqX+JOc4C5HEj3C
-   KF+ATMdmfAPpeXXDOBaVWhVKkB9FIKQqllVhio1EwvUgvLjZQk3nGITg7
-   g7dV4sabBCXtJD/vnarfcSCRzoP/OX0UffW4Rd2CyPK1eyZUosYyclWGt
-   ucT5FPZJYx9lahOXT84BbeonQ87dHm6+Ob6d6h3TGcnZ4ybZBhVVyfMqq
-   nExIrUVVxdkLiqSlnJlcbsxtUb1hHwfWzpN2M/iO7lx12iXj+WnBNZKAq
-   Q==;
-X-CSE-ConnectionGUID: FQOC3GARSruoHi4aKd5jHg==
-X-CSE-MsgGUID: FUDVGFEMQOiogjeu+G7T3Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="12915461"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="12915461"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:27:52 -0700
-X-CSE-ConnectionGUID: GXTp4ahSSLO1w9Kk1uMldg==
-X-CSE-MsgGUID: XI2EP/mmT1miEeEtqX2WVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="34651079"
-Received: from unknown (HELO localhost) ([10.245.247.140])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:27:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] intel_th: pci: Convert PCIBIOS_* return codes to errnos
-Date: Mon, 27 May 2024 16:27:43 +0300
-Message-Id: <20240527132743.14309-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716816489; c=relaxed/simple;
+	bh=QPBcibKyBusuJJW6N8QIorC7ot7ufZXzahC+ZmkGGCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CX/MDAgcyjPFtcgVsZhBvvGGLNb2Ih82DrflMPj1fpolzhFYDkcK6KO886t+Hp5iKBAK4Pt+JlfVbPNTQv4BTxEznktrckAKCe/2MAoaGAylgaLQMRwtq8HSAmuaJ0k3191IByE/d4vTN+YF4QnO3l6E0RDrvObkZobdK/Qs+RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGbJXfkV; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3564a0bea19so3043321f8f.2;
+        Mon, 27 May 2024 06:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716816486; x=1717421286; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1abBfthlBeoo2zktXJUi6xTpqVnu+v6KAPi60X0AC0Y=;
+        b=QGbJXfkVgMVtuNdZjIRABA1HSHvUj/depr/wsnRRAZfZzvLx+4PhkfdpB9nN+MztKf
+         q1Ru4GrU4IyQt1CZDctVgqfMknTVdgNAmjH2klPBSXX1W6ZxsKd3pM5S/0e9HOwnDKhP
+         CDIBYUO4XKROXPc6QSUGE+VvsUZH66bQzv6xc/u/pQ4eW4JxGctektpDInTRJMAEfLgx
+         t2vpt37SzTf5EpCIBFbZn9aH2hd0xbo6g0HBJVUP4Zbv1bpOo2SkCusOfwFrQVAQHPRb
+         uWUKha4IA5xMg+gdo+bFV6EQlAITxCmT2qMb4hXq5wJvHSjBGMNK3zH6W3c08glUE3ua
+         lpuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816486; x=1717421286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1abBfthlBeoo2zktXJUi6xTpqVnu+v6KAPi60X0AC0Y=;
+        b=NarurHLY0ayzOiUl00qd92L3F9+nz7863oBIbsDA3U0VwGTuFYEfR1VRMcJ6yOu5ri
+         X6FRbE55n0h5IVKAK8NCdiI2xoNZarggEVWhjb8dYvczYKsf7e1MW3zMD/iHDfWxcDNk
+         +uNmLPXRfgaIR92X69RPfW4Dp70tpEO7C+Yz6cAh+PIVSRz6hzeyaTye5u4UQe6TRbrf
+         fzX7MCiJp2+Fq4xPWvvH/hQ/Omwx0gKnVsvkU/bjEGR2DAVfbMndh9+jCtFPhoE6fXMN
+         ptUsZrXuhFirJ///VRLbnm6pBEoYaX8W5qp+4BynNjxyLJ0Q3tBCLekXRqXCXXbpFSk8
+         K+Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTw8LbAwyhmLLFsYfQBOJeHK1u0elfoEkI2J6ECcdKOOq50L47Pl8QLeWblqaYf0zCvs08ntGvsaG6Si1VR0RcHmwnIw63MhDFaciXIPrv2WIRZw1Zkz3xguKABzTeO3Lfq2Dv2pdhsg==
+X-Gm-Message-State: AOJu0YyrGZ9Qp2xvHWaeHEP6TymWRqmXTUdFYHCaRpLbDW55HVULfXpw
+	PlETxHMcRWO9W/PPLtb77F/4fF1JPbdZq7FdtSD+WLCrKi9OxZ+8
+X-Google-Smtp-Source: AGHT+IFCsm+w4WkBs2uaYF1htGMLpN3Do3gTxrOWS99G3rbDTZ0JfujL83iOgmn4pU5fn/8WrjQuCw==
+X-Received: by 2002:a5d:698c:0:b0:354:fa7d:dcfe with SMTP id ffacd0b85a97d-35526c272b4mr10251055f8f.23.1716816486056;
+        Mon, 27 May 2024 06:28:06 -0700 (PDT)
+Received: from andrea ([151.76.32.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35867d26553sm4164856f8f.116.2024.05.27.06.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 06:28:05 -0700 (PDT)
+Date: Mon, 27 May 2024 15:28:00 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@kernel.org,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	jonas.oberhauser@huaweicloud.com
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <ZlSKYA/Y/daiXzfy@andrea>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
 
-intel_th_pci_activate() uses pci_{read,write}_config_dword() that
-return PCIBIOS_* codes. The value is returned as is to the caller. The
-non-errno return value is returned all the way to active_store() which
-then returns the value like it is an error. PCIBIOS_* return codes,
-however, are positive (0x8X) so the return value of the store function
-is treated as the length consumed from the write buffer which can
-confuse the userspace writer.
+> > +    |                smp_store_mb | W[once] ->po F[mb]                        |
+> 
+> I expect this one to be hard-coded in herd7 source code, but I cannot find
+> it. Can you give me a pointer?
 
-Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
-errno before returning it from intel_th_pci_activate().
+smp_store_mb() is currently mapped to { __store{once}(X,V); __fence{mb}; } in
+the .def file, so it's semantically equivalent to "WRITE_ONCE(); smp_mb();".
 
-Fixes: a0e7df335afd ("intel_th: Perform time resync on capture start")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/hwtracing/intel_th/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
-index 147d338c191e..40e2c922fbe7 100644
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -46,7 +46,7 @@ static int intel_th_pci_activate(struct intel_th *th)
- 	if (err)
- 		dev_err(&pdev->dev, "failed to read NPKDSC register\n");
- 
--	return err;
-+	return pcibios_err_to_errno(err);
- }
- 
- static void intel_th_pci_deactivate(struct intel_th *th)
--- 
-2.39.2
+> What about spin_unlock?
 
+spin_unlock() is listed among the non-RMW ops/macros in the current table: it
+is represented by a single UL or "Unlock" event (a special type of Store event
+with (some special) Release semantics).
+
+
+> I found the extra spaces in the failure case very hard to read. Any
+> particular reason why you went with this format?
+
+The extra spaces were simply to convey something like "belong to the previous
+row/entry", but I'm open to remove them or other suggestions if preferred.
+
+  Andrea
 
