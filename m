@@ -1,90 +1,58 @@
-Return-Path: <linux-kernel+bounces-191230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1D48D0863
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D638D080E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAAE0285341
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28172A9009
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3CB16F0D6;
-	Mon, 27 May 2024 16:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558CE15A84E;
+	Mon, 27 May 2024 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hZGkBaDT"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pWSJrdzm"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5538616EBF7;
-	Mon, 27 May 2024 16:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD1A155CBA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716826536; cv=none; b=kkI4jVjVzahOTwC5j8aIa64QRCU2/pEl+RRn5NLaK8KFBSiruw4gzUHNIO9Kr9In9aKzvcoqgppzTTbnBXoM27ET2GzzvM1WLfgUZkltk3Isf9U0rP1Z3kNSFw3j7py+6b0CAVj4FfwsTwNSZfj+02ndzmvhmhVludJoaNpqlDE=
+	t=1716826499; cv=none; b=g7TvH1NmWC/6bvflgY4gyiwF0zLh65fc/9tII2+6ee8fxKy/6y+JvoVtNENEGPP5BLu+lcmIWHNeBpDDRVOoZ4BNXfCFEHLRkG8qKRU2FdCpxqzl3FQ9cSa7TunaWA8E+vHyGjggtbqoH4XQyF4h8IaPmkYyS1pZwIXOguOJzXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716826536; c=relaxed/simple;
-	bh=chCtCkqI/NY4Vy2ffwwkDxwHFQRfFlMjA49T/JZ0V2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r27VkhrCUxcO9+BNg6x5fcj6XWTsTiSNHju+p33+epUdJ70tV9yImdKBKJdRU+wVbg/IVn/08uyiZubi+r44uEO/5XYKGerI+6h0mE23gql7LtrV0LDvKX1k/6BDmAcCTObScGm/4b7bSU4E6tYjFVf7w0yOchHyGQjJq3aKuiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hZGkBaDT; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 7A5E0FF80E;
-	Mon, 27 May 2024 16:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716826533;
+	s=arc-20240116; t=1716826499; c=relaxed/simple;
+	bh=mDqPw03z1INldEN1n/0pBYaeYCz5BWHtTiuNavY06ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fRptGcmyULYko+qnVSu1f4syrPZk96QvuDM2uNJphqB2wJH+azSlJ43u443LPJqJoDucP/rp2fTXJ3EjazNtPWh5EkhAizldfZI0Hub1p/uO/I2CJbKkC1uAcW9PvHKe64j8ZNE1ghz5TZkYYZQu5Myl4Sm+NrUkNcs91SDjZNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pWSJrdzm; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tytso@mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716826496;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S5EWnWVm8Boacgm88RxHxweJ58Kbq8GGMqtCde3uKZI=;
-	b=hZGkBaDT6XPUEKAWzhUuB2+uCGFMlArWDpCILqxRuPBbHcghizqQZSlO6wFCsZiI1gmal1
-	qJix31+53cvT67bFzT2JMWd2PWAYeSdFM1JBSybqfgMBH9ymCqyP6eNoMY5TS+PA0UvHr5
-	JP5evTTr7etsXnKUux/tPEQ/0JRsRD1zp8al+pZvukRpuvvTQUMs1ewOkEV/nbBaYldyXb
-	OdwNsy9IevypTwYfC/wG2jQvoCEMvMe81wNzeCXH//bQZkxfHBHW/lg+ax8mQk+C3xk030
-	GUKfOk8LDGvsh2bB27tPwafLEVhic2aBVX0Eu7S8iViYTvAmW7o8yOs4jNpA4Q==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 19/19] MAINTAINERS: Add the Microchip LAN966x PCI driver entry
-Date: Mon, 27 May 2024 18:14:46 +0200
-Message-ID: <20240527161450.326615-20-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240527161450.326615-1-herve.codina@bootlin.com>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iolobSHI8WMmsdMwomRdpBAacDRAgxWFZ/JZJ8XKCOs=;
+	b=pWSJrdzmTsL+rcs0OUzCeWZ9lDoZxaF7xvuPYH5vBSih5bVVfElbMocVISYIk9PY36sjy/
+	0YsTfYx7HxkUL5GavaZ61Vz7zXsPgXK5vq/YSZNddF7oAGCN+ror3P+WflOIgm7XykqR6S
+	2n1rE8PmZjnwaJRVXUy1MA9D1HqKoIs=
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: luis.henriques@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [PATCH] ext4: use ext4_update_inode_fsync_trans() helper in inode creation
+Date: Mon, 27 May 2024 17:14:47 +0100
+Message-ID: <20240527161447.21434-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +60,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-Migadu-Flow: FLOW_OUT
 
-After contributing the driver, add myself as the maintainer for the
-Microchip LAN966x PCI driver.
+Call helper function ext4_update_inode_fsync_trans() instead of open
+coding it in __ext4_new_inode().  This helper checks both that the handle
+is valid *and* that it hasn't been aborted due to some fatal error in the
+journalling layer, using is_handle_aborted().
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ext4/ialloc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index baeb307344cd..c84ec27ccbe4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14733,6 +14733,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml
- F:	drivers/irqchip/irq-lan966x-oic.c
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index e9bbb1da2d0a..9dfd768ed9f8 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1336,10 +1336,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+ 		}
+ 	}
  
-+MICROCHIP LAN966X PCI DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+S:	Maintained
-+F:	drivers/mfd/lan966x_pci.c
-+F:	drivers/mfd/lan966x_pci.dtso
-+
- MICROCHIP LCDFB DRIVER
- M:	Nicolas Ferre <nicolas.ferre@microchip.com>
- L:	linux-fbdev@vger.kernel.org
--- 
-2.45.0
-
+-	if (ext4_handle_valid(handle)) {
+-		ei->i_sync_tid = handle->h_transaction->t_tid;
+-		ei->i_datasync_tid = handle->h_transaction->t_tid;
+-	}
++	ext4_update_inode_fsync_trans(handle, inode, 1);
+ 
+ 	err = ext4_mark_inode_dirty(handle, inode);
+ 	if (err) {
 
