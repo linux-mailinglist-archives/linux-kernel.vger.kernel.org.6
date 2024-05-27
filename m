@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-191323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A22B8D09E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994FF8D09EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990451F23886
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556A628276E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F9915F33A;
-	Mon, 27 May 2024 18:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2304415F41F;
+	Mon, 27 May 2024 18:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eoN8+72R"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0zdIoJ2"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFEE2F2B;
-	Mon, 27 May 2024 18:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECBC2F2B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716834757; cv=none; b=tK71SoHNM58NPWKAYXxMStfPXV+uG55eAL5k4IMnCE2NazZt2uPRr/AonXcTQfUn04a1a23/vjwR6WgyKHES7ALoHxazA8Hje5WIEMKyu6DH4PSGMq7zX88JPcPezH3+tRJRKMH7GrcSHuHcXWdV0Im1Ngw6WgCpIyXPHp7FFPc=
+	t=1716835040; cv=none; b=tbPSekp8OCPzoWPmBiUOCnMxDrl55icwbG8eJxq9Cjlpdh6NVHqOf/1Lf9JyEMA6weE+8+RzMhHf3LEk4yntOjh4kWP8XTTnh04Hz6MaZz6t6z4lvhOa8QyneyKVih4fLu2mo76hpU5IPX4Qz7Yx2KxBF7Ojk9j8SCwYgzzzVHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716834757; c=relaxed/simple;
-	bh=f1NG8EyCsxK46GkES5qlcTPT4YQSJfe52SwViOa+/9E=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=N+tns75IdXkynGoAk/6FmAvJ6wbhEyAWdkGv8c4DtRYsw3AsLI6OqnNVHxVK6CM6CS0pK0v5YpdHCDst5eYY+Z0Pqt1VxqqujSEam2dj6K/fXjRHz7AsN+6fXeh9GsFu4y6ef7dIYUfn/jZqGdIOCvWkWApyhNCtJnUgvEUm1dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eoN8+72R; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716834739; x=1717439539; i=markus.elfring@web.de;
-	bh=pZFFKlLsRfCpipPUqY1WhEOAnXhn7hIE/lIk8jtjW1U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eoN8+72Rfmo0i38Y51JESCjEpr3DKQgzJZgnGtM+uOkYKkqO2tt/swKHnPwjULjt
-	 aLfgoQ5jW5uRdiq63WzIhQgPXLy3v10tpYSy6ItJ2nQYdQC3KqsM8+IqEusOR0fCj
-	 w+IN3Dq1WnPqiE8ZIQNqNIR8DquolG+cNgGe4vd46oYm8rxBxgKzu1R6H5XFF3G7D
-	 A0FNHtzogPn+3hcboa4Svj2PhmsdR+cZYM1Uu2zo2dQmfGpsD//bdZx03SO5ooLZo
-	 zrXH1P9/BOrvzTaf6+y4oY/iEeutNTfFasa+fcEmYPWfOAiGcBKBz8aLJLR2lWxQn
-	 KtvcrPLggC52veG7Zw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFaui-1sHkCr1mEY-002nit; Mon, 27
- May 2024 20:32:19 +0200
-Message-ID: <f0eaf77b-eed9-4f8e-8009-983250fa56a8@web.de>
-Date: Mon, 27 May 2024 20:32:05 +0200
+	s=arc-20240116; t=1716835040; c=relaxed/simple;
+	bh=ctCUsCS4mERWQN5uWM2DnIZrH/yMQp1hn0xvwTfGOV4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Tv1yfRu/HSa5YJy2Afn909vUzepLOsEaWLIzgP423ujYDnor+bHESclIRDsa1hy51iAlajb8+a6oULAxp8m/+I4QJ+cETJF3jVVofOcDKBjSXzTiUVo858tLleGBvsb6XtZ2sAo3KmYATrvIK56BCd9ol4PdqnNu0C+JhkJA6ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c0zdIoJ2; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f48e9871e2so188865ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716835038; x=1717439838; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZREJP9vEhBnXbP7OCuzE5kdbwmu9xegRbDK6klfZJg=;
+        b=c0zdIoJ24m7B/mKl/blcC15rnGdfIIwn1RuR+zMDfdAir4IG7WbvQRUFi6BnMDYYdZ
+         JW5L7qFY3ublCRgXZ5qnBH9Khx9ayJuKgohbAdFx4nG9/NIg7FQlatikdT5kdQf843uT
+         Eofz6n9umqC6/JlhKEh8CIE/G9grkBHeNBFW/CLliNRYCpNZ84OVlD8oDlfNpyJuLNtI
+         K3r4BXYFQ1Hc2yp9Us9NWdUCiM1Fo/WVg8p2V6l4vMtZbKHV2vn39GLFGQQVSK895ZEq
+         vZlaDGWkVz+9wD5Vgqpv3UyvBrpuTdjMnQhxWYJ8lYJ3GXFSqBeGtA7yCVBDzj459ODY
+         WQtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716835038; x=1717439838;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZREJP9vEhBnXbP7OCuzE5kdbwmu9xegRbDK6klfZJg=;
+        b=SJhhP4+9OKInNmdhj5cVGHk5jW2CXs+6t1aaYaGkoWc9MP22yNWwsvhELEzXnfhYKs
+         hrCmx312oTkH3RMmfQ2+YSBts8Uh4DRRi9mCbXmD7xh2uB1SgYt/mbC1LwgaCFPLEIgO
+         UQKsdjv8oHKR2IkOEwbjsZ4U0OVrh4KQ5DjeAWFWjGZghiyggYT34twMWxXzLsT6KdMN
+         +OkaiAU0/rCagu1bPxAmS945UDRh9k6FtF91hnqMjp9CRP2x2HVhK+moSQVds5XnUtg7
+         9smA24BpKKxUG6Q2165n928d28PtLsd/0qRlwsw28S+1UH5ty4b5xqCdOnB7GArpTc/c
+         XLwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWoK9wwPZWHE7O9/8zFK888jE9SOgTHm8M+D4B36yJoJYufBc2+S/A7Js2hRazCdpKUiauZVEE00KFS5K5ijTdP4uAJ+FikG9Zf/VB
+X-Gm-Message-State: AOJu0YxOYawMIipJ6vBwKewBffy3KtIXvdNkZ9n0nwh6Sb6ApJCJERpC
+	MLAuvDJ4ot5PpyTZiWqWG+NNiFd2HWsV4RymC3YVh8CfBLyHGoRc0+jGdZQj4w==
+X-Google-Smtp-Source: AGHT+IEAL9UflWJoo7lbOoL2iTxPWvC4MLeycXG2R6EPtLWseyz3TQ+/DhwL1Fdid2CUzoLzhdeWCw==
+X-Received: by 2002:a17:902:c384:b0:1f3:61f1:e340 with SMTP id d9443c01a7336-1f4693d8fd3mr3532215ad.13.1716835038114;
+        Mon, 27 May 2024 11:37:18 -0700 (PDT)
+Received: from [2620:0:1008:15:2ed5:4637:e8cc:f09e] ([2620:0:1008:15:2ed5:4637:e8cc:f09e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c968386sm66391625ad.146.2024.05.27.11.37.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 11:37:17 -0700 (PDT)
+Date: Mon, 27 May 2024 11:37:16 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Christoph Lameter <cl@linux.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>, 
+    Suren Baghdasaryan <surenb@google.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] mm, slab: don't wrap internal functions with
+ alloc_hooks()
+In-Reply-To: <20240527090127.21979-2-vbabka@suse.cz>
+Message-ID: <30544807-e9a4-f764-d113-d446242e9f35@google.com>
+References: <20240527090127.21979-2-vbabka@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Louis Chauvet <louis.chauvet@bootlin.com>, dmaengine@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Brian Xu <brian.xu@amd.com>,
- Lizhi Hou <lizhi.hou@amd.com>, Michal Simek <michal.simek@amd.com>,
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240527-xdma-fixes-v1-1-f31434b56842@bootlin.com>
-Subject: Re: [PATCH] dmaengine: xilinx: xdma: Fixes possible threading issue
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240527-xdma-fixes-v1-1-f31434b56842@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZTH3khqj+zdWbkdstetybfKashnzaduBDY9DmF4Dfh2FSlaeoCh
- MqFZmo/a+anuy+cecYrJWF3ZXW2PtqWvn1rv3cjOxSsVl6q49kM2u4gjTJ9zz8QsUVO1LoN
- V42dazRcLi8j569W/P2Fy06RiT/yNELE60Erlj45gocDUQ153UcBtrSH/AcBxtdpbgQ4Ypp
- W4ikxhPOEwx7AGvJJFA5Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yL2uW7/UscI=;ORtGIrvLLbEjuIzIN2Yi8uSwuQk
- Wqb97UF36Cp4v0tPijyu+TVOY7/3oXbz9C630xFvKIXH13QDXQVNrQ2HzJ3ctTjHxy9yr/Dmp
- /pEBJWfxvMLKp3g+NgEr1OEe1dHKP9P5gLlBNxjFBogQ3L6njj2VdZyM2bi8DHcFTOACveItQ
- Eyfx6D/D9DiybjoXCVFxPefY03N3Mf9bHsxfGzSEZuIa+pa14+Hv68Ofjco8Ja3r//BmWkSJi
- LQQFv2gKkaic7vUOIgiPMF5K3j2E2k4/punIxZvrsKJdU5Ao+TK3c5NRepXenIx/UN7AU80Gn
- ufj12lhe48MLS65j8VXTLjf6rdhdN+2AWS+83eK7x2SihbhnZRVpOAb4nEEVCghaCt7xzIdLB
- iQRl6qMZI8isngruTbtWiSLHqNY7Ygf9lP2+HOIndCW+89a8IhQU6CeYVMb+2pGZ4jVWDQvpM
- AmwHvSzGv7LI26dD7nvgJot6bbLWW2rZbGXDk2EoyECkRtHpgiU+4DtAVyl2p3t5KHK4mOPTe
- Lc5Y/yLTg9hXf8Ld5qETwinDT9HxHQRaTZC1GRYx6hKsIAcChJIHkDCiG1MuvzuWNsXjuXoNW
- fCoDSxsMaFBxspunyp6OwbheoNEf8h1MSCNNJorjU6NItcg62YIcNJZP9oHzkuv9/7Htas4t7
- MXURTybaw1sHhbtP5mv05h0FZ2r8eLfYq2uQ31/zWaa6mRZMyLjy4IRLwChMGz4yLyu1amA9Q
- QQETlBJ0nuhQfnjIehi9Cp1FFIFxpmXVWXki6W4NiI4V3NJhn2qqSlGXALKXo1ASzv2+ox9dU
- IIQsJZZV1FYmJHUeqJ21hEH2Y4avhcpBE4j39Tpq/D03U=
+Content-Type: text/plain; charset=US-ASCII
 
-> The current interrupt handler in xdma.c was using xdma->stop_request
-> before locking the vchan lock.
+On Mon, 27 May 2024, Vlastimil Babka wrote:
 
-1. Will an additional imperative wording become helpful here?
-   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc1#n94
+> The functions __kmalloc_noprof(), kmalloc_large_noprof(),
+> kmalloc_trace_noprof() and their _node variants are all internal to the
+> implementations of kmalloc_noprof() and kmalloc_node_noprof() and are
+> only declared in the "public" slab.h and exported so that those
+> implementations can be static inline and distinguish the build-time
+> constant size variants. The only other users for some of the internal
+> functions are slub_kunit and fortify_kunit tests which make very
+> short-lived allocations.
+> 
+> Therefore we can stop wrapping them with the alloc_hooks() macro.
+> Instead add a __ prefix to all of them and a comment documenting these
+> as internal. Also rename __kmalloc_trace() to __kmalloc_cache() which is
+> more descriptive - it is a variant of __kmalloc() where the exact
+> kmalloc cache has been already determined.
+> 
+> The usage in fortify_kunit can be removed completely, as the internal
+> functions should be tested already through kmalloc() tests in the
+> test variant that passes non-constant allocation size.
+> 
+> Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-2. How do you think about to use the summary phrase =E2=80=9CFix data sync=
-hronisation in xdma_channel_isr()=E2=80=9D?
-
-3. Will development interests grow for the usage of a statement like =E2=
-=80=9Cguard(spin)(&xchan->vchan.lock);=E2=80=9D?
-   https://elixir.bootlin.com/linux/v6.10-rc1/source/include/linux/cleanup=
-h#L124
-
-
-Regards,
-Markus
+Acked-by: David Rientjes <rientjes@google.com>
 
