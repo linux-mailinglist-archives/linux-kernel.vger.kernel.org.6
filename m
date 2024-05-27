@@ -1,306 +1,205 @@
-Return-Path: <linux-kernel+bounces-190010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64EF8CF856
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:10:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B990F8CF840
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BF91F2250C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62631C20E52
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876743FE4A;
-	Mon, 27 May 2024 04:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017B179E1;
+	Mon, 27 May 2024 04:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n75IrPhE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYRAlzYc"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C34E4594D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F3E323D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716782896; cv=none; b=MTTT6f1zFIDhbrUhozSoKICYK93F3ebx1zVCp2IFUa4kz25EEJVI0oDmw6bJwavbVEhb/z0NlgfUnOuqP+5UiUPaaUKT3GGt8BzQA9o9d2dMZGd0pN4tKIhnRWixgHPGNB7OxroZaje+wAMy0gya8K+1HblyO8LUJQrjZHSxT+Y=
+	t=1716782844; cv=none; b=n441mzUjNHERm7Cu7+b7cq8y9PTMKYlQaJm0MzMvJovKoYJU/AxsWun/R/dtS+AvB36xsgnVkXJ5oeI5UymrG0C950Tf07Imb35b3N92ZGWUQqovxlxxOgOLm/g52L89eHyxMywekwS3m0w7kbrkIp7JJKk1Ch4iBVtQYZht7os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716782896; c=relaxed/simple;
-	bh=4V9sklD42p2zqL0F1s8plgL/3abyqQhvM0nPRltyMjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CU8GWyq83/Myz0+KQ7zLCxkrgbLcNqFySqLJ7wCEoKDkHP1H6z3DekKMMblD62VqFHy6KQToVD/UsQGrGdmdpMF9wnAUpX2icQqiYgL5g4VeyU4grqcFpxpq7EGbWx0fmnEHOhuljnCXytBEldAKbf0JSip5SDwsaN8kseRoknc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n75IrPhE; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716782896; x=1748318896;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4V9sklD42p2zqL0F1s8plgL/3abyqQhvM0nPRltyMjI=;
-  b=n75IrPhE1r6lx+qWQl/tqFcl3bi/nquzv2wHbZEdXMpfx8tCKP2hR3hz
-   Weh9GT5TnJmYLjkk4eZmXCPKJmWZyK6An7Mx+zIXEoiIkYGesm2iFuodZ
-   kAcP5h8A4IoRFS0WSGr2X0Zn5zfVAUwon3nYvXF+NkFx1UndOfL9E/m++
-   JO9UMIMgIsuKklAtOqr32r1jy760ZvUVvn16XPWanlI5Z5De+4jKGzSsp
-   +Uqes7mFBlGVoa9zwkNOCq7fukb0+MPjrrhe6Qnl+Z5X+jIMutdZHWaSr
-   MWbFcuiuB0fMQdaLoKpVYZSnRzhR/FRP7UJYkn8SgFbwnoREpDf+NiZie
-   w==;
-X-CSE-ConnectionGUID: BRiyQRT8R7yYAVi29dNYkg==
-X-CSE-MsgGUID: zmlZ8Ud+S4iQiu19jofJCQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13022947"
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="13022947"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 21:08:01 -0700
-X-CSE-ConnectionGUID: OcasJu0YSeWZ0VbHjPptIQ==
-X-CSE-MsgGUID: g70BRhNKQSiZKuMVgA3vGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="39400023"
-Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by orviesa003.jf.intel.com with ESMTP; 26 May 2024 21:07:58 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>
-Cc: iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v6 10/10] iommufd/selftest: Add coverage for IOPF test
-Date: Mon, 27 May 2024 12:05:17 +0800
-Message-Id: <20240527040517.38561-11-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240527040517.38561-1-baolu.lu@linux.intel.com>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1716782844; c=relaxed/simple;
+	bh=71oaZq4xR9DQ028U8pjpCHAuPZbnjTR5ff8W4JCHNiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h3AfJvE3y3DAakK95324AxMgaG316DWhLPu5VKB7xDiPS7+3VcKPuP1aRcMlfuIgxvvf0n+u+PqWXgx/vn0Qnan6Uyeo6TQyf8aTd2Pd/TM3gXP3K+MEljPVLNox7Cv3NwOnLKaAv8pZI68L9xBOD/QDS/4/VjfbGhrF6M+r8LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYRAlzYc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-420180b58c3so81424045e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716782841; x=1717387641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3d4wcnpC+sJlEKgi++LLlXHUe/6Lf69h5GwFk08nXEw=;
+        b=DYRAlzYcW110aH6q/86lLQz1qg4W+xzkOnsyZ3oDkB8FahHCh/yKJi+SD105sDeTn6
+         xBYElzBYfFEKVcoW0KQDI+SpPJul6rT0k5bmzEzfi6Y2BgCt+AfvkwlQCRP/4sFAzbQa
+         zaChGBkPQyVrgw82IdJUZn3oy8mBc3Ah2Pl5JxiMF5zSscSbIovjUgeOLxdB/upyIphm
+         XY0fsM0eIZZ3OM8LbvvsgqyhJCkiPE7m9G1IHO19a5+D82qYlAp3tz1cYk1eAdeDRlLu
+         62II7xy2zt/h1mDoC9y9evz8/WpDirCFFEt6xlxwSWeXUTsr3vu6rty5HjsrtTKAcy/h
+         TecQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716782841; x=1717387641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3d4wcnpC+sJlEKgi++LLlXHUe/6Lf69h5GwFk08nXEw=;
+        b=LdwLRqsEXHXbbfn0ebo/UrVX07MuOswKkbD6h6KhAyVTj90MT4C35c2g1/l5UMOxVH
+         DGDbGGzF9YES5viLbUD1EeTqxxJP2WU86FYIR7AY59wH2LQ4Q95yu3d3fZFBmfuFW63P
+         1AQKK8Jli1MEu3efcufiQTMcAvwoTcPRDtaCS+q5L/WwR+qoUDN/QQttkdyjRE3WWPvd
+         6nLBYloRIhfqVHquHbbsHxWqu1oBI2OVaQzR/SGYsQNj5trZY1aAm8Cz6b3RC2HHqyH5
+         ddVz5xz6wBwCrYw1qOSLNnSyfFiiVFRanc1sSJBxfUVdU6HFs+nfnvXUG3NWtHjPC698
+         QecA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFSRlIu2GCUMb9eO5WEMyRbf4MfoiZpIhmgV3QlK0BsfgntQrCeyFNLJL8BrnMl2jNE6z1pDT3u4n4PvTMB+p1fLGxcOp+Aml3/Iru
+X-Gm-Message-State: AOJu0YwYygNZk3DYg8LVmwsN0HPkPOY1LMvC0fdDBcguopZL/knDlBTG
+	jhOLNPwOCeuQ60nK4aUCDrWYZIJkzTrtE3DYfKI3c14AKplZvgsO1aST+rGpF3QColmtXgy4Di+
+	JjObWJTt1kJ+md7qLezw2O9sWf/o3Wgf9OXk=
+X-Google-Smtp-Source: AGHT+IG8kfC9vaSJM7DNnJOgGB0H0o6noT3lMj5oUdJAizBMG6v797upDh+ThyOKhMLrJe5nEVMlcjb9bYgMNvO38j0=
+X-Received: by 2002:a05:600c:22d4:b0:41b:82ba:7997 with SMTP id
+ 5b1f17b1804b1-42108a4f8cfmr64099065e9.3.1716782840435; Sun, 26 May 2024
+ 21:07:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1716204978-29455-1-git-send-email-zhiguo.niu@unisoc.com> <1d67715b-5f88-4940-969d-e098fd80ae2a@kernel.org>
+In-Reply-To: <1d67715b-5f88-4940-969d-e098fd80ae2a@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Mon, 27 May 2024 12:07:09 +0800
+Message-ID: <CAHJ8P3LXYWQ+bLZHPn_5FLu3oi83ei8C9ZCzAXwa9oBdEKVDNA@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: enable atgc if atgc_age_threshold from user is less
+ than elapsed_time
+To: Chao Yu <chao@kernel.org>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	ke.wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extend the selftest tool to add coverage of testing IOPF handling. This
-would include the following tests:
+On Mon, May 27, 2024 at 11:49=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
+>
+> On 2024/5/20 19:36, Zhiguo Niu wrote:
+> > Now atgc can be enabled based on the following conditions:
+> > -ATGC mount option is set
+> > -elapsed_time is more than atgc_age_threshold already
+> > but these conditions are check when umounted->mounted device again.
+> > If the device has not be umounted->mounted for a long time, atgc can
+> > not work even the above conditions met.
+>
+> Zhiguo, I didn't get it, can you please explain more about this issue?
+>
+> Thanks,
+Hi Chao,
 
-- Allocating and destroying an iommufd fault object.
-- Allocating and destroying an IOPF-capable HWPT.
-- Attaching/detaching/replacing an IOPF-capable HWPT on a device.
-- Triggering an IOPF on the mock device.
-- Retrieving and responding to the IOPF through the file interface.
+At present, the point of atgc enale is checked during the mount
+process. What I mean is that if a device has not been rebooted
+(re-mounted) for a long time, even if the above two conditions are
+met(ATGC mount option is set, and the device has been powered on long
+enough=EF=BC=8C more than atgc default threshold ), atgc cannot be dynamica=
+lly
+enabled.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- tools/testing/selftests/iommu/iommufd_utils.h | 84 +++++++++++++++++--
- tools/testing/selftests/iommu/iommufd.c       | 18 ++++
- .../selftests/iommu/iommufd_fail_nth.c        |  2 +-
- 3 files changed, 98 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
-index 8d2b46b2114d..cb913ec89f96 100644
---- a/tools/testing/selftests/iommu/iommufd_utils.h
-+++ b/tools/testing/selftests/iommu/iommufd_utils.h
-@@ -153,7 +153,7 @@ static int _test_cmd_mock_domain_replace(int fd, __u32 stdev_id, __u32 pt_id,
- 	EXPECT_ERRNO(_errno, _test_cmd_mock_domain_replace(self->fd, stdev_id, \
- 							   pt_id, NULL))
- 
--static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
-+static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id, __u32 ft_id,
- 				__u32 flags, __u32 *hwpt_id, __u32 data_type,
- 				void *data, size_t data_len)
- {
-@@ -165,6 +165,7 @@ static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
- 		.data_type = data_type,
- 		.data_len = data_len,
- 		.data_uptr = (uint64_t)data,
-+		.fault_id = ft_id,
- 	};
- 	int ret;
- 
-@@ -177,24 +178,30 @@ static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
- }
- 
- #define test_cmd_hwpt_alloc(device_id, pt_id, flags, hwpt_id)                  \
--	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags,   \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags,   \
- 					  hwpt_id, IOMMU_HWPT_DATA_NONE, NULL, \
- 					  0))
- #define test_err_hwpt_alloc(_errno, device_id, pt_id, flags, hwpt_id)   \
- 	EXPECT_ERRNO(_errno, _test_cmd_hwpt_alloc(                      \
--				     self->fd, device_id, pt_id, flags, \
-+				     self->fd, device_id, pt_id, 0, flags, \
- 				     hwpt_id, IOMMU_HWPT_DATA_NONE, NULL, 0))
- 
- #define test_cmd_hwpt_alloc_nested(device_id, pt_id, flags, hwpt_id,         \
- 				   data_type, data, data_len)                \
--	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags, \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags, \
- 					  hwpt_id, data_type, data, data_len))
- #define test_err_hwpt_alloc_nested(_errno, device_id, pt_id, flags, hwpt_id, \
- 				   data_type, data, data_len)                \
- 	EXPECT_ERRNO(_errno,                                                 \
--		     _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags, \
-+		     _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags, \
- 					  hwpt_id, data_type, data, data_len))
- 
-+#define test_cmd_hwpt_alloc_iopf(device_id, pt_id, fault_id, flags, hwpt_id,    \
-+				   data_type, data, data_len)                   \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, fault_id, \
-+					  flags, hwpt_id, data_type, data,      \
-+					  data_len))
-+
- #define test_cmd_hwpt_check_iotlb(hwpt_id, iotlb_id, expected)                 \
- 	({                                                                     \
- 		struct iommu_test_cmd test_cmd = {                             \
-@@ -684,3 +691,70 @@ static int _test_cmd_get_hw_info(int fd, __u32 device_id, void *data,
- 
- #define test_cmd_get_hw_capabilities(device_id, caps, mask) \
- 	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, NULL, 0, &caps))
-+
-+static int _test_ioctl_fault_alloc(int fd, __u32 *fault_id, __u32 *fault_fd)
-+{
-+	struct iommu_fault_alloc cmd = {
-+		.size = sizeof(cmd),
-+	};
-+	int ret;
-+
-+	ret = ioctl(fd, IOMMU_FAULT_QUEUE_ALLOC, &cmd);
-+	if (ret)
-+		return ret;
-+	*fault_id = cmd.out_fault_id;
-+	*fault_fd = cmd.out_fault_fd;
-+	return 0;
-+}
-+
-+#define test_ioctl_fault_alloc(fault_id, fault_fd)                       \
-+	({                                                               \
-+		ASSERT_EQ(0, _test_ioctl_fault_alloc(self->fd, fault_id, \
-+						     fault_fd));         \
-+		ASSERT_NE(0, *(fault_id));                               \
-+		ASSERT_NE(0, *(fault_fd));                               \
-+	})
-+
-+static int _test_cmd_trigger_iopf(int fd, __u32 device_id, __u32 fault_fd)
-+{
-+	struct iommu_test_cmd trigger_iopf_cmd = {
-+		.size = sizeof(trigger_iopf_cmd),
-+		.op = IOMMU_TEST_OP_TRIGGER_IOPF,
-+		.trigger_iopf = {
-+			.dev_id = device_id,
-+			.pasid = 0x1,
-+			.grpid = 0x2,
-+			.perm = IOMMU_PGFAULT_PERM_READ | IOMMU_PGFAULT_PERM_WRITE,
-+			.addr = 0xdeadbeaf,
-+		},
-+	};
-+	struct iommu_hwpt_page_response response = {
-+		.size = sizeof(struct iommu_hwpt_page_response),
-+		.dev_id = device_id,
-+		.pasid = 0x1,
-+		.grpid = 0x2,
-+		.code = 0,
-+	};
-+	struct iommu_hwpt_pgfault fault = {};
-+	ssize_t bytes;
-+	int ret;
-+
-+	ret = ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_IOPF), &trigger_iopf_cmd);
-+	if (ret)
-+		return ret;
-+
-+	bytes = read(fault_fd, &fault, sizeof(fault));
-+	if (bytes <= 0)
-+		return -EIO;
-+
-+	response.cookie = fault.cookie;
-+
-+	bytes = write(fault_fd, &response, sizeof(response));
-+	if (bytes <= 0)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+#define test_cmd_trigger_iopf(device_id, fault_fd) \
-+	ASSERT_EQ(0, _test_cmd_trigger_iopf(self->fd, device_id, fault_fd))
-diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
-index edf1c99c9936..5b0169875a4d 100644
---- a/tools/testing/selftests/iommu/iommufd.c
-+++ b/tools/testing/selftests/iommu/iommufd.c
-@@ -279,6 +279,9 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 	uint32_t parent_hwpt_id = 0;
- 	uint32_t parent_hwpt_id_not_work = 0;
- 	uint32_t test_hwpt_id = 0;
-+	uint32_t iopf_hwpt_id;
-+	uint32_t fault_id;
-+	uint32_t fault_fd;
- 
- 	if (self->device_id) {
- 		/* Negative tests */
-@@ -326,6 +329,7 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 					   sizeof(data));
- 
- 		/* Allocate two nested hwpts sharing one common parent hwpt */
-+		test_ioctl_fault_alloc(&fault_id, &fault_fd);
- 		test_cmd_hwpt_alloc_nested(self->device_id, parent_hwpt_id, 0,
- 					   &nested_hwpt_id[0],
- 					   IOMMU_HWPT_DATA_SELFTEST, &data,
-@@ -334,6 +338,10 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 					   &nested_hwpt_id[1],
- 					   IOMMU_HWPT_DATA_SELFTEST, &data,
- 					   sizeof(data));
-+		test_cmd_hwpt_alloc_iopf(self->device_id, parent_hwpt_id, fault_id,
-+					 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
-+					 IOMMU_HWPT_DATA_SELFTEST, &data,
-+					 sizeof(data));
- 		test_cmd_hwpt_check_iotlb_all(nested_hwpt_id[0],
- 					      IOMMU_TEST_IOTLB_DEFAULT);
- 		test_cmd_hwpt_check_iotlb_all(nested_hwpt_id[1],
-@@ -504,14 +512,24 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 			     _test_ioctl_destroy(self->fd, nested_hwpt_id[1]));
- 		test_ioctl_destroy(nested_hwpt_id[0]);
- 
-+		/* Switch from nested_hwpt_id[1] to iopf_hwpt_id */
-+		test_cmd_mock_domain_replace(self->stdev_id, iopf_hwpt_id);
-+		EXPECT_ERRNO(EBUSY,
-+			     _test_ioctl_destroy(self->fd, iopf_hwpt_id));
-+		/* Trigger an IOPF on the device */
-+		test_cmd_trigger_iopf(self->device_id, fault_fd);
-+
- 		/* Detach from nested_hwpt_id[1] and destroy it */
- 		test_cmd_mock_domain_replace(self->stdev_id, parent_hwpt_id);
- 		test_ioctl_destroy(nested_hwpt_id[1]);
-+		test_ioctl_destroy(iopf_hwpt_id);
- 
- 		/* Detach from the parent hw_pagetable and destroy it */
- 		test_cmd_mock_domain_replace(self->stdev_id, self->ioas_id);
- 		test_ioctl_destroy(parent_hwpt_id);
- 		test_ioctl_destroy(parent_hwpt_id_not_work);
-+		close(fault_fd);
-+		test_ioctl_destroy(fault_id);
- 	} else {
- 		test_err_hwpt_alloc(ENOENT, self->device_id, self->ioas_id, 0,
- 				    &parent_hwpt_id);
-diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-index f590417cd67a..c5d5e69452b0 100644
---- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
-+++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-@@ -615,7 +615,7 @@ TEST_FAIL_NTH(basic_fail_nth, device)
- 	if (_test_cmd_get_hw_info(self->fd, idev_id, &info, sizeof(info), NULL))
- 		return -1;
- 
--	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, &hwpt_id,
-+	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, 0, &hwpt_id,
- 				 IOMMU_HWPT_DATA_NONE, 0, 0))
- 		return -1;
- 
--- 
-2.34.1
-
+If the user is used to not restarting the phone after turning it on,
+it will be difficult to use atgc.
+thanks!
+>
+> >
+> > It is better to enable atgc dynamiclly when user change atgc_age_thresh=
+old
+> > meanwhile this vale is less than elapsed_time and ATGC mount option is =
+on.
+> >
+> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > ---
+> >   fs/f2fs/f2fs.h    |  1 +
+> >   fs/f2fs/segment.c |  9 ++++-----
+> >   fs/f2fs/sysfs.c   | 16 ++++++++++++++++
+> >   3 files changed, 21 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 1974b6a..e441d2d 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -3694,6 +3694,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_i=
+nfo *sbi,
+> >   int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
+> >   void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
+> >   void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
+> > +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi);
+> >   int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int ty=
+pe,
+> >                                       unsigned int start, unsigned int =
+end);
+> >   int f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type, boo=
+l force);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 71dc8042..44923d4 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -2931,14 +2931,11 @@ static int get_atssr_segment(struct f2fs_sb_inf=
+o *sbi, int type,
+> >       return ret;
+> >   }
+> >
+> > -static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
+> > +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
+> >   {
+> >       struct curseg_info *curseg =3D CURSEG_I(sbi, CURSEG_ALL_DATA_ATGC=
+);
+> >       int ret =3D 0;
+> >
+> > -     if (!sbi->am.atgc_enabled)
+> > -             return 0;
+> > -
+> >       f2fs_down_read(&SM_I(sbi)->curseg_lock);
+> >
+> >       mutex_lock(&curseg->curseg_mutex);
+> > @@ -2955,7 +2952,9 @@ static int __f2fs_init_atgc_curseg(struct f2fs_sb=
+_info *sbi)
+> >   }
+> >   int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
+> >   {
+> > -     return __f2fs_init_atgc_curseg(sbi);
+> > +     if (!sbi->am.atgc_enabled)
+> > +             return 0;
+> > +     return f2fs_init_atgc_curseg(sbi);
+> >   }
+> >
+> >   static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int ty=
+pe)
+> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > index 09d3ecf..72676c5 100644
+> > --- a/fs/f2fs/sysfs.c
+> > +++ b/fs/f2fs/sysfs.c
+> > @@ -673,6 +673,22 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+> >               return count;
+> >       }
+> >
+> > +     if (!strcmp(a->attr.name, "atgc_age_threshold")) {
+> > +             if (t < 0)
+> > +                     return -EINVAL;
+> > +             sbi->am.age_threshold =3D t;
+> > +             if (sbi->am.atgc_enabled)
+> > +                     return count;
+> > +
+> > +             if (test_opt(sbi, ATGC) &&
+> > +                     le64_to_cpu(sbi->ckpt->elapsed_time) >=3D t) {
+> > +                     if (f2fs_init_atgc_curseg(sbi))
+> > +                             return -EINVAL;
+> > +                     sbi->am.atgc_enabled =3D true;
+> > +             }
+> > +             return count;
+> > +     }
+> > +
+> >       if (!strcmp(a->attr.name, "gc_segment_mode")) {
+> >               if (t < MAX_GC_MODE)
+> >                       sbi->gc_segment_mode =3D t;
 
