@@ -1,150 +1,117 @@
-Return-Path: <linux-kernel+bounces-191303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9311E8D0994
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64B88D0996
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47941C21AAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65CCE282AB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17615F3E7;
-	Mon, 27 May 2024 17:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6699115F3EE;
+	Mon, 27 May 2024 17:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LsBzqnQX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T2tlCDxE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710DB155C8D;
-	Mon, 27 May 2024 17:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CEF155C8D;
+	Mon, 27 May 2024 17:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716832476; cv=none; b=miZ6ZHEfPs1Ic5KPtj4k869D5aY7ZKuEHzjpoUDn8kowZ+J2jN5fgJAmNp3qPFwAy615Uyr6Y8S6rg2MzJ3F5s98M4fryb1rmGi5CY2AkHACyvfL21gQP2qcEk+gITykJKkPP0pXqgSQ4Dc0JgPr3sXWo0HTnC7VEVgFppy1Vxs=
+	t=1716832514; cv=none; b=JE+BiLQk9avuWmVhhvscVhAiC0fCI6cUOpGgaV2iWEexakKPRLea+NZwqhP3mzbcFQo1JE0DQKlY5OWnhq84WNnAYc9w3Q5/plUHgOHbkm+b3TM8lK/ARNyq/OY+UmaUkGFWwltk2IOKPjEq8dPVFl0ZjBpMTl7EV9OXaCWZVHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716832476; c=relaxed/simple;
-	bh=pQD9hTPYdYG3waVVdZmos5TrgAbzf/0R6TMZHpPrboM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r49bZo+xdMa/EMekvcir67BlPeJSlCAh/4RxIk5+ZyvC3IRkUk2w+nwIDL9g3apECG3DFS7R3y75Y3hfuW3L0UerJVYbNOzYoGfFQ/xc4Wy7eVCelKYfpRI1xFxVnrll5wFhmAduZdA59TSko82wHk8hCT7x7E0B92hmGm8Uokk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LsBzqnQX; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716832474; x=1748368474;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pQD9hTPYdYG3waVVdZmos5TrgAbzf/0R6TMZHpPrboM=;
-  b=LsBzqnQXyV3Xx1nnFXM45EjldD5DLqMJzGQQZDqKS7kkEGKACYq9+jAv
-   T8ggPNgT+yezRrsbtpkoLlqBeaKM1K4VtCrnRhaKLKcSFuwoiyP4qUVyn
-   ABJbKAWtbG7BOdMXJVjLwWPLqusEFG0A5CD9K/6ovsXqqfcgrqgNuYm8z
-   Kdsr+zJcwbIBWtXG0JBwxz/UeUZHSGmpuwoxLqp3uIyxPDvD/WFeTBB7v
-   8sbDUz37eePAJ+sL8pG/bE0rhKN8Zi1C+hsy7w5o0jWsU4uVCuXDcWZtk
-   R7X0Y6nimQNbgGxL7SOBLMS3DPka4pR5djDXk94c9fAz0AitLjiTfGZjP
-   Q==;
-X-CSE-ConnectionGUID: lM7sI2tDTAy/3D6scbpjWw==
-X-CSE-MsgGUID: 7OLsxJ1sS2CI5t7wgxmn4Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24574928"
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="24574928"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 10:54:33 -0700
-X-CSE-ConnectionGUID: Ix3a3+nnSBC1vshm3rHFRQ==
-X-CSE-MsgGUID: vJghpWlyTH6wYE8nRgwRZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="39617573"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 10:54:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sBeYF-0000000BKuj-0myM;
-	Mon, 27 May 2024 20:54:27 +0300
-Date: Mon, 27 May 2024 20:54:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Tony Lindgren <tony@atomide.com>, linux-arm-msm@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Guanbing Huang <albanhuang@tencent.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 1/2] serial: port: Don't block system suspend even if
- bytes are left to xmit
-Message-ID: <ZlTI0pYuv7_g6x-V@smile.fi.intel.com>
-References: <20240523232216.3148367-1-dianders@chromium.org>
- <20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+	s=arc-20240116; t=1716832514; c=relaxed/simple;
+	bh=4/wrbLy3tLM4pQAJX3ZUxOmitlqs8ZVtgtu8a9W9zUY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Vvv8SYRP0fE9bdIdDY/oVXQDY3NCcPc5jBJf6TTgFCYpm9l8ayxv9ptAngBVfc8i2FM6dl0FUyMbqgLSksgAVNxcd5ubwAXJmBWHeaHmrVpIHQj7mpwaegaDy4m9LsUGZMCOkx8LXjJhUlA1Udl7sXjCp8a6WZL1dqLpkLD87k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T2tlCDxE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RB13Q2011350;
+	Mon, 27 May 2024 17:55:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vDLTztAKMtbNomsyoxqxOG
+	SafnWIUXeUC9jGH3RM3gE=; b=T2tlCDxEU6oU6J0EjUEziwYvOfIAmjh9gBG0Do
+	XvYRTAO2W1kHed1PZIk4syJlxva8hhQTVygDnolgRdV+6jhrEvwjJ/xJItc8ZLj6
+	WxohNyXsSIx4KTsCktVEFWpEcp+Vv9+VYTlEqQ+e1KK1sZJWxZUTUYVupcEVUtjT
+	H1elqKphRuCbX5Ed6NSDv0ZEoxnpm/nYrU3LtmtP/dCxZb/XtqI9N3tWqlyzQoIc
+	ytbzcObc7kM6Fm9lfjnaE1jVi3bkAVnHPXVEi5z/pKGquRZcZCTGiNhZTbsDEQw+
+	62ts5q+OiCrcoWMwz02Br4XmhS4mEEK0HC1gnlTK1xXiL2Ag==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k4csu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:55:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RHt2bD017548
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:55:02 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
+ 2024 10:55:02 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 27 May 2024 10:55:02 -0700
+Subject: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPXIVGYC/x3MQQrCQAyF4auUrA3MjDoFryIu0mlqA84oSZVC6
+ d2Nrh7f4v0bGKuwwaXbQPkjJs/miIcOykztziijG1JIp3BOPdYRJ8OiVH1i4Jj6TMecE/jlpTz
+ J+s9db+6BjHFQamX+RR7S3itWsoUV9v0LeLILxn0AAAA=
+To: Nicolas Pitre <nico@fluxnic.net>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tJUvKGrVjRfTPw2TcV5MnPtMsYi93zqa
+X-Proofpoint-GUID: tJUvKGrVjRfTPw2TcV5MnPtMsYi93zqa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_04,2024-05-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=817 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405270147
 
-On Thu, May 23, 2024 at 04:22:12PM -0700, Douglas Anderson wrote:
-> Recently, suspend testing on sc7180-trogdor based devices has started
-> to sometimes fail with messages like this:
-> 
->   port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
->   port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
->   port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
->   port a88000.serial:0.0: PM: failed to suspend: error -16
-> 
-> I could reproduce these problem by logging in via an agetty on the
-> debug serial port (which was _not_ used for kernel console) and
-> running:
->   cat /var/log/messages
-> ...and then (via an SSH session) forcing a few suspend/resume cycles.
-> 
-> Tracing through the code and doing some printf debugging shows that
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
 
-printf()
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/cramfs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-..or...
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index 460690ca0174..d818ed1bb07e 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -1003,4 +1003,5 @@ static void __exit exit_cramfs_fs(void)
+ 
+ module_init(init_cramfs_fs)
+ module_exit(exit_cramfs_fs)
++MODULE_DESCRIPTION("Compressed ROM file system support");
+ MODULE_LICENSE("GPL");
 
-printf()-based
-
-> the -16 (-EBUSY) comes from the recently added
-> serial_port_runtime_suspend().
-> 
-> The idea of the serial_port_runtime_suspend() function is to prevent
-> the port from being _runtime_ suspended if it still has bytes left to
-> transmit. Having bytes left to transmit isn't a reason to block
-> _system_ suspend, though. The DEFINE_RUNTIME_DEV_PM_OPS() used by the
-> serial_port code means that the system suspend function will be
-> pm_runtime_force_suspend(). In pm_runtime_force_suspend() we can see
-> that before calling the runtime suspend function we'll call
-> pm_runtime_disable(). This should be a reliable way to detect that
-> we're called from system suspend and that we shouldn't look for
-> busyness.
-
-..
-
-> +	/*
-> +	 * We only want to check the busyness of the port if PM Runtime is
-> +	 * enabled. Specifically PM Runtime will be disabled by
-> +	 * pm_runtime_force_suspend() during system suspend and we don't want
-> +	 * to block system suspend even if there is data still left to
-> +	 * transmit. We only want to block regulator PM Runtime transitions.
-
-regular
-
-> +	 */
-> +	if (!pm_runtime_enabled(dev))
-> +		return 0;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+---
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+change-id: 20240527-md-fs-cramfs-10e1276a3662
 
 
