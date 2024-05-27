@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-190441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF498CFE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E31B8CFE52
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7AF280E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF10B20BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A5E13B789;
-	Mon, 27 May 2024 10:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F1213B5A8;
+	Mon, 27 May 2024 10:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnFEd8Hp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="XSr7hJ01"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419BE3A8C0;
-	Mon, 27 May 2024 10:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055C813BC1B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716806737; cv=none; b=ZNhEIb3Ks6T1KGmY2XTU/a6Jfc61EJgJaETmcI1HETI8RrQ/0ZXujdzEbKrTR/oirq8emXS8f7p7HRsIJ4YBUkpYIlbdBFt0Mf3fxmN0zQI+/WZpYdXaO+FKsFGb854GoOG51qKxk+gDuvxXmyS6Ih5WONZU2qMk7BmEBRKfIVk=
+	t=1716806786; cv=none; b=DlDWTBJ+LsZa3ZNHwOIpO3vliJV/GRgK1Rx74qsmnhWWZOrDytGK9muJKHD0zP9zJTixLQNH+m91pHmhnJn8SYPSYZv0H1Q6kIoVloS9ubgx8h3xunNPK7qZzhn2olNcAcmWKYkCfd01BHg94qb9zGWRSGBIDIFnP1lPPs4CP0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716806737; c=relaxed/simple;
-	bh=NsRBdHHxQsCLxiD+yt98fp2Fw6YW/5eDs4/wXZCQ7iM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffS1CEbNpzI0/rL8fcy20D/Tlvdf7wiIRGjt2wUwjGCHiH35l6P+32Kig7yS3xkw8b5XiyqBsNGQ3OrXeZ2MdAP2i5zNsY+dR9RHytkftD8nf4bA2wv83Ucr9P7NAtyD+4ugkjCBFL8dzZS4htm+obFp3hO6rWC771rPviwFJrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnFEd8Hp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D362CC2BBFC;
-	Mon, 27 May 2024 10:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716806736;
-	bh=NsRBdHHxQsCLxiD+yt98fp2Fw6YW/5eDs4/wXZCQ7iM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YnFEd8Hp/1GeYYADul6Bnf5SYeLiFYxp1IWV0bC+S1oiyRbs0XNhCtH68vm5pO9Ee
-	 Dim0IDbBCerwTh9U5kkl9xKKIUvHbaBM7gqq4zIbc2/dKgrBpaPOU+URbu3V8aC4jM
-	 BTHiTVp+YehH8iQX9gXJXisdUHhysTwVnqGPSPhk5WO8FnBMzVv2XZHZRpXOALhWhD
-	 glxFXCLbn+W97srNNcJTDKueP2cHCLfz08/zuwVpSlU3OZUnhubYIwCaR7MmvA/Bc/
-	 HZU/NHnQiuHyAT9amRSHrDgqzaytiqGzArziWOzpAEmr65nZECpvW8INGUusa38+xs
-	 RlggSLRm2dhBQ==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b97f09cde3so312092eaf.0;
-        Mon, 27 May 2024 03:45:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZcwiF9Llo0jXhme9F2ywpkMHusLaxrucM61rG9dSN5jZjjjQNUqsB4lPDcOipk5bNnbww4zzhbyX2vy3KzUACw8FdAY9OPZpHAoXOzKvpw2vLnHYMXe3jicJNqmVXV5kL6oO0QE+K6Q==
-X-Gm-Message-State: AOJu0YxT6BOzxZ9erIcDr1Ud8dzGN1Zxc+GD74ZGFRL2zpkwuESFuIzi
-	6i150YvF2lKv4CRACoS++OarxKJoJd/EFEO1A3VmwVwhkq/tvJxT/AfdO9lVsFUyisYlyMGTD0D
-	urgSlw2PQOoXwbm9cQ9W0k0jSYRo=
-X-Google-Smtp-Source: AGHT+IGhDqzejDoNzSARoJax6rqzRJosWYBiW7MNYK9Ej1IlNbjaAkttHeqiiCY/n6EWxLUS0TKS2UR2S95ymTizp5k=
-X-Received: by 2002:a4a:e6d8:0:b0:5b2:7aa7:7b29 with SMTP id
- 006d021491bc7-5b96195f885mr9471011eaf.1.1716806736217; Mon, 27 May 2024
- 03:45:36 -0700 (PDT)
+	s=arc-20240116; t=1716806786; c=relaxed/simple;
+	bh=FuNZk22+jZCWwX+4yEiYRJIWKx8ZL/PckE9EdRBFaGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GqCDlzCui/dyiT/SoeJscNhWjFDikVu2t5KzeBuWd/6cyTasU8jTCCCmpIvI4UX3PPCaRPBIrroph6e/70gWVxqNW9BxFKHlEvMuj/p9MLXEpKsaLX2/VSuXJky1g//5Zj60haWYf8okCYeHFiA5mKzkmfD1ky3/D7cticFJJQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=XSr7hJ01; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:2a2a:0:640:d546:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 6AFE660B21;
+	Mon, 27 May 2024 13:46:12 +0300 (MSK)
+Received: from [IPV6:2a02:6b8:0:419:e50:b6d:d0ba:2947] (unknown [2a02:6b8:0:419:e50:b6d:d0ba:2947])
+	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id xjM67Q1Ge4Y0-o3SZoNk8;
+	Mon, 27 May 2024 13:46:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1716806771;
+	bh=foY6hMLRsD6gYR7HtDrQdRpmD7cyxAdDaxwZ8BWPLB8=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=XSr7hJ01t8JJ/ZEXNCVlZO7slr1vojyCXK1+raMxHH63QKJpl0/dAFzcskU7JgnT6
+	 UjC/MigE8/igfAvc1N2/YMMvLtAMCyNjL+tQcaKwBRDqvZcJ6OLlmxkVYQF4Q5gEr5
+	 yYoHVaXmlkvr4KN5U44ad3NBtfrBJHYXWNdr0bG8=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <22da39f0-e73f-4e11-830e-914b5bc04029@yandex-team.ru>
+Date: Mon, 27 May 2024 13:45:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522213649.2860-1-W_Armin@gmx.de> <20240522213649.2860-2-W_Armin@gmx.de>
-In-Reply-To: <20240522213649.2860-2-W_Armin@gmx.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 27 May 2024 12:45:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jVwZJ1Q9XFDMb5E0NmPsj=Z3sC9E9zNTjFH0oWKgpn-g@mail.gmail.com>
-Message-ID: <CAJZ5v0jVwZJ1Q9XFDMb5E0NmPsj=Z3sC9E9zNTjFH0oWKgpn-g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: EC: Avoid returning AE_OK upon unknown error
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, KP Singh <kpsingh@kernel.org>,
+ Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+ <ab3e92eb-d35e-4f5a-8e99-10b3ccb7c2cf@linux.intel.com>
+ <20240508051953.oz3q3hdvifo6lb7o@treble>
+Content-Language: en-US
+From: Maksim Davydov <davydov-max@yandex-team.ru>
+In-Reply-To: <20240508051953.oz3q3hdvifo6lb7o@treble>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 11:37=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> If an error code other than EINVAL, ENODEV or ETIME is returned
-> by acpi_ec_read()/acpi_ec_write(), then AE_OK is wrongly returned.
->
-> Fix this by only returning AE_OK if the return code is 0, and
-> return AE_ERROR otherwise.
->
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/acpi/ec.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-> index a68dce2147a4..68dd17f96f63 100644
-> --- a/drivers/acpi/ec.c
-> +++ b/drivers/acpi/ec.c
-> @@ -1351,8 +1351,10 @@ acpi_ec_space_handler(u32 function, acpi_physical_=
-address address,
->                 return AE_NOT_FOUND;
->         case -ETIME:
->                 return AE_TIME;
-> -       default:
-> +       case 0:
->                 return AE_OK;
-> +       default:
-> +               return AE_ERROR;
->         }
->  }
->
-> --
 
-Applied (with some edits in the subject and changelog) along with the
-[1/2] as 6.10-rc material, thanks!
+
+On 5/8/24 08:19, Josh Poimboeuf wrote:
+> On Tue, May 07, 2024 at 07:58:07AM -0700, Daniel Sneddon wrote:
+>> On 5/6/24 22:30, Josh Poimboeuf wrote:
+>>> In cloud environments it can be useful to *only* enable the vmexit
+>>> mitigation and leave syscalls vulnerable.  Add that as an option.
+>>>
+>>> This is similar to the old spectre_bhi=auto option which was removed
+>>> with the following commit:
+>>>
+>>>    36d4fe147c87 ("x86/bugs: Remove CONFIG_BHI_MITIGATION_AUTO and spectre_bhi=auto")
+>>>
+>>> with the main difference being that this has a more descriptive name and
+>>> is disabled by default.
+>>>
+>>> Requested-by: Maksim Davydov <davydov-max@yandex-team.ru>
+>>> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+>>> ---
+>>
+>> Does the KConfig option need to be updated to support this as well?
+> 
+> In general we don't provide a config option for every possible
+> mitigation cmdline option.  If someone requests it we could add it
+> later.
+> 
+>> Reviewed-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+> 
+> Thanks!
+> 
+
+I think it will be useful for us to have appropriate Kconfig option. 
+Could you please add it to the next version?
+
+-- 
+Best regards,
+Maksim Davydov
 
