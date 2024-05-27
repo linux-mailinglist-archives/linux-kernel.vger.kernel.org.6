@@ -1,230 +1,117 @@
-Return-Path: <linux-kernel+bounces-191300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DE78D0987
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8938D098B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF151F22BB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F801F22B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA9115F335;
-	Mon, 27 May 2024 17:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D49E15F3E1;
+	Mon, 27 May 2024 17:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="angG1vvB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UXhyQ+Mz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5747915EFCC;
-	Mon, 27 May 2024 17:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B62155C8D;
+	Mon, 27 May 2024 17:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716832120; cv=none; b=ViZDxVGy81K/ws4RZ9LgeGRsxxXLdwP7JZUUUMVr+rELqIJjnIcKDdJzuaUXiII8hP9Tv5VWso9D6qWhmuI5pZNdfQMXerzrnfpNup500H3CINgl6hBgOkJYZFXHGGpoYfCMYR5Bs0wgNQNd8LXTUzXsSF1CDXsrVldJzHJ6KtI=
+	t=1716832251; cv=none; b=RdJVMHztT1Hp+5nAgRAa3JsIT4G3T1Az9S9s6ZOe/YLl7SzboG4dZaylh4KsM2aXb5tucwnc+gMgMG6WS4uDaFE2mTfyXPkGRdX6ybyLRwPp730DS99TRNtmMPrV8bh9bPTcqRbVs9lJKmfFpL5DI4g3+ATHdH7fcBM96KHcd5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716832120; c=relaxed/simple;
-	bh=Osjj8NjnFAIZU2NVPkIF21tWTVtBoakiM3p/XGDg+2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WP4KpU7l8NXXGA3mwZP4bKXeDt7eN2vkuANOcU59Ie9IIVlaSFod5Q6K6Wbp6xH7MJqdC6EkEE6gVkZ6UIVGJVa5TN9Cz8IbCjz/WENHsIB/MW1npbkTu/Z/v1klUh/VCOh3gJlan+Du6TpplShcR18RJ4XHeST6BsGVSme6G+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=angG1vvB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF0CC2BBFC;
-	Mon, 27 May 2024 17:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716832119;
-	bh=Osjj8NjnFAIZU2NVPkIF21tWTVtBoakiM3p/XGDg+2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=angG1vvBB/tISqrSMgWTWIbf561kOmcQ+2YRLZ8hOmXgWKdyKc5jrn1KxIkn3xgUA
-	 7ItUxqSGbJYMhWd5AgC3lhXZnxaoywxAtQx78m8WtWT46ovOLXI2klMAr8KLT8qc6w
-	 JRr93tFRa2CAO5P+UpYPpKkUGGdSP3WEdvL0sEqICVwRyfkUb3vyRs5GtCCwr5gOTg
-	 wSdmgtC/a5Gw14NtE0Pjm9elV1LCik59I5TIinkEcbLlPIvTyz+9TlRhEfQ9CruP7J
-	 20a03DPvhHLMeUbrNql+prYlpgisTVDJyYRTqYvscOcawZEG9zTw5058jci6aPpyg8
-	 9/hI9lo1QUdew==
-Date: Mon, 27 May 2024 18:48:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>
-Subject: Re: [PATCH v3 1/6] dt-bindings: adc: ad7173: add support for ad411x
-Message-ID: <20240527-arguably-said-361184ad848e@spud>
-References: <20240527-ad4111-v3-0-7e9eddbbd3eb@analog.com>
- <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+	s=arc-20240116; t=1716832251; c=relaxed/simple;
+	bh=GkrY3yo8W5UlO9VY56pPsTDgblgpfuf4j0U/zbkq8Yg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kO6A83ZIylOJ1cMomZc8iVDlOjkILgn2GDOfP5k2Mr3cr9IwoyuYwu48G/GyFqaNvWuFUZ/7vCtLROMv/fr67r8LQVfOqg2cAb/oIYqMtgNN4R38qlaRNyGXK7wI2LTHm0JXA7o2DJHEWiQ6egqjH7IntWK0CIK1FIus2Kau7ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UXhyQ+Mz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RAwcxu014262;
+	Mon, 27 May 2024 17:50:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/ooyA51c3n+I3p96o9S6Cl
+	EkUQsQ/Hr2I7vtFk6ZHmg=; b=UXhyQ+MzWBxrLf9/SkbW2TQgKgqyYUpoSMXuOa
+	Ekrb/jXkeiMiANUqn7gCPdN3ntEaWMejACshG6E+w1ihCwcwL+7m0BtkRaZOYN2s
+	vsmW2L2MwgmKDklnjrCyX0EvGazW0iuwojbJP8jMXnug5JYOhqdUMEcF3kCQoRl/
+	xtm1Uy4BoSlizXZw38RVw13fK/LbUViGInQqXRa6YHt3IkV5h76VGq3YtNzlZ2Q8
+	5SKwFQJeO20elD8XvgnS+ZhZjPRFbKDx+XBeV4+DPkOl30nzPpAzJgZV326noKY7
+	LgODb4PgVLjSWD9dbdnXHwGZMF2OOehnoLIdVwklO2BTIaYw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2mvb6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:50:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RHoUEN002569
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:50:30 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
+ 2024 10:50:30 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 27 May 2024 10:50:29 -0700
+Subject: [PATCH] fs: hpfs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4cO0smBLoF4dPAzc"
-Content-Disposition: inline
-In-Reply-To: <20240527-ad4111-v3-1-7e9eddbbd3eb@analog.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240527-md-fs-hpfs-v1-1-e0f3d8fa8385@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOTHVGYC/x3MQQrCQAyF4auUrA1MB+tQryIu0jbjBOxYkiqF0
+ rsb3Tz4Fu/fwViFDa7NDsofMXlVR3tqYCxUH4wyuSGGeA5dTDhPmA3L4tP2sU8ppC5fCPywKGf
+ Z/rHb3T2QMQ5KdSy/xFPqe8OZbGWF4/gClh3iRnsAAAA=
+To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RPIOaPDagfM0zZ3eQqZPbnUnn8WW7JkY
+X-Proofpoint-ORIG-GUID: RPIOaPDagfM0zZ3eQqZPbnUnn8WW7JkY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_04,2024-05-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=701 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405270147
 
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hpfs/hpfs.o
 
---4cO0smBLoF4dPAzc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/hpfs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Mon, May 27, 2024 at 08:02:34PM +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
->=20
-> AD411x family ADCs support a VCOM pin, dedicated for single-ended usage.
-> AD4111/AD4112 support current channels, usage is implemented by
->  specifying channel reg values bigger than 15.
->=20
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 122 +++++++++++++++=
-+++++-
->  1 file changed, 120 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> index ea6cfcd0aff4..5b1af382dad3 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> @@ -19,7 +19,18 @@ description: |
->    primarily for measurement of signals close to DC but also delivers
->    outstanding performance with input bandwidths out to ~10kHz.
-> =20
-> +  Analog Devices AD411x ADC's:
-> +  The AD411X family encompasses a series of low power, low noise, 24-bit,
-> +  sigma-delta analog-to-digital converters that offer a versatile range =
-of
-> +  specifications. They integrate an analog front end suitable for proces=
-sing
-> +  fully differential/single-ended and bipolar voltage inputs.
-> +
->    Datasheets for supported chips:
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4111.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4112.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4114.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4115.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD4116.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7172-2.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7172-4.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/=
-AD7173-8.pdf
-> @@ -31,6 +42,11 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - adi,ad4111
-> +      - adi,ad4112
-> +      - adi,ad4114
-> +      - adi,ad4115
-> +      - adi,ad4116
->        - adi,ad7172-2
->        - adi,ad7172-4
->        - adi,ad7173-8
-> @@ -129,10 +145,36 @@ patternProperties:
->          maximum: 15
-> =20
->        diff-channels:
-> +        description: |
-> +          For using current channels specify select the current inputs
-> +           and enable the adi,current-channel property.
-> +
-> +          Family AD411x supports a dedicated VINCOM voltage input.
-> +          To select it set the second channel to 16.
-> +            (VIN2, VINCOM) -> diff-channels =3D <2 16>
-> +
-> +          There are special values that can be selected besides the volt=
-age
-> +          analog inputs:
-> +            21: REF+
-> +            22: REF=E2=88=92
-> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD71=
-77-2:
-> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
-> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
-> +
->          items:
->            minimum: 0
->            maximum: 31
-> =20
-> +      single-channel:
-> +        description: |
-> +          Models AD4111 and AD4112 support single-ended current channels.
-> +          To select the desired current input, specify the desired input=
- pair:
-> +            (IIN2+, IIN2=E2=88=92) -> single-channel =3D <2>
-> +
-> +        items:
-> +          minimum: 1
-> +          maximum: 16
-> +
->        adi,reference-select:
->          description: |
->            Select the reference source to use when converting on
-> @@ -154,9 +196,26 @@ patternProperties:
->            - avdd
->          default: refout-avss
-> =20
-> +      adi,current-channel:
-> +        description: |
-> +          Signal that the selected inputs are current channels.
-> +          Only available on AD4111 and AD4112.
-> +        type: boolean
-> +
-> +      adi,channel-type:
-> +        description:
-> +          Used to differentiate between different channel types as the d=
-evice
-> +           register configurations are the same for all usage types.
-> +          Both pseudo-differential and single-ended channels will use the
-> +           single-ended specifier.
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        enum:
-> +          - single-ended
-> +          - differential
-> +        default: differential
+diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+index 314834a078e9..e73717daa5f9 100644
+--- a/fs/hpfs/super.c
++++ b/fs/hpfs/super.c
+@@ -793,4 +793,5 @@ static void __exit exit_hpfs_fs(void)
+ 
+ module_init(init_hpfs_fs)
+ module_exit(exit_hpfs_fs)
++MODULE_DESCRIPTION("OS/2 HPFS file system support");
+ MODULE_LICENSE("GPL");
 
-I dunno if my brain just ain't workin' right today, or if this is not
-sufficiently explained, but why is this property needed? You've got
-diff-channels and single-channels already, why can you not infer the
-information you need from them? What should software do with this
-information?
-Additionally, "pseudo-differential" is not explained in this binding.
+---
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+change-id: 20240527-md-fs-hpfs-192977075f6a
 
-Also, what does "the device register configurations are the same for
-all uses types" mean? The description here implies that you'd be reading
-the registers to determine the configuration, but as far as I understand
-it's the job of drivers to actually configure devices.
-The only way I could interpret this that makes sense to me is that you're
-trying to say that the device doesn't have registers that allow you to
-do runtime configuration detection - but that's the norm and I would not
-call it out here.
-
-Thanks,
-Conor.
-
---4cO0smBLoF4dPAzc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlTHcwAKCRB4tDGHoIJi
-0kRjAPsG84+KDR7s4y1gNjTV2xf5bXRkzPtrvnplSviQITN4QgD/XKQvmuVdBUba
-oKS3NOU3/HdgiortQmm/UlCPF14I/ww=
-=NQX0
------END PGP SIGNATURE-----
-
---4cO0smBLoF4dPAzc--
 
