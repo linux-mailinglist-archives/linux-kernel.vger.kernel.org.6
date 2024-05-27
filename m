@@ -1,211 +1,141 @@
-Return-Path: <linux-kernel+bounces-190747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDF18D020F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:44:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA4B8D0211
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3388D28D15D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C1F1C21365
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A409115EFD4;
-	Mon, 27 May 2024 13:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54BA15EFAF;
+	Mon, 27 May 2024 13:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KoyqNHpT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e9lGSbVd"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CD015EFCB
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCF115ECEC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817452; cv=none; b=U4Y487kKJdlJuVatySATaMJuD+9OrXWgBXrRHgenK6dF6/dT+kmrn+w0Gx6ehEeI1X4Wn07kgwMfuWHSLLLHHLP2BCB0PAtze+ByP5GUYjFoihw2mSmVstraHOQ1TMhz2gk4O8Zj/CxRlwa9AYHY1Gqjt046VlDVY47Nxov72gU=
+	t=1716817499; cv=none; b=d6sOKzUWHKYCSN/6lYdesQXK0lqYhTq3fXy6vS2DP9nCfEksz1RQs7WHV0v8qQlPz6rJt2V+bxgi0BJMbFFjS8Ph5oBsbWQwwjX5VD7F9rns+Lmy35xUinK6pjoVLioVa4KAWgu4a/mx4kLb80/MXNPeB/DbgUE4iJIwsS3B0To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817452; c=relaxed/simple;
-	bh=Y4lg1w9PMKXk/DYDc4ftwcvGasjMUD1Xkcb1fEgP/BU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ariai9eRGOentClVqqEzoCvvbMYtE7jA8/ZD1zlHuXkwxQyco1TwqRIQXxmpYYdVjForbQPoOu3ObG1ZqWe+hdd00Rz8hP45Uus1qhXEF5cKonRiq+V6EIm5/etHbu91U/lLX+m1VyMtlq0/mVPITKk38G8oqKvypIMLhsnRB9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KoyqNHpT; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716817452; x=1748353452;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y4lg1w9PMKXk/DYDc4ftwcvGasjMUD1Xkcb1fEgP/BU=;
-  b=KoyqNHpTAniAAb8DVHd3MBZNCUCbaQIazWK85nI2G28jATV2Fd6heo5b
-   v1ZM5S2BiQt7OIWcrYfzqXhGsfoeL347+GgiBntsa9DGGpSwuiEcoE+Ma
-   pgv8hvO1znZstA2iBvGu+jXt22mUKd6Z9Wb5FMMbzqSKz03B2sbaLQXC1
-   wrkH0xMt6SR7Uk32Nj8fWerhdRH6esG1uss5X8wV0ZKskUJryPGB446tC
-   G+QGqSthKVBncs5l51EFJwS28rvdidYSTPDUzZd72RdeFgJNpqjHvzHj1
-   PLN2kNsokUVqKeKQT77TWnyLB9uFJW0uutkn9wEmHNlVuI6a4RvG//GRS
-   w==;
-X-CSE-ConnectionGUID: PN9ztC37Qzmn7DTzZkGBsw==
-X-CSE-MsgGUID: HbRAAtvwRqyJpYv542inxw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24265233"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="24265233"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:44:10 -0700
-X-CSE-ConnectionGUID: +/Yk/RZZSai7ZanjM3CxDg==
-X-CSE-MsgGUID: Hdj76MThTLiwanVCmdpq2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="39210524"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.110.211]) ([10.125.110.211])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:44:07 -0700
-Message-ID: <6a8ab4f6-63be-4284-814a-d853faf000b5@linux.intel.com>
-Date: Mon, 27 May 2024 08:44:06 -0500
+	s=arc-20240116; t=1716817499; c=relaxed/simple;
+	bh=fwXZJFB4nkMzHi+97DNTbv/zQhYOdEGJXF+z0FAofVA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t9M3CMxwfCqxCL3poQXGcIPocyvf5362hPXLshcBXyeS/s97R0QSI2kwLo17CFUV/GmLIMfulWZ4pv4s8edyQBoecl6hAP1Oj5JF0lddZksUgmlecTgZI8U8TvEjb+nMti12Bdu0H4201gigWWXZBp/w04G7JB3qyTteOqWmPE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e9lGSbVd; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3588cb76276so636073f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716817497; x=1717422297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BOPePvII73dyzyHk15m4pOPTJxMdXeXMFiP5kpq9p44=;
+        b=e9lGSbVdDpdFXgNm35duyPuVOM/s1buSjbwUS0K5ZobzfaSjZuLM3Hw2899t4KI3MG
+         bq3HSGk/Ohwf12avPGDex6UGjcJIcgKb05oaesFmqiWy3EC3a4zPPayUfAGE7KV0ypJy
+         e1hPM+laFVLGmnj53y62u4rJCj1XixGIkwjmyOmpja6880dIQUWnpMCFah/YnFQOVgUg
+         fiHx7CS2dM8XjFWEGaFGuYGZp6PKfH0i5fUugxS8AhWDATtQCnKJKN3YXJAnGfp5kXAI
+         sbt2cBs88sZAdWNRwbLNHVcZjd1rGLPwJ8+z6c21vI0ic78NiN/Aw7VvrWXxMWZO/bGo
+         BP+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716817497; x=1717422297;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BOPePvII73dyzyHk15m4pOPTJxMdXeXMFiP5kpq9p44=;
+        b=eH8nUSzBC9+jUfQhdo0/ghC+fPQdfo76b6fnrsCt1EeZLWTLnuHJcWD8G/ZvIKADsZ
+         3MhLq8x4VkIqROrTgTwrDu6yv+QYoC4YnOtS+B66TPxx/BgCrX5Gm2hPVJodhGJQMwIl
+         Mw/kqs5wyHJm33dIVQb/yfEu7p8QblCBWopp4OGGjRBSvGGKJBZ0zjeFbabdzABY+aMG
+         4oAu28oVovcrcHM41ARmHGzL4YAG61LNqXLf5S8GlPcxLxZ33+XjxRzRdb6s+Zs05Eq1
+         sjnIrNsSW0VyatoAdqiIh1mXR5jVNhLXyAFNWJ5IqqMrJ3XvmOYD9GuuzU0K3j2AlfKj
+         eRFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjs2GF7N/voZtOijws3TaNaQ3OD+DJeEvurstYv+ovG/qMr1scEwVvoJCvU33XgOatM1l5pvJs99q0Gt4MAbwqL45LmeFhfLvEt1Mz
+X-Gm-Message-State: AOJu0YxTv/tAo/WS47knUsRVEQnUzLEfUk3kJG695c/q5ZBhMMYfc5xU
+	9emtRg9CMEVsfSKkzny28+e1s04tnV4OeEixL1Wo5oh2Qa1kWxG2YiuZNp+mD8s=
+X-Google-Smtp-Source: AGHT+IGwS0/nDa3ITAcmca/nsJyVuSykEMrLjJDamCmRirIOzO7crmASNfLCNT5BvQ9XhxFkMcLswA==
+X-Received: by 2002:a5d:598a:0:b0:356:4cd7:d3ac with SMTP id ffacd0b85a97d-3564cd7d4eemr7776462f8f.12.1716817496449;
+        Mon, 27 May 2024 06:44:56 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a091051sm9114549f8f.61.2024.05.27.06.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 06:44:56 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: jbrunet@baylibre.com, mturquette@baylibre.com, khilman@baylibre.com, 
+ martin.blumenstingl@googlemail.com, glaroque@baylibre.com, 
+ rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+ lukasz.luba@arm.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ conor+dt@kernel.org, Dmitry Rokosov <ddrokosov@salutedevices.com>
+Cc: kernel@salutedevices.com, rockosov@gmail.com, 
+ linux-amlogic@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240328192645.20914-1-ddrokosov@salutedevices.com>
+References: <20240328192645.20914-1-ddrokosov@salutedevices.com>
+Subject: Re: [PATCH v2 0/3] arm64: dts: amlogic: a1: introduce thermal
+ setup
+Message-Id: <171681749543.2905422.16742406814394221719.b4-ty@linaro.org>
+Date: Mon, 27 May 2024 15:44:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoc: tas2781: Playback can work when only RCA binary
- loading without dsp firmware loading
-To: Shenghao Ding <shenghao-ding@ti.com>, broonie@kernel.org
-Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
- 13916275206@139.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
- linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com,
- jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com,
- kevin-lu@ti.com, yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com,
- soyer@irl.hu, Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
- cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com
-References: <20240525014727.197-1-shenghao-ding@ti.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240525014727.197-1-shenghao-ding@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
+Hi,
 
+On Thu, 28 Mar 2024 22:26:34 +0300, Dmitry Rokosov wrote:
+> This patch series introduces thermal sensor declaration to the Meson A1
+> common dtsi file. It also sets up thermal zones for the AD402 reference
+> board. It depends on the series with A1 thermal support at [1].
+> 
+> Changes v2 since v1 at [2]:
+>     - provide Neil RvB for cooling-cells dts patch
+>     - purge unnecessary 'amlogic,a1-thermal' fallback
+> 
+> [...]
 
-On 5/24/24 20:47, Shenghao Ding wrote:
-> In only RCA binary loading case, only default dsp program inside the
-> chip will be work.
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
 
-What does 'RCA' stand for?
+[1/3] arm64: dts: amlogic: a1: add cooling-cells for DVFS feature
+      https://git.kernel.org/amlogic/c/947bde9069c8241afe401433a6eff276595bb073
+[2/3] arm64: dts: amlogic: a1: introduce cpu temperature sensor
+      https://git.kernel.org/amlogic/c/049d141161903e656d9475950bb976240802c01c
+[3/3] arm64: dts: amlogic: ad402: setup thermal-zones
+      https://git.kernel.org/amlogic/c/593ab951232be4779e77f5b1bee0bef4e6fc1022
 
-Also clarify the commit title without double negatives, e.g.
+These changes has been applied on the intermediate git tree [1].
 
-"Enable RCA-based playback without DSP firmware download"
-> -	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
-> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> +	/*
-> +	 * Only RCA file loaded can still work with default dsp program inside
-> +	 * the chip?
+The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
 
-reword the commit and remove question mark.
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
 
-> +	 */
-> +	if (!(tas_priv->fw_state == TASDEVICE_RCA_FW_OK ||
-> +		tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK)) {
-> +		dev_err(tas_priv->dev, "No firmware loaded\n");
->  		return;
->  	}
->  
->  	if (state == 0) {
-> -		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
-> +		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
->  			/*dsp mode or tuning mode*/
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
 
-spaces in comments
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
 
->  			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
->  			tasdevice_select_tuningprm_cfg(tas_priv,
-> @@ -2340,9 +2345,10 @@ void tasdevice_tuning_switch(void *context, int state)
->  
->  		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
->  			TASDEVICE_BIN_BLK_PRE_POWER_UP);
-> -	} else
-> +	} else {
->  		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
->  			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
-> +	}
->  }
->  EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
->  	SND_SOC_TAS2781_FMWLIB);
-> diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-> index 9350972dfefe..ccb9313ada9b 100644
-> --- a/sound/soc/codecs/tas2781-i2c.c
-> +++ b/sound/soc/codecs/tas2781-i2c.c
-> @@ -380,23 +380,30 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
->  	mutex_lock(&tas_priv->codec_lock);
->  
->  	ret = tasdevice_rca_parser(tas_priv, fmw);
-> -	if (ret)
-> +	if (ret) {
-> +		tasdevice_config_info_remove(tas_priv);
->  		goto out;
-> +	}
->  	tasdevice_create_control(tas_priv);
->  
->  	tasdevice_dsp_remove(tas_priv);
->  	tasdevice_calbin_remove(tas_priv);
-> -	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
-> +	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
->  	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
->  		tas_priv->dev_name);
-> +
->  	ret = tasdevice_dsp_parser(tas_priv);
->  	if (ret) {
->  		dev_err(tas_priv->dev, "dspfw load %s error\n",
->  			tas_priv->coef_binaryname);
-> -		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
->  		goto out;
->  	}
-> -	tasdevice_dsp_create_ctrls(tas_priv);
-> +
-> +	ret = tasdevice_dsp_create_ctrls(tas_priv);
-> +	if (ret) {
-> +		dev_err(tas_priv->dev, "dsp controls error\n");
-> +		goto out;
-> +	}
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
-this seems unrelated to the boot process? Move to a different patch?
+-- 
+Neil
 
->  
->  	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
->  
-> @@ -417,9 +424,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
->  	tasdevice_prmg_load(tas_priv, 0);
->  	tas_priv->cur_prog = 0;
->  out:
-> -	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
-> -		/*If DSP FW fail, kcontrol won't be created */
-> -		tasdevice_config_info_remove(tas_priv);
-> +	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
-> +		/*If DSP FW fail, DSP kcontrol won't be created */
-
-It looks like you're no longer using PENDING and FAIL states?
-The state machine is becoming really hard to follow.
-
->  		tasdevice_dsp_remove(tas_priv);
->  	}
->  	mutex_unlock(&tas_priv->codec_lock);
-> @@ -466,14 +472,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
->  {
->  	struct snd_soc_component *codec = dai->component;
->  	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
-> -	int ret = 0;
->  
-> -	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
-> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> -		ret = -EINVAL;
-> +	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
-> +		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
-> +		dev_err(tas_priv->dev, "Bin file not loaded\n");
-> +		return -EINVAL;
->  	}
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int tasdevice_hw_params(struct snd_pcm_substream *substream,
 
