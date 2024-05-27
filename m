@@ -1,122 +1,284 @@
-Return-Path: <linux-kernel+bounces-190544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727818CFFB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6138CFFB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E181F21CBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8DF1C2163B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C099415EFAC;
-	Mon, 27 May 2024 12:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A2F1581E2;
+	Mon, 27 May 2024 12:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="hJPjxmUc"
-Received: from mail02.habana.ai (habanamailrelay.habana.ai [213.57.90.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YxtTi8Tn"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69CF15DBCC
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.57.90.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85C15DBC7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716811994; cv=none; b=KqmF49aLE/rc8wdy2Ms0LI9hOA1IFV2NJ5uxGxH2BMZhaUzleN6SC81DQpXD345NhNWabOpPVHAI1Gxz5KS+Np/ibQ7URGDX6YtiZ1S4oOuwmytdNSa2IuNf3fhWbGd29jYjNLpVyiN4jRjxc+/c+n2E7wHjMXd22JUMakaPbYg=
+	t=1716812075; cv=none; b=VQav9GfxvYfLKINulg6Fj0/m6ylA7rGmlZ3QMljIxMeJj1ciNkU6Pb5vPllo2LcBu7ccCRYIWp0Xl5529cfE6eb+t+1FYkWFQUsLQmfVfN3fwjjG9rXtSbssUbMHU1iEf5fdDApCb4mXZEPpspennneKEWz5gdRzXIOms0WvRsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716811994; c=relaxed/simple;
-	bh=HA3Ew5tpL7ApKKFbeZ+k1CKifd7ompu4unxRVvUSSkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GhgzYqbGulhnn11Ol4vPfnyasdRGLfzmTM2q/jNxZ+KM5oFAg9J9Hb2DPjoL6trvGXFi+AZ2D+KAR2YVyrFYRPDB5hjeUcS4BSU2b8aVOvfJcqg2OH6slqZK/nVqOWaOVZ5VqQfYwYLbgrVyO8VHjJn3HpOKCDg0IVExBwc1i2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=hJPjxmUc; arc=none smtp.client-ip=213.57.90.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
-Received: internal info suppressed
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
-	t=1716811993; bh=HA3Ew5tpL7ApKKFbeZ+k1CKifd7ompu4unxRVvUSSkU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hJPjxmUciGCeDmYTn82I0pH8ClJhQRo8Ku/9DqJTCAyoxQzt/DBzC3TAzhh+aq1Ou
-	 I4eV1MaPXENiqYOJWp7wJpkbtalz5Sy02v0dXXOnvePNY7Sfp4jMVtwMHYT7dWxAOf
-	 1t/Z/tINg6YYTXNeZMIOX4dx87+VOnlCQl89Z1eusBxC7Qvn0jhivLGtzFPQo5uh0X
-	 b4uhNP9O2OSZadK8AVqoQs5Pm6cWRcMICojKTKM/ZE81NrO6DDMl+cA9m6X149aIxA
-	 Kc+L+uWd2rwrfwAL+BE7MqkB8p3Zz9EYF5BrT8XiTq2iPNhHGrupEvQuK0EcYKcKPB
-	 TINOv+umpz6nw==
-Received: from obitton-vm-u22.habana-labs.com (localhost [127.0.0.1])
-	by obitton-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 44RCCub01921351;
-	Mon, 27 May 2024 15:12:57 +0300
-From: Ofir Bitton <obitton@habana.ai>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Tomer Tayar <ttayar@habana.ai>
-Subject: [PATCH 8/8] accel/habanalabs: move hl_eq_heartbeat_event_handle() to common code
-Date: Mon, 27 May 2024 15:12:54 +0300
-Message-Id: <20240527121254.1921306-8-obitton@habana.ai>
+	s=arc-20240116; t=1716812075; c=relaxed/simple;
+	bh=3BIdX3EdAPuVTft31wCYTBWCiJrQdkcS6E6jn6Egyfg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mXbV7hGxPogDPkwvKHygVe1BEV3STVpfWaHf86ksFtIx8u/Uxb7x7OGLzoCm/boPC1P/PHpwbNRymDYOY4ivXWpDywsHPdgB2lpyNVLskw3Joagtmwy3c7P9wiBx55LJ+zUCTwRptXMaemnMiDGWyIHm8acx4zKqynwFze5aZdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YxtTi8Tn; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a62ef52e837so111090666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716812072; x=1717416872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lwzLqzyjdxC6O475cVXSLXVvtX9GC0h/UvWCIMp5xzM=;
+        b=YxtTi8TnE+Mkn48uzSyrZhbKpvEMme5DAC9WQHW2kxmTe5YZFhnW0iGTp06nCrVNgO
+         5RG7jdWH5Z3OJG+hFr0g3FFxgEVXbqNYB5nZmltl8ADDRVMm3CqjFh2k8YWjgHJT7wvW
+         L5O7gpism/a+Fjrd1pOddMxPR9ewC7jMGMazCunIFHBg4NhianfcPX1oMXKtBC3TBZqF
+         GKvg5TfxQ29W5i3Rrgcgd1FbzNkIvKBPrF+Qt11bz/8GqxmmGgmfRYsgUWZaKHUJ1ZXl
+         D2so44m9bAC52BAQQ8sJloW8HdiKfovN5FVUOwws3rfYfW0u9tgJ7ZWJ2R8H30f3YgT4
+         +1CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716812072; x=1717416872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lwzLqzyjdxC6O475cVXSLXVvtX9GC0h/UvWCIMp5xzM=;
+        b=Nuca+FnVKH8fwZKL5Br1vUEsRVKssLn1gx6ObBQ3FEaP/f17lAGRXYHj7mfxlFxLq1
+         t2kvE4EwUZWlMKD3ZJx/+zqniJakgcSr0tUMX2OyFBrLu0pnUtlHuSXaOMA6pz+XhuTi
+         8j8KzAVfx7dx7e7bG+VPMTEYzzBV/mJBUsLmreTtleRsbrRe5D8vuUhkQgx0Hcme9+Ix
+         aKLtFMwPLc3lp0I0LZOAdE+Wjx9VjuzCm8Qnim7iaYsM/fQKfUrW+NiD/eqSiwBzf24y
+         A1wO2nwO0vNwXaCKLnxJV5gF4SM+ShnEuUYpW2Nrv6aU1grTAKg/TnU0jqIyRVIzECXg
+         B6pA==
+X-Gm-Message-State: AOJu0YwMGZMPD4TGwQXXJaJonwqJwQ4LpUeg6vKXrw0jGyY+icVDfu0I
+	MgODv342+Av8tyHVnNSdDlK6rSWaOtF4TU7FyJgwMxqJskj73xOiwmvULRxrJ3FaJLQ1/juCzO2
+	7g064sw==
+X-Google-Smtp-Source: AGHT+IHlP8euj8xyOdayyJM/cHvYJE4SjNAGnZvJhK5Cw8KD+R/MQB5q3lR4IvDNHRqcVv1jGVM2gg==
+X-Received: by 2002:a17:906:4c4f:b0:a59:c28a:d350 with SMTP id a640c23a62f3a-a62641cde01mr549994066b.24.1716812071405;
+        Mon, 27 May 2024 05:14:31 -0700 (PDT)
+Received: from rayden.urgonet (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c2a8sm484100866b.165.2024.05.27.05.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 05:14:30 -0700 (PDT)
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org
+Cc: Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Manuel Traut <manut@mecka.net>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH v7 0/4] Replay Protected Memory Block (RPMB) subsystem
+Date: Mon, 27 May 2024 14:13:36 +0200
+Message-Id: <20240527121340.3931987-1-jens.wiklander@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240527121254.1921306-1-obitton@habana.ai>
-References: <20240527121254.1921306-1-obitton@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tomer Tayar <ttayar@habana.ai>
+Hi,
 
-hl_eq_heartbeat_event_handle() doesn't have ASIC specific code, and
-therefore can be moved from Gaudi2-only code to common code, and
-possibly used for other ASICs.
+This patch set introduces a new RPMB subsystem, based on patches from [1],
+[2], and [3]. The RPMB subsystem aims at providing access to RPMB
+partitions to other kernel drivers, in particular the OP-TEE driver. A new
+user space ABI isn't needed, we can instead continue using the already
+present ABI when writing the RPMB key during production.
 
-Signed-off-by: Tomer Tayar <ttayar@habana.ai>
-Reviewed-by: Ofir Bitton <obitton@habana.ai>
----
- drivers/accel/habanalabs/common/device.c     | 6 ++++++
- drivers/accel/habanalabs/common/habanalabs.h | 1 +
- drivers/accel/habanalabs/gaudi2/gaudi2.c     | 6 ------
- 3 files changed, 7 insertions(+), 6 deletions(-)
+I've added and removed things to keep only what is needed by the OP-TEE
+driver. Since the posting of [3], there has been major changes in the MMC
+subsystem so "mmc: block: register RPMB partition with the RPMB subsystem"
+is in practice completely rewritten.
 
-diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
-index 35502e938b5d..f9b8601c4396 100644
---- a/drivers/accel/habanalabs/common/device.c
-+++ b/drivers/accel/habanalabs/common/device.c
-@@ -2850,3 +2850,9 @@ void hl_set_irq_affinity(struct hl_device *hdev, int irq)
- 	if (irq_set_affinity_and_hint(irq, &hdev->irq_affinity_mask))
- 		dev_err(hdev->dev, "Failed setting irq %d affinity\n", irq);
- }
-+
-+void hl_eq_heartbeat_event_handle(struct hl_device *hdev)
-+{
-+	hdev->heartbeat_debug_info.heartbeat_event_counter++;
-+	hdev->eq_heartbeat_received = true;
-+}
-diff --git a/drivers/accel/habanalabs/common/habanalabs.h b/drivers/accel/habanalabs/common/habanalabs.h
-index 8d0df685e627..057087dc8592 100644
---- a/drivers/accel/habanalabs/common/habanalabs.h
-+++ b/drivers/accel/habanalabs/common/habanalabs.h
-@@ -4059,6 +4059,7 @@ void hl_capture_engine_err(struct hl_device *hdev, u16 engine_id, u16 error_coun
- void hl_enable_err_info_capture(struct hl_error_info *captured_err_info);
- void hl_init_cpu_for_irq(struct hl_device *hdev);
- void hl_set_irq_affinity(struct hl_device *hdev, int irq);
-+void hl_eq_heartbeat_event_handle(struct hl_device *hdev);
- 
- #ifdef CONFIG_DEBUG_FS
- 
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-index 4791582d157c..a38b88baadf2 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-@@ -9777,12 +9777,6 @@ static u16 event_id_to_engine_id(struct hl_device *hdev, u16 event_type)
- 	return U16_MAX;
- }
- 
--static void hl_eq_heartbeat_event_handle(struct hl_device *hdev)
--{
--	hdev->heartbeat_debug_info.heartbeat_event_counter++;
--	hdev->eq_heartbeat_received = true;
--}
--
- static void gaudi2_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
- {
- 	struct gaudi2_device *gaudi2 = hdev->asic_specific;
+With this OP-TEE can access RPMB during early boot instead of having to
+wait for user space to become available as in the current design [4].
+This will benefit the efi variables [5] since we won't rely on userspace as
+well as some TPM issues [6] that were solved.
+
+The OP-TEE driver finds the correct RPMB device to interact with by
+iterating over available devices until one is found with a programmed
+authentication matching the one OP-TEE is using. This enables coexisting
+users of other RPMBs since the owner can be determined by who knows the
+authentication key.
+
+The corresponding secure world OP-TEE patches are available at [7].
+
+I've put myself as a maintainer for the RPMB subsystem as I have an
+interest in the OP-TEE driver to keep this in good shape. However, if you'd
+rather see someone else taking the maintainership that's fine too. I'll
+help keep the subsystem updated regardless.
+
+[1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linux.microsoft.com/
+[2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@linaro.org/
+[3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-tomas.winkler@intel.com/
+[4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.html#rpmb-secure-storage
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c44b6be62e8dd4ee0a308c36a70620613e6fc55f
+[6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7269cba53d906cf257c139d3b3a53ad272176bca
+[7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v7
+
+Thanks,
+Jens
+
+Changes since v6:
+* Add Tested-by: Manuel Traut <manut@mecka.net> provided for the v6
+* Add a new patch "tee: add tee_device_set_dev_groups()" needed later in
+  the patch set
+* Reintroduce the rpmb_class as requested by Greg, this affects the patches
+  "rpmb: add Replay Protected Memory Block (RPMB) subsystem" and
+  "optee: probe RPMB device using RPMB subsystem"
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem":
+  - rpmb_interface_{,un}register() are now based on
+    class_interface_{,un}register()
+  - Embed a separate device in struct rpmb_dev for life cycle
+    management etc
+* "optee: probe RPMB device using RPMB subsystem"
+  - Add an internal blocking_notifier to deal with the struct
+    class_interface callback
+  - Add a rpmb_routing_model variable in sysfs to help integration with
+    systemd, requested by Mikko Rapeli
+  - Add an RPMB probe capability flag in the ABI shared with the secure
+    world, both SMC and FF-A ABI, needed to support the rpmb_routing_model
+    variable
+  - optee_rpc_cmd() is strict whether an RPMB RPC request should be
+    forwarded to tee-supplicant or routed via the RPMB subsystem, depending
+    on the reported RPMB routing model
+
+Changes since v5:
+Manuel Traut reported and investigated an error on an i.MX8MM, the root
+cause was identified as insufficient alignment on frames sent to the RPMB
+device. Fixed in the OP-TEE driver as described below.
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding a missing EXPORT_SYMBOL_GPL()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FRAMES
+    to get rid of the small header struct rpmb_req (now removed) causing
+    the problem.
+  - Matching changes on the secure side + support for re-initializing
+    RPMB in case a boot stage has used RPMB, the latter also reported by 
+    Manuel Traut.
+
+Changes since v4:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Describing struct rpmb_descr as RPMB description instead of descriptor
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Addressing review comments
+  - Adding more comments for struct rpmb_frame
+  - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb_add()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
+    Protected Memory Block (RPMB) subsystem"
+
+Changes since v3:
+* Move struct rpmb_frame into the MMC driver since the format of the RPMB
+  frames depend on the implementation, one format for eMMC, another for
+  UFS, and so on
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+  - Adding more description of the API functions
+  - Removing the set_dev_info() op from struct rpmb_ops, the needed information
+    is supplied in the arguments to rpmb_dev_register() instead.
+  - Getting rid of struct rpmb_ops since only the route_frames() op was
+    remaining, store that op directly in struct rpmb_dev
+  - Changed rpmb_interface_register() and rpmb_interface_unregister() to use
+    notifier_block instead of implementing the same thing ourselves
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Moving the call to rpmb_dev_register() to be done at the end of
+    mmc_blk_probe() when the device is fully available
+* "optee: probe RPMB device using RPMB subsystem"
+  - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
+    available
+  - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_devices()
+    to recognize the error in optee_rpmb_scan()
+  - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
+
+Changes since v2:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Fixing documentation issues
+  - Adding a "depends on MMC" in the Kconfig
+  - Removed the class-device and the embedded device, struct rpmb_dev now
+    relies on the parent device for reference counting as requested
+  - Removed the now unneeded rpmb_ops get_resources() and put_resources()
+    since references are already taken in mmc_blk_alloc_rpmb_part() before
+    rpmb_dev_register() is called
+  - Added rpmb_interface_{,un}register() now that
+    class_interface_{,un}register() can't be used ay longer
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Adding the missing error cleanup in alloc_idata()
+  - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+    instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Registering to get a notification when an RPMB device comes online
+  - Probes for RPMB devices each time an RPMB device comes online, until
+    a usable device is found
+  - When a usable RPMB device is found, call
+    optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
+  - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEXT
+
+Changes since Shyam's RFC:
+* Removed the remaining leftover rpmb_cdev_*() function calls
+* Refactored the struct rpmb_ops with all the previous ops replaced, in
+  some sense closer to [3] with the route_frames() op
+* Added rpmb_route_frames()
+* Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from [3]
+* Removed all functions not needed in the OP-TEE use case
+* Added "mmc: block: register RPMB partition with the RPMB subsystem", based
+  on the commit with the same name in [3]
+* Added "optee: probe RPMB device using RPMB subsystem" for integration
+  with OP-TEE
+* Moved the RPMB driver into drivers/misc/rpmb-core.c
+* Added my name to MODULE_AUTHOR() in rpmb-core.c
+* Added an rpmb_mutex to serialize access to the IDA
+* Removed the target parameter from all rpmb_*() functions since it's
+  currently unused
+
+
+Jens Wiklander (4):
+  rpmb: add Replay Protected Memory Block (RPMB) subsystem
+  mmc: block: register RPMB partition with the RPMB subsystem
+  tee: add tee_device_set_dev_groups()
+  optee: probe RPMB device using RPMB subsystem
+
+ Documentation/ABI/testing/sysfs-class-tee |  15 ++
+ MAINTAINERS                               |   8 +
+ drivers/misc/Kconfig                      |  10 +
+ drivers/misc/Makefile                     |   1 +
+ drivers/misc/rpmb-core.c                  | 232 +++++++++++++++++++++
+ drivers/mmc/core/block.c                  | 241 +++++++++++++++++++++-
+ drivers/tee/optee/core.c                  |  96 ++++++++-
+ drivers/tee/optee/device.c                |   7 +
+ drivers/tee/optee/ffa_abi.c               |  14 ++
+ drivers/tee/optee/optee_ffa.h             |   2 +
+ drivers/tee/optee/optee_private.h         |  26 ++-
+ drivers/tee/optee/optee_rpc_cmd.h         |  35 ++++
+ drivers/tee/optee/optee_smc.h             |   2 +
+ drivers/tee/optee/rpc.c                   | 177 ++++++++++++++++
+ drivers/tee/optee/smc_abi.c               |  14 ++
+ drivers/tee/tee_core.c                    |  19 +-
+ include/linux/rpmb.h                      | 123 +++++++++++
+ include/linux/tee_drv.h                   |  12 ++
+ 18 files changed, 1024 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-tee
+ create mode 100644 drivers/misc/rpmb-core.c
+ create mode 100644 include/linux/rpmb.h
+
 -- 
 2.34.1
 
