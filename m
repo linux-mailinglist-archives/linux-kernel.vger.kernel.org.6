@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-191480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661648D1020
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:15:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEC68D1022
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 979A41C2146F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163B21F21ECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E500E167D9F;
-	Mon, 27 May 2024 22:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1219168C3F;
+	Mon, 27 May 2024 22:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IKHAXosi"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="frghwIL4"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7E4167DB5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4289B168C00
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716848096; cv=none; b=HtT4+8Iykg2rxUOyv8jQ/3wnS9WsSh3fZlFY2msGbpg5qK0FDrZwXvUALbC8OK0TKwCGgWUsZVFLVCfkyNxLXwCmZYo1eu80yRTcCeV344zlv/qjiub8dq2SlJ6jlu+qmNzS8lIw7k6wIjjWs/MOHB9MrzPEYgZaJtc1GtRGcqY=
+	t=1716848096; cv=none; b=S45K3SC88BgWih8ibk6kjiz4YIEwL3EcmotNZPiL+lMA7Xb5q5uCcCrqnqLLUpc76ahn0Ui9s26Iq9oXWAKQUiIWDCIXG7PNKAkl+Uzq7myO4fesARJmGwqH1uGIaloxlTzzBhSFK4NEhLwoikxtqe52rKebrV24g9hyqSyzi48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716848096; c=relaxed/simple;
-	bh=oppOayLgT4TipjNvWZtrKvu8Y0Yu4zuAeXfakAZELQY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KRT02WN61PEPcBoXTcm11rH4XVbKdifa06N+IHBpY8TXaIdgcwJ2lOG1tm5vewuAyXI/wqLyZU17WUPXw3uS+qbrvo4HMHexdXrabiSzF0OAVOWZKC9eBcrnTicIZrpdCm3pUHOAwfMi+YWTleobS4acoBe/tiTu5hN61H+ewCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IKHAXosi; arc=none smtp.client-ip=209.85.222.180
+	bh=Fwd5tXA0UQLNv4eb1QzUSIOyA2aHWmaleAdJjHcH7xg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dw/FxTbvhYRf+kC1gR4Bx0XfQwKkOUzMhFSFE2yXXdQo0svDNCcGUssqR4JdbnYxpiEG+aK/cfd+M2R02sr9d6jZK0paPYua+MzByyNVpZNrZ36btONaUTBlXvINuuZk5c+8qIeWqOMK0K+3wOmmOj/rddnEwDBcUEGoltaWFOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=frghwIL4; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-794cbdc2314so14892585a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:14:53 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-792bdf626beso19078885a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:14:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716848093; x=1717452893; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8oMra6vlnGoklVAVPREy/doMlsD9Wu566bIjtVKUJEI=;
-        b=IKHAXosigA+Yu4r81Qt+hM4rCY8aAYkDLoVpvJW6Fw5JruPpNwmoepisx/AT/sDNm1
-         hS2e6dxPs69PKt7vfyybGnELk15uEUo5wzoR63vxRK2jdLDuSWMsTm5fYhZDLm9iP2na
-         noCAPjfYAa0Hq7Y+WhF8nXdv7ibKFp+T713BI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716848093; x=1717452893;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1716848094; x=1717452894; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8oMra6vlnGoklVAVPREy/doMlsD9Wu566bIjtVKUJEI=;
-        b=RNuEscVJUGkrxmuyyeCG2GHbAJQ+qT2eQzNhUsw0S6i4yutKGv2FvVuww/+kAuMv7m
-         j7xC3mQpwdKKHsFJOUFLJ3JCspx/BCLC6buvCLhLYXqktqhvA+jqOuqwa7hq0lAX1BGt
-         I1iOE/7Nnh9YxMFQ9izufn1JMrREvHkKeZi5EBtn5nlDycca5Z+MhA9+m1HbaqPa8QNI
-         vWQi53zfrNMwEUWDf9CXV9j4U/JvIfofLyAv0OBCXdSBYWJuixniFEyn342f4AnBhcVR
-         dGQJ8OSXKA9FPXycKmXZktCZc6TX8MI8Xzeu4Zf30b6eLt4U5vmF/SIewhrlXZUnCplJ
-         j2EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSIvlo6+zjtq0k85Lq7pOrO+cKFS2GQtAbvQMiQnjFihQ7GNGFyG1zB53b4Nq1KiUkFVf59mjx8v/0k0X434dAGI50/EETKdE0Muub
-X-Gm-Message-State: AOJu0Yxovv9zpo9o+Zs+Fet6fNh9ySNyUEW+xR/m5uL2Jk7DG6k4i4Z9
-	hshyihP3+2KDmMgRsgAz2GSzMK6++YfVGIt62TgNvyMkpcZFcZfXmEMhBCRnHw==
-X-Google-Smtp-Source: AGHT+IGU37guyTfar/mOLUVh/av0TzmbcroyvLNiYEmJSXl4gLVRYr9flpLBq27+gEWeR+3KMFyHig==
-X-Received: by 2002:a05:620a:1476:b0:793:d22:4509 with SMTP id af79cd13be357-794ab09c183mr1036442285a.17.1716848092986;
-        Mon, 27 May 2024 15:14:52 -0700 (PDT)
+        bh=Mhx0VHnzzMbEOw920oSrnPWneiMuNSd3zSFtO71ho5o=;
+        b=frghwIL4k4So7kgynmme9gLrBOr6k9VbBm+47wYd9D4/R7Jx78e0k+m4wCqA1C7+kX
+         +eTDHY+Sp0SCVd1S8PB49wy2u+v4mgRFLMWxTdK8SPf3rcpql7btDkvmTOPL2z3QtVtC
+         bLtXt99ACdM628soY4Nn0fbO2mepHDOr6xy7o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716848094; x=1717452894;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mhx0VHnzzMbEOw920oSrnPWneiMuNSd3zSFtO71ho5o=;
+        b=Ce+PE/2igJbgBSdFRbb8yfqM5zW98uTaH4lhc2rCYhrMIlyAwJNWiUybcfzJZQUlkn
+         i+9QWjwUr6FJjLAXidk8du6jMSfRNWvHtnkllTjsc5gFq08F78HQmyDmqxzu/a8kjOkx
+         cEks1lU0oS9a+ariciC14NHFKtQMIgseQmIHtDSpeZxzfrAdlcO/gVCbiiBZWhS2MAiO
+         iY7GXdXB7qobbErrt1LyvT+/nCU1NokWP+hLT2tS4rCIw4BaUwsUR0YzTatqjJ2zrch6
+         QheLlVCOAAHor+Wy7tE9Y9mdmi3GaJOT9YBqGRVY2ChkKKHPacHIF2X/bHJVAb8FQgIk
+         Ovug==
+X-Forwarded-Encrypted: i=1; AJvYcCUaLLLyCcKTd5++qmbn9g/QMD8/zUo5ggEJ1iuFCZ4sfdO2xQCOAeM8NvJh2T6CK1LLZtCGe1Uv9/CbSSxmMMbP+FZQeBQ2+BPWe0SC
+X-Gm-Message-State: AOJu0Yw+RgAqIRXq2Zbu1cxe76e+i6BTmq0f3V2KynM07miDC8FkUT/l
+	4s6MbFdUpxepwB9ZfzzGWi60O9o84PjMtMjvRBxJB9uXSjhF9KKXg4YJA1LbQw==
+X-Google-Smtp-Source: AGHT+IFWopuwkIVjiRp+xGrzzsUyD3QL/LbqrRwSBKnqvh3yDmw9hxx+rGn2c2Pdly7jYHbmDeJdtw==
+X-Received: by 2002:a05:620a:3906:b0:790:ec77:4c1a with SMTP id af79cd13be357-794a0a568e5mr2414641385a.39.1716848094132;
+        Mon, 27 May 2024 15:14:54 -0700 (PDT)
 Received: from denia.c.googlers.com (125.135.86.34.bc.googleusercontent.com. [34.86.135.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca58e6sm329740885a.18.2024.05.27.15.14.52
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca58e6sm329740885a.18.2024.05.27.15.14.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 15:14:52 -0700 (PDT)
+        Mon, 27 May 2024 15:14:53 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH 0/3] media: ivtv: Fix smatch warnings
-Date: Mon, 27 May 2024 22:14:44 +0000
-Message-Id: <20240527-devm-itv-v1-0-f5829b8e7674@chromium.org>
+Date: Mon, 27 May 2024 22:14:45 +0000
+Subject: [PATCH 1/3] media: pci/ivtv: Replace ioremap with devm_ variants
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,36 +74,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANQFVWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyNz3ZTUslzdzJIyXVMzc0MLc3PDxKSUVCWg8oKi1LTMCrBR0bG1tQC
- /vgYiWgAAAA==
+Message-Id: <20240527-devm-itv-v1-1-f5829b8e7674@chromium.org>
+References: <20240527-devm-itv-v1-0-f5829b8e7674@chromium.org>
+In-Reply-To: <20240527-devm-itv-v1-0-f5829b8e7674@chromium.org>
 To: Andy Walls <awalls@md.metrocast.net>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.4
 
-Linux v6.10r1 throws a couple of warnings, lets fix them:
-https://linux-media.pages.freedesktop.org/-/media-staging/-/jobs/59203691/artifacts/junit/test-smatch.err.txt
+With Managed Device Resources the error handling is simpler.
 
-And now that we are at it, replace some functions with the more modern
-managed versions of them.
+The following smatch warning is silenced:
+drivers/media/pci/ivtv/ivtv-driver.c: drivers/media/pci/ivtv/ivtv-driver.c:1296 ivtv_probe() warn: 'itv->dec_mem' from ioremap() not released on lines: 1296.
+drivers/media/pci/ivtv/ivtv-driver.c: drivers/media/pci/ivtv/ivtv-driver.c:1296 ivtv_probe() warn: 'itv->enc_mem' from ioremap() not released on lines: 1296.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-Ricardo Ribalda (3):
-      media: pci/ivtv: Replace ioremap with devm_ variants
-      media: pci/ivtv: Replace request_mem_region with devm_ variant
-      media: pci/ivtv: Use managed version of pci_enable_device
+ drivers/media/pci/ivtv/ivtv-driver.c | 51 +++++++++---------------------------
+ 1 file changed, 12 insertions(+), 39 deletions(-)
 
- drivers/media/pci/ivtv/ivtv-driver.c | 93 ++++++++++--------------------------
- 1 file changed, 24 insertions(+), 69 deletions(-)
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240527-devm-itv-56718771abde
+diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+index ba503d820e48..7599fffb0c9d 100644
+--- a/drivers/media/pci/ivtv/ivtv-driver.c
++++ b/drivers/media/pci/ivtv/ivtv-driver.c
+@@ -371,33 +371,6 @@ int ivtv_msleep_timeout(unsigned int msecs, int intr)
+ 	return 0;
+ }
+ 
+-/* Release ioremapped memory */
+-static void ivtv_iounmap(struct ivtv *itv)
+-{
+-	if (itv == NULL)
+-		return;
+-
+-	/* Release registers memory */
+-	if (itv->reg_mem != NULL) {
+-		IVTV_DEBUG_INFO("releasing reg_mem\n");
+-		iounmap(itv->reg_mem);
+-		itv->reg_mem = NULL;
+-	}
+-	/* Release io memory */
+-	if (itv->has_cx23415 && itv->dec_mem != NULL) {
+-		IVTV_DEBUG_INFO("releasing dec_mem\n");
+-		iounmap(itv->dec_mem);
+-	}
+-	itv->dec_mem = NULL;
+-
+-	/* Release io memory */
+-	if (itv->enc_mem != NULL) {
+-		IVTV_DEBUG_INFO("releasing enc_mem\n");
+-		iounmap(itv->enc_mem);
+-		itv->enc_mem = NULL;
+-	}
+-}
+-
+ /* Hauppauge card? get values from tveeprom */
+ void ivtv_read_eeprom(struct ivtv *itv, struct tveeprom *tv)
+ {
+@@ -1041,8 +1014,9 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ 	/* map io memory */
+ 	IVTV_DEBUG_INFO("attempting ioremap at 0x%llx len 0x%08x\n",
+ 		   (u64)itv->base_addr + IVTV_ENCODER_OFFSET, IVTV_ENCODER_SIZE);
+-	itv->enc_mem = ioremap(itv->base_addr + IVTV_ENCODER_OFFSET,
+-				       IVTV_ENCODER_SIZE);
++	itv->enc_mem = devm_ioremap(&pdev->dev,
++				    itv->base_addr + IVTV_ENCODER_OFFSET,
++				    IVTV_ENCODER_SIZE);
+ 	if (!itv->enc_mem) {
+ 		IVTV_ERR("ioremap failed. Can't get a window into CX23415/6 encoder memory\n");
+ 		IVTV_ERR("Each capture card with a CX23415/6 needs 8 MB of vmalloc address space for this window\n");
+@@ -1055,8 +1029,9 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ 	if (itv->has_cx23415) {
+ 		IVTV_DEBUG_INFO("attempting ioremap at 0x%llx len 0x%08x\n",
+ 				(u64)itv->base_addr + IVTV_DECODER_OFFSET, IVTV_DECODER_SIZE);
+-		itv->dec_mem = ioremap(itv->base_addr + IVTV_DECODER_OFFSET,
+-				IVTV_DECODER_SIZE);
++		itv->dec_mem = devm_ioremap(&pdev->dev,
++					    itv->base_addr + IVTV_DECODER_OFFSET,
++					    IVTV_DECODER_SIZE);
+ 		if (!itv->dec_mem) {
+ 			IVTV_ERR("ioremap failed. Can't get a window into CX23415 decoder memory\n");
+ 			IVTV_ERR("Each capture card with a CX23415 needs 8 MB of vmalloc address space for this window\n");
+@@ -1073,26 +1048,27 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ 	/* map registers memory */
+ 	IVTV_DEBUG_INFO("attempting ioremap at 0x%llx len 0x%08x\n",
+ 		   (u64)itv->base_addr + IVTV_REG_OFFSET, IVTV_REG_SIZE);
+-	itv->reg_mem =
+-	    ioremap(itv->base_addr + IVTV_REG_OFFSET, IVTV_REG_SIZE);
++	itv->reg_mem = devm_ioremap(&pdev->dev,
++				    itv->base_addr + IVTV_REG_OFFSET,
++				    IVTV_REG_SIZE);
+ 	if (!itv->reg_mem) {
+ 		IVTV_ERR("ioremap failed. Can't get a window into CX23415/6 register space\n");
+ 		IVTV_ERR("Each capture card with a CX23415/6 needs 64 kB of vmalloc address space for this window\n");
+ 		IVTV_ERR("Check the output of 'grep Vmalloc /proc/meminfo'\n");
+ 		IVTV_ERR("Use the vmalloc= kernel command line option to set VmallocTotal to a larger value\n");
+ 		retval = -ENOMEM;
+-		goto free_io;
++		goto free_mem;
+ 	}
+ 
+ 	retval = ivtv_gpio_init(itv);
+ 	if (retval)
+-		goto free_io;
++		goto free_mem;
+ 
+ 	/* active i2c  */
+ 	IVTV_DEBUG_INFO("activating i2c...\n");
+ 	if (init_ivtv_i2c(itv)) {
+ 		IVTV_ERR("Could not initialize i2c\n");
+-		goto free_io;
++		goto free_mem;
+ 	}
+ 
+ 	if (itv->card->hw_all & IVTV_HW_TVEEPROM) {
+@@ -1277,8 +1253,6 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ free_i2c:
+ 	v4l2_ctrl_handler_free(&itv->cxhdl.hdl);
+ 	exit_ivtv_i2c(itv);
+-free_io:
+-	ivtv_iounmap(itv);
+ free_mem:
+ 	release_mem_region(itv->base_addr, IVTV_ENCODER_SIZE);
+ 	release_mem_region(itv->base_addr + IVTV_REG_OFFSET, IVTV_REG_SIZE);
+@@ -1439,7 +1413,6 @@ static void ivtv_remove(struct pci_dev *pdev)
+ 	exit_ivtv_i2c(itv);
+ 
+ 	free_irq(itv->pdev->irq, (void *)itv);
+-	ivtv_iounmap(itv);
+ 
+ 	release_mem_region(itv->base_addr, IVTV_ENCODER_SIZE);
+ 	release_mem_region(itv->base_addr + IVTV_REG_OFFSET, IVTV_REG_SIZE);
 
-Best regards,
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.45.1.288.g0e0cd299f1-goog
 
 
