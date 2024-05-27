@@ -1,199 +1,101 @@
-Return-Path: <linux-kernel+bounces-190407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8DB8CFDEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A738CFDEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B30ECB210E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B905EB22212
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F06F13AD14;
-	Mon, 27 May 2024 10:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5F213AD12;
+	Mon, 27 May 2024 10:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ck9Kh7DQ"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="h0B7aYnF"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E7213AA4E;
-	Mon, 27 May 2024 10:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53027DF60;
+	Mon, 27 May 2024 10:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716804757; cv=none; b=En88YpYQ9X/qFJGnpS46lulUWYwIRjLGqONDy9sjFr4IJeukmqLYFxEURN1bna1/AiCDpnOl1VJRkJ1PthAXBvsInmIf8aUaQdFbJ+AWOBgAB3gn3xDoF2kDdXQjujOXdRDw38oyRJQ/YF2XnBFbxM6S/ZZKQgtPGxycohuKcgU=
+	t=1716804814; cv=none; b=hvP1iHLCtvgoHWDUmjnQPED6U4uQvW7r9wBQFlNYvnYP9Ieu2/yvBvDD+wbMO24qW70xjRH+dTVYfnUG2bWHK0Z5D5w46xzwzONM2r+WkiVe+4jlBMGECi50qGYJVNtVvjMREksW+RLDidgjrogJfrCoO8fpOeiLMPxh2ugnqMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716804757; c=relaxed/simple;
-	bh=Nu4zFkf+vdG4f/A//Ee3j7+2qsOZTO1MLXeLI38A08U=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I6sQsajFrsVgILwLtdWQOb/31AIz2dn/QWn/rjmSaUanauT/WqsbhXxeiBOwYL0GhDQJdn2UwSqvsoCe7B8w1ZsFME7wk3fDdbc971j1wKbC6BH9Ob9FcQUZjpcpumRtA6Hki1VfPcKPn3LLPZpbJFH4X4ia/sNgO3gj1qYms/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ck9Kh7DQ; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44RABxF5067492;
-	Mon, 27 May 2024 05:11:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716804719;
-	bh=Oqc/Z6XWmRCD3Quoa8HVoha1OHkZHirIPRb60TQWAz4=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=ck9Kh7DQK8i+/r/GF/AeKcKwodcJ+kzERxRO9A2sBv0kjnvJZBulI6LBVN9bbD2ST
-	 fdmB1dBNOXxtHs7Z42BL2sSncP9c0Z0OQ9jD2AEA0nH+0cgs9mLkE7O4MsJii6wA7+
-	 LapD8AwpsLx/5vwKvuO3MQD9rZ69lGrVfTDPJhX4=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44RABxLF011380
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 May 2024 05:11:59 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
- May 2024 05:11:58 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 27 May 2024 05:11:58 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44RABwvV091740;
-	Mon, 27 May 2024 05:11:58 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Conor Dooley
-	<conor@kernel.org>
-CC: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: crypto: Add Texas Instruments MCRC64
-In-Reply-To: <c5aa0c8b-b2b4-4ad2-a8a8-ab26ee0edd22@linaro.org>
-References: <20230719-mcrc-upstream-v2-0-4152b987e4c2@ti.com>
- <20230719-mcrc-upstream-v2-3-4152b987e4c2@ti.com>
- <20230811-crestless-gratify-21c9bb422375@spud>
- <20230811-imminent-fancied-89663c373ab5@spud>
- <87plt7acgg.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <c5aa0c8b-b2b4-4ad2-a8a8-ab26ee0edd22@linaro.org>
-Date: Mon, 27 May 2024 15:41:57 +0530
-Message-ID: <87ikyza7iq.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1716804814; c=relaxed/simple;
+	bh=vGTDta5cr4YnLhTy9vZYMIz6pfgtC+BMB/uANO4R624=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u5mE9QFAU7Kk6bE5CMo6Irfr9XKMfgkHw+j1OooH63Fc0ubJix5RVYpUCkjgZpGcSw6XMdhu4+ikJHsqYoDVlYArzTOJH6uQMFtGAmdmMMW+0YJ08apdd3dOzlyKpsA1PPgPq0HozzoyDPf8EY0a7cEoDdVHkLRVK5fLgWOu3WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=h0B7aYnF; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44R72PqS010857;
+	Mon, 27 May 2024 05:13:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=9v5Sit+UNcMkGJqw
+	ZJxWcCcxnPrTKllqGqdXUYIyndE=; b=h0B7aYnFfI6hjV7KwPUgT/iMzYrzzoZJ
+	t8qltkt73Ll+jtk1pFPrP69PuQmEGP30dxCcYYEBIIufq9/n9NhuZB2W2uM5REjJ
+	KWrSsbhyUXpwrkxyku3bv5mNImyGMAw7hGstksA8heJgb6RhvtvGrk8eCm72EPBw
+	J30EXX8lkpt/LzLNQYNga3DOtlPutX6MMXynbPgotoNA+m6NIN4z3rz9CBlhyCK9
+	9rJWoyuo8fncXd7An47RwltQ/fbnGJTv9kuZBEieOcQP4Kv88XA0YZXcap8B6ni8
+	aBgphBsfCcPdKl1XcNbe4g0FhgwTn7v7B2whhoTJY0b27d7VgKD4Aw==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ybdcws9s0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 05:13:29 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
+ 2024 11:13:27 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 27 May 2024 11:13:27 +0100
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E84A4820270;
+	Mon, 27 May 2024 10:13:26 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <lgirdwood@gmail.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: [PATCH] MAINTAINERS: Remove James Schulman from Cirrus audio maintainers
+Date: Mon, 27 May 2024 11:13:26 +0100
+Message-ID: <20240527101326.440345-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Proofpoint-GUID: aY3ADv1RmAiA9svDEXnkT2zoyUYBMGWa
+X-Proofpoint-ORIG-GUID: aY3ADv1RmAiA9svDEXnkT2zoyUYBMGWa
+X-Proofpoint-Spam-Reason: safe
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
+James no longer works for Cirrus Logic, remove him from the list of
+maintainers for the Cirrus audio CODEC drivers.
 
-> This message was sent from outside of Texas Instruments. 
-> Do not click links or open attachments unless you recognize the source of this email and know the content is safe. If you wish
-> to report this message to IT Security, please forward the message as an attachment to phishing@list.ti.com 
->  
-> On 27/05/2024 10:25, Kamlesh Gurudasani wrote:
->> Conor Dooley <conor@kernel.org> writes:
->> 
->>> On Fri, Aug 11, 2023 at 04:34:33PM +0100, Conor Dooley wrote:
->>>> On Fri, Aug 11, 2023 at 12:58:50AM +0530, Kamlesh Gurudasani wrote:
->>>>> Add binding for Texas Instruments MCRC64
->>>>>
->>>>> MCRC64 engine calculates 64-bit cyclic redundancy checks (CRC)
->>>>> according to the ISO 3309 standard.
->>>>>
->>>>> The ISO 3309 64-bit CRC model parameters are as follows:
->>>>>     Generator Polynomial: x^64 + x^4 + x^3 + x + 1
->>>>>     Polynomial Value: 0x000000000000001B
->>>>>     Initial value: 0x0000000000000000
->>>>>     Reflected Input: False
->>>>>     Reflected Output: False
->>>>>     Xor Final: 0x0000000000000000
->>>>>
->>>>> Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
->>>>> ---
->>>>>  Documentation/devicetree/bindings/crypto/ti,mcrc64.yaml | 47 +++++++++++++++++++++++++++++++++++++++++++++++
->>>>>  MAINTAINERS                                             |  5 +++++
->>>>>  2 files changed, 52 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/crypto/ti,mcrc64.yaml b/Documentation/devicetree/bindings/crypto/ti,mcrc64.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..38bc7efebd68
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/crypto/ti,mcrc64.yaml
->>>>> @@ -0,0 +1,47 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/crypto/ti,mcrc64.yaml*__;Iw!!G3vK!Qw75749h2ysFlROkyfLIUT9MGWlHfBEvPAbLVjScJXCPJ7vbwgxH-8hNWlJGBXGwz9Ny47eQi2mPS5R6La54vZo$
->>>>> +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!G3vK!Qw75749h2ysFlROkyfLIUT9MGWlHfBEvPAbLVjScJXCPJ7vbwgxH-8hNWlJGBXGwz9Ny47eQi2mPS5R6P2LNJCQ$
->>>>> +
->>>>> +title: Texas Instruments MCRC64
->>>>> +
->>>>> +description: The MCRC64 engine calculates 64-bit cyclic redundancy checks
->>>>
->>>> A newline after "description" please.
->>>>
->>>>> +  (CRC) according to the ISO 3309 standard.
->>>>> +
->>>>> +maintainers:
->>>>> +  - Kamlesh Gurudasani <kamlesh@ti.com>
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: ti,am62-mcrc64
->>>>
->>>> Is the am62 an SoC or a family of SoCs? I googled a wee bit for am62 &
->>>> there seems to be an am625 and an am623?
->>>
->>> Or is it an am62p5, in which case the compatible should contain
->>> ti,am62p5 I suppose. Sorry for my confusion here, its not really clear
->>> me too since I've been seeing many different-but-similar product names
->>> the last few days.
->>>
->>> Thanks,
->>> Conor.
->>>
->> Hi Conor,
->> 
->> Thanks for the review.
->> 
->> am62 is family of SOCs.
->> 
->> All devices under this family, like am623/5/p5 and etc, have MCRC64.
->> 
->> I have kept the naming convention similar to SA2UL/SA3UL[0].
->> 
->> [0] https://urldefense.com/v3/__https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml*L18__;Iw!!G3vK!Qw75749h2ysFlROkyfLIUT9MGWlHfBEvPAbLVjScJXCPJ7vbwgxH-8hNWlJGBXGwz9Ny47eQi2mPS5R6afCEd8s$
->
-> Usual answer is: no families. There are exceptions, though, so is this
-> case on the exception list?
-Okay, will use ti,am625-mcrc64 as compatible and as fallback compatible for
-other devices. I hope that is right.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dc6818d0938d..f056140236f5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5040,7 +5040,6 @@ F:	Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+ F:	drivers/media/cec/i2c/ch7322.c
+ 
+ CIRRUS LOGIC AUDIO CODEC DRIVERS
+-M:	James Schulman <james.schulman@cirrus.com>
+ M:	David Rhodes <david.rhodes@cirrus.com>
+ M:	Richard Fitzgerald <rf@opensource.cirrus.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+-- 
+2.39.2
 
-Kamlesh
->
-> https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.10-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst*L42__;Iw!!G3vK!Qw75749h2ysFlROkyfLIUT9MGWlHfBEvPAbLVjScJXCPJ7vbwgxH-8hNWlJGBXGwz9Ny47eQi2mPS5R6WaRq1VM$
->
-> P.S. Your email client added some weird subject prefix - please fix it.
-Thanks for bringing this to my notice, Will fix it.
->
->
->
-> Best regards,
-> Krzysztof
 
