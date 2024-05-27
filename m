@@ -1,108 +1,92 @@
-Return-Path: <linux-kernel+bounces-190566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92BA8CFFE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E6C8CFFE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793051F22FD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E1528749A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D56C15F30E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFE515F318;
 	Mon, 27 May 2024 12:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4BqrTUc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oTrXooR9"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A615EFD5;
-	Mon, 27 May 2024 12:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD6215EFC7;
+	Mon, 27 May 2024 12:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812346; cv=none; b=ul9qW3D4eVc/jSKlUwAXdhThQf+yJZVgKjANVi7DFxKbmDU89OFwYD9s19AuEdAWrU1JeS4kEpg1rhT+gvENKhE02ZK5DuJC+5wlIdMwsGn/2RRhTemkEDQIDijUsqZ6fJxmPOetWikdZKhxbMI07GRFdqcoLFN+ydsRWkpXg2M=
+	t=1716812346; cv=none; b=ViU2qmPxy1sMMVRcJA7Vzi28/Z5M7XaIQDVX3QWXXWAyHLIjTjj251tZELmn374JrU7jeHO5iPxqZo0uEJfouvRx1hWkw0TpOjAgU7igEn3rGS+qmaLqjQuavenU52QFpzxRUqCfM0Sb62gqral7j3o3RN3RFCs7OPICWyVptlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716812346; c=relaxed/simple;
-	bh=fMUVC1wYfmgk+F283qmAnsiUZxdqaVd6XznWp+CLxmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=durVqEwl6qjRQCiKQ7g6oh6PlrtzWwI7QhlujCmYd7o8JNiZ2WpFwpaQWwhm0+UOJ1pFUEivsMD2dk/eGrJqyHXNlsTk1VwuEg/qyS2kyKK0lsdXbiOnRJ2pP2U0tdL1ktWpSGtz+su+5XBTuI5+00OQCDYyI0ludtRYjdJDvdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4BqrTUc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04D5C2BBFC;
-	Mon, 27 May 2024 12:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716812346;
-	bh=fMUVC1wYfmgk+F283qmAnsiUZxdqaVd6XznWp+CLxmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h4BqrTUcVVUR/nO1MVwypxsUWquVKtD8crHnsaVQEZsJL6icI8A6k4CjHC/BXClRe
-	 89Wb2ziK/WLkqr0LuAyUfz0eHCGsTdxxYx+Eo+GFWNrg9aJBztf7Gan3Z+fZ4lE/vx
-	 nDu7U4ldKlpicgAv33PihNGtV2P4NFZkpwcZJvkQ+WAWEYX0R3cikwtoVpYADyFxhx
-	 W8ajq8wqp5aS8uQZ8wj+PuS+ZxulDrs4JcYH5G/oHvEhoUnBHK708nmduLo0Ur1cEV
-	 EhngvDzkchvKvC75ba0+UEmjtPAVqYtj5kMGa+D1O2fG41qB/CwfLga9NeEbY4N5eB
-	 4Uwl8MCnlxdaA==
+	bh=IptZZo0YL3FlagpXnKLevmXCzhO71dyB2vJljMEgmUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fMJuIAAwgx8Zwe4G2OivUh9IJyeoEtnJdjGmlIrJ3FIe4GwLIVkV6UJA/gLP5govR4LmRygHBYPA4WgNQXNlQuaA7pXAk/TpJODUasKaD37Y15i9TfabK92i0btK2ipC4owUqToNrpshMyMUbEB0qNXrosabehHgTh7G/DLB6pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oTrXooR9; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2420F1C0003;
+	Mon, 27 May 2024 12:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716812343;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9HFncU1PhOHKdcu8vvbi3jbm3StjIMaMlXJRXdVMGNw=;
+	b=oTrXooR9clakWRqcxff2jUrpg+xOGC2/Wh2pZvkxR2oXNxjWE2TRUI2KnX9Qp/t+IT+YSy
+	fMLZGe4NN5Nhi+YARc8b6vknTmcP36AfFysSNfnu7b991hGQFGSBo3qyp7O2bpCCPMzsod
+	pCD1JUyBzL3fwovy8Y3C91BprjLGyxtJHhCJjG23Wfv+BxVG4cAla3AqvFdK6JY4ljgTNr
+	TIkninxriOji7uPAJHNj1AqcduSwYWcXp1iQV4nT8RqEkQ6TR646EXTYIbOLIkxDwft3ER
+	pwI6uQ1Js30Ab0vz0VIOtQ7Ptgnl87gONUKHqnjPILdVREfgob7Tc8BXrBivcg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	oxffffaa@gmail.com,
+	kernel@sberdevices.ru
+Subject: Re: [PATCH v6 2/3] mtd: rawnand: meson: refactor use of 'meson_nfc_cmd_access()'
 Date: Mon, 27 May 2024 14:19:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Howells <dhowells@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <20240527-pittoresk-kneipen-652000baed56@brauner>
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
+Message-Id: <20240527121901.178655-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240507230903.3399594-3-avkrasnov@salutedevices.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240527100618.np2wqiw5mz7as3vk@ninjato>
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'2234585f5c12f2a633fff715cca32ce0b40cfa29'
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, May 27, 2024 at 12:06:18PM +0200, Wolfram Sang wrote:
-> Hi Christian,
+On Tue, 2024-05-07 at 23:09:02 UTC, Arseniy Krasnov wrote:
+> Move call 'meson_nfc_cmd_seed()' and check for 'NAND_NEED_SCRAMBLING'
+> to 'meson_nfc_cmd_access()', thus removing code duplication.
 > 
-> > Afaict, the "auto" option has either never existent or it was removed before
-> > the new mount api conversion time ago for debugfs.
-> 
-> Frankly, I have no idea why I put this 'auto' in my fstab ages ago. But
-> it seems, I am not the only one[1].
-> 
-> [1] https://www.ibm.com/docs/en/linux-on-systems?topic=assumptions-debugfs
-> 
-> > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > index dc51df0b118d..713b6f76e75d 100644
-> > --- a/fs/debugfs/inode.c
-> > +++ b/fs/debugfs/inode.c
-> > @@ -107,8 +107,16 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param
-> >         int opt;
-> > 
-> >         opt = fs_parse(fc, debugfs_param_specs, param, &result);
-> > -       if (opt < 0)
-> > +       if (opt < 0) {
-> > +               /*
-> > +                * We might like to report bad mount options here; but
-> > +                * traditionally debugfs has ignored all mount options
-> > +                */
-> > +               if (opt == -ENOPARAM)
-> > +                       return 0;
-> > +
-> >                 return opt;
-> > +       }
-> > 
-> >         switch (opt) {
-> >         case Opt_uid:
-> > 
-> > 
-> > Does that fix it for you?
-> 
-> Yes, it does, thank you.
-> 
-> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
 
-Thanks, applied. Should be fixed by end of the week.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+
+Miquel
 
