@@ -1,129 +1,340 @@
-Return-Path: <linux-kernel+bounces-190424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084BC8CFE11
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:26:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B8F8CFE0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE521C21E2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:26:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF230B239F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD95D13BC2B;
-	Mon, 27 May 2024 10:25:40 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF69213B5B8;
+	Mon, 27 May 2024 10:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cjqoJETM"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2CF13B2A4;
-	Mon, 27 May 2024 10:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C88B13AD1C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716805540; cv=none; b=LkqSJR9H+Nx3XOTvlWt9aai9N4Q3byrpARvLJFt62wvhakE+/aWFQBD8Zu57pcf1UV1CTmYoRUwzMmoGMZXrTYo/tiQS5x01WTx9yo573LuRAC2ybW1DFRSFbvIvXiSlIjIHVtfdB6L3UCRCe2iiBu7AvhwdmMHl2wneZjq1PP4=
+	t=1716805536; cv=none; b=fvj2eteJXpcdGr1znMC5N/GL2jzaMClqCMZ5q+2R9bZ3q9TKJDBHS3sWLTe728S6OowLty8xKAtsRPsx8iqoGt07e9fntEWP9sD05XYX4KEGC6gZCehgl5TO7VWediKTjxQUC3hRSAoI0gZZwmM5pTKhoSRLelNP401DoJ91Lw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716805540; c=relaxed/simple;
-	bh=IZP9GwLFHYwsUxISgzy2RcJobADfDP06LD39FBZVelc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bbXOLTpKH4QJ70egzY+NlMkLfEphLfaMLwsbH4Ixcd7b8AMtBEHmwRYhVFUiBvisklbJ6SS2XJ1VUUmSFPyzDq4ze6S8XqPMrcabFesb6MLQi2iiQXOt3Od6WXmzNEtpaHRcLiu1X0ZQjE1J8SGYDKuEayNIv3cDo2awjauj1DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.56] (g56.guest.molgen.mpg.de [141.14.220.56])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5A5E861E5FE01;
-	Mon, 27 May 2024 12:25:00 +0200 (CEST)
-Message-ID: <96828117-2cf8-4a34-a8e6-78ace96b32d3@molgen.mpg.de>
-Date: Mon, 27 May 2024 12:24:59 +0200
+	s=arc-20240116; t=1716805536; c=relaxed/simple;
+	bh=h4KF1MyhQtxXRTJqBhywhOIOuwPX5lcByBeK96ZC+Jw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=awrATvzqWB4jmt9NZO33VpJPzbF5PGy+bKjw9noMvJNUhRgnZatL2LWgPxokMWNjCNzL1BJ4gcGnm24j+Z1oaWy3cJT79K+v0giAYisxM154dyAud9Ky3yW+hCtBpR3kzIjuI8YL3G2O4jcBjCn24Ai3MTx1Cy89V9m9HbQsRYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cjqoJETM; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=s6e5qoitzjaaljvvrq47ks55b4.protonmail; t=1716805531; x=1717064731;
+	bh=kIx8JlpRBz/d6bFUo2zbegrAZT5ZXq16dZqERzuTQ+s=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=cjqoJETMxCKs43D2aEDYr2pv11evCdFtx/Y1bg2OHOZ/e79yrwPpjJTAJwQHzTF8w
+	 RfZfgRdktOJ4QwjtfkpXEoDhxhzW4cj78Gelel55uPo+t/LlwPl3Il90PTb+Y5OANX
+	 oS6m37rQn7h4uk9oX+ngO/RUCCsgJRT3H1Bv7p8T1JDn6L0nSsFPWptbjuDAzLHYSd
+	 R8spkR0e/qINw35D2Ku3kUkN9QmgGLoEuh414FGh2OCFi6Pwj0vfI+JSzL9QCZA/jt
+	 VrPKhe5QRSqIYTo29kdpnL59XzewE3SG97lTvxqW3fwm2NZGrdwesUNwEZEbUY5OK8
+	 x5JheuIAD9p4w==
+Date: Mon, 27 May 2024 10:25:24 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 5/9] rust: list: add List
+Message-ID: <4635b96c-66ab-4974-8ff9-0cd9516d42b1@proton.me>
+In-Reply-To: <20240506-linked-list-v2-5-7b910840c91f@google.com>
+References: <20240506-linked-list-v2-0-7b910840c91f@google.com> <20240506-linked-list-v2-5-7b910840c91f@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 96fd6029a6ec51394d9db0e047cdb81f8abe70a2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
-To: Kalle Valo <kvalo@kernel.org>, Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- James Prestwood <prestwoj@gmail.com>
-References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
- <e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
- <87sey38vte.fsf@kernel.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <87sey38vte.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Dear Kalle, dear Baochen,
+On 06.05.24 11:53, Alice Ryhl wrote:
+> Add the actual linked list itself.
+>=20
+> The linked list uses the following design: The List type itself just has
+> a single pointer to the first element of the list. And the actual list
+> items then form a cycle. So the last item is `first->prev`.
+>=20
+> This is slightly different from the usual kernel linked list. Matching
+> that exactly would amount to giving List two pointers, and having it be
+> part of the cycle of items. This alternate design has the advantage that
+> the cycle is never completely empty, which can reduce the number of
+> branches in some cases. However, it also has the disadvantage that List
+> must be pinned, which this design is trying to avoid.
+>=20
+> Having the list items form a cycle rather than having null pointers at
+> the beginning/end is convenient for several reasons. For one, it lets us
+> store only one pointer in List, and it simplifies the implementation of
+> several functions.
+>=20
+> Unfortunately, the `remove` function that removes an arbitrary element
+> from the list has to be unsafe. This is needed because there is no way
+> to handle the case where you pass an element from the wrong list. For
+> example, if it is the first element of some other list, then that other
+> list's `first` pointer would not be updated. Similarly, it could be a
+> data race if you try to remove it from two different lists in parallel.
+> (There's no problem with passing `remove` an item that's not in any
+> list. Additionally, other removal methods such as `pop_front` need not
+> be unsafe, as they can't be used to remove items from another list.)
 
+I would also mention that later in this patch series you introduce
+cursors for the list, which can be used to safely remove arbitrary items
+(although you need to iterate the list).
 
-Am 27.05.24 um 11:10 schrieb Kalle Valo:
-> Baochen Qiang writes:
-> 
->> On 5/27/2024 4:42 PM, Paul Menzel wrote:
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/list.rs     | 329 ++++++++++++++++++++++++++++++++++++++++++=
++++++-
+>  rust/kernel/list/arc.rs |   6 +-
+>  2 files changed, 330 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
+> index f2eca542e090..d0ff29a3e5d1 100644
+> --- a/rust/kernel/list.rs
+> +++ b/rust/kernel/list.rs
+> @@ -6,6 +6,7 @@
+>=20
+>  use crate::init::PinInit;
+>  use crate::types::Opaque;
+> +use core::marker::PhantomData;
+>  use core::ptr;
+>=20
+>  mod impl_list_item_mod;
+> @@ -16,7 +17,40 @@
+>      impl_list_arc_safe, AtomicListArcTracker, ListArc, ListArcSafe, TryN=
+ewListArc,
+>  };
+>=20
+> -/// Implemented by types where a [`ListArc<Self>`] can be inserted into =
+a `List`.
+> +/// A linked list.
+> +///
+> +/// All elements in this linked list will be [`ListArc`] references to t=
+he value. Since a value can
+> +/// only have one `ListArc` (for each pair of prev/next pointers), this =
+ensures that the same
+> +/// prev/next pointers are not used for several linked lists.
+> +///
+> +/// # Invariants
+> +///
+> +/// * If the list is empty, then `first` is null. Otherwise, `first` poi=
+nts at the links field of
+> +///   the first element in the list.
+> +/// * All prev/next pointers of items in the list are valid and form a c=
+ycle.
 
->>> On the Intel Kaby Lake notebook Dell XPS 13 with
->>>
->>>      3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter [168c:003e] (rev 32)
->>>
->>> with at least a self-built Linux 6.9-rc5, on April 26th, 2024, and
->>> Linux 6.8.11, today, May 27th, 2024, the error below happened, and
->>> the device couldn’t authenticate to a WiFi network until reloading
->>> the module *ath10k_core* and *ath10k_pci* (didn’t check just
->>> *ath10k_pci*):
->>>
->>>      $ sudo modprobe -r ath10k_pci
->>>      $ sudo modprobe -r ath10k_core
->>>      $ sudo modprobe ath10k_pci
->>>
->>> ```
->>> [   49.441618] ath10k_pci 0000:3a:00.0: wmi service ready event not received
->>> [   49.523814] ath10k_pci 0000:3a:00.0: Could not init core: -110
-> 
-> [...]
-> 
->> Are you using a distro kernel?
+I think that you additionally need "The list has exclusive access to all
+`prev`/`next` pointers of items in the list." or "For every item in the
+list, the list owns the associated `ListArc<T, ID>`."
 
-The 6.8.11 is Debian’s current Linux kernel in the suite *unstable/sid*
-(*linux-image-6.8.11-amd64* 6.8.11-1).
+> +pub struct List<T: ?Sized + ListItem<ID>, const ID: u64 =3D 0> {
+> +    first: *mut ListLinksFields,
+> +    _ty: PhantomData<ListArc<T, ID>>,
+> +}
 
->> Could you check if below patch merged in your kernel? if not can
->> you merge it and try again?
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/wireless/ath/ath10k?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
-> 
-> Paul, if you are feeling brave to try out an -rc this commit is in just
-> released v6.10-rc1.
+[...]
 
-Thank you. I haven’t found out yet, how to reproduce this. I’ll keep an 
-eye on it.
+> +    /// Add the provided item to the back of the list.
+> +    pub fn push_back(&mut self, item: ListArc<T, ID>) {
+> +        let raw_item =3D ListArc::into_raw(item);
+> +        // SAFETY:
+> +        // * We just got `raw_item` from a `ListArc`, so it's in an `Arc=
+`.
+> +        // * If this requirement is violated, then the previous caller o=
+f `prepare_to_insert`
+> +        //   violated the safety requirement that they can't give up own=
+ership of the `ListArc`
+> +        //   until they call `post_remove`.
+> +        // * We own the `ListArc`.
+> +        // * Removing items from this list is always done using `remove_=
+internal_inner`, which
+> +        //   calls `post_remove` before giving up ownership.
+> +        let list_links =3D unsafe { T::prepare_to_insert(raw_item) };
+> +        // SAFETY: We have not yet called `post_remove`, so `list_links`=
+ is still valid.
+> +        let item =3D unsafe { ListLinks::fields(list_links) };
+> +
+> +        if self.first.is_null() {
+> +            self.first =3D item;
+> +            // SAFETY: The caller just gave us ownership of these fields=
+.
+> +            // INVARIANT: A linked list with one item should be cyclic.
+> +            unsafe {
+> +                (*item).next =3D item;
+> +                (*item).prev =3D item;
+> +            }
+> +        } else {
+> +            let next =3D self.first;
+> +            // SAFETY: By the type invariant, this pointer is valid or n=
+ull. We just checked that
+> +            // it's not null, so it must be valid.
+> +            let prev =3D unsafe { (*next).prev };
+> +            // SAFETY: Pointers in a linked list are never dangling, and=
+ the caller just gave us
+> +            // ownership of the fields on `item`.
 
-As the commit message says:
+Here you need that new invariant: the list needs exclusive access to all
+of the `next`/`prev` pointers.
 
-> This results in timeout issue if the interrupt is not fired, due to
-> some unknown reasons.
+> +            // INVARIANT: This correctly inserts `item` between `prev` a=
+nd `next`.
+> +            unsafe {
+> +                (*item).next =3D next;
+> +                (*item).prev =3D prev;
+> +                (*prev).next =3D item;
+> +                (*next).prev =3D item;
+> +            }
+> +        }
+> +    }
+> +
+> +    /// Add the provided item to the front of the list.
+> +    pub fn push_front(&mut self, item: ListArc<T, ID>) {
+> +        let raw_item =3D ListArc::into_raw(item);
+> +        // SAFETY:
+> +        // * We just got `raw_item` from a `ListArc`, so it's in an `Arc=
+`.
+> +        // * If this requirement is violated, then the previous caller o=
+f `prepare_to_insert`
+> +        //   violated the safety requirement that they can't give up own=
+ership of the `ListArc`
+> +        //   until they call `post_remove`.
+> +        // * We own the `ListArc`.
+> +        // * Removing items from this list is always done using `remove_=
+internal_inner`, which
+> +        //   calls `post_remove` before giving up ownership.
+> +        let list_links =3D unsafe { T::prepare_to_insert(raw_item) };
+> +        // SAFETY: We have not yet called `post_remove`, so `list_links`=
+ is still valid.
+> +        let item =3D unsafe { ListLinks::fields(list_links) };
+> +
+> +        if self.first.is_null() {
+> +            // SAFETY: The caller just gave us ownership of these fields=
+.
+> +            // INVARIANT: A linked list with one item should be cyclic.
+> +            unsafe {
+> +                (*item).next =3D item;
+> +                (*item).prev =3D item;
+> +            }
+> +        } else {
+> +            let next =3D self.first;
+> +            // SAFETY: We just checked that `next` is non-null.
+> +            let prev =3D unsafe { (*next).prev };
+> +            // SAFETY: Pointers in a linked list are never dangling, and=
+ the caller just gave us
+> +            // ownership of the fields on `item`.
+> +            // INVARIANT: This correctly inserts `item` between `prev` a=
+nd `next`.
+> +            unsafe {
+> +                (*item).next =3D next;
+> +                (*item).prev =3D prev;
+> +                (*prev).next =3D item;
+> +                (*next).prev =3D item;
+> +            }
+> +        }
 
-There are reports from 2016 to 2021 with similar symptoms. These were 
-supposedly fixed with 
-`/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin` [1][2]:
+This code is the same as in `push_back`, can you refactor it?
 
-     $ md5sum /usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin 
-/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
-     cb37c63d9ca28f53fea1ff09ad7c7a82 
-/usr/lib/firmware/ath10k/QCA6174/hw3.0/board.bin
-     651e921b372848b3928621e6f1d34b01 
-/usr/lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
+> +        self.first =3D item;
+> +    }
+> +
+> +    /// Removes the last item from this list.
+> +    pub fn pop_back(&mut self) -> Option<ListArc<T, ID>> {
+> +        if self.first.is_null() {
+> +            return None;
+> +        }
+> +
+> +        // SAFETY: We just checked that the list is not empty.
+> +        let last =3D unsafe { (*self.first).prev };
+> +        // SAFETY: The last item of this list is in this list.
+> +        Some(unsafe { self.remove_internal(last) })
+> +    }
+> +
+> +    /// Removes the first item from this list.
+> +    pub fn pop_front(&mut self) -> Option<ListArc<T, ID>> {
+> +        if self.first.is_null() {
+> +            return None;
+> +        }
+> +
+> +        // SAFETY: The first item of this list is in this list.
+> +        Some(unsafe { self.remove_internal(self.first) })
+> +    }
+> +
+> +    /// Removes the provided item from this list and returns it.
+> +    ///
+> +    /// This returns `None` if the item is not in the list. (Note that b=
+y the safety requirements,
+> +    /// this means that the item is not in any list.)
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The provided item must not be in a different linked list (with t=
+he same id).
 
+"`item` must not be ..." also other instances below.
 
-Kind regards,
+---
+Cheers,
+Benno
 
-Paul
+> +    pub unsafe fn remove(&mut self, item: &T) -> Option<ListArc<T, ID>> =
+{
+> +        let mut item =3D unsafe { ListLinks::fields(T::view_links(item))=
+ };
+> +        // SAFETY: The user provided a reference, and reference are neve=
+r dangling.
+> +        //
+> +        // As for why this is not a data race, there are two cases:
+> +        //
+> +        //  * If `item` is not in any list, then these fields are read-o=
+nly and null.
+> +        //  * If `item` is in this list, then we have exclusive access t=
+o these fields since we
+> +        //    have a mutable reference to the list.
+> +        //
+> +        // In either case, there's no race.
+> +        let ListLinksFields { next, prev } =3D unsafe { *item };
+> +
+> +        debug_assert_eq!(next.is_null(), prev.is_null());
+> +        if !next.is_null() {
+> +            // This is really a no-op, but this ensures that `item` is a=
+ raw pointer that was
+> +            // obtained without going through a pointer->reference->poin=
+ter conversion rountrip.
+> +            // This ensures that the list is valid under the more restri=
+ctive strict provenance
+> +            // ruleset.
+> +            //
+> +            // SAFETY: We just checked that `next` is not null, and it's=
+ not dangling by the
+> +            // list invariants.
+> +            unsafe {
+> +                debug_assert_eq!(item, (*next).prev);
+> +                item =3D (*next).prev;
+> +            }
+> +
+> +            // SAFETY: We just checked that `item` is in a list, so the =
+caller guarantees that it
+> +            // is in this list. The pointers are in the right order.
+> +            Some(unsafe { self.remove_internal_inner(item, next, prev) }=
+)
+> +        } else {
+> +            None
+> +        }
+> +    }
 
+[...]
 
-[1]: https://github.com/kvalo/ath10k-firmware/pull/2
-[2]: https://github.com/linux-surface/linux-surface/issues/41
 
