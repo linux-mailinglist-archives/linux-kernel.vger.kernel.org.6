@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-190574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B80D8CFFF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8388CFFF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4091C21507
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CE5280F7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542E415DBCE;
-	Mon, 27 May 2024 12:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D801815DBD8;
+	Mon, 27 May 2024 12:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zVM0rHud"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9KQmDxn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6F3C463
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A011581E2;
+	Mon, 27 May 2024 12:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812647; cv=none; b=HxlImQrSyOEW786BocPffrDQejq8AbjXgvYUn5A1K1K4+Ff3+RQXkBqtihBlIXqcb28ImjLE4tKroxP96vEP5WqmuNO6EVccbqFoCdK/UOd4slBQcwxnb552PtnW1u7fFXaEQ35XLcPXtRBBYPRUc0lzFgK5+44WwejTy+/8Mdk=
+	t=1716812684; cv=none; b=lvaaeN0UG787S6GJ1xRAsqWAEV/woSYr88q6nENSfTmvxUZyH56ge61uiyvmspxsjf3vmd5WClZ38junlRa/aUkARxG96v/9+iZTQzgWnXllA+Gw2AvTY8ZukWFRSwqxU+gSsWBma1kTZMsHyEc6iatt9Is7OsI/JLodn1Yn4us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812647; c=relaxed/simple;
-	bh=u4pNQndhTwzjvZeCbvNzFIGllGB6K3HszRuUI2KOTno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Prm9UrZuzrZM3NgYkfLIr1jt1+9f6Gf9OaGmK/29xxaHcPgmEjnBdBK23jywxmdEanHk46haYFdpXO4UezgILHXrYe9oF6PNdYYj0ehvANozwF+4CGHKkkUB/o8RdVWYmXutRMczRyMIHkCbEqr5T1MD8iRTV2h+pnf4fiqQL7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zVM0rHud; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5786988ae9bso2543284a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716812644; x=1717417444; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kvByR1DQ2F9g5kyajsGPK2dl35siqeWB3JPTIt3yItE=;
-        b=zVM0rHudB34o7ySW45Ii9I2XxjnADnmUel7RmSG1itp99BEBcP5zWvU+mI7enWC+M0
-         2V2+IwGBOXUafWS4BhxsQritmUWiZ+1qNksWtivxJa/QddEPOp42Z3ZskHPmGj6wV8VC
-         nZpelsWyi4IX/zh9SvHWhVacZ0yIseao6S+zqjILCVSu2wUQI6oyaQr5gfkgBvl1FhUA
-         4f3DhnSvZK6F9ZCCkcdNY6g9oF/Pz2nPbRt1w0jZoEbHKnFjEDkxPgXjI4HDvmfENorJ
-         985kSb51usfMVOMg1hg5N8WgE5aaleISNQrjrEdqaQLnDKu4sfNkYXuoYNzyvfKRKAcF
-         GOuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716812644; x=1717417444;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvByR1DQ2F9g5kyajsGPK2dl35siqeWB3JPTIt3yItE=;
-        b=W2VJQVeiQBXQZHfSfw1XAMD8p6MCFYWfxeG7h5QOwneCa+JBbXrtsJGNj8K4KoAYRb
-         RuvTPYcIIimEygLXF+0bMnWH29ikN5s43AJRC+7biM1w+ckIKCE1NJOXak9O6A4Vst4P
-         E3EM8w2qeWQ58wPVQdTW8u/IRfVW+xgf9H9NH7ii2X/dwzcNTOG0RCCxKSNbLFnGYDTK
-         p0f7oJXrxHpPUB0zs9CVuDljIoMyutHVQVDUzf+00z0x/l4fxM3SeUPS62+VhlcLx4pO
-         D3A+qrP1AxDMMmPc9ZY6GSezqHF/cn/Dux479iwfQN31eUqvFO1R2aaLrdoj76q3rBSM
-         zyqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHLegogeRb4wUxWJBpR8pgUZ/LNAUxCPZQxr+9NTGslRIq2gyqNdMrJuiOxjG1LoB+oNMJyF54giLT3k/QrywZRZQGjdrOCLTCKDOL
-X-Gm-Message-State: AOJu0YwTNdExu2S9zrS5V4cHowa/zY2KBTgprZOdKz1Zr4Ms/pEywF/R
-	GulrU2YbxBsNNsPnSgzvQWIaFuBUWyt1NJPKERCqkfqg/YkhW4nICn9yjL4wowI=
-X-Google-Smtp-Source: AGHT+IHJXyIPVfQ3VM4Dz+dObdkePRCK0LaLG+DImc2OW2iQv0GkTNfNw3rFNPePQO/ok4Rkh6u9fA==
-X-Received: by 2002:a50:8751:0:b0:578:6159:8976 with SMTP id 4fb4d7f45d1cf-57861598a76mr5909962a12.28.1716812643725;
-        Mon, 27 May 2024 05:24:03 -0700 (PDT)
-Received: from [192.168.69.100] ([176.176.152.134])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578638009b1sm4178095a12.17.2024.05.27.05.24.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 05:24:03 -0700 (PDT)
-Message-ID: <9d93682c-5da4-43d2-a9fb-f05d3596e066@linaro.org>
-Date: Mon, 27 May 2024 14:24:01 +0200
+	s=arc-20240116; t=1716812684; c=relaxed/simple;
+	bh=AC1H0aiKdZcdpc098PhYIZqVMQLoaF+pLuHEt1fMz98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtdsB8oBaZ2+iW+Fm7sAvdX7n7i4Ld7XNynJ4qjNloiqUFqKIVGOSViN0dui7aRWtyNiQwjlA9xqEE0A7OUIYct1qmJRlm+ddZUOlPEXOJ77s50shbooZCqWY/JVRqJBEYb/Uu2iVq0hZLsi1mbRan39qEVOtKiio3pCNFMDke8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9KQmDxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B053C2BBFC;
+	Mon, 27 May 2024 12:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716812683;
+	bh=AC1H0aiKdZcdpc098PhYIZqVMQLoaF+pLuHEt1fMz98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c9KQmDxnOw5TGTXwGxEEcfbgKsoiOBfITuiBO/2/kWfxmcSEsdv5Lp41x3oJZPaYN
+	 Ilb4vd8afUoOfTHTjag/aFynY/CMZexYZ/iyjGy/p274N5D9ilvb0cfP3EdSDJ8ue0
+	 kgwCB8WJ3vurwnHhTo88smbCv3E09csXENZZRWPzfbMOUX1qM2nJJQ7C51TgJAjtbo
+	 XzIlu31EI+KeupJ1ecVMHFIewzSoLhO6/UA4PaiPJ/JqGZvlsN1M20SnaFQeQZec+e
+	 arnzHtXgUuCeLi6wvnyUEHqRj3FnOox/aO/vVb+44qa0CU2tRh3WGFY9sPSwGq2Dt9
+	 Wi7aV6VhIz8vA==
+Date: Mon, 27 May 2024 13:24:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power
+ saving
+Message-ID: <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240424164725.GA18760@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] clocksource: mips-gic-timer: Correct sched_clock
- width
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Serge Semin <fancer.lancer@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240511-mips-clks-v1-0-ddb4a10ee9f9@flygoat.com>
- <20240511-mips-clks-v1-7-ddb4a10ee9f9@flygoat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-In-Reply-To: <20240511-mips-clks-v1-7-ddb4a10ee9f9@flygoat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9Jl/B1Q1Lia3QbBq"
+Content-Disposition: inline
+In-Reply-To: <20240424164725.GA18760@francesco-nb>
+X-Cookie: Not every question deserves an answer.
 
-On 11/5/24 18:00, Jiaxun Yang wrote:
-> Counter width of GIC is configurable and can be read from a
-> register.
-> 
-> Use width value from the register for sched_clock.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->   drivers/clocksource/mips-gic-timer.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
 
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+--9Jl/B1Q1Lia3QbBq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
+> On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> > Add pm_runtime support for power saving. In pm runtime suspend
+> > state the registers will be reseted, so add registers save
+> > in pm runtime suspend and restore them in pm runtime resume.
+> >=20
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+>=20
+> Is this introducing a regression?
+>=20
+>   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+>   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code 0=
+x00000000bf000002 -- SError
+>   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 No=
+t tainted 6.9.0-rc5-next-20240424 #1
+>   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin iM=
+X8M Plus on Dahlia Board (DT)
+
+I am now seeing this failure in mainline on both the above board and
+i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
+landed for -rc1, both boards crash as above.  What's the plan for
+getting this fixed, should the patch be reverted for now?
+
+--9Jl/B1Q1Lia3QbBq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZUe4QACgkQJNaLcl1U
+h9BZAAf/SwbkQw7xNK6oPYnkKBhetfwKUF87XHoq2QNLdmGrV1nAsXHA+HccQ4P1
+CGAxLSlJPtMNnZ4CvqPkNfWTmY61novb449w9cydqCmjeJt9XiR1lXmbskFryEMh
+Q/DROuRTtR8TKaSczQii6Cftc88XYTtqb8O1rhl7FLpLliEE6MwW+jDF9xfyq6gs
+y10D5yAmXsHxUjob+O5l/uxq64hZhoBF7RaqAGIwwKwTFF2ma7WOPYFar80BaYRg
+/Ujrvt+j0BsnLEmmbo0B6QPbeG6u/VhYWw8y2FJVk7FZt20uxSW36luHoKc9Zm/U
+f2DKhcL3jyMzwJpxOxxzCfHaF8+Kow==
+=QP7g
+-----END PGP SIGNATURE-----
+
+--9Jl/B1Q1Lia3QbBq--
 
