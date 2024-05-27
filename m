@@ -1,227 +1,496 @@
-Return-Path: <linux-kernel+bounces-190276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A128CFC54
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:00:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6316C8CFC13
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC331F2281E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:00:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1942B282F7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BE36A357;
-	Mon, 27 May 2024 08:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E71E13DBB1;
+	Mon, 27 May 2024 08:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fHwgV9di"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mKRBNVCx"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A1A6BB26
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D5A13AA56
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716800396; cv=none; b=Wpu5vO3zeHT6iYZ2ReWtIahkhZa28AaQUNigd2/3jTpEKGE4vpmnveapPcAc8lqVul9CBMXEplAbbwx+U7Hg+5PxODPli8Ak74pPtRTzhg15TWCfxSOBcQ/Yx1T8h2/9UswXB5PlgXRfKh58PBdE/Zr6akZmQhT3A1dQG0nqccs=
+	t=1716799460; cv=none; b=pjeg+ZNNsFfkigw2LHIGCstBPWsI0fcLMpHwezzMsR0WNg4+kEKnOcqbjUm3aTBxUon55OtjyYOkBggdR9tGwv4YkluTKvIOmaPik+eckOmer5cKti9YixssC8OEKfbmXIAGS172iBNqdeZrV9ItzQ6TYRBKHqZUXgKy7oVTk/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716800396; c=relaxed/simple;
-	bh=8/wfd20QEm2KLvHAdA7Pa90xMSDfPYbqPMRi1cwgZ4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=cOker9Uv+bmdHvKrnwwCvtxOOUZfSWz7iJ8efTR39M0IXjACH4gXpdMkWlO2B4GlOFULhz80GFhLtsjkg354+2KYmIXqWvBj92Op4G3/PDmwc+jc84G3kD/WXxLPmsYXM3nu8Rw5rZCofEei6vHhDlIlWBOALMB+K3LPs2B+fPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fHwgV9di; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240527085952epoutp0210e42353c8ace6ad32cd54d80a399223~TTNxLw3fS2508725087epoutp02k
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:59:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240527085952epoutp0210e42353c8ace6ad32cd54d80a399223~TTNxLw3fS2508725087epoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716800392;
-	bh=CQEl5Odrn2gxp6sQ0rwKylnsdnwf7SZr6c5IE4f2Nnw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fHwgV9dicOrvtK0z8lmz68358uiMntn47nnmXsHF1ZQTEmbfH0FzFwD53GAQMBi2R
-	 Eu4oBOqzSmsscZA6OF/9iDm7p1QakySlP1XhEB4f+1cLbe4PYmZBWdrrp5xwyKNGB8
-	 oxGFiy0QNEq2uwzy1rNKgS36ypTUhbBO7553kvP8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240527085951epcas5p49def0d875e71e6e2715f7a999b37eaf1~TTNwdHmqw1010910109epcas5p4v;
-	Mon, 27 May 2024 08:59:51 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VnqN46xXZz4x9Q5; Mon, 27 May
-	2024 08:59:48 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5C.51.10035.48B44566; Mon, 27 May 2024 17:59:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240527085054epcas5p2be182df41a889b664ebc3edab8daf981~TTF84VBY20347303473epcas5p2Y;
-	Mon, 27 May 2024 08:50:54 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240527085054epsmtrp2f1618382f9787da1f2681bcab59eaba5~TTF83Cwh92271122711epsmtrp2r;
-	Mon, 27 May 2024 08:50:54 +0000 (GMT)
-X-AuditID: b6c32a4b-8afff70000002733-3e-66544b84bb3f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	76.7A.08336.E6944566; Mon, 27 May 2024 17:50:54 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240527085050epsmtip1de5e35f4122e1db93f8daa490f6e562d~TTF5UwrDI2589625896epsmtip1Y;
-	Mon, 27 May 2024 08:50:50 +0000 (GMT)
-Date: Mon, 27 May 2024 08:43:51 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, bvanassche@acm.org, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 06/12] fs, block: copy_file_range for def_blk_ops
- for direct block device
-Message-ID: <20240527084351.g2m7jt4xirj4elle@nj.shetty@samsung.com>
+	s=arc-20240116; t=1716799460; c=relaxed/simple;
+	bh=P55jtoyNrhUYwJD0bT7FCymn+mdEeLeoZfSL1k2d32g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=J2zhKUaARvpoFlDrijiDeAGaM3vZ+UM+fW9lrMQY6XFn9WU0bf3e7L617ZeLHTfzKCITChVmv0s4G8BP7+ZjhFStBcBpDa/4j1ECSqtjHOLTueRy6SEShlNASeu/+bpYivGhjCG8sD4B1EoE5RLucz8fFGlBWSvHBIYqTrVv76Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mKRBNVCx; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5238b5c07efso10504411e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799456; x=1717404256; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dBbl/FgcZn6F0X7Ky+upS0///p1fkbnapcfH14eSyO0=;
+        b=mKRBNVCxHl/Rd6NLytEkkSLIiCnmMM/TgxWcLXI6lnLzPcIEWTHCgoYl5aaBzyHjDT
+         VuJcrqzZrF3pwEjsbWTtS0lgo4KG7lRhzZdwST3xK6+bTSxL2hfvb2+j+d2SEb8x4hiY
+         T0T55GJK86Krmp3Dgh8WiSeeoAv1EFqJzmyxJDFxixJ4Rs5M81YdZIskOja9St+qymnf
+         RzoWFs4FHkUwlDGFkgy1wC0GyAh7URGS7oQ7xtO8UZ3qSbc+c1ZjePDyTTNbhsUNoLHY
+         VdXJtbde51WSzKwYABI9IVmRxrjULRPtMaSfrmgN7kPOj4BezWlnzFoFWFxwH/4xK1H8
+         Eiuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799456; x=1717404256;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dBbl/FgcZn6F0X7Ky+upS0///p1fkbnapcfH14eSyO0=;
+        b=tvSWszao3aCCM3GfHpikOgWOR7peurD9eWaeCVOPmQDjcj6a4LWmi9vllLJK2T+0Dy
+         6swtPQOxyBZWEmnpsoLizp5rcT5Zf6NdwiSxkSTs4TY/3izBTaM5mTg+5TdpUOyq/3pN
+         llLGyqxxzHWhqVUV90J9bFoC8vSXtqOCWsVX4DofWQKwSGzKTcQ78tODcE0kBPKUwoPA
+         RDyP9Yi2QL52uwdj4SSv23oTPClr5R7s+MwlZG4VXQK6gFUa8gUFKYJ59aB3EUtnfPqZ
+         2oiWPk7X8bwTY20GCbAERZ3ESg1ae1H3rNXPJ1H1iM/M1SWeBfkgGwiADcbdEzi2xaNk
+         M9FA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoC0/ojFJgzgiTboLQzKtlLejCkLieK862d7feTjLBktDrq8hF0yEmpKLzqWGqdmtzqC3GM2QneCeouOEf1/jXHX1z9rQpDVGQItdw
+X-Gm-Message-State: AOJu0YyTnaiIILsKKyDXsVjFHcCKJwZabgL2vfP9ipZKeBtD9i94zVLw
+	5CUW6zMKsxO/UBuGh6X6TCuLZHp6fJ5B6b3CB6uxQ5drNtpyBHXWhH3p6d8swSc=
+X-Google-Smtp-Source: AGHT+IHR91qKrZAey7UMKMblToGChyC/IA/h9swBp60xa0r3LYNNQUQ65AEgwkkjUSTH3yhUpBxAJw==
+X-Received: by 2002:a19:7502:0:b0:524:68f8:9566 with SMTP id 2adb3069b0e04-52964bb2c9dmr4933943e87.30.1716799456042;
+        Mon, 27 May 2024 01:44:16 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:44:15 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 27 May 2024 10:43:51 +0200
+Subject: [PATCH v2 4/5] arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP
+ nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlJvp47RSFKkbwRJ@dread.disaster.area>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUZRjG+c7ZPRxsVo8LDB9sGG7UJAYucvGDQGog5jAwCqZNWok77OES
-	sLvtLglMk1wkLnKXsl1AV0DlkmCAtCA4gnItI7kZNEARIIIBcbHMQdr1QON/v3ne55nv/d53
-	XhLnXzK2IiOkKkYhFUcJiS2chtu77OxP+x8OFRUk70M1PR04Sspdw1HVaA6B5m4vAfT14hMc
-	Td5KBejp3V4c1XeMAaQtKeag4VuNGGouycdQRVU7hgrPJWOoff1PAuW3DQE0NajBUMvIbnTx
-	yzIOam7p5qD+piICXbg8ZYyudD7DUF7aIIZ0k4kAVc8tcFDXiAD1rnVy3xbQ/QP+dE8JpBs1
-	o8Z079h3HLr/bgxdW5lO0HVlp+iZOjWgbwwnEHRp9lkunZU8T9CNKeNc+q+pEQ69cHOQoLPr
-	KwH9o/aOcaDpsUiPcEYsYRQ2jDREJomQhnkK/d8L9g52cRU52ju6oX1CG6k4mvEU+gQE2vtG
-	ROmHI7T5TBwVo5cCxUqlcM9+D4UsRsXYhMuUKk8hI5dEyZ3lDkpxtDJGGuYgZVTujiLRXhe9
-	8URkeM31Kq5cZxHb+c91PAEUmmYAExJSzvAXdRM3A2wh+dQNACsSHgJDgU8tAfgoOZAtPAYw
-	5XIqsZmo7q/jsqYWAL9plbGmZQAfl01hhgKHeg1mas/pmSQJajf8YZ00yGbU6zA/X4cb/Dil
-	JWBGYvVzjykVAtvLaYOHR3nD7K4GwPJ22K2e5BjYhHKCpcm5wJCFVJ8JTL3fw2Eb8oFnxqsB
-	y6ZwtrPemGUruDzfstH0SVhRUE6w4dMAau5rNgJeMKUnBzcwToXBR2lDGwFr+FVPNcbqW2HW
-	00mM1XlQd36TX4Xf1mg3/JZw6O/EDabh6PcDGDuVaQAT2tRYLtiheeFHmhfeY9kdpi8mcTX6
-	YeCUAF55RrK4C9Y07dECbiWwZOTK6DBG6SJ3kjIn/19yiCy6Fjy/Fzt/HZj4bdGhDWAkaAOQ
-	xIVmPLPzQaF8nkQcF88oZMGKmChG2QZc9AvKw63MQ2T6g5Oqgh2d3UTOrq6uzm5Oro5CC95c
-	SrGET4WJVUwkw8gZxWYOI02sEjB+yuHOgWNVbboHM5+fMH+IgbTZDx84TYp0Ywffumn/aW3N
-	78E5sVc/1tzJKtq6t+iAbXEhXz0w0WwWNBOUUxxZ/G6/d3L8R0WrK4Ly5b6A6SS/l4+o+xIP
-	/HyqOcOcxI86vHL8X120Z1zfvfT9C62zw5UXhB2VOxuHtzX5WBT/mvmFR4Qk4U1S9NPSarWo
-	yEt1RHpUMOfncJaKXZ3xu+frNb0jzT3n2h/WL6FL7xyvaYLdefXb1/2truK+w6XzsfEtKx2t
-	JYOZh1xCr31i1MAvfb9gm5FJaP4h0cLgG0YyS+9xnm3X0NpFi+a4CfP4Nb/ekABh4brg4AfU
-	E1sCn7c+Y7YSgAs5ynCxox2uUIr/A35YaGK4BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUxTWRiGPfdcbi91mlxK1YMkmDQqqUSgavDEZRxHjRdX3GJiTLTSC5Sl
-	YgsuEw3VBtRKESvStCxWICAlKSqKIIhaUMCtUUQjKuhMsRVUpNEERltmCpmM/568y/f++Wgo
-	dJHTaYUyg1MpZaliik/Wt4rD5ipjtyZEl3yU4Nr79yA+lu+FuObNaQoPtnoALvwyCrHz9nGA
-	vz9yQHz1Xi/AlrISEr+83Ujg5jIDgatr7hK4yKgl8N2xTxQ22J8D3N9tJvDNngh8IaeCxM03
-	O0ncdaOYwucr+3m4qt1H4DMnugnc4DwKsG1wiMQdPaHY4W0P+C2U7Xq2lr1fhthG8xse6+i9
-	TLJdjzLZK9aTFFtXkcW660yAbXqpodjyvLMBrF77mWIbs/sC2OH+HpIdaumm2LyrVsA+tLTx
-	4oJ38JfIuVTFfk4V9etuftIr7ykq/ZPoYIHzGakBA4wOBNKIWYBsXXUBfhYyTQBVFs2f0ENQ
-	pbcNTnAwqva5eDrA/zczDNDbD27Kb5DMLJRrMRI6QNMUE4EejNF+WcTMRgZDA/TnIVNBIdPT
-	p+MDwUw8cpQ2j7OAWYHyOurBxNH3AA1/OAUnjCDUaXKSfoZMDCqtewf9A5AJRVW+8YFAZj4q
-	1+aDfMCYf2qYf2qY/29YALSCEC5dnZaYppamS5XcgUi1LE2dqUyMjN+bdgWM/8IcSQO4bv0S
-	aQcEDewA0VAsEohKNyUIBXLZoT841d5dqsxUTm0HoTQpniaY5tbLhUyiLINL4bh0TvWfS9CB
-	0zWEWff7LX7uL0vjcrbq14zETPb92WIf2bcnKzdjp9zwl3xl9FtHgTwOFhlvKFvK3UnLIprC
-	s+0DhxPdq9fqNUSMWWHaFFsuTJDWO/NsYSmrZvTauhUxk9xjnTrPuSqBxGV6vvni8r6D9Hub
-	Y7Qvs16YvD1upOzO8jXWktdwYbRYmVwce0xSLXOBx4Pi05xz3xHj/pTCrKh5DZ2+DTntvIjC
-	8F3O9TPbNj9ZUhsfFC7t3/Z3z+qvCcrW4tHab68vefTGi71g6m6jVq2dvGWWSINfhDwcenWh
-	apsl27u44/LxsYp1i5I9Uao9nzMOv9gSpJpd8+OaIkwy4Dnyndo45asrSEyqk2TSOVCllv0D
-	5ojMDHoDAAA=
-X-CMS-MailID: 20240527085054epcas5p2be182df41a889b664ebc3edab8daf981
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102929epcas5p2f4456f6fa0005d90769615eb2c2bf273
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102929epcas5p2f4456f6fa0005d90769615eb2c2bf273@epcas5p2.samsung.com>
-	<20240520102033.9361-7-nj.shetty@samsung.com>
-	<ZlJvp47RSFKkbwRJ@dread.disaster.area>
-
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 26/05/24 09:09AM, Dave Chinner wrote:
->On Mon, May 20, 2024 at 03:50:19PM +0530, Nitesh Shetty wrote:
->> For direct block device opened with O_DIRECT, use blkdev_copy_offload to
->> issue device copy offload, or use splice_copy_file_range in case
->> device copy offload capability is absent or the device files are not open
->> with O_DIRECT.
->>
->> Reviewed-by: Hannes Reinecke <hare@suse.de>
->> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> ---
->>  block/fops.c | 26 ++++++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/block/fops.c b/block/fops.c
->> index 376265935714..5a4bba4f43aa 100644
->> --- a/block/fops.c
->> +++ b/block/fops.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/fs.h>
->>  #include <linux/iomap.h>
->>  #include <linux/module.h>
->> +#include <linux/splice.h>
->>  #include "blk.h"
->>
->>  static inline struct inode *bdev_file_inode(struct file *file)
->> @@ -754,6 +755,30 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>  	return ret;
->>  }
->>
->> +static ssize_t blkdev_copy_file_range(struct file *file_in, loff_t pos_in,
->> +				      struct file *file_out, loff_t pos_out,
->> +				      size_t len, unsigned int flags)
->> +{
->> +	struct block_device *in_bdev = I_BDEV(bdev_file_inode(file_in));
->> +	struct block_device *out_bdev = I_BDEV(bdev_file_inode(file_out));
->> +	ssize_t copied = 0;
->> +
->> +	if ((in_bdev == out_bdev) && bdev_max_copy_sectors(in_bdev) &&
->> +	    (file_in->f_iocb_flags & IOCB_DIRECT) &&
->> +	    (file_out->f_iocb_flags & IOCB_DIRECT)) {
->> +		copied = blkdev_copy_offload(in_bdev, pos_in, pos_out, len,
->> +					     NULL, NULL, GFP_KERNEL);
->> +		if (copied < 0)
->> +			copied = 0;
->> +	} else {
->> +		copied = splice_copy_file_range(file_in, pos_in + copied,
->> +						 file_out, pos_out + copied,
->> +						 len - copied);
->> +	}
->
->This should not fall back to a page cache copy.
->
->We keep being told by application developers that if the fast
->hardware/filesystem offload fails, then an error should be returned
->so the application can determine what the fallback operation should
->be.
->
->It may well be that the application falls back to "copy through the
->page cache", but that is an application policy choice, not a
->something the kernel offload driver should be making mandatory.
->
->Userspace has to handle copy offload failure anyway, so they a
->fallback path regardless of whether copy_file_range() works on block
->devices or not...
->
-Makes sense, We will remove fallback part in next version.
-
-Thank you,
-Nitesh Shetty
-
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-4-8d24e3409daf@linaro.org>
+References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tengfei Fan <quic_tengfan@quicinc.com>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Alex Elder <elder@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10650;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=AM9WVgcgmAjbCC/W9GHvUGcjVNV77PVD1BSfacCfkHY=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfZOKBk8uF4pv0CVY6D5nxXvshJuNEbijbZE
+ 8jA8qPp362JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH2QAKCRARpy6gFHHX
+ coNQD/425y25tKpbCMHXa+HkWcbksC8F49IrmvN+T7GB5ZOhIbGEyWWqAOZPxhzSC+OKeZL1fx7
+ qZvrZNCHtjYBI/eqSH33eJm0RDtOoqXrr9lsu2pVnYyIs0eZW51tZAJzIdIFUu7AnzhHHzddrR3
+ FraWzM2BO9AwMWHrBwV2ckm2Yz+zUIWaYk0gvX6MRs8zj0m9YHnERqYpRfcVv/SRbCohS+38s3L
+ YAJxuH8ifiPw5yvJvC+BhtmotxbfRUkR01SU120juA6B2ykeHcudSwfUbOoEVu3ck5IECDsEt5y
+ rifQow7JmVPptSW6x9hRoQmH2IVOj3gIdZerCRitGcxiGJLdl1a9IijB3am5hK1FbBO/4VJ7T3U
+ O0znE9+QdEAiCQnVrkVMOErlQa7iOw7S2tiCC3et7EiLk29z5N2nt4zGcoEDPgze0spvOsFX3ZQ
+ x8dUzs1kGkgl3LIn+k8KXAXGntqVbP1zlQa/plabTxPsAgJBRajiznVzXmmgDZ3CVl92gFQEkBp
+ 0b3Wz8ZdT03e2mxP1skaaWKbuegr02azCZ4/iP9TamlDJGiFNUrK2tHfZXh2GJGmKqnJJOxQvk0
+ 944SIo7/HAulAnVx6AV8U8fY1g3OybeBUYLuO0bdCSQd47jPrgn8n0UeXrxSrFYF/TkwiaKoUYU
+ /Y+3Jxhzx1RhiwQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
+From: Tengfei Fan <quic_tengfan@quicinc.com>
 
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_6c01_--
+Add nodes for remoteprocs: ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 for
+SA8775p SoCs.
+
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 332 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 332 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 31de73594839..5c0b61a5624b 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+ #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+ #include <dt-bindings/mailbox/qcom-ipcc.h>
++#include <dt-bindings/power/qcom,rpmhpd.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+ 
+@@ -544,6 +545,121 @@ cpucp_fw_mem: cpucp-fw@db200000 {
+ 		};
+ 	};
+ 
++	smp2p-adsp {
++		compatible = "qcom,smp2p";
++		qcom,smem = <443>, <429>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <2>;
++
++		smp2p_adsp_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_adsp_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-cdsp0 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <94>, <432>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_CDSP IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <5>;
++
++		smp2p_cdsp0_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_cdsp0_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-cdsp1 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_NSP1 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <12>;
++
++		smp2p_cdsp1_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_cdsp1_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-gpdsp0 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_GPDSP0 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <17>;
++
++		smp2p_gpdsp0_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_gpdsp0_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-gpdsp1 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_GPDSP1 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <18>;
++
++		smp2p_gpdsp1_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_gpdsp1_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
+ 	soc: soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -2479,6 +2595,92 @@ cpufreq_hw: cpufreq@18591000 {
+ 			#freq-domain-cells = <1>;
+ 		};
+ 
++		remoteproc_gpdsp0: remoteproc@20c00000 {
++			compatible = "qcom,sa8775p-gpdsp0-pas";
++			reg = <0x0 0x20c00000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 768 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_gpdsp0_in 0 0>,
++					      <&smp2p_gpdsp0_in 2 0>,
++					      <&smp2p_gpdsp0_in 1 0>,
++					      <&smp2p_gpdsp0_in 3 0>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>;
++			power-domain-names = "cx", "mxc";
++
++			interconnects = <&gpdsp_anoc MASTER_DSP0 0
++					 &config_noc SLAVE_CLK_CTL 0>;
++
++			memory-region = <&pil_gdsp0_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_gpdsp0_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_GPDSP0
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "gpdsp0";
++				qcom,remote-pid = <17>;
++			};
++		};
++
++		remoteproc_gpdsp1: remoteproc@21c00000 {
++			compatible = "qcom,sa8775p-gpdsp1-pas";
++			reg = <0x0 0x21c00000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_gpdsp1_in 0 0>,
++					      <&smp2p_gpdsp1_in 2 0>,
++					      <&smp2p_gpdsp1_in 1 0>,
++					      <&smp2p_gpdsp1_in 3 0>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>;
++			power-domain-names = "cx", "mxc";
++
++			interconnects = <&gpdsp_anoc MASTER_DSP1 0
++					 &config_noc SLAVE_CLK_CTL 0>;
++
++			memory-region = <&pil_gdsp1_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_gpdsp1_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_GPDSP1
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "gpdsp1";
++				qcom,remote-pid = <18>;
++			};
++		};
++
+ 		ethernet1: ethernet@23000000 {
+ 			compatible = "qcom,sa8775p-ethqos";
+ 			reg = <0x0 0x23000000 0x0 0x10000>,
+@@ -2546,6 +2748,136 @@ ethernet0: ethernet@23040000 {
+ 
+ 			status = "disabled";
+ 		};
++
++		remoteproc_cdsp0: remoteproc@26300000 {
++			compatible = "qcom,sa8775p-cdsp0-pas";
++			reg = <0x0 0x26300000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>,
++					<&rpmhpd RPMHPD_NSP0>;
++			power-domain-names = "cx", "mxc", "nsp0";
++
++			interconnects = <&nspa_noc MASTER_CDSP_PROC 0
++					 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_cdsp0_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_cdsp0_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_CDSP
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "cdsp";
++				qcom,remote-pid = <5>;
++			};
++		};
++
++		remoteproc_cdsp1: remoteproc@2a300000 {
++			compatible = "qcom,sa8775p-cdsp1-pas";
++			reg = <0x0 0x2A300000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 798 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>,
++					<&rpmhpd RPMHPD_NSP1>;
++			power-domain-names = "cx", "mxc", "nsp1";
++
++			interconnects = <&nspb_noc MASTER_CDSP_PROC_B 0
++					 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_cdsp1_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_cdsp1_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_NSP1
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "cdsp1";
++				qcom,remote-pid = <12>;
++			};
++		};
++
++		remoteproc_adsp: remoteproc@30000000 {
++			compatible = "qcom,sa8775p-adsp-pas";
++			reg = <0x0 0x30000000 0x0 0x100>;
++
++			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready", "handover",
++					  "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_LCX>,
++					<&rpmhpd RPMHPD_LMX>;
++			power-domain-names = "lcx", "lmx";
++
++			interconnects = <&lpass_ag_noc MASTER_LPASS_PROC 0 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_adsp_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_adsp_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			remoteproc_adsp_glink: glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_LPASS
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "lpass";
++				qcom,remote-pid = <2>;
++			};
++		};
+ 	};
+ 
+ 	thermal-zones {
+
+-- 
+2.43.0
+
 
