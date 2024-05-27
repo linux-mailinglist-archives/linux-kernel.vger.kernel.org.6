@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-190949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611738D04CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:54:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C6B8D04D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48701F20EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482011C2150E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C94160783;
-	Mon, 27 May 2024 14:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D13016F822;
+	Mon, 27 May 2024 14:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2qNMAeQj"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zpo3QcK3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BF215EFAE
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819815; cv=fail; b=J22kBztMbLIjjqutNntTmWYRCDS4aEh8fAfexHFXFqMiuWWerBDGU6gVGNaWFd/2vppOmvTYcIYipC0c7oAjI8ALi+5acXtOd/MFxdY2L5CuSRbqlQnxv03l4J5m8HDCY+cdcCwrZtUBGvnlFAMQtSWdMGPDPiUcm9H9TtCgVbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819815; c=relaxed/simple;
-	bh=qgfcBEMdoezaaogkcGZvzlNSX8qkKbLKUg3J1jwG1Gc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H7yPgMKyns+BcW5gELFWcEBW0M8tYRY0N2ilPpUEmLqGkIW599V0+h0PBrRm+PGMn8TxQoOYA0QQx8katmDadGOIlNAPsRWHWuHTSLVtrd0F0zXv+VZGTar6R6C7VxqOO/uTX3f5t6O5mBem5JPDt/Yyv25kD9r3Kr8XhuoRuDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2qNMAeQj; arc=fail smtp.client-ip=40.107.243.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B7uorN/ISrpSUwgDQwvvnuVAEWU2p+tP8ay3HDkCxqET/NNA6bQrcb+2qqTnVWwHd3CY+RrXgA+6RRXLyIkd0FvTaFtYaLPlueSO1PJa+Kh+Hna9gBazyVkVb902QbL0IWq7Ug3Ojw1BH29nECww2UUEWglHFMC7HcG8LHuDVG49XKn19jeXqQd3FRksAs885I1NarpWwQgd5uCIN64PdW7XPA3w8rRQcmls4c185lDQJdRZsrAezokzPQeUN34kz37sDX6D1BPAGki9jEYqgzffRXcMgENNTGbW7sbaVhHQyjiLfDIX/GjJgGUCKSJhZCiWE5Iu82NRXm0pWYl5YA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=phMXJe+DHK3g7n6LlPjha+ZNbJvzU2d8pm1P7DmcJaU=;
- b=GrgaLY2sneYDSeyzjrN+g4aEQaqPYefwftmeK76NFw58tWIgoe3dckXJ+6SFT2cNcEZPvWsv+Xp9jBEotjEM4SFgYaPncsVnMVWfR1UaqRE8SaxxrBElm5wJfnbK9OpJpqhmaUl0cDgs7Z+yLgtVo8tRyJxs990v3mK94WhMEKVRqRItEIftAzgnE84g5DYDfLrJVx0UqWilIpN6DxfxVkp0oa0tkWTdUQf5+/gwohTe4BWES7LVPGHkTxaJiDoUeJ+h560tzOBwUArcBUenaRVuVz5KMm+RaQaNSvkC1jcQQy9lvr9lmvIPto8ijFujPDKgxO7utoUUSEEzpu180g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org
- smtp.mailfrom=amd.com; dmarc=temperror action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=phMXJe+DHK3g7n6LlPjha+ZNbJvzU2d8pm1P7DmcJaU=;
- b=2qNMAeQjpuiHBT6YRYKUKoQsGCUZUwENAwHNeHpsF8gTLHopSvFYFI1IpwuE+w/pVoCTS0zaoiPovmUaeRPD36Dlj2ALgk9bQSbfWRBZ5oeoWhMP5o7w87MxZo1xZsRcbdrNKvmm6jlmUA8TMaMx4RxuBOoUp9ETU+hwzaE2FjM=
-Received: from BY5PR13CA0024.namprd13.prod.outlook.com (2603:10b6:a03:180::37)
- by BY5PR12MB4228.namprd12.prod.outlook.com (2603:10b6:a03:20b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Mon, 27 May
- 2024 14:23:30 +0000
-Received: from SJ1PEPF00002316.namprd03.prod.outlook.com
- (2603:10b6:a03:180:cafe::5b) by BY5PR13CA0024.outlook.office365.com
- (2603:10b6:a03:180::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.16 via Frontend
- Transport; Mon, 27 May 2024 14:23:30 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=amd.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of amd.com: DNS Timeout)
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002316.mail.protection.outlook.com (10.167.242.170) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 14:23:29 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
- 2024 09:23:27 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <linux-kernel@vger.kernel.org>, Mario Limonciello
-	<mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>, "Chris
- Bainbridge" <chris.bainbridge@gmail.com>
-Subject: [PATCH] drm/client: Detect when ACPI lid is closed during initialization
-Date: Mon, 27 May 2024 09:23:11 -0500
-Message-ID: <20240527142311.3053-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB4116F28C
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716819830; cv=none; b=l0q/TCcPzycZlqLmhjf+kQXp1DnJ2Sa1k/T17U5l9QHPYRc9gdBW3q1uXS/lVL1RggzXKXfPsJtabtCH7sRvr/gu/AdsVt1BAIyBt+oRC0/DV/wFZmGPASWo7nFQ422i9h8j3Lj0IC252rqelgN6+p7oKdVq3Fw5B9ijMiOHF+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716819830; c=relaxed/simple;
+	bh=U/8+cNT/6r/cPMQxaKHzz9tqRw3+vgHMhlaxgqt/NIY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KOOA61KjcCH5UXZ6/yBKui+H10jc16hui0pRA4s0Lyu3hB4ehSKpHr5TXRYisvHDImJjUflnJkrHSNxQcQnWN31NXIZzZgEPgjku52GtToCa2UDPkcm2dwSTtTmAtEEwGBcTgLPVhw6YN3ixSdtWt3YFmsKTqb02Pg85P7lm4RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zpo3QcK3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716819828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uDkfQTZ2OD4EHqIyUHZnwKqde9p/2Gl7tlIUwS9iQSE=;
+	b=Zpo3QcK3FIC1cgPF1L7YNaK6xzcZgxPAyd98bGkaO+KWiX30t8RPve54ufvrYM73p2Kq9L
+	0y/IcOG3FafwOrGS6aXPQluex2gdX+ONj2Qh9jUM3EoPXB+gP8AtU2/n705haV4MtcNFZ+
+	TuYTj6sAfpwkrGbVI5/AOvXOfjVnnLg=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-_9a1mtQHMTKWqB6pg-Ox2Q-1; Mon, 27 May 2024 10:23:45 -0400
+X-MC-Unique: _9a1mtQHMTKWqB6pg-Ox2Q-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d1c9fcce4bso476048b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:23:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716819825; x=1717424625;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDkfQTZ2OD4EHqIyUHZnwKqde9p/2Gl7tlIUwS9iQSE=;
+        b=Q67N0pm9qGdNAVb73i7b54628FVRzI3j+jtTcKP73/hbWmawjqsLp1G9LoX+pQy6sQ
+         XYzpvo8h0Iku7YH9K/W3WLwFmDf/O/zHI5O3b2YEPH9/Smjn9NRHB4flSDNs5Ml6boWP
+         jl15HsBZyd/kQaqPns4snw8cHPzB5UVWORm7OWzPr4dH5E3OvYiIIwcdwCYvi/Tjr0yD
+         dx0y21VsxlJDek8mwkn8XGHm9U5jPIsLmveVSsvgygzdiv0jAv4kCs2ZeS5hCM08yxht
+         Fmg+liVs0kdKrASGjDDZrDm3a22HtpAB/yGGXE9nLE3uiCuTtscVu1NG+DyO2vF77NvX
+         zz7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVS7BLEOy9oGhGJO9JIEahU3/jTSgrdalaEduiIxcxWVtTzuSCwctFu2MjYglBaVMO0otme5QOqUtUm5J6HazfMcV/UejJzt66tKwh1
+X-Gm-Message-State: AOJu0YzyLYaiMf+PDqvoEf5md2mhugS9/cuM8myVjxe+cQ/TdiRESztN
+	FvfULx+IjwbAu98L4mdJiVNqTTLgRrRvzfaB25+OVHqS14hp2rED4kHx6yG+uINcxe8EGkSQc/a
+	kawpgypOz1r7R9sGgn/QiPKtZpk8Amc3YB1xVprYV+jbpHhXKIa6cHoYhmsKLTg==
+X-Received: by 2002:a05:6808:2895:b0:3c9:6f32:48ae with SMTP id 5614622812f47-3d1a7646b36mr10077213b6e.47.1716819824866;
+        Mon, 27 May 2024 07:23:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFd337yra6VNYY4/lCnAw6wP0WY3esjyq2b6ysnQazhhPyLwvvBYzmWw4XghHqjVOjt15jOCg==
+X-Received: by 2002:a05:6808:2895:b0:3c9:6f32:48ae with SMTP id 5614622812f47-3d1a7646b36mr10077185b6e.47.1716819824441;
+        Mon, 27 May 2024 07:23:44 -0700 (PDT)
+Received: from rh (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad77430c57sm17299476d6.38.2024.05.27.07.23.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:23:44 -0700 (PDT)
+Date: Mon, 27 May 2024 16:23:39 +0200 (CEST)
+From: Sebastian Ott <sebott@redhat.com>
+To: Shaoqin Huang <shahuang@redhat.com>
+cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+    linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
+    Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+    Suzuki K Poulose <suzuki.poulose@arm.com>, 
+    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 1/6] KVM: arm64: unify code to prepare traps
+In-Reply-To: <080b8820-d665-40d6-9cf2-35e47086d01e@redhat.com>
+Message-ID: <ab00cdd6-7b93-05a0-896b-24e68e9413a2@redhat.com>
+References: <20240514072252.5657-1-sebott@redhat.com> <20240514072252.5657-2-sebott@redhat.com> <080b8820-d665-40d6-9cf2-35e47086d01e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002316:EE_|BY5PR12MB4228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61704e10-a7bd-4a3d-5dce-08dc7e5894e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|376005|82310400017|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tztx4y1ickvl4tjpOt27ld5+/szlep+iKC13uDGobgcjqLm4Ojy19/9ROWuY?=
- =?us-ascii?Q?0U0ZiXFKoEuWyExehVvbtt9kNq1MHArsvg8evkinflqwVfRBqr9f8ahRObEK?=
- =?us-ascii?Q?nJ/cmEZGA2Z58O6kUr7ddNIl9jFElvVCs+L6xLVoiHR9aX8CNc2GQVJCPRnO?=
- =?us-ascii?Q?8a5nVnk/6752WcTrfsc+0svksEVOQviFy2ggjN+WCprqKubJHBzzTPVBZ35R?=
- =?us-ascii?Q?uSzGf6QZLQmCekGtB+FXCcsrz2PKuUqkOE9Se777FeJaKMUWnxyVZABICisR?=
- =?us-ascii?Q?TXCiRe59VoG86YRhPhAihspULXdYtVXA+WvWxP8AtCT1YBiZmb+iS5WEWytw?=
- =?us-ascii?Q?iuKCJUMXtlhQ6m0xj0k0hZJkPIftJrmolPm+J7f6zQmNK/Hm+nLwtWChj49I?=
- =?us-ascii?Q?nmDPpIEmwRla4Pyq0ifVd3999J7QMkO1IY8FmOCOM6sCjNnAM2oKEC/UtxIp?=
- =?us-ascii?Q?XjtLuDqTLjeOVcjQeBTwZwHosLdMGvjmWg3rPdfxovps10x9isiqdqnIqfCQ?=
- =?us-ascii?Q?O1xtKeuEfy2Z90brcX/31GR/V+grJQdE1x1XjIgDdzl03V+uxsaqKjbTvWYx?=
- =?us-ascii?Q?MJPtR4DM1l7wwsEVNHbUuNW2ObAgDjh5zBp6QXlvOOwgTBBcklMcxoouC/GY?=
- =?us-ascii?Q?F8nu8FKalI7aYJms/HSxVLl+d8MRU+Q8qACMHEggl7DvtBJs6fX+m6DULnfr?=
- =?us-ascii?Q?ogu9gtci6BDD4KPSUEiNAtdbPB1bOudUmPPODTfUTaEjCIrhgSMnRkxtVaJI?=
- =?us-ascii?Q?Q9ClpVd/GdbtaheBLbPPQmOR1swanp0esmZlVhxR+USNKdJqg//shqmKzM60?=
- =?us-ascii?Q?wwvKA7FmfJz0lq8nSYUEIl9DrmupRhb1nyq62G1L1iPIUipvvErKLL9Jj1rp?=
- =?us-ascii?Q?guTN3dG43mgvAzW/OgNrcLmOxwExRtVHd0gDXiTOF7SLI0rPe46QBRHCAeeo?=
- =?us-ascii?Q?NuP4P9aEkezbsjz7MfcWeCTcwkFT6qdzoJy+cAGnmRvKXU1opITlWaBbrbYd?=
- =?us-ascii?Q?H5JblxC9dfk8Vvin4SZUEonzNo7/v0p9h+bFka3C5ubbUPPfgVIN1tIdt0Wb?=
- =?us-ascii?Q?m6RizSkvH5UmURKzVONRBpDdGQjOaVroMQ/N5eokGTRpjfdDJVn089+wVtVR?=
- =?us-ascii?Q?KSPSMOj9bk9RP3CxHd7Z31j4zyhZBOi4edcqNH7RIiXVayjM7zKLdySdA6Nj?=
- =?us-ascii?Q?rep9K0FsNvN70CT3fWqNeM++TAkgkqdcS+YzTHlht+3Zd0Ti8dInq2UL0010?=
- =?us-ascii?Q?poVv0Aatk/r8fyr7M6i9iBtvbgr0lTtggvjTorWqKTNrSbsqpsPmzB2XoRX6?=
- =?us-ascii?Q?9l6m+mVGHpjYwtcj1yI1EKsD?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400017)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 14:23:29.8668
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61704e10-a7bd-4a3d-5dce-08dc7e5894e3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002316.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4228
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-If the lid on a laptop is closed when eDP connectors are populated
-then it remains enabled when the initial framebuffer configuration
-is built.
+Hi Shaoqin,
 
-When creating the initial framebuffer configuration detect the ACPI
-lid status and if it's closed disable any eDP connectors.
+On Mon, 27 May 2024, Shaoqin Huang wrote:
+> On 5/14/24 15:22, Sebastian Ott wrote:
+>> +++ b/arch/arm64/include/asm/kvm_emulate.h
+>>     static inline void vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+>>   {
+>> -	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+>> -	if (has_vhe() || has_hvhe())
+>> -		vcpu->arch.hcr_el2 |= HCR_E2H;
+>> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+>> -		/* route synchronous external abort exceptions to EL2 */
+>> -		vcpu->arch.hcr_el2 |= HCR_TEA;
+>> -		/* trap error record accesses */
+>> -		vcpu->arch.hcr_el2 |= HCR_TERR;
+>> -	}
+>> +	if (!vcpu_has_run_once(vcpu))
+>> +		vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+>
+> Could you give more explaination in your comments about why we still keep the 
+> non-FWB handling in vcpu_reset_hcr()? That would be better for understanding 
+> the special case.
+>
 
-Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/gpu/drm/drm_client_modeset.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+VM ops trapping needs to be toggled via KVM_ARM_VCPU_INIT for this case to
+catch when the guest activates its MMU. This is different to the other
+traps that are setup once before the guest runs for the first time.
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index 31af5cf37a09..b76438c31761 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include "drm/drm_modeset_lock.h"
-+#include <acpi/button.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-@@ -257,6 +258,27 @@ static void drm_client_connectors_enabled(struct drm_connector **connectors,
- 		enabled[i] = drm_connector_enabled(connectors[i], false);
- }
- 
-+static void drm_client_match_edp_lid(struct drm_device *dev,
-+				     struct drm_connector **connectors,
-+				     unsigned int connector_count,
-+				     bool *enabled)
-+{
-+	int i;
-+
-+	for (i = 0; i < connector_count; i++) {
-+		struct drm_connector *connector = connectors[i];
-+
-+		if (connector->connector_type != DRM_MODE_CONNECTOR_eDP || !enabled[i])
-+			continue;
-+
-+		if (!acpi_lid_open()) {
-+			drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
-+				    connector->base.id, connector->name);
-+			enabled[i] = false;
-+		}
-+	}
-+}
-+
- static bool drm_client_target_cloned(struct drm_device *dev,
- 				     struct drm_connector **connectors,
- 				     unsigned int connector_count,
-@@ -844,6 +866,7 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
- 		memset(crtcs, 0, connector_count * sizeof(*crtcs));
- 		memset(offsets, 0, connector_count * sizeof(*offsets));
- 
-+		drm_client_match_edp_lid(dev, connectors, connector_count, enabled);
- 		if (!drm_client_target_cloned(dev, connectors, connector_count, modes,
- 					      offsets, enabled, width, height) &&
- 		    !drm_client_target_preferred(dev, connectors, connector_count, modes,
--- 
-2.43.0
+Sebastian
 
 
