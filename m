@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-190650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3452E8D00EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2B28D00ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EDB1F25A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469F11F25E71
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D854A16078D;
-	Mon, 27 May 2024 12:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F0F3BBEF;
+	Mon, 27 May 2024 13:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Olyl4fuc"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RphZbBsa"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F8D15FA97;
-	Mon, 27 May 2024 12:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837EC1607B6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814791; cv=none; b=i0YyLymkG8eln94tnhST4Pl2ibEMhkygMFCBc6PRPA1yBP75tnZob9uYlYs+WwCwGTnn0IjyvL+n80BU4NQekREDJ3acRkwmv+JhqSmumXYDqMcfZKjM3HX1E8L8QFZHnqCkOtyqiWXuxoIRJKTCjPyRrZVEeT31+XUd/Vv9lVc=
+	t=1716814803; cv=none; b=DzrtsSFwohwnVG1ckW5EzwCvHyWJxhmivAb70muTDNbQoEqCxSquWwZn3lymmWVRZfyKuwZzpmaYSbcI8r00r+3mhRC5UWLG2dE5jBDFqd0qMnCUYto4bbjNv8LceNIvqco8o0oBAeICX5lZ7s8eBoetoxXatKBXaihuyoBCA9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814791; c=relaxed/simple;
-	bh=NUoe4mDdPN9W0IzNYWtLfDFheFSeywtuilNg5JQ/k5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bo6dZWfdRF4rGFQDn2oUxgM5tvmtRz90jTKTmWaJ3XfDrLMxZznlrqdDbz+3FiuFMG+zdgEO8gJGp3u3LbN87vxJ/RtOHUTek+r4pzkymmUgnsZLvqWvPgyVsZkmrHH2CLJ/IORzgtdqIHzpXHEtgQMXMN+JVVLChwnHtL29cLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Olyl4fuc; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 67BED1C0002;
-	Mon, 27 May 2024 12:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716814787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uuejyrShmDWp6N9DabjjRWMGIOVtRON+WOq46a8Kctc=;
-	b=Olyl4fucwY1KvFrTY6et05Q/eLkJaaw30i9SV9uCqwqqo4wUi3PSmf9QA9I560FuHsgcVl
-	amQDYSTr2jQwKaCILQHSD/27zD9lFsTMVpQJ2dAJRY2rfu6s89biBPIX0vtRy3pnLLyQvU
-	dy8HLq04SL56v4uCD38eSlq1U9BD61O5nyRg0+QcKagjAoRC4864dYqg0HyzdXTHqo1ANt
-	Rwn6OAtptkW9vZHhySEoCcJXpTRr947p0OrGw7tPqzfSXZs89p4f0rQMxtFEERWE//rnQM
-	hqT9JZy0lehlHJDIBmKT/+S0/hftO9TYth2DRZiPfqELhidCY5DQKL1Y0l2rbg==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Riku Voipio <riku.voipio@iki.fi>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	herve.codina@bootlin.com,
-	christophercordahi@nanometrics.ca,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH 3/3] leds: pca9532: Change default blinking frequency to 1Hz
-Date: Mon, 27 May 2024 14:59:40 +0200
-Message-ID: <20240527125940.155260-4-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
-References: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1716814803; c=relaxed/simple;
+	bh=HkaP6glwKL/GZZMmy621Cw2Bayb68Wj/BHPrr3EyiO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qls2Rxhze55ku5M/LhScvTqgLyWNdLb/H5kCds1O1fO/YkBaAw9ewiJczyjviMuRZYRSETXjt0sJTt8GBjAcnX8a8C/7Ol4kcP8ktINCxVbikVPVslbNd5SywbmUVZx3j29KaUQeeKdS8kvCzIqEEqCimvmzLyzjiX/nFfeTZTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RphZbBsa; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df7722171bcso3309194276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716814800; x=1717419600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wywx+DoAm5KgDivz+e0k+JypCKJpEVBBW6X7OipnxCA=;
+        b=RphZbBsaDKHLL3mVGp//+NbB/i5gEiymO6lgy5ToTxx/TEtVM93laxTh3kdHxSHpuC
+         LIwg/a6JvRsonooJ5hboHx+tcOLiuTswOS35B/e/CUuhwv83/wTsKITxLhZfyWFvIAxO
+         13nvZqT3xds1FlTyYihvr9+Sp1/WfRlkG6jJI44PiQ2Y64K5v2d1S65gLRIt5VWefB62
+         ZsTG+BQ7yYxLoJg6UFqLAoxg919V29iMss5s8ydPbpyhP6yjVjQJ/+4bIAkst3ztT7vd
+         AR3VuXKbjr8MIQW/vwYk5iH0FGmJpCXOVinPjQyBBxXlZmVQfKjpIN5ZbqpOceLFg0ri
+         zC5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716814800; x=1717419600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wywx+DoAm5KgDivz+e0k+JypCKJpEVBBW6X7OipnxCA=;
+        b=Cf96rHWxYEnZJR3blfe5iE/kz8g5anWDlAEuw0ZUIIkK4H+J/pbWUys1WFOy6G5/QT
+         /0Bhd7RvyHM+XxjdIvJvcNayH+D6+eJA0voFnhfuGy2EFDxcykTVAJtft9jJAI+Y/G1d
+         azWfgSxxPBHvjOAAIAl2KWH+iJviETortLaXWcYL+utovI3b2/rVQxHgcnU/WA7BiARI
+         j1CHNELLRsOzQ5iXGmdMfGDFNE14gg+TZg2rrx58v9iWP6gXPAPo5DalmPV/3IxgaBA1
+         MUVP2nNp/ETKl1Xdsgp/joigPe58rmN+nTGJoNQ64rNCXrRMqQmwHdh6HGKtJ0oMSCbL
+         vO8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGLicjXwvG/a5x3VDYg+3tPeVDCCuPmkngMTL/zoCUsw0zpCz9lRen/Nsu7P5uuhS7eu4lH1oAJPPsCGny/PBJGkpiBAYJKGnLa6m
+X-Gm-Message-State: AOJu0Yxza38VwT1oOtuESFXAYRK4L5HAWjSeE9ol88KqU8Txp7nhEen4
+	UQ40lKLOhl/w5Id2T6RrXBPXfql938mnkjjDa9clMKqGhQkAPchsNFVoGvYL5VypzVP9i5ZEl59
+	exR6KiJJXNgbX55Tv+1S7mVBDvTxPiADDA52dPDXFGVXnqAcVxY8IzA==
+X-Google-Smtp-Source: AGHT+IFb5DbLkPdaiOEZs/ep03FNPZZ+bNRgzDn0ZDr8Mf2yH8mLV7AhtYtaaqlTf4TIqDPk7TtDNMGL41zvuu8XISM=
+X-Received: by 2002:a25:8392:0:b0:df4:9a10:4e12 with SMTP id
+ 3f1490d57ef6-df77223e466mr8632612276.57.1716814800453; Mon, 27 May 2024
+ 06:00:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+References: <20240521012447.42211-1-ychuang570808@gmail.com>
+In-Reply-To: <20240521012447.42211-1-ychuang570808@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 May 2024 14:59:49 +0200
+Message-ID: <CACRpkdb9EZ6fpLHO7a+A4szM_wc6JT6pxH0e0EWCOX6Mg2KkcQ@mail.gmail.com>
+Subject: Re: [PATCH v9 0/3] Add support for nuvoton ma35d1 pin control
+To: Jacky Huang <ychuang570808@gmail.com>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Default blinking period is set to 2s. This is too long to be handled by
-the hardware (maximum is 1.69s).
+On Tue, May 21, 2024 at 3:24=E2=80=AFAM Jacky Huang <ychuang570808@gmail.co=
+m> wrote:
 
-Set the default blinking period to 1s to match what is done in the
-other led drivers.
+> From: Jacky Huang <ychuang3@nuvoton.com>
+>
+> This patch series adds the pin control and GPIO driver for the nuvoton ma=
+35d1
+> ARMv8 SoC. It includes DT binding documentation and the ma35d1 pin contro=
+l driver.
+>
+> This pin control driver has been tested on the ma35d1 som board with Linu=
+x 6.9.0-rc7.
+>
+> v9:
+>   - Update pinctrl driver:
+>     - Fixed a compilation warning reported by testrobot.
+>     - Removed unnecessary gpiochip_remove().
+>     - Made other minor fixes.
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/leds/leds-pca9532.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patch v9 applied for the v6.11 kernel.
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 356b71a4b7ac..5fefcaae7006 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -240,8 +240,8 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
- 
- 	if (*delay_on == 0 && *delay_off == 0) {
- 		/* led subsystem ask us for a blink rate */
--		*delay_on = 1000;
--		*delay_off = 1000;
-+		*delay_on = 500;
-+		*delay_off = 500;
- 	}
- 
- 	led->state = PCA9532_PWM1;
--- 
-2.44.0
+9 iterations are certainly enough, if there are more comments they can be
+addressed in-tree.
 
+Yours,
+Linus Walleij
 
