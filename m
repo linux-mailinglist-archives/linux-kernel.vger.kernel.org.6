@@ -1,152 +1,161 @@
-Return-Path: <linux-kernel+bounces-190433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98728CFE28
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:32:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFD88CFE2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AC17B209B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D011C2127F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152013B2BB;
-	Mon, 27 May 2024 10:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6584513B2A4;
+	Mon, 27 May 2024 10:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Mptzl2WF"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1d/0CU5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1BD79E1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CCB79E1;
+	Mon, 27 May 2024 10:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716805906; cv=none; b=UTTomzpFKPtMmGdRwsC1V1wYACsMOw7OzeXluFGelMbwheyL0tNVfa78kjilXPiBf5ia4ue/aqLBYma1OaHMLT7bbGTkOPuDt+7AinVxeBOqph0T+gSl8aCz56f0MhvuTTmJyeJ8OGid6XUukWswf9iMl5w/ApmENdv4YsxvX2g=
+	t=1716806037; cv=none; b=PbCRzYcAF1A+eytYv8if5cH4VQx/lnkrfhkHRh0QhFRx02kzl00VVqxvrIR1wIyNui633R6AwQsn6v1oACCtHb55BBcTZJhKrqAGzNRpagcke2/rO5rUrqto90KsNfjvQrHb0eXfdtv0DkhRL9bfAQ84cVHjcjmqwvYjXvcGgsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716805906; c=relaxed/simple;
-	bh=5915iZqkJRQVbm8GLKDIhbeHZhz7RipJyJhqNV1k5cs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iXgsgaBC/zGckkgrkKhbW+Vfaw7lIpPxzOFh58UNjhQ9l40YZUgAa5TktMos+B05XJbIGw32QTGK8kKt1oG4t1FDvr7kbk42yEzCnj6AGzgwMh8DMZ/+Bv4WmvMICqc4AI4HxLCR3f+iD/Bsz0jdWGC0ECHOcPMLgYRzouAXfiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Mptzl2WF; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1716805901; x=1717065101;
-	bh=vwyP38HX9GqRLRmp9euL8DsYmRpssOoH8PmzQUaaO+s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Mptzl2WFBbWsnxY28V/bH4KkS5FCx7eed1sOrD9bVwxOb5gauTPm+QBvZ+vKGyBT6
-	 lZLszxmRMgFA8sPMoS7cahy3bLiFB3BjLpaZOl4XDoLDmMDDLKsaWeUX7S6ERQ0vr9
-	 yqStFnG2RVLb1OhUGYi3SD85hbUeYyICUerLOETKP6uwQPG7Kw7XPHaayQklNKMrRx
-	 YZGhrF79g27vdm4ZSLp3chR+wi+KHgj2YWfdYnHn07OLReR8t921An/jdNDyETbT27
-	 R1VKWfN0KCdaqDDT+dpX4yjHH3LP5HksdUEvHLLWRDUVXYyov1oowgKq/guP//QKVY
-	 y0XOkqrx8jAXA==
-Date: Mon, 27 May 2024 10:31:35 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 6/9] rust: list: add iterators
-Message-ID: <cc65eeaf-81e1-45f5-8350-8e8259efe289@proton.me>
-In-Reply-To: <20240506-linked-list-v2-6-7b910840c91f@google.com>
-References: <20240506-linked-list-v2-0-7b910840c91f@google.com> <20240506-linked-list-v2-6-7b910840c91f@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 7ca9ca532a66a67c1020f5d68da622eadad78e61
+	s=arc-20240116; t=1716806037; c=relaxed/simple;
+	bh=kh7zExYsU5NSwXABQCpfwbxqjGDH1gafzF+5b2SbwQE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=oMASn0EEWFDzS6fUN8Hu+AsPfQxJ56/4C217/VljAX8DprMIVZ3bGakKFcfSdIwc30JtLy2dTfvv5SCrN7ksjUSq1ngrSh1GYN96HMTnRZuamRaceQDZVajfklXe+FN/ngfs8mqOyHRPa399L5zdg8OmYxgrXCdGYnX0QRan0s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1d/0CU5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716806036; x=1748342036;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kh7zExYsU5NSwXABQCpfwbxqjGDH1gafzF+5b2SbwQE=;
+  b=M1d/0CU5Jl1WDFFNgOggf/l1eR/LazbvBpCbHKrnhwoOBeBf0N3yWZO3
+   a4k1edQsywF5ygQUd7wJfFyAzlDu4kdf/dcVGBEaNXEgw5O4Hdcei2HBZ
+   9d6SLJdQi2EbDfNDkhfw+QwLhklRfofxW9/IptI/gYuxugn/RrNwf29ZU
+   CpIYF+nxNOeTvMzExp2jc1hM2r68BLZc3p6CEPanQTtzxHX6It8UKzGv4
+   8gC9N9ccCmxzY8tuw/c1M7lVQ/0WhC6vk4FAYw5JXdbLWjvrGdjmVkc3h
+   98HUbmUKYTudwGQT8swFEYQkeNj+mm7yxfBHnSK114C/+DLk7JKH45m8D
+   w==;
+X-CSE-ConnectionGUID: 3+35JX/UStu7lRHCpVePqA==
+X-CSE-MsgGUID: zIA2NkDwQeixMUACzOez3Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="13239124"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="13239124"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 03:33:55 -0700
+X-CSE-ConnectionGUID: SExCQypaS/y8JBy/H0Ut8w==
+X-CSE-MsgGUID: N+FtcBA1RaetMv4BazM3MA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="39154551"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.138])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 03:33:54 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 27 May 2024 13:33:49 +0300 (EEST)
+To: Shravan Kumar Ramani <shravankr@nvidia.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
+    David Thompson <davthompson@nvidia.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] Documentation/ABI: Add document for Mellanox PMC
+ driver
+In-Reply-To: <d8f86ffc4a8a93f13a278ac9c95e0f95b4dd3fb9.1716205838.git.shravankr@nvidia.com>
+Message-ID: <23406905-4c1a-5fb3-1bb4-8a3475536977@linux.intel.com>
+References: <cover.1716205838.git.shravankr@nvidia.com> <d8f86ffc4a8a93f13a278ac9c95e0f95b4dd3fb9.1716205838.git.shravankr@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On 06.05.24 11:53, Alice Ryhl wrote:
-> Rust Binder has lists containing stuff such as all contexts or all
-> processes, and sometimes need to iterate over them. This patch enables
+On Mon, 20 May 2024, Shravan Kumar Ramani wrote:
 
-typo: need -> needs
+> The sysfs interface is created for programming and monitoring the
 
-> Rust Binder to do that using a normal for loop.
->=20
-> The iterator returns the ArcBorrow type, so it is possible to grab a
-> refcount to values while iterating.
->=20
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+This patch is not creating interface. I suggest you change the wording to:
 
-Two documentation nits below, with those fixed:
+"Document the sysfs interface for ...
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
+> performance counters in various HW blocks of Mellanox BlueField-1,
+> BlueField-2 and BlueField-3.
+> 
+> Signed-off-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+> Reviewed-by: David Thompson <davthompson@nvidia.com>
 > ---
->  rust/kernel/list.rs | 102 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 102 insertions(+)
->=20
-> diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-> index d0ff29a3e5d1..e36afc7ee44a 100644
-> --- a/rust/kernel/list.rs
-> +++ b/rust/kernel/list.rs
-> @@ -5,7 +5,9 @@
->  //! A linked list implementation.
->=20
->  use crate::init::PinInit;
-> +use crate::sync::ArcBorrow;
->  use crate::types::Opaque;
-> +use core::iter::{DoubleEndedIterator, FusedIterator};
->  use core::marker::PhantomData;
->  use core::ptr;
->=20
-> @@ -435,6 +437,17 @@ pub fn push_all_back(&mut self, other: &mut List<T, =
-ID>) {
->          // INVARIANT: The other list is now empty, so update its pointer=
-.
->          other.first =3D ptr::null_mut();
->      }
+>  .../ABI/testing/sysfs-platform-mellanox-pmc   | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-pmc
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-pmc b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
+> new file mode 100644
+> index 000000000000..47094024dbeb
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
+> @@ -0,0 +1,49 @@
+> +HID           Driver         Description
+> +MLNXBFD0      mlxbf-pmc      Performance counters (BlueField-1)
+> +MLNXBFD1      mlxbf-pmc      Performance counters (BlueField-2)
+> +MLNXBFD2      mlxbf-pmc      Performance counters (BlueField-3)
 > +
-> +    /// Creates an iterator over the list.
-> +    pub fn iter(&self) -> Iter<'_, T, ID> {
-> +        // INVARIANT: If the list is empty, both pointers are null. Othe=
-rwise, both pointers point
-> +        // at the first element of the same list.
-> +        Iter {
-> +            current: self.first,
-> +            stop: self.first,
-> +            _ty: PhantomData,
-> +        }
-> +    }
->  }
->=20
->  impl<T: ?Sized + ListItem<ID>, const ID: u64> Default for List<T, ID> {
-> @@ -450,3 +463,92 @@ fn drop(&mut self) {
->          }
->      }
->  }
+> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/event_list
+> +Date:		Dec 2020
+> +KernelVersion:	5.10
+> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
+> +Description:
+> +		List of events supported by the counters in the specific block.
+> +		It is used to extract the event number or ID associated with
+> +		each event.
 > +
-> +/// An iterator into a [`List`].
+> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/event<N>
+> +Date:		Dec 2020
+> +KernelVersion:	5.10
+> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
+> +Description:
+> +		Event monitored by corresponding counter. This is used to
+> +		program or read back the event that should be or is currently
+> +		being monitored by counter<N>.
+> +
+> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/counter<N>
+> +Date:		Dec 2020
+> +KernelVersion:	5.10
+> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
+> +Description:
+> +		Counter value of the event being monitored. This is used to
+> +		read the counter value of the event which was programmed using
+> +		event<N>. This is also used to clear or reset the counter value.
 
-I would use "over" instead of "into".
+Please document how to clear/reset it in more concrete terms (I didn't 
+check the code but my guess would one writes zero there to reset the 
+counter?).
 
-> +///
-> +/// # Invariants
-> +///
-> +/// * There must be a [`List`] that is immutably borrowed for the durati=
-on of `'a`.
-> +/// * The `current` pointer is null or points at a value in that [`List`=
-].
-> +/// * The `stop` pointer is equal to the `first` field of the [`List`].
+> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/enable
+> +Date:		Dec 2020
+> +KernelVersion:	5.10
+> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
+> +Description:
+> +		Start or stop counters. This is used to start the counters
+> +		for monitoring the programmed events and also to stop the
+> +		counters after the desired duration.
+> +
+> +What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/<reg>
+> +Date:		Dec 2020
+> +KernelVersion:	5.10
+> +Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
+> +Description:
+> +		Value of register. This is used to read or reset the registers
+> +		where various performance statistics are counted for each block.
 
-the -> that
+Ditto for the reset part.
 
----
-Cheers,
-Benno
-
-> +#[derive(Clone)]
-> +pub struct Iter<'a, T: ?Sized + ListItem<ID>, const ID: u64 =3D 0> {
-> +    current: *mut ListLinksFields,
-> +    stop: *mut ListLinksFields,
-> +    _ty: PhantomData<&'a ListArc<T, ID>>,
-> +}
+-- 
+ i.
 
 
