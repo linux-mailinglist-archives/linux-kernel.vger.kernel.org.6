@@ -1,150 +1,186 @@
-Return-Path: <linux-kernel+bounces-190258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50138CFC1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:48:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCBF8CFC1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A491C21DE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72CAD283ACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09FC132494;
-	Mon, 27 May 2024 08:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7943B13A404;
+	Mon, 27 May 2024 08:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OYyES5c1"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRTSsGab"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DB76CDB1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A9113A3E7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799587; cv=none; b=CJHBIb2uTR2VucvyKaMrIQVOL1YVouKXYCXhMJEGIj/69gc3pAWUG6hUTS+aVfhZUY05dTOw/9zfVrUjJdDP8tkMPmzJC7eregKBfGgejoNedbmJp09a1dn2RtEO3w9SHXLoRRK9JHHwm9dT3Tgo2AizLAR7XPsQtFu11FjL/xE=
+	t=1716799594; cv=none; b=NN1ZwIEMKoLPi4H1JfM49SRvQJP20iQYXOEhzognYyMsk1RCYdAsLmQ42l6AxUxMGdjsFw08yK53X7siUFUMW8RMrA0aOHznaOQTALs0Pjrm6adK5aP2yS+xdzOZJHhFQ1MLOtbONdrUPkZxaOFg7ym3GWdL/TkeZyFVv+UCkfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799587; c=relaxed/simple;
-	bh=1TfGGOPQIJAxfW9bXXbGkAy29+61DNQCFn6EEoU1vc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=fOzXW90zvSfD+XK9qoVI5SYiJSUur6ayiiPy8fTBzJWrsPOZflcBeZQEqzm4uvrdViCYSdIFOA3TujTvToY5CEPNlsXwTlnZJRf0FvCiNMJPC3Fo86Q3ppg6hW7hWne21dz98bPJtLTyVCGIhMakcpFOqYSYbeGGmqdDdOKyZIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OYyES5c1; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240527084622epoutp03b77a034f8254cc7ffe3afe4df3f2b71c~TTB-G0SN11542815428epoutp03L
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:46:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240527084622epoutp03b77a034f8254cc7ffe3afe4df3f2b71c~TTB-G0SN11542815428epoutp03L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716799582;
-	bh=wQVGpATxrdqStkwdOGFt1J4r37xmzkXgq1XbQORwUDo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=OYyES5c1nqkP+dh+Dg2rOA4nl/E0ZbI4UMZ3kXRmPPVTOcPyAtCW17RsFMsCtMJ67
-	 77qPh6UUioVD6AucTXe49Y9LnaAexwTGlSZRsiPOG7ThIy9eZbrGcvVKkG9iZ2OAgq
-	 ioJy0X2TyRHA0xHTThhjAW35ugiqwszLOrx/0Q+A=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240527084621epcas5p22fb6319772dabebfc723f9409a5bd8fa~TTB_rt7wO0432704327epcas5p22;
-	Mon, 27 May 2024 08:46:21 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vnq4X1Y5dz4x9QB; Mon, 27 May
-	2024 08:46:20 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1F.0E.10035.95844566; Mon, 27 May 2024 17:46:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6~TTBZR9KYk2501925019epcas5p12;
-	Mon, 27 May 2024 08:45:41 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240527084541epsmtrp29911fbf77cd490add8293e7885e2fe52~TTBZRJpLW1959819598epsmtrp2b;
-	Mon, 27 May 2024 08:45:41 +0000 (GMT)
-X-AuditID: b6c32a4b-8afff70000002733-9f-66544859fb86
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	60.D9.08336.53844566; Mon, 27 May 2024 17:45:41 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240527084540epsmtip2a05b7057b1a6b4748ceab0bb9460fcc9~TTBYN4CjE1034210342epsmtip2Q;
-	Mon, 27 May 2024 08:45:40 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
-	<xue01.he@samsung.com>
-Subject: [PATCH v2] block: delete redundant function declarations
-Date: Mon, 27 May 2024 16:45:33 +0800
-Message-Id: <20240527084533.1485210-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716799594; c=relaxed/simple;
+	bh=70rY50aseYI64Qm8+oXFaZPxdIOsmiHvyjmjaE2BkRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhViwlFLDZP86kOBloCAiQwHVSBkIMNlndw1vfzoy2Ls5/K4kuOI9svMeWY76MldblRq1z5xzcw/zRVHU+UPDd4IxKMkM0Jc5tGLVM1xqvNoyXqsPqmYWiXYU8STDn1fKeDvIVG6psgYiCK/iRzan7skbSl+Pe041OO9Pq3BrY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRTSsGab; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95afec7e6so23404721fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716799591; x=1717404391; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCW+HFtoeaierrg0K+2TVOUHq8VHzqfUi+kUPqpq30g=;
+        b=FRTSsGabWb+ngqdHMp3yhgqdJ+Tl21ir+gQNAsEqVuVyFsGJijN33MIIbgmCIbDXiT
+         bTeMQP4z7G7ZL5HY8hQl2dZfEgbb//4j4RsLFfrQ/qldFkC+B68X7O4ZTeCgabCs5FMs
+         8N/Pz0XISOfops40CHRO8kw4pJxmTrMMeKR9bRtBIm/bZAtVnAe3AJHP2WupjpmKev5B
+         QsX9H48FOzteC4BvvZnboWZ/OZvWAv0VE0wOyMIg7T3r8FNK1CYL+rwe+5+MDesZVgQZ
+         Tgl1NpfeUPMjZ+dZCwcsWb6IT2ib+9gdSQCyrFhT05Qn1Bh+nK9U1tfsAkv6KKBckf18
+         nlsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799591; x=1717404391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TCW+HFtoeaierrg0K+2TVOUHq8VHzqfUi+kUPqpq30g=;
+        b=LL8phIfpheLX71OZm9sxUdOJDj97IMG+kcqPptrIz3O0KZXyguHuFR4Jcbabe7jFfU
+         HIxjA8uS/LMxOPMzq22MM9J7Tb6OS3e8ZYAQ3cubGSceEPCA1lbqlb4Zhkht9c/WKZAL
+         PP9Z7Ha6/w3hUszK0eCztEc/tQ/OSwTxKpjbrHDs+6/r5S16VpGKcMm12GL7hWnUq86B
+         TX+H4Jjl+5nhFde7qYoUF2OM40JAUVmFa4BkYKR8Xzmai+oy/eDdVCfSahQjNz1X0aof
+         Mn63/jrt8enmuDCoELagzS+qdqOiUgatzSMy13rIjHeI3nYjYA2asxmOqSnHPYxcWPDh
+         BV4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKgofvGsz5rjQdy8i4xKJ6h8M+A7pBTvViIovAatcQ3Jo2o0CsKE3jhr8TJYdTe7gna+zg8H7JSZB/Bmbl8RwqC1wB/PZqr+TZpY0h
+X-Gm-Message-State: AOJu0Yz5OwlTo7ZL7xY6lqfmPq5yUXwscsOykeKMA90RtkzUYIynb50y
+	MkL97ZfGbzRX9xNB2mX9MN2C3GJAyyRoU864HZ+NShns9kC9lAkvVkHqzHTOBac=
+X-Google-Smtp-Source: AGHT+IGoIHMv7LzRXg/j0eiiJ3Hf7gEQa4vkwrOCUAOl8CxlUeLhgksZ+dNSoUDerxoQwluUxl8chQ==
+X-Received: by 2002:a2e:2c19:0:b0:2e2:3761:2ef5 with SMTP id 38308e7fff4ca-2e951b82fdbmr37512241fa.14.1716799591109;
+        Mon, 27 May 2024 01:46:31 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95be2126esm18474141fa.119.2024.05.27.01.46.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:46:30 -0700 (PDT)
+Date: Mon, 27 May 2024 11:46:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] phy: qcom: qmp-combo: introduce QPHY_MODE
+Message-ID: <v36mrliwd7rarqofbitv5mtb6kd3n3hmuwp6bgg67krnvzejd6@luityjlkb7nn>
+References: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
+ <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-3-a03e68d7b8fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsWy7bCmum6kR0iawadeDovVd/vZLH5132W0
-	2HtL2+LyrjlsFmcnfGC16Lpwis2BzePy2VKPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvOT8nM
-	S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wB2qqkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM44c3M6c8En1orVt3+xNTD+
-	Zuli5OSQEDCRmLvyE5DNxSEksJtR4v6hK6wgCSGBT4wSv2cWQyS+MUrM3b+DGabjyN4DzBCJ
-	vYwSS59/Y4JwfjBK7Dw4BWwum4CSxP4tHxhBbBEBYYn9Ha1gcWaBWImjyx6AxYUFHCWud+1n
-	A7FZBFQlZrfsBovzClhLrPt3BmqbvMTNrv3MEHFBiZMzn0DNkZdo3job7AoJgU3sEj9mtjFC
-	NLhILF62jx3CFpZ4dXwLlC0l8fndXjYIO19i8vf1UPU1Eus2v4MGhrXEvyt7gGwOoAWaEut3
-	6UOEZSWmnlrHBLGXT6L39xMmiDivxI55MLaSxJIjK6BGSkj8nrCIFcL2kNjx7AYzJEhjJfb9
-	62GfwCg/C8k7s5C8Mwth8wJG5lWMkqkFxbnpqcWmBcZ5qeXwiE3Oz93ECE58Wt47GB89+KB3
-	iJGJg/EQowQHs5IIr8i8wDQh3pTEyqrUovz4otKc1OJDjKbAMJ7ILCWanA9MvXkl8YYmlgYm
-	ZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTA5bHv6jretSXLy388vFt0qPHub
-	73OWoOayWIut5xmLDvCuuqt0cdualounZHcK5If8nsYVXKY7eUXd/TRW/9yg3Vr2Ofp3vhQG
-	PSnc6du86+zNwERJ1bu90ZoTHiat5Ww3YoyxahXjf+pxv/ZFnNfz+0tSroUE38l3UDye4CEf
-	l+DPLsZZFyzSvinqirrBtiMenIlS8fKikj8u77o/S+yLTyPP+7s7eKryTu0r2XWrK3vRmwNh
-	k//dSJtVoX9cuLbyRPfjgAsSibvni5wSrjsstHNObWnN3+qjbr6H3S9lepzYL9/gnhoQrRK4
-	5kbs+q3HZ0fI9rRnLyiM55t8Say0rzmVy3tv3lrDdmexSUosxRmJhlrMRcWJAA8k0ysFBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsWy7bCSvK6pR0iawaH56har7/azWfzqvsto
-	sfeWtsXlXXPYLM5O+MBq0XXhFJsDm8fls6UefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlXHm
-	5nTmgk+sFatv/2JrYPzN0sXIySEhYCJxZO8B5i5GLg4hgd2MEvfPXGGFSEhI7Hj0B8oWllj5
-	7zk7RNE3RomOV4fYQBJsAkoS+7d8YASxRYCK9ne0gk1lFoiXuDT1PDOILSzgKHG9az9YPYuA
-	qsTslt1g9bwC1hLr/p1hhlggL3Gzaz8zRFxQ4uTMJ1Bz5CWat85mnsDINwtJahaS1AJGplWM
-	kqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMFBqKW5g3H7qg96hxiZOBgPMUpwMCuJ8IrM
-	C0wT4k1JrKxKLcqPLyrNSS0+xCjNwaIkziv+ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwJT8muHf
-	pLyPE3r+sk7pTO1Zppz2OYt38f5km6bnpX4XhaMZZt8XPWXhN+3xG4tzDRdfefGcsHAIuvrN
-	2+TBw7bUnHnXHkoHNRQevbbtfwLLKy6f0y8ledZ67ODcq+XLUf8ovm1Oto/sSYMw3qNP7bpm
-	Vpct3Vw+MWP18T3pnHdYFqr4nnSK3q5bo9Nxdo7j+ofbxPJyPzvItrkvtDav9ZGM31twq7r8
-	772Ft9I3LY8S28kb+HPevP2Oi9uc+q7uSn6fMs/bkPn4447PD/R8tJbybRd9whHQUXBb5Hfc
-	v/0nDn3nlrQ7waZy59/aGfF/7dK0uNqNzEy+u+VtruN8+4s3P2P7Ww9PtrpTB2cwOiqxFGck
-	GmoxFxUnAgBkR5LSsQIAAA==
-X-CMS-MailID: 20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6
-References: <CGME20240527084541epcas5p17fa0a6ee3f53148ff0896703c58146b6@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-3-a03e68d7b8fc@linaro.org>
 
-blk_stats_alloc_enable is used in block hybrid poll, the related function
-definitions have been removed by patch:
-commit 54bdd67d0f88 ("blk-mq: remove hybrid polling")
-but the function declaration was not deleted.
+On Mon, May 27, 2024 at 10:42:35AM +0200, Neil Armstrong wrote:
+> Introduce an enum for the QMP Combo PHY modes, use it in the
+> QMP commmon phy init function and default to COMBO mode.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 41 +++++++++++++++++++++++++++----
+>  1 file changed, 36 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> index 183cd9cd1884..788e4c05eaf2 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+> @@ -61,6 +61,12 @@
+>  
+>  #define PHY_INIT_COMPLETE_TIMEOUT		10000
+>  
+> +enum qphy_mode {
+> +	QPHY_MODE_COMBO = 0,
+> +	QPHY_MODE_DP_ONLY,
+> +	QPHY_MODE_USB_ONLY,
+> +};
+> +
+>  /* set of registers with offsets different per-PHY */
+>  enum qphy_reg_layout {
+>  	/* PCS registers */
+> @@ -1503,6 +1509,7 @@ struct qmp_combo {
+>  
+>  	struct mutex phy_mutex;
+>  	int init_count;
+> +	enum qphy_mode init_mode;
+>  
+>  	struct phy *usb_phy;
+>  	enum phy_mode mode;
+> @@ -2589,12 +2596,33 @@ static int qmp_combo_com_init(struct qmp_combo *qmp, bool force)
+>  	if (qmp->orientation == TYPEC_ORIENTATION_REVERSE)
+>  		val |= SW_PORTSELECT_VAL;
+>  	writel(val, com + QPHY_V3_DP_COM_TYPEC_CTRL);
+> -	writel(USB3_MODE | DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
+>  
+> -	/* bring both QMP USB and QMP DP PHYs PCS block out of reset */
+> -	qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
+> -			SW_DPPHY_RESET_MUX | SW_DPPHY_RESET |
+> -			SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
+> +	switch (qmp->init_mode) {
+> +	case QPHY_MODE_COMBO:
+> +		writel(USB3_MODE | DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
+> +
+> +		/* bring both QMP USB and QMP DP PHYs PCS block out of reset */
+> +		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
+> +				SW_DPPHY_RESET_MUX | SW_DPPHY_RESET |
+> +				SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
+> +		break;
+> +
+> +	case QPHY_MODE_DP_ONLY:
+> +		writel(DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
+> +
+> +		/* bring QMP DP PHY PCS block out of reset */
+> +		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
+> +				SW_DPPHY_RESET_MUX | SW_DPPHY_RESET);
+> +		break;
+> +
+> +	case QPHY_MODE_USB_ONLY:
+> +		writel(USB3_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
+> +
+> +		/* bring QMP USB PHY PCS block out of reset */
+> +		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
+> +				SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
+> +		break;
+> +	}
+>  
+>  	qphy_clrbits(com, QPHY_V3_DP_COM_SWI_CTRL, 0x03);
+>  	qphy_clrbits(com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
+> @@ -3603,6 +3631,9 @@ static int qmp_combo_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_node_put;
+>  
+> +	/* Set PHY_MODE as combo by default */
+> +	qmp->init_mode = QPHY_MODE_COMBO;
+> +
 
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- block/blk-stat.h | 1 -
- 1 file changed, 1 deletion(-)
+I see that COMBO mode is backwards compatible with existing code. But
+shouldn't the USB-only be a default mode?
 
-diff --git a/block/blk-stat.h b/block/blk-stat.h
-index 17e1eb4ec7e2..5d7f18ba436d 100644
---- a/block/blk-stat.h
-+++ b/block/blk-stat.h
-@@ -64,7 +64,6 @@ struct blk_stat_callback {
- 
- struct blk_queue_stats *blk_alloc_queue_stats(void);
- void blk_free_queue_stats(struct blk_queue_stats *);
--bool blk_stats_alloc_enable(struct request_queue *q);
- 
- void blk_stat_add(struct request *rq, u64 now);
- 
+>  	qmp->usb_phy = devm_phy_create(dev, usb_np, &qmp_combo_usb_phy_ops);
+>  	if (IS_ERR(qmp->usb_phy)) {
+>  		ret = PTR_ERR(qmp->usb_phy);
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.40.1
-
+With best wishes
+Dmitry
 
