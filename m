@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-191358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6768D0AF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:05:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C278D0B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C5C2821C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57C81C21619
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091D016078F;
-	Mon, 27 May 2024 19:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E2D1607AB;
+	Mon, 27 May 2024 19:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMnGX34z"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WM5+at7f"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E917E90E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 19:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C53761FCD
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 19:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716836685; cv=none; b=e7vc+VsQWyBd5JoWv+nt+tCgQaiWB3XzyQXt0eV7X6rmyIaidv5wTzbRbi6x8XgUmIahFH3l217YYfTqjL0q3ouJ5vFOJ70dEDoWEyuaMlZvHUP6QhhaTSIxu7vc8hBycXFl2KWUqLlijVyeWgnIFGXBCtVesJF9zPUSKdfFXa4=
+	t=1716836712; cv=none; b=M3XUKzMoP94bM3ml/UY6Dr6X71dkRL7oxOlexaNaOeUYCjLWSNbyXfPAZ9MK7MOI/yVK2WsG9qaNl2IxCHxM5VYL+Els0cjSLT8RmdHUyD6OjHyghnbubB13FK/CkqeUOgoRkZ/OJh2Kr+XG3Mq1VGTcmVzG48FLFzzEN+uvD68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716836685; c=relaxed/simple;
-	bh=40YGK2iI/uurnxQuVz+rLsE2LOFYR+LnFD9GWtz/FZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YYo0s1EF4tYmfLIIm7OK05vuaNC0Bged8BmyVuCIjzPH0RuuccOZKfiKUIrciQ+BbLDjfSHuB8n3F1eZCi4inF3uZeeAUUQ4CeemzwaajP6XFZofXaBcW6/6tClZBWvLDM1v8DajElgPK/VKrBkkVRVxtfftT1ECG6I19g5BLKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XMnGX34z; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1716836712; c=relaxed/simple;
+	bh=/rnvwWn+eIPBI0YrWZQpmPB9aZMBK6dV8VBOnimWFjg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=S+5qOb4W33/kgyzRGClVYZmbUcHgPBfLs8uG/0FNI7wkm33cAeAZlCWaassfaz0ggGSga7CWWc+3pJWUF/2EjUeP4L4xkKFEDpTLakmRMMsYeOb5pyzRI14iLZs3pU8vPUpCY6MIGWprFwFPSvoT1hCyiAMP2/ioQ1PYUpkzz5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WM5+at7f; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-529b22aabc1so60823e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:04:42 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5238b7d0494so82127e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716836680; x=1717441480; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716836709; x=1717441509; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LInQISId5MrDy4ph5vfn9w1VaeWSkpi0NqBmEc8DMR8=;
-        b=XMnGX34zv9VjcxsZYYNb40df3CndxP99c+ApuWgBtebBXlTzixn0G5MhCxVzJup+Yr
-         MQOdGKw49+/0X07YF3om/OzBqyokwdWsQ8ZAT4tyvms8sdaMK0c4jvulmmnZzwZOAqwH
-         Ieb37mY9KioOIVv9yjUPDJKgcS+Xvx+j7Au0AURo6wdQPXGX+yBavPNmGxJZP43qn2ru
-         LcWlaBpBjhPNLbDHNJbivNDhY6GeXg1oNFjX9kRLo+VKB2o+ajQQX97vDMKxhHkZQn+e
-         +y31i2JNF7SzqDDFvEwpEcebytIpJK8AXfFCXrv49Z1twX2HiYaV0weiwkjDG6nxSx7J
-         b7QA==
+        bh=4kXS9nddib3XLf5CYGsW2IFBpVQNzR2KAdVGPMDeXnQ=;
+        b=WM5+at7fCcAkyY/E9wiz6q2rls12OQAud/61WcUozux2uDilKwyon9SLyo4oGYAoyG
+         Qa2C9IvHKCOPCwgPYMksBQ6LS3g8wIOHyxro3yNnCKHOHYyRjrkoutIfNdfRTbFr+lGu
+         XAkf+WKj1nD7nqYezBfZflr2zwooBIjJiZ/LDV5XmEH9PxY6Zj3rUQ2hWpSPkK2KX3zi
+         slg95C1BZhRwAJAQMWjhsIOY5gvkdd4d0tYgTJqfHotw8oIc4jMq5WaoTwphNj0CuQns
+         nih5Mr7P/+G1KaN3V6Q6Vssy80kaBhlL+xVO3GBLBdzNobW4qAlQn+/lXtqqC4Ej/aEJ
+         +ylQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716836680; x=1717441480;
+        d=1e100.net; s=20230601; t=1716836709; x=1717441509;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LInQISId5MrDy4ph5vfn9w1VaeWSkpi0NqBmEc8DMR8=;
-        b=NBlHss4nkZNbTRei+qSg//ZPK8XHaW2Nx0/+/qFRiLq0lO7tK0gxriUVW4YNPGEBbE
-         jPPAGv+2fBZE01J07ynE8qAyT0JALAB1vGmvuj/NY1bCOvSBO1aJKZzvGnoexd75/SdK
-         Ozw8lVB6CgegS3CIAcskwRr3s/Z1Aqmn4k8RhNJ2kiY/2I0GRQvwD5L01YqFjB6w+MdQ
-         Zq9fvVu+JclOdkgeUmzT+rOhB6WwM5RHJ7a9pnrAbNbkSig56hDnmRiSx4bXzuHpxNcx
-         YJ8sC/XOkR7sbITR+YQR2hL8kUGnvOnpnOBgbwfUu3ukDFFel0znO56k0PfSfqYCClA1
-         GqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqijQ3QJo+ihIBURuLILnEyS4VQfmZq1g15mJvSnv4Bp2nIcdNPcW0BKA5ByMTdyWCVEzMzgL4fsxXL70i91austnw3mGsOgy5eYD2
-X-Gm-Message-State: AOJu0Yz0nGAo/82NZPzhURKUa/6862N/y3FhCGSUO2NsLivWpBcVC2me
-	ejLcP1u9jJ06v7Ts4zLXxWHHsQtP/AltPtDeWYSv+6wdFpjclt0/lFVLH+dFbbk=
-X-Google-Smtp-Source: AGHT+IF+nSew+iU1GJ6uF8ZN9AS9QJbJvGdfa3QiNWzHflY18U7Fuh+Ytk/YEnBHeJTGhLRw2pCvcg==
-X-Received: by 2002:ac2:5a09:0:b0:523:88e9:9cd2 with SMTP id 2adb3069b0e04-529667cf983mr5189826e87.67.1716836680441;
-        Mon, 27 May 2024 12:04:40 -0700 (PDT)
+        bh=4kXS9nddib3XLf5CYGsW2IFBpVQNzR2KAdVGPMDeXnQ=;
+        b=VXN0ivft7UmQlE/gs2+zU3+S+N+qqp4ImAOT7hRFwNU21te1zXqXRQmYtyypZIgSEn
+         9l0rHKHqb+0LyAarf3lPjY4KlseLGSGzEQIssopOhOIIlDuGS7GuQDDoAp54EKTFB7Fz
+         xy4WsO2yNvrlfs+U+4h117uF4foqOD9UYETh3hfNdq0wn4hq9lrY5/3sLZmgyJ+X5L9y
+         hMCsCbxppOHNs7WO0Unt932NcaTcqFb8iPKVFGH1Co9v0eusB7/Ki5tfpXfP52KdTcUc
+         HuPq0tKvnjnEeg12BkN1q4lm3Owg/QbCZPoYkZiGXMnPikIrHvWmBhi4yDv9BedoV5FP
+         kejw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZno1vkN+0RTlqwtW5LdY/59kwnMi5zVZijOi588yMJgZH4WTCW3vgZ7qV5bkuJqQUGt4ujp7zM+q++hRL5pyV23ez4JRN2XwBcbBd
+X-Gm-Message-State: AOJu0YzHhEDZdRmeRvlCN3v92byxh/WrJh1WnMfpRayIFprJiXtNC0m/
+	OQbG3VWVcLevEORRf4L9lHcB5az9XtQc3VP9yTofdfzrj3d5Y8HWBdBZ+jQ3HE0=
+X-Google-Smtp-Source: AGHT+IGuPXTldBY/idHnqHLU54Du9J/gwZ+dEmL4Y8kySgTCzJ0Kyt8fHAJw7L2mKqlLcvYcbA5idQ==
+X-Received: by 2002:a05:6512:3ca0:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-52965b39a01mr11310662e87.29.1716836708817;
+        Mon, 27 May 2024 12:05:08 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579ce507649sm2424076a12.14.2024.05.27.12.04.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524bb79esm6085907a12.92.2024.05.27.12.05.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 12:04:39 -0700 (PDT)
-Message-ID: <8afe1888-5886-45fc-b576-98db3d392d37@linaro.org>
-Date: Mon, 27 May 2024 21:04:38 +0200
+        Mon, 27 May 2024 12:05:08 -0700 (PDT)
+Message-ID: <959cb44e-064d-4127-95d1-a3b13cfd9a2a@linaro.org>
+Date: Mon, 27 May 2024 21:05:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,16 +76,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
+Subject: Re: [PATCH 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
  binding
-To: Sylvain Petinot <sylvain.petinot@foss.st.com>,
- benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-2-sylvain.petinot@foss.st.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Rob Herring <robh@kernel.org>
+Cc: benjamin.mugnier@foss.st.com, mchehab@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240417133453.17406-1-sylvain.petinot@foss.st.com>
+ <20240417133453.17406-2-sylvain.petinot@foss.st.com>
+ <20240418130916.GA1016598-robh@kernel.org>
+ <e38eeaab-f3dd-4129-86aa-9f6bb03bdc40@foss.st.com>
+ <4a75aae4-9ed6-4e7e-883f-23ffdc1354ec@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -131,40 +135,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240521162950.6987-2-sylvain.petinot@foss.st.com>
+In-Reply-To: <4a75aae4-9ed6-4e7e-883f-23ffdc1354ec@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/05/2024 18:29, Sylvain Petinot wrote:
-> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
-> sensors. Update MAINTAINERS file.
+On 03/05/2024 18:06, Krzysztof Kozlowski wrote:
+> On 03/05/2024 10:25, Sylvain Petinot wrote:
+>>>> +...
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 7c121493f43d..991e65627e18 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -20868,6 +20868,15 @@ S:	Maintained
+>>>>  F:	Documentation/hwmon/stpddc60.rst
+>>>>  F:	drivers/hwmon/pmbus/stpddc60.c
+>>>>  
+>>>> +ST VD56G3 DRIVER
+>>>> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>>>> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
+>>>> +L:	linux-media@vger.kernel.org
+>>>> +S:	Maintained
+>>>> +T:	git git://linuxtv.org/media_tree.git
+>>>
+>>> This should be covered by the media maintainer entry.
+>>
+>> I'm really sorry but I don't see what you're referring to. Can you point
+>> me to the correct direction please ?
+>>
 > 
-> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
+> Find the media maintainer entry. Do you see Git tree there? Then it is
+> done. Otherwise, do you have write commit access to above Git? Are you
+> going to commit to that Git?
 
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ef6be9d95143..554e6861425b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20885,6 +20885,15 @@ S:	Maintained
->  F:	Documentation/hwmon/stpddc60.rst
->  F:	drivers/hwmon/pmbus/stpddc60.c
->  
-> +ST VD56G3 DRIVER
-> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +T:	git git://linuxtv.org/media_tree.git
-
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
+Please answer above: can you commit to above Git?
 
 Best regards,
 Krzysztof
