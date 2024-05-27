@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-190200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4768CFB19
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F78CFB1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB4C1F2155A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663991F216B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6654C44C9E;
-	Mon, 27 May 2024 08:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F1552F6D;
+	Mon, 27 May 2024 08:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kSPol2IA"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R0jEZN+T"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246BC3EA72
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85304597F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716797689; cv=none; b=OrD7pD2azpObrvOiMgLc0otnll0pDsvb5D+a64Yghv9P/PaiYpRMDH8NAytymvP3eyBkFG9wQ+Ic0iFmmEdPtkh1GMuDp4bRFTH4FfgdFK9Omrf73qnScOkYtdCMz4mM04V5UKFtFXKPTriPQcd6Rf+XQzDdx+s9RxHw63qALwM=
+	t=1716797773; cv=none; b=lT5c6tVoY6N6gEZhCIUHtBdUuYrJLjtALZYpMyka+Wo4h3/1hcYlVTaveGqvrb3a5owfRvR6a1KZ5a+eClxxutSA8X6uHFaVd2mmQ0AZH1OBFN5FV9h9pvfVRZL9QLVjtIVCx2GfAjJy5iueWF7alGI5dfYcGtLqotqxetRwYvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716797689; c=relaxed/simple;
-	bh=lsx7EwUwBi3NvHqO1utE290g0jz7B/NyZB8DGC2Ks9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEpSUox2cEQkT6wXezf32rDHQWSlOp6s6i33ObLEfTftv170j+suKb0tUEUUz4hgIkHmEGlrdm5eGQl+lLppewj6McP9/96t8Cs8i06gatUV3hVu1dJF+OR01Mo3eG+g60QiKtJsMGRtlqTBsXMCFtVhjTTqq1I6eQkW8/UjaHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kSPol2IA; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e719bab882so104409911fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:14:46 -0700 (PDT)
+	s=arc-20240116; t=1716797773; c=relaxed/simple;
+	bh=3i2hn3y4fgfN0pMQVA6pExH0GY75p5HNfE+xCB2CqTM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pnBRXFBwdFVfWgkcQZEBpsRMOxT5E05pwGogBG8slnSYbzEAnHrlTF7Doi3jhKMFEQOfATQpqTjM5G7FuW+Nn12NNcxiQsHw+qYG5ZQoMOnGNMO+qFpPGbXk/qFuooJi6x0WgpWPd9qpyFmxCRl+6fKvWAKWOlXm9uJYG78jZCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R0jEZN+T; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so3459244a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:16:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716797685; x=1717402485; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U9TONvTEWThGczkgWTi4O6+TwYpFpcfs3Yxs9Jjw9zo=;
-        b=kSPol2IA2xiMjgdGFJhhfMWXFP/aXTGwmOwGXnjbVObp2W5nj48gH9f2ejpCb29crH
-         zEEkQoc3E4tdkbeQVIyJcsE75ZZkSwz3mdW7N4Ez48hBnBxm9ExAcGUtPNT+1Gq1ktEw
-         S0qRofu48vzmkt3utEjyMXjdmQMhsLWjfi/akKenyyGWMH+pe+belC60EpRcR+Uq0Z6m
-         HSIIQ6sFs90QPhuMF1AcT/myDDBowxZ8EvP9z6u4pTRXuSdMjJoDYmYPW+rGspShd8ql
-         MjePuEGAFPJPXVwCB+zvq6k48hg2SCw1k97UEx6JPjm2llQ+xPmZgxuuSC6sbzx7w80P
-         E44g==
+        d=linaro.org; s=google; t=1716797770; x=1717402570; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlYGuShbJYJGIFE8S2W701RIcZqUyd2QZ8ocar3toek=;
+        b=R0jEZN+TXfQB2ynEIRrWtvuxcj/FhiZOf4sfEsiP/eP/MAsnBh+gBFs86ccbzJ5Ph1
+         xpPOKKpiEsTaZt1j3UXPuy4nXNoJrDMFFak4mAf23ebWzbJyGnAo1TymdRcxKS66mYn1
+         lP8p1A9S7hWVbKVhdccEBl+pfqzBj6hGy56DS1wjBoceHLIHkxXJwwWReGx+hIN46ghu
+         87dgfjXh6OU/uiIaXWSXunXTpiyz4awM0445FrtSRMPd4zybW3psRU3etn1J7kE6LxSk
+         gHFuetctHLG38JMKldkXKlUs9UYQaRxFApdbcRSxdkCmrbMPOAqS8sc3icGq28HMzfam
+         AQwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716797685; x=1717402485;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U9TONvTEWThGczkgWTi4O6+TwYpFpcfs3Yxs9Jjw9zo=;
-        b=YNxg+Dp5zgTlFSOb6sz8WvhyzSZ0ZhpC0f5pYhulnvDUuD8JFsSurLTMZzt8HtGIYk
-         GVGes4gu+TkhnxvyHsTCB+GM7TxfDHU5b1ZiKw250UOH4PlxuCalmKNtIDCuWHSKy/Nu
-         DlllMH1NNiU83REKEL+zBxbfzuhbymVc668oKy/i5X697jHICRHjscWk3ZKGn1gecAZQ
-         TRUDzeTmwSLndfywwYDHDZbfO8XoujOfPsz1kw1Gyr5CSaTZ7Q1n26sMxi2dIw46toSC
-         ZoIHTE2p0VBzl+QWTTHk5mlZ8UNXXKm20mz5YfRFqnN95B0yIMDOmxwBm13GKfv/DIy/
-         5+Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCVjaYMPjm/n7Bhoq16ObDfkZAnE+8kPc1ZTFx80JDY2RX47rmJwyWdn5mJYETVyrV6hbS0rEU7oL4SmvH6bcI17k4CV3t+2qgKkpbdr
-X-Gm-Message-State: AOJu0YwkhvHMkX05gZvHaDVMd48kpURtQpkYiqlTXV2/QHi29dmjuBqq
-	IOTgbwNipkrcMNBpV7/Qh9VdhVXrRd9nBcZZZOlZHtJP0mRudzqeAhgAWiJE62I=
-X-Google-Smtp-Source: AGHT+IE5hwvA+dnXZp0Ce0d7BlZoXZS8BtrFd0HTMRigsC5U6EqzAEtorNHmX+hus94f/jH5p+ygFg==
-X-Received: by 2002:a2e:9819:0:b0:2e9:6d3e:e91f with SMTP id 38308e7fff4ca-2e96d3ee9b2mr28178891fa.52.1716797685169;
-        Mon, 27 May 2024 01:14:45 -0700 (PDT)
-Received: from [192.168.27.173] ([77.205.21.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210896fc8asm100562585e9.13.2024.05.27.01.14.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 01:14:44 -0700 (PDT)
-Message-ID: <bb07e774-ba80-4fc5-a57e-ad5ef6360c32@baylibre.com>
-Date: Mon, 27 May 2024 10:14:41 +0200
+        d=1e100.net; s=20230601; t=1716797770; x=1717402570;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GlYGuShbJYJGIFE8S2W701RIcZqUyd2QZ8ocar3toek=;
+        b=FasFE0N8Ihk3DV4xbhVwSwauPj/ZRFLDAm9VRrPTXrp22/TKhZBBZ7OasdUNU91gOj
+         xdF8ozygXjFCR6AC4fxDTRKJmrOjbvVYa8oFkZX7LiJHdxQY1eELMw4PBm9q+n06Qc/0
+         TFHk2PS6xWmOwbph/yR958DEu43rCN9xo6yrJZjrjvmJJRPC2450KuXiA72MsxCI962I
+         JqYtql88Q9SG+xC3yYmkG79tIsv31uCoIi1OBgYoiXF1pvky9YrHfoxrypD4c4y2/1m4
+         MQzPcIcAMQ0myVE3DzAms6OlkQkoC8PUNzycW+MrT311vpXrpUMkIcIcNz9sEJdwOHqr
+         8A7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ+LkqjiYIqTuCKt8pNRMMq/klX2S8+Yb3hcM7vhTMlm51HSPNfqvKU6BF0a7Watd9Cr5gkQZBVHyIIUPV9nnRa5Z5azxNYT4sbDPY
+X-Gm-Message-State: AOJu0Yw4KwSxKBMaV5bUBwoP0/02lWVug8yaMT+WdgKRRiG/lG1Eq32N
+	EJ44Sgb/GPBqa+eOuqwH/5mTI/jSWU+8V79j438BLljDhr3hb8zMMcqAYJeKnoS6Ke9TrceuecU
+	u
+X-Google-Smtp-Source: AGHT+IHyk8/QtE0nK/LJKzyMh1QAJqDT/3M8dtrUy8e0pmTi3aLNh0xLKvv9jKwHoBDJChRC4REE2g==
+X-Received: by 2002:a50:951e:0:b0:578:c161:525d with SMTP id 4fb4d7f45d1cf-578c161554dmr3152304a12.25.1716797769887;
+        Mon, 27 May 2024 01:16:09 -0700 (PDT)
+Received: from [127.0.1.1] ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d5941903sm924105a12.83.2024.05.27.01.16.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:16:09 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 27 May 2024 11:16:01 +0300
+Subject: [PATCH] soc: qcom: pmic_glink: Increase max ports to 3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] dt-bindings: thermal: mediatek: Rename thermal
- zone definitions for MT8186 and MT8188
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Nicolas Pitre <npitre@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-References: <20240524-mtk-thermal-mt818x-dtsi-v5-0-56f8579820e7@baylibre.com>
- <20240524-mtk-thermal-mt818x-dtsi-v5-1-56f8579820e7@baylibre.com>
- <20240524-concerned-fritter-262f5e16293e@spud>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <20240524-concerned-fritter-262f5e16293e@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240527-x1e80100-soc-qcom-pmic-glink-v1-1-e5c4cda2f745@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEBBVGYC/x3MSwqEMAwA0KtI1hNIq8XPVQYXWlMNM7baggji3
+ S0u3+ZdkDgKJ+iKCyIfkiT4DPUpwC6DnxllygZNuiKjNZ6KG1JEmILF3YYVt1Uszn/xP3TlWCv
+ j2LiWIBdbZCfn23/7+34APJ+I9m4AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=911; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=3i2hn3y4fgfN0pMQVA6pExH0GY75p5HNfE+xCB2CqTM=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmVEFEzkvlCFJTDIvwLXKRmzyZ0oUYtV0UhbPCY
+ VKZfkL5Ke+JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZlRBRAAKCRAbX0TJAJUV
+ VqTaD/49WtpPUvqp26jREgUjsePi2mbdc6Vz5rhiUEw+JaAkmQgDq4Rxi1Gk3voBWOgXrIBT6UG
+ yVCTBTnJgcrIkH1RpQFVZaOe8URkKR/6bVOwBL2xj5GdPUWyaqns4dCCZPh3/hfUmod+HShSVea
+ BpWVtvnj/KvC17I2Z7wc1+BPLvPvKPdLHubWIM44N9qYAHVxn+jTZFUz6HCi67hXKgBuvDF3B/0
+ BRsUdtw9MSca+qaytyovB4pajQDW71ArUDGtolrcg+83vxZhwM4qBwENNcNUezdtT07lF36sLM0
+ FTRrhrOnOH/jW2AVCVKtuVLqhvnH9EBbhrcUcd1gFlh10+x9uERUsSsC2/ifP0BoEp64xVhNUoc
+ uwZvLCe/orz7qYEaW1hXpwu5ljVCmGnsG/IxnqXqZfrAYMuCtu8PpYFIpYERaIMDg1q4y35YXKm
+ IETtiQbkDHDNQHpchXfW8Mdmnhqzv9W8Ppm3pYppCnbnfpj5TixeHHSUv+YGZfqbGuHY/uQ02nn
+ DFGLJF+GeHUyM9879jbM1rkF3aMJkHE6bkfn0P8B/XM5WQ2U/tG5lu0KhJ069O3SJt+pLlNGt0Y
+ OCJq5j7dLVvCQIBMUgE7SpnAZcIQeuBhyMTKQDcUudRWLpRkH9wa/8ABrMizPqJn26GlgqjC2wA
+ +o+X7dBsT3DOEMg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On 5/24/24 20:24, Conor Dooley wrote:
-> On Fri, May 24, 2024 at 11:04:34AM +0200, Julien Panis wrote:
->> Use thermal zone names that make more sense.
->>
->> Signed-off-by: Julien Panis <jpanis@baylibre.com>
-> Removing the defines is an ABI break. If these are all the same devices,
-> but with more accurate naming, then keep the old defines and add new
-> ones. However, the GPU1 define changes in the course of this patch which
-> is more problematic.
->
-> Why do these names even make more sense? Where did the old names come
-> from and where do the new?
->
-> Thanks,
-> Conor.
+Up until now, all Qualcomm platforms only had maximum 2 ports. The X Elite
+(x1e80100) adds a third one. Increase the maximum allowed to 3.
 
-Thanks for your comment.
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/soc/qcom/pmic_glink_altmode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For mt8188, the old name 'soc' came from a document by MTK, which is not
-public: MT8188G Functional Specification. This document does not explain
-what 'soc' are/do exactly, it just says that some temperature sensors are
-located on them.
+diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
+index b3808fc24c69..1e0808b3cb93 100644
+--- a/drivers/soc/qcom/pmic_glink_altmode.c
++++ b/drivers/soc/qcom/pmic_glink_altmode.c
+@@ -20,7 +20,7 @@
+ 
+ #include <linux/soc/qcom/pmic_glink.h>
+ 
+-#define PMIC_GLINK_MAX_PORTS	2
++#define PMIC_GLINK_MAX_PORTS	3
+ 
+ #define USBC_SC8180X_NOTIFY_IND	0x13
+ #define USBC_CMD_WRITE_REQ      0x15
 
-Then, there was a comment about these 'soc' names:
-https://lore.kernel.org/all/ff12e104-da8b-4800-bfbe-a006ffe1b840@collabora.com/
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240522-x1e80100-soc-qcom-pmic-glink-f3b715fe5f90
 
-So, I had a discussion with MTK to understand what these 'soc1/2/3'
-are/do. The new names comes from this discussion and were given by MTK.
-
-For the other SoC of this series (mt8186), the same kind of document exists
-(MT8186G Functional Specification) and explains what 'soc' are/do exactly:
-('cam', 'dsp', 'nna'...which are used in 'mt8186.dtsi').
-Using the same logic in 'mt8188.dtsi' would be more consistent. Besides,
-these names are more explicit.
-
-Julien
-
->
->> ---
->>   include/dt-bindings/thermal/mediatek,lvts-thermal.h | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/include/dt-bindings/thermal/mediatek,lvts-thermal.h b/include/dt-bindings/thermal/mediatek,lvts-thermal.h
->> index bf95309d2525..ddc7302a510a 100644
->> --- a/include/dt-bindings/thermal/mediatek,lvts-thermal.h
->> +++ b/include/dt-bindings/thermal/mediatek,lvts-thermal.h
->> @@ -24,7 +24,7 @@
->>   #define MT8186_BIG_CPU1	5
->>   #define MT8186_NNA		6
->>   #define MT8186_ADSP		7
->> -#define MT8186_MFG		8
->> +#define MT8186_GPU		8
->>   
->>   #define MT8188_MCU_LITTLE_CPU0	0
->>   #define MT8188_MCU_LITTLE_CPU1	1
->> @@ -34,11 +34,11 @@
->>   #define MT8188_MCU_BIG_CPU1	5
->>   
->>   #define MT8188_AP_APU		0
->> -#define MT8188_AP_GPU1		1
->> -#define MT8188_AP_GPU2		2
->> -#define MT8188_AP_SOC1		3
->> -#define MT8188_AP_SOC2		4
->> -#define MT8188_AP_SOC3		5
->> +#define MT8188_AP_GPU0		1
->> +#define MT8188_AP_GPU1		2
->> +#define MT8188_AP_ADSP		3
->> +#define MT8188_AP_VDO		4
->> +#define MT8188_AP_INFRA		5
->>   #define MT8188_AP_CAM1		6
->>   #define MT8188_AP_CAM2		7
->>   
->>
->> -- 
->> 2.37.3
->>
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
 
