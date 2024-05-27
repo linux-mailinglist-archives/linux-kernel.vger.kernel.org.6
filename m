@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-191249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5638D08B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D968D08AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A88C28D9C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:32:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8754B1F22589
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F31E73447;
-	Mon, 27 May 2024 16:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074C1155C96;
+	Mon, 27 May 2024 16:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="DOlHSyAF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EzRLbrem"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAZ5gP7L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C962C17D2;
-	Mon, 27 May 2024 16:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394C061FE5;
+	Mon, 27 May 2024 16:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827556; cv=none; b=arAHM2Wy5ssy71U9PCnA0RfrS7bflpm32lFxbZH7Fr1tczPUgNVXxslDJrIuUAxgWs+/4/rGtvcpMtB73/WZTR/84kvKIKUBibmsH4cPeSTEeY+iNWww9UN5r53d8jN/c1LxklrruJYUiyW2NTHJvPYSr0d9ss1TMExsr+F1nLU=
+	t=1716827533; cv=none; b=YvVfwsffydLU2zhVzdTd8cUPOrSA9vZ8gXQIEvjGttKUw7GanHcHjuHw6ZcU19vL3SG7bg+MiNl5/Rb+jiE+WUlpohI7ISGkXkHKBwjNG4jaF4170L7l6NoNdbPCLYDe0yiLEuWc6xbmFAYe3ZA/NbwtGVR0ijKIWu/tDqajoJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716827556; c=relaxed/simple;
-	bh=vvZ/FbEHkHjmV4YVtrOr07e4SJaIpDJtFPbO2aNqId0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=X7bYtZcTvaQfizoBpHrrtse7C4gumJ9gS+l6D9+pcB4zlwj4YKEFTlmccGHqzXpYRCcpzD70virV91FzDbTejKhbaZkOgHIBP8uiBzt/o0tZnnUFpKs/5HO0R/CvmtNq52V66zfvyws/UZXl5xzlR739Y90l0+Bpg811Z8DLRgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=DOlHSyAF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EzRLbrem; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 800FD18000A9;
-	Mon, 27 May 2024 12:32:33 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Mon, 27 May 2024 12:32:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1716827553;
-	 x=1716913953; bh=x9BxI7LFCFkFrM7Q7G2UlUaRQ+JZjCElOdG4eDd2QZk=; b=
-	DOlHSyAFRBV2Mx/yoQUqxNcEmIiKW/GwGshwVqBYrQSBRxAVWowiOVzcEhjhA+fB
-	XtqIigGL/JpZoDv502EyXr5HBsLEh8ovEexssgrcl3JAk5NnazoRuHcFat0gdIFt
-	WTOhrFyDIoWZYn1WFst/+gPf8sJrwcgIt0eCEcUgs4wHPciLSsKTigQzWoDqvrn1
-	HGO3CGFhT7FVXDi808om8xYMMKp27cKK2awOfboGxzDlxJ94ytEhOoys1QWa9xfi
-	Eul8N5jZq4N42rROWGQ6gy/9/9WZwWu5Djbl0jkRy1GjY4O72JxDuyPkEetUvwTd
-	wO0UxAgy5wLHF6yC2boSSg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716827553; x=
-	1716913953; bh=x9BxI7LFCFkFrM7Q7G2UlUaRQ+JZjCElOdG4eDd2QZk=; b=E
-	zRLbrem9B11b3QyZ5S6rJQaBGIeTJA5k3Df96Me+aQ6QYrVIab0ypx1XJZRUPHyX
-	LqZAKRCUc9KD4IIi4c5sT3M4s0KS9EOHAQWBQJIUbyMfO6k7aPikgMoSxvXeoWv4
-	I6K4kFxm3zzCM/Cuk5qQSsoPkQUX/MAcUGgLvmFrijf5+nhu3cpfyXPQpyKJLOg+
-	xDB1vXr/xk57NfazKFmcSbJ4Ok3vhd+SBA1XGOaRPoODSwLvyC5epMo8O8E1II6w
-	mmx6ufFb2sFfUbtBHgs3YEox7jGaoeYu9w4IvKjLGYIRslOLIS1o3wFIRyzW/JoK
-	A6fybOG+tLeGaPhQfHJvA==
-X-ME-Sender: <xms:oLVUZhPCTZy0dV6wRPWdZEKtMWRq1_ctX1olunHacysejeYJqs8K8g>
-    <xme:oLVUZj_Q8hQ47ybqxnJHCblDxf91ybhPR6vHuW7nvbQ2VHT7bkCRW7aEw3sJRPAeP
-    j-36S_8A7dU90xJDX4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejgedgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:oLVUZgSd76ViWuBKm_4CkA_HTmf0j12gauMghmwtYyHmKcLXHnegDQ>
-    <xmx:oLVUZtveqmox785dgDlQI-Z0uT-puGopVSwe_BNFlKDBuv9Rva6sOQ>
-    <xmx:oLVUZpdpIYfhoDcepnSrSRj6ZMXIA_APGcz4teLqoqn-mvBb_fATgg>
-    <xmx:oLVUZp07MlhMW91f5DVk0czmvJ3kHRsQIiR71beLbG-dC8Q3zo4_kw>
-    <xmx:obVUZiEJRuFrOK4hgbiPkzTBa6CAzEtwSY0i-Cb-K2WAfsJrRQtBo1T5>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A288536A0074; Mon, 27 May 2024 12:32:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716827533; c=relaxed/simple;
+	bh=DNt0Dh22pTekgmdMN3R8pCvCQ6794P7yP++KToqrJ6c=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=i+v5MsiRKI9dYR7aK5l2dMwEDvDzhpDYd5plShxWslHQpa8DEe3kOkDPjlRQwZ5/hxPJ2rJEzr3I5gge1Y67qasGRL3mLmEI/76XxNyEEFJu7GjLsqvQ64rxbPrLfHahVQD5Uki2FN7bQT4fd34xa7Qf0+CX78N4uEZOhAxX/s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAZ5gP7L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35A0C2BBFC;
+	Mon, 27 May 2024 16:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716827532;
+	bh=DNt0Dh22pTekgmdMN3R8pCvCQ6794P7yP++KToqrJ6c=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=fAZ5gP7L/bpEQiNYnCKxA1zrJPwpwbz+r2vt/Uuid0n//IqCLA+IkAacwVu/pH+EL
+	 54TvL7f1Hm+t93mVqp7u59XUA6NFVbeekNtOjh2ZhuepAVtTZFhChJ3GwD1ogeZzHF
+	 B90lfC/mSPDnw4hJdy206TP4rl0+i2oLIMq85/G1KxhxzLyRpi5KCIUNhwFvpKOYuG
+	 fhVxnO5HXwncThmL/AdIfiPqRc/gJYlQ7M8Vn7edHKuJsTTeiia2JmBFa/67PpyTWD
+	 mhVzTBGkNimvk39hKaNZjO2XKROrgOzhIwT+3f10abKo2laedmIlDAwHcMCtD2ml5E
+	 KtIdN/f0XfX8g==
+Date: Mon, 27 May 2024 09:32:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+CC: Kees Cook <keescook@chromium.org>, y0un9n132@gmail.com,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_AUTOSEL_6=2E9_12/15=5D_binfmt=5F?=
+ =?US-ASCII?Q?elf=3A_Leave_a_gap_between_=2Ebss_and_brk?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240526094152.3412316-12-sashal@kernel.org>
+References: <20240526094152.3412316-1-sashal@kernel.org> <20240526094152.3412316-12-sashal@kernel.org>
+Message-ID: <B4568D76-34A6-40F2-936A-000F29BC42B1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
-In-Reply-To: <87sey3b6de.ffs@tglx>
-References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
- <87sey3b6de.ffs@tglx>
-Date: Mon, 27 May 2024 17:32:13 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for MIPS/Loongson64
-Content-Type: text/plain;charset=utf-8
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
+Hi,
+
+Please don't backport this change=2E While it has been tested, it's a proc=
+ess memory layout change, and I'd like to be as conservative as possible ab=
+out it=2E If there is fall-out, I'd prefer to keep it limited to 6=2E10+=2E=
+ :)
+
+-Kees
 
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
-=8D=884:51=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
-> Jiaxun!
->
-Hi Thomas,
-[...]
->
-> What's this indirection for? Why dont you update=20
-[...]
->
->> +static struct clocksource nodecnt_clocksource =3D {
->> +	.name	=3D "nodecnt",
->> +	.read	=3D nodecnt_clocksource_read,
->
-> the read function pointer here and spare the indirection?
-Smart! sched_clock takes slightly different function pointer argument ty=
-pe
-but as we don't use the argument anyway, it should be safe to relax this
-indirection.
 
-Will fix in v3.
-
-Thanks
+On May 26, 2024 2:41:44 AM PDT, Sasha Levin <sashal@kernel=2Eorg> wrote:
+>From: Kees Cook <keescook@chromium=2Eorg>
 >
-> Thanks
+>[ Upstream commit 2a5eb9995528441447d33838727f6ec1caf08139 ]
 >
->         tglx
+>Currently the brk starts its randomization immediately after =2Ebss,
+>which means there is a chance that when the random offset is 0, linear
+>overflows from =2Ebss can reach into the brk area=2E Leave at least a sin=
+gle
+>page gap between =2Ebss and brk (when it has not already been explicitly
+>relocated into the mmap range)=2E
+>
+>Reported-by:  <y0un9n132@gmail=2Ecom>
+>Closes: https://lore=2Ekernel=2Eorg/linux-hardening/CA+2EKTVLvc8hDZc+2Yhw=
+mus=3DdzOUG5E4gV7ayCbu0MPJTZzWkw@mail=2Egmail=2Ecom/
+>Link: https://lore=2Ekernel=2Eorg/r/20240217062545=2E1631668-2-keescook@c=
+hromium=2Eorg
+>Signed-off-by: Kees Cook <keescook@chromium=2Eorg>
+>Signed-off-by: Sasha Levin <sashal@kernel=2Eorg>
+>---
+> fs/binfmt_elf=2Ec | 3 +++
+> 1 file changed, 3 insertions(+)
+>
+>diff --git a/fs/binfmt_elf=2Ec b/fs/binfmt_elf=2Ec
+>index 5397b552fbeb5=2E=2E7862962f7a859 100644
+>--- a/fs/binfmt_elf=2Ec
+>+++ b/fs/binfmt_elf=2Ec
+>@@ -1262,6 +1262,9 @@ static int load_elf_binary(struct linux_binprm *bpr=
+m)
+> 		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+> 		    elf_ex->e_type =3D=3D ET_DYN && !interpreter) {
+> 			mm->brk =3D mm->start_brk =3D ELF_ET_DYN_BASE;
+>+		} else {
+>+			/* Otherwise leave a gap between =2Ebss and brk=2E */
+>+			mm->brk =3D mm->start_brk =3D mm->brk + PAGE_SIZE;
+> 		}
+>=20
+> 		mm->brk =3D mm->start_brk =3D arch_randomize_brk(mm);
 
 --=20
-- Jiaxun
+Kees Cook
 
