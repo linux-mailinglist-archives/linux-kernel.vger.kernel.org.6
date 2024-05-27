@@ -1,85 +1,71 @@
-Return-Path: <linux-kernel+bounces-191241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BCB8D0894
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:30:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902DC8D089A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF99028AB9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18621C22DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B089F15A879;
-	Mon, 27 May 2024 16:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6748F15EFBB;
+	Mon, 27 May 2024 16:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="VRGTBMug"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kZyC3pE9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595FF73469
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E867346C;
+	Mon, 27 May 2024 16:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716827390; cv=none; b=PohLOobQOI8Gyg8j3kI2+H8fu9oVQUbyVa/xJlN2B5X3Zj1/gJznaV5Ulbw3amE8ki/4yaLz3xicxCQXoo5xrhn/vF/fTuaVms73Colx8Vl8xptKsEP6z7sv4DUcCJ5Q+LQwS9FCaXoyfWkiXOHOTr2e7iBC/CZbtP9kRvUK17Q=
+	t=1716827390; cv=none; b=TF0kIyuT6VFtpoqt90s35NUH8ohEeWnl26KaKgsy0It0HkhEe8qe6yOFQfiWUEwVIl+w53Z55av0LLToCLbu8WMxF5bXLA1fYzSnDHr7Zp6tnU9O/DU2PkEU2HkjOEU1jH8RqbNgJmPIgLC5utD470QhsI52CDRcfm/Z1h3ksow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716827390; c=relaxed/simple;
-	bh=IZXMCQ1FxdHmcAoyzX6sKL0KJwelX3zrJhQyguv/6zQ=;
+	bh=aRoI7xtsmkM04Wifif6pMbPQqrT8YiNfoLqdNjPbItA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pBIAyQdS1b9iPtQyrikgWbi0WKv4386txG6h8LJiIBdJ+1mqbRu0pc3rR9+hOCL86lso7ylLJjqDeI1h9p34amURdx4ZFRGaYFCWjUJYbCQ9mk7ca4ZClD7iKjqAS7/Dg2Vjt/AHEVGmSizW6fTgRiXiBdhWko0gh3U7B9+s+MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=VRGTBMug; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-420180b5897so46648015e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1716827387; x=1717432187; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H2zB37FLsCEU3qcA1K5WX2J0t5s2Si0hkv34drQge/E=;
-        b=VRGTBMug1gSv8vjl/tROma6MvCo78uj2HSQn3sHTSWsXLYl6l7hMD9dHoDr2X6WN09
-         d+q0nmxqPtS6LgFLlyieBFwdHnpH3pvwQRXsX9DYeOS2L5eKAGroVIVC6pQlpGc8ER0+
-         gq7pyVN0obXHDwrVTqg0O/vWN1OPyx2knBTTrbxv69wNLBXQfU/jkGinsNw/0EeUL8S3
-         Fqfi8WaLPlwYYYwR2r335tHyKHDBRk81GKiCxlAuQ6nZxMqvoTsI0h7WzLYVEJMCEFIy
-         1lMM60M2HltGR80sB1JiwJXE2UUxfiLDiCrYhPVVVGkwDDNh91MQpwh8NsEjRcCzQTrc
-         WBJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716827387; x=1717432187;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H2zB37FLsCEU3qcA1K5WX2J0t5s2Si0hkv34drQge/E=;
-        b=I86ITW3shwVkyXw3e2TYY7fnjHy1SfgsM776F4859nV7BKRP+BtUZeC1ZHPXFqqIpJ
-         M/1oV2EEEnNyORHHDjp+09MUAKh/ICCW5ny+wb6oROdhDNymB1oKynG/jpN1aHwwWZwE
-         X1OJXzNxlCDsO2L4+R1QV38On1xkyfU+lTbA4L9fShyDvf0E/xlZcwLGZt5XghUHvMKN
-         G0majf3eIu4arbPtkmtNE7fithRXZcwX7EdQ74wSVexTow3PkBtezPeSpTc7VDZl8/lg
-         nSHaXKyn5m7oJVYmt14H0VW8hgHGrBkKwFL+u0y6fi2aL26agNIHFnH+hhCWRpb1REGz
-         AJnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJNa3AkcLwJXZzZ72ngw52sKjzlWyaTxgjm8vBMgfdzAi91I69oix0DILaWVSAF94w7ODSdZeaACZrnSVqoM29NaEm6xKhzYuNINfY
-X-Gm-Message-State: AOJu0YwV01Ez+96B7690WZQfMtlk5u03batKYv50Xzu3+FESfA71geIe
-	WXt04NUzvAUCO5eE8NQDFeR7TwQpuedIuq1QpzdOxEz+pADddtSRzGGovSluEvs=
-X-Google-Smtp-Source: AGHT+IHINXCkiw2NUljFrgeUFwhaZdwQ+fb2vuaNPpG8uSuGOg50lvCQavB66BSGklf0wD2Hp15QoA==
-X-Received: by 2002:a7b:cbd8:0:b0:420:11cd:d302 with SMTP id 5b1f17b1804b1-421089d7682mr64769185e9.9.1716827386761;
-        Mon, 27 May 2024 09:29:46 -0700 (PDT)
-Received: from localhost ([176.74.158.132])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210896f442sm113388455e9.11.2024.05.27.09.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 09:29:46 -0700 (PDT)
-Date: Mon, 27 May 2024 18:29:45 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	cleger@rivosinc.com, alex@ghiti.fr, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 5/5] KVM: riscv: selftests: Add Svadu Extension to
- get-reg-list testt
-Message-ID: <20240527-e9845c06619bca5cd285098c@orel>
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-6-yongxuan.wang@sifive.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iz8Fs/816Sh6TFN564XctlfwBZ+/wfgJ+e/10Iq9TxXcfYVvU+F2EAFwIGZN1Mu5yWBo+icYw09HN6qsO/rNDBkMmpLFVrj2d/jSIuqRD8DjPTeK/j0nopoPiedNQAeQEq4SOJwxMTCwK93ESwWq+Qqa9AK/0mnuEbk4Pb2D57k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kZyC3pE9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Fe3M1WbTvAZeXMfbjuO8H7fTMStHiUlxRCcFwILoi+4=; b=kZyC3pE9swZXYLzz8yt3pUxTp2
+	/wqUOtShL76yRoPFsx9iwX/lZDip6D8a2JAF3nE6WkONLGSDL8ETYEQFkPopmvcDWZhvA9ZZXMSLr
+	nWTrMyx6ITOcrcba+BCZnbjwJfK2EUrLu3yVC/BN7SweM9X3VBo037kruAppcin61/XenD2n4xu2q
+	FGIWh5/RkrV++5MD10M9PWWOWML8/CzcNWqw6R4R/ls6LN7ENFYL9hlycOIlt1wnz3huLCC1T0SNp
+	EhYrN47f6vcdD/SxCZMD76gOCQKv7RqTHY1WlVKJiy85arZ1tz4KMXJVApgY7W4AGPbbFLv7b+ps1
+	4m6EMf7g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBdEK-0000000FrSL-22Qr;
+	Mon, 27 May 2024 16:29:48 +0000
+Date: Mon, 27 May 2024 09:29:48 -0700
+From: "hch@infradead.org" <hch@infradead.org>
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "hch@infradead.org" <hch@infradead.org>, "jack@suse.cz" <jack@suse.cz>,
+	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"alex.aring@gmail.com" <alex.aring@gmail.com>,
+	"cyphar@cyphar.com" <cyphar@cyphar.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	"amir73il@gmail.com" <amir73il@gmail.com>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <ZlS0_DWzGk24GYZA@infradead.org>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org>
+ <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
+ <ZlRzNquWNalhYtux@infradead.org>
+ <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,56 +74,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524103307.2684-6-yongxuan.wang@sifive.com>
+In-Reply-To: <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, May 24, 2024 at 06:33:05PM GMT, Yong-Xuan Wang wrote:
-> Update the get-reg-list test to test the Svadu Extension is available for
-> guest OS.
+On Mon, May 27, 2024 at 03:38:40PM +0000, Trond Myklebust wrote:
+> > It
+> > does not matter what mount you use to access it.
 > 
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> ---
->  tools/testing/selftests/kvm/riscv/get-reg-list.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> index b882b7b9b785..3e71b7e40dbf 100644
-> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> @@ -44,6 +44,7 @@ bool filter_reg(__u64 reg)
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SMSTATEEN:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SSAIA:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SSTC:
-> +	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVADU:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVINVAL:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVNAPOT:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVPBMT:
-> @@ -409,6 +410,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
->  		KVM_ISA_EXT_ARR(SMSTATEEN),
->  		KVM_ISA_EXT_ARR(SSAIA),
->  		KVM_ISA_EXT_ARR(SSTC),
-> +		KVM_ISA_EXT_ARR(SVADU),
->  		KVM_ISA_EXT_ARR(SVINVAL),
->  		KVM_ISA_EXT_ARR(SVNAPOT),
->  		KVM_ISA_EXT_ARR(SVPBMT),
-> @@ -932,6 +934,7 @@ KVM_ISA_EXT_SUBLIST_CONFIG(fp_d, FP_D);
->  KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
->  KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
->  KVM_ISA_EXT_SIMPLE_CONFIG(sstc, SSTC);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(svadu, SVADU);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svinval, SVINVAL);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svnapot, SVNAPOT);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svpbmt, SVPBMT);
-> @@ -987,6 +990,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
->  	&config_h,
->  	&config_smstateen,
->  	&config_sstc,
-> +	&config_svadu,
->  	&config_svinval,
->  	&config_svnapot,
->  	&config_svpbmt,
-> -- 
-> 2.17.1
->
+> Sure. However if you are providing a path argument, then presumably you
+> need to know which file system (aka super_block) it eventually resolves
+> to.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Except that you can't, at least not without running into potential
+races.  The only way to fix a race vs unmount/remount is to include
+the fsid part in the kernel generated file handle.
+
+> 
+> If your use case isn't NFS servers, then what use case are you
+> targeting, and how do you expect those applications to use this API?
+
+The main user of the open by handle syscalls seems to be fanotify
+magic.
+
 
