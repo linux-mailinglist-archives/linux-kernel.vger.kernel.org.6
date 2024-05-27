@@ -1,1347 +1,249 @@
-Return-Path: <linux-kernel+bounces-190377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD7C8CFD72
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:48:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B398CFD76
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E298B23559
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034341C210D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B9513AD06;
-	Mon, 27 May 2024 09:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C945613AA2A;
+	Mon, 27 May 2024 09:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhjPxZbR"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MhfR46x1";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Z4sCqJsX"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FDE13A898;
-	Mon, 27 May 2024 09:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716803272; cv=none; b=C8FURmRuUw0qMFwW4O674jYKE0h0L4YcOyO+9nOOoN4ZDK00iS63B8WeYK0juE7hZ8yRrzwq8KoFEaeukKWgGlLRxakCfg2zYwRYhxEu6Y+GuqXO+pHr58nl94g2ZQ3Q61jwmVDObquTjcP5a63fu2JhYH5nzkoD/yHLOTKbT0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716803272; c=relaxed/simple;
-	bh=NecRHn7sywc1+ha56YpvK/cGSasQtq86AchAN73/3aQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HwZzlREzDNyY/ZJpjOzDLYtBqL4GrgjcokzWY6cK2+F4J/CqPy1MBlVCDwgMbBlnMWEqY3/nLEiDDSv5F42ZtCpzHMjKQyoAB5bd+nL9JdSlC1yupO33J6LAWimQLG88X7DVN0aBHhPz9J2Mmg1P6iXDlGqP0sYhVtV+P7Din34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhjPxZbR; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e73441edf7so80291621fa.1;
-        Mon, 27 May 2024 02:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716803268; x=1717408068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g6Y7qDlP2128BVfGMguLxddnEmP7/zMqdBLE/EZJfD4=;
-        b=fhjPxZbR+R7oLYc7nL5q4dmu26oWy0mxDSCZn0B4WuA0A5tcv+JPVqQFJVNt0luFTt
-         I0p1b7y3l97gx7L9Fx0C+NlvKosVMFGs4Uh/f1qS6Nsvy6Cd33XGRXYhFPrwJMelO9oE
-         YB6Fsh/0/MBM7Avay0+XNjYokqvfL/Rdw8YrV4vJqAtZMMRVIrtxH6DD99hAIGd/GtV/
-         uZGdMSEe5Rk7LkAIn53zkY4xEggwIu0xtZScCrOWMu3KxURoZ14WX0XNV1/ziIP1aC2Q
-         G2vkoX1Gij03xpE1BwlCob8m3u/XJzgwUcoz9KF4BisYY0gHidWw1Xb7FGJ0H3zYl5e2
-         7V2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716803268; x=1717408068;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g6Y7qDlP2128BVfGMguLxddnEmP7/zMqdBLE/EZJfD4=;
-        b=FYG8v2IoGj9m8VrJNEV9CStTgPc8JMXfr1RhE7Okmxg7N/rwNqmB9YGvbR9n5A5X6l
-         n6D4XvFfB1uB8eqpCxxeynLhzprv8NN2o5Rw2We+K8tS4aCWHgOE7lTy/SaivL1P4Bvf
-         kTApf7t2DxB5vUrqXmO9EdUclFs7hLuBzli7dJXaoG6ELsDmgzeObqAOCyUraa25ho6k
-         OWRzA3DI4/N208ENypf61QgiCzFThFye23ilBH2y5rO2p9yUN76kf6fOOpVGAX2nFWce
-         MMdRcOspvbmjm8uIRGtfLLeH2ds4W6++KjiTjS+fSk38LYpklwm7LvvDyl0PGoj8Jqbg
-         XCrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLU+DAD1xI+pnai5b0ZwwKOpKdOl9VkZrGM7He4CEjlGfOTpZxyw7GluIxarNS2lgP4tV3Ps+o+7Q1PAZ3i9kTe4pfb7Y6D7n2ptRRa50vQwoMSQ91UbPVCaxnTTonac3MVaO3a0owXwMLXRhJ3XaaHe5nxuOokbF8R3KleTJRftz96vo=
-X-Gm-Message-State: AOJu0YzZTQFF4o24eX2z9LgvVeF6uLDwRllpeonk6Ri4BNIKfgbG1gAS
-	6yX5uR5ShAU1P4o+o55WafUvvwOaG5cC4KzSfTzrY/wHf0l2N2Lq
-X-Google-Smtp-Source: AGHT+IEsgob9VAbjfucaX7jx/m+oAlwtrZTapSs+DhINo309KVRJLpeijrmCgDG8yJNjkDiXIAk8aA==
-X-Received: by 2002:ac2:4c45:0:b0:51b:5c9f:992e with SMTP id 2adb3069b0e04-529644ebec3mr6446641e87.14.1716803267379;
-        Mon, 27 May 2024 02:47:47 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-420fd37c1d2sm156356915e9.1.2024.05.27.02.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:47:47 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v3 3/3] leds: leds-lp5569: Add support for Texas Instruments LP5569
-Date: Mon, 27 May 2024 11:47:34 +0200
-Message-ID: <20240527094737.13354-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527094737.13354-1-ansuelsmth@gmail.com>
-References: <20240527094737.13354-1-ansuelsmth@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55A013A877;
+	Mon, 27 May 2024 09:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716803366; cv=fail; b=d69BfvevF5DtWAhvozQ2YZ6HyF97AyaxCWWXl6rQdHh1DOmfHL4bTNUOM0Wmp2rrFHEkI0jI+Wzvv4NF6SJU8IoL1wan6snb9hjCBnc+6aB+rGApCLNCAeAJ3ITesWFl6MEDWX1+sD0/+wNIAaDtzd/XEc0SYVxe7y/EmZ22WG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716803366; c=relaxed/simple;
+	bh=/IJxqFaCAJxKUoJnwjlvtSqWKrp2Ij32dr2kFIos9pA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=s/OuaSKDypA3/Kv2krwhd2ANgmByE/r+86cqjx59bcMnxn8Ifb8RNzDz71GBmnxr9xW3skUOMuExdW51v9zz5C3LbHCgWLVWa5QiQ5zgV0vqUl0ZaZUsUhwRaDo5VTL9c3vWXZpUpbWaa5RRvMBElUsEIJiH51PprUFfpiQXli8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MhfR46x1; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Z4sCqJsX; arc=fail smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716803364; x=1748339364;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=/IJxqFaCAJxKUoJnwjlvtSqWKrp2Ij32dr2kFIos9pA=;
+  b=MhfR46x1rMv1WV+bi/mbSI50vEoT/HrL/eVqojQOXofWNJkKi2Os8f6G
+   X5VNUxaRsz1j+5n1p6x5OsFVXE3PiSyRjVx3SwNMu9Ckrau8UH9Wjplfv
+   lqCVn5nYdaz99EyR+GxRhiIf6Il5iLVMhDBDRWvLOLcJIjRo7UkxNqT3V
+   jsCVjO5wBIMcLqWYQ22EHhPYobekkl/sO+LftetMJwN1gXU1GJQ8cXJL2
+   PxKimDyCoGy7dqQGMVLnBoBGrCAk5Dzsc83N4Ybnp0b1isTw+G+Tdq5pQ
+   0cAEiCsl7rojuAbJEuOVVHMnQUbdb2tOHg6V3XkEdanSGshWrFk131gZp
+   w==;
+X-CSE-ConnectionGUID: +RHgMxyXSTOmX/H7JE7Yaw==
+X-CSE-MsgGUID: N8dVJef5S9Oblp3h19fr3w==
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="193775910"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 May 2024 02:49:23 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 27 May 2024 02:48:12 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Mon, 27 May 2024 02:48:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V+TurSleAVVbGGgddT53PDFJdg6aDZ1e3KJf12W1u2jIJrapfbPg7rOHs98h3wdTn54Pxd3UCGXMuFR3OGfMNG7fcp99Tm3+Lz0XFqip7fMAooYBoNaU83WRGWm+bTBjPCgmDrcDTelqcpkCLXJDwp9xZv544guJicW7OIFNEKxIlbRSDQqxBCKd9Lp5/b1ygiDFo3LqkkfFXEzKNZveSPpX+hgB7KFd1w9xagbsISHie2OXs2xHdE+k8dx/HxMawY76FB46AQbSpA09Q7jKf6NiCPaTg+7jJigj9q0YRVwZ7zCOIxCoahX/e9Ri1Ebd/o6gzd/A7WYvegmA4wAENQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/IJxqFaCAJxKUoJnwjlvtSqWKrp2Ij32dr2kFIos9pA=;
+ b=QjjEZHyM9FRMWcKTOwVgsQzQqcWnxNsEVtADVKuAf9f17XKtxXYDkibVIo4RiakwP7vi/L+zOqtiwVqNmY5sPoMYkoOPsCJdRpwUlxo27ft8falPlaSPTIRDEXS+9Dk6xAfQ3sNlxsG9Imfm+BS+hK2MnZZu0+eMgGmH2cNVEPiixVXTTEqY84yMmlAhL1V7q7SLGr+dYV1hgKpYUd0azF8X4eqozHSHWeNmHtqPYpb7fUGhZMaz7OJNLgS1hUYjDraDhFrogs2r76SImsEkcg3m9qmV1ETGII0SiKcRsLC5TJWKp5G8u0pGvdOlObazyqiahku3Y2Dv5ucW/rlh3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/IJxqFaCAJxKUoJnwjlvtSqWKrp2Ij32dr2kFIos9pA=;
+ b=Z4sCqJsX5pXchzfethisVS9pm8ZSrrQyackN0A2fDjjjeE0qDxZIti1THLfmw3/9nZkHbDKICTy7lVbqwFnWx4q9MCRqdZkDEXNonkqbTJtHcuMdp5a/1onxB3vl67xS872MBk9gDq/j+hyl6MUU4E3ER7uI1XJ78BgQRCesZtga0hS0kJ9XjAUTvwZzNGiBp0MxdZ7jWFepzXqnP5CohzlW511DMV9zJEEjk9kjOnAmx0ALVjVcc7vziBuITO3t7a8ZUn1bfe3hbIqgQTEg/hXHGewSEF8IVyw8Pn0vW2ERySXkz6cAULrxDF45hxocnm8GQfqvD6WMtjqKZc3DGQ==
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
+ by SA1PR11MB6808.namprd11.prod.outlook.com (2603:10b6:806:24f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Mon, 27 May
+ 2024 09:48:10 +0000
+Received: from SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
+ ([fe80::84fa:e267:e389:fa9%4]) with mapi id 15.20.7587.030; Mon, 27 May 2024
+ 09:48:10 +0000
+From: <Parthiban.Veerasooran@microchip.com>
+To: <andrew@lunn.ch>, <ramon.nordin.rodriguez@ferroamp.se>
+CC: <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 0/1] phy: microchip_t1s: lan865x rev.b1 support
+Thread-Topic: [PATCH net 0/1] phy: microchip_t1s: lan865x rev.b1 support
+Thread-Index: AQHarePdJZh+m0FZZ0WCxjUHsxgGEbGmd7uAgARiaoA=
+Date: Mon, 27 May 2024 09:48:10 +0000
+Message-ID: <70c0b4d2-c947-499b-8263-ea7f08f853e3@microchip.com>
+References: <20240524140706.359537-1-ramon.nordin.rodriguez@ferroamp.se>
+ <99f56020-9293-4e6b-8c2a-986af8c3dd79@lunn.ch>
+In-Reply-To: <99f56020-9293-4e6b-8c2a-986af8c3dd79@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|SA1PR11MB6808:EE_
+x-ms-office365-filtering-correlation-id: 68dfbbb0-10dc-45a0-5c1c-08dc7e321ebb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|366007|376005|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?bEswUWtsZE8zVHFtTm0wbDFyUm91a1haWXJ1N0taRnFOWi9oUGh3Z0tEN3l6?=
+ =?utf-8?B?M2I1QzJlUndjNTlFU2Fmb0hlbUV0YlR3Ym8zS0ZwbTd5R0F5ckV0VnF3QVYz?=
+ =?utf-8?B?Tk52emh3cDVHVEgvdDlqNVU0a0NNamhWZDBRenRSaHpVd3JXMGdVcG1IMnRD?=
+ =?utf-8?B?UnFKbHdKRndqU1lOT1MwN1NzbnhCT1RMeTJxZmFvSVpSdTJvdjl2UGJTTkZX?=
+ =?utf-8?B?TzM3WE54eFE0dmVPZ2lhM01rQ3E3UGNSejJmQnVhS05nNktrK3hlMlpSSS9D?=
+ =?utf-8?B?UUxBMTNIU1VEVy80N0dTQURzYnpIZnBvY2hXdElGOFJFM25ZS3M0YlFlNVZ6?=
+ =?utf-8?B?TlBQbXlIbDl3dGdadE1GS2NyenFRbDRBWVBJc3laZEFhOEVmWE9DSDlCdGVw?=
+ =?utf-8?B?c3o5UEdpQkQzY28xRk5Ga2NKbGhYa3djdWxrOWpQS293QTZtSTRjM3RFbzV0?=
+ =?utf-8?B?eU13N3ppcDVNai9CTG9QTzloMFphUVA0STVLazkyNWhjd2xYMmd3SWNseUtr?=
+ =?utf-8?B?YkZ1a3hyU0F4TWR1cm9nZmpkTkVIdFlVQXZZOENEekluRzNVQTI3R3djOUhW?=
+ =?utf-8?B?WUVkR0FwRnhnY0J4VFU5d01na0t4WlRMcEZheTB0VW9vZmJVMk5saS9jVTBJ?=
+ =?utf-8?B?K0pFR3hKMkZxOHB5K0loSGlFQ0ZiRm1qWXhmVTF3dEJMNXB2MWVYSnBaQWUv?=
+ =?utf-8?B?Zm1PSVlUSlVKcXJFNC9oL2YyVnNmckJ6ek10Y0JRbFNlekZiajRkYy94bEhI?=
+ =?utf-8?B?dUprUkxWcU1PRFdlb3g5TldFaDFKczJNYUFhM1pOLzlMa0V3bzBocmp6NHFE?=
+ =?utf-8?B?bCthamVGc0NpTW9DdFF3OXh0eUZJZ0duMzNjODVJVEhnYUQyTHovU1NHck9p?=
+ =?utf-8?B?VmlmZjhHcEtjeEF5R0NKSnVaWk1OVml4UlpGajc3UHZXc1JHRFZhT1FsUkMx?=
+ =?utf-8?B?MkV5a0dqYXN2NkRvakdGUWhGNHRLL0ZBc29xL0hab2Fac2RTQ05SZm9oaWZ4?=
+ =?utf-8?B?VzN1S0p2R3RCK2pPblBMc0g0dVQ5VkVaL0ZUVVMzNUlOWlphZWlJa1J3TGF4?=
+ =?utf-8?B?S2xuNWVoY092K1phM0R1NklCVm91LytvcEN3dk1ScjdwNUJ0MWxldVRCMXJL?=
+ =?utf-8?B?dm8zRU8rVDJvWHBhRWcySG82Y2ZzNm5qV2E2VXJoK0hvbXJCVjVHNGJjY0Q0?=
+ =?utf-8?B?NHY0ZTVvbW9ZTDNRMmFneCtFZ0FtWEx4cjFxVDMyaFJhcUdYdEpRckc3WnNU?=
+ =?utf-8?B?ZXVwaXYrVXRZVWVadmppdnhoNEZvTWVPK3VMcWhYVnVuRzh4N1lQOE5MVEs0?=
+ =?utf-8?B?ZEx1OWhnNExrL1NUZmQvalFHeDZWcFAwdnk5cStIbGovNndLYk1WaGRVcUJN?=
+ =?utf-8?B?TjBiZzZqWEVMTDlQeWcvU3R6cjVLdWorUjBIL1VLZkk1ei95aVllUFp3V2Vr?=
+ =?utf-8?B?bCtTNWZ6czJWN01IbkgwZ0dZcDNRWVhHRmMwL255MmE1SXA3UFlPWm0xeHdC?=
+ =?utf-8?B?aHowblJ1alZFSStFY3UxMDRRc2lvc0RuNmhRazh0WERyRFpiNk5ZeGhzamtD?=
+ =?utf-8?B?SURKaW1CLzRMVzBxTHEvYTFCN3BLWUZxZ2lqcTM3YXhEREJBOFV5dmRMOVZo?=
+ =?utf-8?B?cWVSb3paMjZiUFhNOW9NbUpzdi9UampqN1RsTEFXcXNKY3pwcFc3OG00YnZ2?=
+ =?utf-8?B?bmQxWFlUQm9oanNKQUk2V2Ixd0JiOWtDcnRCTm5BNzE0NU5yTFdxaHFZTFVF?=
+ =?utf-8?B?SFNibEMvS0hWMHJtekpEQjlmQUxoQ3pSSGxRMytqamZkYVdBMEZoVlFMbWRh?=
+ =?utf-8?B?Ry9OTlZwaGJoM2V6VEJXdz09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?R0xNWExvKzRYWGRNTG1SSmhKRldxZGsrdE95RU5aajdPcDJvdFI3REwxbGRo?=
+ =?utf-8?B?ZXpFdlpzSlFRTzRIckIvTzFYYlE4TkhQTGdLMk53Nk12dFZtU2FCeUp2Ymkr?=
+ =?utf-8?B?dlFqbGhpK3RQbGZQeW5OaTJMemR2SXJ3RDNIbmtoRFlGYWVpUkhYekoyc1l0?=
+ =?utf-8?B?Sk00QWU2S2hxamsxZnlkcG1Hb2FRaWMvMGR2YlQrRktCMS9lMzE4RWFZcWtl?=
+ =?utf-8?B?bU81MXNRWHRDOCtnay9CUGdFSUhiRnJrVmdtL29XUjA1enpHVXVkNFliQ1By?=
+ =?utf-8?B?cWhrTHk2VGQ0V0tFRG5icXdxYUVxZzQ0Tld3anZJUE41YjlvU0x5RHRBbEcw?=
+ =?utf-8?B?eXFlVWc0ckEvcHhrcmRYKzdGd2g4SEMwdG1QcHJTWjFubEFFYzRzdldZVk9j?=
+ =?utf-8?B?ZThObTRiT1RTajVhNkk0MHBrM0xGSFR3Ni9ZS1hpcFNSY2JHTGUxa1JXVXMw?=
+ =?utf-8?B?eUNXT1k1V05LVHlvelBZazJVT3VEZnM4enBLUW1kYkhZRHliQVRYaWlhZTFO?=
+ =?utf-8?B?aXdTNE5ib0huNEwxdnE2cVUvalBqa01zQTd1Q1JlNlBRaWJsR1QyZHRRRXJ4?=
+ =?utf-8?B?WThkT2V4SENsbjE2cEZ2VjFPSmJOMEFCcDlEbzczdHo4MUxhRkowUFc2QVR2?=
+ =?utf-8?B?eXdKWUd6NTB3N081VFBNNkJJUEFjdVQ2ZUZEOFlkSlJKWk4vbUJnakw5MDhB?=
+ =?utf-8?B?eW5UUUFKYVUxc1hVMTRhS3NHYWZ6VUF5OFdaKytvdmowVXQzQkhjOGkySFhJ?=
+ =?utf-8?B?eXdQaTB3WmdTaHVGUi9KRHlQZFRvYU0vRE84NzlZd3liWDNZamthWm5sL0dY?=
+ =?utf-8?B?SE80SUY4czQraDJReG4wdjFES3BGWVNidWVLWEZIbDdpSE9RR2t0VzQ1SXQx?=
+ =?utf-8?B?UUV6OVpjeWdBVWMzZkJoc1FKQXJ5NGNJc3NBcUFuSXFlVVJNUy9RNUdTSTZF?=
+ =?utf-8?B?aDFTbkZzTXl3WUNtZVFwUXZvbW9TdzBheTltZGtWYTR1YmVOZFpNVmljYmFK?=
+ =?utf-8?B?eTk1bG1pa1NzYk8zMEpnc3BIRmtFeW0wTndXV1BhSXB2NnE4MEVoU2d0eC9D?=
+ =?utf-8?B?WVdyWk9xa1hPQmRSeU56U0doV2s2Zk1Mdy9ZcEtyWmpQQnlrNHhGTmpkRWI0?=
+ =?utf-8?B?L1hqM3QvR0I0T083NkJTamxkMkF4QUd6NVg2NmxXL05yVVNvZWNCUW01Wm5W?=
+ =?utf-8?B?UkdpWmt5ZHMvQ1ptem4yQ214NzNFaTFuYzczQkpLbTNMRFkzQmhKWnFRTjdE?=
+ =?utf-8?B?b05yVzI3UFNJRlduRmFpeHZBSUlCd2VwS0h2MVR0dEttL0hHSUR2SmVQNnVs?=
+ =?utf-8?B?NEtQV0JaZFdHZ0Z4dW5YYlBsSitFNXFMcnVielpCNGR2U0VCN0FmTnlCbW5n?=
+ =?utf-8?B?OSs1clZrdmVuU2pSbWkwcENtMzY0YjQ1b0VIYlF3UFhKV3p6c0ZhL2hrZDhL?=
+ =?utf-8?B?d1dYU1hVQ3ZzRVY3Sk5RK040WlF6bFdCdXVUVTZzSTd5SW9MWGpKRmJnVjcy?=
+ =?utf-8?B?VXkzYU50Ujdlb3ZIVWlGaDdrcTlRTzZQV2hwYmdySEU2MFpYQXpCbUNuK2tm?=
+ =?utf-8?B?eHhxTElrTHlmT0llSHJQZnZ1QjlFRGZFUlRsVzNsUXpsYXphTXUzYnloTkpZ?=
+ =?utf-8?B?ZlZLQjdXcS8wbm1uR2tVdmRVQWx0V0FKdDFZTW5WaE52ZkhhaWhGTU0rVW4y?=
+ =?utf-8?B?U1AycTFaK0Q0dGxiVndUa3J3cHlGRHp3MzBvYXBsOGtFUXhia3k1d0hubXhF?=
+ =?utf-8?B?ZmVBTExOa3VRcWNzdXhhQWR4dWMyck9LVGtCZHZNZGFrNXQwS3VwU0RpQ2Nj?=
+ =?utf-8?B?TWhZdmdOdDgxQnNPWTJxYzl1Wk10RnRKODRhc3FDYzVKc3QrMTFiUlV5Vjcz?=
+ =?utf-8?B?cmdnUzZNdmpuSXJNb1RFVExvOEFFZ3ZpZnpVaFJ6alRQNTBNNk1YbW1sUlc0?=
+ =?utf-8?B?d1BaQTBFWTVCc055ZVFVSkpSeS9FaFliNGZCK0UxMVhHRVlMamhwYUl2MXdp?=
+ =?utf-8?B?M0lDRUljWVl3N0JKOHVST3dIbkNXdnpkbVd6b2hPUFF0eFR0Yjk1aEg5ZXRp?=
+ =?utf-8?B?VGxUaFNmeWk5V2ZQamhDWnROczkwZ2QwQUtDcjFMTVcwZyt3ZWsxRGx2UHZU?=
+ =?utf-8?B?QWV0anJBZTBTamNKT0NyYUJiTEZkS2hZYlJOZ3FUYTFFZFJnNmZyODZldzBh?=
+ =?utf-8?B?S2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <49FD1F3F6C83384AB285755A5F20C4B1@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68dfbbb0-10dc-45a0-5c1c-08dc7e321ebb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 09:48:10.8243
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: osC3ohz0CC8uYaaq1nvWnDdRkhS+xP3OCb9YG9vn0KOf2WqUaZwu6N/s14p5AJ55NkDgCxZ/qSaSMwrZZgZj4wzeQy6jVM7yTI8DRYWOWNk8Mj6fDkoeGb1Iq6Lc50Ka
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6808
 
-Add support for Texas Instruments LP5569 LED driver.
-
-Texas Instruments LP5569 is 9 channels chip with programmable engines.
-
-It almost a copy of LP5523 with fundamental changes to regs order and
-regs content.
-
-Has difference in how the clock is handled and doesn't support detecting
-clock time automatically, different handling for selftest and different
-scheme for the status regs.
-
-One some devices using this LED Controller (a NBG7815 Router) it was
-found loading big precompiled pattern with up to 3 bytes of code. To
-have support for this "extended" scenarion, hardcode each engine to
-support 4 pages of precompiled pattern (128 bytes of code) and 1 page
-for each MUX. This gives plenty of space for any kind precompiled
-pattern keeping simple logic for page handling of each engine and mux.
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-v3:
-- Enlarge and support program size up to 128bytes
-v2:
-- Fix compilation error with target that doesn't
-  include bitfield.h
-
- drivers/leds/Kconfig       |   16 +-
- drivers/leds/Makefile      |    1 +
- drivers/leds/leds-lp5569.c | 1159 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 1173 insertions(+), 3 deletions(-)
- create mode 100644 drivers/leds/leds-lp5569.c
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 05e6af88b88c..b1d7d94317b3 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -414,7 +414,7 @@ config LEDS_LP50XX
- 	  module will be called leds-lp50xx.
- 
- config LEDS_LP55XX_COMMON
--	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
-+	tristate "Common Driver for TI/National LP5521/5523/55231/5562/5569/8501"
- 	depends on LEDS_CLASS
- 	depends on LEDS_CLASS_MULTICOLOR
- 	depends on OF
-@@ -422,8 +422,8 @@ config LEDS_LP55XX_COMMON
- 	select FW_LOADER
- 	select FW_LOADER_USER_HELPER
- 	help
--	  This option supports common operations for LP5521/5523/55231/5562/8501
--	  devices.
-+	  This option supports common operations for LP5521/5523/55231/5562/5569/
-+	  8501 devices.
- 
- config LEDS_LP5521
- 	tristate "LED Support for N.S. LP5521 LED driver chip"
-@@ -456,6 +456,16 @@ config LEDS_LP5562
- 	  Driver provides direct control via LED class and interface for
- 	  programming the engines.
- 
-+config LEDS_LP5569
-+	tristate "LED Support for TI LP5569 LED driver chip"
-+	depends on LEDS_CLASS && I2C
-+	depends on LEDS_LP55XX_COMMON
-+	help
-+	  If you say yes here you get support for TI LP5569 LED driver.
-+	  It is 9 channels chip with programmable engines.
-+	  Driver provides direct control via LED class and interface for
-+	  programming the engines.
-+
- config LEDS_LP8501
- 	tristate "LED Support for TI LP8501 LED driver chip"
- 	depends on LEDS_CLASS && I2C
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index effdfc6f1e95..ad21941efa19 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -51,6 +51,7 @@ obj-$(CONFIG_LEDS_LP50XX)		+= leds-lp50xx.o
- obj-$(CONFIG_LEDS_LP5521)		+= leds-lp5521.o
- obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
- obj-$(CONFIG_LEDS_LP5562)		+= leds-lp5562.o
-+obj-$(CONFIG_LEDS_LP5569)		+= leds-lp5569.o
- obj-$(CONFIG_LEDS_LP55XX_COMMON)	+= leds-lp55xx-common.o
- obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
- obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
-diff --git a/drivers/leds/leds-lp5569.c b/drivers/leds/leds-lp5569.c
-new file mode 100644
-index 000000000000..b98390263534
---- /dev/null
-+++ b/drivers/leds/leds-lp5569.c
-@@ -0,0 +1,1159 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * lp5569.c - LP5569LED Driver
-+ *
-+ * Copyright (C) 2010 Nokia Corporation
-+ * Copyright (C) 2012 Texas Instruments
-+ *
-+ * Contact: Samu Onkalo <samu.p.onkalo@nokia.com>
-+ *          Milo(Woogyom) Kim <milo.kim@ti.com>
-+ *          Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/firmware.h>
-+#include <linux/i2c.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_data/leds-lp55xx.h>
-+#include <linux/slab.h>
-+#include <dt-bindings/leds/leds-lp55xx.h>
-+
-+#include "leds-lp55xx-common.h"
-+
-+/* Registers */
-+#define LP5569_REG_ENABLE		0x00
-+#define   LP5569_ENABLE			BIT(6)
-+
-+#define LP5569_REG_EXEC_CTRL		0x01
-+/*
-+ * Program Memory Operations
-+ * Same Mask for each engine for both mode and exec
-+ * ENG1	GENMASK(3, 2)
-+ * ENG2	GENMASK(5, 4)
-+ * ENG3	GENMASK(7, 6)
-+ */
-+#define LP5569_MODE_ENG_MASK		GENMASK(1, 0)
-+#define   LP5569_MODE_ENG_SHIFT		2
-+#define   LP5569_MODE_DISABLE_ENG	FIELD_PREP_CONST(LP5569_MODE_ENG_MASK, 0x0)
-+#define   LP5569_MODE_LOAD_ENG		FIELD_PREP_CONST(LP5569_MODE_ENG_MASK, 0x1)
-+#define   LP5569_MODE_RUN_ENG		FIELD_PREP_CONST(LP5569_MODE_ENG_MASK, 0x2)
-+#define   LP5569_MODE_HALT_ENG		FIELD_PREP_CONST(LP5569_MODE_ENG_MASK, 0x3)
-+
-+#define   LP5569_MODE_ENGn_SHIFT(n)	(LP5569_MODE_ENG_SHIFT + (2 * (3 - (n))))
-+#define   LP5569_MODE_ENGn_MASK(n)	(LP5569_MODE_ENG_MASK << LP5569_MODE_ENGn_SHIFT(n))
-+#define   LP5569_MODE_ENGn_GET(n, mode)	\
-+	(((mode) >> LP5569_MODE_ENGn_SHIFT(n)) & LP5569_MODE_ENG_MASK)
-+
-+#define LP5569_REG_OP_MODE		0x02
-+#define   LP5569_EXEC_ENG_MASK		GENMASK(1, 0)
-+#define   LP5569_EXEC_ENG_SHIFT		2
-+#define   LP5569_EXEC_HOLD_ENG		FIELD_PREP_CONST(LP5569_EXEC_ENG_MASK, 0x0)
-+#define   LP5569_EXEC_STEP_ENG		FIELD_PREP_CONST(LP5569_EXEC_ENG_MASK, 0x1)
-+#define   LP5569_EXEC_RUN_ENG		FIELD_PREP_CONST(LP5569_EXEC_ENG_MASK, 0x2)
-+#define   LP5569_EXEC_ONCE_ENG		FIELD_PREP_CONST(LP5569_EXEC_ENG_MASK, 0x3)
-+
-+#define   LP5569_EXEC_ENGn_SHIFT(n)	(LP5569_EXEC_ENG_SHIFT + (2 * (3 - (n))))
-+#define   LP5569_EXEC_ENGn_MASK(n)	(LP5569_EXEC_ENG_MASK << LP5569_EXEC_ENGn_SHIFT(n))
-+
-+#define LP5569_REG_ENABLE_LEDS_MSB	0x04
-+#define LP5569_REG_ENABLE_LEDS_LSB	0x05
-+#define LP5569_REG_LED_CTRL_BASE	0x07
-+#define   LP5569_FADER_MAPPING_MASK	GENMASK(7, 5)
-+#define LP5569_REG_LED_PWM_BASE		0x16
-+#define LP5569_REG_LED_CURRENT_BASE	0x22
-+#define LP5569_REG_MISC			0x2F
-+#define   LP5569_AUTO_INC		BIT(6)
-+#define   LP5569_PWR_SAVE		BIT(5)
-+#define   LP5569_CP_MODE_MASK		GENMASK(4, 3)
-+#define   LP5569_PWM_PWR_SAVE		BIT(2)
-+#define   LP5569_INTERNAL_CLK		BIT(0)
-+#define LP5569_REG_MISC2		0x33
-+#define   LP5569_LED_SHORT_TEST		BIT(4)
-+#define   LP5569_LED_OPEN_TEST		BIT(3)
-+#define LP5569_REG_STATUS		0x3C
-+#define   LP5569_MASK_BUSY		BIT(7)
-+#define   LP5569_STARTUP_BUSY		BIT(6)
-+#define   LP5569_ENGINE_BUSY		BIT(5)
-+#define   LP5569_ENGINE1_INT		BIT(2)
-+#define   LP5569_ENGINE2_INT		BIT(1)
-+#define   LP5569_ENGINE3_INT		BIT(0)
-+#define   LP5569_ENG_STATUS_MASK	(LP5569_ENGINE1_INT | LP5569_ENGINE2_INT | \
-+					 LP5569_ENGINE3_INT)
-+#define LP5569_REG_IO_CONTROL		0x3D
-+#define   LP5569_CLK_OUTPUT		BIT(3)
-+#define LP5569_REG_RESET		0x3F
-+#define   LP5569_RESET			0xFF
-+#define LP5569_REG_MASTER_FADER_BASE	0x46
-+#define LP5569_REG_CH1_PROG_START	0x4B
-+#define LP5569_REG_CH2_PROG_START	0x4C
-+#define LP5569_REG_CH3_PROG_START	0x4D
-+#define LP5569_REG_PROG_PAGE_SEL	0x4F
-+#define LP5569_REG_PROG_MEM		0x50
-+#define LP5569_REG_LED_FAULT1		0x81
-+#define   LP5569_LED_FAULT8		BIT(0)
-+#define LP5569_REG_LED_FAULT2		0x82
-+#define   LP5569_LED_FAULT7		BIT(7)
-+#define   LP5569_LED_FAULT6		BIT(6)
-+#define   LP5569_LED_FAULT5		BIT(5)
-+#define   LP5569_LED_FAULT4		BIT(4)
-+#define   LP5569_LED_FAULT3		BIT(3)
-+#define   LP5569_LED_FAULT2		BIT(2)
-+#define   LP5569_LED_FAULT1		BIT(1)
-+#define   LP5569_LED_FAULT0		BIT(0)
-+
-+#define LP5569_MAX_LEDS			9
-+
-+#define LP5569_PROGRAM_PAGES		16
-+#define LP5569_BYTES_PER_PAGE		32	/* bytes */
-+#define LP5569_PROGRAM_LENGTH		(LP5569_BYTES_PER_PAGE * 4) /* 128 bytes (4 pages) */
-+/* Memory is used like this:
-+ * 0x00 engine 1 program (4 pages)
-+ * 0x40 engine 2 program (4 pages)
-+ * 0x80 engine 3 program (4 pages)
-+ * 0xc0 engine 1 muxing info (1 page)
-+ * 0xd0 engine 2 muxing info (1 page)
-+ * 0xe0 engine 3 muxing info (1 page)
-+ */
-+#define LP5569_ENG1_PROG_ADDR		0x0
-+#define LP5569_ENG2_PROG_ADDR		0x40
-+#define LP5569_ENG3_PROG_ADDR		0x80
-+#define LP5569_ENG1_MUX_ADDR		0xc0
-+#define LP5569_ENG2_MUX_ADDR		0xd0
-+#define LP5569_ENG3_MUX_ADDR		0xe0
-+
-+#define LP5569_BITS_PER_ADDR		16
-+#define LP5569_PAGE_OFFSET(addr)	((addr) / LP5569_BITS_PER_ADDR)
-+
-+/* Memory Page Selection */
-+#define LP5569_PAGE_ENG_OFFSET		LP5569_PAGE_OFFSET(LP5569_ENG1_PROG_ADDR)
-+#define LP5569_PAGE_ENG(n)		((((n) - 1) * 4) + LP5569_PAGE_ENG_OFFSET)
-+#define LP5569_PAGE_MUX_OFFSET		LP5569_PAGE_OFFSET(LP5569_ENG1_MUX_ADDR)
-+#define LP5569_PAGE_MUX(n)		(((n) - 1) + LP5569_PAGE_MUX_OFFSET)
-+
-+#define LEDn_STATUS_FAULT(n, status)	((status) >> (n) & BIT(0))
-+#define LED_ACTIVE(mux, led)		(!!((mux) & (0x0001 << (led))))
-+
-+#define LP5569_DEFAULT_CONFIG \
-+	(LP5569_AUTO_INC | LP5569_PWR_SAVE | LP5569_PWM_PWR_SAVE)
-+
-+enum lp5569_chip_id {
-+	LP5569,
-+};
-+
-+static int lp5569_init_program_engine(struct lp55xx_chip *chip);
-+
-+static inline void lp5569_wait_opmode_done(void)
-+{
-+	usleep_range(1000, 2000);
-+}
-+
-+static void lp5569_set_led_current(struct lp55xx_led *led, u8 led_current)
-+{
-+	led->led_current = led_current;
-+	lp55xx_write(led->chip, LP5569_REG_LED_CURRENT_BASE + led->chan_nr,
-+		     led_current);
-+}
-+
-+static int lp5569_post_init_device(struct lp55xx_chip *chip)
-+{
-+	int ret;
-+	int val;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	/* Chip startup time is 500 us, 1 - 2 ms gives some margin */
-+	usleep_range(1000, 2000);
-+
-+	val = LP5569_DEFAULT_CONFIG;
-+	val |= FIELD_PREP(LP5569_CP_MODE_MASK, chip->pdata->charge_pump_mode);
-+
-+	if (chip->pdata->clock_mode == LP55XX_CLOCK_INT)
-+		val |= LP5569_INTERNAL_CLK;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_MISC, val);
-+	if (ret)
-+		return ret;
-+
-+	if (chip->pdata->clock_mode == LP55XX_CLOCK_INT) {
-+		ret = lp55xx_update_bits(chip, LP5569_REG_IO_CONTROL,
-+					 LP5569_CLK_OUTPUT,
-+					 LP5569_CLK_OUTPUT);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return lp5569_init_program_engine(chip);
-+}
-+
-+static void lp5569_load_engine(struct lp55xx_chip *chip)
-+{
-+	enum lp55xx_engine_index idx = chip->engine_idx;
-+	u8 mask, val;
-+
-+	mask = LP5569_MODE_ENGn_MASK(idx);
-+	val = LP5569_MODE_LOAD_ENG << LP5569_MODE_ENGn_SHIFT(idx);
-+
-+	lp55xx_update_bits(chip, LP5569_REG_OP_MODE, mask, val);
-+
-+	lp5569_wait_opmode_done();
-+}
-+
-+static void lp5569_load_engine_and_select_page(struct lp55xx_chip *chip)
-+{
-+	enum lp55xx_engine_index idx = chip->engine_idx;
-+
-+	lp5569_load_engine(chip);
-+
-+	lp55xx_write(chip, LP5569_REG_PROG_PAGE_SEL, LP5569_PAGE_ENG(idx));
-+}
-+
-+static void lp5569_stop_all_engines(struct lp55xx_chip *chip)
-+{
-+	lp55xx_write(chip, LP5569_REG_OP_MODE, 0);
-+	lp5569_wait_opmode_done();
-+}
-+
-+static void lp5569_stop_engine(struct lp55xx_chip *chip)
-+{
-+	enum lp55xx_engine_index idx = chip->engine_idx;
-+
-+	lp55xx_update_bits(chip, LP5569_REG_OP_MODE, LP5569_MODE_ENGn_MASK(idx), 0);
-+
-+	lp5569_wait_opmode_done();
-+}
-+
-+static void lp5569_turn_off_channels(struct lp55xx_chip *chip)
-+{
-+	int i;
-+
-+	for (i = 0; i < LP5569_MAX_LEDS; i++)
-+		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + i, 0);
-+}
-+
-+static void lp5569_run_engine(struct lp55xx_chip *chip, bool start)
-+{
-+	int i, ret;
-+	u8 mode;
-+	u8 exec;
-+
-+	/* stop engine */
-+	if (!start) {
-+		lp5569_stop_engine(chip);
-+		lp5569_turn_off_channels(chip);
-+		return;
-+	}
-+
-+	/*
-+	 * To run the engine,
-+	 * operation mode and enable register should updated at the same time
-+	 */
-+
-+	ret = lp55xx_read(chip, LP5569_REG_OP_MODE, &mode);
-+	if (ret)
-+		return;
-+
-+	ret = lp55xx_read(chip, LP5569_REG_EXEC_CTRL, &exec);
-+	if (ret)
-+		return;
-+
-+	/* change operation mode to RUN only when each engine is loading */
-+	for (i = LP55XX_ENGINE_1; i <= LP55XX_ENGINE_3; i++) {
-+		if (LP5569_MODE_ENGn_GET(i, mode) != LP5569_MODE_LOAD_ENG)
-+			continue;
-+
-+		mode &= ~LP5569_MODE_ENGn_MASK(i);
-+		mode |= LP5569_MODE_RUN_ENG << LP5569_MODE_ENGn_SHIFT(i);
-+		exec &= ~LP5569_EXEC_ENGn_MASK(i);
-+		exec |= LP5569_EXEC_RUN_ENG << LP5569_EXEC_ENGn_SHIFT(i);
-+	}
-+
-+	lp55xx_write(chip, LP5569_REG_OP_MODE, mode);
-+	lp5569_wait_opmode_done();
-+
-+	lp55xx_write(chip, LP5569_REG_EXEC_CTRL, exec);
-+}
-+
-+static int lp5569_init_program_engine(struct lp55xx_chip *chip)
-+{
-+	int i;
-+	int j;
-+	int ret;
-+	u8 status;
-+	/* one pattern per engine setting LED MUX start and stop addresses */
-+	static const u8 pattern[][LP5569_BYTES_PER_PAGE] =  {
-+		{ 0x9c, LP5569_ENG1_MUX_ADDR, 0x9c, 0xb0, 0x9d, 0x80, 0xd8, 0x00, 0},
-+		{ 0x9c, LP5569_ENG2_MUX_ADDR, 0x9c, 0xc0, 0x9d, 0x80, 0xd8, 0x00, 0},
-+		{ 0x9c, LP5569_ENG3_MUX_ADDR, 0x9c, 0xd0, 0x9d, 0x80, 0xd8, 0x00, 0},
-+	};
-+
-+	/* hardcode 32 bytes of memory for each engine from program memory */
-+	ret = lp55xx_write(chip, LP5569_REG_CH1_PROG_START, LP5569_ENG1_PROG_ADDR);
-+	if (ret)
-+		return ret;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_CH2_PROG_START, LP5569_ENG2_PROG_ADDR);
-+	if (ret)
-+		return ret;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_CH3_PROG_START, LP5569_ENG3_PROG_ADDR);
-+	if (ret)
-+		return ret;
-+
-+	/* write LED MUX address space for each engine */
-+	for (i = LP55XX_ENGINE_1; i <= LP55XX_ENGINE_3; i++) {
-+		chip->engine_idx = i;
-+		lp5569_load_engine_and_select_page(chip);
-+
-+		for (j = 0; j < LP5569_BYTES_PER_PAGE; j++) {
-+			ret = lp55xx_write(chip, LP5569_REG_PROG_MEM + j,
-+					   pattern[i - 1][j]);
-+			if (ret)
-+				goto out;
-+		}
-+	}
-+
-+	lp5569_run_engine(chip, true);
-+
-+	/* Let the programs run for couple of ms and check the engine status */
-+	usleep_range(3000, 6000);
-+	lp55xx_read(chip, LP5569_REG_STATUS, &status);
-+	status = FIELD_GET(LP5569_ENG_STATUS_MASK, status);
-+
-+	if (status != LP5569_ENG_STATUS_MASK) {
-+		dev_err(&chip->cl->dev,
-+			"could not configure LED engine, status = 0x%.2x\n",
-+			status);
-+		ret = -1;
-+	}
-+
-+out:
-+	lp5569_stop_all_engines(chip);
-+	return ret;
-+}
-+
-+static int lp5569_update_program_memory(struct lp55xx_chip *chip,
-+					const u8 *data, size_t size)
-+{
-+	enum lp55xx_engine_index idx = chip->engine_idx;
-+	u8 pattern[LP5569_PROGRAM_LENGTH] = {0};
-+	unsigned int cmd;
-+	char c[3];
-+	int nrchars;
-+	int ret;
-+	int offset = 0;
-+	int page, i = 0;
-+
-+	while ((offset < size - 1) && (i < LP5569_PROGRAM_LENGTH)) {
-+		/* separate sscanfs because length is working only for %s */
-+		ret = sscanf(data + offset, "%2s%n ", c, &nrchars);
-+		if (ret != 1)
-+			goto err;
-+
-+		ret = sscanf(c, "%2x", &cmd);
-+		if (ret != 1)
-+			goto err;
-+
-+		pattern[i] = (u8)cmd;
-+		offset += nrchars;
-+		i++;
-+	}
-+
-+	/* Each instruction is 16bit long. Check that length is even */
-+	if (i % 2)
-+		goto err;
-+
-+	for (page = 0; page < LP5569_PROGRAM_LENGTH / LP5569_BYTES_PER_PAGE; page++) {
-+		/* Write to the next page each 32 bytes */
-+		lp55xx_write(chip, LP5569_REG_PROG_PAGE_SEL,
-+			     LP5569_PAGE_ENG(idx) + page);
-+
-+		for (i = 0; i < LP5569_PROGRAM_LENGTH; i++) {
-+			ret = lp55xx_write(chip, LP5569_REG_PROG_MEM + i,
-+					   pattern[i + (page * LP5569_BYTES_PER_PAGE)]);
-+			if (ret)
-+				return -EINVAL;
-+		}
-+	}
-+
-+
-+	return size;
-+
-+err:
-+	dev_err(&chip->cl->dev, "wrong pattern format\n");
-+	return -EINVAL;
-+}
-+
-+static void lp5569_firmware_loaded(struct lp55xx_chip *chip)
-+{
-+	const struct firmware *fw = chip->fw;
-+
-+	if (fw->size > (LP5569_BYTES_PER_PAGE * LP5569_PROGRAM_PAGES * 2)) {
-+		dev_err(&chip->cl->dev, "firmware data size overflow: %zu\n",
-+			fw->size);
-+		return;
-+	}
-+
-+	/*
-+	 * Program memory sequence
-+	 *  1) set engine mode to "LOAD"
-+	 *  2) write firmware data into program memory
-+	 */
-+
-+	lp5569_load_engine_and_select_page(chip);
-+	lp5569_update_program_memory(chip, fw->data, fw->size);
-+}
-+
-+static ssize_t show_engine_mode(struct device *dev,
-+				struct device_attribute *attr,
-+				char *buf, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	enum lp55xx_engine_mode mode = chip->engines[nr - 1].mode;
-+
-+	switch (mode) {
-+	case LP55XX_ENGINE_RUN:
-+		return sprintf(buf, "run\n");
-+	case LP55XX_ENGINE_LOAD:
-+		return sprintf(buf, "load\n");
-+	case LP55XX_ENGINE_DISABLED:
-+	default:
-+		return sprintf(buf, "disabled\n");
-+	}
-+}
-+show_mode(1)
-+show_mode(2)
-+show_mode(3)
-+
-+static ssize_t store_engine_mode(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	struct lp55xx_engine *engine = &chip->engines[nr - 1];
-+
-+	mutex_lock(&chip->lock);
-+
-+	chip->engine_idx = nr;
-+
-+	if (!strncmp(buf, "run", 3)) {
-+		lp5569_run_engine(chip, true);
-+		engine->mode = LP55XX_ENGINE_RUN;
-+	} else if (!strncmp(buf, "load", 4)) {
-+		lp5569_stop_engine(chip);
-+		lp5569_load_engine(chip);
-+		engine->mode = LP55XX_ENGINE_LOAD;
-+	} else if (!strncmp(buf, "disabled", 8)) {
-+		lp5569_stop_engine(chip);
-+		engine->mode = LP55XX_ENGINE_DISABLED;
-+	}
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return len;
-+}
-+store_mode(1)
-+store_mode(2)
-+store_mode(3)
-+
-+static int lp5569_mux_parse(const char *buf, u16 *mux, size_t len)
-+{
-+	u16 tmp_mux = 0;
-+	int i;
-+
-+	len = min_t(int, len, LP5569_MAX_LEDS);
-+
-+	for (i = 0; i < len; i++) {
-+		switch (buf[i]) {
-+		case '1':
-+			tmp_mux |= (1 << i);
-+			break;
-+		case '0':
-+			break;
-+		case '\n':
-+			i = len;
-+			break;
-+		default:
-+			return -1;
-+		}
-+	}
-+	*mux = tmp_mux;
-+
-+	return 0;
-+}
-+
-+static void lp5569_mux_to_array(u16 led_mux, char *array)
-+{
-+	int i, pos = 0;
-+
-+	for (i = 0; i < LP5569_MAX_LEDS; i++)
-+		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
-+
-+	array[pos] = '\0';
-+}
-+
-+static ssize_t show_engine_leds(struct device *dev,
-+				struct device_attribute *attr,
-+				char *buf, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	char mux[LP5569_MAX_LEDS + 1];
-+
-+	lp5569_mux_to_array(chip->engines[nr - 1].led_mux, mux);
-+
-+	return sprintf(buf, "%s\n", mux);
-+}
-+show_leds(1)
-+show_leds(2)
-+show_leds(3)
-+
-+static int lp5569_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
-+{
-+	struct lp55xx_engine *engine = &chip->engines[nr - 1];
-+	int ret;
-+
-+	lp5569_load_engine(chip);
-+
-+	ret = lp55xx_write(chip, LP5569_REG_PROG_PAGE_SEL, LP5569_PAGE_MUX(nr));
-+	if (ret)
-+		return ret;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_PROG_MEM, (u8)(mux >> 8));
-+	if (ret)
-+		return ret;
-+
-+	ret = lp55xx_write(chip, LP5569_REG_PROG_MEM + 1, (u8)(mux));
-+	if (ret)
-+		return ret;
-+
-+	engine->led_mux = mux;
-+	return 0;
-+}
-+
-+static ssize_t store_engine_leds(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	struct lp55xx_engine *engine = &chip->engines[nr - 1];
-+	u16 mux = 0;
-+	ssize_t ret;
-+
-+	if (lp5569_mux_parse(buf, &mux, len))
-+		return -EINVAL;
-+
-+	mutex_lock(&chip->lock);
-+
-+	chip->engine_idx = nr;
-+	ret = -EINVAL;
-+
-+	if (engine->mode != LP55XX_ENGINE_LOAD)
-+		goto leave;
-+
-+	if (lp5569_load_mux(chip, mux, nr))
-+		goto leave;
-+
-+	ret = len;
-+leave:
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+store_leds(1)
-+store_leds(2)
-+store_leds(3)
-+
-+static ssize_t store_engine_load(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+
-+	chip->engine_idx = nr;
-+	lp5569_load_engine_and_select_page(chip);
-+	ret = lp5569_update_program_memory(chip, buf, len);
-+
-+	mutex_unlock(&chip->lock);
-+
-+	return ret;
-+}
-+store_load(1)
-+store_load(2)
-+store_load(3)
-+
-+static ssize_t lp5569_led_open_test(struct lp55xx_led *led, char *buf)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	struct lp55xx_platform_data *pdata = chip->pdata;
-+	bool leds_fault[LP5569_MAX_LEDS];
-+	struct lp55xx_led *led_tmp = led;
-+	int i, ret, pos = 0;
-+	u8 status;
-+
-+	/* Set in STANDBY state */
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, 0);
-+	if (ret)
-+		goto exit;
-+
-+	/* Wait 1ms for device to enter STANDBY state */
-+	usleep_range(1000, 2000);
-+
-+	/* Set Charge Pump to 1.5x */
-+	ret = lp55xx_update_bits(chip, LP5569_REG_MISC,
-+				 FIELD_PREP(LP5569_CP_MODE_MASK, LP55XX_CP_BOOST),
-+				 LP5569_CP_MODE_MASK);
-+	if (ret)
-+		goto exit;
-+
-+	/* Enable LED Open Test */
-+	ret = lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_OPEN_TEST,
-+				 LP5569_LED_OPEN_TEST);
-+	if (ret)
-+		goto exit;
-+
-+	/* Put Device in NORMAL state */
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
-+	if (ret)
-+		goto exit;
-+
-+	/* Wait 500 us for device to enter NORMAL state */
-+	usleep_range(500, 750);
-+
-+	/* Enable LED and set to 100% brightness */
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		ret = lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-+				   LED_FULL);
-+		if (ret)
-+			goto exit;
-+
-+		led_tmp++;
-+	}
-+
-+	/* Wait 500 us for device to fill status regs */
-+	usleep_range(500, 750);
-+
-+	/* Parse status led fault 1 regs */
-+	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT1, &status);
-+	if (ret < 0)
-+		goto exit;
-+
-+	for (i = 0; i < 8; i++)
-+		leds_fault[i] = !!((status >> i) & 0x1);
-+
-+	/* Parse status led fault 2 regs */
-+	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT2, &status);
-+	if (ret < 0)
-+		goto exit;
-+
-+	for (i = 0; i < 1; i++)
-+		leds_fault[i + 8] = !!((status >> i) & 0x1);
-+
-+	/* Report LED fault */
-+	led_tmp = led;
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		if (leds_fault[led_tmp->chan_nr])
-+			pos += sprintf(buf + pos, "LED %d OPEN FAIL\n",
-+				       led_tmp->chan_nr);
-+
-+		led_tmp++;
-+	}
-+
-+	ret = pos;
-+
-+exit:
-+	/* Disable LED Open Test */
-+	lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_OPEN_TEST,
-+			   0);
-+
-+	led_tmp = led;
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-+			     0);
-+
-+		led_tmp++;
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t lp5569_led_short_test(struct lp55xx_led *led, char *buf)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	struct lp55xx_platform_data *pdata = chip->pdata;
-+	bool leds_fault[LP5569_MAX_LEDS];
-+	struct lp55xx_led *led_tmp = led;
-+	int i, ret, pos = 0;
-+	u8 status;
-+
-+	/* Set in STANDBY state */
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, 0);
-+	if (ret)
-+		goto exit;
-+
-+	/* Wait 1ms for device to enter STANDBY state */
-+	usleep_range(1000, 2000);
-+
-+	/* Set Charge Pump to 1x */
-+	ret = lp55xx_update_bits(chip, LP5569_REG_MISC,
-+				 FIELD_PREP(LP5569_CP_MODE_MASK, LP55XX_CP_BYPASS),
-+				 LP5569_CP_MODE_MASK);
-+	if (ret)
-+		goto exit;
-+
-+	/* Enable LED and set to 100% brightness and current to 100% (25.5mA) */
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		ret = lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-+				   LED_FULL);
-+		if (ret)
-+			goto exit;
-+
-+		ret = lp55xx_write(chip, LP5569_REG_LED_CURRENT_BASE + led_tmp->chan_nr,
-+				   LED_FULL);
-+		if (ret)
-+			goto exit;
-+
-+		led_tmp++;
-+	}
-+
-+	/* Put Device in NORMAL state */
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
-+	if (ret)
-+		goto exit;
-+
-+	/* Wait 500 us for device to enter NORMAL state */
-+	usleep_range(500, 750);
-+
-+	/* Enable LED Shorted Test */
-+	ret = lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_OPEN_TEST,
-+				 LP5569_LED_SHORT_TEST);
-+	if (ret)
-+		goto exit;
-+
-+	/* Wait 500 us for device to fill status regs */
-+	usleep_range(500, 750);
-+
-+	/* Parse status led fault 1 regs */
-+	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT1, &status);
-+	if (ret < 0)
-+		goto exit;
-+
-+	for (i = 0; i < 8; i++)
-+		leds_fault[i] = !!LEDn_STATUS_FAULT(i, status);
-+
-+	/* Parse status led fault 2 regs */
-+	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT2, &status);
-+	if (ret < 0)
-+		goto exit;
-+
-+	for (i = 0; i < 1; i++)
-+		leds_fault[i + 8] = !!LEDn_STATUS_FAULT(i, status);
-+
-+	/* Report LED fault */
-+	led_tmp = led;
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		if (leds_fault[led_tmp->chan_nr])
-+			pos += sprintf(buf + pos, "LED %d SHORTED FAIL\n",
-+				       led_tmp->chan_nr);
-+
-+		led_tmp++;
-+	}
-+
-+	ret = pos;
-+
-+exit:
-+	/* Disable LED Shorted Test */
-+	lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_SHORT_TEST,
-+			   0);
-+
-+	led_tmp = led;
-+	for (i = 0; i < pdata->num_channels; i++) {
-+		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-+			     0);
-+
-+		led_tmp++;
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t lp5569_selftest(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int i, pos = 0;
-+
-+	mutex_lock(&chip->lock);
-+
-+	/* Test LED Open */
-+	pos = lp5569_led_open_test(led, buf);
-+	if (pos < 0)
-+		goto fail;
-+
-+	/* Test LED Shorted */
-+	pos = lp5569_led_short_test(led, buf);
-+	if (pos < 0)
-+		goto fail;
-+
-+	for (i = 0; i < chip->pdata->num_channels; i++) {
-+		/* Restore current */
-+		lp55xx_write(chip, LP5569_REG_LED_CURRENT_BASE + led->chan_nr,
-+			     led->led_current);
-+
-+		/* Restore brightness */
-+		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led->chan_nr,
-+			     led->brightness);
-+		led++;
-+	}
-+
-+	if (pos == 0)
-+		pos = sprintf(buf, "OK\n");
-+	goto release_lock;
-+fail:
-+	pos = sprintf(buf, "FAIL\n");
-+
-+release_lock:
-+	mutex_unlock(&chip->lock);
-+
-+	return pos;
-+}
-+
-+#define show_fader(nr)						\
-+static ssize_t show_master_fader##nr(struct device *dev,	\
-+			    struct device_attribute *attr,	\
-+			    char *buf)				\
-+{								\
-+	return show_master_fader(dev, attr, buf, nr);		\
-+}
-+
-+#define store_fader(nr)						\
-+static ssize_t store_master_fader##nr(struct device *dev,	\
-+			     struct device_attribute *attr,	\
-+			     const char *buf, size_t len)	\
-+{								\
-+	return store_master_fader(dev, attr, buf, len, nr);	\
-+}
-+
-+static ssize_t show_master_fader(struct device *dev,
-+				 struct device_attribute *attr,
-+				 char *buf, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+	u8 val;
-+
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_read(chip, LP5569_REG_MASTER_FADER_BASE + nr - 1, &val);
-+	mutex_unlock(&chip->lock);
-+
-+	if (ret == 0)
-+		ret = sprintf(buf, "%u\n", val);
-+
-+	return ret;
-+}
-+show_fader(1)
-+show_fader(2)
-+show_fader(3)
-+
-+static ssize_t store_master_fader(struct device *dev,
-+				  struct device_attribute *attr,
-+				  const char *buf, size_t len, int nr)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+	unsigned long val;
-+
-+	if (kstrtoul(buf, 0, &val))
-+		return -EINVAL;
-+
-+	if (val > 0xff)
-+		return -EINVAL;
-+
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_write(chip, LP5569_REG_MASTER_FADER_BASE + nr - 1,
-+			   (u8)val);
-+	mutex_unlock(&chip->lock);
-+
-+	if (ret == 0)
-+		ret = len;
-+
-+	return ret;
-+}
-+store_fader(1)
-+store_fader(2)
-+store_fader(3)
-+
-+static ssize_t show_master_fader_leds(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int i, ret, pos = 0;
-+	u8 val;
-+
-+	mutex_lock(&chip->lock);
-+
-+	for (i = 0; i < LP5569_MAX_LEDS; i++) {
-+		ret = lp55xx_read(chip, LP5569_REG_LED_CTRL_BASE + i, &val);
-+		if (ret)
-+			goto leave;
-+
-+		val = FIELD_PREP(LP5569_FADER_MAPPING_MASK, val);
-+		if (val > FIELD_MAX(LP5569_FADER_MAPPING_MASK)) {
-+			ret = -EINVAL;
-+			goto leave;
-+		}
-+		buf[pos++] = val + '0';
-+	}
-+	buf[pos++] = '\n';
-+	ret = pos;
-+leave:
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
-+static ssize_t store_master_fader_leds(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t len)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-+	struct lp55xx_chip *chip = led->chip;
-+	int i, n, ret;
-+	u8 val;
-+
-+	n = min_t(int, len, LP5569_MAX_LEDS);
-+
-+	mutex_lock(&chip->lock);
-+
-+	for (i = 0; i < n; i++) {
-+		if (buf[i] >= '0' && buf[i] <= '7') {
-+			val = FIELD_PREP(LP5569_FADER_MAPPING_MASK, buf[i] - '0');
-+			ret = lp55xx_update_bits(chip,
-+						 LP5569_REG_LED_CTRL_BASE + i,
-+						 LP5569_FADER_MAPPING_MASK,
-+						 val);
-+			if (ret)
-+				goto leave;
-+		} else {
-+			ret = -EINVAL;
-+			goto leave;
-+		}
-+	}
-+	ret = len;
-+leave:
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
-+static int lp5569_multicolor_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+	int i;
-+
-+	mutex_lock(&chip->lock);
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		ret = lp55xx_write(chip,
-+				   LP5569_REG_LED_PWM_BASE +
-+				   led->mc_cdev.subled_info[i].channel,
-+				   led->mc_cdev.subled_info[i].brightness);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
-+static int lp5569_led_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led->chan_nr,
-+			   led->brightness);
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
-+static LP55XX_DEV_ATTR_RW(engine1_mode, show_engine1_mode, store_engine1_mode);
-+static LP55XX_DEV_ATTR_RW(engine2_mode, show_engine2_mode, store_engine2_mode);
-+static LP55XX_DEV_ATTR_RW(engine3_mode, show_engine3_mode, store_engine3_mode);
-+static LP55XX_DEV_ATTR_RW(engine1_leds, show_engine1_leds, store_engine1_leds);
-+static LP55XX_DEV_ATTR_RW(engine2_leds, show_engine2_leds, store_engine2_leds);
-+static LP55XX_DEV_ATTR_RW(engine3_leds, show_engine3_leds, store_engine3_leds);
-+static LP55XX_DEV_ATTR_WO(engine1_load, store_engine1_load);
-+static LP55XX_DEV_ATTR_WO(engine2_load, store_engine2_load);
-+static LP55XX_DEV_ATTR_WO(engine3_load, store_engine3_load);
-+static LP55XX_DEV_ATTR_RO(selftest, lp5569_selftest);
-+static LP55XX_DEV_ATTR_RW(master_fader1, show_master_fader1,
-+			  store_master_fader1);
-+static LP55XX_DEV_ATTR_RW(master_fader2, show_master_fader2,
-+			  store_master_fader2);
-+static LP55XX_DEV_ATTR_RW(master_fader3, show_master_fader3,
-+			  store_master_fader3);
-+static LP55XX_DEV_ATTR_RW(master_fader_leds, show_master_fader_leds,
-+			  store_master_fader_leds);
-+
-+static struct attribute *lp5569_attributes[] = {
-+	&dev_attr_engine1_mode.attr,
-+	&dev_attr_engine2_mode.attr,
-+	&dev_attr_engine3_mode.attr,
-+	&dev_attr_engine1_load.attr,
-+	&dev_attr_engine2_load.attr,
-+	&dev_attr_engine3_load.attr,
-+	&dev_attr_engine1_leds.attr,
-+	&dev_attr_engine2_leds.attr,
-+	&dev_attr_engine3_leds.attr,
-+	&dev_attr_selftest.attr,
-+	&dev_attr_master_fader1.attr,
-+	&dev_attr_master_fader2.attr,
-+	&dev_attr_master_fader3.attr,
-+	&dev_attr_master_fader_leds.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group lp5569_group = {
-+	.attrs = lp5569_attributes,
-+};
-+
-+/* Chip specific configurations */
-+static struct lp55xx_device_config lp5569_cfg = {
-+	.reset = {
-+		.addr = LP5569_REG_RESET,
-+		.val  = LP5569_RESET,
-+	},
-+	.enable = {
-+		.addr = LP5569_REG_ENABLE,
-+		.val  = LP5569_ENABLE,
-+	},
-+	.max_channel  = LP5569_MAX_LEDS,
-+	.post_init_device   = lp5569_post_init_device,
-+	.brightness_fn      = lp5569_led_brightness,
-+	.multicolor_brightness_fn = lp5569_multicolor_brightness,
-+	.set_led_current    = lp5569_set_led_current,
-+	.firmware_cb        = lp5569_firmware_loaded,
-+	.run_engine         = lp5569_run_engine,
-+	.dev_attr_group     = &lp5569_group,
-+};
-+
-+static int lp5569_probe(struct i2c_client *client)
-+{
-+	struct lp55xx_platform_data *pdata = dev_get_platdata(&client->dev);
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-+	struct device_node *np = dev_of_node(&client->dev);
-+	struct lp55xx_chip *chip;
-+	struct lp55xx_led *led;
-+	int ret;
-+
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->cfg = &lp5569_cfg;
-+
-+	if (!pdata) {
-+		if (np) {
-+			pdata = lp55xx_of_populate_pdata(&client->dev, np,
-+							 chip);
-+			if (IS_ERR(pdata))
-+				return PTR_ERR(pdata);
-+		} else {
-+			dev_err(&client->dev, "no platform data\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	led = devm_kcalloc(&client->dev,
-+			   pdata->num_channels, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	chip->cl = client;
-+	chip->pdata = pdata;
-+
-+	mutex_init(&chip->lock);
-+
-+	i2c_set_clientdata(client, led);
-+
-+	ret = lp55xx_init_device(chip);
-+	if (ret)
-+		goto err_init;
-+
-+	dev_info(&client->dev, "%s Programmable led chip found\n", id->name);
-+
-+	ret = lp55xx_register_leds(led, chip);
-+	if (ret)
-+		goto err_out;
-+
-+	ret = lp55xx_register_sysfs(chip);
-+	if (ret) {
-+		dev_err(&client->dev, "registering sysfs failed\n");
-+		goto err_out;
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	lp55xx_deinit_device(chip);
-+err_init:
-+	return ret;
-+}
-+
-+static void lp5569_remove(struct i2c_client *client)
-+{
-+	struct lp55xx_led *led = i2c_get_clientdata(client);
-+	struct lp55xx_chip *chip = led->chip;
-+
-+	lp5569_stop_all_engines(chip);
-+	lp55xx_unregister_sysfs(chip);
-+	lp55xx_deinit_device(chip);
-+}
-+
-+static const struct i2c_device_id lp5569_id[] = {
-+	{ "lp5569",  LP5569 },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, lp5569_id);
-+
-+static const struct of_device_id of_lp5569_leds_match[] = {
-+	{ .compatible = "ti,lp5569", },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, of_lp5569_leds_match);
-+
-+static struct i2c_driver lp5569_driver = {
-+	.driver = {
-+		.name	= "lp5569x",
-+		.of_match_table = of_lp5569_leds_match,
-+	},
-+	.probe		= lp5569_probe,
-+	.remove		= lp5569_remove,
-+	.id_table	= lp5569_id,
-+};
-+
-+module_i2c_driver(lp5569_driver);
-+
-+MODULE_AUTHOR("Mathias Nyman <mathias.nyman@nokia.com>");
-+MODULE_AUTHOR("Milo Kim <milo.kim@ti.com>");
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("LP5569 LED engine");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
-
+SGkgQW5kcmV3LA0KDQpPbiAyNC8wNS8yNCA4OjIwIHBtLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
+RVhURVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVu
+bGVzcyB5b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPj4gRmFyIGFzIEkgY2FuIHRl
+bGwgdGhlIHBoeS1kcml2ZXIgY2Fubm90IGFjY2VzcyBzb21lIG9mIHRoZSByZWdzIG5lY2Vzc2Fy
+eQ0KPj4gZm9yIHByb2JpbmcgdGhlIGhhcmR3YXJlIGFuZCBwZXJmb3JtaW5nIHRoZSBpbml0L2Zp
+eHVwIHdpdGhvdXQgZ29pbmcNCj4+IG92ZXIgdGhlIHNwaSBpbnRlcmZhY2UuDQo+PiBUaGUgTU1E
+Q1RSTCByZWdpc3RlciAodXNlZCB3aXRoIGluZGlyZWN0IGFjY2VzcykgY2FuIGFkZHJlc3MNCj4+
+DQo+PiAqIFBNQSAtIG1tcyAzDQo+PiAqIFBDUyAtIG1tcyAyDQo+PiAqIFZlbmRvciBzcGVjaWZp
+YyAvIFBMQ0EgLSBtbXMgNA0KPj4NCj4+IFRoaXMgZHJpdmVyIG5lZWRzIHRvIGFjY2VzcyBtbXMg
+KG1lbW9yeSBtYXAgc2VsZWVjdG9yKQ0KPj4gKiBtYWMgcmVnaXN0ZXJzIC0gbW1zIDEsDQo+PiAq
+IHZlbmRvciBzcGVjaWZpYyAvIFBMQ0EgLSBtbXMgNA0KPj4gKiB2ZW5jb3Igc3BlY2lmaWMgLSBt
+bXMgMTANCj4gDQo+IEluIGdlbmVyYWwsIGEgTUFDIHNob3VsZCBub3QgYmUgdG91Y2hpbmcgdGhl
+IFBIWSwgYW5kIHRoZSBQSFkgc2hvdWxkDQo+IG5vdCBiZSB0b3VjaGluZyB0aGUgTUFDLiBUaGlz
+IHJ1bGUgaXMgYmVjYXVzZSB5b3Ugc2hvdWxkIG5vdCBhc3N1bWUNCj4geW91IGhhdmUgYSBzcGVj
+aWZpYyBNQUMrUEhZIHBhaXIuIEhvd2V2ZXIsIHRoaXMgaXMgb25lIGJsb2Igb2YNCj4gc2lsaWNv
+biwgc28gd2UgY2FuIHJlbGF4IHRoYXQgYSBiaXQgaWYgbmVlZGVkLg0KPiANCj4gU28gaXQgc291
+bmRzIGxpa2UgTWljcm9jaGlwIGhhdmUgbWl4ZWQgdXAgdGhlIHJlZ2lzdGVyIGFkZHJlc3Mgc3Bh
+Y2VzDQo+IDotKA0KPiANCj4gSSBndWVzcyB0aGlzIGFsc28gbWVhbnMgdGhlcmUgaXMgbm8gZGlz
+Y3JldGUgdmVyc2lvbiBvZiB0aGlzIFBIWSwNCj4gYmVjYXVzZSB3aGVyZSB3b3VsZCB0aGVzZSBy
+ZWdpc3RlcnMgYmU/DQo+IA0KPiBEbyBhbnkgb2YgdGhlIHJlZ2lzdGVycyBpbiB0aGUgd3Jvbmcg
+YWRkcmVzcyBzcGFjZSBuZWVkIHRvIGJlIHBva2VkIGF0DQo+IHJ1bnRpbWU/IEJ5IHRoYXQgaSBt
+ZWFuIGNvbmZpZ19hbmVnKCksIHJlYWRfc3RhdHVzKCkuIE9yIGFyZSB0aGV5IG9ubHkNCj4gbmVl
+ZGVkIGFyb3VuZCB0aGUgdGltZSB0aGUgUEhZIGlzIHByb2JlZD8NCj4gDQo+IEhvdyBjcml0aWNh
+bCBpcyB0aGUgb3JkZXJpbmc/IENvdWxkIHdlIGhhdmUgdGhlIE1pY3JvY2hpcCBNQUMgZHJpdmVy
+DQo+IHByb2JlLiBJdCBpbnN0YW50aWF0ZXMgdGhlIFRDNiBmcmFtZXdvcmsgd2hpY2ggcmVnaXN0
+ZXJzIHRoZSBNRElPIGJ1cw0KPiBhbmQgcHJvYmVzIHRoZSBQSFkuIENhbiB0aGUgTUFDIGRyaXZl
+ciB0aGVuIGNvbXBsZXRlIHRoZSBQSFkgc2V0dXANCj4gdXNpbmcgdGhlIHJlZ2lzdGVycyBpbiB0
+aGUgd3JvbmcgYWRkcmVzcyBzcGFjZT8gRG9lcyBpdCBuZWVkIHRvIGFjY2Vzcw0KPiBhbnkgUEhZ
+IHJlZ2lzdGVycyBpbiB0aGUgY29ycmVjdCBhZGRyZXNzIHNwYWNlPyBUaGUgTUFDIGRyaXZlciBz
+aG91bGQNCj4gYmUgYWJsZSB0byBkbyB0aGlzIGJlZm9yZSBwaHlfc3RhcnQoKQ0KPiANCj4gRG9l
+cyBNTVMgMCByZWdpc3RlciAxICJQSFkgSWRlbnRpZmljYXRpb24gUmVnaXN0ZXIiIGdpdmUgZW5v
+dWdoDQo+IGluZm9ybWF0aW9uIHRvIGtub3cgaXQgaXMgYSBCMSBQSFk/IFRoZSBzdGFuZGFyZCBz
+dWdnZXN0cyBpdCBpcyBhDQo+IHN0cmFpZ2h0IGNvcHkgb2YgUEhZIHJlZ2lzdGVycyAyIGFuZCAz
+LiBTbyB0aGUgTUFDIGRyaXZlciBkb2VzIG5vdA0KPiBuZWVkIHRvIHRvdWNoIFBIWSByZWdpc3Rl
+cnMsIHdlIGFyZSBub3QgdG90YWxseSB2aW9sYXRpbmcgdGhlDQo+IGxheWVyaW5nLi4uDQpJIGNv
+bXBsZXRlbHkgYWdyZWUgd2l0aCBhbGwgeW91ciBhYm92ZSBwb2ludHMuIEFzIEkgdG9sZCBhbHJl
+YWR5LCBJIGFtIA0KaW4gdGFsayB3aXRoIG91ciBkZXNpZ24gdGVhbSBhYm91dCB0aGlzIGNvbXBs
+aWNhdGlvbnMgYnkgdGhlIHRpbWUgdGhpcyANClJldi5CMSBzdXBwb3J0IGhhcyBiZWVuIHBvc3Rl
+ZC4gV2lsbCB0cnkgdG8gZ2V0IHRoZSBjbGFyaXR5IGFzIHNvb24gYXMgDQpwb3NzaWJsZS4gU29y
+cnkgZm9yIHRoZSBpbmNvbnZlbmllbmNlLg0KDQpTbyBJIHdvdWxkIHJlY29tbWVuZCB0byBnbyB3
+aXRoIFJldi5CMCBzdXBwb3J0IG5vdyBhcyAiQ0QgZGlzYWJsZSBpZiANClBMQ0EgaXMgZW5hYmxl
+ZCIgZml4IHdoaWNoIGdpdmVzIHN0YWJsZSBwZXJmb3JtYW5jZSB1bnRpbCB3ZSBnZXQgdGhlIA0K
+Y2xhcml0eSBvbiBCMS4gU28gdGhhdCB3ZSBjYW4gZXZhbHVhdGUgdGhlIFRDNiBmcmFtZXdvcmsg
+KG9hX3RjNi5jKSB0byANCmhhdmUgYSBpbml0aWFsL2Jhc2ljIHZlcnNpb24gaW4gdGhlIG1haW5s
+aW5lIGZpcnN0Lg0KDQpCZXN0IHJlZ2FyZHMsDQpQYXJ0aGliYW4gVg0KPiANCj4gICAgICAgICAg
+QW5kcmV3DQo+IA0KDQo=
 
