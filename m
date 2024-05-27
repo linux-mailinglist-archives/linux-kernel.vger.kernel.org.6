@@ -1,158 +1,277 @@
-Return-Path: <linux-kernel+bounces-191443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098AC8D0F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F110B8D0F47
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20F428208A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:15:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58441F21438
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CC11649D8;
-	Mon, 27 May 2024 21:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC1B16191E;
+	Mon, 27 May 2024 21:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="l8g5iEgH"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zag8FdRG"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2080.outbound.protection.outlook.com [40.107.101.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCE61F19A;
-	Mon, 27 May 2024 21:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716844544; cv=none; b=BB6Lvkc71qMAW6iGK3AWSibjelq+NMMUVao/NO8rQKz2dz3XBjgchdovLOoOQKW0rDd3uAE9lHNuSvKOxVQi/v8ZwXrRN4N6kFFBLPdhGjTBtntEL240GUy2ckdIrUlKuceCj/MK6qr/A+zV7BL/3i+omdshcu0FUuxaZrRErTA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716844544; c=relaxed/simple;
-	bh=5QI9+2nUeg6sHv8+a7FEhAPMX9J3Rh8bGnehdX2GrL4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oXtTWGqJqBN5Afn9/RTDOJjqdNn2HjN2V0Poe7KCqH+IC7+bGLnoXR5s3RcPqUmcrnmUtn6wYr+us9Eu19leUVH1EGMfQ6kDUMPhRl3Egzpsn115gOTWV493SEvwWlhYoG2dIfTrjIvLSXY6bFLoe5WDR007GYUZie/ksIxg5N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=l8g5iEgH; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-578517c8b49so142956a12.3;
-        Mon, 27 May 2024 14:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1716844541; x=1717449341; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:references:cc:to:from:content-language
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5QI9+2nUeg6sHv8+a7FEhAPMX9J3Rh8bGnehdX2GrL4=;
-        b=l8g5iEgHYZihL2K6/uydgrMcFewgHrFqfcrK5HwGWyf1xKH980f6KK8ZYAn8w3UuGr
-         Nr18IaR2TMS0YfKVdGhPcGEGIqrUiRbE3MkBZvWqevYhOnWTh2Xf+2jfWiIoAzB5xKdc
-         LLbrLYSHYUcv95A5Y3/n8zspfhwj6PxROByuRa0JVemx6x5cAW/iBC9+Y7aiHOAIZrIz
-         gFHTlvFsudEqlkPgETlWvwEQ2dZABSNZYCxmWKBUIp2rKSpZZusCka/n9dRiPuX8da4n
-         qCuvgY5EyQPq5P3DrcMcDrZ0KWoAIshl0r9vva5UFnckA8Lu8jaS5mXA9gDU4izvELCZ
-         hx7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716844541; x=1717449341;
-        h=in-reply-to:autocrypt:references:cc:to:from:content-language
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5QI9+2nUeg6sHv8+a7FEhAPMX9J3Rh8bGnehdX2GrL4=;
-        b=BDbquDn8FJMP61+KvKkA9/EPEy9ivggC4LFYRbfGPtJpwnWBK3aH1xsQeQndiaVUNr
-         Z6eI4fc568vb2bW+5oNjQN8wzGd0goGPPBWLU+jhEvepHuiA9k26il0o9AsGCEoa7u1B
-         +uOYYNX9mjFor5gLbRSXKIuLkqshBELA9DYW7z6+g4Vu1y1wGqfoVf41qPAxd7O1qV7o
-         yrIiIvXbVsm3prVnTi6RN44aFqZCLo3WRK5BlZRusqGTSPgXQtD2TepFVh9UlvuoxtXD
-         4+4imQd/XR9nfhde+f/J1ts3dGdHe6LD/XkGd1PoWJndBWSgs7CINNvxzwifSZM9gB/u
-         FxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqX2NsCYyIDjQ0WlLHR5eBOy4HhlcUHC+cDZmROqWprfSgkpClFhorknHczs1WnP3rNBhyuFso9l4iJKxi7ReIdX/oNDC
-X-Gm-Message-State: AOJu0Yzx9o5kD+uJ00ThUByvbDYktIBidzDzXMSpJ5G1bDgtkRvK9uEb
-	CR9aOidvWePmJrZoWg9QsfcCDpWlSDd3Uy/FtKezK3Vq8NwE9JUubNRl/qM=
-X-Google-Smtp-Source: AGHT+IGR6/64hfqhV2ZS37JhZM+qklVcsqImjtkdFjjE7r2XPdLMvisOzP5Wt26xjk+PyRE4X4so+w==
-X-Received: by 2002:a50:cac7:0:b0:572:4702:2227 with SMTP id 4fb4d7f45d1cf-57865b2fc5emr4869139a12.35.1716844541252;
-        Mon, 27 May 2024 14:15:41 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac3ea.dip0.t-ipconnect.de. [91.42.195.234])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579d65934ddsm1613590a12.38.2024.05.27.14.15.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 14:15:40 -0700 (PDT)
-Message-ID: <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
-Date: Mon, 27 May 2024 23:15:39 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EC7DDC1;
+	Mon, 27 May 2024 21:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716844612; cv=fail; b=rlSkkvwjlUMZUNhyC/fCP9nhR1P0oMzZJQm8wOzsNRYOgfmovhDyMk1h0H+0ec99Au/6FdLIo4gHBZJuvI8n0GavBZPvM7L8HP3+esTBKx/nmCHO1G6CWk4USgNVAN130k/bmVc9b68wvL5RlVlXhe/dM19LsufIdex3IVKb/fA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716844612; c=relaxed/simple;
+	bh=5pksoOG09hDgo7rxeccmSrs+8KVMX/TW4s/IMkqnvr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=E3ruO+5zUhV19qmsslThPMGR7kEtkxAu1cZDGlOSwJG0QCdN8kp5+Nm65SzFnBoEBGIIXvJHv+HDLTYtWJVwFpI//WbpF8MpfwOb3gyzJPZifDZqkJCeD+3LCRk19E8Qm8kQ2onEMdKV1kqHxkAgzZzbUOU9VHTl9A5I6fzkDvo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zag8FdRG; arc=fail smtp.client-ip=40.107.101.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=brB6XPm+r43sXGEuM6Alb7La7DWASgnub5oSjZ2bGfrwAXat04Yi8P/6DnECx3BDlXOikfWGfdn46gu2Y1Gp6qS3QVDwzpUCC9OUYl6N1Pf03/Zp3FckOWoa12mPmtUAw5+gGf68S0ZuDOm35XsD54V6nzrS/x8dCvXhkaiPtdaBR+Gwhu5mTeGOuu79O0Ia5bcBBH4j8QXKJj1gZa93gCzcbqTXf8/5ImyhY1p2729AjFiTQhW8L12cecrUmWd8vpuoGg0WGGR8ESfJsqslrlCISZsxgfHLnnyGnkSnBCAiO56nvLvNtH1EUF+mTTtqFJAqJo5Ar+y18lcKnQrdXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=28qpJeU5/KOChtq/m7spbUDPhoJrz89c74dQA+hjBVE=;
+ b=jTc8k7cGoMJuDt+lTG+U0XdfusqdKf20DZpdLuUqn5I63odVlWSQFZAPKRZ5BIqFBY796voF0AXl1yRga4Il0QfyMf1+X20lpcAAOSgnGr7Qsd1X8UGa7XLELOW75bIcpy5ikdLkGDovMAWsUuk5ed/FrQOlG5lBtBZDYX21vj/k7ONZzeKlC5xPqlfw2DHV5gIuDxajdMB3UmUJDDVmMScK4HNde+kjYGw3XYmimGpiU7o4uGGGpOkNXmzUp2F3q6HENH3ARYGkOdSuwIrK2WZK8OylWQS4Qsj+wXnolL5YxipRwbTQ5bnWpkso/XMmr0KbnwTmCocoMbqFhrDHUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=28qpJeU5/KOChtq/m7spbUDPhoJrz89c74dQA+hjBVE=;
+ b=Zag8FdRG3cCeuUtyCDtYCQ9j3PEMSdEIiJgpvTmQFWfLpKzeOy/wZEzgsPQu6KI1fzuH1xJnO9UcLA2I589j/NR0GI4nDWQ1opxInmohrdYfOjiZHIeWUL1lPmWbUY3H9JsjRMmeXuJa7sp+zJLZqkYCM4WulrlIoecs8VZ+ox88aqi7IVgDhATCMR27ejbQb9HxnBJzR2LCquqlsEIReWgAa+uva63wkqVhmkltRLtPZMdzslVTyIMarzGzz1MkMZOjDvK/eg9wXRCtCa1uBPg5+o2881b7vLwpk5W6LSVtDpodoczk/ZvvS2NCcgM0KfTeSUHrTmOgUdLm1cHsPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
+ by CY8PR12MB8193.namprd12.prod.outlook.com (2603:10b6:930:71::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
+ 2024 21:16:46 +0000
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7611.030; Mon, 27 May 2024
+ 21:16:45 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kselftest@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	llvm@lists.linux.dev,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2] selftests/vDSO: fix clang build errors and warnings
+Date: Mon, 27 May 2024 14:16:22 -0700
+Message-ID: <20240527211622.290635-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.45.1
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0032.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::7) To BY5PR12MB4130.namprd12.prod.outlook.com
+ (2603:10b6:a03:20b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
- detection
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
-Autocrypt: addr=pschneider1968@googlemail.com; keydata=
- xjMEY58biBYJKwYBBAHaRw8BAQdADPnoGTrfCUCyH7SZVkFtnlzsFpeKANckofR4WVLMtMzN
- L1BldGVyIFNjaG5laWRlciA8cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20+wpwEExYK
- AEQCGyMFCQW15qgFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSjgovXlszhGoyt6IZu
- OpLJLD/yRAUCY58b8AIZAQAKCRBuOpLJLD/yRIeIAQD0+/LMdKHM6AJdPCt+e9Z92BMybfnN
- RtGqkdZWtvdhDQD9FJkGh/3PFtDinimB8UOB7Gi6AGxt9Nu9ne7PvHa0KQXOOARjnxuIEgor
- BgEEAZdVAQUBAQdAw2GRwTf5HJlO6CCigzqH6GUKOjqR1xJ+3nR5EbBze0sDAQgHwn4EGBYK
- ACYWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCY58biAIbDAUJBbXmqAAKCRBuOpLJLD/yRONS
- AQCwB9qiEQoSnxHodu8kRuvUxXKIqN7701W+INXtFGtJygEAyPZH3/vSBJ4A7GUG7BZyQRcr
- ryS0CUq77B7ZkcI1Nwo=
-In-Reply-To: <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------EqAeY0EgVRc5KD51Pgzg6iIz"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|CY8PR12MB8193:EE_
+X-MS-Office365-Filtering-Correlation-Id: 906ed397-548d-498d-6fc9-08dc7e925048
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FxoCFIaACYQ/anvkNYwWoi+YMRpwGBYw2XR5ugk0yCz4/3sB+wANgD7zorBH?=
+ =?us-ascii?Q?ck9y6Cz4mMbP6MeeMB/k0F15WlLnAxKXeTxfp9mA+UWLFluFAOQ7m/+RkKiq?=
+ =?us-ascii?Q?pGRlTZh4DiyS5EoebiDmVCu44Zl88hIGtz7xnRvKdtXcAVb+bm0CEKOMxETS?=
+ =?us-ascii?Q?UCoadhVe7LCI98PXbFnTaQ61INS8/57g1hoAaTiW0T0gIlYQvt20FTILvasC?=
+ =?us-ascii?Q?ZmrUJ489xfgBKFofZ+kGYxu7kq3sRUCtqBuAvWNtnhmsE8tH5i5PXzyP+9tU?=
+ =?us-ascii?Q?kb/3d0OIh8ujLokoiQF8QhrtsJ5auNlHgGo6sRKXEN+trzOTtm2W468URk3s?=
+ =?us-ascii?Q?w2o1Tl3tqt3+Qs6YIQWMrRPVF1FwQ1XSnS6O/d93uEtlmli7coanK7h+maMC?=
+ =?us-ascii?Q?LZO5zoRdd6ugdO17l9hD3OU3Ns3+Hd0IQEaPoOyJEWSUvTUYIxriaCtkHabN?=
+ =?us-ascii?Q?uDJ9Y0FrYLAbF7XicDdY11Ac205KzBml3iLA7MXfSeVE7ZAG/X09ys8/6RjM?=
+ =?us-ascii?Q?E5EfqqZf0e11D+5OvKB9ZxekZcCg0vilKnC8TPkG0xN8uzbYFuwFxpgjOQLv?=
+ =?us-ascii?Q?pb4obY2qJcVBn82BMiHBgG6izxizk95vtUXWewbhURZTjPdc5fuT5W2Bwqq7?=
+ =?us-ascii?Q?fzUwyYn1vstOFi7AxAaHd2bBfLvWDFaJwVVHldEGC/+rsgKz3M0ObJDIl14J?=
+ =?us-ascii?Q?j5W/Vcig8jZO4pJVGtDlRzrWhFlc71dcVZAmmiRNtvks1u/iuDrDv0iWRqnZ?=
+ =?us-ascii?Q?6rJo8+z3nm27QPgLMz0WNwnjtCn2CkGYFyzeIjZcbZQLp1fzma/jACptNmlF?=
+ =?us-ascii?Q?pWFM3Q52yy4mq+hLwAeXJLG3Gw1dm7iYiV0FU/YGsHoBAlfQqX2masbCS/ql?=
+ =?us-ascii?Q?i4iozUpD8ZhG9B4/03kDufaIGQ9QYwDWwfuJGBpqbpqN0oVEAO7/2WvcLi86?=
+ =?us-ascii?Q?7EQsJ5j6rWOcpbUQE+GhIwFSOYhpGT2NzR11pM9Yjg0J7k9l2XJsH70x2jiV?=
+ =?us-ascii?Q?Y0flGzAnp4KUPpCaF8/M6h50bea4xw8Rg2qLbupQouBnSkQ6KbYijRkSZqYY?=
+ =?us-ascii?Q?E3vRQgpNkrLjnBc4Oext/YZrE2qSWkdvuUavb+5z9eU4OzQMh4tootzQ0UTN?=
+ =?us-ascii?Q?DWDhKGT2B0Esc1QRUwyP028/kjOkXD9x70Q48rZgWhPjfDL2ip3ShlzcYwx9?=
+ =?us-ascii?Q?zrkiEyCkIRO+0xbk7a0iUO7DoyolZW3T3DLoFMUyAbULBEdm+QGCu7vB9Dds?=
+ =?us-ascii?Q?ZbqF+eay4Xg2W/UEPKoy3Kf5b9wn07T1VZamQ9tb6Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wwU7ZyXADQoBghcV+SZowXa3MCklCLN9H/PhBEZXkuzwR0BCL6BJK36xTczo?=
+ =?us-ascii?Q?kxUaR1SW3+YoAhzLbo4OYvml0kNpr4DtFb5OpP9Yd6v7H2ilULgp75xGY+NO?=
+ =?us-ascii?Q?rm3o5Y2hP6LtwTIhrN9BdHeJQDsPBL132PjlVlg35r1ZjvDhFRB/60aUWUo3?=
+ =?us-ascii?Q?JWvO8HXmQCMwyfHzwpSe4BIt2mTdNpCDfe0ed/F5ygGIdcatzGyWkxkIYh08?=
+ =?us-ascii?Q?FfiZ/5msT3SDJFsQQAdX7c0WNJ+5sR14rnDOE/4/OYT76tYHiwcb1RWxVWvk?=
+ =?us-ascii?Q?wObb2N6Cf9q5EqFuvd7r1c6yQ+E/CzkVEDM771OvGvayJPC/XKehwh2p+d7V?=
+ =?us-ascii?Q?Lakcg+ZkPpR2JK1Y1XDC9DWm/1Qiu2nKaKujl88XYAyIbDsCASB4biRGgogi?=
+ =?us-ascii?Q?eZZDB0HHw0VGkHp0ff8KAYrQIPbUEk4+picpL8GVk32bUDusVDSlfQHGkqKA?=
+ =?us-ascii?Q?nhk4/mtQRGYtQTnOhbP7j12gQgYR0wjFqO+Vtsx4ntPOarj7k7gjbx97FLaz?=
+ =?us-ascii?Q?Ricn6poVgDd/bexRr1VxXbt9wcnTJqbadM6lx4gxWK1h2Y2PK2szuWwNiMOU?=
+ =?us-ascii?Q?cOPP4kPwN6P6tI3qizyjrfigK6y+mjKUA31rlvVXFPnVVPnf4Tdk83GXzjE2?=
+ =?us-ascii?Q?4OTr9oJwvHtRY54ZeH2FntvmyIjootf6FHoXeDHFd/x0lZ57VNjJMfZXIvQ9?=
+ =?us-ascii?Q?qrEA7hlq/c0vOdAVoHkSkrUl4e2GYi3vPVRhT1NHEZtGK/A8qvIgKDAOZyqC?=
+ =?us-ascii?Q?dBLmj6IJrIDcHE8qnlMrECd0NGs1ncMJb+n75aWxPvJPFiNqAOZ8zpF1w6Q+?=
+ =?us-ascii?Q?toELprU2M8kAKETElLTbPoptut9U4uWmgO+7DjAGzGaCVreOQsW1kypgIDey?=
+ =?us-ascii?Q?ao93svpgAwlVz/Oo2M92+8nJAb14mxI6SL6akpRUCGByQEiiiXKv7JecoPlW?=
+ =?us-ascii?Q?qQEHYD4MtjXnD6TfZObG6pWf8+anU3kziOwe9PPfbNuiZF5RIDKDYXDvQ83F?=
+ =?us-ascii?Q?3nCPKgdfoLTpoIiI1reZg6yrUUR2xKt5okiNoD1lJ1P/kltrd/Chad4Zdqzs?=
+ =?us-ascii?Q?Ou86T67p1ko4YLhFj/2aMBfFFaeFRAP/DgNF6e+RdcfMYTkCclz9wsRman+2?=
+ =?us-ascii?Q?lHmtXmpF903+vPfzBzDYBZruwq80h4kUvF6rZBrPtZDb2c7W7ELkcQHVdYi8?=
+ =?us-ascii?Q?d23v7aGWikspw79jNM4OLl9xbMot33ELJ4TqBbwf6dh0cxWGAjYlXDoaHUMd?=
+ =?us-ascii?Q?oXMPlz79RrZYt6IMWPk5SyUh/G+E++UBa7L9XyYxD2VSP9531j5gmlFHpztz?=
+ =?us-ascii?Q?TfnrM01n5qC61nViEzlJTR4uzY5S9dI6K+z4PMnvXjKr05ncHsjl4p/z3DSG?=
+ =?us-ascii?Q?7cIaCEYrDn6XCRQ7JnZW1EUF6Oph6LYzwT1eXE3YA9vr06OaU0cmCnplTwZM?=
+ =?us-ascii?Q?qGbZ2OyeIJhtns0AaIac6jpgTt1zmMfQWF3HlWZkaVpnZ+pDipjGiR5OYe8u?=
+ =?us-ascii?Q?acuOOpekRWi7q553U1HNFJrxHcEwW4fAoiFJYXbSm+k9a0AoKKtA1q7wnjMe?=
+ =?us-ascii?Q?ipqGZxPHOv5FRCh/hHQwmeRIXgfdYM65i6Rr0OxRQHpnC6J56c6X9GWV3gOE?=
+ =?us-ascii?Q?PA=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 906ed397-548d-498d-6fc9-08dc7e925048
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 21:16:45.7707
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VwsukZfIFyT5UyBHeGORuzT5OgSCMoTSLbuZ8RREgsmCAxVPeKHWVnsGdF91t+iXh0aLemJSHBz0Dh8PrI8buw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8193
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------EqAeY0EgVRc5KD51Pgzg6iIz
-Content-Type: multipart/mixed; boundary="------------BvFioRcM2KIi68l7aRnaPghK";
- protected-headers="v1"
-From: Peter Schneider <pschneider1968@googlemail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-Message-ID: <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
- detection
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
-In-Reply-To: <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+When building with clang, via:
 
---------------BvFioRcM2KIi68l7aRnaPghK
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+    make LLVM=1 -C tools/testing/selftests
 
-VGhvbWFzLA0KDQpBbSAyNy4wNS4yMDI0IHVtIDIzOjA2IHNjaHJpZWIgUGV0ZXIgU2NobmVp
-ZGVyOg0KID4gSGVsbG8gVGhvbWFzLA0KID4NCiA+IHRoYW5rcyB2ZXJ5IG11Y2ggZm9yIGxv
-b2tpbmcgaW50byB0aGlzIGlzc3VlIQ0KDQpbLi4uXQ0KDQoNCkkgd2FudCB0byBhZGQgb25l
-IHRoaW5nOiB0aGVyZSBpcyBhIGxvZyBlbnRyeSBpbiB0aGUgZG1lc2cgb3V0cHV0IG9mIGEg
-ImJhZCIga2VybmVsLCB3aGljaCANCkkgaW5pdGlhbGx5IG92ZXJsb29rZWQsIGJlY2F1c2Ug
-aXQgaXMgd2F5IHVwLCBhbmQgSSBub3RpY2VkIHRoaXMganVzdCBub3cuIEkgZ3Vlc3MgdGhp
-cyANCm1pZ2h0IGJlIHJlbGV2YW50Og0KDQpbICAgIDEuNjgzNTY0XSBbRmlybXdhcmUgQnVn
-XTogQ1BVMDogVG9wb2xvZ3kgZG9tYWluIDAgc2hpZnQgMSAhPSA1DQoNClRoaXMgZG9lcyBu
-b3QgYXBwZWFyIGluIHRoZSA2Ljgga2VybmVsIGRtZXNnLg0KDQpXaGF0IGRvIHlvdSB0aGlu
-az8NCg0KQmVzdGUgR3LDvMOfZSwNClBldGVyIFNjaG5laWRlcg0KDQotLSANCkNsaW1iIHRo
-ZSBtb3VudGFpbiBub3QgdG8gcGxhbnQgeW91ciBmbGFnLCBidXQgdG8gZW1icmFjZSB0aGUg
-Y2hhbGxlbmdlLA0KZW5qb3kgdGhlIGFpciBhbmQgYmVob2xkIHRoZSB2aWV3LiBDbGltYiBp
-dCBzbyB5b3UgY2FuIHNlZSB0aGUgd29ybGQsDQpub3Qgc28gdGhlIHdvcmxkIGNhbiBzZWUg
-eW91LiAgICAgICAgICAgICAgICAgICAgLS0gRGF2aWQgTWNDdWxsb3VnaCBKci4NCg0KT3Bl
-blBHUDogIDB4QTM4MjhCRDc5NkNDRTExQThDQURFODg2NkUzQTkyQzkyQzNGRjI0NA0KRG93
-bmxvYWQ6IGh0dHBzOi8vd3d3LnBldGVycy1uZXR6cGxhdHouZGUvZG93bmxvYWQvcHNjaG5l
-aWRlcjE5NjhfcHViLmFzYw0KaHR0cHM6Ly9rZXlzLm1haWx2ZWxvcGUuY29tL3Brcy9sb29r
-dXA/b3A9Z2V0JnNlYXJjaD1wc2NobmVpZGVyMTk2OEBnb29nbGVtYWlsLmNvbQ0KaHR0cHM6
-Ly9rZXlzLm1haWx2ZWxvcGUuY29tL3Brcy9sb29rdXA/b3A9Z2V0JnNlYXJjaD1wc2NobmVp
-ZGVyMTk2OEBnbWFpbC5jb20NCg0K
+..there are several warnings, and an error. This fixes all of those and
+allows these tests to run and pass.
 
---------------BvFioRcM2KIi68l7aRnaPghK--
+1. Fix linker error (undefined reference to memcpy) by providing a local
+   version of memcpy.
 
---------------EqAeY0EgVRc5KD51Pgzg6iIz
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+2. clang complains about using this form:
 
------BEGIN PGP SIGNATURE-----
+    if (g = h & 0xf0000000)
 
-wnsEABYIACMWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCZlT3+wUDAAAAAAAKCRBuOpLJLD/yREVp
-AP4oLnmY3HQSVtJs85p47ivlBYloyRBVvlPoq3me/2ZOKQD9HlZTTlnWhpfiE+EU0Fxes3eqrVS6
-E3+elmvvenM4cwk=
-=Gzab
------END PGP SIGNATURE-----
+..so factor out the assignment into a separate step.
 
---------------EqAeY0EgVRc5KD51Pgzg6iIz--
+3. The code is passing a signed const char* to elf_hash(), which expects
+   a const unsigned char *. There are several callers, so fix this at
+   the source by allowing the function to accept a signed argument, and
+   then converting to unsigned operations, once inside the function.
+
+4. clang doesn't have __attribute__((externally_visible)) and generates
+   a warning to that effect. Fortunately, gcc 12 and gcc 13 do not seem
+   to require that attribute in order to build, run and pass tests here,
+   so remove it.
+
+[1] https://lore.kernel.org/all/20240329-selftests-libmk-llvm-rfc-v1-1-2f9ed7d1c49f@valentinobst.de/
+
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+
+Changes since the first version:
+
+1) Rebased onto Linux 6.10-rc1
+
+thanks,
+John Hubbard
+
+ tools/testing/selftests/vDSO/parse_vdso.c      | 16 +++++++++++-----
+ .../selftests/vDSO/vdso_standalone_test_x86.c  | 18 ++++++++++++++++--
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+index 413f75620a35..4ae417372e9e 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.c
++++ b/tools/testing/selftests/vDSO/parse_vdso.c
+@@ -55,14 +55,20 @@ static struct vdso_info
+ 	ELF(Verdef) *verdef;
+ } vdso_info;
+ 
+-/* Straight from the ELF specification. */
+-static unsigned long elf_hash(const unsigned char *name)
++/*
++ * Straight from the ELF specification...and then tweaked slightly, in order to
++ * avoid a few clang warnings.
++ */
++static unsigned long elf_hash(const char *name)
+ {
+ 	unsigned long h = 0, g;
+-	while (*name)
++	const unsigned char *uch_name = (const unsigned char *)name;
++
++	while (*uch_name)
+ 	{
+-		h = (h << 4) + *name++;
+-		if (g = h & 0xf0000000)
++		h = (h << 4) + *uch_name++;
++		g = h & 0xf0000000;
++		if (g)
+ 			h ^= g >> 24;
+ 		h &= ~g;
+ 	}
+diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+index 8a44ff973ee1..27f6fdf11969 100644
+--- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
++++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+@@ -18,7 +18,7 @@
+ 
+ #include "parse_vdso.h"
+ 
+-/* We need a libc functions... */
++/* We need some libc functions... */
+ int strcmp(const char *a, const char *b)
+ {
+ 	/* This implementation is buggy: it never returns -1. */
+@@ -34,6 +34,20 @@ int strcmp(const char *a, const char *b)
+ 	return 0;
+ }
+ 
++/*
++ * The clang build needs this, although gcc does not.
++ * Stolen from lib/string.c.
++ */
++void *memcpy(void *dest, const void *src, size_t count)
++{
++	char *tmp = dest;
++	const char *s = src;
++
++	while (count--)
++		*tmp++ = *s++;
++	return dest;
++}
++
+ /* ...and two syscalls.  This is x86-specific. */
+ static inline long x86_syscall3(long nr, long a0, long a1, long a2)
+ {
+@@ -70,7 +84,7 @@ void to_base10(char *lastdig, time_t n)
+ 	}
+ }
+ 
+-__attribute__((externally_visible)) void c_main(void **stack)
++void c_main(void **stack)
+ {
+ 	/* Parse the stack */
+ 	long argc = (long)*stack;
+
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+-- 
+2.45.1
+
 
