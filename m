@@ -1,117 +1,187 @@
-Return-Path: <linux-kernel+bounces-190361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084428CFD47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEC58CFD48
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFF801F2488E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFC01F262C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A681C13B7AF;
-	Mon, 27 May 2024 09:39:41 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2513D625;
+	Mon, 27 May 2024 09:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="MbsgICAu"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6E213A89E;
-	Mon, 27 May 2024 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE5513AD22
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802781; cv=none; b=ohAQ1gAjftwt653gAQmOtXCWOGt5zaRUlgtnKFQNxQ69pr13Wx7+foJcoWatWetvAWqkRSP9DYvYTPg7DcAKafdKFxzQ15x10PsGpRY/gsMqXjUc94dNFmXPHU9hnP3zBuUQ3ysPHyMg0OHCaN57rrv9JQgxXYC0gldTNLCF5pY=
+	t=1716802786; cv=none; b=S9sy0qGkFCqdXKpOllLQUheJd7VAULgxaHfT1ZcYd+I3WV20JruIddNs3SQHny/GO9KxNgXAr6FXs6SuLy8iIq/FAD7TebS2w227axueQY9YZWFcWUuJURbjqu43Y99R7+tDve4Iy0a9wH+VC+VlfxC0OxY1Mykq0M1qlT48hjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802781; c=relaxed/simple;
-	bh=dx+hN+wmsJTwtBfOQ42M7kIfPQOsGL7NwwOe8NY7hNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDRKCb9+i15z+TRrHwZtqGBVWOuJs+0Rh5YpPOll+p9VkjYGn9d4rmeq41fma4svg6G/BVi4kLVVkBhLUah51jGRDufTgTL/ijuEk9V3PHA2b3vuooPg/xwso6ri7SwMUNCfxkFyjSp5aJp+JxGGUx7XnUZpM50e7kwS4q3bpkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a14a73627so25474737b3.2;
-        Mon, 27 May 2024 02:39:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802778; x=1717407578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cs7oGWkvAyFJE8iOCwgBBHVZVN7XGrEi9s1+j6aNNq8=;
-        b=I3grRimC+HXDHAsrT+VzWm0xbn+fAktWNr6PbBS9dqbY7iCWSx9WdS1RzzfmRW9Alr
-         05qBhrCPO9ozbFA3NaLpp1LZJE/N8GNqmiu8R/x4oYY3g7VycALPlGg/kBLThEAzRa9z
-         FWNtO2OibMZfy3Bezib4BXJeYCjljaYeMc4c6PnYi9GUAWWKeMW5Nxe4lrg40+dPXt5h
-         0yD+3tPI18FhcjENN8cfkRaOaxZf4wffMmnggIWR5FXc/GSfLbS04blceH8k9+W5cKDk
-         6tE1c8TQKcdmvRNnf8oO0w0TSxkbvNlHRhSRiIz0c7Bf8HJQ3L3H+EsRQ6HWYKHk3kjs
-         CCCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSHIuqF7sxXQaW/jAe+e1jJre3uv4GI0WUag/41aQf6CnxqBEuZtlPr5b1CxJMam4KQnc1ZZfhafekmOhYSl8Vob9iC3XXlDfsPHHnlRHMQzeYWj3vaTq/VgSc8J9YC7JQBzl0yigXI5omf4SubRp3II8v3vIMh3m+5aK+7bks1lAjfmcosfD6Y4bCOU64CaV7OA/E5sNxfMrnZSShSIt00i8E
-X-Gm-Message-State: AOJu0Ywldlu6JZxJTkxFZMvXnVKbNVob9/jdafVFmNTswXo5cOGEIbgj
-	ghP93d4ZpgGEggNTvNnu+RBk3N3Zs3+te1XI4zIFLuCopwshBDIO3WLHT336
-X-Google-Smtp-Source: AGHT+IG2/TpKChXsuvqybcRJVUPrmpak18nT0ShQi4aDZXyUx2IzP20WJt+hzESLxcLXMOY6rszPRA==
-X-Received: by 2002:a81:9182:0:b0:617:cb98:f9b2 with SMTP id 00721157ae682-62a08f2cae4mr85149047b3.43.1716802777784;
-        Mon, 27 May 2024 02:39:37 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a551098sm15952597b3.128.2024.05.27.02.39.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:39:37 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a14a73627so25474357b3.2;
-        Mon, 27 May 2024 02:39:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXMH8HYVdlJ2qq7g0HMCxAiwvFXro6fSFmjZugnvkKPJL7oVhj0EpaB+yf3Jo5g3kiwP//Y+lpt/vhG1VjeAlIxolaIovcrrITsVLZpb+wzVmj5b/cgEIbBJkNE9HnRsPJxJnvk6v8MwoRbD5WghMdrxRbJHuMeFnb+XR4GDldMWIIFRpewtjUl7+XgZEmDax/VS3GZO6tpybxmAWuUt31xRsPw
-X-Received: by 2002:a25:9348:0:b0:df4:d5d2:b524 with SMTP id
- 3f1490d57ef6-df772184a6cmr8464467276.14.1716802777293; Mon, 27 May 2024
- 02:39:37 -0700 (PDT)
+	s=arc-20240116; t=1716802786; c=relaxed/simple;
+	bh=Bc9tW9Cz1DZ6iFpTzDPfmkj3uh5mXjjEkrZPtv5Yq/0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hnn2LDb436tscLCMl+4AzZ81PzmZSWvPXcFhDW2bnJ4MYh6wZCfHTGAOhKpClpRYOC7YIKROX8Y2xPzqTdB1+zkL3Zk00vWIGLLIkqdvKAl2D99JLyI/Xx+juY35Fbxl4RZzmA7NQvEYmfoxrAuvGWXj3zlGt1AIcImNFrSV8mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=MbsgICAu; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1716802782; x=1717061982;
+	bh=bkUwFBzgjFcOaacbjZdsraAbAQYEQ569ujl7iN25NmA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MbsgICAunyMFYYipG/xUhINPKEFnTmWeYRVF4b34mD4oRscCS2SzKlcPXtfB4kygL
+	 Dwxt99gJxJd3h1ymCxYxV7A6rrqmdBWPL/hsaths91EhC8WIe+jhrKisOWUBjwvOFB
+	 VL0f0JB78OR3M7XeOvJus5Zx/XU6O+DMzw5PFtMGIbgR4AbecPchcUqG3MIoWI6Loq
+	 nr0faS5MbTwNw3Q1QFOk3Zpmj87VAb4n9sNPMIUDc3C8DaVTZcmK14CvZNY3ZtPcW1
+	 8hlZeWL128JxBTp6EY42zRKsP/YCCiYr4rXYKx7g/vjknQLdasT6H8+pM0XWTV9adv
+	 0nvwJez8MS/iQ==
+Date: Mon, 27 May 2024 09:39:38 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] rust: list: add tracking for ListArc
+Message-ID: <35544d52-166a-45a0-ae60-b39ecde576bc@proton.me>
+In-Reply-To: <20240506-linked-list-v2-2-7b910840c91f@google.com>
+References: <20240506-linked-list-v2-0-7b910840c91f@google.com> <20240506-linked-list-v2-2-7b910840c91f@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 4cc69eeba12c0c462a2df5fdc5ed89fa72890678
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com> <20240513-rzn1-gmac1-v7-7-6acf58b5440d@bootlin.com>
-In-Reply-To: <20240513-rzn1-gmac1-v7-7-6acf58b5440d@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 May 2024 11:39:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWC=mF0xVwALAT6OsZMn821V-vz6G94HLVsEDvXWRpngQ@mail.gmail.com>
-Message-ID: <CAMuHMdWC=mF0xVwALAT6OsZMn821V-vz6G94HLVsEDvXWRpngQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 7/7] ARM: dts: r9a06g032: describe GMAC1
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 9:24=E2=80=AFAM Romain Gantois
-<romain.gantois@bootlin.com> wrote:
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->
-> The r9a06g032 SoC of the RZ/N1 family features two GMAC devices named
-> GMAC1/2, that are based on Synopsys cores. GMAC1 is connected to a
-> RGMII/RMII converter that is already described in this device tree.
->
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> [rgantois: commit log]
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+On 06.05.24 11:53, Alice Ryhl wrote:
+> @@ -32,9 +33,24 @@ pub trait ListArcSafe<const ID: u64 =3D 0> {
+>     unsafe fn on_drop_list_arc(&self);
+>  }
+>=20
+> +/// Declares that this type is able to safely attempt to create `ListArc=
+`s at any time.
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that `try_new_list_arc` does not return `tr=
+ue` if a `ListArc` already
+> +/// exists.
+> +pub unsafe trait TryNewListArc<const ID: u64 =3D 0>: ListArcSafe<ID> {
+> +    /// Attempts to convert an `Arc<Self>` into an `ListArc<Self>`. Retu=
+rns `true` if the
+> +    /// conversion was successful.
+> +    fn try_new_list_arc(&self) -> bool;
+> +}
+> +
+>  /// Declares that this type supports [`ListArc`].
+>  ///
+> -/// When using this macro, it will only be possible to create a [`ListAr=
+c`] from a [`UniqueArc`].
+> +/// When using this macro, you may choose between the `untracked` strate=
+gy where it is not tracked
+> +/// whether a [`ListArc`] exists, and the `tracked_by` strategy where th=
+e tracking is deferred to a
+> +/// field of the struct. The `tracked_by` strategy can be combined with =
+a field of type
+> +/// [`AtomicListArcTracker`] to track whether a [`ListArc`] exists.
 
-Thanks, will queue in renesas-devel for v6.11.
+I think it would make sense to use bullet points here.
+Also, you should mention that in the `tracked_by` strategy, the field is
+required to implement `TryNewListArc`.
 
-Gr{oetje,eeting}s,
+>  #[macro_export]
+>  macro_rules! impl_list_arc_safe {
+>     (impl$({$($generics:tt)*})? ListArcSafe<$num:tt> for $t:ty { untracke=
+d; } $($rest:tt)*) =3D> {
+> @@ -45,6 +61,37 @@ unsafe fn on_drop_list_arc(&self) {}
+>         $crate::list::impl_list_arc_safe! { $($rest)* }
+>     };
+>=20
+> +    (impl$({$($generics:tt)*})? ListArcSafe<$num:tt> for $t:ty {
+> +        tracked_by $field:ident : $fty:ty;
+> +    } $($rest:tt)*) =3D> {
+> +        impl$(<$($generics)*>)? $crate::list::ListArcSafe<$num> for $t {
+> +            unsafe fn on_create_list_arc_from_unique(self: ::core::pin::=
+Pin<&mut Self>) {
+> +                // SAFETY: This field is structurally pinned.
 
-                        Geert
+Who ensures this? This is not documented on the macro.
+The only way that I see to fix this would be to make the `tracked_by`
+strategy `unsafe`. At least until we implement proper structural pinning
+of fields.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+> +                let field =3D unsafe {
+> +                    ::core::pin::Pin::map_unchecked_mut(self, |me| &mut =
+me.$field)
+> +                };
+> +                // SAFETY: The caller promises that there is no `ListArc=
+`.
+> +                unsafe {
+> +                    <$fty as $crate::list::ListArcSafe<$num>>::on_create=
+_list_arc_from_unique(field)
+> +                };
+> +            }
+> +            unsafe fn on_drop_list_arc(&self) {
+> +                // SAFETY: The caller promises that there is no `ListArc=
+` reference, and also
+> +                // promises that the tracking thinks there is a `ListArc=
+` reference.
+> +                unsafe { <$fty as $crate::list::ListArcSafe<$num>>::on_d=
+rop_list_arc(&self.$field) };
+> +            }
+> +        }
+> +        unsafe impl$(<$($generics)*>)? $crate::list::TryNewListArc<$num>=
+ for $t
+> +        where
+> +            $fty: TryNewListArc<$num>,
+> +        {
+> +            fn try_new_list_arc(&self) -> bool {
+> +                <$fty as $crate::list::TryNewListArc<$num>>::try_new_lis=
+t_arc(&self.field)
+> +            }
+> +        }
+> +        $crate::list::impl_list_arc_safe! { $($rest)* }
+> +    };
+> +
+>     () =3D> {};
+>  }
+>  pub use impl_list_arc_safe;
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+[...]
+
+> @@ -313,3 +406,60 @@ impl<T, U, const ID: u64> core::ops::DispatchFromDyn=
+<ListArc<U, ID>> for ListArc
+>     U: ListArcSafe<ID> + ?Sized,
+>  {
+>  }
+> +
+> +/// A utility for tracking whether a [`ListArc`] exists using an atomic.
+> +///
+> +/// # Invariant
+> +///
+> +/// If the boolean is `false`, then there is no [`ListArc`] for this val=
+ue.
+
+"If `inner` is `false`, ..."
+
+---
+Cheers,
+Benno
+
+> +#[repr(transparent)]
+> +pub struct AtomicListArcTracker<const ID: u64 =3D 0> {
+> +    inner: AtomicBool,
+> +    _pin: PhantomPinned,
+> +}
+
+[...]
+
 
