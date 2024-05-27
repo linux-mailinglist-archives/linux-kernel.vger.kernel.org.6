@@ -1,178 +1,223 @@
-Return-Path: <linux-kernel+bounces-191295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB288D0975
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:36:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045D38D0978
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10CE1C2183D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:36:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884091F22255
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DB615EFD5;
-	Mon, 27 May 2024 17:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB9A15EFDF;
+	Mon, 27 May 2024 17:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zye5Y2M6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="0DJ+9IAz"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A65155CA7;
-	Mon, 27 May 2024 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329C7155CA7
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 17:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716831396; cv=none; b=brk9GU7njMqS/ewnsMM6F4wpnjiaa9y+Cg1mz+WMpAD/cbrI0rv8XJyGuujSxjGLlOkdnAQwpI/IOtndYJhvwM7pPXAcdp6usBgsB4mmqxuwlxNJVioddf8xkG8oM67RAKRv3cCJ20Xk38l50qIvLE4n17gVvse2hv2Nt8OawGE=
+	t=1716831428; cv=none; b=VuzFFYbpu+Qh8E67/jplvb3Dt9JQWX9TRKIsawZ9RjLG5W9xyOvXJGsoQJPg6fWSDXE2Y8/PdGmFQe5Pt2jRp/V81vsobIZFFxjxtp8C/5ljj6fOeWJJT4iG7HrlwNfU2Aua2EfdqhIzeXyGThyF13HQYymHn+t7x9l3qpiAERU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716831396; c=relaxed/simple;
-	bh=9azP1CoqBgVzc1Ap21svaHMHj3h571dn+Ed1pu/oZnU=;
+	s=arc-20240116; t=1716831428; c=relaxed/simple;
+	bh=XI6erCDnrp+edCzPtCdt2hp9LgvvOZnP83lVYPYHph4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYHidXGuyuZWREnIDnL9codf0XWE0sbFgQ5w2ioHXynLgYFt/swTLI1vPc2uVN7f0qTg9E5ph8EONYwlio26QXI53vKJDQalIR5dIO8VZlvRCCeH2w4ukMDpFPoSaDX8FthNfsPiS8rsEyb06zH4JphtyyKTZUdgJfhN0J6MN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zye5Y2M6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1853C2BBFC;
-	Mon, 27 May 2024 17:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716831396;
-	bh=9azP1CoqBgVzc1Ap21svaHMHj3h571dn+Ed1pu/oZnU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zye5Y2M6ZcwVdvsk5HTNp16+CzXgCstjS1xb9IxfH4+tcOhW0sR7W9u0/bCC4mRr+
-	 yh8xka7Oj//VwikLVjQ/a1J4ULjGTAZR9BTXzaaC9Me/U9cttPvRwq7JjYeYOfPFgM
-	 wTD2X1BPGVI+HcaQPOyatPyo7ZOBJGU3RCDci8lR7XNQNGJHNWl01ouq3JAhpN+9le
-	 Q5n83MV6Wji9XSwh+MP/R4TGaf8fKV4ZgmQNI+Bmw6J1/8UwKih+cIF2qDRgHmiuwT
-	 BPIdf5HQfXTu7gZbMcD9YJVjWtMlb0TD7JiU+9nG/dX2WpeqV9d8iRMiYwWzGH7DVH
-	 +Ou4bN2/Bejtg==
-Date: Mon, 27 May 2024 18:36:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jason-ch Chen <jason-ch.chen@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Shawn Sung <shawn.sung@mediatek.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH RESEND,v6 2/8] dt-bindings: mailbox: Add property for
- CMDQ secure driver
-Message-ID: <20240527-bullion-slapping-d35fcddb56d5@spud>
-References: <20240526144443.14345-1-jason-jh.lin@mediatek.com>
- <20240526144443.14345-3-jason-jh.lin@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OaffY4vLWMKaGlxkaXbw7WJ7F4KcnXLtfbpA0UjkeAhtuiRbpRjB1tp6bBk0/Pwz/EuOWPddljXcLLxI3SnXtqApYyAzbHkzs4+iFIWnSoKlQ8lFLZiCT+aTPenXDDzgBDr7cgoH33bOJ6ShONp3fuIvLcxFeosi/Kd5TUt7sRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=0DJ+9IAz; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354faf5f1b4so4172338f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 10:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1716831425; x=1717436225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hr18hpneNHT7XlkoThFD4j7gue3uN8Une2pu0eWpvNk=;
+        b=0DJ+9IAzti2vugVYkKwZ+eJC/QJQBMTuE7BzanFIcrz86+S5rgwcYc8wUbHu0tc+0O
+         wu0RYLQ4IUbKGdQy4+7VB+HtKxXkyj4RySCqJeCgRtr5lxhTp4bCuKsOCmCSXE0tIk10
+         mYcf15pN735Pa1t4/yj0Y0eOEPI6ukHH89/wyS2VTveRXolA8FB3PGrQIhebf9Go57Bm
+         6kgE9d2JEEUIEUA40Z8lNoXKByAbkbfnWYgqWYyM6g07H/desKIaXhyFOtjanSVomrx6
+         pVG4OC4XizNAzfhFHSLmJs/KCIDU+nl6Kno0jQTwWvecS6yiqGk2vscEPjxkgURFCwO7
+         +xuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716831425; x=1717436225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hr18hpneNHT7XlkoThFD4j7gue3uN8Une2pu0eWpvNk=;
+        b=hBmXls3Kyk4w4ZcF9ZikmiXPCXvDNLdo8XA6hexd1UHbI1WL/w069DMgjRzJO3pIlE
+         NNT4fnuLa1PC73Y4Xnjbb26OKfBAJf8Zwj5xeGc3U8u8jR6Yla51WDoiC7UMi7E2tKVi
+         eupF4vrPR628oBIHBvmzLsoq23NNPNhv9Z0W90xx8y4ybxjUkj7BqpQZlk2nvHLm2dnU
+         DtxnXvlSEbIAgW2Fu/qM9pmGND2/xUs1Hzf9nq3xd/uJdsEONgszW5Q+CU6zzQF0E02p
+         LovQUG/yvUTx9OJyj2Bl6oxpsNEr2uBbXeWqfGju67smPWLQsQS1BYp29kOb3cKm4KHl
+         Jxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUqJ7+uA9IlGGcoZlxcCN7ERx2DSWMJEQmQOJqcAUmbBPRgIMUoEPwLoZcecBHuLf5ShjE/WX+p4k5X5wcpp2meFnFwpISn4apT5so
+X-Gm-Message-State: AOJu0YzL+9xyPnC5XQBUjmp1M7KacVLuSEe/NnhpakqygE58XWXRwD4J
+	khIeXm8N2/gVHY3yUSPYvcC3KxRp/K1CKt6FjzXRdPuPUi01J6eEFYv1Zb3rwII=
+X-Google-Smtp-Source: AGHT+IFHCdjZfBLADJgWvonL4PKkMzOE4//76Gn2zYKCwqPkEaCY0W71oc+vzFaisXznPhCsroiviQ==
+X-Received: by 2002:a05:6000:1001:b0:354:db70:3815 with SMTP id ffacd0b85a97d-355270567abmr9685956f8f.7.1716831425563;
+        Mon, 27 May 2024 10:37:05 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c9530sm9512807f8f.81.2024.05.27.10.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 10:37:05 -0700 (PDT)
+Date: Mon, 27 May 2024 18:37:03 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v2] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240527173703.52wsstp5dnczaxrv@airbuntu>
+References: <20240515220536.823145-1-qyousef@layalina.io>
+ <20240523114540.2856c109@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gfL6Eu9ihKM1A1EB"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240526144443.14345-3-jason-jh.lin@mediatek.com>
+In-Reply-To: <20240523114540.2856c109@gandalf.local.home>
 
+On 05/23/24 11:45, Steven Rostedt wrote:
+> On Wed, 15 May 2024 23:05:36 +0100
+> Qais Yousef <qyousef@layalina.io> wrote:
+> > diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> > index df3aca89d4f5..5cb88b748ad6 100644
+> > --- a/include/linux/sched/deadline.h
+> > +++ b/include/linux/sched/deadline.h
+> > @@ -10,8 +10,6 @@
+> >  
+> >  #include <linux/sched.h>
+> >  
+> > -#define MAX_DL_PRIO		0
+> > -
+> >  static inline int dl_prio(int prio)
+> >  {
+> >  	if (unlikely(prio < MAX_DL_PRIO))
+> > @@ -19,6 +17,10 @@ static inline int dl_prio(int prio)
+> >  	return 0;
+> >  }
+> >  
+> > +/*
+> > + * Returns true if a task has a priority that belongs to DL class. PI-boosted
+> > + * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
+> > + */
+> >  static inline int dl_task(struct task_struct *p)
+> >  {
+> >  	return dl_prio(p->prio);
+> > diff --git a/include/linux/sched/prio.h b/include/linux/sched/prio.h
+> > index ab83d85e1183..6ab43b4f72f9 100644
+> > --- a/include/linux/sched/prio.h
+> > +++ b/include/linux/sched/prio.h
+> > @@ -14,6 +14,7 @@
+> >   */
+> >  
+> >  #define MAX_RT_PRIO		100
+> > +#define MAX_DL_PRIO		0
+> >  
+> >  #define MAX_PRIO		(MAX_RT_PRIO + NICE_WIDTH)
+> >  #define DEFAULT_PRIO		(MAX_RT_PRIO + NICE_WIDTH / 2)
+> > diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
+> > index b2b9e6eb9683..a055dd68a77c 100644
+> > --- a/include/linux/sched/rt.h
+> > +++ b/include/linux/sched/rt.h
+> > @@ -7,18 +7,43 @@
+> >  struct task_struct;
+> >  
+> >  static inline int rt_prio(int prio)
+> > +{
+> > +	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
+> > +		return 1;
+> > +	return 0;
+> > +}
+> > +
+> > +static inline int realtime_prio(int prio)
+> >  {
+> >  	if (unlikely(prio < MAX_RT_PRIO))
+> >  		return 1;
+> >  	return 0;
+> >  }
+> 
+> I'm thinking we should change the above to bool (separate patch), as
+> returning an int may give one the impression that it returns the actual
+> priority number. Having it return bool will clear that up.
+> 
+> In fact, if we are touching theses functions, might as well change all of
+> them to bool when returning true/false. Just to make it easier to
+> understand what they are doing.
 
---gfL6Eu9ihKM1A1EB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I can add a patch on top, sure.
 
-On Sun, May 26, 2024 at 10:44:37PM +0800, Jason-JH.Lin wrote:
-> 1. Add mboxes property to define a GCE loopping thread as a secure IRQ
-> handler.
-> The CMDQ secure driver requests a mbox channel and sends a looping
-> command to the GCE thread. The looping command will wait for a secure
-> packet done event signal from secure world and then jump back to the
-> first instuction. Each time it waits for an event, it notifies the
-> CMDQ driver to perform the same action as the IRQ handler.
->=20
-> 2. Add gce-events property from gce-props.yaml to define a
-> secure packet done signal in secure world.
-> There are 1024 events IDs for GCE to use to execute instructions in
-> the specific event happened. These events could be signaled by HW or SW
-> and their value would be different in different SoC because of HW event
-> IDs distribution range from 0 to 1023.
-> If we set a static event ID: 855 for mt8188, it might be conflict the
-> event ID original set in mt8195.
+> 
+> >  
+> > +/*
+> > + * Returns true if a task has a priority that belongs to RT class. PI-boosted
+> > + * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
+> > + */
+> >  static inline int rt_task(struct task_struct *p)
+> >  {
+> >  	return rt_prio(p->prio);
+> >  }
+> >  
+> > -static inline bool task_is_realtime(struct task_struct *tsk)
+> > +/*
+> > + * Returns true if a task has a priority that belongs to RT or DL classes.
+> > + * PI-boosted tasks will return true. Use realtime_task_policy() to ignore
+> > + * PI-boosted tasks.
+> > + */
+> > +static inline int realtime_task(struct task_struct *p)
+> > +{
+> > +	return realtime_prio(p->prio);
+> > +}
+> > +
+> > +/*
+> > + * Returns true if a task has a policy that belongs to RT or DL classes.
+> > + * PI-boosted tasks will return false.
+> > + */
+> > +static inline bool realtime_task_policy(struct task_struct *tsk)
+> >  {
+> >  	int policy = tsk->policy;
+> >  
+> 
+> 
+> 
+> > diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+> > index 0469a04a355f..19d737742e29 100644
+> > --- a/kernel/trace/trace_sched_wakeup.c
+> > +++ b/kernel/trace/trace_sched_wakeup.c
+> > @@ -545,7 +545,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+> >  	 *  - wakeup_dl handles tasks belonging to sched_dl class only.
+> >  	 */
+> >  	if (tracing_dl || (wakeup_dl && !dl_task(p)) ||
+> > -	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
+> > +	    (wakeup_rt && !realtime_task(p)) ||
+> >  	    (!dl_task(p) && (p->prio >= wakeup_prio || p->prio >= current->prio)))
+> >  		return;
+> >  
+> 
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Two different SoCs, two different compatibles, no problem.
-I'm almost certain you previously told me that the firmware changing
-could result in a different event ID, but I see no mention of that here.
-The commit messages makes it seem like this can be determined by the
-compatible, so either give me a commit message that explains why the
-compatible is not sufficient or drop the patch.
+Thanks!
 
-> So we define an event ID that will be set when GCE runs to the end of
-> secure cmdq packet in the secure world.
->=20
-> This can reduce the latency of software communication between normal
-> world and secure world. In addition, we can also remove the complex
-> logic after the secure packet done in the secure world.
->=20
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> ---
->  .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailb=
-ox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.ya=
-ml
-> index cef9d7601398..6e5e848d61d9 100644
-> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-> @@ -49,6 +49,10 @@ properties:
->      items:
->        - const: gce
-> =20
-> +  mboxes:
-> +    items:
-> +      - description: GCE looping thread as a secure IRQ handler
+--
+Qais Yousef
 
-Why is this needed? It's going to be a reference to itself, right?
-Why can't you just reserve a channel in the driver?
-
-Thanks,
-Conor.
-
-> +
->  required:
->    - compatible
->    - "#mbox-cells"
-> @@ -57,6 +61,8 @@ required:
->    - clocks
-> =20
->  allOf:
-> +  - $ref: /schemas/mailbox/mediatek,gce-props.yaml#
-> +
->    - if:
->        not:
->          properties:
-> @@ -67,7 +73,7 @@ allOf:
->        required:
->          - clock-names
-> =20
-> -additionalProperties: false
-> +unevaluatedProperties: false
-> =20
->  examples:
->    - |
-> --=20
-> 2.18.0
->=20
-
---gfL6Eu9ihKM1A1EB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlTEngAKCRB4tDGHoIJi
-0to1AQDxMdlkCNTKNL4Cai++qtW6p5V+CLhlWwb1OMH0cnYOqgEArzOexHmWlxUE
-80S67d+XuFdcAciAe/PNG2Dd7EsXdwA=
-=ITK7
------END PGP SIGNATURE-----
-
---gfL6Eu9ihKM1A1EB--
+> 
+> 
 
