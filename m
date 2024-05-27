@@ -1,571 +1,1015 @@
-Return-Path: <linux-kernel+bounces-191202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE78D07EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:15:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307B38D07F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9208B1F21737
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06904B31F22
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6E91667E1;
-	Mon, 27 May 2024 16:04:37 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5DD73453;
+	Mon, 27 May 2024 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KDyCYYpH"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83C061FDA;
-	Mon, 27 May 2024 16:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6F16A369
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825876; cv=none; b=sR7TKAhgBuG/UT0K1UjKnnnErQDCfWU8M04mW2DYPeOt/G5wEQM78u7GYT+gTJMRwq1LhsRqkYtpDkt4KmUBsNEz9rVeyO7uUPlI0vxgcBGb4DJNT4iVqzET/iY7NS9NCPHyRI78SrameQUs6Oal93sXEyGK1M+7ZOTtYKvwg8E=
+	t=1716825922; cv=none; b=Wh+y/xeO+QgaqjrnBkRYylfj7fm4U8XWZrep/bJsR3jUEmWttsYLQNW9OY8+U+sMJ1e3rtRXGC0vHXGy+oyNIrDa+wUwihdT/pCsKaOL5z9BLWsCOTE1NvwXYsVDl5qGaSNx9lgiIEoNk6uoh8lJPVf09sdr0g169aoOnmJKCoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825876; c=relaxed/simple;
-	bh=ZwblT6MBdzg4nhMoXCxxpldI1YgwEdiNNDc5PkSN2X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=STPjcHUyi1DAZkWDCNHymp7QYo/i2S6RYKbDNBM6+rajpp80f5Rb60hD5Tcf7aAecdBfv2hveOklgTfrMKg+YwmkxOc2jgphtdoa5HZqSJI664ubEdzsG21tcAe/c2MyWmaHhXHCRxGWl8A7jgaG2CUFLKbhAcqvEOtMgXKRJ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id C234C43ECE;
-	Mon, 27 May 2024 18:04:23 +0200 (CEST)
-Message-ID: <4d799672-378b-42b1-896b-38df2c5e9c84@proxmox.com>
-Date: Mon, 27 May 2024 18:04:20 +0200
+	s=arc-20240116; t=1716825922; c=relaxed/simple;
+	bh=Y8/RodRQMhdADgVqAzXVgqEC0A7U+PAVZ0Ny80dejYE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jKabwg9bk0fKOSb7iZB4VYgT6jIFQBM+rZUtwjhYjS0tzXaR3fo6+kqB+fYCR6UBTM6b2zA/l+DE1Kq83MbikCrVLqU/QOpQ4VDeR0qNwOvVNo5csIbny2eow2OWJ7CWf3mEO24DVEuWbnL9OaDCB+1HPEqahpsucGL49kFIHwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KDyCYYpH; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a0eb1c809so50560727b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716825917; x=1717430717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MG+PCZQ7Jpcpo0xV5x4+9OECcULf8pc8w3UlXB4VtDA=;
+        b=KDyCYYpHYzXi6BHsyo8VijtoJfgdqHWbLz1OkHXvGhTLbkHXLhRSTauybAM+7pmLQV
+         h/I3eIiSFf2Z98taAij9PLl94wTwkF7SKGDoehvUDmfWKQHcBgJDaA/+6NEOfcNQxiGI
+         +FOoWBfGAmuJ2Cv6q1WVDsJuZBAjG9L8y5AOmk+xFmsMXqlfqrNPsWIH64CEOi/VO3Hx
+         8kqx+KqwyfCIW3kZs0BzIGsFWaLj3AAE3sWb9UYkzgw0YZZT2SKvxMoyND1holaQwg9M
+         /iHLL/pTMb0Xy0lhPdIO9IrO+XPs+gniivw47sCBUJWst+uMk46HChh4a31EXIQNhxQl
+         SVAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716825917; x=1717430717;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MG+PCZQ7Jpcpo0xV5x4+9OECcULf8pc8w3UlXB4VtDA=;
+        b=Ua525GXBHhYVk3Hx3xTLUJX7ZqNor/snucvDa86/ffVeb7rZyTLYVf48dl1+tfBL//
+         T5A4ggomM1zgVmqB8S/J6rrVWU7HsNiXtD2dDUJP1KR5vTfxcOz31Ir+VQSpeAyU3LR+
+         BW0HU+enqgTRAnsrNg8ORexmerFvKBxMAJe+iZXtv9Sf2ZB8ZKYHVbzI4QlvL5ncqeoA
+         uAEqrozfxZPJ5W62zjYN9yNfQr0OnNqvJScUwZ5/7L6Rta+GnlRvmjU1tX7N34oqWPez
+         7bxWwlZ4qfzkQw2NCxXXpUmdcKyVXRFS3K4m8ZkLt2vTx/+qhFmuF2X58HFs157m9pTR
+         fJrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXd18RBeDE37hfTlscIn6IOiq8Yt9+epOL8/mOsQOb+SM4aKV5bCJCngkQ9yPejB8s0SdSwatUGu94q+s77I9HyR7vaS0exAnWdZvTq
+X-Gm-Message-State: AOJu0YxL9lknGv2/J9qhURHKtNwPxnVrkXJenD30k+H6UxdumYtoeaRV
+	x8gxec9bAIHY69T7GNgMUIEJRnFt4FigP9IuPR9oQQzpNOu6goJRLpCmGPU9xhO3GwIodAfDR+R
+	m4YbMBeqMyd/ZHQ==
+X-Google-Smtp-Source: AGHT+IG8krVcSoIZ5nJgOOfbF0rFJw6nSxO4pZPJMD10Xz9HwFVMG5gAxeVnd/M/+7L1KrlnCm2PIqWydBHMfaI=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:fc3:b0:61b:e2e7:e127 with SMTP
+ id 00721157ae682-62a08d74111mr30486647b3.1.1716825917626; Mon, 27 May 2024
+ 09:05:17 -0700 (PDT)
+Date: Mon, 27 May 2024 16:05:14 +0000
+In-Reply-To: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] blk-flush: reuse rq queuelist in flush state
- machine
-To: Chengming Zhou <chengming.zhou@linux.dev>, axboe@kernel.dk,
- ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20230717040058.3993930-1-chengming.zhou@linux.dev>
- <20230717040058.3993930-5-chengming.zhou@linux.dev>
- <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
- <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
-Content-Language: en-US
-From: Friedrich Weber <f.weber@proxmox.com>
-In-Reply-To: <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240525-dompteur-darfst-79a1b275e7f3@brauner>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240527160514.3909734-1-aliceryhl@google.com>
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+From: Alice Ryhl <aliceryhl@google.com>
+To: brauner@kernel.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, 
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
+	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
+	yakoyoku@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chengming,
+Christian Brauner <brauner@kernel.org> writes:
+> On Fri, May 24, 2024 at 07:17:13PM +0000, Alice Ryhl wrote:
+> > On Fri, May 24, 2024 at 6:12=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > On Fri, May 17, 2024 at 09:30:36AM +0000, Alice Ryhl wrote:
+> > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > >
+> > > > This abstraction makes it possible to manipulate the open files for=
+ a
+> > > > process. The new `File` struct wraps the C `struct file`. When acce=
+ssing
+> > > > it using the smart pointer `ARef<File>`, the pointer will own a
+> > > > reference count to the file. When accessing it as `&File`, then the
+> > > > reference does not own a refcount, but the borrow checker will ensu=
+re
+> > > > that the reference count does not hit zero while the `&File` is liv=
+e.
+> > > >
+> > > > Since this is intended to manipulate the open files of a process, w=
+e
+> > > > introduce an `fget` constructor that corresponds to the C `fget`
+> > > > method. In future patches, it will become possible to create a new =
+fd in
+> > > > a process and bind it to a `File`. Rust Binder will use these to se=
+nd
+> > > > fds from one process to another.
+> > > >
+> > > > We also provide a method for accessing the file's flags. Rust Binde=
+r
+> > > > will use this to access the flags of the Binder fd to check whether=
+ the
+> > > > non-blocking flag is set, which affects what the Binder ioctl does.
+> > > >
+> > > > This introduces a struct for the EBADF error type, rather than just
+> > > > using the Error type directly. This has two advantages:
+> > > > * `File::fget` returns a `Result<ARef<File>, BadFdError>`, which th=
+e
+> > > >   compiler will represent as a single pointer, with null being an e=
+rror.
+> > > >   This is possible because the compiler understands that `BadFdErro=
+r`
+> > > >   has only one possible value, and it also understands that the
+> > > >   `ARef<File>` smart pointer is guaranteed non-null.
+> > > > * Additionally, we promise to users of the method that the method c=
+an
+> > > >   only fail with EBADF, which means that they can rely on this prom=
+ise
+> > > >   without having to inspect its implementation.
+> > > > That said, there are also two disadvantages:
+> > > > * Defining additional error types involves boilerplate.
+> > > > * The question mark operator will only utilize the `From` trait onc=
+e,
+> > > >   which prevents you from using the question mark operator on
+> > > >   `BadFdError` in methods that return some third error type that th=
+e
+> > > >   kernel `Error` is convertible into. (However, it works fine in me=
+thods
+> > > >   that return `Error`.)
+> > > >
+> > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > > Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> > > > Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> > > > Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> > > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > > ---
+> > > >  fs/file.c                       |   7 +
+> > > >  rust/bindings/bindings_helper.h |   2 +
+> > > >  rust/helpers.c                  |   7 +
+> > > >  rust/kernel/file.rs             | 330 ++++++++++++++++++++++++++++=
+++++++++++++
+> > > >  rust/kernel/lib.rs              |   1 +
+> > > >  rust/kernel/types.rs            |   8 +
+> > > >  6 files changed, 355 insertions(+)
+> > > >
+> > > > diff --git a/fs/file.c b/fs/file.c
+> > > > index 3b683b9101d8..f2eab5fcb87f 100644
+> > > > --- a/fs/file.c
+> > > > +++ b/fs/file.c
+> > > > @@ -1127,6 +1127,13 @@ EXPORT_SYMBOL(task_lookup_next_fdget_rcu);
+> > > >   *
+> > > >   * The fput_needed flag returned by fget_light should be passed to=
+ the
+> > > >   * corresponding fput_light.
+> > > > + *
+> > > > + * (As an exception to rule 2, you can call filp_close between fge=
+t_light and
+> > > > + * fput_light provided that you capture a real refcount with get_f=
+ile before
+> > > > + * the call to filp_close, and ensure that this real refcount is f=
+put *after*
+> > > > + * the fput_light call.)
+> > > > + *
+> > > > + * See also the documentation in rust/kernel/file.rs.
+> > > >   */
+> > > >  static unsigned long __fget_light(unsigned int fd, fmode_t mask)
+> > > >  {
+> > > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindin=
+gs_helper.h
+> > > > index ddb5644d4fd9..541afef7ddc4 100644
+> > > > --- a/rust/bindings/bindings_helper.h
+> > > > +++ b/rust/bindings/bindings_helper.h
+> > > > @@ -9,6 +9,8 @@
+> > > >  #include <kunit/test.h>
+> > > >  #include <linux/errname.h>
+> > > >  #include <linux/ethtool.h>
+> > > > +#include <linux/file.h>
+> > > > +#include <linux/fs.h>
+> > > >  #include <linux/jiffies.h>
+> > > >  #include <linux/mdio.h>
+> > > >  #include <linux/phy.h>
+> > > > diff --git a/rust/helpers.c b/rust/helpers.c
+> > > > index 4c8b7b92a4f4..5545a00560d1 100644
+> > > > --- a/rust/helpers.c
+> > > > +++ b/rust/helpers.c
+> > > > @@ -25,6 +25,7 @@
+> > > >  #include <linux/build_bug.h>
+> > > >  #include <linux/err.h>
+> > > >  #include <linux/errname.h>
+> > > > +#include <linux/fs.h>
+> > > >  #include <linux/mutex.h>
+> > > >  #include <linux/refcount.h>
+> > > >  #include <linux/sched/signal.h>
+> > > > @@ -157,6 +158,12 @@ void rust_helper_init_work_with_key(struct wor=
+k_struct *work, work_func_t func,
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+> > > >
+> > > > +struct file *rust_helper_get_file(struct file *f)
+> > > > +{
+> > > > +     return get_file(f);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(rust_helper_get_file);
+> > > > +
+> > > >  /*
+> > > >   * `bindgen` binds the C `size_t` type as the Rust `usize` type, s=
+o we can
+> > > >   * use it in contexts where Rust expects a `usize` like slice (arr=
+ay) indices.
+> > > > diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+> > > > new file mode 100644
+> > > > index 000000000000..ad881e67084c
+> > > > --- /dev/null
+> > > > +++ b/rust/kernel/file.rs
+> > > > @@ -0,0 +1,330 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +
+> > > > +//! Files and file descriptors.
+> > > > +//!
+> > > > +//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h) =
+and
+> > > > +//! [`include/linux/file.h`](srctree/include/linux/file.h)
+> > > > +
+> > > > +use crate::{
+> > > > +    bindings,
+> > > > +    error::{code::*, Error, Result},
+> > > > +    types::{ARef, AlwaysRefCounted, Opaque},
+> > > > +};
+> > > > +use core::{marker::PhantomData, ptr};
+> > > > +
+> > > > +/// Flags associated with a [`File`].
+> > > > +pub mod flags {
+> > > > +    /// File is opened in append mode.
+> > > > +    pub const O_APPEND: u32 =3D bindings::O_APPEND;
+> > > > +
+> > > > +    /// Signal-driven I/O is enabled.
+> > > > +    pub const O_ASYNC: u32 =3D bindings::FASYNC;
+> > > > +
+> > > > +    /// Close-on-exec flag is set.
+> > > > +    pub const O_CLOEXEC: u32 =3D bindings::O_CLOEXEC;
+> > > > +
+> > > > +    /// File was created if it didn't already exist.
+> > > > +    pub const O_CREAT: u32 =3D bindings::O_CREAT;
+> > > > +
+> > > > +    /// Direct I/O is enabled for this file.
+> > > > +    pub const O_DIRECT: u32 =3D bindings::O_DIRECT;
+> > > > +
+> > > > +    /// File must be a directory.
+> > > > +    pub const O_DIRECTORY: u32 =3D bindings::O_DIRECTORY;
+> > > > +
+> > > > +    /// Like [`O_SYNC`] except metadata is not synced.
+> > > > +    pub const O_DSYNC: u32 =3D bindings::O_DSYNC;
+> > > > +
+> > > > +    /// Ensure that this file is created with the `open(2)` call.
+> > > > +    pub const O_EXCL: u32 =3D bindings::O_EXCL;
+> > > > +
+> > > > +    /// Large file size enabled (`off64_t` over `off_t`).
+> > > > +    pub const O_LARGEFILE: u32 =3D bindings::O_LARGEFILE;
+> > > > +
+> > > > +    /// Do not update the file last access time.
+> > > > +    pub const O_NOATIME: u32 =3D bindings::O_NOATIME;
+> > > > +
+> > > > +    /// File should not be used as process's controlling terminal.
+> > > > +    pub const O_NOCTTY: u32 =3D bindings::O_NOCTTY;
+> > > > +
+> > > > +    /// If basename of path is a symbolic link, fail open.
+> > > > +    pub const O_NOFOLLOW: u32 =3D bindings::O_NOFOLLOW;
+> > > > +
+> > > > +    /// File is using nonblocking I/O.
+> > > > +    pub const O_NONBLOCK: u32 =3D bindings::O_NONBLOCK;
+> > > > +
+> > > > +    /// File is using nonblocking I/O.
+> > > > +    ///
+> > > > +    /// This is effectively the same flag as [`O_NONBLOCK`] on all=
+ architectures
+> > > > +    /// except SPARC64.
+> > > > +    pub const O_NDELAY: u32 =3D bindings::O_NDELAY;
+> > > > +
+> > > > +    /// Used to obtain a path file descriptor.
+> > > > +    pub const O_PATH: u32 =3D bindings::O_PATH;
+> > > > +
+> > > > +    /// Write operations on this file will flush data and metadata=
+.
+> > > > +    pub const O_SYNC: u32 =3D bindings::O_SYNC;
+> > > > +
+> > > > +    /// This file is an unnamed temporary regular file.
+> > > > +    pub const O_TMPFILE: u32 =3D bindings::O_TMPFILE;
+> > > > +
+> > > > +    /// File should be truncated to length 0.
+> > > > +    pub const O_TRUNC: u32 =3D bindings::O_TRUNC;
+> > > > +
+> > > > +    /// Bitmask for access mode flags.
+> > > > +    ///
+> > > > +    /// # Examples
+> > > > +    ///
+> > > > +    /// ```
+> > > > +    /// use kernel::file;
+> > > > +    /// # fn do_something() {}
+> > > > +    /// # let flags =3D 0;
+> > > > +    /// if (flags & file::flags::O_ACCMODE) =3D=3D file::flags::O_=
+RDONLY {
+> > > > +    ///     do_something();
+> > > > +    /// }
+> > > > +    /// ```
+> > > > +    pub const O_ACCMODE: u32 =3D bindings::O_ACCMODE;
+> > > > +
+> > > > +    /// File is read only.
+> > > > +    pub const O_RDONLY: u32 =3D bindings::O_RDONLY;
+> > > > +
+> > > > +    /// File is write only.
+> > > > +    pub const O_WRONLY: u32 =3D bindings::O_WRONLY;
+> > > > +
+> > > > +    /// File can be both read and written.
+> > > > +    pub const O_RDWR: u32 =3D bindings::O_RDWR;
+> > > > +}
+> > > > +
+> > > > +/// Compile-time information for keeping track of how a [`File`] i=
+s shared.
+> > > > +///
+> > > > +/// The `fdget_pos` method can be used to access the file's positi=
+on without taking `f_pos_lock`,
+> > > > +/// as long as the file is not shared with any other threads. Duri=
+ng such calls to `fdget_pos`, the
+> > > > +/// file must remain non-shared, so it must not be possible to mov=
+e the file to another thread. For
+> > > > +/// example, if the file is moved to another thread, then it could=
+ be passed to `fd_install`, at
+> > > > +/// which point the remote process could touch the file position.
+> > > > +///
+> > > > +/// The share mode only keeps track of whether there are active `f=
+dget_pos` calls that did not take
+> > > > +/// the `f_pos_lock`, and does not keep track of `fdget` calls. Th=
+is is okay because `fdget` does
+> > > > +/// not care about the refcount of the underlying `struct file`; a=
+s long as the entry in the
+> > > > +/// current thread's fd table does not get removed, it's okay to s=
+hare the file. For example,
+> > > > +/// `fd_install`ing the `struct file` into another process is okay=
+ during an `fdget` call, because
+> > > > +/// the other process can't touch the fd table of the original pro=
+cess.
+> > > > +mod share_mode {
+> > > > +    /// Trait implemented by the two sharing modes that a file mig=
+ht have.
+> > > > +    pub trait FileShareMode {}
+> > > > +
+> > > > +    /// Represents a file for which there might be an active call =
+to `fdget_pos` that did not take
+> > > > +    /// the `f_pos_lock` lock.
+> > > > +    pub enum MaybeFdgetPos {}
+> > > > +
+> > > > +    /// Represents a file for which it is known that all active ca=
+lls to `fdget_pos` (if any) took
+> > > > +    /// the `f_pos_lock` lock.
+> > > > +    pub enum NoFdgetPos {}
+> > > > +
+> > > > +    impl FileShareMode for MaybeFdgetPos {}
+> > > > +    impl FileShareMode for NoFdgetPos {}
+> > > > +}
+> > > > +pub use self::share_mode::{FileShareMode, MaybeFdgetPos, NoFdgetPo=
+s};
+> > > > +
+> > > > +/// Wraps the kernel's `struct file`.
+> > > > +///
+> > > > +/// This represents an open file rather than a file on a filesyste=
+m. Processes generally reference
+> > > > +/// open files using file descriptors. However, file descriptors a=
+re not the same as files. A file
+> > > > +/// descriptor is just an integer that corresponds to a file, and =
+a single file may be referenced
+> > > > +/// by multiple file descriptors.
+> > > > +///
+> > > > +/// # Refcounting
+> > > > +///
+> > > > +/// Instances of this type are reference-counted. The reference co=
+unt is incremented by the
+> > > > +/// `fget`/`get_file` functions and decremented by `fput`. The Rus=
+t type `ARef<File>` represents a
+> > > > +/// pointer that owns a reference count on the file.
+> > > > +///
+> > > > +/// Whenever a process opens a file descriptor (fd), it stores a p=
+ointer to the file in its fd
+> > > > +/// table (`struct files_struct`). This pointer owns a reference c=
+ount to the file, ensuring the
+> > > > +/// file isn't prematurely deleted while the file descriptor is op=
+en. In Rust terminology, the
+> > > > +/// pointers in `struct files_struct` are `ARef<File>` pointers.
+> > > > +///
+> > > > +/// ## Light refcounts
+> > > > +///
+> > > > +/// Whenever a process has an fd to a file, it may use something c=
+alled a "light refcount" as a
+> > > > +/// performance optimization. Light refcounts are acquired by call=
+ing `fdget` and released with
+> > > > +/// `fdput`. The idea behind light refcounts is that if the fd is =
+not closed between the calls to
+> > > > +/// `fdget` and `fdput`, then the refcount cannot hit zero during =
+that time, as the `struct
+> > > > +/// files_struct` holds a reference until the fd is closed. This m=
+eans that it's safe to access the
+> > > > +/// file even if `fdget` does not increment the refcount.
+> > > > +///
+> > > > +/// The requirement that the fd is not closed during a light refco=
+unt applies globally across all
+> > > > +/// threads - not just on the thread using the light refcount. For=
+ this reason, light refcounts are
+> > > > +/// only used when the `struct files_struct` is not shared with ot=
+her threads, since this ensures
+> > > > +/// that other unrelated threads cannot suddenly start using the f=
+d and close it. Therefore,
+> > > > +/// calling `fdget` on a shared `struct files_struct` creates a no=
+rmal refcount instead of a light
+> > > > +/// refcount.
+> > > > +///
+> > > > +/// Light reference counts must be released with `fdput` before th=
+e system call returns to
+> > > > +/// userspace. This means that if you wait until the current syste=
+m call returns to userspace, then
+> > > > +/// all light refcounts that existed at the time have gone away.
+> > >
+> > > You obviously are aware of this but I'm just spelling it out. Iirc,
+> > > there will practically only ever be one light refcount per file.
+> > >
+> > > For a light refcount to be used we know that the file descriptor tabl=
+e
+> > > isn't shared with any other task. So there are no threads that could
+> > > concurrently access the file descriptor table. We also know that the
+> > > file descriptor table cannot become shared while we're in system call
+> > > context because the caller can't create new threads and they can't
+> > > unshare the file descriptor table.
+> > >
+> > > So there's only one fdget() caller (Yes, they could call fdget()
+> > > multiple times and then have to do fdput() multiple times but that's =
+a
+> > > level of weirdness that we don't need to worry about.).
+> >=20
+> > Hmm. Is it not the case that different processes with different file
+> > descriptor tables could reference the same underlying `struct file` and
+> > both use light refcounts to do so, as long as each fd table is not
+> > shared? So there could be multiple light refcounts to the same `struct
+> > file` at the same time on different threads.
+>=20
+> That's correct.
+> But I misread what you were trying to say then. I thought you were
+> talking about multiple light references from the same thread which is
+> rather rare and should only happen in system calls that take two fds.
+>=20
+> But what you're talking about is the same struct file being present in
+> separate file descriptor tables and referenced multiple times from
+> different threads so in that sense we have multiple light references.
+> And that's obviously correct.
+>=20
+> >=20
+> > And this does *not* apply to `fdget_pos`, which checks the refcount of
+> > the `struct file` instead of the refcount of the fd table.
+>=20
+> I have only skimmed the replies down thread so far but I saw that this
+> has mostly been clarified. The reference counting between fdget() and
+> fdget_pos() is identical. fdget_pos() calls fdget() after all.
+>=20
+> What's different is that if the file is already shared among different
+> processes then even if a light reference was taken by the caller because
+> it doesn't share the file descriptor table fdget_pos() may still acquire
+> the f_pos_lock because the struct file is referenced by multiple
+> processes.
+>=20
+> IOW, you could have the same struct file in the file descriptor tables
+> of 10 processes. So the f_count would be 10. Assume all of them
+> concurrently call read(), then none of them will bump f_count because
+> fdget() sees that the file descriptor tables aren't shared.
+>=20
+> But all 10 of them will serialize on f_pos_lock. So that's really
+> separate from light refcounting. If you have to acquire f_pos_lock from
+> within the same thread then fdget*() always take normal reference
+> counts.
 
-Thank you for taking a look at this!
+See my reply to Al Viro.
+https://lore.kernel.org/r/20240527160356.3909000-1-aliceryhl@google.com
 
-On 27/05/2024 07:09, Chengming Zhou wrote:
->> I've used this reproducer for a bisect, which produced
->>
->>  81ada09cc25e (blk-flush: reuse rq queuelist in flush state machine)
->>
->> as the first commit with which I can reproduce the crashes. I'm not 100%
->> sure it is this one because the reproducer is a bit flaky. But it does
->> sound plausible, as the commit is included in our 6.8 kernel, and
->> touches `queuelist` which is AFAICT where blk_flush_complete_seq
->> dereferences the NULL pointer.
-> 
-> Ok, it will be better that I can reproduce it locally, will try later.
+> > > > +///
+> > > > +/// ### The file position
+> > > > +///
+> > > > +/// Each `struct file` has a position integer, which is protected =
+by the `f_pos_lock` mutex.
+> > > > +/// However, if the `struct file` is not shared, then the kernel m=
+ay avoid taking the lock as a
+> > > > +/// performance optimization.
+> > > > +///
+> > > > +/// The condition for avoiding the `f_pos_lock` mutex is different=
+ from the condition for using
+> > > > +/// `fdget`. With `fdget`, you may avoid incrementing the refcount=
+ as long as the current fd table
+> > > > +/// is not shared; it is okay if there are other fd tables that al=
+so reference the same `struct
+> > > > +/// file`. However, `fdget_pos` can only avoid taking the `f_pos_l=
+ock` if the entire `struct file`
+> > > > +/// is not shared, as different processes with an fd to the same `=
+struct file` share the same
+> > > > +/// position.
+> > > > +///
+> > > > +/// ## Rust references
+> > > > +///
+> > > > +/// The reference type `&File` is similar to light refcounts:
+> > > > +///
+> > > > +/// * `&File` references don't own a reference count. They can onl=
+y exist as long as the reference
+> > > > +///   count stays positive, and can only be created when there is =
+some mechanism in place to ensure
+> > > > +///   this.
+> > > > +///
+> > > > +/// * The Rust borrow-checker normally ensures this by enforcing t=
+hat the `ARef<File>` from which
+> > > > +///   a `&File` is created outlives the `&File`.
+> > > > +///
+> > > > +/// * Using the unsafe [`File::from_ptr`] means that it is up to t=
+he caller to ensure that the
+> > > > +///   `&File` only exists while the reference count is positive.
+> > > > +///
+> > > > +/// * You can think of `fdget` as using an fd to look up an `ARef<=
+File>` in the `struct
+> > > > +///   files_struct` and create an `&File` from it. The "fd cannot =
+be closed" rule is like the Rust
+> > > > +///   rule "the `ARef<File>` must outlive the `&File`".
+> > > > +///
+> > > > +/// # Invariants
+> > > > +///
+> > > > +/// * All instances of this type are refcounted using the `f_count=
+` field.
+> > > > +/// * If the file sharing mode is `MaybeFdgetPos`, then all active=
+ calls to `fdget_pos` that did
+> > > > +///   not take the `f_pos_lock` mutex must be on the same thread a=
+s this `File`.
+> > > > +/// * If the file sharing mode is `NoFdgetPos`, then there must no=
+t be active calls to `fdget_pos`
+> > > > +///   that did not take the `f_pos_lock` mutex.
+> > > > +#[repr(transparent)]
+> > > > +pub struct File<S: FileShareMode> {
+> > > > +    inner: Opaque<bindings::file>,
+> > > > +    _share_mode: PhantomData<S>,
+> > > > +}
+> > > > +
+> > > > +// SAFETY: This file is known to not have any local active `fdget_=
+pos` calls, so it is safe to
+> > > > +// transfer it between threads.
+> > > > +unsafe impl Send for File<NoFdgetPos> {}
+> > > > +
+> > > > +// SAFETY: This file is known to not have any local active `fdget_=
+pos` calls, so it is safe to
+> > > > +// access its methods from several threads in parallel.
+> > > > +unsafe impl Sync for File<NoFdgetPos> {}
+> > > > +
+> > > > +/// File methods that only exist under the [`MaybeFdgetPos`] shari=
+ng mode.
+> > > > +impl File<MaybeFdgetPos> {
+> > > > +    /// Constructs a new `struct file` wrapper from a file descrip=
+tor.
+> > > > +    ///
+> > > > +    /// The file descriptor belongs to the current process, and th=
+ere might be active local calls
+> > > > +    /// to `fdget_pos`.
+> > > > +    pub fn fget(fd: u32) -> Result<ARef<File<MaybeFdgetPos>>, BadF=
+dError> {
+> > > > +        // SAFETY: FFI call, there are no requirements on `fd`.
+> > > > +        let ptr =3D ptr::NonNull::new(unsafe { bindings::fget(fd) =
+}).ok_or(BadFdError)?;
+> > > > +
+> > > > +        // SAFETY: `bindings::fget` created a refcount, and we pas=
+s ownership of it to the `ARef`.
+> > > > +        //
+> > > > +        // INVARIANT: This file is in the fd table on this thread,=
+ so either all `fdget_pos` calls
+> > > > +        // are on this thread, or the file is shared, in which cas=
+e `fdget_pos` calls took the
+> > > > +        // `f_pos_lock` mutex.
+> > > > +        Ok(unsafe { ARef::from_raw(ptr.cast()) })
+> > > > +    }
+> > >
+> > > I'm a little unclear how this is supposed to be used. What I
+> > > specifically struggle with is what function does one have to call to
+> > > translate from a file descriptor to a file? IOW, where are the actual
+> > > entry points for turning fds into files? That's what I want to see an=
+d
+> > > that's what we need to make this interface usable generically.
+> >=20
+> > That is File::fget. It takes a file descriptor and returns a long-term
+> > reference to a file.
+>=20
+> Ok.
+>=20
+> >=20
+> > > Because naively, what I'm looking for is a Rust version of fdget() an=
+d
+> > > fdget_pos() that give me back a File<MaybeFdget> or a
+> > > File<MaybeFdgetPos>.
+> > >
+> > > And then those both implement a get_file() method so the caller can t=
+ake
+> > > an explicit long-term reference to the file.
+> >=20
+> > Even if you call `get_file` to get a long-term reference from something
+> > you have an fdget_pos reference to, that doesn't necessarily mean that
+> > you can share that long-term reference with other threads. You would
+> > need to release the fdget_pos reference first. For that reason, the
+> > long-term reference returned by `get_file` would still need to have the
+> > `File<MaybeFdgetPos>` type.
+>=20
+> So what you're getting at seems to be that some process has a private
+> file descriptor table and an just opened @fd to a @file that isn't
+> shared.
+>=20
+> 	fd =3D open("/my/file");
+>=20
+> and then let's say has a random ioctl(fd, SOMETHING_SOMETHING) that
+> somehow does:
+>=20
+> 	struct fd fd =3D fdget_pos();
+> 	if (!fd.file)
+> 		return -EBADF;
+>=20
+> We know that process has used a light reference count and that it didn't
+> acquire f_pos_lock.
+>=20
+> Your whole approach seems to assume that after something like this has
+> happened the same process now offloads that struct file to another
+> process that somehow ends up doing some other operation on the file that
+> would also require f_pos_lock to be taken but it doesn't like a read or
+> something.
 
-Interestingly, so far I haven't been able to reproduce the crash when
-generating IO on the host itself, I only got crashes when generating IO
-in a QEMU VM.
+Can we not have a data race even if the other process *does* take the
+f_pos_lock mutex? The current thread did not take the mutex, so if the
+current thread touches the file position after sending the file
+reference, then that could race with the other process even if the
+other process takes f_pos_lock.
 
-The reproducer in more detail:
+> To share a file between multiple processes would normally always require
+> that the process sends that file to another process. That process then
+> install that fd into its file descriptor table and then later accesses
+> that file via fdget() again. That's the standard way of doing it -
+> binder does it that way too. And that's all perfectly fine.
 
-- Compile Linux 6.9 with CONFIG_FAULT_INJECTION,
-CONFIG_FAULT_INJECTION_DEBUG_FS, CONFIG_FAIL_MAKE_REQUEST and boot it on
-the host
+And similarly, if the remote process installs the file, returns to
+userspace, and then userspace calls back into the kernel, which enters
+an fdget_pos scope and modifies the file position. Then this can also
+race on the file position if the original process changes the file
+position it after sending the file reference.
 
-- On the host, I have root on ext4 on top of a RAID1 software raid, see
-[0] for mdadm output. I have to enable the write-intent bitmap to
-reproduce the crash.
+*That's* the data race that this is trying to prevent.
 
-- Run QEMU to start a Linux VM whose disk is backed by a qcow2 file on
-root, see [1] for QEMU 8.2.2 command line. The VM is running Proxmox VE
-here, but I don't think that matters.
+> What you would need for this to be a problem is for a process be sent a
+> struct file from a process that is in the middle of an f_pos_lock scope
+> and for the receiving process to immediately start doing stuff that
+> would normally require f_pos_lock.
+>=20
+> Like, idk vfs_read(file, ...).
+>=20
+> If that's what this is about then yes, there's a close-to-zero but
+> non-zero possibility that some really stupid code could end up doing
+> something like this.
+>=20
+> Basically, that scenario doesn't exist (as I've mentioned before)
+> currently. It only exists in a single instance and that's when
+> pidfd_getfd() is used to steal a file from another task while that task
+> is in the middle of an f_pos_lock section (I said it before we don't
+> care about that because non-POSIX interface anyway and we have ptrace
+> rights anyway. And iiuc that wouldn't even be preventable in your
+> current scheme because you would need to have the information available
+> that the struct file you're about to steal from the file descriptor
+> table is currently within an f_pos_lock section.).
+>=20
+> Is it honestly worth encoding all that complexity into rust's file
+> implementation itself right now? It's barely understandable to
+> non-rust experts as it is right now. :)
+>=20
+> Imho, it would seem a lot more prudent to just have something simpler
+> for now.
 
-- Run fio inside the VM as follows:
+The purpose of the changes I've made are to prevent data races on the
+file position. If we go back to what we had before, then the API does
+not make it impossible for users of the API to cause such data races.
 
-fio --name foo --size 1M --filename foo.bin --rw=write --bs=4k --iodepth
-4 --ioengine libaio --numjobs 4 --time_based --runtime 600
+That is the tradeoff.
 
-- Inject faults on sdb1 on the host:
+> > (But you could convert it to a `File<NoFdgetPos>` afterwards. The
+> > `assume_no_fdget_pos` method performs that conversion.)
+> >=20
+> > As a sidenote, the reason that this patchset does not implement `fdget`
+> > or `fdget_pos` is that Rust Binder does not use them. Like C Binder, it
+>=20
+> Yes, you mentioned.
+>=20
+> > just uses `fget` to immediately obtain a long-term reference. I was tol=
+d
+>=20
+> Right and that's why I'm confused why that whole shared_state
+> machinery is needed in the first place. Because binder does do it
+> correctly:
+>=20
+> * sender registers a bunch of fds to use and takes fget() reference
+>   All other processes that use the same file in their fdtable and rely
+>   on fdget_pos() will see the elevated reference count and acquire
+>   f_pos_lock.
+> * receiver installs stuff into their fdtable
+>   Receiver can now use fdget_pos() to do reads/writes. Everything's in
+>   order as well.
+>=20
+> > that as an exception, Rust code can be merged *before* its user, but
+> > that we couldn't merge Rust code with no upcoming user. However, I can
+> > include implementations of `fdget` and `fdget_pos` in the next version
+> > if you prefer that. After all, it seems rather likely that we will
+> > eventually have a user for fdget.
+> >=20
+> > > The fget() above is really confusing to me because it always takes a
+> > > reference on the file that's pointed to by the fd and then it returns=
+ a
+> > > MaybeFdgetPos because presumably you want to indicate that the file
+> > > descriptor may refer to a file that may or may not be referenced by
+> > > another thread via fdget()/fdget_pos() already.
+> >=20
+> > No, not another thread. It is because it may or may not be referenced b=
+y
+> > fdget_pos by *the same* thread already.
+> >=20
+> > Here's how I think of it: The `fget` method takes a file descriptor and
+> > returns a long term reference (an ARef) to a `struct file`. It does not
+> > return a file descriptor, since it doesn't store anywhere which fd it
+> > came from.
+> >=20
+> > The `File::fget` method returns a `File<MaybeFdgetPos>` in case *the
+> > same thread* is also using `fdget_pos` on the same file descriptor. It'=
+s
+> > okay if other threads are using `fdget_pos` because in that case the
+> > file is already shared, so those other `fdget_pos` calls necessarily th=
+e
+> > f_pos_lock mutex.
+> >=20
+> > Note that since it forgets which fd and fd table it came from, calls to
+> > `fdget` are actually not a problem for sending our long-term references
+> > across threads. The `fdget` requirements only care about things that
+> > touch the entry in the file descriptor table, such as closing the fd.
+> > The `ARef<File>` type does not provide any methods that could lead to
+> > that happening, so sharing it across threads is okay *even if* there is
+> > an light reference. That's why I have an `MaybeFdgetPos` but no
+> > `MaybeFdget`.
+> >=20
+> > > So I've _skimmed_ the binder RFC and looked at:
+> > > 20231101-rust-binder-v1-13-08ba9197f637@google.com
+> > > which states:
+> > >
+> > >         Add support for sending fds over binder.
+> > >
+> > >         Unlike the other object types, file descriptors are not trans=
+lated until
+> > >         the transaction is actually received by the recipient. Until =
+that
+> > >         happens, we store `u32::MAX` as the fd.
+> > >
+> > >         Translating fds is done in a two-phase process. First, the fi=
+le
+> > >         descriptors are allocated and written to the allocation. Then=
+, once we
+> > >         have allocated all of them, we commit them to the files in qu=
+estion.
+> > >         Using this strategy, we are able to guarantee that we either =
+send all of
+> > >         the fds, or none of them.
+> > >
+> > > So I'm curious. How does the binder fd sending work exactly? Because =
+I
+> > > feel that this is crucial to understand here. Some specific questions=
+:
+> > >
+> > > * When file descriptors are passed the reference to these files via
+> > >   fget() are taken _synchronously_, i.e., by the sending task, not th=
+e
+> > >   receiver? IOW, is binder_translate_fd() called in the context of th=
+e
+> > >   sender or the receiver. I assume it must be the sender because
+> > >   otherwise the sender and receiver must share a file descriptor tabl=
+e
+> > >   in order for the receiver to call fget().
+> >=20
+> > binder_translate_fd is called in the context of the sender.
+> >=20
+> > > * The receiving task then allocates new file descriptors and installs
+> > >   the received files into its file descriptor table?
+> >=20
+> > That happens in binder_apply_fd_fixups, which is called in the context
+> > of the receiver.
+>=20
+> Yes, that's what I thought.
+>=20
+> >=20
+> > I can see how the sentence "Until that happens, we store `u32::MAX` as
+> > the fd." is really confusing here. What happens when you send a fd is
+> > this:
+> >=20
+> > In the sender's ioctl:
+> > 1. The sender wishes to send a byte array to the recipient. The sender
+> >    tells the kernel that at specific offsets in this array, there are
+> >    some file descriptors that it wishes to send.
+> >=20
+> > 2. The kernel copies the byte array directly into the recipient's
+> >    address space. The offsets in the byte array with file descriptors
+> >    are not copied - instead u32::MAX is written temporarily at those
+> >    offsets.
+> >=20
+> > 3. For each fd being sent, the kernel uses fget to obtain a reference t=
+o
+> >    the underlying `struct file`. These pointers are stored in an array.
+> >=20
+> > In the receiver's ioctl:
+> > 1. Go through the list of `struct file` pointers and create a
+> >    `FileDescriptorReservation` for each.
+> >=20
+> > 2. Go through the list of `struct file` pointers again and `fd_install`
+> >    them into the current thread's fd table. This is infallible due to
+> >    the reservations we just made.
+> >=20
+> > 3. Finally, overwrite the u32::MAX values in the byte array with the
+> >    actual file descriptors that the files were assigned.
+> >=20
+> > This is the same as how it works in C Binder.
+>=20
+> Yes, that all seems fine.
+>=20
+> >=20
+> > > And so basically, what I'm after here is that the binder_translate_fd=
+()
+> > > that calls fget() is done in the context of the sender and we _know_
+> > > that the fds can't have light references. Because if they did it coul=
+d
+> > > only be by the calling task but they don't since the calling task use=
+s
+> > > fget() on them. And if the calling task is multi-threaded and another
+> > > thread has called fdget() or fdget_pos() we know that they have taken
+> > > their own reference because the file descriptor table is shared.
+> > >
+> > > So why is that fget() in here returning a File<MaybeFdgetPos>? This
+> > > doesn't make sense to me at first glance.
+> >=20
+> > Because when you call `File::fget`, then there could also be a differen=
+t
+> > call to `fdget_pos` on the same thread on the same file descriptor.
+> >=20
+> > 	fdget_pos(my_fd);
+> > 	let my_file =3D File::fget(my_fd)?;
+> > 	// oh no!
+> > 	send_to_another_thread(my_file);
+>=20
+> Ok, that's basically my above example.
+>=20
+> >=20
+> > In the above code, the file becomes shared even though `fdget_pos` migh=
+t
+> > not have taken the `f_pos_lock` mutex. That's not okay. We could end up
+> > with a data race on the file position.
+>=20
+> But a race on f_pos isn't a memory safety issue it's just a POSIX
+> ordering requirement.
 
-echo 1 > /sys/block/sdb/sdb1/make-it-fail
-echo 1000 > /sys/kernel/debug/fail_make_request/times
-echo 50 > /sys/kernel/debug/fail_make_request/interval
-echo 5 > /sys/kernel/debug/fail_make_request/probability
-echo 1 > /sys/kernel/debug/fail_make_request/verbose
+Memory safety may be the wrong word, but data races *are* on the list of
+things that Rust tries to prevent.
 
-- And usually (in somewhat 80% of cases) I get a host crash within ~5
-minutes. Sometimes the software RAID declares sdb1 to be faulty and
-disables it, in this case I have to try again.
+Alice
 
->> Does anyone have an idea what could be the cause for the crash, or how
->> to further debug this? Happy to provide more information if needed, as
->> well as the complete reproducer (I'd need to clean it up a little bit
->> first).
-> 
-> BUG shows it panic on 0000000000000008, not sure what it's accessing then,
-> does it means rq->queuelist.next == 0 or something? Could you use add2line
-> to show the exact source code line that panic? I use blk_flush_complete_seq+0x296/0x2e0
-> and get block/blk-flush.c:190, which is "fq->flush_data_in_flight++;",
-> obviously fq can't be NULL. (I'm using the v6.9 kernel)
-
-Sorry for the confusion, the crash dump was from a kernel compiled at
-81ada09cc25e -- with 6.9, the offset seems to be different. See [2] for
-a kernel 6.9 crash dump.
-
-I don't know too much about kernel debugging, but I tried to get
-something useful out of addr2line:
-
-# addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-debug2
-blk_flush_complete_seq+0x291/0x2d0
-__list_del
-/[...]./include/linux/list.h:195
-
-I tried to find the relevant portions in `objdump -SD blk-flush.o`, see
-[3]. If I'm not mistaken, blk_flush_complete_seq+0x291 should point to
-
-351:   48 89 4f 08             mov    %rcx,0x8(%rdi)
-
-To me this looks like part of
-
-	list_move_tail(&rq->queuelist, pending);
-
-What do you think?
-
-FWIW, I've also compiled a 6.9 kernel with CONFIG_LIST_DEBUG, and when
-running the reproducer it started reporting corruptions, see [4] for the
-first one. It did not crash, though, maybe because CONFIG_LIST_DEBUG
-prevents the NULL pointer dereference?
-
-Hope this helps! If I can provide anything else, just let me know.
-
-Best wishes,
-
-Friedrich
-
-[0]
-
-# mdadm --detail /dev/md0
-/dev/md0:
-           Version : 1.2
-     Creation Time : Wed May 22 10:14:40 2024
-        Raid Level : raid1
-        Array Size : 33534976 (31.98 GiB 34.34 GB)
-     Used Dev Size : 33534976 (31.98 GiB 34.34 GB)
-      Raid Devices : 2
-     Total Devices : 2
-       Persistence : Superblock is persistent
-
-     Intent Bitmap : Internal
-
-       Update Time : Mon May 27 17:31:02 2024
-             State : active
-    Active Devices : 2
-   Working Devices : 2
-    Failed Devices : 0
-     Spare Devices : 0
-
-Consistency Policy : bitmap
-
-              Name : reproflushfull:0  (local to host reproflushfull)
-              UUID : fda4a959:d2dd0bef:d7094fb1:c6e3174c
-            Events : 749
-
-    Number   Major   Minor   RaidDevice State
-       0       8        1        0      active sync   /dev/sda1
-       1       8       17        1      active sync   /dev/sdb1
-
-[1]
-
-/qemu-8.2.2/qemu-system-x86_64 \
-  -accel kvm \
-  -name 'pve,debug-threads=on' \
-  -chardev
-'socket,id=qmp,path=/var/run/qemu-server/100.qmp,server=on,wait=off' \
-  -mon 'chardev=qmp,mode=control' \
-  -chardev 'socket,id=qmp-event,path=/var/run/qmeventd.sock,reconnect=5' \
-  -mon 'chardev=qmp-event,mode=control' \
-  -pidfile /var/run/qemu-server/100.pid \
-  -smbios 'type=1,uuid=25a3012b-e72a-4121-9e57-f6f5a40ebe62' \
-  -smp '4,sockets=1,cores=4,maxcpus=4' \
-  -nodefaults \
-  -vnc 'unix:/var/run/qemu-server/100.vnc,password=on' \
-  -cpu host,+kvm_pv_eoi,+kvm_pv_unhalt \
-  -m 4096 \
-  -object 'iothread,id=iothread-virtioscsi0' \
-  -device 'pci-bridge,id=pci.1,chassis_nr=1,bus=pci.0,addr=0x1e' \
-  -device 'pci-bridge,id=pci.2,chassis_nr=2,bus=pci.0,addr=0x1f' \
-  -device 'pci-bridge,id=pci.3,chassis_nr=3,bus=pci.0,addr=0x5' \
-  -device 'vmgenid,guid=ab6d50e3-d574-4ba8-bb0c-3c0bbcc9cd2e' \
-  -device 'piix3-usb-uhci,id=uhci,bus=pci.0,addr=0x1.0x2' \
-  -device 'VGA,id=vga,bus=pci.0,addr=0x2' \
-  -device
-'virtio-scsi-pci,id=virtioscsi0,bus=pci.3,addr=0x1,iothread=iothread-virtioscsi0'
-\
-  -drive
-'file=/var/lib/vz/images/100/vm-100-disk-0.qcow2,if=none,id=drive-scsi0,format=qcow2,cache=none,aio=io_uring,detect-zeroes=on'
-\
-  -device
-'scsi-hd,bus=virtioscsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0,id=scsi0,bootindex=100'
-\
-  -machine 'type=pc'
-
-[2]
-
-[   85.282301] BUG: kernel NULL pointer dereference, address:
-0000000000000008
-[   85.283454] #PF: supervisor write access in kernel mode
-[   85.284289] #PF: error_code(0x0002) - not-present page
-[   85.285087] PGD 0 P4D 0
-[   85.285500] Oops: 0002 [#1] PREEMPT SMP NOPTI
-[   85.286211] CPU: 0 PID: 794 Comm: kvm Tainted: G            E
-6.9.0-debug2 #27
-[   85.287420] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   85.289177] RIP: 0010:blk_flush_complete_seq+0x291/0x2d0
-[   85.289994] Code: 0f b6 f6 49 8d 56 01 49 c1 e6 04 4d 01 ee 48 c1 e2
-04 49 8b 4e 10 4c 01 ea 48 39 ca 74 2b 48 8b 4b 50 48 8b 7b 48 48 8d 73
-48 <48> 89 4f 08 48 89 39 49 8b 4e 18 49 89 76 18 48 89 53 48 48 89 4b
-[   85.292894] RSP: 0018:ffff9c08c07f3998 EFLAGS: 00010046
-[   85.293714] RAX: 0000000000000000 RBX: ffff8b9c8abad000 RCX:
-ffff8b9c8abad048
-[   85.294809] RDX: ffff8b9c80a3d6a0 RSI: ffff8b9c8abad048 RDI:
-0000000000000000
-[   85.295921] RBP: ffff9c08c07f39d8 R08: 0000000000000000 R09:
-0000000000000000
-[   85.297111] R10: 0000000000000000 R11: 0000000000000000 R12:
-0000000000009801
-[   85.298211] R13: ffff8b9c80a3d680 R14: ffff8b9c80a3d690 R15:
-ffff8b9c8341ddc0
-[   85.299353] FS:  0000776683e006c0(0000) GS:ffff8b9db7a00000(0000)
-knlGS:0000000000000000
-[   85.300825] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   85.301712] CR2: 0000000000000008 CR3: 000000010e6e4001 CR4:
-0000000000372ef0
-[   85.302810] Call Trace:
-[   85.303242]  <TASK>
-[   85.303597]  ? show_regs+0x6c/0x80
-[   85.304169]  ? __die+0x24/0x80
-[   85.304671]  ? page_fault_oops+0x175/0x5b0
-[   85.305326]  ? do_user_addr_fault+0x311/0x680
-[   85.306012]  ? exc_page_fault+0x82/0x1b0
-[   85.306657]  ? asm_exc_page_fault+0x27/0x30
-[   85.307297]  ? blk_flush_complete_seq+0x291/0x2d0
-[   85.308023]  ? __blk_mq_alloc_requests+0x251/0x540
-[   85.308785]  ? wbt_wait+0x33/0x100
-[   85.309620]  blk_insert_flush+0xce/0x220
-[   85.310307]  blk_mq_submit_bio+0x5cd/0x730
-[   85.310948]  __submit_bio+0xb3/0x1c0
-[   85.311535]  submit_bio_noacct_nocheck+0x2fc/0x3d0
-[   85.312296]  submit_bio_noacct+0x1ba/0x6b0
-[   85.312934]  ? ext4_file_write_iter+0x3b1/0x7e0
-[   85.313663]  submit_bio+0xb1/0x110
-[   85.314220]  md_super_write+0xcf/0x110
-[   85.314816]  write_sb_page+0x148/0x300
-[   85.315422]  filemap_write_page+0x5b/0x70
-[   85.316058]  md_bitmap_unplug+0x99/0x1f0
-[   85.316676]  flush_bio_list+0x107/0x110 [raid1]
-[   85.317399]  raid1_unplug+0x3c/0xf0 [raid1]
-[   85.318056]  __blk_flush_plug+0xbe/0x140
-[   85.318673]  blk_finish_plug+0x30/0x50
-[   85.319268]  io_submit_sqes+0x4c4/0x6c0
-[   85.319872]  __do_sys_io_uring_enter+0x2f2/0x640
-[   85.320590]  ? blk_mq_complete_request+0x26/0x40
-[   85.321326]  __x64_sys_io_uring_enter+0x22/0x40
-[   85.322044]  x64_sys_call+0x20b9/0x24b0
-[   85.322656]  do_syscall_64+0x80/0x170
-[   85.323243]  ? vring_interrupt+0x94/0x110
-[   85.323878]  ? __x64_sys_ppoll+0xf2/0x170
-[   85.324501]  ? handle_irq_event+0x52/0x80
-[   85.325103]  ? _raw_spin_unlock+0xe/0x40
-[   85.325728]  ? handle_edge_irq+0xda/0x250
-[   85.326347]  ? irqentry_exit_to_user_mode+0x76/0x270
-[   85.327114]  ? irqentry_exit+0x43/0x50
-[   85.327703]  ? clear_bhb_loop+0x15/0x70
-[   85.328286]  ? clear_bhb_loop+0x15/0x70
-[   85.328897]  ? clear_bhb_loop+0x15/0x70
-[   85.329541]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   85.330326] RIP: 0033:0x776695660b95
-[   85.330908] Code: 00 00 00 44 89 d0 41 b9 08 00 00 00 83 c8 10 f6 87
-d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45 31 c0 b8 aa 01 00 00 0f
-05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2 02 74 c2 f0 48 83 0c 24
-[   85.333736] RSP: 002b:0000776683dfafd8 EFLAGS: 00000246 ORIG_RAX:
-00000000000001aa
-[   85.334911] RAX: ffffffffffffffda RBX: 000077667c0039f0 RCX:
-0000776695660b95
-[   85.335999] RDX: 0000000000000000 RSI: 0000000000000003 RDI:
-0000000000000033
-[   85.337111] RBP: 000077667c0039f8 R08: 0000000000000000 R09:
-0000000000000008
-[   85.338210] R10: 0000000000000000 R11: 0000000000000246 R12:
-000077667c003ae0
-[   85.339304] R13: 0000000000000000 R14: 000064175d5afc68 R15:
-000064178a3f9450
-[   85.340408]  </TASK>
-[   85.340772] Modules linked in: tcp_diag(E) inet_diag(E) veth(E)
-cmac(E) nls_utf8(E) cifs(E) cifs_arc4(E) nls_ucs2_utils(E) rdma_cm(E)
-iw_cm(E) ib_cm(E) ib_core(E) cifs_md4(E) netfs(E) ebtable_filter(E)
-ebtables(E) ip_set(E) ip6table_raw(E) iptable_raw(E) ip6table_filter(E)
-ip6_tables(E) iptable_filter(E) nf_tables(E) softdog(E) sunrpc(E)
-binfmt_misc(E) bonding(E) tls(E) nfnetlink_log(E) nfnetlink(E)
-intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency_common(E)
-intel_pmc_core(E) intel_vsec(E) pmt_telemetry(E) pmt_class(E)
-kvm_intel(E) kvm(E) hid_generic(E) crct10dif_pclmul(E)
-polyval_clmulni(E) polyval_generic(E) ghash_clmulni_intel(E)
-sha256_ssse3(E) sha1_ssse3(E) aesni_intel(E) crypto_simd(E) usbhid(E)
-cryptd(E) hid(E) rapl(E) pcspkr(E) vmgenid(E) joydev(E) input_leds(E)
-serio_raw(E) mac_hid(E) vhost_net(E) vhost(E) vhost_iotlb(E) tap(E)
-efi_pstore(E) dmi_sysfs(E) qemu_fw_cfg(E) ip_tables(E) x_tables(E)
-autofs4(E) raid10(E) raid456(E) async_raid6_recov(E) async_memcpy(E)
-async_pq(E) async_xor(E) async_tx(E)
-[   85.340859]  xor(E) raid6_pq(E) libcrc32c(E) raid0(E) raid1(E)
-crc32_pclmul(E) bochs(E) drm_vram_helper(E) drm_ttm_helper(E) psmouse(E)
-uhci_hcd(E) ehci_hcd(E) ttm(E) i2c_piix4(E) pata_acpi(E) floppy(E)
-[   85.357137] CR2: 0000000000000008
-[   85.358209] ---[ end trace 0000000000000000 ]---
-[   85.358926] RIP: 0010:blk_flush_complete_seq+0x291/0x2d0
-[   85.360004] Code: 0f b6 f6 49 8d 56 01 49 c1 e6 04 4d 01 ee 48 c1 e2
-04 49 8b 4e 10 4c 01 ea 48 39 ca 74 2b 48 8b 4b 50 48 8b 7b 48 48 8d 73
-48 <48> 89 4f 08 48 89 39 49 8b 4e 18 49 89 76 18 48 89 53 48 48 89 4b
-[   85.362891] RSP: 0018:ffff9c08c07f3998 EFLAGS: 00010046
-[   85.363695] RAX: 0000000000000000 RBX: ffff8b9c8abad000 RCX:
-ffff8b9c8abad048
-[   85.364800] RDX: ffff8b9c80a3d6a0 RSI: ffff8b9c8abad048 RDI:
-0000000000000000
-[   85.365902] RBP: ffff9c08c07f39d8 R08: 0000000000000000 R09:
-0000000000000000
-[   85.366993] R10: 0000000000000000 R11: 0000000000000000 R12:
-0000000000009801
-[   85.368089] R13: ffff8b9c80a3d680 R14: ffff8b9c80a3d690 R15:
-ffff8b9c8341ddc0
-[   85.369190] FS:  0000776683e006c0(0000) GS:ffff8b9db7a00000(0000)
-knlGS:0000000000000000
-[   85.370440] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   85.371327] CR2: 0000000000000008 CR3: 000000010e6e4001 CR4:
-0000000000372ef0
-[   85.372440] note: kvm[794] exited with irqs disabled
-[   85.373340] note: kvm[794] exited with preempt_count 1
-[   85.374238] ------------[ cut here ]------------
-[   85.374943] WARNING: CPU: 0 PID: 794 at kernel/exit.c:827
-do_exit+0x8a2/0xab0
-[   85.376047] Modules linked in: tcp_diag(E) inet_diag(E) veth(E)
-cmac(E) nls_utf8(E) cifs(E) cifs_arc4(E) nls_ucs2_utils(E) rdma_cm(E)
-iw_cm(E) ib_cm(E) ib_core(E) cifs_md4(E) netfs(E) ebtable_filter(E)
-ebtables(E) ip_set(E) ip6table_raw(E) iptable_raw(E) ip6table_filter(E)
-ip6_tables(E) iptable_filter(E) nf_tables(E) softdog(E) sunrpc(E)
-binfmt_misc(E) bonding(E) tls(E) nfnetlink_log(E) nfnetlink(E)
-intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency_common(E)
-intel_pmc_core(E) intel_vsec(E) pmt_telemetry(E) pmt_class(E)
-kvm_intel(E) kvm(E) hid_generic(E) crct10dif_pclmul(E)
-polyval_clmulni(E) polyval_generic(E) ghash_clmulni_intel(E)
-sha256_ssse3(E) sha1_ssse3(E) aesni_intel(E) crypto_simd(E) usbhid(E)
-cryptd(E) hid(E) rapl(E) pcspkr(E) vmgenid(E) joydev(E) input_leds(E)
-serio_raw(E) mac_hid(E) vhost_net(E) vhost(E) vhost_iotlb(E) tap(E)
-efi_pstore(E) dmi_sysfs(E) qemu_fw_cfg(E) ip_tables(E) x_tables(E)
-autofs4(E) raid10(E) raid456(E) async_raid6_recov(E) async_memcpy(E)
-async_pq(E) async_xor(E) async_tx(E)
-[   85.376128]  xor(E) raid6_pq(E) libcrc32c(E) raid0(E) raid1(E)
-crc32_pclmul(E) bochs(E) drm_vram_helper(E) drm_ttm_helper(E) psmouse(E)
-uhci_hcd(E) ehci_hcd(E) ttm(E) i2c_piix4(E) pata_acpi(E) floppy(E)
-[   85.392395] CPU: 0 PID: 794 Comm: kvm Tainted: G      D     E
-6.9.0-debug2 #27
-[   85.393594] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   85.395347] RIP: 0010:do_exit+0x8a2/0xab0
-[   85.395975] Code: 38 0c 00 00 e9 2d fe ff ff 49 8d 7d 18 e8 b6 83 07
-00 e9 5a f8 ff ff 48 8b bb f8 09 00 00 31 f6 e8 b3 e0 ff ff e9 c1 fd ff
-ff <0f> 0b e9 d4 f7 ff ff 0f 0b e9 8f f7 ff ff 4c 89 e6 bf 05 06 00 00
-[   85.398793] RSP: 0018:ffff9c08c07f3ec8 EFLAGS: 00010286
-[   85.399625] RAX: 0000000000000000 RBX: ffff8b9c82e90000 RCX:
-0000000000000000
-[   85.400720] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-0000000000000000
-
-[3]
-
-00000000000000c0 <blk_flush_complete_seq>:
-{
-[...]
-       struct list_head *pending = &fq->flush_queue[fq->flush_pending_idx];
- 32a:   49 8d 56 01             lea    0x1(%r14),%rdx
- 32e:   49 c1 e6 04             shl    $0x4,%r14
- 332:   4d 01 ee                add    %r13,%r14
- 335:   48 c1 e2 04             shl    $0x4,%rdx
-        return READ_ONCE(head->next) == head;
- 339:   49 8b 4e 10             mov    0x10(%r14),%rcx
- 33d:   4c 01 ea                add    %r13,%rdx
-                if (list_empty(pending))
- 340:   48 39 ca                cmp    %rcx,%rdx
- 343:   74 2b                   je     370 <blk_flush_complete_seq+0x2b0>
-        __list_del(entry->prev, entry->next);
- 345:   48 8b 4b 50             mov    0x50(%rbx),%rcx
- 349:   48 8b 7b 48             mov    0x48(%rbx),%rdi
-                list_move_tail(&rq->queuelist, pending);
- 34d:   48 8d 73 48             lea    0x48(%rbx),%rsi
-        next->prev = prev;
- 351:   48 89 4f 08             mov    %rcx,0x8(%rdi)
-        WRITE_ONCE(prev->next, next);
- 355:   48 89 39                mov    %rdi,(%rcx)
-        __list_add(new, head->prev, head);
- 358:   49 8b 4e 18             mov    0x18(%r14),%rcx
-        next->prev = new;
- 35c:   49 89 76 18             mov    %rsi,0x18(%r14)
-        new->next = next;
- 360:   48 89 53 48             mov    %rdx,0x48(%rbx)
-        new->prev = prev;
- 364:   48 89 4b 50             mov    %rcx,0x50(%rbx)
-        WRITE_ONCE(prev->next, new);
- 368:   48 89 31                mov    %rsi,(%rcx)
-}
- 36b:   e9 30 fe ff ff          jmp    1a0 <blk_flush_complete_seq+0xe0>
-                        fq->flush_pending_since = jiffies;
- 370:   48 8b 0d 00 00 00 00    mov    0x0(%rip),%rcx        # 377
-<blk_flush_complete_seq+0x2b7>
- 377:   49 89 4d 08             mov    %rcx,0x8(%r13)
- 37b:   eb c8                   jmp    345 <blk_flush_complete_seq+0x285>
-
-[4] May 27 11:12:53 reproflushfull kernel: list_del corruption.
-prev->next should be ffff8ad44ab63788, but was ffff8ad44ab63400.
-(prev=ffff8ad44ab63788)
-May 27 11:12:53 reproflushfull kernel: WARNING: CPU: 0 PID: 797 at
-lib/list_debug.c:62 __list_del_entry_valid_or_report+0xd4/0x100
-May 27 11:12:53 reproflushfull kernel: Modules linked in: veth(E)
-cmac(E) nls_utf8(E) cifs(E) cifs_arc4(E) nls_ucs2_utils(E) rdma_cm(E)
-iw_cm(E) ib_cm(E) ib_core(E) cifs_md4(E) netfs(E) ebtable_filter(E)
-ebtables(E) ip_set(E) ip6table_raw(E) iptable_raw(E) ip6table_filter(E)
-ip6_tables(E) iptable_filter(E) nf_tables(E) softdog(E) sunrpc(E)
-binfmt_misc(E) bonding(E) tls(E) nfnetlink_log(E) nfnetlink(E)
-intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency_common(E)
-intel_pmc_core(E) intel_vsec(E) pmt_telemetry(E) pmt_class(E)
-kvm_intel(E) kvm(E) crct10dif_pclmul(E) polyval_clmulni(E)
-polyval_generic(E) hid_generic(E) ghash_clmulni_intel(E) sha256_ssse3(E)
-sha1_ssse3(E) aesni_intel(E) crypto_simd(E) usbhid(E) cryptd(E) hid(E)
-rapl(E) pcspkr(E) vmgenid(E) joydev(E) input_leds(E) mac_hid(E)
-serio_raw(E) vhost_net(E) vhost(E) vhost_iotlb(E) tap(E) efi_pstore(E)
-dmi_sysfs(E) qemu_fw_cfg(E) ip_tables(E) x_tables(E) autofs4(E)
-raid10(E) raid456(E) async_raid6_recov(E) async_memcpy(E) async_pq(E)
-async_xor(E) async_tx(E) xor(E) raid6_pq(E)
-May 27 11:12:53 reproflushfull kernel:  libcrc32c(E) raid0(E) raid1(E)
-crc32_pclmul(E) bochs(E) psmouse(E) drm_vram_helper(E) drm_ttm_helper(E)
-uhci_hcd(E) ttm(E) i2c_piix4(E) ehci_hcd(E) pata_acpi(E) floppy(E)
-May 27 11:12:53 reproflushfull kernel: CPU: 0 PID: 797 Comm: kvm
-Tainted: G            E      6.9.0-debug #25
-May 27 11:12:53 reproflushfull kernel: Hardware name: QEMU Standard PC
-(i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org
-04/01/2014
-May 27 11:12:53 reproflushfull kernel: RIP:
-0010:__list_del_entry_valid_or_report+0xd4/0x100
-May 27 11:12:53 reproflushfull kernel: Code: 48 89 fe 48 89 ca 48 c7 c7
-78 77 9f a1 e8 84 3a 8e ff 0f 0b 31 c0 eb b0 48 89 fe 48 89 c2 48 c7 c7
-b0 77 9f a1 e8 6c 3a 8e ff <0f> 0b 31 c0 eb 98 48 89 d1 48 c7 c7 f8 77
-9f a1 48 89 f2 48 89 c6
-May 27 11:12:53 reproflushfull kernel: RSP: 0018:ffffb1dd80673740
-EFLAGS: 00010046
-May 27 11:12:53 reproflushfull kernel: RAX: 0000000000000000 RBX:
-ffff8ad440be12c0 RCX: 0000000000000000
-May 27 11:12:53 reproflushfull kernel: RDX: 0000000000000000 RSI:
-0000000000000000 RDI: 0000000000000000
-May 27 11:12:53 reproflushfull kernel: RBP: ffffb1dd80673740 R08:
-0000000000000000 R09: 0000000000000000
-May 27 11:12:53 reproflushfull kernel: R10: 0000000000000000 R11:
-0000000000000000 R12: ffff8ad44a8c1e00
-May 27 11:12:53 reproflushfull kernel: R13: ffff8ad440be12c0 R14:
-ffff8ad44ab63788 R15: ffff8ad44ab63740
-May 27 11:12:53 reproflushfull kernel: FS:  00007e8a67c006c0(0000)
-GS:ffff8ad577a00000(0000) knlGS:0000000000000000
-May 27 11:12:53 reproflushfull kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-0000000080050033
-May 27 11:12:53 reproflushfull kernel: CR2: 00007e8a5801a008 CR3:
-000000010e022001 CR4: 0000000000372ef0
-May 27 11:12:53 reproflushfull kernel: Call Trace:
-May 27 11:12:53 reproflushfull kernel:  <TASK>
-May 27 11:12:53 reproflushfull kernel:  ? show_regs+0x6c/0x80
-May 27 11:12:53 reproflushfull kernel:  ? __warn+0x88/0x140
-May 27 11:12:53 reproflushfull kernel:  ?
-__list_del_entry_valid_or_report+0xd4/0x100
-May 27 11:12:53 reproflushfull kernel:  ? report_bug+0x182/0x1b0
-May 27 11:12:53 reproflushfull kernel:  ? handle_bug+0x46/0x90
-May 27 11:12:53 reproflushfull kernel:  ? exc_invalid_op+0x18/0x80
-May 27 11:12:53 reproflushfull kernel:  ? asm_exc_invalid_op+0x1b/0x20
-May 27 11:12:53 reproflushfull kernel:  ?
-__list_del_entry_valid_or_report+0xd4/0x100
-May 27 11:12:53 reproflushfull kernel:  blk_flush_complete_seq+0x2f3/0x360
-May 27 11:12:53 reproflushfull kernel:  ? wbt_wait+0x33/0x100
-May 27 11:12:53 reproflushfull kernel:  blk_insert_flush+0xce/0x220
-May 27 11:12:53 reproflushfull kernel:  blk_mq_submit_bio+0x5cd/0x730
-May 27 11:12:53 reproflushfull kernel:  __submit_bio+0xb3/0x1c0
-May 27 11:12:53 reproflushfull kernel:
-submit_bio_noacct_nocheck+0x2fc/0x3d0
-May 27 11:12:53 reproflushfull kernel:  submit_bio_noacct+0x1ba/0x6b0
-May 27 11:12:53 reproflushfull kernel:  submit_bio+0xb1/0x110
-May 27 11:12:53 reproflushfull kernel:  md_super_write+0xcf/0x110
-May 27 11:12:53 reproflushfull kernel:  write_sb_page+0x148/0x300
-May 27 11:12:53 reproflushfull kernel:  filemap_write_page+0x5b/0x70
-May 27 11:12:53 reproflushfull kernel:  md_bitmap_unplug+0x99/0x1f0
-May 27 11:12:53 reproflushfull kernel:  flush_bio_list+0x107/0x110 [raid1]
-May 27 11:12:53 reproflushfull kernel:  raid1_unplug+0x3c/0xf0 [raid1]
-May 27 11:12:53 reproflushfull kernel:  __blk_flush_plug+0xd9/0x170
-May 27 11:12:53 reproflushfull kernel:  blk_finish_plug+0x30/0x50
-May 27 11:12:53 reproflushfull kernel:  io_submit_sqes+0x4c4/0x6c0
-May 27 11:12:53 reproflushfull kernel:  __do_sys_io_uring_enter+0x2f2/0x640
-May 27 11:12:53 reproflushfull kernel:  __x64_sys_io_uring_enter+0x22/0x40
-May 27 11:12:53 reproflushfull kernel:  x64_sys_call+0x20b9/0x24b0
-May 27 11:12:53 reproflushfull kernel:  do_syscall_64+0x80/0x170
-May 27 11:12:53 reproflushfull kernel:  ? do_mprotect_pkey+0x198/0x620
-May 27 11:12:53 reproflushfull kernel:  ?
-__memcg_slab_post_alloc_hook+0x18e/0x230
-May 27 11:12:53 reproflushfull kernel:  ? policy_nodemask+0x145/0x180
-May 27 11:12:53 reproflushfull kernel:  ?
-__mod_memcg_lruvec_state+0x87/0x120
-May 27 11:12:53 reproflushfull kernel:  ? __mod_lruvec_state+0x36/0x50
-May 27 11:12:53 reproflushfull kernel:  ? __lruvec_stat_mod_folio+0x70/0xc0
-May 27 11:12:53 reproflushfull kernel:  ? set_ptes.constprop.0+0x2b/0xb0
-May 27 11:12:53 reproflushfull kernel:  ? _raw_spin_unlock+0xe/0x40
-May 27 11:12:53 reproflushfull kernel:  ? do_anonymous_page+0x23d/0x790
-May 27 11:12:53 reproflushfull kernel:  ? __pte_offset_map+0x1c/0x1b0
-May 27 11:12:53 reproflushfull kernel:  ? __handle_mm_fault+0xc1a/0xe90
-May 27 11:12:53 reproflushfull kernel:  ? do_syscall_64+0x8c/0x170
-May 27 11:12:53 reproflushfull kernel:  ? __count_memcg_events+0x6f/0xe0
-May 27 11:12:53 reproflushfull kernel:  ?
-count_memcg_events.constprop.0+0x2a/0x50
-May 27 11:12:53 reproflushfull kernel:  ? handle_mm_fault+0xaf/0x340
-May 27 11:12:53 reproflushfull kernel:  ? do_user_addr_fault+0x365/0x680
-May 27 11:12:53 reproflushfull kernel:  ?
-irqentry_exit_to_user_mode+0x76/0x270
-May 27 11:12:53 reproflushfull kernel:  ? irqentry_exit+0x43/0x50
-May 27 11:12:53 reproflushfull kernel:  ? clear_bhb_loop+0x15/0x70
-May 27 11:12:53 reproflushfull kernel:  ? clear_bhb_loop+0x15/0x70
-May 27 11:12:53 reproflushfull kernel:  ? clear_bhb_loop+0x15/0x70
-May 27 11:12:53 reproflushfull kernel:
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 27 11:12:53 reproflushfull kernel: RIP: 0033:0x7e8a75069b95
-May 27 11:12:53 reproflushfull kernel: Code: 00 00 00 44 89 d0 41 b9 08
-00 00 00 83 c8 10 f6 87 d0 00 00 00 01 8b bf cc 00 00 00 44 0f 45 d0 45
-31 c0 b8 aa 01 00 00 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 41 83 e2
-02 74 c2 f0 48 83 0c 24
-May 27 11:12:53 reproflushfull kernel: RSP: 002b:00007e8a67bfafd8
-EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-May 27 11:12:53 reproflushfull kernel: RAX: ffffffffffffffda RBX:
-00007e8a580039f0 RCX: 00007e8a75069b95
-May 27 11:12:53 reproflushfull kernel: RDX: 0000000000000000 RSI:
-0000000000000020 RDI: 0000000000000033
-May 27 11:12:53 reproflushfull kernel: RBP: 00007e8a580039f8 R08:
-0000000000000000 R09: 0000000000000008
-May 27 11:12:53 reproflushfull kernel: R10: 0000000000000000 R11:
-0000000000000246 R12: 00007e8a58003ae0
-May 27 11:12:53 reproflushfull kernel: R13: 0000000000000000 R14:
-000064a145ca1c68 R15: 000064a183935450
-May 27 11:12:53 reproflushfull kernel:  </TASK>
-May 27 11:12:53 reproflushfull kernel: ---[ end trace 0000000000000000 ]---
+> > One of the primary design principles of Rust is that, if the user of ou=
+r
+> > API has *any* way of using it that could trigger a memory safety
+> > problem, then we must be able to point at an unsafe block *in the user'=
+s
+> > code* that is at fault. This must be the case no matter how contrived
+> > the use of the API is.
+> >=20
+> > As a corollary, if the user can trigger memory safety problems with our
+> > API without using any unsafe blocks, then that is a bug in the API.
+> > We cannot assign the blame to an unsafe block in the user's code, so th=
+e
+> > blame *must* lie with an unsafe block inside the API.
+> >=20
+> > So, to follow that design principle, I have designed the API in a way
+> > that prevents the above data race. Concretely, because the
+> > `File<MaybeFdgetPos>` type is not thread safe (or in Rust terms "is not
+> > Send"), it's not possible to send values of that type across thread
+> > boundaries. E.g., our `send_to_another_thread` would have a requirement
+> > in its signature saying that it can only be called with types that are
+> > thread safe, so calling it with a type that isn't results in a type
+> > error.
+> >=20
+> >=20
+> >=20
+> > Now, what if you *want* to send it to another thread? Let's consider
+> > Rust Binder, which needs to do exactly that. The relevant code in Rust
+> > Binder would need to be updated to look like this:
+> >=20
+> > 	let file =3D File::fget(my_fd)?;
+> > 	// SAFETY: We know that there are no active `fdget_pos` calls on
+> > 	// the current thread, since this is an ioctl and we have not
+> > 	// called `fdget_pos` inside the Binder driver.
+> > 	let thread_safe_file =3D unsafe { file.assume_no_fdget_pos() };
+> >=20
+> > (search for File::from_fd in the RFC to find where this would go)
+> >=20
+> > The `assume_no_fdget_pos` call has no effect at runtime - it is purely =
+a
+> > compile-time thing to force the user to use unsafe to "promise" that
+> > there aren't any `fdget_pos` calls on the same fd.
+> >=20
+> > If Rust Binder uses `assume_no_fdget_pos` and ends up triggering memory
+> > unsafety because it sent a file to another thread, then we can point to
+> > the unsafe block that calls `assume_no_fdget_pos` and say "that unsafe
+> > block is at fault because it assumed that there was no `fdget_pos` call=
+,
+> > but that assumption was false."
+> >=20
+> > > > +    /// Assume that there are no active `fdget_pos` calls that pre=
+vent us from sharing this file.
+> > > > +    ///
+> > > > +    /// This makes it safe to transfer this file to other threads.=
+ No checks are performed, and
+> > > > +    /// using it incorrectly may lead to a data race on the file p=
+osition if the file is shared
+> > > > +    /// with another thread.
+> > > > +    ///
+> > > > +    /// This method is intended to be used together with [`File::f=
+get`] when the caller knows
+> > > > +    /// statically that there are no `fdget_pos` calls on the curr=
+ent thread. For example, you
+> > > > +    /// might use it when calling `fget` from an ioctl, since ioct=
+ls usually do not touch the file
+> > > > +    /// position.
+> > > > +    ///
+> > > > +    /// # Safety
+> > > > +    ///
+> > > > +    /// There must not be any active `fdget_pos` calls on the curr=
+ent thread.
+> > > > +    pub unsafe fn assume_no_fdget_pos(me: ARef<Self>) -> ARef<File=
+<NoFdgetPos>> {
+> > > > +        // INVARIANT: There are no `fdget_pos` calls on the curren=
+t thread, and by the type
+> > > > +        // invariants, if there is a `fdget_pos` call on another t=
+hread, then it took the
+> > > > +        // `f_pos_lock` mutex.
+> > > > +        //
+> > > > +        // SAFETY: `File<MaybeFdgetPos>` and `File<NoFdgetPos>` ha=
+ve the same layout.
+> > > > +        unsafe { ARef::from_raw(ARef::into_raw(me).cast()) }
+> > > > +    }
+> > > > +}
+> > > > +
+> > > > +/// File methods that exist under all sharing modes.
+> > > > +impl<S: FileShareMode> File<S> {
+> > > > +    /// Creates a reference to a [`File`] from a valid pointer.
+> > > > +    ///
+> > > > +    /// # Safety
+> > > > +    ///
+> > > > +    /// * The caller must ensure that `ptr` points at a valid file=
+ and that the file's refcount is
+> > > > +    ///   positive for the duration of 'a.
+> > > > +    /// * The caller must ensure that the requirements for using t=
+he chosen file sharing mode are
+> > > > +    ///   upheld.
+> > > > +    pub unsafe fn from_ptr<'a>(ptr: *const bindings::file) -> &'a =
+File<S> {
+> > >
+> > > I think I requested from_raw_file() in the last revision?
+> >=20
+> > Ah, yeah, I totally forgot about this. I'll make the change in the next
+> > version.
+> >=20
+> > > > +    /// Returns a raw pointer to the inner C struct.
+> > > > +    #[inline]
+> > > > +    pub fn as_ptr(&self) -> *mut bindings::file {
+> > >
+> > > And that was supposed to be into_raw_file() or as_raw_file()?
+> >=20
+> > Per the Rust API guidelines [1], this should be `as_raw_file`. The
+> > `into_*` prefix is for conversions that destroy the object you call it
+> > on. (E.g., because it takes ownership of the underlying allocation or
+> > refcount.)
+> >=20
+> > As always, thank you for the very detailed questions!
+> >=20
+> > Alice
+> >=20
+> > [1]: https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conv=
+ersions-follow-as_-to_-into_-conventions-c-conv
 
 
