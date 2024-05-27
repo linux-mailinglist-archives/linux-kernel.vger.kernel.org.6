@@ -1,275 +1,119 @@
-Return-Path: <linux-kernel+bounces-190348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF8C8CFD22
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:38:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F498CFD25
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E051F25ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:38:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40745B235DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5091513AA2D;
-	Mon, 27 May 2024 09:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BA013A899;
+	Mon, 27 May 2024 09:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P0/R063B"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="r5nxq332"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34F13A418
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBD813A24D;
+	Mon, 27 May 2024 09:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802621; cv=none; b=XARsTeR1oO12z8taip+5nqlTbrdZLALC3iYNJZ+yxOWnmEwLeIFnNUPLhAlIvzB0NZKRGvQRNSnNEikNgPEh7UE7LuPXf19/gYuqWWoMFhWL41MhWh3NUfnUjfGC/pXLnXtU7Gdt3lSTI6XjysNAxtZ90ub/5kCr/n4oFX+WJC4=
+	t=1716802684; cv=none; b=n3SNFjE0498MAQwehr9LaVTWPH2U9+D+5SK8bUvK5NgrjJrUNamqlXlE9MhhBAJuJKga1NWy90fBPb0JaJWo4GnhTgd+bcH4Fs9Wh9b/evWeoPfrtphyHjC0NFZ9JYwUUzbgA1OgKKSFMwktXFsLdALymln4pcEUXHU1hfSLU7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802621; c=relaxed/simple;
-	bh=ca7qxTX4u6UzTeFhYW4NkFxCP0XwOUteCJo7P6ydaEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y1ENIAJAWVrwKnRtYOJtUFIE727AKy4t9r41FTEScMrsYu7QH149pKBSAtWio8hp78z4yb4e/qin1C5mcOmjUDOM2H9dSUcIj2PfBNNc46MBzRq6s23TglgEp1NnEMwWqU2XWFAc6DkGyTUrd5oRB3cjmUIOqlSu7LJC0mPfxHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P0/R063B; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5295a576702so3282244e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716802617; x=1717407417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H/ixPzkRCck5ZUKxx74gVuIQcS7/KCEVfrXzpOu54PQ=;
-        b=P0/R063Bgh8BsH8SNa6+rs36Zb1kMEof/Yc0G5AAUt0yFyewwUf1VgJw8I/kvNV6VO
-         xIztpzoTlXe6tsmRXONhnsrEfAG6crTv3WYkVGxTrxGHd8Kq+/EQDoGKcm+DGIQGaiBO
-         yJ3WK5j8rjrrsOGXMGStHIdXYegB7+iibzBd6pTIROqY2zBAnmsXgfinBYBlD8fYfCzQ
-         QBdk0wXhaADo5BFEsDq5si78RRXrmeUyQpKTjbeOCayXaOnSKVgPeSUfQwe73v85r5NF
-         wyOSVdcI651j3kUt5eeEK3enBDDMaUvjUIArWzmgAyeCgvTSCCFB5V0MLVe1ZjjW3HRe
-         aowg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802617; x=1717407417;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/ixPzkRCck5ZUKxx74gVuIQcS7/KCEVfrXzpOu54PQ=;
-        b=GIwLOpjNHEWmRfbjWWGMUtASQo2RUYf1Tw+RqYGrLWKTSxV4AQQdI+KnZSPPVLqZRw
-         4bGpHYOiPbNuamD+MISpJ9kQKzI2dMZM9wNR9ht/aHJMr233Hz7f4gkoiLdwC7YyxOqG
-         jkSVqPA+V16rlzP9N5VX/1PKq221GOcWwsAnk07hBc26CBMbHFJGJSp16/1VBKfnwjqa
-         09tf0qPXphLSPdMir83tt8tnLh05MLP6P0yGwXNV0oblCTpKAxbR33w51buUCfXrog7G
-         ajHXm72V24fRL1Nck8DEpedQbtpMbhCEF1v5Gdm0I1MYg/fwinil6mJuocmSESx8t5VV
-         u3qA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW6ubDjjbRmYBn/KGuP9YiQLVFzn3OBeERs414J+wZY2AWJ8fHnWGvn4rUUHUq2iwLc+mjjLthwoCEVUykiw30/T0a2oxRl+CDU5l9
-X-Gm-Message-State: AOJu0YzKruGVNS5jP0JICyrJVx2YgXpEzCU2iOqVlvFb1RH+W2ANsn4M
-	OVvgNN7uhIQufXWLm8wxkfmEKAV8gpArGoMLikcrLwnnXJpv5ODosXPMsPwfNYY=
-X-Google-Smtp-Source: AGHT+IHEAjDHV04sv046OkrhZ6dT5pavox8wzKlyT3vi+iHB28XVQkbRU0voEZTDpoqyXyek79OCfA==
-X-Received: by 2002:ac2:4e10:0:b0:51b:e0f0:e4f8 with SMTP id 2adb3069b0e04-52964bb0ea4mr7110372e87.31.1716802616696;
-        Mon, 27 May 2024 02:36:56 -0700 (PDT)
-Received: from [10.100.51.161] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad8e2sm136039195e9.33.2024.05.27.02.36.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:36:56 -0700 (PDT)
-Message-ID: <2b920bab-23a2-4a8d-95c2-b69472d38373@suse.com>
-Date: Mon, 27 May 2024 11:36:55 +0200
+	s=arc-20240116; t=1716802684; c=relaxed/simple;
+	bh=XBN7++Zvn6jUh1suRjCaio6HybTeWQjWEhslD6Yd0b8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LlTkreMWik8ZKBgBlyua1sIK9NblD4SwFhrFSB9oMinRqS+o/Dpd2tD4Tz9eGL62PmOcbFrKJ5w5gs57rh4NRcvgwc6tfJgXc0u4sbL3Kq0LcJvQc+xeWAFt89dpGX0DGBno6Bawo4ejX655E34TAr6wjZsqsOBDN1gcO8QzYzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=r5nxq332; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716802682; x=1748338682;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XBN7++Zvn6jUh1suRjCaio6HybTeWQjWEhslD6Yd0b8=;
+  b=r5nxq332giUC8OABvwXqZPb0wMgL5doOep7cWgFcYPWi3VFOclXeTjXw
+   TxIrTMty7hGsOkr9dZYoz2ToDjktK7piKxh1SkfVazU44lv0cuDK5PkTy
+   N3B6pVWX5tJGHR5Ju4/BVps7Llqv/PIAOwOEBeBg6vETEnX8NIUs3Kk5w
+   gkjE61azd770U9uQ2ucXhDv8XeLQuY+XbZh1vN5pUFBwLTVfWSVpFS8xE
+   218PRZOc/jpPefcvtmgNS/NZZop+0dS+2q+Jhcem00bSVrCYFPhBnEYLp
+   0TAJY0vmSPabJglTiI6rlUaYwi/kQ76Zafhgeu68MLZMuA1EvXCdFdvAM
+   A==;
+X-CSE-ConnectionGUID: AcSvwgxcR7OHBHrk8NTkiw==
+X-CSE-MsgGUID: 9VeZiux7QCa+8v7K5kzo2A==
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="193774875"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 May 2024 02:37:55 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 27 May 2024 02:37:36 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 27 May 2024 02:37:34 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To:
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Daire McNamara
+	<daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring
+	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: [PATCH v1 0/2] PCI: microchip: support using either instance 1 or 2
+Date: Mon, 27 May 2024 10:37:13 +0100
+Message-ID: <20240527-slather-backfire-db4605ae7cd7@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ring-buffer: Fix a race between readers and resize
- checks
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-users <linux-rt-users@vger.kernel.org>
-References: <20240517134008.24529-1-petr.pavlu@suse.com>
- <20240517134008.24529-3-petr.pavlu@suse.com>
- <20240520095037.33a7fde6@gandalf.local.home>
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240520095037.33a7fde6@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1393; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=XBN7++Zvn6jUh1suRjCaio6HybTeWQjWEhslD6Yd0b8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGkhIV5Hb7ekJjy5yn61vjp/YpvsgyCxNZrvRef79E9Z3+6W 8uFhRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACaiMpHhr5DDG46y3Zencpk4fFrxyy f147+COPmrgR+W7Www+D5dI56R4amTOremdfZq2zc19WvYBFssG2QYkieJsHKvE0pImxrIDQA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On 5/20/24 15:50, Steven Rostedt wrote:
-> On Fri, 17 May 2024 15:40:08 +0200
-> Petr Pavlu <petr.pavlu@suse.com> wrote:
-> 
->> The reader code in rb_get_reader_page() swaps a new reader page into the
->> ring buffer by doing cmpxchg on old->list.prev->next to point it to the
->> new page. Following that, if the operation is successful,
->> old->list.next->prev gets updated too. This means the underlying
->> doubly-linked list is temporarily inconsistent, page->prev->next or
->> page->next->prev might not be equal back to page for some page in the
->> ring buffer.
->>
->> The resize operation in ring_buffer_resize() can be invoked in parallel.
->> It calls rb_check_pages() which can detect the described inconsistency
->> and stop further tracing:
->>
->> [  190.271762] ------------[ cut here ]------------
->> [  190.271771] WARNING: CPU: 1 PID: 6186 at kernel/trace/ring_buffer.c:1467 rb_check_pages.isra.0+0x6a/0xa0
->> [  190.271789] Modules linked in: [...]
->> [  190.271991] Unloaded tainted modules: intel_uncore_frequency(E):1 skx_edac(E):1
->> [  190.272002] CPU: 1 PID: 6186 Comm: cmd.sh Kdump: loaded Tainted: G            E      6.9.0-rc6-default #5 158d3e1e6d0b091c34c3b96bfd99a1c58306d79f
->> [  190.272011] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552c-rebuilt.opensuse.org 04/01/2014
->> [  190.272015] RIP: 0010:rb_check_pages.isra.0+0x6a/0xa0
->> [  190.272023] Code: [...]
->> [  190.272028] RSP: 0018:ffff9c37463abb70 EFLAGS: 00010206
->> [  190.272034] RAX: ffff8eba04b6cb80 RBX: 0000000000000007 RCX: ffff8eba01f13d80
->> [  190.272038] RDX: ffff8eba01f130c0 RSI: ffff8eba04b6cd00 RDI: ffff8eba0004c700
->> [  190.272042] RBP: ffff8eba0004c700 R08: 0000000000010002 R09: 0000000000000000
->> [  190.272045] R10: 00000000ffff7f52 R11: ffff8eba7f600000 R12: ffff8eba0004c720
->> [  190.272049] R13: ffff8eba00223a00 R14: 0000000000000008 R15: ffff8eba067a8000
->> [  190.272053] FS:  00007f1bd64752c0(0000) GS:ffff8eba7f680000(0000) knlGS:0000000000000000
->> [  190.272057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [  190.272061] CR2: 00007f1bd6662590 CR3: 000000010291e001 CR4: 0000000000370ef0
->> [  190.272070] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> [  190.272073] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> [  190.272077] Call Trace:
->> [  190.272098]  <TASK>
->> [  190.272189]  ring_buffer_resize+0x2ab/0x460
->> [  190.272199]  __tracing_resize_ring_buffer.part.0+0x23/0xa0
->> [  190.272206]  tracing_resize_ring_buffer+0x65/0x90
->> [  190.272216]  tracing_entries_write+0x74/0xc0
->> [  190.272225]  vfs_write+0xf5/0x420
->> [  190.272248]  ksys_write+0x67/0xe0
->> [  190.272256]  do_syscall_64+0x82/0x170
->> [  190.272363]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->> [  190.272373] RIP: 0033:0x7f1bd657d263
->> [  190.272381] Code: [...]
->> [  190.272385] RSP: 002b:00007ffe72b643f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->> [  190.272391] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f1bd657d263
->> [  190.272395] RDX: 0000000000000002 RSI: 0000555a6eb538e0 RDI: 0000000000000001
->> [  190.272398] RBP: 0000555a6eb538e0 R08: 000000000000000a R09: 0000000000000000
->> [  190.272401] R10: 0000555a6eb55190 R11: 0000000000000246 R12: 00007f1bd6662500
->> [  190.272404] R13: 0000000000000002 R14: 00007f1bd6667c00 R15: 0000000000000002
->> [  190.272412]  </TASK>
->> [  190.272414] ---[ end trace 0000000000000000 ]---
->>
->> Note that ring_buffer_resize() calls rb_check_pages() only if the parent
->> trace_buffer has recording disabled. Recent commit d78ab792705c
->> ("tracing: Stop current tracer when resizing buffer") causes that it is
->> now always the case which makes it more likely to experience this issue.
->>
->> The window to hit this race is nonetheless very small. To help
->> reproducing it, one can add a delay loop in rb_get_reader_page():
->>
->>  ret = rb_head_page_replace(reader, cpu_buffer->reader_page);
->>  if (!ret)
->>  	goto spin;
->>  for (unsigned i = 0; i < 1U << 26; i++)  /* inserted delay loop */
->>  	__asm__ __volatile__ ("" : : : "memory");
->>  rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
->>
->> .. and then run the following commands on the target system:
->>
->>  echo 1 > /sys/kernel/tracing/events/sched/sched_switch/enable
->>  while true; do
->>  	echo 16 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
->>  	echo 8 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
->>  done &
->>  while true; do
->>  	for i in /sys/kernel/tracing/per_cpu/*; do
->>  		timeout 0.1 cat $i/trace_pipe; sleep 0.2
->>  	done
->>  done
->>
->> To fix the problem, make sure ring_buffer_resize() doesn't invoke
->> rb_check_pages() concurrently with a reader operating on the same
->> ring_buffer_per_cpu by taking its cpu_buffer->reader_lock.
-> 
-> Definitely a bug. Thanks for catching it. But...
-> 
->>
->> Fixes: 659f451ff213 ("ring-buffer: Add integrity check at end of iter read")
->> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
->> ---
->>  kernel/trace/ring_buffer.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
->> index 0ae569eae55a..967655591719 100644
->> --- a/kernel/trace/ring_buffer.c
->> +++ b/kernel/trace/ring_buffer.c
->> @@ -1449,6 +1449,11 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
->>   *
->>   * As a safety measure we check to make sure the data pages have not
->>   * been corrupted.
->> + *
->> + * Callers of this function need to guarantee that the list of pages doesn't get
->> + * modified during the check. In particular, if it's possible that the function
->> + * is invoked with concurrent readers which can swap in a new reader page then
->> + * the caller should take cpu_buffer->reader_lock.
->>   */
->>  static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
->>  {
->> @@ -2200,8 +2205,13 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
->>  		 */
->>  		synchronize_rcu();
->>  		for_each_buffer_cpu(buffer, cpu) {
->> +			unsigned long flags;
->> +
->>  			cpu_buffer = buffer->buffers[cpu];
->> +			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->>  			rb_check_pages(cpu_buffer);
->> +			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock,
->> +						   flags);
-> 
-> Putting my RT hat on, I really don't like the above fix. The
-> rb_check_pages() iterates all subbuffers which makes the time interrupts
-> are disabled non-deterministic.
+The current driver and binding for PolarFire SoC's PCI controller assume
+that the root port instance in use is instance 1. The second reg
+property constitutes the region encompassing both "control" and "bridge"
+registers for both instances. In the driver, a fixed offset is applied to
+find the base addresses for instance 1's "control" and "bridge"
+registers. The BeagleV Fire uses root port instance 2, so something must
+be done so that software can differentiate. This series splits the
+second reg property in two, with dedicated "control" and "bridge"
+entries so that either instance can be used.
 
-I see, this applies also to the same rb_check_pages() validation invoked
-from ring_buffer_read_finish().
+Cheers,
+Conor.
 
-> 
-> Instead, I would rather have something where we disable readers while we do
-> the check, and re-enable them.
-> 
-> 			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> 			cpu_buffer->read_disabled++;
-> 			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> 
-> // Also, don't put flags on a new line. We are allow to go 100 characters now.
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Krzysztof Wilczyński <kw@linux.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: linux-pci@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
 
-Noted.
+Conor Dooley (2):
+  dt-bindings: PCI: microchip,pcie-host: fix reg properties
+  PCI: microchip: rework reg region handing
 
-> 
-> 
->   			rb_check_pages(cpu_buffer);
-> 			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> 			cpu_buffer->read_disabled--;
-> 			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> 
-> Or something like that. Yes, that also requires creating a new
-> "read_disabled" field in the ring_buffer_per_cpu code.
+ .../bindings/pci/microchip,pcie-host.yaml     |  10 +-
+ drivers/pci/controller/pcie-microchip-host.c  | 159 +++++++++---------
+ 2 files changed, 83 insertions(+), 86 deletions(-)
 
-I think this would work but I'm personally not immediately sold on this
-approach. If I understand the idea correctly, readers should then check
-whether cpu_buffer->read_disabled is set and bail out with some error if
-that is the case. The rb_check_pages() function is only a self-check
-code and as such, I feel it doesn't justify disrupting readers with
-a new error condition and adding more complex locking.
+-- 
+2.43.2
 
-I've been considering how to approach this RT issue differently. One
-obvious approach would be to drop the rb_check_pages() validation but
-that is probably not desirable.
-
-Another option could be to make the check less thorough and walk only
-a part of the list which is bounded by some constant, typically one
-would want to check the part where some change was just made. In case of
-a smaller list, it should be still possible to traverse it completely.
-
-This is an idea that I'm currently looking at.
-
-> 
-> That said, I'm going to accept these patches as is (moving flags onto the
-> same line). But would like the above code for the next merge window as it
-> would then not affect RT.
-> 
-> I'll accept these patches because it does fix the bug now.
-
-Thanks,
-Petr
 
