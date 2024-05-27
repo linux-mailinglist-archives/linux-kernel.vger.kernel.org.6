@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-190643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDDBD8D00DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:02:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D208D00DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722281F21E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8280B1C23754
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392F615EFCE;
-	Mon, 27 May 2024 12:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF27315F3EE;
+	Mon, 27 May 2024 12:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BYiyBB3X"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=benyossef-com.20230601.gappssmtp.com header.i=@benyossef-com.20230601.gappssmtp.com header.b="Y8p3eWYK"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E3615EFBE;
-	Mon, 27 May 2024 12:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10C715F32D
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814678; cv=none; b=BI/hVZK3BqCb0wnPygEbAUODEBrj//6yIxCoqv4bWyR/Ht2fwHQaKgJzEe1fbf0T6AGdgjLfymX81oNHJs7MWFAVVN7RCAuCJqFV/wiorfG1j79+p7MPpuGplnNdpPg2QdnyJTE/aXB33gTK4QP9/zfXNZzMqHPRlBakpjqv/xk=
+	t=1716814702; cv=none; b=monVchV+Dwd5sihXSK1BRfwmzWDDr/Lmx/xsINWibV2Oe1LHtbcPffbfbdKqJU7tpbogAdMm9PG70wtgpUHQFXs8B1EBnNE7X6nfK0U8YCaiLXvFaR+9+1Y1IhApdLAJOrmTug+zn+Rs03MwX3estRBEcAhe7/8fEkNgi8FQxyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814678; c=relaxed/simple;
-	bh=8GCzunIMdlubOTXf0pyUHn8KPY2JZDD1cESnN8SAnis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxpEq9+pD+Vvv8J0BsDaSuUjY8F4cRa1A1fQX1AJdWDy/50DjjD8E0BFRA3g6KysSw/W1pNnLY85dBsB35NkTN9RQup986H8SqvQ7ESdatDq+ptozqEyx5jerM3t+2n+gcdUaV5CoFtZ9BQn+G3Kw45ZUNjNPJQXwGlQmZskniI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BYiyBB3X; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rMFfpqCc+bc4O8mDHjvAEFD1eHUpLSCJjFslGtJ4svo=; b=BYiyBB3X8G1QiZKbh5RNNixyhN
-	/txB0NYAWfPSURQCARY+CvzFQfrT9NuzVsc6O7U0HqVcm7UzH5eeQa7BX0hQknfK1GBb//KsRn9Fl
-	I9q7M2N2KzZq/dv9EwvUhztgslecsFMmh69szcGzBA6ttSYVdu/OUF+hj/uHYrH5cvWhwKs7TYLke
-	3ztvLiZZVLuW8GeZfFpX7xYGM0faF2NtfNL/6U4Pr3Ncib88OQC7uA86dF8Om4ZBHGvhFcUxtqMRL
-	lWMyKoi5fgnxHG4p2Mf6qtHUsw1ksvbHxm1CrbiFAxIpsnEMzU0AmZCPEU/SVtk7kAiK70l0PPZkb
-	w66XC4Bw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37854)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBZuz-0003Wh-1b;
-	Mon, 27 May 2024 13:57:37 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBZv0-0002Kk-8F; Mon, 27 May 2024 13:57:38 +0100
-Date: Mon, 27 May 2024 13:57:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
-Cc: Ron Economos <re@w6rz.net>, Guenter Roeck <linux@roeck-us.net>,
-	regressions@lists.linux.dev, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
-Message-ID: <ZlSDQssA9I4LRjwM@shell.armlinux.org.uk>
-References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
- <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
+	s=arc-20240116; t=1716814702; c=relaxed/simple;
+	bh=bmcvhdZmrh6MM9mLmNF5LoiL7grdt8YdrHMavfQCy6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EaTPOQzxgq60NuOmerZXeIl12tBpXbirGlcabVE9qojcwTRFJ4ud+iU/Ed0UcvhY3ou8Gr3y5XhflH9Odoal7rKfssVFk+Uryu3bWSHn3drYgu88WgCBE8wUUhXsBaqhbD3KE/nZ4xCXMtI/s67hTzIETcmOxlBkuzb9Y/h7das=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com; spf=none smtp.mailfrom=benyossef.com; dkim=pass (2048-bit key) header.d=benyossef-com.20230601.gappssmtp.com header.i=@benyossef-com.20230601.gappssmtp.com header.b=Y8p3eWYK; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=benyossef.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-68194ee2174so2406388a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20230601.gappssmtp.com; s=20230601; t=1716814700; x=1717419500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xvZlf59fa//TZ0XsXvjA+byhSo5nv4PsjI3fiaMAaLI=;
+        b=Y8p3eWYKEJmljk5COSiuAZvkvorZeAUf2+Ny7bS3Z0ok+UjGxmGqonx9PJ5CQjoHhw
+         GEd1ssy31/p4rh272GyRHfdZa0pwosPZF7l3drvKi6RzGtPI9A/CNbuakXPk3f38X2oP
+         xsPAMov2TNGKUb2af+eEKQYPNrGtGFeQfHNleci5VcGiVrxdNJGaGSLMHz02VBI1uT8k
+         hvRfS5g+GwonDUiJjvzkU0PwF4+DwsQEa/7hdJPR+4jiPNGFhJbhtBGsUNQgWbKbhWhK
+         2PZqkF9ADuDxmBt9LMFSeQNYUqkLkDVR6AcLxMnrFWC1A/T/ql52uFaj1+8WfJ9tQIIy
+         wdGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716814700; x=1717419500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xvZlf59fa//TZ0XsXvjA+byhSo5nv4PsjI3fiaMAaLI=;
+        b=cfSRr1QN4pJiAjjB95bPAqk3Y2bmi42b/GbMrjuGT/iN/kvRgrPSElAImdJsbEX8ew
+         DFimWkOiwnE0cWSz8ZfltEbit3hzhCyl3GgmtGeTeOFfFFnh8ZMegRvX/SmxxInv9EI1
+         I7y8hVa9U3PDBiG+bOeKTofZ9HUWd7HxCYimVJ+oAGbJamxQriVf5zgduPc1qfKNRA/7
+         GS/fqUFkUy+z4UGbjdOqq00mwGe6R+AOqhy7f+1j7ey3DQIlfLMqfjAdQjyXLH2ZDLhp
+         cSoIuQOrG4ap54GYYaBzKTPCrbJt5I10UXyaoIQ2FilxB1BI6tIEGFOLxA6ljYGCab3m
+         fKsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVBArtVhThQdXFuX4QjsK+oK9GDsjhuRoLXYMxY+u56Jn5nAf26rAodsJ2tl/vVFe1bbC7cWu+lPhnS8IgSxY16XrkL7siXO2PbFMK
+X-Gm-Message-State: AOJu0YxVmf+/ongVsiNWxBwNKfUKSNBaa2YWVjQm/HKIQSCtVxpraCHx
+	Aq9pyzwCZ9ehxtLg7JvleQNdrNn21cWNCgQZCB0J+QGwbA+B0Ky8Ao01NqCbOPy3m2Si9wUQyn2
+	/7p0UGJcpg50mm5PFr6lapFkbymdf1s36Lti3TCJeQVTTV+4X1wfzeg==
+X-Google-Smtp-Source: AGHT+IHHyXhyOmyn8cD3PRL1zxRgm+vpW39GdI4a6ARMcYXrO5Tarx7P0yZjgP8sagG7trFpkjvT6O1DxX7Ia+kJMYM=
+X-Received: by 2002:a05:6a21:7895:b0:1b1:ebf3:7a4e with SMTP id
+ adf61e73a8af0-1b212d0f9f4mr11200573637.25.1716814700097; Mon, 27 May 2024
+ 05:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240511145200.226295-1-linux@treblig.org>
+In-Reply-To: <20240511145200.226295-1-linux@treblig.org>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Mon, 27 May 2024 15:58:09 +0300
+Message-ID: <CAOtvUMfYbNZ2G7-qkO8PFX5shdZmYvAQa6Uy4XbdvxsmKnDttQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: Remove unused struct 'tdes_keys'
+To: linux@treblig.org
+Cc: herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 01:16:06PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 27.05.24 12:45, Ron Economos wrote:
-> > On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
-> >>
-> >> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
-> >> > Report an error when an attempt to register a clkdev entry results in a
-> >> > truncated string so the problem can be easily spotted.
-> >> >
-> >> > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
-> >> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> >> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> >>
-> >> With this patch in the mainline kernel, I get
-> >> [...]
-> >> when trying to boot sifive_u in qemu.
-> >>
-> >> Apparently, "10000000.clock-controller" is too long. Any suggestion on
-> >> how to solve the problem ? I guess using dev_name(dev) as dev_id
-> > parameter
-> >> for clk_hw_register_clkdev() is not or no longer a good idea.
-> >> What else should be used instead ?
-> > 
-> > This issue causes a complete boot failure on real hardware (SiFive
-> > Unmatched).
-> 
-> Hmmm. That and because nobody afaics has time/motivation to fix this
-> anytime soon (or am I mistaken there?) makes me wonder if we should
-> revert this change for now (and remerge it later once the problem this
-> change exposed was fixed). Or is another solution in sight somewhere?
+Hi David,
 
-I'm sorry, but clearly I should tell my employer that I can't do work
-for them because there's been a mainline kernel regression, and of
-course I should be working on this bank holiday Monday...
+On Sat, May 11, 2024 at 5:52=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> 'tdes_keys' appears unused.
+> Remove it.
+>
 
-No, please wait a bit longer.
+Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thank you for the patch and your patience.
+
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/crypto/ccree/cc_cipher.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>
+> diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_c=
+ipher.c
+> index cd66a580e8b64..3fb667a17bbb1 100644
+> --- a/drivers/crypto/ccree/cc_cipher.c
+> +++ b/drivers/crypto/ccree/cc_cipher.c
+> @@ -261,12 +261,6 @@ static void cc_cipher_exit(struct crypto_tfm *tfm)
+>         kfree_sensitive(ctx_p->user.key);
+>  }
+>
+> -struct tdes_keys {
+> -       u8      key1[DES_KEY_SIZE];
+> -       u8      key2[DES_KEY_SIZE];
+> -       u8      key3[DES_KEY_SIZE];
+> -};
+> -
+>  static enum cc_hw_crypto_key cc_slot_to_hw_key(u8 slot_num)
+>  {
+>         switch (slot_num) {
+> --
+> 2.45.0
+>
+
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
 
