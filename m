@@ -1,291 +1,185 @@
-Return-Path: <linux-kernel+bounces-190333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E2D8CFD01
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B17948CFD04
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17431C21943
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D518D1C21D42
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3542B13AA2E;
-	Mon, 27 May 2024 09:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787613A407;
+	Mon, 27 May 2024 09:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cnWHzCsE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KSC/C42I"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4613A26E;
-	Mon, 27 May 2024 09:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802451; cv=none; b=cfiqhgNSmgvV82Q4hhT1REDE4kIUQCQtMXm99ZRszv0JTprIqvK5EnqNP3ASB+A0sYxDzE5Sh++L7TCj2iREtU5//aC1/QgAlJm/lL7REwQVRiJlWE5+xfGAhy8A95fvbPbMacPGNodC5IMmfgCP7N2nMvEz/uvgRyfOJ0L+Oxg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802451; c=relaxed/simple;
-	bh=E+EoT7O1nqssyNDflC3jIs91HYNjVo4Y6XoiJ0luzsQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oBRP/6NSkBQA+bpGcYAlRFhWDRhHjhKgRcezS4icngtVDthSBB/2KI5UwFZzLcPTtUHtueDkKq9SdYLmE2LIVr0nj5GsuXveaOYrPol4w1/NtbtsMQIP6+H8q7AXeRIZh1gNMagNXQy7Uq+pUQaXtKfsxQyxL3WyMpNTa2MvNTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.png.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cnWHzCsE; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.png.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716802450; x=1748338450;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E+EoT7O1nqssyNDflC3jIs91HYNjVo4Y6XoiJ0luzsQ=;
-  b=cnWHzCsErQJtIH/ToxqAclEHis46jAtieQgUxzCWK+Kgh0FAQ/7kG24G
-   ODCkXbi+Fe8VRYp2Tv6+agS+EhM/0TEJdFmKzosx5cuQof4YxyMvt8s4B
-   FfBHTSevwQ3ph8aAg1DBBBUmTu5xtPo3QBMX7cs0LkLn+CH4MVXaBteix
-   P+RECiI1TRydl8UXvGIRDVpzARghmHsi8DB4h9z8uNQ3Cx0/GDaNWrW4u
-   UET1uzuOiDpfuwn03RPSo7+mEANt10oYw17uPeSRBiZF9R3eh79arbcyq
-   GNN2EcP1tBzZvnHitszpnkiZVVsP6vkwEJxy87qWId1oUjQd9Y1xO0AHd
-   w==;
-X-CSE-ConnectionGUID: 6bFAmk0OSTya1wIDjRSa4w==
-X-CSE-MsgGUID: PuXydhQvQgqQK65xf2CHcw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="12933283"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="12933283"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 02:34:09 -0700
-X-CSE-ConnectionGUID: XqWhXrEDSTiplvGlUD+vlA==
-X-CSE-MsgGUID: C+tsYZsyRba24MqYtp41Fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="35193445"
-Received: from pglmail07.png.intel.com ([10.126.73.9])
-  by orviesa006.jf.intel.com with ESMTP; 27 May 2024 02:34:06 -0700
-Received: from pglc00465.png.intel.com (pglc00465.png.intel.com [10.221.239.148])
-	by pglmail07.png.intel.com (Postfix) with ESMTP id 9B85616426;
-	Mon, 27 May 2024 17:34:04 +0800 (+08)
-Received: by pglc00465.png.intel.com (Postfix, from userid 11742525)
-	id 9936160568E; Mon, 27 May 2024 17:34:04 +0800 (+08)
-From: Boon Khai Ng <boon.khai.ng@intel.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Tien Sung Ang <tien.sung.ang@intel.com>,
-	G Thomas Rohan <rohan.g.thomas@intel.com>,
-	Looi Hong Aun <hong.aun.looi@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Cc: Boon Khai Ng <boon.khai.ng@intel.com>
-Subject: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net: stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
-Date: Mon, 27 May 2024 17:33:39 +0800
-Message-Id: <20240527093339.30883-2-boon.khai.ng@intel.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240527093339.30883-1-boon.khai.ng@intel.com>
-References: <20240527093339.30883-1-boon.khai.ng@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923D513A3FE;
+	Mon, 27 May 2024 09:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716802470; cv=fail; b=udjrFIwd06RxDcbBasbpq/esxsUyrONqBbkcLqewuNtpN3/nK8EaLFZb/1DgZDVrnMZGyX955KRUkCr/JiwNKhUK0I0QsgjQ+EfQM5RMLjjhxLowgT1f+w18Gvo7N6JpxR4gEW3Cl0wCXkgeAdFAZMZqN4t3sx0yfv9yjFuvO0M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716802470; c=relaxed/simple;
+	bh=cLUvMN9C5cb237NWsWPhvxV1dGdR+kG/hwqdqy57ekM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FBdTMjYt+p8Yhg7l4elaICRlaaJsSwc0G61ZK9VVhqCk+ILBd4CZAnnhD0mo0e2SDOTFW6DrAVLA3jDn7PfTU574r2Iwtv8VwgLTyU1K8buVFEdEdBP7yC/DEgQgpvuti8hRmlqbgdPt+ifNly7n44GGMYw6V1n/2sxS5Dooo8s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KSC/C42I; arc=fail smtp.client-ip=40.107.237.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RxFExEDRvqhhB50IRTEy3HvFBYyvVB+zninv/rOIUBKFEHg32uw4dhMspB4DsMRKY3soKr3JdZ79hXpFRluB+QIwCSGCOc21CzNa6dwLivJmugH4ZohDQYqsBoRCE6qM0nLqM5w6X47I94GQe2cmFJVpxRgNxNXTk71DiRNsVCJIHqjtPLDMMzVTgQwahQ6UXwFwcNPA1VMouh6nZU7WJBOeG2alqONWC/UD+rV1CeVkSazJhz+q1qHNi0Vzp7vOYoFsLTD1QCFDIjJ5HQ6DJoQBgNpM/zlZbx6igURPx0GtBvLQBiOBSeSXzgitx/muTq0CA+OhCrZ97huoLOQokw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8jDmP8/zJcCqWuI2MFC6XZKPi1W2Resil/Di9/ztmqM=;
+ b=Lcsg58EeZTocjoD3QSVttPu1/iKoEOdYm4EKJxqBfQmelmOafYbB7jST1Xn2rAI5XbwHF1NaimdjkHwuyZyfMlDLwr9n0r2Sa3I8/I2O8AHOICSP0gE5jwIuIsDeshqUOAjdgcybojTRqEibNjbshsZYnHwMOODquzJiLzH6NonMO735kQQgWynJPZiGMtSuScJJxIjJOnjevwQkw/x2xTkik3ieod2NfMulQh5F3bi7FOUQv2tceH6qpuQZwXykP4U5h/4FTI9s4Q/lfuy13JeE4/GmaFmvfO2tRIC3jkwE+hgWBbWhZA7i3FKH0/zTU7LcPOXl0zGqKm3O+V1Plg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8jDmP8/zJcCqWuI2MFC6XZKPi1W2Resil/Di9/ztmqM=;
+ b=KSC/C42IMN9Tu2fuA02q/Ji1IETo79mIqQaQHxHrJwj4xpBEuGu6ySkogZqxwoXl0cx+3pVVWJY4wFCL2uICnYfvrpyKHUYCCSowef2QBQ35fHnGj2SwfOwTDgYUjMHmucItUChBtbee9ycjrcfKjtZPqEg/iPuP1Djturvrk3o=
+Received: from SA1P222CA0092.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::12)
+ by PH7PR12MB8014.namprd12.prod.outlook.com (2603:10b6:510:27c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.21; Mon, 27 May
+ 2024 09:34:23 +0000
+Received: from SA2PEPF00003F62.namprd04.prod.outlook.com
+ (2603:10b6:806:35e:cafe::2) by SA1P222CA0092.outlook.office365.com
+ (2603:10b6:806:35e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29 via Frontend
+ Transport; Mon, 27 May 2024 09:34:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003F62.mail.protection.outlook.com (10.167.248.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Mon, 27 May 2024 09:34:23 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 27 May
+ 2024 04:34:21 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh@kernel.org>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, "moderated list:ARM/ZYNQ ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 00/12] arm64: zynqmp: Update description for Kria
+Date: Mon, 27 May 2024 11:34:06 +0200
+Message-ID: <cover.1716802450.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1464; i=michal.simek@amd.com; h=from:subject:message-id; bh=cLUvMN9C5cb237NWsWPhvxV1dGdR+kG/hwqdqy57ekM=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhrSQ4MnL1x7LU7j/6ven5eorpUuWXn/Qq3AupTP3Tvk/j i9Sr0XdOmJZGASZGGTFFFmkba6c2Vs5Y4rwxcNyMHNYmUCGMHBxCsBEElQZ5mdyXUqOY4wrbGcU PB78vX1Gdy9XCMOCli3vHdXZzhbdXD4v++FV21f306tTAA==
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F62:EE_|PH7PR12MB8014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76ba902f-dbf9-4a15-1a00-08dc7e30316a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|1800799015|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u484joR54hpVZdH0FW5rd5upefMdjBZmq2MYOEISpIA206rvQjXE0t4RcP41?=
+ =?us-ascii?Q?LinZGIIwTvjsDU2fCqyXnywUPih7mC5Myyfg6uMRo8ujSUjM4Zk/lsc6aBcR?=
+ =?us-ascii?Q?SVYnVybrLNjrTYAswDLI65xojgF+LiD1yelzatEXo7AZpX8J1G8AXg2hFUdP?=
+ =?us-ascii?Q?8rt/O6d5pxpMhlSqDQ+4sxQcuJVHPS1vHLv98j8BCZAw68MkEpyoMWlm3E9J?=
+ =?us-ascii?Q?GfVxJ6cIg+fgAOTLLd+l2pVhhy6nLb0qCzDNAPJpq5pWGTIE1IYYuXY3mk4e?=
+ =?us-ascii?Q?VkpzZizPO0fOZvIN5qZffZOP4FIF/7xovyE4lsft1b0jt+26cxJm1o9uCmCf?=
+ =?us-ascii?Q?w/hbAYlA2cNj+zjGA8gVFkc01ExLT2pai8EZ5Xb3D5BFn64BQEi3mec6BlN8?=
+ =?us-ascii?Q?8hnGdJeKJ8uiOgQe8E/A13+knynGB0alwowxr4B4DyfwRz8LvyQj7jGCZEuO?=
+ =?us-ascii?Q?x7nDz+bgFpwtTmSVorrXTzB3dXIl8eT67z9C1z65hLXog5Udq57G97I1zIRs?=
+ =?us-ascii?Q?t23vzCwRSjCduCzFzioh0YL0DZ62+V5xXlZ4QTNVr9HiBbijoXFQiVnpbqWw?=
+ =?us-ascii?Q?EjzEWCzZyWpLw6Kpkk/zEsgfcQIQ6Uss6gS4g93ttTrw8hb4YoHhUVBOU29U?=
+ =?us-ascii?Q?A6q6CyTq1Q6XZo5rssGRgLyI39A0NsCfYsbpU53Sh6VI+sGlYg4pBHW9SoOn?=
+ =?us-ascii?Q?TDG51HH6YUWRPodFoCGmTyRHCQuOG9S/QhykxDA35OmNEz0EPbucrhaailaJ?=
+ =?us-ascii?Q?QTH2FAcauBASVYhDmX6tG1CTYqhx5jN3fGDY0hcyCrBiZcmu6t2tmSkFLDd7?=
+ =?us-ascii?Q?sfledO6t2LiIwIlwlnAG7gkpbUDUmEHKdozyo/rW2/AVwDsYnTXw3agylgbb?=
+ =?us-ascii?Q?ooIv9fyCAlu+tQANG42cphexR/Hro7li5czSo01NQmKQA88n8N37PuUObtn8?=
+ =?us-ascii?Q?n5nt2Mxn+LKCyB++dvec/iOa5ZMv1MyIxRK5AYrXuljInkzAlBBsnmC/LHiE?=
+ =?us-ascii?Q?QTY5ays5Z1rWqxqvaabRFyNsMvM/YG9Qi6QX6NkNlLi16ZxGwesMFjUM45r6?=
+ =?us-ascii?Q?3zOuMU9rPekkYsJ1bL5JjzAAEWhbrzWVKcV90dpou/cdvVYQrjH4tPH5iDSv?=
+ =?us-ascii?Q?KiWdGAvfdKWQ7lkH2FMK8aw2YZ3saWTG9F0Iay0YYn6h22mmEc4DLPev/Plg?=
+ =?us-ascii?Q?4TryDqyMo9C5A69MTqvSFANjPOyK7egUNkbbGP+5q2MamPkQwd0bpIparVih?=
+ =?us-ascii?Q?7bB19AqXKHiZU2ziuGtp+TUp/PGHym67k9HBddQLMkcM2+nW7zLO9tvK6M58?=
+ =?us-ascii?Q?hPn1lHdJvQRuiJXCJRQWkzA9eZCgwgOJkF0zwyxS3TN79e6T1uWITzSs8rx0?=
+ =?us-ascii?Q?p04P/uwqg3sCA5dqtM5b2aS3klC6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 09:34:23.1709
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76ba902f-dbf9-4a15-1a00-08dc7e30316a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F62.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8014
 
-Currently, VLAN tag stripping is done by software driver in
-stmmac_rx_vlan() for dwxgmac2 driver. This patch is to Add support
-for VLAN tag stripping by the MAC hardware and MAC drivers to support it.
-This is done by adding rx_hw_vlan() and set_hw_vlan_mode() callbacks
-at stmmac_ops struct which are called from upper software layer.
+Hi,
 
-The setting can be turn on and off at ethool by running the command
-below:
-ethtool -k eth0 rx-vlan-offload on
-ethtool -k eth0 rx-vlan-offload off
+over last couple of months dt bindings have been updated but dtbs didn't
+reflect it that's why I have created this series to match description used
+in U-Boot to be able to switch to OF_UPSTREAM for ZynqMP platforms.
+There are still small missing part regarding usb peer hub and MTD layouts
+for other boards.
+The rest should be in sync already.
 
-Hence for XGMAC IP, it is supported with the hardware stripping and
-the flag NETIF_F_HW_VLAN_CTAG_RX is used to
-determine that the hardware stripping feature is selected.
+Thanks,
+Michal
 
-This implementation was ported from the dwmac4 driver.
 
-Signed-off-by: Boon Khai Ng <boon.khai.ng@intel.com>
----
- .../net/ethernet/stmicro/stmmac/dwxgmac2.h    | 28 +++++++++++++++
- .../ethernet/stmicro/stmmac/dwxgmac2_core.c   | 34 +++++++++++++++++++
- .../ethernet/stmicro/stmmac/dwxgmac2_descs.c  | 18 ++++++++++
- 3 files changed, 80 insertions(+)
+Michal Simek (9):
+  arm64: zynqmp: Align nvmem node with dt schema
+  arm64: zynqmp: Use fpga-region as node name
+  arm64: zynqmp: Add missing description for efuses
+  arm64: zynqmp: Describe USB wakeup interrupt
+  arm64: zynqmp: Describe OCM controller
+  arm64: zynqmp: Remove address/size-cells from ams node
+  arm64: zynqmp: Add compatible string for kv260
+  arm64: zynqmp: Add description for ina260 on kv260
+  arm64: zynqmp: Add support for K26 rev2 boards
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index 6a2c7d22df1e..05b0f210ad90 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -7,6 +7,7 @@
- #ifndef __STMMAC_DWXGMAC2_H__
- #define __STMMAC_DWXGMAC2_H__
- 
-+#include <linux/bitfield.h>
- #include "common.h"
- 
- /* Misc */
-@@ -455,6 +456,7 @@
- #define XGMAC_TDES2_VTIR		GENMASK(15, 14)
- #define XGMAC_TDES2_VTIR_SHIFT		14
- #define XGMAC_TDES2_B1L			GENMASK(13, 0)
-+#define XGMAC_TDES2_VLAN_TAG_MASK	GENMASK(15, 14)
- #define XGMAC_TDES3_OWN			BIT(31)
- #define XGMAC_TDES3_CTXT		BIT(30)
- #define XGMAC_TDES3_FD			BIT(29)
-@@ -486,6 +488,7 @@
- #define XGMAC_RDES3_RSV			BIT(26)
- #define XGMAC_RDES3_L34T		GENMASK(23, 20)
- #define XGMAC_RDES3_L34T_SHIFT		20
-+#define XGMAC_RDES3_ET_LT		GENMASK(19, 16)
- #define XGMAC_L34T_IP4TCP		0x1
- #define XGMAC_L34T_IP4UDP		0x2
- #define XGMAC_L34T_IP6TCP		0x9
-@@ -495,4 +498,29 @@
- #define XGMAC_RDES3_TSD			BIT(6)
- #define XGMAC_RDES3_TSA			BIT(4)
- 
-+/* RDES0 (write back format) */
-+#define XGMAC_RDES0_VLAN_TAG_MASK	GENMASK(15, 0)
-+
-+/* MAC VLAN Tag Control */
-+#define XGMAC_VLAN_TAG_CTRL_OB		BIT(0)
-+#define XGMAC_VLAN_TAG_CTRL_CT		BIT(1)
-+#define XGMAC_VLAN_TAG_CTRL_OFS_MASK	GENMASK(6, 2)
-+#define XGMAC_VLAN_TAG_CTRL_OFS_SHIFT	2
-+#define XGMAC_VLAN_TAG_CTRL_EVLS_MASK	GENMASK(22, 21)
-+#define XGMAC_VLAN_TAG_CTRL_EVLS_SHIFT	21
-+#define XGMAC_VLAN_TAG_CTRL_EVLRXS	BIT(24)
-+
-+#define XGMAC_VLAN_TAG_STRIP_NONE	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x0)
-+#define XGMAC_VLAN_TAG_STRIP_PASS	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x1)
-+#define XGMAC_VLAN_TAG_STRIP_FAIL	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x2)
-+#define XGMAC_VLAN_TAG_STRIP_ALL	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x3)
-+
-+/* Error Type or L2 Type(ET/LT) Field Number */
-+#define XGMAC_ET_LT_VLAN_STAG		8
-+#define XGMAC_ET_LT_VLAN_CTAG		9
-+#define XGMAC_ET_LT_DVLAN_CTAG_CTAG	10
-+#define XGMAC_ET_LT_DVLAN_STAG_STAG	11
-+#define XGMAC_ET_LT_DVLAN_CTAG_STAG	12
-+#define XGMAC_ET_LT_DVLAN_STAG_CTAG	13
-+
- #endif /* __STMMAC_DWXGMAC2_H__ */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-index f8e7775bb633..2870ee3d7104 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/bitrev.h>
- #include <linux/crc32.h>
-+#include <linux/if_vlan.h>
- #include <linux/iopoll.h>
- #include "stmmac.h"
- #include "stmmac_ptp.h"
-@@ -1301,6 +1302,35 @@ static void dwxgmac2_sarc_configure(void __iomem *ioaddr, int val)
- 	writel(value, ioaddr + XGMAC_TX_CONFIG);
- }
- 
-+static void dwxgmac2_rx_hw_vlan(struct mac_device_info *hw,
-+				struct dma_desc *rx_desc, struct sk_buff *skb)
-+{
-+	if (hw->desc->get_rx_vlan_valid(rx_desc)) {
-+		u16 vid = hw->desc->get_rx_vlan_tci(rx_desc);
-+
-+		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
-+	}
-+}
-+
-+static void dwxgmac2_set_hw_vlan_mode(struct mac_device_info *hw)
-+{
-+	void __iomem *ioaddr = hw->pcsr;
-+	u32 val = readl(ioaddr + XGMAC_VLAN_TAG);
-+
-+	val &= ~XGMAC_VLAN_TAG_CTRL_EVLS_MASK;
-+
-+	if (hw->hw_vlan_en)
-+		/* Always strip VLAN on Receive */
-+		val |= XGMAC_VLAN_TAG_STRIP_ALL;
-+	else
-+		/* Do not strip VLAN on Receive */
-+		val |= XGMAC_VLAN_TAG_STRIP_NONE;
-+
-+	/* Enable outer VLAN Tag in Rx DMA descriptro */
-+	val |= XGMAC_VLAN_TAG_CTRL_EVLRXS;
-+	writel(val, ioaddr + XGMAC_VLAN_TAG);
-+}
-+
- static void dwxgmac2_enable_vlan(struct mac_device_info *hw, u32 type)
- {
- 	void __iomem *ioaddr = hw->pcsr;
-@@ -1574,6 +1604,8 @@ const struct stmmac_ops dwxgmac210_ops = {
- 	.config_l4_filter = dwxgmac2_config_l4_filter,
- 	.set_arp_offload = dwxgmac2_set_arp_offload,
- 	.fpe_configure = dwxgmac3_fpe_configure,
-+	.rx_hw_vlan = dwxgmac2_rx_hw_vlan,
-+	.set_hw_vlan_mode = dwxgmac2_set_hw_vlan_mode,
- };
- 
- static void dwxlgmac2_rx_queue_enable(struct mac_device_info *hw, u8 mode,
-@@ -1634,6 +1666,8 @@ const struct stmmac_ops dwxlgmac2_ops = {
- 	.config_l4_filter = dwxgmac2_config_l4_filter,
- 	.set_arp_offload = dwxgmac2_set_arp_offload,
- 	.fpe_configure = dwxgmac3_fpe_configure,
-+	.rx_hw_vlan = dwxgmac2_rx_hw_vlan,
-+	.set_hw_vlan_mode = dwxgmac2_set_hw_vlan_mode,
- };
- 
- int dwxgmac2_setup(struct stmmac_priv *priv)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-index fc82862a612c..284c0c840ed1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-@@ -4,6 +4,7 @@
-  * stmmac XGMAC support.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/stmmac.h>
- #include "common.h"
- #include "dwxgmac2.h"
-@@ -67,6 +68,21 @@ static int dwxgmac2_get_tx_ls(struct dma_desc *p)
- 	return (le32_to_cpu(p->des3) & XGMAC_RDES3_LD) > 0;
- }
- 
-+static inline u16 dwxgmac2_wrback_get_rx_vlan_tci(struct dma_desc *p)
-+{
-+	return le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK;
-+}
-+
-+static inline bool dwxgmac2_wrback_get_rx_vlan_valid(struct dma_desc *p)
-+{
-+	u32 et_lt;
-+
-+	et_lt = FIELD_GET(XGMAC_RDES3_ET_LT, le32_to_cpu(p->des3));
-+
-+	return et_lt >= XGMAC_ET_LT_VLAN_STAG &&
-+	       et_lt <= XGMAC_ET_LT_DVLAN_STAG_CTAG;
-+}
-+
- static int dwxgmac2_get_rx_frame_len(struct dma_desc *p, int rx_coe)
- {
- 	return (le32_to_cpu(p->des3) & XGMAC_RDES3_PL);
-@@ -349,6 +365,8 @@ const struct stmmac_desc_ops dwxgmac210_desc_ops = {
- 	.set_tx_owner = dwxgmac2_set_tx_owner,
- 	.set_rx_owner = dwxgmac2_set_rx_owner,
- 	.get_tx_ls = dwxgmac2_get_tx_ls,
-+	.get_rx_vlan_tci = dwxgmac2_wrback_get_rx_vlan_tci,
-+	.get_rx_vlan_valid = dwxgmac2_wrback_get_rx_vlan_valid,
- 	.get_rx_frame_len = dwxgmac2_get_rx_frame_len,
- 	.enable_tx_timestamp = dwxgmac2_enable_tx_timestamp,
- 	.get_tx_timestamp_status = dwxgmac2_get_tx_timestamp_status,
+Tejas Bhumkar (1):
+  arm64: zynqmp: Disable Tri-state for SDIO
+
+Vishal Patel (1):
+  arm64: zynqmp: Add pwm-fan node and fix ttc0 pwm-cells property
+
+Vishal Sagar (1):
+  arm64: zynqmp: Describe DisplayPort connector for Kria
+
+ .../boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso | 19 +++-
+ .../boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso | 41 ++++++++-
+ .../boot/dts/xilinx/zynqmp-sm-k26-revA.dts    | 19 +++-
+ .../boot/dts/xilinx/zynqmp-smk-k26-revA.dts   |  8 +-
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi        | 91 ++++++++++++++++---
+ 5 files changed, 156 insertions(+), 22 deletions(-)
+
 -- 
-2.35.3
+2.40.1
 
 
