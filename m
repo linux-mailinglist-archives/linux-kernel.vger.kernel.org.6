@@ -1,134 +1,166 @@
-Return-Path: <linux-kernel+bounces-191011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8DE8D0576
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:11:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0766E8D0575
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855641F25F91
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA0829196D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB8C16E874;
-	Mon, 27 May 2024 14:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02311168C2F;
+	Mon, 27 May 2024 14:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NfNVC+FZ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFFFZ4+W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572E716E868
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DFF1667F9;
+	Mon, 27 May 2024 14:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821385; cv=none; b=sia660GoSGP2nMBlNqC1/XyjhiEO5pZlK+xuK4RjgF9INbSjb2v0OJBUk5BM1PTo1RnKioJoQhgwbxqDyxVg2paRuOTOKY2lpAUeJkN+gi+MVCNmPwnZynL5cNkIEd0u2v/yjeCABRyeMsWH96uIh8c1UwyiQ0GZ30lWZAWxCEg=
+	t=1716821380; cv=none; b=fI5XeJ24iD8TP7jO7ZtFLyNmVF06DRjpUxXumh9njjZKTwjKX0cZUcIi9SN1lWmJCiOotm1IkZtA/AtAuKwGpEA5npRauJSa2fpvaCBHMwZYWegw/Ekq9Uvkz5757eSalq7X0Rqo6n+dGQ5WZjCTYZT22czZ4k2EeqroElZrXKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821385; c=relaxed/simple;
-	bh=fc/uxhHDXm84M3D2c5Iq6LLxGzTCjb70qlqhCxwJ2qY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mow0oQI9VZE0WMt1AajZZWwbnfH8GfYKCvvkUXy9hQw+qh9Xvg4ApGc05p3qQnZfYJgB7Bckidyylmkf+JvL/PqSoq3EQWMKsgjkzjVKCDMD8BFG12y/Wp+NBlqK3oadt8E5YFBNV+UcrlZQzgTlMEErE5NSLNcxZU+GaPYmh5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NfNVC+FZ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so90157471fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716821382; x=1717426182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lg2MB52lHo3rAL36XsBKver+ioxYN/8YtGYwXUC5DuI=;
-        b=NfNVC+FZyWud1GfNTCx9/GY16r2/ae/16nsWEiX6KLrwsN3GGdN632YDixQ74d5M4g
-         gYw8Ss9i0rp4M99y46SCJYGnAnOEkZppQnWgCq3B5AnSHTOnzWaBJdBnLwWB/DluG1p1
-         AAEWG2L14YQVDpvhDbpOkUk5pQ7ofSageaLdlPmUfbVMSHbBTKokq0S1Gc+ZfGOjMd8T
-         MrhQ/6HTaLW65x10l6Ybb3W2vWiIc4C7a/CXYber6O4f9Cdq19FoVahSHB9V0iBwQm4e
-         sj9KMsBDAFxhjh/tNa6En2+DMvMPKL4klsR4/6zKgMjzTJ5Quuch6yz8YPw0oN9a9uC8
-         3Xfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821382; x=1717426182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lg2MB52lHo3rAL36XsBKver+ioxYN/8YtGYwXUC5DuI=;
-        b=InqlTbXOf2G5UsV913HJ9jdqvDbj1IKkHvsPVpkPv039+NZEpVNit79LSLjHMBK+2v
-         HyjxQZK9eb5AZ7BVNTq4hpgAuLUfTaaR0xrSFfepm1nPal26/pj16QIM5K2mkAaLb4y5
-         W2EwvuQYDKVvDQ0+jJHo/4LTY6l7taMNvY5RVpTmMNtS4cf+yTldI+sxXeS2rs8rvxOX
-         Gk/Ojs09aelU8LMIqoxeYYwTiJ7PHupmS3hGBiCHGGBTDqXfhefRfKKKu8D094BmzHIt
-         kcnE0pZ4OejDConkgdjqYkv+556zj9DDgC7iw1Z5oeyJIN7fnQ3ou3zOs/J/TVPixgx7
-         v0cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzgoXOOLzpWhrhumVd7fw91TOnIhabIDVEhMm/B5nZcSkbvsRoOd2jzDhSDl2cr5/CRvq47xOU7VKVEa+/5b2RReL7JzyyBmsjft8b
-X-Gm-Message-State: AOJu0YzoB9xdXxbT5jYv6bjGXmJqAn6oOy/ASlSaj34bCRrcSgNaWSx2
-	dgpg0KqDAkV4h/5HfmsvRs8uLiX4Ju4tF8HS/IS7jZ62Q1LkQXF21YcfaVsM77BHFnoADtxQPvN
-	sKiX3dy2Ips/WulzL8NVvAl6lpZ0Mq5vZEOvScg==
-X-Google-Smtp-Source: AGHT+IFKkP8nzOgR0zKG6YNm+x1e+OAEIUK14Lm/bCi5EfHeBTR8QctSGLB9f75TwyqyIBr6Xr8CVJKTRpbOvcalGgo=
-X-Received: by 2002:a2e:9591:0:b0:2e9:4b33:dd04 with SMTP id
- 38308e7fff4ca-2e95b0bce53mr57808231fa.1.1716821382395; Mon, 27 May 2024
- 07:49:42 -0700 (PDT)
+	s=arc-20240116; t=1716821380; c=relaxed/simple;
+	bh=V01owRMSGbHKVTfD/05++xO+/+N+LoOPgcGpNbPVVTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+7pNgFZWtf3G6L5v8eyW3jQwQ7Ybg5zEfoKbZfXxo7Amu5VkfWq1RvxVC+aMf4Pu6k+aKi1Kg3Tv4j5hw4nHswktbAvEp4kOSnsYd/jCCWGkVE7vrGuFjNZkT7Fe/5UsFRXVzD2syBIMPuCnn5N7RRAFOnitFi2ty1r7LPJAuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFFFZ4+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F363C2BBFC;
+	Mon, 27 May 2024 14:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716821379;
+	bh=V01owRMSGbHKVTfD/05++xO+/+N+LoOPgcGpNbPVVTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AFFFZ4+WujWysxWSi5yYd48hLJqvS5Zkqp0ltgJid34S7kCqpHYvJifRk2u2PQCrh
+	 sObJ0mWRk1/RULHOsmrwmrbsI2dNkdCCDafqyK+xA8xELQPOEdtrxUAahAEKwqBqa3
+	 sVozQoJfXAwI/02Scb8h9vIPbEvGwGxlN5mCTeJly+jRqfVSkEqRZCG5Wl3lBMQ2y0
+	 QYZACSUFeZaToF3n3UfLTJQd0K2ckVTWSV27D14pBsPcVMTRlNKMbFBvmEQjuIWEe5
+	 Gna6byLWuqtwzPw1sF0suWZCrCEoOz5CN5SDj1fTaRmWH44vki7GCLK8Pq5C7tBkzY
+	 WY3XeUmFMwjsg==
+Date: Mon, 27 May 2024 16:49:35 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Peter Hutterer <peter.hutterer@who-t.net>, jikos@kernel.org, linux-input@vger.kernel.org, 
+	bpf@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.8 27/30] HID: bpf: add in-tree HID-BPF fix for
+ the HP Elite Presenter Mouse
+Message-ID: <wdxqrc3onfoltxvpqkvkpeu6f6afq36hwksl2krhue7ntk5r2o@bqkkjzxcfcg7>
+References: <20240527141406.3852821-1-sashal@kernel.org>
+ <20240527141406.3852821-27-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510160534.2424281-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240510160534.2424281-1-andriy.shevchenko@linux.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 May 2024 16:49:31 +0200
-Message-ID: <CAMRc=McF==kj0EPw_zMmqn5fxYenOVDaZo4XZ0_SiREaagS-rg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpiolib: Show more info for interrupt only lines
- in debugfs
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527141406.3852821-27-sashal@kernel.org>
 
-On Fri, May 10, 2024 at 6:05=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Show more info for interrupt only lines in debugfs. It's useful
-> to monitor the lines that have been never requested as GPIOs,
-> but IRQs.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On May 27 2024, Sasha Levin wrote:
+> From: Benjamin Tissoires <bentiss@kernel.org>
+> 
+> [ Upstream commit 4e6d2a297dd5be26ad409b7a05b20bd033d1c95e ]
+> 
+> Duplicate of commit 0db117359e47 ("HID: add quirk for 03f0:464a HP Elite
+> Presenter Mouse"), but in a slightly better way.
+> 
+> This time we actually change the application collection, making clearer
+> for userspace what the second mouse is.
+> 
+> Note that having both hid-quirks fix and this HID-BPF fix is not a
+> problem at all.
+
+Please drop this patch in all backports (and FWIW, any fix in drivers/hid/bpf/progs/).
+
+HID-BPF is only available since kernel v6.3, and the compilation output
+of the in-tree file is not used directly, but shipped from udev-hid-bpf.
+
+TL;DR: this just adds noise to those stable kernel trees.
+
+Cheers,
+Benjamin
+
+
+> 
+> Link: https://lore.kernel.org/r/20240410-bpf_sources-v1-4-a8bf16033ef8@kernel.org
+> Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->
-> For the reference. May be applied together with
-> 20240508144741.1270912-1-andriy.shevchenko@linux.intel.com
-> as a precursor.
->
->  drivers/gpio/gpiolib.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 1f1673552767..4cd7e05f3e5b 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4801,11 +4801,11 @@ static void gpiolib_dbg_show(struct seq_file *s, =
-struct gpio_device *gdev)
->
->         for_each_gpio_desc(gc, desc) {
->                 guard(srcu)(&desc->srcu);
-> -               if (test_bit(FLAG_REQUESTED, &desc->flags)) {
-> +               is_irq =3D test_bit(FLAG_USED_AS_IRQ, &desc->flags);
-> +               if (is_irq || test_bit(FLAG_REQUESTED, &desc->flags)) {
->                         gpiod_get_direction(desc);
->                         is_out =3D test_bit(FLAG_IS_OUT, &desc->flags);
->                         value =3D gpio_chip_get_value(gc, desc);
-> -                       is_irq =3D test_bit(FLAG_USED_AS_IRQ, &desc->flag=
-s);
->                         active_low =3D test_bit(FLAG_ACTIVE_LOW, &desc->f=
-lags);
->                         seq_printf(s, " gpio-%-3u (%-20.20s|%-20.20s) %s =
-%s %s%s\n",
->                                    gpio, desc->name ?: "", gpiod_get_labe=
-l(desc),
-> --
-> 2.43.0.rc1.1336.g36b5255a03ac
->
-
-This now conflicts with current next, please rebase and resend.
-
-Bart
+>  .../hid/bpf/progs/HP__Elite-Presenter.bpf.c   | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> 
+> diff --git a/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> new file mode 100644
+> index 0000000000000..3d14bbb6f2762
+> --- /dev/null
+> +++ b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> @@ -0,0 +1,58 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2023 Benjamin Tissoires
+> + */
+> +
+> +#include "vmlinux.h"
+> +#include "hid_bpf.h"
+> +#include "hid_bpf_helpers.h"
+> +#include <bpf/bpf_tracing.h>
+> +
+> +#define VID_HP 0x03F0
+> +#define PID_ELITE_PRESENTER 0x464A
+> +
+> +HID_BPF_CONFIG(
+> +	HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_GENERIC, VID_HP, PID_ELITE_PRESENTER)
+> +);
+> +
+> +/*
+> + * Already fixed as of commit 0db117359e47 ("HID: add quirk for 03f0:464a
+> + * HP Elite Presenter Mouse") in the kernel, but this is a slightly better
+> + * fix.
+> + *
+> + * The HP Elite Presenter Mouse HID Record Descriptor shows
+> + * two mice (Report ID 0x1 and 0x2), one keypad (Report ID 0x5),
+> + * two Consumer Controls (Report IDs 0x6 and 0x3).
+> + * Prior to these fixes it registers one mouse, one keypad
+> + * and one Consumer Control, and it was usable only as a
+> + * digital laser pointer (one of the two mouses).
+> + * We replace the second mouse collection with a pointer collection,
+> + * allowing to use the device both as a mouse and a digital laser
+> + * pointer.
+> + */
+> +
+> +SEC("fmod_ret/hid_bpf_rdesc_fixup")
+> +int BPF_PROG(hid_fix_rdesc, struct hid_bpf_ctx *hctx)
+> +{
+> +	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
+> +
+> +	if (!data)
+> +		return 0; /* EPERM check */
+> +
+> +	/* replace application mouse by application pointer on the second collection */
+> +	if (data[79] == 0x02)
+> +		data[79] = 0x01;
+> +
+> +	return 0;
+> +}
+> +
+> +SEC("syscall")
+> +int probe(struct hid_bpf_probe_args *ctx)
+> +{
+> +	ctx->retval = ctx->rdesc_size != 264;
+> +	if (ctx->retval)
+> +		ctx->retval = -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +char _license[] SEC("license") = "GPL";
+> -- 
+> 2.43.0
+> 
 
