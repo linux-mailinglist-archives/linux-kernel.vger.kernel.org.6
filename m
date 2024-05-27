@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-190144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5ADC8CFA29
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6918CFA34
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB6B1C20D71
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0AB1C20E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180F017BC9;
-	Mon, 27 May 2024 07:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3326282E1;
+	Mon, 27 May 2024 07:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fa7czT0B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p3lf1QEG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fa7czT0B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p3lf1QEG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="XZLZT5u4"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9D41F5FA;
-	Mon, 27 May 2024 07:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716795026; cv=none; b=QkF8UeFALuMGgxPZ/CiQocRoQFfhJkTELzaW5cnYxx0RD2VZlnyEUzojC4v07IxemYwTrDM+FPBUvM9ZWPEOqmPlf3MGyDBwBmpA3PHkJf7hSqo+ViUggR6J7H0I12+M9AQNAWgT5S5QrRzrBjSlq5Yp9490xW+t4NZPcneelu4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716795026; c=relaxed/simple;
-	bh=kZOAFVEGf8BGOvGQnLyNxKGobzZ9MZiX4ytpEF7UloE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d4RAkpFQAjtSlTD8lG4ZBg/hn1fNNPzM8J4bwW0PLnt7VwA64piWoi2C1X9gWniDBU3S0ODBPzwv19NlObJkf7ljiIPdDW1dSnXQFCb+9n4aT/kS0DNJAP/Ea6MXbQOunc6z/bOrxQGnMVEQozQivVGfsTQEes8E9q2SL+PgQ1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fa7czT0B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p3lf1QEG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fa7czT0B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p3lf1QEG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07B817BCA;
+	Mon, 27 May 2024 07:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716795268; cv=pass; b=r7CdySXFBVtEElfAc+dgqMrqumDtZAlc43ZmjBNh8gAD50aJyV7gQYnWss+RQfpj8jNhMVx9r1gtMrSis7d0hMGCzFghQ+3CpP1PhlsdAD5eeTw7PkDN3W6Q9RMQ3p9kaxqKeNZWybbJ7FIRKJ9s+xSuQiabWJdMjtuA9MEc1P8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716795268; c=relaxed/simple;
+	bh=2aUHCuEHYPSY1aqgTbH07WewgGXDHVS+cl/5npazbSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDtpnImklA6gQ8zH4gVWT8ZzJJymeu4RbnbbsXLvSMZwl1SrTyX4sS8saX/FlcCPoQNPcC6TUnKLTRmlh8+hzsDGd/Xw0G+0xpC855VJePgw1UUAbtH6X7lIrzpoy8gWNI/ZThi5b9WzCxzHsIlBitf8eA9O06C1H/N6tE4wAyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=XZLZT5u4; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (80-248-247-191.cust.suomicom.net [80.248.247.191])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B849F1FB80;
-	Mon, 27 May 2024 07:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716795022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4VnnTW2kzQz49Pyk;
+	Mon, 27 May 2024 10:34:23 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1716795263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gH7RK4lg/aTfFcwih3pLH5lRA1fX13MGIKzh6pvjK6w=;
-	b=Fa7czT0BAXh3r5Vm0tHOnLyysm7sQYi2ZGW2/vMPswE8TzjWFSDKBcm9LZcEYM3+I4uIKD
-	C0b406VQJ4hiiYXRrq9/7tuGj9k3QA80n+f0+vGFkjBHLJ5WgZ7CfqhFg/nyoPj9RNCcN6
-	6cpnGp4e0psmlOc3vMfHyrPXApfimu0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716795022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=20RQnVNvBDYr+FH4kFsSKaG6M/MyCTgpME0lCI4FhFw=;
+	b=XZLZT5u4WxvUYJAuY12Mkc2QAwE223rUqwwSRo29WTZt/ntX1zEddEQANMsAWXHflDk+/+
+	I9LwirdI/w5aM2mwdxEGCYMgzpjmd2TLC2HNNpLsxsNyDWm8QuzCw4klXUy0bF/0ZOzHrx
+	jz8KVu8vTgE005ffyxNqSEgfzFCMV2TkH+d367KX8V2ZnFvAHKbyCcjhxnO7Z1rtYWTp5l
+	Z+Djo9BOI0YCuBXAE5gEfnIda4ly2YfGctSKM9s9ojzv6BcCQBKusZoYKFz0XljFwfxQxg
+	WzG7bciJv/jp9Te7ez9kjphaZQkhzBqW4E8NmI+95qd9asON7C9Tv7J+JAOrfw==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1716795263; a=rsa-sha256;
+	cv=none;
+	b=OrTm0sGPkg/Fj/sLTOBHDpgC+0oUY1LYA+z9GJzm7r2MF2Fsg/D3LKUPRUlsyMiN9bbY8m
+	BKgk+sELKUsH7yHjzeYPbZvaWLITWhFiQ24drtITXDsFYvKGpaCGP3fG8qMXndBDkKn9He
+	26Sl1vaqpXlLHk/KcOm/bYuzAut7vktyNNqOIdGueWB+aJHsXgXe5GYq2a2AsMkQeCBiiV
+	APmpnDL354SLShJs10FuqMh0cXEke0ANDyKLQiolFqocot1NW1IQxnTcpZSmUgH/VkwI4t
+	Gi/OFpAr/SUUeTrT0cS7uB+Z8RtiEMEQOM3lNvTTnr2RGMI/peoOrMPhiiufmQ==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1716795263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gH7RK4lg/aTfFcwih3pLH5lRA1fX13MGIKzh6pvjK6w=;
-	b=p3lf1QEGztjeEbe44P9J5mT3ecv2ZF/DlrNx6rbLuU4z1jWHv/4QLIPGycZ/tM9PAOROfB
-	Z8QHUkM3ATDdHADg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Fa7czT0B;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=p3lf1QEG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716795022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gH7RK4lg/aTfFcwih3pLH5lRA1fX13MGIKzh6pvjK6w=;
-	b=Fa7czT0BAXh3r5Vm0tHOnLyysm7sQYi2ZGW2/vMPswE8TzjWFSDKBcm9LZcEYM3+I4uIKD
-	C0b406VQJ4hiiYXRrq9/7tuGj9k3QA80n+f0+vGFkjBHLJ5WgZ7CfqhFg/nyoPj9RNCcN6
-	6cpnGp4e0psmlOc3vMfHyrPXApfimu0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716795022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gH7RK4lg/aTfFcwih3pLH5lRA1fX13MGIKzh6pvjK6w=;
-	b=p3lf1QEGztjeEbe44P9J5mT3ecv2ZF/DlrNx6rbLuU4z1jWHv/4QLIPGycZ/tM9PAOROfB
-	Z8QHUkM3ATDdHADg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	bh=20RQnVNvBDYr+FH4kFsSKaG6M/MyCTgpME0lCI4FhFw=;
+	b=eHyxaXzusUS5nE1k+w8Tx2OKSomDhZUF3v5f8Q68A3OAvnzHK+JynoJIMG90skV629Ms44
+	J5Hr6BD7iGMSkCnjPNn0RkwcffcCZ31PVmmFhCbREq4aE8KhNwwLOis2kDezVgmmifmvNT
+	2wDZ+1HCVRjmhor2LuZG7TcIQPlM55UufwRf4G6GzCRZdSi3lNnQ2RhTi6Km1eoTAYE1mE
+	p/AECKIuzg66C3CQdPC9jcJuDSfqNcNqnewWp5RWLC5NjQ8V6b9w0IaIuOfDEvgCnkmckM
+	UXdgh+4L+wwUJSeDJEEI1K2whY2jtP4GkaZosFrUmpNTi50jD8h2Fkb82NR0Sw==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E58413A6B;
-	Mon, 27 May 2024 07:30:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +WY1F442VGYiMwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 27 May 2024 07:30:22 +0000
-Date: Mon, 27 May 2024 09:30:43 +0200
-Message-ID: <87ikyzlnj0.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	sbinding@opensource.cirrus.com,
-	kailang@realtek.com,
-	shenghao-ding@ti.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Adjust G814JZR to use SPI init for amp
-In-Reply-To: <20240526091032.114545-1-luke@ljones.dev>
-References: <20240526091032.114545-1-luke@ljones.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 38798634C93;
+	Mon, 27 May 2024 10:31:28 +0300 (EEST)
+Date: Mon, 27 May 2024 07:31:27 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>, mchehab@kernel.org,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hdegoede@redhat.com, laurent.pinchart@ideasonboard.com
+Subject: Re: [PATCH 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
+Message-ID: <ZlQ2zymJguCipLMl@valkosipuli.retiisi.eu>
+References: <20240417133453.17406-1-sylvain.petinot@foss.st.com>
+ <20240417133453.17406-3-sylvain.petinot@foss.st.com>
+ <Zil1wiCcCdwZs5Df@valkosipuli.retiisi.eu>
+ <d45a2ea1-bc2d-441a-b036-1da40290c6b3@foss.st.com>
+ <c9b35dc4-6f52-48e2-8952-5a43c500f819@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.42 / 50.00];
-	BAYES_HAM(-2.91)[99.60%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: B849F1FB80
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -3.42
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9b35dc4-6f52-48e2-8952-5a43c500f819@foss.st.com>
 
-On Sun, 26 May 2024 11:10:32 +0200,
-Luke D. Jones wrote:
+Hi Benjamin,
+
+On Mon, May 13, 2024 at 03:37:25PM +0200, Benjamin Mugnier wrote:
+> >>> +static int vd56g3_read_expo_cluster(struct vd56g3 *sensor, bool force_cur_val)
+> >>> +{
+> >>> +	u64 exposure = 0;
+> >>> +	u64 again = 0;
+> >>> +	u64 dgain = 0;
+> >>
+> >> Do you need the assignments? The values are assigned by cci_read() below,
+> >> right?
+> > 
+> > Well initially, I didn't have those assignments and some checker
+> > complains (Honestly I didn't investigate the warning).
+> > I will double check and see if they are necessary.
+> > 
 > 
-> The 2024 ASUS ROG G814J model is much the same as the 2023 model
-> and the 2023 16" version. We can use the same Cirrus Amp quirk.
+> Since I have smatch ready, I ran it without these initialization against
+> the latest media tree. I got these :
 > 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> drivers/media/i2c/st-vd56g3.c:403 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'exposure'.
+> drivers/media/i2c/st-vd56g3.c:404 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'again'.
+> drivers/media/i2c/st-vd56g3.c:405 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'dgain'.
+> drivers/media/i2c/st-vd56g3.c:407 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'exposure'.
+> drivers/media/i2c/st-vd56g3.c:408 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'again'.
+> drivers/media/i2c/st-vd56g3.c:409 vd56g3_read_expo_cluster() error:
+> uninitialized symbol 'dgain'.
+> 
+> cci_read() is indeed not modifying its 'var' argument in the default
+> case of the switch [1]. Spawning these errors.
+> Adding a '*val = 0' in the default case would also fix it, but will
+> change the function behavior.
 
-Thanks, applied.
+I think I'd add the assignment to cci_read(). This isn't the only driver
+that's affected. In the best case smatch would be fixed to figure this out.
 
+Any thoughts?
 
-Takashi
+Cc also Hans and Laurent.
+
+-- 
+Regards,
+
+Sakari Ailus
 
