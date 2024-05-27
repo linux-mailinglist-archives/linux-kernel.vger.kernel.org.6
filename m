@@ -1,114 +1,159 @@
-Return-Path: <linux-kernel+bounces-191021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387368D05A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:14:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60BE8D0675
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612501C21CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB62AB2BE52
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8643C16089A;
-	Mon, 27 May 2024 14:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA96916938A;
+	Mon, 27 May 2024 14:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="OpSRQSnA"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1E/BMBm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96A15FD19;
-	Mon, 27 May 2024 14:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C948161331;
+	Mon, 27 May 2024 14:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821736; cv=none; b=kMeLdXWmhkO8e/hMf/TYVM7EnAObRydUaq/zreA2vbsjgCTboGh6vetIMtqV1rsiSXGUPbnpt9GKujTV0esclmdAt1O3myVK/tvI8oUEKbDYYhOwZBr9TbvqqQdJ2Kq4CwtNVOcUsyl6cutqL8H2E4H7QkGr2n2JthY0G7OVkUo=
+	t=1716821831; cv=none; b=AvcrPTYp0bTk96pqUoRp8us78JCdP0PwYo6WZYCZ7FbsGFMfGeoxtnmZsxZGy65KrrikDEmTFK8PzJTFDHxra9dKonqycYo5f1n4PR668kCXxRs2tjR6/7Hh40DNIcXzEntrvhv8n8hNhl61m3dycAY+rAaPO07jSmaI+7zyQy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821736; c=relaxed/simple;
-	bh=WqdfSky25P014jToQJxbbx2jmpw/Y6gIbx3q5jkMXhQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r0oXFDlfO+oXok30RXIXuKr38vstRx2h+cJ3MvyfN/I/egpHWqJyytM9bXPKuuRAWj/7QMsD0UX2uaN6wdpozc8oJ5c3YIwEtvsrXx7Vq7J/+3P/ECBO8oiV6jnIAheAxqy3UO6VM3knhRp11lqopBqelu3SYz6rYZYHs0YEknk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=OpSRQSnA; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3BD0547C39
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1716821734; bh=JUk9kiyoUx5RdgIxL9VYYk1ttK/biBJXbO+frYzpI0E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OpSRQSnAig4IIYY8BNqix2k+Yb6FWJLwUUDh/7zJR3VliwFvSwhjOVu+Z00OWVUTi
-	 KVw4IkJcG5msbhLvlUo1sTFRWleDxOukx7T4tmzLHByyJOy6WBoMQSoE6Z4VSj5BNh
-	 wCoU4L9+TRxIe0jBtjA1q9CovmgzTdxCOQMzpRLTRj3LkpHIAEgFEA6yy5+Q2HGI0Q
-	 FM43LYmqlZedmh5NcbRxWKNjYk8UYXdxqSsRLcfqgT+CyufHyV+BJrCbjenZAOG8kO
-	 7LfrCr41ZPvqI+8bFU0s7/jDCVKQxYGIJHgACbRe+inNRNKS/hgtXKkEvGcJaSVSbY
-	 agwtFAZLmVOSA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3BD0547C39;
-	Mon, 27 May 2024 14:55:34 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Yunseong Kim <yskelg@gmail.com>
-Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>, Austin Kim
- <austindh.kim@gmail.com>, shjy180909@gmail.com, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v3] Documentation: cve Korean translation
-In-Reply-To: <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
-References: <20240527103003.29318-1-yskelg@gmail.com>
- <87ikyzpgqz.fsf@meer.lwn.net>
- <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
- <87o78rnz3a.fsf@meer.lwn.net>
- <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
-Date: Mon, 27 May 2024 08:55:33 -0600
-Message-ID: <877cffnw2i.fsf@meer.lwn.net>
+	s=arc-20240116; t=1716821831; c=relaxed/simple;
+	bh=anwxSewuYppnpNpMRH71PAQfXd/+GYXNJoF3P+nqe34=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TVfBFcW+unspPzadjFhNIhhP9sC1ZRMXRGSRH20N5asQB7J6Jh74CqHs9F30l4516hK1Nl1IEl3d8mpmw5VqwL0kfl829Yh4EMU0fI1awiTF57K/aaozjAI3WAEHwX3jhw8Xdymi/942dTNploHutpwnKeeXay9R65AQiXlkKdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1E/BMBm; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716821830; x=1748357830;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=anwxSewuYppnpNpMRH71PAQfXd/+GYXNJoF3P+nqe34=;
+  b=Z1E/BMBmxrBTKdRBoV5tpn3pusSVRNufrrzHWQKPNRXEVuoW2e0gTFHA
+   Fee8haKSKuqcEILJNVapHsVB6sgQ8Tyv7HVhrTE8oJ/pAcAUdDGbTmAw0
+   IvyMmGeSdrazB9HJTF6Rgad+IXmsqHrzfo2dSAZza7NSGqyK1oOzqWUWD
+   baSkMbASxV48viiCQzfg3AXEFUW7BR1RCs9GALfpN/IFnMwEiKmTXv/i3
+   Hl5vaW9Uoo5lINCqdcVx+tPFfbmIFpNfMauXRGp08662NYCtvy+F0VqQe
+   k97dDmJA1hFSXlFc9mYq+Tx8Mze3rra2zzJS2FZHNPdye8UsBKfE27GOv
+   g==;
+X-CSE-ConnectionGUID: 82zxdn2xTxeP/c20Epnsvg==
+X-CSE-MsgGUID: i5XIEIwgRSCaMzU2xsCY9w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="11715418"
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="11715418"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:57:09 -0700
+X-CSE-ConnectionGUID: vIoPr/bnQ+mlO+fYA48sLw==
+X-CSE-MsgGUID: tyWK4F2TR2GXjCyiin5UKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
+   d="scan'208";a="39192759"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.140])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:57:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 27 May 2024 17:57:02 +0300 (EEST)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Linus Walleij <linus.walleij@linaro.org>, 
+    Bartosz Golaszewski <brgl@bgdev.pl>, 
+    Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to
+ errnos
+In-Reply-To: <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
+Message-ID: <8ca1b7a8-5abb-e7b7-2e08-ec8c8edccdcb@linux.intel.com>
+References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com> <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain> <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com> <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-2079346626-1716821822=:1006"
 
-Yunseong Kim <yskelg@gmail.com> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On 5/27/24 10:50 =EC=98=A4=ED=9B=84, Jonathan Corbet wrote:
->> Yunseong Kim <yskelg@gmail.com> writes:
->>=20
->>>> 1) Why do I have three versions of it in my mailbox, sent over a period
->>>>    of 13 minutes?  What changed between the versions?
->>>
->>> Sorry, I forgot the name of the reviewer when I first sent the
->>> documentation content related patch version 2.
->>=20
->> Which is fine, but...
->>=20
->>>>    Normally, you want to wait for reviews to come in on one version
->>>>    before posting the next, and you should put a comment after the "--=
--"
->>>>    line saying what changed.
->>>>
->>>> 2) When did this review from Jinwoo Park happen?  I was not copied on
->>>>    that.
->>=20
->> You did not answer this question.  Reviews should generally be done in
->> public, but that does not seem to have happened here?
->
-> Oops, sorry about that, Jonathan.
->
-> Jinwoo Park sent me the review below, and I've updated some of ambiguous
-> words in patch version 2.
->
-> https://lore.kernel.org/linux-doc/57f0d90c-4cc6-4418-ab79-6ae026d8ae09@gm=
-ail.com/T/#t
+--8323328-2079346626-1716821822=:1006
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-It does look like the patch was reviewed, but no Reviewed-by tag was
-offered.  *Never* apply a Reviewed-by tag that has not been explicitly
-given to you.
+On Mon, 27 May 2024, Dan Carpenter wrote:
+> On Mon, May 27, 2024 at 05:11:32PM +0300, Ilpo J=E4rvinen wrote:
+> > On Mon, 27 May 2024, Dan Carpenter wrote:
+> >=20
+> > > On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo J=E4rvinen wrote:
+> > > > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd811=
+1.c
+> > > > index 6f3ded619c8b..3377667a28de 100644
+> > > > --- a/drivers/gpio/gpio-amd8111.c
+> > > > +++ b/drivers/gpio/gpio-amd8111.c
+> > > > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
+> > > > =20
+> > > >  found:
+> > > >  =09err =3D pci_read_config_dword(pdev, 0x58, &gp.pmbase);
+> > > > -=09if (err)
+> > > > +=09if (err) {
+> > > > +=09=09err =3D pcibios_err_to_errno(err);
+> > >=20
+> > > The patch is correct, but is the CC to stable necessary?  Is this a r=
+eal
+> > > concern?
+> > >=20
+> > > Most callers don't check.  Linus Torvalds, once said something to the
+> > > effect that if your PCI bus starts failing, there isn't anything the
+> > > operating system can do, so checking is pointless.  The only fix is t=
+o
+> > > buy new hardware.  There was a hotpluggable PCI back in the day but I
+> > > don't think it exists any more.
+> >=20
+> > I don't mind if the CC stable isn't there.
+>=20
+> I don't mind either way.  I was hoping you were going to say it was for
+> some new hotswap hardware Intel was working on.
 
-Jinwoo, would you like to offer that tag for this patch?
+That's not exactly the correct answer but I'm auditing all these because=20
+I have a sinister plan to convert the PCI accessors away from returning=20
+PCIBIOS_* codes and push the conversion down into real PCIBIOS interface=20
+under arch/x86/pci where they'd be immediately converted into errnos.
 
-Thanks,
+As the by-product of the audit, I see all these cases where the return
+type is incorrect so I've created a fix for each where the return type=20
+confusion propagates.
 
-jon
+> Smatch deletes all the failure paths from the pci_read_ functions
+> because otherwise you end up with a lot of warnings that no one cares
+> about.  Uninitialized variables mostly?
+
+Please note that there's a difference between ignoring errors entirely and=
+=20
+returning wrong value (type) on errors.
+
+At this point, I've already ignored many many cases where the value type=20
+confusion does not propagate because of my main goal which is anyway to=20
+eventually get rid of having to deal with PCIBIOS_* codes in any generic=20
+code.
+
+If a PCIBIOS_* return code somehow leaks into userspace where errno would=
+=20
+be expected, it could confuse userspace (e.g., one case unrelated to=20
+module init functions I found is sysfs show function returning positive in=
+=20
+case of error which has obviously different meaning from the caller's=20
+point of view).
+
+In case of module init, do_module_init() checks for ret > 0 and prints=20
+warning + stacktrace, however, it does not attempt to correct the return=20
+code so I think the positive code still leaks into userspace.
+
+--=20
+ i.
+
+--8323328-2079346626-1716821822=:1006--
 
