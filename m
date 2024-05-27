@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-191193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77A98D07CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:13:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58F98D0850
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46201C2298C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:13:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8980B309D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E571C171662;
-	Mon, 27 May 2024 16:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/8XJZaE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2707438FB9;
-	Mon, 27 May 2024 16:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C334F15FD01;
+	Mon, 27 May 2024 15:59:58 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id B61F315FD04
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825606; cv=none; b=haiEWPw6wm0Xtgt2LFfCykqTfm1oYvfxd7nADX98O09/GiXHwPbDJqZ7N+dWCpqGhWvXwvx5Mn/3dVXuRhtcCUXP1M9SUiaQTlr7NWMiuwFOsh/EVdp1t1vgp1KodCwF9aOSfw2nezHx73wtVQg49BuADipVnXWMZ2lpGcwyi8E=
+	t=1716825598; cv=none; b=dSw3VMEGBUjD44FWrgcXvhKU9cJyqNuFttMxn6mAFhAdcOMs4IFdw/xh+aKUuJU3ZKQcILoTdVRK1pbhax5HWdVkrPOsGCpUMUH/pqsb0mYuQFGIchNVVE2AbJFbtfhlSSws344gsJxlpuXMzEEEqcAz9dhgAkL4m1vCcB8UYxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825606; c=relaxed/simple;
-	bh=3j6I4oXfoJyk2FD8DzmE8CORnviTv/b07TPvLGl+Hf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L1XC4yfvn9/pGhOwdITzIUHq/O6RJWuyNiuBMyf34bveY6vMdm10vGI7nUaHMWe233KjJg1dWTDRMwNBhrQ6B9cR5fj+MwBlYG4j3GtXpMyYH+x7FvetjlTfT8nvYnmeoIfVRpLkfQMgdl1EcKOdm7dTwUxZE394kY/dnJpDA0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/8XJZaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F333CC2BBFC;
-	Mon, 27 May 2024 16:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716825605;
-	bh=3j6I4oXfoJyk2FD8DzmE8CORnviTv/b07TPvLGl+Hf0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q/8XJZaEAZmUW1fYgIXjoKQfJaX+mSVsfPHrZwE5fsSqdZiWWXyCBfFDRpjsY0rPB
-	 8lt1N2o5sERqeJn6vLMO2NlT9DXpx3Xx4tM9WezJOyYePmR/TcsAhUNrWYbDT2zVVs
-	 YQoIgFeKv8ONoIKGGuc71Fxinp0BQFCSwoMyXZnBJqAX4odIqW5/FgLATQsaSsvoW1
-	 /0AwB14ClTi2SStkR2WIY2aF2Wcd+6XojEZTJu0T5ZmQ7QdaBdQDOy21RgaTdC8Rti
-	 YhSqynuIShshgB0UidXd/3isVpAS/UpEsTK1YORI2iFRlU6EYsMWabF3aavK/VUbOI
-	 TH7o17n92Q/Cw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	nathan@kernel.org,
-	bhe@redhat.com,
-	arnd@arndb.de,
-	geert@linux-m68k.org,
-	rppt@kernel.org,
-	stanislav.kinsburskii@gmail.com,
-	wangkefeng.wang@huawei.com,
-	christophe.leroy@csgroup.eu,
-	bhelgaas@google.com,
-	linuxppc-dev@lists.ozlabs.org,
-	llvm@lists.linux.dev
-Subject: [PATCH AUTOSEL 4.19 2/2] powerpc/io: Avoid clang null pointer arithmetic warnings
-Date: Mon, 27 May 2024 11:59:45 -0400
-Message-ID: <20240527155949.3866553-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527155949.3866553-1-sashal@kernel.org>
-References: <20240527155949.3866553-1-sashal@kernel.org>
+	s=arc-20240116; t=1716825598; c=relaxed/simple;
+	bh=ffEWuxCllktJhS6CvvMULqiZ+vYepD6NCdO09y7vhNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJ4UwCcnIJDM4cIk4+x6PpHKTthQhXRzQJIUXnGKK51qlOYgP9LAE7dAG1adjnswCqVNYfqrbpbS9k+oA/yTA9LyFyzvzQWiig/EXqFPtQ3AnL8ws4pMuFFZM8Q69SGd1MkYUgO2QEhSkNdQVe0EV5kJaxDuj0AiUJUBMwzxVuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 663339 invoked by uid 1000); 27 May 2024 11:59:55 -0400
+Date: Mon, 27 May 2024 11:59:55 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 2/4] tools/memory-model: Define applicable tags on
+ operation in tools/...
+Message-ID: <2094aee7-4597-4f7e-b08f-9829f70aa8ff@rowland.harvard.edu>
+References: <20240527152253.195956-1-jonas.oberhauser@huaweicloud.com>
+ <20240527152253.195956-3-jonas.oberhauser@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.315
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527152253.195956-3-jonas.oberhauser@huaweicloud.com>
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+On Mon, May 27, 2024 at 05:22:51PM +0200, Jonas Oberhauser wrote:
+> Herd7 transforms reads, writes, and read-modify-writes by eliminating
+> 'acquire tags from writes, 'release tags from reads, and 'acquire,
+> 'release, and 'mb tags from failed read-modify-writes. We emulate this
+> behavior by redefining Acquire, Release, and Mb sets in linux-kernel.bell
+> to explicitly exclude those combinations.
+> 
+> Herd7 furthermore adds 'noreturn tag to certain reads. Currently herd7
+> does not allow specifying the 'noreturn tag manually, but such manual
+> declaration (e.g., through a syntax __atomic_op{noreturn}) would add
+> invalid 'noreturn tags to writes; in preparation, we already also exclude
+> this combination.
+> 
+> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+> ---
+>  tools/memory-model/linux-kernel.bell | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index 1b2444cdf8d1..08fa1ccb1328 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -36,6 +36,13 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+>  		'after-srcu-read-unlock (*smp_mb__after_srcu_read_unlock*)
+>  instructions F[Barriers]
+>  
+> +(* Remove impossible tags, such as Acquire on a store or failed RMW *)
+> +let FailedRMW = RMW \ (domain(rmw) | range(rmw))
+> +let Acquire = Acquire \ W \ FailedRMW
+> +let Release = Release \ R \ FailedRMW
+> +let Mb = Mb \ FailedRMW
+> +let Noreturn = Noreturn \ W
+> +
+>  (* SRCU *)
+>  enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
+>  instructions SRCU[SRCU]
+> @@ -82,4 +89,4 @@ let Plain = M \ Marked
+>  let carry-dep = (data ; [~ Srcu-unlock] ; rfi)*
+>  let addr = carry-dep ; addr
+>  let ctrl = carry-dep ; ctrl
+> -let data = carry-dep ; data
+> +let data = carry-dep ; data
+> \ No newline at end of file
 
-[ Upstream commit 03c0f2c2b2220fc9cf8785cd7b61d3e71e24a366 ]
+It looks like the final newline was accidentally deleted.
 
-With -Wextra clang warns about pointer arithmetic using a null pointer.
-When building with CONFIG_PCI=n, that triggers a warning in the IO
-accessors, eg:
-
-  In file included from linux/arch/powerpc/include/asm/io.h:672:
-  linux/arch/powerpc/include/asm/io-defs.h:23:1: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     23 | DEF_PCI_AC_RET(inb, u8, (unsigned long port), (port), pio, port)
-        | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ...
-  linux/arch/powerpc/include/asm/io.h:591:53: note: expanded from macro '__do_inb'
-    591 | #define __do_inb(port)          readb((PCI_IO_ADDR)_IO_BASE + port);
-        |                                       ~~~~~~~~~~~~~~~~~~~~~ ^
-
-That is because when CONFIG_PCI=n, _IO_BASE is defined as 0.
-
-Although _IO_BASE is defined as plain 0, the cast (PCI_IO_ADDR) converts
-it to void * before the addition with port happens.
-
-Instead the addition can be done first, and then the cast. The resulting
-value will be the same, but avoids the warning, and also avoids void
-pointer arithmetic which is apparently non-standard.
-
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Closes: https://lore.kernel.org/all/CA+G9fYtEh8zmq8k8wE-8RZwW-Qr927RLTn+KqGnq1F=ptaaNsA@mail.gmail.com
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240503075619.394467-1-mpe@ellerman.id.au
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/powerpc/include/asm/io.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index 4681d4c50567e..5ff8ab12f56c7 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -569,12 +569,12 @@ __do_out_asm(_rec_outl, "stwbrx")
- #define __do_inw(port)		_rec_inw(port)
- #define __do_inl(port)		_rec_inl(port)
- #else /* CONFIG_PPC32 */
--#define __do_outb(val, port)	writeb(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_outw(val, port)	writew(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_outl(val, port)	writel(val,(PCI_IO_ADDR)_IO_BASE+port);
--#define __do_inb(port)		readb((PCI_IO_ADDR)_IO_BASE + port);
--#define __do_inw(port)		readw((PCI_IO_ADDR)_IO_BASE + port);
--#define __do_inl(port)		readl((PCI_IO_ADDR)_IO_BASE + port);
-+#define __do_outb(val, port)	writeb(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_outw(val, port)	writew(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_outl(val, port)	writel(val,(PCI_IO_ADDR)(_IO_BASE+port));
-+#define __do_inb(port)		readb((PCI_IO_ADDR)(_IO_BASE + port));
-+#define __do_inw(port)		readw((PCI_IO_ADDR)(_IO_BASE + port));
-+#define __do_inl(port)		readl((PCI_IO_ADDR)(_IO_BASE + port));
- #endif /* !CONFIG_PPC32 */
- 
- #ifdef CONFIG_EEH
-@@ -590,12 +590,12 @@ __do_out_asm(_rec_outl, "stwbrx")
- #define __do_writesw(a, b, n)	_outsw(PCI_FIX_ADDR(a),(b),(n))
- #define __do_writesl(a, b, n)	_outsl(PCI_FIX_ADDR(a),(b),(n))
- 
--#define __do_insb(p, b, n)	readsb((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_insw(p, b, n)	readsw((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_insl(p, b, n)	readsl((PCI_IO_ADDR)_IO_BASE+(p), (b), (n))
--#define __do_outsb(p, b, n)	writesb((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
--#define __do_outsw(p, b, n)	writesw((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
--#define __do_outsl(p, b, n)	writesl((PCI_IO_ADDR)_IO_BASE+(p),(b),(n))
-+#define __do_insb(p, b, n)	readsb((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_insw(p, b, n)	readsw((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_insl(p, b, n)	readsl((PCI_IO_ADDR)(_IO_BASE+(p)), (b), (n))
-+#define __do_outsb(p, b, n)	writesb((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
-+#define __do_outsw(p, b, n)	writesw((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
-+#define __do_outsl(p, b, n)	writesl((PCI_IO_ADDR)(_IO_BASE+(p)),(b),(n))
- 
- #define __do_memset_io(addr, c, n)	\
- 				_memset_io(PCI_FIX_ADDR(addr), c, n)
--- 
-2.43.0
-
+Alan
 
