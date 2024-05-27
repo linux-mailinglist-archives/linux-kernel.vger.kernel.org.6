@@ -1,229 +1,374 @@
-Return-Path: <linux-kernel+bounces-190279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614008CFC5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:01:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F258C8CFC5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA6D1F22C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F9128202A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550127CF33;
-	Mon, 27 May 2024 09:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200C06A357;
+	Mon, 27 May 2024 09:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b5oZZKtM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="almTB9U4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RIxbb8sO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SaHcXx+5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9cN3jAZn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D80C6A33A;
-	Mon, 27 May 2024 09:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85F8381B1
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716800455; cv=none; b=S1aaMpEi40tianWOdt3Iz7BZN56YFqAIYi4D3lwkzUZnRmVu8hzp7oklb1mE66WNqkPHd145XXeNhmZhhQkbYacUkceKFWRMc7aQamJDr8AzA/RLjQNb8o/1DzqvQ9UsSwYHoL/qiaTDg/RucRfbs9GInJLnMuLCwveIeEJeo7o=
+	t=1716800506; cv=none; b=qsh6LilFwv10FwKY9Pgd0Qg0WojtmkmrGX9VDgOs55R8pcfiqURlTXXABrZo2eGJQgePG6J74GfsKf3lNwxrM/H8Sjil52LtDkW3L9VRYJmQBsLoatzwicGOs8nwwzFa1cZWpaNctQTXeqlThQhWOwE2E/fLJ5grPmRzVgZ0rUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716800455; c=relaxed/simple;
-	bh=LY/SMQjt4ef0MedNWQo+mZzxqQhJeBIxgr3yyyFYZkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dVQHXy/8DqJDRR0XrEz48poI+Eajdcyi5RB8IW6qqs+lnMT8dSODwowfpHP8ksn8S+gDruZfjEiUQOgd1ah2Yje4GbpgTjTB48MdO5OlyAooW2efnwbcuFxW1LDwjT2yZmqc3gBBpSgVMe1/tYgge9LMakS/3ISgImlwjHZBml0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b5oZZKtM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44R0mEc5021184;
-	Mon, 27 May 2024 09:00:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FW54q9XMg0asIAxgeyWG9GNJSEOosc1JNTifQZcFteQ=; b=b5oZZKtMMTV+hWBx
-	uxkfl+Om9TZQultzaJ1WG/d1xVG1EQlPF3koXaw+vSgUuM4vgnq6gsbatDtSKBjI
-	9kQASTAiWyxUUIEK+s+1GToPscQwPcuxcw0LjJ0VrVnWa/GlmYrCsF3hBchWsSR8
-	w3yb0EamMpfMfKHq1Why5hNAGFNYoxqYwG1ZBLawYJ8CMlSDshu1ZgUVPQsQ+PIx
-	pDPS4qjR408ZoTpNE6biBaD2+mwBXA1v5c1rUIL6usUQsX/xDO+qUzOeecDhx9jE
-	sL1NEnBwJoL9RpXFBtJC5u8hGZcWTP29dsY1vVIOf6OnmAY+n2SDhwOuVU4HjRTO
-	fm7j7g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k32km-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 09:00:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44R90Wwk001968
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 09:00:32 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 02:00:30 -0700
-Message-ID: <e1bc0bb8-a66e-4e03-bc22-3dc506b6fb59@quicinc.com>
-Date: Mon, 27 May 2024 17:00:27 +0800
+	s=arc-20240116; t=1716800506; c=relaxed/simple;
+	bh=6saI82LM+IF5SUZ7EMgU2Oqbo4imTnYAF4BXGdoz+ic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Swee+VCGyl7tpJnXrUANsrG0WUPtGjUF3T7JQDEyR8f7fGIFHCPXcFS5y8q6+K0cdPuvhyCK6ru14IjNo5I0EEtRH188kX46brJ9xn6AedDGXcwYInuvXCp5NKGGhL7GlgFG1HqRhxJLsc3jwXpHSaHgMltBgbtAgaE9NaQ3w90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=almTB9U4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RIxbb8sO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SaHcXx+5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9cN3jAZn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D8F9F21D7C;
+	Mon, 27 May 2024 09:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716800502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gXtaN4gTFvxej3uREjWvzZenfDkLBdRMKDAdRVewHIs=;
+	b=almTB9U4uBWJ1tt+BaLBiSreB/nFMOtLu/qhYDM05eVHK2W/Ts6jEYyV1/RMSsMGqWl7JU
+	AWRXM6dWI7gIqP7PaCcR7LDXSwZb2rWo0/NjIKOGvBfNdfTfPesaTuOjl4lznBO0NkFfHC
+	+T/jaFI2DiEucY3pFFwdmKTlN9xrL0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716800502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gXtaN4gTFvxej3uREjWvzZenfDkLBdRMKDAdRVewHIs=;
+	b=RIxbb8sOBg2rnx+cdmHN6DhHvn5DTgBTPTTtbgwQ4wKc9HT2Qln4PVrTM6cEZuv52RsvAL
+	gNlJsDiA3XhODEAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716800501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gXtaN4gTFvxej3uREjWvzZenfDkLBdRMKDAdRVewHIs=;
+	b=SaHcXx+5lpSHfgKeZNqeNmyGeyV+wyE1DuuE7UUaZl7d6CW7DX7dYd3VDK6RwQ1BEQLyZm
+	06wr+mYnKdVlFCm+gT9hZDkAdcL45wQLDjBo/BTNYnhDbFGTjPWnREmFg0xxrly/QVBOia
+	m4PcpNMPYkLAerPo4hZbPphynsmZRz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716800501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gXtaN4gTFvxej3uREjWvzZenfDkLBdRMKDAdRVewHIs=;
+	b=9cN3jAZnfI72OAd2OCzRobDbuFq25RKldQDX/cZcOuRE4co9A3WSBWjlqLpR4yzikLDMcf
+	tj5prgpPn9dZrtBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B3E3313A6B;
+	Mon, 27 May 2024 09:01:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fJiYK/VLVGYeawAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 27 May 2024 09:01:41 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH v2] mm, slab: don't wrap internal functions with alloc_hooks()
+Date: Mon, 27 May 2024 11:01:28 +0200
+Message-ID: <20240527090127.21979-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ath10k_pci 0000:3a:00.0: Could not init core: -110
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
-References: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <0c544b16-5c0d-4687-9f96-8ff1f3269f79@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3BhtXsnrZv6E9pABqB5ibB1KrROOpqeA
-X-Proofpoint-GUID: 3BhtXsnrZv6E9pABqB5ibB1KrROOpqeA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405270073
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_CC(0.00)[linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,suse.cz,google.com,chromium.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,chromium.org:email];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 
+The functions __kmalloc_noprof(), kmalloc_large_noprof(),
+kmalloc_trace_noprof() and their _node variants are all internal to the
+implementations of kmalloc_noprof() and kmalloc_node_noprof() and are
+only declared in the "public" slab.h and exported so that those
+implementations can be static inline and distinguish the build-time
+constant size variants. The only other users for some of the internal
+functions are slub_kunit and fortify_kunit tests which make very
+short-lived allocations.
 
+Therefore we can stop wrapping them with the alloc_hooks() macro.
+Instead add a __ prefix to all of them and a comment documenting these
+as internal. Also rename __kmalloc_trace() to __kmalloc_cache() which is
+more descriptive - it is a variant of __kmalloc() where the exact
+kmalloc cache has been already determined.
 
-On 5/27/2024 4:42 PM, Paul Menzel wrote:
-> Dear Linux folks,
-> 
-> 
-> On the Intel Kaby Lake notebook Dell XPS 13 with
-> 
->     3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter [168c:003e] (rev 32)
-> 
-> with at least a self-built Linux 6.9-rc5, on April 26th, 2024, and Linux 6.8.11, today, May 27th, 2024, the error below happened, and the device couldn’t authenticate to a WiFi network until reloading the module *ath10k_core* and *ath10k_pci* (didn’t check just *ath10k_pci*):
-> 
->     $ sudo modprobe -r ath10k_pci
->     $ sudo modprobe -r ath10k_core
->     $ sudo modprobe ath10k_pci
-> 
-> ```
-> [   49.441618] ath10k_pci 0000:3a:00.0: wmi service ready event not received
-> [   49.523814] ath10k_pci 0000:3a:00.0: Could not init core: -110
-> [   49.523826] ------------[ cut here ]------------
-> [   49.523828] Hardware became unavailable upon resume. This could be a software issue prior to suspend or a hardware issue.
-> [   49.523896] WARNING: CPU: 2 PID: 2990 at net/mac80211/util.c:2593 ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.524121] Modules linked in: ctr ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device l2tp_ppp l2tp_netlink l2tp_core ip6_udp_tunnel xfrm_interface xfrm6_tunnel tunnel6 tunnel4 udp_tunnel pppox xfrm_user xfrm_algo ppp_generic slhc snd_sof_pci_intel_skl snd_sof_intel_hda_common soundwire_intel soundwire_generic_allocation snd_sof_intel_hda_mlink soundwire_cadence snd_sof_intel_hda snd_hda_codec_hdmi snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_ctl_led snd_sof_utils soundwire_bus snd_hda_codec_realtek snd_hda_codec_generic snd_soc_avs snd_soc_hda_codec snd_soc_skl intel_uncore_frequency intel_uncore_frequency_common binfmt_misc snd_soc_hdac_hda snd_hda_ext_core snd_soc_sst_ipc snd_soc_sst_dsp x86_pkg_temp_thermal ath10k_pci snd_soc_acpi_intel_match intel_powerclamp snd_soc_acpi coretemp ath10k_core snd_soc_core kvm_intel snd_compress snd_pcm_dmaengine nls_ascii snd_hda_intel nls_cp437 vfat ath snd_intel_dspcfg kvm fat btusb snd_intel_sdw_acpi mac80211 btrtl btintel
-> snd_hda_codec mei_hdcp i915 mei_pxp mei_wdt dell_laptop
-> [   49.524258]  snd_hda_core btbcm ledtrig_audio uvcvideo btmtk libarc4 snd_hwdep videobuf2_vmalloc dell_wmi intel_rapl_msr dell_smm_hwmon irqbypass bluetooth uvc snd_pcm rapl videobuf2_memops cfg80211 intel_cstate videobuf2_v4l2 dell_smbios intel_uncore dcdbas snd_timer videodev pcspkr iTCO_wdt mei_me wmi_bmof dell_wmi_descriptor joydev intel_pmc_bxt ecdh_generic intel_wmi_thunderbolt snd videobuf2_common mei iTCO_vendor_support rfkill watchdog soundcore mc ecc intel_pch_thermal drm_buddy drm_display_helper ucsi_acpi typec_ucsi cec soc_button_array intel_vbtn rc_core processor_thermal_device_pci_legacy processor_thermal_device intel_pmc_core processor_thermal_wt_hint processor_thermal_rfim ttm intel_vsec processor_thermal_rapl typec pmt_telemetry intel_rapl_common int3403_thermal pmt_class drm_kms_helper processor_thermal_wt_req int3400_thermal processor_thermal_power_floor acpi_thermal_rel processor_thermal_mbox int340x_thermal_zone intel_xhci_usb_role_switch intel_hid
-> intel_soc_dts_iosf i2c_algo_bit sparse_keymap
-> [   49.524400]  roles ac acpi_pad button hid_multitouch evdev serio_raw msr parport_pc ppdev lp parport loop efi_pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2 crc32c_generic usbhid dm_crypt dm_mod nvme nvme_core t10_pi crc64_rocksoft_generic crc32_pclmul crc32c_intel ghash_clmulni_intel crc64_rocksoft sha512_ssse3 hid_generic xhci_pci crc_t10dif xhci_hcd crct10dif_generic i2c_hid_acpi i2c_hid crct10dif_pclmul sha512_generic drm usbcore crc64 intel_lpss_pci i2c_i801 sha256_ssse3 sha1_ssse3 i2c_smbus hid crct10dif_common intel_lpss usb_common idma64 battery video wmi aesni_intel crypto_simd cryptd
-> [   49.524520] CPU: 2 PID: 2990 Comm: kworker/u8:39 Not tainted 6.8.11-amd64 #1  Debian 6.8.11-1
-> [   49.524529] Hardware name: Dell Inc. XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022
-> [   49.524534] Workqueue: events_unbound async_run_entry_fn
-> [   49.524550] RIP: 0010:ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.524746] Code: 02 00 00 41 c6 86 85 05 00 00 00 4c 89 f7 e8 18 8b fb ff 41 89 c4 85 c0 0f 84 0d 03 00 00 48 c7 c7 30 fd 8c c1 e8 01 64 8b cc <0f> 0b eb 2d 84 c0 0f 85 9d 01 00 00 c6 87 85 05 00 00 00 e8 e9 8a
-> [   49.524752] RSP: 0000:ffffa888c4977cd8 EFLAGS: 00010282
-> [   49.524759] RAX: 0000000000000000 RBX: ffff88d283230538 RCX: 0000000000000027
-> [   49.524764] RDX: ffff88d5ef121708 RSI: 0000000000000001 RDI: ffff88d5ef121700
-> [   49.524769] RBP: ffff88d2832303c0 R08: 0000000000000000 R09: ffffa888c4977aa8
-> [   49.524773] R10: ffffa888c4977aa0 R11: 0000000000000003 R12: 00000000ffffff92
-> [   49.524777] R13: 0000000000000000 R14: ffff88d283230900 R15: ffff88d287224f88
-> [   49.524782] FS:  0000000000000000(0000) GS:ffff88d5ef100000(0000) knlGS:0000000000000000
-> [   49.524788] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   49.524792] CR2: 0000000000000000 CR3: 000000002ae20001 CR4: 00000000003706f0
-> [   49.524797] Call Trace:
-> [   49.524804]  <TASK>
-> [   49.524808]  ? ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.524996]  ? __warn+0x81/0x130
-> [   49.525012]  ? ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.525201]  ? report_bug+0x171/0x1a0
-> [   49.525211]  ? handle_bug+0x3c/0x80
-> [   49.525223]  ? exc_invalid_op+0x17/0x70
-> [   49.525234]  ? asm_exc_invalid_op+0x1a/0x20
-> [   49.525252]  ? ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.525438]  ? ieee80211_reconfig+0x9f/0x14f0 [mac80211]
-> [   49.525644]  ? schedule+0x32/0xd0
-> [   49.525653]  ? wq_worker_running+0xe/0x60
-> [   49.525665]  ? schedule_timeout+0x151/0x160
-> [   49.525675]  ? wait_for_completion+0x95/0x160
-> [   49.525687]  wiphy_resume+0x82/0x1b0 [cfg80211]
-> [   49.525852]  ? __pfx_wiphy_resume+0x10/0x10 [cfg80211]
-> [   49.525994]  dpm_run_callback+0x89/0x1e0
-> [   49.526005]  device_resume+0x9c/0x240
-> [   49.526012]  async_resume+0x1d/0x30
-> [   49.526018]  async_run_entry_fn+0x31/0x130
-> [   49.526031]  process_one_work+0x171/0x340
-> [   49.526042]  worker_thread+0x27b/0x3a0
-> [   49.526054]  ? __pfx_worker_thread+0x10/0x10
-> [   49.526063]  kthread+0xe5/0x120
-> [   49.526072]  ? __pfx_kthread+0x10/0x10
-> [   49.526079]  ret_from_fork+0x31/0x50
-> [   49.526091]  ? __pfx_kthread+0x10/0x10
-> [   49.526098]  ret_from_fork_asm+0x1b/0x30
-> [   49.526113]  </TASK>
-> [   49.526116] ---[ end trace 0000000000000000 ]---
-> [   49.526253] ------------[ cut here ]------------
-> [   49.526256] WARNING: CPU: 2 PID: 2990 at net/mac80211/driver-ops.c:41 drv_stop+0xf5/0x100 [mac80211]
-> [   49.526397] Modules linked in: ctr ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device l2tp_ppp l2tp_netlink l2tp_core ip6_udp_tunnel xfrm_interface xfrm6_tunnel tunnel6 tunnel4 udp_tunnel pppox xfrm_user xfrm_algo ppp_generic slhc snd_sof_pci_intel_skl snd_sof_intel_hda_common soundwire_intel soundwire_generic_allocation snd_sof_intel_hda_mlink soundwire_cadence snd_sof_intel_hda snd_hda_codec_hdmi snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_ctl_led snd_sof_utils soundwire_bus snd_hda_codec_realtek snd_hda_codec_generic snd_soc_avs snd_soc_hda_codec snd_soc_skl intel_uncore_frequency intel_uncore_frequency_common binfmt_misc snd_soc_hdac_hda snd_hda_ext_core snd_soc_sst_ipc snd_soc_sst_dsp x86_pkg_temp_thermal ath10k_pci snd_soc_acpi_intel_match intel_powerclamp snd_soc_acpi coretemp ath10k_core snd_soc_core kvm_intel snd_compress snd_pcm_dmaengine nls_ascii snd_hda_intel nls_cp437 vfat ath snd_intel_dspcfg kvm fat btusb snd_intel_sdw_acpi mac80211 btrtl btintel
-> snd_hda_codec mei_hdcp i915 mei_pxp mei_wdt dell_laptop
-> [   49.526520]  snd_hda_core btbcm ledtrig_audio uvcvideo btmtk libarc4 snd_hwdep videobuf2_vmalloc dell_wmi intel_rapl_msr dell_smm_hwmon irqbypass bluetooth uvc snd_pcm rapl videobuf2_memops cfg80211 intel_cstate videobuf2_v4l2 dell_smbios intel_uncore dcdbas snd_timer videodev pcspkr iTCO_wdt mei_me wmi_bmof dell_wmi_descriptor joydev intel_pmc_bxt ecdh_generic intel_wmi_thunderbolt snd videobuf2_common mei iTCO_vendor_support rfkill watchdog soundcore mc ecc intel_pch_thermal drm_buddy drm_display_helper ucsi_acpi typec_ucsi cec soc_button_array intel_vbtn rc_core processor_thermal_device_pci_legacy processor_thermal_device intel_pmc_core processor_thermal_wt_hint processor_thermal_rfim ttm intel_vsec processor_thermal_rapl typec pmt_telemetry intel_rapl_common int3403_thermal pmt_class drm_kms_helper processor_thermal_wt_req int3400_thermal processor_thermal_power_floor acpi_thermal_rel processor_thermal_mbox int340x_thermal_zone intel_xhci_usb_role_switch intel_hid
-> intel_soc_dts_iosf i2c_algo_bit sparse_keymap
-> [   49.526642]  roles ac acpi_pad button hid_multitouch evdev serio_raw msr parport_pc ppdev lp parport loop efi_pstore configfs nfnetlink efivarfs ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2 crc32c_generic usbhid dm_crypt dm_mod nvme nvme_core t10_pi crc64_rocksoft_generic crc32_pclmul crc32c_intel ghash_clmulni_intel crc64_rocksoft sha512_ssse3 hid_generic xhci_pci crc_t10dif xhci_hcd crct10dif_generic i2c_hid_acpi i2c_hid crct10dif_pclmul sha512_generic drm usbcore crc64 intel_lpss_pci i2c_i801 sha256_ssse3 sha1_ssse3 i2c_smbus hid crct10dif_common intel_lpss usb_common idma64 battery video wmi aesni_intel crypto_simd cryptd
-> [   49.526745] CPU: 2 PID: 2990 Comm: kworker/u8:39 Tainted: G        W         6.8.11-amd64 #1  Debian 6.8.11-1
-> [   49.526753] Hardware name: Dell Inc. XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022
-> [   49.526757] Workqueue: events_unbound async_run_entry_fn
-> [   49.526768] RIP: 0010:drv_stop+0xf5/0x100 [mac80211]
-> [   49.526901] Code: 0b 00 48 85 c0 74 0c 48 8b 78 08 48 89 de e8 f2 03 05 00 65 ff 0d 93 3a 87 3e 0f 85 39 ff ff ff 0f 1f 44 00 00 e9 2f ff ff ff <0f> 0b 5b c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90
-> [   49.526907] RSP: 0000:ffffa888c4977c28 EFLAGS: 00010246
-> [   49.526913] RAX: 0000000000000000 RBX: ffff88d283230900 RCX: ffff88d2857bc668
-> [   49.526918] RDX: 0000000080000000 RSI: 0000000000000282 RDI: ffff88d283230900
-> [   49.526922] RBP: ffff88d283230900 R08: 0000000000000000 R09: 0000000000000000
-> [   49.526926] R10: 0000000000000001 R11: 0000000000000000 R12: ffff88d2832311d0
-> [   49.526930] R13: ffff88d283230e10 R14: 0000000000000000 R15: ffff88d28b07dc08
-> [   49.526934] FS:  0000000000000000(0000) GS:ffff88d5ef100000(0000) knlGS:0000000000000000
-> [   49.526939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   49.526943] CR2: 0000000000000000 CR3: 000000002ae20001 CR4: 00000000003706f0
-> [   49.526948] Call Trace:
-> [   49.526952]  <TASK>
-> [   49.526955]  ? drv_stop+0xf5/0x100 [mac80211]
-> [   49.527086]  ? __warn+0x81/0x130
-> [   49.527097]  ? drv_stop+0xf5/0x100 [mac80211]
-> [   49.527230]  ? report_bug+0x171/0x1a0
-> [   49.527241]  ? handle_bug+0x3c/0x80
-> [   49.527251]  ? exc_invalid_op+0x17/0x70
-> [   49.527261]  ? asm_exc_invalid_op+0x1a/0x20
-> [   49.527277]  ? drv_stop+0xf5/0x100 [mac80211]
-> [   49.527409]  ? drv_stop+0x12/0x100 [mac80211]
-> [   49.527539]  ieee80211_do_stop+0x56a/0x800 [mac80211]
-> [   49.527724]  ieee80211_stop+0x58/0x180 [mac80211]
-> [   49.527923]  __dev_close_many+0xa7/0x120
-> [   49.527941]  dev_close_many+0xa9/0x180
-> [   49.527958]  dev_close+0x8c/0xc0
-> [   49.527971]  cfg80211_shutdown_all_interfaces+0x4d/0xf0 [cfg80211]
-> [   49.528169]  wiphy_resume+0xc1/0x1b0 [cfg80211]
-> [   49.528366]  ? __pfx_wiphy_resume+0x10/0x10 [cfg80211]
-> [   49.528560]  dpm_run_callback+0x89/0x1e0
-> [   49.528570]  device_resume+0x9c/0x240
-> [   49.528579]  async_resume+0x1d/0x30
-> [   49.528586]  async_run_entry_fn+0x31/0x130
-> [   49.528600]  process_one_work+0x171/0x340
-> [   49.528613]  worker_thread+0x27b/0x3a0
-> [   49.528627]  ? __pfx_worker_thread+0x10/0x10
-> [   49.528637]  kthread+0xe5/0x120
-> [   49.528644]  ? __pfx_kthread+0x10/0x10
-> [   49.528654]  ret_from_fork+0x31/0x50
-> [   49.528666]  ? __pfx_kthread+0x10/0x10
-> [   49.528675]  ret_from_fork_asm+0x1b/0x30
-> [   49.528690]  </TASK>
-> [   49.528692] ---[ end trace 0000000000000000 ]---
-> ```
-> 
-> Please find the logs of both boots attached.
-> 
-> 
-> Kind regards,
-> 
-> Paul
-Are you using a distro kernel? Could you check if below patch merged in your kernel? if not can you merge it and try again?
+The usage in fortify_kunit can be removed completely, as the internal
+functions should be tested already through kmalloc() tests in the
+test variant that passes non-constant allocation size.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/wireless/ath/ath10k?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
+Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+v2: keep _noprof per Kent, remove usage from fortify_kunit per Kees
+
+ include/linux/slab.h | 48 ++++++++++++++++++++++----------------------
+ lib/fortify_kunit.c  |  5 -----
+ lib/slub_kunit.c     |  2 +-
+ mm/slub.c            | 26 ++++++++++++------------
+ 4 files changed, 38 insertions(+), 43 deletions(-)
+
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 7247e217e21b..ed6bee5ec2b6 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -528,9 +528,6 @@ static_assert(PAGE_SHIFT <= 20);
+ 
+ #include <linux/alloc_tag.h>
+ 
+-void *__kmalloc_noprof(size_t size, gfp_t flags) __assume_kmalloc_alignment __alloc_size(1);
+-#define __kmalloc(...)				alloc_hooks(__kmalloc_noprof(__VA_ARGS__))
+-
+ /**
+  * kmem_cache_alloc - Allocate an object
+  * @cachep: The cache to allocate from.
+@@ -568,31 +565,34 @@ static __always_inline void kfree_bulk(size_t size, void **p)
+ 	kmem_cache_free_bulk(NULL, size, p);
+ }
+ 
+-void *__kmalloc_node_noprof(size_t size, gfp_t flags, int node) __assume_kmalloc_alignment
+-							 __alloc_size(1);
+-#define __kmalloc_node(...)			alloc_hooks(__kmalloc_node_noprof(__VA_ARGS__))
+-
+ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t flags,
+ 				   int node) __assume_slab_alignment __malloc;
+ #define kmem_cache_alloc_node(...)	alloc_hooks(kmem_cache_alloc_node_noprof(__VA_ARGS__))
+ 
+-void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t flags, size_t size)
+-		    __assume_kmalloc_alignment __alloc_size(3);
++/*
++ * The following functions are not to be used directly and are intended only
++ * for internal use from kmalloc() and kmalloc_node()
++ * with the exception of kunit tests
++ */
++
++void *__kmalloc_noprof(size_t size, gfp_t flags)
++				__assume_kmalloc_alignment __alloc_size(1);
++
++void *__kmalloc_node_noprof(size_t size, gfp_t flags, int node)
++				__assume_kmalloc_alignment __alloc_size(1);
+ 
+-void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+-		int node, size_t size) __assume_kmalloc_alignment
+-						__alloc_size(4);
+-#define kmalloc_trace(...)			alloc_hooks(kmalloc_trace_noprof(__VA_ARGS__))
++void *__kmalloc_cache_noprof(struct kmem_cache *s, gfp_t flags, size_t size)
++				__assume_kmalloc_alignment __alloc_size(3);
+ 
+-#define kmalloc_node_trace(...)			alloc_hooks(kmalloc_node_trace_noprof(__VA_ARGS__))
++void *__kmalloc_cache_node_noprof(struct kmem_cache *s, gfp_t gfpflags,
++				  int node, size_t size)
++				__assume_kmalloc_alignment __alloc_size(4);
+ 
+-void *kmalloc_large_noprof(size_t size, gfp_t flags) __assume_page_alignment
+-					      __alloc_size(1);
+-#define kmalloc_large(...)			alloc_hooks(kmalloc_large_noprof(__VA_ARGS__))
++void *__kmalloc_large_noprof(size_t size, gfp_t flags)
++				__assume_page_alignment __alloc_size(1);
+ 
+-void *kmalloc_large_node_noprof(size_t size, gfp_t flags, int node) __assume_page_alignment
+-							     __alloc_size(1);
+-#define kmalloc_large_node(...)			alloc_hooks(kmalloc_large_node_noprof(__VA_ARGS__))
++void *__kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
++				__assume_page_alignment __alloc_size(1);
+ 
+ /**
+  * kmalloc - allocate kernel memory
+@@ -654,10 +654,10 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
+ 		unsigned int index;
+ 
+ 		if (size > KMALLOC_MAX_CACHE_SIZE)
+-			return kmalloc_large_noprof(size, flags);
++			return __kmalloc_large_noprof(size, flags);
+ 
+ 		index = kmalloc_index(size);
+-		return kmalloc_trace_noprof(
++		return __kmalloc_cache_noprof(
+ 				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, size);
+ 	}
+@@ -671,10 +671,10 @@ static __always_inline __alloc_size(1) void *kmalloc_node_noprof(size_t size, gf
+ 		unsigned int index;
+ 
+ 		if (size > KMALLOC_MAX_CACHE_SIZE)
+-			return kmalloc_large_node_noprof(size, flags, node);
++			return __kmalloc_large_node_noprof(size, flags, node);
+ 
+ 		index = kmalloc_index(size);
+-		return kmalloc_node_trace_noprof(
++		return __kmalloc_cache_node_noprof(
+ 				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, node, size);
+ 	}
+diff --git a/lib/fortify_kunit.c b/lib/fortify_kunit.c
+index 39da5b3bc649..044f409ef856 100644
+--- a/lib/fortify_kunit.c
++++ b/lib/fortify_kunit.c
+@@ -233,11 +233,6 @@ static void fortify_test_alloc_size_##allocator##_dynamic(struct kunit *test) \
+ 		kfree(p));						\
+ 	checker(expected_size,						\
+ 		kmalloc_array_node(alloc_size, 1, gfp, NUMA_NO_NODE),	\
+-		kfree(p));						\
+-	checker(expected_size, __kmalloc(alloc_size, gfp),		\
+-		kfree(p));						\
+-	checker(expected_size,						\
+-		__kmalloc_node(alloc_size, gfp, NUMA_NO_NODE),		\
+ 		kfree(p));						\
+ 									\
+ 	orig = kmalloc(alloc_size, gfp);				\
+diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+index 4ce960438806..e6667a28c014 100644
+--- a/lib/slub_kunit.c
++++ b/lib/slub_kunit.c
+@@ -140,7 +140,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
+ {
+ 	struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
+ 				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
+-	u8 *p = kmalloc_trace(s, GFP_KERNEL, 18);
++	u8 *p = __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
+ 
+ 	kasan_disable_current();
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index 0809760cf789..95e0a3332c44 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4053,7 +4053,7 @@ EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+  * directly to the page allocator. We use __GFP_COMP, because we will need to
+  * know the allocation order to free the pages properly in kfree.
+  */
+-static void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
++static void *___kmalloc_large_node(size_t size, gfp_t flags, int node)
+ {
+ 	struct folio *folio;
+ 	void *ptr = NULL;
+@@ -4078,25 +4078,25 @@ static void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
+ 	return ptr;
+ }
+ 
+-void *kmalloc_large_noprof(size_t size, gfp_t flags)
++void *__kmalloc_large_noprof(size_t size, gfp_t flags)
+ {
+-	void *ret = __kmalloc_large_node(size, flags, NUMA_NO_NODE);
++	void *ret = ___kmalloc_large_node(size, flags, NUMA_NO_NODE);
+ 
+ 	trace_kmalloc(_RET_IP_, ret, size, PAGE_SIZE << get_order(size),
+ 		      flags, NUMA_NO_NODE);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_large_noprof);
++EXPORT_SYMBOL(__kmalloc_large_noprof);
+ 
+-void *kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
++void *__kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
+ {
+-	void *ret = __kmalloc_large_node(size, flags, node);
++	void *ret = ___kmalloc_large_node(size, flags, node);
+ 
+ 	trace_kmalloc(_RET_IP_, ret, size, PAGE_SIZE << get_order(size),
+ 		      flags, node);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_large_node_noprof);
++EXPORT_SYMBOL(__kmalloc_large_node_noprof);
+ 
+ static __always_inline
+ void *__do_kmalloc_node(size_t size, gfp_t flags, int node,
+@@ -4106,7 +4106,7 @@ void *__do_kmalloc_node(size_t size, gfp_t flags, int node,
+ 	void *ret;
+ 
+ 	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
+-		ret = __kmalloc_large_node(size, flags, node);
++		ret = __kmalloc_large_node_noprof(size, flags, node);
+ 		trace_kmalloc(caller, ret, size,
+ 			      PAGE_SIZE << get_order(size), flags, node);
+ 		return ret;
+@@ -4142,7 +4142,7 @@ void *kmalloc_node_track_caller_noprof(size_t size, gfp_t flags,
+ }
+ EXPORT_SYMBOL(kmalloc_node_track_caller_noprof);
+ 
+-void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t gfpflags, size_t size)
++void *__kmalloc_cache_noprof(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+ {
+ 	void *ret = slab_alloc_node(s, NULL, gfpflags, NUMA_NO_NODE,
+ 					    _RET_IP_, size);
+@@ -4152,10 +4152,10 @@ void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+ 	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_trace_noprof);
++EXPORT_SYMBOL(__kmalloc_cache_noprof);
+ 
+-void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+-			 int node, size_t size)
++void *__kmalloc_cache_node_noprof(struct kmem_cache *s, gfp_t gfpflags,
++				  int node, size_t size)
+ {
+ 	void *ret = slab_alloc_node(s, NULL, gfpflags, node, _RET_IP_, size);
+ 
+@@ -4164,7 +4164,7 @@ void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+ 	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_node_trace_noprof);
++EXPORT_SYMBOL(__kmalloc_cache_node_noprof);
+ 
+ static noinline void free_to_partial_list(
+ 	struct kmem_cache *s, struct slab *slab,
+-- 
+2.45.1
+
 
