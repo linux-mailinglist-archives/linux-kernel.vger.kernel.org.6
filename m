@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-190751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8FF8D0221
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:49:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDD08D01EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1B31C21438
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B11F2890FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F346915EFAF;
-	Mon, 27 May 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="tkh5WiiA"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0137215EFDA;
+	Mon, 27 May 2024 13:40:37 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32D51640B;
-	Mon, 27 May 2024 13:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EB13A250;
+	Mon, 27 May 2024 13:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817762; cv=none; b=OntCHm80soi0razQjh3UM6D0Fs0qsPp0AVVk1jNEWDKbzCV10WLVaT/qAodd+8RVMxEV+eMUIvqvcKZnmEVOhGrymWQquVeiwfaAlEPnd0ReSe5UhWpkjZzlICv/Q4DFquuHdKhbfTnuva0oMtNCvqJ+3zhNEmOYtsReMDgrvxs=
+	t=1716817236; cv=none; b=tCp9YNGstpjjv3terWVbBkk+atAPoRs2HsbjZuU5vis0eNI6BC7HB3Bxy6nR53ivR/9y0cwfIbWwgNH32EwMXF4OZXdJEg4h0TN6K4hhEtclO2bgN8G47TKbe/jLP0UwvyzEIU4Vzjb1TBR77Z7ZiIqu9bx0+lXQKAzS0mANNOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817762; c=relaxed/simple;
-	bh=gqza+53r5VdbcAND+Hi9YfxVDyGCS9djsD4wSOb5XXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tNygDAISHlSJrueL2AvgWRcFtE7f/pMEKFfXZjUD61Skv11MBM1dUNVznL82BbCy0RntATNB8l9q8inMuCFFNm2n7vsy9KUQfsDVdplXn/w7O8CEGJi+o3C9HB3DRLRrv0IbZxabO9CrTEmEJJsTzQWMmCl38NoCLXeAbLJtBRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=tkh5WiiA; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 8D9221D2C84;
-	Mon, 27 May 2024 15:40:05 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1716817205; bh=vzQMaKe8PWq8/rJIUTZI8C7BenHzVSRhtEQYf/oFXl0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tkh5WiiAboiiWDCmRyyPkyqW3L3y4BGcfr2IVSnE000zAnqBVehCthCdnt5HF//Sf
-	 czWPcJDgPtMJeXWAkPQwwXCxQQYI4WGwg+p5mOVXBF+GkXoUOfuVV9qY3AoaiJXLxs
-	 e9GUxse0caC3zHiaONykC3nFyUL3lg53epva4av26V9xw0s1SBYvTDo7Qji/wa2IoI
-	 fumT5hlRv1YqUyyTPtH7ewdcG1PbAgqKxLwSAYNmZNiPFdvzI9Lv55koPkJ4oesE5v
-	 JAFFt/4bY8BqC4KrocxDMv8WX9CSCk/Hqqqufv854ToBcEuh8x4I+eO5TCCW/o9CYY
-	 QOtkOYjfT/2CA==
-Date: Mon, 27 May 2024 15:40:04 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
- iommu@lists.linux.dev, Michael Kelley <mhklinux@outlook.com>, Bagas Sanjaya
- <bagasdotme@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] Documentation/core-api: correct reference to
- SWIOTLB_DYNAMIC
-Message-ID: <20240527154004.41a41caf@meshulam.tesarici.cz>
-In-Reply-To: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
-References: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1716817236; c=relaxed/simple;
+	bh=i+fmA1Usq+yf1h8sd1JSGhI2faM4avD4s7E3zhr+kbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KC01pgjakEejUC9iLa8WhdfHM/je0AxbZGA4uSBHFE5KVxr/hchZ2X9+aFzxQIncIz5i9SOz75wa6jux8SiKm3UHc0Ce3gSddCcGH+7nJfCcLCNZr7G9fUIakSv4Y+mfadYVYXQr3N6uFSpVqAlx8s53gEviFMVThOhXD81xAuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VnxCy3RfMz9v7JS;
+	Mon, 27 May 2024 21:23:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id CC536140113;
+	Mon, 27 May 2024 21:40:29 +0800 (CST)
+Received: from [10.206.134.102] (unknown [10.206.134.102])
+	by APP2 (Coremail) with SMTP id GxC2BwD3MCVAjVRm63gBCQ--.51164S2;
+	Mon, 27 May 2024 14:40:29 +0100 (CET)
+Message-ID: <41bc01fa-ce02-4005-a3c2-abfabe1c6927@huaweicloud.com>
+Date: Mon, 27 May 2024 15:40:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+To: Andrea Parri <parri.andrea@gmail.com>,
+ Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
+ boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+ j.alglave@ucl.ac.uk, luc.maranget@inria.fr, paulmck@kernel.org,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
+ <ZlSKYA/Y/daiXzfy@andrea>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <ZlSKYA/Y/daiXzfy@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwD3MCVAjVRm63gBCQ--.51164S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw4fZw43Xw18XF47uF4DArb_yoW3Xwb_GF
+	ZakrykGryYkFsrKF48XFZ0v34rG393XrZ3t347KayI9F93CrW5Wrs7ZryfArnrGanIyF12
+	krZI9rsYvw4DAjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
+	04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r
+	1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon, 27 May 2024 15:13:14 +0200
-Lukas Bulwahn <lbulwahn@redhat.com> wrote:
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+
+Am 5/27/2024 um 3:28 PM schrieb Andrea Parri:
+>>> +    |                smp_store_mb | W[once] ->po F[mb]                        |
+>>
+>> I expect this one to be hard-coded in herd7 source code, but I cannot find
+>> it. Can you give me a pointer?
 > 
-> Commit c93f261dfc39 ("Documentation/core-api: add swiotlb documentation")
-> accidentally refers to CONFIG_DYNAMIC_SWIOTLB in one place, while the
-> config is actually called CONFIG_SWIOTLB_DYNAMIC.
-> 
-> Correct the reference to the intended config option.
+> smp_store_mb() is currently mapped to { __store{once}(X,V); __fence{mb}; } in
+> the .def file, so it's semantically equivalent to "WRITE_ONCE(); smp_mb();".
 
-Good catch!
+By the way, I experimented a little with these kind of mappings to see 
+if we can just explicitly encode the mapping there. E.g., I had an idea 
+to use
+     { __fence{mb-successful-rmw}; __cmpxchg{once}...; 
+__fence{mb-successful-rmw}; }
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+for defining (almost) the current mapping of cmpxchg explicitly.
 
-Reviewed-by: Petr Tesarik <petr@tesarici.cz>
+But none of the changes I made were accepted by herd7.
 
-Petr T
+Do you know how the syntax works?
 
-> ---
->  Documentation/core-api/swiotlb.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/core-api/swiotlb.rst b/Documentation/core-api/swiotlb.rst
-> index 5ad2c9ca85bc..cf06bae44ff8 100644
-> --- a/Documentation/core-api/swiotlb.rst
-> +++ b/Documentation/core-api/swiotlb.rst
-> @@ -192,7 +192,7 @@ alignment larger than PAGE_SIZE.
->  
->  Dynamic swiotlb
->  ---------------
-> -When CONFIG_DYNAMIC_SWIOTLB is enabled, swiotlb can do on-demand expansion of
-> +When CONFIG_SWIOTLB_DYNAMIC is enabled, swiotlb can do on-demand expansion of
->  the amount of memory available for allocation as bounce buffers. If a bounce
->  buffer request fails due to lack of available space, an asynchronous background
->  task is kicked off to allocate memory from general system memory and turn it
+     jonas
 
 
