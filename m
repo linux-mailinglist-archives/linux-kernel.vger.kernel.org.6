@@ -1,94 +1,108 @@
-Return-Path: <linux-kernel+bounces-190613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F372E8D0077
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:53:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA6B8D0054
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AA01F21CF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F26A1C2137A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0C015E5D3;
-	Mon, 27 May 2024 12:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0157915E5D2;
+	Mon, 27 May 2024 12:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="N0/wY+f3"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="up2iwDuf"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F1A1DDC9;
-	Mon, 27 May 2024 12:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFF115E5A9;
+	Mon, 27 May 2024 12:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814388; cv=none; b=J3OMCK8qtyeMBa6Pbg6NFcKcwjlAtgeQ0obb+Etwvezx/MevEsjilCdVNRW4j3BZoRu3+hJHM0xU4TFweqnkbxstCf+z+HAs74b2n8ccMidipepVjYy88i/VWNtnW46A2ZCf3AdJ1nWdaHau1u/XZXMy2xljUGcVJRicyerFsAM=
+	t=1716813883; cv=none; b=S6lGetuN/W8os5nXRLltZ9fkE+vQv4vRAWVLZamOIYg+KA4kHLio/bPtns/GBkIPGZQggLyVyriz0hAo+u1oLowVekENKbxTr6Piq/bgkuGtFzOi/uwE+V5mINu51l8bG/2PpWJ09XABFq915YaxrxOf0NJvejOz5x//zumuOzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814388; c=relaxed/simple;
-	bh=kBPorpQ7vBYqMRTfoGQhRu1WySBg6CbmBx69KpiwWGE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tJLxKLuPNCjL1Zf21c8AL37sQVaJMpkvaMNHLY3KLrUPplTeXJdAFrA/L5DVD8uiYz0Ujuj2OqusISBCDo1PPo+fw85HjFLVisDUavvZ8BlgWAmDJtaFFiStytFFDFYzpwlo33vV6n0w0oTu0XRZwu+yd8/BPsJ9sf4HtIPRgRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=N0/wY+f3; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 269E247C5F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1716813813; bh=hZwk0AW8MLiViFy52ADHgAvY9XF6YcrHWsC+PnuwlD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=N0/wY+f3sVLJ5hmYykdJ3dqt8t9u6adwghZY4UVPJQrK/haj1xVCL/ipi7mnAIIZP
-	 aOZRYUUa5Ix8zduN2WqD5lpzg79od4xBJ3E+rnSFWVBEt/7cKqb/RwmEsaus9ENcNd
-	 HsvjHPtklHZk45chyYMocmPBDPI+EX6DsefwzWSc+pczfBLBEyodip6PgKa5AduTxp
-	 9+9XooKIm3+c6J+Bwrth+T/WHs6mPTGRpy8ImJA/EQiFEXEaUtrWu/jsMngUcIelgG
-	 92ZF3BDtAlLm/+3XxoqWLNNGflc5/gc/fwF/UAWq8/jo90vhoOq8judBV8PTuaQF8u
-	 Yzg/RnE7R5mhA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 269E247C5F;
-	Mon, 27 May 2024 12:43:33 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: yskelg@gmail.com
-Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>, Austin Kim
- <austindh.kim@gmail.com>, shjy180909@gmail.com, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, Yunseong Kim
- <yskelg@gmail.com>
-Subject: Re: [PATCH v3] Documentation: cve Korean translation
-In-Reply-To: <20240527103003.29318-1-yskelg@gmail.com>
-References: <20240527103003.29318-1-yskelg@gmail.com>
-Date: Mon, 27 May 2024 06:43:32 -0600
-Message-ID: <87ikyzpgqz.fsf@meer.lwn.net>
+	s=arc-20240116; t=1716813883; c=relaxed/simple;
+	bh=XGq8EBx7YBbAZYv3a+yoVQGfuikgMWgloGnI4v0Cqqs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZByYja89vKqLXr0sZCVuFnhjxl9dB5VvoMFkqQCDZ2fDYqi+be/5qvphmVRA/VgUESXNGkQa89CjhJalviUvMatykrwIFEBbeDWd0RighH2bgVhNOXADnIqNWTrXsV7rPakmw7ymKdTVwpOUWuI8m6ijk0m1yqnNxRD0lnAKkOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=up2iwDuf; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44RCiRqs033804;
+	Mon, 27 May 2024 07:44:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716813867;
+	bh=znYaiwd1zQ81t8MWJthN/5rFgqs1K/Pm7b/YKSKLSfU=;
+	h=From:To:CC:Subject:Date;
+	b=up2iwDuf5qTQXIxYH1ZERrFL/clWn45vi+DXRy+cdiD1J1iZVb40YfFfdflVGrUIm
+	 p7ORKFodFQERvLHeqpYdQ+9NyAse4aRpdxIrQZ/1unAsVbDdI2y1pJYVVOQ9es9ZA8
+	 btY51EylO6fgdtw0CbvM4BMvVj/GKoZR0LSHPhII=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44RCiRsO015508
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 27 May 2024 07:44:27 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
+ May 2024 07:44:27 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 27 May 2024 07:44:27 -0500
+Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44RCiMbT035499;
+	Mon, 27 May 2024 07:44:23 -0500
+From: Neha Malcom Francis <n-francis@ti.com>
+To: <robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <kristo@kernel.org>, <vigneshr@ti.com>, <nm@ti.com>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>
+CC: <marten.lindahl@axis.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <u-kumar1@ti.com>, <n-francis@ti.com>
+Subject: [PATCH v2 0/3] arm64: ti: Add TPS6287 nodes
+Date: Mon, 27 May 2024 18:14:19 +0530
+Message-ID: <20240527124422.3553828-1-n-francis@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-yskelg@gmail.com writes:
+Add nodes for TPS6287x present in AM68 SK, AM69 SK and J784S4 EVM. They
+are a family of synchronous step-down DC/DC converters. These converters
+are used to enable AVS (Adaptive Voltage Scaling) for these devices.
 
-> From: Yunseong Kim <yskelg@gmail.com>
->
-> This is a Documentation/process/cve korean version.
+Also since AM68 SK lacks DT node of it's PMIC, LP8733; make use of this
+series to add that in as well.
 
-Thank you for working to improve our documentation.  A couple of
-questions, though:
+Data sheet: https://www.ti.com/lit/ds/slvsgc5a/slvsgc5a.pdf
+Boot logs (v2): https://gist.github.com/nehamalcom/1a288f534d730e8af43c48a175919b19 
 
-> Reviewed-by: Jinwoo Park <pmnxis@gmail.com>
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+Changes since v1:
+- remove changing the compatibility of the existing driver (Rob and
+  Mark)
+- remove unnecessary bootph-pre-ram, have them only for VDD_CPU_AVS
+  (Udit)
 
-1) Why do I have three versions of it in my mailbox, sent over a period
-   of 13 minutes?  What changed between the versions?
+Neha Malcom Francis (3):
+  arm64: boot: dts: ti: k3-am68-sk-base-board: Add LP8733 and TPS6287
+    nodes
+  arm64: boot: dts: ti: k3-am69-sk: Add TPS62873 node
+  arm64: boot: dts: ti: k3-j784s4-evm: Add TPS62873 node
 
-   Normally, you want to wait for reviews to come in on one version
-   before posting the next, and you should put a comment after the "---"
-   line saying what changed.
+ .../boot/dts/ti/k3-am68-sk-base-board.dts     | 77 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts         | 21 +++++
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts      | 21 +++++
+ 3 files changed, 119 insertions(+)
 
-2) When did this review from Jinwoo Park happen?  I was not copied on
-   that.
+-- 
+2.34.1
 
-Thanks,
-
-jon
 
