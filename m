@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-191470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728E58D0FAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:58:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2793C8D0FAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F11D6B21D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:58:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4D4B21BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CCE1667C8;
-	Mon, 27 May 2024 21:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFE71667C9;
+	Mon, 27 May 2024 21:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJLGt255"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lc7AvNri"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D3179A8;
-	Mon, 27 May 2024 21:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7FC179A8;
+	Mon, 27 May 2024 21:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716847078; cv=none; b=XE73DQ4ftwAWfSGfu3Qq6blvHIB9+c/zGHtvF6riYeJpnf4M/s4+/1WNhhspreYxsXf3PhT2NNY3MNR7LV3691Nkrb6HEkAsEChpgZhITOsbAbWEbyKbaw/mRRZrJfGOQxReDq0TqWt/oUsZUP4qF5lkH0ckxUiVMdk2Ug/uYSs=
+	t=1716847138; cv=none; b=dcq6tLvXfNiBYxRu75Cp242DBiNAz6Z/k1HpdaLd8n2s/dRKLtvh3i+7M+qIZtcE0YLX41mtsHb774MAkEdbq+kxMEvlonLgHwnBLwx5ON8KiOyjBeMCeQCg92Rqtlb+Uyp5Ubv/aYvSnLWWYMjEI1ZDnURyIipj7+hk27mGlt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716847078; c=relaxed/simple;
-	bh=tFpudmb7utFLtp1DrkxJwkGe4WVa+1FmsNU710JrlLA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=ol2aQRV4DAMttlcELRC15lCr9nCdJY55fU2K3WZw5PSpQc6tWwGGxDvtXKa5LwnvUWB86IREyOvsbsurQWzfdLKN4TamjoZaLN0gLqLGL21mU0AgRMi+VVVG4orXBumDxrWKaV9R3ft/GVN9WwOmXuaz4upWqkMcan4McmqzocA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJLGt255; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f6bddf57f6so189383b3a.0;
-        Mon, 27 May 2024 14:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716847077; x=1717451877; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aEY/VZ0kOW3TO79bbaxiQdw+PPKgHYYJ4mnExDE3Dw=;
-        b=dJLGt255ljxAq+2FwTxgGtZYFDiV9WE+r2qKq1wy686VH9pzYeglM91MKop/hz2WtA
-         //KS2yKqkwoextAghk1hj0WMDCYbHHYFo8Uv+07kP5W1/gvknRBYzGoWnTSkzu1OlEQD
-         9lpBlucComTyUmouD314ssoG4gk+nmzp8StB4znZv7YS2HkhUw7VJsXkDPPGnFcwmt6S
-         Qd9BArNnSWyB3torwmE6nWx6idOKOUe4HaDE2dMjhSRmQcmbvWKx6Jnmu+fUuKXd0kda
-         Vd6+Dg9ZV/7qFJNks7Cb+uehxsTfsb/1gs1Z2qcuuGo0wLVz6nfULpdMzpw8NPOGLdwm
-         4d4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716847077; x=1717451877;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4aEY/VZ0kOW3TO79bbaxiQdw+PPKgHYYJ4mnExDE3Dw=;
-        b=DKbLoqpTfpxu6naZOp6W3b9EJhlN7ARgGOHs7p9UDu6beDaiX6SU8MTYzHQwJwlLvg
-         vbttoX+wYuxyC2/DmBqJvkuFz0S6NXS7J+vmxDvWSMTY6Jemud/cRp+8391bboqLQslH
-         AZj+ipejblaI0HzWKmHFhJqLOnWM4Kv0Tj1HzzVykFf55L2QDO80n6FCNXlE6J2QFvUs
-         gA+AHGvkopie0AGFyL78w8vo2nkh/H1egMjxAP8l8mb3C+1CU4JN396j2wGFnMY8n0Wl
-         BtA3fyk+638WIPu+P2d/y2/S0M8c/Vh2Y+axgqTLkSeaNDqi45bdUCjpl7HBR3rfuIls
-         W0tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeOKr6H/Y8BvXilg9c2VPR0OUAdsZKoWl4DcFWcjhGhZ0000J2ICeyUIyU0oHTjHv51edOsP3CKC3K95fosTuifYXN5XteW4QT7qe+90vM+iZxKLvb3PO+N4e8GBqFNxZGqH/x
-X-Gm-Message-State: AOJu0Yz1hn7loPYi/DCtBOH/DJJ0D4zInSsuGNswe0Z8iqgZXyZfpbC7
-	Ojb9EG2OmhQpn/LwlOyl7rI00EMsGo8ONL04o0S4SRpy++OQrelc
-X-Google-Smtp-Source: AGHT+IHyyK9R+xE+MtpfI+UAMFtrboJJduXIZ818GnkIr7zOYph0pzCdXWMyUAy3gUzpvIq3+Gb5Dw==
-X-Received: by 2002:a05:6a00:330d:b0:6f8:d499:2d41 with SMTP id d2e1a72fcca58-6f8f3f8ba84mr12440692b3a.24.1716847076494;
-        Mon, 27 May 2024 14:57:56 -0700 (PDT)
-Received: from [10.83.3.140] (177.204.11.224.dynamic.adsl.gvt.net.br. [177.204.11.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-701b2219980sm508796b3a.46.2024.05.27.14.57.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 14:57:56 -0700 (PDT)
-Message-ID: <bf02d65d-876f-4a90-84b5-595707659fb0@gmail.com>
-Date: Mon, 27 May 2024 18:57:52 -0300
+	s=arc-20240116; t=1716847138; c=relaxed/simple;
+	bh=27X3OpWXeYz+3UvmmbSLZOSMgK7993GPNRHShnJDtmM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Rf/96AMjEoXB6NehDT1qbAv7g+XW8SzHAxXoQ2lysJplawgcgrS4u6SmuAoHmAjOt0jC0hjnW2B8/3qtMtYSxsOSbQ8CEVt3JYVvvwXhXog+64tOm62aRPC9V3WzbPaYrFZzBGxxaMrWV51VL5TnPLJ4dsK3BPaKMJKv078HzAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lc7AvNri; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B06ECC32781;
+	Mon, 27 May 2024 21:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716847138;
+	bh=27X3OpWXeYz+3UvmmbSLZOSMgK7993GPNRHShnJDtmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lc7AvNriCWXUeeaK4Agj0Lff3GY0cqORFdpn522SmV+GYYxrWcPHMcjTCFJoTLS5V
+	 chcUSdF8PN+B9XFfpShK9JuXtuM0WdFV1SPWXV0rqxFBxmGkh7WcWb6kEiRyNZDDPF
+	 V3XfUCbiGkQkFtMLNUEK1IhPJ7C0YCU9jBIIfwgGjTcCurHx3tlL5lnSqPA8ikUo/p
+	 JsvqKuAisIjgIUAtDF/DlFdig8orS8I5VYZaSq06NZL+ggOPbiIrHoUlXekxBX7Fts
+	 DbswiVwyQs/OPEJGghUgf+x1b7xWDP+8m870tWn3Kt4yFuuKOUZqNpEMRm0n9CkMil
+	 BZDVRdR3iO9rw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Gustavo Brondani Schenkel <gustavo.schenkel@gmail.com>
-Subject: Issue with f2fs on kernel 6.9.x
-To: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <2024052527-panama-playgroup-899a@gregkh>
-Content-Language: en-US
-In-Reply-To: <2024052527-panama-playgroup-899a@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 May 2024 00:58:54 +0300
+Message-Id: <D1KRILI1KRQ8.2CNPU7PFES0VI@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+Cc: <linux-crypto@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
+X-Mailer: aerc 0.17.0
+References: <20240527202840.4818-1-jarkko@kernel.org>
+ <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
+In-Reply-To: <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
 
-Hi,
-since upgrade to Kernel 6.9 I am getting Issues when booting using f2fs.
-If I am correct, I am receiving `fs error: invalid_blkaddr` in two 
-distinct drives, one nvme, and other sata.
-Each reboot the fsck runs to correct this suppose error.
-If I downgrade to Kernel 6.6.29, on the first boot, fsck runs just once, 
-than after reboot is normal.
-I used 6.9.0, but in 6.9.1 it took my attention because I don't reboot 
-often. One 6.9.2 the Issue persist.
-Since I didn't find nothing about issues on kernel messages I am trying 
-reach you.
+On Tue May 28, 2024 at 12:05 AM EEST, Jarkko Sakkinen wrote:
+> On Mon May 27, 2024 at 11:28 PM EEST, Jarkko Sakkinen wrote:
+> > Public key blob is not just x and y concatenated. It follows RFC5480
+> > section 2.2. Address this by re-documenting the function with the
+> > correct description of the format.
+> >
+> > Link: https://datatracker.ietf.org/doc/html/rfc5480
+> > Fixes: 4e6602916bc6 ("crypto: ecdsa - Add support for ECDSA signature v=
+erification")
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > It is a bug fix that does not really need a stable backport. Still
+> > categorizes as a bug because by following the existing documentation
+> > you end up with an error code.
+> >  crypto/ecdsa.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+> > index 258fffbf623d..55114146ff84 100644
+> > --- a/crypto/ecdsa.c
+> > +++ b/crypto/ecdsa.c
+> > @@ -215,9 +215,8 @@ static int ecdsa_ecc_ctx_reset(struct ecc_ctx *ctx)
+> >  }
+> > =20
+> >  /*
+> > - * Set the public key given the raw uncompressed key data from an X509
+> > - * certificate. The key data contain the concatenated X and Y coordina=
+tes of
+> > - * the public key.
+> > + * Set the public ECC key as defined by RFC5480 section 2.2 "Subject P=
+ublic
+> > + * Key". Only the uncompressed format is supported.
+> >   */
+> >  static int ecdsa_set_pub_key(struct crypto_akcipher *tfm, const void *=
+key, unsigned int keylen)
+> >  {
+>
+> Based on this, is this now along the lines of correct format":
+>
+>        *ptr++ =3D 0x04; /* uncompressed */
+>        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)], &x[0], =
+x_size);
+>        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)], &x[x_si=
+ze + 2], x_size);
+>        in_len =3D ptr - in;
+>        ret =3D crypto_akcipher_set_pub_key(tfm, in, in_len);
 
-I use Slackware Linux 15.0-current, and debug flags are disabled by 
-default, but if you needed,
-I can rebuilt the kernel with the flags you say are needed, to find what 
-are happening.
 
-PS: I didn't find any better way to report this issue, said that, sorry 
-if this is the wrong way to do so.
+I fixed up the above as it should be only single octect string to this:
 
--- 
-Gustavo B. Schenkel
-System Analyst
-B.Sc(IT), MBA(Banking)
+	ptr =3D &in[0];
+        *ptr++ =3D 0x04; /* uncompressed */
+        ptr =3D asn1_encode_octet_string(&ptr[0], &in[sizeof(in)],
+                                       &data[0], 2 * x_size);
+        in_len =3D ptr - in;
+        pr_info("in_len=3D%u\n", in_len);
+        ret =3D crypto_akcipher_set_pub_key(tfm, in, in_len);
+        crypto_free_akcipher(tfm);
 
+It fails in:
+
+	ndigits =3D DIV_ROUND_UP(digitlen, sizeof(u64));
+	if (ndigits !=3D ctx->curve->g.ndigits)
+		return -EINVAL;
+
+I checked that in_len=3D67.
+
+The tfm is deleted at instant because the above code is part of *_query.
+TPM2 ECDSA asymmetric key that way that signature verification will work
+when it is needed. The key type signs with TPM and verifies with the
+software cipher.
+
+BR, Jarkko
 
