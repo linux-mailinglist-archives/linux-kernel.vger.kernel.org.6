@@ -1,102 +1,165 @@
-Return-Path: <linux-kernel+bounces-190287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853CB8CFC71
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923428CFC76
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8C228389B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EA41C2185A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A7E6A33D;
-	Mon, 27 May 2024 09:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767A212D743;
+	Mon, 27 May 2024 09:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hkt8MkHA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ogl7VKwz"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE77217BCD
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9ED433C8;
+	Mon, 27 May 2024 09:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716800771; cv=none; b=l8rrYD1KOT77rAP9MVx+/LwjidLUeaJNHXQq49cpoSNCq6aSyZlkgdc/qBXIrmx+yoTizwTpYdf//NpuAR2LxG5MtV8crIiIcyn7BD8EIzjr83cwmOv/jFJF7EUmdAP1SqCXcDQz/ery6W0ctT6l0Wt1qJbDup24VptVGZemJXw=
+	t=1716800887; cv=none; b=pCR2ZitePmEkPuLDGkJToLESW4LuNhLPCEHaX5VxH1GWi6epK8jUXQ0SeumOn8Xc4ieleuO9ytjbYV4YTqsM3bKcgwANfk+iV5Qv3Rhufdrd1osD57cl1UboOmjT5hl9BodVzaoaZ2wELSkutAagMawRKOZA7IzLS2c3hqOg0e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716800771; c=relaxed/simple;
-	bh=Gs4PX66nrFGoxLlu5z968DmwNa+4mZ+YwkgGi250oy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hreEZZcriG7SS9WjaKnvyKT1PfdfwkTiWqm/5QJpAC7zaF0GyFUdA8ehuSNV4Q41v3Sl2Twm6gBgekOn1A5ov8oWCg/S+hoc1jEEvwVvtdPrzYpk1IpBt5gCTYNsh6oPgAqCQI8rmp4ehb/DA4bN2zfMwcrWp5jRjj9/0Rz88Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hkt8MkHA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5238fe0cfc9so4821898e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716800768; x=1717405568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMLd7p+Que1meif8YHCemGbLRtR9KifnLNtA/LHS/So=;
-        b=Hkt8MkHAk1d45BmNwbMsdwtXlebkiFs81+EeljLvnILN6eB3gE2SMGHG/DYfUxyItq
-         8xeskweSVGjXe5/x8jCSzFV7yORPZSZJHRN7EgXZDh7aU6SsNjje7O/Cy3ATy/bgQSZi
-         RiDrtPO3SohkgL81APvhcTjqR7jBfawE0EYQGYxtqns0k3wDLzlzmcU8/VNmFIQBGPXw
-         sXChAgjEDuQF2lRfw8kJRpvIxnqqINPqERix9UdQ4CdHR3R4oX/qaTiCpSVEqpCXM4Zm
-         bGnONnNAd+Nh1Lrc98Z0W2/4PBvxjZg8M+ey5XV/l+Jvha/5awsk7KNtEvwiSu0K1O8L
-         TYGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716800768; x=1717405568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OMLd7p+Que1meif8YHCemGbLRtR9KifnLNtA/LHS/So=;
-        b=OHe9ezOmjOlLBLkWookxsY6BqcPD6UX/aSEVhF6N+rZZNIC98MpSaZLoi7exQiVo8D
-         CtWBufkyorc+5k2NDdDi3K2/ydbUfM3TUxkZVh5P1GW+efFTDm1jGAMxPeO4y3K7t6eh
-         JDYqqLNBfjdYoIdvAYRSNLAZm/z0Cr3XyULBJhAw+HmWTrMSWiCETDcDGLXtPUBz3yEe
-         6Ots8UTGX8l6GNKV8+iS22PAY5ke8GNnnPwsTBdAq03Bx4l1WGkBDEDy3eJW10W5E9bM
-         9x/xVh3mm9slGUTYFVSijfnRQ1s0Ddo6ao7tnrXgvvlgrCiyCGNhs8ESre46Q8zkgNZH
-         27Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSxU5dbA/pgVpzfOF3jrfhd1jFbJrw87TeLQO8E/vJxEvE4HZS0WPKIu3nnOfsrZYJ+qGRASJp8UfEdfdcpiCZMld5yw0dBbUgPXSO
-X-Gm-Message-State: AOJu0Yx3mV9fjwkoDSK3EsguBX+9DwBmzxNZnPlevYaSONwxd48VfeH9
-	FhcOr5k3hiMtJf0/qURe20P6oIQrMmk23E+VGF3JSnatx8xZGv9zjxOFVoLWZXdu27PYTcrECoJ
-	O
-X-Google-Smtp-Source: AGHT+IGkXmvrRQ6mpRufYwk/kC/26tyDgDsA5Ckg6RIN8jvh3T/HBnhZA8lPzBaM6D4S85WI+aZuVw==
-X-Received: by 2002:a05:6512:b14:b0:529:aa43:4522 with SMTP id 2adb3069b0e04-529aa434af7mr1409251e87.24.1716800767878;
-        Mon, 27 May 2024 02:06:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b8b3sm492168e87.174.2024.05.27.02.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:06:07 -0700 (PDT)
-Date: Mon, 27 May 2024 12:06:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: pmic_glink: Increase max ports to 3
-Message-ID: <3xiwtl3m2eujg677r3ipjkprhtsviv5cscowsle2seitzkhh7o@scxobcbxp5hf>
-References: <20240527-x1e80100-soc-qcom-pmic-glink-v1-1-e5c4cda2f745@linaro.org>
+	s=arc-20240116; t=1716800887; c=relaxed/simple;
+	bh=SNmeK7mCWTtFSvWO8eh0/lnLnjP3/m8V0C0ApJhbfYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DX2UdV0fLaLsWno/+VX2v2xpkScrAemDgssTj0XlFYH1wvLAHMv2t/LmqmAxLLLYcfyoDOAXbLQvASrt/2RoSxxgPHhrrRzQf7RxGohYIKvH7W0NWQiZTlQ6t9GcTlkULWzGbD3whfp1ZZv6munGtuOX6pCCJcAbYDlHLvlXfBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ogl7VKwz; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716800863; x=1717405663; i=markus.elfring@web.de;
+	bh=cQmjal3CjS/j+6M+2XYTIrwdOTGkVSbVdktpb0tEJ1Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ogl7VKwzEbqPYLbKarHyZcbWvGUqfFUr8Ca2b/xaom/NHzUeFoaGb16QiFT/W6uS
+	 bhAnjYXo6VEDaYXj8R7erFdHDFc7d1M7/OiIpQ7tieAwLVnLm79dqoCe3SlSSU5Uz
+	 9DTXGLFzEieAKXCEMnZFg/8l7QFIdXGveTKtQ3lmfbNX3h7BbYaN/Mrwgf27QWu9G
+	 hC8pr7gBJr5r5uzjxRYZK79SC7tCBP+7GCL0NURrP4vkn7RFHmtyctrXyjyXvLCps
+	 PDY/df7+p+Be/YzhlCb84Jtd6Uv3Nv7jIHptMvMoF4VAoPUdkGL6LdgCZebIbrdgV
+	 afeCMGEs/IeDdoZc0g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4vRm-1sauyp37Bs-010xJV; Mon, 27
+ May 2024 11:07:43 +0200
+Message-ID: <6ee0b36c-5ea0-4a0a-9d30-865f5b823e78@web.de>
+Date: Mon, 27 May 2024 11:07:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527-x1e80100-soc-qcom-pmic-glink-v1-1-e5c4cda2f745@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm/loongson: Add a helper for creating child
+ devices
+To: Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+ <20240526195826.109008-2-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240526195826.109008-2-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fuak37MKdt1gdQD3nd04PvrGf9PL1iGX348e3REJD+6AlRnnm4i
+ H9i03KpL3MUnrdt47SQs446hFV10lycuGT5nmaqo36Bc+hdPZ1nqQDEK88yYhae24RJbrqw
+ j1DT3hB0OKdZPo7gB8bNhfybJE0uZDjt9oupAP6FiLJDb/3h/X5xictayypvsAmq7SIcvE7
+ AiK2U8XMEPG52POAFy4TQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VxbJ0CWmErI=;qQHNln+YdOL5+hTp4xFs7wOhdNy
+ BMgj1Cupf1AM7vTsTmRw2ZSmOQdGUHcMQmleC/pUMNIegxO+qXek3mKE5+Y6Pj+v9x0dAa0+Y
+ UgFDK7rxsBswrsjaLOTbJjy20AmRmA4jOef6O8SX0/EvtArHz/1WUHsN2GSbLYoZ7hbzV37eI
+ gnFjuKZX9CkdzWIvYelT935uOsN2WwwS8h8jaXMlveNJZ7wqYlFheCdrgMGsHqqcQ3oiPkBXo
+ PkCkv2VDB3bNLOg1YRF2SUkAEQUqSsfMLXcY1209FXOPJ+pqlsLjwiuduj+GmpUrOzMz3A1X/
+ 2X39BmEG9Uvx0P9zkn3LLo0GyvHTVKqn4UQmviWw0OjLlTtbgUZQPRJXiecKIeIonaGmdSLfx
+ 8VWdiwjRaxnogzL/dY5nqb+KSiD1tHXOpO7s6r1Bg8BZNdpdREnaoNeuXjzh887SYUUqaEL1n
+ nZw8hXDz1WCgeHaHkuAv03Ukhr1jnXuPfs5iYWBuLrqFBd4YmVkCgya/vvWKKff7dnHoO3dhc
+ PL8clYoUdsvcvCsAWL5oCY/x2DWmSMS2uaanSvGyD/PbPqHft1wEWPWkeAGMz8HG3XR4TZFaC
+ omXr2oyXGCgTrZfjRGIhcbT6xbFaAS0h8iH5mBJoVLga0x9OzI6UkjobdmbEFBM64RxoQojtu
+ auk8E1tBq4FdGmjd5ydVv6iFL/nes6AqQbxpNm5wxHU3m7uZhq8eC07IXfcMpR9V0uC12nX/k
+ rv79ZlJV6Ku1f8H2NxYrh0ShB/uLwuWxaiSYjzuARKCckMbddLL3k34XDr+hoo5Vr3L0+Wswo
+ Mq89d+XGjKBJ+ltSkdNCOY5g858ZoY7ew52hn6qAK0+jk=
 
-On Mon, May 27, 2024 at 11:16:01AM +0300, Abel Vesa wrote:
-> Up until now, all Qualcomm platforms only had maximum 2 ports. The X Elite
-> (x1e80100) adds a third one. Increase the maximum allowed to 3.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/soc/qcom/pmic_glink_altmode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> In some display subsystems, the functionality of a PCIe device may too
+
+                                                                 might be?
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+=E2=80=A6
+> into child devices can helpful to =E2=80=A6
 
--- 
-With best wishes
-Dmitry
+                         be?
+
+
+> Another benefit is that we could migrate the dependency on exterinal
+
+                                                             external?
+
+
+=E2=80=A6
+> and rising cyclic dependency problems if not process correctly.
+
+                                               processed?
+
+
+=E2=80=A6
+> driver to create sub-devices for it. The manually created decice acts as
+
+                                                            device?
+
+
+> agents for the principal part, migrate the potential issue to submodule.
+
+  an agent?
+
+
+Please improve your change descriptions considerably.
+
+
+=E2=80=A6
+> +++ b/drivers/gpu/drm/loongson/loongson_device.c
+=E2=80=A6
+> @@ -100,3 +101,44 @@ lsdc_device_probe(struct pci_dev *pdev, enum loongs=
+on_chip_id chip_id)
+>  {
+>  	return __chip_id_desc_table[chip_id];
+>  }
+> +
+> +int loongson_create_platform_device(struct device *parent,
+> +				    const char *name, int id,
+> +				    struct resource *pres,
+> +				    void *data,
+> +				    struct platform_device **ppdev)
+> +{
+=E2=80=A6
+> +		ret =3D platform_device_add_resources(pdev, pres, 1);
+> +		if (ret) {
+> +			platform_device_put(pdev);
+> +			return ret;
+> +		}
+=E2=80=A6
+> +	ret =3D platform_device_add(pdev);
+> +	if (ret) {
+> +		platform_device_put(pdev);
+> +		return ret;
+> +	}
+=E2=80=A6
+
+Please use a goto chain for common exception handling.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
+
+Regards,
+Markus
 
