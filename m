@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-189945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7178CF786
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A728CF782
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E76280A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8502812D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECE5D26D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D47C129;
 	Mon, 27 May 2024 02:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+szD9Q+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0dezIaZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5423D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D701FAA;
 	Mon, 27 May 2024 02:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716778511; cv=none; b=DFTv4k9dUBDmgPLEUeHRZ9xXTL84Oks7Id+UOKABclksy9MfDT4RzBP5yrTW17tCr8vwrtSS6mHyqvxP5WW+FIx2stjHvhMP29n1AYPHiCCcPU64dYFESGpOAD+HVeyRtxiehSsUPlwecbztgvYnKQ/m1Va369EQKGjCIv85sB0=
+	t=1716778511; cv=none; b=LCWkWepT+bCPLt4Ij6HoM3mIYVyuDnxxez0rQYtVvBU43bFyYa7UaJyOze4vlQXpf1/DB6imtIGZieASiD4RomIiFuhqv2MFLTvzHdBjDsw2j00sIeUK1egePpglS+yxtYWeflkcMpO+ni96srQVnFZBHLIf/oJwNQtD9AJu8Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716778511; c=relaxed/simple;
-	bh=aZpuLYiE4LlGL9s75mSoBU8PIw58s3XwiPcNNXEzxyU=;
+	bh=39qO4ArV4WMkI/+MoaGYnazaqANez7q1UTHks9np4s8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AGSyDG1rT0tOrgMgKvSr3wXdyu2v2eYjqI34nyYQHyKEfYPVg4qsLLVTjtzv27sNEDG6Wp4xrOo97MNWVHO+kbbDpxFbin1hYBOwxQhORhCYa0SqZfBJxklbJfI/lEootsimE+7sPedualWnAxbUIOPUAnSVq88grfEJWcRagKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+szD9Q+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 307E6C4AF0A;
+	 In-Reply-To:To:Cc; b=C139/x+zJJhf6iFl0BU6gu5qwlJzA9q7u9bNy1NaYxm7jVO3TBRf7bZt3HuZvt2v9E+tqbVQOnOS/b/DVFkQcyq4+QNi/P+MtRU5SfPgZfr2eAInxMTctI9KGQOYiAys7XkJnBAfh25LEASRWcrmhAVo97Q6p29A2JUhnRud2JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0dezIaZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 297E9C32789;
 	Mon, 27 May 2024 02:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716778511;
-	bh=aZpuLYiE4LlGL9s75mSoBU8PIw58s3XwiPcNNXEzxyU=;
+	bh=39qO4ArV4WMkI/+MoaGYnazaqANez7q1UTHks9np4s8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=H+szD9Q+LtPMLJiFIV84z6LgMroAJCfOqJxnywfmKBps5Qi6wlCeb6AR874FXbAK0
-	 xDTWZlyGYb/Xlvr55pDLNHQkyUzGhnF2uJXEDHd3Jeukt4e7Z1YRo4G/e8zFoUTcbI
-	 2vzDxeBms6pcGq8kcCo7HnmAVs/vyPg1l7xPNJCjnAfkx+eIe8CWbYsGlJAMwgqvNu
-	 1HUSxqmzhPoJ00dLKxbZuZA6wHSMKgmnH1cn7YKHhmQO5RDFSrlvUcuITIetozb1TN
-	 eQZFTgJ0rnTuo7RhTe4EeU0oju8wBJWd2+6LOjomC8NjdyYFBXWWx/sYGFD0HIe8+q
-	 12mqX4IDdhHWw==
+	b=Q0dezIaZxlrFzGX+kwhj2Y2qgdgxgguKN499Jh6AowH8IHeJppEuw4g7xqZYAYgo4
+	 G6jUAAyLWCEVkfsD1mDJANpVjyLnmRrtZ1eU3E9kpfsI0eX1WgAGhz3mESO/wstYxW
+	 KlXPs9J3jsrQJzoXpOpH/QHieyH1dbeIGfY1v333StXkq31ugdlHGSzYvAQAkP4yg4
+	 RFj9WNzlbshlmUt3F7cb2b24HyGrIagt7+DfXiVHUgmWb5CUxpW9qjgd4L1Gb/FQo6
+	 z6/h2XYMLL8Ql4Xq45fK8WJpGmfFeZVXW/qU8OADaNbi7VhNG/thDKBeU77W2mZxyF
+	 PJefczsOXHIPQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1A482DE4001;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 13421CF21F9;
 	Mon, 27 May 2024 02:55:11 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Input: cros_ec_keyb - Remove an unused field in struct
- cros_ec_keyb
+Subject: Re: [PATCH v2] drm/mediatek/dp: fix mtk_dp_aux_transfer return value
 From: patchwork-bot+chrome-platform@kernel.org
 Message-Id: 
- <171677851110.1901.13316641660823149535.git-patchwork-notify@kernel.org>
+ <171677851107.1901.3212994325646956148.git-patchwork-notify@kernel.org>
 Date: Mon, 27 May 2024 02:55:11 +0000
-References: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dmitry.torokhov@gmail.com, bleung@chromium.org, groeck@chromium.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-input@vger.kernel.org, chrome-platform@lists.linux.dev
+References: <20240417103819.990512-1-wmacek@chromium.org>
+In-Reply-To: <20240417103819.990512-1-wmacek@chromium.org>
+To: Wojciech Macek <wmacek@chromium.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ daniel@ffwll.ch, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
 
 Hello:
 
 This patch was applied to chrome-platform/linux.git (for-kernelci)
-by Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+by Chun-Kuang Hu <chunkuang.hu@kernel.org>:
 
-On Wed,  1 May 2024 08:49:47 +0200 you wrote:
-> In "struct cros_ec_keyb", the 'keymap_data' field is unused.
-> Remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, 17 Apr 2024 10:38:19 +0000 you wrote:
+> In case there is no DP device attached to the port the
+> transfer function should return IO error, similar to what
+> other drivers do.
+> In case EAGAIN is returned then any read from /dev/drm_dp_aux
+> device ends up in an infinite loop as the upper layers
+> constantly repeats the transfer request.
 > 
 > [...]
 
 Here is the summary with links:
-  - Input: cros_ec_keyb - Remove an unused field in struct cros_ec_keyb
-    https://git.kernel.org/chrome-platform/c/5128de84d8fc
+  - [v2] drm/mediatek/dp: fix mtk_dp_aux_transfer return value
+    https://git.kernel.org/chrome-platform/c/8431fff9e0f3
 
 You are awesome, thank you!
 -- 
