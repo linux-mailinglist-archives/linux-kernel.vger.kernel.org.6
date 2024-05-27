@@ -1,146 +1,194 @@
-Return-Path: <linux-kernel+bounces-190303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903D48CFCA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B08CFCA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B361A1C20E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F64B20957
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E783E139D13;
-	Mon, 27 May 2024 09:18:17 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70C8BF0;
+	Mon, 27 May 2024 09:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXWfMfZ7"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F8B8BF0;
-	Mon, 27 May 2024 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBA8604BB
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801497; cv=none; b=Fnk4+rHD39MBEGzJ3VyWnZtfEbkGqtsaB/lnpT+2uFe3Ii3f21IEgnfgZltUkC3vfmal5EmFiaqYjtOu8RT3DnGBq8nLEhsoHWVTyWeMolje2UFODEVaibI46oe+4kqbwuecoqEYFj7wAxvrhLqLIrdT2BchrBo3NmpzQBjS0v8=
+	t=1716801516; cv=none; b=Wu740asvEt936WC1x48wkCBsdIzaozbR0BKRK9sUNqezV2aF8vI8b5u7Msw1+OW1hhkOI6o/G3T6IcT8llQiPHP8mcdwJzh8awLO1YzmqfFbC9mcT1zQHCQoV8PkTI3Zl63tAmsuECtNCicGchN6LebYS7Abjm9b9ZrNwlwpb4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801497; c=relaxed/simple;
-	bh=06ov8LDF6C94yAWPdz3byY1cC7MZjQLNnXADs1Y3168=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jCY14G/zfR6Eh+d05QmMMJ8x4jaowWgJ4XwSu9Do3bP2EYGMHu7+fOBPHAUlTo6fv8A0k9q9CvGybaLMwJ8mM2KmwL23Bw3ePsQ1qRWRNkZVDSmNVy8SSsObZWjto1kG5AKqjBxxMcKeB/GjRVoS8fSGXumyBO4ahCP6lCSB6SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a0809c805so31949007b3.0;
-        Mon, 27 May 2024 02:18:15 -0700 (PDT)
+	s=arc-20240116; t=1716801516; c=relaxed/simple;
+	bh=wQcfv6030ij82jUK6+/wla/4dKOwktAWdTrmIqKWvnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIX7mrPSIQHIVyXj655SzE6O2QtyQAPMldj54W2C+GtlvgM/2uGjFtiLA6w8S7fVSTB5wE6VLU4ND/DxW5TCxN3PHs7gZjX0Fx8u/spUBakRY//3Qoh+2MVqXKPEozbBAIbYGgXl4GG6Vo77r3VXqBefKU+6fJTiCqQXblyWIYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXWfMfZ7; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e95a1eff78so38996471fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716801513; x=1717406313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ElGvATidgGffK1r5Dzp1IOrlLnZD2i4ep1EfK0h/Tms=;
+        b=zXWfMfZ7TMtR/34NQ59daSb9BgImqB6PPvQegbRy512a5zDIwa2nAASZEElW73Ahj/
+         CPRh7FY1zmyUpbCya51XpTu5QG1mUM5Pf5zA3gp0D2vo/4BO+WvXDXk94fBwVsmWFCQR
+         lQpr+WhyUSeBz0QtZwVgvghlGqhVlCQKIGN4A8eisc9btN5cmauzpX7URg3jB92S89Qw
+         OJ1IlJ0j8BL3Cd1AooBveVuD6gUpNTkn4jyD8iLngfIGEgMnu8NTo8NhN2G7CTtsnQ67
+         OP/SuN/sJ2oy9Z2aZOtgiC3MJiSNqvbLFoN0yAJjAy/V3cswUW9ArG4By8DR1NJ77loh
+         0KBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716801494; x=1717406294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1bOMQpnCot1Q27PtbLkLD5PwnyVT+SP5xzT/2JZo+w=;
-        b=mawjDWl1xV1jPbO4ia8tEPVTF+Har/s6m5YjRrR4HrB9bP3mUKI8cdca+7m+Wgog13
-         9IrvUSLvNxqTcd9PuUiufV9t+4JOQS6woGyPhyVG0uVjft1CJ+AcW/R64IhXEM3+r/OI
-         vN7xhHuEwnS3X8CYl1Nv7S87T6M96eEY2q1/fNlnAFJdTfYiLWL9p2+c3C2JTz+XjZlO
-         Pxw3LsdWGrVkfElo3CGSUhO49lE6+JAKNLSa7uU2jAMjoOwY+mUcBHOHPST82RmJ31Th
-         NfBtM5yZwidfLDJJkNrOuwsyxlsDj/KAozi2AXaaHmW5B8Hy3s2TzsM1m6jWi42ltScB
-         rdvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXql4lpZ8/HnTn4OMGeOcel9oPzFyKLStu38DP97PCtMSLmaExd/XIFr32oN/cMgrcsFs86fP7YQAemPWtSR2mKVwNwQ40zFz2fnPTW3eyKRd6poj9sRwuSfPf16f3HNCwUMViFrkFZTCjk1TIObZSCYTveOPGx3ejrV7NXT8rOPiieb0IK0wtex1535ePW+2L63tgKxl1XMmeJinGVJ1+YoOkszxg
-X-Gm-Message-State: AOJu0YwzQ1RmBxEQlDdV4c3tgNx9X2/hTEGPa2nvGS5fFzx5wasSsZrs
-	TW/AMFJ5GeSssiCWtwDFp+S9t38sg7fsdeU3x3aHcdD+WTcODtiT7nSspoWy
-X-Google-Smtp-Source: AGHT+IE9Lj3+8RNO8Lg1zFGWdi6XIwXNIUZWezZlbPLmFzYS+nnUL9IP9IDsYFEeXfITyQhpF4Cpqw==
-X-Received: by 2002:a81:6c04:0:b0:61b:df5:7876 with SMTP id 00721157ae682-62a08d7443amr81201407b3.6.1716801494081;
-        Mon, 27 May 2024 02:18:14 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a56c17csm15751687b3.131.2024.05.27.02.18.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:18:12 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df4e503983fso5168391276.2;
-        Mon, 27 May 2024 02:18:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXciuFRHdC5fTuENBxKqtuVlm+RKosNzV0B+hc4MWzsvZg0EqU8NPUtrBINsAB9G6ya7vp6oHgKx4X8dqjZNR8HKye8VkOXzcvG5Rq2ufS8D3RG+rlCrhe5FAZzwrMaLdikhJuKHucqizf0+8TkKJ/qwnFyUmZrjKvQ00V4H2JXRd4O5UmKPCvfGFrMUBiXhQ0y166n6xSRZTCmqljkHh9/tIXNCrT3
-X-Received: by 2002:a05:6902:528:b0:de6:4ff:3164 with SMTP id
- 3f1490d57ef6-df7721ad3dbmr8878974276.36.1716801492684; Mon, 27 May 2024
- 02:18:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716801513; x=1717406313;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ElGvATidgGffK1r5Dzp1IOrlLnZD2i4ep1EfK0h/Tms=;
+        b=gWuXSswJGIzcd8Z2R7rLARh14sZuxfE6RLf1mAomsKANO+Je2kUtkSfRhmP/sDKpgo
+         xVxdHI/gmUK9gtnxS1m0eJr+6Z1G9RviHl93fHnHyXCgi8NjHB4FNuCnBzwqOqsQya7p
+         y/HN2s9H/2uxajM6x44GZb++S3ZRI0anrQ9Rku03zQu4i21TVh+s0lgADtdgIzaTKSsG
+         duhe1ZB+XzI87zXkiI0TOCuQWVBj8xjx0IRGC17W1vsYhA7CTnPrgpPIG6yZzts902N1
+         G+LX8xw+hxFu7sgqSDSnxoWCA0637fgTlI7LAyP3rOMOUwmEZilR1ybW03FnANeyxW5a
+         JrSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdzLNaEYbPVcRul8O1wfK2XfQ2lBlvMGQEwlrKq7z7MGx1b+BSka00P/0fLAPa39ZnWv//hNcRpBTfcVbxTigaWiqDi49NXAB6Jz6i
+X-Gm-Message-State: AOJu0Yw44JAuMQtXg8tGtbAh6aZMb7HlOT3a0+W7VVrPILUzvWL/76Sv
+	X6NBmkfltkJVmz0/5n2Mob4YCoc1Lc55zI+RVqOskrzRyH8XWeqvx/4+1LnHFoQ=
+X-Google-Smtp-Source: AGHT+IFhFokDStqP88zftcz543WctnBkGzESkn0T+HS6G4fMr6/934An9b6sPz9x1PZPdPLBTyz6tA==
+X-Received: by 2002:a2e:a710:0:b0:2dd:cb34:ddbc with SMTP id 38308e7fff4ca-2e95b27b108mr66759911fa.48.1716801512661;
+        Mon, 27 May 2024 02:18:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcf4c32sm18295741fa.66.2024.05.27.02.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 02:18:32 -0700 (PDT)
+Date: Mon, 27 May 2024 12:18:30 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: typec-mux: nb7vpq904m: broadcast typec state to
+ next mux
+Message-ID: <jdqnlfuqount32ralk4jr3beobdt7dgs3h4lcpxj5fbmanysl6@pgwqeozl7ow5>
+References: <20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org>
+ <20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-2-79ec91381aba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 May 2024 11:18:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-2-79ec91381aba@linaro.org>
 
-Hi Prabhakar,
-
-On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
-> (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
-> in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2H(=
-P)
-> Hardware User's Manual (Rev.1.01, Feb. 2024).
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
-> @@ -0,0 +1,644 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corp.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+On Mon, May 27, 2024 at 09:45:30AM +0200, Neil Armstrong wrote:
+> In the Type-C graph, the nb7vpq904m retimer is in between the USB-C
+> connector and the USB3/DP combo PHY, and this PHY also requires the
+> USB-C mode events to properly set-up the SuperSpeed Lanes functions
+> to setup USB3-only, USB3 + DP Altmode or DP Altmode only on the 4 lanes.
+> 
+> Update the nb7vpq904m retimer to get an optional type-c mux on the next
+> endpoint, and broadcast the received mode to it.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/usb/typec/mux/nb7vpq904m.c | 29 +++++++++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
+> index b17826713753..efb10f890fed 100644
+> --- a/drivers/usb/typec/mux/nb7vpq904m.c
+> +++ b/drivers/usb/typec/mux/nb7vpq904m.c
+> @@ -69,6 +69,7 @@ struct nb7vpq904m {
+>  
+>  	bool swap_data_lanes;
+>  	struct typec_switch *typec_switch;
+> +	struct typec_mux *typec_mux;
+>  
+>  	struct mutex lock; /* protect non-concurrent retimer & switch */
+>  
+> @@ -275,6 +276,7 @@ static int nb7vpq904m_sw_set(struct typec_switch_dev *sw, enum typec_orientation
+>  static int nb7vpq904m_retimer_set(struct typec_retimer *retimer, struct typec_retimer_state *state)
+>  {
+>  	struct nb7vpq904m *nb7 = typec_retimer_get_drvdata(retimer);
+> +	struct typec_mux_state mux_state;
+>  	int ret = 0;
+>  
+>  	mutex_lock(&nb7->lock);
+> @@ -292,7 +294,14 @@ static int nb7vpq904m_retimer_set(struct typec_retimer *retimer, struct typec_re
+>  
+>  	mutex_unlock(&nb7->lock);
+>  
+> -	return ret;
+> +	if (ret)
+> +		return ret;
 > +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +	mux_state.alt = state->alt;
+> +	mux_state.data = state->data;
+> +	mux_state.mode = state->mode;
 > +
-> +/* Clock list */
+> +	return typec_mux_set(nb7->typec_mux, &mux_state);
+>  }
+>  
+>  static const struct regmap_config nb7_regmap = {
+> @@ -411,9 +420,16 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>  		return dev_err_probe(dev, PTR_ERR(nb7->typec_switch),
+>  				     "failed to acquire orientation-switch\n");
+>  
+> +	nb7->typec_mux = fwnode_typec_mux_get(dev->fwnode);
+> +	if (IS_ERR(nb7->typec_mux)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(nb7->typec_mux),
+> +				    "Failed to acquire mode-switch\n");
+> +		goto err_switch_put;
+> +	}
+> +
+>  	ret = nb7vpq904m_parse_data_lanes_mapping(nb7);
+>  	if (ret)
+> -		return ret;
+> +		goto err_mux_put;
+>  
+>  	ret = regulator_enable(nb7->vcc_supply);
+>  	if (ret)
+> @@ -456,6 +472,12 @@ static int nb7vpq904m_probe(struct i2c_client *client)
+>  	gpiod_set_value(nb7->enable_gpio, 0);
+>  	regulator_disable(nb7->vcc_supply);
+>  
+> +err_mux_put:
+> +	typec_mux_put(nb7->typec_mux);
+> +
+> +err_switch_put:
+> +	typec_switch_put(nb7->typec_switch);
 
-No distinction between Core and Module clocks?
-
-> +#define R9A09G057_SYS_0_PCLK                           0
-> +#define R9A09G057_DMAC_0_ACLK                          1
-> +#define R9A09G057_DMAC_1_ACLK                          2
-> +#define R9A09G057_DMAC_2_ACLK                          3
-
-[...]
-
-> +/* Resets list */
-
-[...]
-
-No power domain specifiers, as mentioned in PATCH 1/4?
+Same comment, typec_switch_put should go to a separate commit. IMHO it
+almost begs us to have devm_fwnode_typec_mux_get() and
+devm_fwnode_typec_switch_get().
 
 > +
-> +#endif /* __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ */
+>  	return ret;
+>  }
+>  
+> @@ -469,6 +491,9 @@ static void nb7vpq904m_remove(struct i2c_client *client)
+>  	gpiod_set_value(nb7->enable_gpio, 0);
+>  
+>  	regulator_disable(nb7->vcc_supply);
+> +
+> +	typec_mux_put(nb7->typec_mux);
+> +	typec_switch_put(nb7->typec_switch);
+>  }
+>  
+>  static const struct i2c_device_id nb7vpq904m_table[] = {
+> 
+> -- 
+> 2.34.1
+> 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
 
