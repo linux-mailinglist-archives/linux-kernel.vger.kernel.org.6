@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15248D0A17
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B09A8D0A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A3F6B2213A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB741F220DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B8515FA91;
-	Mon, 27 May 2024 18:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568315FA8C;
+	Mon, 27 May 2024 18:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSiiFpfC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHx1sLV+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E24915FA7B;
-	Mon, 27 May 2024 18:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E93E155C81;
+	Mon, 27 May 2024 18:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835374; cv=none; b=QmYEkF70lhnpx/XpQP5ucnarna2DeeHwT0hKg2O1QrBB80PArx8daPEVmrQWtBceOOfMWjYuKOBKYaE/T85gns5sAtRHcqIj4VNwb7xrL6Vz1HEZja7sVR25kvDEs139xXH49csYjbDxzUGqOBOzLZsUiu/nfi/TmC1dCP1ygwI=
+	t=1716835440; cv=none; b=iKCU2oLUhMJLhuDrEwAwb18uoYt0Mz0dvLVjdXWOYBKkEnpX1oO2QcdGe44crU1QPHuw559OPfOdISuU3ZX+6/wYm1Z2wW5snuH3Ek9QL8WkNmxAeDms5gO2f+fFcyyHhHaiq55hsSYldqe45vqeiNCosjtNfqZtlkZFXj3dxZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835374; c=relaxed/simple;
-	bh=xEpbPDiFG2K+IH0Y/rvh7wsZUZ7O1REPFbeWPqsBuJg=;
+	s=arc-20240116; t=1716835440; c=relaxed/simple;
+	bh=9EmvIFl4KYSHoGu6mBh30DLc+7+lt6Z/dShi6EknA3g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVgMCzwW3gsWWUG32DaqF16rdQ8ibq72EFH9KyHATVZTev/WUqWSBaanPXn+gz3GW/yV1CROTHcIqySRmd+eAR9xE+JfdrM4tYx7uWCYGxDjQ7qOWEkAarYRj8IdOXfltiS6krhnqZC78S1REcX0DGiHSvSiC28cKwu5BpZ0hdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSiiFpfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D13C2BBFC;
-	Mon, 27 May 2024 18:42:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QVDZSDLTe4KWek0lRFpsdvGWKFahPmDi8xtShOBEO619XezT1CWBvjcTk4CxePjKiZjHUV8Hb/PBB5kDgAb8c6/jgsFoAQJIJ6/38kYH8NajhQjr2IB/UJa5Rqv9TBK4cHscFTPJ37CuWWLOraTqh+5cQCMqAUbgkNomCCxnUok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHx1sLV+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C45C32781;
+	Mon, 27 May 2024 18:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835373;
-	bh=xEpbPDiFG2K+IH0Y/rvh7wsZUZ7O1REPFbeWPqsBuJg=;
+	s=k20201202; t=1716835439;
+	bh=9EmvIFl4KYSHoGu6mBh30DLc+7+lt6Z/dShi6EknA3g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dSiiFpfCIiU7Uo0a5B2wFfsyb6P96fVATzj5DePYbiadg/EpboYLICcveTXOqSKy4
-	 NtCmlpt8iC+3Ks0c80ZLAaJIwpMJHQPV5Ygcjk+bVVTyzr33GIJ2/YjQWDkbS1EXOC
-	 oj9O2C5X8uXmtAzNxJOh25c5TxmLWgUVSGhPE0ASf5Meka0UAAmfz7yKdGJH/B61+o
-	 RlNWDJfUa3VzovLC15lCeBy6bnwsTeQuQF1v5HT1LwnOoG1Okf9p3+0mV0EHnblGaG
-	 y2h/A9HMkym1PAnc8/sQGvx0nd8NStQFZNtjD4lpRlag2mV/GyOOQ+KFhAKymzUp7l
-	 8o5Xl6f8I/yZw==
-Message-ID: <fb49e19b-911c-440a-a83b-f54b828fc304@kernel.org>
-Date: Mon, 27 May 2024 20:42:47 +0200
+	b=ZHx1sLV+kdgEaHYMxSCoiUFXsrQl5l9LsN+SzNvbSyRVJ+VYqH1HNGuPvLrPfWqEr
+	 ryIqN4M8JuoV38nD5gC/U//GO/mWQsH/GU4taOCb2NXwuMh9bAX4gonEqgQwnezBy6
+	 o29jv2/eZNWJ0KJ07SWYLXGVhO6Ei254uPH82aWuuB0CvcUzsOl/HgjVsv2kArE8SY
+	 7BlXwoJ/A7Sp4a4w4VmcicOC9pVWc6AS0hselcK9gYn5yvw1O0THqe3Q7sooUomS6E
+	 Cvh6PU/HaRHKUxAAtygQwgZnp+GuVQMaf06lY0EcNKWkKh0dIKD6+c/CbTSJiQ033F
+	 JZhli92NulnPg==
+Message-ID: <f0797ee5-8286-45aa-a817-fb8514c72cef@kernel.org>
+Date: Mon, 27 May 2024 20:43:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/9] ASoC: dt-bindings: samsung,midas-audio: Add
- GPIO-based headset jack detection
-To: Artur Weber <aweber.kernel@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
- <20240525-midas-wm1811-gpio-jack-v4-2-f488e03bd8c7@gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp:
+ Reference usb-switch.yaml to allow mode-switch
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
+ <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-1-a03e68d7b8fc@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,20 +106,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240525-midas-wm1811-gpio-jack-v4-2-f488e03bd8c7@gmail.com>
+In-Reply-To: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-1-a03e68d7b8fc@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/05/2024 15:28, Artur Weber wrote:
-> Some Samsung devices that share the midas-audio driver use a GPIO-based
-> approach to headset jack detection, as opposed to using the built-in
-> jack detection provided by the wm8994 driver. This setup uses two GPIOs
-> (one for jack detection and another for key detection) and an ADC
-> channel for determining the jack type or button pressed.
+On 27/05/2024 10:42, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY can work in 3 modes:
+> - DisplayPort Only
+> - USB3 Only
+> - USB3 + DisplayPort Combo mode
 > 
-> Add DT configuration values that allow for describing these setups.
+> In order to switch between those modes, the PHY needs to receive
+> Type-C events, allow marking to the phy with the mode-switch
+> property in order to allow the PHY to Type-C events.
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> Reference usb-switch.yaml as a simpler way to allow the mode-switch
+> property instead of duplicating the property definition.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
