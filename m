@@ -1,154 +1,171 @@
-Return-Path: <linux-kernel+bounces-191028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6D78D05BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:16:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CD38D0718
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1789A1C22287
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:16:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8D2FB23150
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2A616ABFD;
-	Mon, 27 May 2024 15:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866B816C865;
+	Mon, 27 May 2024 15:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcB2e5iU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="wE+8G3F8"
+Received: from mail02.habana.ai (habanamailrelay.habana.ai [213.57.90.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8560415EFD0;
-	Mon, 27 May 2024 15:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE34B16C6B8
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.57.90.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716822117; cv=none; b=JipZwg2Dz56NWbBS5IgVruHZxY+gw1sDQlH49r/zn5ibUoCWbcTrfdTJz804QUqVpQN2nwSgslwoy5+JAhqNZtlGJNz2jvap/yGX4qPEfcTdcITeWR/F0WKtxEC9pSey2DDbC8tKT68xsMg78LyWwgSwkN5D62VVSAYLRW/RSU4=
+	t=1716822161; cv=none; b=S2SvgWcyVGAF6OR+fS3qIwX/bDhlAnDo6EbtZdlPNHpxfQY8aBAiQuvdoJd+XLIjuzx5UFhA6j7ZrCli4Ejdq5q6s0/vqP5oaozXO2uJDgcbVJOPPZgj9k4Mj5rzK2BPIjGQQ4V5jjWpprNQA4rlzcZuK6ESh8UscIO1QvQGUhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716822117; c=relaxed/simple;
-	bh=K7M4dLSIKdMi6+X3XLgLzDWX09De+whRQvoqNYwdGJQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=sYkGCuvdqZYcawqF6+esACqB188xJ6I4TZAw0bTQ76pzV0Un4nrytx8vFLveJF7FVg8RubVMe9j1MSVw+QmlQjyR13L8Y9GmaOzEjcYiznPApUEWZ01bV/H/pHcITh8N5b/2i89hGac5F6Jbv0ZPlhUjsVHjBHMc4k583RC1OaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcB2e5iU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50361C2BBFC;
-	Mon, 27 May 2024 15:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716822117;
-	bh=K7M4dLSIKdMi6+X3XLgLzDWX09De+whRQvoqNYwdGJQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=CcB2e5iUdnVk9MQsJmzq2v25j7KC1fepkTQUm3AAwdI1eZPy+H/I3WoELa9oWeF7v
-	 SkuPGd1pzptmOPXquStexNdx9ZHHzuHXWfMMpvXn7eXFcxeJ2uvdeLTorua9sI5JIt
-	 zw8JhvNs15RbLehKWb01skT3schgd4OLD0EUJFF/V0QaGtzqwRXNPkktoZD3SfacD6
-	 P5YC5jV82KbeNQKjrN3k7KJGTw+MjH5LqaBaV5TLFpcUe0oIkZqIE/EyOSZ1DXYxcX
-	 SW7v6XDNEChWzmZDJ9G6FTJ0AgacVcT5/mpLqjI/fwn7rNeU9Fuoq1h35pcbynLdLp
-	 RpOMXwiFc9b7w==
+	s=arc-20240116; t=1716822161; c=relaxed/simple;
+	bh=3jyCp5WLB1q5U7lpJgv1v9IMLy+ia/ewwngv2+8knpU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W/nwiGexo+zWuVfLZ5Ib42/HqTTUoTcvzP8HdWI6JVxu7YamwWkzY4HBPKvWIffY24bKZM+XjIPVE+3lbjteqjmPVjRouLicPG7Td5P2FjmEi2iZWDythiJAQJUi66tMI+p7CaktuVPfs86E6FSYogUNoSg96JPPIBu50KyQYDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=wE+8G3F8; arc=none smtp.client-ip=213.57.90.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
+Received: internal info suppressed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=habana.ai; s=default;
+	t=1716822162; bh=3jyCp5WLB1q5U7lpJgv1v9IMLy+ia/ewwngv2+8knpU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wE+8G3F8xZhEjg6kH22qMDN3MEFKr8Pk6Bj1OL35JC0o3D7iALI5f+08xCynp2mpH
+	 H2IDQPmlIbUQn+LZUEdEijMPYp1DxJ4uKwvSSEFJy1H8RGc7HX854Vgeiw6THliiB9
+	 HImm4tWADWZXJgu36e/3AabyvbJCzWMLM0VohGvW20HoBeZwLnVbQuzhxBfsIOQxlO
+	 KyQrNcWLuFQjczrxN4obEO6yL0AbV0eu+7zCqiAn0sAkKbqQYXRzO9Rb9Pug+/M2Ip
+	 uen92lMw0WK/cGF11MNyJheccJTqPkdmvz5BEw8p4cDwHF0Ab1XPehknIhKMLFKNZj
+	 T2YtUyfF17FZQ==
+Received: from obitton-vm-u22.habana-labs.com (localhost [127.0.0.1])
+	by obitton-vm-u22.habana-labs.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 44RF2PiS1954007;
+	Mon, 27 May 2024 18:02:25 +0300
+From: Ofir Bitton <obitton@habana.ai>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Farah Kassabri <fkassabri@habana.ai>
+Subject: [PATCH 1/8] accel/habanalabs/gaudi2: add GAUDI2D revision support
+Date: Mon, 27 May 2024 18:02:17 +0300
+Message-Id: <20240527150224.1953969-1-obitton@habana.ai>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 May 2024 18:01:52 +0300
-Message-Id: <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Vitor Soares"
- <ivitro@gmail.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
- <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
- <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
- <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
-In-Reply-To: <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon May 27, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
-> On Thu May 23, 2024 at 10:59 AM EEST, Vitor Soares wrote:
-> > On Wed, 2024-05-22 at 19:11 +0300, Jarkko Sakkinen wrote:
-> > > On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> > > > I did run with ftrace, but need some more time to go through it.
-> > > >=20
-> > > > Here the step I did:
-> > > > kernel config:
-> > > > =C2=A0 CONFIG_FUNCTION_TRACER
-> > > > =C2=A0 CONFIG_FUNCTION_GRAPH_TRACER
-> > > >=20
-> > > > ftrace:
-> > > > =C2=A0 # set filters
-> > > > =C2=A0 echo tpm* > set_ftrace_filter
-> > > >=20
-> > > > =C2=A0 # set tracer
-> > > > =C2=A0 echo function_graph > current_tracer
-> > > >=20
-> > > > =C2=A0 # take the sample
-> > > > =C2=A0 echo 1 > tracing_on; time modprobe tpm_tis_spi; echo 0 > tra=
-cing_on
-> > > >=20
-> > > > regards,
-> > > > Vitor Soares
-> > >=20
-> > > I'm now compiling distro kernel (OpenSUSE) for NUC7 with v6.10 conten=
-ts.
-> > >=20
-> > > After I have that setup, I'll develop a perf test either with perf or
-> > > bpftrace. I'll come back with the possible CONFIG_* that should be in
-> > > place in your kernel. Might take up until next week as I have some
-> > > conference stuff to prepare but I try to have stuff ready early next
-> > > week.
-> > >=20
-> > > No need to rush with this as long as possible patches go to rc2 or rc=
-3.
-> > > Let's do a proper analysis instead.
-> > >=20
-> > > In the meantime you could check if you get perf and/or bpftrace to=20
-> > > your image that use to boot up your device. Preferably both but
-> > > please inform about this.
-> > >=20
-> >
-> > I already have perf running, for the bpftrace I might not be able to he=
-lp.
->
-> The interesting function to look at with/without hmac is probably
-> tpm2_get_random().
->
-> I attached a patch that removes hmac shenigans out of tpm2_get_random()
-> for the sake of proper comparative testing.
+From: Farah Kassabri <fkassabri@habana.ai>
 
-Other thing that we need to measure is to split the cost into
-two parts:
+Gaudi2 with PCI revision ID with the value of '4' represents Gaudi2D
+device and should be detected and initialized as Gaudi2.
 
-1. Handshake, i.e. setting up and shutdowning a session.
-2. Transaction, payload TPM command.
+Signed-off-by: Farah Kassabri <fkassabri@habana.ai>
+Reviewed-by: Ofir Bitton <obitton@habana.ai>
+---
+ drivers/accel/habanalabs/common/device.c                 | 4 ++++
+ drivers/accel/habanalabs/common/habanalabs.h             | 3 +++
+ drivers/accel/habanalabs/common/habanalabs_drv.c         | 3 +++
+ drivers/accel/habanalabs/common/mmu/mmu.c                | 1 +
+ drivers/accel/habanalabs/common/sysfs.c                  | 3 +++
+ drivers/accel/habanalabs/include/hw_ip/pci/pci_general.h | 3 ++-
+ 6 files changed, 16 insertions(+), 1 deletion(-)
 
-This could be done by setting up couple of kprobes_events:
+diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
+index f9b8601c4396..fd117489a05a 100644
+--- a/drivers/accel/habanalabs/common/device.c
++++ b/drivers/accel/habanalabs/common/device.c
+@@ -862,6 +862,10 @@ static int device_early_init(struct hl_device *hdev)
+ 		gaudi2_set_asic_funcs(hdev);
+ 		strscpy(hdev->asic_name, "GAUDI2C", sizeof(hdev->asic_name));
+ 		break;
++	case ASIC_GAUDI2D:
++		gaudi2_set_asic_funcs(hdev);
++		strscpy(hdev->asic_name, "GAUDI2D", sizeof(hdev->asic_name));
++		break;
+ 	default:
+ 		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
+ 			hdev->asic_type);
+diff --git a/drivers/accel/habanalabs/common/habanalabs.h b/drivers/accel/habanalabs/common/habanalabs.h
+index 057087dc8592..0d16b5310add 100644
+--- a/drivers/accel/habanalabs/common/habanalabs.h
++++ b/drivers/accel/habanalabs/common/habanalabs.h
+@@ -1273,15 +1273,18 @@ struct hl_dec {
+  * @ASIC_GAUDI2: Gaudi2 device.
+  * @ASIC_GAUDI2B: Gaudi2B device.
+  * @ASIC_GAUDI2C: Gaudi2C device.
++ * @ASIC_GAUDI2D: Gaudi2D device.
+  */
+ enum hl_asic_type {
+ 	ASIC_INVALID,
++
+ 	ASIC_GOYA,
+ 	ASIC_GAUDI,
+ 	ASIC_GAUDI_SEC,
+ 	ASIC_GAUDI2,
+ 	ASIC_GAUDI2B,
+ 	ASIC_GAUDI2C,
++	ASIC_GAUDI2D,
+ };
+ 
+ struct hl_cs_parser;
+diff --git a/drivers/accel/habanalabs/common/habanalabs_drv.c b/drivers/accel/habanalabs/common/habanalabs_drv.c
+index e542fd40e16c..b1613a82c7f2 100644
+--- a/drivers/accel/habanalabs/common/habanalabs_drv.c
++++ b/drivers/accel/habanalabs/common/habanalabs_drv.c
+@@ -144,6 +144,9 @@ static enum hl_asic_type get_asic_type(struct hl_device *hdev)
+ 		case REV_ID_C:
+ 			asic_type = ASIC_GAUDI2C;
+ 			break;
++		case REV_ID_D:
++			asic_type = ASIC_GAUDI2D;
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/drivers/accel/habanalabs/common/mmu/mmu.c b/drivers/accel/habanalabs/common/mmu/mmu.c
+index a9813ffcde14..79823facce7f 100644
+--- a/drivers/accel/habanalabs/common/mmu/mmu.c
++++ b/drivers/accel/habanalabs/common/mmu/mmu.c
+@@ -600,6 +600,7 @@ int hl_mmu_if_set_funcs(struct hl_device *hdev)
+ 	case ASIC_GAUDI2:
+ 	case ASIC_GAUDI2B:
+ 	case ASIC_GAUDI2C:
++	case ASIC_GAUDI2D:
+ 		hl_mmu_v2_set_funcs(hdev, &hdev->mmu_func[MMU_DR_PGT]);
+ 		if (prop->pmmu.host_resident)
+ 			hl_mmu_v2_hr_set_funcs(hdev, &hdev->mmu_func[MMU_HR_PGT]);
+diff --git a/drivers/accel/habanalabs/common/sysfs.c b/drivers/accel/habanalabs/common/sysfs.c
+index 8a9f98832157..b6c63f8a0c1b 100644
+--- a/drivers/accel/habanalabs/common/sysfs.c
++++ b/drivers/accel/habanalabs/common/sysfs.c
+@@ -270,6 +270,9 @@ static ssize_t device_type_show(struct device *dev,
+ 	case ASIC_GAUDI2C:
+ 		str = "GAUDI2C";
+ 		break;
++	case ASIC_GAUDI2D:
++		str = "GAUDI2D";
++		break;
+ 	default:
+ 		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
+ 				hdev->asic_type);
+diff --git a/drivers/accel/habanalabs/include/hw_ip/pci/pci_general.h b/drivers/accel/habanalabs/include/hw_ip/pci/pci_general.h
+index 4f951cada077..a75faa00197f 100644
+--- a/drivers/accel/habanalabs/include/hw_ip/pci/pci_general.h
++++ b/drivers/accel/habanalabs/include/hw_ip/pci/pci_general.h
+@@ -25,7 +25,8 @@ enum hl_revision_id {
+ 	REV_ID_INVALID				= 0x00,
+ 	REV_ID_A				= 0x01,
+ 	REV_ID_B				= 0x02,
+-	REV_ID_C				= 0x03
++	REV_ID_C				= 0x03,
++	REV_ID_D				= 0x04
+ };
+ 
+ #endif /* INCLUDE_PCI_GENERAL_H_ */
+-- 
+2.34.1
 
-  payload_event: tpm2_get_random() etc.
-  hmac_event: tpm2_start_auth_session(), tpm2_end_auth_session() etc.
-
-And just summing up the time for a boot to get a cost for hmac.
-
-I'd use bootconfig for this:
-
-https://www.kernel.org/doc/html/v6.9/trace/boottime-trace.html
-
-So I've made up plans how measure the incident but not sure when I
-have time to pro-actively work on a benchmark (thus sharing details).
-
-So I think with just proper bootconfig wtih no other tools uses this
-can be measured.
-
-BR, Jarkko
 
