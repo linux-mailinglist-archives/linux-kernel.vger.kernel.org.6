@@ -1,102 +1,118 @@
-Return-Path: <linux-kernel+bounces-191305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EC28D0999
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBDF8D099B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9722F1C21669
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B44B283EC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B76815F3E3;
-	Mon, 27 May 2024 17:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985AA15F3EA;
+	Mon, 27 May 2024 17:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHPiEbVt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ia0VO87k"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F2155C8D;
-	Mon, 27 May 2024 17:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808AB15F321;
+	Mon, 27 May 2024 17:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716832617; cv=none; b=rteh8R59XV0QJWv7F8YrNdxjeDG2+BUFJY+KuNCrXYas/og4a3MHeErLUnQK/8s3emDBRG23BO6KSgrDZ61+o42YItZEmZHkypNqax/D6ZRmGIlW0OeHLeX/w0PQ67Zp15MEDWErwkRDMjq4fQW1ST6ULt0Xtk8iyLTa/ZNE/0s=
+	t=1716832626; cv=none; b=J16UF1ZAiCHAjO+ukBm+wgxBsiChHBmT1KfsOyFKtQyKTvUgJmLmWtRu2A9Ut/OF/apBTaYbuRl8mLcr1JfdKBrjh9j5L4DVZPYk5taa0lz3uY985liNUKC7gF6LezZjFqewvfMUmLcp5jHZmzfNNz9+Lk2VGP3v4IR8bzgMkQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716832617; c=relaxed/simple;
-	bh=xJfRQZyOb9ZjlBIvuRLICUQph7EB4GQE2wQqkDfH07o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhqR4uwgLbXTXdDWyqiNdteOpFH87oeQrXEiiwOkDESzywnmrjixynx0NX58vwUjLM52rQHv2yQoQW+6OVc3A25n4+BXf4YRNjIEewQSeHBTpkpqToiU/0lk1JAKE05LPdGMdI+zJu1oITzyOXy2bhYWhbClxfN/bUzYyghe/a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHPiEbVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DD3C2BBFC;
-	Mon, 27 May 2024 17:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716832617;
-	bh=xJfRQZyOb9ZjlBIvuRLICUQph7EB4GQE2wQqkDfH07o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rHPiEbVtgUkPWQrMOiEJ3tCoHPdiYgS46nBpgyHJQmLh1Gw/QSKGr+jpNZr6hsDqI
-	 FpsMqZjsRTk8nSMWvL2YCdZgY+xC4LTD1kz+eOBj53LPKCESo7DNM7Kq8tFaf/TAGY
-	 XSdyViSacRu5vhL2yC9CAd+mUFPSLYjl9dmCNIWVrXxR9UB5F/odW6iIhn1uwqIHd4
-	 Rq6W9E8B5KD2ZhKvBULliWHsjdP5TuwyUxe/Eidf9mlfjPFF5D14+Amed3xs8GiaQh
-	 28aE8sSiXNnyJnzdCf8Wvswawl0h13TSroxbzCK3ghw39KoiLBmZswmsV5EYCbcF2X
-	 yjuNCmPDefWlg==
-Date: Mon, 27 May 2024 18:56:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Henry Bell <dmoo_dv@protonmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	Drew Fustini <drew@beagleboard.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v2] RISC-V: add Star64 board devicetree
-Message-ID: <20240527-guru-gratify-2626be43b1c0@spud>
-References: <sQqtfYJc5p5nCV1CUpJC_eti56gLvmhqfMv4DY-aojB0sCARXzXRBveErmAN0spUDzvux3m5LdcmU-i4BfNDCCckVQfHLpH1QakaXdpnXuo=@protonmail.com>
- <20240524-omen-smell-6c9349065883@spud>
+	s=arc-20240116; t=1716832626; c=relaxed/simple;
+	bh=RmWNq1X/vMzWc2Wd+AEi30jMk+nfswv5PNTyyZbhbaw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IZwvAC0eXETYrpBXXWhXKsaPThH/tMDohWxG4VfIgh7UKWcwRpLrJmZ8mwAqzFxXK/XTFR6g1XgtAozgI3W+tlODWf5xOdqK5uD/ckCHEry7WAll/wcRSclOICd66RLLpH01r3VNw7/QeuA0QTFfv331oPp2DMitqZeeWTHa6eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ia0VO87k; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RA3fG9002772;
+	Mon, 27 May 2024 17:57:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=tKD/EqcYpTUC11I5gkYdNF
+	n3rQuIz2E6kler6LOTt7E=; b=ia0VO87kQtmzKmPk6OzuT3ncgPbn6HY+nDwCeq
+	ViCASiILz29KVU1ATykOrA6R1CxVA2buVik6Gc6fpVy0jicIgH6RpkqQf9BzRYeT
+	/TFpL9x0ENZuStBjf4hqfz2ABsETE6YaMrngIklyyNfXqx9nqeeBsZ2SZCeWx1fc
+	k/e1A+KCwQKRKh8tmlvUclhEUjCCHHazMi3fE8/jvx12AkE3IAgWVZ0XUBByL/n+
+	PwCtwijAhQcvO2WVB2IadJrELKIiBNkcgYH/r6NvNE/9LSsmtUxTrsuPpXJSZXfa
+	sGDHnXXK6rbfz0WaxgtPzI87lEc05+TkYczkdEUTlB3CnsQg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g4ev2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:57:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RHv0Rd002064
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 17:57:00 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
+ 2024 10:57:00 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 27 May 2024 10:56:59 -0700
+Subject: [PATCH] fs: btrfs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1Sn0De3yrAQc1jyn"
-Content-Disposition: inline
-In-Reply-To: <20240524-omen-smell-6c9349065883@spud>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240527-md-fs-btrfs-v1-1-9a8732bf2a70@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGvJVGYC/x3MQQrCQAyF4auUrA3UGWXQq4iLTCdjA3aUpJVC6
+ d2Nbh58i/dvYKzCBtduA+WPmLya43joYBipPRiluCH04dSfQ8KpYDXMs/peYowlJ06VCfzxVq6
+ y/mu3uzuTMWalNoy/xlPasuJENrPCvn8B6KRQTHwAAAA=
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba
+	<dsterba@suse.com>
+CC: <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IktWCcQxMabjXeHujtnJMXzvi_jZIsUt
+X-Proofpoint-ORIG-GUID: IktWCcQxMabjXeHujtnJMXzvi_jZIsUt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_04,2024-05-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=706 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405270147
 
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/btrfs/btrfs.o
 
---1Sn0De3yrAQc1jyn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/btrfs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, May 24, 2024 at 07:48:50PM +0100, Conor Dooley wrote:
-> On Thu, May 23, 2024 at 09:55:37PM +0000, Henry Bell wrote:
-> > Add star64,pine64 to JH7110 compatability
-> >=20
-> > Signed-off-by: Henry Bell <dmoo_dv@protonmail.com>
->=20
-> $subject here is wrong, it should match other commits to
-> Documentation/devicetree/bindings/riscv/starfive.yaml.
-> If there's nothing else to fix with the patchset, I'll fix it up on
-> application.
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index f05cce7c8b8d..649913e13bc0 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2590,6 +2590,7 @@ static int __init init_btrfs_fs(void)
+ late_initcall(init_btrfs_fs);
+ module_exit(exit_btrfs_fs)
+ 
++MODULE_DESCRIPTION("B-Tree File System (BTRFS)");
+ MODULE_LICENSE("GPL");
+ MODULE_SOFTDEP("pre: crc32c");
+ MODULE_SOFTDEP("pre: xxhash64");
 
-Applied with a fixed up commit message.
+---
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+change-id: 20240527-md-fs-btrfs-9333db7e7fea
 
---1Sn0De3yrAQc1jyn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlTJZAAKCRB4tDGHoIJi
-0i0tAP4rO0rk9qWCg5RqkVH89K6dpbJwGc3uAUE/M1qDrOTz2wEAkLR9kZAg2zhU
-dJa4MsowTMZTXTSs3wRMoA8iGGXyBQo=
-=q1M3
------END PGP SIGNATURE-----
-
---1Sn0De3yrAQc1jyn--
 
