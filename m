@@ -1,166 +1,116 @@
-Return-Path: <linux-kernel+bounces-191012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479D28D0578
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:11:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579828D057C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5681F26236
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EB01C21E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64929169379;
-	Mon, 27 May 2024 14:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A050169394;
+	Mon, 27 May 2024 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfvIE6If"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="j3P0PBrQ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E71168C2E;
-	Mon, 27 May 2024 14:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E3315A866
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821407; cv=none; b=Ldx8CEkzdxB2W+NHE/k2UmTtRr7BeVLbxDKUlKy9VahiWuAh8EBdTJGqmfYbicmePXz8fjS73sfuxb7Dy5j4H90Izdq4kep4HHPRcbtORVzm4elPXAPcLPZ85FEvkntoOSMo+vxoDcvXA1eYmCxQmvRhpRIcIM6kH102Vu9lce0=
+	t=1716821434; cv=none; b=eYbwVjCsVgM3GRi+Sk89qWB0q8niw51V/7h1iqU0d1Yex9Q8Nj3RhWM8lFQMMyig7QfqCzI6zUeUFSiVHOBewBgLfV9fh0jZS+UP0QOl9PQ4M+Ae3UkeEp8KdM2PMvBUY1n+iQQ6xozlFBIxmT+3Phx5xvkgN9uznECE7a45rpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821407; c=relaxed/simple;
-	bh=V01owRMSGbHKVTfD/05++xO+/+N+LoOPgcGpNbPVVTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3hARgcARSmAsVsvC7Ms0BkJof+ZdkzPVXOwwg/adegLjwMKrRIGr+jP+PzBIRipPDGHpFEADl9PtlcrlHy63TIucYZPLYCFlv6/eQz2OwRVWqUA0A/p4WfLEpzHW0RTOKiSmIoq8GAPUbIL4HsrOMtGf7X47a9EVaTdWZTevCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfvIE6If; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71852C2BBFC;
-	Mon, 27 May 2024 14:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716821407;
-	bh=V01owRMSGbHKVTfD/05++xO+/+N+LoOPgcGpNbPVVTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QfvIE6IfxbLNHEEXdqx3P8WJXaxzCsLBXnSuxd40tdpNB0ly+pXCygbLSmJbliuDw
-	 1Dcni9K0GC9RBKSsSXAT0gUDiAH/WWqkevLaFFMc5fW0UFiSY0obq973EL68eV9CWB
-	 fr/PLuKfDle2+IXs9JNTK9yt+Pu73JGdegPfdZDfJTULwY5RHgI/Si/OQ8vUDC0J8J
-	 XRhi3h9TNe2W6Rb00QUFuquxmMFnaEx5vnj75jxaooriM5BOBjMZ09gpBFz23IuPyk
-	 KkTngPinyi5zzJQOVB9Nk9jo/mHWxo+f88UKCTWRJ+n7c1zW3bjBkq6YxGQ7M99ocm
-	 G4oPT/9sMtYqQ==
-Date: Mon, 27 May 2024 16:50:02 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Peter Hutterer <peter.hutterer@who-t.net>, jikos@kernel.org, linux-input@vger.kernel.org, 
-	bpf@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.9 31/35] HID: bpf: add in-tree HID-BPF fix for
- the HP Elite Presenter Mouse
-Message-ID: <k4j2pjxg23i6tggjc7beodock2q7pbjbgzombidzlowb7rpr37@ziaqvisevijj>
-References: <20240527141214.3844331-1-sashal@kernel.org>
- <20240527141214.3844331-31-sashal@kernel.org>
+	s=arc-20240116; t=1716821434; c=relaxed/simple;
+	bh=aQmfaqRdM70dUl3sSYpYCvVuvVwmhdGi6uJkBkc+nnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J4axQrdDstuBJ3dUXofr1ibyc0HajWzNkXWo3BYibitNoF47a9bQzeyPqDc03xcw/lh3oZNQ5ZlnSV/Y6+ESucN3tD2Yf9HkQfaixFDxE0NgJntMN01D8pt7H9BQiJ+gKx9sKS2hAmADSOipVF4WybBxvVe5rpeeuTPF11qd53A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=j3P0PBrQ; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso91852861fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:50:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716821432; x=1717426232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iVxw+/vOj3sQMuY9pWBFSOW4TraL4Q9T9iSAPkfZRnc=;
+        b=j3P0PBrQ7oUhCTzkBaFesPbg9bVLjzZFtCCno+rU+QYkoAvpZkQRkJUKoQa2oWTCnw
+         CjS2A3lWpUGeoOznJXWYTl33FBXTdVw5uVACuTSXPxVgkjZYUcsb4f6gW4YzPCI+1A1x
+         EMzFy8eYjZFe4HVm8vKnLSDskYVz/gTSNIa5w9cJKcdG+iyPekhBUwBeePeMJLox6/Q6
+         mQlchTapVsEJcndn0sR+3mog8zsFidHfDYjSaN+6n669jOGBasaNcvjQ1XqHiQGVukCE
+         gHppnqa6TUFpST/PUpSK4Fw6Aml49trY8sS43kndr0w4FosJshOt7bYzusS5LYJVb/SP
+         fYiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716821432; x=1717426232;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iVxw+/vOj3sQMuY9pWBFSOW4TraL4Q9T9iSAPkfZRnc=;
+        b=Sfe4ZgSGIXLJMoIhy/8JzSWXZQR2F8u8dL2LWkJcICCD6H75KZjh2fAetIBWvZ/qcm
+         WMaDNJjxjTNOsQi86N/VEB5K1J2fFjv3l2Nxa73MZt+YulK2vIXDWNono9zfHwe0L+04
+         DFBuU6onABrqNWmBV/FVulPYAeQcRUkDyjOBt78PZrUM5g/yT2/teyuCcfiZTkb/7uqD
+         6EKzGthhoZF1K0LDnQuTd4du164afoFCKLfmMmyMQKauxSqZAXJU2J9/WyIO7QTuca1U
+         +GekYrTdk46Er9vaFu038IDNMxvr81Z584VY/A0NXcrpCShKPifjkKs5ZdqOqwGtZgUd
+         5RKw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Jn/XXrxs76s4/sxaXHgCFKieDMf1Btpz+ogozBakBdk99sZw+KIkNeC1dNP0oV5cgsuHLbwWnLGYVIFiT2JEN2V34qcvP8KViUdD
+X-Gm-Message-State: AOJu0Yw7fChAichE9iXiEJAEDar0brRiqmy2tdRvHPTnab8SydvN8YH4
+	3GjWl8do2/K2IkoCIppVwRMMKBF5l4x50x4n4iYHq4ViZUMQGDCnsG9JfAKyS7M=
+X-Google-Smtp-Source: AGHT+IFMmZGrXNV5jImFthKc7UTTRRpbEBcF2dKZ0Mc60DCS5P4fb3NXNeGa5dqT0XkiXZKRTc+G3w==
+X-Received: by 2002:a2e:a308:0:b0:2e1:ae29:f28a with SMTP id 38308e7fff4ca-2e95b256324mr76970671fa.34.1716821431708;
+        Mon, 27 May 2024 07:50:31 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089cc504sm111600385e9.40.2024.05.27.07.50.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:50:31 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Vegard Nossum <vegard.nossum@oracle.com>,
+	Hu Haowen <2023002089@link.tyut.edu.cn>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>
+Subject: Re: [PATCH v1 1/1] gpio: Remove legacy API documentation
+Date: Mon, 27 May 2024 16:50:29 +0200
+Message-ID: <171682142405.156260.1185957689650199871.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240508101703.830066-1-andriy.shevchenko@linux.intel.com>
+References: <20240508101703.830066-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527141214.3844331-31-sashal@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On May 27 2024, Sasha Levin wrote:
-> From: Benjamin Tissoires <bentiss@kernel.org>
-> 
-> [ Upstream commit 4e6d2a297dd5be26ad409b7a05b20bd033d1c95e ]
-> 
-> Duplicate of commit 0db117359e47 ("HID: add quirk for 03f0:464a HP Elite
-> Presenter Mouse"), but in a slightly better way.
-> 
-> This time we actually change the application collection, making clearer
-> for userspace what the second mouse is.
-> 
-> Note that having both hid-quirks fix and this HID-BPF fix is not a
-> problem at all.
-
-Please drop this patch in all backports (and FWIW, any fix in drivers/hid/bpf/progs/).
-
-HID-BPF is only available since kernel v6.3, and the compilation output
-of the in-tree file is not used directly, but shipped from udev-hid-bpf.
-
-TL;DR: this just adds noise to those stable kernel trees.
-
-Cheers,
-Benjamin
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
+On Wed, 08 May 2024 13:17:01 +0300, Andy Shevchenko wrote:
+> In order to discourage people to use old and legacy GPIO APIs
+> remove the respective documentation completely. It also helps
+> further cleanups of the legacy GPIO API leftovers, which is
+> ongoing task.
 > 
-> Link: https://lore.kernel.org/r/20240410-bpf_sources-v1-4-a8bf16033ef8@kernel.org
-> Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  .../hid/bpf/progs/HP__Elite-Presenter.bpf.c   | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
 > 
-> diff --git a/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
-> new file mode 100644
-> index 0000000000000..3d14bbb6f2762
-> --- /dev/null
-> +++ b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
-> @@ -0,0 +1,58 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2023 Benjamin Tissoires
-> + */
-> +
-> +#include "vmlinux.h"
-> +#include "hid_bpf.h"
-> +#include "hid_bpf_helpers.h"
-> +#include <bpf/bpf_tracing.h>
-> +
-> +#define VID_HP 0x03F0
-> +#define PID_ELITE_PRESENTER 0x464A
-> +
-> +HID_BPF_CONFIG(
-> +	HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_GENERIC, VID_HP, PID_ELITE_PRESENTER)
-> +);
-> +
-> +/*
-> + * Already fixed as of commit 0db117359e47 ("HID: add quirk for 03f0:464a
-> + * HP Elite Presenter Mouse") in the kernel, but this is a slightly better
-> + * fix.
-> + *
-> + * The HP Elite Presenter Mouse HID Record Descriptor shows
-> + * two mice (Report ID 0x1 and 0x2), one keypad (Report ID 0x5),
-> + * two Consumer Controls (Report IDs 0x6 and 0x3).
-> + * Prior to these fixes it registers one mouse, one keypad
-> + * and one Consumer Control, and it was usable only as a
-> + * digital laser pointer (one of the two mouses).
-> + * We replace the second mouse collection with a pointer collection,
-> + * allowing to use the device both as a mouse and a digital laser
-> + * pointer.
-> + */
-> +
-> +SEC("fmod_ret/hid_bpf_rdesc_fixup")
-> +int BPF_PROG(hid_fix_rdesc, struct hid_bpf_ctx *hctx)
-> +{
-> +	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
-> +
-> +	if (!data)
-> +		return 0; /* EPERM check */
-> +
-> +	/* replace application mouse by application pointer on the second collection */
-> +	if (data[79] == 0x02)
-> +		data[79] = 0x01;
-> +
-> +	return 0;
-> +}
-> +
-> +SEC("syscall")
-> +int probe(struct hid_bpf_probe_args *ctx)
-> +{
-> +	ctx->retval = ctx->rdesc_size != 264;
-> +	if (ctx->retval)
-> +		ctx->retval = -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +char _license[] SEC("license") = "GPL";
-> -- 
-> 2.43.0
-> 
+
+Applied, thanks!
+
+[1/1] gpio: Remove legacy API documentation
+      commit: 447e140e66fd226350b3ce86cffc965eaae4c856
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
