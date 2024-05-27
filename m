@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5DD8D0A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:45:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081B48D0A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199351C21B5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE201F21C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5639715FCF0;
-	Mon, 27 May 2024 18:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B020415FA80;
+	Mon, 27 May 2024 18:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3DpXNtI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAayaDuZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B315FA68;
-	Mon, 27 May 2024 18:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E737D2F2B;
+	Mon, 27 May 2024 18:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835545; cv=none; b=BwfA1zAw4hw7yjAQ9AV8a0VU2n0xbyZ/W6GM0WND/rN3ikYSepfpYoNmG00Zk+VdGOgtoNBVnwt/bYerMGs1w8pEIqlf46U8ZW16W2C7qaLbG7SlvbpM+YzI5NnRxebku+gDgBJ9nk7jxJxgkJLgaZTY75B++BhKwcW2fVCKBrE=
+	t=1716835660; cv=none; b=NfU5EVa04H3UcAqrDoa+i1IHs+xZ/p/L4Cb1IUtnNpWmVIVs51B/p3RAaXgOe82SYURRjyKnQIYBTBIR4SD2RjeDxtu7/16/paukKfACgiAPHkXl9Jj6ijoo7TYNCVKvOBGMg1a+NFsRJN6CUkR/622cSqVPVso9Djbcma8U+LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835545; c=relaxed/simple;
-	bh=+lgrcWv2d5hUELgZXgg1mfyLgMa4f/KFrKkgNaGJNuQ=;
+	s=arc-20240116; t=1716835660; c=relaxed/simple;
+	bh=jaAoKf72h+215Gu9ulvjMVI1NhGGhE2JKDwTraDASZ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZop6injbm39CXbQcfAFd7plMsVl34zTvBUQLW12cG/1IGcop/a98drdoKwU73Wkd3628ncdHKZ3J2CughWorHCZuhFpDBh3ltAEXeDIpqcXRtVKHU4S4fBzRcTtd5eGLFTVfBwTFd3x3gdnglzf4CfCjdxodBxLWRpaQi2zJHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3DpXNtI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491AAC2BBFC;
-	Mon, 27 May 2024 18:45:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RfthTNauqosx4ONd/9Lrz0lbJhPAaO4Njbg5Ihno0JPR+EsEBzM6pSjaBhI/AGa7zvN2ZkInCO5pR7w1MC6+3uIN5F2CunTkrrhRwLUUX5Yzubim5qJMeYTqqSTLwtanjnvMKMTSjVEVUfdTMEypy9p3KDf3vc8fOIm8jwDOiq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAayaDuZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751D7C2BBFC;
+	Mon, 27 May 2024 18:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835545;
-	bh=+lgrcWv2d5hUELgZXgg1mfyLgMa4f/KFrKkgNaGJNuQ=;
+	s=k20201202; t=1716835659;
+	bh=jaAoKf72h+215Gu9ulvjMVI1NhGGhE2JKDwTraDASZ4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i3DpXNtIrd5v+Z8Ur5+KWtRQFBJAQkv9ZL5bUvwTzo7nqEAG+JqXvdGCcONP2Qjgb
-	 wlHab3Q/Lw/v5zS9ES9cvjgaG3RCBWtcIHKtodbhU5n/1KcfQ6KiL/J4BXkeyJLRtf
-	 6RzwpZhSVYGMT9YlqLOPujBs54waFiG/BlbOlQTGEj5dA/5GJ/x4HNuPMzzZLysIry
-	 aM7NYs/pEHKAXRurkF2iu0nmAyz1RE5HrMungZoyJAweidcX8YXXmGBlda3tVXLRpZ
-	 AndwDnK/LpeBjbVr+f9jMk28Dvl1/HFMiGoPKitVlnmwk0zC9OvO+9Zva2nLcPUMjp
-	 nQl+v43sSFQkw==
-Message-ID: <6aac1fce-887b-4ace-bd74-b4e1e5d98517@kernel.org>
-Date: Mon, 27 May 2024 20:45:38 +0200
+	b=GAayaDuZk01U74xR9K61NwMiyHx3NoudtEmBggOSVErOq3RZ80ZGrv7lpMjntA6TP
+	 o06x5yz1cLrc1z52lVTX9dFiiZ0xcwKCBpsJxaUciJKTAn2YopCxn/XDLTSzbx36kU
+	 pDkvQCPLUQswqqdvcVlft3k3xb6OPJifkqFifmT5Q/5aJKmDh3BW+a0Ra45qaDhyxU
+	 Dn/APVC9o3P0nvUTlOq1A+6g7iAOQ6NSDi5MYC7WYJNQdjcbJRGpTp6r/yj2rvtq5u
+	 GvwY/yrX9KXi+NkPccBQuUQ6QAGgva2EB7ypMbA3Tcf1V5Fwzr9yE5Jb3cm7jPxHu/
+	 lREGgxim74ESg==
+Message-ID: <771db1ec-115f-4b96-916f-3975ca302f55@kernel.org>
+Date: Mon, 27 May 2024 20:47:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: thermal: qcom-tsens: Document the X1E80100
- Temperature Sensor
-To: Abel Vesa <abel.vesa@linaro.org>, Amit Kucheria <amitk@kernel.org>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org>
+Subject: Re: [PATCH] dt-bindings: watchdog: img,pdc-wdt: Convert to dtschema
+To: Shresth Prasad <shresthprasad7@gmail.com>, wim@linux-watchdog.org,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+References: <20240527062102.3816-2-shresthprasad7@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,18 +101,82 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org>
+In-Reply-To: <20240527062102.3816-2-shresthprasad7@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/05/2024 08:52, Abel Vesa wrote:
-> Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
+On 27/05/2024 08:21, Shresth Prasad wrote:
+> Convert txt bindings of ImgTec's PDC watchdog timer to dtschema to allow
+> for validation.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+> ---
+> The binding has been checked and tested against `img/pistachio_marduk.dts`
+> with no errors or warnings.
 > ---
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+Thank you for your patch. There is something to discuss/improve.
+
+
+> +
+> +maintainers:
+> +  - Shresth Prasad <shresthprasad7@gmail.com>
+> +
+> +
+
+Just one blank line.
+
+> +allOf:
+> +  - $ref: watchdog.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - img,pdc-wdt
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 2
+
+Instead of maxItems please list items with description so the items will
+be described.
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: wdt
+> +      - const: sys
+> +
+> +  interrupts:
+> +    description:
+> +      Should contain WDT interrupt
+
+Drop description, redundant.
+
+> +    maxItems: 1
+> +
+> +  assigned-clocks:
+> +    maxItems: 2
+
+Drop property
+
+> +
+> +  assigned-clock-rates:
+> +    maxItems: 2
+
+Drop property
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +
 Best regards,
 Krzysztof
 
