@@ -1,145 +1,270 @@
-Return-Path: <linux-kernel+bounces-190493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C7C8CFF31
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:40:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C048CFF32
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62717B2272F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16C11F237AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4608415E5D9;
-	Mon, 27 May 2024 11:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E4B15D5D2;
+	Mon, 27 May 2024 11:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YWG0pUdO"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nyx/MeDg"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5559815DBC6;
-	Mon, 27 May 2024 11:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DCF13AD28
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716809965; cv=none; b=f8oijMWzHKdejf7VDLJz9Q50UezRIdPjp0Qgl9mFtCHYfYQTOn6D3UrbgRyBIpWwwHrlZYHWz8KVlFElQdEVfpliDHRdNzF6tYdcsnpr+G0vursBZwp6yB62h3nG4Cn2J38qW1Tc1kiG6B1ozSwzqVavnPiq/KZKIS35IXjoOCA=
+	t=1716810138; cv=none; b=U7CGbonKihtidyHBjR5gxghITBU2kuAi8D683ys86GJBlN3ykPGWDpWJPKur7dhlKVZ989Q4klCLpnYLyPGrfRhoeDHX9+MoMEMuYGmKjwPb2dFdPrWLqHOk2jw+iSFKEGPs1TzrNA0/diAT88PxszPZQ/RtuKZHuwWRTB7RYQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716809965; c=relaxed/simple;
-	bh=CziR8tGg5qwYNvJIC+QQYLKyVrnjY04Q5lyj/7UJ7ts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GUul2IMY59h61Zmxp63qh/sv8V3ogoUk1z5diW4HnA7qL9to23RhKxVaTaapQxUmHedLf/rBjDigJnRHKaSPJUlwXCp9jeMyydooGL4lvj9zu5W8i5n4OVywZbzw7IzeunLsTXhWL9OzCPXrYShlyIc71V98LOtsgFAJKqNHcEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YWG0pUdO; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id B4BA61C0008;
-	Mon, 27 May 2024 11:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716809956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bzjZT6VO3PxtG5290LSf4VPSnmjoCdCbJpas0iFjQn4=;
-	b=YWG0pUdOVE5ttqrJyGb+Y9ye+4BRUS6/YkTrUf+78IMYXx8jFDFyaPYa1Fj/cEYPtuAmbC
-	8lmCWTvWanyDCzHd5zuq30E4O+i2G74wW5dqt856qXVCE+JqaDPFlfNKMdQIAnv/U5R+Ky
-	4FcHVkstnXr3R4eSSgB/VwFyLuS2L82wQBqFaxppOxc6CBUx3YMfN/As5cC9fhKqNHcsCG
-	EDmRIUfC0nc/LZqh7tB6ST78SuHrYuDGxaZ+CB5A3SPGw6ykF70tsfJXkTKkUqqA3z2+eM
-	qCeWsHKHOFtivTHWQPVPWw4Nwx2Jk/uh23u9qf6utgYGOJmMVyDGXe/5nFYpZg==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Peter Rosin <peda@axentia.se>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	herve.codina@bootlin.com,
-	christophercordahi@nanometrics.ca,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH 3/3] i2c: mux: gpio: Add support for the 'transition-delay-ms' property
-Date: Mon, 27 May 2024 13:39:08 +0200
-Message-ID: <20240527113908.127893-4-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240527113908.127893-1-bastien.curutchet@bootlin.com>
-References: <20240527113908.127893-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1716810138; c=relaxed/simple;
+	bh=W9k0BmIHyn2MJjOZIKvOW1YY7kqid4ihPr/22yJ4bvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BqNuB4Z5qsiFwwYciYDvxLvPnIxhk7FTXBVPCXYj2LMSq8JP0iLfUKuGGv21uzJc6SiiE5vQz5LJ+EPP5F8w/YKQUeIyU/2BoMSHjD6kl8TPw7zO7zysHOaeQs9X2C2+aF3l/Vk4Jgpjz17LrxrCQKTyTsFTPRTlznohxmJ3jdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nyx/MeDg; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-421140314d5so7013495e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716810135; x=1717414935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3a0IwIbKiun5ZjFq+aihsDppfHB3sjCXZbCHtC5Ys0k=;
+        b=nyx/MeDgKKERkccBb8krpG9Zcn51T8/wtu+tMFcA7w749z9aNlDwVM8w/w/UAS3Omk
+         758YFkShJPxJR5ABY8VEnROnHc5XoelAUQKjB9WSmi6gc9ArfFYYWCT8AtvoyEhHywXG
+         6b2+PWval2bDSwxD2UGeLS1lxMKOOfcfz0P2TqVFDg33det/0BR5FMdBM2o3Sa7gAicV
+         LDp8i0NeNh/0tHqROhUZKFy0/AMQD9v1OepuIzH2t9YhoT0qB5UmNZ3ootX57bKYOsb6
+         x6141u8jsB2WqQKoMi64pPGHUkJozG4CrqjArFcOabj5/na44h5ko5bX6OT9KL6JoVKi
+         cJag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716810135; x=1717414935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3a0IwIbKiun5ZjFq+aihsDppfHB3sjCXZbCHtC5Ys0k=;
+        b=N94Veipv+6iwMZ2RATDb+MbEhNB+W6dbmt5eIo1lIksx/nTQmRaIIWNNdNEPczlNix
+         qu/TfvNFIyNWNS2afF6J0FCFB8lt23Jnlpo/zP4R7QYe+bqNQbz38PiopmMhbtBb/1u0
+         kvEYaqDr4DzSzHKTDD54AibXQh/Ui3KkuXnobk9LksqpGckpjrCgPsY9mzteQa62JCFl
+         21FpIt9f56RGwt5ZA8dSHH/lG31r0Gpl8mTGlE46awynF+Iaf1W8V/03KLQzK3ZznleU
+         07aSENvXUMC0pfJoGsV+FdVo1H4vgOdpSn+g0WXPeYeOyUV37F1Wc7+dBzjFbzsUjV9N
+         vDtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFU19QvasfkboEZeijX4FOdG1NiHIGJn+ESnQP1ZOp3NYckEKquuRIfFVVk/WA7PijekPwEnAlz68xeJJgEIMa870NtuCspNS53W41
+X-Gm-Message-State: AOJu0YwpQldJqAOAqvi1OyVexWbkCC9GeygA0kAkiDgpSBW6bHcJeY+c
+	wNsSTN8m+Y5/xenVs758DLnBPb3CRUdMsJKUUH2CxNPKTE0spJFOeUO+I9rdGemxbnIKua4Y/mR
+	EyUudAoVNEZ3Ytdy8Rq/b8ypZX0SH1kwdTiIm
+X-Google-Smtp-Source: AGHT+IEvpaRfqMw/sKzNNtB4iVjDlASFoCmySrw4aSwM/P8O6KFd2w0EJJJKBGrH4vKAXtoiorMDYk9QNOejAdn6UG8=
+X-Received: by 2002:a05:600c:4589:b0:41c:503:9a01 with SMTP id
+ 5b1f17b1804b1-42108a00012mr73225675e9.25.1716810135124; Mon, 27 May 2024
+ 04:42:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+References: <20240506-linked-list-v2-0-7b910840c91f@google.com>
+ <20240506-linked-list-v2-3-7b910840c91f@google.com> <82220d9b-3f4f-43ba-ad15-412ceb349a56@proton.me>
+In-Reply-To: <82220d9b-3f4f-43ba-ad15-412ceb349a56@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 27 May 2024 13:42:00 +0200
+Message-ID: <CAH5fLghoHiU928pCzMy3DRZzbw7J_HUVMObGXGtX-0ncVJnP3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] rust: list: add struct with prev/next pointers
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, 
+	Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some hardware need some time to switch from a bus to another. This can
-cause the first transfers following the selection of a bus to fail.
-There is no way to configure this kind of waiting time in the driver.
+On Mon, May 27, 2024 at 11:58=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>
+> On 06.05.24 11:53, Alice Ryhl wrote:
+> > Define the ListLinks struct, which wraps the prev/next pointers that
+> > will be used to insert values into a List in a future patch. Also
+> > define the ListItem trait, which is implemented by structs that have a
+> > ListLinks field.
+> >
+> > The ListItem trait provides four different methods that are all
+> > essentially container_of or the reverse of container_of. Two of them ar=
+e
+> > used before inserting/after removing an item from the list, and the two
+> > others are used when looking at a value without changing whether it is
+> > in a list. This distinction is introduced because it is needed for the
+> > patch that adds support for heterogeneous lists, which are implemented
+> > by adding a third pointer field with a fat pointer to the full struct.
+> > When inserting into the heterogeneous list, the pointer-to-self is
+> > updated to have the right vtable, and the container_of operation is
+> > implemented by just returning that pointer instead of using the real
+> > container_of operation.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/list.rs | 116 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 116 insertions(+)
+> >
+> > diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
+> > index c5caa0f6105c..b5cfbb96a392 100644
+> > --- a/rust/kernel/list.rs
+> > +++ b/rust/kernel/list.rs
+> > @@ -4,7 +4,123 @@
+> >
+> >  //! A linked list implementation.
+> >
+> > +use crate::init::PinInit;
+> > +use crate::types::Opaque;
+> > +use core::ptr;
+> > +
+> >  mod arc;
+> >  pub use self::arc::{
+> >      impl_list_arc_safe, AtomicListArcTracker, ListArc, ListArcSafe, Tr=
+yNewListArc,
+> >  };
+> > +
+> > +/// Implemented by types where a [`ListArc<Self>`] can be inserted int=
+o a `List`.
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that they provide the guarantees document=
+ed on the three methods
+>
+> I would not mention the number of methods, since it is difficult to
+> maintain and doesn't actually provide any value (it already is incorrect =
+:)
 
-Add support for the 'transition-delay-ms' device-tree property. When set,
-the i2c_mux_gpio_select() applies a delay before returning, leaving
-enough time to the hardware to switch to the new bus.
+I will remove the mention of a number.
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/i2c/muxes/i2c-mux-gpio.c           | 6 ++++++
- include/linux/platform_data/i2c-mux-gpio.h | 2 ++
- 2 files changed, 8 insertions(+)
+> > +    /// This is called when an item is inserted into a `List`.
+> > +    ///
+> > +    /// # Guarantees
+> > +    ///
+> > +    /// The caller is granted exclusive access to the returned [`ListL=
+inks`] until `post_remove` is
+> > +    /// called.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// * The provided pointer must point at a valid value in an [`Arc=
+`].
+> > +    /// * Calls to `prepare_to_insert` and `post_remove` on the same v=
+alue must alternate.
+>
+> Are there any synchronization requirements? Am I allowed to call
+> `prepare_to_insert` and `post_remove` on different threads without
+> synchronizing?
 
-diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux-gpio.c
-index c61e9d9ea695..d2cbbaa09485 100644
---- a/drivers/i2c/muxes/i2c-mux-gpio.c
-+++ b/drivers/i2c/muxes/i2c-mux-gpio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/i2c.h>
-@@ -37,6 +38,9 @@ static int i2c_mux_gpio_select(struct i2c_mux_core *muxc, u32 chan)
- 
- 	i2c_mux_gpio_set(mux, chan);
- 
-+	if (mux->data.transition_delay)
-+		mdelay(mux->data.transition_delay);
-+
- 	return 0;
- }
- 
-@@ -116,6 +120,8 @@ static int i2c_mux_gpio_probe_fw(struct gpiomux *mux,
- 	if (device_property_read_u32(dev, "idle-state", &mux->data.idle))
- 		mux->data.idle = I2C_MUX_GPIO_NO_IDLE;
- 
-+	device_property_read_u32(dev, "transition-delay-ms", &mux->data.transition_delay);
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/platform_data/i2c-mux-gpio.h b/include/linux/platform_data/i2c-mux-gpio.h
-index 816a4cd3ccb5..c449f714d32b 100644
---- a/include/linux/platform_data/i2c-mux-gpio.h
-+++ b/include/linux/platform_data/i2c-mux-gpio.h
-@@ -19,6 +19,7 @@
-  *	position
-  * @n_values: Number of multiplexer positions (busses to instantiate)
-  * @idle: Bitmask to write to MUX when idle or GPIO_I2CMUX_NO_IDLE if not used
-+ * @transition_delay: Delay to wait when a new bus is selected
-  */
- struct i2c_mux_gpio_platform_data {
- 	int parent;
-@@ -26,6 +27,7 @@ struct i2c_mux_gpio_platform_data {
- 	const unsigned *values;
- 	int n_values;
- 	unsigned idle;
-+	int transition_delay;
- };
- 
- #endif /* _LINUX_I2C_MUX_GPIO_H */
--- 
-2.44.0
+No, if you call them at the same time, then they aren't alternating.
 
+> > +    /// * The caller must own the [`ListArc`] for this value.
+> > +    /// * The caller must not give up ownership of the [`ListArc`] unl=
+ess `post_remove` has been
+> > +    ///   called after this call to `prepare_to_insert`.
+> > +    ///
+> > +    /// [`Arc`]: crate::sync::Arc
+> > +    unsafe fn prepare_to_insert(me: *const Self) -> *mut ListLinks<ID>=
+;
+> > +
+> > +    /// This undoes a previous call to `prepare_to_insert`.
+> > +    ///
+> > +    /// # Guarantees
+> > +    ///
+> > +    /// The returned pointer is the pointer that was originally passed=
+ to `prepare_to_insert`.
+> > +    ///
+> > +    /// The caller is free to recreate the `ListArc` after this call.
+>
+> As I read the requirements on `prepare_to_insert`, the caller is not
+> required to deconstruct the `ListArc`. For example the caller is allowed
+> to `clone_arc()` and then `into_raw()` and then pass that pointer to
+> `prepare_to_insert`.
+> So I would just remove this sentence.
+
+I will remove it.
+
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The provided pointer must be the pointer returned by the previ=
+ous call to
+>
+> Does "most recent call" make more sense? I find previous call a bit
+> weird. (also in the requirements above)
+
+Sure, I can say "most recent".
+
+Alice
+
+> ---
+> Cheers,
+> Benno
+>
+> > +    /// `prepare_to_insert`.
+> > +    unsafe fn post_remove(me: *mut ListLinks<ID>) -> *const Self;
+> > +}
+> > +
+> > +#[repr(C)]
+> > +#[derive(Copy, Clone)]
+> > +struct ListLinksFields {
+> > +    next: *mut ListLinksFields,
+> > +    prev: *mut ListLinksFields,
+> > +}
+> > +
+> > +/// The prev/next pointers for an item in a linked list.
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// The fields are null if and only if this item is not in a list.
+> > +#[repr(transparent)]
+> > +pub struct ListLinks<const ID: u64 =3D 0> {
+> > +    #[allow(dead_code)]
+> > +    inner: Opaque<ListLinksFields>,
+> > +}
+> > +
+> > +// SAFETY: The next/prev fields of a ListLinks can be moved across thr=
+ead boundaries.
+> > +unsafe impl<const ID: u64> Send for ListLinks<ID> {}
+> > +// SAFETY: The type is opaque so immutable references to a ListLinks a=
+re useless. Therefore, it's
+> > +// okay to have immutable access to a ListLinks from several threads a=
+t once.
+> > +unsafe impl<const ID: u64> Sync for ListLinks<ID> {}
+> > +
+> > +impl<const ID: u64> ListLinks<ID> {
+> > +    /// Creates a new initializer for this type.
+> > +    pub fn new() -> impl PinInit<Self> {
+> > +        // INVARIANT: Pin-init initializers can't be used on an existi=
+ng `Arc`, so this value will
+> > +        // not be constructed in an `Arc` that already has a `ListArc`=
+.
+> > +        ListLinks {
+> > +            inner: Opaque::new(ListLinksFields {
+> > +                prev: ptr::null_mut(),
+> > +                next: ptr::null_mut(),
+> > +            }),
+> > +        }
+> > +    }
+> > +}
+> >
+> > --
+> > 2.45.0.rc1.225.g2a3ae87e7f-goog
+> >
+>
+>
 
