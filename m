@@ -1,122 +1,89 @@
-Return-Path: <linux-kernel+bounces-191483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C85B8D1025
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:15:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9058D1029
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF37E1C21445
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE0F281C69
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4722716728A;
-	Mon, 27 May 2024 22:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84061667FA;
+	Mon, 27 May 2024 22:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BFScEVdD"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BLNQIN8O"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A2168C25
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD40217E8EF;
+	Mon, 27 May 2024 22:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716848098; cv=none; b=i+rQiYFOeZEp3NDfyhE1pmnhIsrC6Oz//51do405T9Uux7TAsu+shr7MXu6V7PbOG8L5EJU7U7QQIyXgRGlrJYoD++/ecZyyyV7u+CqTL0503Z9WqbBZtpzlQHPeIATUx9CMca4zVUZ3wmy3e0rSJ96Y8If8GCo1KymLkjphM00=
+	t=1716848214; cv=none; b=jV5KqjxBv1voAvroeHMMhumYkqtgZhqsWIOgwAgZ2k1FrWFYcHlkMIpO0odWDzI4+tIEPiYMp257HEk5XBvM61mkSpmYWWoTzjn6n4dHUfnRHQ5PvIFv7woZlZkGQmAt81EGM075mVTp0fP709jB5scSaUu0QH0voXGPuQn35n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716848098; c=relaxed/simple;
-	bh=zkCc5qc834sm2jFXbJrz+qWjcuUHh5rZO02ixWNCZGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qVIktYZwAD0l8nojmbtiMTEFus3njMVuUL9DuGkqEtMnnW7pdib5PdN2ZA0DL1dm5N5OVu0IUELVl2ui9bH4HK8zv9q03aCvJYM4nd8zQrpssyjeTdoKPixjGRSlr1Dy+irj4AzCFnzcdAtpjOsGcHRd3tAJdVPkEAfAk3sEOhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BFScEVdD; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-df78b040314so206474276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716848096; x=1717452896; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MH5jBveEGD7wUqQ+hKTo7ViWmJ+iwz9fODsOR0liGjU=;
-        b=BFScEVdD0lThi0CHoyjl4b+zcmmzlnHfOCOjyBLwkr48MkY7jUwzMZ1GwWIXQ5L7Tq
-         1p6eGgq8oG/HLtTryeRszd+nxXPrpjPVR7+IYIwJpzclJnabSigMRbRu4OfF+1T7W7SZ
-         8QEKv55UgmpA8wF+cnsTcs/YyD3Yqq3lDh+7w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716848096; x=1717452896;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MH5jBveEGD7wUqQ+hKTo7ViWmJ+iwz9fODsOR0liGjU=;
-        b=UrnMDbEQbAFJuPiZN6i3yHSWAjJPmnm76o99M197xRil5jSqt5xjL3P4SlhLcuD7sg
-         fD2a8a3HwecSU1Rnlvy6LMN9cDyDug9YZfDarqiBUVjOkGLvpOU4OXqOtCJDjk5zrFpu
-         9IIB9/PFDB9+2GErXO4B3gd7wBMGzb0apLt1UeFQY/+vvec+fzbHdd2i4U3v2GJbIXCZ
-         vL71K1H6i930+wBam7+tey+zonJC43o/cbVKWuwUQtBEWaFP610WjLelJkCoPimF4DRJ
-         HlRMsdvu6XBYaMxmUjT/HK4ubEKa7Gv4ol4a+h9blMfdB0NmoZealZ4pp/ceeoVRqnyA
-         561Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXLwrakoF48vRz52gpZ1E3SVhmMk8gP8pi4Y6yS/Mkha5MYnM8GF/X/1ris7a7N+7TFh2k97mDbBmleiu91FPBmZzCiwCfNvPXfTMuk
-X-Gm-Message-State: AOJu0YwGDlVCD0yeav825AOnNyn94VoxEGGAuWTMZAbiKHEmN6DSDGGb
-	mX3Kx2PPuoYc5eAGxQfnejwMIu2oy+Ejv1Zq8VXjuBSBPb++Z/3BPrxgFMQ3Tg==
-X-Google-Smtp-Source: AGHT+IF/+Mihfsp6bhL+448RZuxxPngF070ExMphzlwcEZQFgFLZGDEAty23JjJu3gtIRrXr8eMhKA==
-X-Received: by 2002:a25:ada0:0:b0:dc2:421e:c943 with SMTP id 3f1490d57ef6-df7722597b7mr9399627276.42.1716848096193;
-        Mon, 27 May 2024 15:14:56 -0700 (PDT)
-Received: from denia.c.googlers.com (125.135.86.34.bc.googleusercontent.com. [34.86.135.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca58e6sm329740885a.18.2024.05.27.15.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 15:14:55 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 27 May 2024 22:14:47 +0000
-Subject: [PATCH 3/3] media: pci/ivtv: Use managed version of
- pci_enable_device
+	s=arc-20240116; t=1716848214; c=relaxed/simple;
+	bh=T7j1+5j4XXrl86er3G4Mvu1GdfBJVXcGFioamjVXWUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwIgDGHU8KfJrX11PYM8RKXBPN2xdOnePgwNt0KNrmVjBIpLbSgk9w3vD3yV4uaE/feGjaxei61xn7c8xF5j9ZA7xekVmj767iv4RWDwIbi1O/V0UB678v4E3aHe/0db2JEwjRv+FbOuXj/XjG+ikurUgnFOi8RU2m0yVUvLCZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BLNQIN8O; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hKS4kDhpGM7nfRkS7MgrVHJ6ZRbC/gLbDfkWBa/zlhs=; b=BLNQIN8OuijtmaEFw+vy96KSVa
+	QW9AVBFhkIRM1+6LDRqpKdVY4Cpoc/jhrYzgigbwdmkKAdfe8FbmAdhRkSLEO2s+lHf6MuMwGuAq3
+	59uuvo8IR4c1IA8kVOVv0dNrvhNtvfQ1BrEm5WDYJfKZywzazFdpZ2Fivxp+gv1z8fEA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sBidw-00G6qp-4i; Tue, 28 May 2024 00:16:36 +0200
+Date: Tue, 28 May 2024 00:16:36 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Simon Horman <horms@kernel.org>, Diogo Ivo <diogo.ivo@siemens.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com
+Subject: Re: [PATCH net-next v7 0/2] Add TAPRIO offload support for ICSSG
+ driver
+Message-ID: <57f6ed32-65cd-49e4-bfe6-c8d320e8de53@lunn.ch>
+References: <20240527055300.154563-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-devm-itv-v1-3-f5829b8e7674@chromium.org>
-References: <20240527-devm-itv-v1-0-f5829b8e7674@chromium.org>
-In-Reply-To: <20240527-devm-itv-v1-0-f5829b8e7674@chromium.org>
-To: Andy Walls <awalls@md.metrocast.net>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527055300.154563-1-danishanwar@ti.com>
 
-If there is any error during probing, we should probably leave the
-device in its previous state.
+On Mon, May 27, 2024 at 11:22:58AM +0530, MD Danish Anwar wrote:
+> This series adds taprio offload support for ICSSG driver.
+> 
+> Patch [1/2] of the series moves some structures and API definition to .h
+> files so that these can be accessed by taprio (icssg_qos.c) file.
+> 
+> Patch [2/2] of the series intoduces the taprio support for icssg driver.
 
-pcim_ will take care of this.
+What is the dependency between these patches and switchdev support? It
+is good to make that clear in the cover note, especially if this code
+will not apply without some other patches first.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/pci/ivtv/ivtv-driver.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
-index 96f40c9685d2..ecc20cd89926 100644
---- a/drivers/media/pci/ivtv/ivtv-driver.c
-+++ b/drivers/media/pci/ivtv/ivtv-driver.c
-@@ -806,7 +806,7 @@ static int ivtv_setup_pci(struct ivtv *itv, struct pci_dev *pdev,
- 
- 	IVTV_DEBUG_INFO("Enabling pci device\n");
- 
--	if (pci_enable_device(pdev)) {
-+	if (pcim_enable_device(pdev)) {
- 		IVTV_ERR("Can't enable device!\n");
- 		return -EIO;
- 	}
-@@ -1402,7 +1402,6 @@ static void ivtv_remove(struct pci_dev *pdev)
- 
- 	free_irq(itv->pdev->irq, (void *)itv);
- 
--	pci_disable_device(itv->pdev);
- 	for (i = 0; i < IVTV_VBI_FRAMES; i++)
- 		kfree(itv->vbi.sliced_mpeg_data[i]);
- 
-
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+     Andrew
 
