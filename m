@@ -1,109 +1,180 @@
-Return-Path: <linux-kernel+bounces-191267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82DD8D08FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:00:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288AC8D08FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CB71C221C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:00:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 356E9B2154E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2315DBC8;
-	Mon, 27 May 2024 17:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC9F15DBC8;
+	Mon, 27 May 2024 17:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6CNCGDy"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtuqOepR"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EED6FB0;
-	Mon, 27 May 2024 17:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7934E6FB0;
+	Mon, 27 May 2024 17:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716829235; cv=none; b=Vhm0bpZQ/PeN04fSEXHW3sxUFfI7MKOBGJUkgZ3vuw5xsbNopZonOWJ6h9hyF+fOwR4gzNMD2bOs54GUEMO4OpGlJaCS/ytKbnBxE0z0vYq28smxDrlO0o+hhqieh7yXvkR9DX0NkvOVcWUjnConVz5oepVgxpMMm6r9MHNAG0E=
+	t=1716829340; cv=none; b=O8inGWK38CV4M5zMd5nDPlOhh/YiRpwDLd1FUkpHBRS0t18Fn32A1bpU6PJ8NXkgxrEO9qg0UjvO9YpTs7z9bQph4Y+cW2yk/mWchaaOcctDvHCcNJ59t9krBnTWch7Pb10My1bJajwj5jOu//XPeiuK+gGNn1wnQ7k9jFxwg/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716829235; c=relaxed/simple;
-	bh=8MLNb2bRcbp/oLUAripV2zX69ZK7bOk3ntrl8bKbv7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P2ZhoKwUzGGa3mp+UEs3F67+Lb5VzPJPeED3igy7rL1yrPECpRcdMPAw4HyZUXWuvokewUcITymDgOqIIM3yGDEkQKnultZ8T35qLRl1tFrByE2SB6mhXueMvu6UXO5YLMTNqcc9ICli9RQ8zOpXDfFMw3COSCZphD9lY2wzRt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6CNCGDy; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1716829340; c=relaxed/simple;
+	bh=UH5jbQ1ExU6rF0ycNuWGeiHpq0CHgcaCU5amH+tnEzo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S0Uc7g5e1aLzh+jdU82nB/AS7ebRCu5GqQ7E87bxpX33G7HSOQ0iXO+OqCVccAas+oNVySowO9y+2vKE7ndATnFhoxEhk9IOyKCFtzJgsyuFo3RNnNKmP9XK7WISMlqiTXtabosX6TOAh5LYqe0ZvyETd74ppAaujCpFIg8tiNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtuqOepR; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f480624d04so13909515ad.2;
-        Mon, 27 May 2024 10:00:34 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-529661f2552so3324045e87.2;
+        Mon, 27 May 2024 10:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716829234; x=1717434034; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pnYD2vB9if3b0Pw8B9yj3OZSPzEecAxuxqjy5zfQk70=;
-        b=e6CNCGDy8hNGGL2YZWY/ZvWRPvuMMRYYv6VePDFcYjkxkpX0dENQEhCThcSHWgmrk5
-         tYVgo+STgb7JonTXR7fXAv7t5yALRiivIOvAqTzA79lsEGCsMHuzjjvo9M15JtsbjEHb
-         iSPPzr22fNUXppwm237sbPa38ZVVLafhzKFejn8W6Qh4Fg0iK4p1vfrWOI7QzffalM84
-         PoXlpVmHFPw+dg1IJTEtu8CZhnCiHcibvUJtcn6wXIkZxH+j3uAKpLIbCtxXHO/+h7tR
-         rm9jjcF63yyQ2wZMgjt+dlhjzkLNMWjyzWJOYGt2QOzCzx1BjqY/hyjE4FPmlYbg5TMl
-         p02Q==
+        d=gmail.com; s=20230601; t=1716829336; x=1717434136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ke2wFmW7lwdlJUKXnCszi5dmNPopJyhPXGzvDznThNk=;
+        b=BtuqOepRcnq6erBpDC556K6VkX3PtzhkGMO2kfD5CN7bQ0aUvRBXGiKU7UxHM9tH0t
+         byA3X6FO7wQtZkXYHOu/6lX0slJaQLhKYyr6Hhyq8q41ZcjIAQ3FIv5PWz8n4n8DTUZF
+         YzuKMfL66fuftOYAAvGD5KQhpeHcV+dbPQhOv+9ZzhVns+IyNX907UKcES2sHcdQYV+H
+         LqA/FUUjFRK889t/OgBSxsWVKKABv2yFlbm+A3YIvQsNQQ9NtaZMTL+V8Bq/35OSb1Ql
+         i1HJF2lPLdIutdOdtK2vb5G1XHJC3wqU8OjSSROkulzVuqTI1KJhhF/JCu8egQXsAtm4
+         opmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716829234; x=1717434034;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pnYD2vB9if3b0Pw8B9yj3OZSPzEecAxuxqjy5zfQk70=;
-        b=v7GwpEEloFfKMDjMe1rd6DLsDZfFY0eUdzGxzkqc0DinJBo31FcFL6c8pogMETStC5
-         g4UTgnYhWJrqKjuuZdqzdQeLo5x0IG4wIlZWa/v3ewVp/FnvckJfgTuSqLVg3uWI5V3t
-         dI2i/E2a8uFGC6lGhWMte9lyJeqIz3gtspZXwzpyFPPDYsNprRU+BdmuepYaxh9txIQ2
-         97jeT7pQEz0d52LTitpgVuU61WCLo/3Lrq8gbT0eFqRM4g9/2GYeLmQw5ZKag/p4RH/T
-         VLU//Tug6CcKz/X64lYlhVZ0DuCEceHmdp8ZyC/3y9mAFXG/Y07JXLSHPXC3auXiQ+RA
-         jK/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXjeXxkIC2ov/Aqb8KokMFhkzP3wpnn/sbmGp4+78OUMSMtdBnTpEtRiLqb+LCpXBEsnWzog+bs4JMFfddU4rWX24X36T5hPebzrKVBbBBzwLdjunblyN5J5/4EfzB6nAAKWtx42LoaK6G/NDCkPFb3+2ieL0pqQjBEl/eXUQsimHDo
-X-Gm-Message-State: AOJu0YwRk3OP1zAWRMdYW2Ih1oTBJDQ+GomI/yEkl71aZZVAouwLca+3
-	fuwrfzksEcgfEj80fp7e9os5FkXRL73XBISTqLnp1ugsFx2cvM0I
-X-Google-Smtp-Source: AGHT+IGmgWeyiRNe9+u2BnAS1T0LPl+16VQSq5K+KtGP+MlwlyWvOvoH3Tc4mPXyjH2k8Qjrfmh4Hg==
-X-Received: by 2002:a17:902:c94d:b0:1f4:98f4:4763 with SMTP id d9443c01a7336-1f498f449a0mr38374615ad.53.1716829233424;
-        Mon, 27 May 2024 10:00:33 -0700 (PDT)
-Received: from [10.59.0.127] ([210.178.66.119])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c99d23asm65061795ad.208.2024.05.27.10.00.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 10:00:33 -0700 (PDT)
-Message-ID: <f8a8c06a-9dcd-437f-ab75-d0ddb608662f@gmail.com>
-Date: Tue, 28 May 2024 02:00:28 +0900
+        d=1e100.net; s=20230601; t=1716829336; x=1717434136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ke2wFmW7lwdlJUKXnCszi5dmNPopJyhPXGzvDznThNk=;
+        b=GgVvxLao+tcwgSvXPeB7C5yTETTnLbTBRykSgWw7qrgxTmnKYtbnx7Ezx7d2o7RHNJ
+         QbanQnOPPem/zTQVc+lW50ljXhurjKrvRbEHik1p/tUz+iZy30L0KAwlGftW5ZIbTAUJ
+         xv33LZgzG/LWfGMYvcxRT6tXj1yBLnqZPxY4NvYzWfGrnmXZBHGITjGdz4WAT4XIwfCq
+         5Ccu0MwHu6XgV34pVteM+09kSqG/pRTxd9RHVHtNyLJE/vpy0DXS+dHNsLbiSKDlvKM9
+         Xqn8BxsTtNSFSZSKFda/+r+E1wc5Lya7oGI7LY23tY0tr+LH5wDFmeVP2QcQu8wnwYQp
+         H8Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWoeiur/pCsk5AdWjzBuEiaWHX7kJnRQ5LizM8+5StwDLJ9WO/M/PBZxqP8T9zVteCqAH9jYlN2VleBZFOe+eVhaeM44z6gQndKrP1
+X-Gm-Message-State: AOJu0Yz04bMX7q11Yvvv4drp3I1zwIZqjiEurd9Tlj23EaauGHk49rmJ
+	g1uFaM9g5SWbJ1e+9x5zQMjNcE+gXB659FeztT0oDRNRbKYKnlb+vGaF92yf
+X-Google-Smtp-Source: AGHT+IEcr5JzU5aF4BzGeMHHDb9m3TkWG32KGUvLhVqaPVtwcZzBrcVd8yipPSLiup6xzM3AzX+dFQ==
+X-Received: by 2002:ac2:4214:0:b0:525:502a:acc6 with SMTP id 2adb3069b0e04-529668c9e48mr5908436e87.52.1716829335955;
+        Mon, 27 May 2024 10:02:15 -0700 (PDT)
+Received: from mslusarz-hyperv.mshome.net (1779df417e104.rev.snt.net.pl. [213.192.104.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817a98sm512017466b.37.2024.05.27.10.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 10:02:15 -0700 (PDT)
+From: marcin.slusarz@gmail.com
+To: linux-wireless@vger.kernel.org
+Cc: =?UTF-8?q?Marcin=20=C5=9Alusarz?= <mslusarz@renau.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Date: Mon, 27 May 2024 19:01:37 +0200
+Message-Id: <20240527170137.455671-1-marcin.slusarz@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Documentation: cve Korean translation
-Content-Language: ko
-To: Jonathan Corbet <corbet@lwn.net>, Yunseong Kim <yskelg@gmail.com>
-Cc: skhan@linuxfoundation.org, Austin Kim <austindh.kim@gmail.com>,
- shjy180909@gmail.com, workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20240527103003.29318-1-yskelg@gmail.com>
- <87ikyzpgqz.fsf@meer.lwn.net>
- <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
- <87o78rnz3a.fsf@meer.lwn.net>
- <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
- <877cffnw2i.fsf@meer.lwn.net>
-From: Jinwoo Park <pmnxis@gmail.com>
-In-Reply-To: <877cffnw2i.fsf@meer.lwn.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Marcin Ślusarz <mslusarz@renau.com>
 
+Right now it's possible to hit NULL pointer dereference in
+rtw_rx_fill_rx_status on hw object and/or its fields because
+initialization routine can start getting USB replies before
+rtw_dev is fully setup.
 
-On 2024. 5. 27. 오후 11:55, Jonathan Corbet wrote:
-> It does look like the patch was reviewed, but no Reviewed-by tag was
-> offered.  *Never* apply a Reviewed-by tag that has not been explicitly
-> given to you.
-> 
-> Jinwoo, would you like to offer that tag for this patch?
+The stack trace looks like this:
 
-Thank you for taking a close look at the content and flow of the patch.
-Jon, yes I want to offer and apply Reviewd-by tag for the patch.
+rtw_rx_fill_rx_status
+rtw8821c_query_rx_desc
+rtw_usb_rx_handler
+..
+queue_work
+rtw_usb_read_port_complete
+..
+usb_submit_urb
+rtw_usb_rx_resubmit
+rtw_usb_init_rx
+rtw_usb_probe
 
-Thanks Regards,
-Jinwoo Park
+So while we do the async stuff rtw_usb_probe continues and calls
+rtw_register_hw, which does all kinds of initialization (e.g.
+via ieee80211_register_hw) that rtw_rx_fill_rx_status relies on.
+
+Fix this by moving the first usb_submit_urb after everything
+is set up.
+
+For me, this bug manifested as:
+[    8.893177] rtw_8821cu 1-1:1.2: band wrong, packet dropped
+[    8.910904] rtw_8821cu 1-1:1.2: hw->conf.chandef.chan NULL in rtw_rx_fill_rx_status
+because I'm using Larry's backport of rtw88 driver with the NULL
+checks in rtw_rx_fill_rx_status.
+
+This should fix:
+https://marc.info/?l=linux-wireless&m=167907688311943&w=2
+
+Signed-off-by: Marcin Ślusarz <mslusarz@renau.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/wireless/realtek/rtw88/usb.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
+index a0188511099a..98f81e3ae13e 100644
+--- a/drivers/net/wireless/realtek/rtw88/usb.c
++++ b/drivers/net/wireless/realtek/rtw88/usb.c
+@@ -740,7 +740,6 @@ static struct rtw_hci_ops rtw_usb_ops = {
+ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
+ {
+ 	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
+-	int i;
+ 
+ 	rtwusb->rxwq = create_singlethread_workqueue("rtw88_usb: rx wq");
+ 	if (!rtwusb->rxwq) {
+@@ -752,13 +751,19 @@ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
+ 
+ 	INIT_WORK(&rtwusb->rx_work, rtw_usb_rx_handler);
+ 
++	return 0;
++}
++
++static void rtw_usb_setup_rx(struct rtw_dev *rtwdev)
++{
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++	int i;
++
+ 	for (i = 0; i < RTW_USB_RXCB_NUM; i++) {
+ 		struct rx_usb_ctrl_block *rxcb = &rtwusb->rx_cb[i];
+ 
+ 		rtw_usb_rx_resubmit(rtwusb, rxcb);
+ 	}
+-
+-	return 0;
+ }
+ 
+ static void rtw_usb_deinit_rx(struct rtw_dev *rtwdev)
+@@ -895,6 +900,8 @@ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 		goto err_destroy_rxwq;
+ 	}
+ 
++	rtw_usb_setup_rx(rtwdev);
++
+ 	return 0;
+ 
+ err_destroy_rxwq:
+-- 
+2.25.1
+
 
