@@ -1,156 +1,158 @@
-Return-Path: <linux-kernel+bounces-190673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1198D013E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:21:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB608D0145
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912C51C21932
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:21:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D261DB23676
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7E415ECF1;
-	Mon, 27 May 2024 13:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mflf9vpD"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB0215EFC0;
+	Mon, 27 May 2024 13:22:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0B543AC1;
-	Mon, 27 May 2024 13:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEEA15ECFA
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816110; cv=none; b=MB4GEmxUJNuQrTfX+8QDPfP1zRzIfkyle8dvIFVZc2T5gOR2dm6zj4M+u52aXuM1pui72ecoqwZ5H2k/UgPkZMPNgn0Sh7Qs8sabX2WHLJTuk3UHi6iCOIAs8WEI/IfNM8udcYdt2Ae6aLEcy9tD9KRPPkTsFJRz3VBzsdqgfOI=
+	t=1716816150; cv=none; b=YHCs37d+uuKYWVBKdYBUSdZxH+2slJtZ0m1BNGBWUrGFD0vM+IgnE6njmcF63IqxL47mrbFnDIVGC8fi3T5q/MBwmJrAIvTm8nVyKwHJ7CqqV0eSUx5qG4bu+MFwBqr8mDoUsDzvWsaPc4/hLI9+uyhlf7leRJExF2li5+kfvbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816110; c=relaxed/simple;
-	bh=LhIMyM7Q1PMo3Lw0qt2I3zHR0JcJLpGAUAcCqpa58+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NUg7xQQONgV7P5ptz1ReQra1eXcgtQ5gDDldLi1v5lkYnKKFQp+nVwEmrZ0zvCF2JHekVDl/QVajCW8Sss1Q+/b2yw78MUNcCIihQpNFRG7T/U+DnLpLCcIon5jUpl4w91LVzkEjHUihGEGQxS/R7FurmYO5EM6uoPA0JsY4D3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mflf9vpD; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f4a52b94c3so6605365ad.3;
-        Mon, 27 May 2024 06:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716816108; x=1717420908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=csiiP32o7V0QfgwfDEwBkwjUhpQOhY+JNgQcN0UEYPc=;
-        b=Mflf9vpDisabKDkLXB6aV1fKf/HCkn9jLK/fRXe8FcoUEsOVhU2bVmm/F2PkA0iXx1
-         sSdEZNrm/pFJcSG2RDARUsoICPchEmk0fA4PCa4d/o9lGU+6dwpNFbuRkOjpAxh/xAvE
-         ZZ0mjyGdhc1QfsbXZWeHvI5HEoKBZFdhGBxb0aNpKEoOTC7btCdcObwLx4LVGGIa0LBG
-         Rv58lpol2d2xd6kC6IRYiSsFoOzKzHB27LgT/TUbm5NauQqnjV0Ny4aw15yAXQerwKsV
-         OK8mSAkWCWyBBE9ph3v5ogIUHXcBXXNrK+nO7SXbKsnoyaOOxlwNK9OIOu9s3XtybuMh
-         gHTQ==
+	s=arc-20240116; t=1716816150; c=relaxed/simple;
+	bh=l4cYYvTuGJTCQAXcG6jFJSb2OefKYqz1SCBoseZVUns=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XGUjY6Y0yfz8MBcTXOC/Nj/IuhX2WbDeIyZ5IUzpulhOK5tRfy7SoDUqxV8xdVRySXRFfz5nL4AmBhqhJYR5OREtrFdRwiiZKfmz2Dxp6OasN+o8LiDYf+35wAoOJEkLquzhaE/NZ4DZtb2a3dXOeu4MdyvFHGyh3BKu9cJit5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3738db5b07dso18518705ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:22:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716816108; x=1717420908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=csiiP32o7V0QfgwfDEwBkwjUhpQOhY+JNgQcN0UEYPc=;
-        b=B3K/ZA6JKBl+zOxL1ZMdn2wzAQiu7FqzneLALd3Hjg1RcN5x7YijsvvvcvZzZ4GbXs
-         C0dQQSgWU/BYAuPkUxQyRupxIoA0ZEgHnu6Dd9JQf/L5d4ba5A3NeXKyofYDstIYeIU5
-         xgc36Ak2J7P7Hu/Eqb9vYhPZMKMVOeLhtKRK3cLoUd3pqZJTvooHaKOw1eFoJn3ntOdN
-         XSq8r6U+6Fy3+zxScOX7YLV29v6P2/pKefDSiLyXOK4T4eD0DLHhDHk4v9saREmxnsLp
-         dAmh8tSjcZl+Bmxn3s2G9FJZBzDKS7kqpLiE5pMX4BK/52ux51RGi9PRsFNhUEOnUaZI
-         i07Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXctR2kxuzaLOmZD1vH5yYGRYiPl6WeJojRZkoImKbDyqsK7UZ4fyMgCP1jhNmtGyE6yB3Onle7DLHT/sujyRuDUJz+9P4iHzLDitle0G8Yw91Ed1gRdSGpN1KwI5WS7mfFXyIdEbjsZA3MMGSlOY1Iz1sl5m09neJzNxluTvR9aGD
-X-Gm-Message-State: AOJu0YxI0+pNPLV7ZXujecGJBUND89SCdVzqCCaHmg9d5s+GFPNxp+PN
-	ib6zm13ESQKahynCS6O4adoFZ/7ou1KmL6qxMeP6NuJtSUqy+5qd
-X-Google-Smtp-Source: AGHT+IECc6I+wxeOCmvUlz/sds6+InCkcpa/gLRp/BqLxWTt9sf2LZk9n0dHEAlhEO+pxx48Q3Wirw==
-X-Received: by 2002:a17:902:cec1:b0:1f4:8e6d:6efc with SMTP id d9443c01a7336-1f48e6d7307mr44291085ad.5.1716816108025;
-        Mon, 27 May 2024 06:21:48 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967925sm60465375ad.168.2024.05.27.06.21.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 06:21:47 -0700 (PDT)
-Message-ID: <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
-Date: Mon, 27 May 2024 22:21:44 +0900
+        d=1e100.net; s=20230601; t=1716816148; x=1717420948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/qhmbTQ4F0jLVtDtoVk681gByJJZtXvPAOYim6+cLZE=;
+        b=tfdCyl7LQHDjTreZGXEna7bHqvxgzMArodiLF1HK37xqt5b3QcPg8cn8sW4sXLFkph
+         1e9f3ypJqF6ayOTsj/yfUsT9CyFVO2vtrCqEuonyV0eDjUDhW+zw9EorLbKShQvZTDUt
+         +CII5GzYDvEOnUC9sh4e5i/hl/eS9Gxixx7K8hcs8z+HUWQ+P1Xq35ioINUViACM9XtC
+         dV4FJ/aLqIubWliW70OhGDGt03Odi3AuCMSUqMh6P6UsPW97mMa624BoQD3WA3oVSpNx
+         fNDjXEOxTX5Np29APsHqhlWwommfz9wbQq89+kgAP2u/UUUh1+q96pEXvMoytC5IMuff
+         ropA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw/JxdwU+yCoSw2CtNu9WRgQHzP0vhqDEVv+C++WmfVak/lXn7tleKRpAm89h+a0YDUmvJZ0UwFwMqFbCZgX9BKQTsJVaA+q226BnB
+X-Gm-Message-State: AOJu0YzFKIRe3N61a/gXB1FqAV89y1ButR23Htv4jNdlFJhAAJXv0nvG
+	nvQ4+CmBFqgLDLHO1IAaQBVSqRitl+kTOKE9gH/JT7NafRqQ6QOsx577a3HzYa/RUFfYzyF8Pj6
+	XcARn6bfSxIKb9jmJFxW1IWkNT1hEk6BB/FYLGp5g8p2y/gxxEaXcVcU=
+X-Google-Smtp-Source: AGHT+IEWiodKgU8o7O1h9yGWtTo/R1nGfBJ3VP+NBaqZy7bxNCatxqKr698IrVTTW8Zz1Lpq5lic2HoFa0yiw29chSGTWr3ilD7J
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Documentation: cve Korean translation
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>,
- Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20240527103003.29318-1-yskelg@gmail.com>
- <87ikyzpgqz.fsf@meer.lwn.net>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <87ikyzpgqz.fsf@meer.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:216e:b0:36b:2731:4084 with SMTP id
+ e9e14a558f8ab-3737b2bdafemr5797905ab.2.1716816148564; Mon, 27 May 2024
+ 06:22:28 -0700 (PDT)
+Date: Mon, 27 May 2024 06:22:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae186106196f6894@google.com>
+Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_issue_sqe
+From: syzbot <syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b9b972980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=b1647099e82b3b349fbf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+BUG: KMSAN: uninit-value in io_req_complete_post io_uring/io_uring.c:937 [inline]
+BUG: KMSAN: uninit-value in io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+ io_req_complete_post io_uring/io_uring.c:937 [inline]
+ io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:215 [inline]
+ io_recv_finish+0xf10/0x1560 io_uring/net.c:861
+ io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ __do_kmalloc_node mm/slub.c:4038 [inline]
+ __kmalloc+0x6e4/0x1060 mm/slub.c:4052
+ kmalloc include/linux/slab.h:632 [inline]
+ io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
+ io_msg_alloc_async io_uring/net.c:166 [inline]
+ io_recvmsg_prep_setup io_uring/net.c:725 [inline]
+ io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
+ io_init_req io_uring/io_uring.c:2135 [inline]
+ io_submit_sqe io_uring/io_uring.c:2182 [inline]
+ io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 7410 Comm: iou-wrk-7408 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 5/27/24 9:43 오후, Jonathan Corbet wrote:
-> yskelg@gmail.com writes:
-> 
->> From: Yunseong Kim <yskelg@gmail.com>
->>
->> This is a Documentation/process/cve korean version.
-> 
-> Thank you for working to improve our documentation.  A couple of
-> questions, though:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Hi Jonathan, Thank you for the review.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->> Reviewed-by: Jinwoo Park <pmnxis@gmail.com>
->> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
-> 
-> 1) Why do I have three versions of it in my mailbox, sent over a period
->    of 13 minutes?  What changed between the versions?
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Sorry, I forgot the name of the reviewer when I first sent the
-documentation content related patch version 2.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->    Normally, you want to wait for reviews to come in on one version
->    before posting the next, and you should put a comment after the "---"
->    line saying what changed.
-> 
-> 2) When did this review from Jinwoo Park happen?  I was not copied on
->    that.
-> Thanks,
-> 
-> jon
-
-Thank you for your comment.
-
-I have updated the content from version 2 to version 1 from
-Jinwoo's review.
-
-In version 3, I added the name of the reviewer I forgot in version 2.
-
-> ---
->  .../translations/ko_KR/process/cve.rst        | 108 ++++++++++++++++++
->  1 file changed, 108 insertions(+)
->  create mode 100644 Documentation/translations/ko_KR/process/cve.rst
->
-> diff --git a/Documentation/translations/ko_KR/process/cve.rst
-b/Documentation/translations/ko_KR/process/cve.rst
-> new file mode 100644
-> index 000000000000..9daacba8d445
-> --- /dev/null
-> +++ b/Documentation/translations/ko_KR/process/cve.rst
-> @@ -0,0 +1,108 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +:원문: Documentation/process/cve.rst
-> +:역자: 김윤성 <yskelg@gmail.com>
-
-I added Jinwoo's name here on version 3.
-
-> +:감수: 박진우 <pmnxis@gmail.com>
-
-Warm Regards,
-
-Yunseong Kim
+If you want to undo deduplication, reply with:
+#syz undup
 
