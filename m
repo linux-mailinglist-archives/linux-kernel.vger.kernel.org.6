@@ -1,159 +1,214 @@
-Return-Path: <linux-kernel+bounces-190139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884578CFA06
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FBD8CFA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD3EB20A6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42E2280F29
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 07:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6220D3C062;
-	Mon, 27 May 2024 07:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DEd+ktRV"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB194376E5;
+	Mon, 27 May 2024 07:24:32 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DCB17C8D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BFD22615
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716794673; cv=none; b=Zh5RE1xD291GHoHMx1arNq93Gin4lL75B7idMi2b6B8jJ0J7F3gKc5g3J9ESHKz22rmbSHbZPcn7IA1ztCL+wAzgOMkSHzRQD1spmVZAwLJnD7cHTUaSWnNyVqkX0MWyZ1RS1vi6CCwf18FndI1Z5/hKyvqNxjgn6Q4RI914Bro=
+	t=1716794672; cv=none; b=YWJ1s67c+k3lOD+54JuF0rhdTyYledo/I+W+vjtKVBWDdbVFn6RV7MxlcEBIZwqYWqczovrKJH+qaiPq3f/U3mAxEMfApt1hkqkGC4hZ1dPWpRkc3C1ih00qLbhItTtcH2NxAeZAbCNcyD7tAZxLnH0r26vG5FXx67KYqRWTuGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716794673; c=relaxed/simple;
-	bh=wC/VHPlG/K7p6CUmEsrG1n6NOqLLTQKeyKQryX1tK8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oR3WEPbel6EndyrUfI0oQArE2ZpJmhGK9GlMKjxf8eakIxcY0f78HhmUPhO3QvnLhQpc1+HcTgMC7g1wdHrfwDLZOJobUdOzImk2btQh4YoTnK6f8Yrbe0KVCw2VKUwQe7DcN2L1bCss1gL3MQcg5TSCnPjyYIhhOvStAL2HEuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DEd+ktRV; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44R7NxZW088786;
-	Mon, 27 May 2024 02:23:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716794639;
-	bh=snx6Ph4uQVjQek/swj+K0VorNZB+1Jjhdc3Cuw8ryaI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=DEd+ktRVrjIlbm14MNfdqAYORqaMMqdN5NYOvM4ujIOoycoMApi15Awu+rhO8VW3j
-	 767GmphGs63Cj3WJyYBtuKEWIFUv0P2oGYlczI8LRDJo4Q53QTQl5PXTae20sBqQLW
-	 davT8oQMqHh1nKkfioiWv/7COG26jjsAEuAcGbDg=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44R7NxZm007598
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 May 2024 02:23:59 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
- May 2024 02:23:59 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 27 May 2024 02:23:58 -0500
-Received: from [172.24.227.102] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44R7NsIg083020;
-	Mon, 27 May 2024 02:23:54 -0500
-Message-ID: <5bf589c6-6ba9-434a-b7da-eb0c09284dcd@ti.com>
-Date: Mon, 27 May 2024 12:53:53 +0530
+	s=arc-20240116; t=1716794672; c=relaxed/simple;
+	bh=t1WMwtWHD1eE7edCg6VwTMBC5IohTUF4FgdcQgiJ7EM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cDpxFA8IKKNJqj8Gp5+YrUW/i7B2DrL7ibY4rDM15gDTa1jHz+feLB1IJ/oPS8r+UDdiDy9swT8hfb9l4W85CoB0E45IRVUYl1uofnibmlCy3cNl1hWjBVVcke7ai7Umgf65tHAXaxBYxE38STHowxp3jlC7g2csf1136Sj4wwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1e409d1f4so562527439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:24:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716794669; x=1717399469;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NWFUzUHCi9dLgq8/JAwYKdKMCUezO6W78gjgnHoq7Sk=;
+        b=HShsuc4eTB2ZwmX+LNaD5p9QfFyIKRYzs1Hgg3uvmgc3tMAY52jvEZnzLWaTIudfkM
+         gQOnfyJkp3F+OPIEwV1D+DKDZEmZEajUFKq5y+fwO0sLPSTE3s9NGfnj0N4NQSoLvUPI
+         SFnMC4z1JjnTbavtE3ULACqPcRcp+DTgjuLv26KAT15p84w2ydl7AsEIz4n4Ay/X6zLw
+         H5cmBI59Z87T/L6Q119z4v0x8WhN3qD9Rj/5yQScTsYKyyTRdB1M9NH9EAI3Sh0PGHR2
+         bGa/5p3mdZEFerM2hR4TWKHGcn1DLdrAzQC2d0+iimZm8tBPDAI1yZFzdbGJMC0iva9y
+         XBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBTBNqt1KspUbGcAqmGkjfA/XTrs4WQ/Pns+nNUkD7q/bvE9oIW7w4b1Lyaw7OA7MQ1MHFJ39FCoBw6I8qsjCX4lwDfXt++TC9mpeb
+X-Gm-Message-State: AOJu0YyozPNVpVaTOLN8CpcnJj0dL1Nit7ORM4UTov0oBRc2AHmZwmUh
+	orL3jg88Y8uTKcrvWeFVGTv9V8RUqyrEuq6VFLkFWRnuvDg2VHmW10E08o63X2AqlLja9j0jeyn
+	KTJG333kL+0EeqC4BrgNvw/uwswG3HQeCvBLzvTdw3cJ9cfmc3An4uGA=
+X-Google-Smtp-Source: AGHT+IF3zEtmKdKFUFfnTGXoZLon2AJbVRqW1PjJnTKM8yMkzNttssiBdckyMyd7m9o2FVSJ4BgtwCwJDissD+PY9rKN2iEZO1ED
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/bridge: sii902x: Fix mode_valid hook
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <sam@ravnborg.org>,
-        <mripard@kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <a-bhatia1@ti.com>
-References: <20240524093509.127189-1-j-choudhary@ti.com>
- <20240524093509.127189-2-j-choudhary@ti.com>
- <y6ersd72tp2d6k4i2hja7bg37lahnvye2qion67urxeakw6rju@dher7oomt2ks>
- <4cd64cf5-d2b0-4aa9-b958-6b6fc54f0bf2@ti.com>
- <x7i5miguht47wxliioos7npelzzicnwt7g5pfjqjvdztksgzga@c7djvf3lg3kf>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <x7i5miguht47wxliioos7npelzzicnwt7g5pfjqjvdztksgzga@c7djvf3lg3kf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a05:6e02:1d8a:b0:374:5b18:28c8 with SMTP id
+ e9e14a558f8ab-3745b182b34mr1461115ab.3.1716794669715; Mon, 27 May 2024
+ 00:24:29 -0700 (PDT)
+Date: Mon, 27 May 2024 00:24:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000070dbbd06196a68ea@google.com>
+Subject: [syzbot] [wireguard?] general protection fault in wg_packet_receive
+From: syzbot <syzbot+470d70be7e9ee9f22a01@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10263a34980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
+dashboard link: https://syzkaller.appspot.com/bug?extid=470d70be7e9ee9f22a01
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+470d70be7e9ee9f22a01@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc001ffff113: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: probably user-memory-access in range [0x00000000ffff8898-0x00000000ffff889f]
+CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: wg-kex-wg1 wg_packet_handshake_receive_worker
+RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
+Code: 11 00 00 39 05 b3 cf 1f 12 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 3d e3 92 0f 84 98 f2
+RSP: 0018:ffffc90000007500 EFLAGS: 00010002
+
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 000000001ffff113 RSI: ffff888015f20000 RDI: 00000000ffff8898
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8fe29817 R11: 0000000000000004 R12: 00000000ffff8898
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0016a3000 CR3: 000000005dcac000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ __queue_work+0x39e/0x1020 kernel/workqueue.c:2319
+ queue_work_on+0x11a/0x140 kernel/workqueue.c:2410
+ wg_packet_receive+0x13ea/0x2350 drivers/net/wireguard/receive.c:570
+ wg_receive+0x74/0xc0 drivers/net/wireguard/socket.c:326
+ udp_queue_rcv_one_skb+0xad1/0x18b0 net/ipv4/udp.c:2131
+ udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2209
+ udp_unicast_rcv_skb+0x165/0x3b0 net/ipv4/udp.c:2369
+ __udp4_lib_rcv+0x2636/0x3550 net/ipv4/udp.c:2445
+ ip_protocol_deliver_rcu+0x30c/0x4e0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_rcv+0x2c5/0x5d0 net/ipv4/ip_input.c:569
+ __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5624
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:5738
+ process_backlog+0x133/0x760 net/core/dev.c:6067
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6721
+ napi_poll net/core/dev.c:6790 [inline]
+ net_rx_action+0x9b6/0xf10 net/core/dev.c:6906
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ wg_socket_send_skb_to_peer+0x14c/0x220 drivers/net/wireguard/socket.c:184
+ wg_socket_send_buffer_to_peer+0x12b/0x190 drivers/net/wireguard/socket.c:200
+ wg_packet_send_handshake_response+0x297/0x310 drivers/net/wireguard/send.c:103
+ wg_receive_handshake_packet+0x248/0xbf0 drivers/net/wireguard/receive.c:154
+ wg_packet_handshake_receive_worker+0x17f/0x3a0 drivers/net/wireguard/receive.c:213
+ process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0xe3e/0x3b30 kernel/locking/lockdep.c:5005
+Code: 11 00 00 39 05 b3 cf 1f 12 0f 82 be 05 00 00 ba 01 00 00 00 e9 e4 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 82 1f 00 00 49 81 3c 24 a0 3d e3 92 0f 84 98 f2
+RSP: 0018:ffffc90000007500 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 000000001ffff113 RSI: ffff888015f20000 RDI: 00000000ffff8898
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8fe29817 R11: 0000000000000004 R12: 00000000ffff8898
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88802c000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0016a3000 CR3: 000000005dcac000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	11 00                	adc    %eax,(%rax)
+   2:	00 39                	add    %bh,(%rcx)
+   4:	05 b3 cf 1f 12       	add    $0x121fcfb3,%eax
+   9:	0f 82 be 05 00 00    	jb     0x5cd
+   f:	ba 01 00 00 00       	mov    $0x1,%edx
+  14:	e9 e4 00 00 00       	jmp    0xfd
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	4c 89 e2             	mov    %r12,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 82 1f 00 00    	jne    0x1fb6
+  34:	49 81 3c 24 a0 3d e3 	cmpq   $0xffffffff92e33da0,(%r12)
+  3b:	92
+  3c:	0f                   	.byte 0xf
+  3d:	84                   	.byte 0x84
+  3e:	98                   	cwtl
+  3f:	f2                   	repnz
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 25/05/24 01:16, Dmitry Baryshkov wrote:
-> On Fri, May 24, 2024 at 05:54:02PM +0530, Jayesh Choudhary wrote:
->> Hello Dmitry,
->>
->> On 24/05/24 15:11, Dmitry Baryshkov wrote:
->>> On Fri, May 24, 2024 at 03:05:08PM +0530, Jayesh Choudhary wrote:
->>>> Currently, mode_valid hook returns all mode as valid and it is
->>>> defined only in drm_connector_helper_funcs. With the introduction of
->>>> 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
->>>> bridge_attach call for cases when the encoder has this flag enabled.
->>>> So add the mode_valid hook in drm_bridge_funcs as well with proper
->>>> clock checks for maximum and minimum pixel clock supported by the
->>>> bridge.
->>>>
->>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->>
->> [...]
->>
->>>> +
->>>>    static enum drm_mode_status sii902x_mode_valid(struct drm_connector *connector,
->>>>    					       struct drm_display_mode *mode)
->>>>    {
->>>> -	/* TODO: check mode */
->>>> +	struct sii902x *sii902x = connector_to_sii902x(connector);
->>>> +	const struct drm_display_mode *mod = mode;
->>>> -	return MODE_OK;
->>>> +	return sii902x_validate(sii902x, mod);
->>>
->>> There is no need to. The drm_bridge_chain_mode_valid() should take care
->>> of calling bridge's mode_valid callback and rejecting the mode if it is
->>> not accepted.
->>
->> I need some clarity here.
->>
->> IIRC, if the bridge does initialize the connector in case
->> where the encoder does not attach the bridge with the
->> DRM_BRIDGE_ATTACH_NO_CONNECTOR (DBANC) flag (referring to tidss
->> encoder before we implemented the DBANC feature), then
->> drm_connector_helper_func are called and drm_bridge_funcs
->> are NOT called (atleast from what I have seen in detect
->> hook for cdns-mhdp-8546 driver which is there in both
->> structures).
-> 
-> There are different kinds of bridge_funcs. detect is a part of the
-> connector-related interface, so it is not called by the drm core. On the
-> other hand functions like mode_valid, enable/disable, etc. are called
-> for all bridges.
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Oh okay!
-Thanks for clarifying.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->> I do not have any platform to test non-DBANC encoders.
->> And I did not want to break any platform that were still using
->> bridge_attach without DBANC flag.
->> That is why I kept mode_valid hook in both structures.
->>
->> Are you implying that if connector_helper_funcs are not there
->> then there will be some sort of fallback to bridge_funcs instead
->> of passthrough for mode_valid check? Because that goes against my
->> previous observations.
-> 
-> Not quite. See how drm_atomic_heler uses bridge_funcs.
-> 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I will do that and spin another revision with the suggested changes.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Warm Regards,
-Jayesh
+If you want to undo deduplication, reply with:
+#syz undup
 
