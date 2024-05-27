@@ -1,224 +1,113 @@
-Return-Path: <linux-kernel+bounces-190570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA898CFFE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA418CFFE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D05B2393C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4B51C21371
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C6D15DBDD;
-	Mon, 27 May 2024 12:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0DC15DBC7;
+	Mon, 27 May 2024 12:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pViCnqJv"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HxIAVzV/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309AB15DBC0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDD03C463
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812420; cv=none; b=YOvBgWylGtV7TwmFMG7cweICGtv8AE+/9rcXcEKo4aSv45lgcPmyoB/BQ5lyUmCXHOykuT/PWA1uIpiElM8DzEqKIY3Jmrl4G7IGmVXmVH2lXIKb0HAjqnQamkhtbI3SF0q3G5It/AgXPgIj3pCNKHWHWZxeeoekIrSjJr654lQ=
+	t=1716812552; cv=none; b=UMj72XterCymEksPn9EEDdkd6d7Za3OR3h+aeNS6H/tqhXhbMz3ow0h0SE0zy/rrdg0RSDAiGPmiJVtLWMr6DjGpJ8ONqgmrUQxQkceqavB9ZJ/jjKrRreO+4UW7+UTXcPs+gE8f4zKK1hSozuILrs5ef6T5z28pAWKJBhPSsv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812420; c=relaxed/simple;
-	bh=JORPMngvobZc4VwXSAHwmLVdN+mISEnwWhTtVXqckK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sLXxSeJQO5s4mz8UijhekbpNLGI6lC7n+uUj7UVH79jJAGBhXazjMoRzgyno7IllSut2mNxhjpTBlj18cIitMpAUnHv5aD/1mEUY3tNcAFoonJI0b6I65vISc4UlaD9qSwA7W9CJAX39O1HFtbKz0EjTmABrpcI2LIYTBl40pVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pViCnqJv; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a5cec2c2981so653820466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716812416; x=1717417216; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rbkau0elypGQ8gua5kPGlwsAuXIezMiLROfFecqvTt8=;
-        b=pViCnqJveqcEQVxKNyNKak4DatC41RKolvhagFyZ95vE4Rle9miF3rAU/seN6caNj+
-         wpp8/jtYmglx10aBj0u07ceXbNXahyVtxkxAyFNACF1jqrBuPnKsMo2xqOlgVpJ3I7Q8
-         TKqn5cOZZRVDkMMv80rNXCgIWe2RYLrODWTRfymVyxZEfXKCOpvr5DQTruI4Y2iCjz91
-         XQAgjsurwE7dA/aMAm2ty+0njo8aA0ZDLofJFQnX5/v3m4OAAn/M1GFTpkrpG/21TciS
-         +mQ+ZNStO8keQDFzyIM+VZsvj1MLBIBNq0IEC3ggBrpRIrXN9h667s/1Cw8CCw+BtpTt
-         7NnA==
+	s=arc-20240116; t=1716812552; c=relaxed/simple;
+	bh=D6/X4Q+ZVx1RfZYyIKjcJ+UXqytanBrJpY1KREx9o0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYuE8goc2DzMOoXMhBYdSmtk7vb9HHs1ow9P8BDvqiYmIjLXWy1bOJYbO7GaH7R7QSKfZc9oxwKpx/pR97hzc+gXnHaLAnilQXWjITc8gz8FREd5vhkb2YmXF+9XzrpOkf/6983VDm1c+hOc+ms7hL12uX7KCU+AtXC9INREuPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HxIAVzV/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716812549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D6/X4Q+ZVx1RfZYyIKjcJ+UXqytanBrJpY1KREx9o0k=;
+	b=HxIAVzV/P4IbvG3e01gCEjCUIqpvONsajCgaG59EkrWAFOCK8HxGf518KeFpmBr4Yobscu
+	jaYyPJbCDQ3yfYeZm6GB99nODz3Fm2XsViOOK26jv64H6HsT+WyQmH7cyUNgs5UzoVvWhY
+	eZXAr7/9gBwE73YDUsveCQCWiGdKuk8=
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
+ [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-F1fhJY_1OX-_6-pLg5mDjg-1; Mon, 27 May 2024 08:22:28 -0400
+X-MC-Unique: F1fhJY_1OX-_6-pLg5mDjg-1
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-24c9f218317so3991845fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:22:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716812416; x=1717417216;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rbkau0elypGQ8gua5kPGlwsAuXIezMiLROfFecqvTt8=;
-        b=SuLiQKm81Advya73dnhn6oCUXRo4cX1/Q9U1lqsISCErYKy8KsIaIDeQDhaMLABiBp
-         JEnQbX3QYzH49q0yuldeLZIVg3OUmuqX1j+Nrm/gR/lCES2MW9hz6Y4bPKNFguDfW4+W
-         dGxauElzku5u5Bhu0FhUbpS1uQswKxBjmGp4wnctwId+TuGZQuyZrDN9WUOHcYq+hYXB
-         7mVf5y1x7CWokrG1kFgCnqbrH2Ifhb4fokT4pNF+3ytqm3CfRzcrEs0dLa9v6SzaadOM
-         V57+25hMh83kNrJYAmWeGinEkq4MePon9dmbeUYwdcJzLSaM9LUSrKxHCpTBtcDJ8eBz
-         7LVw==
-X-Gm-Message-State: AOJu0YwM6YDXeKtd03Cl5WhV+U3G8/RlsYwbcW9SW6vLkQegQCWA3PRA
-	VHEvnUvS74oVcRUQnqDXSBNPdL79aacUU94juUeHGTR66h7UUjdgznQpVCP+dxU=
-X-Google-Smtp-Source: AGHT+IEmX8jP9vhuFMUdD2fM7U214Wh5sWN4iEtg9z3ZkQrLLr308V35uKjmX8VURGnfvbjCW4ob5w==
-X-Received: by 2002:a50:d55b:0:b0:578:631b:3090 with SMTP id 4fb4d7f45d1cf-578631b3ad1mr5848685a12.33.1716812416487;
-        Mon, 27 May 2024 05:20:16 -0700 (PDT)
-Received: from [192.168.69.100] ([176.176.152.134])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785233a96esm5738532a12.5.2024.05.27.05.20.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 05:20:16 -0700 (PDT)
-Message-ID: <8f6d2408-cada-4f03-aa95-31bd234aa47d@linaro.org>
-Date: Mon, 27 May 2024 14:20:14 +0200
+        d=1e100.net; s=20230601; t=1716812547; x=1717417347;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D6/X4Q+ZVx1RfZYyIKjcJ+UXqytanBrJpY1KREx9o0k=;
+        b=ZCfjtFA8mRyfJQlZqwfYhrZoSPNAORLKr5IPR/SdSA80rulNMm4Ew6pBFbAi2ygkmZ
+         VaIV3ciFyYSe9eylV5cHe7nNtvtCse7N7gDS2H8RC52vbdv69n3GCDcHDxBL8Ppg69k5
+         5luOtg+yHCV8wfrRiQapqZCTpB4m3ejiQYgGDHKqXjPw65H/x5NJU1SQ8TE1Wx6ALKmW
+         il+X/LDR3R+1Er/SpQ0yeeXxC//9oiBzOGYTYiIE46BMaFoXUjLnlLk9c3kapzB4Rvqb
+         e1APfGH2yLCFn3PNbQP2S7c8uBVh10Y6Q298VRU+xKL16bHBTsr7Dv7sIizrkVSXuHCF
+         DudA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUAR+eCR3smBB/z3C9maFbUsUnqp8i7nqdQEPAOc2fit8ZrlgE+W8DhUU96iNVJLnDyo8ZNOf9tQt5f36AjeA//HVZMkR9n8R7Gmgp
+X-Gm-Message-State: AOJu0Yxjm6WsHlyieuOG/Bji0dL43msHJ/ZV4Gmwx6vCFXk1pyp9fFYM
+	U4LWIoTdF/6Tv0b6A4sb3zisEe4dcqtWBkZMeX2mWJK9nu4quC9Ll6QJfzLl6L6ozd0zTNHP9d6
+	KrhlMxijTGLtr4rzU4wkNrtKW18EZ2l1GNHDJhz/5dwdLvZagWiZF6aqP8tvNanMiwIrkrIzlOO
+	0ZKUQl9mkDpVpxHjed2EULbmx47oeMUv/EpdmR
+X-Received: by 2002:a05:6870:ecac:b0:24f:ca0b:a416 with SMTP id 586e51a60fabf-24fca0ba9ddmr8660847fac.25.1716812547521;
+        Mon, 27 May 2024 05:22:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpbWE3sG5qxjjbcE+5g10+YLPBcXTh7NIQm64af4KCelQYvybRmXETJ7F3TEfsOhjU3VUcUja1bKEg/ReA+vI=
+X-Received: by 2002:a05:6870:ecac:b0:24f:ca0b:a416 with SMTP id
+ 586e51a60fabf-24fca0ba9ddmr8660830fac.25.1716812547194; Mon, 27 May 2024
+ 05:22:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for
- MIPS/Loongson64
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen
- <chenhuacai@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-In-Reply-To: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240516190437.3545310-1-costa.shul@redhat.com>
+ <20240516190437.3545310-5-costa.shul@redhat.com> <87wmnrj4uz.ffs@tglx> <87seyfj4h7.ffs@tglx>
+In-Reply-To: <87seyfj4h7.ffs@tglx>
+From: Costa Shulyupin <costa.shul@redhat.com>
+Date: Mon, 27 May 2024 15:21:50 +0300
+Message-ID: <CADDUTFx4XPtAYNUPK03BSFH0p8Z17OCftEb7aq+f6VqpnEWkoA@mail.gmail.com>
+Subject: Re: [PATCH v1 4/7] sched/isolation: Adjust affinity of managed irqs
+ according to change of housekeeping cpumask
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: longman@redhat.com, pauld@redhat.com, linux-kernel@vger.kernel.org, 
+	Ming Lei <ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jiaxun,
+Hello Thomas,
 
-On 17/5/24 19:13, Jiaxun Yang wrote:
-> Node counter is a timer presents on many Loongson-3 series CPUs.
-> It is maintained on every node in system. To avoid synchronisation
-> complexity we only access the copy from first node in system.
-> 
-> It also has many ways to be accessed, on latest Loongson-3 CPU with
-> IOCSR instruction support it should be accessed with a IOCSR request,
-> while on earlier Loongson-3 CPUs it is attached to a 32 bits MMIO bus.
-> For QEMU's Loongson-3 virt system it is mapped to a 64 bit MMIO location.
-> 
-> On some rare case the counter is disabled by firmware or not present
-> on chip, so we need to perform a lightweight test to ensure it is
-> running before actually use it.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> Changes in v2:
-> - Fix build failure when it's not enabled.
-> - Link to v1: https://lore.kernel.org/r/20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com
-> ---
->   MAINTAINERS                                      |   1 +
->   arch/mips/include/asm/mach-loongson64/loongson.h |   3 +
->   arch/mips/loongson64/time.c                      |   3 +
->   drivers/clocksource/Kconfig                      |   8 ++
->   drivers/clocksource/loongson-nodecnt.c           | 112 +++++++++++++++++++++++
->   5 files changed, 127 insertions(+)
+Thank you so much for very valuable feedback!
+I've tested your proposal to use the hotplug for the isolation.
+It works well for both timers, but managed irqs are not ready for this scenario.
+
+Current implementation is introduced by
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=11ea68f553e244851d15793a7fa33a97c46d8271
+
+How do you suggest to proceed?
+
+> So why inflicting all of this nonsense to the kernel instead of
+> cleverly (ab)using CPU hotplug for it in user space:
+..
 
 
-> diff --git a/drivers/clocksource/loongson-nodecnt.c b/drivers/clocksource/loongson-nodecnt.c
-> new file mode 100644
-> index 000000000000..3cea4045ce75
-> --- /dev/null
-> +++ b/drivers/clocksource/loongson-nodecnt.c
-
-
-> +#define NODECNT_REGBASE		0x3ff00408
-> +
-> +static void __iomem *nodecnt_reg;
-> +static u64 (*nodecnt_read_fn)(void);
-> +
-> +static u64 notrace nodecnt_read_2x32(void)
-> +{
-> +	unsigned int hi, hi2, lo;
-> +
-> +	do {
-> +		hi = readl_relaxed(nodecnt_reg + 4);
-> +		lo = readl_relaxed(nodecnt_reg);
-> +		hi2 = readl_relaxed(nodecnt_reg + 4);
-> +	} while (hi2 != hi);
-> +
-> +	return (((u64) hi) << 32) + lo;
-> +}
-> +
-> +static u64 notrace nodecnt_read_64(void)
-> +{
-> +	return readq_relaxed(nodecnt_reg);
-> +}
-
-
-> +int __init nodecnt_clocksource_init(void)
-> +{
-> +	int err;
-> +	uint64_t delta;
-> +
-> +	if (!cpu_clock_freq)
-> +		return -ENODEV;
-> +
-> +	if (cpu_has_csr() && csr_readl(LOONGSON_CSR_FEATURES) & LOONGSON_CSRF_NODECNT) {
-> +		nodecnt_read_fn = nodecnt_read_csr;
-> +	} else if (loongson_sysconf.bridgetype == VIRTUAL) {
-> +		nodecnt_reg = ioremap(NODECNT_REGBASE, 8);
-> +		if (!nodecnt_reg)
-> +			return -ENOMEM;
-> +		nodecnt_read_fn = nodecnt_read_64;
-> +	} else {
-> +		switch (boot_cpu_data.processor_id & (PRID_IMP_MASK | PRID_REV_MASK)) {
-> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R2_0:
-> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R2_1:
-> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R3_0:
-> +		case PRID_IMP_LOONGSON_64C | PRID_REV_LOONGSON3A_R3_1:
-> +			break;
-> +		default:
-> +			return -ENODEV;
-> +		}
-> +		nodecnt_reg = ioremap(NODECNT_REGBASE, 8);
-> +		if (!nodecnt_reg)
-> +			return -ENOMEM;
-> +		nodecnt_read_fn = nodecnt_read_2x32;
-> +	}
-> +
-> +	/* Test if nodecnt is usable */
-> +	delta = nodecnt_read_fn();
-> +	udelay(10);
-> +	delta = nodecnt_read_fn() - delta;
-> +
-> +	if (!delta) {
-> +		pr_info("nodecnt: clocksource unusable\n");
-> +		err = -ENODEV;
-> +		goto out;
-> +	}
-> +
-> +	err = clocksource_register_hz(&nodecnt_clocksource, cpu_clock_freq);
-> +	if (err) {
-> +		pr_err("nodecnt: clocksource register failed\n");
-> +		goto out;
-> +	}
-> +
-> +	/* It fits for sched_clock if we don't suffer from cross node access */
-> +	if (loongson_sysconf.bridgetype == VIRTUAL || loongson_sysconf.nr_nodes <= 1)
-> +		sched_clock_register(nodecnt_read_fn, 64, cpu_clock_freq);
-
-return 0; ? ...
-
-> +
-> +out:
-
-.. or:
-
-   if (err) ?
-
-> +	if (nodecnt_reg)
-> +		iounmap(nodecnt_reg);
-> +	return err;
-> +}
-> 
-> ---
-> base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
-> change-id: 20240512-loongson_nodecnt-0704f76bc959
-> 
-> Best regards,
+> Or something like that. You get the idea, right?
+>
+> IOW, the only kernel change which is required to achieve your goal is to
+> ensure that changing the housekeeping/isolated property of a CPU at
+> runtime is only possible when the CPU is "offline".
 
 
