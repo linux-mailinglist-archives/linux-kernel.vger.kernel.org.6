@@ -1,229 +1,107 @@
-Return-Path: <linux-kernel+bounces-191197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B498D07DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F080A8D07DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B841C216F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927F51F21629
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857C517E913;
-	Mon, 27 May 2024 16:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H1M6ni55"
-Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A3713A40D
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E9E1607B1;
+	Mon, 27 May 2024 16:04:13 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 1921C15FA61
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 16:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825843; cv=none; b=l4OEDaCiGJiJVpXCWk9/G3iEmXhzkVMxntWWBgWE9h965Qei3qnp0989VSJbSrli/7Dc8a5903zrZ3AsKsIpOna1MMfR8nCzpd57mJy6H4KFpM37wYnCrFIzJqGG0kvsrz+erqT4A/mvbJ7g2ELaHrFo7awSzJWc2cjg4abaD50=
+	t=1716825853; cv=none; b=ifxYbWxrsz0yT9c83CEkLcYOx65BtoWNBB8VnmXosmiLmYlpfVNqVb2DT6Ce2Fjw0/XVN6eL8Y5PWFEJ10unDrekTgykdO9yYB7ycL5oTBIrBxFcI8/Zm1d1fRsx8k9Y+0zza/rLaoWkEK8zzX9UHHpSGZjvsJw6fE57tTjOhII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825843; c=relaxed/simple;
-	bh=4EmFyncAhhLiKY+1D8a0clxDIqQWULOdjf0ovBAqZOg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hwScvf5SwXgm+4eiN1VMiQMtyHUTn35/cZiyhtgKDXIw+4u4MAYBpk13Isu5NoSftKH2qTqqz1G7G0785wQpX/zBchObIT4acI5BzMhW3RkFCuP3RskRI/1+gOjLiUyrAsURQLSSed9F6Hs7GomtBonQL3lZhhxzl8RO0O9xIYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H1M6ni55; arc=none smtp.client-ip=209.85.208.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-2e95a1d5ff1so26598371fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716825840; x=1717430640; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EJWqJxrkn9eN5G99j0riJdNLIsQh7HlIjrBMGMc+Qc0=;
-        b=H1M6ni55WKT5hNa6QGjItDS8EnlyiMwcMYm7r0Yar834aTI/MhAr6DAUme4y9CkPmX
-         E/GW1CJ2ChhAKqHMwykpg1e9cV4bw9dxdn5o7LBK/ghdDjfZRk5mXeCmn3nipmw/gi2g
-         bfH/oYsFqgLgyODVKHvW8H4shJqDjBcfwzaj7wLUGdiYS5j5riuO3rsaWQSc7L7iFtWz
-         B1HC09oQXUGxNLy/8demm/W6OmZR9k4H0NV7pIxwttu9bPHDDPLSvbdXivNJxarp0M/F
-         ePEyDQCV2QE0IV4vk/TZL/TutSEehNP1wjboQQ2L/c48NmTXEsXay2fsW+dMNG1Fyfm1
-         Temw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716825840; x=1717430640;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EJWqJxrkn9eN5G99j0riJdNLIsQh7HlIjrBMGMc+Qc0=;
-        b=AYVLn1Lq4NQB+H4bbF3sVoCp1pxWCHbaqQ1/DjjbL1C7uROK/vTQ5M88QDqNm4hx4b
-         AdjBnLqMR67vhoIg+wFi8JTdbzjCQw8RhT5N6d9EbX7fFUK0yIOuqI6E+/6pW66zQl5j
-         ArBcXaVXe/Ymbl3CiWfVv6FE4Bh8Y3bByC9VreDa8+0t0hb3nDZpgNtI1SWdUZEkUsWD
-         U4jZC6Js9suiccSpcTld0jHXZtctHSTHvHjogisIgb2ixAA4WDxHyU2stMEU6DBmC0Eo
-         YRKVV1PBG5i5X09SBo4Z8FR8mMkJI8xiuwHsbm4KqmGxfxg2/rM3c7nR0PeXWcjQeQyt
-         ep0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXt+IsA72n7/dL9DdYGT5qkEMq+F8O8mbVnlEEXBiMLNkZrG/sYJcLBqMDdELbrfWl6is+XNiDxVLFcfJJGpVN3Q/lhCb6WrQwJR/Io
-X-Gm-Message-State: AOJu0YySi1RvRsBzD8yctXxjxvcs/7o12Ik30ZqwM+B5euLIPHO/dMQg
-	l8d2biOTRWzhKsom+XBQOlD8/CWzg9RlVWfKICmEn/iuhITPcRc8mce9+g8IwZCUruhn+6Zk4ob
-	FUo+nL6PHLgF8Aw==
-X-Google-Smtp-Source: AGHT+IF3eJeOUIBjEjZ9ZRQCMvF3qFkK/+/n2pG/a8Q4YqeNxCsqp6O78uLUaBfl65HTl/3GKm7277j1vlQVAB8=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a2e:9155:0:b0:2e2:a6dc:8289 with SMTP id
- 38308e7fff4ca-2e95b25667emr88131fa.7.1716825839717; Mon, 27 May 2024 09:03:59
- -0700 (PDT)
-Date: Mon, 27 May 2024 16:03:56 +0000
-In-Reply-To: <20240524213245.GT2118490@ZenIV>
+	s=arc-20240116; t=1716825853; c=relaxed/simple;
+	bh=h54dWY/zDi3py//moP1826iPuQH0d1/QxOp7rIFQxz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUk79eNlT6GUjtYnXDF0sPr7k+FeGr4aSWch4umDoj+KKGoZGRdiEepNlFEC/bl2MiaWyU1zbZKKX7W34J2RJlXLxw1wpkX0Ke+L587JEbtVJolpzj/7gQOkQujuECpbJ1v2N9fHBDUAgASLHMZjSEX/pZ6ifXkQYeEpGtl/QuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 663494 invoked by uid 1000); 27 May 2024 12:04:10 -0400
+Date: Mon, 27 May 2024 12:04:10 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+  linux-kernel@vger.kernel.org, Viktor Vafeiadis <viktor@mpi-sws.org>
+Subject: Re: [RFC][PATCH 3/4] tools/memory-model: Define effect of Mb tags on
+ RMWs in tools/...
+Message-ID: <42f31a6a-2f99-46fa-9fac-c3ad5174399a@rowland.harvard.edu>
+References: <20240527152253.195956-1-jonas.oberhauser@huaweicloud.com>
+ <20240527152253.195956-4-jonas.oberhauser@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240524213245.GT2118490@ZenIV>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240527160356.3909000-1-aliceryhl@google.com>
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-From: Alice Ryhl <aliceryhl@google.com>
-To: viro@zeniv.linux.org.uk
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, brauner@kernel.org, cmllamas@google.com, 
-	dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, 
-	gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, 
-	ojeda@kernel.org, peterz@infradead.org, rust-for-linux@vger.kernel.org, 
-	surenb@google.com, tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
-	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527152253.195956-4-jonas.oberhauser@huaweicloud.com>
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
-> > > You obviously are aware of this but I'm just spelling it out. Iirc,
-> > > there will practically only ever be one light refcount per file.
-> > >
-> > > For a light refcount to be used we know that the file descriptor table
-> > > isn't shared with any other task. So there are no threads that could
-> > > concurrently access the file descriptor table. We also know that the
-> > > file descriptor table cannot become shared while we're in system call
-> > > context because the caller can't create new threads and they can't
-> > > unshare the file descriptor table.
-> > >
-> > > So there's only one fdget() caller (Yes, they could call fdget()
-> > > multiple times and then have to do fdput() multiple times but that's a
-> > > level of weirdness that we don't need to worry about.).
-> > 
-> > Hmm. Is it not the case that different processes with different file
-> > descriptor tables could reference the same underlying `struct file` and
-> > both use light refcounts to do so, as long as each fd table is not
-> > shared? So there could be multiple light refcounts to the same `struct
-> > file` at the same time on different threads.
+On Mon, May 27, 2024 at 05:22:52PM +0200, Jonas Oberhauser wrote:
+> Herd7 transforms successful RMW with Mb tags by inserting smp_mb() fences
+> around them. We emulate this by considering imaginary po-edges before the
+> RMW read and before the RMW write, and extending the smp_mb() ordering
+> rule, which currently only applies to real po edges that would be found
+> around a really inserted smp_mb(), also to cases of the only imagined po
+> edges.
 > 
-> Relevant rules:
+> Reported-by: Viktor Vafeiadis <viktor@mpi-sws.org>
+> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+> ---
+>  tools/memory-model/linux-kernel.cat | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> 	* Each file pointer in any descriptor table contributes to refcount
-> of file.
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index adf3c4f41229..3a6e9677abe4 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -34,6 +34,15 @@ let R4rmb = R \ Noreturn	(* Reads for which rmb works *)
+>  let rmb = [R4rmb] ; fencerel(Rmb) ; [R4rmb]
+>  let wmb = [W] ; fencerel(Wmb) ; [W]
+>  let mb = ([M] ; fencerel(Mb) ; [M]) |
+> +	(* full-barrier RMWs (successful cmpxchg(), xchg(), etc.) act as
+> +	 * though there were enclosed by smp_mb().
+> +	 * The effect of these virtual smp_mb() is formalized by adding
+> +	 * Mb tags to the read and write of the operation, and providing
+> +	 * the same ordering as though there were additional po edges
+> +	 * between the Mb tag and the read resp. write.
+> +	 *)
+
+This file's style calls for multiline comments to start with "(*" on a 
+line by themselves.
+
+> +	([M] ; po ; [Mb] ; (* po ; *) [R]) |
+> +	([W] ; (* po ; *) [Mb] ; po ; [M]) |
+
+Can't these be written as:
+
+	([M] ; po ; [Mb & R]) |
+	([Mb & W] ; po ; [M]) |
+
+?  I think this would be easier to understand, even though it doesn't 
+correspond as directly to the comment.
+
+Alan
+
+>  	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+>  	([M] ; po? ; [RMW] ; fencerel(After-atomic) ; [M]) |
+>  	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
+> -- 
+> 2.34.1
 > 
-> 	* All assignments to task->files are done by the task itself or,
-> during task creation, by its parent The latter happens before the task
-> runs for the first time.  The former is done with task_lock(current)
-> held.
-> 
-> 	* current->files is always stable.  The object it points to
-> is guaranteed to stay alive at least until you explicitly change
-> current->files.
-> 	* task->files is stable while you are holding task_lock(task).
-> The object it points to is guaranteed to stay alive until you release
-> task_lock(task).
-> 	* task->files MAY be fetched (racily) without either of the
-> above, but it should not be dereferenced - the memory may be freed
-> and reused right after you've fetched the pointer.
-> 
-> 	* descriptor tables are refcounted by table->count.
-> 	* descriptor table is created with ->count equal to 1 and
-> destroyed when its ->count reaches 0.
-> 	* each task with task->files == table contributes to table->count.
-> 	* before the task dies, its ->files becomes NULL (see exit_files()).
-> 	* when task is born (see copy_process() and copy_files())) the parent
-> is responsible for setting the value of task->files and making sure that
-> refcounts are correct; that's the only case where one is allowed to acquire
-> an extra reference to existing table (handling of clone(2) with COPY_FILES).
-> 
-> 	* the only descriptor table one may modify is that pointed to
-> by current->files.  Any access to other threads' descriptor tables is
-> read-only.
-> 
-> 	* struct fd is fundamentally thread-local.  It should never be
-> passed around, put into shared data structures, etc.
-> 
-> 	* if you have done fdget(N), the matching fdput() MUST be done
-> before the caller modifies the Nth slot of its descriptor table,
-> spawns children that would share the descriptor table.
-> 
-> 	* fdget() MAY borrow a reference from caller's descriptor table.
-> That can be done if current->files->count is equal to 1.
-> In that case we can be certain that the file reference we fetched from
-> our descriptor table will remain unchanged (and thus contributing to refcount
-> of file) until fdput().  Indeed,
-> 	+ at the time of fdget() no other thread has task->files pointing
-> to our table (otherwise ->count would be greater than 1).
-> 	+ our thread will remain the sole owner of descriptor table at
-> least until fdput().  Indeed, the first additional thread with task->files
-> pointing to our table would have to have been spawned by us and we are
-> forbidden to do that (rules for fdget() use)
-> 	+ no other thread could modify our descriptor table (they would
-> have to share it first).
-> 	+ we are allowed to modify our table, but we are forbidden to touch
-> the slot we'd copied from (rules for fdget() use).
-> 
-> In other words, if current->files->count is equal to 1 at fdget() time
-> we can skip incrementing refcount.  Matching fdput() would need to
-> skip decrement, of course.  Note that we must record that (borrowed
-> vs. cloned) in struct fd - the condition cannot be rechecked at fdput()
-> time, since the table that had been shared at fdget() time might no longer
-> be shared by the time of fdput().
-
-This is great! It matches my understanding. I didn't know the details
-about current->files and task->files.
-
-You should copy this to the kernel documentation somewhere. :)
-
-> > And this does *not* apply to `fdget_pos`, which checks the refcount of
-> > the `struct file` instead of the refcount of the fd table.
-> 
-> False.  fdget_pos() is identical to fdget() as far as file refcount
-> handling goes.  The part that is different is that grabbing ->f_pos_lock
-> is sensitive to file refcount in some cases.  This is orthogonal to
-> "does this struct fd contribute to file refcount".
-
-Sorry, I see now that I didn't phrase that quite right. What I meant is
-that there are ways of sharing a `struct file` reference during an fdget
-scope that are not dangerous, but where it *would be* dangerous if it
-was an fdget_pos scope instead. Specifically, the reason they are
-dangerous is that they can lead to a data race on the file position if
-the fdget_pos scope did not take the f_pos_lock mutex.
-
-For example, during an `fdget(N)` scope, you can always do a `get_file`
-and then send it to another process and `fd_install` it into that other
-process. There's no way that this could result in the deletion of the
-Nth entry of `current->files`.
-
-However, during an `fdget_pos(N)` scope, then it is *not* the case that
-it's always okay to send a `get_file` reference to another thread and
-`fd_install` it. Because after the remote process returns from the
-syscall in which we `fd_install`ed the file, the remote process could
-proceed to call another syscall that in turn modifies the file position.
-And if the original `fdget_pos(N)` scope modifies the file position
-after sending the `get_file` reference, then that could be a data race
-on f_pos.
-
-> Again, "light" references are tied to thread; they can only be created
-> if we are guaranteed that descriptor table's slot they came from will
-> remain unchanged for as long as the reference is used.
-> 
-> And yes, there may be several light references to the same file - both
-> in different processes that do not share descriptor table *and* in the
-> same thread, if e.g. sendfile(in_fd, out_fd, ...) is called with
-> in_fd == out_fd.
-
-Thanks for confirming this!
-
-
-
-
-
-I hope this reply along with my reply to Christian Brauner also
-addresses your other thread. Let me know if it doesn't.
-
-Alice
 
