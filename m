@@ -1,193 +1,172 @@
-Return-Path: <linux-kernel+bounces-191361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1BA8D0B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F348D0B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C905BB220EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:08:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E496828207E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B752160877;
-	Mon, 27 May 2024 19:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6815FA85;
+	Mon, 27 May 2024 19:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YR8/eFXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQmfo1UY"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402215ECFF;
-	Mon, 27 May 2024 19:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA911078F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 19:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716836860; cv=none; b=IMDcq/mhGcFVz8qfbZ30txvMfhc2dmxV97w/+I6QylvHn2k9/2pdW9GbUOgnUR+Zyb69L6+FL+pQiqs58N0cbPppsYie5xDNsDY5Ocb8VUkSfPKCwv1OKwlMDrrwj4t6z64pKqH3xquML6dho0ay4Lj9kNss9PiWM0sHZAK6ZBE=
+	t=1716836858; cv=none; b=fCiX79vuPObGTub8fJamK3ANkNRCGLaMXCfa6e3eZHr8aK2Ch4gFViTyzO/OBDwzVw0DvmhgKS+Iu9ydUn3sqvqe0AASljOUu/BKyWoKi0JYO1RlXubsmKFo6LVe7ZzqPhwoj8sPLJpkYZnR+Sz3q5sC4hnUs3GsHb8DQpfCzB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716836860; c=relaxed/simple;
-	bh=UAEnHiSC1PDA0L1KaZk1ZNrZGkvGLhQGf5jxKFjBwLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQaDWe5U96cCE7w4v59chp4RHtgN7j/+97E+hWfXzvaXJJAUG5VmWRZkrgvxPs67SacGqQYqZh669DULYIthXQFpUmGuiGWGtR4hveqP7J7SB1EVnp/Q9gxrFmMffru7i0JB7PeJISkCuxtg2xadjOwBF9t1gNU8Ms7Qn7FmZu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YR8/eFXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88945C2BBFC;
-	Mon, 27 May 2024 19:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716836860;
-	bh=UAEnHiSC1PDA0L1KaZk1ZNrZGkvGLhQGf5jxKFjBwLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YR8/eFXJyUokyJhCKsd2N8o4+6s0N8UvrEamhTdSXomXPST5JbQJuI0vjaWwKbfMG
-	 TQFDvUwj6aosaxDpYWID/W9VLyicSyy/AR7mDNOqBUwDn7A9n+VJcapdPBqvgKiUCt
-	 SwHQgI/o4GM8wKMtY60ZTHA7nL67CNGIlT775YIObUHL8SuJmNKJ7tcxh6mXISzfqT
-	 P+RCSYpRbP9SUVQdDMS1LPIDkgLePczld6jtCHhwgAaEIF0Ns9QYs91yNs4JpbLqZZ
-	 zbnYpa7RLwzWN4VMVp+FOR7j9M7cIsAFMHEmQEHGMZ+rLmRc7pPt96Us6Li8njks94
-	 o8dPHplm0FyPQ==
-Date: Mon, 27 May 2024 20:07:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Shengyu Li <shengyu.li.evgeny@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>,
-	Ronald Warsow <rwarsow@gmx.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Will Drewry <wad@chromium.org>,
-	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
- leading to race conditions
-Message-ID: <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
-References: <20240511171445.904356-1-mic@digikod.net>
- <20240511171445.904356-5-mic@digikod.net>
+	s=arc-20240116; t=1716836858; c=relaxed/simple;
+	bh=tSHuEMxJouR4cSNe/6JdiZ4bbwdl6FmRIp/8udEk/vk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LjOJNcqgM09v/zeo/FjH6bhe/pyUBLF8/DWlNCzXIXsLCesTRAvFIdwhDu0rqr/+nepGK+wvdVknvuMjWxehoHCkCAt6ZwWsgMBpZ+cxGlsPcNZb08zouuLHta9SwVyNS2p6aNdLYpG1Evf2APjYJZ2kJfMHI2BZXl+IomdVSW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQmfo1UY; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e974862b00so298861fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716836855; x=1717441655; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MMb8cqOGHOlYvluE+ZypX3WOvmD8Wjx3TnYK5qZF94M=;
+        b=BQmfo1UYoTH5tjllwLxuw0ihQb2mGq8N4GHmMZJaT9if6hYkZRxjD2s+g7vpkmPOXb
+         8lw23itcTG6NI7xeovFEZiT7BC/CoiU5+8t0uBt98NU+/yvftzoL2aEDV94SYmugCsoF
+         UUapaSpo4WTsVahb6sQWaB/gOXEbd4SLQ0I286IF8uQSODlpENTmdiXxEzpoHF0H0aub
+         WQmak19ERCpnWC4lHMdyjxyYCv8BPhm3X8TiTdIpdRsMU7x2OzMMFOpDTsg2FbjQEAJO
+         Bo24yFpYoQzv/PCwif8aMA7ANeq1lxUbfwprTBbDxNppTVWhN840KgpAWTCLq1qMtBfT
+         vxUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716836855; x=1717441655;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MMb8cqOGHOlYvluE+ZypX3WOvmD8Wjx3TnYK5qZF94M=;
+        b=Xh6K3p0PfFJKQd7KO0cfdyu2JbHuA6BkgcntL6IGq3pRXLMmIIe3er1vkYs/sXUxZv
+         3G8qeU5x/N6ZWDj/59u0l8B2muMkdfKX/mnoGWzrTLNeKEUVFEa6Tn7wYQr5dCWQYDKX
+         p5y9yRm9yL8nfOyzF8oVcCklM//yFSgMjHiADhUDPfAThFu07GiNZdjEJpK+pekMFBRa
+         eHwTi4gEgZEQYv9ap8nLFkrUlMQGF/KgBAo90aodkhu2fLT9Z5mJxqIaRrzxFICd22uE
+         K2MY3YX/izm/nIjbzaxjWrMVtjpORmBWzmH3IPKIBhQKZ0niNKpFBC3XjIDDg5TqZhx/
+         Q73A==
+X-Forwarded-Encrypted: i=1; AJvYcCWstORYUmryQHdaolJ7Zdv4VGZM/WZcWMWheWszlkUaUWi2iw3iPcKn1LE8RhvZ4VGNRLyb30M5o/hAAfquQm2cfiHLIBOGYMi1m+sm
+X-Gm-Message-State: AOJu0YwTBf9RTepvgR2VT4r72LWoiIgOyotYQC5zuetyIEYLXJEbWvW2
+	HI4whVMKlN2GpMIyf6N4y9yj2RksUUrhr59fQgMvyPXsONj+q066KYSi5relQOw=
+X-Google-Smtp-Source: AGHT+IH5U4venbl2NzsLrKNcps4t4Gp/IpeMMHzyGog1s4eLpoa67ICa5GNm24fgsm4lauKXMm34qw==
+X-Received: by 2002:ac2:4a9a:0:b0:522:36f7:3660 with SMTP id 2adb3069b0e04-52965198b61mr6454265e87.36.1716836854746;
+        Mon, 27 May 2024 12:07:34 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c987cf8sm520773066b.94.2024.05.27.12.07.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 12:07:34 -0700 (PDT)
+Message-ID: <c4e7ea45-bd81-49c1-a461-e418a32d6122@linaro.org>
+Date: Mon, 27 May 2024 21:07:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pwkg7Agk0Gg3e4Mx"
-Content-Disposition: inline
-In-Reply-To: <20240511171445.904356-5-mic@digikod.net>
-X-Cookie: Teutonic:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+To: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon <nm@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+ Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240523080225.1288617-1-msp@baylibre.com>
+ <20240523080225.1288617-2-msp@baylibre.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240523080225.1288617-2-msp@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 23/05/2024 10:02, Markus Schneider-Pargmann wrote:
+> Add a property with an array of phandles to devices that have pins that
+> are capable to wakeup the SoC from Partial-IO. In Partial-IO everything
+> is powered off including the DDR. Only pins belonging to a couple of
+> devices are active and wakeup the system on activity.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> index 7f06b1080244..c8ed0dd4fee4 100644
+> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> @@ -61,6 +61,12 @@ properties:
+>    mboxes:
+>      minItems: 2
+>  
+> +  ti,partial-io-wakeup-sources:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      List of phandles to devicetree nodes that can wakeup the SoC from the
+> +      Partial IO poweroff mode.
 
---pwkg7Agk0Gg3e4Mx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We have binding for this - wakeup-source in each device - what's wrong
+with it?
 
-On Sat, May 11, 2024 at 07:14:39PM +0200, Micka=EBl Sala=FCn wrote:
+Best regards,
+Krzysztof
 
-> Fix a race condition when running several FIXTURE_TEARDOWN() managing
-> the same resource.  This fixes a race condition in the Landlock file
-> system tests when creating or unmounting the same directory.
-
-> Using clone3() with CLONE_VFORK guarantees that the child and grandchild
-> test processes are sequentially scheduled.  This is implemented with a
-> new clone3_vfork() helper replacing the fork() call.
-
-This is now in mainline and appears to be causing several tests (at
-least the ptrace vmaccess global_attach test on arm64, possibly also
-some of the epoll tests) that previously were timed out by the harness
-to to hang instead.  A bisect seems to point at this patch in
-particular, there was a bunch of discussion of the fallout of these
-patches but I'm afraid I lost track of it, is there something in flight
-for this?  -next is affected as well from the looks of it.
-
-Log of the ptrace issue (not that it's useful, the job just gets killed
-by the test runner):
-
-   https://lava.sirena.org.uk/scheduler/job/307984
-
-Bisect log:
-
-git bisect start
-# status: waiting for both good and bad commits
-# good: [e8f897f4afef0031fe618a8e94127a0934896aba] Linux 6.8
-git bisect good e8f897f4afef0031fe618a8e94127a0934896aba
-# status: waiting for bad commit, 1 good commit known
-# bad: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-git bisect bad a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-# good: [480e035fc4c714fb5536e64ab9db04fedc89e910] Merge tag 'drm-next-2024=
--03-13' of https://gitlab.freedesktop.org/drm/kernel
-git bisect good 480e035fc4c714fb5536e64ab9db04fedc89e910
-# good: [2ac2b1665d3fbec6ca709dd6ef3ea05f4a51ee4c] Merge tag 'hwlock-v6.9' =
-of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux
-git bisect good 2ac2b1665d3fbec6ca709dd6ef3ea05f4a51ee4c
-# good: [e858beeddfa3a400844c0e22d2118b3b52f1ea5e] bcachefs: If we run merg=
-es at a lower watermark, they must be nonblocking
-git bisect good e858beeddfa3a400844c0e22d2118b3b52f1ea5e
-# good: [e43afae4a335ac0bf54c7a8f23ed65dd55449649] Merge tag 'powerpc-6.9-3=
-' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-git bisect good e43afae4a335ac0bf54c7a8f23ed65dd55449649
-# good: [09e10499ee6a5a89fc352f25881276398a49596a] Merge tag 'drm-misc-fixe=
-s-2024-05-02' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fi=
-xes
-git bisect good 09e10499ee6a5a89fc352f25881276398a49596a
-# good: [3c15237018eb8a9a56bb49a5dbf4d8eeb154b5cc] Merge tag 'usb-6.9-rc7' =
-of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
-git bisect good 3c15237018eb8a9a56bb49a5dbf4d8eeb154b5cc
-# good: [62788b0f225da1837ad38101112e2c49123470ee] Merge tag 'for-linus' of=
- git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux
-git bisect good 62788b0f225da1837ad38101112e2c49123470ee
-# good: [ed44935c330a2633440e8d2660db3c7538eeaf10] Merge tag 'spi-fix-v6.9-=
-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi
-git bisect good ed44935c330a2633440e8d2660db3c7538eeaf10
-# good: [c22c3e0753807feee1391a22228b0d5e6ba39b74] Merge tag 'mm-hotfixes-s=
-table-2024-05-10-13-14' of git://git.kernel.org/pub/scm/linux/kernel/git/ak=
-pm/mm
-git bisect good c22c3e0753807feee1391a22228b0d5e6ba39b74
-# good: [b61821bb32c5577272408e1b05e6a0879a64257f] Merge tag 'drm-misc-fixe=
-s-2024-05-10' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fi=
-xes
-git bisect good b61821bb32c5577272408e1b05e6a0879a64257f
-# bad: [323feb3bdb67649bfa5614eb24ec9cb92a60cf33] selftests/harness: Handle=
- TEST_F()'s explicit exit codes
-git bisect bad 323feb3bdb67649bfa5614eb24ec9cb92a60cf33
-# bad: [323feb3bdb67649bfa5614eb24ec9cb92a60cf33] selftests/harness: Handle=
- TEST_F()'s explicit exit codes
-git bisect bad 323feb3bdb67649bfa5614eb24ec9cb92a60cf33
-# bad: [3656bc23429a4d539c81b5cb8f17ceeeeca8901a] selftests/landlock: Do no=
-t allocate memory in fixture data
-git bisect bad 3656bc23429a4d539c81b5cb8f17ceeeeca8901a
-# good: [7e4042abe2ee7c0977fd8bb049a6991b174a5e6f] selftests/landlock: Fix =
-FS tests when run on a private mount point
-git bisect good 7e4042abe2ee7c0977fd8bb049a6991b174a5e6f
-# bad: [a86f18903db9211e265cc130b61adb175b7a4c42] selftests/harness: Fix in=
-terleaved scheduling leading to race conditions
-git bisect bad a86f18903db9211e265cc130b61adb175b7a4c42
-# good: [fff37bd32c7605d93bf900c4c318d56d12000048] selftests/harness: Fix f=
-ixture teardown
-git bisect good fff37bd32c7605d93bf900c4c318d56d12000048
-# first bad commit: [a86f18903db9211e265cc130b61adb175b7a4c42] selftests/ha=
-rness: Fix interleaved scheduling leading to race conditions
-
---pwkg7Agk0Gg3e4Mx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZU2fIACgkQJNaLcl1U
-h9Dbvwf9GBe6CMev8rV7g0l9ySTK2TS6MgAsua7pQ3x/WySaCk0rujv9vrJ+sIR8
-tEIjLhwHiAsapapJ9sWukiC9O5pud9XH2NtvinE1i51LIQhdpiuwarqPa3Jcdyf/
-wkKrVrAIlS4AWb0N5heFCTSkL5Oq1DHWiqw/ojlDoWs0f3F/pN3pbCsCJFIzhNhS
-dvlgnGo9WYNUa0PTay1FYdjA24Q/eJO9FDBTqnC5VU6bp3MoZPzVuS/aj5FRK/0R
-O3dbNQ2zCcZtQSDCNXBUGIu93ySlLbXyK7e+wZ/FWh4KZJsjwGIGXShxFKKQH65+
-GKs/BgwkzGoDBlvdbqfqlGkjrZGcJw==
-=iE8h
------END PGP SIGNATURE-----
-
---pwkg7Agk0Gg3e4Mx--
 
