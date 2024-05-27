@@ -1,65 +1,67 @@
-Return-Path: <linux-kernel+bounces-190384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7228CFD8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:56:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 818568CFD90
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F23A1C211DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B319D1C21339
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E6113AA2D;
-	Mon, 27 May 2024 09:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F10713AD04;
+	Mon, 27 May 2024 09:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nRyqNcYJ"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XH3BduKH"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC6513A88B
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A9713AA5A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716803761; cv=none; b=PqUSQ2/4uVCtvlnSDFUy9znb0XXSEfBGZ8CjndiDxe0wA6JcjJxqKhmY27HS00G1iQtt46fSBojcMELqVvHZiQm6tdPxpRObVNFpd+FzM+avKCCpV1ecz1aNVRO4hsRQryDKOd2E144Cti+Ip+TzZ9/dy+QKYIJab8U0Kw11ITc=
+	t=1716803765; cv=none; b=s1zrJ7gjjl2svHV4GjT8QYUs6DM0ryPlsoxVekXIJveWLpGi2W4kwfrHf3AXcYCoAhChvs6kRuSjNOPx01GjpZN0nalRWxQBWH/xSSrX8Mkl663Wv0MspoFdHeMk9ZgZxdNHV+Lmgs0vlj9FSLpEhXrf8oaGhkXZB1JrkL7KTw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716803761; c=relaxed/simple;
-	bh=4qLu63oQjPQI3PoKweAmwGqswfeub7pAhmGJZVG+mBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UjGvxvY1NbHrcn6aWsTo8XMiZsJCgeYNA+Cyt79kYjuR4FzU84FXy0bVyOABGcrfOJ3U4t99uP0ULqihvEJ3NBIm72VkbMoGqs1aNtXwcT+LtHoimLzURYKfaY6NC/q+DbN2+JgOVJEI7rHvoASjxVF9RRuRTRoEVVbVEMyUV9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nRyqNcYJ; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1716803765; c=relaxed/simple;
+	bh=ssYNAyM+Wrm3A/wzKcQOiFbguT4msW3A8pkK6v4qL2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sFCstxhFyj9cb6lOECfXi6U4B5r8MeWelEp9dGygM/OIUolp+8Fp5TOrRSkvODjmRdxUlOrqyCqoPZDztR8pvlIr7gBnfCdM2tex4mp1iHeaqH11BgwJ5SCt2St0C1ahhv2e7ajAaRShK8cJduNxL/oYRYWCYDg3ysPKlLKmFPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XH3BduKH; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f850ff30c0so3229893b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:55:59 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f8edde1013so2430439b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716803759; x=1717408559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVqObQW1tDXZp0fIQB+e2zlQS1L4PNA6wMGDb0OfNVs=;
-        b=nRyqNcYJBnQFQMO8ogfIhpsRdUEMD1dGJjP6xl5Zsn9VJtYJ1n83f3YArkRK0HFFkU
-         NB2DTX2gaMAMkugcs1dNyYrsCGQLDjGsAZx0h3rQK39XZKZf7cJlzjTkeTpYZ3yfRbdB
-         DT0vLDjy1fvML4RvWZlGnTPS+tV2PdpL7sudk=
+        d=chromium.org; s=google; t=1716803762; x=1717408562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hri39nzdsLHFaL5eQSVV2RnGvDJQcNHW5cuOIUxzRm8=;
+        b=XH3BduKHJeRnFMEZNgHcA9yDQFXNrxTn1hZQWaUpmU+ASma4IBrhvHM7L7bokermtr
+         B5fxGunVt6M39+9TQ9YJoSTwnAzFEvzw7QAyooa0SFLrSVKTWdL9nKaaNPd/0kdAhT7i
+         D8kYvzIAqfClOLL3pJJT0I1M3BgJjgUmYInic=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716803759; x=1717408559;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xVqObQW1tDXZp0fIQB+e2zlQS1L4PNA6wMGDb0OfNVs=;
-        b=I0dW1jpp2a1/k0A7OK/t0xVSL6B7BMODoZEBsrbZ001ja9wDLepw8wHu/TbsSCYaWV
-         Ct6V8gj8Ayf1sREwvyn/06Wr86xl+XDZ8CZN5Kx9UYW9RUgYQqzn7owjgwHFb5inZzTk
-         5T70C+5cz294igYqGCL0r5c6RQufuAWgfVWHJ8yMqMC+ESMcxTvcSctZJoegwe/zsoCj
-         wr8BNVQhUiGO6v0NwXSJ6z+vq5L7276mTGIEIwF2nmcxswIywY8l+1bYNJt2eY1kPH0J
-         ww+V6Wo5sbiw60/x7vh/J8tZZa7pAwI+JidsjAS01IH+laG+T4rC1GHpHuiFNMWFGKwi
-         llzw==
-X-Gm-Message-State: AOJu0Yzi+8lVZcc5eND+zwUA3YvZRtkPN5uq+ELY/6SPew0sAoiBFEEz
-	byAl9wQeXZHlw2A/HAhk9gCTp0BqOqAoiNGfVEiIJYQZSx8mL+5HnKKQvfXgsw==
-X-Google-Smtp-Source: AGHT+IGSeRQ9ncSvLh1p/paH6YS7lQiGlvz0ZoxgQ9AWSvApeNL+VJvo1/NPMaTOG4LA1ELaniNmyg==
-X-Received: by 2002:a05:6a00:450a:b0:6ea:74d4:a01c with SMTP id d2e1a72fcca58-6f8f34aa591mr10007490b3a.14.1716803758828;
-        Mon, 27 May 2024 02:55:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716803762; x=1717408562;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hri39nzdsLHFaL5eQSVV2RnGvDJQcNHW5cuOIUxzRm8=;
+        b=u1jMHIph72Ot13aumbY4/1JovE6HvZ9BhUulVOXUnLHu0nhIEmOBnrPUfERMyMTykn
+         l7S0iHnWkTrB+cqXDnbyJwKnVuiNEjxHHdAYJvHMBzVb8XGF3j9HLgjCfXI56ccmjz5I
+         Lc55HN4GiIUo0bgNB4qn54eKjRi6pjqjMKru9UfCJ1Qluf0MElPUOgjkMgCn1ajxBhOg
+         shQSJ3EVu36GaSoB0iAq1n08TX9WCQ9PdAzHaOjoeawaqmMB9hcEnE+riM+EFkwZnITH
+         ZQlAWoZghfvE9FynBwctB0gICb5J3gIvnU1MwdJn0iIqNqonsVDeiTIF3FyXnNcvmmnS
+         k4wg==
+X-Gm-Message-State: AOJu0Yxuz/6G8sUOGlj4Ym85yce7Z6LT27IbD4WM4SjW/pa343NT/4em
+	xBiuW7UQ1XbDgH+Q4oFOoYebThqP832O115pUhQsrzAQURImRNYG25nNIaFxpg==
+X-Google-Smtp-Source: AGHT+IHUc2Oe5f9342JCi3pcCnVsTBNJ/kRwkv7ILoAyjRnszeU3ZyL9Go0bULUqzpA/VnM1VSbEhQ==
+X-Received: by 2002:a05:6a00:8013:b0:6e7:3939:505e with SMTP id d2e1a72fcca58-6f8f2c6dd6cmr8236318b3a.2.1716803762447;
+        Mon, 27 May 2024 02:56:02 -0700 (PDT)
 Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:a9ab:23f:9d2d:dc0e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6fd94372addsm2951616b3a.186.2024.05.27.02.55.56
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6fd94372addsm2951616b3a.186.2024.05.27.02.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:55:58 -0700 (PDT)
+        Mon, 27 May 2024 02:56:02 -0700 (PDT)
 From: Pin-yen Lin <treapking@chromium.org>
 To: Douglas Anderson <dianders@chromium.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -73,10 +75,12 @@ To: Douglas Anderson <dianders@chromium.org>,
 Cc: linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Pin-yen Lin <treapking@chromium.org>
-Subject: [PATCH 0/2] Support more panels used by MT8173 Chromebooks in edp-panel
-Date: Mon, 27 May 2024 17:54:48 +0800
-Message-ID: <20240527095511.719825-1-treapking@chromium.org>
+Subject: [PATCH 1/2] drm/panel-edp: Add support for several panels
+Date: Mon, 27 May 2024 17:54:49 +0800
+Message-ID: <20240527095511.719825-2-treapking@chromium.org>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+In-Reply-To: <20240527095511.719825-1-treapking@chromium.org>
+References: <20240527095511.719825-1-treapking@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,27 +89,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series contains 2 patches.
+Add support for the following models:
+AUO B140HTN02.0
+BOE NT116WHM-N21 V4.1
+BOE NT116WHM-N21
 
-The first patch adds more panel entries with the delays from the
-datasheets.
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+---
 
-The second patch adds 3 panel entries whose datasheets are not available.
-For more backgrounds of the rationale behind these conservative timings,
-please refer to the commit message of commit 7c8690d8fc80 ("drm/panel-edp:
-Add some panels with conservative timings") and the related mailing list
-discussion[1].
+ drivers/gpu/drm/panel/panel-edp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1]: https://lore.kernel.org/all/CAD=FV=V=K9L=bJiNvFJ+K_DHUTPxA4WtukXA+E_VW6uihE8kdQ@mail.gmail.com/
-
-
-Pin-yen Lin (2):
-  drm/panel-edp: Add support for several panels
-  drm/panel-edp: Add more panels with conservative timings
-
- drivers/gpu/drm/panel/panel-edp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 01e26b5a2388..2688ff1eb14f 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1985,6 +1985,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x145c, &delay_200_500_e50, "B116XAB01.4"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x1e9b, &delay_200_500_e50, "B133UAN02.1"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x1ea5, &delay_200_500_e50, "B116XAK01.6"),
++	EDP_PANEL_ENTRY('A', 'U', 'O', 0x203d, &delay_200_500_e50, "B140HTN02.0"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x208d, &delay_200_500_e50, "B140HTN02.1"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x235c, &delay_200_500_e50, "B116XTN02.3"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x239b, &delay_200_500_e50, "B116XAN06.1"),
+@@ -2005,6 +2006,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0607, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0608, &delay_200_500_e50, "NT116WHM-N11"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0609, &delay_200_500_e50_po2e200, "NT116WHM-N21 V4.1"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0668, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x068f, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x06e5, &delay_200_500_e200, "Unknown"),
+@@ -2020,6 +2022,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0771, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0786, &delay_200_500_p2e80, "NV116WHM-T01"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0797, &delay_200_500_e200, "Unknown"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x07a8, &delay_200_500_e50_po2e200, "NT116WHM-N21"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x07d1, &boe_nv133fhm_n61.delay, "NV133FHM-N61"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x07d3, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x07f6, &delay_200_500_e200, "NT140FHM-N44"),
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
