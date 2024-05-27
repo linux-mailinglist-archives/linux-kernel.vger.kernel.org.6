@@ -1,168 +1,135 @@
-Return-Path: <linux-kernel+bounces-189998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D358CF83F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9548CF83B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CE73B20DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACAF1C20C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B542FD528;
-	Mon, 27 May 2024 04:03:04 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09612D502
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8618C07;
+	Mon, 27 May 2024 04:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GVb0kHuM"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA471A2C06
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716782584; cv=none; b=oWApTT3b8X3TH+fDWyBYc2iMDmfdkVECgwdg/rLLXfkWEJrMWZm6UO8E6e5FiWgj3wHVYGoDK+EG4UtLUuTshj8wDzYehotND83GE7LG6gWr8Src9HwkufIKSbaMwunENFdXVuQaYBlcQoIm6aPJ1+nInH0Y4Isn4UueJF/fTUk=
+	t=1716782435; cv=none; b=dKegtWNACedpAkIfh3y8xnnGLg0sS2ChQ7UugJpkYIh4O75ZEmim/0DLTAjiGLa7CwgY5nsmlLO/4mb7Gv6gyZxIx3TFxYMV2Dy0X9DxSpCZ8Uxi2a9FywDYsbSiZOT0kZDepDbrZYxgARZ5GQOmfF3opHjaSRNc5bdR+MW0fxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716782584; c=relaxed/simple;
-	bh=iFsO/uDenGFjNxv/Aedsr/2qc9SLqkBaJgizzpFNTHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvJkyLZ/L18PqTSVGZV4dzF2jb1G1/TtIFWIuyY+tAnX8O3GwKFe4jMH2g8YX7KD3lW5zzfda9wxXDbP/m5fHNjJ9KoWXmX1rPAMBEgXBL4q/70K0+q5O0y6ul6rWxuU7tqTLLB7NfYFwjcTx0z7eYW8VyrTtIXTteLytrGzXBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-eb-6654045d84c7
-Date: Mon, 27 May 2024 12:56:08 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240527035608.GB12937@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
- <20240527015732.GA61604@system.software.com>
- <8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1716782435; c=relaxed/simple;
+	bh=vpapg2UevpSKJYzb5JyThjyZeYx4tkUFrSR1WEmKFnk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ChAjUeYvXvg3Z0EZl1dL8B07kx8raKZWwPcKXUbbOc/h5J3XYhBZxf+fqWWt5qEWvDM1qwSOzkAlNs/Ez52DAljFSf1sFcr345TtygXma3HC7FRoB8vrnQuFNyAxKMPnczmKeYeQwc7vov8C0WRGaOXiv5HdOsWiMdgHKpG7Tbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GVb0kHuM; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5295dadce7fso3534431e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716782431; x=1717387231; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRuvZhJPDoNLCNwIjcJF1I2bXe4M5YSZZXOsUihzxa8=;
+        b=GVb0kHuM/mAxpLgVNmaCHQ9ScIBWuLGcs47awJskLfzd3c0F8E4GBwoyYDAMSB+Ern
+         FooxBvpEmgc6GRDy0ithog2tzRPOGEm53tSY1J9Vu1Y65frxu103HbQqt37jQEsm92Yi
+         NyriMjwnMWESONDAOpJfGjz0VXXHtehHvpO80dujkt1txamUxW6USSNgI3p3U8Jm1Ehk
+         ViGgHruCHDLOiZykBMytODQDbyLPUAOw9OHGbHcAShkMcOrhwEN6L2klFyG3SqfHn0lg
+         AZXnmFuwjSsiA9XwIaBKYjHaEmdQFGtX6fAOvHqMU3kFXX1LdqIZo47dIJQCk9qE2vmk
+         Rwqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716782431; x=1717387231;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tRuvZhJPDoNLCNwIjcJF1I2bXe4M5YSZZXOsUihzxa8=;
+        b=J0A87KEItiHCsxg4kT062NofP4g05MyWpscuGFg4+g91y9ayBukHh+R+2zzEAvxCrF
+         Y4sr9wNTNpUZbtPHzmhnm2q4sVZAtZxlET5bcODX+7MkWYirMWj28ZqmyD7F0Wwagcm9
+         ix8Y7oU9MdBxWUaBP5QO2XvjKKpdWIGwKECJDWOCs1GkEGhCgNbYaF5fXwngqSoCZagV
+         N89FuwQgTcTcJH72YbnwkYtj7fed8tIfcqqYCU9++mi34lyM8K+2kwMh6LI6ctrk5O+u
+         G6XHy57jNjGJDR/fSYMXbMvtLo/g5vPFU3XdHtg/YsbdfLhUIyWvbUSkPPRp40HJd7FC
+         NTmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwgxS0WzXrFFdivEIfec4bXnlEx/+9zW0YXpSAVSTz0WcQFugvdQsE7PTMPbNPvyV0QJ61QZlS9U5wKbZ4v+V9Pae1Y9e4o6LYDVT5
+X-Gm-Message-State: AOJu0YyK0acIgmzCAby+atO8CI7u2oKbew1c/LB5Vd41N5oVEmTIQLux
+	QEdPCjr7Z2A1cyquurP9Xwvnb8zilRJ5Nknm++sS7nqUJMJF7KX7nODxEakqgz5o8RauUJyO9hP
+	C
+X-Google-Smtp-Source: AGHT+IFIBuHRkJmbDJ79c+HEEn+ra39J5KYtIkFUNbnYVhpVLECmUerJTblEmBKdwbPjKNZ9I4Wa4A==
+X-Received: by 2002:a05:6512:388b:b0:523:aac1:b559 with SMTP id 2adb3069b0e04-529663e6304mr4842739e87.44.1716782431209;
+        Sun, 26 May 2024 21:00:31 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970d2a06asm457497e87.218.2024.05.26.21.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 21:00:30 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 27 May 2024 07:00:22 +0300
+Subject: [PATCH] arm64: dts: qcom: sdm850-lenovo-yoga-c630: fix IPA
+ firmware path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734q46jc8.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsXC9ZZnoe4H1pA0g7dfdSzmrF/DZvF5wz82
-	i08vHzBavNjQzmjxdf0vZounn/pYLC7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
-	zL/3mc1i86apzBbHp0xltPj9A6j45KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
-	qpPNY9OnSewe786dY/c4MeM3i8e8k4Ee7/ddZfPY+svOo3HqNTaPz5vkAviiuGxSUnMyy1KL
-	9O0SuDI+HbvGWvBGouL1ssUsDYyPhboYOTkkBEwkGietZu9i5ACzL7eLgYRZBFQlJr/8zApi
-	swmoS9y48ZMZxBYR0JD4tHA5UDkXB7NAH7PEmsWHGEESwgIhEtM+rGECsXkFLCQuLN0PZgsJ
-	nGaU2NrmChEXlDg58wkLiM0soCVx499LJpC9zALSEsv/cYCYnAJ2Eg93SIJUiAooSxzYdpwJ
-	ZJWEwC52iU37z7FCnCwpcXDFDZYJjAKzkEydhWTqLISpCxiZVzEKZeaV5SZm5pjoZVTmZVbo
-	JefnbmIExuOy2j/ROxg/XQg+xCjAwajEw5vhHpwmxJpYVlyZe4hRgoNZSYRXZF5gmhBvSmJl
-	VWpRfnxRaU5q8SFGaQ4WJXFeo2/lKUIC6YklqdmpqQWpRTBZJg5OqQZGAQW3lAO/3WLNZB3u
-	b5lx7H1wh+018V0q2m98bGUuKvn1s1/j2vx/j3VNS9/JiTP2Sd29ciUswPPU8kMdr1jEa431
-	rzHHqr+49VaCfdo3oa+le74dXCAeWMAgtYIzSi1cSlD0KnsIT2D71IYlNVqu35UXrPWe63un
-	rbOUPaFuJ8OsG4+4t/xQYinOSDTUYi4qTgQAiJQRe8MCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsXC5WfdrBvLEpJmcGKFuMWc9WvYLD5v+Mdm
-	8enlA0aLFxvaGS2+rv/FbPH0Ux+LxeG5J1ktLu+aw2Zxb81/Vovzu9ayWuxYuo/J4tKBBUwW
-	x3sPMFnMv/eZzWLzpqnMFsenTGW0+P0DqPjkrMksDkIe31v7WDx2zrrL7rFgU6nH5hVaHov3
-	vGTy2LSqk81j06dJ7B7vzp1j9zgx4zeLx7yTgR7v911l81j84gOTx9Zfdh6NU6+xeXzeJBfA
-	H8Vlk5Kak1mWWqRvl8CV8enYNdaCNxIVr5ctZmlgfCzUxcjBISFgInG5XayLkZODRUBVYvLL
-	z6wgNpuAusSNGz+ZQWwRAQ2JTwuXs3cxcnEwC/QxS6xZfIgRJCEsECIx7cMaJhCbV8BC4sLS
-	/WC2kMBpRomtba4QcUGJkzOfsIDYzAJaEjf+vWQC2cssIC2x/B8HiMkpYCfxcIckSIWogLLE
-	gW3HmSYw8s5C0jwLSfMshOYFjMyrGEUy88pyEzNzTPWKszMq8zIr9JLzczcxAqNrWe2fiTsY
-	v1x2P8QowMGoxMOb4R6cJsSaWFZcmXuIUYKDWUmEV2ReYJoQb0piZVVqUX58UWlOavEhRmkO
-	FiVxXq/w1AQhgfTEktTs1NSC1CKYLBMHp1QD4/zrMn9mpt5cXHXij9nO8hUH/L6cSeTd8XhJ
-	yp8V3jyfPr3q+SLn/m/L9N3quYFm1xMu1P8Qn9fZdUH00MtLbSly9hMdU5wXPP8SqK/2XKom
-	ZVP1pt06Xaf4/+rWpVYeVXeZem/imTdN09ZMn9Tss6XcZqd/2q46c3f7KyY/ll2qq/mscvxN
-	vasSS3FGoqEWc1FxIgDJUBi2qgIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240527-yoga-ipa-fw-v1-1-99ac1f5db283@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFUFVGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyNz3cr89ETdzIJE3bRyXTPLZIM0I1NTgxRTcyWgjoKi1LTMCrBp0bG
+ 1tQCgiMw9XQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1076;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=vpapg2UevpSKJYzb5JyThjyZeYx4tkUFrSR1WEmKFnk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVAVeOJ6pMoWF+xS78t1AVN0GigeUilbNbYf4i
+ kNeue2o6biJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlQFXgAKCRCLPIo+Aiko
+ 1dh2B/0d0+t6zdU9S5h+hOk+MiUnjCaNZRoq7S2IJuNSFe3UltJ+LwomuMFP5tzufF8k6Dk6JLV
+ jccs86EQV9SnErMGKbSD6kyPfAmk9mG+CvPd4UflmXGX0jix5euZA/EFoxDXBU+9VuHD/Z6bmC3
+ dFHDtclOc9dB05NTerle8oRi7lNTEh8rbWv1bIFKnHW/00MtJt6XEtniyniE8AcubodjNUDr3Di
+ Fy5uK9ycydo5/JaO7npZz1DZNarTaJScBHpSBPv598UP30Y32zx5BICkcAeEE7A75n73xoA+QWg
+ WCQeCXrflZqFJf9UKwxVHDxgyh/FTbjc9GBlZtLAnIv3+Fh3
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Mon, May 27, 2024 at 11:10:15AM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > On Fri, May 24, 2024 at 10:16:39AM -0700, Dave Hansen wrote:
-> >> On 5/9/24 23:51, Byungchul Park wrote:
-> >> > To achieve that:
-> >> > 
-> >> >    1. For the folios that map only to non-writable tlb entries, prevent
-> >> >       tlb flush during unmapping but perform it just before the folios
-> >> >       actually become used, out of buddy or pcp.
-> >> 
-> >> Is this just _pure_ unmapping (like MADV_DONTNEED), or does it apply to
-> >> changing the memory map, like munmap() itself?
-> >
-> > I think it can be applied to any unmapping of ro ones but LUF for now is
-> > working only with unmapping during folio migrion and reclaim.
-> >
-> >> >    2. When any non-writable ptes change to writable e.g. through fault
-> >> >       handler, give up luf mechanism and perform tlb flush required
-> >> >       right away.
-> >> > 
-> >> >    3. When a writable mapping is created e.g. through mmap(), give up
-> >> >       luf mechanism and perform tlb flush required right away.
-> >> 
-> >> Let's say you do this:
-> >> 
-> >> 	fd = open("/some/file", O_RDONLY);
-> >> 	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
-> >> 	foo1 = *ptr1;
-> >> 
-> >> You now have a read-only PTE pointing to the first page of /some/file.
-> >> Let's say try_to_unmap() comes along and decides it can_luf_folio().
-> >> The page gets pulled out of the page cache and freed, the PTE is zeroed.
-> >>  But the TLB is never flushed.
-> >> 
-> >> Now, someone does:
-> >> 
-> >> 	fd2 = open("/some/other/file", O_RDONLY);
-> >> 	ptr2 = mmap(ptr1, size, PROT_READ, MAP_FIXED, fd, ...);
-> >> 	foo2 = *ptr2;
-> >> 
-> >> and they overwrite the old VMA.  Does foo2 have the contents of the new
-> >> "/some/other/file" or the old "/some/file"?  How does the new mmap()
-> >
-> > Good point.  It should've give up LUF at the 2nd mmap() in this case.
-> > I will fix it by introducing a new flag in task_struct indicating if LUF
-> > has left stale maps for the task so that LUF can give up and flush right
-> > away in mmap().
-> >
-> >> know that there was something to flush?
-> >> 
-> >> BTW, the same thing could happen without a new mmap().  Someone could
-> >> modify the file in the middle, maybe even from another process.
-> >
-> > Thank you for the pointing out.  I will fix it too by introducing a new
-> > flag in inode or something to make LUF aware if updating the file has
-> > been tried so that LUF can give up and flush right away in the case.
-> >
-> > Plus, I will add another give-up at code changing the permission of vma
-> > to writable.
-> 
-> I guess that you need a framework similar as
-> "flush_tlb_batched_pending()" to deal with interaction with other TLB
-> related operations.
+Specify firmware path for the IPA network controller on the Lenovo Yoga
+C630 laptop. Without this property IPA tries to load firmware from the
+default location, which likely will fail.
 
-Thank you.  I will check it.
+Fixes: 2e01e0c21459 ("arm64: dts: qcom: sdm850-yoga: Enable IPA")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-	Byungchul
+diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+index 47dc42f6e936..8e30f8cc0916 100644
+--- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
++++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+@@ -494,6 +494,7 @@ ecsh: hid@5c {
+ &ipa {
+ 	qcom,gsi-loader = "self";
+ 	memory-region = <&ipa_fw_mem>;
++	firmware-name = "qcom/sdm850/LENOVO/81JL/ipa_fws.elf";
+ 	status = "okay";
+ };
+ 
 
-> --
-> Best Regards,
-> Huang, Ying
-> 
-> > Thank you very much.
-> >
-> > 	Byungchul
-> >
-> >> 	fd = open("/some/file", O_RDONLY);
-> >> 	ptr1 = mmap(-1, size, PROT_READ, ..., fd, ...);
-> >> 	foo1 = *ptr1;
-> >> 	// LUF happens here
-> >> 	// "/some/file" changes
-> >> 	foo2 = *ptr1; // Does this see the change?
+---
+base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
+change-id: 20240527-yoga-ipa-fw-69c0f2550d57
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
