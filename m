@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-191001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8458D055D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022D08D0558
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F231C2119D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA4E91F21111
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B90E1E880;
-	Mon, 27 May 2024 14:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07C273469;
+	Mon, 27 May 2024 14:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iJRIad8X"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zhb1+Scy"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9373C155CAF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6197B1E880
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821151; cv=none; b=AtcpEwNENSCbqGNCt9G2kc8HHQJG4hpH5atzwNIMEN6eIIUSvCAA0qqqHv1BdqX1qHAdOVpRe/bviLSoTE4v04bGEiSja9KoWvO/Vl1Gztqyig0v82uYAZSX6bd7IiuG1ok3r8HUU0CvylZ4TGWAWFSGExjHSlaZ0nH6SaG5Xvg=
+	t=1716821145; cv=none; b=nPCDGC1gdqXnYJ8+DNpZe5EJuMoi6bM9Vm3AQnPKq9HanVQUORLDn+bvIxlrfIr/tTVnOJlqhM0QBXnkuLIYWsUbAvAxvfUzLnJZAGmTL81DgUEMdsTehB8OFKX9kxfRDYVfnO74/TMaeSPO3UuR87tY2Ulka7/7f+zP/lCvrjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821151; c=relaxed/simple;
-	bh=AO5nSYfoZmTmOnVUiP3qQUadzHCNJAjQMwP0TefZ1q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UTi+KWQbwIuEGo6STKwKJV7OHLuJYZuhgHNosup9Ah+36WT8bAw37+FvEnLU+8QRugd7HX5ugMHQG2oquxEL+Ez6qvhqkq3kz5jeTc4r8Cv5rWPccsDfSsdiF3m1H4Uvx/bRGbUN8aoJ7Ul1jf4CS56xUI+NlCd4oON7PO19NRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iJRIad8X; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421087b6f3fso27199225e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:45:49 -0700 (PDT)
+	s=arc-20240116; t=1716821145; c=relaxed/simple;
+	bh=7Gmig81o8VCtO+jw8ZG0v3vKCZkx6IgJP+6S9UFxNjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rwSF4p4J9P3gmJJMsiTt0EOYnR1rU1qWAkcZQc4VsiGR4JtL3MPActEDSf8WTJVKKFZtUPktGi6OSVm3KjMXgLOniojswVqOSGh/bSEXeIFMVF6ZlJvBOgYoXtLj0Vx9wKf7y+POMUNmAvDidyksnDznQXaJRERkC4vjNQvDYqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zhb1+Scy; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e6f33150bcso115471411fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716821148; x=1717425948; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716821141; x=1717425941; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SlPh8asFNYRAYES5kXdkoiGJIIskI39MHFNbVehtCHw=;
-        b=iJRIad8X/QGGmd79b7bgomr+wyoidVYEkdsMbFU6gMIEv4VIvZfIUuOEf3Z9A25QxR
-         3RYA0PDUYKgwIny0prco6d3uqBagRWVtOT1wxyX6DIt+zAvb7OPB2aPbOv+4UjRXQcYS
-         4fV4G15FRHPaWIdBk6ZuKEgBEne26pwUE8wCgHSgv9WL5uS+vhElzie3XZrmNb5c4BMn
-         Fr6G/4G8DUMZV+tg1nxwzAQnbDfkqKR6iTzvSZHsPCuZAHqsLwgxcLUBbU0LcQU2hL8U
-         +j4aoLjwn04CHdObVwhIdhskibrwjbHoX21NR61ImNopRNqv54JKU3bddU2UCwp7rOlK
-         CY1g==
+        bh=E0zp8EmCNFr7PZtWolAKP7vPxVa4oV0/0CpIkN5A1xM=;
+        b=zhb1+ScyJTSS4FBTYI4INJd/fZjQaZdkv+B6306eEuwKDo2q7tj1WsIUCjbGCNckao
+         Afm52lzF2jVO0o7mkpxscJXZ+/rff6tRpirJUaYSqlxEgpfYOhZSEKrYQe7pYlmImiKI
+         wlcae/b5tqHfwuoYwFBcRv4l5P5lBFUxF+6ojYCS1psjTmHUuGfeEU1MJ/QwfoVT3Nwf
+         R+6/7QwHCtQQHWJ5QXPI8MVNQW6fh9UVuJg3SK0uRf/8hkEsiAzIybkdLt+OTB5RVcmr
+         LzGYSQO5eHYeFCm4fVwuxAfM+ra+57ybx6D8EfFL2rop3b6QTHQ8bJdVn9eVNN2NJmtO
+         97uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821148; x=1717425948;
+        d=1e100.net; s=20230601; t=1716821141; x=1717425941;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SlPh8asFNYRAYES5kXdkoiGJIIskI39MHFNbVehtCHw=;
-        b=th+EwzPHVbRl1fIRhIyfJIhHYCxaHGZTC27KsF3P81GLwxBAZCtzkwsux0IssqkSKX
-         QObYq89PwtJ/LsaupKICRE2fiB5DY5iqdM2RBVP171mLs1VAEhtLZ2fuTZ4gw2tYM9q8
-         UNA5nka8ddOgKvoQN5D7BzWCU1UQZ9LwyCKIlSvo0mGMb6kC6sojohOOS8v2J99LY2ba
-         dIo4nyw8UC6TYVNaqI8M4RuV9ZbGATlVHPNndkcZPqazkm4C0a4Geu4PWDNwUZ5eHCW1
-         kqnY5lOHPejIryfRVcHsT9uycrsa6S03Lnv+V7tfLpFOU2W9tCPNv2erm55F2iHRI68v
-         4Gow==
-X-Forwarded-Encrypted: i=1; AJvYcCX1gexlq6oifJhUNrZd7WB8dk3IxrbjEZKX7gyG1lKuEBgrqr9rIag6bsR+Ivzdnmxm8NRX85pqRA63zWKwGOWnowjRVss9MbH4NMxK
-X-Gm-Message-State: AOJu0YykYu1KibkuzFN5aiE6wLCAd3AbURJrp7P+Twn0o00qZfhZEtUT
-	aMkT1HVlkvK1EuUMZ1fb0MhIzcWfb2E0XKjXdEs2O4sEQIJYwpPWrF/+ojwHvwKOA3TNud5XPFW
-	e
-X-Google-Smtp-Source: AGHT+IFr258v4SXR0QTU2G0U7yZ6h9mynnDCJbZQqvSS9vBIBIZa0qKTI7/tvGC3zsaKQiHMi+PM4A==
-X-Received: by 2002:a05:600c:2045:b0:420:1853:68c3 with SMTP id 5b1f17b1804b1-421089de945mr65141785e9.20.1716821147875;
-        Mon, 27 May 2024 07:45:47 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108989fdesm111746175e9.25.2024.05.27.07.45.47
+        bh=E0zp8EmCNFr7PZtWolAKP7vPxVa4oV0/0CpIkN5A1xM=;
+        b=uOH2JlG0QKLcgwVkw6RkWCUPLnTa4n4J5c3H4GGcHjD94caibIra+a4Bn5xMk6ALsb
+         M/kY0CytPUl2vwJe2vK9FtXkX21NTA4EikE4m8E6h9tR8KI9uOORqz2P2tp3WTlUVvh+
+         ftBumlzsPYFXdr0HHsdOZOnX1uLl0jkCj0Rsw6gYfhRrmWAUgeU0bpTdSaoWMBwc9+UX
+         GaNRybvxMAAOlgAY7cph1SG1cgQy/o4DMI0nHgIGl4CGyncHqcC9ngXpHBM+7NDeAT4W
+         /T24fuEg4Hib4Lxy1AC4pLyUCXh/Ehhs4BuVQ8t0nvNVPzKwnAkx3OF3KsBuSkf7/+9a
+         l4cA==
+X-Forwarded-Encrypted: i=1; AJvYcCVb6Eo1xUmEg5aeB2Cnv4BStz0zhmAbKviL6sSsENeqTxh0Q+BaqKYkCZ6oUGknNdkeLFED7G+sA0NSwKhEudWLeL7PtMeQsuQPRWqa
+X-Gm-Message-State: AOJu0YypV8awLs4tp18K+TyT8Lb7hyMs/BcU2tqdvkm0W5+9xVMCt9Kf
+	xVGVSRLPgYWePd4devdIi7qT7RXG9tGldQWIzoe8dQQdAtSWIm+0IsNzA8FvDBs=
+X-Google-Smtp-Source: AGHT+IGFJ8k0xWDQVcil8mB8eiFAQ8o0MJDi9mGfT1OCI0XAbK25IWHMiAlNTsDqUatDQdXfJTqNUA==
+X-Received: by 2002:a2e:700c:0:b0:2e9:5380:615c with SMTP id 38308e7fff4ca-2e95b099b5emr56591841fa.12.1716821141510;
+        Mon, 27 May 2024 07:45:41 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bf2866dsm19350491fa.139.2024.05.27.07.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 07:45:47 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] dt-bindings: usb: qcom,dwc3: set minItems for interrupt-names
-Date: Mon, 27 May 2024 16:45:38 +0200
-Message-ID: <20240527144538.155704-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+        Mon, 27 May 2024 07:45:41 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain fixes for v6.10-rc2
+Date: Mon, 27 May 2024 16:45:40 +0200
+Message-Id: <20240527144540.323019-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,31 +82,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Linus,
 
-There's a set of compatibles for which we set a strict list of 5 interrupt
-names even though minItems for the interrupts property is 4. One of the
-USB controllers on sa8775p only consumes 4 interrupts which leads to
-dtbs_check errors. Make the last entry optional by setting minItems to 4.
+Here's a PR with a pmdomain fix intended for v6.10-rc2. Details about the
+highlights are as usual found in the signed tag.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Please pull this in!
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-index cf633d488c3f..4251dc25ee9a 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-@@ -468,6 +468,7 @@ allOf:
-           minItems: 4
-           maxItems: 5
-         interrupt-names:
-+          minItems: 4
-           items:
-             - const: pwr_event
-             - const: hs_phy_irq
--- 
-2.43.0
+Kind regards
+Ulf Hansson
 
+
+The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6:
+
+  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/jlawall/linux (2024-05-20 16:00:04 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.10-rc1
+
+for you to fetch changes up to e8dc41afca161b988e6d462f4d0803d247e22250:
+
+  pmdomain: imx: gpcv2: Add delay after power up handshake (2024-05-21 12:21:01 +0200)
+
+----------------------------------------------------------------
+pmdomain providers:
+ - Fix regression in gpcv2 PM domain for i.MX8
+
+----------------------------------------------------------------
+Shengjiu Wang (1):
+      pmdomain: imx: gpcv2: Add delay after power up handshake
+
+ drivers/pmdomain/imx/gpcv2.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
