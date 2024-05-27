@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-191391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302338D0E9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:30:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6079B8D0E9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70D11F22236
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:30:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB4B283442
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58ED1667C5;
-	Mon, 27 May 2024 20:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C7716086C;
+	Mon, 27 May 2024 20:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZv07vSk"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYv2ITGJ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA216133E
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A091667C3
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716841824; cv=none; b=ndiy7L1mhK99HCKy8lqomfHQ2aRTcRTl1oc/OCG5wQh1qEqXMQDIzqD2ka/c+6igP3cQndsYJoWkQxWLtIWTy4GAHMaptR/sb8f0RGzEHW8kFEWqSN0zIrlkZtqABIsHZ5KH/7IUTSznyzVTRYYNOQPSmHWuSrg6xPFzyL4oG4Y=
+	t=1716841826; cv=none; b=fzVHkCxSC8hTqB4U7a0wz83zWKqvaHpJK4JSYHvr5xp5jSKVVtjpsYMCkPAP5l3Qf3C7IdKxUGMORYI01ijuOisVgaW/K4q67E+0cJAHqxZHDK3p6N6ay05IY92AVkacjPmVmn7QVOVI4XA9KSYSjOnQMS9HJiZ+l3vx80n+eHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716841824; c=relaxed/simple;
-	bh=miz7CyMIADUVHaJwVFLRC9ZGG4NWk6IFWm7j6D/ics0=;
+	s=arc-20240116; t=1716841826; c=relaxed/simple;
+	bh=1LD7c5LViI7urQvc+sfSQLQyNFLgn5A2MV6jvln6c2s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=apTqPl9crRu4tLXXGBTjJMgBUWlA572EUfs21RXnm+cb7BW0XcOZ8+6j75Oslc5G/i7GENmAJ/LjGvsASGGsGpb1QKLISvEvIzilbnC8HVPUXrexzuLHMcm+7DekMti4Gv5I7LTSyHh48gOKjSP3GyHLO02zig2iryKViSCFzQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZv07vSk; arc=none smtp.client-ip=209.85.166.173
+	 MIME-Version; b=qZTcsNEO2aAGmO05lRrIo5u/jyfd+sghZthcqPKuWq3+geuNlSjSXGCy8gFi4A95Dmb5YhSDnaY8z/FN9CpEIoaDg55yBgjCY0LLzGyVKk9V2xPTTeD9ePRLbfoN32Jm+66aW3+TCs9EjdqLzKksWp7Af1fR/Q4kQpLStYCfHfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYv2ITGJ; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-36daacdbf21so59635ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:30:22 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-698ef41ed78so15000a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:30:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716841822; x=1717446622; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716841824; x=1717446624; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i004hZB22bqjMNJFc+n67bTnhzWYs+D5uA7aOWn+Ye4=;
-        b=lZv07vSkEuMmlhG6U3SwC0gTcyLGFXh1sFrkRvrjxV6h0H7asYyGV69xG1za02kEKX
-         swmt5GDnji64tmYFUvgQDXN97qLUee2xAczOd+6iI9F7QpVHjV6JQNUUj9p4uHLhQHaH
-         Hmnk6fpwO/EbNBaCy/Ch1LFib1K3WAWvpUb9McPSDs6W89KhOd+bGfdI5AZ2jWT24af3
-         fbBQHjXBo0vD9jN4nLQK7J3S3DVMGDyfqlG+Tut8nnGlWnVz3ccjhlhdC51rlm/YPK4+
-         yR7wlMtJiqhYVYttma412PkaGupI9TWmPIdlLK0pexn2xMMkakxH3DtQZ7WucO50tOWM
-         3sZg==
+        bh=9u1J2zaM6wMEMZtGfmaKCd9HEjdRd9oqVcYxMgAgPQg=;
+        b=OYv2ITGJjitO9pPbRF1dauiNbJ3wlxMr/+0oviLu3guYNVtqRpqygsNOitYif+rpji
+         Tb9zODnok6h2laJC5SKPIu7YaM8Rs38waMuYjHvYHjQhWZMT07Q9oVvXNl/GttPq3PXT
+         dyk/c2ZuTIV9WAMoCWigfeEdOaTuj58JPt7/qWGpbhNAPX98exrMDpSPU4yRAOi6oEyS
+         TYB04WBEtiiE/hUKw+Bkmb6erbb2LTlWKSPb4ZQ2Yss8tkU6QLHAcii+CoseLzrObciq
+         FI1Ox41QV6DkcSfh7GY87bz5d1sbBjWAlW9YG6dCarP+M0nBSwruoT/Ttmt6Y2L0Monh
+         i3yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716841822; x=1717446622;
+        d=1e100.net; s=20230601; t=1716841824; x=1717446624;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i004hZB22bqjMNJFc+n67bTnhzWYs+D5uA7aOWn+Ye4=;
-        b=N/LSW2XZjpjhu7Bqr1rszC23XOyFxkFIksfIV2LggO8zmWGd1X6fDxb2NU1nFtuLlB
-         VbdyNeXkKbQLbTpxjf40A/MPvgpvMfguarh6lfPI/zZvQTlknPWx3EMxxpY/2gPwvM1U
-         U1esNByjSKLpG33f9dN1JWvGLl2gVYyPg1q9H5cTCy8ya1cADCCOp8CT578IazF9THWw
-         aDRiBlgGjQmO8vQXyxAIYubFFd2E+Om6U8qYp+C8mHvzCe5e9GX/YbiKpAScHwLuhO2l
-         8ehEPfWbRde0XiQYMGk5V+aEvvPp6Lqzrr9aHTZ6Q1yOZo85/8CtYroKfG470vVpBsk4
-         ZkiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDB/NrrMdFIHLsRDk3k0XiOCDdNnMadMeIkiPt88mVzP0WH90tcsU1BjAjxt4A5flpGQpT0Sv9yCd8TncLhX53xNEnqsddUg/IF0Hk
-X-Gm-Message-State: AOJu0Yx8/Rq530mUF+1urA/bY0SL0SlXFzNNuxiqS1JjmhWaZmd5BwmD
-	BhuihUXs3RgQeiW22AFdy3OnM3zd4N280tf77rWJdYlOZ7NbcicB
-X-Google-Smtp-Source: AGHT+IEeDtdDFbyG/VbCJB+hOYKSqRLvSuvYTT9GOjcWHVn/us0YWPRGyIqHjDl2WGfON48XahWsFw==
-X-Received: by 2002:a05:6e02:1d83:b0:36d:96ab:f4a with SMTP id e9e14a558f8ab-3737b2e3524mr110040075ab.1.1716841821738;
-        Mon, 27 May 2024 13:30:21 -0700 (PDT)
+        bh=9u1J2zaM6wMEMZtGfmaKCd9HEjdRd9oqVcYxMgAgPQg=;
+        b=AEKpbpvQKAgIfE3e/179MzN7ObIvBHJ/1YXqouv7UssH2HTgwypyf1oFq6XSlN+w8K
+         2+4HywgEncWLUqHHd8RTQRG1Jb6i00gJbiESBcDyDsAmMcCMrX+pMGt5GiaIVNrp38Y/
+         O6lLMos2fnLO4EJzSrE0TdtsoZ8Id4hZmBcsNswzQ8EjIHXk1EMd4Qkg3V65JzbQoms1
+         59lbMfYfnS0OZXbpHgvMV/17YkIrUoMnM833/XW1PiUSH6gLyP6zQdqp8l3RqEYYMMMA
+         4afM0aGeSD2dYYQQUzDrIhfXjda0l3JV3095CTKt8bm1xYXVNpjp4deCQuSPCts3E9s/
+         SlqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6mvPmXKqj34uQ/kvrIGj1UVQyk3RlqaRduqwqajfODIQKEcG7ez3HSarTOmbND1FJF6bUXuliyR8371gEcf5VL+hA9r+k4bnV9Vi3
+X-Gm-Message-State: AOJu0YwkDCfdQC+1tjXKd7sAkNVtCR47fOYIP9QwlVJF29hSC6M950gl
+	wLETyrSb3FM6ANxDEdYPt19dWPzfPQe7iYMTzfjPTK7jmPTfazfcWc39gA==
+X-Google-Smtp-Source: AGHT+IEqo3X1+g+xb8gq3a69aw38LlEIjE24l4riHOcwFr919xGm+e7v0AexfS3qQRnsRZA0dz3Cnw==
+X-Received: by 2002:a05:6a00:2e85:b0:6fd:1705:9cb8 with SMTP id d2e1a72fcca58-6fd17059fdemr7479260b3a.1.1716841823980;
+        Mon, 27 May 2024 13:30:23 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822092a678sm5324279a12.11.2024.05.27.13.30.20
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822092a678sm5324279a12.11.2024.05.27.13.30.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 13:30:21 -0700 (PDT)
+        Mon, 27 May 2024 13:30:23 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: akpm@linux-foundation.org
 Cc: jserv@ccns.ncku.edu.tw,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH 2/4] lib/sort: Fix outdated comment regarding glibc qsort()
-Date: Tue, 28 May 2024 04:30:09 +0800
-Message-Id: <20240527203011.1644280-3-visitorckw@gmail.com>
+Subject: [PATCH 3/4] lib/sort: Optimize heapsort for handling final 2 or 3 elements
+Date: Tue, 28 May 2024 04:30:10 +0800
+Message-Id: <20240527203011.1644280-4-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240527203011.1644280-1-visitorckw@gmail.com>
 References: <20240527203011.1644280-1-visitorckw@gmail.com>
@@ -85,33 +85,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The existing comment in lib/sort refers to glibc qsort() using
-quicksort. However, glibc qsort() no longer uses quicksort; it now uses
-mergesort and falls back to heapsort if memory allocation for mergesort
-fails. This makes the comment outdated and incorrect.
+After building the heap, the code continuously pops two elements from
+the heap until only 2 or 3 elements remain, at which point it switches
+back to a regular heapsort with one element popped at a time. However,
+to handle the final 2 or 3 elements, an additional else-if statement in
+the while loop was introduced, potentially increasing branch misses.
+Moreover, when there are only 2 or 3 elements left, continuing with
+regular heapify operations is unnecessary as these cases are simple
+enough to be handled with a single comparison and 1 or 2 swaps outside
+the while loop.
 
-Update the comment to refer to quicksort in general rather than glibc's
-implementation to provide accurate information about the comparisons
-and trade-offs without implying an outdated implementation.
+Eliminating the additional else-if statement and directly managing
+cases involving 2 or 3 elements outside the loop reduces unnecessary
+conditional branches resulting from the numerous loops and conditionals
+in heapify.
+
+This optimization maintains consistent numbers of comparisons and swaps
+for arrays with even lengths while reducing swaps and comparisons for
+arrays with odd lengths from 2.5 swaps and 1 comparison to 1.5 swaps
+and 1 comparison.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- lib/sort.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/sort.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/lib/sort.c b/lib/sort.c
-index 651b73205f6d..b918ae15302d 100644
+index b918ae15302d..048b7a6ef967 100644
 --- a/lib/sort.c
 +++ b/lib/sort.c
-@@ -5,7 +5,7 @@
-  * This performs n*log2(n) + 0.37*n + o(n) comparisons on average,
-  * and 1.5*n*log2(n) + O(n) in the (very contrived) worst case.
-  *
-- * Glibc qsort() manages n*log2(n) - 1.26*n for random inputs (1.63*n
-+ * Quicksort manages n*log2(n) - 1.26*n for random inputs (1.63*n
-  * better) at the expense of stack usage and much larger code to avoid
-  * quicksort's O(n^2) worst case.
-  */
+@@ -250,10 +250,7 @@ void sort_r(void *base, size_t num, size_t size,
+ 			a = size << shift;
+ 			n -= size;
+ 			do_swap(base + a, base + n, size, swap_func, priv);
+-		} else if (n > size) {	/* Sorting: Extract root */
+-			n -= size;
+-			do_swap(base, base + n, size, swap_func, priv);
+-		} else	{		/* Sort complete */
++		} else {		/* Sort complete */
+ 			break;
+ 		}
+ 
+@@ -283,6 +280,11 @@ void sort_r(void *base, size_t num, size_t size,
+ 			do_swap(base + b, base + c, size, swap_func, priv);
+ 		}
+ 	}
++
++	n -= size;
++	do_swap(base, base + n, size, swap_func, priv);
++	if (n == size * 2 && do_cmp(base, base + size, cmp_func, priv) > 0)
++		do_swap(base, base + size, size, swap_func, priv);
+ }
+ EXPORT_SYMBOL(sort_r);
+ 
 -- 
 2.34.1
 
