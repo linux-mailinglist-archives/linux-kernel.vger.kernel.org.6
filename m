@@ -1,95 +1,102 @@
-Return-Path: <linux-kernel+bounces-190456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA9B8CFE81
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:00:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFD08CFE85
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B41F2357E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735581F231FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62F613BC31;
-	Mon, 27 May 2024 11:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A3313BC1F;
+	Mon, 27 May 2024 11:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUkcDjA+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVIYnWm9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EAC17BCC;
-	Mon, 27 May 2024 11:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C093713B2BC;
+	Mon, 27 May 2024 11:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716807629; cv=none; b=fHeN3qEHvcJ/3RY+JAd3V3dDDO8yV8fRF4btNwhwQWnRfgkAtHnADB3RgaszwrFomxIOcM+lPUmYcZ1XQWq2ZVBFE1JbUbepSmtDpqcA2wMhkUzSoyxvoMYe8kspvL30BqxOnBABENvHz54rT2IIIQC5XD4jGEumMi59bzvXkVQ=
+	t=1716807650; cv=none; b=lcQvcmPSj/Jg4rfZyV48EqDDwvzqChyH6jCQeftTVOTTvD9LxN1VfNOPazXO7QhACpViD1QHgpBOArsTD+duxcMflVwcsr63Q0fTpXZcquFIvVDMOvkuCS6mu2JNB0+PtTZ0KMvhWALOSyx+Th9s61lVF1nwk5JvfBvkqo7Gyr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716807629; c=relaxed/simple;
-	bh=9OvgGCLs7UsmYX5hDtFasiQG55WDAV2a+q/y+k0S2Ww=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JoMff3LHhgSoPoqh+sz+Lp3MJbBe7YSHjJZpIdH7JLoIsjyBoidZnwqwGIi7n+mpLz6BEWAzlywnr8Q+npJYCDm+1lHrZ9GMNTbPBZ0RGbIjwUbpbHODd74nCIfBrCNP0pJ9A5i3hXO5FIlkz3QQzbgzkqtsoq+/UymcHBq3k0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUkcDjA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A333AC32786;
-	Mon, 27 May 2024 11:00:28 +0000 (UTC)
+	s=arc-20240116; t=1716807650; c=relaxed/simple;
+	bh=SCl5FIk5Id/nLQQw5/gf5Kfb9XND05Sm7vVtqyaXE0Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=R5MhK0yZRhk//YNMNO0O/KYJM8bxBU/oPghUukINflA8YLoPjHvBP279e4BBYamTuwCooZlVfaRnwXzP9T5aryQdqzuU8LKP43pKdoAD2q3N1Tjw32EfcmREBhxmo8/k2MyDa9/n3wxbc8yyQ+swYaR1Lq5bXomIPvWVq3xBA3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVIYnWm9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CFCC2BBFC;
+	Mon, 27 May 2024 11:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716807628;
-	bh=9OvgGCLs7UsmYX5hDtFasiQG55WDAV2a+q/y+k0S2Ww=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eUkcDjA+J4EeGU1jei0k9g0HiVpryBGM/5vp+X+5Vk+MznHrmADwPrJiNswqFDKLq
-	 F4ZmADjPovevjncTJ/JcQSvgxcpM0phPXFqFniSK0EnDGR5uKM/xsta6PASJjxfBrj
-	 tNa30VY9URVQBnclG0Q042u5ABe4AbnkEukdxA2fudDEY8ctt3uqJs4jsYP7r3N7ud
-	 ++7qm6OxxqDVZMhpPgYYp6hoOB5PEWECCdE8VY//nDslw9PqSUOzNHZJ0jamixW7g3
-	 e5R9xXNQ5m72ozMteVJ0s5H6IZ/7AYEAo5P4NgYituZXLZQQwVtCpMQcPXqNkzpSVL
-	 vsVNGW5R7JUOw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F94FCF21F8;
-	Mon, 27 May 2024 11:00:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1716807650;
+	bh=SCl5FIk5Id/nLQQw5/gf5Kfb9XND05Sm7vVtqyaXE0Q=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=mVIYnWm91n62JO71GIWwjjPrEFJvJ9UO/COzMgoLgkR9xLR6oY3y//mDlYvvua5f5
+	 jv3Bv3Nu6MM2Gl+BhZuD1/Fe/Y7LyepDslaw5LVweEkIU0pUq1iJ1dTQA/2UuSbNNJ
+	 wk2idr1rNHlsmrgwt0vovrsyyKUlfiv5WAWy98wHaMBpgP/cbh2qFFOZntkYfS+A2q
+	 eUAZRNzCzMgzGKyCd1/ecE2bjhHVuENmMSOyB0/zgSYABC3cT7ttvTnbBsdyITFHVy
+	 lNA5/QkjgyNb1u3dj9zKY/pizsINBNUtaEn0KaLpCHp/a3GYpFz8XrAv3kIeop8Aam
+	 EyCSNgZCfxNSg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: usb: smsc95xx: fix changing LED_SEL bit value updated
- from EEPROM
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171680762858.16270.336533909510921768.git-patchwork-notify@kernel.org>
-Date: Mon, 27 May 2024 11:00:28 +0000
-References: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
-In-Reply-To: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 27 May 2024 14:00:45 +0300
+Message-Id: <D1KDIOAFZ55T.3ECZ64CCUEER2@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <James.Bottomley@HansenPartnership.com>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>,
+ "David Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "Mario Limonciello" <mario.limonciello@amd.com>,
+ <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Open code tpm_buf_parameters()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Paul Menzel" <pmenzel@molgen.mpg.de>
+X-Mailer: aerc 0.17.0
+References: <20240525154406.4811-1-jarkko@kernel.org>
+ <17bbe39e-3c68-4e0b-9862-9658f684b19e@molgen.mpg.de>
+In-Reply-To: <17bbe39e-3c68-4e0b-9862-9658f684b19e@molgen.mpg.de>
 
-Hello:
+On Sun May 26, 2024 at 8:42 AM EEST, Paul Menzel wrote:
+> Dear Jarkko,
+>
+>
+> Thank you for your patch.
+>
+> Am 25.05.24 um 17:44 schrieb Jarkko Sakkinen:
+> > With only single call site, this no sense, and it actually slipped out
+>
+> this *makes* no sense?
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Thanks for the remark :-)
 
-On Thu, 23 May 2024 14:23:14 +0530 you wrote:
-> LED Select (LED_SEL) bit in the LED General Purpose IO Configuration
-> register is used to determine the functionality of external LED pins
-> (Speed Indicator, Link and Activity Indicator, Full Duplex Link
-> Indicator). The default value for this bit is 0 when no EEPROM is
-> present. If a EEPROM is present, the default value is the value of the
-> LED Select bit in the Configuration Flags of the EEPROM. A USB Reset or
-> Lite Reset (LRST) will cause this bit to be restored to the image value
-> last loaded from EEPROM, or to be set to 0 if no EEPROM is present.
-> 
-> [...]
+>
+> > of the radar during the review. Open code and document the action
+> > directly to the site, to make it more readable.
+>
+> [=E2=80=A6]
+>
+>
+> Kind regards,
+>
+> Paul
 
-Here is the summary with links:
-  - net: usb: smsc95xx: fix changing LED_SEL bit value updated from EEPROM
-    https://git.kernel.org/netdev/net/c/52a2f0608366
+In order not to have to recycle this, does this now make sense to you:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/comm=
+it/?id=3Db6b88cde77e7c30ab8f534d723ad9c4ec15b7753
 
+Unless actual critical fixes for hmac, probably will save this to v6.11
+but with some "real" fixes I'll piggy pack it to rcX.
 
+BR, Jarkko
 
