@@ -1,281 +1,168 @@
-Return-Path: <linux-kernel+bounces-191221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EA58D0835
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:24:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39DF8D080D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CCCD1F21B49
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24621C227AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530F816936C;
-	Mon, 27 May 2024 16:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F5155CA5;
+	Mon, 27 May 2024 16:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jPHjua9W"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="akvUQLSZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a1oCo9j7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="akvUQLSZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a1oCo9j7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42EC16B751;
-	Mon, 27 May 2024 16:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E3E17E913;
+	Mon, 27 May 2024 16:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716826520; cv=none; b=O73C2/DIeIPdgPDRu9nVE3eV8I6ML3rNlmRIgWwQ8hVtjNHiTP+jEoTdf8dNcZ6UWHMjPNftiM5XZXiPrOx/L0si1bYgplBCOaLwrrRNLkhpnfJGYSsESJUvmfDbonmsw+VOYY7PLjuwtRRJMISOJ/zvG1USvOemBPHhBngrtr8=
+	t=1716826487; cv=none; b=p1fGERFVt25iWxc2bVXYw5J77q/IqTuEKGFOJqT5H/4It8iGWWEM0Me47qobRnDfa6qgPXgmMMqM+ZI3Xf/iKS+FXVlXjdDXojjwqNx0t5sc3f6XUn5yMBQbPIAAWdpcxUPyBGE+CHr2012L9uGvqV52XP0zElA5NRiHe2xX888=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716826520; c=relaxed/simple;
-	bh=C/7pxn/zvd0ZkrMu2JxCU9aLE6K8DlE8/+ktjuIqF+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otMJenDNqVYOR38B7HL+/SigtRFHpR9hy6dBxUwncXSVxcr2prrAQ3h3t6pLQeORH0ebFT5cVaUzGzJb6Eqcg4V1rQKM7kC5tWRYE9k2XYzMYof88mo+yRVK+NWxHbzqDx35Ct4Aq+MlQuiBxRRfdK09Oc95th1wn5LujwayfZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jPHjua9W; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id A25BCFF80D;
-	Mon, 27 May 2024 16:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716826516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	s=arc-20240116; t=1716826487; c=relaxed/simple;
+	bh=ujfSi3fu/yloH/M4yTSPIT1sEFbDxfHs66CZJiGQ9K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ikdCnRan+F4/lEMX+3UQw1j9aSj+RdnEAr+QhFkQsOZuqYk3+xhRphk97wSCHXchWAXwTsXwdS3ThcPtqyyypL++UERC/one13Kh2hlAZnDtdyqeMf+1NjR898NIaKy4xqabdygQIGz1p2Vn2Na6SYA26wzuwGqb82RVBTKzFV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=akvUQLSZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a1oCo9j7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=akvUQLSZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a1oCo9j7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 80E2121F87;
+	Mon, 27 May 2024 16:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716826483;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Mi3oj3KqfvDzq+/15bPMcWypI2LWK0r10UEBjijnOtc=;
-	b=jPHjua9WxG50yVIdqMNDLvOGQkQ6iB4QYm/1BGyxgTb8OooPHLqIJLy60UGGZXbIaxDabh
-	pPwkbWZxBGOXlZV1InZfo4OhQlP68xHlK+trSLZ43n7dfRalP7Sbu0nRxGRb4Zchwpp2af
-	LeGKWTAEnleyERDMXp34zfuDP8pzZDx22iB0CHstGcAwBtpK48FI1m5zkI/J4kq1c/MQmG
-	kTftzwBFldi7v+VE0xn3HBxR8Jku6AQ3puEOoTRhmEHrVYtSkmYNZAx1SGktc5is99y3ii
-	Mm4FGQ3Wo2H18jkER+EKHkcMdMh7L1ALa6QmzwRTfI9Jx8aiq6vdAP8rBBQmXg==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 10/19] irqdomain: Introduce irq_domain_alloc() and irq_domain_publish()
-Date: Mon, 27 May 2024 18:14:37 +0200
-Message-ID: <20240527161450.326615-11-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240527161450.326615-1-herve.codina@bootlin.com>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
+	bh=wssN6e0yGUvF1iJN/7+g+bS10CSfVX5ayRqBNqac4Bk=;
+	b=akvUQLSZJCeZpd4YAWKDu+6iaZkf53Lp+CcaAX8/Y9tfDwqcIX8ZGqPBrHN3aNkSKOSXgJ
+	kG8UL6qMP1UsEYC6eCZCvbUE9zS2UZl+4qNt4ndaN7CFPACfNfHN/mjUtphBkK9+zJlFse
+	tNiF1r+oRn+f94HsVBDDohpr12yNeSk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716826483;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wssN6e0yGUvF1iJN/7+g+bS10CSfVX5ayRqBNqac4Bk=;
+	b=a1oCo9j7HDlkvWOhfs9ZESGIw/LCCJltL0LKO5WUSP0Gc68pFUF4jOgtq6qZ/Qs6ybEiqN
+	tygARkaIUU6t/UAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=akvUQLSZ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=a1oCo9j7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716826483;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wssN6e0yGUvF1iJN/7+g+bS10CSfVX5ayRqBNqac4Bk=;
+	b=akvUQLSZJCeZpd4YAWKDu+6iaZkf53Lp+CcaAX8/Y9tfDwqcIX8ZGqPBrHN3aNkSKOSXgJ
+	kG8UL6qMP1UsEYC6eCZCvbUE9zS2UZl+4qNt4ndaN7CFPACfNfHN/mjUtphBkK9+zJlFse
+	tNiF1r+oRn+f94HsVBDDohpr12yNeSk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716826483;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wssN6e0yGUvF1iJN/7+g+bS10CSfVX5ayRqBNqac4Bk=;
+	b=a1oCo9j7HDlkvWOhfs9ZESGIw/LCCJltL0LKO5WUSP0Gc68pFUF4jOgtq6qZ/Qs6ybEiqN
+	tygARkaIUU6t/UAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6730B13A56;
+	Mon, 27 May 2024 16:14:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1icIGXOxVGYzXAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 27 May 2024 16:14:43 +0000
+Date: Mon, 27 May 2024 18:14:38 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Toralf =?iso-8859-1?Q?F=F6rster?= <toralf.foerster@gmx.de>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: RIP: + BUG: with 6.8.11 and BTRFS
+Message-ID: <20240527161438.GB8631@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <e8b3311c-9a75-4903-907f-fc0f7a3fe423@gmx.de>
+ <3c053912-4e47-4c44-be80-dee4ade8bc6b@gmx.de>
+ <1d887489-200c-46e1-9ee3-8b18722ce19c@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+In-Reply-To: <1d887489-200c-46e1-9ee3-8b18722ce19c@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmx.com];
+	FREEMAIL_ENVRCPT(0.00)[gmx.com,gmx.de];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.de,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 80E2121F87
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.21
 
-The irq_domain_add_*() family functions create an irq_domain and also
-publish this newly created to domain. Once an irq_domain is published,
-consumers can request IRQ in order to use them.
+On Mon, May 27, 2024 at 07:02:56PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/5/27 00:16, Toralf Förster 写道:
+> > On 5/26/24 11:08, Toralf Förster wrote:
+> >>
+> >> I upgraded yesterday from kernel 6.8.10 to 6.8.11.
+> >>
+> >> The system does not recover from reboot in moment.
+> >
+> > It recovered eventually, I switched to 6.9.2, which runs fine so far.
+> > But these are new log messages:
+> 
+> That looks exactly the one Linus recently reported
+> (https://lore.kernel.org/linux-btrfs/CAHk-=wgt362nGfScVOOii8cgKn2LVVHeOvOA7OBwg1OwbuJQcw@mail.gmail.com/)
 
-Some interrupt controller drivers have to perform some more operations
-with the created irq_domain in order to have it ready to be used.
-For instance:
-  - Allocate generic irq chips with irq_alloc_domain_generic_chips()
-  - Retrieve the generic irq chips with irq_get_domain_generic_chip()
-  - Initialize retrieved chips: set register base address and offsets,
-    set several hooks such as irq_mask, irq_unmask, ...
-
-To avoid a window where the domain is published but not yet ready to be
-used, introduce irq_domain_alloc_*() family functions to create the
-irq_domain and irq_domain_publish() to publish the irq_domain.
-With this new functions, any additional initialisation can then be done
-between the call creating the irq_domain and the call publishing it.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- include/linux/irqdomain.h | 16 +++++++
- kernel/irq/irqdomain.c    | 91 ++++++++++++++++++++++++++++-----------
- 2 files changed, 82 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 21ecf582a0fe..86203e7e6659 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -257,6 +257,22 @@ static inline struct fwnode_handle *irq_domain_alloc_fwnode(phys_addr_t *pa)
- }
- 
- void irq_domain_free_fwnode(struct fwnode_handle *fwnode);
-+struct irq_domain *irq_domain_alloc(struct fwnode_handle *fwnode, unsigned int size,
-+				    irq_hw_number_t hwirq_max, int direct_max,
-+				    const struct irq_domain_ops *ops,
-+				    void *host_data);
-+
-+static inline struct irq_domain *irq_domain_alloc_linear(struct fwnode_handle *fwnode,
-+							 unsigned int size,
-+							 const struct irq_domain_ops *ops,
-+							 void *host_data)
-+{
-+	return irq_domain_alloc(fwnode, size, size, 0, ops, host_data);
-+}
-+
-+void irq_domain_free(struct irq_domain *domain);
-+void irq_domain_publish(struct irq_domain *domain);
-+void irq_domain_unpublish(struct irq_domain *domain);
- struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, unsigned int size,
- 				    irq_hw_number_t hwirq_max, int direct_max,
- 				    const struct irq_domain_ops *ops,
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 86f8b91b0d3a..06c3e1b03a1d 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -231,7 +231,38 @@ static struct irq_domain *__irq_domain_create(struct fwnode_handle *fwnode,
- 	return domain;
- }
- 
--static void __irq_domain_publish(struct irq_domain *domain)
-+struct irq_domain *irq_domain_alloc(struct fwnode_handle *fwnode, unsigned int size,
-+				    irq_hw_number_t hwirq_max, int direct_max,
-+				    const struct irq_domain_ops *ops,
-+				    void *host_data)
-+{
-+	return __irq_domain_create(fwnode, size, hwirq_max, direct_max, ops,
-+				   host_data);
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_alloc);
-+
-+/**
-+ * irq_domain_free() - Free an irq domain.
-+ * @domain: domain to free
-+ *
-+ * This routine is used to free an irq domain. The caller must ensure
-+ * that the domain is not published.
-+ */
-+void irq_domain_free(struct irq_domain *domain)
-+{
-+	fwnode_dev_initialized(domain->fwnode, false);
-+	fwnode_handle_put(domain->fwnode);
-+	if (domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
-+		kfree(domain->name);
-+	kfree(domain);
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_free);
-+
-+/**
-+ * irq_domain_publish() - Publish an irq domain.
-+ * @domain: domain to publish
-+ */
-+void irq_domain_publish(struct irq_domain *domain)
- {
- 	mutex_lock(&irq_domain_mutex);
- 	debugfs_add_domain_dir(domain);
-@@ -240,6 +271,36 @@ static void __irq_domain_publish(struct irq_domain *domain)
- 
- 	pr_debug("Added domain %s\n", domain->name);
- }
-+EXPORT_SYMBOL_GPL(irq_domain_publish);
-+
-+/**
-+ * irq_domain_unpublish() - Unpublish an irq domain.
-+ * @domain: domain to unpublish
-+ *
-+ * This routine is used to unpublish an irq domain. The caller must ensure
-+ * that all mappings within the domain have been disposed of prior to
-+ * use, depending on the revmap type.
-+ */
-+void irq_domain_unpublish(struct irq_domain *domain)
-+{
-+	mutex_lock(&irq_domain_mutex);
-+	debugfs_remove_domain_dir(domain);
-+
-+	WARN_ON(!radix_tree_empty(&domain->revmap_tree));
-+
-+	list_del(&domain->link);
-+
-+	/*
-+	 * If the going away domain is the default one, reset it.
-+	 */
-+	if (unlikely(irq_default_domain == domain))
-+		irq_set_default_host(NULL);
-+
-+	mutex_unlock(&irq_domain_mutex);
-+
-+	pr_debug("Removed domain %s\n", domain->name);
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_unpublish);
- 
- /**
-  * __irq_domain_add() - Allocate a new irq_domain data structure
-@@ -264,7 +325,7 @@ struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, unsigned int s
- 	domain = __irq_domain_create(fwnode, size, hwirq_max, direct_max,
- 				     ops, host_data);
- 	if (domain)
--		__irq_domain_publish(domain);
-+		irq_domain_publish(domain);
- 
- 	return domain;
- }
-@@ -280,28 +341,8 @@ EXPORT_SYMBOL_GPL(__irq_domain_add);
-  */
- void irq_domain_remove(struct irq_domain *domain)
- {
--	mutex_lock(&irq_domain_mutex);
--	debugfs_remove_domain_dir(domain);
--
--	WARN_ON(!radix_tree_empty(&domain->revmap_tree));
--
--	list_del(&domain->link);
--
--	/*
--	 * If the going away domain is the default one, reset it.
--	 */
--	if (unlikely(irq_default_domain == domain))
--		irq_set_default_host(NULL);
--
--	mutex_unlock(&irq_domain_mutex);
--
--	pr_debug("Removed domain %s\n", domain->name);
--
--	fwnode_dev_initialized(domain->fwnode, false);
--	fwnode_handle_put(domain->fwnode);
--	if (domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
--		kfree(domain->name);
--	kfree(domain);
-+	irq_domain_unpublish(domain);
-+	irq_domain_free(domain);
- }
- EXPORT_SYMBOL_GPL(irq_domain_remove);
- 
-@@ -1184,7 +1225,7 @@ struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
- 		domain->parent = parent;
- 		domain->flags |= flags;
- 
--		__irq_domain_publish(domain);
-+		irq_domain_publish(domain);
- 	}
- 
- 	return domain;
--- 
-2.45.0
-
+It could be similar to what was fixed in ef1e68236b91 ("btrfs: fix race
+in read_extent_buffer_pages()"), also hard to reproduce. The stack
+traces are the only clues we have now.
 
