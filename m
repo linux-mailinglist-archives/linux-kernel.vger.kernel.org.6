@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-191366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64EE8D0CB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:22:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7798D0CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 21:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E1A1F22701
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7C01C21077
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 19:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B01E1607AA;
-	Mon, 27 May 2024 19:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354251607A5;
+	Mon, 27 May 2024 19:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HRMsubYG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="erhcU8xc"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832A5168C4;
-	Mon, 27 May 2024 19:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632C3168C4;
+	Mon, 27 May 2024 19:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716837745; cv=none; b=nZMLvo/xrWBRTkhA0YZ2v0yF9lNLJBuouu5lZbUHNVjnAygv8RAkD2sy6xEq4RON8Uc8y7Lvi/gkOVJUOhh7jiPTRoyNOUonn1L0mnGSFLcsJcsedhbNAHjWs+aVGUGtrAOux9S4q8b+edjBnQ12NOU7UVoTqbr9jDOUh6nb0zE=
+	t=1716837854; cv=none; b=GNqhckEQAOYkemCSPPssoEsvrQCpoTsu35DEB2N9uEtl6RRGLNU/oPPxQ/AB1X3jK5vJOd9bWu9IexexkRdlpvoyexiEiHldwwZPmujgZib1sPwhE/+WG2p7I3AvgTX/S94bX5UnK4+xtnOF9kGWEOTXl6hT2SSmMGbhqfzKYNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716837745; c=relaxed/simple;
-	bh=kRjyh3oVDFHZzlBJvCjPHdot1YuoXmIouFWC6CTwPJ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tIIqV1w5z9gHSzedzFScVfMMA845WtqPpshH+voTIDTbGLyffgz/UfwHFspK3CKmWUODTxm/Zy/o3dB83ccFqB6Q9tl454uoTUiL+DT4cXll+iXgsK/rxyzEzVYRWz5QXRqwXQ2QvXGaZBsypDFnQQF9blJiWuR5rFzvSkLxjuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HRMsubYG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RB5iAb011373;
-	Mon, 27 May 2024 19:22:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=uigtUjAeyX0roe9lGMfghP
-	X4bcugzbG6bapakn4jByw=; b=HRMsubYGJfCaf5sR3VYKV02iFhdRl4LeY8c6zz
-	Mf9qdyDwa/JR5QVO2J/hS1sbJYgR1QfvF1NIjMFCiqjlC3+IUmCKMvNeAFre5WDr
-	DyBlNLuQXNmUEgKYtJ1sXLc1sr0ji88xoM/Cbcdu9jfHYkfUZP0tSnqL6/FaKdLS
-	1oIFGBXRSEramOURRDhMHSyYpsn28BzMWnOMVfIPSS0+6k6lCCQJ5yfuOxG5LHox
-	RyZwDXFXOc9/RqR1dNDM+5MPakp9JUorj5mZgjqqYC7cF4mnKphg13RmkjRL/47C
-	59ttesy+pDYmJ5xdtGqPMUi83Lfjjd3UOMqKSDrEfUQvjK4A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k4g7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 19:22:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RJMIER020640
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 19:22:18 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 12:22:17 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 27 May 2024 12:22:16 -0700
-Subject: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
+	s=arc-20240116; t=1716837854; c=relaxed/simple;
+	bh=1AYlBAqGh7pyXd2PfPvcQ+zPsx8akvGVdpbKbEb3WhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9kyW8S0LckUSpxYaEEtntYXQt5Nb8szOFWsnI0pJoD8PTTugHkbOxCMmNkko1osWcmx4dkRr7fi+HUFgAR50DJF4kQlBmyT3JbsSBmykS5J20HPGJHdXG1c0BMgCFt2wBQStYHzqAhR0mr8eXx8LH/MSfXAdpASIO6SRAIGSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=erhcU8xc; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716837844;
+	bh=1AYlBAqGh7pyXd2PfPvcQ+zPsx8akvGVdpbKbEb3WhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=erhcU8xcTXBvLNHDveHYYQeXF3gXskdNyLRM8056BO0fY8Pqc64b1OofeHwV2Ua21
+	 J1sDiOvO1TELsFkRLxEUZCt1tvBcrEXFcK9Tc+oy+bTFIBu+s/9Fd6Ipuz5Ml6dJlf
+	 FNCCGr8twKdmSWywWiIbakE0EBsXqSICvlMfOgD8=
+Date: Mon, 27 May 2024 21:24:03 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Stephen Horvath <s.horvath@outlook.com.au>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Moritz Fischer <mdf@kernel.org>
+Subject: Re: [PATCH v2 1/2] hwmon: add ChromeOS EC driver
+Message-ID: <9cf224dd-51eb-4608-abcf-06f337d08178@t-8ch.de>
+References: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
+ <20240507-cros_ec-hwmon-v2-1-1222c5fca0f7@weissschuh.net>
+ <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGfdVGYC/x2MQQqDQAxFryJZN2BDZ4RepXQxo7EG6lgSFUG8e
- 6Orz+Pz3g7GKmzwrHZQXsVkKg73WwXtkMqHUTpnoJoedaAGxw57w7TMk0+kSCH6EZoMrvyUe9m
- u3OvtnJMxZk2lHc7IV8qy4ZhsZoXj+ANfkFCMfQAAAA==
-To: Ian Kent <raven@themaw.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <autofs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CvnCgo5XStgD70_VHR9EQR6Gj2C_lBf9
-X-Proofpoint-GUID: CvnCgo5XStgD70_VHR9EQR6Gj2C_lBf9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_05,2024-05-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1011 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=729 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405270159
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SY4P282MB30635BA1D4087113E79921B5C5F52@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+Hi Stephen,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- fs/autofs/init.c | 1 +
- 1 file changed, 1 insertion(+)
+On 2024-05-25 09:13:09+0000, Stephen Horvath wrote:
+> I was the one to implement fan monitoring/control into Dustin's driver, and
+> just had a quick comment for your driver:
+> 
+> On 8/5/24 02:29, Thomas Weißschuh wrote:
+> > The ChromeOS Embedded Controller exposes fan speed and temperature
+> > readings.
+> > Expose this data through the hwmon subsystem.
+> > 
+> > The driver is designed to be probed via the cros_ec mfd device.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >   Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
+> >   Documentation/hwmon/index.rst         |   1 +
+> >   MAINTAINERS                           |   8 +
+> >   drivers/hwmon/Kconfig                 |  11 ++
+> >   drivers/hwmon/Makefile                |   1 +
+> >   drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
+> >   6 files changed, 316 insertions(+)
+> > 
 
-diff --git a/fs/autofs/init.c b/fs/autofs/init.c
-index b5e4dfa04ed0..1d644a35ffa0 100644
---- a/fs/autofs/init.c
-+++ b/fs/autofs/init.c
-@@ -38,4 +38,5 @@ static void __exit exit_autofs_fs(void)
- 
- module_init(init_autofs_fs)
- module_exit(exit_autofs_fs)
-+MODULE_DESCRIPTION("Kernel automounter support");
- MODULE_LICENSE("GPL");
+<snip>
 
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240527-md-fs-autofs-62625640557b
+> > diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> > new file mode 100644
+> > index 000000000000..d59d39df2ac4
+> > --- /dev/null
+> > +++ b/drivers/hwmon/cros_ec_hwmon.c
+> > @@ -0,0 +1,269 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + *  ChromesOS EC driver for hwmon
+> > + *
+> > + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/hwmon.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/platform_data/cros_ec_commands.h>
+> > +#include <linux/platform_data/cros_ec_proto.h>
+> > +#include <linux/units.h>
+> > +
+> > +#define DRV_NAME	"cros-ec-hwmon"
+> > +
+> > +struct cros_ec_hwmon_priv {
+> > +	struct cros_ec_device *cros_ec;
+> > +	u8 thermal_version;
+> > +	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+> > +};
+> > +
+> > +static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+> > +{
+> > +	u16 data;
+> > +	int ret;
+> > +
+> > +	ret = cros_ec->cmd_readmem(cros_ec, EC_MEMMAP_FAN + index * 2, 2, &data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	data = le16_to_cpu(data);
+> > +
+> > +	if (data == EC_FAN_SPEED_NOT_PRESENT)
+> > +		return -ENODEV;
+> > +
+> 
+> Don't forget it can also return `EC_FAN_SPEED_STALLED`.
 
+Thanks for the hint. I'll need to think about how to handle this better.
+
+> Like Guenter, I also don't like returning `-ENODEV`, but I don't have a
+> problem with checking for `EC_FAN_SPEED_NOT_PRESENT` in case it was removed
+> since init or something.
+
+Ok.
+
+> My approach was to return the speed as `0`, since the fan probably isn't
+> spinning, but set HWMON_F_FAULT for `EC_FAN_SPEED_NOT_PRESENT` and
+> HWMON_F_ALARM for `EC_FAN_SPEED_STALLED`.
+> No idea if this is correct though.
+
+I'm not a fan of returning a speed of 0 in case of errors.
+Rather -EIO which can't be mistaken.
+Maybe -EIO for both EC_FAN_SPEED_NOT_PRESENT (which should never happen)
+and also for EC_FAN_SPEED_STALLED.
+And EC_FAN_SPEED_STALLED also sets HWMON_F_FAULT.
+HWMON_F_ALARM doesn't seem right to me.
+
+But if Guenter has a preference, that will do, too.
+
+> 
+> > +	*speed = data;
+> > +	return 0;
+> > +}
+> > +
+
+<snip>
+
+> But feel free to ignore me if I'm completly wrong about this, since I really
+> don't have much experience with kernel dev.
+
+Thanks for your feedback!
+
+Would you mind if I Cc you on further revisions?
+
+
+Thomas
 
