@@ -1,114 +1,107 @@
-Return-Path: <linux-kernel+bounces-189993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCDA8CF830
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA15D8CF834
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 05:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7391C20F9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EA1280F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E29A8F6B;
-	Mon, 27 May 2024 03:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4ClMU5s"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF4C23D7;
-	Mon, 27 May 2024 03:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D456FCB;
+	Mon, 27 May 2024 03:46:27 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E7E10E5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 03:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716781507; cv=none; b=o34adsX3w8itVqbboUDxy0rTiMRFUCHiTqgkF6UNeDPKAxU+RKxAAOaBstd4EHur0vURQvL/ZO8J1S3pw2HDr7WDJSi/GZ8kmulUcRTu0KQ36heo3FB3Mp1YpVM1/u5GhiBQ19U+A5wRBl5sAopYewH5/g6fMlUCB2Kpn1LD6wY=
+	t=1716781587; cv=none; b=gBr7AMmjoY1PekexmKspvawSgpZhOcwlgDbVrzvAduaDA2C4Sbh5Hhp20QQsSKiGOedwO0e4STEbwc8p/g/pQO4vsYjQK3N58l4Mvm0bwgnd5s5gk2DWn+/pHxBED4NcJ7qCPqj62iDrcBVHXPTo9PXRwarCMztrWB60gwlygDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716781507; c=relaxed/simple;
-	bh=tCjs5Eba84WyRbeea3rCmX7AOf6IYq26s/todap2UFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XhOlLnNvzf0Y9cWCujj9L3rmsMLohqE9Mtx3+mddxTF7w8aZYOOZowmHD+m0esa8ti2HM+2VN2DkWpH8yJYn+tUPgbcENMcuvdVNeCSHgC3j+XY6nLzqhVewtHHTcbG/xqzXPi6HXyuxeGEBK3XG8BSvWLE41T/fHfDhazPCG1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4ClMU5s; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3737b3c56d7so11266005ab.2;
-        Sun, 26 May 2024 20:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716781505; x=1717386305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SxnEZqeiz6E5KfZch5QPrkG1bRqZFA0h6HtEP1on5fs=;
-        b=Y4ClMU5s3CpTXGFSZsTo4CXC+id/43RpgYo3ARfgjcB3jReJ7yFmc7gUCC1WolvK3D
-         u4/pnm2q6/wf0um+cxyATzuXKq1tTS2gggIrGYo7UfErlTWcSAU6goDub9QT6M9mP10+
-         lzmLzaIZrfqZF8AocoyUoE8gRo/qOLmTAwZ1Pj1OnTOb4sSZ/snArgtKKsfjIzgwov5v
-         zbIth2VjlYHCihyHYPdFksuKpiph9//WyAj1RkvoBPU41SCXkeC1EFQxnH1lW+Z/Q2KD
-         i2I350SzwzhkZccqOth+dGLnjXJ89/HdyRgnUSN+eOVzeJkkygvVNof8l6p6bhH0qvvV
-         UkVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716781505; x=1717386305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SxnEZqeiz6E5KfZch5QPrkG1bRqZFA0h6HtEP1on5fs=;
-        b=Rn+1mb+Vc42ZZn/NFvcCC3lsfsIk3RFqbXHB5ArRMVHOy1+h/vpIPQ8bd2tTEjkXT9
-         /cCS2pXa/wDUw9swQU0EAFGrjnKJpxcw75A5ZxC51nGnjNt3hIblkoba+me2MXEUfVwF
-         VltUqP26Zzlev98ZnZSQFKCBH6YlWBb/3xHJEoYqpcOdzgigISHSaEZam3R8Q9M+dU0l
-         MBt51uUpE2kbPgK3ERMeAeekHdqRn5AzWdfYo8mYmq+9CJzuAHdF7A3DEsze6zK+8i0n
-         fwII7UJGXgiuUoe7AQ9LM3sTL+QpV7K+xhFvF4Haw3WbnsD9HCaq4OJzvOYv/HqwsoEM
-         ud/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfAjHb7Ph6ZGEN2j/ue4f78xftQIBBA3IuLEfG6fbPmQ1wCRZ6synKTRSEBZ8A0rjTLZ0YwVPTqMYIboHyh7JlwkSKcySRnlveYUURLlNZC5kPRKB5Rk5hKk4W3AnBjMI5dBFdOU6EVJvu761uyCzqkIOdVXziv9ZqEqf3P35zVIpVW8Ve5tfQzIjHJyMvNxMO7VNsz17vwhG7pjQqEeaF8WEH6A==
-X-Gm-Message-State: AOJu0YyFvKyMneSAI1dGjE74HVwGPic5fqQZ3kiapJyLGNidH3c7XntK
-	QK1kbfWUVDwh9nhupa17QvSvK+/Ap4T4JlgH1GDnbi2Y4Qbp2lWLltVyGT5th1WpSyU5wlbC5/m
-	NUL+wbvkOG8Ztu0479vFa+Ydv9Eg=
-X-Google-Smtp-Source: AGHT+IEQ5Inmp3v++358a6lbXEUkviSYZMCbFiCuAWuQtWjhewWpE404nqkXbPrvEpGYJ+8RcolCNtdpyxh58qpeWP0=
-X-Received: by 2002:a05:6e02:1d99:b0:373:8e8d:58e6 with SMTP id
- e9e14a558f8ab-3738e8d5b18mr56635485ab.6.1716781504763; Sun, 26 May 2024
- 20:45:04 -0700 (PDT)
+	s=arc-20240116; t=1716781587; c=relaxed/simple;
+	bh=eEXS+I7ieXLR5ZpU0pu31fAUvLwHh9+1q0Ak8+u86Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=koIwOvnbLC0XEe/GWYAeLdru04CBwYHuxLxvL7DDl6D/ujBXFZ34FAMy/YTdpLdnL5m/XCx4G0oaCyozXxdYo+a7qmKC53Q8SiGhpnHSaBl8/kEI6euuIgSv2sSAFpnkl1Xrj+7xQJ+PShRJT+Ys2wFOvagX4tbk6zKxE6JdYB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-5f-6654020b6189
+Date: Mon, 27 May 2024 12:46:14 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, akpm@linux-foundation.org,
+	ying.huang@intel.com, vernhao@tencent.com,
+	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
+	david@redhat.com, peterz@infradead.org, luto@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, rjgolo@gmail.com
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <20240527034614.GA12937@system.software.com>
+References: <20240510065206.76078-1-byungchul@sk.com>
+ <982317c0-7faa-45f0-82a1-29978c3c9f4d@intel.com>
+ <20240527015732.GA61604@system.software.com>
+ <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com> <9fe12ecc-c4c2-4adb-a62c-4c8fe91b6613@web.de>
-In-Reply-To: <9fe12ecc-c4c2-4adb-a62c-4c8fe91b6613@web.de>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Mon, 27 May 2024 11:44:53 +0800
-Message-ID: <CAA+D8AONWV7Msf=FbGa33ukkMLpySH+AZgO8B2O3fz8fhpJ5Kg@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
- earc_phy and audpll
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel-janitors@vger.kernel.org, imx@lists.linux.dev, 
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a28df276-069c-4d4d-abaf-efc24983211e@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsXC9ZZnkS43U0iawd0GW4s569ewWXze8I/N
+	4tPLB4wWLza0M1p8Xf+L2eLppz4Wi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
+	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
+	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2Ty2/rLzaJx6jc3j8ya5AL4oLpuU1JzMstQi
+	fbsErowjh+ezF5xmq3j2cC5zA2MfaxcjJ4eEgInE3U+XWWDsJ1MOM4HYLAKqEm+WfmcGsdkE
+	1CVu3PgJZosA2adWLmfvYuTiYBb4zyRx/2ErWEJYIERi2oc1YM28AhYSuw8uZwIpEhI4xSjR
+	d+kNM0RCUOLkzCdg25gFtCRu/HsJVMQBZEtLLP/HARLmFLCV2Dn3ATuILSqgLHFg23GwORIC
+	29glrvX8ZYa4VFLi4IobLBMYBWYhGTsLydhZCGMXMDKvYhTKzCvLTczMMdHLqMzLrNBLzs/d
+	xAiMymW1f6J3MH66EHyIUYCDUYmHN8M9OE2INbGsuDL3EKMEB7OSCK/IvMA0Id6UxMqq1KL8
+	+KLSnNTiQ4zSHCxK4rxG38pThATSE0tSs1NTC1KLYLJMHJxSDYzdl6cvsHHQTb8qO2/q1yyJ
+	5I8/f/1bnGCY9ffFgx0Mf4wb5rRlX3tXu07wkEsAc3K5L99D9kkMhR4zGni37s8qX/ts2ZtY
+	1n0xgV1TBaLX+TCvuya8SYQjYA/H4XcL1G1lGkT+KGaXmVksqC7Rdr2/7b1O27VUucSnp+4Z
+	rRdarnNCWlvL7Y4SS3FGoqEWc1FxIgDwKFjPxgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsXC5WfdrMvNFJJm0NCgbTFn/Ro2i88b/rFZ
+	fHr5gNHixYZ2Rouv638xWzz91MdicXjuSVaLy7vmsFncW/Of1eL8rrWsFjuW7mOyuHRgAZPF
+	8d4DTBbz731ms9i8aSqzxfEpUxktfv8AKj45azKLg5DH99Y+Fo+ds+6yeyzYVOqxeYWWx+I9
+	L5k8Nq3qZPPY9GkSu8e7c+fYPU7M+M3iMe9koMf7fVfZPBa/+MDksfWXnUfj1GtsHp83yQXw
+	R3HZpKTmZJalFunbJXBlHDk8n73gNFvFs4dzmRsY+1i7GDk5JARMJJ5MOcwEYrMIqEq8Wfqd
+	GcRmE1CXuHHjJ5gtAmSfWrmcvYuRi4NZ4D+TxP2HrWAJYYEQiWkf1oA18wpYSOw+uJwJpEhI
+	4BSjRN+lN8wQCUGJkzOfsIDYzAJaEjf+vQQq4gCypSWW/+MACXMK2ErsnPuAHcQWFVCWOLDt
+	ONMERt5ZSLpnIemehdC9gJF5FaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmCMLav9M3EH45fL
+	7ocYBTgYlXh4M9yD04RYE8uKK3MPMUpwMCuJ8IrMC0wT4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+	zusVnpogJJCeWJKanZpakFoEk2Xi4JRqYJx/qk38Qv4bzoeHGbb3btdT5nRdyPlZ7fz8dzos
+	YkomlZxCe6d8nr9pw8tZIlayP92+yfBaf7LQWhi1/XCq4etrvhNv1thcCJdwXKEhrfrgyu45
+	Ux9s/niNxymyt+e148K8a+a7pZZ7fL009+H9D9eCGK+sXC3OV9Uks9BO8dU9rhmhjFIMdxKU
+	WIozEg21mIuKEwEPJJMVrQIAAA==
+X-CFilter-Loop: Reflected
 
-On Sat, May 25, 2024 at 3:55=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> > According to Reference Manual of i.MX8MP
-> > The parent clock of "earc_phy" is "sai_pll_out_div2",
-> > The parent clock of "audpll" is "osc_24m".
-> =E2=80=A6
-> > Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
->
-> Does such information indicate that the word =E2=80=9CCorrect=E2=80=9D wo=
-uld be more appropriate
-> (instead of =E2=80=9CCorrent=E2=80=9D) in the summary phrase?
+On Sun, May 26, 2024 at 07:43:10PM -0700, Dave Hansen wrote:
+> On 5/26/24 18:57, Byungchul Park wrote:
+> ...
+> > Plus, I will add another give-up at code changing the permission of vma
+> > to writable.
+> 
+> I suspect you have a much more general problem on your hands. Just
+> tweaking the VFS or mmap() code likely isn't going to cut it.
 
-Yes,  thanks for pointing out the typo.
+LUF is interested in limited folios that are migratable or reclaimable
+in lru for now.  So, IMHO, fixing a few things is going to cut it.
 
-best regards
-Shengjiu Wang
+> I guess we'll see what you come up with next, but this email was really
+> just the result of Vlastimil and I chatting on IRC for five minutes
+> about this set.
+> 
+> It has absolutely not been tested nor reviewed enough.  <fud>I hope the
+> performance gains stick around once more of the bugs are gone.</fud>
 
->
-> Regards,
-> Markus
+Sure. It should be.
+
+	Byungchul
 
