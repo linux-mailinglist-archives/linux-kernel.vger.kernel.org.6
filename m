@@ -1,138 +1,90 @@
-Return-Path: <linux-kernel+bounces-190755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334E28D0245
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719918D0235
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18B22B2304D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F381F274FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0E715DBC7;
-	Mon, 27 May 2024 13:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E2815F311;
+	Mon, 27 May 2024 13:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PDOWOD46"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCCjdoOq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1626215ECF8
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7CD15DBC7;
+	Mon, 27 May 2024 13:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817890; cv=none; b=aGS6ORipUfQEpvx41CsiEptUp1bgh0JDOlXBXAggLxkPtx40DnkNd/l7D9l4GjrvQ4LPZ9e1kCLS16QJkJfIAu2rSbAQThbPIh1CGf70k92/5i8RRnlipg99WVsl7vWp8Woj6yFDMI4/MzVBOMpVAICjkZxfXbwRzuMRNe/tHBo=
+	t=1716817899; cv=none; b=rXesipdJxwJD+8U2o/yotWis7nIcJg34ifv7ZHdLqQOXfMJotN4LagZY1WEqG6tWWzcQ9grk40aRTnxdXDvfeI874hvriG+4XjkWYEokuDohDAwujkSzLieIijLIcWD6EZ5aYx54JCLlkkN9XfPJv7ujAYFT6odVvBPDIOWeIPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817890; c=relaxed/simple;
-	bh=3SLmwhe1BG8k1dOTLMosKY+YaYjuv7dkAru+9Up3axM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7oMACEiF7/2xfTxgLmHwvH8m9hSV7Jfgns8C8PYLe3/f/tIeuLMoqRlTTjn4UGAwaSe447MPJK8uOZVLUOTUT8dGd2m00wYoSg8Rg+XPWnhgSTN5TKj1VLmv+/uks2NluuuVv4ipMUqDqKTtdSl3K2pJGFlbm83Li5C0mRbFQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PDOWOD46; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B4BC140E01E8;
-	Mon, 27 May 2024 13:51:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Oq2UhWKWQFUl; Mon, 27 May 2024 13:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716817883; bh=+od7caDLEPXz4QA7OiR3Y4qE0Xp9CTT3BbEYpXhsbzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDOWOD46MaTked/eyXcWeCGd9lUl6+OwvmUj15L2UV3K//S2TEtmWvb+2f8hij7oe
-	 ARCtWuTYwKadOfNLq2eL0puJ/RhDQMC+8mk8kt0gLEF5dqE5SkV7QHiDGlbxQbsXHv
-	 r2rz0jj47TJ1gb7LunkbPQxVq0hytMTVAese3XvFH1S+AfSDf0GcVBW7fHpgHIi4Dt
-	 SWkmmoqKrih7i/F6xhY/2PNiHQPTYq30OO0or2O70YfXFlAk8uEakTPyCdOKD7BEDZ
-	 oNrFdjiXdtU39XSNDyJJAoHvTbvucvC0zzmYDfbvMphsDjbaYmusWHz2q3l1csbFFg
-	 ejKaZiqzCkfreZXP9A1GkSqUhAjcQGihZ4ak13S9jAy+xkiOsG9naawfM33L+UW8B5
-	 seggOrBBpRQM4SDkVpgxmAfY8sZOIa4pr+/SF2OIkEoaSqN6l/ojbYWOrqfZw+QA9Q
-	 whhEHr3lpSwIHLj+NbR6f/SePqkBBOJgERWyfYsW7g3W4mTeUArHMMPN+NGhHnX0UU
-	 nYu9xPFO4+WIJJoMVRqDVyZHx4J7WWqCkN6vHbTJivy/7oX/sEY6i/0mjiExwsKuRw
-	 MS+mKGQZKk94ykDf0bV5Fiirz3gGxeWLjFot9m8u6wBjz/QQqn/PH9IT7c+8D/cW/3
-	 /Nw85SErsxXvvEjQ8/pejOZ8=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5FC3440E0177;
-	Mon, 27 May 2024 13:51:09 +0000 (UTC)
-Date: Mon, 27 May 2024 15:51:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v4 09/15] x86/sev: Provide guest VMPL level to userspace
-Message-ID: <20240527135101.GBZlSPxQ6iBSlMDefY@fat_crate.local>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <435f78e07c76e25d2d857138724098bc2a729b0a.1713974291.git.thomas.lendacky@amd.com>
+	s=arc-20240116; t=1716817899; c=relaxed/simple;
+	bh=i99uGTLxclktf5jnh2ZwVj/CRPdOxCoL34V4EZwfdtg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GN0+xbXVJiVqjQgPI+EknRsXhQ+lDfhIRmu6rJR6V4fjKynRNYb3jbN26lGyPoDrtlZt6p+s6bxt1X1HhH2FIyvGk238PFlSzhR66iHOTYPKVJ0ZSeZ07GzsGeM8AyxfDAdqQbSsMgZvQbwPcrznVJLU3wxjI4hOwF6BVxD5gJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCCjdoOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D20C2BBFC;
+	Mon, 27 May 2024 13:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716817898;
+	bh=i99uGTLxclktf5jnh2ZwVj/CRPdOxCoL34V4EZwfdtg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WCCjdoOqZt9n9XhWMmzNMVLM2CUbxptLvU4cHYHJhkUTlxWRz9Oy6rZGf1zQUcxFw
+	 9ihFaR+1bjyEm6qTxQqGVjyNkruqYWnmDhi1efDhJFW3Au5jxgRCpwsLDPeM4rayvr
+	 8DPySQTp0KcziheaM2fqZ40tRS/qLxUF4FrWB1yFU2FOoc3mibAeP+6eERhRQGqzJe
+	 Vf0ZJkiKtVrmGw+B3xZuYMz4/2GLqKp1/LYKPz+DLkTunT45mTQL+hG+IVWUBmIfeS
+	 DzLeXPgEzKKu9cbPYbDFvrA2fbD3mhVMJm4dp8qLZR6Xr1bnMkXp94nCIib82UKTgv
+	 44H2+0werXGmg==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: minix: add MODULE_DESCRIPTION()
+Date: Mon, 27 May 2024 15:51:28 +0200
+Message-ID: <20240527-eindimensional-bojen-eaa8f6bb4591@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240525-md-fs-minix-v1-1-824800f78f7d@quicinc.com>
+References: <20240525-md-fs-minix-v1-1-824800f78f7d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <435f78e07c76e25d2d857138724098bc2a729b0a.1713974291.git.thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=913; i=brauner@kernel.org; h=from:subject:message-id; bh=i99uGTLxclktf5jnh2ZwVj/CRPdOxCoL34V4EZwfdtg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSF9D9SM4rOm1BcdUWEUyIm23hegvnJsj5pce9wHWUGe y61A186SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJiJWxPDfO7n2FcPu1TOOHE/X WNvfY6X1WsjuQ6H8uYdul4vjJOe/YvgfG/7EZyFfvUB89pULa+ZslL663XouZ+a7DtvlFwP/LX7 BAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 24, 2024 at 10:58:05AM -0500, Tom Lendacky wrote:
-> Requesting an attestation report from userspace involves providing the
-> VMPL level for the report. Currently any value from 0-3 is valid because
-> Linux enforces running at VMPL0.
+On Sat, 25 May 2024 08:25:56 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
 > 
-> When an SVSM is present, though, Linux will not be running at VMPL0 and
-> only VMPL values starting at the VMPL level Linux is running at to 3 are
-> valid. In order to allow userspace to determine the minimum VMPL value
-> that can be supplied to an attestation report, create a sysfs entry that
-> can be used to retrieve the current VMPL level of Linux.
+> 
 
-So what is the use case here: you create the attestation report *on* the
-running guest and as part of that, the script which does that should do
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-cat /sys/.../sev/vmpl
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-?
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-But then sev-guest does some VMPL including into some report:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-struct snp_report_req {
-        /* user data that should be included in the report */
-        __u8 user_data[SNP_REPORT_USER_DATA_SIZE];
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-        /* The vmpl level to be included in the report */
-        __u32 vmpl;
-
-Why do you need this and can't use sev-guest?
-
-> +static int __init sev_sysfs_init(void)
-> +{
-> +	struct kobject *sev_kobj;
-> +	int ret;
-> +
-> +	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-> +		return -ENODEV;
-> +
-> +	sev_kobj = kobject_create_and_add("sev", kernel_kobj);
-
-In the main hierarchy?!
-
-This is a x86 CPU thing, so if anything, it should be under
-/sys/devices/system/cpu/
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+[1/1] fs: minix: add MODULE_DESCRIPTION()
+      https://git.kernel.org/vfs/vfs/c/95f90dd0a954
 
