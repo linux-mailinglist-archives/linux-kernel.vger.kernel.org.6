@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-190750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046EA8D0237
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822598D0224
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2D2B266C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FC9285334
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB4A15ECFE;
-	Mon, 27 May 2024 13:47:49 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4F015EFA7;
+	Mon, 27 May 2024 13:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="D6Nsjc8M"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7024E1DDEB;
-	Mon, 27 May 2024 13:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D961640B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716817669; cv=none; b=npjo9fd4rrOciJ6cDBGOQjdJX/+ewBT2AcxxuYKIYEYEF8HLCbCMob1jzqwSeKhf4okEck8xl8+RMsPzCCWyp9Ao3T2ei+9i1uzR1jGP1i+AS0f5BGQyNKZ14Irtf/mh9n4W2nyct9tTZlbDIVOcyDRtUGXU31BkitwS1GfKXyk=
+	t=1716817821; cv=none; b=oCPsG1dBsOhm7l/3Nj2HSgLCAK9FP20LxBQ8i9BcOUyGs70Ld20462c5rdhe+tkQGh4QqmpA81Nu2lb/yW9RORQvJsGhlhW0s46kaRjREZQV+1fFuCSoT3Ft+jaY9BuWro0R32TVnpB93KVGnns8GRrzxSGGoylsY9ncJCuqxKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716817669; c=relaxed/simple;
-	bh=8xcCsB+EROXGp8PmzD+b1rGd0T94KqkDNPuU4A2t/a4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bw9OpHri7YNL2g9TQN1iWpss+eNFE88HP619jLyRXF5aboSgDU0fD7hMgPNgLzu33aoO5IemBBk8WD5d0edepv6lbM0c28KKVcBGcE4YwFKYE2565bAg1hqZjbZTKn2PP/pbZvUctVfCnJKXDMXUAf9XI2O+4jd/BsNLvItAgmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VnxNH6XmZz9v7Hm;
-	Mon, 27 May 2024 21:30:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 7BF971404F0;
-	Mon, 27 May 2024 21:47:35 +0800 (CST)
-Received: from [10.206.134.102] (unknown [10.206.134.102])
-	by APP2 (Coremail) with SMTP id GxC2BwDn0ibqjlRm4I0BCQ--.41868S2;
-	Mon, 27 May 2024 14:47:34 +0100 (CET)
-Message-ID: <7f5a586f-f4b6-4d70-b121-3d82daf54865@huaweicloud.com>
-Date: Mon, 27 May 2024 15:47:20 +0200
+	s=arc-20240116; t=1716817821; c=relaxed/simple;
+	bh=SlXdApCylnQr8N4neH0zBYcckEuMSS9hVMXK7hRZ0Ao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2ztFAMUUl8kp5et8Sow2femhP3qpCzcTSXz7OAXXdMyL/75Tn3hRT9qtV7aj7Yg2aPqd/joZ0azWyIy4px++9RfEMtYfaMkWOzC2EtfjyOTlidGAhg93MHj36iluPCiFVilaVRKYTZ+Cq6GKrzvOtFcdNyGVff6E8jqXJiG6CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=D6Nsjc8M; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52742fdd363so4740476e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716817818; x=1717422618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tIOT9wvexJ79HNlrDmaPIby9uyeD/58/CsVvVIRo/Pk=;
+        b=D6Nsjc8M+mozp/1Yt+GtPtqPBNmvMQwHHnB3qJdGlaIf8/8cHyJzmqEeKiQoHBE8yI
+         Gc8X0OQzJRYEivdCq4uCi168JDSVQMLd+3LV2UbCuSbWmlavsHBd5SQ5PFhg9eWrsRQN
+         07BdIVb7CzPkIvK2LuldHc9lqSESnwjVzoJGW/B+Kk26LIZUJv8eAOp40JdNDLNddTBX
+         wI8pLXjFmgsNx/7yl5J/F0QBSNnQePk9zu/QTAZQZcHIvpZaW2HYwIyHYH0xQKCZM3nJ
+         UlKFzYcsfd6acOSs9TSAYcrYzpoSOdF5vW2LFLDpmvly7VuthTwgzUvzDCULEWA3n7zx
+         iuNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716817818; x=1717422618;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tIOT9wvexJ79HNlrDmaPIby9uyeD/58/CsVvVIRo/Pk=;
+        b=UONoMVh2p0pI6HWA4FuEKTtvrZnN8dPFAL/+hIg42SEiHraOugbM1kofX69qq6vsUF
+         aTisG3sflkS5SX5309bL2OhOm1UTosmIxYmJIhpaQS9XkG7+yFAJGnRsaRbpUKdJbnq6
+         kamKoX+b01zDYCrfjf+uju+rlXcSNwClnP6hKSLp9SBAhuqkis2HlN4C7fh44qO8Xba9
+         VBl0sZb0xTEXZqn3UGl+X2VEiJQNBMLBIj6QJ2jvIcWpn9xQlM0DJkmEG17qy+HrNQfm
+         1MiRs+mp85CnFKpWDTbJd+V4WgdHh5kTzAh2HIi8IYgmIL5QBRIyo/QrHZDE7O82bTnn
+         hXIQ==
+X-Gm-Message-State: AOJu0YwO2pWwg9jRj9M2gTB9mU2AwH2NGJQUqiFDjgp6jhELAXyhpE8G
+	Bg+kYdkORCa8VxSjo8Wps6gnpMbeHZ0mGGeYKptK7rA3BH6upiJWLvZFUOL6Bh7qwHEx7WNpJXZ
+	4Kr4=
+X-Google-Smtp-Source: AGHT+IEgARaZR+bIcjTK+/X0WoYnEvM7h0HHZFhNHPDwp9UyqUv1nbtDit7XTXMaV1EI/AddrP1s2A==
+X-Received: by 2002:a19:7705:0:b0:521:a96:bf1a with SMTP id 2adb3069b0e04-52966bad0eamr5027540e87.61.1716817817617;
+        Mon, 27 May 2024 06:50:17 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524b9e80sm5802279a12.85.2024.05.27.06.50.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 06:50:17 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH v2] w1: Drop allocation error message
+Date: Mon, 27 May 2024 15:49:47 +0200
+Message-ID: <20240527134946.338398-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-To: Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>
-Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
- will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
- npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
- luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
- dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
- <ZlSKYA/Y/daiXzfy@andrea>
- <79b55c10-dd06-4947-8545-20ffeb324bc6@rowland.harvard.edu>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <79b55c10-dd06-4947-8545-20ffeb324bc6@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwDn0ibqjlRm4I0BCQ--.41868S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrZry7Gw1Uuw17Jw48ZrWfuFg_yoW8JrWDpF
-	ZFga1xKw1DJay093yUGa9IvasY9an3XF1rW3s0yrs2ya1Yyw1xJryYvFW2gFyxtrn7A3WU
-	Jw4Yv3yxXayDAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI
-	0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyU
-	JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUF0eHDUUUU
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Transfer-Encoding: 8bit
 
+Drop the custom error message because kzalloc() already prints
+allocation failures.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+Changes in v2:
+- Drop the error message instead of fixing it as suggested by Krzysztof
+  Kozlowski
+- Link to v1: https://lore.kernel.org/linux-kernel/20240513154354.185974-3-thorsten.blum@toblux.com/
+---
+ drivers/w1/w1_int.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Am 5/27/2024 um 3:37 PM schrieb Alan Stern:
-> On Mon, May 27, 2024 at 03:28:00PM +0200, Andrea Parri wrote:
->>>> +    |                smp_store_mb | W[once] ->po F[mb]                        |
->>>
->>> I expect this one to be hard-coded in herd7 source code, but I cannot find
->>> it. Can you give me a pointer?
->>
->> smp_store_mb() is currently mapped to { __store{once}(X,V); __fence{mb}; } in
->> the .def file, so it's semantically equivalent to "WRITE_ONCE(); smp_mb();".
-> 
-> Why don't we use this approach for all the value-returning full-barrier
-> RMW operations?  That would immediately solve the issue of the
-> special-purpose code in herd7, leaving only the matter of how to
-> annotate failed RMW operations.
-
-
-I experimented with that the other day. My idea was to use a new 
-__fence{mb-successful-rmw} which would have
-
-   Mb = Mb | Mb-successful-rmw & (domain((po\(po;po));rmw) | 
-range(rmw;(po\(po;po)))
-
-to turn only the ordering effect of fences around cmpxchg off (and the 
-existance of these fences around unsuccessful cmpxchg would be the only 
-difference to the current representation).
-
-Unfortunately I didn't manage to get my changes to the .def file to 
-compile (FWIW I'm on herd 7.56+03).
-
-Maybe someone wiser with herd can figure out how to work the .def file.
-
-Best wishes,
-    jonas
+diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
+index 3a71c5eb2f83..19a0ea28e9f3 100644
+--- a/drivers/w1/w1_int.c
++++ b/drivers/w1/w1_int.c
+@@ -32,12 +32,8 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
+ 	 * We are in process context(kernel thread), so can sleep.
+ 	 */
+ 	dev = kzalloc(sizeof(struct w1_master) + sizeof(struct w1_bus_master), GFP_KERNEL);
+-	if (!dev) {
+-		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+-			sizeof(struct w1_master));
++	if (!dev)
+ 		return NULL;
+-	}
+-
+ 
+ 	dev->bus_master = (struct w1_bus_master *)(dev + 1);
+ 
+-- 
+2.45.1
 
 
