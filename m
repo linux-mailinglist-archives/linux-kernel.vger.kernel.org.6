@@ -1,155 +1,212 @@
-Return-Path: <linux-kernel+bounces-190483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EA48CFEE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:23:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB7F8CFEE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45181F22DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:23:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D72CB2340A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961C913C8EA;
-	Mon, 27 May 2024 11:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B9F14F9CC;
+	Mon, 27 May 2024 11:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Md2dvVf/"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gyVltNGu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156D13C825
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED5114EC6B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808945; cv=none; b=RbMX5UFqeJ+uwirtgtJ2i7dYVaBFTtoEOwIS8GYp1XyV3NIsmffLmLONvhhu1cGTr/jb4FVLBrITh7KJifFMkTjX6bPERGXJsvoPF9LDDnbO28tzW5lg/6BeQd6LvBKol66j2dMewl1ZlNq5I2hEukdEgvfoFNL1nEdnpyI6+8c=
+	t=1716809043; cv=none; b=QzRpyEXLKFdZEl3tgBCk/XGt+gFmTw7+AYnd1/kpM4ZYV71aWR6qzS445xzizwuTluXQA2njTRUTE5UhUnFqc2C/ZhyLCAyXyzufykI9sgA5CK+3cyDu2wRB2maSIrU3WzSuovI5UVbZ+5Pj/5pOhlVPu3R//ub0CU4orz/3xPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808945; c=relaxed/simple;
-	bh=88POcvOWFFjPPQWCit/6miZynfoeEN1gpEssKj4qSgU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QLJripdgq/MkcC5sFC2z6+XqAc6YBdwpwN8nsPuy7XFBP9/UYpXQ+Djr6jyJXiZ033UGB9rnjM0n9bdayUg0yaLK8pStCYqFLr+zQaROJJ5OQV1QYQj/zlYBq0tg7Oy+uWQ7Yhnd2EW/ZtEpM/spapL/RfR02n/uzTvaPp0tjFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Md2dvVf/; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a63036f2daaso68847266b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1716808942; x=1717413742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLptiP5qkymbmbX9UsdRdz023vOqmxKFBh0YRmvGv1M=;
-        b=Md2dvVf/doenhWB6q1z18CIBpb1+DAdMiaeYMtqTIiB4sSWQkKKWBDtRW39Xujysb8
-         DBm47LAAAwVpE8kg0V4ec87EToNwM1ckYBL8dbBas+kM/iNk4eBIvrETqmaerH/Is0mZ
-         e6thb8v1nUpd0Pt3Z9emAjTUYZd15TzvujOOXZUqjRpOfAv3wJO/Anig6h77bgnmRC1U
-         Yms42EaqFrmGZ1RKfJXZLaZcMo5hjm2ESEjxdFNmOkx3MuomlhebPs/5zDh9/wPdcZo8
-         Dge+Tm4Jp9nPbmY5dp7rPcShNsD90h55pepcDG3MqbCj1NObkGff7tqro4UiRo7QKesC
-         v10w==
+	s=arc-20240116; t=1716809043; c=relaxed/simple;
+	bh=I1jeBlgpNjWM5V+1t6DmYPIGjHTRRjbnXfam3eEIuDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F92LTUuNT+4HHYHtRsIJ0P0TaVmzDl/QlBiRpedLHMJC6XFw0LWDPiqNU6mddh/zbve8EF4if2Ezkz0p1YqjHrEx5Cj2YQEwLJLSvREVPW/KK9t7SHfYdZyz0Zc7m7YuGh/K3LG+dHajNZREtJabpQ3q9Q7P+UVB4otxN62cl9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gyVltNGu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716809040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezJXdyF0CJ1UVaUvAyDpaA8e9pPvbwoD8x8nXFabkEM=;
+	b=gyVltNGuPrAMQhZz8Q0NmHAbYIOCm1F5Ru6+4MJUZU0aqqcyiS+tuDhbNIdBejc5Tsi8Lv
+	gPhGaF1XvGm4oppyVO4dO1o0VmYtKxjPL4HmBVOCeh9X4oyAKT+m+JqtNthw8K99TsD+r9
+	RBTzHUA2tEaiPXPJpAehwsNNpH4dZJ8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-63bF6eYWNluJon4DL7PHSg-1; Mon, 27 May 2024 07:23:59 -0400
+X-MC-Unique: 63bF6eYWNluJon4DL7PHSg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4211211e18cso6043735e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:23:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716808942; x=1717413742;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eLptiP5qkymbmbX9UsdRdz023vOqmxKFBh0YRmvGv1M=;
-        b=AkgJ26kq2mgGtAAGTr6rZ4xVJVjPCIpYCrt96P1yGAXYPp/CqztWkat6UNth0beDB/
-         dovrIkSkXnGHtxIA03zmcFbYUJj6NaNcGLWWlVDjxlwlbByNH+yFodFRlrrgg9fTKUp5
-         MMlqBOxbUUWpyj5G6YeNIH9PpJFh+jMSi4DVR0vQNn+ICrdAyQ3IeDpN/QtnAPtRzixO
-         p3D7oICQGadJZBfpfS4W7IJei/DVmD6u1luoAYQHKJkWU8YPbblfuVNkcgy1yKEpK3w6
-         +bIA0iB+790g+GW9qYIxIu6msGVN3pZfVabwPMEdbWLMIRpbAaCQztXtkrdgJumJsQDi
-         G+bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+FAYc3LP/5wYrb6i7AlHKvMpe/NghMveM82UWBdEWnFPpRCe+8Gn8OR3m30CHtRT1azi6Z0R7+CsVhsMdsA+IRnTIvvP/h/5Om1IU
-X-Gm-Message-State: AOJu0YxMXXhdIjKXtCTyN3DdF8L9Re+jGo3REz8ZneYgwz2ZhEiEo8Kh
-	uzI2BRxr/lKM/nLdGAApZvlEXIj8swUd73kfbso7DduZ3QRH8o4mrd0sgb2CGHM=
-X-Google-Smtp-Source: AGHT+IEZdlj1VzyTR7Ta4LFCgyFZzIs4D4+uzViTqz7y8iQel3WIQ/7/p0r19rtv0ZF0a3iVzioFGg==
-X-Received: by 2002:a17:906:314e:b0:a59:c319:f1dc with SMTP id a640c23a62f3a-a62642daa92mr608591766b.4.1716808942029;
-        Mon, 27 May 2024 04:22:22 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:20])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a62bee266a1sm259856066b.159.2024.05.27.04.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 04:22:21 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: John Fastabend <john.fastabend@gmail.com>,  Daniel Borkmann
- <daniel@iogearbox.net>,  Hillf Danton <hdanton@sina.com>,  Tetsuo Handa
- <penguin-kernel@i-love.sakura.ne.jp>,  Eric Dumazet <edumazet@google.com>,
-  Linus Torvalds <torvalds@linux-foundation.org>,  bpf
- <bpf@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-In-Reply-To: <87a5kfwe8l.fsf@cloudflare.com> (Jakub Sitnicki's message of
-	"Fri, 24 May 2024 15:06:50 +0200")
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
-	<20240521225918.2147-1-hdanton@sina.com>
-	<20240522113349.2202-1-hdanton@sina.com> <87o78yvydx.fsf@cloudflare.com>
-	<CAADnVQKfbaY-pm2H-6U_c=-XyvocSAkNqXg4+Kj7cXGtmajaAA@mail.gmail.com>
-	<87a5kfwe8l.fsf@cloudflare.com>
-User-Agent: mu4e 1.12.4; emacs 29.1
-Date: Mon, 27 May 2024 13:22:19 +0200
-Message-ID: <871q5nwlck.fsf@cloudflare.com>
+        d=1e100.net; s=20230601; t=1716809036; x=1717413836;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ezJXdyF0CJ1UVaUvAyDpaA8e9pPvbwoD8x8nXFabkEM=;
+        b=iTITveeSqFeZ794f8UnivVpDhfgifwARwfhz8GyAJ/PGlwER2gFZdEdDVXVrY3NZQ6
+         HaQcbGRkoMlFF8O7WeT/CC4IC+puDyb0fn8bPyzUxMzE3Iw7mUuMiqj/8EOI+pcQ8RL7
+         SgW2gJWsidey/EWnTIY51ZvsdgNLY7ZycO2GQbphJ6WSbdPzmFXHmknWjsKMKUl6uH9x
+         RmRIl3kVPRyEJnMFqOMa8Up0wolTnecry2ezDtWtX5CXrZNlLB/Ac9vZNnahPfe9WLu1
+         Sr0U1e2DTmBtMJ3jQl+zsDCCOY8Kj9rm6WHU6D+/5vpDCQiJS+Z89gt4A6xhfBQ0JyOL
+         GPeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRpAR9ZSbO3fXncrwq/elniYrGw+Qzvht0E11hmMaM8nKQwjFPsOaG9phYgKP1xl7AjDYFpHMIj9+vqALPDMhKowUiZK/yA/8l4SeY
+X-Gm-Message-State: AOJu0YzWNI6HDmlQxcMyKJUjBl5eSL+IH7te6PUVes2iuqOS6vmo99Lg
+	Y8+vN/1gFsvbAmz+hRX4oIjZ9LG9kMUBo9faNUaQe0bxJA+fq9s1QhS6GIxP566CarukMsUVf+m
+	HTxC9+x6cTiW77XyWSBGle97nzHV8yMrtvNJBkuQuwMgnx3sLvPNAm2n1dTTI1Q==
+X-Received: by 2002:a05:600c:474f:b0:421:10e4:7f6b with SMTP id 5b1f17b1804b1-42110e47fd9mr36926245e9.27.1716809036240;
+        Mon, 27 May 2024 04:23:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEikC1MDgYWGSkvxnXWs44q8PtsKnEAug1a4E0ySEMd1oLjB/kkI4c5l3efqErU0u/TQoTByQ==
+X-Received: by 2002:a05:600c:474f:b0:421:10e4:7f6b with SMTP id 5b1f17b1804b1-42110e47fd9mr36926025e9.27.1716809035839;
+        Mon, 27 May 2024 04:23:55 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089708f8sm105016995e9.20.2024.05.27.04.23.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 04:23:55 -0700 (PDT)
+Message-ID: <59d4bf96-9a94-4e2c-9636-81e79d572438@redhat.com>
+Date: Mon, 27 May 2024 13:23:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/nouveau/nvif: Avoid build error due to potential
+ integer overflows
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Jani Nikula <jani.nikula@intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ Kees Cook <keescook@chromium.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Joe Perches <joe@perches.com>, David Airlie <airlied@gmail.com>
+References: <20240524134817.1369993-1-linux@roeck-us.net>
+Content-Language: en-US
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <20240524134817.1369993-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 03:06 PM +02, Jakub Sitnicki wrote:
-> On Wed, May 22, 2024 at 07:57 AM -07, Alexei Starovoitov wrote:
->> On Wed, May 22, 2024 at 5:12=E2=80=AFAM Jakub Sitnicki <jakub@cloudflare=
-com> wrote:
->>>
->>> On Wed, May 22, 2024 at 07:33 PM +08, Hillf Danton wrote:
->>> > On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.c=
-om>
->>> > On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
->>> >> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.star=
-ovoitov@gmail.com>
->>> >> >> On Sun, May 12, 2024 at 12:22=3DE2=3D80=3DAFAM Tetsuo Handa <peng=
-uin-kernel@i-love.sakura.ne.jp> wrote:
->>> >> >> > --- a/net/core/sock_map.c
->>> >> >> > +++ b/net/core/sock_map.c
->>> >> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *=
-sk,
->>> >> >> >         bool strp_stop =3D3D false, verdict_stop =3D3D false;
->>> >> >> >         struct sk_psock_link *link, *tmp;
->>> >> >> >
->>> >> >> > +       rcu_read_lock();
->>> >> >> >         spin_lock_bh(&psock->link_lock);
->>> >> >>
->>> >> >> I think this is incorrect.
->>> >> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
->>> >> >
->>> >> > Could you specify why it won't be safe in rcu cs if you are right?
->>> >> > What does rcu look like in RT if not nothing?
->>> >>
->>> >> RCU readers can't block, while spinlock RT doesn't disable preemptio=
-n.
->>> >>
->>> >> https://docs.kernel.org/RCU/rcu.html
->>> >> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preemp=
-t-rt
->>> >>
->>> >> I've finally gotten around to testing proposed fix that just disallo=
-ws
->>> >> map_delete_elem on sockmap/sockhash from BPF tracing progs
->>> >> completely. This should put an end to this saga of syzkaller reports.
->>> >>
->>> >> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
->>
->> Agree. Let's do that. According to John the delete path is not something
->> that is used in production. It's only a source of trouble with syzbot.
->
-> Cool. The proposed API rule would be that if a BPF program type is
-> allowed to update a sockmap/sockhash, then it is also allowed to delete
-> from it.
->
-> So I need to tweak my patch to allow deletes from sock_ops progs.
-> We have a dedicated bpf_sock_map_update() helper there.
->
-> [...]
+On 5/24/24 15:48, Guenter Roeck wrote:
+> Trying to build parisc:allmodconfig with gcc 12.x or later results
+> in the following build error.
+> 
+> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_mthd':
+> drivers/gpu/drm/nouveau/nvif/object.c:161:9: error:
+> 	'memcpy' accessing 4294967264 or more bytes at offsets 0 and 32 overlaps 6442450881 bytes at offset -2147483617 [-Werror=restrict]
+>    161 |         memcpy(data, args->mthd.data, size);
+>        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_ctor':
+> drivers/gpu/drm/nouveau/nvif/object.c:298:17: error:
+> 	'memcpy' accessing 4294967240 or more bytes at offsets 0 and 56 overlaps 6442450833 bytes at offset -2147483593 [-Werror=restrict]
+>    298 |                 memcpy(data, args->new.data, size);
+> 
+> gcc assumes that 'sizeof(*args) + size' can overflow, which would result
+> in the problem.
+> 
+> The problem is not new, only it is now no longer a warning but an error
+> since W=1 has been enabled for the drm subsystem and since Werror is
+> enabled for test builds.
+> 
+> Rearrange arithmetic and use check_add_overflow() for validating the
+> allocation size to avoid the overflow. While at it, split assignments
+> out of if conditions.
+> 
+> Fixes: a61ddb4393ad ("drm: enable (most) W=1 warnings by default across the subsystem")
+> Cc: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: Jani Nikula <jani.nikula@intel.com>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Danilo Krummrich <dakr@redhat.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Cc: Joe Perches <joe@perches.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Posted:
+Applied to drm-misc-fixes, thanks!
 
-https://lore.kernel.org/r/20240527-sockmap-verify-deletes-v1-0-944b372f2101=
-@cloudflare.com
+> ---
+> v3: Split assignments from if conditions.
+> v2: Use check_add_overflow() to calculate the allocation size and to check
+>      for overflows.
+> 
+>   drivers/gpu/drm/nouveau/nvif/object.c | 24 ++++++++++++++++++------
+>   1 file changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
+> index 4d1aaee8fe15..1d19c87eaec1 100644
+> --- a/drivers/gpu/drm/nouveau/nvif/object.c
+> +++ b/drivers/gpu/drm/nouveau/nvif/object.c
+> @@ -142,11 +142,16 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
+>   		struct nvif_ioctl_v0 ioctl;
+>   		struct nvif_ioctl_mthd_v0 mthd;
+>   	} *args;
+> +	u32 args_size;
+>   	u8 stack[128];
+>   	int ret;
+>   
+> -	if (sizeof(*args) + size > sizeof(stack)) {
+> -		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
+> +	if (check_add_overflow(sizeof(*args), size, &args_size))
+> +		return -ENOMEM;
+> +
+> +	if (args_size > sizeof(stack)) {
+> +		args = kmalloc(args_size, GFP_KERNEL);
+> +		if (!args)
+>   			return -ENOMEM;
+>   	} else {
+>   		args = (void *)stack;
+> @@ -157,7 +162,7 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
+>   	args->mthd.method = mthd;
+>   
+>   	memcpy(args->mthd.data, data, size);
+> -	ret = nvif_object_ioctl(object, args, sizeof(*args) + size, NULL);
+> +	ret = nvif_object_ioctl(object, args, args_size, NULL);
+>   	memcpy(data, args->mthd.data, size);
+>   	if (args != (void *)stack)
+>   		kfree(args);
+> @@ -276,7 +281,15 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
+>   	object->map.size = 0;
+>   
+>   	if (parent) {
+> -		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL))) {
+> +		u32 args_size;
+> +
+> +		if (check_add_overflow(sizeof(*args), size, &args_size)) {
+> +			nvif_object_dtor(object);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		args = kmalloc(args_size, GFP_KERNEL);
+> +		if (!args) {
+>   			nvif_object_dtor(object);
+>   			return -ENOMEM;
+>   		}
+> @@ -293,8 +306,7 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
+>   		args->new.oclass = oclass;
+>   
+>   		memcpy(args->new.data, data, size);
+> -		ret = nvif_object_ioctl(parent, args, sizeof(*args) + size,
+> -					&object->priv);
+> +		ret = nvif_object_ioctl(parent, args, args_size, &object->priv);
+>   		memcpy(data, args->new.data, size);
+>   		kfree(args);
+>   		if (ret == 0)
+
 
