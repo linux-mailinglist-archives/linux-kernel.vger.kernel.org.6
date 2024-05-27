@@ -1,437 +1,153 @@
-Return-Path: <linux-kernel+bounces-190947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0141F8D04C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585DF8D04C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2371F21C5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:53:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9D31F2163E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E30B17B43B;
-	Mon, 27 May 2024 14:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D7D15FA68;
+	Mon, 27 May 2024 14:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="OLD9Gj1w"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmyBspOA"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617E017B408;
-	Mon, 27 May 2024 14:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B1D15EFAE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819737; cv=none; b=WKmM1jZ0cu5T6xXsoDE9e4aykCWxs8LZ+MK/65v4V/4v19IAiFp/Bg4T7pwP6lqBy7rtgHWSbB5N1OS6ZrTv4whmRI5t66I1uLvBnws/4NOD/U3oReXHSg09tdt42pc9D2dBU4FvQA1AfztIhxXPDUn+qJQlHd8f0zCmFm3w/rA=
+	t=1716819807; cv=none; b=SMglDl1ZU8HJLa8U5Z73k4RqplRHoMI8a86l7H7Q7/6ADGvD6jExwD71r+MHl51pDHsbp7nASbULlZuT6VLht8MkoEJKThT1Ksl0JtzGtEY7XEPCEuzVvpNityZ9zBRbb+Qz2lxPCUFd2Zv+wKNC3GHvoJ53+1D6MTEti8tx3QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819737; c=relaxed/simple;
-	bh=7Pc+Vo3FNBYgK2OpLuaRpDRsNyAMhdPFi4gM1pbAazw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EzcewGhHAYfBGthDzIIOs8smsIpAJHXD4Nlm8hMTI3F3WPbHITtgyXGMEMLCEOiTspt2achQZNYuSzViIGDW5gxD+vxkOanduafGzUInorx6QIljP96+VtdHY5NBcavKqq6AxkXqQemf0AGNfCvqAwtce0Ewu8X65exrlvugssY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=OLD9Gj1w; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id 3688260415;
-	Mon, 27 May 2024 14:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1716819731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hiOQ8/ye/TAlumJArsn1YKtZ+Y0SMuYKwQl/8eLNSX4=;
-	b=OLD9Gj1wgQoy8RQ9C5N9q1VKaejTAVsQYXgo5m89XFj1Gv0Gi8stniepnea8ef8RRN8B4O
-	Z9Z6cC15RCp5UCpS2pVQQE+lwTL9w3U3aGq3oX1UTDLQ291Vpfhu19ZQrknpDZ6dkynSdM
-	bmE3+yt3iyLHCbo90ps4Qu5nSbJ9BOU=
-Received: from frank-G5.. (fttx-pool-217.61.154.6.bambit.de [217.61.154.6])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 2125836014D;
-	Mon, 27 May 2024 14:22:10 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	John Crispin <john@phrozen.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [net v2] net: ethernet: mtk_eth_soc: handle dma buffer size soc specific
-Date: Mon, 27 May 2024 16:21:42 +0200
-Message-Id: <20240527142142.126796-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716819807; c=relaxed/simple;
+	bh=sm44pjviolYcXIDxzIPWqNX7LR3G6mUIs56YucRNwwM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tA8gyn08QcOgeDoWXH2dx8s1O3hMWbAGL6Ko7nMXvA2XWsD6SZT0Vqy/9SDBEBoK9b9YoTSuSI3cLwJNOoIF+tdHdUoCFF3XvpzTejDM03iEnOCRYazWx1O9ijjWggYjJE4hJk22dCR6QC8uX3fgl227TLtxsI466cbf7w3lOR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmyBspOA; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f8e9878514so2531692b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716819804; x=1717424604; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iAFaFyYmOhcqz6/0CsRDcA375GrElz4k011ZY6EWfEo=;
+        b=mmyBspOA3eSuBiQJxF5b21ZBhhr8dxl895/L2D5nwSVyIn9VFHJBCLUvZGhRGYgWi2
+         IUeP/67inFCTMas9k/MFQ75kLcn2QabBmV7OKQKN7NPx8MPg/GdzepTsTqU1+A+AVVZC
+         3zPSSvKZjTlpH6wqxmBJp8Gtvam0SWd684KytEqjAzRW/Z9L0vUQ8S66NYhlB1krc6FO
+         SXf2iCy/ZqcXGk63bDc5lX365djnvLcNoGVbBn5MJLTRJ2sYnY8MJuFGrKkO5xQ4GmvJ
+         HXV62SEhDE0b0HVAUDSA8LcuzcA5vVSbd6c/EtFTSxQLSHTj3tmfMLRorqXgwS6hLUq6
+         sxBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716819804; x=1717424604;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iAFaFyYmOhcqz6/0CsRDcA375GrElz4k011ZY6EWfEo=;
+        b=RQYCHc4iCZevpVSBSEmHBeJoBUb7Wc96d00vxRNMx6PpdmzUdaHyVWp8V/m0gtunZQ
+         Ncp/Y2iJjkxQwo3xwBMKTFrFpNP8TTaHax3Tsjv+KsYkKkf3IuW+3hmu4g8bU5ILinoX
+         eUAfKmESEVcwKA1UUoryUz7UdyaMUjkD0xGDRHGomR4cfCiIFrQrWPhO0MFJNhSQFAu2
+         csi8+Zo1VwDPZ/J4MKgw9XSakHFYfBNtOYihrOvEE/qnh3FCsaARNkC6bfcSZB0AnMG/
+         Ou9rh/JuM3CVzkYWI0q2LBx+0Xkmoz0J7KMWumdLyCYGrVLuvt8JuhkcAlyQsPSaHN5o
+         1fgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf/+tysIcKSbdyTfYYJ3Nsnh0z25R0PGy8+Av2FDDeePwpANHN9X9Qjkbjj2Mmh3pMtlkucpecndMsoyUF8zQzjcSRM/UP9hurjvcE
+X-Gm-Message-State: AOJu0YwCSce1L844bO7I+T3Tliko+4bmFF+iOia057ubdB3TI+Srjgcr
+	KBdZlhZAsMSHeQitv37dk3MZBqr2Ll0OoQIlLpfli77GW0gulrOHWJoKCW3Fox8=
+X-Google-Smtp-Source: AGHT+IFc1iZS9wh9Is7k3xcIqgtRRQ9HCmO7nnfXJHnANhfsUFqEtGfj2zZjpZvOYRWLoYWyCsnRkg==
+X-Received: by 2002:a05:6a21:788c:b0:1ad:746:b15a with SMTP id adf61e73a8af0-1b212dfe3c0mr10634192637.47.1716819804334;
+        Mon, 27 May 2024 07:23:24 -0700 (PDT)
+Received: from [127.0.1.1] ([112.64.61.67])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fbd3eb67sm5109895b3a.19.2024.05.27.07.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:23:23 -0700 (PDT)
+From: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v5 0/6] Add DSC support to DSI video panel
+Date: Mon, 27 May 2024 22:21:46 +0800
+Message-Id: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 909db082-f0a2-4ba0-9a81-10d1f1ce0d2f
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPqWVGYC/5WNQQ6CMBBFr0K6dkwdC1FX3sOwADrAJELJDDYa0
+ rtbuYGLv3h/8d5mlIRJza3YjFBk5TBnKA+F6cZmHgjYZzZo0dkSHUw6gZc87fIYInsK8Fp0FWo
+ mcIBIiFXVt3S5mqxZhHp+74lHnXlkXYN89mJ0v/cPeXRggapTZ8vW2bPv70+eGwnHIIOpU0pf3
+ zrF6tEAAAA=
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Jun Nie <jun.nie@linaro.org>, Jonathan Marek <jonathan@marek.ca>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716819804; l=1945;
+ i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
+ bh=sm44pjviolYcXIDxzIPWqNX7LR3G6mUIs56YucRNwwM=;
+ b=Y7rs1ciLUI2OTmqboUiW7dxJf9Q6pb/KA0uo6G1fDAJQXyvhmaXXXIms5PqaUjuLCg25CbPC2
+ EME/sYC6vdvANroYFAd+6OSoTIRc5PdTNpMDjVmlpTO0yp1OBddakzz
+X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
+ pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-From: Frank Wunderlich <frank-w@public-files.de>
+This is follow up update to Jonathan's patch set.
 
-The mainline MTK ethernet driver suffers long time from rarly but
-annoying tx queue timeouts. We think that this is caused by fixed
-dma sizes hardcoded for all SoCs.
+Changes vs V4:
+- Polish width calculation with helper function
+- Split cfg2 compression bit into another patch
 
-Use the dma-size implementation from SDK in a per SoC manner.
+Changes vs V3:
+- Rebase to latest msm-next-lumag branch.
+- Drop the slice_per_pkt change as it does impact basic DSC feature.
+- Remove change in generated dsi header
+- update DSC compressed width calculation with bpp and bpc
+- split wide bus impact on width into another patch
+- rename patch tile of VIDEO_COMPRESSION_MODE_CTRL_WC change
+- Polish warning usage
+- Add tags from reviewers
 
-Fixes: 656e705243fd ("net-next: mediatek: add support for MT7623 ethernet")
-Suggested-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Changes vs V2:
+- Drop the INTF_CFG2_DATA_HCTL_EN change as it is handled in
+latest mainline code.
+- Drop the bonded DSI patch as I do not have device to test it.
+- Address comments from version 2.
+
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
-sorry for multiple posting in first version
+Changes in v5:
+- Link to v4: https://lore.kernel.org/r/20240524-msm-drm-dsc-dsi-video-upstream-4-v4-0-e61c05b403df@linaro.org
 
-based on SDK:
-
-https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/fac194d6253d339e15c651c052b532a449a04d6e
-
-v2:
-- fix unused variable 'addr' in 32bit build
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 105 +++++++++++++-------
- drivers/net/ethernet/mediatek/mtk_eth_soc.h |   9 +-
- 2 files changed, 78 insertions(+), 36 deletions(-)
+Jonathan Marek (4):
+      drm/msm/dpu: fix video mode DSC for DSI
+      drm/msm/dsi: set video mode widebus enable bit when widebus is enabled
+      drm/msm/dsi: set VIDEO_COMPRESSION_MODE_CTRL_WC
+      drm/msm/dsi: add a comment to explain pkt_per_line encoding
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index cae46290a7ae..f1ff1be73926 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -1131,9 +1131,9 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
- {
- 	const struct mtk_soc_data *soc = eth->soc;
- 	dma_addr_t phy_ring_tail;
--	int cnt = MTK_QDMA_RING_SIZE;
-+	int cnt = soc->tx.fq_dma_size;
- 	dma_addr_t dma_addr;
--	int i;
-+	int i, j, len;
- 
- 	if (MTK_HAS_CAPS(eth->soc->caps, MTK_SRAM))
- 		eth->scratch_ring = eth->sram_base;
-@@ -1142,40 +1142,46 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
- 						       cnt * soc->tx.desc_size,
- 						       &eth->phy_scratch_ring,
- 						       GFP_KERNEL);
-+
- 	if (unlikely(!eth->scratch_ring))
- 		return -ENOMEM;
- 
--	eth->scratch_head = kcalloc(cnt, MTK_QDMA_PAGE_SIZE, GFP_KERNEL);
--	if (unlikely(!eth->scratch_head))
--		return -ENOMEM;
-+	phy_ring_tail = eth->phy_scratch_ring + soc->tx.desc_size * (cnt - 1);
- 
--	dma_addr = dma_map_single(eth->dma_dev,
--				  eth->scratch_head, cnt * MTK_QDMA_PAGE_SIZE,
--				  DMA_FROM_DEVICE);
--	if (unlikely(dma_mapping_error(eth->dma_dev, dma_addr)))
--		return -ENOMEM;
-+	for (j = 0; j < DIV_ROUND_UP(soc->tx.fq_dma_size, MTK_FQ_DMA_LENGTH); j++) {
-+		len = min_t(int, cnt - j * MTK_FQ_DMA_LENGTH, MTK_FQ_DMA_LENGTH);
-+		eth->scratch_head[j] = kcalloc(len, MTK_QDMA_PAGE_SIZE, GFP_KERNEL);
- 
--	phy_ring_tail = eth->phy_scratch_ring + soc->tx.desc_size * (cnt - 1);
-+		if (unlikely(!eth->scratch_head[j]))
-+			return -ENOMEM;
- 
--	for (i = 0; i < cnt; i++) {
--		dma_addr_t addr = dma_addr + i * MTK_QDMA_PAGE_SIZE;
--		struct mtk_tx_dma_v2 *txd;
-+		dma_addr = dma_map_single(eth->dma_dev,
-+					  eth->scratch_head[j], len * MTK_QDMA_PAGE_SIZE,
-+					  DMA_FROM_DEVICE);
- 
--		txd = eth->scratch_ring + i * soc->tx.desc_size;
--		txd->txd1 = addr;
--		if (i < cnt - 1)
--			txd->txd2 = eth->phy_scratch_ring +
--				    (i + 1) * soc->tx.desc_size;
-+		if (unlikely(dma_mapping_error(eth->dma_dev, dma_addr)))
-+			return -ENOMEM;
- 
--		txd->txd3 = TX_DMA_PLEN0(MTK_QDMA_PAGE_SIZE);
--		if (MTK_HAS_CAPS(soc->caps, MTK_36BIT_DMA))
--			txd->txd3 |= TX_DMA_PREP_ADDR64(addr);
--		txd->txd4 = 0;
--		if (mtk_is_netsys_v2_or_greater(eth)) {
--			txd->txd5 = 0;
--			txd->txd6 = 0;
--			txd->txd7 = 0;
--			txd->txd8 = 0;
-+		for (i = 0; i < cnt; i++) {
-+			struct mtk_tx_dma_v2 *txd;
-+
-+			txd = eth->scratch_ring + (j * MTK_FQ_DMA_LENGTH + i) * soc->tx.desc_size;
-+			txd->txd1 = dma_addr + i * MTK_QDMA_PAGE_SIZE;
-+			if (j * MTK_FQ_DMA_LENGTH + i < cnt)
-+				txd->txd2 = eth->phy_scratch_ring +
-+					    (j * MTK_FQ_DMA_LENGTH + i + 1) * soc->tx.desc_size;
-+
-+			txd->txd3 = TX_DMA_PLEN0(MTK_QDMA_PAGE_SIZE);
-+			if (MTK_HAS_CAPS(soc->caps, MTK_36BIT_DMA))
-+				txd->txd3 |= TX_DMA_PREP_ADDR64(dma_addr + i * MTK_QDMA_PAGE_SIZE);
-+
-+			txd->txd4 = 0;
-+			if (mtk_is_netsys_v2_or_greater(eth)) {
-+				txd->txd5 = 0;
-+				txd->txd6 = 0;
-+				txd->txd7 = 0;
-+				txd->txd8 = 0;
-+			}
- 		}
- 	}
- 
-@@ -2457,7 +2463,7 @@ static int mtk_tx_alloc(struct mtk_eth *eth)
- 	if (MTK_HAS_CAPS(soc->caps, MTK_QDMA))
- 		ring_size = MTK_QDMA_RING_SIZE;
- 	else
--		ring_size = MTK_DMA_SIZE;
-+		ring_size = soc->tx.dma_size;
- 
- 	ring->buf = kcalloc(ring_size, sizeof(*ring->buf),
- 			       GFP_KERNEL);
-@@ -2465,8 +2471,8 @@ static int mtk_tx_alloc(struct mtk_eth *eth)
- 		goto no_tx_mem;
- 
- 	if (MTK_HAS_CAPS(soc->caps, MTK_SRAM)) {
--		ring->dma = eth->sram_base + ring_size * sz;
--		ring->phys = eth->phy_scratch_ring + ring_size * (dma_addr_t)sz;
-+		ring->dma = eth->sram_base + soc->tx.fq_dma_size * sz;
-+		ring->phys = eth->phy_scratch_ring + soc->tx.fq_dma_size * (dma_addr_t)sz;
- 	} else {
- 		ring->dma = dma_alloc_coherent(eth->dma_dev, ring_size * sz,
- 					       &ring->phys, GFP_KERNEL);
-@@ -2588,6 +2594,7 @@ static void mtk_tx_clean(struct mtk_eth *eth)
- static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- {
- 	const struct mtk_reg_map *reg_map = eth->soc->reg_map;
-+	const struct mtk_soc_data *soc = eth->soc;
- 	struct mtk_rx_ring *ring;
- 	int rx_data_len, rx_dma_size, tx_ring_size;
- 	int i;
-@@ -2595,7 +2602,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- 	if (MTK_HAS_CAPS(eth->soc->caps, MTK_QDMA))
- 		tx_ring_size = MTK_QDMA_RING_SIZE;
- 	else
--		tx_ring_size = MTK_DMA_SIZE;
-+		tx_ring_size = soc->tx.dma_size;
- 
- 	if (rx_flag == MTK_RX_FLAGS_QDMA) {
- 		if (ring_no)
-@@ -2610,7 +2617,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- 		rx_dma_size = MTK_HW_LRO_DMA_SIZE;
- 	} else {
- 		rx_data_len = ETH_DATA_LEN;
--		rx_dma_size = MTK_DMA_SIZE;
-+		rx_dma_size = soc->rx.dma_size;
- 	}
- 
- 	ring->frag_size = mtk_max_frag_size(rx_data_len);
-@@ -3139,7 +3146,10 @@ static void mtk_dma_free(struct mtk_eth *eth)
- 			mtk_rx_clean(eth, &eth->rx_ring[i], false);
- 	}
- 
--	kfree(eth->scratch_head);
-+	for (i = 0; i < DIV_ROUND_UP(soc->tx.fq_dma_size, MTK_FQ_DMA_LENGTH); i++) {
-+		kfree(eth->scratch_head[i]);
-+		eth->scratch_head[i] = NULL;
-+	}
- }
- 
- static bool mtk_hw_reset_check(struct mtk_eth *eth)
-@@ -5052,11 +5062,14 @@ static const struct mtk_soc_data mt2701_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
- 		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
- 	},
-@@ -5076,11 +5089,14 @@ static const struct mtk_soc_data mt7621_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
- 		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
- 	},
-@@ -5102,11 +5118,14 @@ static const struct mtk_soc_data mt7622_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
- 		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
- 	},
-@@ -5127,11 +5146,14 @@ static const struct mtk_soc_data mt7623_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
- 		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
- 	},
-@@ -5150,11 +5172,14 @@ static const struct mtk_soc_data mt7629_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
- 		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
- 	},
-@@ -5176,6 +5201,8 @@ static const struct mtk_soc_data mt7981_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma_v2),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
- 		.dma_len_offset = 8,
-+		.dma_size = MTK_DMA_SIZE(4K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
-@@ -5183,6 +5210,7 @@ static const struct mtk_soc_data mt7981_data = {
- 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(1K),
- 	},
- };
- 
-@@ -5202,6 +5230,8 @@ static const struct mtk_soc_data mt7986_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma_v2),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
- 		.dma_len_offset = 8,
-+		.dma_size = MTK_DMA_SIZE(4K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
-@@ -5209,6 +5239,7 @@ static const struct mtk_soc_data mt7986_data = {
- 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(1K),
- 	},
- };
- 
-@@ -5228,6 +5259,8 @@ static const struct mtk_soc_data mt7988_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma_v2),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
- 		.dma_len_offset = 8,
-+		.dma_size = MTK_DMA_SIZE(4K),
-+		.fq_dma_size = MTK_DMA_SIZE(4K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma_v2),
-@@ -5235,6 +5268,7 @@ static const struct mtk_soc_data mt7988_data = {
- 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
- 		.dma_len_offset = 8,
-+		.dma_size = MTK_DMA_SIZE(1K),
- 	},
- };
- 
-@@ -5249,6 +5283,8 @@ static const struct mtk_soc_data rt5350_data = {
- 		.desc_size = sizeof(struct mtk_tx_dma),
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
-+		.fq_dma_size = MTK_DMA_SIZE(2K),
- 	},
- 	.rx = {
- 		.desc_size = sizeof(struct mtk_rx_dma),
-@@ -5256,6 +5292,7 @@ static const struct mtk_soc_data rt5350_data = {
- 		.dma_l4_valid = RX_DMA_L4_VALID_PDMA,
- 		.dma_max_len = MTK_TX_DMA_BUF_LEN,
- 		.dma_len_offset = 16,
-+		.dma_size = MTK_DMA_SIZE(2K),
- 	},
- };
- 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index 4eab30b44070..f5174f6cb1bb 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -32,7 +32,9 @@
- #define MTK_TX_DMA_BUF_LEN	0x3fff
- #define MTK_TX_DMA_BUF_LEN_V2	0xffff
- #define MTK_QDMA_RING_SIZE	2048
--#define MTK_DMA_SIZE		512
-+#define MTK_DMA_SIZE(x)		(SZ_##x)
-+#define MTK_FQ_DMA_HEAD		32
-+#define MTK_FQ_DMA_LENGTH	2048
- #define MTK_RX_ETH_HLEN		(ETH_HLEN + ETH_FCS_LEN)
- #define MTK_RX_HLEN		(NET_SKB_PAD + MTK_RX_ETH_HLEN + NET_IP_ALIGN)
- #define MTK_DMA_DUMMY_DESC	0xffffffff
-@@ -1176,6 +1178,8 @@ struct mtk_soc_data {
- 		u32	desc_size;
- 		u32	dma_max_len;
- 		u32	dma_len_offset;
-+		u32	dma_size;
-+		u32	fq_dma_size;
- 	} tx;
- 	struct {
- 		u32	desc_size;
-@@ -1183,6 +1187,7 @@ struct mtk_soc_data {
- 		u32	dma_l4_valid;
- 		u32	dma_max_len;
- 		u32	dma_len_offset;
-+		u32	dma_size;
- 	} rx;
- };
- 
-@@ -1264,7 +1269,7 @@ struct mtk_eth {
- 	struct napi_struct		rx_napi;
- 	void				*scratch_ring;
- 	dma_addr_t			phy_scratch_ring;
--	void				*scratch_head;
-+	void				*scratch_head[MTK_FQ_DMA_HEAD];
- 	struct clk			*clks[MTK_CLK_MAX];
- 
- 	struct mii_bus			*mii_bus;
+Jun Nie (2):
+      drm/msm/dpu: adjust data width for widen bus case
+      drm/msm/dpu: enable compression bit in cfg2 for DSC
+
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c          |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h     |  8 ++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 18 ++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c          | 13 +++++++++++++
+ drivers/gpu/drm/msm/dsi/dsi_host.c                   | 10 +++++++++-
+ 5 files changed, 49 insertions(+), 2 deletions(-)
+---
+base-commit: e6428bcb611f6c164856a41fc5a1ae8471a9b5a9
+change-id: 20240524-msm-drm-dsc-dsi-video-upstream-4-22e2266fbe89
+
+Best regards,
 -- 
-2.34.1
+Jun Nie <jun.nie@linaro.org>
 
 
