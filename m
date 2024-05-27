@@ -1,295 +1,101 @@
-Return-Path: <linux-kernel+bounces-190686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF25C8D0160
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:25:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA848D015D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D221F21D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C1E1F21C1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1A515F322;
-	Mon, 27 May 2024 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE615EFBF;
+	Mon, 27 May 2024 13:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VO3FTXkQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GX6aFElK"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566C15F30B;
-	Mon, 27 May 2024 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065AB15EFB8
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 13:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716816308; cv=none; b=GKno8AQA2Cxz8lk6ux5L/qo9D63ugs9wueu1XGmQz0xy7Ziu+zljaEUG24TaGFBPyev+mBoa0gEhhZxfVe6Xy9C+xFSDRxGv1VlXJLvKgFj6K3j/YXCxGsVlsqGfGRwDFXZ8VFEu2dFPqMHWUNpTUkjTLkfI+ghnGaIB5WlOIO8=
+	t=1716816304; cv=none; b=qMIOTni2+Fm0XRsTuUzB3jJHqKjs0v89c/GQq5IeIUGTkGxEIodgvkAJzwt/yg58NnFhTBA2mz5c4RdwhcmCezw7jW98Er+YZJJGusGyyEHe4JC2GqYoKuPdv2hZIMsWNPltcZPoRH6cO9louXIIs0ZqGfsnYvh4rsSRyyM+Ve8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716816308; c=relaxed/simple;
-	bh=EIaUMYWuRe8562D/Mf8UlCvMzsjv6hJ90LrIKb7TGmY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r/VMTwWZ3qJIoWkvMx/KRYGbgU/PWiHlhQJ1mKcAO2MLmy2LcgXO3Bsz6tIgbNUzSsl/sTL93sIY9w+oMozZQwVWPl0+iagbHobzBHChmVINd/42XUDhMoXNDmjGRW8zQFAcgKrspydOJwnp1tfoHfBXp3QAY/pn7gKunkCjOTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VO3FTXkQ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716816307; x=1748352307;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EIaUMYWuRe8562D/Mf8UlCvMzsjv6hJ90LrIKb7TGmY=;
-  b=VO3FTXkQVPOCIxPpXlb6q0iHwEESzU+twtoTRMRVSKiVy7mAX4FHIZm+
-   zuQu2mmiefMDdZaVs8dsKnsqk2VeneipapGTcskWyOBeeJdj1Zm/byWJg
-   l5J6hQ7yBMvjXDblRbqHF69BUGwXQsWakdMAGb3Aa+miEU4aa/Ro9jzXs
-   psu++altdXaPZoNh/K1Cx0bIegHPLKcn7BXNZm7TMR1k0C+ngJ7Uy5Cr+
-   Oti3O0WPZbTXQKoJiQ+/k5LAinjfTkZCbQDAT6JbmZTnkNOQeYoNEUWZw
-   zu/jsypfbXYOYy2V5grHSCUazwRbWZenVcA3YKNOio6Xq4ot1MCT0EMk6
-   g==;
-X-CSE-ConnectionGUID: g/gb+7PjT1C1JV1jFLDPCQ==
-X-CSE-MsgGUID: LhZBoK91QyamNqlN6P1McA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="16969419"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="16969419"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:25:07 -0700
-X-CSE-ConnectionGUID: qazZSeGERtqEaOe0w5u2sw==
-X-CSE-MsgGUID: nUvmhy5MRBekUUvy1hkmhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="34670162"
-Received: from unknown (HELO localhost) ([10.245.247.140])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 06:25:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Chevron Li <chevron.li@bayhubtech.com>,
-	Dinghao Liu <dinghao.liu@zju.edu.cn>,
-	Adam Lee <adam.lee@canonical.com>,
-	Chris Ball <chris@printf.net>,
-	Peter Guo <peter.guo@bayhubtech.com>,
-	Jennifer Li <Jennifer.li@o2micro.com>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] mmc: sdhci-pci-o2micro: Convert PCIBIOS_* return codes to errnos
-Date: Mon, 27 May 2024 16:24:42 +0300
-Message-Id: <20240527132443.14038-2-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240527132443.14038-1-ilpo.jarvinen@linux.intel.com>
-References: <20240527132443.14038-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1716816304; c=relaxed/simple;
+	bh=CQ6QFnP2deDpvp3Pj7oNizzTCPgYn5yROzn1dc6gUJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PffKzazYI1GB8bSjsk3hNmUPGCFbCxgYL2TewjiKXYmZcJDowZNZHBuCHNXmzbItIT699YAeOhCToO0QLV0lqbdoVRxJ3KrBn0isOnEeu3UNamaRWnycoemm7lAnYvPLNq1iy5jlk0XmiFplQSr9Bv6Ubykg+EtB5/iH1pGzVK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GX6aFElK; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a080a171dso31600407b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 06:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716816302; x=1717421102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQ6QFnP2deDpvp3Pj7oNizzTCPgYn5yROzn1dc6gUJE=;
+        b=GX6aFElKK7u+h/K8jDC4n0pKU9+8DjxGsOjF+VvFBjQfjzbFnA+20Q35RpTlLxh3Jn
+         CIsz+bwM2wRv1l7ibGCxqKIP8NB/Nlgyu0GDbIC9AS8xIfspE8NXwAWzFcSr7glIOooe
+         4HxcLZzmfWkCaR96VbfHPm06oWwUUYrOaAnhW5yPqePK7fLFPBTcJEwQVQX/Dexdap6d
+         UBc9796Tww7pJxe+mxAfK6O2OTEbg6v+STguCf4oRsnK69edMu13I9D9wYrEUo5azcuW
+         U1MKarOp6VBLlti+MtXoyj92URNZeBzVjI0Q1qCj6NWYjo2wGV6+cpJ1qvidspDwlxTq
+         REQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816302; x=1717421102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CQ6QFnP2deDpvp3Pj7oNizzTCPgYn5yROzn1dc6gUJE=;
+        b=b0LOMagvouMybjikwGTfDi4w//ubwTyiayzq2duyCERU0lWiImwXizAde0li3Z9xQR
+         cXmaLQXIJDpvkLG60eVGQx3qcgbaG7x8VRjSkijEuWLF33TeD7oDT07dHod7Fu0ca9L5
+         4aXv4jvp+xq3JcPl8qkAId0JcBhfqtTzRWl7kzFDIm73f6E+xd3krHiz14wNvsbZN2bf
+         fx9hXr1cGN7T1FcumSs2WJN4GHLZBaszmI31XMIQUhbI90BSgMS3RxxKI8G7Bj7l2xfC
+         uNGVk2j1qD+GraL/9tRwfgrlpwvLn99O6s8eVTfMF8bYQhG0HVOTx8aikS+O2kULdvCt
+         KtHg==
+X-Gm-Message-State: AOJu0YwfeouGJPtLj34azIIO5OlF8JjwomO9/bidj+SgQGphrJpxEc7Q
+	CS8SQ4C9l5szG3IYJ6YwWZgMvy3h9dgW1rGOgrlyU9W9U6AG4YzxI6sYZRtbeVg68QOq1H0SSH9
+	wvgUXgq52SJXpJXOjfbBjdAoCOPKheaC2iMt9xA==
+X-Google-Smtp-Source: AGHT+IFva1a/cQkBiyWvE7gUZAS0TVsAW0fRcqJHDA9tmjBCLMZvIEDmvw/hk2OUWJb0h0vbuBejxk7aTe8N+86gM/k=
+X-Received: by 2002:a05:6902:1021:b0:de5:549b:dc9e with SMTP id
+ 3f1490d57ef6-df772385ecbmr10475413276.57.1716816301823; Mon, 27 May 2024
+ 06:25:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240508184905.2102633-1-andriy.shevchenko@linux.intel.com> <20240508184905.2102633-5-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240508184905.2102633-5-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 May 2024 15:24:51 +0200
+Message-ID: <CACRpkdaSU97+aA4fvVZT=ay2e9g8pjbX0dMO23gFF8+sn5S88A@mail.gmail.com>
+Subject: Re: [PATCH v1 04/10] misc: eeprom_93xx46: Hide legacy platform data
+ in the driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-sdhci_pci_o2_probe() uses pci_read_config_{byte,dword}() that return
-PCIBIOS_* codes. The return code is then returned as is but as
-sdhci_pci_o2_probe() is probe function chain, it should return normal
-errnos.
+On Wed, May 8, 2024 at 8:49=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
-errno before returning them. Add a label for read failure so that the
-conversion can be done in one place rather than on all of the return
-statements.
+> First of all, there is no user for the platform data in the kernel.
+> Second, it needs a lot of updates to follow the modern standards
+> of the kernel, including proper Device Tree bindings and device
+> property handling.
+>
+> For now, just hide the legacy platform data in the driver's code.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Fixes: 3d757ddbd68c ("mmc: sdhci-pci-o2micro: add Bayhub new chip GG8 support for UHS-I")
-Fixes: d599005afde8 ("mmc: sdhci-pci-o2micro: Add missing checks in sdhci_pci_o2_probe")
-Fixes: 706adf6bc31c ("mmc: sdhci-pci-o2micro: Add SeaBird SeaEagle SD3 support")
-Fixes: 01acf6917aed ("mmc: sdhci-pci: add support of O2Micro/BayHubTech SD hosts")
-Fixes: 26daa1ed40c6 ("mmc: sdhci: Disable ADMA on some O2Micro SD/MMC parts.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/mmc/host/sdhci-pci-o2micro.c | 41 +++++++++++++++-------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index d4a02184784a..058bef1c7e41 100644
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -823,7 +823,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch &= 0x7f;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 
-@@ -834,7 +834,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_CLKREQ, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x20;
- 		pci_write_config_byte(chip->pdev, O2_SD_CLKREQ, scratch);
- 
-@@ -843,7 +843,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		 */
- 		ret = pci_read_config_byte(chip->pdev, O2_SD_CAPS, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x01;
- 		pci_write_config_byte(chip->pdev, O2_SD_CAPS, scratch);
- 		pci_write_config_byte(chip->pdev, O2_SD_CAPS, 0x73);
-@@ -856,7 +856,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_INF_MOD, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x08;
- 		pci_write_config_byte(chip->pdev, O2_SD_INF_MOD, scratch);
- 
-@@ -864,7 +864,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x80;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
-@@ -875,7 +875,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 
- 		scratch &= 0x7f;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
-@@ -886,7 +886,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 						    O2_SD_FUNC_REG0,
- 						    &scratch_32);
- 			if (ret)
--				return ret;
-+				goto read_fail;
- 			scratch_32 = ((scratch_32 & 0xFF000000) >> 24);
- 
- 			/* Check Whether subId is 0x11 or 0x12 */
-@@ -898,7 +898,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 							    O2_SD_FUNC_REG4,
- 							    &scratch_32);
- 				if (ret)
--					return ret;
-+					goto read_fail;
- 
- 				/* Enable Base Clk setting change */
- 				scratch_32 |= O2_SD_FREG4_ENABLE_CLK_SET;
-@@ -921,7 +921,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_dword(chip->pdev,
- 					    O2_SD_CLK_SETTING, &scratch_32);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 
- 		scratch_32 &= ~(0xFF00);
- 		scratch_32 |= 0x07E0C800;
-@@ -931,14 +931,14 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_dword(chip->pdev,
- 					    O2_SD_CLKREQ, &scratch_32);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch_32 |= 0x3;
- 		pci_write_config_dword(chip->pdev, O2_SD_CLKREQ, scratch_32);
- 
- 		ret = pci_read_config_dword(chip->pdev,
- 					    O2_SD_PLL_SETTING, &scratch_32);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 
- 		scratch_32 &= ~(0x1F3F070E);
- 		scratch_32 |= 0x18270106;
-@@ -949,7 +949,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_dword(chip->pdev,
- 					    O2_SD_CAP_REG2, &scratch_32);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch_32 &= ~(0xE0);
- 		pci_write_config_dword(chip->pdev,
- 				       O2_SD_CAP_REG2, scratch_32);
-@@ -961,7 +961,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 					   O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x80;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
-@@ -971,7 +971,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 				O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 
- 		scratch &= 0x7f;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
-@@ -979,7 +979,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_dword(chip->pdev,
- 					    O2_SD_PLL_SETTING, &scratch_32);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 
- 		if ((scratch_32 & 0xff000000) == 0x01000000) {
- 			scratch_32 &= 0x0000FFFF;
-@@ -998,7 +998,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 						    O2_SD_FUNC_REG4,
- 						    &scratch_32);
- 			if (ret)
--				return ret;
-+				goto read_fail;
- 			scratch_32 |= (1 << 22);
- 			pci_write_config_dword(chip->pdev,
- 					       O2_SD_FUNC_REG4, scratch_32);
-@@ -1017,7 +1017,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		ret = pci_read_config_byte(chip->pdev,
- 					   O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x80;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
-@@ -1028,7 +1028,7 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev, O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch &= 0x7f;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 
-@@ -1057,13 +1057,16 @@ static int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		/* Lock WP */
- 		ret = pci_read_config_byte(chip->pdev, O2_SD_LOCK_WP, &scratch);
- 		if (ret)
--			return ret;
-+			goto read_fail;
- 		scratch |= 0x80;
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	}
- 
- 	return 0;
-+
-+read_fail:
-+	return pcibios_err_to_errno(ret);
- }
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.39.2
-
+Yours,
+Linus Walleij
 
