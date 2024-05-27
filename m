@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-190581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2128D0008
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CEA8D0009
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56ADA283929
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF26283352
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0415E5AD;
-	Mon, 27 May 2024 12:29:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EB915E5A9;
+	Mon, 27 May 2024 12:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="aIalgtHa"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB0915DBC0
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E533C38FA6
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716812968; cv=none; b=lgu49XOjGx/XBfVv9TPl7CAuUeE/AdbZu11cm88RjcS7zUustW+tL3BGBMFBePdb5dGUiZezXxOMA9QX24LFE3hnlNheYaGpx7RuIx9xenzZV1BSCjQcAKQBZGTtANpKPPAOFG2+O8454dfxqDS8A2J/gVr0ELWVScQYowU4W8A=
+	t=1716813052; cv=none; b=FJyebNRVgGODLQedYyhgb0Ro5Ch6IttLyP9ITy8UEiYR/vOVPqAgN5gdcHWyUDh8xEKkQaYXviTT8KEspGycgHPu+93uMTnZ66t3Tf2tHcRuwKQN0fAQixHf7FCyE40KtVM121GbJO0amNcorIy/+DkFm40H1Qnwx0QEtBXlMaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716812968; c=relaxed/simple;
-	bh=ms9VXN8D1NATqDWtwOpSreufyoC7PyZATKQgJfLKKkU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GWGfhA2SWYqeXmWy218qv3mGd/NCztKQFQUyl7clQLOpgtFcRDnXZXuxGSRN8JsqT9H9OptzmM6YmIi+oL2We43YlxSLgYTa3GqrUwCMMQ0aNiR0xaiXDXKY5mp8Y8Tg4ddVhHgyCR4QVJuIFq5RAJeDWzPUeJ+5wdyM6/Wiiq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eac3b73a53so165168239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:29:27 -0700 (PDT)
+	s=arc-20240116; t=1716813052; c=relaxed/simple;
+	bh=6+DvNF9RmDjZqkDGx57QY0y83XXuNrV7E1Kzbl2XyQ0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gEyn80UJ3GTPG2piVQkWqJUoP9XD5N1j61zADWzwW58kik3k7wyZM2hnxQKxJlGIjVNwz7DAfoIVHkkUpQ4qtaKrHUeiP5ZFx+rAiN4yAT28uszv01d9xqeK8veNgPA6biirbwZHU8mu6vxHHqcdj9wWPvx4ZqMtC7ibzrGJcjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=aIalgtHa; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5cec2c2981so654396266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716813049; x=1717417849; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kfzGbRD3sk8twjWqVfYmhO7ZpaFRIUQWKhYr1L1EPwE=;
+        b=aIalgtHaJdleI/Fhf7+Mt8dZOfgMd7DJ4cc8oblSeemsMFOqX5aTcgxmAPI4EeLEk9
+         GTHzVePq+WSqKTvpVigiqKs6znAv/Z9xq7/f+lyTmlLmaRwQx+AmB+rhaHtVewbn5TaA
+         Kop6PsTQxbsx5qdP0l5YQRutW5EMmpLbTdd+yllMbZnqFaImOAJQXoSknd82TynFjVkE
+         OExjAuNd2oTO7s/DyKCMVbIBw3p6wmkXi24Wnk68c+o7+s/XWZVUqmO9mUKXz4Sl+QKS
+         AxZzhnkdGcwoIMNUQmDEhEioTa5R+zGBD363Gw7PlWIoDp35K59T64t/1ImdZv+IGVaA
+         8pLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716812966; x=1717417766;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPzW7UX5wznXxQBLpB5LbS3U4R1DB+9hPgb7NPzC2Io=;
-        b=uLgby+0+WOSmVFigaRmKMbZGoky+OvSa1llIaOnWdJ6Nqh/jlTOsdJtLbeST8MdLxE
-         XlghWjQpyjeZgwyGScmpC1U+05eRDJiybx80+cnrXleqfcXLFPxXz8YHtrs5Tyjg6Voy
-         m3J7BswpuEv1iemLZANvHY7mbb8wyd7KCYv8zreeEvGqX3g9vZV5GBa4F/yuAaio1ncX
-         4K6mhXG3W44nvch0t6LQQZiWP4Qc2d1uqOM3Q6/aLkEWwWQIZBngdEqDELpGnAz6sfBT
-         /J4vndeSLN/oxkcmBk1AzKEU0CnjBTwLbNHPZTFobkOr3ctVn5r3rwyMAz5C6iJvQgWF
-         6VEA==
-X-Gm-Message-State: AOJu0YzchlwXXf6S/H05Lo5hOLlIBescdAiRg3xW8i5TexpsHVd2HYsm
-	tklopFrHqW3opXRvGMu923WIAYWrYgghIVrwxqRs4Wh9C7qFZdwMkffFOqzo8ZLxb9TzbwC6Z6k
-	FyeHr0X+m0ibTgH1Wl7qO4FA+tu2asLYr+2Kki9887Aw2tiesk6I3wmk=
-X-Google-Smtp-Source: AGHT+IFMuOQbvKl+uejf1nm3Nnf+yfAB8DraI9mE+91WF5Q9V3BwymwmL4ZASQG7nGOeMzp9RYgyuEBd48FcPvsNhtZNjKW5C+13
+        d=1e100.net; s=20230601; t=1716813049; x=1717417849;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kfzGbRD3sk8twjWqVfYmhO7ZpaFRIUQWKhYr1L1EPwE=;
+        b=QNFHdtYRKdObuHiqkhEcEH2v49tT+IEe+KVMM7cJFefZKvbOzClXQPvy+pNU4NB+vf
+         6Iw2dt7qH1LyzGvmYt1Y17SQFYZY7BJrd0W0pSDPkMIcIGo8yRCh2iqGdPBDxa1i/j0d
+         cb91H9NkBFtxqaeHqVpXl2BDFUh71xw+IydkG5iH7gmOnjRgSIKOxULyUr0DKiNIl0Mh
+         XYJUol6KmfQNYtKMAzGlWk6y1ZE2dg5NeCq9YJnTjXPSzMNq6CWYGQIs8pXQ2UKNfD89
+         CJxvXK2oP9/4A/yjgbNYPy2DTZqQNVTbofkUR+8dRy7VHbhQn0eodflzjis/e+9DlNGj
+         rpbQ==
+X-Gm-Message-State: AOJu0YyDhugdKO4dm+Tk+xGFq0g2jWN2wp6Noy1mGAHZLwFbJRxWggMo
+	INRBwMTlE1o9PkxWm7yEtIQ2qEihsZ/JdD4gr23DM3EvLwQgXlPul/arI4dFdt8=
+X-Google-Smtp-Source: AGHT+IFpUMr18cxOauY12oXYvM6RE8hLu/q+zupGiRCnd0dXkMbEPZiZwA/qkFVsXWVeyutQBdWRUQ==
+X-Received: by 2002:a50:c907:0:b0:572:689f:6380 with SMTP id 4fb4d7f45d1cf-578519144e9mr7586305a12.3.1716813049163;
+        Mon, 27 May 2024 05:30:49 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:aa3:5c01:cd9d:f244:3bcd:de57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57861b4ddefsm4475753a12.60.2024.05.27.05.30.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2024 05:30:48 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a02:cd2c:0:b0:48a:37e1:a545 with SMTP id
- 8926c6da1cb9f-4b03fccefbamr154311173.6.1716812965144; Mon, 27 May 2024
- 05:29:25 -0700 (PDT)
-Date: Mon, 27 May 2024 05:29:25 -0700
-In-Reply-To: <00000000000089427c0614c18cf4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000eef89706196eaad4@google.com>
-Subject: Re: [syzbot] Test
-From: syzbot <syzbot+c4c6c3dc10cc96bcf723@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [RESEND PATCH] w1: Add missing newline and fix typos in
+ w1_bus_master comment
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
+Date: Mon, 27 May 2024 14:30:37 +0200
+Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <80088619-34B7-4815-8697-368EBB0CF48B@toblux.com>
+References: <20240515101150.3289-2-thorsten.blum@toblux.com>
+ <20240527092746.263038-2-thorsten.blum@toblux.com>
+ <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 27. May 2024, at 13:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 27/05/2024 11:27, Thorsten Blum wrote:
+>> - Add missing newline before @return
+>> - s/bytes/byte/
+>> - s/handles/handle/
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> 
+> Do not attach (thread) your patchsets to some other threads (unrelated
+> or older versions). This buries them deep in the mailbox and might
+> interfere with applying entire sets.
 
-***
-
-Subject: Test
-Author: radoslaw.zielonek@gmail.com
-
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 71b1543c83d65af8215d7558d70fc2ecbee77dcf
-
----
- net/sched/sch_taprio.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
-index a0d54b422186..41add4a1d407 100644
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -44,6 +44,8 @@ static struct static_key_false taprio_have_working_mqprio;
- 	(TCA_TAPRIO_ATTR_FLAG_TXTIME_ASSIST | TCA_TAPRIO_ATTR_FLAG_FULL_OFFLOAD)
- #define TAPRIO_FLAGS_INVALID U32_MAX
- 
-+#define TAPRIO_MAX_NUM_SCHEDULES_BEFORE_NOW 10
-+
- struct sched_entry {
- 	/* Durations between this GCL entry and the GCL entry where the
- 	 * respective traffic class gate closes
-@@ -62,6 +64,8 @@ struct sched_entry {
- 	u32 gate_mask;
- 	u32 interval;
- 	u8 command;
-+	/* Used to skip some cycles to prevent other tasks from starving */
-+	u8 num_schedules_before_now;
- };
- 
- struct sched_gate_list {
-@@ -111,6 +115,9 @@ struct __tc_taprio_qopt_offload {
- 	struct tc_taprio_qopt_offload offload;
- };
- 
-+static void setup_txtime(struct taprio_sched *q,
-+			 struct sched_gate_list *sched, ktime_t base);
-+
- static void taprio_calculate_gate_durations(struct taprio_sched *q,
- 					    struct sched_gate_list *sched)
- {
-@@ -919,6 +926,7 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
- 	struct sched_entry *entry, *next;
- 	struct Qdisc *sch = q->root;
- 	ktime_t end_time;
-+	ktime_t basenow;
- 	int tc;
- 
- 	spin_lock(&q->current_entry_lock);
-@@ -977,6 +985,23 @@ static enum hrtimer_restart advance_sched(struct hrtimer *timer)
- 	taprio_set_budgets(q, oper, next);
- 
- first_run:
-+	basenow = ktime_get();
-+	if (ktime_before(end_time, basenow))
-+	{
-+		next->num_schedules_before_now++;
-+		if (next->num_schedules_before_now >= TAPRIO_MAX_NUM_SCHEDULES_BEFORE_NOW)
-+		{
-+			end_time = ktime_add_ns(basenow, oper->cycle_time);
-+			next->end_time = end_time;
-+			next->num_schedules_before_now = 0;
-+			setup_txtime(q, oper, basenow);
-+		}
-+	}
-+	else
-+	{
-+		next->num_schedules_before_now = 0;
-+	}
-+
- 	rcu_assign_pointer(q->current_entry, next);
- 	spin_unlock(&q->current_entry_lock);
- 
-@@ -1074,6 +1099,7 @@ static int parse_sched_entry(struct taprio_sched *q, struct nlattr *n,
- 	}
- 
- 	entry->index = index;
-+	entry->num_schedules_before_now = 0;
- 
- 	return fill_sched_entry(q, tb, entry, extack);
- }
--- 
-2.43.0
-
-
+Ok thanks - didn't know that either.
 
