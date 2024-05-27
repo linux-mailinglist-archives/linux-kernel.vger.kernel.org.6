@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-191319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517218D09DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74318D09E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0735F1F22274
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:29:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623E9B21975
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C9415FA83;
-	Mon, 27 May 2024 18:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E7F15FD16;
+	Mon, 27 May 2024 18:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="OgmCWSW/";
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="wYP1mGPJ"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ts958yWY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405BD518;
-	Mon, 27 May 2024 18:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB0BD518;
+	Mon, 27 May 2024 18:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716834539; cv=none; b=J/1dpVnu9tkSY5DR3wpJLK5mDN7f6iz0o0yZrNDEZNHj1CsCpt2uzyXZR/G//oJ2T7uXe8gINbVPfZ2C/96YaSzcFoXIU5Jfmyg7iaTZ43KIXR4oLiQcS032SWfzzn8rTArTjPQ/KTAVY0GDtPQfb9SVBuDpG4XSeQCwWvKb714=
+	t=1716834543; cv=none; b=c1k1oRLOpbeOD2892sPS9ZEoBWlmgua4fQDh9R8+YQ6BObu13+i45cB++wPhE0yy5EIWWp4NZ5+xzZTFIMtimjLlMXK1nLtDzy6StOgDXifBliCQeMzDoEDybipdQ+Fh3Z8ziCu+Pdp+V6yd9CImFs0OFUwbQmhmuvJxskVfScY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716834539; c=relaxed/simple;
-	bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qDJoHUuFaXdXqV7tfL4P5HEOK8uT3n6EhVwEzMq/nFjnHCaDpuOB/SWlg5BzjS+WdXvl9TspClxyqPbfCPrp3UbY7sBcCyPRAaJShZxNnaqSymQlFIJh1psSm0qasRtWDMCtxzQEBa7mKWeIfXHdj/JT4Ei1SrL0U6RCylhnhBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=OgmCWSW/; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=wYP1mGPJ; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id CFAC3332FE;
-	Mon, 27 May 2024 14:28:56 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-	:to:cc:subject:in-reply-to:message-id:references:mime-version
-	:content-type; s=sasl; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZ
-	CU8DM=; b=OgmCWSW/T7T+Z9QhuOImpu+4MLdn14A/keuomDewXz2DU0JtMCKViK
-	1pqrWxSRHWpSumcgXDJcJt9VdOgALnIymH+8mjyoobW33RaaVE+m5CARrqQ2aovQ
-	NzhfJhVNDkrWHB5s++aelsFS2ccVnGdXlgtkK4ZQPRPQKjfTmN7nE=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id C62DA332FC;
-	Mon, 27 May 2024 14:28:56 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=; b=wYP1mGPJqHWDh88S8V7+MJGODsV8ZHFrhiwdxOS4e51jJ7MsthZrFiSvEirEv9WVjl4f9tvL+N8y9RBqJdTGyiBwGsR/WXIBVAsSh293nglvPDHLdzMwiUQxxJ92HGnhB7m37GH6qb4/DD0eyIsu6YzRxUSxaxR7b64XkcAHaIQ=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 4097F332FB;
-	Mon, 27 May 2024 14:28:56 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 291B7CCC583;
-	Mon, 27 May 2024 14:28:55 -0400 (EDT)
-Date: Mon, 27 May 2024 14:28:55 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
-In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
-Message-ID: <9o69oo79-34ns-ns70-1138-79pq20436188@syhkavp.arg>
-References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+	s=arc-20240116; t=1716834543; c=relaxed/simple;
+	bh=WCEO9fUe+0GQf8DDEogefQXVqjO2ehsYlYrxbZijXSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/Q4/5mHLg+dKR0pU0bWk9XPtdAyHlK7q1w0SRpWJN/JPr1JAVjxb0EijIsbCqjn1i8CrZrP2XDQE8wU6T7OtiDRE3TL2NJr9KYyvpX/JXDLerGx85C1EUByAvaDmQYkDSX5BKIRCZyyxadULhWOhoBbq2gZp5EX24SY/hG11w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ts958yWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06725C2BBFC;
+	Mon, 27 May 2024 18:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716834543;
+	bh=WCEO9fUe+0GQf8DDEogefQXVqjO2ehsYlYrxbZijXSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ts958yWY3Uvgact64hd/8yz4QyfDipMqtBbY/9pVuFx+VF1ewGl8LXX5oEJyebBNf
+	 j+b3dC4Dbh0v1012gogIXFfxbjJCf/QDEnnSW4dVov7qH0Mp1bcckdjelsWFugx+s0
+	 4MRV+cu3sey7bBVubpney7vFb8erx5y5Uch8dW4o=
+Date: Mon, 27 May 2024 20:29:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Oleksandr Natalenko <oleksandr@natalenko.name>,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Peter Chiu <chui-hao.chiu@mediatek.com>,
+	StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
+	Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+Message-ID: <2024052750-rippling-catty-1cb5@gregkh>
+References: <6061263.lOV4Wx5bFT@natalenko.name>
+ <2341660.ElGaqSPkdT@natalenko.name>
+ <60fe8df750a74331b8a54a76d55d5e8349ac46b4.camel@sipsolutions.net>
+ <878qzy9zly.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID:
- FA3D352A-1C56-11EF-9D8C-25B3960A682E-78420484!pb-smtp2.pobox.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <878qzy9zly.fsf@kernel.org>
 
-On Mon, 27 May 2024, Jeff Johnson wrote:
+On Sat, May 25, 2024 at 09:26:01AM +0300, Kalle Valo wrote:
+> Johannes Berg <johannes@sipsolutions.net> writes:
+> 
+> > On Wed, 2024-05-15 at 00:51 +0200, Oleksandr Natalenko wrote:
+> >> Also /cc Johannes because of this commit:
+> >> 
+> >> 6092077ad09ce wifi: mac80211: introduce 'channel request'
+> >> 
+> >> On středa 15. května 2024 0:43:40, SELČ Oleksandr Natalenko wrote:
+> >> > Hello Felix, Lorenzo et al.
+> >> > 
+> >> > With v6.9 kernel the following card:
+> >> > 
+> >> > 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E
+> >> > 802.11ax PCI Express Wireless Network Adapter [14c3:7915]
+> >> > 
+> >> > doesn't work any more. Upon mt7915e module insertion the following splat happens:
+> >> > 
+> >
+> > 6.9 didn't get commit 2f7cf3b61d85 ("wifi: mt76: mt7915: add missing
+> > chanctx ops")? Huh?
+> 
+> Yeah, commit 2f7cf3b61d85 should have been taken to wireless tree but it
+> fell through the cracks. I didn't realise that it's an important bugfix
+> and the commit message didn't give any indication of that either.
+> 
+> But commit 2f7cf3b61d85 is now in Linus' tree so it would be good if
+> someone could submit it to stable releases.
 
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+It's already in 6.9.1, does it need to go anywhere else?
 
-Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
+thanks,
 
-> ---
->  fs/cramfs/inode.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-> index 460690ca0174..d818ed1bb07e 100644
-> --- a/fs/cramfs/inode.c
-> +++ b/fs/cramfs/inode.c
-> @@ -1003,4 +1003,5 @@ static void __exit exit_cramfs_fs(void)
->  
->  module_init(init_cramfs_fs)
->  module_exit(exit_cramfs_fs)
-> +MODULE_DESCRIPTION("Compressed ROM file system support");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-> change-id: 20240527-md-fs-cramfs-10e1276a3662
-> 
-> 
+greg k-h
 
