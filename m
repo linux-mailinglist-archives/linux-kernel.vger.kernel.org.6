@@ -1,197 +1,366 @@
-Return-Path: <linux-kernel+bounces-190471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40648CFEB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:19:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49508CFEB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 13:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2FA1F22424
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4058F1F22541
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6697B13A268;
-	Mon, 27 May 2024 11:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5942B13C684;
+	Mon, 27 May 2024 11:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1v9HSqmM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xlQOYgcr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1v9HSqmM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xlQOYgcr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cbUepe9a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2938250263
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455B313C3D2
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808766; cv=none; b=HsRIV+/tijaPF5PunZHD9RFvPD0eQMERNS/4/hip+Hzs6Z4maAS6J/3BjACzBY/b+y3yNkBBPnqql4JsFts7Lg5rIxlV/6UpyFLlSL6E1cfLeDBcClYfOfsr9FuIW6GS5PCRXeW6cmvw1X4d+nkThtSG3RLlsh8c+sE0bFs+7cY=
+	t=1716808770; cv=none; b=TLfHenijhZSt0CwJoyUmkpZ4FLyq0ea8Tg8AFIv+1HeEubecJ4IBBwozYIHXjBFizQ0d89bfwfTCBNB5KY5ciM0NLVhZ3IVbbTYmcI1iM5u7mFjOEQzxrgmvHuzRHuT+6AOEfS2AW4IBg145YfstBoZh9eWMXQdqvor4JDhcznU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808766; c=relaxed/simple;
-	bh=90bj6Ua089uwsGGMm3buoMjeF2Udw7a4TF62hhKO2Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kT6RNZldwnAfTHyMHrgAdy49dSKkFCIGsSypY2SvejRohl3OisXNKrFCP0v1lYzN3yn5V/7XrT74qfxT00OnOaNE4bKHdxP8Zn+27X8a9S3iJYwMDKsG/aA7UGmuTvvIHC+lPLm4RSaJHxsKf2sCB7L7PITRjBdCmRSfy2ieuSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1v9HSqmM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xlQOYgcr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1v9HSqmM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xlQOYgcr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6711B1FCF9;
-	Mon, 27 May 2024 11:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716808762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1716808770; c=relaxed/simple;
+	bh=Gif6fa0MsQHzsCJ/VOlaXfVoUhcm3dK+8cBJ/sFaZrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmKptmKRBxXTZ4dROqoiARSTJRkoQJHjr5aj9Vo7PkVlHuGqxHCwp2ULtcgloTdL/fOoFj4uul/WVjBbsAbJfjBH31PiB9ZdV5DBv50JvXs9v+KvrVcba0DxxcuIkZzSvZjX4xwvTwL//teqhyE3kWTsEsp4eOk89dvW5+3ootA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cbUepe9a; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716808767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2Bi7Ql1X3s4Dacbspx0O9yRaUH+sqke7d9JnW3emmk4=;
-	b=1v9HSqmM3ByGTDpUJcOlBE7lZwtRH36akLa3r92ozdA0Vig4wwX77SMggBICDlvZtiLWgR
-	B8dzgwKBbCvIkiUrm0pdDG75+gyFW9El6tBG2pV3ODs/5dr+uE9sfV3JgNyMpuoEDap//n
-	RAFkcpV7txMFEaS2dFHuPjxdeukGqOU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716808762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Bi7Ql1X3s4Dacbspx0O9yRaUH+sqke7d9JnW3emmk4=;
-	b=xlQOYgcrsgLz/gT/b41UXdxr3G8IJM2z3u2ptnaoTmir+HwvA8vbdcYm2iRO2RtmV6nnwz
-	lsjfsRa3+2HSBIDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1v9HSqmM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=xlQOYgcr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716808762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Bi7Ql1X3s4Dacbspx0O9yRaUH+sqke7d9JnW3emmk4=;
-	b=1v9HSqmM3ByGTDpUJcOlBE7lZwtRH36akLa3r92ozdA0Vig4wwX77SMggBICDlvZtiLWgR
-	B8dzgwKBbCvIkiUrm0pdDG75+gyFW9El6tBG2pV3ODs/5dr+uE9sfV3JgNyMpuoEDap//n
-	RAFkcpV7txMFEaS2dFHuPjxdeukGqOU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716808762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Bi7Ql1X3s4Dacbspx0O9yRaUH+sqke7d9JnW3emmk4=;
-	b=xlQOYgcrsgLz/gT/b41UXdxr3G8IJM2z3u2ptnaoTmir+HwvA8vbdcYm2iRO2RtmV6nnwz
-	lsjfsRa3+2HSBIDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDAD713A6B;
-	Mon, 27 May 2024 11:19:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4gE/LzlsVGYmDwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 27 May 2024 11:19:21 +0000
-Date: Mon, 27 May 2024 13:19:12 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v3 03/16] mm: Provide mm_struct and address to
- huge_ptep_get()
-Message-ID: <ZlRsMCvVo9tSEFQV@localhost.localdomain>
-References: <cover.1716714720.git.christophe.leroy@csgroup.eu>
- <fbba60d762faad40ebb959bf9517c5c22301f69e.1716714720.git.christophe.leroy@csgroup.eu>
+	bh=BdA/b+tw1blJIaO7mJL6nTF1r5QtrHfdOb74Ea/gdaE=;
+	b=cbUepe9aFXspqFuRP4b3swvPxuAY4vnBMNGe8l783jfbY59XNgzIbGuU/KnVNjKiIhtMMK
+	GGXyUqcAclTQKCjdh1xjPPBQ3VDVGzrqWrDwudql43WEMxPzorQ5y3/hL6BnblB34cl5ZB
+	76iL62516swAGJm7oNFqVJa9Z8LkTFg=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-NH5T1fw9NqalvodkPtZg9w-1; Mon, 27 May 2024 07:19:25 -0400
+X-MC-Unique: NH5T1fw9NqalvodkPtZg9w-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eac412397cso147426039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:19:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716808765; x=1717413565;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdA/b+tw1blJIaO7mJL6nTF1r5QtrHfdOb74Ea/gdaE=;
+        b=Eq8ewbmgwzknJ4ffJvngjFU47zFaTobrVIUrjf0ikvkSq9onMHc5FtIZLTheqLNSuL
+         tdaurbFTliS+HAWaBf7inZcL0O9OIb+YkVcQI7MoZ4B/dvqcXU4yTmHu14sFduRa7XR3
+         HGsPFBQrL2pQPdMT6mTQXRQRDO5zKBwtm0JLR5ICEr/SgmtRT1PhJjjPw9ZNT/UpTOvl
+         YR5wcD3S8ai3ZihwZEqpABee3XbLD3nDbYV7a+4Sm0Iv0pHJJYg5V2FM28rXSjSJqX4O
+         aXGEzRVSY5GCeXDbLhpnRN2QRpO6Y5X1zGr8esVjv58zxoHptS1G6/uz3/J96K7ya2Xw
+         lHaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq5UJKv7Zhiw9mgxC6UlQ9HJ3TZJAiNQIqOGRxX7yl/OaEt8z5S+8K71d+sLiEFa1LZyL5fftgDU91KVbvmDld52rOntIdGPmjRp2U
+X-Gm-Message-State: AOJu0Yxo0WYjTx0YHWTxQsXAuX6LfhEj2Nls8anwVE0nWZDuyNdWFRl7
+	00x1ReToJDFey2cBq4zCONw2zIWzJKkl3eIbL5bs/nVcz+neV3YUI9zdNuMHD15NsqyB1y6XVW6
+	5Ak4JgvsSSzHG0GeaKttXrDulkMlHpoJLmx+jXBp+u+x7b7tZYlAkGb/gyQEjdQ==
+X-Received: by 2002:a5d:8d0a:0:b0:7de:a9d1:1cfa with SMTP id ca18e2360f4ac-7e8c19e4a55mr1233480439f.0.1716808764923;
+        Mon, 27 May 2024 04:19:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLsNtctR1RS5lFQuJN1Gaa8Q2sCs48tsrvPbgptAn9DOO01ligw2osQKxjz5KDGuNhUxVu+A==
+X-Received: by 2002:a5d:8d0a:0:b0:7de:a9d1:1cfa with SMTP id ca18e2360f4ac-7e8c19e4a55mr1233477239f.0.1716808764186;
+        Mon, 27 May 2024 04:19:24 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b03ecd0535sm2053249173.149.2024.05.27.04.19.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 04:19:23 -0700 (PDT)
+Message-ID: <e32fa7ed-be51-44d5-b849-6649da8a8e27@redhat.com>
+Date: Mon, 27 May 2024 13:19:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbba60d762faad40ebb959bf9517c5c22301f69e.1716714720.git.christophe.leroy@csgroup.eu>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 6711B1FCF9
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -6.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: dell-smbios: Fix wrong token data in sysfs
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240518234744.144484-1-W_Armin@gmx.de>
+ <23e67b5e-8e24-0fa4-42bb-e20cb1596601@linux.intel.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <23e67b5e-8e24-0fa4-42bb-e20cb1596601@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 26, 2024 at 11:22:23AM +0200, Christophe Leroy wrote:
-> On powerpc 8xx huge_ptep_get() will need to know whether the given
-> ptep is a PTE entry or a PMD entry. This cannot be known with the
-> PMD entry itself because there is no easy way to know it from the
-> content of the entry.
+Hi,
+
+On 5/27/24 12:25 PM, Ilpo Järvinen wrote:
+> On Sun, 19 May 2024, Armin Wolf wrote:
 > 
-> So huge_ptep_get() will need to know either the size of the page
-> or get the pmd.
+>> When reading token data from sysfs on my Inspiron 3505, the token
+>> locations and values are wrong. This happens because match_attribute()
+>> blindly assumes that all entries in da_tokens have an associated
+>> entry in token_attrs.
+>>
+>> This however is not true as soon as da_tokens[] contains zeroed
+>> token entries. Those entries are being skipped when initialising
+>> token_attrs, breaking the core assumption of match_attribute().
+>>
+>> Fix this by defining an extra struct for each pair of token attributes
+>> and use container_of() to retrieve token information.
+>>
+>> Tested on a Dell Inspiron 3050.
+>>
+>> Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
+>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+>> ---
+>>  drivers/platform/x86/dell/dell-smbios-base.c | 127 ++++++++-----------
+>>  1 file changed, 50 insertions(+), 77 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
+>> index e61bfaf8b5c4..bc1bc02820d7 100644
+>> --- a/drivers/platform/x86/dell/dell-smbios-base.c
+>> +++ b/drivers/platform/x86/dell/dell-smbios-base.c
+>> @@ -11,6 +11,7 @@
+>>   */
+>>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>>
+>> +#include <linux/container_of.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/module.h>
+>>  #include <linux/capability.h>
+>> @@ -25,11 +26,16 @@ static u32 da_supported_commands;
+>>  static int da_num_tokens;
+>>  static struct platform_device *platform_device;
+>>  static struct calling_interface_token *da_tokens;
+>> -static struct device_attribute *token_location_attrs;
+>> -static struct device_attribute *token_value_attrs;
+>> +static struct token_sysfs_data *token_entries;
+>>  static struct attribute **token_attrs;
+>>  static DEFINE_MUTEX(smbios_mutex);
+>>
+>> +struct token_sysfs_data {
+>> +	struct device_attribute location_attr;
+>> +	struct device_attribute value_attr;
+>> +	struct calling_interface_token *token;
+>> +};
+>> +
+>>  struct smbios_device {
+>>  	struct list_head list;
+>>  	struct device *device;
+>> @@ -416,47 +422,24 @@ static void __init find_tokens(const struct dmi_header *dm, void *dummy)
+>>  	}
+>>  }
+>>
+>> -static int match_attribute(struct device *dev,
+>> -			   struct device_attribute *attr)
+>> +static ssize_t location_show(struct device *dev, struct device_attribute *attr, char *buf)
+>>  {
+>> -	int i;
+>> -
+>> -	for (i = 0; i < da_num_tokens * 2; i++) {
+>> -		if (!token_attrs[i])
+>> -			continue;
+>> -		if (strcmp(token_attrs[i]->name, attr->attr.name) == 0)
+>> -			return i/2;
+>> -	}
+>> -	dev_dbg(dev, "couldn't match: %s\n", attr->attr.name);
+>> -	return -EINVAL;
+>> -}
+>> -
+>> -static ssize_t location_show(struct device *dev,
+>> -			     struct device_attribute *attr, char *buf)
 > 
-> In order to be consistent with huge_ptep_get_and_clear(), give
-> mm and address to huge_ptep_get().
+> This change is littered with just style fixes which are good but do not 
+> belong to this patch, such as here to remove the newline. I think it makes 
+> this patch noticeably messier to include those extra style changes so 
+> please separate them out of this patch.
+
+I agree with Ilpo's remarks that the style changes should be split out,
+either pre or post the patch fixing the actual issue.
+
+After that + addressing Ilpo's other review remarks I can merge this
+as a fix for 6.10-rc#
+
+Regards,
+
+Hans
+
+
+
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
-> v2: Add missing changes in arch implementations
-> v3: Fixed a comment in ARM and missing changes in S390
-> ---
->  arch/arm/include/asm/hugetlb-3level.h |  4 +--
->  arch/arm64/include/asm/hugetlb.h      |  2 +-
->  arch/arm64/mm/hugetlbpage.c           |  2 +-
->  arch/riscv/include/asm/hugetlb.h      |  2 +-
->  arch/riscv/mm/hugetlbpage.c           |  2 +-
->  arch/s390/include/asm/hugetlb.h       |  4 +--
->  arch/s390/mm/hugetlbpage.c            |  4 +--
+>> -{
+>> -	int i;
+>> +	struct token_sysfs_data *data = container_of(attr, struct token_sysfs_data, location_attr);
+>>
+>>  	if (!capable(CAP_SYS_ADMIN))
+>>  		return -EPERM;
+>>
+>> -	i = match_attribute(dev, attr);
+>> -	if (i > 0)
+>> -		return sysfs_emit(buf, "%08x", da_tokens[i].location);
+>> -	return 0;
+>> +	return sysfs_emit(buf, "%08x", data->token->location);
+>>  }
+>>
+>> -static ssize_t value_show(struct device *dev,
+>> -			  struct device_attribute *attr, char *buf)
+>> +static ssize_t value_show(struct device *dev, struct device_attribute *attr, char *buf)
+> 
+> Another style fix.
+> 
+>>  {
+>> -	int i;
+>> +	struct token_sysfs_data *data = container_of(attr, struct token_sysfs_data, value_attr);
+>>
+>>  	if (!capable(CAP_SYS_ADMIN))
+>>  		return -EPERM;
+>>
+>> -	i = match_attribute(dev, attr);
+>> -	if (i > 0)
+>> -		return sysfs_emit(buf, "%08x", da_tokens[i].value);
+>> -	return 0;
+>> +	return sysfs_emit(buf, "%08x", data->token->value);
+>>  }
+>>
+>>  static struct attribute_group smbios_attribute_group = {
+>> @@ -473,73 +456,65 @@ static int build_tokens_sysfs(struct platform_device *dev)
+>>  {
+>>  	char *location_name;
+>>  	char *value_name;
+>> -	size_t size;
+>>  	int ret;
+>>  	int i, j;
+>>
+>> -	/* (number of tokens  + 1 for null terminated */
+>> -	size = sizeof(struct device_attribute) * (da_num_tokens + 1);
+>> -	token_location_attrs = kzalloc(size, GFP_KERNEL);
+>> -	if (!token_location_attrs)
+>> +	token_entries = kcalloc(da_num_tokens, sizeof(struct token_sysfs_data), GFP_KERNEL);
+> 
+> sizeof(*token_entries)
+> 
+>> +	if (!token_entries)
+>>  		return -ENOMEM;
+>> -	token_value_attrs = kzalloc(size, GFP_KERNEL);
+>> -	if (!token_value_attrs)
+>> -		goto out_allocate_value;
+>>
+>> -	/* need to store both location and value + terminator*/
+>> -	size = sizeof(struct attribute *) * ((2 * da_num_tokens) + 1);
+>> -	token_attrs = kzalloc(size, GFP_KERNEL);
+>> +	/* We need to store both location and value + terminator */
+>> +	token_attrs = kcalloc((2 * da_num_tokens) + 1, sizeof(struct attribute *), GFP_KERNEL);
+> 
+> sizeof(*token_attrs)
+> 
+>>  	if (!token_attrs)
+>>  		goto out_allocate_attrs;
+>>
+>>  	for (i = 0, j = 0; i < da_num_tokens; i++) {
+>> -		/* skip empty */
+>> +		/* Skip empty */
+> 
+> Style change.
+> 
+>>  		if (da_tokens[i].tokenID == 0)
+>>  			continue;
+>> -		/* add location */
+>> -		location_name = kasprintf(GFP_KERNEL, "%04x_location",
+>> -					  da_tokens[i].tokenID);
+>> -		if (location_name == NULL)
+>> +
+>> +		token_entries[i].token = &da_tokens[i];
+>> +
+> 
+>> +		/* Add location */
+>> +		location_name = kasprintf(GFP_KERNEL, "%04x_location", da_tokens[i].tokenID);
+>> +		if (!location_name)
+> 
+> Style change x3.
+> 
+>>  			goto out_unwind_strings;
+>> -		sysfs_attr_init(&token_location_attrs[i].attr);
+>> -		token_location_attrs[i].attr.name = location_name;
+>> -		token_location_attrs[i].attr.mode = 0444;
+>> -		token_location_attrs[i].show = location_show;
+>> -		token_attrs[j++] = &token_location_attrs[i].attr;
+>> +
+>> +		sysfs_attr_init(&token_entries[i].location_attr.attr);
+>> +		token_entries[i].location_attr.attr.name = location_name;
+>> +		token_entries[i].location_attr.attr.mode = 0444;
+>> +		token_entries[i].location_attr.show = location_show;
+>> +		token_attrs[j++] = &token_entries[i].location_attr.attr;
+>>
+>>  		/* add value */
+>> -		value_name = kasprintf(GFP_KERNEL, "%04x_value",
+>> -				       da_tokens[i].tokenID);
+>> -		if (value_name == NULL)
+>> -			goto loop_fail_create_value;
+>> -		sysfs_attr_init(&token_value_attrs[i].attr);
+>> -		token_value_attrs[i].attr.name = value_name;
+>> -		token_value_attrs[i].attr.mode = 0444;
+>> -		token_value_attrs[i].show = value_show;
+>> -		token_attrs[j++] = &token_value_attrs[i].attr;
+>> -		continue;
+>> -
+>> -loop_fail_create_value:
+>> -		kfree(location_name);
+>> -		goto out_unwind_strings;
+> 
+>> +		value_name = kasprintf(GFP_KERNEL, "%04x_value", da_tokens[i].tokenID);
+>> +		if (!value_name) {
+> 
+> Style change x2.
+> 
+>> +			kfree(location_name);
+>> +			goto out_unwind_strings;
+>> +		}
+>> +
+>> +		sysfs_attr_init(&token_entries[i].value_attr.attr);
+>> +		token_entries[i].value_attr.attr.name = value_name;
+>> +		token_entries[i].value_attr.attr.mode = 0444;
+>> +		token_entries[i].value_attr.show = value_show;
+>> +		token_attrs[j++] = &token_entries[i].value_attr.attr;
+>>  	}
+>>  	smbios_attribute_group.attrs = token_attrs;
+>>
+>>  	ret = sysfs_create_group(&dev->dev.kobj, &smbios_attribute_group);
+>>  	if (ret)
+>>  		goto out_unwind_strings;
+>> +
+> 
+> Style change.
+> 
+>>  	return 0;
+>>
+>>  out_unwind_strings:
+>>  	while (i--) {
+>> -		kfree(token_location_attrs[i].attr.name);
+>> -		kfree(token_value_attrs[i].attr.name);
+>> +		kfree(token_entries[i].location_attr.attr.name);
+>> +		kfree(token_entries[i].value_attr.attr.name);
+>>  	}
+>>  	kfree(token_attrs);
+>>  out_allocate_attrs:
+>> -	kfree(token_value_attrs);
+>> -out_allocate_value:
+>> -	kfree(token_location_attrs);
+>> +	kfree(token_entries);
+>>
+>>  	return -ENOMEM;
+>>  }
+>> @@ -548,15 +523,13 @@ static void free_group(struct platform_device *pdev)
+>>  {
+>>  	int i;
+>>
+>> -	sysfs_remove_group(&pdev->dev.kobj,
+>> -				&smbios_attribute_group);
+>> +	sysfs_remove_group(&pdev->dev.kobj, &smbios_attribute_group);
+> 
+> Style change.
+> 
+> 
 
-I was wondering whether we could do something similar for what we did in
-patch#1, so we do not touch architectures code.
-
-  
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 1611e73b1121..86b5105b82a1 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2812,7 +2812,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
->  	if (pte_end < end)
->  		end = pte_end;
->  
-> -	pte = huge_ptep_get(ptep);
-> +	pte = huge_ptep_get(NULL, addr, ptep);
-
-I know that after this series all this code is gone, but I was not sure
-about the behaviour between this patch and the last one.
-
-It made me nervous, until I realized that this code is only used
-on CONFIG_ARCH_HAS_HUGEPD, which should not be the case anymore for 8xx after
-patch#8, and since 8xx is the only one that will use the mm parameter from
-huge_ptep_get, we are all good.
-
-
-
--- 
-Oscar Salvador
-SUSE Labs
 
