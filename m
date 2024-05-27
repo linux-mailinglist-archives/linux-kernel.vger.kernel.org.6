@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-190354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46CA8CFD36
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441A18CFD38
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62451C22049
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C881C220D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E24A13A40C;
-	Mon, 27 May 2024 09:38:59 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B945E13AD11;
+	Mon, 27 May 2024 09:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KmZI87EK"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7AC13A407;
-	Mon, 27 May 2024 09:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7672B13A24D;
+	Mon, 27 May 2024 09:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802739; cv=none; b=CBQXwRdI2GnXWR0ZhcEBsfs/w0R9Jvf+tg3pKMtHtA6s/iEmxIik6fuaKv9DwG3VXR37Fbvpmezxxt1G3tUo1KqvGaZGTZgJct9wKSxjfT1K3Y1Wglrwfx2y7i9owpHT6Xi2BOW5foEr6uhICp+DH9m6Wsx72wSj314wRwL4I5c=
+	t=1716802755; cv=none; b=KOOKORupJrrOQwVaaxK47uRnPYTLwIX7SHp9ff9FP9hR/F8CXmiStvlen4l8hupnAGVdJSNA8dj9kUXrgLhjiwGQgq+bLrZe1gwEL+7g9iGOv02xLpxMoZ6h8U2jk5Wte14r4a/g4J6RykOOwPjafiNrrC56MiGwKj8QKm62gkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802739; c=relaxed/simple;
-	bh=AN//DizJVCyUg0QCrDZjkYZgMBSSJ7AIyufoQQ22Ie8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H89xGlix2HCdeO6Yh+2pMR6Q9LOGX6QZRlo4SVj+Xo3HaagSJnEAFltCz+NwiTAOyU5ZT7EnP8elBGD42aGdRuv11112C0aQytOpL5oJmyeXwW6YNnb0FtB6hoFPsqCMctV/hzmxh7NULaNusRHn+5athaYv5Fvt6uR9IFhqyPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-62a08099115so27771487b3.0;
-        Mon, 27 May 2024 02:38:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802736; x=1717407536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FwobYBfmNmsLhAXC5mjd8bY4+Dv8TEhrLLXdGOAc17Y=;
-        b=BWljlhYJ+boFjImcljN0GKxUii+79pON+DY7ZyvrUaVm0jZ2z2K/zfYO+VqHhw0M0m
-         dmlUYCEuSsNLagwA4/qQXIKc68BFl4wJlIiPW+A77uIyVX80GrPorKqIz/aYL1fwGf20
-         n0RFoYR7D1M86Z9YEtgP6mQqUv98oErhWfPsRLW+wbriv18fRt/qgycZvfFsiXnQA9w9
-         NEYvb/Nxn3f9oipu9O7JLCDvAibE9koL03Nm3RIBStZ5Qy5fNnoj17WeyO5VSkBPjhrV
-         tEaIPqJFybJp2A63Bh+60PI1YXhC9fcbjW7AjQiMIzJctUoZuR3YmZ25jVrV8JrJXx60
-         HGoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhs6VQDcVaMZ3G93sixRtfuwUp2PL0mpKDVkvQuPyScugEcUTLgeTu9ltXEWKQYBnGdOLp35tYOwIqqzEZ6UUAEHpR7HlEfxSuQB+9dQxZAg56dDjyk/UEPH3nWhZWa3Wuk8MLous/vQ==
-X-Gm-Message-State: AOJu0Ywb94wqz/YdZZgMIRBl/pHRpRMfGcf3Ov+bUN9T9oPRlb4f4Wk0
-	P/6YKfj3LCDmKkWnHEV1otK+s5A7XiaKJ6aazldATTE9pdInEf83ZS9wQMv9
-X-Google-Smtp-Source: AGHT+IEf7RRCQEErGEEzkgBT4P0u9P5DV+7UgALY+UqnxoS9YNJ0BBwwP9HQsgrUwpkSevSB2SfOpg==
-X-Received: by 2002:a81:c20c:0:b0:618:81f8:4a52 with SMTP id 00721157ae682-62a08d8acacmr78134477b3.19.1716802735683;
-        Mon, 27 May 2024 02:38:55 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a43b5fasm15963647b3.70.2024.05.27.02.38.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:38:54 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df771b45e13so2844555276.2;
-        Mon, 27 May 2024 02:38:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeJVASeKyPOzLsKZrDCRSv1CNvvw3RPnzY9RkHIls5QDbB2cISXd+ojQfzZ2tjNbcaaYnaLyR6BsnynTsxbm7GNI9GopwmwzDZtMX1S1N4uadBElcQk5sWhbnea7J+Ox5I5hAUe8NTGw==
-X-Received: by 2002:a25:b2a2:0:b0:dcb:e82c:f7d with SMTP id
- 3f1490d57ef6-df772256da5mr8432522276.41.1716802734191; Mon, 27 May 2024
- 02:38:54 -0700 (PDT)
+	s=arc-20240116; t=1716802755; c=relaxed/simple;
+	bh=phWrTw+karsjUzSg7kcqChr4IdJshL4HbQ9zmQkn4Qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DPYIoOJaR2h59azfvs7W7fY0rS/hECsNt9z0BEUUSYcMfY2zDoii22LGx0gMvF+IG93+TpI+ZWtmNNT24GLBrT5j6ml1AdiaZVa+1kl/fORe/C1hFs2FmaFEccRBLoMVOlrepAHR66t3wt7G7Dsa9TiMBdN8SCCwy5vHomiakSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KmZI87EK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716802751;
+	bh=phWrTw+karsjUzSg7kcqChr4IdJshL4HbQ9zmQkn4Qk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KmZI87EKdwsteVx5VwSdvILvBracIrFrCTLUXucUpWp5B8zeZOvElhuJ4qjMyXNbo
+	 J0pozHh2KKNF93/orrsz9CapK9KRxsbKChlvWuD7rBsgvKkxTpNGwT3MSkQXLYLXWT
+	 PIxb0hewTe6muqjZwQt5nULsisMGzK7LVqLKaF5dVVWaYHMLcf4+OLYk4UpArg9Ai0
+	 TT2lB9gpFNWJ2gZF1LjFHuZOSkmqv8kHVuesPKJuHffEcwNY54h8snfcJa/IRrIORl
+	 QjGBXNK9UO6yv3lZbag/0m37jiB8Ty4r0vJWFf7687uUxy70YloAXauKJASQ3/72+7
+	 iI0j7MeYigTug==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B90B53782065;
+	Mon, 27 May 2024 09:39:10 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	mandyjh.liu@mediatek.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com,
+	jpanis@baylibre.com
+Subject: [PATCH 0/5] Support for MT8188 power domains, gpu, gce, vdo
+Date: Mon, 27 May 2024 11:39:03 +0200
+Message-ID: <20240527093908.97574-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523205041.7356-1-wsa+renesas@sang-engineering.com> <20240523205041.7356-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240523205041.7356-4-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 May 2024 11:38:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+ypZ462P2TpU7LdsBDUaZ+eYcWT7f8M+yUONTdFe7-A@mail.gmail.com>
-Message-ID: <CAMuHMdU+ypZ462P2TpU7LdsBDUaZ+eYcWT7f8M+yUONTdFe7-A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: s4sk: add aliases for I2C busses
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 10:50=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> They are numbered like this in the schematics, so keep the names in
-> Linux the same.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This series adds power domains, basic VDOSYS nodes and GCE Mailboxes
+to finally be able to add the GPU node, which is needed to get the
+thermal nodes complete, unblocking that series.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.11, with s/busses/buses/.
+Please note that the IMG_VCORE power domains were omitted, as those
+need some more (driver side) love to actually work... and adding them
+right now would most likely break basic boot.
 
-Gr{oetje,eeting}s,
+For the GPU, this series depends on [1].
 
-                        Geert
+Cheers!
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+[1]: https://lore.kernel.org/lkml/20240527092513.91385-1-angelogioacchino.delregno@collabora.com
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+AngeloGioacchino Del Regno (5):
+  dt-bindings: mfd: mediatek,mt8195-scpsys: Add support for MT8188
+  arm64: dts: mediatek: mt8188: Add Global Command Engine mailboxes
+  arm64: dts: mediatek: mt8188: Add VDOSYS0/1 support for multimedia
+  arm64: dts: mediatek: mt8188: Add support for SoC power domains
+  arm64: dts: mediatek: mt8188: Add support for Mali GPU on Panfrost
+
+ .../bindings/mfd/mediatek,mt8195-scpsys.yaml  |   1 +
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 480 ++++++++++++++++++
+ 2 files changed, 481 insertions(+)
+
+-- 
+2.45.1
+
 
