@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-191317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B508D09CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:14:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089098D09CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51041F22CAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DFB1C22191
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 18:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A45B15F415;
-	Mon, 27 May 2024 18:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1E15F3F4;
+	Mon, 27 May 2024 18:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Vpqs5F3R"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TDSEdTto"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F69C1DDC9;
-	Mon, 27 May 2024 18:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B5E61FDC
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 18:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716833679; cv=none; b=d1S8jWV4imsbsxYa0OSK/n9hF64Et5yMIQRb1tU3t21GWTOISj5xZpFT4cisdzI+f2wpUrdrLkfuqtMtsT5w6YSUEU4ufVuvelUCQoslF4cdvD7MI4JBMXxFylmfmv+xrGPQE9KQCfPJEHz9dEl1MNH8lUZh2qMwai1fb2CDIz4=
+	t=1716833728; cv=none; b=KqIWTlRF+5kEl1d2nX7Hki7tSozC3q0wz8ICtP/Nm8pXCBicKVrGMIsuSDj+rLcttSW+GzA6jWVoRh8oOoDxhWaJ4eKntzdW38u7xrOByWn1zJvCIDC0yMTAijOkj+jlKvKGbjtW3AWoxAsgAkAUQ01ioRCxW7LR/radf4n5zBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716833679; c=relaxed/simple;
-	bh=hVr28pGJ4hsBrlJfUQDMbhDwUl512kWSkB4J26U1kuk=;
+	s=arc-20240116; t=1716833728; c=relaxed/simple;
+	bh=T0y8bXCJEZH+eS8ee7C5dR+fg3yTcWZMqPHkcbuqMW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TorC9xkr8cfNAZ60k5gxOsG9kEmaD4rFOgXAk97TF9SZiiQi9jntm4WcnZnu4F0bkEgmHRwUKGx5QYRz0KtQP1N7ba9gXAncmngRuzyc/a3Si9cxW6sDK7BLBYfIHVYrit7ejdkf9qsJI2rZ+D/O9WfTcLjM1t2vW9D2ttSdrhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Vpqs5F3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE8BC2BBFC;
-	Mon, 27 May 2024 18:14:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oy6mx6zTP77v0FtsHk0xtXDVti8prGH2mrFLSp6GXceNbVGjzaDta0iHa0DV6JrCuTg/pfJvU0IYQvvpmnvmhTC4NGs5mL3zL7exGUo3pv8LA7IE+2jy7cl/e9OdqLC8FjkOMpRpl7+rVrelwio6BQqsrg/gC2+MmEVEdu6xkMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TDSEdTto; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C150C2BBFC;
+	Mon, 27 May 2024 18:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716833678;
-	bh=hVr28pGJ4hsBrlJfUQDMbhDwUl512kWSkB4J26U1kuk=;
+	s=korg; t=1716833727;
+	bh=T0y8bXCJEZH+eS8ee7C5dR+fg3yTcWZMqPHkcbuqMW4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vpqs5F3RAXKRlnRDWM4zYkqo444yYZeyNkXAU7/CqQgQzsx6Sj4s2WxBFMgWTtk+L
-	 k2yYMRiJHJfyqi5L4DGWvq0Wlw6no772rgT7fuRaLL9LawTl9Ntvnu6teVeKgYMKxG
-	 emtC7sddTH3FtcE2+IorMgtm6LfAHxFStCH34upY=
-Date: Mon, 27 May 2024 20:14:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ilkka =?iso-8859-1?Q?Naulap=E4=E4?= <digirigawa@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-Message-ID: <2024052710-marsupial-debug-febd@gregkh>
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
- <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
- <20240524132008.6b6f69f6@gandalf.local.home>
- <CAE4VaRF80OhnaiqeP9STfLa5pORB31YSorgoJ92fQ8tsRovxqQ@mail.gmail.com>
- <CAE4VaRGaNJSdo474joOtKEkxkfmyJ-zsrr8asb7ojP2JexFt-A@mail.gmail.com>
+	b=TDSEdTtoC0S3ZJMeSMk9KPqlkAjTXi3rUcqk7rVmPAFLrL9j4WsjMaRbVFf90AmbS
+	 Wokuzxh+lD9Eec8KaCegxqyAugiVia6qLVXeP+ZNK9OFb8yE8UV30o0VUp4SbPTjTk
+	 sYHNDCVzX3MRsfZ4c615e2ava8rrOqUPfp3rlGag=
+Date: Mon, 27 May 2024 20:15:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [stable 6.6, 6.8, 6.9] backport 2fd3ef1b9265
+Message-ID: <2024052700-avatar-hardhead-1414@gregkh>
+References: <CAK7LNAQo43-iUhhjKNPRJmh=SeMuZCX5=FK3BKemb0Oj9S2_CA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE4VaRGaNJSdo474joOtKEkxkfmyJ-zsrr8asb7ojP2JexFt-A@mail.gmail.com>
+In-Reply-To: <CAK7LNAQo43-iUhhjKNPRJmh=SeMuZCX5=FK3BKemb0Oj9S2_CA@mail.gmail.com>
 
-On Mon, May 27, 2024 at 07:40:21PM +0300, Ilkka Naulapää wrote:
-> Hi Steven,
+On Mon, May 27, 2024 at 06:53:47PM +0900, Masahiro Yamada wrote:
+> Hello Greg, Sasha,
 > 
-> I took some time and bisected the 6.8.9 - 6.8.10 and git gave the
-> panic inducing commit:
 > 
-> 414fb08628143 (tracefs: Reset permissions on remount if permissions are options)
+> Do you have a plan to backport this commit?
 > 
-> I reverted that commit to 6.9.2 and now it only serves the trace but
-> the panic is gone. But I can live with it.
+>  2fd3ef1b9265eda7f53b9506f1ebfb67eb6435a2
+> 
+>  selftests/ftrace: Fix BTFARG testcase to check fprobe is enabled correctly
+> 
+> 
+> 
+> It has a Fixes tag.
 
-Steven, should we revert that?
+It also has a cc: stable@ tag, so yes, we will, give us a chance to
+catch up :)
 
-Or is there some other change that we should take to resolve this?
+> So, maybe it is already caught by your raders.
+> 
+> If not, could you consider it for backporting?
+> (to 6.6.y, 6.8,y and 6.9.y)
+> 
+> With my quick test, it fixed the kselftests/ftrace issue for me.
 
-thanks,
+Great, I'll queue it up now, thanks.
 
 greg k-h
 
