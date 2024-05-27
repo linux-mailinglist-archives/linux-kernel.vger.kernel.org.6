@@ -1,150 +1,379 @@
-Return-Path: <linux-kernel+bounces-189916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAB78CF706
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 718478CF708
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E4528179E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2523E281756
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 00:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC08BE49;
-	Mon, 27 May 2024 00:33:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976023D7;
+	Mon, 27 May 2024 00:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHfEKp6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06869441
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 00:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F54463D;
+	Mon, 27 May 2024 00:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716770009; cv=none; b=FOLM8FMiFq5KV3EcNo/+DINT2MCdEiMmC32TYJ4nk9Rv6FzPulPxT6lx3ophid00G3oHL3+J03CuelCL8Y1XBt5/9cA1ic5IDYErZR5powirX1V3ByB9rQYtUQ/tiSbEae9U6oak4EpPNLDK4LVXlOBDyggS+WkbxDYuUzUVZXQ=
+	t=1716770083; cv=none; b=ibHapLyjOHD/VMLU+gI3ifGImkJEU9tRQzjjZYQkDuuuLzj0Mj6gqHEoMCQ7wODM8dEFnH3ay/aksysBqCxV/6qFvBng0TNzSbvqjpli5mjQQLS6xkYEJcaEBMyCGFcU/8zsKystiux52eUoXJd9l37qWEJ/c+5NvtZbm8u8lfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716770009; c=relaxed/simple;
-	bh=doHX4PzDqiSxtfhzMJePbVvn4Mof4IBeekCuJEcLnV4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cdXywXi4R5QoX+ATqQZfdVyCxZUpNOmDOqwvyPpk2JyPk4J1OO/xFtid/MBwJ1q8O6K2n7bgtilRyRsNmrpwnEByo9SCzK9e4uga0h6y43xUM5hkkAp5AEO0LDt3BzriQZWOybyKAKm44ZB+HW+WLpqy8+CgMX+rA9giNgmb0Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3738836578aso22034805ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 17:33:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716770007; x=1717374807;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j328NClK9+hNcB/FJGTyXY5OlSxScTEKHfRs1xB643s=;
-        b=POIpz/Mf9XxFa5Y41tPvqRf3kYUI7eu77gJyzSBP1CdvLBOd36NoTqn65xNl6ypR6i
-         w+GSiQ94ynv1m9mabr75nRN0mNap4hsmTMlzueI+IZqX+964y9dYeddmmwIRGEaG7qjf
-         1cewNH7whoOZdIn3J3SoCcqlaylRJ+ZJa8g/QzZrzv2o8Z5ZAERXj8wiutpG7D37UVAZ
-         MtzFi79HnszdTaxsT8OWX4elT3Ds8/DLwOgBVJaYngERKnuWKHlrRicS7FciveFTz7wu
-         aqD5QlDbcpT57Z6jpEOsMIZndrA3I3/HQ0aFzRpotRiZFHpVZd+pGrsAtvB9JwPRPp4a
-         tBlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8YUjHX19pI5qFXXCSGnuzVTjW/vKqLZPhYQLmq1yumoS8giVXV8ddmU2/bnpakOs9+zBpUwiaBfBW8HCMWbMZNRXMAiGaZu/dQHSQ
-X-Gm-Message-State: AOJu0Yx7wRViqQxx3mRWMb4eoYulWR8HPzBzn5bv2jRwudRBUX5fDKIN
-	y85R5YViHVtQ4m8UkZzXEXKc+35GoiCeNM3b1H4xfIjC1klAoe0ZxZVNgks0GBjaHnovLpQ2xUd
-	b/UgzbBrGcPdHezJ6h9W8jy+cF3piQAZTV30JLuJ3MeoDmoiOmLLcQgs=
-X-Google-Smtp-Source: AGHT+IEk5bcL3ZtXmZCksvX+fwWAYTQWg+Q0ZV9NkG7ADcuQmCo/JbD0Tx7yMV6vc++KMoUXf172C2sb9n0dNuLAMApNpKNHZEIT
+	s=arc-20240116; t=1716770083; c=relaxed/simple;
+	bh=/xC6V6uAdYEa4i+hkqSsca3aTN3SHmEbZZwFAaCh6CE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QMbuoblbsz99V8gC4LXNZzKxxuX1ll434y2VfYZwBH2ZjdWa9S11bXpEJc11advUI6cWVl3fq3Hwi+1H488GL6mpCPDXJNRXaAGrp95GNmzO6YoQ3nk61hO28keclocghuakJgFTx/QY7L6UyoRM7+01Swqb2qa4+ZBs23cbUI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHfEKp6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF2FC2BD10;
+	Mon, 27 May 2024 00:34:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716770083;
+	bh=/xC6V6uAdYEa4i+hkqSsca3aTN3SHmEbZZwFAaCh6CE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pHfEKp6VJNZ2PXnv15OKpMDq6GZSD71ed/v1+AnzqLclx3GJZuxVv6dLV7Ge7aPoA
+	 mcM+9V3rAaJ5H8UMP6rpKkj6ykjXC4gyql10CG2I6KQPhkI9Wry2+dfuYwbBvtt/yQ
+	 Uxqu+r2TNHQhkafwpJRRXitNycpCpJY++Q81Qo28qmCM+zSdTeiBsOrj2BLklMRann
+	 ObetLabZ8HdUK5c94Rhibi0NtEO0kLZ5zmcRUA+Nukh48na9GS8LIp1TPMoKH/Zv+I
+	 x1mPBiNgylCaLfjznd04165FSDoeo8WsJKILDEFYC8PIJ8foCRPqfLBw+8kY5ECkkd
+	 G6eNGZb/0sYsA==
+Date: Mon, 27 May 2024 09:34:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH 04/20] function_graph: Allow multiple users to attach to
+ function graph
+Message-Id: <20240527093436.7060d358a64cc2ea3213b07b@kernel.org>
+In-Reply-To: <20240525023741.836661178@goodmis.org>
+References: <20240525023652.903909489@goodmis.org>
+	<20240525023741.836661178@goodmis.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:cb0c:0:b0:373:8b9c:66cd with SMTP id
- e9e14a558f8ab-3738b9c8a05mr2245325ab.0.1716770007155; Sun, 26 May 2024
- 17:33:27 -0700 (PDT)
-Date: Sun, 26 May 2024 17:33:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007018c0061964aa67@google.com>
-Subject: [syzbot] [nfc?] [net?] KMSAN: uninit-value in nci_ntf_packet (2)
-From: syzbot <syzbot+71bfed2b2bcea46c98f2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, krzk@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 24 May 2024 22:36:56 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-syzbot found the following issue on:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Allow for multiple users to attach to function graph tracer at the same
+> time. Only 16 simultaneous users can attach to the tracer. This is because
+> there's an array that stores the pointers to the attached fgraph_ops. When
+> a function being traced is entered, each of the ftrace_ops entryfunc is
+> called and if it returns non zero, its index into the array will be added
+> to the shadow stack.
+> 
+> On exit of the function being traced, the shadow stack will contain the
+> indexes of the ftrace_ops on the array that want their retfunc to be
+> called.
+> 
+> Because a function may sleep for a long time (if a task sleeps itself),
+> the return of the function may be literally days later. If the ftrace_ops
+> is removed, its place on the array is replaced with a ftrace_ops that
+> contains the stub functions and that will be called when the function
+> finally returns.
+> 
+> If another ftrace_ops is added that happens to get the same index into the
+> array, its return function may be called. But that's actually the way
+> things current work with the old function graph tracer. If one tracer is
+> removed and another is added, the new one will get the return calls of the
+> function traced by the previous one, thus this is not a regression. This
+> can be fixed by adding a counter to each time the array item is updated and
+> save that on the shadow stack as well, such that it won't be called if the
+> index saved does not match the index on the array.
+> 
+> Note, being able to filter functions when both are called is not completely
+> handled yet, but that shouldn't be too hard to manage.
+> 
+> Co-developed with Masami Hiramatsu:
+> Link: https://lore.kernel.org/linux-trace-kernel/171509096221.162236.8806372072523195752.stgit@devnote2
+> 
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=160b7244980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=71bfed2b2bcea46c98f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1065f33f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13113a34980000
+Thanks for update this. I have some comments below.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+[...]
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+71bfed2b2bcea46c98f2@syzkaller.appspotmail.com
+> @@ -110,11 +253,13 @@ void ftrace_graph_stop(void)
+>  /* Add a function return address to the trace stack on thread info.*/
+>  static int
+>  ftrace_push_return_trace(unsigned long ret, unsigned long func,
+> -			 unsigned long frame_pointer, unsigned long *retp)
+> +			 unsigned long frame_pointer, unsigned long *retp,
+> +			 int fgraph_idx)
 
-=====================================================
-BUG: KMSAN: uninit-value in nci_rf_intf_activated_ntf_packet net/nfc/nci/ntf.c:620 [inline]
-BUG: KMSAN: uninit-value in nci_ntf_packet+0x27f4/0x39c0 net/nfc/nci/ntf.c:802
- nci_rf_intf_activated_ntf_packet net/nfc/nci/ntf.c:620 [inline]
- nci_ntf_packet+0x27f4/0x39c0 net/nfc/nci/ntf.c:802
- nci_rx_work+0x288/0x5d0 net/nfc/nci/core.c:1532
- process_one_work kernel/workqueue.c:3267 [inline]
- process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
- worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+We do not need this fgraph_idx parameter anymore because this removed
+reuse-frame check.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3877 [inline]
- slab_alloc_node mm/slub.c:3918 [inline]
- kmem_cache_alloc_node+0x622/0xc90 mm/slub.c:3961
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:577
- __alloc_skb+0x35b/0x7a0 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1319 [inline]
- virtual_ncidev_write+0x6d/0x290 drivers/nfc/virtual_ncidev.c:120
- vfs_write+0x497/0x14d0 fs/read_write.c:588
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  {
+>  	struct ftrace_ret_stack *ret_stack;
+>  	unsigned long long calltime;
+> -	int index;
+> +	unsigned long val;
+> +	int offset;
+>  
+>  	if (unlikely(ftrace_graph_is_dead()))
+>  		return -EBUSY;
+> @@ -124,24 +269,57 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+>  
+>  	BUILD_BUG_ON(SHADOW_STACK_SIZE % sizeof(long));
+>  
+> +	/* Set val to "reserved" with the delta to the new fgraph frame */
+> +	val = (FGRAPH_TYPE_RESERVED << FGRAPH_TYPE_SHIFT) | FGRAPH_FRAME_OFFSET;
+> +
+>  	/*
+>  	 * We must make sure the ret_stack is tested before we read
+>  	 * anything else.
+>  	 */
+>  	smp_rmb();
+>  
+> -	/* The return trace stack is full */
+> -	if (current->curr_ret_stack >= SHADOW_STACK_MAX_INDEX) {
+> +	/*
+> +	 * Check if there's room on the shadow stack to fit a fraph frame
+> +	 * and a bitmap word.
+> +	 */
+> +	if (current->curr_ret_stack + FGRAPH_FRAME_OFFSET + 1 >= SHADOW_STACK_MAX_OFFSET) {
+>  		atomic_inc(&current->trace_overrun);
+>  		return -EBUSY;
+>  	}
+>  
+>  	calltime = trace_clock_local();
+>  
+> -	index = current->curr_ret_stack;
+> -	RET_STACK_INC(current->curr_ret_stack);
+> -	ret_stack = RET_STACK(current, index);
+> +	offset = READ_ONCE(current->curr_ret_stack);
+> +	ret_stack = RET_STACK(current, offset);
+> +	offset += FGRAPH_FRAME_OFFSET;
+> +
+> +	/* ret offset = FGRAPH_FRAME_OFFSET ; type = reserved */
+> +	current->ret_stack[offset] = val;
+> +	ret_stack->ret = ret;
+> +	/*
+> +	 * The unwinders expect curr_ret_stack to point to either zero
+> +	 * or an offset where to find the next ret_stack. Even though the
+> +	 * ret stack might be bogus, we want to write the ret and the
+> +	 * offset to find the ret_stack before we increment the stack point.
+> +	 * If an interrupt comes in now before we increment the curr_ret_stack
+> +	 * it may blow away what we wrote. But that's fine, because the
+> +	 * offset will still be correct (even though the 'ret' won't be).
+> +	 * What we worry about is the offset being correct after we increment
+> +	 * the curr_ret_stack and before we update that offset, as if an
+> +	 * interrupt comes in and does an unwind stack dump, it will need
+> +	 * at least a correct offset!
+> +	 */
+>  	barrier();
+> +	WRITE_ONCE(current->curr_ret_stack, offset + 1);
+> +	/*
+> +	 * This next barrier is to ensure that an interrupt coming in
+> +	 * will not corrupt what we are about to write.
+> +	 */
+> +	barrier();
+> +
+> +	/* Still keep it reserved even if an interrupt came in */
+> +	current->ret_stack[offset] = val;
+> +
+>  	ret_stack->ret = ret;
+>  	ret_stack->func = func;
+>  	ret_stack->calltime = calltime;
+> @@ -151,7 +329,7 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+>  #ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
+>  	ret_stack->retp = retp;
+>  #endif
+> -	return 0;
+> +	return offset;
+>  }
+>  
+>  /*
+> @@ -168,49 +346,67 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
+>  # define MCOUNT_INSN_SIZE 0
+>  #endif
+>  
+> +/* If the caller does not use ftrace, call this function. */
+>  int function_graph_enter(unsigned long ret, unsigned long func,
+>  			 unsigned long frame_pointer, unsigned long *retp)
+>  {
+>  	struct ftrace_graph_ent trace;
+> +	unsigned long bitmap = 0;
+> +	int offset;
+> +	int i;
+>  
+>  	trace.func = func;
+>  	trace.depth = ++current->curr_ret_depth;
+>  
+> -	if (ftrace_push_return_trace(ret, func, frame_pointer, retp))
+> +	offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
+> +	if (offset < 0)
+>  		goto out;
+>  
+> -	/* Only trace if the calling function expects to */
+> -	if (!fgraph_array[0]->entryfunc(&trace))
+> +	for (i = 0; i < fgraph_array_cnt; i++) {
+> +		struct fgraph_ops *gops = fgraph_array[i];
+> +
+> +		if (gops == &fgraph_stub)
+> +			continue;
+> +
+> +		if (gops->entryfunc(&trace))
+> +			bitmap |= BIT(i);
+> +	}
+> +
+> +	if (!bitmap)
+>  		goto out_ret;
+>  
+> +	/*
+> +	 * Since this function uses fgraph_idx = 0 as a tail-call checking
+> +	 * flag, set that bit always.
+> +	 */
 
-CPU: 1 PID: 3730 Comm: kworker/u8:19 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: nfc2_nci_rx_wq nci_rx_work
-=====================================================
+This comment is also out-of-date.
+
+> +	set_bitmap(current, offset, bitmap | BIT(0));
+
+And we do not need to set BIT(0) anymore.
+
+> +
+>  	return 0;
+>   out_ret:
+> -	RET_STACK_DEC(current->curr_ret_stack);
+> +	current->curr_ret_stack -= FGRAPH_FRAME_OFFSET + 1;
+>   out:
+>  	current->curr_ret_depth--;
+>  	return -EBUSY;
+>  }
+>  
+>  /* Retrieve a function return address to the trace stack on thread info.*/
+> -static void
+> +static struct ftrace_ret_stack *
+>  ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+> -			unsigned long frame_pointer)
+> +			unsigned long frame_pointer, int *offset)
+>  {
+>  	struct ftrace_ret_stack *ret_stack;
+> -	int index;
+>  
+> -	index = current->curr_ret_stack;
+> -	RET_STACK_DEC(index);
+> +	ret_stack = get_ret_stack(current, current->curr_ret_stack, offset);
+>  
+> -	if (unlikely(index < 0 || index > SHADOW_STACK_MAX_INDEX)) {
+> +	if (unlikely(!ret_stack)) {
+>  		ftrace_graph_stop();
+> -		WARN_ON(1);
+> +		WARN(1, "Bad function graph ret_stack pointer: %d",
+> +		     current->curr_ret_stack);
+>  		/* Might as well panic, otherwise we have no where to go */
+>  		*ret = (unsigned long)panic;
+> -		return;
+> +		return NULL;
+>  	}
+>  
+> -	ret_stack = RET_STACK(current, index);
+>  #ifdef HAVE_FUNCTION_GRAPH_FP_TEST
+>  	/*
+>  	 * The arch may choose to record the frame pointer used
+> @@ -230,26 +426,29 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+>  		ftrace_graph_stop();
+>  		WARN(1, "Bad frame pointer: expected %lx, received %lx\n"
+>  		     "  from func %ps return to %lx\n",
+> -		     current->ret_stack[index].fp,
+> +		     ret_stack->fp,
+>  		     frame_pointer,
+>  		     (void *)ret_stack->func,
+>  		     ret_stack->ret);
+>  		*ret = (unsigned long)panic;
+> -		return;
+> +		return NULL;
+>  	}
+>  #endif
+>  
+> +	*offset += FGRAPH_FRAME_OFFSET;
+>  	*ret = ret_stack->ret;
+>  	trace->func = ret_stack->func;
+>  	trace->calltime = ret_stack->calltime;
+>  	trace->overrun = atomic_read(&current->trace_overrun);
+> -	trace->depth = current->curr_ret_depth--;
+> +	trace->depth = current->curr_ret_depth;
+>  	/*
+>  	 * We still want to trace interrupts coming in if
+>  	 * max_depth is set to 1. Make sure the decrement is
+>  	 * seen before ftrace_graph_return.
+>  	 */
+>  	barrier();
+> +
+> +	return ret_stack;
+>  }
+>  
+>  /*
+> @@ -287,30 +486,47 @@ struct fgraph_ret_regs;
+>  static unsigned long __ftrace_return_to_handler(struct fgraph_ret_regs *ret_regs,
+>  						unsigned long frame_pointer)
+>  {
+> +	struct ftrace_ret_stack *ret_stack;
+>  	struct ftrace_graph_ret trace;
+> +	unsigned long bitmap;
+>  	unsigned long ret;
+> +	int offset;
+> +	int i;
+> +
+> +	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> +
+> +	if (unlikely(!ret_stack)) {
+> +		ftrace_graph_stop();
+> +		WARN_ON(1);
+> +		/* Might as well panic. What else to do? */
+> +		return (unsigned long)panic;
+> +	}
+>  
+> -	ftrace_pop_return_trace(&trace, &ret, frame_pointer);
+> +	trace.rettime = trace_clock_local();
+>  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+>  	trace.retval = fgraph_ret_regs_return_value(ret_regs);
+>  #endif
+> -	trace.rettime = trace_clock_local();
+> -	fgraph_array[0]->retfunc(&trace);
+> +
+> +	bitmap = get_bitmap_bits(current, offset);
+> +	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
+> +		struct fgraph_ops *gops = fgraph_array[i];
+> +
+> +		if (!(bitmap & BIT(i)))
+> +			continue;
+> +		if (gops == &fgraph_stub)
+
+nit: here, we can make this check unlikely() because the above
+bitmap check already filtered. (Some sleepable functions leave
+the return frame on shadow stack after gops is unregistered. But it
+also rare compared with living time.)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thank you,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
