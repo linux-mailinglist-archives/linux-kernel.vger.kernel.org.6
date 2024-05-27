@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-190371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0EE8CFD62
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A228CFD64
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427081F20F41
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81547281035
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7358613AA4C;
-	Mon, 27 May 2024 09:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78F313AA2A;
+	Mon, 27 May 2024 09:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+PQh7Fv"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GZjfPuYJ"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3E13AA36
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B013A890;
+	Mon, 27 May 2024 09:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716803155; cv=none; b=Q5mOoD2dY1PKXl3y7eNGQ7+aSDsWbeNYde71zOpisgGfCpdXZCbxkyU1BXYH+MwJNPsGYQi0tTerfbefgEIvLir7h97q1l5eDRZJ5MyH7JFLzOFnmYSFnwXQ1tf/XHRwIQgrizNwtAIiNiHZkXYmU5ogAR5jIBx0AFjW3ujDkSM=
+	t=1716803168; cv=none; b=nV/X20sSno2zzEgEQGqIfyK6AoTcTUzOsehr8USdcVwckwtiurLxJ+BMeG/lvlejZRKlVUwwxUtIJIh2+jz8yxQ4YlCgIhI/qDsjtUKCfRpB+kb5qOtXH6lf6bxN4GMZRolVUgL9hwEQfvc7GPWphnujNIOuAObTlPDqhy/LDRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716803155; c=relaxed/simple;
-	bh=WflIQoeUamn8PO2OKh5VSMS4KpxPJy/grFXhGMPOAe0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d4pajSo3G8nZ/B6iRaxqed+pE0Uf+6kc2c/PuW42BtsgfislA2t70RDyHSQW8qq3WBz2Uobh2mWfsHZ28qKPmIsIKSOfAMA8NMUmwMnvaVQH0uTistoijs1adhNAHKByTdwxlER1IDSYGDMe0Dy39ovVYnBNTu+1oiuIJFzQSrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+PQh7Fv; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57857e0f462so2989207a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716803152; x=1717407952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCU3XZH1xof6IMBlikDcCMM2jat2Zoq5blIFKcFiWcU=;
-        b=h+PQh7FvQTiBmB2So33JNq3mU2XCOVoWw//KXdvgv7PlMzb7BZBjxd2BSbxePmfeHT
-         mIvMIx9y7D1pakRQvefhuDqeCSdzI16NQLeiWQf0LVw3bl0xEawxyZlYZjXPg3ibfhIi
-         +1v+OgXybHVQULnK4brzbbdSkUy6mKQhBzEK4QTggJIUcleZvP9Rp2uqjl9P3Y9fte4F
-         5E88vNOosEXxmJ4vTxU10gqyI5JOMlOr8rSzWiDjn640H1xRCoYidIbTRmvl5HwUCxWf
-         kDeI5XNsBlWa6nxreNZzGnNuM2tMsA33+/q58ASr8lHtN6Ce3juWnQwTXVAsugJMTN/5
-         OLQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716803152; x=1717407952;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZCU3XZH1xof6IMBlikDcCMM2jat2Zoq5blIFKcFiWcU=;
-        b=q+3xbd+zuMlPHLXHpzrzyspSOQrRbAxT61WGUFWqkibQW7J9pGAhG2U9p2eM6Vyoo5
-         57u1YzLeOCZeuPbQIWd3YPa69izVCrmaI+LgQBJa5kSSCGSLzHPWMvs0OafWbma76nnh
-         cK/J62TN/KguGKc9CodTUQ31MFmvILs7GUCUrM387iBNgBn/MQYjZ3o6T5ZJWuofYtq/
-         1OXJMqmIYJ18FQ9pEpVXZPBMX6RSUZOh1S/E6l5/XVUGHSZRbz9OjTCLjoLZJpM1tTFv
-         LttyS+JFatwR+Ds5QEHG/1gHckRkWptC7pYk3CysyKAtZf2Xf5cIWEDCZ/Vtv4fUrUey
-         HBjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU92Kedeap1Cc3Wf8/uklSNuD8SWyyvj5/kdM6nwB+cYkSss2DteBUTSRmWsxW43/wXEoeo2imfxX8mgVFp0skI3+2efg9+Q6r0djbi
-X-Gm-Message-State: AOJu0YwE+AqYpxH6Biy/x+WLJCU12L+pyJUI5gVuYVffO5IDFMBRizCE
-	jLiIrUqLKAsZTffxKnm9vg8M2mQ1odzWj6GOjH4KtqEGhueK2DDM
-X-Google-Smtp-Source: AGHT+IFCyaJZWTGFtwyvFpUuoVfenu2rfxpVDS9Di1Q0IN+mizrFBCaT9vyhskDyjLy7ncb8AVoMEw==
-X-Received: by 2002:a50:9514:0:b0:578:6c19:47fa with SMTP id 4fb4d7f45d1cf-5786c195f61mr4100819a12.22.1716803152358;
-        Mon, 27 May 2024 02:45:52 -0700 (PDT)
-Received: from localhost.localdomain (ip-77-25-34-87.web.vodafone.de. [77.25.34.87])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579c6c72ed3sm2304178a12.87.2024.05.27.02.45.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:45:52 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: philipp.g.hortmann@gmail.com,
-	namcao@linutronix.de,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 2/2] staging: rtl8192e: remove unnecessary line breaks
-Date: Mon, 27 May 2024 11:45:27 +0200
-Message-ID: <20240527094527.2046-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240527094527.2046-1-straube.linux@gmail.com>
-References: <20240527094527.2046-1-straube.linux@gmail.com>
+	s=arc-20240116; t=1716803168; c=relaxed/simple;
+	bh=Qg/8XDQ2y4nz1E3KZ78FVxwmzL8QMPbzuLqJUGrZKek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyP8yO5Ts3799PM7CINhjlXx9IyMGNiT9VJRMlUBt92HsRZiLARi/sdNtCHRbjPPzsAVF/F1WDFQOWAyp5t1LjNjZHZP3s06T+SI1iUU1uJ+iOPVChdUOteRkMb+MenyvwFB/fKPUIXsUJ39Y4J7p8ppxJ5AqhM1XZNvIY1G30M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GZjfPuYJ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716803136; x=1717407936; i=markus.elfring@web.de;
+	bh=b0hWRCQXVgCjXUi18BLPuJgUdQMZo6dOE/TxIyOa5qE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GZjfPuYJWaALaaTQHYbcyIs00O6+Ji7r6Sx+7MHU7QwP/199r8reePOjg2nXJ9sV
+	 qsAHcxbKcEZuPo6NJRnjRQZUaSL11hHJ3zWh08BHZYV6qMzhY8dtvvzOozzo5oDjv
+	 5iiX9ZApyBvvehaD2femcX33EsUUMtcIMj7/9zS4xT7ZcNtgFSUrsKyuJfmEGxypZ
+	 NziUfLAh/+YKOeX+Cfm+JRDQU5O8ElpCBUawx1f2/EXFRhmhU+RX5hYE87/iW9D7r
+	 +JZSA8Tj3ycm+jdpOzDIUDz15wQE8a3U0g4aNs3bCc7WAOHClAxHijT2V3YEE2D49
+	 HnJ0HjpDBdKonqu92Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MODmV-1rrvjK41IP-00U476; Mon, 27
+ May 2024 11:45:36 +0200
+Message-ID: <568162b8-563e-4ec7-8f31-bd16f329b245@web.de>
+Date: Mon, 27 May 2024 11:45:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] drm/loongson: Add dummy gpu driver as a
+ subcomponent
+To: Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+ <20240526195826.109008-4-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240526195826.109008-4-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QBWQBXE9g1+Sf2ppixiXzVQP3Rkay7qyHC4DgAIEj4DyWUs46yv
+ wOIsyoWViQeITi8HOTwcOdse/1pCAu1/TbBlr7O+Ytl95ibvCbyJuYZ6VucOGA8qMmcqJeM
+ GhsHUC3ej/dQQJu+/zwqtRlOT5OlSmlrbdR5hHbnoHO8p1Mnh2mM1FHgp1LjN3pqPtt7Dxg
+ zrq1vYLhsdm2eAEC+2J2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NYLnz5L0av4=;5CfIPCZ4HKcxCI2iE3OBU+9r8Bt
+ w5qKMdMZfB67NYxwP5F1YmER+TqhJqLpK6o3i50no16Ges0MRsRcxMC3HUhKeMiqgrnmZSHkk
+ fHzHpaEk6Cr0yXYSuRgdicvOer7cIAJW91+8rgiQPqX0Ary0ci/LAHwxIllS5Z3NO/s2CufuP
+ 0iv4MwA2Uw4uFRU7az5H/dvVzI6MHe11dQ82PCD8ltsJuZ1wDAwdDapX4oALNzDrEuMrBWkvd
+ uHi8d7AYgEwcmssD07f9MiiHUFwgcTb0iZ+ZI2eglFxqGR3UGAtUn3SBRy81Sy7+XYrPlZY6r
+ w+n5GD+ZgiAS1f85rq/ABDBRdn2sIzIKebfQIEzmr6SHqX3n0HcD5izWZxne4MXNxDw8KqMIt
+ 0OS7gfL4nirEwf2ElcWKV5uPDgbpkHa530WofBRh+CSbcVqMTYAR+ljji8eWJ1atLmuz/fwza
+ FWZtQUw3uikcg/Xd+05b5B+wO+9RKDg7/nz4umi1z1CL3MVm+bLZwGyy1rabDzGx6UwWWWp0A
+ Euau3irXtpGFPwACV/ApUq/uqdljH+YyaBmmzRnNIfCOxHQe5RnQeqaUpyY/Qff31A/KWR1Ft
+ LD1R2h7W4ApeREWynbYTfQGdck9Yo/aEUOskFLPLRO9dDliETE+4X3yMrrh0IYDGnHGVuQ4FI
+ UJ97DTe2CbktgSf1nLFfh7jjhTDbx7chHyZrY1AtFN3r5VRf5DkuQCJifHnFW9Bc8sIqrYwTd
+ Bd44se47iXPe/+dANwGYsL+/lb0C90+TpNG616vpjOD97T3DZMa0RUF9d78aJfahQeo0xWwnk
+ 71koy2ilJNryfj+61v34WbPNAM5lMEwA8Ozl77HYetsO8=
 
-Remove some unnecessary line breaks after '=' and '==' to improve
-readability.
+=E2=80=A6
+> loose coupling, but still be able to works togather to provide a unified
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Reviewed-by: Nam Cao <namcao@linutronix.de>
----
-v1 -> v2:
-Added Nam Cao's reviewed-by tag from v1
+  use loose?          should?          work together?            an?
 
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.c | 24 ++++++++--------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-index 2fda44c5a412..5392d2daf870 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-@@ -1392,8 +1392,7 @@ static void _rtl92e_dm_rx_path_sel_byrssi(struct net_device *dev)
- 				continue;
- 
- 			rf_num++;
--			cur_cck_pwdb =
--					dm_rx_path_sel_table.cck_pwdb_sta[i];
-+			cur_cck_pwdb = dm_rx_path_sel_table.cck_pwdb_sta[i];
- 
- 			if (rf_num == 1) {
- 				cck_rx_ver2_max_index = i;
-@@ -1412,27 +1411,20 @@ static void _rtl92e_dm_rx_path_sel_byrssi(struct net_device *dev)
- 				}
- 			} else {
- 				if (cur_cck_pwdb > tmp_cck_max_pwdb) {
--					tmp_cck_sec_pwdb =
--							tmp_cck_max_pwdb;
--					cck_rx_ver2_sec_index =
--							cck_rx_ver2_max_index;
-+					tmp_cck_sec_pwdb = tmp_cck_max_pwdb;
-+					cck_rx_ver2_sec_index = cck_rx_ver2_max_index;
- 					tmp_cck_max_pwdb = cur_cck_pwdb;
- 					cck_rx_ver2_max_index = i;
--				} else if (cur_cck_pwdb ==
--						tmp_cck_max_pwdb) {
-+				} else if (cur_cck_pwdb == tmp_cck_max_pwdb) {
- 					tmp_cck_sec_pwdb = cur_cck_pwdb;
- 					cck_rx_ver2_sec_index = i;
- 				} else if (PWDB_IN_RANGE) {
- 					tmp_cck_sec_pwdb = cur_cck_pwdb;
- 					cck_rx_ver2_sec_index = i;
--				} else if (cur_cck_pwdb ==
--						tmp_cck_sec_pwdb) {
--					if (tmp_cck_sec_pwdb ==
--						tmp_cck_min_pwdb) {
--						tmp_cck_sec_pwdb =
--								cur_cck_pwdb;
--						cck_rx_ver2_sec_index =
--								i;
-+				} else if (cur_cck_pwdb == tmp_cck_sec_pwdb) {
-+					if (tmp_cck_sec_pwdb == tmp_cck_min_pwdb) {
-+						tmp_cck_sec_pwdb = cur_cck_pwdb;
-+						cck_rx_ver2_sec_index = i;
- 					}
- 				} else if ((cur_cck_pwdb < tmp_cck_sec_pwdb) &&
- 						(cur_cck_pwdb > tmp_cck_min_pwdb)) {
--- 
-2.45.1
+=E2=80=A6
+> Add a dummy driver for the GPU, it functional as a subcomponent as well.
 
+                                     is?
+
+
+Please improve your change descriptions considerably.
+
+
+=E2=80=A6
+> +++ b/drivers/gpu/drm/loongson/loongson_module.c
+> @@ -29,8 +29,15 @@ static int __init loongson_module_init(void)
+>  	if (ret)
+>  		return ret;
+>
+> +	ret =3D pci_register_driver(&loong_gpu_pci_driver);
+> +	if (ret) {
+> +		platform_driver_unregister(&lsdc_output_port_platform_driver);
+> +		return ret;
+> +	}
+> +
+>  	ret =3D pci_register_driver(&lsdc_pci_driver);
+>  	if (ret) {
+> +		pci_unregister_driver(&loong_gpu_pci_driver);
+>  		platform_driver_unregister(&lsdc_output_port_platform_driver);
+>  		return ret;
+>  	}
+
+How do you think about to use another goto chain for common exception hand=
+ling?
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
+
+Would you become interested in the application of scope-based resource man=
+agement here?
+
+
+> @@ -43,6 +50,8 @@ static void __exit loongson_module_exit(void)
+>  {
+>  	pci_unregister_driver(&lsdc_pci_driver);
+>
+> +	pci_unregister_driver(&loong_gpu_pci_driver);
+> +
+>  	platform_driver_unregister(&lsdc_output_port_platform_driver);
+>  }
+
+I suggest to avoid blank lines for this function implementation.
+
+Regards,
+Markus
 
