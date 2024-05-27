@@ -1,110 +1,136 @@
-Return-Path: <linux-kernel+bounces-191398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776F98D0EAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235348D0EB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0111DB21B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D108F28304D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F5516131A;
-	Mon, 27 May 2024 20:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3122161337;
+	Mon, 27 May 2024 20:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Br4j+KvQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="SQy5Nhjr"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75F65338D;
-	Mon, 27 May 2024 20:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D68161306;
+	Mon, 27 May 2024 20:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716842297; cv=none; b=hYVimp8trqjKw44GytDlDnpuF9hoI4wlDLnMxsQ+MxCq4NISu6WrLskleiMMxYz3Sfa1qNYHGIAzKPSFQ83W47SF4kfbovE6QmDcznjRHIjpqizUCNmJvx61bLvi2EBzwIjaWdkEFh/dUuPQ0PqrXqZyYjaCdckwwKg2Z9yeI8k=
+	t=1716842467; cv=none; b=CaoNmuA3Qkj0BXtc+lNbi59dAB8/KaQ8SU49aD6umpNQ3Ff9Z0LRnNIahd8/gGSJkwYv3gJPm8JVcNFAAZYGxsAYfBH0bbBBZrbEgHcYiptJPhNngW2CuGzbQ3UOtn+wfcJ4CKcXVw+Kv+MO3LdmcKLstQJKQYDyuWN69o5dlVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716842297; c=relaxed/simple;
-	bh=5ij4LoZCJaP0Z3WwRoKYheiONp4dxGoT34/7Tch/SL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUAc3Xt7evGhhxOHgoz5/EJQJbT7sYI4rgl/3ouIokbCFLt7KJhu+ezLJ3VhCk/OnCv3AcHN9RPd2r5mxP1IqpljmW4xy+oW9Vl5H47soNfn6Z3GPCPhoWi+g9XxYyEm+/8EAf7xvgbMUZcYweU8Nm4s5efCvw4qBzZZMvyI9Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Br4j+KvQ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716842296; x=1748378296;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5ij4LoZCJaP0Z3WwRoKYheiONp4dxGoT34/7Tch/SL4=;
-  b=Br4j+KvQqt05kQ9NrA3fsCU3A3ziPAMqF1FS0r3WvKYIyVWMn6liBwkV
-   4P/ktfnfctE2GSL5cqQu9z9DQDjp0xFbZVtfoK7JP6hBrPoSOz3A1N/HM
-   8PR68ygJI8jaOpH4lIuX0nlcMvHe5h1f/HvVapUrR+9kG87zawguiMF8K
-   jOtdDnhMe6TvL59pRhxXpbqVlrtXtcb3fKXJgqjY6jexAO7op219IlR52
-   Vwv2dKWljhvcYc71ilQH7MtcPcgbZxZATQTQhge4MmK07+JrsRN2D80xL
-   PLOiaJKugvvEy/6LtRGgB69Q5RGvvn/gPMJW5LHvI58FLsb5oFC67y0xM
-   A==;
-X-CSE-ConnectionGUID: FjHAV2VuRh6zOCzhKUrj/A==
-X-CSE-MsgGUID: xwfm6gF/TkuiSUt9KGUJ8g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="11717976"
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="11717976"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 13:38:15 -0700
-X-CSE-ConnectionGUID: yCvC5PYWRQyenQLni3tKYQ==
-X-CSE-MsgGUID: 7w34H7sKRcmaBGSayhQRxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,193,1712646000"; 
-   d="scan'208";a="65660436"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 13:38:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sBh6b-0000000BMks-1LiV;
-	Mon, 27 May 2024 23:38:05 +0300
-Date: Mon, 27 May 2024 23:38:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
-	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
-	dlatypov@google.com
-Subject: Re: [PATCH v9 07/10] lib: add basic KUnit test for lib/math
-Message-ID: <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
- <20240526180933.1126116-1-devarsht@ti.com>
- <ZlTu_9orsuosNiGk@smile.fi.intel.com>
+	s=arc-20240116; t=1716842467; c=relaxed/simple;
+	bh=NbXY2Kk4FGwSPszns2tNOssIhDlhmg+90rK9jIm+aWE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y2E8Z5lLGjGRnfP9oTqF4+gdCjriWvSTZx8XBKQlmBKEQItS9sHJ7x0dlubnuW+2XBadjsRDsuVT/2KLl/M1xjQmRtD8RsTb4l/7BiALMnAe3jC+gG4a9vtrnKYG7OfgJHQ3OTJmDigwKaXHoY/sCPwaqa5OwofqMt+zwkNV7wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=SQy5Nhjr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 58AB11C0002;
+	Mon, 27 May 2024 20:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1716842460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nfH6b5pwYJEOTT3sLSjSrRNYvJ7fdHrC/cOseFcXPFE=;
+	b=SQy5NhjrknphnSRui48ouVOppbA5yPQyJceM4GNRtWRx8km0pI4ni/fN8rt7xB+jSThrGd
+	VsB42Z4aZU5hlx4SN5aCESYYaIrnGobEq6fWLhOTACQQHKzcAZUMQ15MaaqjpqSQhtmYa+
+	fDfJpdZGgQrM9SJCvif4Hf6+7qKADy7Oc1wvkqnlS4psCsVn/Xc/LmrHirx2R5xpJqlLyj
+	4ThlDYLuzkaOg7Al0UTJRuHFRXlqw6lUt699TnIcwudJo8uIAkQ7WGGGzI0J3hK+g5XkFL
+	CAHWnlLn0qPJTX7sT+fsEuLlbjbkgaaoXCNSGyQyR3SW4Mk0Tw0Gb1poA3vnsw==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
+  <linux-fsdevel@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
+In-Reply-To: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com> (Jeff
+	Johnson's message of "Fri, 24 May 2024 11:48:09 -0700")
+References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+Date: Mon, 27 May 2024 16:40:47 -0400
+Message-ID: <87y17vng34.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlTu_9orsuosNiGk@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-GND-Sasl: gabriel@krisman.be
 
-On Mon, May 27, 2024 at 11:37:20PM +0300, Andy Shevchenko wrote:
-> On Sun, May 26, 2024 at 11:39:33PM +0530, Devarsh Thakkar wrote:
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-..
+> Currently 'make W=1' reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+>
+> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+> generated utf8data file.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Note that I verified that REGENERATE_UTF8DATA creates a file with
+> the correct MODULE_DESCRIPTION(), but that file has significantly
+> different contents than utf8data.c_shipped using the current:
+> https://www.unicode.org/Public/UNIDATA/UCD.zip
 
-> > +MODULE_LICENSE("GPL");
-> 
-> modpost validator won't be happy about this, i.e. missing MODULE_DESCRIPTION().
+Thanks for reporting this.  I'll investigate and definitely regenerate
+the file.
 
-And obviously + module.h in the inclusion block.
+The patch is good, I'll apply it to the unicode code tree
+following the fix to the above issue.
+
+> ---
+>  fs/unicode/mkutf8data.c       | 1 +
+>  fs/unicode/utf8-selftest.c    | 1 +
+>  fs/unicode/utf8data.c_shipped | 1 +
+>  3 files changed, 3 insertions(+)
+>
+> diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
+> index bc1a7c8b5c8d..77b685db8275 100644
+> --- a/fs/unicode/mkutf8data.c
+> +++ b/fs/unicode/mkutf8data.c
+> @@ -3352,6 +3352,7 @@ static void write_file(void)
+>  	fprintf(file, "};\n");
+>  	fprintf(file, "EXPORT_SYMBOL_GPL(utf8_data_table);");
+>  	fprintf(file, "\n");
+> +	fprintf(file, "MODULE_DESCRIPTION(\"UTF8 data table\");\n");
+>  	fprintf(file, "MODULE_LICENSE(\"GPL v2\");\n");
+>  	fclose(file);
+>  }
+> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+> index eb2bbdd688d7..f955dfcaba8c 100644
+> --- a/fs/unicode/utf8-selftest.c
+> +++ b/fs/unicode/utf8-selftest.c
+> @@ -307,4 +307,5 @@ module_init(init_test_ucd);
+>  module_exit(exit_test_ucd);
+>  
+>  MODULE_AUTHOR("Gabriel Krisman Bertazi <krisman@collabora.co.uk>");
+> +MODULE_DESCRIPTION("Kernel module for testing utf-8 support");
+>  MODULE_LICENSE("GPL");
+> diff --git a/fs/unicode/utf8data.c_shipped b/fs/unicode/utf8data.c_shipped
+> index d9b62901aa96..dafa5fed761d 100644
+> --- a/fs/unicode/utf8data.c_shipped
+> +++ b/fs/unicode/utf8data.c_shipped
+> @@ -4120,4 +4120,5 @@ struct utf8data_table utf8_data_table = {
+>  	.utf8data = utf8data,
+>  };
+>  EXPORT_SYMBOL_GPL(utf8_data_table);
+> +MODULE_DESCRIPTION("UTF8 data table");
+>  MODULE_LICENSE("GPL v2");
+>
+> ---
+> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+> change-id: 20240524-md-unicode-48357fb5cd99
+>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Gabriel Krisman Bertazi
 
