@@ -1,399 +1,192 @@
-Return-Path: <linux-kernel+bounces-190240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9338E8CFBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:43:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF858CFBDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 10:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FE52823A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39E0B211B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 08:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43B713AD07;
-	Mon, 27 May 2024 08:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBDD13AA2E;
+	Mon, 27 May 2024 08:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fb/KEyg/"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARuiEhaQ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B9613AA2E;
-	Mon, 27 May 2024 08:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC09913AD1A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799356; cv=none; b=B1u41U/8dQ5X4EwKBgXB11Z4pDYtnPdYv/NBJ1rw76/fHU3Tzvy2xZD/FMq0ghGDm868yxtADcYzcLHOv+4ZIcFdmSne4LArBHsPs5MbJixGR3Po0ch0N33fj3GXXj3R0aRmu5mOaG5rPW58RMdnwdbhCbcG63QF/Ya94xTtT1Q=
+	t=1716799366; cv=none; b=a8bo/kJ/htZ4KQCl8d812En70NAteEPDuQkjZy6qHwXufgsn4x+QXBqBh+pAF3tmPAlwS09OEMMtemIgsJQpEQWRoaeyfFTQ1Kn5GennzR9w2e78PX01fulo+6rAAFcRRrEsMjlJuGFvsMWSQ5gxmsFCXAA7mQYTgPIceS8efnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799356; c=relaxed/simple;
-	bh=r/aE+f+SQbJG3ozKay0GlDI7/LC67ye9uc0/R7BeTd4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VFMs+ki/pFgvhjs1iB+ijK95uDWwbTQ+iwn0Du8VvFlmi9E5YT0IqV4Bjc13/aQFHpy8QZlHq31YFfDTVw9ETqYKvlp6GXx80RWsX4Q0U0IkutFmZqd1KGWaD4oI/CYItLZEbio4euKTU0Am7G8/1ByEy5tV6wU1sCJxK86DrHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fb/KEyg/; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44R5fcnt027304;
-	Mon, 27 May 2024 01:42:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
-	I9+uU4quOo3lWwYZ/skqAd4eQQMLx6FgwuZHgq4ogE=; b=fb/KEyg/D7RXKK3h5
-	54n71lKKX9/0nk1UrXaes/wRz0qHgQ83HHCn7p82mr1DMqeTdDALGZN6oB9jkKCV
-	wOgduB0klqocXKPCVoxy8ecBoWr1YOafo7CqiXXZkdixknEhwa1q31etOZMgY4SP
-	kmDdNb2/baHs4ElKuIJwx3BOThvvvI402klXVZ5pWeAGGhS8j6a54bCWP9Ow5XZ6
-	zmLWHxRt/cGErE09EhJ36HSzPBNnfg++g8MGmNQQAfN1jx+8Kau+X9aHXZj+yD76
-	rQTNLYwFNvLI14O+VuAYjpW1Gcbf25UpnoCD6pYT4rqLZOZ/b7TFphmKySruPQIK
-	S8AzQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3ycm8grk6x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 01:42:29 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 27 May 2024 01:42:28 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 27 May 2024 01:42:28 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id C89023F7062;
-	Mon, 27 May 2024 01:42:27 -0700 (PDT)
-From: Witold Sadowski <wsadowski@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <broonie@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
-Subject: [PATCH v5 5/5] spi: cadence: Add MRVL overlay xfer operation support
-Date: Mon, 27 May 2024 01:42:16 -0700
-Message-ID: <20240527084216.667380-7-wsadowski@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527084216.667380-1-wsadowski@marvell.com>
-References: <20240527084216.667380-1-wsadowski@marvell.com>
+	s=arc-20240116; t=1716799366; c=relaxed/simple;
+	bh=ShNumuEqHFtQaXqkFlIDAFs1IqCQ3du3nnDnxol1h5Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HHVWe5Aw9NPrhH6Y2S2uiY7KrMERXXgtxqU54+KrW5/iak67pSbLMmZnCuCvl5qHAlWoQWYE0c1LuD/MvDq8eeX5E3XI7T/UPrDl1cMiFqdH61JVfDClUGw+0gPWBhj5qpmejb7B+HoQxND07URbrsrisSvQyKxHgBCJ2gHJhMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ARuiEhaQ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354de3c5d00so2467775f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 01:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716799362; x=1717404162; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6Gc+kT2JekTX9NL/YClyq4Cu4TmQMdt+1e1Ze3dy8w=;
+        b=ARuiEhaQ80HFAoGZ0cA4k2mQZTE/HWLxNwRiTjYxdABoH2oluXFZq81X/nAJbwjBHI
+         fZ2TGq8Q0dy/06DTJCvU+YjoMioVT4O6N4H09BKD5LjuA0atd5djyrO9l8p/SAAoVxDE
+         UlrEH3ve1bWGZ352jxqlP0pEXEg3wRD4QU64tvZmgmKEaUlbJEynCZnrXvNdbYJM8BeU
+         0oJefg5h7QawiPRwu0H0ROWAXVBlzcIhEDQ5NVUflRlp6vIvjQAZFly1itxSZHrl6cZs
+         lUC3i88UIurf3srRQ5OzWe6u3BCOPb6Ru1oVc5Fp9M3xf+r1QC6seIN0EIad0+z24edE
+         TIwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799362; x=1717404162;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v6Gc+kT2JekTX9NL/YClyq4Cu4TmQMdt+1e1Ze3dy8w=;
+        b=Vr29Vyk4ae0igb7CsyCzTncX4OKVez/f7uh2mEJJEAmuwRQ0EGzY+5xi01//oa7vlQ
+         hNODDONkj/6g3dp9UHD0dQiThQKp6uQl6LxS0qQz8B6nVq5qIzd+X5q9X9wC3KcFjoPO
+         sntWCs+N+98rYSSDxQvg0jSlvjNqIPwcm7UQ7CQs+3Fqjg91c8BMabaqAaoYtQTrrBed
+         K6+y7AXmXLjBl58TWA5CNAsZ9MgYv2WSlHsHOFFdM4Smkb1+zdSGG6S7o4ZGsS4ZpTQ1
+         fGSk2gp23ArA/4cLbK0Pxry/6V8tQ84ZKNg4cABk/6v04O2Ca9cdFTxzJrCrepWeytFE
+         p/Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVImtEgsR2rmRETpQTXC3NQ17RZsGHcBdofo1zpTq+byH5XAAGV8GLLnSrrOpp+Rn/5ejUBAq9KjMLnqgOW2QvYKdKyokdOnP1u5i6c
+X-Gm-Message-State: AOJu0Yx0tZ15rleNTRHW2yxaVNY+8XVEJ11zeiFY5oTrCR5rjn1wtsZu
+	r4vpo38QU80/NitLiQ9R2Kt2WkyfK7fXnPnI7scrhJpZxh+eDfxIeQqCt3GSjt4=
+X-Google-Smtp-Source: AGHT+IE/gbYd8CmEJe1Fnu3+bm4ciMI00a+mz01IIfc82xZMwUel0Jl18pHTsHxDsU+h61BBkMmsJA==
+X-Received: by 2002:adf:b608:0:b0:35a:62e3:710d with SMTP id ffacd0b85a97d-35a62e37412mr160188f8f.28.1716799362005;
+        Mon, 27 May 2024 01:42:42 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3558889fb57sm8447292f8f.114.2024.05.27.01.42.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:42:41 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 0/7] arm64: qcom: allow up to 4 lanes for the Type-C
+ DisplayPort Altmode
+Date: Mon, 27 May 2024 10:42:32 +0200
+Message-Id: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: Dt5FhsH6wYlwlgukPrhECtRy0YQftGPv
-X-Proofpoint-ORIG-GUID: Dt5FhsH6wYlwlgukPrhECtRy0YQftGPv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHhHVGYC/52NQQ6CMBBFr0K6dkw7QARX3sOwKHWESSxt2kIgh
+ LtbOYL5q/cX7+0iUmCK4l7sItDCkd2UAS+FMKOeBgJ+ZRYosZKILSTn2UC0zVpLmH1MgbQFP25
+ gnO0dpM2TATuvUKq+xjxVmlZknw/05vVsPbvMI8fkwnamF/V7/6ksCiTIG2GlsVRNJR8fnnRwV
+ xcG0R3H8QUlPzwb4wAAAA==
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3510;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=ShNumuEqHFtQaXqkFlIDAFs1IqCQ3du3nnDnxol1h5Y=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmVEd7QtwNlGO1CbXCgSWwpHXk0bJO6vEQQKIXjTdM
+ 1vXDDTyJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZlRHewAKCRB33NvayMhJ0TpDEA
+ CFHOekFof52PWcrjj7sU0m2q+u0kpEdqyx08ZwgvQTTeUyuRRsfrzZoGLTrqjDhdlOgIWK/hZJmY4W
+ mCo0btwkv0j8MSKCrRNKWwFq9/bwj6xF3/lXqFl4Y05lxNt8ai4VS0rmz/qzIZK24GggZ6XvGoiFMr
+ xwRw8h95wjra1PqrTXnCpfdNfYH4sO6Fr7kmzgno7K/KCOUEzvbQFBAOTxQGwJMNYO7iNxfDkOfmQ4
+ OuW+wWa5HgopQZ3kcbWAr/jRRMIHLkD4xVQyypp0vRvu9ONd5FWG3WVc/xve9Syl4g+wYghuKhPYPg
+ p5ZqVVQSTzIe9pgrI+wUls9iNZZw3URiHRaGgMo/2RzDQ+2bR1mqh+YGzChdb2jjklL6wOXcLBY9l9
+ ex+X398Sg62iAUWjrakX6p9X4h9UY2BulA4+RiUYcsJc8UJo0ANzfyYcpAnx2MROcNihs2jRJ16Ttc
+ PJrjH/bt9WsPDO3M9Oj8Ce/0/5uPdNgLQtXe+i9IxQVMAJwCpXyoEZGVEa/q/x3mPRWvbBbQelUvXD
+ qa7DJBh/Diaj9BYCxUzzgmB+1N7IAwOoyybp8RU0SUCWlYi+1ys43B080BpY407Dg7OQ9FH2dYIpn3
+ 4tfC9PWINs21ng9xOi+DYlQjjtVj8UujKJi6FxnderPp+ogIIv9DZ5k0ngBg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-MRVL Xfer overlay extends xSPI capabilities to support non-memory SPI
-operations. The Marvell overlay, combined with a generic command, allows
-for full-duplex SPI transactions. It also enables transactions with
-undetermined lengths using the cs_hold parameter and the ability to
-extend CS signal assertion, even if the xSPI block requests CS signal
-de-assertion.
+Register a typec mux in order to change the PHY mode on the Type-C
+mux events depending on the mode and the svid when in Altmode setup.
 
-Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
+The DisplayPort phy should be left enabled if is still powered on
+by the DRM DisplayPort controller, so bail out until the DisplayPort
+PHY is not powered off.
+
+The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
+will be set in between of USB-Only, Combo and DisplayPort Only so
+this will leave enough time to the DRM DisplayPort controller to
+turn of the DisplayPort PHY.
+
+The patchset also includes bindings changes and DT changes.
+
+This has been successfully tested on an SM8550 board, but the
+Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
+PD USB Hubs and PD Altmode Dongles to make sure the switch works
+as expected.
+
+The DisplayPort 4 lanes setup can be check with:
+$ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
+	name = msm_dp
+	drm_dp_link
+		rate = 540000
+		num_lanes = 4
+..
+
+This patchset depends on [1] to allow broadcasting the type-c mode
+to the PHY, otherwise the PHY will keep the combo state while the
+retimer would setup the 4 lanes in DP mode.
+
+[1] https://lore.kernel.org/all/20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org/
+
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+Changes in v2:
+- Reference usb-switch.yaml in bindings patch
+- Fix switch/case indenting
+- Check svid for USB_TYPEC_DP_SID
+- Fix X13s patch subject
+- Update SM8650 patch to enable 4 lanes on HDK aswell
+- Link to v1: https://lore.kernel.org/r/20240229-topic-sm8x50-upstream-phy-combo-typec-mux-v1-0-07e24a231840@linaro.org
+
 ---
- drivers/spi/spi-cadence-xspi.c | 245 +++++++++++++++++++++++++++++++++
- 1 file changed, 245 insertions(+)
+Neil Armstrong (7):
+      dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
+      phy: qcom: qmp-combo: store DP phy power state
+      phy: qcom: qmp-combo: introduce QPHY_MODE
+      phy: qcom: qmp-combo: register a typec mux to change the QPHY_MODE
+      arm64: dts: qcom-sm8550: allow 4 lanes for DisplayPort and enable QMP PHY mode-switch
+      arm64: dts: qcom-sm8650: allow 4 lanes for DisplayPort and enable QMP PHY mode-switch
+      arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13: allow 4 lanes for DisplayPort and enable QMP PHY mode-switch
 
-diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
-index 490bba7a0fc8..7279a73162ce 100644
---- a/drivers/spi/spi-cadence-xspi.c
-+++ b/drivers/spi/spi-cadence-xspi.c
-@@ -219,6 +219,7 @@
- #define CDNS_XSPI_DLL_RST_N BIT(24)
- #define CDNS_XSPI_DLL_LOCK  BIT(0)
- 
-+
- /* Marvell overlay registers - clock */
- #define MRVL_XSPI_CLK_CTRL_AUX_REG   0x2020
- #define MRVL_XSPI_CLK_ENABLE	     BIT(0)
-@@ -232,6 +233,22 @@
- #define MRVL_XSPI_SPIX_INTR_AUX	0x2000
- #define MRVL_MSIX_CLEAR_IRQ	0x01
- 
-+/* Marvell overlay registers - xfer */
-+#define MRVL_XFER_FUNC_CTRL		 0x210
-+#define MRVL_XFER_FUNC_CTRL_READ_DATA(i) (0x000 + 8 * (i))
-+#define MRVL_XFER_SOFT_RESET		 BIT(11)
-+#define MRVL_XFER_CS_N_HOLD		 GENMASK(9, 6)
-+#define MRVL_XFER_RECEIVE_ENABLE	 BIT(4)
-+#define MRVL_XFER_FUNC_ENABLE		 BIT(3)
-+#define MRVL_XFER_CLK_CAPTURE_POL	 BIT(2)
-+#define MRVL_XFER_CLK_DRIVE_POL		 BIT(1)
-+#define MRVL_XFER_FUNC_START		 BIT(0)
-+#define MRVL_XFER_QWORD_COUNT		 32
-+#define MRVL_XFER_QWORD_BYTECOUNT	 8
-+
-+#define MRVL_XSPI_POLL_TIMEOUT_US	1000
-+#define MRVL_XSPI_POLL_DELAY_US		10
-+
- enum cdns_xspi_stig_instr_type {
- 	CDNS_XSPI_STIG_INSTR_TYPE_0,
- 	CDNS_XSPI_STIG_INSTR_TYPE_1,
-@@ -256,6 +273,7 @@ struct cdns_xspi_dev {
- 	void __iomem *iobase;
- 	void __iomem *auxbase;
- 	void __iomem *sdmabase;
-+	void __iomem *xferbase;
- 
- 	int irq;
- 	int cur_cs;
-@@ -270,6 +288,9 @@ struct cdns_xspi_dev {
- 	const void *out_buffer;
- 
- 	u8 hw_num_banks;
-+
-+	bool xfer_in_progress;
-+	int current_xfer_qword;
- };
- 
- struct cdns_xspi_driver_data {
-@@ -836,6 +857,220 @@ static int cdns_xspi_setup(struct spi_device *spi_dev)
- 	return 0;
- }
- 
-+static int cdns_xspi_prepare_generic(int cs, const void *dout, int len, int glue, u32 *cmd_regs)
-+{
-+	u8 *data = (u8 *)dout;
-+	int i;
-+	int data_counter = 0;
-+
-+	memset(cmd_regs, 0x00, 6*4);
-+
-+	if (len > 7) {
-+		for (i = (len >= 10 ? 2 : len - 8); i >= 0 ; i--)
-+			cmd_regs[3] |= data[data_counter++] << (8*i);
-+	}
-+	if (len > 3) {
-+		for (i = (len >= 7 ? 3 : len - 4); i >= 0; i--)
-+			cmd_regs[2] |= data[data_counter++] << (8*i);
-+	}
-+	for (i = (len >= 3 ? 2 : len - 1); i >= 0 ; i--)
-+		cmd_regs[1] |= data[data_counter++] << (8 + 8*i);
-+
-+	cmd_regs[1] |= 96;
-+	cmd_regs[3] |= len << 24;
-+	cmd_regs[4] |= cs << 12;
-+
-+	if (glue == 1)
-+		cmd_regs[4] |= 1 << 28;
-+
-+	return 0;
-+}
-+
-+static unsigned char reverse_bits(unsigned char num)
-+{
-+	unsigned int count = sizeof(num) * 8 - 1;
-+	unsigned int reverse_num = num;
-+
-+	num >>= 1;
-+	while (num) {
-+		reverse_num <<= 1;
-+		reverse_num |= num & 1;
-+		num >>= 1;
-+		count--;
-+	}
-+	reverse_num <<= count;
-+	return reverse_num;
-+}
-+
-+static void cdns_xspi_read_single_qword(struct cdns_xspi_dev *cdns_xspi, u8 **buffer)
-+{
-+	u64 d = readq(cdns_xspi->xferbase +
-+		      MRVL_XFER_FUNC_CTRL_READ_DATA(cdns_xspi->current_xfer_qword));
-+	u8 *ptr = (u8 *)&d;
-+	int k;
-+
-+	for (k = 0; k < 8; k++) {
-+		u8 val = reverse_bits((ptr[k]));
-+		**buffer = val;
-+		*buffer = *buffer + 1;
-+	}
-+
-+	cdns_xspi->current_xfer_qword++;
-+	cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+}
-+
-+static void cdns_xspi_finish_read(struct cdns_xspi_dev *cdns_xspi, u8 **buffer, u32 data_count)
-+{
-+	u64 d = readq(cdns_xspi->xferbase +
-+		      MRVL_XFER_FUNC_CTRL_READ_DATA(cdns_xspi->current_xfer_qword));
-+	u8 *ptr = (u8 *)&d;
-+	int k;
-+
-+	for (k = 0; k < data_count % MRVL_XFER_QWORD_BYTECOUNT; k++) {
-+		u8 val = reverse_bits((ptr[k]));
-+		**buffer = val;
-+		*buffer = *buffer + 1;
-+	}
-+
-+	cdns_xspi->current_xfer_qword++;
-+	cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+}
-+
-+static int cdns_xspi_prepare_transfer(int cs, int dir, int len, u32 *cmd_regs)
-+{
-+	memset(cmd_regs, 0x00, 6*4);
-+
-+	cmd_regs[1] |= 127;
-+	cmd_regs[2] |= len << 16;
-+	cmd_regs[4] |= dir << 4; //dir = 0 read, dir =1 write
-+	cmd_regs[4] |= cs << 12;
-+
-+	return 0;
-+}
-+
-+static bool cdns_xspi_stig_ready(struct cdns_xspi_dev *cdns_xspi, bool sleep)
-+{
-+	u32 ctrl_stat;
-+
-+	return readl_relaxed_poll_timeout
-+		(cdns_xspi->iobase + CDNS_XSPI_CTRL_STATUS_REG,
-+		ctrl_stat,
-+		((ctrl_stat & BIT(3)) == 0),
-+		sleep ? MRVL_XSPI_POLL_DELAY_US : 0,
-+		sleep ? MRVL_XSPI_POLL_TIMEOUT_US : 0);
-+}
-+
-+static bool cdns_xspi_sdma_ready(struct cdns_xspi_dev *cdns_xspi, bool sleep)
-+{
-+	u32 ctrl_stat;
-+
-+	return readl_relaxed_poll_timeout
-+		(cdns_xspi->iobase + CDNS_XSPI_INTR_STATUS_REG,
-+		ctrl_stat,
-+		(ctrl_stat & CDNS_XSPI_SDMA_TRIGGER),
-+		sleep ? MRVL_XSPI_POLL_DELAY_US : 0,
-+		sleep ? MRVL_XSPI_POLL_TIMEOUT_US : 0);
-+}
-+
-+static int cdns_xspi_transfer_one_message_b0(struct spi_controller *controller,
-+					   struct spi_message *m)
-+{
-+	struct cdns_xspi_dev *cdns_xspi = spi_controller_get_devdata(controller);
-+	struct spi_device *spi = m->spi;
-+	struct spi_transfer *t = NULL;
-+
-+	const int max_len = MRVL_XFER_QWORD_BYTECOUNT * MRVL_XFER_QWORD_COUNT;
-+	int current_cycle_count;
-+	int cs = spi_get_chipselect(spi, 0);
-+	int cs_change = 0;
-+
-+	/* Enable xfer state machine */
-+	if (!cdns_xspi->xfer_in_progress) {
-+		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+
-+		cdns_xspi->current_xfer_qword = 0;
-+		cdns_xspi->xfer_in_progress = true;
-+		xfer_control |= (MRVL_XFER_RECEIVE_ENABLE |
-+				 MRVL_XFER_CLK_CAPTURE_POL |
-+				 MRVL_XFER_FUNC_START |
-+				 MRVL_XFER_SOFT_RESET |
-+				 FIELD_PREP(MRVL_XFER_CS_N_HOLD, (1 << cs)));
-+		xfer_control &= ~(MRVL_XFER_FUNC_ENABLE | MRVL_XFER_CLK_DRIVE_POL);
-+		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+	}
-+
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		u8 *txd = (u8 *) t->tx_buf;
-+		u8 *rxd = (u8 *) t->rx_buf;
-+		u8 data[10];
-+		u32 cmd_regs[6];
-+
-+		if (!txd)
-+			txd = data;
-+
-+		cdns_xspi->in_buffer = txd + 1;
-+		cdns_xspi->out_buffer = txd + 1;
-+
-+		while (t->len) {
-+
-+			current_cycle_count = t->len > max_len ? max_len : t->len;
-+
-+			if (current_cycle_count < 10) {
-+				cdns_xspi_prepare_generic(cs, txd, current_cycle_count,
-+							  false, cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				if (cdns_xspi_stig_ready(cdns_xspi, true))
-+					return -EIO;
-+			} else {
-+				cdns_xspi_prepare_generic(cs, txd, 1, true, cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				cdns_xspi_prepare_transfer(cs, 1, current_cycle_count - 1,
-+							   cmd_regs);
-+				cdns_xspi_trigger_command(cdns_xspi, cmd_regs);
-+				if (cdns_xspi_sdma_ready(cdns_xspi, true))
-+					return -EIO;
-+				cdns_xspi_sdma_handle(cdns_xspi);
-+				if (cdns_xspi_stig_ready(cdns_xspi, true))
-+					return -EIO;
-+
-+				cdns_xspi->in_buffer += current_cycle_count;
-+				cdns_xspi->out_buffer += current_cycle_count;
-+			}
-+
-+			if (rxd) {
-+				int j;
-+
-+				for (j = 0; j < current_cycle_count / 8; j++)
-+					cdns_xspi_read_single_qword(cdns_xspi, &rxd);
-+				cdns_xspi_finish_read(cdns_xspi, &rxd, current_cycle_count);
-+			} else {
-+				cdns_xspi->current_xfer_qword += current_cycle_count /
-+								 MRVL_XFER_QWORD_BYTECOUNT;
-+				if (current_cycle_count % MRVL_XFER_QWORD_BYTECOUNT)
-+					cdns_xspi->current_xfer_qword++;
-+
-+				cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-+			}
-+			cs_change = t->cs_change;
-+			t->len -= current_cycle_count;
-+		}
-+	}
-+
-+	if (!cs_change) {
-+		u32 xfer_control = readl(cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+
-+		xfer_control &= ~(MRVL_XFER_RECEIVE_ENABLE |
-+				  MRVL_XFER_SOFT_RESET);
-+		writel(xfer_control, cdns_xspi->xferbase + MRVL_XFER_FUNC_CTRL);
-+		cdns_xspi->xfer_in_progress = false;
-+	}
-+
-+	m->status = 0;
-+	spi_finalize_current_message(controller);
-+
-+	return 0;
-+}
-+
- static int cdns_xspi_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -903,6 +1138,15 @@ static int cdns_xspi_probe(struct platform_device *pdev)
- 		return PTR_ERR(cdns_xspi->auxbase);
- 	}
- 
-+	if (cdns_xspi->mrvl_hw_overlay) {
-+		cdns_xspi->xferbase = devm_platform_ioremap_resource(pdev, 3);
-+		if (IS_ERR(cdns_xspi->xferbase)) {
-+			dev_info(dev, "XFER register base not found, set it\n");
-+			// For compatibility with older firmware
-+			cdns_xspi->xferbase = cdns_xspi->iobase + 0x8000;
-+		}
-+	}
-+
- 	cdns_xspi->irq = platform_get_irq(pdev, 0);
- 	if (cdns_xspi->irq < 0)
- 		return -ENXIO;
-@@ -917,6 +1161,7 @@ static int cdns_xspi_probe(struct platform_device *pdev)
- 	if (drv_data->mrvl_hw_overlay) {
- 		cdns_mrvl_xspi_setup_clock(cdns_xspi, MRVL_DEFAULT_CLK);
- 		cdns_xspi_configure_phy(cdns_xspi);
-+		host->transfer_one_message = cdns_xspi_transfer_one_message_b0;
- 	}
- 
- 	cdns_xspi_print_phy_config(cdns_xspi);
+ .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   7 +-
+ .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   6 +-
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts            |   3 +-
+ arch/arm64/boot/dts/qcom/sm8550-qrd.dts            |   3 +-
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts            |   3 +-
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts            |   3 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 169 +++++++++++++++++++--
+ 7 files changed, 174 insertions(+), 20 deletions(-)
+---
+base-commit: d4eef8b2e18d3e4d2343fb3bb975f8ac4522129a
+change-id: 20240229-topic-sm8x50-upstream-phy-combo-typec-mux-31b5252513c9
+
+Best regards,
 -- 
-2.43.0
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
