@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-191020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B968D059F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D608D059D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D06290126
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9784A1C2144C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E34C16079B;
-	Mon, 27 May 2024 14:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E52515FD07;
+	Mon, 27 May 2024 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FzN2KyoQ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OCyUgVho"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952CF15FD19
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A6B15FCF5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821707; cv=none; b=cBe6A2Y6KAU1EufaF5l4seIyevEw/QnyEVAYZnTObwtkWWz3+3CsVCSuFgvCsSeYhvhKi21VUunb8aNSb0NbykamjHAluoUgaDvl9cEbbZy8Gz3zR4IoFb0QWAc/jRhg5TqgL40BZ/GpU3COu2lPQxfR2BUY/hI3eYTN+jq+K3A=
+	t=1716821701; cv=none; b=QaF2UG59HYQcPWq8eV0PmdZpg0/z++b7ZxHgYjK+ukwZxAZDoeecY2SdmywB4RIezqyak5jQScLPrbcXmbk2P3ZpBwFrpGD2Elq1fIz3Lu+gB+dKliCDGi6HnuAiukBfga6mvwSGNG02lJxR0lhxCfq09mMmnWV0Hzm/If/+8fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821707; c=relaxed/simple;
-	bh=5TD6+fP9zGBVCkWnjvWQY4Ucu0QI2ucP5yTRATx+ATE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zn2Kedne2RoyqY5ULQI4jtTydlGmVODLbloKe4fDjy6qyOPo0bjpsD/r/TSgo38jDEZ0lbSCRc5ZDMKp/4jCAQAOGFLBkff2sp79AAdEJIkgfri6L9x8MfKNYobHm6Z4xBKjjmlZFgVNOVExyXXyIlkwuA/5FDGJ9yj8ht2v+oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FzN2KyoQ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e968e77515so27487821fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:55:05 -0700 (PDT)
+	s=arc-20240116; t=1716821701; c=relaxed/simple;
+	bh=rxNoykyrgmE+ykXiTgwE+amgfPWMp+eHsqYoLpCLE2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pr30wktYCGmkXQmROAb6rkULv7ycCrywth1d9HX8R6t2/UJBoP8U/r8uiGxdTHQKCiv5EblCJBL5PsPSgTQIVLNJj19/LcHxAuhe/cQpc1x7CyNtqG5z9s7tTyAGbyhLPQUdpc79jH6mk8W2QRkQ8MbV3QB9IUaLCrJi21B1MkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OCyUgVho; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6267639e86so384098866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716821704; x=1717426504; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TD6+fP9zGBVCkWnjvWQY4Ucu0QI2ucP5yTRATx+ATE=;
-        b=FzN2KyoQRXGJ5PiqXT8HuzkptLZdyml+tDdNuAwiBFtsZJXifQR1IaF+h2pDadjYgj
-         HA98Q25DbUir1P8Em96kIycOto1xILQeTE3R1RgjwABHQ8RlI0qEU2q2XPTfky8u8blx
-         q1yoijWX42uapWS/sybfs7AzOSM6ve+HCAywljseJbFSOgNtNljerpatjDxYXkRPxz10
-         T6/WLRRpysk/DKjktBXzFaiDxidKp/hatQkXupKH63AmNBm9RsmomL0L4YF3/QoGQN/O
-         xPgTCo4YEhReoMb9EF5secNWEoNxOnVb2gs6G1tbi4l6YJxAreGuBfPavlKFk2K+QYOZ
-         72lQ==
+        d=suse.com; s=google; t=1716821698; x=1717426498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fovS7e3KM/LcT9QtzEodGZIjj0DUcgpQyzljDo7RuCQ=;
+        b=OCyUgVho1XA6FAXmFcs+wNtRcOLtVUWucKghPk15LR2p4EYdFsN6noulKndjQcROiV
+         Msc27HA++C6pCDVCroszTI/XZ1pZoPjgapgCcpcVCAFRiYrinsDCrEoqdBZQJ8rLF8RQ
+         LeOT7PmW2m1QD48nS3lvScyTEj1RKQCu2SdqEFKgbBoHBxX41KfTgevyJ7RQxE91GYyV
+         uLRpaq1y06iTXhl/cUlgW9JcXVd4SDBBacqwM57VWpzGpIh6Lm0TziB8Adkzl0QWHGkF
+         ypPijbd/yNKoaHRFBTCjiWWRKEWDRug8RUU9GDYU1Nw94xLqp/KC3AFUPqAkv52Mfzhm
+         DrfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821704; x=1717426504;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TD6+fP9zGBVCkWnjvWQY4Ucu0QI2ucP5yTRATx+ATE=;
-        b=nyykIMP9+TKXJzhPNQtBZTON8ktT5FEiU+asnlt6cFk76ozBVfypCLJS+yx5anurQd
-         OrufbbbpFVBWPsGS1Cn0puHtF7cFh88HVRBK6DDkUhNrMtHvXhekBMC7uVDxCakENwVx
-         BXhWF3LhrVuBL08r/VLB8K3tubSgnB3FIaiuYkzzMWiUxIC3LcFWEcbks5VMjPtZ3CRC
-         GZf36D/Hgncr+5jNMqunilbmBgX/Y29YqAfqVJzZNk/WesBq3VLHax0XXpcbRRfrXV71
-         37wCm69k9uHpHo7uoW1wfYLLTKpm5a25mktzaDShi5l263oI7VFFC8QQXqM9RaL8Xjjg
-         sdcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEnWKh/2N2Y0IJiStTrTryrhqUE+qiVDGYYrZXrbarM7wB+GgtXyIm2HZnlK2qiTSx1t/9N2qngjnc7Jm6fZLFihEMMDlOMii9LFX3
-X-Gm-Message-State: AOJu0YytUc6YVBXqmyR3uczOlDof2MFgmFs5avt1DkE1CDd+3sX9ItpJ
-	VPWfFJBnyEZZwOpfvwCElE0hcy9Oe9DbnrdtZ0zAB4x9O7kKerzS7NQi8XfVGCq8wVGNSoQqTaK
-	2Y8ALk/ai5vr3XLc+vBLNjqVsIQ8lpQKUJa01sg==
-X-Google-Smtp-Source: AGHT+IEWEP0lfG2yK4OCOQAmDalN2VIZFxrErH+r4nSQ8/qZSUVrTMLkXMTAMXvfbr6eAaU2P2kpvtmtsnGulk2HYyo=
-X-Received: by 2002:a2e:a0cb:0:b0:2e9:4c17:9c8e with SMTP id
- 38308e7fff4ca-2e95b2d04a2mr63410011fa.44.1716821703725; Mon, 27 May 2024
- 07:55:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716821698; x=1717426498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fovS7e3KM/LcT9QtzEodGZIjj0DUcgpQyzljDo7RuCQ=;
+        b=mnlbiFJgWOQZWFLLqB8UNgaQYAytp+rAGIvw9pe7jlSMv45aKh07rs4u6bpYyXIf3m
+         gASUfNpDR2FMlVIlTO782+NLE+NZP34D3Q+U4h+dA92jPLb4K6cOrWZ4fZi5loRSAsys
+         c9Nv7d6afzoU+SaKLBJIWzHp/ZAm5doZ89vxvLteEGq8J0NbYsSRwfoRTDRoDoCz4h8v
+         ex17ZlYEYCdBxF0zMQx7lh+B2FnsNN9r0UF4TebqHKg3VQNigMGcSZhMgRnaRYqTcjko
+         isFA/x2tqXvLPvUlPWLS4W8hMxAa1/r34r33PQ4Nvae7jkroD1kg9JIWkm1HlUrXVSlY
+         Wj6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2AeKhEcR0Z9wXzS52iJkrbRbJQOPKDnThN/jvl5jEaDW1mcLvZlllybEhW+e3YT7is9iO8Y74qkAOrTTJFjKdwQs9DWHtmvtpMuir
+X-Gm-Message-State: AOJu0YwVJ6eqAUJ5NqRLxgmkeiIE/DeHlNfs/vtwfEbgTRSOv27LnMHK
+	Q4wSapMTE6HvezqWBQeSTMfVig7nIHPhEJlDdBT+2HxB+iVqtyHQu0G7m3/3cSk=
+X-Google-Smtp-Source: AGHT+IGo3H94dZVgD3Oj0JZFgaCwoWp8yWWSpLeBEfysv4WM0NLTjl+TNS8hNQyVGKq/HRHAP/vAhg==
+X-Received: by 2002:a17:906:7c98:b0:a59:beb2:62cc with SMTP id a640c23a62f3a-a62651469a3mr631672666b.61.1716821698131;
+        Mon, 27 May 2024 07:54:58 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c934fd8sm496587566b.47.2024.05.27.07.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:54:57 -0700 (PDT)
+Date: Mon, 27 May 2024 16:54:56 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Xiang Gao <gxxa03070307@gmail.com>
+Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, linux-kernel@vger.kernel.org,
+	fengqi@xiaomi.com, xiaoa <gaoxiang19870307@163.com>
+Subject: Re: [PATCH] printk: Increase PRINTK_PREFIX_MAX and the buf size in
+ print_caller.
+Message-ID: <ZlSewPTyQ-jMpW5n@pathway.suse.cz>
+References: <20240527091929.316471-1-gxxa03070307@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514041223.800811-1-foxhoundsk.tw@gmail.com>
-In-Reply-To: <20240514041223.800811-1-foxhoundsk.tw@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 May 2024 16:54:52 +0200
-Message-ID: <CAMRc=MeuHpu4_QbgW-6Kc-TGzhcBim7Eb-TZhPax6G2SZHR5iw@mail.gmail.com>
-Subject: Re: [PATCH] docs: gpio: prefer pread(2) for interrupt reading
-To: Huichun Feng <foxhoundsk.tw@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527091929.316471-1-gxxa03070307@gmail.com>
 
-On Tue, May 14, 2024 at 6:12=E2=80=AFAM Huichun Feng <foxhoundsk.tw@gmail.c=
-om> wrote:
->
-> In legacy sysfs GPIO, when using poll(2) on the sysfs GPIO value for
-> state change awaiting, a subsequent read(2) is required for consuming
-> the event, which the doc recommends the use of lseek(2) or
-> close-and-reopen to reset the file offset afterwards.
->
-> The recommendations however, require at least 2 syscalls to consume
-> the event. Gladly, use of pread(2) require only 1 syscall for the
-> consumption. Let's advertise this usage by prioritizing its placement.
->
-> Signed-off-by: Huichun Feng <foxhoundsk.tw@gmail.com>
-> ---
+On Mon 2024-05-27 17:19:29, Xiang Gao wrote:
+> Sometimes we need to add our own hooks to carry more caller information
+> to improve debug efficiency, but currently the buf in print caller is
+> too small.
 
-This doesn't apply on top of gpio/for-next, please rebase and resend.
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -23,7 +23,7 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
+>  #ifdef CONFIG_PRINTK
+>  
+>  #ifdef CONFIG_PRINTK_CALLER
+> -#define PRINTK_PREFIX_MAX	48
+> +#define PRINTK_PREFIX_MAX	64
+>  #else
+>  #define PRINTK_PREFIX_MAX	32
+>  #endif
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 420fd310129d..2d7f003113f7 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1331,7 +1331,7 @@ static size_t print_time(u64 ts, char *buf)
+>  #ifdef CONFIG_PRINTK_CALLER
+>  static size_t print_caller(u32 id, char *buf)
+>  {
+> -	char caller[12];
+> +	char caller[32];
 
-Bart
+Could you provide more details, please?
+How exactly do you add your own hooks?
+
+If you need to modify the code to add the extra info, you could also
+modify the buffer size.
+
+The buffer is big enough for the info printed by the upstream code.
+I do understand why we should do this change upstream.
+
+>  	snprintf(caller, sizeof(caller), "%c%u",
+>  		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
+
+
+Best Regards,
+Petr
 
