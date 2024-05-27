@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-191486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0F08D1030
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3F18D1032
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3AF1C210D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:19:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DD82831C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B8C167267;
-	Mon, 27 May 2024 22:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEC9167265;
+	Mon, 27 May 2024 22:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fSy0Ga4U"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AWXaxdl5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135917E8EF;
-	Mon, 27 May 2024 22:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496CF1667C9;
+	Mon, 27 May 2024 22:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716848347; cv=none; b=I4bKXanRwBdFI/OacJoTmiGc2dtc04pHoPNUpHYrzl2gQ1oIQFkS1i8tKbQHvxjCludmyqIQHaxr7/nZBRs4JnECel2oz9lN/C3AjC4ubhySr/+u0Y5eY9/mACE5//1K1H24udloXH+bjhkJ5c0F/+yDou4UaZFF2h/YBmnmWm4=
+	t=1716848373; cv=none; b=TAabmj81bRYVW8hvxBuga4HmwrUeSVCWMdx9qElK62yXcNB7DCEDG8ppMGz8GgLUXcPLHHVXLpWqvvQPzd/IBNY8kYiqLWejdWnd4NAt0dumpkVOvKdyVkOPq7daH8V3darn/jYL73IA5Ks+Gu8WrA/+UZ+LIKCMW2mnmnwuwkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716848347; c=relaxed/simple;
-	bh=nBsMaSZMZLwwhSbLlNH5zZm39772/CBLeDri8h0k1UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shFPbiJqeXs2yGSrFxfAbyoHGjbUKgvOs6VKeCiKWqs5gvVXRvOhCWcf5cVNAULWgj5u57j1IMnBcCZLOWTZL45RjbuN49h6BBMpixkOxM3Bg+SNStpmFntufzaYnx/YGv1dVkUXI5Kp4REqhj0XZH7LXWKWU3dVwlfG+H5LUSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fSy0Ga4U; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=zo1XCoKBVMLFJ723+R6j/uyNQ3r6suOfHnoTPScIyo0=; b=fS
-	y0Ga4Ub6PVt4oEfmJg5kM77IWFUmmYrw5zLmQtvd0MidTODiDw2WVk7OQBpuHHDdIoL4b2fZpO+xJ
-	LxtXFemqDH7EMOrH/urn09Qaxcy7vIBjNr2jl+1vne1AGtVXq+pFTODjJHv0C7rdsWKL9XuKdsnN2
-	33WfX0Ne9o88a0c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sBig3-00G6s8-1s; Tue, 28 May 2024 00:18:47 +0200
-Date: Tue, 28 May 2024 00:18:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Simon Horman <horms@kernel.org>, Diogo Ivo <diogo.ivo@siemens.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, srk@ti.com,
-	Roger Quadros <rogerq@ti.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH net-next v7 2/2] net: ti: icssg_prueth: add TAPRIO
- offload support
-Message-ID: <1d0f9d73-89e7-413a-b1df-5ff56bc1cac4@lunn.ch>
-References: <20240527055300.154563-1-danishanwar@ti.com>
- <20240527055300.154563-3-danishanwar@ti.com>
+	s=arc-20240116; t=1716848373; c=relaxed/simple;
+	bh=ms53SJU8uT9WYVQRG8jVvS3grObwOxRhlhxnfU0ujY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JpN5S8lOHWHQZBlzfpYbUuZzeAd0Q1oSziV4HauAvWU8QLyPLB2MILSrLTRZHRsgRBVcxQArYF4RT3qSlk77Ud/QVKlpfM0/iq1T4sz7k30Hh7dz+dpeI8ilrsg0e9Ss7MPPrhO+UHaqLp5FwmUYRB63R9Nfi8mB+tk43Jr85b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AWXaxdl5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716848360;
+	bh=xX9ZFj+rSlOvBdyaOW+bNOxJLkSdWp7W0ftITF3l/F8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AWXaxdl5yFbPBODhWWyhM7SSjT2iuTHqhG3gAaasVdkhzpAsSn/WQAmDxjGTt5gVw
+	 GDs4J5/k3kkMuNmBkLsVBxpRLO2PxDAYEeeAv8jxVF5vZe8wMGZlwY4vXTKqsMtZ9v
+	 b8c+LiV+5YpX2czqPWhdCEO5tntlQOciTq2kct1qIgg4DE3KQIiZDwybCdTrG9/6GO
+	 WgBJV9xVSlDn094fHsq/6g2tdUyLD7HXA/lpRUtFx/Q0o4xt6+BFgZ+mQ0iiTLAWKN
+	 WE1UMgPaex8l/40eCejPH5OuXDXZDh9gAMGNE3ueknbsOXVWrTPSrr0YiXVY2Ja0SW
+	 RgMfCmhN4/wYA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vp96c1XNxz4x1C;
+	Tue, 28 May 2024 08:19:20 +1000 (AEST)
+Date: Tue, 28 May 2024 08:19:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the jfs tree
+Message-ID: <20240528081902.3677843a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527055300.154563-3-danishanwar@ti.com>
+Content-Type: multipart/signed; boundary="Sig_/P=UFHx9_XAwut6VhBoTFP+y";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, May 27, 2024 at 11:23:00AM +0530, MD Danish Anwar wrote:
-> From: Roger Quadros <rogerq@ti.com>
-> 
-> ICSSG dual-emac f/w supports Enhanced Scheduled Traffic (EST – defined
-> in P802.1Qbv/D2.2 that later got included in IEEE 802.1Q-2018)
-> configuration.
+--Sig_/P=UFHx9_XAwut6VhBoTFP+y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You only mention dual-emac here. What about when it is in switch mode
-and is using the other firmware?
+Hi all,
 
-    Andrew
+Commit
+
+  71653c99fce7 ("jfs: Convert dec_io to take a folio")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/P=UFHx9_XAwut6VhBoTFP+y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVBtYACgkQAVBC80lX
+0Gy1TQgAo69STWQIRvRTzHHSJF0I1/oHfwXHblxIqQIvV6qzPRJFreBB54cZcSeH
+iDlRSQNnvzr5/kcgsWYHIt0K6a8jNT4BL6mgruxsncik6r6vSS3t7eV/70KCB/IF
+RJFDwk90K5GVUpPwSVQ+EWhPGOQcFQlfuxZG/QDjHPsOTy+P1g5S2UtIsG1MFkkX
+Xi02D95xddSlziVY8sTWeUnulhvpjjfNnWAjn/nsefKucyagVWZUeHQJE5QAsaGF
+Y/yPYCKU65fWHV4/GiOeTL6uhCnzoCv53T0maCouKwp4LBccLO2xxPRdfVcbwoE3
+RjEWX/NRu1eqnkbJ0T/PPUArLIbQTQ==
+=ql3E
+-----END PGP SIGNATURE-----
+
+--Sig_/P=UFHx9_XAwut6VhBoTFP+y--
 
