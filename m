@@ -1,48 +1,54 @@
-Return-Path: <linux-kernel+bounces-191386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5394A8D0E91
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8C18D0E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 22:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0366528145F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B278A1C214FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 20:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EBB3BB59;
-	Mon, 27 May 2024 20:25:42 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AEC16078F;
+	Mon, 27 May 2024 20:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0yUbENz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877CC17E91C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 20:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713E217E91C;
+	Mon, 27 May 2024 20:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716841542; cv=none; b=eIvcQVErXFiBYk9yaBdExBT4hMuonTCRGEzrFUMvj3NBy3oiNvLv/cZzEfViRVxFBlUj85XXa2dLKraUXHMxTLi928r2HfL2bZprDJ6+AH4+p/vonmUiUXIwahH9pQFvGvac7hcu6BoWp9AxAzi5K/ljbf7Rwn1XIic2hKJw1tQ=
+	t=1716841733; cv=none; b=asxQPntvIr1VE45yBz2JkMgXGnBaFhHLxQjTNLRt3xdqAadP078HhZorSgfPcc/0bLTgqJ+p5qE+I59Mx/rcmgeFtc0lZEJP+pwKjZ+5qxRbwOT6zJ+esFiLGWa3AYXe893V4wwgHcMvBZLu1GVpNM/LKKjiG4hic1H0Vs9luHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716841542; c=relaxed/simple;
-	bh=kzOn/pg9oEMfSMyQo519MSdFHUDCKUEJSi3NgD70QJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GR9Z9ZwaeXXK8qsqVXV7CoUso2/uun1VGMrSQwVtGdW4IRjmhx9HKTgjv6f2RV93Cv9LPeb2icnx267lHYnd2+nhUaosSTLoCOniOh7AE2Yk5lF0rEpVGLciY02I/0GKOjSHjTanWaE9A6kvqHhojS8QtyPyw4OhYTOU//AyleU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id 1ed924e2-1c67-11ef-8d38-005056bd6ce9;
-	Mon, 27 May 2024 23:24:30 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1716841733; c=relaxed/simple;
+	bh=VdklvfCEKaHVCacU+1F3nFSD3rl7oBp3RQBkvn4Txog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nrBigVzUF+giTKj1C/JdTvajKqhsvUHWQ444/fh8MkT8sJH9PKm4EpMnlQ0Khv0Gjdmi7wPYMSo7hb+9AuprORM2IhZqw8eg0iLRRARCbXPZ1VkMw+vIBz0b+BarqUD5UPMXf4stDe+Uq4SXNU7J1JBZO4rc5wZFqBEQJHpavSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0yUbENz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DB7C2BBFC;
+	Mon, 27 May 2024 20:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716841733;
+	bh=VdklvfCEKaHVCacU+1F3nFSD3rl7oBp3RQBkvn4Txog=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K0yUbENzIX3kFTrMZSxeo/SvkFkNLc+9jMIAdhACmoVcbutD4daKTSMOx7yGW+eYD
+	 Bd+7x2sAtz0GNztRzWliW7qdvbYZzFEqyelxjOx3OpwfwS7XivsWrO0RfpA7K6PdIF
+	 kS6S/sTC5aL1QlRDb7CXmJfJjRN2JeIBknFAhNAwCxtDlFD0fGz0KAHzKmmVIzpkTJ
+	 0/pekSyrL0Cgx9eSFxHrgY7iIdtsgAJzMlhsT3aOU2kPWgxBYTUM5FvKtCanxMJxgF
+	 QfQvwM9hTKmDWf16IGWIB4zIZzhT7h1jW9NOfEUqF2wb18nzAzhhTdBu+OzrcJFphX
+	 4xFQlUq4eYxIA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Stefan Berger <stefanb@linux.ibm.com>,
 	linux-kernel@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Guanbing Huang <albanhuang@outlook.com>,
-	Guanbing Huang <albanhuang@tencent.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Woody Suwalski <terraluna977@gmail.com>
-Subject: [PATCH v1 1/1] PNP: Export pnp_bus_type for modules
-Date: Mon, 27 May 2024 23:24:24 +0300
-Message-ID: <20240527202424.1430103-1-andy.shevchenko@gmail.com>
+Subject: [PATCH] crypto: ecdsa: Fix the public key format description
+Date: Mon, 27 May 2024 23:28:39 +0300
+Message-ID: <20240527202840.4818-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,29 +58,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since we have dev_is_pnp() macro that utilises the address of pnp_bus_type
-variable, the users, which can be compiled as modules, will be failed to
-build. Export the variable to the modules to prevent build breakage.
+Public key blob is not just x and y concatenated. It follows RFC5480
+section 2.2. Address this by re-documenting the function with the
+correct description of the format.
 
-Reported-by: Woody Suwalski <terraluna977@gmail.com>
-Closes: https://lore.kernel.org/r/cc8a93b2-2504-9754-e26c-5d5c3bd1265c@gmail.com
-Fixes: 2a49b45cd0e7 ("PNP: Add dev_is_pnp() macro")
-Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Link: https://datatracker.ietf.org/doc/html/rfc5480
+Fixes: 4e6602916bc6 ("crypto: ecdsa - Add support for ECDSA signature verification")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/pnp/driver.c | 1 +
- 1 file changed, 1 insertion(+)
+It is a bug fix that does not really need a stable backport. Still
+categorizes as a bug because by following the existing documentation
+you end up with an error code.
+ crypto/ecdsa.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pnp/driver.c b/drivers/pnp/driver.c
-index 0a5d0d8befa8..1394d17bd6f7 100644
---- a/drivers/pnp/driver.c
-+++ b/drivers/pnp/driver.c
-@@ -265,6 +265,7 @@ const struct bus_type pnp_bus_type = {
- 	.pm	 = &pnp_bus_dev_pm_ops,
- 	.dev_groups = pnp_dev_groups,
- };
-+EXPORT_SYMBOL(pnp_bus_type);
+diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+index 258fffbf623d..55114146ff84 100644
+--- a/crypto/ecdsa.c
++++ b/crypto/ecdsa.c
+@@ -215,9 +215,8 @@ static int ecdsa_ecc_ctx_reset(struct ecc_ctx *ctx)
+ }
  
- int pnp_register_driver(struct pnp_driver *drv)
+ /*
+- * Set the public key given the raw uncompressed key data from an X509
+- * certificate. The key data contain the concatenated X and Y coordinates of
+- * the public key.
++ * Set the public ECC key as defined by RFC5480 section 2.2 "Subject Public
++ * Key". Only the uncompressed format is supported.
+  */
+ static int ecdsa_set_pub_key(struct crypto_akcipher *tfm, const void *key, unsigned int keylen)
  {
 -- 
 2.45.1
