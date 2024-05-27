@@ -1,117 +1,249 @@
-Return-Path: <linux-kernel+bounces-190615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD338D007D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041BD8D0098
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF191C22235
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF2D1F23B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050AA15E5DE;
-	Mon, 27 May 2024 12:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB35715ECD0;
+	Mon, 27 May 2024 12:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fHuA/6Gp"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pH4FkCfT"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61401DDC9
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190215EFD5
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814433; cv=none; b=HgVY7zqHGYIEhHbpzQk0qi26JTOK+5l1SfK427P/bRs7HnW6eKgQHJCszmPi3UEd4Y3e8c/DriwIjT3jO0D6orwh6fzxQoTKGoRptXGN4iFiPdwOPnExIAO+pYcnng99EsPDFHL1+bZAWdUQf9uYy8wfB0ykZxQN7N8MQFU44XM=
+	t=1716814608; cv=none; b=pmBglx9ltA0MBXY1OHcvpHKitKl+ZkXgL2Nx8xfXVu+ruTD3i0jAu3zrMGJWLy+sDrRqxXbYRx8ynfQClXnzsiIob/u2C4Wgl2YnltBnQCHeuL1bwxkdWrc3GAuhzmB74s2ssfPPb5177vJlF0vWSiHwHQ5zpsu15R94qMapUP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814433; c=relaxed/simple;
-	bh=kRzIkfk9aA6AIARat06tGUsnw6dX00qMxa9B4WK7jyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyYKiFNkPW7rP3az3/GxI/EpBn3oysKn9aVu4ooQg7C4wDXfPoPPOq1yJHsvhGHw8QhRQzxRJEXEZMHFFhfwNGZFN40L8XavX1/XXj2f6ixA8Q60sDdbl9nW4IgZvYkg+X71DXpnkxMek8FWhFAhWkMmbrO5IhfYa/quLXFW5tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fHuA/6Gp; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df771b6cf71so3419972276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:53:51 -0700 (PDT)
+	s=arc-20240116; t=1716814608; c=relaxed/simple;
+	bh=CA8042YIpnyj2ZXHYRDm1I27BUIfcazEW/6sonPev8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b2zaiOvAmnfiG+/bjTLY5IM4YVBzo6HwRyy53798hkXoYPeDb/gZZGdsugH0IYyFI/VwMIpX/XIlM1cd0FtoTnKzJTJEsBG056mPewdrKJUUdkkdSIXOpwoonmfU+0/XCBhWV//AT8i3i7I++yHMfhLLVI22DcwZR7lFFlbRyfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pH4FkCfT; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4202ca70270so61291515e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716814431; x=1717419231; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n38xc1OaRNv1MJQDIDghtRWtDAZeB5O1XOyPBUpnu/Y=;
-        b=fHuA/6GpxbFta6a2KX9JdEHNG6t+L6ldm26F55NMH3FVFDYSmaI4b8hfgB9elpuPE8
-         4QOi7ghU1ZJ+aEvgPDvzFMAzicQ9ciDAx4wZlNqt35IGHzvRz8QT4ezg3lVUKMGJ1i8p
-         PasFVK1F3HTj61j90aXdVEKFBGFfKEPbnoLl+0Bmwl5UsrKMduzD1VLlLT7ll4X4CEVB
-         th33+gx5wbhrOy8ArFLXwq8foalOZpDCOLI3ASrnmvhXFhRSm6ePV+/n3Uo3xxp3g8z4
-         8CjKpD9rPfd7bMqCidsUp07WXvjRshPbpet+UB3iLo7U6uZFvlJdd0dwPA8yT2mKxurM
-         l9cg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716814605; x=1717419405; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GD82MM1VVjohnjRvbeZeJlkCdboh2s6SKcgpo4ScdJw=;
+        b=pH4FkCfTEz8EeN0nO71PcsbQeZ+EzsIbNQCc33Kw4HKGos89/ylC3cIddIqSpQoIYR
+         xCgIp+fJdNrndjbPSHN+K2pZLzD8YhR4db3rgp10QhVMvviBGJ9aLJuhpcNdjzmHk2PX
+         LEsGWZHPh9owsRvWLFx/3mmmvW3auT7bJFHRkez5Pvfe5grCHCxzr55D4sbY46hmEH/R
+         4WqnuznBBQYKpM0kTxlRt14Z1qozlWYT5doLR/HhKLbF8pVbQKAQopDzauMvyF2dGl0F
+         V8/jxhLbLGL7kcirAkTzMRfmsS5CyJtpe08TjjolYkPtH3xbEmdUqfTQD/nvuEm04rlQ
+         H7fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716814431; x=1717419231;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n38xc1OaRNv1MJQDIDghtRWtDAZeB5O1XOyPBUpnu/Y=;
-        b=GZsn0sqx6ECO3vjvdKDt73gtEJY6NDvIjyHKFIyEvJorY7rknWqXg/psmvb+zvPm/W
-         bJ+OAmYVPtcPzQPUx8aRrGQSmwG0yAHRInXIJYkcVvKTmIdZ7S+MlHkYn7SGrKfhDxnP
-         eeuqI511kiiI9GJM4T+GQryUMWkFq8P7icveNFrc17KZBFQnvLv5mOseNgDZFu1XahX7
-         vsLtUttHdhK2wt/FDy5mfco0UNmyYsie9F6FgLnnt/mRNLzGx5NO//HsHbuwj20sD24G
-         p3MYcSmhxuWgCLi9wHNLKKFI509CcmwnFVtb4SmfZS0ZX/a+A9yzDIDvn3zv7y60h866
-         xWYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHraJhIAyKf+TEV3bzWBBJQrIUZpeGTEtGnrTMKI7SPqJPk4i3CuV5lw3/j2RSBpGRJGS0BZ85Na3acfLnKMIOXRBiwCU0xj86x3O5
-X-Gm-Message-State: AOJu0YxTnJ7DRYrnNu4a8znYhzkY/VfRubnzdGJQCo4uQhlgHpbcErSA
-	5VDlCc9sCZocVf7PjonNOHbm6kt8GgaXfOnKx1UZFB5JNwpNTcVSZU59Ux03qm3xmFoEjD2VEKJ
-	YwU1RSdbWaBpopjFDca2Tv6SLIxvM6Eisyq+eWw==
-X-Google-Smtp-Source: AGHT+IFzU18N+mOTSmGUX+D8nV9CprtXNPZ2YG3J4xB1E5yVmFBi3UzDUGrPZaFYiDw2nCnS3zR2JAFmDI/T6iCD3W0=
-X-Received: by 2002:a25:ad50:0:b0:df7:887b:abfb with SMTP id
- 3f1490d57ef6-df7887bb0f3mr6066354276.15.1716814430908; Mon, 27 May 2024
- 05:53:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716814605; x=1717419405;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GD82MM1VVjohnjRvbeZeJlkCdboh2s6SKcgpo4ScdJw=;
+        b=EYYv6B4PTBn6NzE0CNfCgeu9t1DCEH1KwtZiWj0/fQ3xxeyUefHS1RQ/DwQnaCNKGu
+         yTuCkc7hR7Ry7KWo0U+IH6mW8sb09vnMo47tyY/V5AKtvpxDVa4cKl08mi67/H2zSMAQ
+         iSwbRHCLaA8ZB1EiWncsfVSH9KyndUSZu64CWevKQXD09nQoTHh/L+D4RjqKXV0fZYTK
+         uWC2870YbjMbWz+CNYGuTxZsXOzDybbd86qOHTYUOVV4bvSeRjvorbO1PUz6135SDPkL
+         HLJ5kZFuhTp6obpaLZRRNYEPtN4ghCud0OC90z8Hu5L7LCjYy040CLN3ouWKE+KZDIo1
+         jxVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZXdow4AdgoUhmRBD4bOVWp9ZmRcm3unUrBmwGQqUXB37mhVWIMo1gT8jym15OJkJGcgAQU6RCcXMVMgB1WNafIOnR8O8w9aYORRPH
+X-Gm-Message-State: AOJu0Yy4Z89JLBGjsCUAG3YT0GCNQo6SjPBbhPC7S/wTrupBYYHtUAT4
+	H/hWw0WbQ6ML3Ub62ex7R3GtsBG6B736ZmuMNY68BK9aJJ+ow79NtPxPSLFxpk4=
+X-Google-Smtp-Source: AGHT+IE5ugbBF1IRGuSLkrpLGi0B589uc1IvGTg3DvM/wSrGwWTLZuoK7IkX4Cupa1ZlCdYCe3k0VQ==
+X-Received: by 2002:a05:600c:5354:b0:420:f8:23d6 with SMTP id 5b1f17b1804b1-42108aa7589mr94703665e9.36.1716814604660;
+        Mon, 27 May 2024 05:56:44 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f64f98sm138753635e9.24.2024.05.27.05.56.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 05:56:44 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v10 00/15] firmware: qcom: implement support for and enable
+ SHM bridge
+Date: Mon, 27 May 2024 14:54:50 +0200
+Message-Id: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521-pinctrl-scmi-imx95-v1-0-9a1175d735fd@nxp.com> <20240521-pinctrl-scmi-imx95-v1-3-9a1175d735fd@nxp.com>
-In-Reply-To: <20240521-pinctrl-scmi-imx95-v1-3-9a1175d735fd@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 May 2024 14:53:40 +0200
-Message-ID: <CACRpkdanc3gJ7_z+V5zwKbn+L-Qy1+nwsPLCSF9ZQ_xk3qJOXA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: imx: support SCMI pinctrl protocol for i.MX95
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJqCVGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDA10FJSSM
+ xLz0lN1M1OAAkpGBkYmBqZG5rrFGbm6SUWZKUCZVCMTS5O05OQkgyRTJaCGgqLUtMwKsGnRsbW
+ 1AHRGr/9dAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Marko <robimarko@gmail.com>, 
+ Das Srinagesh <quic_gurus@quicinc.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Maximilian Luz <luzmaximilian@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Elliot Berman <quic_eberman@quicinc.com>, 
+ Alex Elder <elder@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ kernel@quicinc.com, Andrew Halaney <ahalaney@redhat.com>, 
+ Deepti Jaggi <quic_djaggi@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6070;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=CA8042YIpnyj2ZXHYRDm1I27BUIfcazEW/6sonPev8Q=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVIMEs510EWY0AP7N7UDVpxO2Si8KYg3b7HUsk
+ D/JPsAZSw2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlSDBAAKCRARpy6gFHHX
+ citoD/9Zd1+dMd+FnsjX5/jY0RWRlqxdoaDVqQWUwTdCnDssRbXefCUcB7LYJo9UXENpfuqwqJE
+ ljZtDmSe+n4bp9RGKTJl0eLLKlDld4q430oe83vF2z0848OwCXGg9l/60Z0J5T8fBHizikYDrAO
+ Sr2MaUUC5VS8ZqO/bKh5rMUtEQWgGcDNxIevAm2qBdlLCTbS3fMWP5TvmGPW34/ofkLgPK/P52C
+ 6u9t2TOSceD6+Q5OvtBtev64l4X7MF2fNSklCKeeTXm2Xj5fRN9/ibIaczulaNW+DEtZGlyriU/
+ cF/PIHb6Z7j0c96czpKjtmgiIc6Tnwc3zi4JzVvxI6+QnP5W+ImEtnm3kXSv3TP+ML/9YBON1iB
+ 9R3S/yHktXXgURFUwmFCEGHYledlk4onvVyRLF73BbNA0EifW7YVxuzAgtbZKFgB8yc6DdN22DZ
+ kTUy8RGeTDEwFPs/H2KOmXQvwXRMklWMrG8v0zvrJgPp09Hpd0HXOZ6qckhCugr7elPGPAOxlKW
+ UQcs3DWwiquvPeN6fpJEzW0bfZM5cGSBr7sKHX0NOY6tgrXw6lsIaIYggnMFri8eyQD/2B8GoU5
+ 7Bb+YDN2nFAvDaWjEdKv+1gsbjheGWOq27MI6e/oLSkUQaTUIscbc5+MddJFA9GjRrenA3OBfbH
+ dtX8F7ipq8BTXQA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Tue, May 21, 2024 at 8:17=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
+SCM calls that take memory buffers as arguments require that they be
+page-aligned, physically continuous and non-cachable. The same
+requirements apply to the buffer used to pass additional arguments to SCM
+calls that take more than 4.
 
-> +static int pinctrl_scmi_imx_dt_node_to_map(struct pinctrl_dev *pctldev,
-> +                                          struct device_node *np,
-> +                                          struct pinctrl_map **map,
-> +                                          unsigned int *num_maps)
-(...)
-> +static int pinctrl_scmi_imx_pinconf_set(struct pinctrl_dev *pctldev,
-> +                                       unsigned int pin,
-> +                                       unsigned long *configs,
-> +                                       unsigned int num_configs)
+To that end drivers typically use dma_alloc_coherent() to allocate memory
+of suitable format which is slow and inefficient space-wise.
 
-The code in these functions look suspiciously similar to same code
-in pinctrl-imx.c, I bet it is copy/pase/modify.
+SHM Bridge is a safety mechanism that - once enabled - will only allow
+passing buffers to the TrustZone that have been explicitly marked as
+shared. It improves the overall system safety with SCM calls and is
+required by the upcoming scminvoke functionality.
 
-Can you look a second time if it is possible to share code between the
-drivers?
+The end goal of this series is to enable SHM bridge support for those
+architectures that support it but to that end we first need to unify the
+way memory for SCM calls is allocated. This in itself is beneficial as
+the current approach of using dma_alloc_coherent() in most places is quite
+slow.
 
-It's not super much code, I'm mostly worried about bugs having to be
-fixed in two places.
+First let's add a new TZ Memory allocator that allows users to create
+dynamic memory pools of format suitable for sharing with the TrustZone.
+Make it ready for implementing multiple build-time modes.
 
-What is the opinion of the othe i.MX pinctrl maintainers?
+Convert all relevant drivers to using it. Add separate pools for SCM core
+and for qseecom.
 
-Yours,
-Linus Walleij
+Finally add support for SHM bridge and make it the default mode of
+operation with the generic allocator as fallback for the platforms that
+don't support SHM bridge.
+
+Tested on db410c, RB5, sm8550-qrd, sa8775p-ride (verified the memory is
+allocated from the dedicated pool) and lenovo X13s. I also tested on
+sc8180x with SHM bridge disabled to make sure we can still use this SoC
+with generic allocator.
+
+v9 -> v10:
+- add support for dedicated TZ FFI memory carveout and enable it for
+  sa8775p
+- add a blacklist of SoC known to not support SHM bridge correctly
+  (currently only sc8180x)
+
+v8 -> v9:
+- split the qseecom driver rework into two parts: first convert it to using
+  the __free() helper and then make it switch to tzmem
+- use QCOM_SCM_PERM_RW instead of (QCOM_SCM_PERM_WRITE | QCOM_SCM_PERM_READ)
+- add the TZMEM MAINTAINERS entry in correct alphabetical order
+- add a missing break; in a switch case in the tzmem module
+
+v7 -> v8:
+- make the pool size dynamic and add different policies for pool growth
+- improve commit messages and the cover letter: describe what the SHM
+  bridge is and why do we need it and the new allocator, explain why it's
+  useful to merge these changes already, independently from scminvoke
+- improve kerneldoc format
+- improve the comment on the PIL SCM calls
+- fix license tags, drop "or-later" for GPL v2
+- add lockdep and sleeping asserts
+- minor tweaks and improvements
+
+v6 -> v7:
+- fix a Kconfig issue: TZMEM must select GENERIC_ALLOCATOR
+
+v5 -> v6:
+Fixed two issues reported by autobuilders:
+- add a fix for memory leaks in the qseecom driver as the first patch for
+  easier backporting to the v6.6.y branch
+- explicitly cast the bus address stored in a variable of type dma_addr_t
+  to phys_addr_t expected by the genpool API
+
+v4 -> v5:
+- fix the return value from qcom_tzmem_init() if SHM Bridge is not supported
+- remove a comment that's no longer useful
+- collect tags
+
+v3 -> v4:
+- include linux/sizes.h for SZ_X macros
+- use dedicated RCU APIs to dereference radix tree slots
+- fix kerneldocs
+- fix the comment in patch 14/15: it's the hypervisor, not the TrustZone
+  that creates the SHM bridge
+
+v2 -> v3:
+- restore pool management and use separate pools for different users
+- don't use the new allocator in qcom_scm_pas_init_image() as the
+  TrustZone will create an SHM bridge for us here
+- rewrite the entire series again for most part
+
+v1 -> v2:
+- too many changes to list, it's a complete rewrite as explained above
+
+---
+Bartosz Golaszewski (15):
+      dt-bindings: firmware: qcom,scm: add memory-region for sa8775p
+      firmware: qcom: add a dedicated TrustZone buffer allocator
+      firmware: qcom: scm: enable the TZ mem allocator
+      firmware: qcom: scm: smc: switch to using the SCM allocator
+      firmware: qcom: scm: make qcom_scm_assign_mem() use the TZ allocator
+      firmware: qcom: scm: make qcom_scm_ice_set_key() use the TZ allocator
+      firmware: qcom: scm: make qcom_scm_lmh_dcvsh() use the TZ allocator
+      firmware: qcom: scm: make qcom_scm_qseecom_app_get_id() use the TZ allocator
+      firmware: qcom: qseecom: convert to using the TZ allocator
+      firmware: qcom: scm: add support for SHM bridge operations
+      firmware: qcom: tzmem: enable SHM Bridge support
+      firmware: qcom: scm: add support for SHM bridge memory carveout
+      firmware: qcom: scm: clarify the comment in qcom_scm_pas_init_image()
+      arm64: defconfig: enable SHM Bridge support for the TZ memory allocator
+      arm64: dts: qcom: sa8775p: add a dedicated memory carveout for TZ
+
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |  15 +
+ MAINTAINERS                                        |   8 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   7 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/firmware/qcom/Kconfig                      |  31 ++
+ drivers/firmware/qcom/Makefile                     |   1 +
+ drivers/firmware/qcom/qcom_qseecom_uefisecapp.c    | 256 +++++------
+ drivers/firmware/qcom/qcom_scm-smc.c               |  30 +-
+ drivers/firmware/qcom/qcom_scm.c                   | 175 ++++++--
+ drivers/firmware/qcom/qcom_scm.h                   |   6 +
+ drivers/firmware/qcom/qcom_tzmem.c                 | 466 +++++++++++++++++++++
+ drivers/firmware/qcom/qcom_tzmem.h                 |  13 +
+ include/linux/firmware/qcom/qcom_qseecom.h         |   8 +-
+ include/linux/firmware/qcom/qcom_scm.h             |  14 +-
+ include/linux/firmware/qcom/qcom_tzmem.h           |  56 +++
+ 15 files changed, 854 insertions(+), 233 deletions(-)
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240527-shm-bridge-e2494fccb0b5
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
