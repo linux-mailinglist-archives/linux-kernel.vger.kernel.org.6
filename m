@@ -1,115 +1,88 @@
-Return-Path: <linux-kernel+bounces-190978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DA38D0511
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:01:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBDC8D0594
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8522B1C2190D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:01:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6C4B34A86
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82B416C42C;
-	Mon, 27 May 2024 14:31:23 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E900416C685;
+	Mon, 27 May 2024 14:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzAdraRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A401C15F33A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3391E15F3EE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716820283; cv=none; b=EhcBXYhrsJOCol1LIJ4U4ocxT8FAaq0J5te5S9hTJoGNdYVBR4dT6LzgSM1oE54gR7OAgUiaSEcd1z+TUGgZ377RVjDFqgjDtjZMzIYXDfUKDpnA537YxCkDOZq991xI0PkknFAp+UYm1ZGeam+mugmBhtJOoRIkhRd/6j/L1E0=
+	t=1716820409; cv=none; b=GrMA7ZgTt09JbtkpPs4OEt9J0yV/yOKYvisXRdY78Tefd9kTOBoU8PJUMVIEv8p6Tn6W3FMlkN+Rm5ksdLaC2naN5642XZLHEDv4hj/okpdM0NQ8SGyhSMBTCLDUs6ErPGPPhuRr/0cZu1z0xcv52ssBnnHZInolcw8wgFY+hRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716820283; c=relaxed/simple;
-	bh=zQPbdgs7RCJg4Qq0wbiVF+3cbUHM+UsGXZAKlfdrC84=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SacKVmbVo2vzL0oxz7TBtYKwO7YlnXOGFYQDnd3DpLZL6L8Fsh25USDIxi1tV1I9XNTCxqc2sqEVLbO16qlzsD7DEeFH8QzNQhTPZJrT8OrLsei3hyb0YX2C+uBc+MdeY3fRnUfAIwOqWnXmYOIjhQpKIqslEkqbKZqb2rcjizE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 9f91693c-1c35-11ef-80bb-005056bdfda7;
-	Mon, 27 May 2024 17:30:11 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 27 May 2024 17:30:10 +0300
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] hwmon: (ltc2992) Use
- fwnode_for_each_available_child_node_scoped()
-Message-ID: <ZlSY8tjYm5g9bEJ_@surfacebook.localdomain>
-References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
- <20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
- <20240526144851.493dd3f2@jic23-huawei>
+	s=arc-20240116; t=1716820409; c=relaxed/simple;
+	bh=S0TBfxjUtfuVEbYgXZOiLFontODzcJL+M7Q4Hl3IXRg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Fgvv0iWGZzYcJpdZa4guiPSbE3k0B8hQKmJW+l7lR7WXEuEtD8aIC+ZCEqs205+fWmXfVEnMqXyFmFbpxPV6DFZRDBkAuAbsoffMtE/bsXbSOgw65WA88PIJjTDhr88DQeb1xYebTTQlvYqWd3QTwT+Ghq4Qmawl9dVVrnawsGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzAdraRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778C7C2BBFC;
+	Mon, 27 May 2024 14:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716820408;
+	bh=S0TBfxjUtfuVEbYgXZOiLFontODzcJL+M7Q4Hl3IXRg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bzAdraRGohEIH3y+D1Vl5PXrkEGVsueuZciQhCH0pHkrz1zTJoJ9c+AfE/p1ZH7Wy
+	 1UVDEP11Z89Zbrj/a2XL5PDFU1PD8j0lMO64aR6Li76qX8X4WvZZEHfeK+vxixENPw
+	 ROFu6qkY6rxmaZeD0fYzoBF1ccjMsMfsUaGccNTjOTe5f4q4eVhjaeB3qXDhfyYfSR
+	 8ab6Us7ChKC8p4lrShwl70/46ZlhxFYaQ5tNcOTuYnnyvmLbLcxs2d+hvk12H71jTO
+	 IBWtXH+SaJznQsDR/0uQBmSEmXkymZXicM56gE95nL/L0iYR42Q93aCc+KxwVuH1Pq
+	 yL21heGWNLkkw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Ricardo Ribalda <ribalda@kernel.org>,
+  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 4/6] mtd: spi-nor: get rid of SPI_NOR_NO_FR
+In-Reply-To: <494daaab-a93c-44cd-a437-d306a8269251@linaro.org> (Tudor
+	Ambarus's message of "Mon, 22 Apr 2024 06:59:56 +0100")
+References: <20240419141249.609534-1-mwalle@kernel.org>
+	<20240419141249.609534-5-mwalle@kernel.org>
+	<494daaab-a93c-44cd-a437-d306a8269251@linaro.org>
+Date: Mon, 27 May 2024 16:33:26 +0200
+Message-ID: <mafs0ttij1g09.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240526144851.493dd3f2@jic23-huawei>
+Content-Type: text/plain
 
-Sun, May 26, 2024 at 02:48:51PM +0100, Jonathan Cameron kirjoitti:
-> On Thu, 23 May 2024 17:47:16 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
-> > The scoped version of the fwnode_for_each_available_child_node() macro
-> > automates object recfount decrement, avoiding possible memory leaks
-> > in new error paths inside the loop like it happened when
-> > commit '10b029020487 ("hwmon: (ltc2992) Avoid division by zero")'
-> > was added.
-> > 
-> > The new macro removes the need to manually call fwnode_handle_put() in
-> > the existing error paths and in any future addition. It also removes the
-> > need for the current child node declaration as well, as it is internally
-> > declared.
-> > 
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> 
-> This looks like another instances of the lack of clarify about 
-> what device_for_each_child_node[_scoped]() guarantees about node availability.
-> On DT it guarantees the node is available as ultimately calls
-> of_get_next_available_child()
-> 
-> On ACPI it doesn't (I think).
-> For swnode, there isn't an obvious concept of available.
-> 
-> It would be much better if we reached some agreement on this and
-> hence could avoid using the fwnode variants just to get the _available_ form
-> as done here.
+On Mon, Apr 22 2024, Tudor Ambarus wrote:
 
-> Or just add the device_for_each_available_child_node[_scoped]()
-> and call that in almost all cases.
+> On 4/19/24 15:12, Michael Walle wrote:
+>> The evervision FRAM devices are the only user of the NO_FR flag. Dro
+>
+> everspin is evervision?
 
-device_for_each*() _implies_ availability. You need to talk to Rob about all
-this. The design of the device_for_each*() was exactly done in accordance with
-his suggestions...
+Looks like a typo to me. Evervision seems to only create display panels.
+I can do s/evervision/everspin/, both in commit message and in code when
+applying.
 
-> In generic code, do we ever want to walk unavailable child nodes?
-
-..which are most likely like your question here, i.e. why we ever need to
-traverse over unavailable nodes.
-
+>
+>> the global flag and instead use a manufacturer fixup for the evervision
+>> flashes to drop the fast read support.
+>> 
+>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+[...]
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Pratyush Yadav
 
