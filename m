@@ -1,254 +1,118 @@
-Return-Path: <linux-kernel+bounces-190873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93C08D03BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE0B8D0344
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EFF1F24067
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED9429F91D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04901836D9;
-	Mon, 27 May 2024 14:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4DC15EFC1;
+	Mon, 27 May 2024 14:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaNRgyYm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b/3JO/Di"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FC916C451;
-	Mon, 27 May 2024 14:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9DA15EFAE
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819332; cv=none; b=MYG7Udq1jsQTwkdyLiLFMYy/NWlmMKJaasxHcb2Sfyr4nG+9llhUHG8N8VMDQY6XY2yzwQPrP2Sv8AS1VfAVNWnO+mWNjhyMX4GNnq0vk6KTQIk3qZ6YJCzImteXF3dkhhG2Q/zYamHUlU4ZheCgrQf6y651LgWn0s5ZM+tb0AQ=
+	t=1716819256; cv=none; b=tHkanhRusk278dviHfCkqI3A5rXZzNTJ3TRw+cJtBY5Bzo/BwB5ov3ugjBFBJCwCDhnK5KCxIDtN+RyWOLLK1igkPhPW3qF8z+oIfR2zP1QmR0ZDQj28lUzOhWPG5DVe2bJh6wZdt4/kssYhWWHfv1qrOOkAEezFrikpelbgXwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819332; c=relaxed/simple;
-	bh=UUX6FM7FevEjcmk/Q+b3AHxsD6DcfXw/QHAtxiCn7Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gn+my+LRfsr/phxncgRXwn/yY9R4Zhe5LiTvvdPMemtigNCZ59Y2Cl796UxBBn+i4qZi39Db9k29+hKMq5SX7MPsXY7y4m3xM5VhWKoKO11cryA0Wz/oFX0kSCsp6e79DuiRhCpLBxZJEE0Fj+nN9BH1tdr46mfAvc2dv8JQrPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaNRgyYm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6728C4AF08;
-	Mon, 27 May 2024 14:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716819331;
-	bh=UUX6FM7FevEjcmk/Q+b3AHxsD6DcfXw/QHAtxiCn7Kc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qaNRgyYmxTegceBTF3oSqlDfnYqx2VX9xYx4cmfMs9MZAaGyIwQdl9Mj0TdaOB+7r
-	 JTq0XIj90YUkkHk6jdVFahpHOUOdhnQGgVmyl5cEOfErA1xn7t5l9lswFXujccZobl
-	 3QUgkUBb8B7Y7p9bAkcsvl4SCmO0EShEWMkvHXRiUDKzaHK3YeyZ3hXTtDpffQFrz5
-	 A7mBn9Te742/g7EcJ0WEzWCJoBOLpWtKBbySvQb7KtC5llQ9jcvhehis4baw1xC9q4
-	 r9o2nejqwfamiTeUGQCKYxozxCz0eKaGk/wNVw5KUQz2ZmNEfRP8RL4MV9xL8bEbh0
-	 xdbS72O4Pju+w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Uri Arev <me@wantyapps.xyz>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.8 30/30] Bluetooth: ath3k: Fix multiple issues reported by checkpatch.pl
-Date: Mon, 27 May 2024 10:13:39 -0400
-Message-ID: <20240527141406.3852821-30-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527141406.3852821-1-sashal@kernel.org>
-References: <20240527141406.3852821-1-sashal@kernel.org>
+	s=arc-20240116; t=1716819256; c=relaxed/simple;
+	bh=wS1BFxKWoEkKiNdSApsvB8JRUm9MZJzCp1jj637qV3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MO6MLeRp2+NKesnZefvah7ovp1NgzXdVNcwJ2PaubWypaKaoHtJd1G7psoHS7tQ/svd3PbCIqgB9xhLEKH8WS7MCuYMU+NEw/coz/SebRkNWhPS7ri5YBsMDpeprRgm08uG9qfL8dZAlrbmj28GHUeeBL8OrYgvNDsUzz3154U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b/3JO/Di; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716819253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SFzMZWvRCDrb7WkYa5wLatMYu1+RpvoRMJMjVnqZvBU=;
+	b=b/3JO/DiCWuqT7mrNRNL72nKwG9RuveCwsU+yoyUDiZAKGoc/GkD8pIvLn2YIEnEltj9Sd
+	vnxtWmH2XJhdoOHPpgS1lDt7vPULej2/ppwSU7CU9D7+hdiDPp9O75WSe/O8qON/hP2KsU
+	9PyY/NXoO8QMbzlqRttfbqpI+SVtfYw=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-M7tzZXrKOn2r6CETXMdE5g-1; Mon, 27 May 2024 10:14:11 -0400
+X-MC-Unique: M7tzZXrKOn2r6CETXMdE5g-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ab960d4c84so28206d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:14:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716819250; x=1717424050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SFzMZWvRCDrb7WkYa5wLatMYu1+RpvoRMJMjVnqZvBU=;
+        b=vbfffZ7bXWX1D5dx25YUE68YXT5xFnEiUlO0UtJ6akhD+sBDYULUprRi/L5fiNDfuP
+         oO8rLoNrEul9PXRZmZNydat46x5kxKXh2kryaz0o4HLd5uIcBeXJNCV0iTYJLkslEdb1
+         KcEAQVuN6HWO5A/5PpWSj2PkFmsKDGzbBepHl/YEVBbP+jbO82Ld7U2wKouympitTxuN
+         puvhrT2JhR9ltbPjmCeefotze33SSTrvXWjW5s0Wg95/oq5dbSHI5VxYZSy30BCQ/yxF
+         YPSCzGsDGexAFT4l23RyescSeEYhDhjKFbc5BmJVC+yoKxBeSwPq9WkqcOYI9GsBXZTU
+         kxVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+fn7NVp3IlH/jifgszAVXsZVsjUKx6yt8pMH8vKnjuJtZWng2XTIRm2zWo9nGJTKGW0H7nYLHW9tDAtti3ROg83BoQmDBvysoOLpz
+X-Gm-Message-State: AOJu0Yy2RW3gCwm6hk3tQZCTjiNhcmZs49bIFsdIZ8UuGL+m4A2l1dgM
+	lAogh6D6N+jESzVrfRcadhRq/ILCkn0ofKVEDRzTDggCSy+Es8qT4toFHybzDDr9Lczwe8ete10
+	6jDCfeCCLP7SqKJUs4t4DQQ84VKvo2rPhewS5ZQEoOiv+Dsic06IE+5ouHveb9kHUXP0xOA==
+X-Received: by 2002:a05:622a:1a08:b0:439:ecc6:cdff with SMTP id d75a77b69052e-43fb0e50bbdmr106246811cf.1.1716819249855;
+        Mon, 27 May 2024 07:14:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGd8th8Wg469CYBTawHV9rsQeFuB8nclhehcyxMjGfWytXD5S2gp1EDIKK4hPSKKRLENR5EfA==
+X-Received: by 2002:a05:622a:1a08:b0:439:ecc6:cdff with SMTP id d75a77b69052e-43fb0e50bbdmr106246401cf.1.1716819249131;
+        Mon, 27 May 2024 07:14:09 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb16b97b5sm33974641cf.18.2024.05.27.07.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:14:08 -0700 (PDT)
+Date: Mon, 27 May 2024 10:14:06 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 00/20] Reimplement huge pages without hugepd on
+ powerpc (8xx, e500, book3s/64)
+Message-ID: <ZlSVLv2JlsZS4f3d@x1n>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <Zk-bpBZ_yjsj_B2z@x1n>
+ <87jzjj4y0t.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.8.11
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87jzjj4y0t.fsf@mail.lhotse>
 
-From: Uri Arev <me@wantyapps.xyz>
+On Fri, May 24, 2024 at 02:46:58PM +1000, Michael Ellerman wrote:
+> Christophe is a powerpc developer :)
 
-[ Upstream commit 68aa21054ec3a1a313af90a5f95ade16c3326d20 ]
+Yes, definitely. :)
 
-This fixes some CHECKs reported by the checkpatch script.
+> 
+> I'll help where I can, but I don't know the hugepd code that well, I've
+> never really worked on it before. Nick will hopefully also be able to
+> help, he at least knows mm better than me, but he also has other work.
+> 
+> Hopefully we can make this series work, and replace hugepd. But if we
+> can't make that work then there is the possibility of just dropping
+> support for 16M/16G pages with HPT/4K pages.
 
-Issues reported in ath3k.c:
--------
-ath3k.c
--------
-CHECK: Please don't use multiple blank lines
-+
-+
+Great, thank you!
 
-CHECK: Blank lines aren't necessary after an open brace '{'
-+static const struct usb_device_id ath3k_blist_tbl[] = {
-+
-
-CHECK: Alignment should match open parenthesis
-+static int ath3k_load_firmware(struct usb_device *udev,
-+                               const struct firmware *firmware)
-
-CHECK: Alignment should match open parenthesis
-+               err = usb_bulk_msg(udev, pipe, send_buf, size,
-+                                       &len, 3000);
-
-CHECK: Unnecessary parentheses around 'len != size'
-+               if (err || (len != size)) {
-
-CHECK: Alignment should match open parenthesis
-+static int ath3k_get_version(struct usb_device *udev,
-+                       struct ath3k_version *version)
-
-CHECK: Alignment should match open parenthesis
-+static int ath3k_load_fwfile(struct usb_device *udev,
-+               const struct firmware *firmware)
-
-CHECK: Alignment should match open parenthesis
-+               err = usb_bulk_msg(udev, pipe, send_buf, size,
-+                                       &len, 3000);
-
-CHECK: Unnecessary parentheses around 'len != size'
-+               if (err || (len != size)) {
-
-CHECK: Blank lines aren't necessary after an open brace '{'
-+       switch (fw_version.ref_clock) {
-+
-
-CHECK: Alignment should match open parenthesis
-+       snprintf(filename, ATH3K_NAME_LEN, "ar3k/ramps_0x%08x_%d%s",
-+               le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
-
-CHECK: Alignment should match open parenthesis
-+static int ath3k_probe(struct usb_interface *intf,
-+                       const struct usb_device_id *id)
-
-CHECK: Alignment should match open parenthesis
-+                       BT_ERR("Firmware file \"%s\" not found",
-+                                                       ATH3K_FIRMWARE);
-
-CHECK: Alignment should match open parenthesis
-+               BT_ERR("Firmware file \"%s\" request failed (err=%d)",
-+                                               ATH3K_FIRMWARE, ret);
-
-total: 0 errors, 0 warnings, 14 checks, 540 lines checked
-
-Signed-off-by: Uri Arev <me@wantyapps.xyz>
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/bluetooth/ath3k.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
-index 88262d3a93923..ce97b336fbfb8 100644
---- a/drivers/bluetooth/ath3k.c
-+++ b/drivers/bluetooth/ath3k.c
-@@ -3,7 +3,6 @@
-  * Copyright (c) 2008-2009 Atheros Communications Inc.
-  */
- 
--
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -128,7 +127,6 @@ MODULE_DEVICE_TABLE(usb, ath3k_table);
-  * for AR3012
-  */
- static const struct usb_device_id ath3k_blist_tbl[] = {
--
- 	/* Atheros AR3012 with sflash firmware*/
- 	{ USB_DEVICE(0x0489, 0xe04e), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0489, 0xe04d), .driver_info = BTUSB_ATH3012 },
-@@ -202,7 +200,7 @@ static inline void ath3k_log_failed_loading(int err, int len, int size,
- #define TIMEGAP_USEC_MAX	100
- 
- static int ath3k_load_firmware(struct usb_device *udev,
--				const struct firmware *firmware)
-+			       const struct firmware *firmware)
- {
- 	u8 *send_buf;
- 	int len = 0;
-@@ -237,9 +235,9 @@ static int ath3k_load_firmware(struct usb_device *udev,
- 		memcpy(send_buf, firmware->data + sent, size);
- 
- 		err = usb_bulk_msg(udev, pipe, send_buf, size,
--					&len, 3000);
-+				   &len, 3000);
- 
--		if (err || (len != size)) {
-+		if (err || len != size) {
- 			ath3k_log_failed_loading(err, len, size, count);
- 			goto error;
- 		}
-@@ -262,7 +260,7 @@ static int ath3k_get_state(struct usb_device *udev, unsigned char *state)
- }
- 
- static int ath3k_get_version(struct usb_device *udev,
--			struct ath3k_version *version)
-+			     struct ath3k_version *version)
- {
- 	return usb_control_msg_recv(udev, 0, ATH3K_GETVERSION,
- 				    USB_TYPE_VENDOR | USB_DIR_IN, 0, 0,
-@@ -271,7 +269,7 @@ static int ath3k_get_version(struct usb_device *udev,
- }
- 
- static int ath3k_load_fwfile(struct usb_device *udev,
--		const struct firmware *firmware)
-+			     const struct firmware *firmware)
- {
- 	u8 *send_buf;
- 	int len = 0;
-@@ -310,8 +308,8 @@ static int ath3k_load_fwfile(struct usb_device *udev,
- 		memcpy(send_buf, firmware->data + sent, size);
- 
- 		err = usb_bulk_msg(udev, pipe, send_buf, size,
--					&len, 3000);
--		if (err || (len != size)) {
-+				   &len, 3000);
-+		if (err || len != size) {
- 			ath3k_log_failed_loading(err, len, size, count);
- 			kfree(send_buf);
- 			return err;
-@@ -425,7 +423,6 @@ static int ath3k_load_syscfg(struct usb_device *udev)
- 	}
- 
- 	switch (fw_version.ref_clock) {
--
- 	case ATH3K_XTAL_FREQ_26M:
- 		clk_value = 26;
- 		break;
-@@ -441,7 +438,7 @@ static int ath3k_load_syscfg(struct usb_device *udev)
- 	}
- 
- 	snprintf(filename, ATH3K_NAME_LEN, "ar3k/ramps_0x%08x_%d%s",
--		le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
-+		 le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
- 
- 	ret = request_firmware(&firmware, filename, &udev->dev);
- 	if (ret < 0) {
-@@ -456,7 +453,7 @@ static int ath3k_load_syscfg(struct usb_device *udev)
- }
- 
- static int ath3k_probe(struct usb_interface *intf,
--			const struct usb_device_id *id)
-+		       const struct usb_device_id *id)
- {
- 	const struct firmware *firmware;
- 	struct usb_device *udev = interface_to_usbdev(intf);
-@@ -505,10 +502,10 @@ static int ath3k_probe(struct usb_interface *intf,
- 	if (ret < 0) {
- 		if (ret == -ENOENT)
- 			BT_ERR("Firmware file \"%s\" not found",
--							ATH3K_FIRMWARE);
-+			       ATH3K_FIRMWARE);
- 		else
- 			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
--							ATH3K_FIRMWARE, ret);
-+			       ATH3K_FIRMWARE, ret);
- 		return ret;
- 	}
- 
 -- 
-2.43.0
+Peter Xu
 
 
