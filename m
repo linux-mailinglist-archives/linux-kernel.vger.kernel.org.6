@@ -1,174 +1,275 @@
-Return-Path: <linux-kernel+bounces-190341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA888CFD11
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF8C8CFD22
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8591C22060
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E051F25ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7217F13C69B;
-	Mon, 27 May 2024 09:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5091513AA2D;
+	Mon, 27 May 2024 09:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsVf6wIr"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P0/R063B"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DF713A40C;
-	Mon, 27 May 2024 09:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34F13A418
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802496; cv=none; b=Z4kNCfFSHKapQ065k+LwFsQzK2Jr+nkOK3PCKPJ68q+xuC3oWw2n/a8+s0VB8uCJ84YDoqIiQ79+Sh3m3MlaHMXCECLIpuI/GZnhYTwGMJDckH2LkcoUbFfjVmM2yC8VUvZg4EXXk/wSb9NKVAySx7oUSZ5/b5HdgJtMDP41/F0=
+	t=1716802621; cv=none; b=XARsTeR1oO12z8taip+5nqlTbrdZLALC3iYNJZ+yxOWnmEwLeIFnNUPLhAlIvzB0NZKRGvQRNSnNEikNgPEh7UE7LuPXf19/gYuqWWoMFhWL41MhWh3NUfnUjfGC/pXLnXtU7Gdt3lSTI6XjysNAxtZ90ub/5kCr/n4oFX+WJC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802496; c=relaxed/simple;
-	bh=GZmGEocmWzBeg3ElgilT4NF4U3VsdfiPEyNkcWMuauE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxN9ObIBD8SmTXCDPNXvgxq6Oe8gcCU5PjgTVO8S/Ec2JFrqsW4ZCGTzV4h1tIAqZVbUSVGacmZhYKKwYUyvmQIMuxJo//6tpta9eSroqqgDOr/j/uNfkpEdNSpOB+LPQcmFMREete+qVS5m7VeX5Jy3Zv4X56bAVlNG6mDlNsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VsVf6wIr; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6266ffdba8so218189966b.1;
-        Mon, 27 May 2024 02:34:54 -0700 (PDT)
+	s=arc-20240116; t=1716802621; c=relaxed/simple;
+	bh=ca7qxTX4u6UzTeFhYW4NkFxCP0XwOUteCJo7P6ydaEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y1ENIAJAWVrwKnRtYOJtUFIE727AKy4t9r41FTEScMrsYu7QH149pKBSAtWio8hp78z4yb4e/qin1C5mcOmjUDOM2H9dSUcIj2PfBNNc46MBzRq6s23TglgEp1NnEMwWqU2XWFAc6DkGyTUrd5oRB3cjmUIOqlSu7LJC0mPfxHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P0/R063B; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5295a576702so3282244e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716802493; x=1717407293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5cBODzR4p/d1EwJmZY+G8DbaP2yePNKcsEM/yAst/A=;
-        b=VsVf6wIrhvQfX4OwzETDZGjpE7iVfOxvx7cnGtGsDG9qbjmCWa2jtewRLa8KBM7V0I
-         m1VLLTZbMRJhkKBxG65LQzS8nPKgmdSavEeI9pHFKk8hNYjbhfJ5gaYjHHsLubNvMjis
-         q+tLtuwOZXiA50u3/Wk48mvScTR47qV0eWZh6AjSISyP639FcC2yg+X3sbr04vK0jA9t
-         Ci8wbOJ30mf8EoAtGs6tP6J/umk5zxmaGfVqXGWteLH8iBbnyZc4pM7JIx1qjuUX7tLE
-         Wf0BT3UBExO5Uq3w8BXkq8OKympnn91p/+MLMsMxZgaNnnr5LQKtiH+osaqMuQ0l5Fv3
-         D9mA==
+        d=suse.com; s=google; t=1716802617; x=1717407417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/ixPzkRCck5ZUKxx74gVuIQcS7/KCEVfrXzpOu54PQ=;
+        b=P0/R063Bgh8BsH8SNa6+rs36Zb1kMEof/Yc0G5AAUt0yFyewwUf1VgJw8I/kvNV6VO
+         xIztpzoTlXe6tsmRXONhnsrEfAG6crTv3WYkVGxTrxGHd8Kq+/EQDoGKcm+DGIQGaiBO
+         yJ3WK5j8rjrrsOGXMGStHIdXYegB7+iibzBd6pTIROqY2zBAnmsXgfinBYBlD8fYfCzQ
+         QBdk0wXhaADo5BFEsDq5si78RRXrmeUyQpKTjbeOCayXaOnSKVgPeSUfQwe73v85r5NF
+         wyOSVdcI651j3kUt5eeEK3enBDDMaUvjUIArWzmgAyeCgvTSCCFB5V0MLVe1ZjjW3HRe
+         aowg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802493; x=1717407293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t5cBODzR4p/d1EwJmZY+G8DbaP2yePNKcsEM/yAst/A=;
-        b=TfyEt06USZP+uu1L0NerNebfLXkee5a0MJeH/7JZdGwMqeJBColxryT1X7GSI5+zlE
-         fEB/cHXcu2DJL9faeA+V+QHXoPwi5+o3f678jtP0N9U0A8l5/8DmlW07msNPXP1HZwbz
-         l1Cpy0WN4JwNzmHKeBEmMDFt/NAzicHU40MzXRMO7gbmBzP5MaLxQC232vJPsytIHJVx
-         79Dh7K36SzaaKXhSHfLH77TFDavPbWQLRJ4+x+gJQ+aocbtEAISIzHj03+cu/eWYyQ5k
-         b/F4nRRs7O9MZA4Z95Mut9Q3lpmV7SI9hY+hwK9J1oeZbyfkAyzzqBLE6X/QbzKKcqNK
-         eP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWA9ezkekuoTLGru8fu20DINqPxgp6dwaTprV7dkTyA1jDoVq4CJQY1/slONxd7oaM04tM+vxewrBQl5ayLD916ENo0FGKTASmG0dI4Qi68wLOKrQyOVl82CGyYw8CcHmni
-X-Gm-Message-State: AOJu0YziBbZwaInknJ/PVOPMlldOVdEoFawHUr4HbHN/rG+J/knUa8Bb
-	qN1QV567U72saRfwAxaQ5ohCuShY+usCBW3Vzi7ahsHNkDI8r/Cm
-X-Google-Smtp-Source: AGHT+IFjYaXZRXFnIlLX5I0tdJRm3cO32xFRJZGBWA4rLg7R5JB0Spcaz69YutEH+tX+ZrdKFwP7YA==
-X-Received: by 2002:a17:907:36ca:b0:a59:a83b:d435 with SMTP id a640c23a62f3a-a62641cb750mr676443566b.18.1716802493112;
-        Mon, 27 May 2024 02:34:53 -0700 (PDT)
-Received: from f (cst-prg-19-178.cust.vodafone.cz. [46.135.19.178])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8b87fsm469221766b.158.2024.05.27.02.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:34:52 -0700 (PDT)
-Date: Mon, 27 May 2024 11:34:36 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Pekka Enberg <penberg@kernel.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Howard McLauchlan <hmclauchlan@fb.com>, bpf@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH] mm: don't call should_failslab() for !CONFIG_FAILSLAB
-Message-ID: <3j5d3p22ssv7xoaghzraa7crcfih3h2qqjlhmjppbp6f42pg2t@kg7qoicog5ye>
-References: <e01e5e40-692a-519c-4cba-e3331f173c82@kernel.dk>
- <2dfc6273-6cdd-f4f5-bed9-400873ac9152@suse.cz>
+        d=1e100.net; s=20230601; t=1716802617; x=1717407417;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/ixPzkRCck5ZUKxx74gVuIQcS7/KCEVfrXzpOu54PQ=;
+        b=GIwLOpjNHEWmRfbjWWGMUtASQo2RUYf1Tw+RqYGrLWKTSxV4AQQdI+KnZSPPVLqZRw
+         4bGpHYOiPbNuamD+MISpJ9kQKzI2dMZM9wNR9ht/aHJMr233Hz7f4gkoiLdwC7YyxOqG
+         jkSVqPA+V16rlzP9N5VX/1PKq221GOcWwsAnk07hBc26CBMbHFJGJSp16/1VBKfnwjqa
+         09tf0qPXphLSPdMir83tt8tnLh05MLP6P0yGwXNV0oblCTpKAxbR33w51buUCfXrog7G
+         ajHXm72V24fRL1Nck8DEpedQbtpMbhCEF1v5Gdm0I1MYg/fwinil6mJuocmSESx8t5VV
+         u3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCXW6ubDjjbRmYBn/KGuP9YiQLVFzn3OBeERs414J+wZY2AWJ8fHnWGvn4rUUHUq2iwLc+mjjLthwoCEVUykiw30/T0a2oxRl+CDU5l9
+X-Gm-Message-State: AOJu0YzKruGVNS5jP0JICyrJVx2YgXpEzCU2iOqVlvFb1RH+W2ANsn4M
+	OVvgNN7uhIQufXWLm8wxkfmEKAV8gpArGoMLikcrLwnnXJpv5ODosXPMsPwfNYY=
+X-Google-Smtp-Source: AGHT+IHEAjDHV04sv046OkrhZ6dT5pavox8wzKlyT3vi+iHB28XVQkbRU0voEZTDpoqyXyek79OCfA==
+X-Received: by 2002:ac2:4e10:0:b0:51b:e0f0:e4f8 with SMTP id 2adb3069b0e04-52964bb0ea4mr7110372e87.31.1716802616696;
+        Mon, 27 May 2024 02:36:56 -0700 (PDT)
+Received: from [10.100.51.161] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad8e2sm136039195e9.33.2024.05.27.02.36.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 02:36:56 -0700 (PDT)
+Message-ID: <2b920bab-23a2-4a8d-95c2-b69472d38373@suse.com>
+Date: Mon, 27 May 2024 11:36:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2dfc6273-6cdd-f4f5-bed9-400873ac9152@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ring-buffer: Fix a race between readers and resize
+ checks
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-users <linux-rt-users@vger.kernel.org>
+References: <20240517134008.24529-1-petr.pavlu@suse.com>
+ <20240517134008.24529-3-petr.pavlu@suse.com>
+ <20240520095037.33a7fde6@gandalf.local.home>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240520095037.33a7fde6@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-+cc Linus
-
-On Thu, Oct 07, 2021 at 05:32:52PM +0200, Vlastimil Babka wrote:
-> On 10/5/21 17:31, Jens Axboe wrote:
-> > Allocations can be a very hot path, and this out-of-line function
-> > call is noticeable.
-> > 
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On 5/20/24 15:50, Steven Rostedt wrote:
+> On Fri, 17 May 2024 15:40:08 +0200
+> Petr Pavlu <petr.pavlu@suse.com> wrote:
 > 
-> It used to be inline b4 (hi, Konstantin!) and then was converted to be like
-> this intentionally :/
+>> The reader code in rb_get_reader_page() swaps a new reader page into the
+>> ring buffer by doing cmpxchg on old->list.prev->next to point it to the
+>> new page. Following that, if the operation is successful,
+>> old->list.next->prev gets updated too. This means the underlying
+>> doubly-linked list is temporarily inconsistent, page->prev->next or
+>> page->next->prev might not be equal back to page for some page in the
+>> ring buffer.
+>>
+>> The resize operation in ring_buffer_resize() can be invoked in parallel.
+>> It calls rb_check_pages() which can detect the described inconsistency
+>> and stop further tracing:
+>>
+>> [  190.271762] ------------[ cut here ]------------
+>> [  190.271771] WARNING: CPU: 1 PID: 6186 at kernel/trace/ring_buffer.c:1467 rb_check_pages.isra.0+0x6a/0xa0
+>> [  190.271789] Modules linked in: [...]
+>> [  190.271991] Unloaded tainted modules: intel_uncore_frequency(E):1 skx_edac(E):1
+>> [  190.272002] CPU: 1 PID: 6186 Comm: cmd.sh Kdump: loaded Tainted: G            E      6.9.0-rc6-default #5 158d3e1e6d0b091c34c3b96bfd99a1c58306d79f
+>> [  190.272011] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552c-rebuilt.opensuse.org 04/01/2014
+>> [  190.272015] RIP: 0010:rb_check_pages.isra.0+0x6a/0xa0
+>> [  190.272023] Code: [...]
+>> [  190.272028] RSP: 0018:ffff9c37463abb70 EFLAGS: 00010206
+>> [  190.272034] RAX: ffff8eba04b6cb80 RBX: 0000000000000007 RCX: ffff8eba01f13d80
+>> [  190.272038] RDX: ffff8eba01f130c0 RSI: ffff8eba04b6cd00 RDI: ffff8eba0004c700
+>> [  190.272042] RBP: ffff8eba0004c700 R08: 0000000000010002 R09: 0000000000000000
+>> [  190.272045] R10: 00000000ffff7f52 R11: ffff8eba7f600000 R12: ffff8eba0004c720
+>> [  190.272049] R13: ffff8eba00223a00 R14: 0000000000000008 R15: ffff8eba067a8000
+>> [  190.272053] FS:  00007f1bd64752c0(0000) GS:ffff8eba7f680000(0000) knlGS:0000000000000000
+>> [  190.272057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  190.272061] CR2: 00007f1bd6662590 CR3: 000000010291e001 CR4: 0000000000370ef0
+>> [  190.272070] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> [  190.272073] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> [  190.272077] Call Trace:
+>> [  190.272098]  <TASK>
+>> [  190.272189]  ring_buffer_resize+0x2ab/0x460
+>> [  190.272199]  __tracing_resize_ring_buffer.part.0+0x23/0xa0
+>> [  190.272206]  tracing_resize_ring_buffer+0x65/0x90
+>> [  190.272216]  tracing_entries_write+0x74/0xc0
+>> [  190.272225]  vfs_write+0xf5/0x420
+>> [  190.272248]  ksys_write+0x67/0xe0
+>> [  190.272256]  do_syscall_64+0x82/0x170
+>> [  190.272363]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>> [  190.272373] RIP: 0033:0x7f1bd657d263
+>> [  190.272381] Code: [...]
+>> [  190.272385] RSP: 002b:00007ffe72b643f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>> [  190.272391] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f1bd657d263
+>> [  190.272395] RDX: 0000000000000002 RSI: 0000555a6eb538e0 RDI: 0000000000000001
+>> [  190.272398] RBP: 0000555a6eb538e0 R08: 000000000000000a R09: 0000000000000000
+>> [  190.272401] R10: 0000555a6eb55190 R11: 0000000000000246 R12: 00007f1bd6662500
+>> [  190.272404] R13: 0000000000000002 R14: 00007f1bd6667c00 R15: 0000000000000002
+>> [  190.272412]  </TASK>
+>> [  190.272414] ---[ end trace 0000000000000000 ]---
+>>
+>> Note that ring_buffer_resize() calls rb_check_pages() only if the parent
+>> trace_buffer has recording disabled. Recent commit d78ab792705c
+>> ("tracing: Stop current tracer when resizing buffer") causes that it is
+>> now always the case which makes it more likely to experience this issue.
+>>
+>> The window to hit this race is nonetheless very small. To help
+>> reproducing it, one can add a delay loop in rb_get_reader_page():
+>>
+>>  ret = rb_head_page_replace(reader, cpu_buffer->reader_page);
+>>  if (!ret)
+>>  	goto spin;
+>>  for (unsigned i = 0; i < 1U << 26; i++)  /* inserted delay loop */
+>>  	__asm__ __volatile__ ("" : : : "memory");
+>>  rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
+>>
+>> .. and then run the following commands on the target system:
+>>
+>>  echo 1 > /sys/kernel/tracing/events/sched/sched_switch/enable
+>>  while true; do
+>>  	echo 16 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
+>>  	echo 8 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
+>>  done &
+>>  while true; do
+>>  	for i in /sys/kernel/tracing/per_cpu/*; do
+>>  		timeout 0.1 cat $i/trace_pipe; sleep 0.2
+>>  	done
+>>  done
+>>
+>> To fix the problem, make sure ring_buffer_resize() doesn't invoke
+>> rb_check_pages() concurrently with a reader operating on the same
+>> ring_buffer_per_cpu by taking its cpu_buffer->reader_lock.
 > 
-> See 4f6923fbb352 ("mm: make should_failslab always available for fault
-> injection")
+> Definitely a bug. Thanks for catching it. But...
 > 
-> And now also kernel/bpf/verifier.c contains:
-> BTF_ID(func, should_failslab)
+>>
+>> Fixes: 659f451ff213 ("ring-buffer: Add integrity check at end of iter read")
+>> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+>> ---
+>>  kernel/trace/ring_buffer.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+>> index 0ae569eae55a..967655591719 100644
+>> --- a/kernel/trace/ring_buffer.c
+>> +++ b/kernel/trace/ring_buffer.c
+>> @@ -1449,6 +1449,11 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
+>>   *
+>>   * As a safety measure we check to make sure the data pages have not
+>>   * been corrupted.
+>> + *
+>> + * Callers of this function need to guarantee that the list of pages doesn't get
+>> + * modified during the check. In particular, if it's possible that the function
+>> + * is invoked with concurrent readers which can swap in a new reader page then
+>> + * the caller should take cpu_buffer->reader_lock.
+>>   */
+>>  static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+>>  {
+>> @@ -2200,8 +2205,13 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+>>  		 */
+>>  		synchronize_rcu();
+>>  		for_each_buffer_cpu(buffer, cpu) {
+>> +			unsigned long flags;
+>> +
+>>  			cpu_buffer = buffer->buffers[cpu];
+>> +			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+>>  			rb_check_pages(cpu_buffer);
+>> +			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock,
+>> +						   flags);
 > 
-> I think either your or Andrew's version will break this BTF_ID thing, at the
-> very least.
+> Putting my RT hat on, I really don't like the above fix. The
+> rb_check_pages() iterates all subbuffers which makes the time interrupts
+> are disabled non-deterministic.
+
+I see, this applies also to the same rb_check_pages() validation invoked
+from ring_buffer_read_finish().
+
 > 
-> But I do strongly agree that putting unconditionally a non-inline call into
-> slab allocator fastpath sucks. Can we make it so that bpf can only do these
-> overrides when CONFIG_FAILSLAB is enabled?
-> I don't know, perhaps putting this BTF_ID() in #ifdef as well, or providing
-> a dummy that is always available (so that nothing breaks), but doesn't
-> actually affect slab_pre_alloc_hook() unless CONFIG_FAILSLAB has been enabled?
+> Instead, I would rather have something where we disable readers while we do
+> the check, and re-enable them.
 > 
+> 			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> 			cpu_buffer->read_disabled++;
+> 			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> 
+> // Also, don't put flags on a new line. We are allow to go 100 characters now.
 
-I just ran into it while looking at kmalloc + kfree pair.
+Noted.
 
-A toy test which calls this in a loop like so:
-static long noinline custom_bench(void)
-{
-        void *buf;
+> 
+> 
+>   			rb_check_pages(cpu_buffer);
+> 			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> 			cpu_buffer->read_disabled--;
+> 			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> 
+> Or something like that. Yes, that also requires creating a new
+> "read_disabled" field in the ring_buffer_per_cpu code.
 
-        while (!signal_pending(current)) {
-                buf = kmalloc(16, GFP_KERNEL);
-                kfree(buf);
-                cond_resched();
-        }
+I think this would work but I'm personally not immediately sold on this
+approach. If I understand the idea correctly, readers should then check
+whether cpu_buffer->read_disabled is set and bail out with some error if
+that is the case. The rb_check_pages() function is only a self-check
+code and as such, I feel it doesn't justify disrupting readers with
+a new error condition and adding more complex locking.
 
-        return -EINTR;
-}
+I've been considering how to approach this RT issue differently. One
+obvious approach would be to drop the rb_check_pages() validation but
+that is probably not desirable.
 
-.. shows this with perf top:
-   57.88%  [kernel]           [k] kfree
-   31.38%  [kernel]           [k] kmalloc_trace_noprof
-    3.20%  [kernel]           [k] should_failslab.constprop.0
+Another option could be to make the check less thorough and walk only
+a part of the list which is bounded by some constant, typically one
+would want to check the part where some change was just made. In case of
+a smaller list, it should be still possible to traverse it completely.
 
-A side note is that I verified majority of the time in kfree and
-kmalloc_trace_noprof is cmpxchg16b, which is both good and bad news.
+This is an idea that I'm currently looking at.
 
-As for should_failslab, it compiles to an empty func on production
-kernels and is present even when there are no supported means of
-instrumenting it. As in everyone pays for its existence, even if there
-is no way to use it.
+> 
+> That said, I'm going to accept these patches as is (moving flags onto the
+> same line). But would like the above code for the next merge window as it
+> would then not affect RT.
+> 
+> I'll accept these patches because it does fix the bug now.
 
-Also note there are 3 unrelated mechanisms to alter the return code,
-which imo is 2 too many. But more importantly they are not even
-coordinated.
-
-A hard requirement for a long term solution is to not alter the fast
-path beyond nops for hot patching.
-
-So far I think implementing this in a clean manner would require
-agreeing on some namespace for bpf ("failprobes"?) and coordinating
-hotpatching between different mechanisms. Maybe there is a better, I
-don't know.
-
-Here is the crux of my e-mail though:
-1. turning should_failslab into a mandatory func call is an ok local
-   hack for the test farm, not a viable approach for production
-2. as such it is up to the original submitter (or whoever else
-   who wants to pick up the slack) to implement something which
-   hotpatches the callsite as opposed to inducing a function call for
-   everyone
-
-In the meantime the routine should disappear unless explicitly included
-in kernel config. The patch submitted here would be one way to do it.
+Thanks,
+Petr
 
