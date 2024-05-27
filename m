@@ -1,173 +1,165 @@
-Return-Path: <linux-kernel+bounces-190997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7548D054E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:06:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38678D0551
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0882A1F22B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 549412809AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497C917BB22;
-	Mon, 27 May 2024 14:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512C817F362;
+	Mon, 27 May 2024 14:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li6IEBRh"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIaaCytv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386EE7344A
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867287344A;
+	Mon, 27 May 2024 14:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821064; cv=none; b=N5xVpQzXJPGFx/5gIXvcFMxeuJHMM2irTOqILfyYwTdz36Zw43FViaJ6lqrFCUKNu8gL4JZvv8YgmerOorj9+UMQcTx4SHYH5UUJOVywZ3kAl+cIowqRfVB/ZBKpUReC8BCrCXMU+6TE5mcf0bCqx6V0jhIBSmo5VT4ZdQOj8lA=
+	t=1716821074; cv=none; b=g2H6mVDFLBCiNHri/qdAwrc5lxFdTVzo0xgjut8FUHuGFPctbUNvrfOD+AYrC9IYOEIneSnc2ooHr8WnLMDfatMOn9M9WISD7+hztBoXCW2otlA1fgtW5a20T7hz86i1AVJjgHLs6OIKnzjd7z7NM44enx/YPXt8Cm9YNs6VuAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821064; c=relaxed/simple;
-	bh=naxWkh+jaHwQkl6wdomPYdy1Lu2VRfU+XBoYyk6CnJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kleXGJdsO7qcsYWxGOZfblgg5yOxlgchHS1/7q5vj7/Ztx1iCY8k9kGrLFNrj43T/b97Kjn3Ye3r+RKe7zUR81Zl9P8GJfyVsd/PTKzicZIPoVfJwx1zHAK9L5FxZ8gtoBf0rxIZPcmISmFlMNYHr/SjeMESVFtDDNVnV4936rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li6IEBRh; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2bfdae7997aso609058a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716821062; x=1717425862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=33epQlN6HkJRhJOgQtZxq9FfffiSVKippP5QOan7qrs=;
-        b=Li6IEBRhkqB5Z+tqwQEI7BhwKaKpWryxucIY2Fn9vXobMWjxpz3uqagmN9ciFh4wwZ
-         TFWnp9pAEMpU0+BqJenpql0hB1768q/zV1kAidpyr82Bru+9ysFYR/oAAZkn72CizsL6
-         1sTQbUeJlQYcSuaMLHBElrhArobapsQbZnucWc8fVQZ65yzgYbkWvD5IaZt26AWQop3o
-         57lWl95ejGO+6FKnlBT3GJuwvJgSWLr/Djrh32VqWU2DPBoWMY9Cj2Kr4wCMUI+wmxzj
-         4WwDmE8fs8wxyknRgWKGvRTTpj3Tr/XQarZkMVGXAbNpXV6O7yis+V+K4hnq7s+lEXmR
-         3wBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821062; x=1717425862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=33epQlN6HkJRhJOgQtZxq9FfffiSVKippP5QOan7qrs=;
-        b=HVaYtUeUwoVrDprnEfgxXnPmAEocqFDObcbHCI+B4+4VTAyy7lJeSrKpB6TsQxshxb
-         wYpPcesF1s5X8XVG1zmoFfnvGfpUp/mokgOIYlIh2jEC+lAknhFljHEa9Cva8D+jyYQa
-         UDfu6omM96q+Ng49fGjx3jaL9WKDKWjCayDGMCoqKTMLmE24ETDm+WZU5Wt4jnqWAA9D
-         JAiH7lknZDMI7NjNswpM82FgtdM5im17QsKBxWcw9Of8P4Y8XfjuNVEsbO164ffiJ71m
-         jf7NNrZDVTlEQdJJ1fK3RrpcjhbFjFebRrFZj7uFFr7H4p5Xv5UZyWqtxKSw1ihCPHIk
-         K2og==
-X-Forwarded-Encrypted: i=1; AJvYcCXmYkDH0wHJDMdr49ksPSrRVmB2FNJSNEr9/tyciaTIA7FEP6FbdlTX7DajG6TVIvCZktxFPVEYlrIjy5CNf0q7L+mAVFzDnqQxxJEt
-X-Gm-Message-State: AOJu0YyVDxADOkGqFNc+GkEMpj0XX7hlDFVPMeGB358tz3B3Rzo4mPDo
-	zCuzWCpvHGdeOq1OkMuZhQTF+IMmA32c3UKfs8ShBOoB48W/gWZZG/cYBv3l8PAZu+sn0H2anho
-	ExuG3u7uu1ZGxDG6tJhJhfD9Z+SheuQ==
-X-Google-Smtp-Source: AGHT+IFm4UmAs6X0gy4NyYZ2+/6TjuN/HpBLYgaJx0duaa4fvNf+tI9o8AmCS25QUej7Si8DFMKmmT76q4H8I9wXtHA=
-X-Received: by 2002:a17:90b:1085:b0:2bd:ec55:9f38 with SMTP id
- 98e67ed59e1d1-2bf5ee1ff20mr8201233a91.29.1716821062404; Mon, 27 May 2024
- 07:44:22 -0700 (PDT)
+	s=arc-20240116; t=1716821074; c=relaxed/simple;
+	bh=VXnbAOzlX5khZRJQ6AYi/xPQV7jrRzp/lColep2hVG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axDk/37R5wkWqWf6BTfNnkUAUbFLQCwOAPDBdzn2bWDl/LlHMkGJUW83KEoj74uz+7sT7Go9He+BzC7MvzQan4rcHAX7pdeTMQlST/jqZqHYn/QAO0Sq92rRME/zkTt/53hQNA3+kpEEMGIdrIvi58S1iKx+h7fHa+Z7d/pTrRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIaaCytv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7490EC2BBFC;
+	Mon, 27 May 2024 14:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716821074;
+	bh=VXnbAOzlX5khZRJQ6AYi/xPQV7jrRzp/lColep2hVG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIaaCytvmfnwqvjLSWAYUNEf3LjmCMM1PBXrrnWCz1PiAIxwUuvBEAIY2/nq6R/Vd
+	 dTNmZlJacnuHhdv8syhKju99/X36lwFvl+87daX+6B9H6+j1pT5g6RYbfvTr+zfsw9
+	 TRTbZB4C1ZzgPLlikjHYB1nPHWa7jdlD9dq1ux1XL8BJBeXht/h+3+xz+roLJSE5QI
+	 M7i1eCnL9fc1sJ2vOk1uth/UTn0ICKpGo1ptCHPEhJasRpJgnYJfBzRd16X4hcVL76
+	 79QwseOc84V50soL+MyPLYm+hqt7YW105Lf2nQImGSuHRYizcnRIQwTtJsv6/wjWS7
+	 Q/hrlpytYxA2A==
+Date: Mon, 27 May 2024 16:44:29 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Peter Hutterer <peter.hutterer@who-t.net>, jikos@kernel.org, linux-input@vger.kernel.org, 
+	bpf@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 3/3] HID: bpf: add in-tree HID-BPF fix for
+ the HP Elite Presenter Mouse
+Message-ID: <wvic5hyu3hp2obb7nzbomrlwsfkwdfl4mbojtk6jig3vlku4xz@ytrwtwhyz56d>
+References: <20240527142010.3855135-1-sashal@kernel.org>
+ <20240527142010.3855135-3-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527142311.3053-1-mario.limonciello@amd.com>
-In-Reply-To: <20240527142311.3053-1-mario.limonciello@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 27 May 2024 10:44:10 -0400
-Message-ID: <CADnq5_MxA3JkUkYfu7baP30NKs1W49w-AEA8fM3W+XbTEMdOXw@mail.gmail.com>
-Subject: Re: [PATCH] drm/client: Detect when ACPI lid is closed during initialization
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, 
-	Chris Bainbridge <chris.bainbridge@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527142010.3855135-3-sashal@kernel.org>
 
-On Mon, May 27, 2024 at 10:32=E2=80=AFAM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> If the lid on a laptop is closed when eDP connectors are populated
-> then it remains enabled when the initial framebuffer configuration
-> is built.
->
-> When creating the initial framebuffer configuration detect the ACPI
-> lid status and if it's closed disable any eDP connectors.
->
-> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On May 27 2024, Sasha Levin wrote:
+> From: Benjamin Tissoires <bentiss@kernel.org>
+> 
+> [ Upstream commit 4e6d2a297dd5be26ad409b7a05b20bd033d1c95e ]
+> 
+> Duplicate of commit 0db117359e47 ("HID: add quirk for 03f0:464a HP Elite
+> Presenter Mouse"), but in a slightly better way.
+> 
+> This time we actually change the application collection, making clearer
+> for userspace what the second mouse is.
+> 
+> Note that having both hid-quirks fix and this HID-BPF fix is not a
+> problem at all.
+
+Please drop this patch in all backports (and FWIW, any fix in drivers/hid/bpf/progs/).
+
+HID-BPF is only available since kernel v6.3, and the compilation output
+of the in-tree file is not used directly, but shipped from udev-hid-bpf.
+
+TL;DR: this just adds noise to those stable kernel trees.
+
+Cheers,
+Benjamin
+
+> 
+> Link: https://lore.kernel.org/r/20240410-bpf_sources-v1-4-a8bf16033ef8@kernel.org
+> Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  drivers/gpu/drm/drm_client_modeset.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_c=
-lient_modeset.c
-> index 31af5cf37a09..b76438c31761 100644
-> --- a/drivers/gpu/drm/drm_client_modeset.c
-> +++ b/drivers/gpu/drm/drm_client_modeset.c
-> @@ -8,6 +8,7 @@
->   */
->
->  #include "drm/drm_modeset_lock.h"
-> +#include <acpi/button.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/slab.h>
-> @@ -257,6 +258,27 @@ static void drm_client_connectors_enabled(struct drm=
-_connector **connectors,
->                 enabled[i] =3D drm_connector_enabled(connectors[i], false=
-);
->  }
->
-> +static void drm_client_match_edp_lid(struct drm_device *dev,
-> +                                    struct drm_connector **connectors,
-> +                                    unsigned int connector_count,
-> +                                    bool *enabled)
+>  .../hid/bpf/progs/HP__Elite-Presenter.bpf.c   | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> 
+> diff --git a/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> new file mode 100644
+> index 0000000000000..3d14bbb6f2762
+> --- /dev/null
+> +++ b/drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c
+> @@ -0,0 +1,58 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2023 Benjamin Tissoires
+> + */
+> +
+> +#include "vmlinux.h"
+> +#include "hid_bpf.h"
+> +#include "hid_bpf_helpers.h"
+> +#include <bpf/bpf_tracing.h>
+> +
+> +#define VID_HP 0x03F0
+> +#define PID_ELITE_PRESENTER 0x464A
+> +
+> +HID_BPF_CONFIG(
+> +	HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_GENERIC, VID_HP, PID_ELITE_PRESENTER)
+> +);
+> +
+> +/*
+> + * Already fixed as of commit 0db117359e47 ("HID: add quirk for 03f0:464a
+> + * HP Elite Presenter Mouse") in the kernel, but this is a slightly better
+> + * fix.
+> + *
+> + * The HP Elite Presenter Mouse HID Record Descriptor shows
+> + * two mice (Report ID 0x1 and 0x2), one keypad (Report ID 0x5),
+> + * two Consumer Controls (Report IDs 0x6 and 0x3).
+> + * Prior to these fixes it registers one mouse, one keypad
+> + * and one Consumer Control, and it was usable only as a
+> + * digital laser pointer (one of the two mouses).
+> + * We replace the second mouse collection with a pointer collection,
+> + * allowing to use the device both as a mouse and a digital laser
+> + * pointer.
+> + */
+> +
+> +SEC("fmod_ret/hid_bpf_rdesc_fixup")
+> +int BPF_PROG(hid_fix_rdesc, struct hid_bpf_ctx *hctx)
 > +{
-> +       int i;
+> +	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
 > +
-> +       for (i =3D 0; i < connector_count; i++) {
-> +               struct drm_connector *connector =3D connectors[i];
+> +	if (!data)
+> +		return 0; /* EPERM check */
 > +
-> +               if (connector->connector_type !=3D DRM_MODE_CONNECTOR_eDP=
- || !enabled[i])
-
-Might want to check for LVDS here as well since a lot of laptops used
-LVDS prior to eDP.
-
-Alex
-
-> +                       continue;
+> +	/* replace application mouse by application pointer on the second collection */
+> +	if (data[79] == 0x02)
+> +		data[79] = 0x01;
 > +
-> +               if (!acpi_lid_open()) {
-> +                       drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed=
-, disabling\n",
-> +                                   connector->base.id, connector->name);
-> +                       enabled[i] =3D false;
-> +               }
-> +       }
+> +	return 0;
 > +}
 > +
->  static bool drm_client_target_cloned(struct drm_device *dev,
->                                      struct drm_connector **connectors,
->                                      unsigned int connector_count,
-> @@ -844,6 +866,7 @@ int drm_client_modeset_probe(struct drm_client_dev *c=
-lient, unsigned int width,
->                 memset(crtcs, 0, connector_count * sizeof(*crtcs));
->                 memset(offsets, 0, connector_count * sizeof(*offsets));
->
-> +               drm_client_match_edp_lid(dev, connectors, connector_count=
-, enabled);
->                 if (!drm_client_target_cloned(dev, connectors, connector_=
-count, modes,
->                                               offsets, enabled, width, he=
-ight) &&
->                     !drm_client_target_preferred(dev, connectors, connect=
-or_count, modes,
-> --
+> +SEC("syscall")
+> +int probe(struct hid_bpf_probe_args *ctx)
+> +{
+> +	ctx->retval = ctx->rdesc_size != 264;
+> +	if (ctx->retval)
+> +		ctx->retval = -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +char _license[] SEC("license") = "GPL";
+> -- 
 > 2.43.0
->
+> 
 
