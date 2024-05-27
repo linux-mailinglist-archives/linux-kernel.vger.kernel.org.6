@@ -1,149 +1,233 @@
-Return-Path: <linux-kernel+bounces-190322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8A38CFCDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:30:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C47A8CFCE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082C52825A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:30:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD821C2194A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CF013A3F3;
-	Mon, 27 May 2024 09:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA0913A3FC;
+	Mon, 27 May 2024 09:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qt+TIp/X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="liET+FTP"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF04F13A268
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 09:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870973B79F;
+	Mon, 27 May 2024 09:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802191; cv=none; b=fgz9TmZ9G8sGCIV/G4BkXspj/wBvxf9JLNhJJqFFTZGWy8I0TDLOvUTK53SCi/71DZWA4IB5h4fu0Z3hvBQyiKSKuuXH93Cr+s6XYfjiVgS1oTn0FEVVU9iHDj/jMEuV0ox5vZE9nu7h27ImgNwPzIiufsiAGxWQ+bmpxc6Sagk=
+	t=1716802230; cv=none; b=nlOaVwRd4JYGBe/NsL7iCWh48r5LfqdsWT2wocTA845ANlPaL5zAMLRFWDepTlXzas1N0DBH+9+nVvqsKso36EKe5q7mqWbdQ/s+zkv8yOtLf7LJqmnVhmTFdVRL+pbadWG9CkWu/kilm1XBWTlOpwhVv3wj+YWA39Vp3wOUFvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802191; c=relaxed/simple;
-	bh=GVk5OV/h2v884ljEBZx1wxeGLOe6kBRIDF8Asd89Iyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZkAkRCdYwY+dQKoSQp7Aov4F6HyxHWzs8Rju24LznnVnTMr/67RMvPQYsPd+7Qvg485MPIV8Wv/x4/xRB2I25s5nL1mCXmC59syKFKcTuorehqW2hV/pltJD/EILeZpyyUs9kfeC6EpUIv0fFVjS3IqaI9D7FZh4J58p1pRvr88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qt+TIp/X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716802187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a2KHdQxlr+nCK+72i7BoiThRuJXfjIGAcKBIGrSIL78=;
-	b=Qt+TIp/Xaivkay4KjM0URuYWq6SsiRecSq3TGBWjstDG2cWTkfC7VJt6Q6JlFh01hh1eK8
-	oLv0cXBir9xW8y7bREWGx7qWbmFNMFCF+VxbGT6igKx22yOuQubiMhhfDbetBKDZsigY7W
-	mnU7rftnBVLrAlBeQuiSnRFAyGnjAZo=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-gVslgbvpOO2TOfpFcZ1Oag-1; Mon, 27 May 2024 05:29:46 -0400
-X-MC-Unique: gVslgbvpOO2TOfpFcZ1Oag-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a6266ffd419so141754366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:29:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802185; x=1717406985;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a2KHdQxlr+nCK+72i7BoiThRuJXfjIGAcKBIGrSIL78=;
-        b=fkTELPnM5xZL9BSaZaq0clDmFr+s5RxGrxasyO1ceXS8MgDxlkk5ua3AcgMnexBYYh
-         u9o+s678wEv60pPk0tZWJhZDlPX0OsYAzyifag/PF7euZIXfvs9GvX5HM5PfDiP9+pTW
-         kKrUQ11SaUsS4pmJEr+d0eW9LIsGD4wBCOo7Xt0OujZ0FGgPy7PZQW+EiRaF2fAVe1iq
-         a3smKBncoEPommFRmtudvgLDQSsHlaEfoM2gEQSch6rdLq9A3Y4R8BErCZSNc0u56Mfb
-         Hocq07EhVvlcxdu0IyqSsOMQrea+qJATqgdDtYy3bknbHxGU6ME2NJesHg61H4s35IoL
-         MmVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4BeCWQgLSuCc1vpKkgTAvBz3z4QjnNe3IfztoDLZVitcPhZMnzDxZXMVBwyHkH3Sr2ICeB7YhrVImr1QqBlT7cmcOGC5GEZunW+AB
-X-Gm-Message-State: AOJu0Ywzf3I58sBSNl0v3gIquYoakqW8w73cNhQGqCSuZP6mluXV9kfR
-	SxlX2daKmKKA2LqkPK6/KrNawlKTzBrnod5DL8S6CFMa70NQzCFmWpMtkGGKCY60qiUy5slnZow
-	dtctsIaywuzQ2bFNW+KAjSv+SU1U9Xv/qTckDuLeuCPbSQX7KXero/+FEcJCR5A==
-X-Received: by 2002:a17:906:b15:b0:a5a:15f6:157f with SMTP id a640c23a62f3a-a62641b42fcmr573358366b.14.1716802185027;
-        Mon, 27 May 2024 02:29:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEY7hYRzJQt/K0T3Xo6dt+GVQ6bfmi9PMBGZAhv1A5DH1gxbNqtbSUlQN9ac3tQ+gdHgt1I2Q==
-X-Received: by 2002:a17:906:b15:b0:a5a:15f6:157f with SMTP id a640c23a62f3a-a62641b42fcmr573356966b.14.1716802184553;
-        Mon, 27 May 2024 02:29:44 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c9376edsm466532366b.59.2024.05.27.02.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:29:44 -0700 (PDT)
-Message-ID: <e6db0add-e290-4fac-b90c-da264939693d@redhat.com>
-Date: Mon, 27 May 2024 11:29:43 +0200
+	s=arc-20240116; t=1716802230; c=relaxed/simple;
+	bh=j46PnwFGIjwfKrPkQohHnCw9GlnNH915/OdzLM+EKxM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Or8htlfkpPctg3DTsd6RIemijV1Qdgz/JWci1dB2MZoPNT5SvmY6CTJngfw6zMYUen8fbVlk9qg2ZC7TGV7k7FGqA23/BZBtJlJ4LCLyLx4VhAL+7KGR7XNHBZIEDbwi78RAqLxvrNTurnNXx+YeXUc4D2I6pluZsX+pSxBkGvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=liET+FTP; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44R8Bsnj013587;
+	Mon, 27 May 2024 05:30:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=COaWAn4zkH3eoeXQxnwPb3tvK1q
+	yqTv7O9wQvouZ3Tk=; b=liET+FTPWoz7HwNoWYis7l8NBm5pZ19jlVBAixIJTDR
+	HUQkcHiOIgX7iqmZaDbPWySzPpCRLuXA6ELxTvY7y0qGgDczIJx3qCAnDPnog2BK
+	OomQEM79XQK4aNV3X83RI0D4mbNuRZEdV1vGjxre9eVMExkFLWjiF6AkVRw/eIqY
+	9NK/ApALsZlsVMmayb05hU5ScDtQLqvxQay7ru6r8B0i+mBkx9ASHiERwe5QxdiB
+	G6RXWr5GWqZ0NOBd8eJKe97bWXhPD66K0Bk4cg/kj5CrKU3YtAnAlEWm5XA5CcQW
+	m2SwIWCjtE42+ofSUZOztnOJUANYm/qyOgC7adqRz2g==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3ybcw25s5t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 May 2024 05:30:09 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44R9U7un046826
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 27 May 2024 05:30:07 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 27 May
+ 2024 05:30:06 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 27 May 2024 05:30:06 -0400
+Received: from radu.ad.analog.com ([10.48.65.189])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44R9TrPZ006193;
+	Mon, 27 May 2024 05:29:56 -0400
+From: Radu Sabau <radu.sabau@analog.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Radu Sabau <radu.sabau@analog.com>
+Subject: [PATCH v4] drivers: hwmon: max31827: Add PEC support
+Date: Mon, 27 May 2024 12:29:47 +0300
+Message-ID: <20240527092947.4370-1-radu.sabau@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: ylmytddwowMI5yZCFZHKo--NJNEG6diu
+X-Proofpoint-GUID: ylmytddwowMI5yZCFZHKo--NJNEG6diu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 phishscore=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405270077
 
-Hi,
+Add support for PEC by attaching PEC attribute to the i2c device.
+Add pec_store and pec_show function for accessing the "pec" file.
 
-On 5/17/24 4:49 PM, Harshit Mogalapalli wrote:
-> In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
-> Fix this by reordering the kfree() post the dereference.
-> 
-> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+---
+Change log:
+v2:
+ *Rebase on top of v6.9
+ *Attach pec attribute only to i2c device
+ *Fix bug to attach pec attribute to i2c device if the device supports it.
+v3:
+ *Use only one variable to write PEC_EN bit in configuration register
+ *Use regmap_set_bits to set PEC_EN bit when requested instead of
+  regmap_update_bits.
+ *Fix typo in commit message.
+v4:
+ *Use regmap_clear_bits to clear PEC_EN bit when requested instead of
+  regmap_update_bits.
+---
+ Documentation/hwmon/max31827.rst | 13 +++++--
+ drivers/hwmon/max31827.c         | 62 ++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 3 deletions(-)
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
-
-Regards,
-
-Hans
-
-
-
-
-> ---
-> v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
-> This is found by smatch and only compile tested.
-> ---
->  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 7bac7841ff0a..7fa360073f6e 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
->  	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
->  	/* Free the package instance when the all partitions are removed */
->  	if (!tpmi_sst->partition_mask_current) {
-> -		kfree(tpmi_sst);
->  		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
-> +		kfree(tpmi_sst);
->  	}
->  	mutex_unlock(&isst_tpmi_dev_lock);
->  }
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 44ab9dc064cb..9c11a9518c67 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
+ before overtemperature or undertemperature faults are indicated in the
+ corresponding status bits.
+ 
+-Notes
+------
++PEC Support
++-----------
++
++When reading a register value, the PEC byte is computed and sent by the chip.
++
++PEC on word data transaction respresents a signifcant increase in bandwitdh
++usage (+33% for both write and reads) in normal conditions.
+ 
+-PEC is not implemented.
++Since this operation implies there will be an extra delay to each
++transaction, PEC can be disabled or enabled through sysfs.
++Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index f8a13b30f100..c120032582ac 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -24,6 +24,7 @@
+ 
+ #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+ #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
++#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+ #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+ #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+ #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+@@ -475,6 +476,52 @@ static ssize_t temp1_resolution_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(temp1_resolution);
+ 
++static ssize_t pec_show(struct device *dev, struct device_attribute *devattr,
++			char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
++}
++
++static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
++			 const char *buf, size_t count)
++{
++	struct max31827_state *st = dev_get_drvdata(dev);
++	struct i2c_client *client = to_i2c_client(dev);
++	unsigned int val;
++	int err;
++
++	err = kstrtouint(buf, 10, &val);
++	if (err < 0)
++		return err;
++
++	switch (val) {
++	case 0:
++		err = regmap_clear_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++					MAX31827_CONFIGURATION_PEC_EN_MASK);
++		if (err)
++			return err;
++
++		client->flags &= ~I2C_CLIENT_PEC;
++		break;
++	case 1:
++		err = regmap_set_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++				      MAX31827_CONFIGURATION_PEC_EN_MASK);
++		if (err)
++			return err;
++
++		client->flags |= I2C_CLIENT_PEC;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(pec);
++
+ static struct attribute *max31827_attrs[] = {
+ 	&dev_attr_temp1_resolution.attr,
+ 	NULL
+@@ -578,6 +625,11 @@ static int max31827_init_client(struct max31827_state *st,
+ 	return regmap_write(st->regmap, MAX31827_CONFIGURATION_REG, res);
+ }
+ 
++static void max31827_remove_pec(void *dev)
++{
++	device_remove_file(dev, &dev_attr_pec);
++}
++
+ static const struct hwmon_channel_info *max31827_info[] = {
+ 	HWMON_CHANNEL_INFO(temp, HWMON_T_ENABLE | HWMON_T_INPUT | HWMON_T_MIN |
+ 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
+@@ -627,6 +679,16 @@ static int max31827_probe(struct i2c_client *client)
+ 	if (err)
+ 		return err;
+ 
++	if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC)) {
++		err = device_create_file(dev, &dev_attr_pec);
++		if (err)
++			return err;
++
++		err = devm_add_action_or_reset(dev, max31827_remove_pec, dev);
++		if (err)
++			return err;
++	}
++
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, st,
+ 							 &max31827_chip_info,
+ 							 max31827_groups);
+-- 
+2.34.1
 
 
