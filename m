@@ -1,210 +1,136 @@
-Return-Path: <linux-kernel+bounces-190976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F328D050A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59408D04DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 16:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296CB282D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647201F20D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7823B1649A8;
-	Mon, 27 May 2024 14:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8122F16FF3E;
+	Mon, 27 May 2024 14:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vX3VhVkt"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtRw8EjA"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395D17E91B;
-	Mon, 27 May 2024 14:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C8815F30F
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716820026; cv=none; b=XoG28LPWR6+ZGGkpxD/Ct6ypPiMMwVyVHTPHc78R0nXiZ6lAswM88paNw1Mrux2LwExOutFOu3dm0zUsdwUe/QB+jR4rTFiT/UvT74yjEKv8zaVustNJWos69fIabdu4mZQztgGV9Q2aZifGM2fPu4whT69mwGGSL9mGdbtNogM=
+	t=1716819974; cv=none; b=VLjVE9Cn72nkB0ipG5yuv3DuNoCwrpLRDrl0wpONeJ5ruyXN9rpP/ioayR+XPjd+WU/0EmKZNBk+dei1PsmCx8+R9lGFPtd5g6vLSI+J86aM0g4R2EHmKbx4J6qUxHWP2bt0Vo05eLOqb3bqApC65m6yZnNFI0ay+6Mte8Iag5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716820026; c=relaxed/simple;
-	bh=TgeovkgpeOWUAlJ7eOdHzTn1cFUm/dVzU2NqObmFObU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rDWMMLz/FvwD0GuHTRuOPt0uWEScp+8G/YcwkLE70Ps1j61uDD5MRsF4pW6x05qE7ovPnsEbQmbG0AEC1Hs/poZ/p+wNXNOToHuAW/b2f+2Wjq2F+6ANZ6f/A2a1C86K8Rhc1z9dikVKawp7z68X9SCJNskzr+MSOBxw5E4lzbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vX3VhVkt; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716819939; x=1717424739; i=markus.elfring@web.de;
-	bh=WBD5fZbJKASRGqCVJjwjF0/sBlA3tJ1is50PhfAuexQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vX3VhVktvAsC3VEpXA8voazwMQsxjS3krCXirqMDaKAZ3hS5dLEBLJJcYH/CnQUD
-	 LX884yPHk6T2CjcYkXrEWl3j7h+qjsuQr6krfiSjSbT9o7hELP6R1MOL3ePslfGIM
-	 nUn+Cno9/WCN6Qt7tnw9wJkEH43RGHNxZEMJFx1wgs5oyZoUK9bL3MJfGys243Jnt
-	 RWe1fGAwlia3NmWKjA9buWb62mNSN4PEffNKdBdV4ee2XJY9EETUDzwTlBNTo8KlT
-	 kv2IvCfd4sTrUVWvA5STc6LBECDk34micjPSbDUs3ES7nw1m899uLKkS35frEPwr4
-	 gv2XA0CeWBiz5oCAtw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mtgyj-1sV3WP3CJT-017EBc; Mon, 27
- May 2024 16:25:38 +0200
-Message-ID: <96beb071-ec2c-475f-8fa2-d519a1b1dc28@web.de>
-Date: Mon, 27 May 2024 16:25:18 +0200
+	s=arc-20240116; t=1716819974; c=relaxed/simple;
+	bh=6jcDQSRGQriKta5hxhLanAzBNZ/Jw6OPpaAHgN7aCBw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WvcQHZosm4CzJenuTLq1oqVui5ax23czicqKetx2FEE5MFF54XUqEOupdneY1/aVgx/YksZiUQECkDikuk/KNURsagbQHeaFdYetorKkextMoFClvgsOuimLkT8KYOIhpm7AQj/v8sU99LhicyY8cqiXxWCRTzok4JkZpsZVuXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtRw8EjA; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5296232e00bso3500294e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716819969; x=1717424769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4/aOzZ0hsg6Et5+0deJCRjrlcbs+6p+P8Nfmbgr0Wg=;
+        b=gtRw8EjAt5T/bRgN18LNqeQyURmvswT2q0HodrTvY2VWqxtHUbIPiBgGCY5XVu3e1b
+         HfP1mW5EovML0K4Cah0WGitWs531Xr69eCzCrgUw0p74R11Jb96w1SE7UMQO1Wq6aG3j
+         8dDJTEmRxQEwN1kCeOfDolwwWN5NQ13bEBASjNnLkVS5HJsDl3LT/zPg+TZZDLI21EQR
+         sNFsMJRaOMndgqPc2WMsMeFvKjluJgakP946ZjJJ8jsMWSwclBju2AZQSUGjcMSC0M2z
+         +intT+qaXtMk8H1HO3yf1YASVW+sgEJirAiYAfYdAL4orsYInz5JZIwRH4TOnQVroJHr
+         nJ5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716819969; x=1717424769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X4/aOzZ0hsg6Et5+0deJCRjrlcbs+6p+P8Nfmbgr0Wg=;
+        b=kIzOVEVCdutdRgfHjunwmh6JI8OalDeGUkyn9xNohZfDzIJAnAjERh9w7AnMa3mWYj
+         X8GbyT3hd/r4jIoxCP+/rlR7hVlQV6XMSzr4bwgCfjKa33///jRU10OxfZqexF36+Ycz
+         8TvNjKtk9vYLKgtKo4z2NR1XjLfoQcHvRdVryzRgjmDEZnnqZjdwu5Kj8wb+8Gsiieac
+         NA2EqTWubBa+QxDYwOMmO1SoE/gpULKuToHXBMD8+F1oP+yCGwtCmajA4KUD0Bjz2/9T
+         JGEwXlPPC3DJSJaUyEdrgg6RV6X93L9eQPK7A6qOz94pTz+vIPNwmcz5MQ8ZnLG8b/sC
+         HDNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDzQX3oGCQjuDFWLDAfyd2YL8ILO3WMsOwKmyAkiYg6IXl5oHuuWpY9bgKs/T+ervSUGJHh4gm6QdD8hSU4j8ed3BDuPwSl/RXLpZG
+X-Gm-Message-State: AOJu0Yzc5XDu7Z/nWMLCcwrW3LfiWUMBRf+WbChmVB6OjP2u8AcWYhBK
+	rXG+NTK8EqC23a24bZsqfxFeXRSM0njGCyd4VaGNfLTKl3JTfMrFHZ0MzIiOBsE=
+X-Google-Smtp-Source: AGHT+IH+Repiz1mD7Jsz8/a6LNVzHuU42Y7XwFI26a4ECpBnmSdsIFpuHAnpFl7oDQPNA9Ib/KtAhg==
+X-Received: by 2002:a05:6512:3994:b0:522:2a2c:759e with SMTP id 2adb3069b0e04-5296420479emr6995769e87.6.1716819968484;
+        Mon, 27 May 2024 07:26:08 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529711fa7f3sm562002e87.258.2024.05.27.07.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:26:07 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-pm@vger.kernel.org
+Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-rt-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] pmdomain/cpuidle-psci: Support s2idle/s2ram on PREEMPT_RT
+Date: Mon, 27 May 2024 16:25:50 +0200
+Message-Id: <20240527142557.321610-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Peng Fan <peng.fan@nxp.com>, soc@kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chester Lin <chester62515@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter
- <dan.carpenter@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Dvorkin Dmitry <dvorkin@tibbo.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Fabio Estevam <festevam@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Hal Feng <hal.feng@starfivetech.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Jacky Bai <ping.bai@nxp.com>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Joel Stanley <joel@jms.id.au>, Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Orson Zhai
- <orsonzhai@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Sean Wang <sean.wang@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Viresh Kumar <vireshk@kernel.org>, Wells Lu <wellslutw@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org,
- imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
- openbmc@lists.ozlabs.org, kernel@pengutronix.de,
- Peng Fan <peng.fan@oss.nxp.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-References: <20240504-pinctrl-cleanup-v2-4-26c5f2dc1181@nxp.com>
-Subject: Re: [PATCH v2 04/20] pinctrl: starfive: Use scope based of_node_put()
- cleanups
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-4-26c5f2dc1181@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+RyPoq5wWT0ZiaKtbHEM7oUjpYEVZsaQY6N7Y3GqAcCCbvu/2JH
- u2A1o9G2LZb7XdHLU3H69K/ZAgfhJvU9jxdpYiqAnNWG9BA1SqA6BdADoQmnmuaRrP6fAil
- 8Vj3+benFoPx5AOFPUxJJt7XUQwXd4D4fxOV2u0S4nMX3GZIShaRs493PFfPvepvyAbRCtv
- sA0TyVvmVIL0Nk6+KE4zA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:31oKYLNiYt8=;Hxns51jU3fPbLxYZhS6Zxy9O8BL
- qcSJkc+8tI81FYEgYUDEjPFyxO5CsD0G4Yr1KM0HiJM1RAdO+budqXdzmwIJQJO5p6Qgg2nVe
- YKgM7j5yLFrWsSzyaik+NFTvY+PW6VUe11QHVHkDricbyYHE5P9qzbTg86+yeRiFSOOQZksg9
- Xdrs6r2eTX9AowMfEJqKIKNofU6TcDdmBmEh2hd5cMEugRlaO/xU/ubiYD/XRmfkiGEw2Tk9X
- NW8zaQg81GL2PPwft4f4poEafCoYwl+CIrmPHqURH/2YArZiC4UDm9VTu3lTVR8WSADgs2juL
- WzjmfuF3Nb/H8VSJqqzY977EL7BYu0JfjXhqczsj/AJHIU8x7U9FkHQwVLD+/aW9Q5b/a9OPw
- LI1zUhjAqpzjkl9ILHME5dfhA7gkD4YfqDP0iVyWu+VnmZh/pblaybHt4rD5ZI5OfaaxJKTej
- VGs+IMuQBrMttXj/4DWsuAy6tL2ASvq9ajbc+W4PfJFRO8eiyAiXlRr8A1ilG3Wwi2usEs8x0
- pyhK5u8Ye84ZDNXC0xiObkf3AMdCBhIc+0OAJbS7S/lr4Wa88XoId5G8Ib9v3q3Danb/+yyUK
- 5YECHUaogBhuwKJTAPf6awFWX25sWIKFsuMiL9bOP098OSKsVamHNvrpo4VNiI2KTPlO3jYMF
- m4zC6H3fMiyTT6q5AwrZQbBuPo5FStw2mq46jULp/VkrI2I5mP81da+ZdY2nuNi0JHqnAsXYb
- nCNKXCaTB/N8hkFz1ZJ6BaXlj9tzCbHQ/4RlK/pJC38X/hUvhfMryOHSpF+68/zEebizBSnT2
- Xmop5HdbEWKcl91rEpyYcoeHY0XK5F3NVihbciHAlOag4=
+Content-Transfer-Encoding: 8bit
 
-> Use scope based of_node_put() cleanup to simplify code.
+Updates in v2:
+	- Rebased and fixed a small issue in genpd, see patch3.
+	- Re-tested on v6.9-rt5 (PREEMPT_RT enabled)
+	- Re-tested on v6.10-rc1 (for regressions, PREEMPT_RT disabled)
 
-I see opportunities to improve affected function implementations another b=
-it.
+The hierarchical PM domain topology and the corresponding domain-idle-states
+are currently disabled on a PREEMPT_RT based configuration. The main reason is
+because spinlocks are turned into sleepable locks on PREEMPT_RT, which means
+genpd and runtime PM can't be use in the atomic idle-path when
+selecting/entering an idle-state.
+
+For s2idle/s2ram this is an unnecessary limitation that this series intends to
+address. Note that, the support for cpuhotplug is left to future improvements.
+More information about this are available in the commit messages.
+
+I have tested this on a Dragonboard 410c.
+
+Kind regards
+Ulf Hansson
 
 
-=E2=80=A6
-> +++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-=E2=80=A6
-> @@ -543,18 +540,18 @@ static int starfive_dt_node_to_map(struct pinctrl_=
-dev *pctldev,
->  			pins =3D devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
->  			if (!pins) {
->  				ret =3D -ENOMEM;
-> -				goto put_child;
-> +				goto free_map;
->  			}
->
->  			pinmux =3D devm_kcalloc(dev, npins, sizeof(*pinmux), GFP_KERNEL);
->  			if (!pinmux) {
->  				ret =3D -ENOMEM;
-> -				goto put_child;
-> +				goto free_map;
->  			}
-=E2=80=A6
-> @@ -623,8 +620,6 @@ static int starfive_dt_node_to_map(struct pinctrl_de=
-v *pctldev,
->  	mutex_unlock(&sfp->mutex);
->  	return 0;
->
-> -put_child:
-> -	of_node_put(child);
->  free_map:
->  	pinctrl_utils_free_map(pctldev, map, nmaps);
->  	mutex_unlock(&sfp->mutex);
-=E2=80=A6
-> +++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-=E2=80=A6
-> @@ -175,18 +175,18 @@ static int jh7110_dt_node_to_map(struct pinctrl_de=
-v *pctldev,
->  		pins =3D devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
->  		if (!pins) {
->  			ret =3D -ENOMEM;
-> -			goto put_child;
-> +			goto free_map;
->  		}
->
->  		pinmux =3D devm_kcalloc(dev, npins, sizeof(*pinmux), GFP_KERNEL);
->  		if (!pinmux) {
->  			ret =3D -ENOMEM;
-> -			goto put_child;
-> +			goto free_map;
->  		}
-=E2=80=A6
-> @@ -233,8 +233,6 @@ static int jh7110_dt_node_to_map(struct pinctrl_dev =
-*pctldev,
->  	*num_maps =3D nmaps;
->  	return 0;
->
-> -put_child:
-> -	of_node_put(child);
->  free_map:
->  	pinctrl_utils_free_map(pctldev, map, nmaps);
->  	mutex_unlock(&sfp->mutex);
+Ulf Hansson (7):
+  pmdomain: core: Enable s2idle for CPU PM domains on PREEMPT_RT
+  pmdomain: core: Don't hold the genpd-lock when calling
+    dev_pm_domain_set()
+  pmdomain: core: Use dev_name() instead of kobject_get_path() in
+    debugfs
+  cpuidle: psci-domain: Enable system-wide suspend on PREEMPT_RT
+  cpuidle: psci: Drop redundant assignment of CPUIDLE_FLAG_RCU_IDLE
+  cpuidle: psci: Enable the hierarchical topology for s2ram on
+    PREEMPT_RT
+  cpuidle: psci: Enable the hierarchical topology for s2idle on
+    PREEMPT_RT
 
+ drivers/cpuidle/cpuidle-psci-domain.c | 10 ++--
+ drivers/cpuidle/cpuidle-psci.c        | 26 ++++++----
+ drivers/pmdomain/core.c               | 75 +++++++++++++++++++--------
+ include/linux/pm_domain.h             |  5 +-
+ 4 files changed, 80 insertions(+), 36 deletions(-)
 
-1. Exception handling is repeated a few times also according to memory all=
-ocation failures.
-   How do you think about to use a corresponding label like =E2=80=9Ce_nom=
-em=E2=80=9D
-   so that another bit of duplicate source code can be avoided?
-   https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a=
-+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+reso=
-urces
+-- 
+2.34.1
 
-2. Will development interests grow for the usage of a statement like =E2=
-=80=9Cguard(mutex)(&sfp->mutex);=E2=80=9D?
-
-
-Regards,
-Markus
 
