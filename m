@@ -1,227 +1,115 @@
-Return-Path: <linux-kernel+bounces-190977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043CA8D050B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:01:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DA38D0511
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401D0282CFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8522B1C2190D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3561649CC;
-	Mon, 27 May 2024 14:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA1UtrmJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82B416C42C;
+	Mon, 27 May 2024 14:31:23 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0440F15D5D0;
-	Mon, 27 May 2024 14:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A401C15F33A
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716820176; cv=none; b=dmDP1Tq00cjLJxB1TbniI9bN1wOm5SAkZS16sPyDjbMMvNc4vZOFiJwDsfbMC3NB/1IWR+HLpic04hA/Chon/coaXNo+Ee/lEqIKVmLjgvRmOVQxanaNpw2UFIFNdBH/D3zWlJzNASnUoJeac9EAc9k8KoEeFp9jLuqhApG7U10=
+	t=1716820283; cv=none; b=EhcBXYhrsJOCol1LIJ4U4ocxT8FAaq0J5te5S9hTJoGNdYVBR4dT6LzgSM1oE54gR7OAgUiaSEcd1z+TUGgZ377RVjDFqgjDtjZMzIYXDfUKDpnA537YxCkDOZq991xI0PkknFAp+UYm1ZGeam+mugmBhtJOoRIkhRd/6j/L1E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716820176; c=relaxed/simple;
-	bh=PQHKI0v3kfahV+WO0+ELOBiuGyhB7NTGZcjanRwq69w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WsrAbYUySriH5Kej6J7zxqbxMUouqc7rL909+KZoRy1vEjwyVRKeWOITQEF33wTmx+ysnxJfy61e4h/F+uAbzRy/+YiGFf1KER21EKwtUN4nkM7XHhhjXIKbQW5EcMGaR2qUBg3qo3d+BFWoPyN/Sq6//kx2knQ0zbzZ3D/BeSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA1UtrmJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAFFC2BBFC;
-	Mon, 27 May 2024 14:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716820175;
-	bh=PQHKI0v3kfahV+WO0+ELOBiuGyhB7NTGZcjanRwq69w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MA1UtrmJkgAVPTyIPSkBpMsmFjxQmIvSbb6uJ4EEOlqJ3RYAQz/41sokR7Ar7oBPy
-	 GH3AIeB/5P2UHJRraJTWt7dmpfLsSXbgll00MuA5ZJaG6JzRGggrwU+EH4YymRImvu
-	 IYvc4Khe4XOOdf0BfcRfRTEYQkP1xW77qP5KkgNVEWk2G7GhMu8JgAeHFoD5KAhl86
-	 HsCBow8y5vlyDgLm3+HTb7VU7kTa5X7qYQSECA5NPZ1o+gDyG+9q6WI+VHr+aIzaJE
-	 Fcki8DCXzquYpYVmBBng2ZjUriFSJTpRsshQ+G7UWd2OB+XzWgF581iUegcbeeB1NX
-	 gexhFrtr5Zu5g==
-Message-ID: <547196ae-af25-43bb-801c-9a9dbb6ec134@kernel.org>
-Date: Mon, 27 May 2024 16:29:29 +0200
+	s=arc-20240116; t=1716820283; c=relaxed/simple;
+	bh=zQPbdgs7RCJg4Qq0wbiVF+3cbUHM+UsGXZAKlfdrC84=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SacKVmbVo2vzL0oxz7TBtYKwO7YlnXOGFYQDnd3DpLZL6L8Fsh25USDIxi1tV1I9XNTCxqc2sqEVLbO16qlzsD7DEeFH8QzNQhTPZJrT8OrLsei3hyb0YX2C+uBc+MdeY3fRnUfAIwOqWnXmYOIjhQpKIqslEkqbKZqb2rcjizE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 9f91693c-1c35-11ef-80bb-005056bdfda7;
+	Mon, 27 May 2024 17:30:11 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 27 May 2024 17:30:10 +0300
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] hwmon: (ltc2992) Use
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <ZlSY8tjYm5g9bEJ_@surfacebook.localdomain>
+References: <20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com>
+ <20240523-fwnode_for_each_available_child_node_scoped-v2-3-701f3a03f2fb@gmail.com>
+ <20240526144851.493dd3f2@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: boot: dts: ti: k3-am68-sk-base-board: Add
- LP8733 and TPS6287 nodes
-To: Neha Malcom Francis <n-francis@ti.com>, robh@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org, kristo@kernel.org, vigneshr@ti.com,
- nm@ti.com, broonie@kernel.org, lgirdwood@gmail.com
-Cc: marten.lindahl@axis.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, u-kumar1@ti.com
-References: <20240527124422.3553828-1-n-francis@ti.com>
- <20240527124422.3553828-2-n-francis@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240527124422.3553828-2-n-francis@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240526144851.493dd3f2@jic23-huawei>
 
-On 27/05/2024 14:44, Neha Malcom Francis wrote:
-> Add DTS node for LP87334E PMIC and two TPS6287x high current buck
-> converters.
+Sun, May 26, 2024 at 02:48:51PM +0100, Jonathan Cameron kirjoitti:
+> On Thu, 23 May 2024 17:47:16 +0200
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 > 
-> LP87334E is responsible for supplying power to the MCU and MAIN domains
-> as well as to LPDDR4. The two TPS6287x supply power to the MAIN
-> domain for AVS and other core supplies.
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
+> > The scoped version of the fwnode_for_each_available_child_node() macro
+> > automates object recfount decrement, avoiding possible memory leaks
+> > in new error paths inside the loop like it happened when
+> > commit '10b029020487 ("hwmon: (ltc2992) Avoid division by zero")'
+> > was added.
+> > 
+> > The new macro removes the need to manually call fwnode_handle_put() in
+> > the existing error paths and in any future addition. It also removes the
+> > need for the current child node declaration as well, as it is internally
+> > declared.
+> > 
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > 
-> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
-> Link: https://www.ti.com/lit/pdf/slda060
-> ---
->  .../boot/dts/ti/k3-am68-sk-base-board.dts     | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
+> This looks like another instances of the lack of clarify about 
+> what device_for_each_child_node[_scoped]() guarantees about node availability.
+> On DT it guarantees the node is available as ultimately calls
+> of_get_next_available_child()
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> index d743f023cdd9..74e59035013c 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> @@ -414,6 +414,83 @@ &wkup_uart0 {
->  	pinctrl-0 = <&wkup_uart0_pins_default>;
->  };
->  
-> +&wkup_i2c0 {
-> +	bootph-all;
-> +	status = "okay";
+> On ACPI it doesn't (I think).
+> For swnode, there isn't an obvious concept of available.
+> 
+> It would be much better if we reached some agreement on this and
+> hence could avoid using the fwnode variants just to get the _available_ form
+> as done here.
 
-Please order the properties according to DTS coding style:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
+> Or just add the device_for_each_available_child_node[_scoped]()
+> and call that in almost all cases.
 
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&wkup_i2c0_pins_default>;
-> +	clock-frequency = <400000>;
-> +
-> +	lp8733: pmic@60 {
-> +		compatible = "ti,lp8733";
-> +		reg = <0x60>;
-> +
-> +		buck0-in-supply = <&vsys_3v3>;
-> +		buck1-in-supply = <&vsys_3v3>;
-> +		ldo0-in-supply = <&vsys_3v3>;
-> +		ldo1-in-supply = <&vsys_3v3>;
-> +
-> +		lp8733_regulators: regulators {
-> +			lp8733_buck0_reg: buck0 {
-> +				/* FB_B0 -> LP8733-BUCK1 - VDD_MCU_0V85 */
-> +				regulator-name = "lp8733-buck0";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <850000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			lp8733_buck1_reg: buck1 {
-> +				/* FB_B1 -> LP8733-BUCK2 - VDD_DDR_1V1 */
-> +				regulator-name = "lp8733-buck1";
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			lp8733_ldo0_reg: ldo0 {
-> +				/* LDO0 -> LP8733-LDO1 - VDA_DLL_0V8 */
-> +				regulator-name = "lp8733-ldo0";
-> +				regulator-min-microvolt = <800000>;
-> +				regulator-max-microvolt = <800000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			lp8733_ldo1_reg: ldo1 {
-> +				/* LDO1 -> LP8733-LDO2 - VDA_LN_1V8 */
-> +				regulator-name = "lp8733-ldo1";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +		};
-> +	};
-> +
-> +	tps62873a: tps62873@40 {
+device_for_each*() _implies_ availability. You need to talk to Rob about all
+this. The design of the device_for_each*() was exactly done in accordance with
+his suggestions...
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> In generic code, do we ever want to walk unavailable child nodes?
+
+..which are most likely like your question here, i.e. why we ever need to
+traverse over unavailable nodes.
 
 
-> +		compatible = "ti,tps62873";
-> +		bootph-pre-ram;
-> +		reg = <0x40>;
-> +		regulator-name = "VDD_CPU_AVS";
-> +		regulator-min-microvolt = <600000>;
-> +		regulator-max-microvolt = <900000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	tps62873b: tps62873@43 {
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-
-
-Best regards,
-Krzysztof
 
 
