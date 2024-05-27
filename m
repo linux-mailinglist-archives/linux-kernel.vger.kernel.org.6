@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-191019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D608D059D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387368D05A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9784A1C2144C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612501C21CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 15:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E52515FD07;
-	Mon, 27 May 2024 14:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8643C16089A;
+	Mon, 27 May 2024 14:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OCyUgVho"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="OpSRQSnA"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A6B15FCF5
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96A15FD19;
+	Mon, 27 May 2024 14:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716821701; cv=none; b=QaF2UG59HYQcPWq8eV0PmdZpg0/z++b7ZxHgYjK+ukwZxAZDoeecY2SdmywB4RIezqyak5jQScLPrbcXmbk2P3ZpBwFrpGD2Elq1fIz3Lu+gB+dKliCDGi6HnuAiukBfga6mvwSGNG02lJxR0lhxCfq09mMmnWV0Hzm/If/+8fs=
+	t=1716821736; cv=none; b=kMeLdXWmhkO8e/hMf/TYVM7EnAObRydUaq/zreA2vbsjgCTboGh6vetIMtqV1rsiSXGUPbnpt9GKujTV0esclmdAt1O3myVK/tvI8oUEKbDYYhOwZBr9TbvqqQdJ2Kq4CwtNVOcUsyl6cutqL8H2E4H7QkGr2n2JthY0G7OVkUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716821701; c=relaxed/simple;
-	bh=rxNoykyrgmE+ykXiTgwE+amgfPWMp+eHsqYoLpCLE2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pr30wktYCGmkXQmROAb6rkULv7ycCrywth1d9HX8R6t2/UJBoP8U/r8uiGxdTHQKCiv5EblCJBL5PsPSgTQIVLNJj19/LcHxAuhe/cQpc1x7CyNtqG5z9s7tTyAGbyhLPQUdpc79jH6mk8W2QRkQ8MbV3QB9IUaLCrJi21B1MkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OCyUgVho; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6267639e86so384098866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 07:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716821698; x=1717426498; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fovS7e3KM/LcT9QtzEodGZIjj0DUcgpQyzljDo7RuCQ=;
-        b=OCyUgVho1XA6FAXmFcs+wNtRcOLtVUWucKghPk15LR2p4EYdFsN6noulKndjQcROiV
-         Msc27HA++C6pCDVCroszTI/XZ1pZoPjgapgCcpcVCAFRiYrinsDCrEoqdBZQJ8rLF8RQ
-         LeOT7PmW2m1QD48nS3lvScyTEj1RKQCu2SdqEFKgbBoHBxX41KfTgevyJ7RQxE91GYyV
-         uLRpaq1y06iTXhl/cUlgW9JcXVd4SDBBacqwM57VWpzGpIh6Lm0TziB8Adkzl0QWHGkF
-         ypPijbd/yNKoaHRFBTCjiWWRKEWDRug8RUU9GDYU1Nw94xLqp/KC3AFUPqAkv52Mfzhm
-         DrfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716821698; x=1717426498;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fovS7e3KM/LcT9QtzEodGZIjj0DUcgpQyzljDo7RuCQ=;
-        b=mnlbiFJgWOQZWFLLqB8UNgaQYAytp+rAGIvw9pe7jlSMv45aKh07rs4u6bpYyXIf3m
-         gASUfNpDR2FMlVIlTO782+NLE+NZP34D3Q+U4h+dA92jPLb4K6cOrWZ4fZi5loRSAsys
-         c9Nv7d6afzoU+SaKLBJIWzHp/ZAm5doZ89vxvLteEGq8J0NbYsSRwfoRTDRoDoCz4h8v
-         ex17ZlYEYCdBxF0zMQx7lh+B2FnsNN9r0UF4TebqHKg3VQNigMGcSZhMgRnaRYqTcjko
-         isFA/x2tqXvLPvUlPWLS4W8hMxAa1/r34r33PQ4Nvae7jkroD1kg9JIWkm1HlUrXVSlY
-         Wj6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2AeKhEcR0Z9wXzS52iJkrbRbJQOPKDnThN/jvl5jEaDW1mcLvZlllybEhW+e3YT7is9iO8Y74qkAOrTTJFjKdwQs9DWHtmvtpMuir
-X-Gm-Message-State: AOJu0YwVJ6eqAUJ5NqRLxgmkeiIE/DeHlNfs/vtwfEbgTRSOv27LnMHK
-	Q4wSapMTE6HvezqWBQeSTMfVig7nIHPhEJlDdBT+2HxB+iVqtyHQu0G7m3/3cSk=
-X-Google-Smtp-Source: AGHT+IGo3H94dZVgD3Oj0JZFgaCwoWp8yWWSpLeBEfysv4WM0NLTjl+TNS8hNQyVGKq/HRHAP/vAhg==
-X-Received: by 2002:a17:906:7c98:b0:a59:beb2:62cc with SMTP id a640c23a62f3a-a62651469a3mr631672666b.61.1716821698131;
-        Mon, 27 May 2024 07:54:58 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c934fd8sm496587566b.47.2024.05.27.07.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 07:54:57 -0700 (PDT)
-Date: Mon, 27 May 2024 16:54:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Xiang Gao <gxxa03070307@gmail.com>
-Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, linux-kernel@vger.kernel.org,
-	fengqi@xiaomi.com, xiaoa <gaoxiang19870307@163.com>
-Subject: Re: [PATCH] printk: Increase PRINTK_PREFIX_MAX and the buf size in
- print_caller.
-Message-ID: <ZlSewPTyQ-jMpW5n@pathway.suse.cz>
-References: <20240527091929.316471-1-gxxa03070307@gmail.com>
+	s=arc-20240116; t=1716821736; c=relaxed/simple;
+	bh=WqdfSky25P014jToQJxbbx2jmpw/Y6gIbx3q5jkMXhQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r0oXFDlfO+oXok30RXIXuKr38vstRx2h+cJ3MvyfN/I/egpHWqJyytM9bXPKuuRAWj/7QMsD0UX2uaN6wdpozc8oJ5c3YIwEtvsrXx7Vq7J/+3P/ECBO8oiV6jnIAheAxqy3UO6VM3knhRp11lqopBqelu3SYz6rYZYHs0YEknk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=OpSRQSnA; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3BD0547C39
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1716821734; bh=JUk9kiyoUx5RdgIxL9VYYk1ttK/biBJXbO+frYzpI0E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=OpSRQSnAig4IIYY8BNqix2k+Yb6FWJLwUUDh/7zJR3VliwFvSwhjOVu+Z00OWVUTi
+	 KVw4IkJcG5msbhLvlUo1sTFRWleDxOukx7T4tmzLHByyJOy6WBoMQSoE6Z4VSj5BNh
+	 wCoU4L9+TRxIe0jBtjA1q9CovmgzTdxCOQMzpRLTRj3LkpHIAEgFEA6yy5+Q2HGI0Q
+	 FM43LYmqlZedmh5NcbRxWKNjYk8UYXdxqSsRLcfqgT+CyufHyV+BJrCbjenZAOG8kO
+	 7LfrCr41ZPvqI+8bFU0s7/jDCVKQxYGIJHgACbRe+inNRNKS/hgtXKkEvGcJaSVSbY
+	 agwtFAZLmVOSA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 3BD0547C39;
+	Mon, 27 May 2024 14:55:34 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Yunseong Kim <yskelg@gmail.com>
+Cc: skhan@linuxfoundation.org, Jinwoo Park <pmnxis@gmail.com>, Austin Kim
+ <austindh.kim@gmail.com>, shjy180909@gmail.com, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v3] Documentation: cve Korean translation
+In-Reply-To: <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
+References: <20240527103003.29318-1-yskelg@gmail.com>
+ <87ikyzpgqz.fsf@meer.lwn.net>
+ <bf37bf39-32d3-457f-abd6-115215d631af@gmail.com>
+ <87o78rnz3a.fsf@meer.lwn.net>
+ <8880b0ec-9315-428e-b9c4-e578690d3c08@gmail.com>
+Date: Mon, 27 May 2024 08:55:33 -0600
+Message-ID: <877cffnw2i.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527091929.316471-1-gxxa03070307@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 2024-05-27 17:19:29, Xiang Gao wrote:
-> Sometimes we need to add our own hooks to carry more caller information
-> to improve debug efficiency, but currently the buf in print caller is
-> too small.
+Yunseong Kim <yskelg@gmail.com> writes:
 
-> --- a/kernel/printk/internal.h
-> +++ b/kernel/printk/internal.h
-> @@ -23,7 +23,7 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
->  #ifdef CONFIG_PRINTK
->  
->  #ifdef CONFIG_PRINTK_CALLER
-> -#define PRINTK_PREFIX_MAX	48
-> +#define PRINTK_PREFIX_MAX	64
->  #else
->  #define PRINTK_PREFIX_MAX	32
->  #endif
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 420fd310129d..2d7f003113f7 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1331,7 +1331,7 @@ static size_t print_time(u64 ts, char *buf)
->  #ifdef CONFIG_PRINTK_CALLER
->  static size_t print_caller(u32 id, char *buf)
->  {
-> -	char caller[12];
-> +	char caller[32];
+> On 5/27/24 10:50 =EC=98=A4=ED=9B=84, Jonathan Corbet wrote:
+>> Yunseong Kim <yskelg@gmail.com> writes:
+>>=20
+>>>> 1) Why do I have three versions of it in my mailbox, sent over a period
+>>>>    of 13 minutes?  What changed between the versions?
+>>>
+>>> Sorry, I forgot the name of the reviewer when I first sent the
+>>> documentation content related patch version 2.
+>>=20
+>> Which is fine, but...
+>>=20
+>>>>    Normally, you want to wait for reviews to come in on one version
+>>>>    before posting the next, and you should put a comment after the "--=
+-"
+>>>>    line saying what changed.
+>>>>
+>>>> 2) When did this review from Jinwoo Park happen?  I was not copied on
+>>>>    that.
+>>=20
+>> You did not answer this question.  Reviews should generally be done in
+>> public, but that does not seem to have happened here?
+>
+> Oops, sorry about that, Jonathan.
+>
+> Jinwoo Park sent me the review below, and I've updated some of ambiguous
+> words in patch version 2.
+>
+> https://lore.kernel.org/linux-doc/57f0d90c-4cc6-4418-ab79-6ae026d8ae09@gm=
+ail.com/T/#t
 
-Could you provide more details, please?
-How exactly do you add your own hooks?
+It does look like the patch was reviewed, but no Reviewed-by tag was
+offered.  *Never* apply a Reviewed-by tag that has not been explicitly
+given to you.
 
-If you need to modify the code to add the extra info, you could also
-modify the buffer size.
+Jinwoo, would you like to offer that tag for this patch?
 
-The buffer is big enough for the info printed by the upstream code.
-I do understand why we should do this change upstream.
+Thanks,
 
->  	snprintf(caller, sizeof(caller), "%c%u",
->  		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
-
-
-Best Regards,
-Petr
+jon
 
