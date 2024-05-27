@@ -1,103 +1,132 @@
-Return-Path: <linux-kernel+bounces-190582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CEA8D0009
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4EC8D000B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF26283352
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D2F284762
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EB915E5A9;
-	Mon, 27 May 2024 12:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBB615E5AB;
+	Mon, 27 May 2024 12:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="aIalgtHa"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsIexbuJ"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E533C38FA6
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143A113BC31
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716813052; cv=none; b=FJyebNRVgGODLQedYyhgb0Ro5Ch6IttLyP9ITy8UEiYR/vOVPqAgN5gdcHWyUDh8xEKkQaYXviTT8KEspGycgHPu+93uMTnZ66t3Tf2tHcRuwKQN0fAQixHf7FCyE40KtVM121GbJO0amNcorIy/+DkFm40H1Qnwx0QEtBXlMaU=
+	t=1716813116; cv=none; b=hMuQKBD1NINyV3ayv+PbjxQddoOAhvvkwve+Dph91q+kKdRazrBywgsKw2NjSXjA3mqOumLUWM7HTB7j3NR2CXDI2yBD8HpuSVDMDZw9H+yDm6vaSDGnkX1EizKR6dxmWggzdokqrF7hTbCZl8cW9W/Z0cesZVkhZKfApBL2/bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716813052; c=relaxed/simple;
-	bh=6+DvNF9RmDjZqkDGx57QY0y83XXuNrV7E1Kzbl2XyQ0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=gEyn80UJ3GTPG2piVQkWqJUoP9XD5N1j61zADWzwW58kik3k7wyZM2hnxQKxJlGIjVNwz7DAfoIVHkkUpQ4qtaKrHUeiP5ZFx+rAiN4yAT28uszv01d9xqeK8veNgPA6biirbwZHU8mu6vxHHqcdj9wWPvx4ZqMtC7ibzrGJcjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=aIalgtHa; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5cec2c2981so654396266b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:30:50 -0700 (PDT)
+	s=arc-20240116; t=1716813116; c=relaxed/simple;
+	bh=Pg81kNExncHYgEH65vSq7ojtlVX7662uOZgf0mLJfUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KQtaAC7+QOVZ4Rqfl69NEX+fK6BDrYklv0V/1/EkwE+ecGfqvrP2+8kL1LgBKsbWcR+yjKm0Bas9kcI4n/ej2Vgc/LqWZvKqedxgu2vEaPelCoZrl9gbsd4RgvUlcq3khf8Pnt/ejDzD2FUICCgz4WBGbh3+BDw6RDcIbwAS7QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsIexbuJ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-354df3ee1a9so5225718f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:31:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716813049; x=1717417849; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kfzGbRD3sk8twjWqVfYmhO7ZpaFRIUQWKhYr1L1EPwE=;
-        b=aIalgtHaJdleI/Fhf7+Mt8dZOfgMd7DJ4cc8oblSeemsMFOqX5aTcgxmAPI4EeLEk9
-         GTHzVePq+WSqKTvpVigiqKs6znAv/Z9xq7/f+lyTmlLmaRwQx+AmB+rhaHtVewbn5TaA
-         Kop6PsTQxbsx5qdP0l5YQRutW5EMmpLbTdd+yllMbZnqFaImOAJQXoSknd82TynFjVkE
-         OExjAuNd2oTO7s/DyKCMVbIBw3p6wmkXi24Wnk68c+o7+s/XWZVUqmO9mUKXz4Sl+QKS
-         AxZzhnkdGcwoIMNUQmDEhEioTa5R+zGBD363Gw7PlWIoDp35K59T64t/1ImdZv+IGVaA
-         8pLQ==
+        d=linaro.org; s=google; t=1716813113; x=1717417913; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XqjqewY/IWqR8PihupcnQhLFobAiXFGUHx0dGRIGDiE=;
+        b=rsIexbuJjyNEa/dKDfM1aRwhZGAtmS5ZClYc1zegIOXlHOVE7QuNCoSsXSr7VRKRLw
+         GefYKXyHyEZT8KCVRLzM5lwAJzgUPsHK8cSkLw+CiCOpM9ENBUe2SO7BZa8lOepAa1Qb
+         I7EixgpxRQQ8Bd3elXEcs2Em9w6BDOe1WTni3iFb+6/0s6kKC7C5X700RjBURAm9XOGG
+         PROYpSDrqWJU0fNXghfj4Lu0mbSHUKPlrLO6+rQSe/9Ury54n/n4WC5gVD5EJqiQtNb/
+         /VQ7WEI+oTW8xatO7yh9yFi6ACxFZbfTIripFQ5wBQD+E1t+18f183DrX3IO9ca4KbvK
+         AYtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716813049; x=1717417849;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kfzGbRD3sk8twjWqVfYmhO7ZpaFRIUQWKhYr1L1EPwE=;
-        b=QNFHdtYRKdObuHiqkhEcEH2v49tT+IEe+KVMM7cJFefZKvbOzClXQPvy+pNU4NB+vf
-         6Iw2dt7qH1LyzGvmYt1Y17SQFYZY7BJrd0W0pSDPkMIcIGo8yRCh2iqGdPBDxa1i/j0d
-         cb91H9NkBFtxqaeHqVpXl2BDFUh71xw+IydkG5iH7gmOnjRgSIKOxULyUr0DKiNIl0Mh
-         XYJUol6KmfQNYtKMAzGlWk6y1ZE2dg5NeCq9YJnTjXPSzMNq6CWYGQIs8pXQ2UKNfD89
-         CJxvXK2oP9/4A/yjgbNYPy2DTZqQNVTbofkUR+8dRy7VHbhQn0eodflzjis/e+9DlNGj
-         rpbQ==
-X-Gm-Message-State: AOJu0YyDhugdKO4dm+Tk+xGFq0g2jWN2wp6Noy1mGAHZLwFbJRxWggMo
-	INRBwMTlE1o9PkxWm7yEtIQ2qEihsZ/JdD4gr23DM3EvLwQgXlPul/arI4dFdt8=
-X-Google-Smtp-Source: AGHT+IFpUMr18cxOauY12oXYvM6RE8hLu/q+zupGiRCnd0dXkMbEPZiZwA/qkFVsXWVeyutQBdWRUQ==
-X-Received: by 2002:a50:c907:0:b0:572:689f:6380 with SMTP id 4fb4d7f45d1cf-578519144e9mr7586305a12.3.1716813049163;
-        Mon, 27 May 2024 05:30:49 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:aa3:5c01:cd9d:f244:3bcd:de57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57861b4ddefsm4475753a12.60.2024.05.27.05.30.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2024 05:30:48 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1716813113; x=1717417913;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XqjqewY/IWqR8PihupcnQhLFobAiXFGUHx0dGRIGDiE=;
+        b=D1Q0kUPNhjiBlfxZdrPEx19IFXBJEYRx2cPaUPIbkQ3jFAsHbOHZvjyniI5FXOrP2a
+         1CWch9TOvz9FMqGz+jGj2exQ7+7Sr4+Dpwwyxf1bZ3eQdTLZfjby1XyxR2SSWfU9nIOL
+         16Q4MTgmVM2UGyDIcJz8fT/vViX+/Pp2J/IZHZxsiH/eJw9aobqc0CylxcSlD3DD6t8W
+         mXjD27z8oBcizzcf6NThFqEQA827ibiheB/8CaUM6jM/YKazPny1Ze0Nbzx5SPnoK4Gg
+         GsgVQ5SEsHxQ3wzJlFAWXmnzV5Zl/nq870mSifZXK+EMq9DhPTmrBQ3mT6gAkhuQjACP
+         GYOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLlwHYx8RI0n94S3BizjWm66Aqbl2Ro8ojdCJFJxZBI1+uilzCs9sQmJIDxRRESDYnnSXbPMTMUrXC2ExhzuX1UXeaPVCypVwD6FQs
+X-Gm-Message-State: AOJu0Yz31Fiwh1j+v4Gl2iFB/3YIxfePsEYimOr4Y61biCTxHLTz4Zjy
+	UTaEqVaSLJ1Y5QN3vMBB6T56IloBQg84JlNU0pDl3cDuLAWitqwS7epf9Mx2S+stMmgV9K//RQu
+	Rp34=
+X-Google-Smtp-Source: AGHT+IH4Kh0h4/Hczoc0Zp0xPOSEe6v0ZhamuCceNxDEYLUCUwyJEorjIWlpkcHWZTjNRoyxbVymmg==
+X-Received: by 2002:adf:f801:0:b0:354:eb62:3653 with SMTP id ffacd0b85a97d-3552fdc8090mr6257038f8f.53.1716813092584;
+        Mon, 27 May 2024 05:31:32 -0700 (PDT)
+Received: from [192.168.69.100] ([176.176.152.134])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-356c8daef27sm6814638f8f.115.2024.05.27.05.31.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 05:31:32 -0700 (PDT)
+Message-ID: <06b06b65-8eb7-43f6-8fb5-e5663876edb5@linaro.org>
+Date: Mon, 27 May 2024 14:31:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [RESEND PATCH] w1: Add missing newline and fix typos in
- w1_bus_master comment
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
-Date: Mon, 27 May 2024 14:30:37 +0200
-Cc: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <80088619-34B7-4815-8697-368EBB0CF48B@toblux.com>
-References: <20240515101150.3289-2-thorsten.blum@toblux.com>
- <20240527092746.263038-2-thorsten.blum@toblux.com>
- <38eae3e5-cb91-436f-a422-0d03d4c8cc95@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/14] clocksource: mips-gic-timer: Enable counter when
+ CPUs start
+To: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Aleksandar Rikalo <arikalo@gmail.com>, Chao-ying Fu <cfu@wavecomp.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>,
+ Hauke Mehrtens <hauke@hauke-m.de>,
+ Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+ Paul Burton <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Serge Semin <fancer.lancer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tiezhu Yang <yangtiezhu@loongson.cn>
+References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
+ <20240511104341.151550-9-aleksandar.rikalo@syrmia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+In-Reply-To: <20240511104341.151550-9-aleksandar.rikalo@syrmia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 27. May 2024, at 13:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 27/05/2024 11:27, Thorsten Blum wrote:
->> - Add missing newline before @return
->> - s/bytes/byte/
->> - s/handles/handle/
->> 
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On 11/5/24 12:43, Aleksandar Rikalo wrote:
+> From: Paul Burton <paulburton@kernel.org>
 > 
-> Do not attach (thread) your patchsets to some other threads (unrelated
-> or older versions). This buries them deep in the mailbox and might
-> interfere with applying entire sets.
+> In multi-cluster MIPS I6500 systems we have a GIC in each cluster, each
+> with its own counter. When a cluster powers up the counter will be
+> stopped, with the COUNTSTOP bit set in the GIC_CONFIG register.
+> 
+> In single cluster systems it has been fine for us to clear COUNTSTOP
+> once in gic_clocksource_of_init() in order to start the counter, since
+> with only one cluster we know that we won't be resetting that cluster's
+> GIC at any point (ignoring suspend/resume cycles which would need to
+> handle clearing COUNTSTOP in the resume path). Once we support
+> multi-cluster systems this will only have started the counter in the
+> boot cluster, and any CPUs in other clusters will find their counter
+> stopped which will break the GIC clock_event_device.
+> 
+> Resolve this by having CPUs clear the COUNTSTOP bit when they come
+> online, using the existing gic_starting_cpu() CPU hotplug callback. This
+> will allow CPUs in secondary clusters to ensure that the cluster's GIC
+> counter is running as expected.
+> 
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
+> Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
+> Signed-off-by: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>
+> ---
+>   drivers/clocksource/mips-gic-timer.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 
-Ok thanks - didn't know that either.
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+
 
