@@ -1,228 +1,342 @@
-Return-Path: <linux-kernel+bounces-190022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8CE8CF878
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521678CF87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95608B22F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E139283E9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD6610979;
-	Mon, 27 May 2024 04:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10687D50F;
+	Mon, 27 May 2024 04:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afyy0cyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SH0R+ZAj"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B398AFBEF
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DA21754B
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716784695; cv=none; b=Udl+7q8bDU9kzKahCMdukTREcw650dlBBe0Gmop3fIxlGTcIEQgN5MktIIpCX/TwRrwC4lFmYFOIAPuv9eL+XNK+GwdpUV18ps4txzA6SWyfTtOhQTvkUsMH6NVc76f8c6mlw9zxUwoYfXpOYKt4MKyZWXUoxRRX06+KjdEoKc8=
+	t=1716784781; cv=none; b=TVVcGIhyz7+gjaPjWJKQv2CG1ad1mO1caSKmBEisyXLEcZtESSDoZRqhdQ9ljDDLEu2RJQTQuTibv2rVi29iemDbRoRwEwtMUGUOnTftFFQDp5KYNjjv74iEMIvKvtUPbHokmIJ4HBstpOgCWqT323caQCYrZFaSO7ztQg6wVAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716784695; c=relaxed/simple;
-	bh=6IacDSA331WDJCmgAXz+7uyzyFmY9XJJszdZAzteIhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AburO7nJfadtl+Vagn/4Bl1/U37nPjhTn2XQYJC5wixBNwGbUNfkWRNYKNqeY3P3TYAcVs09b/RUtcJ/v9g1+ImYnLysan5X5QcRma3uDnObhN3dDtS85HfSLRvZM7X0WV/58zdWu87Yxkc1tTQstPJAkTc8gstwx8wGEefchLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afyy0cyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BCEEC4AF0C
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 04:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716784695;
-	bh=6IacDSA331WDJCmgAXz+7uyzyFmY9XJJszdZAzteIhQ=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=afyy0cytWcIqw9emc+8VUZeurDI3LCx/dFcD64Hxgp8gqQ7U6lanAdrkTSegtiwhH
-	 sFG6jVQ47A91x2x/sJRzwBjad3aiTnBTWMNtK9CF+yjQfdxo60UR2TI/DcEWmIGIKg
-	 PhHiAp7DFYUybsCmRR2e2cKWj5Gx2hZUg9ubFQbuUn0CnliM55S6FHr0K4VNTDLyxG
-	 wsxkgWiwz/tmYKQ4lDb+PcIyi13UIYh7Ksmy2DqLJ55zL+iaSJt4ea/+UjNAcMN/9B
-	 sWCJXBCiwhamrnfvAjmlQ//pyx7eBeJn2wYiF46fDGBCjV9h2i8JCHOfYcKfOQCQe1
-	 /EpV93tVgyVJw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e968e77515so20052831fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:38:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/HBKbbRRdvPv98EArXdA9Mi/Q38HsP+CqMxTVxntjy6kh2DTA5L/x3kFoVUobrvAfIKqukjhlc8EQQCW5KvNhznQOUUUDPlCWmcR+
-X-Gm-Message-State: AOJu0Yz23g3zpUv9EWM2SVOI/embecQW1v4L1fI/tRSuqM8JdaXa1nyq
-	H46M2grH/N3Qhlb82CHrx54DbWMUrmMaiXQjLRB/bVR+QCum2CarQzURdxAziJbt1OGenDZJxrJ
-	488mCEOgDFucm/pVXcTIMtKzV8TM=
-X-Google-Smtp-Source: AGHT+IGjrHFHsZ9tmyPSaUxkwYd4Npht2+QF0TJ6wi8gmagtuKuANSbtuWVM6wGY+0dXyjAjpIkdHCNisdkXmxAIA3k=
-X-Received: by 2002:a2e:9215:0:b0:2e2:f6e6:ada2 with SMTP id
- 38308e7fff4ca-2e95b096df8mr59157451fa.8.1716784693818; Sun, 26 May 2024
- 21:38:13 -0700 (PDT)
+	s=arc-20240116; t=1716784781; c=relaxed/simple;
+	bh=oJwR3+2YrVRYYhvFhHEyHQNfR5yttFLneZk6S+2cBpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PL6IKMfHvw56sg8PcbD5XynlWI5vBj7K3cOTJirM2K6m1c1VyPry6vjggir7p+DQSEKRjAst4NkfzzEhSBGSQfkw24nVoFpW8yRQSyT8f+eetkWnMHasRLqA042fbXHorpUJIgj2FYGpIwpqspNcfzSscqSByOrT3sIFNT1zwG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SH0R+ZAj; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f47eb2354bso5926995ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2024 21:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1716784779; x=1717389579; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+6YXrviCLcyxXmmDXMgEBXPU7+X84327YvIUqwBQ/Tg=;
+        b=SH0R+ZAjcKQ0KsfjWdaSY/8DOKCSDQJIetvy6HmxkhcMY6EbsaOgR5uREaaae6AI3L
+         X6BIJHIrVnolNVzLCUO0NP1mfLlAoT3JVgpCWFIHUKTfTdGEdV3x1juac4TCdLcr7KjD
+         qhuhjyyKgUO0ld2m2NUaOI1U4jNu9UE0ISBvh55av3XyOf0XUmExtQ3tRQBhxo3f0JyM
+         UE5mrYAn5Jrc1HweV71Xw43VaJFMl3oB6XG+gl86bD/VTJ2kzV9YBzOc7lDmU+OelLMN
+         /6Y7Et1ZNZ8pfYuWCGGZwcFZuYzHHxcX2KTsu8rwrDBzazOXVf43SdmBI0/XINBhso26
+         p/Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716784779; x=1717389579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+6YXrviCLcyxXmmDXMgEBXPU7+X84327YvIUqwBQ/Tg=;
+        b=plvwHMTO3OXo0IAlAKUoKGZAvDx3mQpNOFMPPiGPgECscVAjkPvWOQWAgSH4fZxYVi
+         ZHDD0smRLUroSkGEE9AZ/n0P4h6dHqcthc23WxkRm2YqL+/JWo18HQ2pkXEmWGscIIZp
+         eSeZyblLTBAdA7a1s4HEr/DqWO7rEN3eTmIRNN+lpMiUHgwz22TzVWS2EOe4RnsBfDS6
+         D82EMhe8uq2Spk2I6v6izwu7n8GdaYB0DahMSgAzwRt0+tznJ+hzvoJrausqQVN1bZgl
+         FpUh1C4HOdvnQv9dhT5rCwk+deRNLZniR4KCqAZ95uPZu1BHWyJDvLcbXxR01z7peeAC
+         Vr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdKUUt2H/LdohUf+Jr39jxS2fSs7Ukc5LZ//oKbNg9DIDtpvMy+LV5mfzzpuFn0SE7qbdwF2xjh0w8vBGXbavbTvxEJ0VVPbK2dws0
+X-Gm-Message-State: AOJu0Yyxv9eGal38OdWQOK1oyOmkFTKUeLFVIWZdI8gWAniQ2WFYgJvI
+	PZaSyvRXSc9JJaxq4zQXmVqThzOeaA0x1ZkzX4v9w2R58R33v18OCIvuaC30VrI=
+X-Google-Smtp-Source: AGHT+IE9JvCAMKXsid9Oup9PtkMG3gbKLCIeVIPVgCCtq14j1hr2UK2tj9TrDVbVzYBOJhbbgWrYoQ==
+X-Received: by 2002:a17:903:188:b0:1f3:900:8f83 with SMTP id d9443c01a7336-1f4498ec4ecmr99852385ad.52.1716784778805;
+        Sun, 26 May 2024 21:39:38 -0700 (PDT)
+Received: from sunil-laptop ([106.51.188.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9903b5sm50879945ad.189.2024.05.26.21.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 21:39:38 -0700 (PDT)
+Date: Mon, 27 May 2024 10:09:26 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Andrei Warkentin <andrei.warkentin@intel.com>,
+	Haibo1 Xu <haibo1.xu@intel.com>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Subject: Re: [PATCH v5 13/17] irqchip/riscv-intc: Add ACPI support for AIA
+Message-ID: <ZlQOfrMHHaGV0cDg@sunil-laptop>
+References: <20240501121742.1215792-1-sunilvl@ventanamicro.com>
+ <20240501121742.1215792-14-sunilvl@ventanamicro.com>
+ <874jaofbfp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502103848.5845-1-shawn.sung@mediatek.com>
- <20240502103848.5845-6-shawn.sung@mediatek.com> <CAC=S1ngUh-o107YM8zEu-ebaP7+eaO1x6SsZ6OeRxrH5YgFKxw@mail.gmail.com>
-In-Reply-To: <CAC=S1ngUh-o107YM8zEu-ebaP7+eaO1x6SsZ6OeRxrH5YgFKxw@mail.gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 27 May 2024 12:38:01 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67TZSoQnEMhUNKhnbkwK2=9yCPcwnLD-iHuRp6=Y2ez2Q@mail.gmail.com>
-Message-ID: <CAGb2v67TZSoQnEMhUNKhnbkwK2=9yCPcwnLD-iHuRp6=Y2ez2Q@mail.gmail.com>
-Subject: Re: [PATCH v7 05/18] drm/mediatek: Set DRM mode configs accordingly
-To: Fei Shao <fshao@chromium.org>
-Cc: Shawn Sung <shawn.sung@mediatek.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Bibby Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
-	"Nancy . Lin" <nancy.lin@mediatek.com>, Sean Paul <sean@poorly.run>, 
-	Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874jaofbfp.ffs@tglx>
 
-On Mon, May 27, 2024 at 12:34=E2=80=AFPM Fei Shao <fshao@chromium.org> wrot=
-e:
->
-> Hi Shawn,
->
-> On Thu, May 2, 2024 at 6:39=E2=80=AFPM Shawn Sung <shawn.sung@mediatek.co=
-m> wrote:
-> >
-> > From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> >
-> > Set DRM mode configs limitation according to the hardware capabilities
-> > and pass the IGT checks as below:
-> >
-> > - The test "graphics.IgtKms.kms_plane" requires a frame buffer with
-> >   width of 4512 pixels (> 4096).
-> > - The test "graphics.IgtKms.kms_cursor_crc" checks if the cursor size i=
-s
-> >   defined, and run the test with cursor size from 1x1 to 512x512.
-> >
-> > Please notice that the test conditions may change as IGT is updated.
-> >
-> > Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 22 ++++++++++++++++++++++
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++++
-> >  2 files changed, 26 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/m=
-ediatek/mtk_drm_drv.c
-> > index 8e047043202b4..c9cad3a827376 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > @@ -294,6 +294,9 @@ static const struct mtk_mmsys_driver_data mt8188_vd=
-osys0_driver_data =3D {
-> >         .conn_routes =3D mt8188_mtk_ddp_main_routes,
-> >         .num_conn_routes =3D ARRAY_SIZE(mt8188_mtk_ddp_main_routes),
-> >         .mmsys_dev_num =3D 2,
-> > +       .max_width =3D 8191,
-> > +       .min_width =3D 1,
-> > +       .min_height =3D 1,
-> >  };
-> >
-> >  static const struct mtk_mmsys_driver_data mt8192_mmsys_driver_data =3D=
- {
-> > @@ -308,6 +311,9 @@ static const struct mtk_mmsys_driver_data mt8195_vd=
-osys0_driver_data =3D {
-> >         .main_path =3D mt8195_mtk_ddp_main,
-> >         .main_len =3D ARRAY_SIZE(mt8195_mtk_ddp_main),
-> >         .mmsys_dev_num =3D 2,
-> > +       .max_width =3D 8191,
-> > +       .min_width =3D 1,
-> > +       .min_height =3D 1,
-> >  };
-> >
-> >  static const struct mtk_mmsys_driver_data mt8195_vdosys1_driver_data =
-=3D {
-> > @@ -315,6 +321,9 @@ static const struct mtk_mmsys_driver_data mt8195_vd=
-osys1_driver_data =3D {
-> >         .ext_len =3D ARRAY_SIZE(mt8195_mtk_ddp_ext),
-> >         .mmsys_id =3D 1,
-> >         .mmsys_dev_num =3D 2,
-> > +       .max_width =3D 8191,
-> > +       .min_width =3D 2, /* 2-pixel align when ethdr is bypassed */
-> > +       .min_height =3D 1,
-> >  };
-> >
-> >  static const struct of_device_id mtk_drm_of_ids[] =3D {
-> > @@ -493,6 +502,15 @@ static int mtk_drm_kms_init(struct drm_device *drm=
-)
-> >                 for (j =3D 0; j < private->data->mmsys_dev_num; j++) {
-> >                         priv_n =3D private->all_drm_private[j];
-> >
-> > +                       if (priv_n->data->max_width)
-> > +                               drm->mode_config.max_width =3D priv_n->=
-data->max_width;
-> > +
-> > +                       if (priv_n->data->min_width)
-> > +                               drm->mode_config.min_width =3D priv_n->=
-data->min_width;
-> > +
-> > +                       if (priv_n->data->min_height)
-> > +                               drm->mode_config.min_height =3D priv_n-=
->data->min_height;
-> > +
-> >                         if (i =3D=3D CRTC_MAIN && priv_n->data->main_le=
-n) {
-> >                                 ret =3D mtk_crtc_create(drm, priv_n->da=
-ta->main_path,
-> >                                                       priv_n->data->mai=
-n_len, j,
-> > @@ -520,6 +538,10 @@ static int mtk_drm_kms_init(struct drm_device *drm=
-)
-> >                 }
-> >         }
-> >
-> > +       /* IGT will check if the cursor size is configured */
-> > +       drm->mode_config.cursor_width =3D drm->mode_config.max_width;
-> > +       drm->mode_config.cursor_height =3D drm->mode_config.max_height;
->
-> I think you shouldn't set the cursor size to the maximum plane size.
-> As you mentioned in the commit message, IGT tests the cursor sizes
-> from 1x1 to 512x512, so just setting them to 512 (with a macro) should
-> be enough.
->
-> Currently this tells the userspace "the supported cursor plane size is
-> up to 4096x8191" on MT8195 and MT8188.
-> That means the userspace may allocate a buffer with 4096*8191*4 ~=3D
-> 128MB for the cursor plane in the worst case, and most of the buffer
-> will be wasted.
-> Note that the default value for DRM_CAP_CURSOR_WIDTH is 64.
->
-> In practice, when applying this on the MT8188 Chromebook, I see the
-> userspace allocates two 64MB buffers for the cursor plane.
-> But if I limit the cursor size to 512, the userspace only allocates
-> two 1MB buffers i.e. 126MB is optimized for the DMA buffer allocation.
+Hi Thomas,
 
-That seems more like an issue of ChromeOS not doing the most optimal
-thing though?
+On Thu, May 23, 2024 at 11:47:06PM +0200, Thomas Gleixner wrote:
+> On Wed, May 01 2024 at 17:47, Sunil V L wrote:
+> > diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
+> > index 9e71c4428814..af7a2f78f0ee 100644
+> > --- a/drivers/irqchip/irq-riscv-intc.c
+> > +++ b/drivers/irqchip/irq-riscv-intc.c
+> > @@ -249,14 +249,105 @@ IRQCHIP_DECLARE(riscv, "riscv,cpu-intc", riscv_intc_init);
+> >  IRQCHIP_DECLARE(andes, "andestech,cpu-intc", riscv_intc_init);
+> >  
+> >  #ifdef CONFIG_ACPI
+> > +struct rintc_data {
+> > +	u32 ext_intc_id;
+> > +	unsigned long hart_id;
+> > +	u64 imsic_addr;
+> > +	u32 imsic_size;
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+>
+Sure, thanks!
+ 
+> > +};
+> > +
+> > +static u32 nr_rintc;
+> > +static struct rintc_data *rintc_acpi_data[NR_CPUS];
+> > +
+> > +int acpi_get_intc_index_hartid(u32 index, unsigned long *hartid)
+> 
+> Why int? All of these functions have strictly boolean return values:
+> success = true, fail = false, no?
+> 
+> Either bool or get rid of the pointer and let the function return
+> either the real hart id or an invalid one.
+>
+Sure. I just tried to keep it similar to the parent function. But let me
+go with your suggestion in the next revision.
+ 
+> > +{
+> > +	if (index >= nr_rintc)
+> > +		return -1;
+> > +
+> > +	*hartid = rintc_acpi_data[index]->hart_id;
+> > +	return 0;
+> 
+> I.e.
+> 
+> 	return index >= nr_rintc ? rintc_acpi_data[index]->hart_id : INVALID_HART_ID;
+> 
+Sure.
 
-> Regards,
-> Fei
->
->
-> >
+> > +int acpi_get_ext_intc_parent_hartid(u8 id, u32 idx, unsigned long *hartid)
+> > +{
+> > +	int i, j = 0;
 > > +
-> >         /* Use OVL device for all DMA memory allocations */
-> >         crtc =3D drm_crtc_from_index(drm, 0);
-> >         if (crtc)
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/m=
-ediatek/mtk_drm_drv.h
-> > index 78d698ede1bf8..6cfa790e8df5c 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > @@ -46,6 +46,10 @@ struct mtk_mmsys_driver_data {
-> >         bool shadow_register;
-> >         unsigned int mmsys_id;
-> >         unsigned int mmsys_dev_num;
+> > +	for (i = 0; i < nr_rintc; i++) {
+> > +		if (APLIC_PLIC_ID(rintc_acpi_data[i]->ext_intc_id) == id) {
+> > +			if (idx == j) {
+> > +				*hartid = rintc_acpi_data[i]->hart_id;
+> > +				return 0;
+> > +			}
+> > +			j++;
+> > +		}
+> > +	}
 > > +
-> > +       int max_width;
-> > +       int min_width;
-> > +       int min_height;
-> >  };
-> >
-> >  struct mtk_drm_private {
-> > --
-> > 2.18.0
-> >
+> > +	return -1;
+> > +}
+> > +
+> > +void acpi_get_plic_nr_contexts(u8 id, int *nr_contexts)
+> > +{
+> > +	int i, j = 0;
+> > +
+> > +	for (i = 0; i < nr_rintc; i++) {
+> > +		if (APLIC_PLIC_ID(rintc_acpi_data[i]->ext_intc_id) == id)
+> > +			j++;
+> > +	}
+> > +
+> > +	*nr_contexts = j;
+> > +}
+> > +
+> > +int acpi_get_plic_context(u8 id, u32 idx, int *context_id)
+> > +{
+> > +	int i, j = 0;
+> > +
+> > +	for (i = 0; i < nr_rintc; i++) {
+> > +		if (APLIC_PLIC_ID(rintc_acpi_data[i]->ext_intc_id) == id) {
+> > +			if (idx == j) {
+> > +				*context_id = IDC_CONTEXT_ID(rintc_acpi_data[i]->ext_intc_id);
+> > +				return 0;
+> > +			}
+> > +
+> > +			j++;
+> > +		}
+> > +	}
+> 
+> So that's the third incarnation of the same loop with the truly self
+> explaining variable and argument names.
+> 
+>     j is actually the index of the context which is associated to a
+>     given PLIC ID.
+> 
+>     idx is the context index to search for
+> 
+> Right? So why can't these things be named in a way which makes the
+> intent of the code clear?
+> 
+> Also why are all the arguments u8/u32? There is no hardware
+> involved. Simple 'unsigned int' is just fine and the u8/u32 is not bying
+> you anything here.
+> 
+> Aside of that these ugly macros can be completely avoided and the code
+> can be written without a copy & pasta orgy.
+> 
+> struct rintc_data {
+> 	union {
+> 		u32		ext_intc_id;
+>                 struct {
+>                 	u32	context_id	: 16,
+>                         			:  8,
+>                         	aplic_plic_id	:  8;
+>                 }
+>         };
+> 	unsigned long		hart_id;
+> 	u64			imsic_addr;
+> 	u32			imsic_size;
+> };
+> 
+> #define for_each_matching_plic(_plic, _plic_id)				\
+> 	for (_plic = 0; _plic < nr_rintc; _plict++)			\
+>         	if (rintc_acpi_data[_plic]->aplic_plic_id != _plic_id)	\
+>                 	continue;					\
+>                 else
+> 
+> unsigned int acpi_get_plic_nr_contexts(unsigned int plic_id)
+> {
+> 	unsigned int nctx = 0;
+> 
+> 	for_each_matching_plic(plic, plic_id)
+> 		nctx++;
+> 
+> 	return nctx;
+> }
+> 
+> static struct rintc_data *get_plic_context(unsigned int plic_id, unsigned int ctxt_idx)
+> {
+> 	unsigned int ctxt = 0;
+> 
+> 	for_each_matching_plic(plic, plic_id) {
+>         	if (ctxt == ctxt_idx)
+>                 	return rintc_acpi_data + plic;
+>         }
+>         return NULL;
+> }
+> 
+> unsigned long acpi_get_ext_intc_parent_hartid(unsigned int plic_id, unsigned int ctxt_idx)
+> {
+>         struct rintc_data *data = get_plic_context(plic_id, ctxt_idx);
+> 
+>         return data ? data->hart_id : INVALID_HART_ID;
+> }
+> 
+> unsigned int acpi_get_plic_context(unsigned int plic_id, unsigned int ctxt_idx)
+> {
+>         struct rintc_data *data = get_plic_context(plic_id, ctxt_idx);
+> 
+>         return data ? data->context_id : INVALID_CONTEXT;
+> }
+> 
+> Or something like that. Hmm?
+>
+Nice!. Yes, this is better. Thanks a lot for the suggestion. Let me
+update in the next revision.
+ 
+> > +int acpi_get_imsic_mmio_info(u32 index, struct resource *res)
+> > +{
+> > +	if (index >= nr_rintc)
+> > +		return -1;
+> > +
+> > +	res->start = rintc_acpi_data[index]->imsic_addr;
+> > +	res->end = res->start + rintc_acpi_data[index]->imsic_size - 1;
+> > +	res->flags = IORESOURCE_MEM;
+> > +	return 0;
+> > +}
+> > +
+> > +static struct fwnode_handle *ext_entc_get_gsi_domain_id(u32 gsi)
+> > +{
+> > +	return riscv_acpi_get_gsi_domain_id(gsi);
+> > +}
+> 
+> This wrapper is required because using riscv_acpi_get_gsi_domain_id()
+> directly is too obvious, right?
+>
+:-). Let me remove it.
+ 
+> >  static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
+> >  				       const unsigned long end)
+> >  {
+> > -	struct fwnode_handle *fn;
+> >  	struct acpi_madt_rintc *rintc;
+> > +	struct fwnode_handle *fn;
+> > +	int rc;
+> >  
+> >  	rintc = (struct acpi_madt_rintc *)header;
+> > +	rintc_acpi_data[nr_rintc] = kzalloc(sizeof(*rintc_acpi_data[0]), GFP_KERNEL);
+> > +	if (!rintc_acpi_data[nr_rintc])
+> > +		return -ENOMEM;
+> > +
+> > +	rintc_acpi_data[nr_rintc]->ext_intc_id = rintc->ext_intc_id;
+> > +	rintc_acpi_data[nr_rintc]->hart_id = rintc->hart_id;
+> > +	rintc_acpi_data[nr_rintc]->imsic_addr = rintc->imsic_addr;
+> > +	rintc_acpi_data[nr_rintc]->imsic_size = rintc->imsic_size;
+> > +	nr_rintc++;
+> >  
+> >  	/*
+> >  	 * The ACPI MADT will have one INTC for each CPU (or HART)
+> > @@ -273,7 +364,14 @@ static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
+> >  		return -ENOMEM;
+> >  	}
+> >  
+> > -	return riscv_intc_init_common(fn, &riscv_intc_chip);
+> > +	rc = riscv_intc_init_common(fn, &riscv_intc_chip);
+> > +	if (rc) {
+> > +		irq_domain_free_fwnode(fn);
+> > +		return rc;
+> > +	}
+> 
+> This looks like a completely unrelated bug fix. Please don't mix functional
+> changes and fixes.
+> 
+Makes sense. Let me create separate patch.
+
+Thanks a lot for the review!
+Sunil
 
