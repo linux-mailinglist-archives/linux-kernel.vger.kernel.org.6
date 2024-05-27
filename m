@@ -1,222 +1,111 @@
-Return-Path: <linux-kernel+bounces-190311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792218CFCBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEF58CFCBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 11:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C12282881
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A090A1F23766
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 09:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F45A13A26F;
-	Mon, 27 May 2024 09:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93ACF13A3E2;
+	Mon, 27 May 2024 09:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yUahua0c"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cRCLwCR3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fp6PvISi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC0413A241;
-	Mon, 27 May 2024 09:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76F3B295;
+	Mon, 27 May 2024 09:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801832; cv=none; b=rUHDx+zkuoR1IgEfmWjWJhkuIpmV2fHzosyALKSFrj+J3HEGGQHDExp8+Rb7AjUKMHo0//B+TR2Hy5gMSCwBD1dBGPVwvhK0iH/Fl2MgxMVNhm8SPe2bOVOzMazihHV5wykzRJx7S7xmIe2w29M59N8bnWji1ENRHEVGKuvIzKU=
+	t=1716801847; cv=none; b=RPdYofIvoeEKYLO76M/wNMZG/BAK8nt14lvrY/Qrb3bSPzC2xhW9DjhUlUAk/5RplOdVID7i7TxpYd6LMxOFbrnKIAMCId2Qn9E411olGXcgLz6HnegPVimswcwDQRvgus4ms8MArrwMYx8/W/fmCctcPPVeCIAZyCmfJFrV0Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801832; c=relaxed/simple;
-	bh=3OcXZCSPL67gEa8iZoXVuvDdjEjFD/HXPIObOC3Z7HE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jlgr89C4SzWZrH2P9O3GjsM5gKHtlmMr42+xT0AGgVPBkysWJXvP/kngDVpCMw9mIqQGCjhzIjP6W799/hXnQPonCN+NXQrlLkohv92ARIZXgy0UhzlIgfkoTd4ishXRbO9uSGAjIqVwu0Kttny9e6DLDLhWqcb/qq2oIPjDu+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yUahua0c; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716801827; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AjXreatmcwvB9m/vXBrgxMmdp6KXfvqWLgchc/T9yD4=;
-	b=yUahua0cGX7BgY/pmnZEeOwxwlvRxcw8PAJLkN0x2GwOcfS33z/zAOojYrTmVl1t1Lcrmy8kEo5d2VRiTHf8Kuzk9HXrbp7j+7rf9oxiOMdAEh9aIphpio7VKqSOkFRkIPczcoMxl3QZfX7T0P6X7ohwD64d+BZSLkAb/kutvB4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R361e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7HigJ3_1716801825;
-Received: from 30.97.48.235(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7HigJ3_1716801825)
-          by smtp.aliyun-inc.com;
-          Mon, 27 May 2024 17:23:46 +0800
-Message-ID: <1b2be7fa-332d-4fab-8d36-89ef7a0d3a24@linux.alibaba.com>
-Date: Mon, 27 May 2024 17:23:44 +0800
+	s=arc-20240116; t=1716801847; c=relaxed/simple;
+	bh=KN/Df7cVH1hfGLVbWzKUrHY38uo6ydApmWkCbVJqn+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pb5D56dk2EBziCtjmbIqYaTuGwLgfJGs3bPbqcA7IBN/w4ubSJBbr34x8iVcQLu2Hm24gT5AQ2TEDYT0xyMoLmkVDn2FtqVKJNrrdUcnqGkYvRyDnyeQnXgHfOhi14Zp6eJoB1hbEFiBAXQV6P06n7ARU9R63TD/GbgsuUk8b3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cRCLwCR3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fp6PvISi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 27 May 2024 11:24:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716801844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN/Df7cVH1hfGLVbWzKUrHY38uo6ydApmWkCbVJqn+c=;
+	b=cRCLwCR3YCF/RSe4ks3cWTNQegoy6h7aU7wyx/vQvzm5wyAaD6L3KG0CNVSUZjQNSTfj9U
+	1OJjMOc/SdM/sbewdoHJKwYFQ+G4UvXRVcpwgHFRXXWdVcjxbV+CB/OGgLaS53+9aqrRzH
+	7rGFP0iUNEYNrYMCiKPo1EDDOpY79blVGHLdCpJEt1cgbY4407g6IRpt9N9XacpYeBQiAd
+	8T3QAlchJnCAG6hwM5TTEc8ESUVdQ6c59niLM3AuQcn6mUR+XxjpuYjqZu6WFPLxK2TYTd
+	PFs6Ok74N0VNlOGpc0N1BbBQ+rqe/cpa6POzeo4qR95jbUKboSvsAH3V3/qa1Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716801845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN/Df7cVH1hfGLVbWzKUrHY38uo6ydApmWkCbVJqn+c=;
+	b=fp6PvISiFRAUp9nnXxCWfy+JVAcGhIb+56FdPCV7TCeEYAJvzc8gsDwy+40Y55O1lnh60W
+	PDpP3y6Id2lpo2BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: xu.xin16@zte.com.cn
+Cc: john.ogness@linutronix.de, rostedt@goodmis.org, zhang.yunkai@zte.com.cn,
+	yang.yang29@zte.com.cn, liu.chun2@zte.com.cn, si.hao@zte.com.cn,
+	linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH  5.10-rt] printk: ignore that console preempted by
+ irq/softirq
+Message-ID: <20240527092403.x2m7SpvL@linutronix.de>
+References: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfs: avoid redundant AGFL buffer invalidation
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-xfs@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- Chandan Babu R <chandanbabu@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20240527061006.4045908-1-hsiangkao@linux.alibaba.com>
- <ZlRLWP3Ty6uvMzjd@dread.disaster.area>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <ZlRLWP3Ty6uvMzjd@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
 
-Hi Dave,
+On 2024-05-23 23:55:37 [+0800], xu.xin16@zte.com.cn wrote:
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 7f27cfee283e..faab85dd4439 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3735,6 +3735,14 @@ bool pr_flush(int timeout_ms, bool reset_on_progre=
+ss)
+> diff =3D 0;
+>=20
+> for_each_console(con) {
+> + /*
+> + * When we're in the unpreemptible context on the same cpu
+> + * with which the thread of console locates on, we should
+> + * ignore this console, because it's a vain.
+> + */
+> + if (!preemptible() && con->thread &&
+> + task_cpu(con->thread) =3D=3D smp_processor_id())
+> + continue;
+> if (!(con->flags & CON_ENABLED))
+> continue;
+> printk_seq =3D read_console_seq(con);
 
-On 2024/5/27 16:59, Dave Chinner wrote:
-> On Mon, May 27, 2024 at 02:10:06PM +0800, Gao Xiang wrote:
->> Currently AGFL blocks can be filled from the following three sources:
->>   - allocbt free blocks, as in xfs_allocbt_free_block();
->>   - rmapbt free blocks, as in xfs_rmapbt_free_block();
->>   - refilled from freespace btrees, as in xfs_alloc_fix_freelist().
->>
->> Originally, allocbt free blocks would be marked as stale only when they
->> put back in the general free space pool as Dave mentioned on IRC, "we
->> don't stale AGF metadata btree blocks when they are returned to the
->> AGFL .. but once they get put back in the general free space pool, we
->> have to make sure the buffers are marked stale as the next user of
->> those blocks might be user data...."
-> 
-> So it turns out that xfs_alloc_ag_vextent_small() does this when
-> allocating from the AGFL:
-> 
-> 	if (args->datatype & XFS_ALLOC_USERDATA) {
->                  struct xfs_buf  *bp;
-> 
->                  error = xfs_trans_get_buf(args->tp, args->mp->m_ddev_targp,
->                                  XFS_AGB_TO_DADDR(args->mp, args->agno, fbno),
->                                  args->mp->m_bsize, 0, &bp);
->                  if (error)
->                          goto error;
->                  xfs_trans_binval(args->tp, bp);
->          }
-> 
-> Hence we're already invalidating any buffer over the block allocated
-> from the AGFL to ensure nothing will overwrite the user data that
-> will be placed in the block after the allocation is committed.
-> 
-> This means we can trigger the log force from this path - more
-> about that below....
+This does not apply.
+There is `may_sleep' set earlier.
 
-Thanks for your reply!
+There is no console_lock() around for each=E2=80=A6
 
-Yeah, I understand.
+The other question is which kernel started enforcing might_sleep() for
+pr_flush(). This should be applied to all kernel or none so we don't
+have random behaviour across kernels (5.4 yes, 5.10 no, 5.15 yes).
 
-> 
->> However, after commit ca250b1b3d71 ("xfs: invalidate allocbt blocks
->> moved to the free list") and commit edfd9dd54921 ("xfs: move buffer
->> invalidation to xfs_btree_free_block"), even allocbt / bmapbt free
->> blocks will be invalidated immediately since they may fail to pass
->> V5 format validation on writeback even writeback to free space would be
->> safe.
-> 
-> *nod*
-> 
->> IOWs, IMHO currently there is actually no difference of free blocks
->> between AGFL freespace pool and the general free space pool.  So let's
->> avoid extra redundant AGFL buffer invalidation, since otherwise we're
->> currently facing unnecessary xfs_log_force() due to xfs_trans_binval()
->> again on buffers already marked as stale before as below:
->>
->> [  333.507469] Call Trace:
->> [  333.507862]  xfs_buf_find+0x371/0x6a0
->> [  333.508451]  xfs_buf_get_map+0x3f/0x230
->> [  333.509062]  xfs_trans_get_buf_map+0x11a/0x280
->> [  333.509751]  xfs_free_agfl_block+0xa1/0xd0
->> [  333.510403]  xfs_agfl_free_finish_item+0x16e/0x1d0
->> [  333.511157]  xfs_defer_finish_noroll+0x1ef/0x5c0
->> [  333.511871]  xfs_defer_finish+0xc/0xa0
->> [  333.512471]  xfs_itruncate_extents_flags+0x18a/0x5e0
->> [  333.513253]  xfs_inactive_truncate+0xb8/0x130
->> [  333.513930]  xfs_inactive+0x223/0x270
->>
->> And xfs_log_force() will take tens of milliseconds with AGF buffer
->> locked.  It becomes an unnecessary long latency especially on our PMEM
->> devices with FSDAX enabled.  Also fstests are passed with this patch.
-> 
-> Well, keep in mind the reason the log force was introduced in
-> xfs_buf_lock() - commit ed3b4d6cdc81 ("xfs: Improve scalability of
-> busy extent tracking") says:
-> 
->      The only problem with this approach is that when a metadata buffer is
->      marked stale (e.g. a directory block is removed), then buffer remains
->      pinned and locked until the log goes to disk. The issue here is that
->      if that stale buffer is reallocated in a subsequent transaction, the
->      attempt to lock that buffer in the transaction will hang waiting
->      the log to go to disk to unlock and unpin the buffer. Hence if
->      someone tries to lock a pinned, stale, locked buffer we need to
->      push on the log to get it unlocked ASAP. Effectively we are trading
->      off a guaranteed log force for a much less common trigger for log
->      force to occur.
-> 
-> IOWs, this "log force on buffer lock" trigger isn't specific to AGFL
-> blocks.  The log force is placed there to ensure that access latency
-> to any block we rapidly reallocate is *only* a few milliseconds,
-> rather than being "whenever the next log writes trigger" which could
-> be tens of seconds away....
+This is a delay of max 1 sec during bug() and panic(). Not sure how
+"critical" this is=E2=80=A6
 
-Yes, I understand, also see below:
-
-> 
-> Hence we need to be aware that removing the double invalidation on
-> the AGFL blocks does not make this "log force on stale buffer"
-> latency issue go away, it just changes when and where it happens
-> (i.e. on reallocation).
-
-Yes, I totally agree with you that removing the double invalidation
-doesn't make this "log force on stale buffer" go away.  However,
-currently with our workloads we've seen this path
-("xfs_agfl_free_finish_item->take AGF lock-> xfs_trans_get_buf_map->
-xfs_buf_lock on AGFL blocks") takes AGF lock for tens of milliseconds.
-At the same time, other parallel operations like
-"xfs_reflink_find_shared" which tend to take AGF lock will be blocked
-for tens of milliseconds.
-
-And after we remove the double invalidation, our workloads now behave
-normal (AGF lock won't be bottlenecked at least in our workloads)..
-Since it's unnecessary for the current codebase and it resolves our
-issues, I'd like to remove this double invalidation entirely.
-
-> 
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> ---
->>   fs/xfs/libxfs/xfs_alloc.c | 18 ++----------------
->>   1 file changed, 2 insertions(+), 16 deletions(-)
->>
->> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
->> index 6cb8b2ddc541..a80d2a31252a 100644
->> --- a/fs/xfs/libxfs/xfs_alloc.c
->> +++ b/fs/xfs/libxfs/xfs_alloc.c
->> @@ -2432,22 +2432,8 @@ xfs_free_agfl_block(
->>   	struct xfs_buf		*agbp,
->>   	struct xfs_owner_info	*oinfo)
->>   {
->> -	int			error;
->> -	struct xfs_buf		*bp;
->> -
->> -	error = xfs_free_ag_extent(tp, agbp, agno, agbno, 1, oinfo,
->> -				   XFS_AG_RESV_AGFL);
->> -	if (error)
->> -		return error;
->> -
->> -	error = xfs_trans_get_buf(tp, tp->t_mountp->m_ddev_targp,
->> -			XFS_AGB_TO_DADDR(tp->t_mountp, agno, agbno),
->> -			tp->t_mountp->m_bsize, 0, &bp);
->> -	if (error)
->> -		return error;
->> -	xfs_trans_binval(tp, bp);
->> -
->> -	return 0;
->> +	return xfs_free_ag_extent(tp, agbp, agno, agbno, 1, oinfo,
->> +				  XFS_AG_RESV_AGFL);
->>   }
-> 
-> I'd just get rid of the xfs_free_agfl_block() wrapper entirely and
-> call xfs_free_ag_extent() directly from xfs_agfl_free_finish_item().
-
-Okay, let me revise a new version later.
-
-Thanks,
-Gao Xiang
-
-> 
-> -Dave.
+Sebastian
 
