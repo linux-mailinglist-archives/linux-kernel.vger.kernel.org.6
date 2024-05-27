@@ -1,110 +1,120 @@
-Return-Path: <linux-kernel+bounces-189934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E318CF75D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 03:59:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB97B8CF762
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9EB1F21C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 01:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C1C4B20D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 02:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA6D323D;
-	Mon, 27 May 2024 01:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A07D20E6;
+	Mon, 27 May 2024 02:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="JUu5NKQn"
-Received: from smtp14.infineon.com (smtp14.infineon.com [217.10.52.160])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aI1YAsuy"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FAA79CC;
-	Mon, 27 May 2024 01:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.52.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2B653
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 02:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716775164; cv=none; b=jzUEBQMd88pwkd/Zdj3y6ziyKyCm+LEGxRPhnZnOaj+6nOJTDdsdQ/1A0WSa12boCqYrD6XdO74SOWmwr1Py8DiKUyUIDWEKForLaOoZXEWZ1Ydwhr7Um402EcJyg0fQ3GA+5vRHeVq7nGmqNGehIdc1XjZCGzIkRvej0hY4YG0=
+	t=1716775309; cv=none; b=RUSfCmHMiYPo3KmE8xkOseWqM1fUqAecoOOYMRRYeZRmtKE0D9zv+ogzvD3uFzf9V80oPb10DROIy3TfrLRGtZrFM9ltGsvNvrNYYzYbAVU1gtSkPaagzOTPQ/5LJq1KFpZforz2FNkvCVBToR+atwqcKxQ9XPBeqi8yqBqprXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716775164; c=relaxed/simple;
-	bh=HkaNFuBrTVxYNPWeD6kFeLSKVPgVwvMG4VXUqpIXbho=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=B2u/n3P320SxXJELqeNpQXrdrS6SJK90o0ywnE9hU2emxzy9dECPa5SG63A2i1SDwkf3NlCqdHpwsAq4B2CBMcESm/n9ODJLEvrIKSn1/RRxLAN6iPljaO7UgjefA3ZIXC+cLtzekj1UPgzQicprk6YMHfZWp5mtd5Mh2Tyza8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com; spf=pass smtp.mailfrom=infineon.com; dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b=JUu5NKQn; arc=none smtp.client-ip=217.10.52.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infineon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1716775163; x=1748311163;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=HkaNFuBrTVxYNPWeD6kFeLSKVPgVwvMG4VXUqpIXbho=;
-  b=JUu5NKQnrGan2V5XRkbpjfe0Dpv5KRxT6PG8mHc+tDZMsRmeJowTSwrH
-   H/08eTRsMISKuYUgBlgE6Kcc0MpfM3HH3QRmIOFb2v1Si7HNHkI/U1i5+
-   B6bmFoq1+GQ8EtnL51ZemqADOJUYFrfPQTbYDGrWxaZQoQIK1JIlckRyy
-   k=;
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="51929722"
-X-IronPort-AV: E=Sophos;i="6.08,191,1712613600"; 
-   d="scan'208";a="51929722"
-Received: from unknown (HELO MUCSE822.infineon.com) ([172.23.29.53])
-  by smtp14.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 03:59:14 +0200
-Received: from KLUSE834.infineon.com (172.28.156.178) by MUCSE822.infineon.com
- (172.23.29.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 27 May
- 2024 03:59:13 +0200
-Received: from KLUSE832.infineon.com (172.28.156.177) by KLUSE834.infineon.com
- (172.28.156.178) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 27 May
- 2024 03:59:13 +0200
-Received: from KLUSE832.infineon.com ([fe80::66a7:739f:6a03:4e1c]) by
- KLUSE832.infineon.com ([fe80::66a7:739f:6a03:4e1c%7]) with mapi id
- 15.02.1258.034; Mon, 27 May 2024 03:59:13 +0200
-From: <Nobuaki.Tsunashima@infineon.com>
-To: <luiz.dentz@gmail.com>
-CC: <marcel@holtmann.org>, <linux-bluetooth@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4] Bluetooth: btbcm: Apply
- HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
-Thread-Topic: [PATCH v4] Bluetooth: btbcm: Apply
- HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
-Thread-Index: AQHarXodRFaIWgJslEGA5+113yeWdrGmousAgAOzr9A=
-Date: Mon, 27 May 2024 01:59:12 +0000
-Message-ID: <f7a5e281c48b4232a4ba74022dd3f83a@infineon.com>
-References: <20240524013127.434500-1-nobuaki.tsunashima@infineon.com>
- <CABBYNZ+yvQL0KBagUXtzrBUFmFxp-ek_5aFDJNVyUKsA-xJ-Zg@mail.gmail.com>
-In-Reply-To: <CABBYNZ+yvQL0KBagUXtzrBUFmFxp-ek_5aFDJNVyUKsA-xJ-Zg@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1716775309; c=relaxed/simple;
+	bh=1iKB6LSdGo/7FZCO/nsmeCr9BVtKte1llxxIyXddlgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WM3ge95fuJXGPMcDt0IvwAdjsWDybSWveg1llqtoN7UEDFMXNgu8KpNCQxAjcOGw67VDiGOHJ9fpXW9Uco4ecfiMWeB21jvEX1r/KU1KcjSJ3W8yKKEzv9Nzq9Lzg+TF0c4DphAASen18jRVFCPSR7AqLIDparhqFJ8iGLxkAqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aI1YAsuy; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: dmitry.baryshkov@linaro.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716775304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C4KbC23pVUx2ZjByBYlN7VlAIPsbM3xhWrQdhcgUorw=;
+	b=aI1YAsuyn35SzhLYiWlpO+d5nNexjamENbPmTyQSbuBnXV4YNy/F9IQ3Sh1BPtVMC5VAtv
+	dhCQQx1ME086s38TXjxcZDILTzAdK8+2w25Bss+qnOaR1m3Po54Et78J9AI1DWM09UQ9Z1
+	DQhvk+bhFzFdb+ySSykqQKW0B9+bOzo=
+X-Envelope-To: rfoss@kernel.org
+X-Envelope-To: laurent.pinchart@ideasonboard.com
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <03701609-86b7-47a3-85af-db47035695fb@linux.dev>
+Date: Mon, 27 May 2024 10:01:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v6 02/10] drm/bridge: Set firmware node of drm_bridge
+ instances automatically
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240526202115.129049-1-sui.jingfeng@linux.dev>
+ <20240526202115.129049-3-sui.jingfeng@linux.dev>
+ <lfgb24qv22sohgizlmt7kq3ymnshjeawlkwwcndivbeiloip55@x3qnu4ss3x4y>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <lfgb24qv22sohgizlmt7kq3ymnshjeawlkwwcndivbeiloip55@x3qnu4ss3x4y>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-SGkgTHVpeiwNCg0KVGhhbmtzIGZvciB5b3VyIHJldmlldy4NCg0KPj4gIHN0YXRpYyBpbnQgYnRi
-Y21fcmVhZF9pbmZvKHN0cnVjdCBoY2lfZGV2ICpoZGV2KSAgew0KPj4gICAgICAgICBzdHJ1Y3Qg
-c2tfYnVmZiAqc2tiOw0KPj4gKyAgICAgICB1OCBjaGlwX2lkOw0KPj4gKyAgICAgICB1MTYgYmFz
-ZWxpbmU7DQo+Pg0KPj4gICAgICAgICAvKiBSZWFkIFZlcmJvc2UgQ29uZmlnIFZlcnNpb24gSW5m
-byAqLw0KPj4gICAgICAgICBza2IgPSBidGJjbV9yZWFkX3ZlcmJvc2VfY29uZmlnKGhkZXYpOw0K
-Pj4gICAgICAgICBpZiAoSVNfRVJSKHNrYikpDQo+PiAgICAgICAgICAgICAgICAgcmV0dXJuIFBU
-Ul9FUlIoc2tiKTsNCj4+IC0NCj4+ICsgICAgICAgY2hpcF9pZCA9IHNrYi0+ZGF0YVsxXTsNCj4+
-ICsgICAgICAgYmFzZWxpbmUgPSBza2ItPmRhdGFbM10gfCAoc2tiLT5kYXRhWzRdIDw8IDgpOw0K
-Pg0KPlRoaXMgaXMgbm90IHJlYWxseSBzYWZlLCB5b3Ugc2hvdWxkbid0IGF0dGVtcHQgdG8gYWNj
-ZXNzIHNrYi0+ZGF0YSB3aXRob3V0IGZpcnN0IGNoZWNraW5nIHNrYi0+bGVuLCBhY3R1YWxseSBp
-dCB3b3VsZCBiZSBtdWNoIGJldHRlciB0aGF0ID55b3Ugd291bGQgdXNlIHNrYl9wdWxsX2RhdGEg
-d2hpY2ggZG9lcyBza2ItPmxlbiBjaGVjayBiZWZvcmUgcHVsbGluZyBkYXRhLg0KDQpJIHRoaW5r
-IGl0IGNvdWxkIGJlIHNhZmUgYmVjYXVzZSBpdHMgbGVuZ3RoIGlzIGNoZWNrZWQgaW5zaWRlIGJ0
-YmNtX3JlYWRfdmVyYm9zZV9jb25maWcoKSBhcyBiZWxvdy4NClBsZWFzZSBsZXQgbWUga25vdyBp
-ZiBmdXJ0aGVyIGNoZWNraW5nIGlzIG5lZWRlZC4NCg0KPj4+DQpzdGF0aWMgc3RydWN0IHNrX2J1
-ZmYgKmJ0YmNtX3JlYWRfdmVyYm9zZV9jb25maWcoc3RydWN0IGhjaV9kZXYgKmhkZXYpDQp7DQoJ
-c3RydWN0IHNrX2J1ZmYgKnNrYjsNCg0KCXNrYiA9IF9faGNpX2NtZF9zeW5jKGhkZXYsIDB4ZmM3
-OSwgMCwgTlVMTCwgSENJX0lOSVRfVElNRU9VVCk7DQoJaWYgKElTX0VSUihza2IpKSB7DQoJCWJ0
-X2Rldl9lcnIoaGRldiwgIkJDTTogUmVhZCB2ZXJib3NlIGNvbmZpZyBpbmZvIGZhaWxlZCAoJWxk
-KSIsDQoJCQkgICBQVFJfRVJSKHNrYikpOw0KCQlyZXR1cm4gc2tiOw0KCX0NCg0KCWlmIChza2It
-PmxlbiAhPSA3KSB7DQoJCWJ0X2Rldl9lcnIoaGRldiwgIkJDTTogVmVyYm9zZSBjb25maWcgbGVu
-Z3RoIG1pc21hdGNoIik7DQoJCWtmcmVlX3NrYihza2IpOw0KCQlyZXR1cm4gRVJSX1BUUigtRUlP
-KTsNCgl9DQoNCglyZXR1cm4gc2tiOw0KfQ0KPDw8DQoNCkJlc3QgUmVnYXJkcywNCk5vYnVha2kg
-VHN1bmFzaGltYQ0KDQo=
+Hi,
+
+
+On 5/27/24 05:19, Dmitry Baryshkov wrote:
+> On Mon, May 27, 2024 at 04:21:07AM +0800, Sui Jingfeng wrote:
+>> Normally, the drm_bridge::of_node won't be used by bridge driver instances
+>> themselves. Rather, it is mainly used by other modules to find associated
+>> drm bridge drvier. Therefore, adding a drm bridge to the global bridge list
+>> and setting 'of_node' field of a drm bridge share the same goal. Both are
+>> for finding purpose, therefore better to group them to one function.
+>>
+>> Update the drm_bridge_add() interface and implementation to achieve such
+>> goal atomically, new implementation will fetch the device node from the
+>> backing device of the drm bridge driver automatically. For the majority
+>> cases, which is one device backing one drm bridge driver, this model works
+>> well. Drivers still can set it manually by passing NULL if this model
+>> doesn't fit.
+>>
+>> While at it, Add a 'struct device *' pointer to the drm_bridge structure.
+>> As it already being passed in by both of drm_bridge_add() and
+>> devm_drm_bridge_add(). A lot of driver instances has already added it into
+>> their derived structure, promote it into drm_bridge core helps to reduce
+>> a batch of boilerplates.
+>>
+>> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> ---
+> 
+> [trimmed]
+> 
+>> @@ -231,7 +243,7 @@ static void drm_bridge_remove_void(void *bridge)
+>>    */
+>>   int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge)
+>>   {
+>> -	drm_bridge_add(bridge);
+>> +	drm_bridge_add(bridge, dev);
+>>   	return devm_add_action_or_reset(dev, drm_bridge_remove_void, bridge);
+> 
+> This breaks aux-hpd-bridge, which gets of_node as an external pointer
+> rather than dev->of_node.
+> 
+
+Yes, you are right. I forget to modify that driver.
+My bad, will be fixed at the next version.
+
+-- 
+Best regards
+Sui
 
