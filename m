@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-190593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FC78D002F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAFA8D0045
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 14:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E09F1C210DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA881C219AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 12:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D415E5B6;
-	Mon, 27 May 2024 12:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cSOTj1+6"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26B915ECE8;
+	Mon, 27 May 2024 12:41:32 +0000 (UTC)
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145CE15DBD1
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C6415ECC4
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 12:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716813523; cv=none; b=mjGa891maaty9tL2rZXqqj2Xo/2KPXBAZxP4YK9W0LyJyurXkBMC8q6ScrrmjFF68Pc56fjc0fvOVITWe0tJlAZIq0+CNT39ZLULFZ1s/wFsVtiMvnCF1nd5G4aWUzDC/bsINMwvyClqfE1pb+Fe5BdsAI1wQCLFDxk3UrH3BBs=
+	t=1716813692; cv=none; b=Uee+QfMj4uMHR5J3Wz59Jwa5F7i/4OQS0Em4RTooWR15D0MUmZMHwWO5w8YtoazHeRGxqfkyWBuYN5vptPp9h4pDVym/ET7LcBiyAOLxU6i1lzgGFDcTOsyTLdRwjiB5BQUR2cNvGZCumT1A+aOX0nzcrnn0KPZKV6Gpu6ZxNJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716813523; c=relaxed/simple;
-	bh=KUPmkaVNi0PLQviM9npC6+ISIfhFnQySeRNyLrPRQXI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WJLRVeJ0yrW3oUb9Wfu0Qr6M/iZYx9F3VLVK5P+3wRz50Qf8y4Wk2QtugovJta606sbCA5oKyklXwPvlUUTydICemtYDsmRO3EKFvvzNmz1rnkJ0WcJ7LqEcwKZgT9yh0AGIDYRmyNBA/IqipXWAYeW+TPugcdvM5X/IHuX2B9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cSOTj1+6; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-529614b8c29so4833871e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 05:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716813519; x=1717418319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U0MksHKwBICLwuSG6OgSnqATRY+MnKcyIIXC1UuoUb4=;
-        b=cSOTj1+6tgggUjBV+F0I/iX9/C7/h5mRFTUWEaHczTBlPedAmFhH9/HhLde6D2s5yb
-         CpjoEvD2hdnHecfwb88IpdMYmGpfpuH6j23Q+9MarOkkgnYFqwelGfe7HXuUfMWoclUF
-         NaML2RsFSS36ZuAy2Dp4ppQmHETjJ+UPDbTa7OohaJVRkhdYgeEmWVqKq5JL7Ps3C2Zv
-         d9IYyCVVSXpr9YTUt4csDcEP3D5Ij1h3DNH6W4xW2Vvf7ZO3O4E8Reg3bhdwqsQgVZaW
-         IZmo0D4u9L2Ry7+dyxQJDgDBYGRmqYSmkH8Dho/T+euE8YEP14bQjket9kNpHk7C0YDz
-         oCGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716813519; x=1717418319;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U0MksHKwBICLwuSG6OgSnqATRY+MnKcyIIXC1UuoUb4=;
-        b=ckadfMGGQbIe0K8wSduh3SW3T6t+rl4cV+V7gFcZBtY1WvYdftx/PjOZ8x62Ir/uVU
-         fFiXfmkUfRsYalnqFVIQz1Dr8hy8p8vQ+Fb1jesmJGzRl0IjJjhR3+lfwuKAWUT9LGCZ
-         uTnnRlX2eUtOX5jGppEJA9EG5avj7afqHYdtJHe2RHMGH9b+PMRxEYqDZ7EbQFmyqSIj
-         flnLH2JTtjhgRSUID8RNtmsdBW4YTfFPhwkAFKOk3iQKBSKdNIiBFGWw5GdZmqJM2C74
-         lhEMRxf5xNrImM7dZAY/cKtCLZ57+mckRQ/96jm0HXXt0GMqshu5Y+5ZneyyXat2BBSJ
-         mXrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpoqZSRrWYqkmdal9fZhulidh0j8XHThOMpzaBUeanEmbsjD+W9xzundTn8XjjDf8hZ8Wl9zLtaUt0t/481AYMB/ZwhJ+7Sn5XTNii
-X-Gm-Message-State: AOJu0YwpwEWGOTITGWEtd3vOp6cUGjDKvRV6OCsa3DMi7pMZAkSjOvxU
-	rvzVMEIR0TFo0jdMzSYk1rSoKmjtFhGFg11CVfRABTy9sNuiSVGc3rxFKR/ScV8E5fPd7qtXdy7
-	uEU4=
-X-Google-Smtp-Source: AGHT+IG1nhVnExbK4ShBNQp8AOL1BeyHFQcVZ25huQqTJip9CI8Tg0co5jAULq+rDZ4Vc1qdUlRr3g==
-X-Received: by 2002:ac2:43b9:0:b0:523:ae99:b333 with SMTP id 2adb3069b0e04-52967a26df9mr6335447e87.64.1716813519261;
-        Mon, 27 May 2024 05:38:39 -0700 (PDT)
-Received: from [192.168.69.100] ([176.176.152.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c818139sm491740266b.35.2024.05.27.05.38.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 05:38:38 -0700 (PDT)
-Message-ID: <e3cc1552-4f96-4aa0-a375-a5582094c1ae@linaro.org>
-Date: Mon, 27 May 2024 14:38:36 +0200
+	s=arc-20240116; t=1716813692; c=relaxed/simple;
+	bh=8hdldazWVA2zqxn3teJVpbzPafUsFkhaXGXuAlZegCc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gyiyKI3/LdQh6NXfs3Uj12SxUmM2kqTzy29Z17mwmjhYsfoEtnld195Sj3M7wnRbqC7KJdArLrlqkczJgqcFzM0BQpwdSAApzYgBShy5PrQmUeoUb4Zd6P0fNs3lVNOoUlidx4LeBLo/1zPAfN9Ipi+eYy9W+e+/XZk7DC5VGUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4VnwHq28Pjz4wy8b
+	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 14:41:27 +0200 (CEST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c993:5573:f894:7353])
+	by andre.telenet-ops.be with bizsmtp
+	id UChF2C0032nC7mg01ChF7d; Mon, 27 May 2024 14:41:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sBZeD-00CfTd-4Q;
+	Mon, 27 May 2024 14:41:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sBZf8-003hdW-RS;
+	Mon, 27 May 2024 14:41:14 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/3] pmdomain: renesas: rmobile-sysc: Remove serial console handling
+Date: Mon, 27 May 2024 14:41:10 +0200
+Message-Id: <cover.1716811405.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MIPS: Implement ieee754 NAN2008 emulation mode
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-In-Reply-To: <20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/5/24 14:34, Jiaxun Yang wrote:
-> Implement ieee754 NAN2008 emulation mode.
-> 
-> When this mode is enabled, kernel will accept ELF file
-> compiled for both NaN 2008 and NaN legacy, but if hardware
-> does not have capability to match ELF's NaN mode, __own_fpu
-> will fail for corresponding thread and fpuemu will then kick
-> in.
-> 
-> This mode trade performance for corretness, while maintaining
+	Hi all,
 
-"correctness"
+Since commit a47cf07f60dcb02d ("serial: core: Call
+device_set_awake_path() for console port"), the serial driver properly
+handles the case where the serial console is part of the awake path, and
+it looked like we could start removing special serial console handling
+from PM Domain drivers like the R-Mobile SYSC PM Domain driver.
+Unfortunately the devil is in the details, as usual...
 
-> support for both NaN mode regardless of hardware capability.
-> It is useful for multilib installation that have both types
-> of binary exist in system.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->   Documentation/admin-guide/kernel-parameters.txt |  4 +++-
->   arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
->   arch/mips/kernel/elf.c                          |  4 ++++
->   arch/mips/kernel/fpu-probe.c                    | 10 +++++++++-
->   4 files changed, 31 insertions(+), 2 deletions(-)
+Earlycon relies on the serial port to be initialized by the firmware
+and/or bootloader.  Linux is not aware of any hardware dependencies that
+must be met to keep the port working, and thus cannot guarantee they
+stay met, until the full serial driver takes over.
 
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+E.g. all unused clocks and unused PM Domains are disabled in a late
+initcall.  As this happens after the full serial driver has taken over,
+the serial port's clock and/or PM Domain are no longer deemed unused,
+and this is typically not a problem.
 
+However, if the serial port's clock or PM Domain is shared with another
+device, and that other device is runtime-suspended before the full
+serial driver has probed, the serial port's clock and/or PM Domain will
+be disabled inadvertently.  Any subsequent serial console output will
+cause a crash or system lock-up.  E.g. on R/SH-Mobile SoCs, the serial
+ports share their PM Domain with several other I/O devices.  After the
+use of pwm (Armadillo-800-EVA) or i2c (KZM-A9-GT) during early boot,
+before the full serial driver takes over, the PM Domain containing the
+early serial port is powered down, causing a lock-up when booted with
+"earlycon".
+
+This RFC patch series aims to provide a mechanism for handling this, and
+to fix it for the PM Domain case:
+  1. The first patch provides a mechanism to let the clock and/or PM
+     Domain subsystem or drivers handle this, by exporting the clock and
+     PM Domain dependencies for the serial port, as available in the
+     system's device tree,
+  2. The second patch introduces a new flag to handle a PM domain that
+     must be kept powered-on during early boot, and by setting this flag
+     if the PM Domain contains the serial console (originally I handled
+     this inside rmobile-sysc, but it turned out to be easy to
+     generalize this to other platforms in the core PM Domain code).
+  3. The third patch removes the no longer needed special console
+     handling from the R-Mobile SYSC PM Domain driver.
+
+I did not fix the similar clock issue, as it is more complex (there can
+be multiple clocks, and each clock provider can have its own value of
+#clock-cells), and I do not need it for Renesas ARM platforms.
+
+This has been tested on the APE6-EVM, Armadillo-800-EVA, and KZM-A9-GT
+development boards, with and without earlycon, including s2ram with and
+without no_console_suspend.
+
+Notes:
+  - This should not be needed on RZ/G3S, where each serial port device
+    has its own PM Domain,
+  - drivers/clk/imx/clk.c and drivers/pmdomain/imx/scu-pd.c have special
+    handling for the of_stdout device, but is probably not affected, as
+    each serial port seems to share its PM Domain only with the serial
+    port's clock controller.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  earlycon: Export clock and PM Domain info from FDT
+  pmdomain: core: Avoid earlycon power-down
+  pmdomain: renesas: rmobile-sysc: Remove serial console handling
+
+ drivers/pmdomain/core.c                 | 24 ++++++++++++++++--
+ drivers/pmdomain/renesas/rmobile-sysc.c | 33 +------------------------
+ drivers/tty/serial/earlycon.c           | 14 ++++++++++-
+ include/linux/pm_domain.h               |  4 +++
+ include/linux/serial_core.h             | 10 ++++++++
+ 5 files changed, 50 insertions(+), 35 deletions(-)
+
+-- 
+2.34.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
