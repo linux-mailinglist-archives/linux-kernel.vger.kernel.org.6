@@ -1,256 +1,801 @@
-Return-Path: <linux-kernel+bounces-190015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-190016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A69B8CF862
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E988CF864
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 06:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C54B1F223E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746971F21499
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 04:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC4BD26D;
-	Mon, 27 May 2024 04:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9612D79F6;
+	Mon, 27 May 2024 04:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="m1UlnANq"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2041.outbound.protection.outlook.com [40.107.117.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5OKTE2e"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434DEC121;
-	Mon, 27 May 2024 04:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716784117; cv=fail; b=dQjymtAg+CFLougzOVnFezg5XOEts+OhuTbTmhSgzenzXQ8SgJIEKtwebhhtR6wlobbDdpsMJRYKGkf0yFOXvNZFA9Hu975f5KS8/C7TfIQ5I5165+WZ6lJaT1fQsjaYPXMMbmT4UtbKIqAw7d4qXNIyBrLlSsIBnJCKiZv8mSg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716784117; c=relaxed/simple;
-	bh=5FP5RDoQhJq2Haj00n9Se++ZKC+WxuYgsDqO329IxSw=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=abTXpY/snxE/LmD/DtTX78b02w97f7Yr4D4bFfx1+F3ykxPSW3sAT52hlJ5j91NFrMmgOsJrJydMw0VcBJ/afX8O1i3ZXYSr5tR9QarM5Y6aSqFy+h6OOSx4MOKB5b7JT0phHgyY/0lOFCRkkg8kA+mvEHDkDQKYsZfi11lXzYE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=m1UlnANq; arc=fail smtp.client-ip=40.107.117.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Esvrrs2Qimu+GmtSkgM6drIf5i6pByxMICdn0SIXUbhvc34/fgPFWCvcIFq7Qjj/q6LBuOffgd07EJyBFMfXMXYuhHdoraB6PrO+qOK4pKD0kSotWDVMQK4H9SGvlUOyIGz/pSdBZbwnnTuZSeLXUp46nw+WQE5Agenwqp3lZP4TykYUzUMGEflsk66sNe5om77jIw40ElHzdip3A1Wbc5fjLgSjs+3slhgutvdfcHNXrL41Cc/j2QzC536jj1UsFXH7luvjHMtfN7waJeUrxO+XRNB9XwWdbQ1xLQL83CAvVQJ8V6g+xkfHdgeikjLTJdS5KQBzJ9hSz2AjEMPtcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GEIiGxgT2VsLXHlbaIrmTjEr3/QjJo5Qh5YNhcNb/s4=;
- b=Fau+qYLvgj6915o1ssStcgAEu/TI8NaC6Sfk4sHpFOWno7eAnPSQpUU4ul6d8cfJcIHPU+eiEur804qQ+GAGEHGiGV/3TEeM/WwCZQXeOkvUFQLLHsU+cHscDy418/KMeaR5SdTbUbCLjtu6VRIZ15XI5J1dfMbXq5007cuX95cEeIf26S5pe8XwMQA69i00CILpZskMpCkqAE23rr71WzS3qpuKWL+1n7KDZXjuP1T9UH2VxDFgnxxEk4j2xKp715yswuJvVzJ1CorqoPs4Tsv801nh5Z1hGY3s6p8PKlvc5KpoV9fh33l+ZVzSkjR2WftqL9kQE7sZExIKjodC0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GEIiGxgT2VsLXHlbaIrmTjEr3/QjJo5Qh5YNhcNb/s4=;
- b=m1UlnANqC3JAcKl6vr/yEdnbIqXayQMgLu4KHshSruC76ttwzpe145MuMAfVOl5ykGNRluA56hLtF6jbG7o+iedS7HMDkIPy86721JTasNcFqM6EyTDhHXanPJv2Nf5Vg+icrOXdfTCIVt1tOjvgGZFVykeYDFGq+bid63Wetmb6RplJjDmtkblegqDwr1+VqxmDWvJRG4/Bo/8ZvakV23z1RPBnBSMGomCHsFf3GU0GnvGn/aPew+rv3omMUnrPE24FJQ4wu1M4/11W+NTV7Cyww4sclthu7yeBVbvup59TLpDGvM5LfLn9o1b3VLb8C+kZMpL2VFv/D7Pge/BNjQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by SEZPR06MB5504.apcprd06.prod.outlook.com (2603:1096:101:a4::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
- 2024 04:28:32 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7611.025; Mon, 27 May 2024
- 04:28:32 +0000
-From: Yang Yang <yang.yang@vivo.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yang Yang <yang.yang@vivo.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB25C121;
+	Mon, 27 May 2024 04:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716784205; cv=none; b=Gg/IC0AUaxPvfL3i12gycX/QwpGKq1u6huebKngp5jAm8/GWekWfnDxtY1DEdvuC6RuV2gn0xV1ppHYQMUzKBlf62aQjh+JFd4Q7/4/MhdhiVWJvdJ0dAH1RPUt819/dp2ADDmlSeHorNO5iGaK4Obzqv8d7X9L6qJGXcz6urKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716784205; c=relaxed/simple;
+	bh=MyW7162hhil9njXkACywqnGqUuStOTDFXvP0qYnyaCQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LHBneBHxy9TvAl+kY4uDJAHkIB1Wx7EO5Ytoucjl82cAkC80siHmM7LJpU88lt1YdaBZRspG29vO53miAslqcGs0SzAVOkG4U6tzPRlol0oNBLlqzl3ykMSd6XuAKXK8LRvo+51PxW9pVNgYQeH2HSMpIuukDA757SVRU+FiAJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5OKTE2e; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f8eba8dcfcso2345826b3a.3;
+        Sun, 26 May 2024 21:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716784202; x=1717389002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPeDGuJUx+ow1fp5hpZcNlGfukxk1yzvKoVJsDLM8TA=;
+        b=G5OKTE2e1ok0uLFhbEK5HW1o4cWuvEsahKtuzM/kYaRKEav5rdSgsvuyY2Qa3fZBwK
+         4D4Hs5R1KE4PPrD0/79kKjAkzOYH9Tp/LPOvMsONl58j3NrS2omIUBEYAQRIiucuxxiV
+         OthxnqBV5wcqIBpnheSoBl4rV/97jzwBjTg50M+E+mgiFywrV12ZQSYpslcm84Fb9FOJ
+         pOzpjZshcnYH0bM1Mwo5xRuL/qWYXLazZta3y4MWA3Mb2028FfZ2tm8bVN5rgn/Vt0TE
+         5Lqrc2DFP6o5zPtuL3VSO9US6isKPllZdKhTxpFUHWJf8YFLwHRvsuiaw+Mk7s8nltwu
+         Pmow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716784202; x=1717389002;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FPeDGuJUx+ow1fp5hpZcNlGfukxk1yzvKoVJsDLM8TA=;
+        b=ZTw87qMzHJSmXucMkUePERPmWFWJhpVanNcuqkHx72RDcSTsg4qrNgAY2vjphNWAGO
+         OlgpfglFowJta5O20UpD3DxnpZf6vw23/n2+TsHcoimoA+aXf456GWeKewSZDMDC+pXL
+         +D8SmM43JeW6b4kJUuW9LJVCxBVECw5+e29o4PLKkwzrIm9A/0BdJ9GSukkluAVHtynI
+         Mp37dPCzLOvDazeftITbNjfcLqwaWwBAQFt+TARBBAKptRo3u/xDBVxzoCROYlhfjnRo
+         n8+sJy/xSkSwgW2KVexbmzQBZX9E956NVR10ewgskL3YJD/PNOSqwGZU+JO3KMLkAP09
+         zn5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVHeCgbg8PG/h8+FP37/PBwxpqeiqJXWSxeyvKMPGFLqVmd0AmnK7J3M5g+sX2N4GDw6zkCmQrOKifniwJzfd6xrm9+y1mbsEsz4IhJJuzbOXJw08PifqhFpF9RcXD+ihRpgCSHPy23ec=
+X-Gm-Message-State: AOJu0YxMwTCom7rZcZUhVZsQgPoY4hPWaUYslHTk4edJ/33whxXuqJOl
+	JxYBAC31c5kcTTMzNb+whqOIUyYUI2dEdJ3w6+46tboE6IfmouwO
+X-Google-Smtp-Source: AGHT+IGdVhUULIRxSNxBHzb+bseOVAygKpQ49sIWH+IGBIsRLH9sjUTsJ1yty8ZFXArgO5BdOKY03A==
+X-Received: by 2002:a05:6a20:914b:b0:1a7:60d8:a6dd with SMTP id adf61e73a8af0-1b212e65034mr11181969637.53.1716784202059;
+        Sun, 26 May 2024 21:30:02 -0700 (PDT)
+Received: from mb-board.. ([120.237.109.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fbd3eb67sm4262560b3a.19.2024.05.26.21.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 May 2024 21:30:01 -0700 (PDT)
+From: Charles Wang <charles.goodix@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: hbarnor@chromium.org,
+	dianders@chromium.org,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: [RFC PATCH] sbitmap: fix io hung due to race on sbitmap_word::cleared
-Date: Mon, 27 May 2024 12:26:50 +0800
-Message-Id: <20240527042654.2404-1-yang.yang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR0101CA0025.apcprd01.prod.exchangelabs.com
- (2603:1096:404:8000::11) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+	Charles Wang <charles.goodix@gmail.com>
+Subject: [PATCH v2] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Date: Mon, 27 May 2024 12:28:40 +0800
+Message-ID: <20240527042945.57054-1-charles.goodix@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|SEZPR06MB5504:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63bae6fa-45e8-466e-cf83-08dc7e05773c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|1800799015|366007|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0AT5aFtfpClkhr3HQWeBp30O1ZjHyYSsPZvsPYLGIXbN+yk/kmv+xE+uG/sq?=
- =?us-ascii?Q?6Cujomc+JZKEYBwxIcBdNDnZBU0rYwldDR44pMf7mR5wukg7iFmtaOmhJbM2?=
- =?us-ascii?Q?5zwY+CqubYYy9vrkBL4QI9Pmj+c5SNQUysDv9u5XZrRAhkalnobIjOQm0V5a?=
- =?us-ascii?Q?i3bfZTPT5N8yq/Y8PTedCIWPatXby0bpzI5C2ID6+Up+fcWihArUSZnB89Gy?=
- =?us-ascii?Q?RDA4Hx8HFfwDynLn+roCGZQT7N2TC7yAMefMbltmkDxB/fAUQqD2PgzV+Jhu?=
- =?us-ascii?Q?WYGaMVGMYCdfiRsJDFSSzOItY04sFCGtCvv1o/EwrjkhYKlIrHx6qcvUzmHp?=
- =?us-ascii?Q?SJYG1pqklMx5wGtg9u05YEkUPf7CVTHNnNuKL7EFATXsYpjxx9RbsVY6YT37?=
- =?us-ascii?Q?8v2TTElw4AugN3GbQBBA4j10/tAg6brUC4OU16kMYZrwQCQ7NAUJibU3hRUB?=
- =?us-ascii?Q?qQz8OgLZcYIVx4kNyRTF82S3PqxshVqUHOAvwX/+C8VM8JZorKLU7VxQFijR?=
- =?us-ascii?Q?p8my5wYWir8yBRWjUSixDMXyAwDfXhCPF4sLKUres7GL+ZkAE/la1Zv+WUXu?=
- =?us-ascii?Q?CAh+oVIYsMl6kAdWnnee/+iRnKKzoJNXmGQA/F1RKPOqNdmYahJRzqD9m6dh?=
- =?us-ascii?Q?/ElWRUF0pWBWKmJelJaVUO8Y5PeuScS/UyCR54WWjBPnZCZdWqFuZjA4/X1u?=
- =?us-ascii?Q?YD8UGLf9w8xrWiluBe+fomK1i8f1RV2K0+cO9GdjTC4lAC6LUCNG3tX4fFKO?=
- =?us-ascii?Q?oZVUMB1y0Lj9MeizQ9137jI2oHllwva3xMork2ge8bI89NChUmeYtM3h8XMg?=
- =?us-ascii?Q?4CSaXOqRiExQXNUARQ6VLTo4WJcwbu+yqXU8iUOBw1cMq7o/m6DQSENcwaUm?=
- =?us-ascii?Q?uWOpUeZENuQBZrUf+BynGrLDbwfzIDE7RBFVdSaq4XdBk2D0+QlVlbVKdXmd?=
- =?us-ascii?Q?u6lJzsCkz6+DdcMEhbKKUdxmP0ZeVOLdBCaObg6jR+NnZOLz5WazzJREpPkC?=
- =?us-ascii?Q?CJ3qYVT2YZvWRP6sFedNdN7ZdtoYsO9Jf7O0+dQI5zsINT03KjPR8boas+l2?=
- =?us-ascii?Q?B6iqYaTxRGv8QbNxEHSwP9vbgQ9YPpiB+KgghGS3gaFwq8+lby+XroGxhkYJ?=
- =?us-ascii?Q?C73p8UExHWnUk+uuhurS62hrmcC1WtM6YqfazFVeoVmM8LfBKcCkh0UX/MN+?=
- =?us-ascii?Q?w3gE7REoKQrfviZLs/q5JWlw9C+pHq/McDU2It/1YqIgtnlhH5U2qhWq4FJe?=
- =?us-ascii?Q?oDc9hwSBVYQPXvmLlibeBODWe57DiyJXYQ8BQn9LIkcfbkEDikqUlB7xNWa/?=
- =?us-ascii?Q?1jKc8WMhn99AmvNpMoEtpHeYS3kt65EWDPrrm4bkU+4THA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(1800799015)(366007)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?chODXHFHATKDubhwM272/6ETJ12MDn7uj46RTKW0k+iQ2XhdMr4wbM0iaUZZ?=
- =?us-ascii?Q?jML+rN8xPiK5rG1IBxqQ3T32tSkT61VVoNxcmyQuZDJjGHvolLidG1efCGYP?=
- =?us-ascii?Q?CUhSB6eLKN9g/wOd5oq68ZVs3/McvtGRK+K62QB+MXiUqlTo6egza7Wub85G?=
- =?us-ascii?Q?GCScfRPpZWkdzZE+6Bwaeg/ZOI7xdTyBsa718pQFsxc7X51KL2VTAU2AgoX4?=
- =?us-ascii?Q?paKs4pYqshrNp4moaZqLyq//mQhQiJnFaDLnnK6ZlVfje5qPat3C80F1UhRp?=
- =?us-ascii?Q?pqWPXyJ4e+Bk8uEFEhtBqmkMWgarESmpZmXXoUQsRk4MFKKAwbNGbk+dTZI9?=
- =?us-ascii?Q?JQaV/JHXp4lKwWzurIBJUykcXHi0jEDM1WgZBry2gKKzEnK/Bt+Ex6NwXprE?=
- =?us-ascii?Q?w6zMR3T9+56aasU27XoA8I9Cafkr31q6c3xUiNA0czSi4xjvhJz+Fo4BRE6A?=
- =?us-ascii?Q?T7Xgp5ouXNUsbA5LN8t3OhvClll4Y9mHbnZG4DLtjkCXV+rUBgurKyy0oCQV?=
- =?us-ascii?Q?n3eUsKz01YP9Xa+CEX2fpxwKlySm2Ln9+sG6fIxSNUAhgN9NzKTUSQMiKAnY?=
- =?us-ascii?Q?V5qtOBZ7KmcDI4Kvg2F8z9r0ap/wiamfGPpou/Hf7jZtqP086wc4iFNSMzNy?=
- =?us-ascii?Q?+PMqYERs6YKsrIMz+RjsXOwDZh4xv7jg9xdcCHMg6EY68pOmNdEBBIcdI6hZ?=
- =?us-ascii?Q?Id16v5kFbH8KXMEQhpKaADzEhuZoqntuabBFOHsbuavJIybtvEpWlLcBdHa1?=
- =?us-ascii?Q?t2nAgOLISIOGhEaySl/3UKP2GD22bf9X06ihTf+oTxDqapRlAeNoB85EzcQM?=
- =?us-ascii?Q?HRSacX8aLNaQD8Y49Nb0qOtaoCBifmGhnZ5NdFAPMgED52k3QLX1CiMSR17C?=
- =?us-ascii?Q?Z3CWVMuJ3AJcWlCzP32vzXZpDFgohybOM1d5KqLF/3hq9euDspLfJoXH8q/L?=
- =?us-ascii?Q?OTmvmAdTy9stRPA7dZgyNoKjgAyKTP3qYLDl4vi0nj2i0jNOmrnWnZFtdy0k?=
- =?us-ascii?Q?WUvB9YOaZLfKqtbzQ4kzmiSTOT6W66l7dshfvUh3e47g4Z8z6N6jxEGhOO+I?=
- =?us-ascii?Q?0NBJ7aRSs0gxeGfBJLIATAsjFcLh4Jqw0Xs60CVtF+L2uRN4tAnL6sEDtcFS?=
- =?us-ascii?Q?YTihvX+zao5Ae/FlnuHgS+VNm0xQMzeSK9uzgL3aKgUf0cZcsTtRI0rt9HGa?=
- =?us-ascii?Q?p4M3izaKaizvzQ5OJFpy3Xi2vM2/n4UCJrA7OSgaNH+JPQnZVJUT05MK8Bff?=
- =?us-ascii?Q?ZxQvm0MRQmMVRcg3svOl0HKqQCWSWzL6banG2TY9i95C3Rb+aObw+5tjd+0k?=
- =?us-ascii?Q?X8Tf8nPKJU0zL6ijnsOKRdj+33m9ssbXuutSKYWYNiPBezIiJDOYRHlrBAAh?=
- =?us-ascii?Q?ajRiJv0S6MM9a5M0e9OSDcJnVsAJBuyzAm5w3lEENHPtCGXw6eBDze8HTD/1?=
- =?us-ascii?Q?u3J8cFXvbC2WPLW6vbRkvvZjblUDR3lSq10oSbd9o8413JXXw+zNzYTXMEoR?=
- =?us-ascii?Q?iRgwj8mwprOggR8XyY0p5zP4T6Ms9W75ljnjOpiWLcF6Mieq6hfLt6pCzoEs?=
- =?us-ascii?Q?lTMdJgy9aw17KnoZFo4WilPiUXKnLBI55+AYiXmV?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63bae6fa-45e8-466e-cf83-08dc7e05773c
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2024 04:28:32.1549
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LShssbvktRTB7JthA8oXi8f6czC/8QfKv9Yx4cPliuupmhA2FGIPsYUuAwhmNzeGwDz1WpgtUtZXJZjUfS2zoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5504
+Content-Transfer-Encoding: 8bit
 
-Configuration for sbq:
-  depth=64, wake_batch=6, shift=6, map_nr=1
+This patch introduces a new driver to support the Goodix GT7986U
+touch controller. The data reported is packaged according to the
+HID protocol but uses SPI for communication to improve speed. This
+enables the device to transmit not only coordinate data but also
+corresponding raw data that can be accessed by user-space programs
+through the hidraw interface. The raw data can be utilized for
+functions like palm rejection, thereby improving the touch experience.
 
-1. There are 64 requests in progress:
-  map->word = 0xFFFFFFFFFFFFFFFF
-2. After all the 64 requests complete, and no more requests come:
-  map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
-3. Now two tasks try to allocate requests:
-  T1:                                       T2:
-  __blk_mq_get_tag                          .
-  __sbitmap_queue_get                       .
-  sbitmap_get                               .
-  sbitmap_find_bit                          .
-  sbitmap_find_bit_in_word                  .
-  __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
-  sbitmap_deferred_clear                    __sbitmap_queue_get
-  /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
-    if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
-      return false;                         __sbitmap_get_word -> nr=-1
-    mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
-    atomic_long_andnot()                    /* map->cleared=0 */
-                                              if (!(map->cleared))
-                                                return false;
-                                     /*
-                                      * map->cleared is cleared by T1
-                                      * T2 fail to acquire the tag
-                                      */
+Key features:
+- Device connection confirmation and initialization
+- IRQ-based event reporting to the input subsystem
+- Support for HIDRAW operations (GET_REPORT and SET_REPORT)
 
-4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
-up due to the wake_batch being set at 6. If no more requests come, T1
-will wait here indefinitely.
-
-Fix this issue by adding a new flag swap_inprogress to indicate whether
-the swap is ongoing.
-
-Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
-Signed-off-by: Yang Yang <yang.yang@vivo.com>
+Signed-off-by: Charles Wang <charles.goodix@gmail.com>
 ---
- include/linux/sbitmap.h |  5 +++++
- lib/sbitmap.c           | 22 ++++++++++++++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
+Changes in v2:
+- Fixed build warnings reported by kernel test robot
+---
+ drivers/hid/Kconfig      |   6 +
+ drivers/hid/Makefile     |   1 +
+ drivers/hid/hid-goodix.c | 652 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 659 insertions(+)
+ create mode 100644 drivers/hid/hid-goodix.c
 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index d662cf136021..b88a9e4997ab 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -36,6 +36,11 @@ struct sbitmap_word {
- 	 * @cleared: word holding cleared bits
- 	 */
- 	unsigned long cleared ____cacheline_aligned_in_smp;
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 4c682c650..f57d8fb88 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -404,6 +404,12 @@ config HID_VIVALDI_COMMON
+ 	  option so that drivers can use common code to parse the HID
+ 	  descriptors for vivaldi function row keymap.
+ 
++config HID_GOODIX
++	tristate "Goodix GT7986U SPI HID touchscreen"
++	depends on SPI_MASTER
++	help
++	  Support for Goodix GT7986U SPI HID touchscreen device.
 +
-+	/**
-+	 * @swap_inprogress: set to 1 when swapping word <-> cleared
-+	 */
-+	atomic_t swap_inprogress;
- } ____cacheline_aligned_in_smp;
- 
- /**
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 1e453f825c05..d4bb258fe8b0 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -62,10 +62,19 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
-  */
- static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
- {
--	unsigned long mask;
-+	unsigned long mask, flags;
-+	int zero = 0;
- 
--	if (!READ_ONCE(map->cleared))
-+	if (!READ_ONCE(map->cleared)) {
-+		if (atomic_read(&map->swap_inprogress))
-+			goto out_wait;
- 		return false;
+ config HID_GOOGLE_HAMMER
+ 	tristate "Google Hammer Keyboard"
+ 	select HID_VIVALDI_COMMON
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index 082a728ea..4e799f7e5 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -54,6 +54,7 @@ obj-$(CONFIG_HID_GEMBIRD)	+= hid-gembird.o
+ obj-$(CONFIG_HID_GFRM)		+= hid-gfrm.o
+ obj-$(CONFIG_HID_GLORIOUS)  += hid-glorious.o
+ obj-$(CONFIG_HID_VIVALDI_COMMON) += hid-vivaldi-common.o
++obj-$(CONFIG_HID_GOODIX)	+= hid-goodix.o
+ obj-$(CONFIG_HID_GOOGLE_HAMMER)	+= hid-google-hammer.o
+ obj-$(CONFIG_HID_GOOGLE_STADIA_FF)	+= hid-google-stadiaff.o
+ obj-$(CONFIG_HID_VIVALDI)	+= hid-vivaldi.o
+diff --git a/drivers/hid/hid-goodix.c b/drivers/hid/hid-goodix.c
+new file mode 100644
+index 000000000..a67f7d9ef
+--- /dev/null
++++ b/drivers/hid/hid-goodix.c
+@@ -0,0 +1,652 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Goodix GT7986U SPI Driver Code for HID.
++ *
++ * Copyright (C) 2024 Godix, Inc.
++ */
++#include <asm/unaligned.h>
++#include <linux/delay.h>
++#include <linux/hid.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/sizes.h>
++#include <linux/spi/spi.h>
++
++#define GOODIX_DEV_CONFIRM_ADDR		0x10000
++#define GOODIX_HID_DESC_ADDR		0x1058C
++#define GOODIX_HID_REPORT_DESC_ADDR	0x105AA
++#define GOODIX_HID_SIGN_ADDR		0x10D32
++#define GOODIX_HID_REPORT_ADDR		0x22C8C
++
++#define GOODIX_HID_GET_REPORT_CMD	0x02
++#define GOODIX_HID_SET_REPORT_CMD	0x03
++
++#define GOODIX_HID_MAX_INBUF_SIZE	128
++#define GOODIX_HID_ACK_READY_FLAG	0x01
++#define GOODIX_HID_REPORT_READY_FLAG	0x80
++
++#define GOODIX_DEV_CONFIRM_VAL		0xAA
++
++#define GOODIX_SPI_WRITE_FLAG		0xF0
++#define GOODIX_SPI_READ_FLAG		0xF1
++#define GOODIX_SPI_TRANS_PREFIX_LEN	1
++#define GOODIX_REGISTER_WIDTH		4
++#define GOODIX_SPI_READ_DUMMY_LEN	3
++#define GOODIX_SPI_READ_PREFIX_LEN	(GOODIX_SPI_TRANS_PREFIX_LEN + \
++					 GOODIX_REGISTER_WIDTH + \
++					 GOODIX_SPI_READ_DUMMY_LEN)
++#define GOODIX_SPI_WRITE_PREFIX_LEN	(GOODIX_SPI_TRANS_PREFIX_LEN + \
++					 GOODIX_REGISTER_WIDTH)
++
++#define GOODIX_CHECKSUM_SIZE		sizeof(u16)
++#define GOODIX_NORMAL_RESET_DELAY_MS	150
++
++struct goodix_hid_report_header {
++	u8 flag;
++	__le16 size;
++} __packed;
++#define GOODIX_HID_ACK_HEADER_SIZE	sizeof(struct goodix_hid_report_header)
++
++struct goodix_hid_report_package {
++	__le16 size;
++	u8 data[];
++};
++
++#define GOODIX_HID_PKG_LEN_SIZE		sizeof(u16)
++#define GOODIX_HID_COOR_DATA_LEN	82
++#define GOODIX_HID_COOR_PKG_LEN		(GOODIX_HID_PKG_LEN_SIZE + \
++					 GOODIX_HID_COOR_DATA_LEN)
++
++#define GOODIX_REPORT_DATA_ADDR		(GOODIX_HID_REPORT_ADDR + \
++					 GOODIX_HID_ACK_HEADER_SIZE + \
++					 GOODIX_HID_PKG_LEN_SIZE)
++
++struct goodix_hid_report_event {
++	struct goodix_hid_report_header hdr;
++	u8 data[GOODIX_HID_COOR_PKG_LEN];
++} __packed;
++
++struct goodix_hid_desc {
++	__le16 desc_length;
++	__le16 bcd_version;
++	__le16 report_desc_lenght;
++	__le16 report_desc_register;
++	__le16 input_register;
++	__le16 max_input_length;
++	__le16 output_register;
++	__le16 max_output_length;
++	__le16 cmd_register;
++	__le16 data_register;
++	__le16 vendor_id;
++	__le16 product_id;
++	__le16 version_id;
++	__le32 reserved;
++} __packed;
++
++struct goodix_ts_data {
++	struct device *dev;
++	struct spi_device *spi;
++	struct hid_device *hid;
++	struct goodix_hid_desc hid_desc;
++
++	struct gpio_desc *reset_gpio;
++
++	/* Buffer used to store hid report data */
++	u8 xfer_buf[SZ_4K];
++};
++
++static int goodix_spi_read(struct goodix_ts_data *ts, u32 addr,
++			   u8 *data, unsigned int len)
++{
++	struct spi_device *spi = to_spi_device(&ts->spi->dev);
++	struct spi_transfer xfers;
++	struct spi_message spi_msg;
++	u8 *buf;
++	int error;
++
++	buf = kzalloc(GOODIX_SPI_READ_PREFIX_LEN + len, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	spi_message_init(&spi_msg);
++	memset(&xfers, 0, sizeof(xfers));
++
++	/* buffer format: 0xF1 + addr(4bytes) + dummy(3bytes) + data */
++	buf[0] = GOODIX_SPI_READ_FLAG;
++	put_unaligned_be32(addr, buf + GOODIX_SPI_TRANS_PREFIX_LEN);
++	memset(buf + GOODIX_SPI_TRANS_PREFIX_LEN + GOODIX_REGISTER_WIDTH,
++	       0xff, GOODIX_SPI_READ_DUMMY_LEN);
++
++	xfers.tx_buf = buf;
++	xfers.rx_buf = buf;
++	xfers.len = GOODIX_SPI_READ_PREFIX_LEN + len;
++	xfers.cs_change = 0;
++	spi_message_add_tail(&xfers, &spi_msg);
++
++	error = spi_sync(spi, &spi_msg);
++	if (error)
++		dev_err(ts->dev, "spi transfer error:%d", error);
++	else
++		memcpy(data, buf + GOODIX_SPI_READ_PREFIX_LEN, len);
++
++	kfree(buf);
++	return error;
++}
++
++static int goodix_spi_write(struct goodix_ts_data *ts, u32 addr,
++			    u8 *data, unsigned int len)
++{
++	struct spi_device *spi = to_spi_device(&ts->spi->dev);
++	struct spi_transfer xfers;
++	struct spi_message spi_msg;
++	u8 *buf;
++	int error;
++
++	buf = kzalloc(GOODIX_SPI_WRITE_PREFIX_LEN + len, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	spi_message_init(&spi_msg);
++	memset(&xfers, 0, sizeof(xfers));
++
++	/* buffer format: 0xF0 + addr(4bytes) + data */
++	buf[0] = GOODIX_SPI_WRITE_FLAG;
++	put_unaligned_be32(addr, buf + GOODIX_SPI_TRANS_PREFIX_LEN);
++	memcpy(buf + GOODIX_SPI_WRITE_PREFIX_LEN, data, len);
++
++	xfers.tx_buf = buf;
++	xfers.len = GOODIX_SPI_WRITE_PREFIX_LEN + len;
++	xfers.cs_change = 0;
++	spi_message_add_tail(&xfers, &spi_msg);
++
++	error = spi_sync(spi, &spi_msg);
++	if (error)
++		dev_err(ts->dev, "spi transfer error:%d", error);
++
++	kfree(buf);
++	return error;
++}
++
++static int goodix_dev_confirm(struct goodix_ts_data *ts)
++{
++	u8 tx_buf[8], rx_buf[8];
++	int retry = 3;
++	int error;
++
++	gpiod_set_value_cansleep(ts->reset_gpio, 0);
++	usleep_range(4000, 4100);
++
++	memset(tx_buf, GOODIX_DEV_CONFIRM_VAL, sizeof(tx_buf));
++	while (retry--) {
++		error = goodix_spi_write(ts, GOODIX_DEV_CONFIRM_ADDR,
++					 tx_buf, sizeof(tx_buf));
++		if (error)
++			return error;
++
++		error = goodix_spi_read(ts, GOODIX_DEV_CONFIRM_ADDR,
++					rx_buf, sizeof(rx_buf));
++		if (error)
++			return error;
++
++		if (!memcmp(tx_buf, rx_buf, sizeof(tx_buf)))
++			return 0;
++
++		usleep_range(5000, 5100);
 +	}
 +
-+	if (!atomic_try_cmpxchg(&map->swap_inprogress, &zero, 1))
-+		goto out_wait;
++	dev_err(ts->dev, "device confirm failed, rx_buf:%*ph", 8, rx_buf);
++	return -EINVAL;
++}
 +
-+	local_irq_save(flags);
- 
- 	/*
- 	 * First get a stable cleared mask, setting the old mask to 0.
-@@ -77,6 +86,15 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
- 	 */
- 	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
- 	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
++/**
++ * goodix_hid_parse() - hid-core .parse() callback
++ * @hid: hid device instance
++ *
++ * This function gets called during call to hid_add_device
++ *
++ * Return: 0 on success and non zero on error
++ */
++static int goodix_hid_parse(struct hid_device *hid)
++{
++	struct goodix_ts_data *ts = hid->driver_data;
++	u16 rsize;
++	u8 *rdesc;
++	int error;
 +
-+	atomic_set(&map->swap_inprogress, 0);
-+	smp_mb__after_atomic();
-+	local_irq_restore(flags);
-+	return true;
++	rsize = le16_to_cpu(ts->hid_desc.report_desc_lenght);
++	if (!rsize || rsize > HID_MAX_DESCRIPTOR_SIZE) {
++		dev_err(ts->dev, "invalid report desc size %d", rsize);
++		return -EINVAL;
++	}
 +
-+out_wait:
-+	while (atomic_read(&map->swap_inprogress))
-+		;
- 	return true;
- }
- 
++	rdesc = kzalloc(rsize, GFP_KERNEL);
++	if (!rdesc)
++		return -ENOMEM;
++
++	error = goodix_spi_read(ts, GOODIX_HID_REPORT_DESC_ADDR, rdesc, rsize);
++	if (error) {
++		dev_err(ts->dev, "failed get report desc, %d", error);
++		goto free_mem;
++	}
++
++	error = hid_parse_report(hid, rdesc, rsize);
++	if (error)
++		dev_err(ts->dev, "failed parse report, %d", error);
++
++free_mem:
++	kfree(rdesc);
++	return error;
++}
++
++/* Empty callbacks with success return code */
++static int goodix_hid_start(struct hid_device *hid)
++{
++	return 0;
++}
++
++static void goodix_hid_stop(struct hid_device *hid)
++{
++}
++
++static int goodix_hid_open(struct hid_device *hid)
++{
++	return 0;
++}
++
++static void goodix_hid_close(struct hid_device *hid)
++{
++}
++
++/* Return date length of response data */
++static int goodix_hid_check_ack_status(struct goodix_ts_data *ts)
++{
++	struct goodix_hid_report_header hdr;
++	int retry = 20;
++	int error;
++
++	while (retry--) {
++		/*
++		 * 3 bytes of hid request response data
++		 * - byte 0:    Ack flag, value of 1 for data ready
++		 * - bytes 1-2: Response data length
++		 */
++		error = goodix_spi_read(ts, GOODIX_HID_REPORT_ADDR,
++					(u8 *)&hdr, sizeof(hdr));
++		if (!error && (hdr.flag & GOODIX_HID_ACK_READY_FLAG))
++			return le16_to_cpu(hdr.size);
++
++		/* Wait 10ms for another try */
++		usleep_range(10000, 11000);
++	}
++
++	return -EINVAL;
++}
++
++/**
++ * goodix_hid_get_raw_report() - Process hidraw GET REPORT operation
++ * @hid: hid device instance
++ * @reportnum: Report ID
++ * @buf: Buffer for store the reprot date
++ * @len: Length fo reprot data
++ * @report_type: Report type
++ *
++ * The function for hid_ll_driver.get_raw_report to handle the HIDRAW ioctl
++ * get report request. The transmitted data follows the standard i2c-hid
++ * protocol with a specified header.
++ *
++ * Return: The length of the data in the buf on success, negative error code
++ */
++static int goodix_hid_get_raw_report(struct hid_device *hid,
++				     unsigned char reportnum,
++				     __u8 *buf, size_t len,
++				     unsigned char report_type)
++{
++	struct goodix_ts_data *ts = hid->driver_data;
++	u16 data_register = le16_to_cpu(ts->hid_desc.data_register);
++	u16 cmd_register = le16_to_cpu(ts->hid_desc.cmd_register);
++	u8 tmp_buf[GOODIX_HID_MAX_INBUF_SIZE];
++	int tx_len = 0, args_len = 0;
++	int response_data_len;
++	u8 args[3];
++	int error;
++
++	if (report_type == HID_OUTPUT_REPORT)
++		return -EINVAL;
++
++	if (reportnum == 3) {
++		/* Get win8 signature data */
++		error = goodix_spi_read(ts, GOODIX_HID_SIGN_ADDR, buf, len);
++		if (error) {
++			dev_err(ts->dev, "failed get win8 sign:%d", error);
++			return -EINVAL;
++		}
++		return len;
++	}
++
++	if (reportnum >= 0x0F) {
++		args[args_len++] = reportnum;
++		reportnum = 0x0F;
++	}
++	put_unaligned_le16(data_register, args + args_len);
++	args_len += sizeof(data_register);
++
++	/* Clean 3 bytes of hid ack header data */
++	memset(tmp_buf, 0, GOODIX_HID_ACK_HEADER_SIZE);
++	tx_len += GOODIX_HID_ACK_HEADER_SIZE;
++
++	put_unaligned_le16(cmd_register, tmp_buf + tx_len);
++	tx_len += sizeof(cmd_register);
++
++	tmp_buf[tx_len++] = ((report_type == HID_FEATURE_REPORT ? 0x03 : 0x01) << 4) | reportnum;
++	tmp_buf[tx_len++] = GOODIX_HID_GET_REPORT_CMD;
++
++	memcpy(tmp_buf + tx_len, args, args_len);
++	tx_len += args_len;
++
++	/* Step1: write report request info */
++	error = goodix_spi_write(ts, GOODIX_HID_REPORT_ADDR, tmp_buf, tx_len);
++	if (error) {
++		dev_err(ts->dev, "failed send read feature cmd, %d", error);
++		return error;
++	}
++
++	/* No need read response data */
++	if (!len)
++		return 0;
++
++	/* Step2: check response data status */
++	response_data_len = goodix_hid_check_ack_status(ts);
++	if (response_data_len <= 0)
++		return -EINVAL;
++
++	/* Step3: read response data(skip 2bytes of hid pkg length) */
++	error = goodix_spi_read(ts, GOODIX_REPORT_DATA_ADDR, buf,
++				response_data_len - GOODIX_HID_PKG_LEN_SIZE);
++	if (error) {
++		dev_err(ts->dev, "failed read hid response data, %d", error);
++		return error;
++	}
++
++	return response_data_len - GOODIX_HID_PKG_LEN_SIZE;
++}
++
++/**
++ * goodix_hid_set_raw_report() - process hidraw SET REPORT operation
++ * @hid: HID device
++ * @reportnum: Report ID
++ * @buf: Buffer for communication
++ * @len: Length of data in the buffer
++ * @report_type: Report type
++ *
++ * The function for hid_ll_driver.get_raw_report to handle the HIDRAW ioctl
++ * set report request. The transmitted data follows the standard i2c-hid
++ * protocol with a specified header.
++ *
++ * Return: The length of the data sent, negative error code on failure
++ */
++static int goodix_hid_set_raw_report(struct hid_device *hid,
++				     unsigned char reportnum,
++				     __u8 *buf, size_t len,
++				     unsigned char report_type)
++{
++	struct goodix_ts_data *ts = hid->driver_data;
++	u16 data_register = le16_to_cpu(ts->hid_desc.data_register);
++	u16 cmd_register = le16_to_cpu(ts->hid_desc.cmd_register);
++	int tx_len = 0, args_len = 0;
++	u8 tmp_buf[GOODIX_HID_MAX_INBUF_SIZE];
++	u8 args[5];
++	int error;
++
++	if (reportnum >= 0x0F) {
++		args[args_len++] = reportnum;
++		reportnum = 0x0F;
++	}
++
++	put_unaligned_le16(data_register, args + args_len);
++	args_len += sizeof(data_register);
++
++	put_unaligned_le16(GOODIX_HID_PKG_LEN_SIZE + len, args + args_len);
++	args_len += GOODIX_HID_PKG_LEN_SIZE;
++
++	/* Clean 3 bytes of hid ack header data */
++	memset(tmp_buf, 0, GOODIX_HID_ACK_HEADER_SIZE);
++	tx_len += GOODIX_HID_ACK_HEADER_SIZE;
++
++	put_unaligned_le16(cmd_register, tmp_buf + tx_len);
++	tx_len += sizeof(cmd_register);
++
++	tmp_buf[tx_len++] = ((report_type == HID_FEATURE_REPORT ? 0x03 : 0x02) << 4) | reportnum;
++	tmp_buf[tx_len++] = GOODIX_HID_SET_REPORT_CMD;
++
++	memcpy(tmp_buf + tx_len, args, args_len);
++	tx_len += args_len;
++
++	memcpy(tmp_buf + tx_len, buf, len);
++	tx_len += len;
++
++	error = goodix_spi_write(ts, GOODIX_HID_REPORT_ADDR, tmp_buf, tx_len);
++	if (error) {
++		dev_err(ts->dev, "failed send report %*ph", tx_len, tmp_buf);
++		return error;
++	}
++	return len;
++}
++
++static int goodix_hid_raw_request(struct hid_device *hid,
++				  unsigned char reportnum,
++				  __u8 *buf, size_t len,
++				  unsigned char rtype, int reqtype)
++{
++	switch (reqtype) {
++	case HID_REQ_GET_REPORT:
++		return goodix_hid_get_raw_report(hid, reportnum, buf,
++						 len, rtype);
++	case HID_REQ_SET_REPORT:
++		if (buf[0] != reportnum)
++			return -EINVAL;
++		return goodix_hid_set_raw_report(hid, reportnum, buf,
++						 len, rtype);
++	default:
++		return -EIO;
++	}
++
++	return -EINVAL;
++}
++
++static struct hid_ll_driver goodix_hid_ll_driver = {
++	.parse = goodix_hid_parse,
++	.start = goodix_hid_start,
++	.stop = goodix_hid_stop,
++	.open = goodix_hid_open,
++	.close = goodix_hid_close,
++	.raw_request = goodix_hid_raw_request
++};
++
++static irqreturn_t goodix_hid_irq(int irq, void *data)
++{
++	struct goodix_ts_data *ts = data;
++	struct goodix_hid_report_event event;
++	struct goodix_hid_report_package *pkg;
++	u16 report_size;
++	int error;
++
++	/*
++	 * First, read buffer with space for header and coordinate package:
++	 * - event header = 3 bytes
++	 * - coordinate event = GOODIX_HID_COOR_PKG_LEN bytes
++	 *
++	 * If the data size info in the event header exceeds
++	 * GOODIX_HID_COOR_PKG_LEN, it means that there are other packages
++	 * besides the coordinate package.
++	 */
++	error = goodix_spi_read(ts, GOODIX_HID_REPORT_ADDR, (u8 *)&event,
++				sizeof(event));
++	if (error) {
++		dev_err(ts->dev, "failed get coordinate data, %d", error);
++		return IRQ_HANDLED;
++	}
++
++	/* Check coordinate data valid falg */
++	if (event.hdr.flag != GOODIX_HID_REPORT_READY_FLAG) {
++		dev_err(ts->dev, "invalid event flag 0x%x", event.hdr.flag);
++		return IRQ_HANDLED;
++	}
++
++	pkg = (struct goodix_hid_report_package *)event.data;
++	hid_input_report(ts->hid, HID_INPUT_REPORT, pkg->data,
++			 le16_to_cpu(pkg->size) - GOODIX_HID_PKG_LEN_SIZE, 1);
++
++	report_size = le16_to_cpu(event.hdr.size);
++	/* Check if there are other packages */
++	if (report_size <= GOODIX_HID_COOR_PKG_LEN)
++		return IRQ_HANDLED;
++
++	if (report_size - GOODIX_HID_COOR_PKG_LEN > sizeof(ts->xfer_buf)) {
++		dev_err(ts->dev, "invalid package size, %d", report_size);
++		return IRQ_HANDLED;
++	}
++
++	/* Read the package behind the coordinate data */
++	error = goodix_spi_read(ts, GOODIX_HID_REPORT_ADDR + sizeof(event),
++				ts->xfer_buf,
++				report_size - GOODIX_HID_COOR_PKG_LEN);
++	if (error) {
++		dev_err(ts->dev, "failed read data, %d", error);
++		return IRQ_HANDLED;
++	}
++
++	pkg = (struct goodix_hid_report_package *)ts->xfer_buf;
++	hid_input_report(ts->hid, HID_INPUT_REPORT, pkg->data,
++			 le16_to_cpu(pkg->size) - GOODIX_HID_PKG_LEN_SIZE, 1);
++
++	return IRQ_HANDLED;
++}
++
++static int goodix_hid_init(struct goodix_ts_data *ts)
++{
++	struct hid_device *hid;
++	int error;
++
++	/* Get hid descriptor */
++	error = goodix_spi_read(ts, GOODIX_HID_DESC_ADDR, (u8 *)&ts->hid_desc,
++				sizeof(ts->hid_desc));
++	if (error) {
++		dev_err(ts->dev, "failed get hid desc, %d", error);
++		return error;
++	}
++
++	hid = hid_allocate_device();
++	if (IS_ERR(hid))
++		return PTR_ERR(hid);
++
++	hid->driver_data = ts;
++	hid->ll_driver = &goodix_hid_ll_driver;
++	hid->bus = BUS_SPI;
++	hid->dev.parent = &ts->spi->dev;
++
++	hid->version = le16_to_cpu(ts->hid_desc.bcd_version);
++	hid->vendor = le16_to_cpu(ts->hid_desc.vendor_id);
++	hid->product = le16_to_cpu(ts->hid_desc.product_id);
++	snprintf(hid->name, sizeof(hid->name), "%s %04X:%04X", "hid-gdix",
++		 hid->vendor, hid->product);
++
++	error = hid_add_device(hid);
++	if (error) {
++		dev_err(ts->dev, "failed add hid device, %d", error);
++		hid_destroy_device(hid);
++		return error;
++	}
++
++	ts->hid = hid;
++	return 0;
++}
++
++static int goodix_spi_probe(struct spi_device *spi)
++{
++	struct device *dev = &spi->dev;
++	struct goodix_ts_data *ts;
++	int error;
++
++	/* init spi_device */
++	spi->mode            = SPI_MODE_0;
++	spi->bits_per_word   = 8;
++	error = spi_setup(spi);
++	if (error)
++		return error;
++
++	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
++	if (!ts)
++		return -ENOMEM;
++
++	spi_set_drvdata(spi, ts);
++	ts->spi = spi;
++	ts->dev = dev;
++	ts->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(ts->reset_gpio))
++		return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
++				     "Failed to request reset gpio\n");
++
++	error = goodix_dev_confirm(ts);
++	if (error)
++		return error;
++
++	/* Waits 150ms for firmware to fully boot */
++	msleep(GOODIX_NORMAL_RESET_DELAY_MS);
++
++	error = devm_request_threaded_irq(&ts->spi->dev, ts->spi->irq,
++					  NULL, goodix_hid_irq,
++					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++					  "goodix_spi_hid", ts);
++	if (error < 0) {
++		dev_err(ts->dev, "could not register interrupt, irq = %d, %d",
++			ts->spi->irq, error);
++		return error;
++	}
++
++	error = goodix_hid_init(ts);
++	if (error) {
++		dev_err(dev, "failed init hid device");
++		return error;
++	}
++
++	return 0;
++}
++
++static void goodix_spi_remove(struct spi_device *spi)
++{
++	struct goodix_ts_data *ts = spi_get_drvdata(spi);
++
++	hid_destroy_device(ts->hid);
++}
++
++static void goodix_spi_shutdown(struct spi_device *spi)
++{
++	struct goodix_ts_data *ts = spi_get_drvdata(spi);
++
++	disable_irq_nosync(spi->irq);
++	hid_destroy_device(ts->hid);
++}
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id goodix_spi_acpi_match[] = {
++	{ "GXTS7986" },
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
++#endif
++
++static struct spi_driver goodix_spi_driver = {
++	.driver = {
++		.name = "goodix-spi-hid",
++		.acpi_match_table = ACPI_PTR(goodix_spi_acpi_match),
++	},
++	.probe =	goodix_spi_probe,
++	.remove =	goodix_spi_remove,
++	.shutdown =	goodix_spi_shutdown,
++};
++module_spi_driver(goodix_spi_driver);
++
++MODULE_DESCRIPTION("Goodix SPI driver for HID touchscreen");
++MODULE_AUTHOR("Goodix, Inc.");
++MODULE_LICENSE("GPL");
 -- 
-2.34.1
+2.43.0
 
 
