@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-192304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210938D1B4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:29:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134A68D1B9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2B12832BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4354F1C21254
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8E16D9B7;
-	Tue, 28 May 2024 12:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0F616D335;
+	Tue, 28 May 2024 12:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="gqr1fttq"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cfWiiXfu"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADAA16D4F0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC5A7316E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899350; cv=none; b=J7GjrJIUz89dHc5z88i7izmlDYocg0H4QDDUdrOrcqVHf3wmrs7PFqZ4S1Yzc1vuRd4IgW9ONPFOEMeSaQsa85J3RtCnPG9BY2/pjNCNeoXhFZN7ippz/g5ub4/5YWsQHY4E/Caip7bABHBfGkJ2HQYt/VGZqvL5Zx08JRqYdLs=
+	t=1716900575; cv=none; b=sMvY1kleL9PQr0tR5d28/2IlvNJhdLe+xyLc1RlgYLpz9kE2FcOg/c0pC/QN0mFaZDrNopGs3Fy2cIAyCnxqwbsVI0IED/Tdx8qZdVcTbydW2l3o/JqYiOxWBaeaOYdIi0FaMbxGMw9g8BC9OwVpmoylGuCEqTOHdlbsPIKZa00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899350; c=relaxed/simple;
-	bh=MLywZj2H9KXhqq9F76X1wtPZ9zD+O5VDL3g1/wyM9YA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eh8FH8zy2ww8XSGpThBGlCw+9e8gcwqU2qdi7QteuDkkvvHkAbEnvV67NIfvNuLWadOQOqDh/FGKTSzhgRW0wW22SeYVks14pD0jVT2QM38g3WdBIUdBKRXU3VBJ6vXpP61eM29Ogllg4aIwEJ/aK9imKv/Vy/z2T38JUdtr9J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=gqr1fttq; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=OgHle4voOTcsNO799IluUuijexopfWQRdp/vDqkrVbY=; b=gqr1fttqJZ63HiQnfzTpfV4XCO
-	deKSMqIL+UTXE4dF7bs8W4Xoy/It+A45ccx3vwOArRoYzRKP7GwtSPAP+TyNJfaswptIAdz70rmCN
-	7Jp+hO/y7/AGg2EfUgqixS7jUJSzcDuWDf7eMqattNQXn54cpY03Io4zV6nL13VAlfW6YdTl1CHHu
-	DVs+k6xzDDobNShedE2pGccxW7slgnn5KEQqPNKjE027KbWi1c0hl+v5ccJHiRmbnw5dWYQF3uwL4
-	ysaky7PPKq7GMG66LGwldyRzWNkAJdrzqbOdV8x4x+kZxQpeZNM9q0NgIpISuzkPzcjoPt9GlKdSn
-	ftnpRAWw==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sBvwu-000G8t-6a; Tue, 28 May 2024 14:29:04 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sBvws-000CDS-1k;
-	Tue, 28 May 2024 14:29:02 +0200
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 28 May 2024 14:28:52 +0200
-Subject: [PATCH v2 1/2] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
+	s=arc-20240116; t=1716900575; c=relaxed/simple;
+	bh=eskFZzuz0sBw+qow+jUURiVDJ/Ihsw3DjEQhU+Dwx+U=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=XRKaHKUV8uY74Zy/dCCzElu8l3oy+8dg7ulfViyguvYMqlIj3bhSCPd2QK35QeiLivE4A9ZhLrJcJNCO+LTx2BfDJcmSAWTxqYrFwsuYwqDYKo8E6jNb1mmC2s4UhCt8i8g44vhrAxB9feAI9yyEbraaxtweYypspOmJ+3pNLEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cfWiiXfu; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1716900563; bh=4X+71YgTs5RtTppyyiiPJcwtubGMqCcsHi1CEdzzrf8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cfWiiXfuJZrUG7kSjdNI6tDXqDVR/kbMP1ZqWHpZs0Qlvgu/RBAA8YSE+WYkPVDum
+	 /LJ/vf691TPep20cXJ0JL3gi8UKvsF/XXkLru29jbY2wdqJ5x/2XRbr2PlSLq+UUQZ
+	 iDVDGnVDVgzz63nsoYOvOfNVa9uoxj0AYmWWp2DE=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 734BD064; Tue, 28 May 2024 20:28:52 +0800
+X-QQ-mid: xmsmtpt1716899332tz6r2oqqd
+Message-ID: <tencent_9FA58DAAA5CF0D8B9250DDB2DDF4192FCF07@qq.com>
+X-QQ-XMAILINFO: MmPNY57tR1Xn1VYbDdYGMPX+WEO97G8eisA7LlPfqrz6o2XabzF3LLjtA4cueX
+	 Ruj8yLnj+hD5WrPYxdtbvR8FZ5GWGXe2D+13/qe6gd/jsOt3zKHV8G6SnnGKwQRaqno7JQlbnAIA
+	 TA3//bFXYzkV2Tev8ToHGXMqPbrGvWaJtMyv5gh9hW79tlQxQr3hUWtCIqLS/8Z0X5DdN5fWHtsc
+	 ObP+miZ1G5xVxzTVNANPYIVxsXqJHQpV+bmadvkwmg9o93zHbrxuEH0skcAcKlDcjmS1sWCt131p
+	 A6xhzvz+qE6pY/DMBJsdw8TBeYTaQol1Ur25uo/5A0QVOTSF65VYFlPvZQ4hAex2hhrhXi/S7mYt
+	 KFJ8e9Pn8a7MXDdEDmkO8uRIdHRdksHGjpzqf1bS9a7vXxjn+x4Ldwc5yVVx6JOgw37x+FYvKxo7
+	 7TEpp5fxRi/JStwjtLyczhVdUuKTeTspKD30Vfav6Znbh+Zhc30IJ/sC6xj/ETSW6uPvPzlK3ZpC
+	 Es9D13OSU1jB+UqXC26cjQPVevIO2xRyJdEde/yS82cwIFCjxOHHq41M/2EzIMz+9G37gL+lzCt9
+	 Y/AU1f0+4n4Mp5kRVdN8r0lpAONy+74B3ogfYB/a+/lsYClF49mLmqqjsrduzu1i11k0gBpYNlja
+	 J9JxuJqhyXkPD003jPZJYrk2nsw2vjBAGS2CClYKHSUjA6kFnpo55b9EH37FrUfPdQaXvpfyqhcY
+	 4XuxkJH16C9onCNBGQc3A2PZVxzsTvWda8VcGPG8EWrqAhkvni9J49JpeLCFiUp4NfRgND7rs8kJ
+	 aI4E1rtPPIijW8UtxQ4lcgkQkHVKhwrzUw2+DPAHWs+CfYM33FT/gUWiG+ev1SmCG6Pay7YyDo3w
+	 RDwQkqB5uWDGfy+mkZcwFbYR+7O5Fj/kf8F0tZWSy7AoQSl0WAtZUg64CMIdczFtzUMUQIAHgPfo
+	 ET4gcldK0=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+07762f019fd03d01f04c@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] KMSAN: uninit-value in asus_report_fixup
+Date: Tue, 28 May 2024 20:28:53 +0800
+X-OQ-MSGID: <20240528122852.1885479-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000915d550619389e8a@google.com>
+References: <000000000000915d550619389e8a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-fsl-ifc-config-v2-1-5fd7be76650d@geanix.com>
-References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
-In-Reply-To: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linuxppc-dev@lists.ozlabs.org, Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716899341; l=1486;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=MLywZj2H9KXhqq9F76X1wtPZ9zD+O5VDL3g1/wyM9YA=;
- b=I7byAcSPyjt1Yv3MJjCzMfUm/OXKpRSUKge+5wxo1ctSS0kaRtrGCDC1dq08LiL3koIJiCw+R
- K/vDfoCbrwPDp5waJAuFD4pEeMpeFAlW+NO79jK2B1sdOF00u9ZfePc
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27289/Tue May 28 10:30:59 2024)
+Content-Transfer-Encoding: 8bit
 
-While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
-driver selects FSL_IFC automatically, we need the CONFIG_FSL_IFC option to
-be selectable for platforms using fsl_ifc with NOR flash.
+please test uv asus_report_fixup
 
-Fixes: ea0c0ad6b6eb ("memory: Enable compile testing for most of the drivers")
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/memory/Kconfig       | 2 +-
- drivers/mtd/nand/raw/Kconfig | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 70ec81c2e2b4
 
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 8efdd1f97139..c82d8d8a16ea 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -167,7 +167,7 @@ config FSL_CORENET_CF
- 	  represents a coherency violation.
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 02de2bf4f790..1a92392967fc 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -1204,8 +1204,9 @@ static __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 	}
  
- config FSL_IFC
--	bool "Freescale IFC driver" if COMPILE_TEST
-+	bool "Freescale IFC driver"
- 	depends on FSL_SOC || ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST
- 	depends on HAS_IOMEM
+ 	/* match many more n-key devices */
+-	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+-		for (int i = 0; i < *rsize + 1; i++) {
++	printk("rdesc: %c.%c.%c.%c.%c, %s\n", rdesc[0], rdesc[1], rdesc[2], rdesc[3], rdesc[4], __func__);
++	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && *rsize > 15) {
++		for (int i = 0; i < *rsize - 14; i++) {
+ 			/* offset to the count from 0x5a report part always 14 */
+ 			if (rdesc[i] == 0x85 && rdesc[i + 1] == 0x5a &&
+ 			    rdesc[i + 14] == 0x95 && rdesc[i + 15] == 0x05) {
+diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
+index a90ed2ceae84..9f0e09f667b1 100644
+--- a/drivers/hid/usbhid/hid-core.c
++++ b/drivers/hid/usbhid/hid-core.c
+@@ -1029,7 +1029,7 @@ static int usbhid_parse(struct hid_device *hid)
+ 		return -EINVAL;
+ 	}
  
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index cbf8ae85e1ae..614257308516 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -234,8 +234,7 @@ config MTD_NAND_FSL_IFC
- 	tristate "Freescale IFC NAND controller"
- 	depends on FSL_SOC || ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST
- 	depends on HAS_IOMEM
--	select FSL_IFC
--	select MEMORY
-+	depends on FSL_IFC
- 	help
- 	  Various Freescale chips e.g P1010, include a NAND Flash machine
- 	  with built-in hardware ECC capabilities.
-
--- 
-2.45.1
+-	rdesc = kmalloc(rsize, GFP_KERNEL);
++	rdesc = kzalloc(rsize, GFP_KERNEL);
+ 	if (!rdesc)
+ 		return -ENOMEM;
+ 
 
 
