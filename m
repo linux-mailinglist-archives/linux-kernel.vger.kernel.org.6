@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-191951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5A88D1683
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:42:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE988D1682
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C74D1C2208A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68C5283952
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FA313D255;
-	Tue, 28 May 2024 08:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDB13C91A;
+	Tue, 28 May 2024 08:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XXfc3oeE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCs2QOAY"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B14513C82D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629796D1A6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885723; cv=none; b=tI256crqPCoXR5YN8SE7WLky/Z+SGC1HA0SXJZgfrdyExNeDHJYKd6sSQ5rrX8Nq3X9U0ZgEwhk2Ri8P5y96jKclSZeWzjp7NR5LFZXcGmfqmxDNGtSX/G4Y2N9HT0n14fYdieyFIqCy4eKfYoee6Or1Vq/BEm6x84WiIOt51Js=
+	t=1716885721; cv=none; b=McxfD5IAaqNhpk2pqFgyIekkrAazwFoJD9de2bLnFvHMEyZgdi8ly7EKIh1H0EzQADaQiNbqsCgjkwsEtPb+rKi9m1kvas9obT4uEIT1Vml1ll/XsL6+4/7GCuO0RU5hkD5DxLsT56cyrJlnRXdL3OSRaoxoCAYYLbTiOEQT8Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885723; c=relaxed/simple;
-	bh=Si8uOwB+SR615T9o2vhzkyA4Se0BdaVJkkhBGHvnBRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5ZsANmQs/5QDi+3D9AioqtE7Wd+aXPt4eTsIOJN0Is8TSV+soaT6oOcPnJSwHHD0M/mfI1lsISkghx6UcRZWsWOG6kUkt21+7xIX9wIvPwI/ug2iIhORP2dgKj8EYD5GRD8G9QnMCC62svy1VApnmnzorUy43TULEUwM86XfYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XXfc3oeE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716885720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pUUEi4NFq5/6ujzPIEhzepE5FYBnLSr5RCh2O1Q//wA=;
-	b=XXfc3oeE9vJBnCrzzs3o8ECHrlP6DvqNEPEa8fp7vDD/K+SawM8GmmOsos2HAvRVLzJa+S
-	DaP/k19+ImFRHXHmwwo8TRsE8QTxR3A3ieJPEfSxC26muzsB/vUNcYaYI0nALlIlO/JFDv
-	MA3T+yNcyq+7vA5d8vNWrFkBmAwzFH0=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-gWfmZXKdPqmlEjxtqB4FiQ-1; Tue, 28 May 2024 04:41:58 -0400
-X-MC-Unique: gWfmZXKdPqmlEjxtqB4FiQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a6265d3cb78so41804166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:41:58 -0700 (PDT)
+	s=arc-20240116; t=1716885721; c=relaxed/simple;
+	bh=iXf/xBSZbXbRyTAieBsxS0pwSufFB+gzmegcfsajFxY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hX0LlNDk38FYB+M+CMW3K3d+Z9R0bhTStVJlF52wh/TiA2TUX4Cfrn7uP0D0AhXsW96zYjjhQ4p6obkmr0bLp5gputoH7JKMpKq40/JHD+9rzdLCroXaMz5ES4AabFYicvFBe0Dcgw3zlLeMH4Vui/TPHBmX9MFFSWrRAVXhoks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCs2QOAY; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-529b79609cbso952874e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716885717; x=1717490517; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kQM6HYhZbxPatU25g9nxoYtgAi0elYZKvX9/9nM9Kkg=;
+        b=GCs2QOAYwI/cNnGULvv2DzlwG3xdNzoktih0xQXBcgeBi59ZSwQEf0Rzx1QKOFnsI2
+         v6DPhkN+vrPBIJvCIk7GafZyAhrEN0NSfIZSlKP9C4wreG3u5PIQIhq5EnM6uPCI3oTB
+         m3itAyus5HS9GOCXmueqxjZDYWr4MCjKz2B57L8h/Z4mLsvA88OL5pPj9OcgWqfN2cml
+         M/ALOd1T0zFU/GbEhkVIzyk36sJYR4NxLezOpA0npHmaK0wUG0RbASl6yXlhuVQkstfO
+         p7bJWKgeKtpyNS97OOcrHhRIphOlgyK6aUHOhF+L7xyjEvVpRcxFo7jvhza065Np0IQD
+         Usvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1716885717; x=1717490517;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUUEi4NFq5/6ujzPIEhzepE5FYBnLSr5RCh2O1Q//wA=;
-        b=KauvZgaRJDhIuO9RvfDACQY50McooKYx1g2fbVKTdahNqI+SK84Jgu52gNLxm5UQ5Q
-         znw7DMmBM+02pfNOBIFJLI6s0h+vHlPS2XLUIxCoOHKrVwRazM+pndmdknmNvy4NxoPh
-         tlhcJim/IOr2dS5sMJU3fJDfDY141XSlc5V4IwVpmUfpdhC9BGr3NnbHZDb3l7OdPzLp
-         G47H5KRQnABdV+JvKX5cXZXYNvbt+QtBqmwzHqkRMKjPTg5fYMVotXZif0pn4jlUp6yk
-         7dmrne5F1wFq58675N4jC5I99N4B2A6h3kLU6z1J0t+/lQY64g3991ekZWAz7BahetVu
-         3Xvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuXxa2bxjBPGl3P0wwBXUTZsjr5kBmVjbDoOFz1KsxscVwMpAsz8Iz5w8XZNSjNjOu6Tm9LPzVX+E0a04To1F4KdNFMimwdHyeGqXa
-X-Gm-Message-State: AOJu0YxrgrzW00lf0Yr8TkcU/ilc/iKQEJRRzgclzZZmnJWLBHdXWex4
-	U1Z6JXj8i5yc9UR9sloA/C+cx1dwCjwM50O0Ie3Sx+OAsTARk/6g/OPUoJAPhDwT5+bsk15Je3y
-	EWkxflxSMO3U/++bti3EDnb1qluq0wvOgg4Y9ReTQveNjQ1O2ULcVnm157lyF2w==
-X-Received: by 2002:a17:906:d8d2:b0:a62:c02:425a with SMTP id a640c23a62f3a-a626525d448mr817030966b.74.1716885717519;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kQM6HYhZbxPatU25g9nxoYtgAi0elYZKvX9/9nM9Kkg=;
+        b=dpwAOmErJ/lctJbEgsrFqEuxT9iJQx3gkeU49Nn+JGVCSz2D8cn7bQPU0wkrRBbPYi
+         tVvxw5ounFwP7jAwJqNR9WHW5iHR/RZKe9/eYnqczpu4npdv5HpYIDQrdpw8qQci3k9P
+         XEjsTfV1N2ubQRbEzVcsx850PounVaO7pa03HBRCGjTwZyr2rCusJcIa0O0o8wWYuKRo
+         9Ay3ifmiDAl7Jot3FaXpIWqdfbOnAGao/xshCo1xW2dzKpETcryeiN527NGQmuL81We2
+         YO3Jv7qwkIZYSWJ0doBACHDHrJoVIq2obk6PZ3of4q/WEDAVLAWQGkBxhJ8lbacEQR+C
+         dFiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSPqV4IIXCJm/Qn/UY+Ho7376DDPOsIvGw9DD5x83AyKt6fzy4oCF+y9jnlhWf3AIq5sfhlCHfypIqWofDYsLHH7lc+VXKUX4GHGiG
+X-Gm-Message-State: AOJu0YxA9eHNsXtgCnuj9LNZMLXWDPWrU1QOef0VcyOhfx0urltf9iSn
+	57Jd17A756JQ4OniZnNBjn5JESkBkZtqrmHMJhAI31RiEoHktbIqihHpExOeDPc=
+X-Google-Smtp-Source: AGHT+IHSmbsd+w6NOeeMhcyPQNGVPQBayOgoB5Rg4ZeNC9bV0ohtGlQncUQuOB9hXyz9tT97E7C4MA==
+X-Received: by 2002:a05:6512:3e13:b0:524:43b2:d326 with SMTP id 2adb3069b0e04-52964ca75d5mr8748177e87.37.1716885717433;
         Tue, 28 May 2024 01:41:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdFD9ql2/8w9cDbZsgKBm+WaL/wEXxkf8Jsu4WI1Wl5SGpzVoidZnRLsUUlVlZlyCzn7wrOA==
-X-Received: by 2002:a17:906:d8d2:b0:a62:c02:425a with SMTP id a640c23a62f3a-a626525d448mr817028266b.74.1716885717007;
-        Tue, 28 May 2024 01:41:57 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c860sm586492066b.168.2024.05.28.01.41.55
+Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210896676bsm135394835e9.4.2024.05.28.01.41.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 01:41:56 -0700 (PDT)
-Message-ID: <07686f06-f1a8-4282-bb48-fc4a5b554552@redhat.com>
-Date: Tue, 28 May 2024 10:41:54 +0200
+        Tue, 28 May 2024 01:41:57 -0700 (PDT)
+Message-ID: <2f074d47-3021-4d81-93cd-c8e4593f0b0f@linaro.org>
+Date: Tue, 28 May 2024 10:41:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,79 +77,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers over
- 90%
-To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com,
- vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
- willy@infradead.org, peterz@infradead.org, luto@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, rjgolo@gmail.com
-References: <20240510065206.76078-1-byungchul@sk.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20240510065206.76078-1-byungchul@sk.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/3] pmdomain: amlogic: Add support for A4 power domains
+ controller
+To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
+ <20240528-a4_secpowerdomain-v1-2-2a9d7df9b128@amlogic.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240528-a4_secpowerdomain-v1-2-2a9d7df9b128@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Am 10.05.24 um 08:51 schrieb Byungchul Park:
-> Hi everyone,
+On 28/05/2024 10:39, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> While I'm working with a tiered memory system e.g. CXL memory, I have
-> been facing migration overhead esp. tlb shootdown on promotion or
-> demotion between different tiers.  Yeah..  most tlb shootdowns on
-> migration through hinting fault can be avoided thanks to Huang Ying's
-> work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
-> is inaccessible").  See the following link for more information:
+> Add support for A4 power controller. A4 power control
+> registers are in secure domain, and should be accessed by SMC.
 > 
-> https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
 > 
-> However, it's only for migration through hinting fault.  I thought it'd
-> be much better if we have a general mechanism to reduce all the tlb
-> numbers that we can apply to any unmap code, that we normally believe
-> tlb flush should be followed.
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index 4d5bda0d60fc..3a84d8a74a5e 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -14,6 +14,7 @@
+>   #include <dt-bindings/power/amlogic,c3-pwrc.h>
+>   #include <dt-bindings/power/meson-s4-power.h>
+>   #include <dt-bindings/power/amlogic,t7-pwrc.h>
+> +#include <dt-bindings/power/amlogic,a4-pwrc.h>
+>   #include <linux/arm-smccc.h>
+>   #include <linux/firmware/meson/meson_sm.h>
+>   #include <linux/module.h>
+> @@ -136,6 +137,24 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>   	SEC_PD(RSA,	0),
+>   };
+>   
+> +static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+> +	SEC_PD(A4_AUDIO,	0),
+> +	SEC_PD(A4_SDIOA,	0),
+> +	SEC_PD(A4_EMMC,	0),
+> +	SEC_PD(A4_USB_COMB,	0),
+> +	SEC_PD(A4_ETH,		0),
+> +	SEC_PD(A4_VOUT,		0),
+> +	SEC_PD(A4_AUDIO_PDM,	0),
+> +	/* DMC is for DDR PHY ana/dig and DMC, and should be always on */
+> +	SEC_PD(A4_DMC,	GENPD_FLAG_ALWAYS_ON),
+> +	/* WRAP is secure_top, a lot of modules are included, and should be always on */
+> +	SEC_PD(A4_SYS_WRAP,	GENPD_FLAG_ALWAYS_ON),
+> +	SEC_PD(A4_AO_I2C_S,	0),
+> +	SEC_PD(A4_AO_UART,	0),
+> +	/* IR is wake up trigger source, and should be always on */
+> +	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
+> +};
+> +
+>   static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>   	SEC_PD(C3_NNA,		0),
+>   	SEC_PD(C3_AUDIO,	0),
+> @@ -311,6 +330,11 @@ static struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
+>   	.count = ARRAY_SIZE(a1_pwrc_domains),
+>   };
+>   
+> +static struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
+> +	.domains = a4_pwrc_domains,
+> +	.count = ARRAY_SIZE(a4_pwrc_domains),
+> +};
+> +
+>   static struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
+>   	.domains = c3_pwrc_domains,
+>   	.count = ARRAY_SIZE(c3_pwrc_domains),
+> @@ -331,6 +355,10 @@ static const struct of_device_id meson_secure_pwrc_match_table[] = {
+>   		.compatible = "amlogic,meson-a1-pwrc",
+>   		.data = &meson_secure_a1_pwrc_data,
+>   	},
+> +	{
+> +		.compatible = "amlogic,a4-pwrc",
+> +		.data = &amlogic_secure_a4_pwrc_data,
+> +	},
+>   	{
+>   		.compatible = "amlogic,c3-pwrc",
+>   		.data = &amlogic_secure_c3_pwrc_data,
 > 
-> I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), defers tlb flush
-> until folios that have been unmapped and freed, eventually get allocated
-> again.  It's safe for folios that had been mapped read-only and were
-> unmapped, since the contents of the folios don't change while staying in
-> pcp or buddy so we can still read the data through the stale tlb entries.
-> 
-> tlb flush can be defered when folios get unmapped as long as it
-> guarantees to perform tlb flush needed, before the folios actually
-> become used, of course, only if all the corresponding ptes don't have
-> write permission.  Otherwise, the system will get messed up.
-> 
-> To achieve that:
-> 
->     1. For the folios that map only to non-writable tlb entries, prevent
->        tlb flush during unmapping but perform it just before the folios
->        actually become used, out of buddy or pcp.
 
-Trying to understand the impact: Effectively, a CPU could still read data from a 
-page that has already been freed, until that page gets reallocated again.
-
-The important part I can see is
-
-1) PCP/buddy must not change page content (e.g., poison, init_on_free), 
-otherwise an app might read wrong content.
-
-2) If we mess up the flush-before-realloc, an app might observe data written by 
-whoever allocated the page.
-
-3) We must reliably detect+handle any read-only PTEs for which we didn't flush 
-the TLB yet, otherwise an app could see its memory writes getting lost. I recall 
-that at least uffd-wp might defer TLB flushes (see comment in do_wp_page()). Not 
-sure about other pte_wrprotect() callers that flush the TLB after processing 
-multiple page tables, whereby rmap code might succeed in unmapping a page before 
-the TLB flush happened.
-
-Any other possible issues you stumbled over that are worth mentioning?
-
--- 
-Thanks,
-
-David / dhildenb
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
