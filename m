@@ -1,115 +1,82 @@
-Return-Path: <linux-kernel+bounces-193199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FE68D2833
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5C18D2834
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036401F25D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC07F1F254FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C8F4437A;
-	Tue, 28 May 2024 22:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC74113E057;
+	Tue, 28 May 2024 22:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="weW/IfQD"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hL2s/v1t"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6923317E8F3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D714F17E8F3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936366; cv=none; b=Av9v864e42ubjpU7CjgIuj4QVmWvwmd3E412bl0lOEKRrYW+/UBxx2KsygRKps9v0QLxnirXWhI8H5Vq9uDsr4H6B9PeE7alo4sQBaicyK8PeP7fEd0j29hwyLDaVBOE+s0OlDY0h6uWoFauxr7S/xMwcbzhaf9ogfIh0n7wbGM=
+	t=1716936483; cv=none; b=NSexVuaTB/19CPxmLW37Fv3kjWzvkddmUstqQLHKVoBJuSuTz/Zu5VJnqfKkX4vJgkH6VhBQlGpuZSjXCkBpYZ1m73j1ZZZqnSK2Fn/NrgnSldkyjYTj1mrJ/XzevxB9bo6zwZuDHNVaEDBjxOjZsKF84OzIg/62e/+sF9GLg78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936366; c=relaxed/simple;
-	bh=x3eO+xsLGvYH6hdnnKdPPHQw9PwgGh+IMJx8r3KsF7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dKCwggcOe+dNL5zkMapUWHQhq5amE3eIc/1k4x/thSvkttpeuPjA+D3R4Vo42uazrHnj8dn3zzEMfzRxsXKH62c3NKO6oFq7K+/a5RYSjPm5+w6PCQLJbE7oZGKQfhkc4b3+FdKvBwA9mjRhUQ8nF7rHuzxOlsEVAZLudJ963Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=weW/IfQD; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a08b1a81bso13136007b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716936364; x=1717541164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x3eO+xsLGvYH6hdnnKdPPHQw9PwgGh+IMJx8r3KsF7A=;
-        b=weW/IfQD1s+dFJvVDhmmiKx356BZ1PmgxYYQpLMch8nyUAw3LhU6y3bKpc1MjgeEgI
-         oY/iedTHWQTn4P35NJR0ZR/tMDhA3wEeU3ezSyzwyh68xcQ2NxMI6vNNTCmwkwoMq62d
-         M+8U6uzATkTNqz+YfNBnpd8KFvoEl3B0Ukg65kknmByUQrG/IBOUyz1rpW4P0vEx6rsw
-         2buwlLTAOT5p+6lbqt0E24YtQiBqce4siE9ZIlemuRglje5Y4dZufgdR1JkHNgNNEPAB
-         GF4p8Tfd2NhhuUpQAAgyOHi3ZfCDA2ASb3z+joJUYEwhMoeRaty7uyelKerelnJXKlQe
-         VVkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716936364; x=1717541164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x3eO+xsLGvYH6hdnnKdPPHQw9PwgGh+IMJx8r3KsF7A=;
-        b=uO/FF6tcDGXovyAuMrYGrzLvlTKLND1GYaefphzEm8Md/MceMHY8ylkSPuBCtq2cPq
-         ypX0Jt81iiQYtqE7I9BLF5dpf0GLOcy/bk1YL1EdqDojERnV/e5Fewu3+4VWTfoxUffG
-         85u4VAh56cN27Z6iINw01uMv0/hGKE0Nxvea8tq/FGm2V/Rei8QPzv2grivxOZnuQcBY
-         LTc4d+VWXDB5VW9DqFbQh+O6U/oZpQznKY4wuC8grVy+BtbvETYxtq6cdOfpCqjtO7Hg
-         bvJAZVO4sr8gjW24xR8gWnvP+WTuu2cvcUIoTTE0mZYRpZuLeXsM8vYRaz4zlo3c+wmt
-         Gkhw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1+wo9+gosjcx3okQ8ufIh9MIUSxJIijeOtLtZOLhlgDr53UBoPUSxEc+nWJasyzss5W7u63gWPlwVhWIVkKkbgv2qtXOBJIufvTrC
-X-Gm-Message-State: AOJu0YxK8nXA+IcLoOJuuuMSx+xCDZCEaEHV3EKDv3u67yVSjY0I0FWC
-	zt1EH3uA8Mfp3nVuRrgZDJM1BXf8/Be8zthz+li4r7sx5AkhUWQc9M+DWCk2piKzUWAqbRJOc3G
-	4lIDP+7jcm+UCdCbKGq8n8o/0DhwaXnsVdZIo
-X-Google-Smtp-Source: AGHT+IG3bkluE1gQLzQW/yXE5rXTcQ0ni1+AICIdU5G38blbecC6K/RPr2rHoicqTJdRS6GN/1aRMHyTcoQS1CrT868=
-X-Received: by 2002:a81:6dd0:0:b0:627:dd68:7278 with SMTP id
- 00721157ae682-62a08d86f59mr136358967b3.19.1716936364259; Tue, 28 May 2024
- 15:46:04 -0700 (PDT)
+	s=arc-20240116; t=1716936483; c=relaxed/simple;
+	bh=axSEsC+gneSz5MfgJHsNfBxzzcGCPFR2XD6onipT1Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUkH8pk9zCVw/Gn/ucs9V8AkYh+oui973KBG/eZh3b5c2vO3lYMKMtbN0QAROzU15vbRU4SqE4+hldbPkMHHgq+3hCYnYoRhXc3sarO8xVjcNF81ZBvFOG/7jgWvsjacfsHX+01sBV4wNIoL5m/6CBj4fmn9eJZOhT3phyYUd9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hL2s/v1t; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Arg3zNJfo7OaVad4zVHjBNkJznEpcaVhGh3Yi10lCXA=; b=hL2s/v1tfAtUEo1XUaMmMp9B5B
+	+CWhw1le8tj+XzUWpvv95xY8vyT0m7liz182rkXpnU2U38ulXRMmxaCQVc0roZn1GFBZfmG+A3qlg
+	NuKYpuWn3MoYpjoUdfpXpZnVHNs/MJYz7m3h6+PAPjg8kzCxbLkILxrpy4xjLjwiQn8RA52L+Y683
+	g4BrnNv5hpAZ2esQhL7jEhcjiYTRlW+NmGXyIgItfuEuTo8usymFyeCLK9xBRBuYcB+r4IIE7Wmp8
+	kZXmE3HAKkfwg4ocJkKw5LmVfZyDpEq5JVUGlLnVrjveP0VXCnC3eK3C6CBJyz8rMgTqgSBY1HJRM
+	U9M4KUCQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sC5bo-000000099bN-22l4;
+	Tue, 28 May 2024 22:47:56 +0000
+Date: Tue, 28 May 2024 23:47:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	akpm@linux-foundation.org, vishal.moola@oracle.com,
+	muchun.song@linux.dev, david@redhat.com, osalvador@suse.de
+Subject: Re: [PATCH] mm/hugetlb: mm/memory_hotplug: use a folio in
+ scan_movable_pages()
+Message-ID: <ZlZfHNkWHxtpcXhO@casper.infradead.org>
+References: <20240528220321.144535-1-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528163713.2024887-1-tjmercier@google.com>
- <ZlYzzFYd0KgUnlso@slm.duckdns.org> <zrvsmkowongdaqcy3yqb6abh76utimen5ejrnkczd4uq3etesl@jv3xb4uso4yk>
- <CABdmKX2vmpFS=j_FoFOadHRVVWaWUsReJYv+dJNHosk1uE_Dvw@mail.gmail.com> <ZlZd2EsF7KOqPx7a@slm.duckdns.org>
-In-Reply-To: <ZlZd2EsF7KOqPx7a@slm.duckdns.org>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 28 May 2024 15:45:52 -0700
-Message-ID: <CABdmKX0+rRAHVDmv-A549OxBsyaLcTERYeM52_1ZhiL0-gvTyA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
-To: Tejun Heo <tj@kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528220321.144535-1-sidhartha.kumar@oracle.com>
 
-On Tue, May 28, 2024 at 3:42=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> On Tue, May 28, 2024 at 03:38:01PM -0700, T.J. Mercier wrote:
-> > > > I think it would make sense to introduce something in a similar
-> > > > fashion. Can't think of a good name off the top of my head but add =
-a
-> > > > cgroup. file which lists the controllers in the subtree along with =
-the
-> > > > number of css's.
-> > >
-> > > BTW, there is the 'debug' subsys that has (almost) exactly that:
-> > > 'debug.csses' -- it's in v1 fashion though so it won't show hierarchi=
-cal
-> > > sums.
->
-> Yeah, something like that but hierarchical and built into cgroup2 interfa=
-ce.
-> Would that work for your use case?
->
-I think so, I'm checking this out now. debug as v1-only and non-stable
-interface files doesn't work, but the same sort of thing with a stable
-interface on v2 seems like it would.
+On Tue, May 28, 2024 at 03:03:21PM -0700, Sidhartha Kumar wrote:
+> @@ -1761,9 +1762,9 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
+>  		 * cases false positives and negatives are possible.  Calling
+>  		 * code must deal with these scenarios.
+>  		 */
+> -		if (HPageMigratable(head))
+> +		if (folio_test_hugetlb_migratable(folio))
+>  			goto found;
+> -		skip = compound_nr(head) - (pfn - page_to_pfn(head));
+> +		skip = folio_nr_pages(folio) - folio_page_idx(folio, page);
+>  		pfn += skip - 1;
 
-> Thanks.
->
-> --
-> tejun
+Isn't this an unnecessarily complicated way of writing:
+
+		pfn |= folio_nr_pages(folio) - 1;
+?
 
