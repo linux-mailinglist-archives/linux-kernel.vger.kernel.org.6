@@ -1,224 +1,199 @@
-Return-Path: <linux-kernel+bounces-191830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57398D14C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:57:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8906D8D142B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3140FB227E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:57:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A45EB21C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51C36F079;
-	Tue, 28 May 2024 06:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78824E1B3;
+	Tue, 28 May 2024 06:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A6QX3l8B"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/QUI741"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930E36F066
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9631FDF6B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716879419; cv=none; b=N9JADYkYOkbe5b+bmNZpCgr8Wk4yZvcLE2eJBbEqp2r2I7D8TkE/H9FCH8BKliFMzL5hHEp/lQhBS1Wr8hqhdDPRrRFNr3Ey3UALahGe7brJdanyC1qXJdzyNEqsVobwvUBqM5zG4e0RdWEa8i4cWSr/vgvO6Gcx1My5YFdp9JA=
+	t=1716876354; cv=none; b=kUWwb9Zp/uCCOqDEnEhzJxkJTdRBXNvdplE57crUqPMS4gAn9itCCt/BFSwXgutczAT8Cs6sCdpb8W0LprpvkuDxK9SyZzf3KRV0GIOxMsectldO99X52FoGeLgtx5zBOuSKz+eUG1NN8xbKHtbzqKKAsolJ1///hyvdt86yDLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716879419; c=relaxed/simple;
-	bh=VHklIm/d1slFpHw4H0fGDmkRx7FbeR3jd6KKqB6xOrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=E9biogd7B8AjvbSPkwhb/ACbNW5k3U0yvPLCnZUfSCcAxj6gWmyqKhW47WtwtBjabmgvjhQzOUsRYmZEC9cXHn0ay7yuRJui3yzG72XVOYyqQMRmK83Scqfy7QzBsO4jSUSMjlkZXQI4XJZHR9OWpAsX8b6yBb/TqqcIIGIqUEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A6QX3l8B; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240528065653epoutp0175b3068e24471884b18847850f67aa92~TlLru-cX42098120981epoutp01T
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:56:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240528065653epoutp0175b3068e24471884b18847850f67aa92~TlLru-cX42098120981epoutp01T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716879413;
-	bh=nAZx1LsOHkUtzRfjnw0sqmJkB2agzB/i6qclqjs+O2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=A6QX3l8BIRem4hWQvpzZ3SdTCGJG8oFBQxAtoXUfhh6JWRyw5vGiUTkfGlzg61oG/
-	 zIPDj5UZ8SnBerbI5RNbJbjlFhpRhZ09n9uAyaL3qurd8qhyjNjmd7urty52Um3DQt
-	 8lzVnBgI8Ej5B2UVZDo11DTBKBpgxK8cVcFJMdpU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240528065652epcas5p2d8319a1124923aaa87746d14bdf69f6a~TlLq5UvCH0185501855epcas5p2N;
-	Tue, 28 May 2024 06:56:52 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VpNbk5vG5z4x9QC; Tue, 28 May
-	2024 06:56:50 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	60.C8.09989.23085566; Tue, 28 May 2024 15:56:50 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240528060437epcas5p2587b9da4ba2e6f0beddcb42a9679e860~TkeCoTB6X0914209142epcas5p2L;
-	Tue, 28 May 2024 06:04:37 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240528060437epsmtrp2df0fb02a548747a950a44b275d53f541~TkeCm5zxE0102101021epsmtrp2O;
-	Tue, 28 May 2024 06:04:37 +0000 (GMT)
-X-AuditID: b6c32a4a-e57f970000002705-54-665580324bfc
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9E.14.18846.4F375566; Tue, 28 May 2024 15:04:36 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240528060433epsmtip20328e5dbd5f2ec8f001612a38afabaf3~Tkd-DQImr1951119511epsmtip2Z;
-	Tue, 28 May 2024 06:04:33 +0000 (GMT)
-Date: Tue, 28 May 2024 05:57:33 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, bvanassche@acm.org, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 05/12] fs/read_write: Enable copy_file_range for
- block device.
-Message-ID: <20240528055733.kwmyx7f7u3w7gpon@nj.shetty@samsung.com>
+	s=arc-20240116; t=1716876354; c=relaxed/simple;
+	bh=LK4aIVorUxhjfHB4IO/40AXc58GaNVdgkIX6xbON9Mg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tH8XPAq7WVFgP2pfbNeuZWBQlzRRmOtDAnxpP/eTiIE7HzBZgc9tEdG+AtGH9QyMXmCduTVnGSeizjWo/UR/wG4L4U4BeGMWzBVphFKR00dfnL9ALfs3xl93C4opU65r550Kwlqd0tYvDZqP3XH1gUxE3JRcdEitS8jIZzJC4qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/QUI741; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6ab8f69be57so401966d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716876351; x=1717481151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lLFtm7iDX+a6rVpds8FrN2saOZK3oTtjNBWhdje4pfI=;
+        b=Q/QUI7410tC5fjQOB+E7bvc9O58VNAIOz/wyNvp4gGH6BS+1Z4Laii3qDIvZ8Lg4Nc
+         EeLZ1XUqAWIyD0lI/HHCnCwXW0xerMOBmP4ZR4GlgkSSUemgDLqUEnirnz6aLAjk5eaP
+         a7yjR35XqxaQ2LhZGJH1pC3RErBGpCzJZiQRRP9eQQZtdFlHNHQ7qcudT3nzjZ7jFg4q
+         Qd6y3vOV1ZTDjzrfCVdLkJv9995OsZ8C5Wp0yiuh3BTf8Dbyvkh8CQPVjPoYmFbd191V
+         w9ciIueQcrC+Jjw4Ctatb6mDEVudVOch8Ex8LPtl5ErfC9+mWYAz3/9IOqanap9KVCC3
+         ee2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716876351; x=1717481151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lLFtm7iDX+a6rVpds8FrN2saOZK3oTtjNBWhdje4pfI=;
+        b=rYTM+FPfBjqw39qDYgMAZgUgvMvw7Sfb5ZRd3mBybMQkJpQH0f9oEsSStbipwIliqs
+         KC+a0XZRly5MZnwaBbaLBsb2HnaRCE2DnN+X65HrVhotrPorOM9mqsHln41Pg2W5gORV
+         eM6t++Jm0uKeVb26QOP3CnRmk+xw0XsbfTDoh8eKu80jIVSwjN/Oczh37l16pHQMt9bf
+         lvnIytn+l6jaeOjDHgF/fZ5lS6CMoX9IFF+z9VgNBcEZmP1KbRMQKB/UTP8jwyuC/t8k
+         08a8TFhTvoLQkQvM1NcMez2P+nav8RRCr4fmWrtL+WKqvAtPMglsCj4FUzavn3wWDykK
+         +zNA==
+X-Gm-Message-State: AOJu0YwtCIDxakTzbuS0PsumM3383koKt2AbPIH24UrWPFO/kOcmJZmh
+	hDKhnh8cLrnxrPshNgYMdO3VUKzzqzVO/vkFzYMnrXoZ+vaHGvDcczJQxTVePH65Hu/1pAdxaRI
+	FOYrV2v6A8YzN+ACrLsX+yIg97EQ=
+X-Google-Smtp-Source: AGHT+IF2PA8jXS+bEJ5emheNpUmONCjjSukKcU+Ei1UM2/UjkU9V3pZeMT5KUqfe8OSNiN8sehggaqmqnMTbwBkFOMo=
+X-Received: by 2002:a05:6214:2527:b0:6ab:8c3b:9031 with SMTP id
+ 6a1803df08f44-6abbbc24a30mr118596666d6.1.1716876351137; Mon, 27 May 2024
+ 23:05:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlJuDxhMEpJxKQHV@dread.disaster.area>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzOubfcFiN4pRAPBSerExXCo7w8SFE3jLmZk7AMMjeTYQeXRyht
-	1xZR5kZ5OakPsFOcdbxxCGwQhC1FYUKFFgqERF6DQRkOBoyIDFQmDllLwfjf9/t+33d+rxwW
-	blfO5LDiRXJaKhIIucQmxi8P9rp5+CgiYryV9/egGoMOR+m5KziqGs0h0OyDBYDy5l/gaKL5
-	G4BedvfgqF5nBKioJJ+BhpobMNRYosJQRVUbhm5ez8BQ2+pjAqm0AwBN9qsx1DTsjorPlTFQ
-	Y1MHA/Xe/Z5AhT9MMlG5/hWGrpzvx5BmIg2g6tknDNQ+7IR6VvRWh5yo3r6jlKEEUg3qUSbV
-	Y6xlUL3dSdSdymyCqitLpabrbgDq3pCCoEovf2tFXcqYI6iGrDEr6p/JYQb15Nd+grpcXwmo
-	rqJWZhj70wR+HC2IpqUutChKHB0vig3mHv0oMiTSP8Cb58ELRPu4LiJBIh3MPfxBmMeReKFp
-	OVyXUwJhkokKE8hkXK8DfKk4SU67xIll8mAuLYkWSvwknjJBoixJFOspouX7ed7ePv4m4cmE
-	OLXeSEiK4enRpVKmApTZK4E1C5J+MO1CH6EEm1h25D0Aq1ueMS3BAoC3pwbB68C4OopvWKrG
-	fltXNQDYpWlbDxYBXF7WWZlVDHIXXB3sNtlZLIJ0h52rLDNtT7pClUqDm/U4WURAZVo1Zk6w
-	yeNwsXicYcY2ZAisrx0CFrwVdtyYWOOtSV/Y9HPHWkuQNFjD7yrKGZaWDkPthal1zIZ/6+uZ
-	FsyBi3NNhAUnw4qrtwmLORNA9aAaWBIHYZYhZ202nIyFE4356w9th9cMlu5w0hZeejmBWXgb
-	qCnYwDvhjzVF6wUc4cBSGmGeGJIU1J5zt2zlLwD7ZoxYLnhL/cZA6jfKWfB+mD2fbqU22XHS
-	CZa/YlngXlhz16sIWFUCR1oiS4ylZf4SHxGd/PrMUeLEO2Dtx7i9rwHjf8x7agHGAloAWTjX
-	3sa+4MMYO5towZkUWiqOlCYJaZkW+JsOdAXnOESJTV9OJI/k+QV6+wUEBPgF+gbwuNtsZrPy
-	o+3IWIGcTqBpCS3d8GEsa44Cy1kKoj5mF511zniB5T/tsWcbvrJLUbVXLxWrfqo89AVz907+
-	VM5JB8Pz5SParcey30vd3Mku9tg83vzo+JyX/sSxZ1n383Sh7wTNlLHjAlOn+a7O188o/9zj
-	PxL+r0KDPW3jLkYMdG9vURba8mpcp7ewog7Odp9QCpdCyQVdn/0499bjKU6Bo63CcWXRuS4m
-	ZCUlnbPr7VO7m8/WjglzvwwvxCQPWx1WnR9u86Ayb6mu6STWn4XnS3wTr7LPf87/7+vMm+F5
-	BQkHnp+eHdgRWncRzrRUJnzye2tet3PtxR3sEaB/t7RPlujDwDsjtI+St3QtjjCD5tsXYmEI
-	Z3Uf08j35DJkcQKeGy6VCf4HXkQjk7oEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7bCSvO6X4tA0g1vTTCzWnzrGbNE04S+z
-	xeq7/WwWrw9/YrSY9uEns8WTA+2MFr/Pnme22HLsHqPFgkVzWSxuHtjJZLFn0SQmi5WrjzJZ
-	zJ7ezGRx9P9bNotJh64xWjy9OovJYu8tbYuFbUtYLPbsPclicXnXHDaL+cueslssP/6PyWJi
-	x1Umix1PGhkt1r1+z2Jx4pa0xfm/x1kdpD0uX/H2OLVIwmPnrLvsHufvbWTxuHy21GPTqk42
-	j81L6j1ebJ7J6LH7ZgObx+K+yawevc3v2Dx2tt5n9fj49BaLx/t9V9k8+rasYvQ4s+AIe4Bw
-	FJdNSmpOZllqkb5dAlfGkmkfGAuuiVYcn3iQqYHxs2AXIyeHhICJxOr7N9i7GLk4hAS2M0pc
-	3tvCCJGQlFj29wgzhC0ssfLfc6iij4wSB94dYAFJsAioSvy/fhaogYODTUBb4vR/DpCwiICa
-	xKRJO5hB6pkFlrBJzLx0iRUkISwQIfF54UOwXl4BZ4ktG28yQgx9xigx/+x1JoiEoMTJmU/A
-	ipgFzCTmbX7IDLKAWUBaYvk/sAWcAsYSe7eeZJzAKDALSccsJB2zEDoWMDKvYhRNLSjOTc9N
-	LjDUK07MLS7NS9dLzs/dxAhOCFpBOxiXrf+rd4iRiYPxEKMEB7OSCK/IvMA0Id6UxMqq1KL8
-	+KLSnNTiQ4zSHCxK4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBqZQiWu7vCT3br5wUlM2Uel2
-	6byl/IZmgse1Zx2+vUtbSF9ccvZ1tYzkVY8jdk7QqQ+tipmWaPWjfpIZe7rfbLVtTxlNVhZx
-	fhWK/CSSEiEQw1J1vCP1ydl1WrwWGtWyahnv2TL476/Pd3C0mWbH7M8ktP92i/kynYX66syC
-	3242pP3ZN/fRxpcKdd0CfocV/qSdndzzxZg5zOhXwstyvuULAu+WrEuzimDTnWv8687+87zG
-	p0TVix1/fLMw6869KVx/9IPpOrmjMi94GL5K/Ylt1DnodMWexTuJ4fxhnenbs06IRJVybjYu
-	vb14AUMxQ1xPWOGzz6XGs9bPSA9hqnVMqf/4ov+v8rInxXbaSizFGYmGWsxFxYkAAcvDiHcD
-	AAA=
-X-CMS-MailID: 20240528060437epcas5p2587b9da4ba2e6f0beddcb42a9679e860
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_b7ed_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102917epcas5p1bda532309b9174bf2702081f6f58daf7
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102917epcas5p1bda532309b9174bf2702081f6f58daf7@epcas5p1.samsung.com>
-	<20240520102033.9361-6-nj.shetty@samsung.com>
-	<ZlJuDxhMEpJxKQHV@dread.disaster.area>
+References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
+ <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
+ <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com> <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
+ <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com> <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
+In-Reply-To: <CABXGCsP46xvu3C3Ntd=k5ARrYScAea1gj+YmKYqO+Yj7u3xu1Q@mail.gmail.com>
+From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date: Tue, 28 May 2024 11:05:40 +0500
+Message-ID: <CABXGCsP3Yf2g6e7pSi71pbKpm+r1LdGyF5V7KaXbQjNyR9C_Rw@mail.gmail.com>
+Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
+To: David Hildenbrand <david@redhat.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_b7ed_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On Thu, May 23, 2024 at 12:05=E2=80=AFPM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> On Thu, May 9, 2024 at 10:50=E2=80=AFPM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > Do you have the other stracktrace as well?
+> >
+> > Maybe triggering memory reclaim (e.g., using "stress" or "memhog") coul=
+d
+> > trigger it, that might be reasonable to trey. Once we have a reproducer
+> > we could at least bisect.
+> >
+>
+> The only known workload that causes this is updating a large
+> container. Unfortunately, not every container update reproduces the
+> problem.
 
-On 26/05/24 09:02AM, Dave Chinner wrote:
->On Mon, May 20, 2024 at 03:50:18PM +0530, Nitesh Shetty wrote:
->> From: Anuj Gupta <anuj20.g@samsung.com>
->>
->> This is a prep patch. Allow copy_file_range to work for block devices.
->> Relaxing generic_copy_file_checks allows us to reuse the existing infra,
->> instead of adding a new user interface for block copy offload.
->> Change generic_copy_file_checks to use ->f_mapping->host for both inode_in
->> and inode_out. Allow block device in generic_file_rw_checks.
->>
->> Reviewed-by: Hannes Reinecke <hare@suse.de>
->> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> ---
->>  fs/read_write.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/read_write.c b/fs/read_write.c
->> index ef6339391351..31645ca5ed58 100644
->> --- a/fs/read_write.c
->> +++ b/fs/read_write.c
->> @@ -1413,8 +1413,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
->>  				    struct file *file_out, loff_t pos_out,
->>  				    size_t *req_count, unsigned int flags)
->>  {
->> -	struct inode *inode_in = file_inode(file_in);
->> -	struct inode *inode_out = file_inode(file_out);
->> +	struct inode *inode_in = file_in->f_mapping->host;
->> +	struct inode *inode_out = file_out->f_mapping->host;
->>  	uint64_t count = *req_count;
->>  	loff_t size_in;
->>  	int ret;
->
->Ok, so this changes from file->f_inode to file->mapping->host. No
->doubt this is because of how bdev inode mappings are munged.
->However, the first code that is run here is:
->
->	ret = generic_file_rw_checks(file_in, file_out);
->
->and that function still uses file_inode().
->
->Hence there checks:
->
->> @@ -1726,7 +1726,9 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
->>  	/* Don't copy dirs, pipes, sockets... */
->>  	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
->>  		return -EISDIR;
->> -	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
->> +	if (!S_ISREG(inode_in->i_mode) && !S_ISBLK(inode_in->i_mode))
->> +		return -EINVAL;
->> +	if ((inode_in->i_mode & S_IFMT) != (inode_out->i_mode & S_IFMT))
->>  		return -EINVAL;
->
->.... are being done on different inodes to the rest of
->generic_copy_file_checks() when block devices are used.
->
->Is this correct? If so, this needs a pair of comments (one for each
->function) to explain why the specific inode used for these functions
->is correct for block devices....
->
-We were getting wrong size with file_inode() for block device, but we
-missed to do it here in generic_file_rw_checks.
-We will change the generic_file_rw_checks to use file->mapping->host
-to make it consistent.
+Is it possible to add more debugging information to make it clearer
+what's going on?
 
-Thank You,
-Nitesh Shetty
+BUG: Bad page state in process kcompactd0  pfn:605811
+page: refcount:0 mapcount:0 mapping:0000000082d91e3e index:0x1045efc4f
+pfn:0x605811
+aops:btree_aops ino:1
+flags: 0x17ffffc600020c(referenced|uptodate|workingset|node=3D0|zone=3D2|la=
+stcpupid=3D0x1fffff)
+raw: 0017ffffc600020c dead000000000100 dead000000000122 ffff888159075220
+raw: 00000001045efc4f 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: non-NULL mapping
+Modules linked in: overlay tun uvcvideo uvc videobuf2_vmalloc
+videobuf2_memops videobuf2_v4l2 videobuf2_common videodev rndis_host
+uas cdc_ether usbnet usb_storage mii uinput rfcomm snd_seq_dummy
+snd_hrtimer nf_conntrack_netbios_ns nf_conntrack_broadcast
+nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet
+nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat
+nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables qrtr bnep
+sunrpc binfmt_misc snd_usb_audio snd_usbmidi_lib snd_ump snd_rawmidi
+mc mt76x2u snd_hda_codec_hdmi mt76x2_common mt7921e mt76x02_usb
+mt7921_common mt76_usb mt792x_lib snd_hda_intel intel_rapl_msr amd_atl
+snd_intel_dspcfg mt76_connac_lib mt76x02_lib intel_rapl_common
+snd_intel_sdw_acpi btusb snd_hda_codec mt76 btrtl edac_mce_amd btintel
+snd_hda_core btbcm vfat btmtk snd_hwdep mac80211 fat snd_seq bluetooth
+snd_seq_device kvm_amd eeepc_wmi asus_nb_wmi libarc4 joydev
+ledtrig_netdev hid_apple snd_pcm kvm asus_wmi cfg80211
+apple_mfi_fastcharge snd_timer
+ sparse_keymap platform_profile pcspkr wmi_bmof snd rapl rfkill
+soundcore igc k10temp i2c_piix4 gpio_amdpt gpio_generic loop nfnetlink
+zram amdgpu crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni
+polyval_generic amdxcp i2c_algo_bit drm_ttm_helper ttm drm_exec
+ghash_clmulni_intel gpu_sched sha512_ssse3 nvme drm_suballoc_helper
+drm_buddy sha256_ssse3 nvme_core sha1_ssse3 drm_display_helper ccp
+sp5100_tco video nvme_auth wmi ip6_tables ip_tables fuse
+CPU: 17 PID: 221 Comm: kcompactd0 Tainted: G        W    L    -------
+---  6.10.0-0.rc1.18.fc41.x86_64+debug #1
+Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
+BIOS 2611 04/07/2024
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x84/0xd0
+ bad_page.cold+0xbe/0xe0
+ ? __pfx_bad_page+0x10/0x10
+ ? page_bad_reason+0x9d/0x1f0
+ free_unref_page+0x838/0x10e0
+ __folio_put+0x1ba/0x2b0
+ ? __pfx___folio_put+0x10/0x10
+ ? __pfx___might_resched+0x10/0x10
+ ? migrate_folio_done+0x1de/0x2b0
+ migrate_pages_batch+0xe73/0x2880
+ ? __pfx_compaction_alloc+0x10/0x10
+ ? __pfx_compaction_free+0x10/0x10
+ ? __pfx_migrate_pages_batch+0x10/0x10
+ ? trace_irq_enable.constprop.0+0xce/0x110
+ ? __pfx_remove_migration_pte+0x10/0x10
+ ? rcu_is_watching+0x12/0xc0
+ migrate_pages+0x194f/0x22f0
+ ? __pfx_compaction_alloc+0x10/0x10
+ ? __pfx_compaction_free+0x10/0x10
+ ? __pfx_migrate_pages+0x10/0x10
+ ? trace_irq_enable.constprop.0+0xce/0x110
+ ? rcu_is_watching+0x12/0xc0
+ ? isolate_migratepages_block+0x2b02/0x4560
+ ? __pfx_isolate_migratepages_block+0x10/0x10
+ ? __pfx___might_resched+0x10/0x10
+ compact_zone+0x1a7c/0x3860
+ ? rcu_is_watching+0x12/0xc0
+ ? __pfx___free_object+0x10/0x10
+ ? __pfx_compact_zone+0x10/0x10
+ ? rcu_is_watching+0x12/0xc0
+ ? lock_acquire+0x457/0x540
+ ? kcompactd+0x2fa/0xc70
+ ? rcu_is_watching+0x12/0xc0
+ compact_node+0x144/0x240
+ ? __pfx_compact_node+0x10/0x10
+ ? rcu_is_watching+0x12/0xc0
+ kcompactd+0x686/0xc70
+ ? __pfx_kcompactd+0x10/0x10
+ ? __pfx_autoremove_wake_function+0x10/0x10
+ ? __kthread_parkme+0xb1/0x1d0
+ ? __pfx_kcompactd+0x10/0x10
+ ? __pfx_kcompactd+0x10/0x10
+ kthread+0x2d2/0x3a0
+ ? _raw_spin_unlock_irq+0x28/0x60
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x31/0x70
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_b7ed_
-Content-Type: text/plain; charset="utf-8"
-
-
-------u98hW3AvpxW_WMqzG8XaJinKydZ84Ygy6oP0sovTVoTPagnQ=_b7ed_--
+--=20
+Best Regards,
+Mike Gavrilov.
 
