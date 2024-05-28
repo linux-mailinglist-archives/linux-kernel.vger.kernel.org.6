@@ -1,136 +1,292 @@
-Return-Path: <linux-kernel+bounces-192942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EF38D24A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2A18D24A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A74E1F28C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623851C26BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149B5173342;
-	Tue, 28 May 2024 19:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C9A172786;
+	Tue, 28 May 2024 19:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PiXETvYR"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZayzUQF/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558722628C;
-	Tue, 28 May 2024 19:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0875024E;
+	Tue, 28 May 2024 19:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716924650; cv=none; b=AFpsArXgGyros7iO9ZvAVXwOs/iznRaSTAK/MHTAC/Hcsf8prFaBAPbwSdToLTgN1HXCAGVRqE64RuTMvMZIUEZNV5wg+wiofrXpeXH1DEYqTGKTp2451NcipNOZYPUn+41ftSzHpAG3sJk+rx4KT9WZpBZ6JDkly6+p+6JHFjQ=
+	t=1716924673; cv=none; b=t7qFkjh0kGr3YrrPgi0/obv43sA3FRBlKv3O+9g/rQBrCydVY0RJhHmI2pcxu7evrdeZ825hN3q1gDZMDoukfwdIVl0h79jMgyy2gausjz81bPoIe93OZfxvUcDY8TggRcAWzuJZoO8/16ZVbGtV0IUcWDFNz56Z1/tCKxyH6qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716924650; c=relaxed/simple;
-	bh=fI4YZIUdESe+KXQcRqR67vysxo0zhiFA5TgqGIaSsnk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iwWyXlCzNe2DTtc5rG9HmTqe27yd1P2uTSf81jM2/91rIH9D5XZjN4c/CPMUtQYsAFzBfxLILbvMAepMxAqlYzm7vkV222XWvp5kbuHV49kIGUEZuCCA928n9vhL2lSo31d4HiJFU6dF46z4feEFVrUgViJmtGC+P1a+7CGWGpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PiXETvYR; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: willemdebruijn.kernel@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716924646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gz3k3DiyCGoMOQPg4X/3emTcMizgWP/27mI/YhTD5m0=;
-	b=PiXETvYR6IRMfXEe4gOpDNS9DV3O6W5Gp/M9XzKmFpHzF3IzhEUJabyVl4aKIkY6A9mOQT
-	iWn91fhLI0re1yqfYGa1lq6hNJCm5Y1NbaEitw8hyImb02S6L8FGAx+V9l0wb/W4Td4y6C
-	M5NLDgB6mMCoLSKpQhDcsOYZygSBmig=
-X-Envelope-To: quic_abchauha@quicinc.com
-X-Envelope-To: kernel@quicinc.com
-X-Envelope-To: willemb@google.com
-X-Envelope-To: davem@davemloft.net
-X-Envelope-To: edumazet@google.com
-X-Envelope-To: kuba@kernel.org
-X-Envelope-To: pabeni@redhat.com
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: ahalaney@redhat.com
-X-Envelope-To: martin.lau@kernel.org
-X-Envelope-To: daniel@iogearbox.net
-X-Envelope-To: bpf@vger.kernel.org
-Message-ID: <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
-Date: Tue, 28 May 2024 12:30:37 -0700
+	s=arc-20240116; t=1716924673; c=relaxed/simple;
+	bh=ZGRsY2ZQZErkGb3Ve4FDnyIZLkQj3AbizzUfJX7D1JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gig5GqedvCzONmHV6QqQp/UPHfOGDRgBL/ehq9sTlHCBY1aalVeuLdgC4lQoUcSVnTJCBkAmoDw8ruwwHK2l0evsO24V+Nw6jWX/J88QF+CK7x1lZat38M91mvSlGl3zyjE3j6auQAkhfY4kn37qNd5utdd04Xwd4+cwT6GyjkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZayzUQF/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A7C3277B;
+	Tue, 28 May 2024 19:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716924673;
+	bh=ZGRsY2ZQZErkGb3Ve4FDnyIZLkQj3AbizzUfJX7D1JU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZayzUQF/CRwyHEDjHYOegUqd6PFEA3IZd5BZH3OyeQhARI7ku7s8PLJbxIz2x/DFv
+	 lQu9iInAWM7uPnIH+KM5mWrQYL37cocZgHQJ5WZDp9fyjWE6y/ca/t/JYB733zosP8
+	 mT8ILP083xKJBmeQtllIgtwIiFaCHUAc7DvK2uptb0HfYrG7N3SJy+kttBGHYRLfYi
+	 44iNjWoOwcAtxyFKW+iZa3LW8JGIqLxOAFE0p9grtDvqdjj2eIhR1fAvDnwHEepZOy
+	 P057DWgxD0WH4PjcKHTf11k/e2jTSFCO8ZRYFazwFlgBkl3lQw0s51mTYc+DkrRs2t
+	 YxQgeWrlEYBpQ==
+Date: Tue, 28 May 2024 12:31:10 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 2/7] riscv: Implement cmpxchg8/16() using Zabha
+Message-ID: <20240528193110.GA2196855@thelio-3990X>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-3-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
- tstamp_type for scalabilty
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: kernel@quicinc.com, Willem de Bruijn <willemb@google.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Halaney <ahalaney@redhat.com>,
- Martin KaFai Lau <martin.lau@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
-References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
- <20240509211834.3235191-2-quic_abchauha@quicinc.com>
- <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
- <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-In-Reply-To: <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528151052.313031-3-alexghiti@rivosinc.com>
 
-On 5/28/24 10:24 AM, Willem de Bruijn wrote:
-> Abhishek Chauhan (ABC) wrote:
-> 
->>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
->>> +						    ktime_t kt, clockid_t clockid)
->>> +{
->>> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
->>> +
->>> +	switch (clockid) {
->>> +	case CLOCK_REALTIME:
->>> +		break;
->>> +	case CLOCK_MONOTONIC:
->>> +		tstamp_type = SKB_CLOCK_MONOTONIC;
->>> +		break;
->>> +	default:
->>
->> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn.
->> So i think this might result in unnecessary crashes.
->>
->> Let me know what you think.
->>
->> Logs which are complaining.
->> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
-> 
-> I received reports too. Agreed that we need to fix these reports.
-> 
-> The alternative is to limit sk_clockid to supported ones, by failing
-> setsockopt SO_TXTIME on an unsupported clock.
-> 
-> That changes established ABI behavior. But I don't see how another
-> clock can be used in any realistic way anyway.
-> 
-> Putting it out there as an option. It's riskier, but in the end I
-> believe a better fix than just allowing this state to continue.
+Hi Alexandre,
 
-Failing early would be my preference also. The current ABI is arguably at least 
-confusing (if not broken) considering other clockid is silently ignored by the 
-kernel.
-
+On Tue, May 28, 2024 at 05:10:47PM +0200, Alexandre Ghiti wrote:
+> This adds runtime support for Zabha in cmpxchg8/16 operations.
 > 
-> A third option would be to not fail the system call, but silently
-> fall back to CLOCK_REALTIME. Essentially what happens in the datapath
-> in skb_set_delivery_type_by_clockid now. That is surprising behavior,
-> we should not do that.
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/Kconfig               | 16 ++++++++++++++++
+>  arch/riscv/Makefile              | 10 ++++++++++
+>  arch/riscv/include/asm/cmpxchg.h | 26 ++++++++++++++++++++++++--
+>  3 files changed, 50 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index b443def70139..05597719bb1c 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -579,6 +579,22 @@ config RISCV_ISA_V_PREEMPTIVE
+>  	  preemption. Enabling this config will result in higher memory
+>  	  consumption due to the allocation of per-task's kernel Vector context.
+>  
+> +config TOOLCHAIN_HAS_ZABHA
+> +	bool
+> +	default y
+> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zabha)
+> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zabha)
 
-Not sure if it makes sense to go back to this option only after there is 
-breakage report with a legit usage?
+This test does not take into account the need for
+'-menable-experimental-extensions' and '1p0' in the '-march=' value with
+clang 19, so it can never be enabled even if it is available.
 
+I am not really sure how to succinctly account for this though, other
+than duplicating and modifying the cc-option checks with a dependency on
+either CC_IS_GCC or CC_IS_CLANG. Another option is taking the same
+approach as the _SUPPORTS_DYNAMIC_FTRACE symbols and introduce
+CLANG_HAS_ZABHA and GCC_HAS_ZABHA? That might not make it too ugly.
+
+I think the ZACAS patch has a similar issue, it just isn't noticeable
+with clang 19 but it should be with clang 17 and 18.
+
+> +	depends on AS_HAS_OPTION_ARCH
+> +
+> +config RISCV_ISA_ZABHA
+> +	bool "Zabha extension support for atomic byte/half-word operations"
+> +	depends on TOOLCHAIN_HAS_ZABHA
+> +	default y
+> +	help
+> +	  Adds support to use atomic byte/half-word operations in the kernel.
+> +
+> +	  If you don't know what to do here, say Y.
+> +
+>  config TOOLCHAIN_HAS_ZACAS
+>  	bool
+>  	default y
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index d5b60b87998c..f58ac921dece 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -89,6 +89,16 @@ else
+>  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) := $(riscv-march-y)_zacas
+>  endif
+>  
+> +# Check if the toolchain supports Zabha
+> +ifdef CONFIG_AS_IS_LLVM
+> +# Support for experimental Zabha was merged in LLVM 19.
+> +KBUILD_CFLAGS += -menable-experimental-extensions
+> +KBUILD_AFLAGS += -menable-experimental-extensions
+> +riscv-march-y := $(riscv-march-y)_zabha1p0
+
+This block should have some dependency on CONFIG_TOOLCHAIN_HAS_ZABHA as
+well right? Otherwise, the build breaks with LLVM toolchains that do not
+support zabha, like LLVM 18.1.x:
+
+  clang: error: invalid arch name 'rv64imac_zihintpause_zacas1p0_zabha1p0', unsupported version number 1.0 for extension 'zabha'
+
+I think the zacas patch has the same bug.
+
+I think that it would be good to consolidate the adding of
+'-menable-experimental-extensions' to the compiler and assembler flags
+to perhaps having a hidden symbol like CONFIG_EXPERIMENTAL_EXTENSIONS
+that is selected by any extension that is experimental for the
+particular toolchain version.
+
+config EXPERIMENTAL_EXTENSIONS
+    bool
+
+config TOOLCHAIN_HAS_ZABHA
+    def_bool y
+    select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG
+    ...
+
+config TOOLCHAIN_HAS_ZACAS
+    def_bool_y
+    # ZACAS was experimental until Clang 19: https://github.com/llvm/llvm-project/commit/95aab69c109adf29e183090c25dc95c773215746
+    select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG && CLANG_VERSION < 190000
+    ...
+
+Then in the Makefile:
+
+ifdef CONFIG_EXPERIMENTAL_EXTENSIONS
+KBUILD_AFLAGS += -menable-experimental-extensions
+KBUILD_CFLAGS += -menable-experimental-extensions
+endif
+
+> +else
+> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) := $(riscv-march-y)_zabha
+> +endif
+> +
+>  # Remove F,D,V from isa string for all. Keep extensions between "fd" and "v" by
+>  # matching non-v and non-multi-letter extensions out with the filter ([^v_]*)
+>  KBUILD_CFLAGS += -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
+> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+> index 1c50b4821ac8..65de9771078e 100644
+> --- a/arch/riscv/include/asm/cmpxchg.h
+> +++ b/arch/riscv/include/asm/cmpxchg.h
+> @@ -103,8 +103,14 @@
+>   * indicated by comparing RETURN with OLD.
+>   */
+>  
+> -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
+> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
+>  ({									\
+> +	__label__ zabha, end;						\
+> +									\
+> +	asm goto(ALTERNATIVE("nop", "j %[zabha]", 0,			\
+> +			     RISCV_ISA_EXT_ZABHA, 1)			\
+> +			: : : : zabha);					\
+> +									\
+>  	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
+>  	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
+>  	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
+> @@ -131,6 +137,17 @@
+>  		: "memory");						\
+>  									\
+>  	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
+> +	goto end;							\
+> +									\
+> +zabha:									\
+> +	__asm__ __volatile__ (						\
+> +		prepend							\
+> +		"	amocas" cas_sfx " %0, %z2, %1\n"		\
+
+This should probably have some dependency on CONFIG_RISCV_ISA_ZABHA? I get the
+following with GCC 13.2.0:
+
+  include/linux/atomic/atomic-arch-fallback.h: Assembler messages:
+  include/linux/atomic/atomic-arch-fallback.h:2108: Error: unrecognized opcode `amocas.w a4,a3,0(s1)'
+
+> +		append							\
+> +		: "+&r" (r), "+A" (*(p))				\
+> +		: "rJ" (n)						\
+> +		: "memory");						\
+> +end:									\
+
+I get a lot of warnings from this statement and the one added by the
+previous patch for zacas, which is a C23 extension:
+
+  include/linux/atomic/atomic-arch-fallback.h:4234:9: warning: label at end of compound statement is a C23 extension [-Wc23-extensions]
+  include/linux/atomic/atomic-arch-fallback.h:89:29: note: expanded from macro 'raw_cmpxchg_relaxed'
+     89 | #define raw_cmpxchg_relaxed arch_cmpxchg_relaxed
+        |                             ^
+  arch/riscv/include/asm/cmpxchg.h:219:2: note: expanded from macro 'arch_cmpxchg_relaxed'
+    219 |         _arch_cmpxchg((ptr), (o), (n), "", "", "")
+        |         ^
+  arch/riscv/include/asm/cmpxchg.h:200:3: note: expanded from macro '_arch_cmpxchg'
+    200 |                 __arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,              \
+        |                 ^
+  arch/riscv/include/asm/cmpxchg.h:150:14: note: expanded from macro '__arch_cmpxchg_masked'
+    150 | end:                                                                    \
+        |                                                                         ^
+
+This resolves it:
+
+diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+index ba3ffc2fcdd0..57aa4a554278 100644
+--- a/arch/riscv/include/asm/cmpxchg.h
++++ b/arch/riscv/include/asm/cmpxchg.h
+@@ -147,7 +147,7 @@ zabha:									\
+ 		: "+&r" (r), "+A" (*(p))				\
+ 		: "rJ" (n)						\
+ 		: "memory");						\
+-end:									\
++end:;									\
+ })
+ 
+ #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
+@@ -180,7 +180,7 @@ zacas:									\
+ 		: "+&r" (r), "+A" (*(p))				\
+ 		: "rJ" (n)						\
+ 		: "memory");						\
+-end:									\
++end:;									\
+ })
+ 
+ #define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
+
+>  })
+>  
+>  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
+> @@ -175,8 +192,13 @@ end:									\
+>  									\
+>  	switch (sizeof(*__ptr)) {					\
+>  	case 1:								\
+> +		__arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,		\
+> +					prepend, append,		\
+> +					__ret, __ptr, __old, __new);    \
+> +		break;							\
+>  	case 2:								\
+> -		__arch_cmpxchg_masked(sc_sfx, prepend, append,		\
+> +		__arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,		\
+> +					prepend, append,		\
+>  					__ret, __ptr, __old, __new);	\
+>  		break;							\
+>  	case 4:								\
+> -- 
+> 2.39.2
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
