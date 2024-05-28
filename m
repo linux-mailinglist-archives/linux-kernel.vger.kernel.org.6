@@ -1,90 +1,193 @@
-Return-Path: <linux-kernel+bounces-192996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CE48D2569
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:03:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5277D8D2561
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF241C2784C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D151F22F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FFF173349;
-	Tue, 28 May 2024 20:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E21Ct1tV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7784A178393;
+	Tue, 28 May 2024 20:02:45 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9A17838E;
-	Tue, 28 May 2024 20:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8282C172BDB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926607; cv=none; b=AeAlm14Q40mnqriqtrDVQYNG8XoGyWMKh2t+FY8UkBenAunQY+ZRCRUuChl8oSBX0X+37aw085lHeHnIG4E4NvYZ8M1HKvJpkpX68BesVZ54SbhgDpLcB5VWimKFhjaQHH2erp1V4fpE34Ki2m2YOdQGoRPETo9I3jClo8ogGEw=
+	t=1716926565; cv=none; b=VRB/sx8M71ze3FbS1qMHONErTblqtNXvFbE/n1Jp9DXjhIZYpMlzjiZUcZGbQvRyIlEeGALXTQatK4gugZLvTkQml5lzo0dY48cCusNyeapTgqi7vKZxAzpUk5VEHJ7o0fZMMRji3Yilr9s9SIR7AA1qV9RVW2y6gtYVoEIJQaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926607; c=relaxed/simple;
-	bh=GAX+4DxMOBaXQxskI6jsbm3aDcBHEhA6V34iGhZ3FI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mjtd6TsFzSW09uPfAvLKwfI09lST3YbpPLFRDfRtkSmDSFwT6F/RtByAJNf3JqU2dP6JAy+t045PrS9YpclFFwSx3f+nv3g3b/mrgQP/I8bSmRz8Byo1wxFzf5xBfV5qqFRUElcQBr9hd3cHvyUkZxWoF50EKl6pscJUhaVQz4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E21Ct1tV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E67C32786;
-	Tue, 28 May 2024 20:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716926606;
-	bh=GAX+4DxMOBaXQxskI6jsbm3aDcBHEhA6V34iGhZ3FI8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=E21Ct1tViP9RMBjfbfmBrqQOe7dYJDJ65CW2626+quVfcMw3FhP0GxHO8xqISNLYu
-	 vZ1VKcOeljVot3/6wNJrgCM06vRadywsik/YA6uzQ7SGF90AHNxc37o22AfmQRmBDF
-	 Th9WHV438CCTOl1KWQtboUuAGK2cOW+uOIaE+HRvjal3IfcFbQbB9yL79t6aDGPqMl
-	 BCv/Q3SXzUScRrcZmte3hNC9wK8ObQJk/MxwwMZyeyJM9DGr/SH+Ywv3O0F0cAW1Mm
-	 IdIy8pC3oPr326vcFY/JGr+vzRGw6UYZFfvVv4vrPmQRbte+VOtvh1bPMNFtIGWcG6
-	 naCqVwoHlZH0Q==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Saravana Kannan <saravanak@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: kbuild: Fix dt_binding_check on unconfigured build
-Date: Tue, 28 May 2024 15:02:32 -0500
-Message-ID: <20240528200231.1548800-2-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716926565; c=relaxed/simple;
+	bh=pTf2qUi734ES9Al085wTXfYC8mQU+J7CT38EpK7LQlk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncZ/ucebWaclToqAjNDTJiJ9yeONmJljV83KQAc6oO5uf2OfwVv2D7HsOdJyvxFinY0Rk/nWeAV52MaIFs/E6LUzz+ena3q/KtOqDTSQhaGFkqyjY9vc2uqQYzudztBZoLhb9REBkA46DpEOenvBuo1N1MMftLbzYt/LZgKFapU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 3cab8281-1d2d-11ef-aaf5-005056bdd08f;
+	Tue, 28 May 2024 23:02:41 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 28 May 2024 23:02:39 +0300
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
+Cc: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 06/13] gpio: add AD24xx GPIO driver
+Message-ID: <ZlY4X2P1VpF0aqjM@surfacebook.localdomain>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+ <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
 
-The 'dt_binding_check' target shouldn't depend on the kernel
-configuration, but it has since commit 604a57ba9781 ("dt-bindings:
-kbuild: Add separate target/dependency for processed-schema.json").
-That is because CHECK_DT_BINDING make variable was dropped, but
-scripts/dtc/Makefile was missed. The CHECK_DTBS variable can be used
-instead.
+Fri, May 17, 2024 at 02:58:04PM +0200, Alvin Šipraga kirjoitti:
+> From: Alvin Šipraga <alsi@bang-olufsen.dk>
+> 
+> This driver adds GPIO function support for AD24xx A2B transceiver chips.
 
-Reported-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Fixes: 604a57ba9781 ("dt-bindings: kbuild: Add separate target/dependency for processed-schema.json")
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- scripts/dtc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+"Add GPIO..."
 
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index a18657072541..b47f4daa4515 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -3,7 +3,7 @@
- 
- # *** Also keep .gitignore in sync when changing ***
- hostprogs-always-$(CONFIG_DTC)		+= dtc fdtoverlay
--hostprogs-always-$(CHECK_DT_BINDING)	+= dtc
-+hostprogs-always-$(CHECK_DTBS)		+= dtc
- 
- dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
- 		   srcpos.o checks.o util.o
+> When a GPIO is requested, the relevant pin is automatically muxed to
+> GPIO mode. The device tree property gpio-reserved-ranges can be used to
+> protect certain pins which are reserved for other functionality such as
+> I2S/TDM data.
+
+Why this doesn't use gpio-regmap?
+
+..
+
+> +config GPIO_AD24XX
+> +	tristate "Analog Devies Inc. AD24xx GPIO support"
+> +	depends on A2B_AD24XX_NODE
+> +	help
+> +	  Say Y here to enable GPIO support for AD24xx A2B transceivers.
+
+checkpatch probably complain about too short help text. You may extend it by
+explaining how module will be called.
+
+..
+
+> +#include <linux/a2b/a2b.h>
+> +#include <linux/a2b/ad24xx.h>
+
+This seems to me not so generic as below...
+
++ bits.h
++ device.h
++ err.h
+
+> +#include <linux/gpio/driver.h>
+
+> +#include <linux/interrupt.h>
+
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+
++ mutex.h
+
+> +#include <linux/of_irq.h>
+
+Please, can we avoid OF in a new code?
+
+> +#include <linux/regmap.h>
+
+..hence move that group here and put a blank line before.
+
+..
+
+> +struct ad24xx_gpio {
+> +	struct device *dev;
+> +	struct a2b_func *func;
+> +	struct a2b_node *node;
+> +	struct regmap *regmap;
+> +	int irqs[AD24XX_MAX_GPIOS];
+
+> +	struct gpio_chip gpio_chip;
+
+If you move this to be the first member, you might get less code being
+generated at compile time.
+
+> +	struct irq_chip irq_chip;
+
+Should not be here, but static.
+
+> +	struct mutex mutex;
+> +	unsigned int irq_invert : AD24XX_MAX_GPIOS;
+> +	unsigned int irq_enable : AD24XX_MAX_GPIOS;
+> +};
+
+..
+
+> +	if (ret)
+> +		dev_err(adg->dev,
+> +			"failed to update interrupt configuration: %d\n", ret);
+
+Why and how is this useful?
+
+..
+
+> +	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+
+First of all it uses a wrong API (custom to IRQ core), second why do you need
+this?
+
+..
+
+> +	struct device_node *np;
+
+> +	np = of_irq_find_parent(dev->of_node);
+> +	if (!np)
+> +		return -ENOENT;
+> +
+> +	parent_domain = irq_find_host(np);
+> +	of_node_put(np);
+> +	if (!parent_domain)
+> +		return -ENOENT;
+
+Why is this magic needed?
+
+..
+
+> +	ret = devm_gpiochip_add_data(dev, gpio_chip, adg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+	return devm_gpiochip_add_data(...);
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
