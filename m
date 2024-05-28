@@ -1,421 +1,311 @@
-Return-Path: <linux-kernel+bounces-192872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5348D235A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:41:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428EE8D235E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DE52B22694
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA241F23EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46B16FF4F;
-	Tue, 28 May 2024 18:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260FA16F291;
+	Tue, 28 May 2024 18:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j//TmqMe"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mMg34ppu"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2051.outbound.protection.outlook.com [40.107.22.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8A61C6A5;
-	Tue, 28 May 2024 18:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716921678; cv=none; b=hHR5ZYLR1wq6V6QNqEFauEm1ZBwSQoBajGNG6tlSz/1MCAQuzbyiuu749oJ9KqkdjXp7FBZyAAtCkBPfbxGBOVPyL9J4B+AmjM+qEu/8lvvCVI48WyNIy9KPgM9SyYm3ebAD1I8zOXzQclzMuxYdm9X0DMXrWfMRGqe5qMKj2iY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716921678; c=relaxed/simple;
-	bh=tRxtb+BuCuDdZLNKVI1U9TB5LPyq6Iu++Jsg/AA08T0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJIB7yWg1f43FVcgHN2oCeb5Tp1GlAJWCtcOEIdnOltqQduQZLSaHaqr2eoUZEM1CFfED4eSAadD0F2SfE25ZHsmOejU2z6SafLhiplheaPRn4H+dnmH5Zf2itiNFE2TEai0HtG/TL63asaTqsVX2Z/+IIf2yxsa2Qx+3v806m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j//TmqMe; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716921674;
-	bh=tRxtb+BuCuDdZLNKVI1U9TB5LPyq6Iu++Jsg/AA08T0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j//TmqMeTN4mfoGfnvzPENIvcpKIzu073du5X88NkHpLQ0Ph6d0qVDcjiECsR9pjP
-	 mqGFkSpX5Aexqxv9rzDJhWVjhfjWLx9N6I9yRQY7VK2kg2WYRA+Y9YQs1/ny3MrmOR
-	 YjR6FTT/Y396P/CcAln48BWUt3vKGNgrnY0yuKvuJYR43A/Os3kmB6g6mAxrUM6xXk
-	 dbxYkaSCr/3cxPoDEiOPzbIWpIYpysG/qxzfqz9Ogqxhw0yG9jYVvqBmG1ufvpKRxe
-	 0siJFcURIcsQp4CyaQChBsXe/KPtjIDPwL6TBgJrgNRqAW13cY6J9y+MuzMUHybSwT
-	 x1U9WNi0yc5ig==
-Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: andrzej.p)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6DDF63780A0B;
-	Tue, 28 May 2024 18:41:13 +0000 (UTC)
-Message-ID: <50c62db3-060d-4b21-ae28-629003611e1a@collabora.com>
-Date: Tue, 28 May 2024 20:41:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A121C6A5;
+	Tue, 28 May 2024 18:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716921861; cv=fail; b=la7u/rMJLdXArrMVBfBH8Kx9bgCdLep5Xn0RMbFoZSxYXxUzPAoh4ufv0+YKo7jztk9nGsi23bEQSxWkuLxQMZWv2siNaaH0pB2vX+drIsOj5jY2IJKd3726/taEpnFQ0gravd9FSQNlSWZ1h7IjXENWBoF/r9NnHlfMk9/T+oQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716921861; c=relaxed/simple;
+	bh=VnseUBLE29rvt1rUYWHjrR8KV5DC/vQIYjj1R4oX+YE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HXpMnLwRumnwz6EbPwJ4sVsmj9n2MA20iGsIAOp7NNgdaaRDXJeUB2GN9TgWPP7QwLpYX7BhIkIx1p+eJZIoPuvXLWsglhl9yuyptTeitWXJR3Rix1fdU6xNtLnWEzzmmoUfy66h/cS579+5vEkea3y/XrqX2YYnjOiQ4FBd2yE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=mMg34ppu; arc=fail smtp.client-ip=40.107.22.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GcwWYWkpiad8cw2BTnY1a+9N/m60533XAdaYi9UJ+G/eVC0tbbnkBT2HjnhYfjir9hN2xEUWNFIOF7MbEB05jXzbP2zd2i1c3y8MKMME8eVKETZaULSQpzghy5gVBcxapNLOpyuffQLNIyqSSgMipEqKC9cPMSxJp7wYfrhNys7cMDOhwpb3iaAuZDKOl1xtUR0KdnSc1B2CbTGH8ubSy0l7EEOaWnl2UZFU0Ehnj836dV6bankGaKRDZRBq69+NVDcUQXGP9amwaM3G0989VyCJlx1blVOkM+chbE4kqgSQj5oeteT3eWivPCJF8IEvDLswuZSGTncZA3RtiJM+kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EzXphW7F7dQjmsyWmz/8IjYBVs2e1r3WkVhZKKdcRR8=;
+ b=mWgIB2rCuMMe3bA/8IrS3ye2m0mXs8xKogOVQOVTBtSSRWYUHlOrgN/+yVplKiiXYHxMso0WhEdnpvdx6mXeK1XazRUcqtcEvtZQxa3SD1kfq6FgMiimWenv1MsNL799OUXm7/v+U9CUV3g2dfN4yUN/s0B/Ew4D/QY5276tcDsE8wmC9k23WFi33SzHxnmWxKI5pRf7spFBp82mOw+fCY5ErXr/iLI81tDnCRaKELa4VcDAOeidXbFd76l5y7mHzyqbDAjTTVSAbt1nUxVt+lEro2+cRVqzclTLmDBZMajf9XtawnFortjmur97ulvyF72MbD4Dx1TL9RrJPIuqvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzXphW7F7dQjmsyWmz/8IjYBVs2e1r3WkVhZKKdcRR8=;
+ b=mMg34ppuHsztonFbwhi7PuaUy0TEUb1fkSRIfiFalQbpgDQcy9NNr+ZdpzFWeGzILpvMRL6/NNjJaC089aKTEidkFn5wUPhTJAYTgeBRaOHAz5IsPfHIZalUiTZlzjDRcVJFCSh5dOU3NEv8XAZSu1gZCz29VGyFR4cTFbe/2Bc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB6856.eurprd04.prod.outlook.com (2603:10a6:20b:108::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
+ 2024 18:44:16 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7611.016; Tue, 28 May 2024
+ 18:44:15 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: krzk@kernel.org
+Cc: Frank.li@nxp.com,
+	alexandre.belloni@bootlin.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	robh@kernel.org
+Subject: [PATCH v2 1/1] dt-bindings: rtc: Convert rtc-fsl-ftm-alarm.txt to yaml format
+Date: Tue, 28 May 2024 14:43:59 -0400
+Message-Id: <20240528184359.2685109-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR07CA0053.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::30) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] tools: usb: p9_fwd: add usb gadget packet
- forwarder script
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- kernel@pengutronix.de, Jan Luebbe <jlu@pengutronix.de>
-References: <20240116-ml-topic-u9p-v5-0-5ed0abd53ef5@pengutronix.de>
- <20240116-ml-topic-u9p-v5-3-5ed0abd53ef5@pengutronix.de>
-Content-Language: en-US
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <20240116-ml-topic-u9p-v5-3-5ed0abd53ef5@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB6856:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e8b4dc9-7dd7-49ff-2e63-08dc7f462cb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|1800799015|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ver0NtFFSNXDKMur4KBmdOu0xStevd3lON9cZkSMgVIl2PoDO2LvN+FwrSOW?=
+ =?us-ascii?Q?eZt+G23ZlFBvxlHs4QHa2jyONEaub4S4366JFL1w9V5tXeWAwA332xfDwt52?=
+ =?us-ascii?Q?oWNyXmANCxF4l3HVXVDNNYAKrUBBOYLNK5B0ZcjldA4CBugxZ8vDiM5jQ1En?=
+ =?us-ascii?Q?eTMHZJuvH6S4jBV+0dMYzZ0Qj8quGYA7debjIfwJ8TqzaYSJJX+lomGUFcs2?=
+ =?us-ascii?Q?AibdwgENGfupCxfS9/2CRT0CqDGudK9mJZgtjffGsG2kyqWEMAoEDnLqJqMl?=
+ =?us-ascii?Q?CJ/drU/ak5Ckt2N0iC87UY4vHSzjkywHrkZynvLZ0tMRzLZzJ6sME12NxewG?=
+ =?us-ascii?Q?ICYzufCG6Js9yVfRiBqvRqm9uZ/MCIYFtFa1hP+JufNuOvfJsL6t98MGadl0?=
+ =?us-ascii?Q?7vYo0ygG8jvAeUwBKTYHqonuqQEUTkfvEX6ZuFW/mpeQFmw0/nTPhkxQjOZj?=
+ =?us-ascii?Q?3POX+1Ou/ZzIJWcg/joQnHRDZwoxb+YTLv2eysIJF0jVnD4ARKm+5PhmOFkU?=
+ =?us-ascii?Q?pG5v45pGhOWd5DXGp/0VnomaOumI1dzLHEje3znQYmFgrOgehnB8INFHYBXm?=
+ =?us-ascii?Q?E0OyfmtdfJIGCrZpyCedHObStVW+sSQejli7rsfkff0vK3R9ok0eWtPaVDpr?=
+ =?us-ascii?Q?Tp5+FKSc3hYkEjcurqJ86svxshtxPM3fg+VB8EoL3JaT8RfOtvBQNw9t66Wj?=
+ =?us-ascii?Q?ftbBezrSRecEg8hA83itMkFCLYh17FE5ZR3mNDHOUiO+f3+1KzLmRsIXfcTJ?=
+ =?us-ascii?Q?06locM9wNximpPmz9xuVd8Tg4rhKESuGOO3qOFMaP2EEWu2DtSmbSFx8Fnao?=
+ =?us-ascii?Q?bPhYOcvN52IetlttL6KdvfN8foSitf3ZBcg+jMpoo8Cdb3HJO71+onGpkeWi?=
+ =?us-ascii?Q?IcgSPczwU2c25quppRojbPse8NoTlryFNT+xBjNeA5Q3UGcHw7yJBffUSdOX?=
+ =?us-ascii?Q?HoDlfmt5SxBSkOa71t/RIGYQBf9lxgHL0017gkrQUWPlLqSn9pCFSV9KlsmC?=
+ =?us-ascii?Q?78rakaVKu51NmWKRXH3FRK5bcoupYRyzrj8OYnZfdXC7zFeuVGK3+ri92M7G?=
+ =?us-ascii?Q?K3vuerS9R4DKZxau82CkTth8QF/5g+dKWsFIhaDYonvGGIbSe5AOzU6vOBUl?=
+ =?us-ascii?Q?jELv8vxWGiT8qEq+5Em0wkM4lnsXEt/AZdcruEyPuei57cn/ie99kC+5xgw5?=
+ =?us-ascii?Q?l6l4C6Y1YpCVqYPjv2k+O28jUy1RYg/pAJqwac5YbatRW82GtlnOtv0VldeB?=
+ =?us-ascii?Q?gQkFz9fivIlMR9Ns2CoQ1gi228M3vvCT/5EXBrUOw1tBCCoHWldmdOuB8rUy?=
+ =?us-ascii?Q?aQM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(52116005)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+zMWMh3b0VEagZD8S9JAV13xZXd2izO6cFNKtjpfpkZDZBAULCeF3F4kaGmc?=
+ =?us-ascii?Q?5wKxo/cnA7khF+jo7CLCaJPgAHvNVxU4tIS3ZXB2+TZqmMZUlWPxJGKtdf7A?=
+ =?us-ascii?Q?Kjs6vMhNOLvNfrShk+g/2fiwBAGBJ6wjAjfZKebwN3pek+vCZ9JmQMZ1PvfS?=
+ =?us-ascii?Q?LySrjxF8ZjXkEozxrLewMkMd6B9LjuofBMKSMBuYNU7D9k6ZoSB2CBXQfW1S?=
+ =?us-ascii?Q?OOo9T6mAm3XO4Ujit66kaZaykMZSyKIj7GyYbCGgKMS40VSaPOGtGe1zHkOq?=
+ =?us-ascii?Q?W0r2J/IFCCjepgvgs2rTdRt99uZif3UTzQZgz5rnY5w+CWnvZuc8XXi0CYoA?=
+ =?us-ascii?Q?SDk07+IdwS0rrkeGZXXxgHvrLhfsZxw1cVmY36t4hQrYDkvF87cBr4uWPAep?=
+ =?us-ascii?Q?Oj0ByoduEMTpZk26wC7oketAPL9n8wDGC4rMuVUavcFB9wJqDSo7Xj/hj7ma?=
+ =?us-ascii?Q?gmw91xlSCRICdmUg5VaXyeqriECGBumiZogy6CtM6xjwYy4vaEstYayBBC0s?=
+ =?us-ascii?Q?9P18yQg/VpFSQf2YLWeVNb6Jgkl8gfmCQqPa2iztQETxJxmIByYW1GFWGEAl?=
+ =?us-ascii?Q?CDRn9vSHMK9uqGV0IRpUQOKjr2zu3LCTA8+DDfN8SoCmtgZEyJox9nI3l9sB?=
+ =?us-ascii?Q?3PYcNrQ526NKqJS4bjFZcex+E/SCbN2MZPm2rPNoUih3olaYxHefqJpT2gaU?=
+ =?us-ascii?Q?CLJOewajeRsv8BbfKEcHN5cFWrRxlWtteyTQWD8nwkI4sOs2jw7xIqbJ7q3k?=
+ =?us-ascii?Q?Xn5M2L01BOkGfm4j4fTu7N5nL6nK+Hltkgl3qpRWzDqowgmzvPcH74cf/uIi?=
+ =?us-ascii?Q?FfIpnHKssNolVCWwSjEWiKksGzq4ycGRljj0R+ezr4/EyhCPGqJw/JnAyuw8?=
+ =?us-ascii?Q?5bk4pSzljwpXerzZ1644ai+6PeT5OnilyO5etA2S/tlWJWeBd0NZgvU47ih1?=
+ =?us-ascii?Q?En5w7OEZkc8KC6LKFEtkmfFNwaYPiq/9gTZhoh2PPqg/bZD54d0G9X0Gx6dZ?=
+ =?us-ascii?Q?WGHtabFkg1zKcGHPYwla1O2i42fdI6sgXucWlc056hwgOsPckxZaAYDKliy3?=
+ =?us-ascii?Q?mcKa57yAu6czpHO3oN8oQoP5kPUzSZqxQk4vFdc5obm6uUTerdhDPOuqSgZ0?=
+ =?us-ascii?Q?srG6PhCFIp0ZpGbEpCgpOa8thndFhLo1vYhEGaTjSLTCffSnnFUuTMx0menO?=
+ =?us-ascii?Q?JwMFgNGljkHI5AlEVsci3Zh1YXAjV3W1+AZj5R7GxlvXuYh95fBOuMYkvfmX?=
+ =?us-ascii?Q?KU2M1AEKGo08ZdQL/SfXDTUJgvoK78VQHCRr5sfJnByasD4XZUGrVo3b2DZN?=
+ =?us-ascii?Q?+NKom50WobNBkxw4QhrTJdPvi0CUfEVv5+fOnL1c7TM8GO8vV3FoAtMfLED6?=
+ =?us-ascii?Q?n7Cruscx9gSc0T+0UVeAtcWyfzNzTwQPUDxyaXuG1fNu+lmsF/OtMaTXVhjh?=
+ =?us-ascii?Q?HQhi4aoLEz8CIxDxs6VYEK08HiIdbfVcEKUyrVec/qmeqaEqkDL5iQVfCwoQ?=
+ =?us-ascii?Q?bAhE1t7Vw0AZFJFnMuvHaZmFmYxf7ywaMN5DqQHykpoz8aC+RL+d8Cu/GyxE?=
+ =?us-ascii?Q?1SR4NZ3sSyKHRTALbcmwyxUBwD/iVCfs3t1WHbp3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e8b4dc9-7dd7-49ff-2e63-08dc7f462cb7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 18:44:15.6307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wiALtqZgG+j53aBA4Qpjzg2gGaGmN5BHc9pHZTX8YaJGcGfDdpcTj2ZhK0lyo7MWylhfX0fy3sexRPCfcyUn8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6856
 
-Hi,
+Convert dt-binding doc "rtc-fsl-ftm-alarm.txt" to yaml format.
 
-W dniu 28.05.2024 o 00:08, Michael Grzeschik pisze:
-> This patch is adding an small python tool to forward 9pfs requests
-> from the USB gadget to an existing 9pfs TCP server. Since currently all
-> 9pfs servers lack support for the usb transport this tool is an useful
-> helper to get started.
-> 
-> Refer the Documentation section "USBG Example" in
-> Documentation/filesystems/9p.rst on how to use it.
-> 
-> Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> 
-> ---
-> v4 -> v5:
->    - updated documentation for new subcommands list/connect
->    - run ruff format
->    - make vid and pid parameterized
+Change example's reg to 32bit address and length.
+Remove unrelated rcpm@1e34040 in example.
 
-Thanks for adding that.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
 
->    - add list as subcommand to scan for devices
->    - move connect to extra subcommand
-> v3 -> v4: -
-> v2 -> v3: -
-> v1 -> v2:
->    - added usbg 9pfs detailed instructions to 9p.rst doc
-> ---
->   Documentation/filesystems/9p.rst |  41 +++++++
->   tools/usb/p9_fwd.py              | 243 +++++++++++++++++++++++++++++++++++++++
->   2 files changed, 284 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-> index 10cf79dc287f8..2cc85f3e8659f 100644
-> --- a/Documentation/filesystems/9p.rst
-> +++ b/Documentation/filesystems/9p.rst
-> @@ -67,6 +67,47 @@ To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
->   where <device> is the tag associated by the usb gadget transport.
->   It is defined by the configfs instance name.
->   
-> +USBG Example
-> +============
-> +
-> +The USB host exports a filesystem, while the gadget on the USB device
-> +side makes it mountable.
-> +
-> +Diod (9pfs server) and the forwarder are on the development host, where
-> +the root filesystem is actually stored. The gadget is initialized during
-> +boot (or later) on the embedded board. Then the forwarder will find it
-> +on the USB bus and start forwarding requests.
-> +
-> +In this case the 9p requests come from the device and are handled by the
-> +host. The reason is that USB device ports are normally not available on
-> +PCs, so a connection in the other direction would not work.
-> +
-> +When using the usbg transport, for now there is no native usb host
-> +service capable to handle the requests from the gadget driver. For
-> +this we have to use the extra python tool p9_fwd.py from tools/usb.
-> +
-> +Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
-> +
-> +        $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
-> +
-> +Optionaly scan your bus if there are more then one usbg gadgets to find their path:
-> +
-> +        $ python $kernel_dir/tools/usb/p9_fwd.py list
-> +
-> +        Bus | Addr | Manufacturer     | Product          | ID        | Path
-> +        --- | ---- | ---------------- | ---------------- | --------- | ----
-> +          2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-1.1.2
-> +          2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-1.1.3
-> +
-> +Then start the python transport:
-> +
-> +        $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -p 9999
-> +
-> +After that the gadget driver can be used as described above.
-> +
-> +One use-case is to use it as an alternative to NFS root booting during
-> +the development of embedded Linux devices.
-> +
->   Options
->   =======
->   
-> diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
-> new file mode 100755
-> index 0000000000000..7bedefce75c7b
-> --- /dev/null
-> +++ b/tools/usb/p9_fwd.py
-> @@ -0,0 +1,243 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import argparse
-> +import errno
-> +import logging
-> +import socket
-> +import struct
-> +import time
-> +
-> +import usb.core
-> +import usb.util
-> +
-> +
-> +def path_from_usb_dev(dev):
-> +    """Takes a pyUSB device as argument and returns a string.
-> +    The string is a Path representation of the position of the USB device on the USB bus tree.
-> +
-> +    This path is used to find a USB device on the bus or all devices connected to a HUB.
-> +    The path is made up of the number of the USB controller followed be the ports of the HUB tree."""
-> +    if dev.port_numbers:
-> +        dev_path = ".".join(str(i) for i in dev.port_numbers)
-> +        return f"{dev.bus}-{dev_path}"
-> +    return ""
-> +
-> +
-> +HEXDUMP_FILTER = "".join(chr(x).isprintable() and chr(x) or "." for x in range(128)) + "." * 128
-> +
-> +
-> +class Forwarder:
-> +    @staticmethod
-> +    def _log_hexdump(data):
-> +        if not logging.root.isEnabledFor(logging.TRACE):
-> +            return
-> +        L = 16
-> +        for c in range(0, len(data), L):
-> +            chars = data[c : c + L]
-> +            dump = " ".join(f"{x:02x}" for x in chars)
-> +            printable = "".join(HEXDUMP_FILTER[x] for x in chars)
-> +            line = f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
-> +            logging.root.log(logging.TRACE, "%s", line)
-> +
-> +    def __init__(self, server, vid, pid, path):
-> +        self.stats = {
-> +            "c2s packets": 0,
-> +            "c2s bytes": 0,
-> +            "s2c packets": 0,
-> +            "s2c bytes": 0,
-> +        }
-> +        self.stats_logged = time.monotonic()
-> +
-> +        def find_filter(dev):
-> +            dev_path = path_from_usb_dev(dev)
-> +            if path is not None:
-> +                return dev_path == path
-> +            return True
-> +
-> +        dev = usb.core.find(idVendor=vid, idProduct=pid, custom_match=find_filter)
-> +        if dev is None:
-> +            raise ValueError("Device not found")
-> +
-> +        logging.info(f"found device: {dev.bus}/{dev.address} located at {path_from_usb_dev(dev)}")
-> +
-> +        # dev.set_configuration() is not necessary since g_multi has only one
-> +        usb9pfs = None
-> +        # g_multi adds 9pfs as last interface
-> +        cfg = dev.get_active_configuration()
-> +        for intf in cfg:
-> +            # we have to detach the usb-storage driver from multi gadget since
-> +            # stall option could be set, which will lead to spontaneous port
-> +            # resets and our transfers will run dead
-> +            if intf.bInterfaceClass == 0x08:
-> +                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
-> +                    dev.detach_kernel_driver(intf.bInterfaceNumber)
-> +
-> +            if intf.bInterfaceClass == 0xFF and intf.bInterfaceSubClass == 0xFF and intf.bInterfaceProtocol == 0x09:
-> +                usb9pfs = intf
-> +        if usb9pfs is None:
-> +            raise ValueError("Interface not found")
-> +
-> +        logging.info(f"claiming interface:\n{usb9pfs}")
-> +        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
-> +        ep_out = usb.util.find_descriptor(
-> +            usb9pfs,
-> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT,
-> +        )
-> +        assert ep_out is not None
-> +        ep_in = usb.util.find_descriptor(
-> +            usb9pfs,
-> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN,
-> +        )
-> +        assert ep_in is not None
-> +        logging.info("interface claimed")
-> +
-> +        self.ep_out = ep_out
-> +        self.ep_in = ep_in
-> +        self.dev = dev
-> +
-> +        # create and connect socket
-> +        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-> +        self.s.connect(server)
-> +
-> +        logging.info("connected to server")
-> +
-> +    def c2s(self):
-> +        """forward a request from the USB client to the TCP server"""
-> +        data = None
-> +        while data is None:
-> +            try:
-> +                logging.log(logging.TRACE, "c2s: reading")
-> +                data = self.ep_in.read(self.ep_in.wMaxPacketSize)
-> +            except usb.core.USBTimeoutError:
-> +                logging.log(logging.TRACE, "c2s: reading timed out")
-> +                continue
-> +            except usb.core.USBError as e:
-> +                if e.errno == errno.EIO:
-> +                    logging.debug("c2s: reading failed with %s, retrying", repr(e))
-> +                    time.sleep(0.5)
-> +                    continue
-> +                logging.error("c2s: reading failed with %s, aborting", repr(e))
-> +                raise
-> +        size = struct.unpack("<I", data[:4])[0]
-> +        while len(data) < size:
-> +            data += self.ep_in.read(size - len(data))
-> +        logging.log(logging.TRACE, "c2s: writing")
-> +        self._log_hexdump(data)
-> +        self.s.send(data)
-> +        logging.debug("c2s: forwarded %i bytes", size)
-> +        self.stats["c2s packets"] += 1
-> +        self.stats["c2s bytes"] += size
-> +
-> +    def s2c(self):
-> +        """forward a response from the TCP server to the USB client"""
-> +        logging.log(logging.TRACE, "s2c: reading")
-> +        data = self.s.recv(4)
-> +        size = struct.unpack("<I", data[:4])[0]
-> +        while len(data) < size:
-> +            data += self.s.recv(size - len(data))
-> +        logging.log(logging.TRACE, "s2c: writing")
-> +        self._log_hexdump(data)
-> +        while data:
-> +            written = self.ep_out.write(data)
-> +            assert written > 0
-> +            data = data[written:]
-> +        if size % self.ep_out.wMaxPacketSize == 0:
-> +            logging.log(logging.TRACE, "sending zero length packet")
-> +            self.ep_out.write(b"")
-> +        logging.debug("s2c: forwarded %i bytes", size)
-> +        self.stats["s2c packets"] += 1
-> +        self.stats["s2c bytes"] += size
-> +
-> +    def log_stats(self):
-> +        logging.info("statistics:")
-> +        for k, v in self.stats.items():
-> +            logging.info(f"  {k+':':14s} {v}")
-> +
-> +    def log_stats_interval(self, interval=5):
-> +        if (time.monotonic() - self.stats_logged) < interval:
-> +            return
-> +
-> +        self.log_stats()
-> +        self.stats_logged = time.monotonic()
-> +
-> +
-> +def try_get_usb_str(dev, name):
-> +    try:
-> +        with open(f"/sys/bus/usb/devices/{dev.bus}-{dev.address}/{name}") as f:
-> +            return f.read().strip()
-> +    except FileNotFoundError:
-> +        return None
-> +
-> +
-> +def list_usb(args):
-> +    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-> +
-> +    print("Bus | Addr | Manufacturer     | Product          | ID        | Path")
-> +    print("--- | ---- | ---------------- | ---------------- | --------- | ----")
-> +    for dev in usb.core.find(find_all=True, idVendor=vid, idProduct=pid):
-> +        path = path_from_usb_dev(dev) or ""
-> +        manufacturer = try_get_usb_str(dev, "manufacturer") or "unknown"
-> +        product = try_get_usb_str(dev, "product") or "unknown"
-> +        print(
-> +            f"{dev.bus:3} | {dev.address:4} | {manufacturer:16} | {product:16} | {dev.idVendor:04x}:{dev.idProduct:04x} | {path:18}"
-> +        )
-> +
-> +
-> +def connect(args):
-> +    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-> +
-> +    f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
-> +
-> +    try:
-> +        while True:
-> +            f.c2s()
-> +            f.s2c()
-> +            f.log_stats_interval()
-> +    finally:
-> +        f.log_stats()
-> +
-> +
-> +def main():
-> +    parser = argparse.ArgumentParser(
-> +        description="Forward 9PFS requests from USB to TCP",
-> +    )
-> +
-> +    parser.add_argument("--id", type=str, default="1d6b:0109", help="vid:pid of target device")
-> +    parser.add_argument("--path", type=str, default="", help="path of target device")
+Notes:
+    Change from v1 to v2
+    - file name change to fsl,ls-ftm-alarm.yaml
+    - drop description for reg and interrupt
+    - add descript items for fsl,rcpm-wakeup
+    - add allof rtc.yaml
+    - example use node name 'rtc'
+    - example interrupt include gic.h
+    
+    make dt_binding_check DT_SCHEMA_FILES=rtc-fsl-ftm-alarm.yaml
+      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+      CHKDT   Documentation/devicetree/bindings
+      LINT    Documentation/devicetree/bindings
+      DTEX    Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dts
+      DTC_CHK Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dtb
 
-I had to specify both --id and --path, otherwise I was getting
-"device not found".
+ .../bindings/rtc/fsl,ls-ftm-alarm.yaml        | 73 +++++++++++++++++++
+ .../bindings/rtc/rtc-fsl-ftm-alarm.txt        | 36 ---------
+ 2 files changed, 73 insertions(+), 36 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+ delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
 
-Regards,
-
-Andrzej
-
-> +    parser.add_argument("-v", "--verbose", action="count", default=0)
-> +
-> +    subparsers = parser.add_subparsers()
-> +    subparsers.required = True
-> +    subparsers.dest = "command"
-> +
-> +    parser_list = subparsers.add_parser("list", help="List all connected 9p gadgets")
-> +    parser_list.set_defaults(func=list_usb)
-> +
-> +    parser_connect = subparsers.add_parser(
-> +        "connect", help="Forward messages between the usb9pfs gadget and the 9p server"
-> +    )
-> +    parser_connect.set_defaults(func=connect)
-> +    connect_group = parser_connect.add_argument_group()
-> +    connect_group.required = True
-> +    parser_connect.add_argument("-s", "--server", type=str, default="127.0.0.1", help="server hostname")
-> +    parser_connect.add_argument("-p", "--port", type=int, default=564, help="server port")> +
-> +    args = parser.parse_args()
-> +
-> +    logging.TRACE = logging.DEBUG - 5
-> +    logging.addLevelName(logging.TRACE, "TRACE")
-> +
-> +    if args.verbose >= 2:
-> +        level = logging.TRACE
-> +    elif args.verbose:
-> +        level = logging.DEBUG
-> +    else:
-> +        level = logging.INFO
-> +    logging.basicConfig(level=level, format="%(asctime)-15s %(levelname)-8s %(message)s")
-> +
-> +    args.func(args)
-> +
-> +
-> +if __name__ == "__main__":
-> +    main()
-> 
+diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+new file mode 100644
+index 0000000000000..388102ae30cd8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/fsl,ls-ftm-alarm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale FlexTimer Module (FTM) Alarm
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - fsl,ls1012a-ftm-alarm
++      - fsl,ls1021a-ftm-alarm
++      - fsl,ls1028a-ftm-alarm
++      - fsl,ls1043a-ftm-alarm
++      - fsl,ls1046a-ftm-alarm
++      - fsl,ls1088a-ftm-alarm
++      - fsl,ls208xa-ftm-alarm
++      - fsl,lx2160a-ftm-alarm
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  fsl,rcpm-wakeup:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - items:
++          - description: phandle to rcpm node
++          - description: bit mask of IPPDEXPCR0
++          - description: bit mask of IPPDEXPCR1
++          - description: bit mask of IPPDEXPCR2
++          - description: bit mask of IPPDEXPCR3
++          - description: bit mask of IPPDEXPCR4
++          - description: bit mask of IPPDEXPCR5
++          - description: bit mask of IPPDEXPCR6
++        minItems: 1
++    description:
++      phandle to rcpm node, Please refer
++      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++
++  big-endian:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      If the host controller is big-endian mode, specify this property.
++      The default endian mode is little-endian.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - fsl,rcpm-wakeup
++
++allOf:
++  - $ref: rtc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    rtc@2800000 {
++        compatible = "fsl,ls1088a-ftm-alarm";
++        reg = <0x2800000 0x10000>;
++        fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
++        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++    };
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+deleted file mode 100644
+index fffac74999da6..0000000000000
+--- a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-Freescale FlexTimer Module (FTM) Alarm
+-
+-Required properties:
+-- compatible : Should be "fsl,<chip>-ftm-alarm", the
+-	       supported chips include
+-	       "fsl,ls1012a-ftm-alarm"
+-	       "fsl,ls1021a-ftm-alarm"
+-	       "fsl,ls1028a-ftm-alarm"
+-	       "fsl,ls1043a-ftm-alarm"
+-	       "fsl,ls1046a-ftm-alarm"
+-	       "fsl,ls1088a-ftm-alarm"
+-	       "fsl,ls208xa-ftm-alarm"
+-	       "fsl,lx2160a-ftm-alarm"
+-- reg : Specifies base physical address and size of the register sets for the
+-  FlexTimer Module.
+-- interrupts : Should be the FlexTimer Module interrupt.
+-- fsl,rcpm-wakeup property and rcpm node : Please refer
+-	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+-
+-Optional properties:
+-- big-endian: If the host controller is big-endian mode, specify this property.
+-  The default endian mode is little-endian.
+-
+-Example:
+-rcpm: rcpm@1e34040 {
+-	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
+-	reg = <0x0 0x1e34040 0x0 0x18>;
+-	#fsl,rcpm-wakeup-cells = <6>;
+-};
+-
+-ftm_alarm0: timer@2800000 {
+-	compatible = "fsl,ls1088a-ftm-alarm";
+-	reg = <0x0 0x2800000 0x0 0x10000>;
+-	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
+-	interrupts = <0 44 4>;
+-};
+-- 
+2.34.1
 
 
