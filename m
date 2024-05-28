@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-192238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095938D1A7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5638D1A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 991AEB253AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:59:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1B0B26892
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A2C16D32B;
-	Tue, 28 May 2024 11:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1D216C875;
+	Tue, 28 May 2024 11:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wvR3m5ZZ"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSw92NH1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B224516C863
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48E4C97;
+	Tue, 28 May 2024 11:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897531; cv=none; b=I/LMTBCukVBwkBby0ul/Wy9YnHrdVDM0njdTwn6ENFdlAb00Y8yaGsWnfyOc2QEq7eRRsGwVJcV1UCwsegk054Wn1oGyQyKjWkulHjJm/CCM9BPIUyRBf5Wn1LKeB0wTIZqPDT9gjkxmZHsssKUf7B0o+amy6orYnHfVdF5Vh3k=
+	t=1716897585; cv=none; b=NjXZQcbfroR8K55f0XT6bvzgInRMELDnjPLrtCvzCwLlMaeUkR4CP6BT8nxUH/BOjlU+COb7oqd9XiSbhA8lZk1G8NhNVZIfL1DNTDDKzRakLalfi5jFNnZQZN2UG+TT7TLgAsObA6IC7w6u0Hv8LJvNkSoKw/pApKWcdlRfFos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897531; c=relaxed/simple;
-	bh=XYEcwBrn2ZuAVxK/8OUQeCzOCxQyqvHA12tGOH+svqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aevywr0RM2AoCBtebomvCFEUA1IIUSXkT0dYySTzKEnBhv0dkOhhs4XZ5PM0rh9Cl2NajK/PgXyBP55/CuaBdyb4qRUHjTTcbpdpWhcvuyYowuwZ0Fd1qdzcVjDVPEyMWHbRYyMRsJOZng+TUtgvb7E2HbRcWDInsYZEjFgJEYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wvR3m5ZZ; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a2424ecdaso7320427b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716897529; x=1717502329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XYEcwBrn2ZuAVxK/8OUQeCzOCxQyqvHA12tGOH+svqk=;
-        b=wvR3m5ZZpG9TtziiPqDPQd0C34yd81oJCe8YxiDKUc7x3yDmT7O61VeD0EuhMNMEfA
-         JPkShAzEB05xK3MwdHG0UN53ECPH+FcKzBaXBYzvmFZFg73NSah1Cyl4QLhTlS4DN9Xw
-         y7Xu5ADr6FQgPeL3KBt/snfKfeCGH6cu3osGRYmwamijfnjbQqGsSoENKN5kyXnmOT6m
-         NkJxGf9W7QKX28IlARln1KP+2pS0jF9P+LfCd2gRSgBbzXglwdJxWq5+JsQE/XWHP+q0
-         L/j8iD6b/QTfd3PIyTEIhFdySbTNKb9YgYyR5jLd/Vk1wbP0Vt6YReX+QHkdfHlSu6X4
-         7F8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716897529; x=1717502329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XYEcwBrn2ZuAVxK/8OUQeCzOCxQyqvHA12tGOH+svqk=;
-        b=rPJAHxCnAF8GPGR7NqXv0+jQFWGNoNEKDUCBsz3zBha4yCT1oKxprylWDe3eCG8e53
-         BlIQ1330AF/FsV49IV37VR4c8/8haaCH89XbdfrwDr0SkCkMZNDacUUQ6iwcS7U3OHqj
-         V33NXSAIxdo7EiUu3vY4/QIZgtVT4T9Ih8e4BBRVM73efx8EeB86fCsj7zTgYcwMfuPZ
-         oW2ysQzH/KONKBESWtSyiFMPuQ6RnfH61c6fOi1BPTHeEvc2RUp0KKOA588lhgRe3OGS
-         B+7IOREkFHy4ApXkPNhUB+HVJInTk/lf6tSdUJaeI/0LlX2h5KtRkN6b4rG1qAwgFMsV
-         EYzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo8ahxwiHeoeVHLSwx+KGK8OKazhS4tnAognvnhuu1PBORrBE8/Y4DWCbX1a/qvxau63qyCirfm90LqYBgglHLEUuMJ/7lKtIQvAAR
-X-Gm-Message-State: AOJu0YylmNrUZY83hDkg17IuIew8KQgkqC6dFLkXvygXkluJ1shYhe3P
-	Z92aiICcWryGDpnimldx+Qxk+J3wdIa+NwYCrMfJ0PeuVVzI8MHqOcL25MOk4V+Wt+K4Yfosr+h
-	nJIDLkFl0W5wh/tqmorMZ/ppHP/X4ZZffrq7dMQ==
-X-Google-Smtp-Source: AGHT+IEi2FFXpJzm6Ui68LI58fiW+9ORaUI9qMfSH5fZ2ghY0PYbSNMQ3NXlttGGYAUDF59nM+IzQBpvFB2cxXuz9QU=
-X-Received: by 2002:a81:92d4:0:b0:61b:33f6:9bbb with SMTP id
- 00721157ae682-62a08de4efamr123625807b3.28.1716897528671; Tue, 28 May 2024
- 04:58:48 -0700 (PDT)
+	s=arc-20240116; t=1716897585; c=relaxed/simple;
+	bh=PJ6dm+ojt4tB8KatVUHmNd4ox8+zoZGcn/Tu/Vumpvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dbLnErrhZaoh3eU9/VfKrr1Zxa/pisvbnj6Mn+02J2K3qlxpSCBxU3fs0+sipLiek0TmxLiKK8BUcDdcan8L2LTBGgtxKetyeQG9ytpEAgCJaQe1m351/Y1rKWsDHnzHtcgq+kuZMSTXqlo8FLe97NJKD2E50L3A/rWAeWx2GoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSw92NH1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9F9C3277B;
+	Tue, 28 May 2024 11:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716897585;
+	bh=PJ6dm+ojt4tB8KatVUHmNd4ox8+zoZGcn/Tu/Vumpvg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fSw92NH1+IcaGXB0/E0EVitFVJAe5MUKtDUk5DgyUoNRo9eTzpU4uZeji57srdptp
+	 Ef4rEKITaSAdxJjddldsfiqdw5n0/Nm2dtbiAIb/Zyan8txG45YavEwGtua76O0beX
+	 31wSslTX2Tz42exe4ZWoDeRYdEioaxRhXMAkwm1iih54n/6y71QpqXlKixcyzondFw
+	 2D471jjJ54e09DZf2aw2LVYTBDzF57xIpftc5GcT1dkkLDV1cdWauKqbTWmG4hz+BK
+	 dhac6CYFGxEloxMRni/G95Cga+XRbkkPPJKbjdxS0Wk+DdfqnhDpilsvqQrby+/ssG
+	 ZwCLl7SvRmfOA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Armin Wolf <W_Armin@gmx.de>,
+	SungHwan Jung <onenowy@gmail.com>,
+	Henning Schild <henning.schild@siemens.com>,
+	Ai Chao <aichao@kylinos.cn>,
+	Robert Joslyn <robert.joslyn@redrectangle.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: yt2-1380: add CONFIG_EXTCON dependency
+Date: Tue, 28 May 2024 13:59:33 +0200
+Message-Id: <20240528115940.3169455-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521152602.1097764-1-patrick.rudolph@9elements.com> <CAHp75VfpFtYtStacY68-iu32x-XK3XMn_34N7EH07vvhjwp36g@mail.gmail.com>
-In-Reply-To: <CAHp75VfpFtYtStacY68-iu32x-XK3XMn_34N7EH07vvhjwp36g@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 28 May 2024 13:58:37 +0200
-Message-ID: <CACRpkdbFVpZhF_RZEeZf06PRq-Sf1Z-8apUbnaJAFDaQt_5xMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: cy8c95x0: Use single I2C lock
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>, naresh.solanki@9elements.com, 
-	broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024 at 7:25=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, May 21, 2024 at 6:26=E2=80=AFPM Patrick Rudolph
-> <patrick.rudolph@9elements.com> wrote:
-> >
-> > Currently there are 3 locks being used when accessing the chip, one
-> > in the driver and one in each regmap. Reduce that to one driver only
-> > lock that protects all regmap and regcache accesses.
->
-> Right. But please consider converting the driver to use cleanup.h.
-> Dunno if it requires a separate patch or can be folded into this one
-> as it seems you anyway touch almost all mutex calls in the code.
-> Linus?
+From: Arnd Bergmann <arnd@arndb.de>
 
-I think it's best to add a separate patch for this for bisection,
-just right after this one.
+This driver uses the extcon subsystem and fails to build
+when it cannot call into that subsystem:
 
-Yours,
-Linus Walleij
+x86_64-linux-ld: vmlinux.o: in function `yt2_1380_fc_worker':
+lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9d819): undefined reference to `extcon_get_state'
+x86_64-linux-ld: lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9d853): undefined reference to `extcon_get_state'
+x86_64-linux-ld: vmlinux.o: in function `yt2_1380_fc_serdev_probe':
+lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9da22): undefined reference to `extcon_get_extcon_dev'
+x86_64-linux-ld: lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9dc0c): undefined reference to `devm_extcon_register_notifier_all'
+
+Add a Kconfig dependency to make it it always builds correctly.
+
+Fixes: b2ed33e8d486 ("platform/x86: Add lenovo-yoga-tab2-pro-1380-fastcharger driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 809888e4c1e7..9f850e4617bf 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -136,6 +136,7 @@ config YOGABOOK
+ config YT2_1380
+ 	tristate "Lenovo Yoga Tablet 2 1380 fast charge driver"
+ 	depends on SERIAL_DEV_BUS
++	depends on EXTCON
+ 	depends on ACPI
+ 	help
+ 	  Say Y here to enable support for the custom fast charging protocol
+-- 
+2.39.2
+
 
