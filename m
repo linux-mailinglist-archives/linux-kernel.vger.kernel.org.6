@@ -1,137 +1,170 @@
-Return-Path: <linux-kernel+bounces-191800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D438D1437
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AA28D1449
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE0961C2180C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94D2282379
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC5761FFC;
-	Tue, 28 May 2024 06:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9076961FC5;
+	Tue, 28 May 2024 06:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cboUSiem"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fXxQM+Q8"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364844F5FD;
-	Tue, 28 May 2024 06:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716876565; cv=none; b=WEJYYxlPbRGwXKIn3VzAslFqMu/d6NM8gb3gqAPNicym7v203S/34KPcIEvncmQlTRJS1UB9Dz8chEZeWQpxpgQ1fpyEIApNEYdqBKZaRaiWIz+PJu6zDH2ul1yfQEOmAC3FYINNvRRvSRJrCNv3ZCZwUKfVXD25+NtGqdmc8y4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716876565; c=relaxed/simple;
-	bh=Eqtg8XNRPOkiV1rBmKE+E5Q17RJH/f6pOWXblhQp/oo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qOiFOhzQLmTz/gVXxh9IlcNu8lwY6+KjiWFsR18+Iocz4Zahl/uFtQMwIb+2w2UxlbtvPh0uWMLWJ5nlSdtJqVHzAXnEthOAN7/J5cuK0IXLyvetVbaDbVGqwK2hfCpN8dRngTdp1vPTKJdBkqlgj+rVX4B4vQMibmxcCMwModM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cboUSiem; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DA425C4AF09;
-	Tue, 28 May 2024 06:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716876564;
-	bh=Eqtg8XNRPOkiV1rBmKE+E5Q17RJH/f6pOWXblhQp/oo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cboUSiem9KklcZFiXMPFFmoO869Fn7z+mlCVUx/tp3HK+Cc8XrMH4rm3LyJvhATSp
-	 4dtV2YL/W+SLRTPu/QjGlCQ8wmPW/nG+SayWvkYKAfj09bf7u7f33jl1e/zZ4fW10n
-	 FjLsQgQjwD8Cr/vIuyUt4jvW2topU7rlEXY5iFFgUXkxPpgcch2RDdoiTwUvtnGS3I
-	 c4ZL0FYsG1sOzHVVd3Ocu6jeNOrYOyAotBTfFrmrxRHEnN5KLMEWBVlUmwhq3YQgPY
-	 mdM6iXghB9TgsCtph4dy/5nkm0a+NDVkSmo3g4Fs8L9j2P+rStSgJLvT3bYz5Q89uJ
-	 IT9WQZ58h+lfg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FE0C27C4E;
-	Tue, 28 May 2024 06:09:24 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+n.shubin.yadro.com@kernel.org>
-Date: Tue, 28 May 2024 09:09:25 +0300
-Subject: [PATCH v2 3/3] dmaengine: ioatdma: Fix kmemleak in
- ioat_pci_probe()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F6D4F1F2;
+	Tue, 28 May 2024 06:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716877219; cv=fail; b=hdi0loV8yUFH9664P1WixyeztWdCQfJp/GpGrxlDs2K5sA6RSHSb1sWXPf0N22r543J98BgVoKVqjAcQWL6gkcJ0WGXEc+Ug6GHdJRWafzpVsxlkn7YUD0KbtLYqdz1l5D/356XLAUEkrFtRcDOLRne0iWVUhOJFOnT4IH59K5s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716877219; c=relaxed/simple;
+	bh=/84PmwcWiAsWnEJj3aKV6aU/LHtp+0b1uN9hc3uizyo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k/7Hh6CBBgrVkAwAVHTOCfDSbqCmQTMMn8EVS7b7+6ttqr9aIOFlFD4VMLKp3YvBhBuzgn0E5R2VbXRxQxqK/PEFYJQERwYiDa6Vjl7uWlU5KcRb6FukY8jhfgPVSTKNdCf1OqhyofsL6j/3tu+HWThHm1UHp8lX4PTH0dqV6DE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fXxQM+Q8; arc=fail smtp.client-ip=40.107.243.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jv9zZqxF3czDXsgKcqx5oaIB/stM0VumGuw1W8MjzACBGkRIFX8vvAcKeXdKg2FS5IoVXNeuTcbYYF5C3ZLw08wV3KicPtpqvNVbrByQm86KobsOqFg3S4D6CtHOMW0+Ep2go9nllYO+9J3qbHk8UwWEQg7QGIku8n3/B6V7ejTjQ2uBh7Yfp6b60XARycq4IPhAzXGrhNdPA+zULx0RkvR2UHYVkc4IxRFheo8hJHJwanpGwIoIYuqBNU9J/dMsOTXBBoEnnzNr/TJ2j7OBeW6BkCVmxLtCR4DlxLtqOoPY3frfYP4+a/ov2NZ/eYI1lcsrU8vF2BRU7QCJAe1/mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CZ50y166iv4tVd9uWOqirP3JXv2hZ4dczk3bgD6PVMM=;
+ b=Eih8mI3YpHHxH//fV/ZL0dp1kpJ+Xxf+0O9PxFwKVcT0FIf7KY0n6SyWrwljiJBQKc0BdRF/NYo/V5u5BmHCwh3DJijxKtzrL2QPc02QDvt0zrKm/BJp6KYWRWC6v8guqNnU1JkvlTCCAG3ZbaNjD6i+UvG7AqSi3szKxIEpcYpSR8C9VobyoXTq7I2eugg2lIBE6WWsRFmDffrCYZzdA4w7u//VvapJNQ9LiJeC3thGmilpCCsCUMEk4f1TN63/Xq+YEk/yU48Q2FaiIn+xw+eSJEIfdCQUHluP/Tr7sDd9kT2CgwDuhUG5BZMOXG6OecsAx89zfPNCbpQzx65nKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CZ50y166iv4tVd9uWOqirP3JXv2hZ4dczk3bgD6PVMM=;
+ b=fXxQM+Q8ne+LgPASKEeGvFKUsH0EnSJi+vcwB8ayW1i685XqnTq+HRY1LoJRkSpAgUsB+M03Q8/Ib9xa9uoAUMu3BQp7Vj+ic5mjuzDTORD+cnDlRmEB970dpQ3PPDwhwfm31o9HIJHFIfUHKNBxrxiIWfmLUBJvICyp2xZ7tlc=
+Received: from MW2PR16CA0072.namprd16.prod.outlook.com (2603:10b6:907:1::49)
+ by CY5PR12MB6274.namprd12.prod.outlook.com (2603:10b6:930:21::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Tue, 28 May
+ 2024 06:20:15 +0000
+Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
+ (2603:10b6:907:1:cafe::3b) by MW2PR16CA0072.outlook.office365.com
+ (2603:10b6:907:1::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
+ Transport; Tue, 28 May 2024 06:20:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7656.0 via Frontend Transport; Tue, 28 May 2024 06:20:14 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 28 May
+ 2024 01:20:14 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 28 May
+ 2024 01:20:13 -0500
+Received: from xhdvineethc40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 28 May 2024 01:20:09 -0500
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+To: <git@amd.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <harini.katakam@amd.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<michal.simek@amd.com>
+CC: <vineeth.karumanchi@amd.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH net-next v3 0/2] net: xilinx_gmii2rgmii: Add clock support 
+Date: Tue, 28 May 2024 11:50:06 +0530
+Message-ID: <20240528062008.1594657-1-vineeth.karumanchi@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-ioatdma-fixes-v2-3-a9f2fbe26ab1@yadro.com>
-References: <20240528-ioatdma-fixes-v2-0-a9f2fbe26ab1@yadro.com>
-In-Reply-To: <20240528-ioatdma-fixes-v2-0-a9f2fbe26ab1@yadro.com>
-To: Vinod Koul <vkoul@kernel.org>, Dave Jiang <dave.jiang@intel.com>, 
- Logan Gunthorpe <logang@deltatee.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, dmaengine@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux@yadro.com, 
- Nikita Shubin <n.shubin@yadro.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716876563; l=1823;
- i=n.shubin@yadro.com; s=20230718; h=from:subject:message-id;
- bh=tibFMcaMMDINAMULT2DBvxJYeYcAsWOCGa6cDYv40uU=;
- b=Spd8wOljNfdMMhAzdRsBkqUw7Og0HFDv9oagQ2CV4x/zau+jRsHiHjlwwnYJMz6jjFm38Gzeif5N
- xvJJmEOnDPT6u6tYxvot0aqRUcWdbEYraI1TO2qjxXOxk6eLRGxh
-X-Developer-Key: i=n.shubin@yadro.com; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for n.shubin@yadro.com/20230718 with
- auth_id=161
-X-Original-From: Nikita Shubin <n.shubin@yadro.com>
-Reply-To: n.shubin@yadro.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: vineeth.karumanchi@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|CY5PR12MB6274:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdc37cb8-4caa-48dd-f4cf-08dc7ede3cfd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|82310400017|376005|7416005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Xoy7E0M4ylrGHFOlF0hAgTL2PPlFcIu8ZQHrg9sx6YKq/xiJeeVacgXe4IZD?=
+ =?us-ascii?Q?GyS/jQ4NRXYPNRrUHOq2qSCI/RALYdySM7TJI5OajC88UG7pllCfykIST6Fn?=
+ =?us-ascii?Q?hLtfSLKXFWH/2fPLFGVrySZJyUr63N4r/0s85evrm2Beh6YP3T0017JSIEAo?=
+ =?us-ascii?Q?08BdJX5HkJr3HKp+EJuKg+bevkKRq80jVdxdT3tvUgPdLJB11hVGih5lkxDq?=
+ =?us-ascii?Q?MWcqmEDUsDsZx2pod6fManQO8Q2Ky+Lg6Ng2pzFuPKHDG8RsLPCFtM+vjDYO?=
+ =?us-ascii?Q?/Qh7n/V0kNLg4hwE/K2e59ZpDLxATDnWgPO55OlxOigjlqtVVBUkSyvBDQzD?=
+ =?us-ascii?Q?McDNbOCaqi6C2173hnMJu0lL8hAi3JEv4Mhsn8SF3wgbmoT0+KltTt/tLOyE?=
+ =?us-ascii?Q?5zcZWbVxTUBtrNWpDg5Q0/YK/YQOnUlvi2Rvt5wH/Os/cdNILuRlaVnrexSd?=
+ =?us-ascii?Q?WKDl1ky4ZZWCBtec8HHM/iS7t/ZjCSqiaDbfMc748vggNCqrT0wano5GWSxm?=
+ =?us-ascii?Q?SnjxB2ockNKI7Zrz3jKGd647BMEqSvp0dQ21Q8OGdrMHM+rGTDKT6lcSDFkD?=
+ =?us-ascii?Q?CzUjfc48krKMW/KlBTQBoKJHPEOCJMs21nylEDwtGi+iwb17AHRT3H2vMqdF?=
+ =?us-ascii?Q?QHmqeT12Bt6vKgyPupRxFXvcpu7d3PyK56fL9yHIdMhjLzTP33ygzIp8AnTq?=
+ =?us-ascii?Q?9sodWEsMFduSpk7LJIf15bvmgwaI/KnKDdGSKfBZhdcuwMAm9ao7HpnVi5yK?=
+ =?us-ascii?Q?3296LNxPdH2LGtXLl0opMgkyz04uFTd+P+7FE2blYDx7dLnP7ntIN7Y8KV7a?=
+ =?us-ascii?Q?hFPhE+ADOeSO4OkTVF+CKV3y9w7exyHuogmjDtwamvzv9RlyXAIkH07SRpic?=
+ =?us-ascii?Q?njVTZETYSiSMp3DZtRFOjwNVwTMv6bcP10SzqYum1U4VIB/xqKCKE+lnP7qD?=
+ =?us-ascii?Q?GKaL23ydR+s6SWQc0e9d1YaTMW8JbQ6LMMFtD6LcVAARP2hNfZr7urHxxmX+?=
+ =?us-ascii?Q?vDB6m0up2Db9ne7jWE/i9KeVe2P1qSPJS300OxiE9GsgWmLwVDkQPtbaWreI?=
+ =?us-ascii?Q?QTQsh1IbZGSpDF/zQSvxd4hooo7C6aehO0mBqrekplbdvkGqFivUO/Ohoo9K?=
+ =?us-ascii?Q?DFP5RMC69Ri1zP8WL10d9z3i6UGg00pRRTkIxUw1SaShFWBJMy8ALy0JiFT6?=
+ =?us-ascii?Q?rErCNgK/LM+8HBU2aY3VQDEhuMqNNHH1TsIGlQT//6BcRK/RbkJ4Lj9qc4B/?=
+ =?us-ascii?Q?00g1o25YxcAP7LADNzdbgAz/Km1M5stn5SYcciZ9Vh+rldDAtTEA2jDBj9YZ?=
+ =?us-ascii?Q?o8lmC/+35Cikefzo96oKJYi57uQp2oqXmoRm3Nqk14Ivxw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(376005)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 06:20:14.9164
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdc37cb8-4caa-48dd-f4cf-08dc7ede3cfd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6274
 
-From: Nikita Shubin <n.shubin@yadro.com>
+Add input clock support to gmii_to_rgmii IP.
+Add "clocks" bindings for the input clock.
 
-If probing fails we end up with leaking ioatdma_device and each
-allocated channel.
+Changes in v3:
+- Added items constraints.
 
-Following kmemleak easy to reproduce by injecting an error in
-ioat_alloc_chan_resources() when doing ioat_dma_self_test().
+Changes in v2:
+- removed "clkin" clock name property.
+v2 link : https://lore.kernel.org/netdev/20240517054745.4111922-1-vineeth.karumanchi@amd.com/
 
-unreferenced object 0xffff888014ad5800 (size 1024): [..]
-    [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
-    [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
-    [<ffffffffa000b7d1>] ioat_pci_probe+0xc1/0x1c0 [ioatdma]
-[..]
+v1 link : https://lore.kernel.org/netdev/20240515094645.3691877-1-vineeth.karumanchi@amd.com/ 
 
-repeated for each ioatdma channel:
+Vineeth Karumanchi (2):
+  dt-bindings: net: xilinx_gmii2rgmii: Add clock support
+  net: phy: xilinx-gmii2rgmii: Adopt clock support
 
-unreferenced object 0xffff8880148e5c00 (size 512): [..]
-    [<ffffffff827692ca>] kmemleak_alloc+0x4a/0x80
-    [<ffffffff81430600>] kmalloc_trace+0x270/0x2f0
-    [<ffffffffa0009641>] ioat_enumerate_channels+0x101/0x2d0 [ioatdma]
-    [<ffffffffa000b266>] ioat3_dma_probe+0x4d6/0x970 [ioatdma]
-    [<ffffffffa000b891>] ioat_pci_probe+0x181/0x1c0 [ioatdma]
-[..]
-
-Fixes: bf453a0a18b2 ("dmaengine: ioat: Support in-use unbind")
-Signed-off-by: Nikita Shubin <n.shubin@yadro.com>
----
- drivers/dma/ioat/init.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 26964b7c8cf1..cf688b0c8444 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1347,6 +1347,7 @@ static int ioat_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	void __iomem * const *iomap;
- 	struct device *dev = &pdev->dev;
- 	struct ioatdma_device *device;
-+	unsigned int i;
- 	u8 version;
- 	int err;
- 
-@@ -1384,6 +1385,9 @@ static int ioat_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	err = ioat3_dma_probe(device, ioat_dca_enabled);
- 	if (err) {
-+		for (i = 0; i < IOAT_MAX_CHANS; i++)
-+			kfree(device->idx[i]);
-+		kfree(device);
- 		dev_err(dev, "Intel(R) I/OAT DMA Engine init failed\n");
- 		return -ENODEV;
- 	}
+ .../devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml        | 5 +++++
+ drivers/net/phy/xilinx_gmii2rgmii.c                        | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
 -- 
-2.43.2
-
+2.34.1
 
 
