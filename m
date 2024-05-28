@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-192636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8551E8D2003
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C0B8D2006
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A381F22693
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9C91C231C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E3617108B;
-	Tue, 28 May 2024 15:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC3C17166F;
+	Tue, 28 May 2024 15:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PfW2GoIF"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv2GZYRR"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256E7F9D6;
-	Tue, 28 May 2024 15:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99F17166A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909224; cv=none; b=Ip1RXpGmKcKUKyEvqqc7oiIbsKkDDQUcEkAx6O3S+ytTD6oclbAnzv4YJScmeJRojT8bG5qkkHWgzjQtmqpHW6UYtqh6ta0vNdT+Zcl7bqn+dKsSbe65jOtwaQDWwfahEGMvekNpKk8ZdukLNTOfWLeh7dRT09mYu+QEQfBOzBg=
+	t=1716909230; cv=none; b=nPcQxP9Yg1lKs1odxGBOtRFZEVscMDake0fMyrQzIMf5AwZn74lJyTVFXkDPrjM8gcNnFf1+aNTkmbdiLdXHE/kRJ+CWy/a8ZiC1BmGWYoAtxq9e3r5eqEBisrW+PK7jODbP1mWGjm58jyzWhxvrgYYIUtPYpaA2o+T/zbw/4zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909224; c=relaxed/simple;
-	bh=+wg48Pe0yMxZQCJDUwVC11WijDo9w7CHZQOJikcc/lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFP+5m2mbZ5MwPYriYxbiPV87/3AcYp0q9oqtGEp7yblABt13XEkvaP3+8O4353+dDUi1cghtcQmjZzt1PbtZRPqRuuvEgGt5l6Lk6H4G423AjVBGnsNmUkLj+Ognm3xfvbxHWIWFE72uwUIWBn+E83i8Cz2GW8xwdKILAAwXoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PfW2GoIF; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SDkCU0020650;
-	Tue, 28 May 2024 15:13:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=V7VSE2+uYPCRI/RBA5OqDNx1FltHW8J5cwNzFsvCWA4=;
- b=PfW2GoIFpKZFwa9Z7bFPrA0YH0cYid8pfwhehd4CILeyGyiCCXuKbhXnvcCBgd4z8Uzz
- g3vZl2GrdaUHRUOJ2xCMsuXaUtt2sypsUov4QwpZxgPBijV1ghHlRVi5CmxAE8PHkWUT
- zg8oI6mYRAB/u2eLjWv0KBfR+GKbTdQSyWyOcHPy+zT0ffArhpkg1/Hc4TIGzKZXyKM+
- c9ohPabR1bW2wMqlr0HYnqYnqAn6V02MpDfBKzDAc/f13ajJCRpIEiEw4fZNNVkLr7f8
- cIf0TqQX3RIJsZ5tj43hzqUpWPZoGmKRmquT7CqWena6IKkfXKCsf3zaFPyXlC8oBqEY EQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydf6jghdj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:13:42 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SFDfO7015446;
-	Tue, 28 May 2024 15:13:41 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydf6jghdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:13:41 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SDV7iw004505;
-	Tue, 28 May 2024 15:13:40 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ybuanyffm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:13:40 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SFDblY24969968
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 15:13:39 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 457B25805F;
-	Tue, 28 May 2024 15:13:37 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C122C58050;
-	Tue, 28 May 2024 15:13:35 +0000 (GMT)
-Received: from [9.61.37.147] (unknown [9.61.37.147])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 May 2024 15:13:35 +0000 (GMT)
-Message-ID: <67fb5c3d-a53f-4ef3-93de-a307777ec044@linux.ibm.com>
-Date: Tue, 28 May 2024 11:13:35 -0400
+	s=arc-20240116; t=1716909230; c=relaxed/simple;
+	bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=auOJZeWae8K9CGj3XgS12B0Od74PzpK4g5izrLL303p7E7yiDR5NeWzcLtTyth35pS3sSJetVHyUATrq3uwPEPaj4HTIFw8QCBcruFbgVT57KeG4oS5snklfsDWgu0lWZeltqsfghekQdisZqa82ByyRaWwyKlPr/4R4QC4VloY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv2GZYRR; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f8d0a1e500so705686a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716909228; x=1717514028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
+        b=Wv2GZYRRi9qg/7ni5w4z9e4BU+wPffxlUjsMuZT+duzXNxo8/l2JB3fo04d4Tep/YM
+         lGFAG3ucBdHKIcTG4EHGj1xAy2lP5npFI5f12iaQasHGmyINBtbqi/p6gCby37go6dzQ
+         5lBiDySQQiNKXLHKUqgFeaL85oNzUM7sKaEOKdhmxsMY0cdMZG2CDjf8T2qNttrTzBMD
+         w24GvUCrXeDo1VCpnaZh5FkydQKjNf9oujqHUF3IdrcnyOIa/HFJd28la41Me05aaT/l
+         qkv04qh5PKTVHSobFlzGCGYbq5jh/2ppsMsOwrJ/qmge4/56kKX3yrJnnewZuVYW9f4v
+         NCow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716909228; x=1717514028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e6N91zsLIkCffcVoj9IwNk6WCrnFz/oKvE1DmIr4i3I=;
+        b=D/hjhxpFSamcL5vXwj5xeTqU9ykvfWUCeSKEFH0/Pun8DBFQIeIVoIkRv1V7hZLXRT
+         /ZSZHrf7lTC2nFwezAZgBcUniRMHV/8ftCo6yu1Sv63Vc/zpb0arfcW4UpF7Hhpye0X/
+         Yp3U1G5m0ti32HaW18UaXle18W227g7H2T9hS1s9OLkUEBmkxtkJEanWm5LAf2yiwrij
+         uni/ZMv86qh9df5kOGAki5jp1PuDuDPWGZ9qGoXgmu2NftZgEeCjFPyQ7Oq17AQsYJwe
+         8oVPY/T7XRH8YYvTUVmUd+Dv6x7vaZZZXcnl++g8S3aVh3+iK3HYgAenenQ2Ru/nfUwx
+         31WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzy0Lrvvobqh9DEpkbKpanOiJrk76QxKi4cn6406xTNxao+ilszo1S7ImGw4b4UrjlqbtaQ4bydeyfX0DrBJlGf4s0FWGeCblldzd
+X-Gm-Message-State: AOJu0YzOyyqwsQNa9+9QZvGKDZViwTD+TilCKwtdu9rKSzDBsZyVcvw5
+	jtadP7CZAlQqWS8YtSMqY23uuJQmwETb1WsrMzYI64yYM2W45y4I9Rq+W9Q5sg/Z5zurXsBwgH6
+	5aZA+p7jWcqQK0AwbIouBSCRbj41nIw==
+X-Google-Smtp-Source: AGHT+IGz3r4U+on+uB/aGr+GRepszIiD2ZLz8sbZ0xk1P0EJC+xvzvqhCXeqaCQ9OjPYEXDavg3veacofQZQEKFMVeY=
+X-Received: by 2002:a05:6870:171e:b0:24c:a547:7b5a with SMTP id
+ 586e51a60fabf-24ca5478ebbmr14054365fac.14.1716909228407; Tue, 28 May 2024
+ 08:13:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] vfio/pci: Tolerate oversized BARs by disallowing
- mmap
-To: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com>
- <20240523-vfio_pci_mmap-v2-2-0dc6c139a4f1@linux.ibm.com>
-Content-Language: en-US
-From: Matthew Rosato <mjrosato@linux.ibm.com>
-In-Reply-To: <20240523-vfio_pci_mmap-v2-2-0dc6c139a4f1@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1TMO_DwrdKXKL-FGAcPwUpCYKZuyh9d-
-X-Proofpoint-GUID: YViOe4KNdkMX-dMiwr9B6EZb5UU2L43m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_11,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=909
- suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 bulkscore=0
- mlxscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405280113
+References: <20240524033819.1953587-1-yosryahmed@google.com> <20240524033819.1953587-2-yosryahmed@google.com>
+In-Reply-To: <20240524033819.1953587-2-yosryahmed@google.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 28 May 2024 08:13:36 -0700
+Message-ID: <CAKEwX=PG183P_BxRHD7gHV=MrmOhuyn+=FTDpOcu_GSBQg-ZAg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: zswap: use sg_set_folio() in zswap_{compress/decompress}()
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/23/24 7:10 AM, Niklas Schnelle wrote:
-> On s390 there is a virtual PCI device called ISM which has a few rather
-> annoying oddities. For one it claims to have a 256 TiB PCI BAR (not
-> a typo) which leads to any attempt to mmap() it failing during vmap.
-> 
-> Even if one tried to map this "BAR" only partially the mapping would not
-> be usable on systems with MIO support enabled however. This is because
-> of another oddity in that this virtual PCI device does not support the
-> newer memory I/O (MIO) PCI instructions and legacy PCI instructions are
-> not accessible by user-space when MIO is in use. If this device needs to
-> be accessed by user-space it will thus need a vfio-pci variant driver.
-> Until then work around both issues by excluding resources which don't
-> fit between IOREMAP_START and IOREMAP_END in vfio_pci_probe_mmaps().
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
+On Thu, May 23, 2024 at 8:38=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> sg_set_folio() is equivalent to sg_set_page() for order-0 folios, which
+> are the only ones supported by zswap. Now zswap_decompress() can take in
+> a folio directly.
+>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-
-
+LGTM.
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
