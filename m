@@ -1,325 +1,166 @@
-Return-Path: <linux-kernel+bounces-192832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B688D22DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1B48D22E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A10428577C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BDB1C22902
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D514644E;
-	Tue, 28 May 2024 17:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AF145957;
+	Tue, 28 May 2024 18:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DVYNoduC"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2070.outbound.protection.outlook.com [40.107.247.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJpxeOwJ"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A2A4501E;
-	Tue, 28 May 2024 17:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716919029; cv=fail; b=BUvqhRkx1CiIYPgDz2xUs4fB32N4ITJ/9yeAnizCdq4g1kwELDt1t/KglNXxOAc7UGhtSzu0ptuHfnZ429S09WrBEyjMBm+aMIfYPW/Ehjsp5KeCDvptqS4IH1wXb8WVM4603wNrg+OKpdymdxRMngZOOEfq8dspVyi+w/KnMiM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716919029; c=relaxed/simple;
-	bh=Ll2Yeu5BnD/hizFP9o6YmEs9HDLeDFtfECIcuCDny8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=upyZhGUbHIIPLWUpOyXefsFSvcHO03d9bpGgCPYkdgdHjZHQsP5nH5sQnx/zvCqDil33l9dOnYo8CeVvaz/3POyxdYlL9qByEdzGUE6URhBS2Pe2GPSRFFfq7hR3uhVoVpM9Sysk/u78dMrmwFEdAWkI5D8OJ8ujoc8O6CEdCeU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=DVYNoduC; arc=fail smtp.client-ip=40.107.247.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gNvwbdjhSeMiXgMqdKgJu+bC+HyIWgmPO6AEIw07hXjB3OlB+zpicdgfOGCAwq0QQOjD4nMBEBb07xTMwoTBEIwGJftXZwZZlu9v8G+xyS8S40s7hPNK1/qaKv4D2V37L5aIuotn/KK+gQv4WtkPUNJucyGo89dBY3lWkmbWutMaS3BkaCxVtU2UiLTwRlsPYVmsIoBXccOZpViLyCNvwVQk56hFLlbqMgHvM38JeDiDvjcPoYJJaXPqf+LVKIag2VTNgD8klmr69R+wwzg3JgEQLHFRJwk9AG2qldmbhUWYVPCHCHYla/WfcMXolr4PrVEUfKXKddM2jRrp4FOjUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Eh8Csu3RezZhPxqV+WVuW3nAaOagyjglgMz4xf4jfvk=;
- b=Gp/ZsRoI7619qA2CsENRHkX/9xh/2fXoUzxm9EKY+p4r/riQCpGHVt9S0BV+rJnYURiKWpBDpIJQ6XxrJFZvd+bEyTh8+Dnsn78Nk00APeDdODykMMVc4B6C9qh8dyNrlv8h7oRIjBh0lA5BofyHlLaBUHFKxAw/tfJfbGsR49SgRXJs9dXvMm1te+hPhamYVbf3spA93o3yeGolLNqCRvSWmy2VQY0UMYxr8g5KyQDlsTQtZBAFOwc8i6y1VQbhit69EOXb1aj+uMWxsfAOkYxj+bBSvoXFZ7CKpZGKKB4Vlwv41dON2Jw95UzTLbxh8meB92SvWP6vmvkpjenKGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eh8Csu3RezZhPxqV+WVuW3nAaOagyjglgMz4xf4jfvk=;
- b=DVYNoduCmfFLeM3TgdFnEL/pwwva+Wt/YxM2Lrno/u/WLEGc7wlk2uv1djVe4vBL22WbQqKH3b/qWIEidf9yyetzLlFquZAuq1KrwW2J6VsnP9hJ9PinNZDIG3Al/3OEnXMSZEkuAl0wcvd7mm0eXdZzpqckmcLpZIuExrcnHj8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB7710.eurprd04.prod.outlook.com (2603:10a6:102:e6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
- 2024 17:57:03 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7611.016; Tue, 28 May 2024
- 17:57:03 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: gpio: mpc8xxx: Convert to yaml format
-Date: Tue, 28 May 2024 13:56:46 -0400
-Message-Id: <20240528175647.2604295-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR20CA0006.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58644C7E;
+	Tue, 28 May 2024 18:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716919215; cv=none; b=AZRnTU0Rv6JoHo2aMHEfonGmBhCjLnEBk5y29vafojJFBoBaFCHpjMuZL4zA4uzk/GHqOus40lIn5bulLmYqYb67yLWlrpzbAIvCkpx7RdQSkpPBHFnMg2D0TkNgxkD5l+uWbsiEfJwVYgcrs2jLrZch+WqGL6iR3A83Mzm6IKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716919215; c=relaxed/simple;
+	bh=+SMLwVcqLRSmG8T75XqR3w6eFstMjRzAAFgHYK+96eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHtYRtFQKYhbPHo8cscMC844T0olwsyQmVLbGhghWW/juKE+bj01ZdRApBd0cc9SSDhzm3qECwXczLzJ8f1TyXVwmMvEpSfvIs/0ZHTNpae634ET+qKvQNRQ64wnjgFsmYsyzZ+mxRK0TFbejrqItBwp0kEHzb/pdYwHgLXt9X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJpxeOwJ; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6f8cd25ebd5so498948a34.1;
+        Tue, 28 May 2024 11:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716919213; x=1717524013; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9CcbgCubAJ73RNKrfh6CLd9MLYV3LALBDGHRnXyNZ4=;
+        b=VJpxeOwJlcZGL2zDUNi/6MPcL7e2Dc6QbTQjV1vp51FqbJDvEx0PgERyGFzl+KI17z
+         zCCY8oiumNd672vT6dSZtzBdtu/aLXrL7Py3oRJDU4oh9by440EwUs0PaRhZJ85N/fyk
+         LlJKEDlPV40/wFxUqx0On4zivZUJzKI3e5DrgKrQq9Cm67c0WrSNClXRz/tRipdlR8Io
+         bSlKjz02iF5S8lGt8XOHDBl4x1YpASoMRBk+F3E7CmKi8yi4o6vFUN85pawvxalUm9a/
+         srIb0BGISS1DSZcPi6tILjLh0hpp5CJMa8i2DMwaa4HQipEUS7YakYihLlJvWJupTPMq
+         hBYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716919213; x=1717524013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T9CcbgCubAJ73RNKrfh6CLd9MLYV3LALBDGHRnXyNZ4=;
+        b=j8DQYFL1xhYJDD3q1VHF+G2feGXFweEgT5mumw96B8F77W8Ri2TZmEoRIzyqV4z67i
+         r0DHYSDDAKiYLSsYCfcpcMESsFEkwo93zhxoQcjeMSCYyYlzfZB+a2zX54C/XHrNaTK2
+         fVWgwpSAnbuQVf67r+AGx1IMOJGM7fP8tFEkIyOC9tNEsO6jgvyEAfDVHFCy0T2fc71e
+         NFY3XTzWREhGT06oWzscFlWtw+nGZjyIz5ZjDA8UCLo5GTJWEyZSWS42kaQ8Bx+QImqB
+         JJu9TxkQUj/5nns9UHs32VFAurOQJ17TBCUceFPzgBRzQVD67uCNdlLjZ5Wu2eWIbC7v
+         EirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAJ1jsMzJllmOLKc366dIiDAxAO+glP6NFk9x+mbQlC2357rBbF4JwEzSPQ1CHq0dZgB0q89ouVN5QqSU2He6d15pOd0Ku0Pew22dyJE3kVSZzuAzzR2Os/pcXEUUv9M2X1xIP/CZsew==
+X-Gm-Message-State: AOJu0YyAjkeRI5QUo1KKeiCX8m3Tj5kxbSEC2syIYA8uSE8euSFjH/3+
+	loBtcCbHolgqOS2jADSYtbRIfvDCLlmnlsp8rV4lN/AP8Tyak/1s
+X-Google-Smtp-Source: AGHT+IElcgIpXkhyT9tgu74eBbiQ1jW3vTOU3j/+QTY2x6SznREkmM8cyy1VNsmpwJvsuHcEn1WGsA==
+X-Received: by 2002:a05:6870:218d:b0:24e:6d33:9e1a with SMTP id 586e51a60fabf-24e6d33a0c5mr11547793fac.12.1716919212597;
+        Tue, 28 May 2024 11:00:12 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca7f80sm402204585a.21.2024.05.28.10.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 10:59:49 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 7C4721200032;
+	Tue, 28 May 2024 13:59:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 28 May 2024 13:59:33 -0400
+X-ME-Sender: <xms:hRtWZldR5lnMpqIwidbYtObOpcMDPFGLEhscKUPKEpZP0e15khsT3A>
+    <xme:hRtWZjPoTuqtPJi8jGN-OJfJbG6kwg1djyq3h-KHcu_KAop94w6NqAp1v6eCDZQLy
+    WX08o-DEEc_6kmBkw>
+X-ME-Received: <xmr:hRtWZugHm-gyAHOGoJpPgVVfasIDSwjAqq5d6tbX89uXBypc3eJaSWTY-nI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtrodttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeeitdefvefhteeklefgtefhgeelkeefffelvdevhfehueektdevhfettddv
+    teevvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:hRtWZu854BEC9bqPofNG1gLeTo_MKcOJGPIggOURrmrLwjaZdCD-fA>
+    <xmx:hRtWZhspHfdDsB-YzWEE_-130Y46nNWnRtG85it3vasVdIK-uoiQkA>
+    <xmx:hRtWZtFeIzqp4QnNEZCjSuEQ68GPzdHeSfXHQlpVOvd7_JKQiQOJ5A>
+    <xmx:hRtWZoO2iKHK3slOhWt9C_bley7S6ba8UofqDtvzk0LbsmhcmpwUeA>
+    <xmx:hRtWZqM0pH6XfoRohovq0N0Bb1uHByrDxd1WAst9iOTjyLmZD8Z5bZIz>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 May 2024 13:59:32 -0400 (EDT)
+Date: Tue, 28 May 2024 10:58:53 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Andrea Parri <parri.andrea@gmail.com>,
+	Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+	stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
+	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <ZlYbXZSLPmjTKtaE@boqun-archlinux>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <1a3c892c-903e-8fd3-24a6-2454c2a55302@huaweicloud.com>
+ <ZlSKYA/Y/daiXzfy@andrea>
+ <41bc01fa-ce02-4005-a3c2-abfabe1c6927@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7710:EE_
-X-MS-Office365-Filtering-Correlation-Id: efc84c4c-66e7-4318-82b6-08dc7f3f9474
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|52116005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QXe04qnxUbUERGzYyNy0iSmgZ52APyUDLbUg4YJdGgKywj684Maq9UJkTfDh?=
- =?us-ascii?Q?SciWV6nIVTgsiRkqQPn8+4HiH5+E7Ooankyd2Fwk9NP8GMEZCL8UHxoF3yLY?=
- =?us-ascii?Q?H2FzKOeqHjBgF8WyzWJw7kl8Oo5Lk66zC+aH+BpDe2EsDx3+YUy0L/q/X1ar?=
- =?us-ascii?Q?iY8c+MVwRSAt4BVh8CBUEBR/9sOBYL/SQVuTC6aYKlUl/RO9JQjzHEc/dLTz?=
- =?us-ascii?Q?6m8I6uwt646zZ6pC5gDkMrzegbrUNcX9T92+9g3lfmqvG25EiBBNxVf7FafH?=
- =?us-ascii?Q?L7C47Uc6uGaM9ebWOMVNXYIjr9KWsivALsrfb5QbQAVa9ov4AkgUxn+z90wJ?=
- =?us-ascii?Q?NtOnF207lZ30k1i+JL3+8RPALV7cd6w/UbRpv+eUhzmc/nd5cptsC6IpmGR8?=
- =?us-ascii?Q?fUZG9CYCQj7W1/VPtJrttEmxKluv1x0aGmMnlVva2a0iokMIdgoVqAvDljDr?=
- =?us-ascii?Q?ZKejfaxipHN3b7pLNIKblvY7R2RztslF4EWciorZHs/JcP7O7+1UQe4jjcBD?=
- =?us-ascii?Q?UGdx3j08laGyDXPI1yYL8yZkmxTJWz6TVJpMCZ6t/t+3T5jTPBDjdboDP3D8?=
- =?us-ascii?Q?SaGODZcsH+8xmGw5Vu9YQpsyq+IHf87lBmaAFeuJSITvRXsycWYQM2NtCmL5?=
- =?us-ascii?Q?HPtHmy48SeMfFYtsssaoy1+LqpxgIQb4vUoOv7D6cqd/utiBOz93zzwkkOWu?=
- =?us-ascii?Q?JXnkdWigFd4hssg4nQ6QVg+qEaj/51HOvBtvk0wJPCJXV6uJ8DtZlHl3/Imc?=
- =?us-ascii?Q?SqFza9nuPQ+4LjkTl6ZaF2Gm/KMB2TUOGV66IQKuhmqvdot7QihlXhI3junE?=
- =?us-ascii?Q?8Z9zbmjBidqf8Do/PxOVNGIZO1MpC5Au0Xk+jhisk09N0zHBEYSgcHhZW3Se?=
- =?us-ascii?Q?6D3QHSUZ3vBudxc0raEsUDwJV+2e1mCkV46rEQr6h0eAUqilij+Igs0kuZ51?=
- =?us-ascii?Q?sGG1LBDrwP3V2DKqEdNM5g3x6i3aEym5DweUhSwD9HhdKJWsiPzAxwf2UgyH?=
- =?us-ascii?Q?GHju3h9SG6rEn1yld636i0I+5ojpeldQckqOO1lLu+2zxGLTQSdFTWwpcz6e?=
- =?us-ascii?Q?s1qeJzCW8HlX/dKMCae91h0OhOsBxNVm9SKWNmi+kYdV9hwdlTd+AiJup2Qa?=
- =?us-ascii?Q?GY5hBX/IqkBfY0+dEGKkE5S0INDpVuvfBZp+n0CktrANpLqh/aulHlNQH47b?=
- =?us-ascii?Q?F1yQmwOLcByMxXegW6vUpCiImNBM3vc5kO0M4mtOps3gF1oK3reawRuo8DYu?=
- =?us-ascii?Q?6xCbfhwVzt8pdSToRldZ/70C8q7NWwpjTgH/o9SXbPhIyWfMtxKo3UudZ6T0?=
- =?us-ascii?Q?aHE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tloEe58VkcPe562OpL50hndMizif3tGmr0lM5+i1IB+lB149jOAdrcT+ZPpv?=
- =?us-ascii?Q?18mhR1L6MXV/X3If0nL7vDfgIu+I0EW4h9wx8h2CRd0rzDJV/cRlV8MAOxEO?=
- =?us-ascii?Q?d20Awm7MKjEuK//s4ddERtiu5Vmdl+Sm7uEYUsqCanYEji5tb2ccSJnkUl60?=
- =?us-ascii?Q?UpE/Pw0pDjPugLXb86Y5Z/Jj2RIAt045VeNXNqd3fzWP2mtYuAvRDzD8WyBR?=
- =?us-ascii?Q?olzUINEee4wY+7kVYFXzDSoGwlALqSdQZ2LpWsrtA5Xful+H8K1pbImv6e3l?=
- =?us-ascii?Q?3NVC+KZcU+iaS9R9SZXtTIRqtJlX42rFoEUw9u6CEe1ecvXBkUk0m1XvANSz?=
- =?us-ascii?Q?6KzEVgejuXu+9EsyLIfXW6D3+XuWX4reyL9DOo7gCdu2WgXfSTvyrxQUOTzP?=
- =?us-ascii?Q?dj6DMOpDVcK2AIZmQaJPiKvJrDcawnZW2o1m/J/DOXUs+gbVLxgHXTurPhnp?=
- =?us-ascii?Q?YtGTE+OoHv8w86iR0F2u3x+U3Ob+RkKqSXuM++7hoNoDUouK2E5EhmjdEnHc?=
- =?us-ascii?Q?5Rlhu1PaSGq14Q3bNMzybeUvZkUZFMnr5A2dSclafnnEsRG8o7QJQ0wbq9Xm?=
- =?us-ascii?Q?Uj/B06qgI53tql+gCP2hztIi6Mca3+V12KKfpQ45PvckDZMD37XUjVmylqJS?=
- =?us-ascii?Q?JKSoIDiuB5BN3FJQ2+MS53IYrOohPUfJHhrAB9a25oWpGIgdKv+dxUr986ba?=
- =?us-ascii?Q?FQE2skdX2mXLaZ00w6Hh6uqj78HaM3mnnWbPh3BiJxx+VN16+7fWql3IHK4G?=
- =?us-ascii?Q?1VZ/FxTQKp9zm2LRFfXoCH15iTo6u/DqkxpXuhWJ3Tzcr9UNKPz46YpODs7p?=
- =?us-ascii?Q?PoB3jHRwmvDZCqNhYNt2ok0N5piPGNpep+9/G7o7cjft/l353OypjdAvSeHn?=
- =?us-ascii?Q?vloX95Z2g+pnsc2HQLCeo/CE0kNlt29WMSTkWgh5toA/iBPMMh9ByjPFpSMN?=
- =?us-ascii?Q?/GQ1Ov9eSLLHr3n2srzIXPvA/yCqMi/7lq8jkGkNIWD0rbYAFOEb94MF24I2?=
- =?us-ascii?Q?4QhkYhG8soRxgwvYaJda1PqmfPEVmFttvw7McSoaFTmsiGNKq4VosqP1tdkR?=
- =?us-ascii?Q?8oX+m8Yi7CTs0wCotLtxnD+EaL/1xU+L7f32eNjQD+2ph/fG0FSoY5twdjmF?=
- =?us-ascii?Q?JS+7XJ72RmM1AiwcalEsY8NRp7OtuNpDkugROPN/aNH4USgOIRB9nXZJFrxn?=
- =?us-ascii?Q?9ctzCaZCMUXi0b2OhGtRtIwVVinD0UxabCSUYqBugpCqxttZWH8sqX0QJzlG?=
- =?us-ascii?Q?HkZrODDCoVPJFov3n5dfSqgqww0hmwmzka35FaoF0bNIsEPeKMZUIWIwBwki?=
- =?us-ascii?Q?+qaxc3KIvv1RdtsQiZxiCm2LyeNlECFbJ/WbvhFx6tWatrubGDYw8fruRzTr?=
- =?us-ascii?Q?f1ty1FjYrxX9LlL82702r0X91GapwxReVEij7hCIDh2hTb0Ewc70NzwSfAhY?=
- =?us-ascii?Q?xfZA/v5AP2cG8fUbTLK7qQteW46fEa3b9I/JeLvS3exAagWiIb7hIeFgbWGH?=
- =?us-ascii?Q?Bby6hz7Wxt32phwRUC6TeCoUe3CswRVZ2nLXTQoUBJbeUYzEi1O+LYtb8ZDU?=
- =?us-ascii?Q?ZTpMEFdk2BvWxa1JIzYqgugvRLEvIjtRq+kpxmbL?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efc84c4c-66e7-4318-82b6-08dc7f3f9474
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 17:57:03.2485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7pID+pVzdzMKVTIVfXzN/FF/tfaDSMf9ZyLxkG4MeqRAHz9MNYwOPFqemk23rP3LIiDMdk7YpRtBFJGc6A7PNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7710
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41bc01fa-ce02-4005-a3c2-abfabe1c6927@huaweicloud.com>
 
-Convert binding doc from txt to yaml.
+On Mon, May 27, 2024 at 03:40:13PM +0200, Jonas Oberhauser wrote:
+> 
+> 
+> Am 5/27/2024 um 3:28 PM schrieb Andrea Parri:
+> > > > +    |                smp_store_mb | W[once] ->po F[mb]                        |
+> > > 
+> > > I expect this one to be hard-coded in herd7 source code, but I cannot find
+> > > it. Can you give me a pointer?
+> > 
+> > smp_store_mb() is currently mapped to { __store{once}(X,V); __fence{mb}; } in
+> > the .def file, so it's semantically equivalent to "WRITE_ONCE(); smp_mb();".
+> 
+> By the way, I experimented a little with these kind of mappings to see if we
+> can just explicitly encode the mapping there. E.g., I had an idea to use
+>     { __fence{mb-successful-rmw}; __cmpxchg{once}...;
+> __fence{mb-successful-rmw}; }
+> 
+> for defining (almost) the current mapping of cmpxchg explicitly.
+> 
+> But none of the changes I made were accepted by herd7.
+> 
+> Do you know how the syntax works?
+> 
 
-Remove redundated "gpio1: gpio@2300000" example.
+This may not be trivial. Note that cmpxchg() is an expression (it has a
+value), so in .def, we want to define it as an expression. However, the
+C-like multiple-statement expression is not supported by herd parser, in
+other words we want:
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
+	{
+		__fence{mb-successful-rmw};
+		int tmp = __cmpxchg{once}(...);
+		__fence{mb-successful-rmw};
+		tmp;
+	}
 
-Notes:
-    Pass dt_binding_check
-    make dt_binding_check DT_SCHEMA_FILES=fsl,qoriq-gpio.yaml
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-      CHKDT   Documentation/devicetree/bindings
-      LINT    Documentation/devicetree/bindings
-      DTC_CHK Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.example.dtb
+but herd parser doesn't support this as a valid expression.
 
- .../bindings/gpio/fsl,qoriq-gpio.yaml         | 80 +++++++++++++++++++
- .../devicetree/bindings/gpio/gpio-mpc8xxx.txt | 53 ------------
- 2 files changed, 80 insertions(+), 53 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+Regards,
+Boqun
 
-diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-new file mode 100644
-index 0000000000000..532fbb631a89a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/fsl,qoriq-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale MPC512x/MPC8xxx/QorIQ/Layerscape GPIO controller
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,mpc5121-gpio
-+          - fsl,mpc5125-gpio
-+          - fsl,mpc8349-gpio
-+          - fsl,mpc8572-gpio
-+          - fsl,mpc8610-gpio
-+          - fsl,pq3-gpio
-+      - items:
-+          - enum:
-+              - fsl,ls1021a-gpio
-+              - fsl,ls1028a-gpio
-+              - fsl,ls1043a-gpio
-+              - fsl,ls1088a-gpio
-+              - fsl,ls2080a-gpio
-+          - const: fsl,qoriq-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  little-endian:
-+    description:
-+      GPIO registers are used as little endian. If not
-+      present registers are used as big endian by default.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio@1100 {
-+        compatible = "fsl,mpc5125-gpio";
-+        #gpio-cells = <2>;
-+        reg = <0x1100 0x080>;
-+        interrupts = <78 0x8>;
-+    };
-+
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    gpio@2300000 {
-+        compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
-+        reg = <0x2300000 0x10000>;
-+        interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+        gpio-controller;
-+        little-endian;
-+        #gpio-cells = <2>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+    };
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-deleted file mode 100644
-index cd28e932bf50e..0000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--* Freescale MPC512x/MPC8xxx/QorIQ/Layerscape GPIO controller
--
--Required properties:
--- compatible : Should be "fsl,<soc>-gpio"
--  The following <soc>s are known to be supported:
--	mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq,
--	ls1021a, ls1043a, ls2080a, ls1028a, ls1088a.
--- reg : Address and length of the register set for the device
--- interrupts : Should be the port interrupt shared by all 32 pins.
--- #gpio-cells : Should be two.  The first cell is the pin number and
--  the second cell is used to specify the gpio polarity:
--      0 = active high
--      1 = active low
--
--Optional properties:
--- little-endian : GPIO registers are used as little endian. If not
--                  present registers are used as big endian by default.
--
--Example of gpio-controller node for a mpc5125 SoC:
--
--gpio0: gpio@1100 {
--	compatible = "fsl,mpc5125-gpio";
--	#gpio-cells = <2>;
--	reg = <0x1100 0x080>;
--	interrupts = <78 0x8>;
--};
--
--Example of gpio-controller node for a ls2080a SoC:
--
--gpio0: gpio@2300000 {
--	compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
--	reg = <0x0 0x2300000 0x0 0x10000>;
--	interrupts = <0 36 0x4>; /* Level high type */
--	gpio-controller;
--	little-endian;
--	#gpio-cells = <2>;
--	interrupt-controller;
--	#interrupt-cells = <2>;
--};
--
--
--Example of gpio-controller node for a ls1028a/ls1088a SoC:
--
--gpio1: gpio@2300000 {
--	compatible = "fsl,ls1028a-gpio", "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
--	reg = <0x0 0x2300000 0x0 0x10000>;
--	interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
--	gpio-controller;
--	#gpio-cells = <2>;
--	interrupt-controller;
--	#interrupt-cells = <2>;
--	little-endian;
--};
--- 
-2.34.1
-
+>     jonas
+> 
 
