@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-192181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E748D198B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD588D198F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8411C216AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C65D28890B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF816D321;
-	Tue, 28 May 2024 11:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D62416C69F;
+	Tue, 28 May 2024 11:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TmK2Z8ez"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ErXr+ajk"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73216C852;
-	Tue, 28 May 2024 11:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0F57D07D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716895922; cv=none; b=JWjUL34VDloE6IFs8hKlbI6EmJJi3PuWAGhvQ8ueqEHzKkvC4VgJg+i67RWKf20ejChRvMNXwMpin2XRh3XdL8zgT4zPzpm7wFbicIqKkEYke1C0R8mnoKgg2ekBqYuh+1m/gMF4vjbWbqV0ugP6qJmAU5xeWR97Gpn22u0sABQ=
+	t=1716896016; cv=none; b=AFhnhfSFeAM8In1XxAu/8JHsFpRlederPca9hg6X/+SKdrvd7UeIcdOT09tKWaUG4dJKQ5/j8f99vRvO2L3PeBIzJqA6295kIq+tDBy7gCOWY6VBpqK6DChCW9UN1DnfO+HQfkVrUdAqpndc8O9wtOHLrQ6kF9ETkouMR4HMZ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716895922; c=relaxed/simple;
-	bh=s9zJsE3/1kg/YHUe1X0gPbq/JexKL+o52CjjXo5/REE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WYWQrJWO8Z4KcLsDTrWlTjodSxI6F8gP6SJmf4Q9mFNKWoByFmdclElDBrIbPo5eLxuKEhbOfS/+IDkTexBNVKJNyrsHQwsTRrM+1DusmjTYX+EqRyber1CngrBPq+x9NS4WwJMxolDT1Z0YqYpRwOqT9HH0CAmU4D7CGbppdmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TmK2Z8ez; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SBVenp062222;
-	Tue, 28 May 2024 06:31:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716895900;
-	bh=VpSNru19mBz9l4/n9K1fomuoEtlk8IP8cCmAhFDqj9k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=TmK2Z8ezSKCZDHjB/iSRmrlXraznKS7RMMA+qdqEiftotR/sCS9Vzjzc4zgo24O0s
-	 h2JSxOhqLRvw3+8fYE1FAJ2tykEIoHb9RwtN/GyjQ8jrhMhuhk0epVj+Dk/W4bbQsA
-	 ndHKMSvNYdQqNRncDgz+G+cgH4zgu1fDoe/BJOdQ=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SBVect036639
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 28 May 2024 06:31:40 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
- May 2024 06:31:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 28 May 2024 06:31:40 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SBVVrb076827;
-	Tue, 28 May 2024 06:31:32 -0500
-Message-ID: <9c88bc47-35f0-86ed-2df7-dd83640d9997@ti.com>
-Date: Tue, 28 May 2024 17:01:31 +0530
+	s=arc-20240116; t=1716896016; c=relaxed/simple;
+	bh=pVkfCfXwvpGITqeArgg8XorBGEqsQIg7EkQ5urfJgbQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cfa/3Z4PbVLTg3nKDeBVR6N10bM26Vh57kXn7KxXhx526joRqqShtpYPa7f3CuueXeuOE5o1A2zEWdUurYauhCw9zyFv+GL7lLlff8BHGsjndwQh13jhUBCTRk50SJ7BjObdqaGKrk0sSdM4DsZJEGLpZAJwtCLYMbVb++6jCjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maennich.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ErXr+ajk; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maennich.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42120a4c56eso2143285e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716896013; x=1717500813; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pTOxhoHq0Nkxf/74IFjzbYdMxemeJfpZA9XvBTvTfc4=;
+        b=ErXr+ajkwW8QC39Mej+rxdrFeYUwVnx/x0bXfsBYisomxuLsZpmRb8iBz6j+fd1Wzp
+         omwdzrak9vItrH6+cW+YktjF0vAmUUmG1XS1XR25aLRpYq/hHFCnUoy7At3g5EVgZp5Y
+         8zSj0Uz40Ztpbv0TaV7ljrJ8WgqXb3HnRhUWoVYesIvoQsUGC0DYkaGb563A+vXYyIIW
+         y8ej/2RESLsXc1B6bz2EPbldrQJeJ4Y9UYZt0e3loev6KU/jvHBfmkU78qmlMVF4wWc4
+         Md030pqFfjorYLkp2UFfkCx1Wsv+gsdOoib+EOCpfUgoUduH3Dt3mGUn7Ns/q9zYguCr
+         mizQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716896013; x=1717500813;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pTOxhoHq0Nkxf/74IFjzbYdMxemeJfpZA9XvBTvTfc4=;
+        b=kg33HftfGNH52QLmrJ/k4tVsTjpDly5FTyS6a2ite5I6vS3Dshw4l1gkF7ulwCOl+T
+         fepUzBvrFLJnyEhQXDnRigEPmlEnc4bLLf69+wWxHW1ftkhIKCANH5wO3gbymvzIB/Jc
+         8ZX6JxHvRWX2dIDAOK7SnhgOhlB1B8HwVK8O9Ubw/MxLP2eyADDvWpv6vDYOozTubS7S
+         TkrSzsX6fWxPvB183A+cuCKmBY3uHlVoXse4Pmou3BgFTzk5MzhF22rJ33L7E3b53Z+8
+         TdRU+IRffbFL8uu+BIr1oFdqQEu1FS6f1A8/mCofNkpkh1Lt2osvyXrAvHBrfXVRB9A8
+         2V1g==
+X-Gm-Message-State: AOJu0Yxat12y1Zxn+do78apIaB9po0iaLyj/C6yg1XqhW80Iox2rBGME
+	lXIM9p9a+RH+g3e4pc/3czUFQOpw5kCOj/AeJcxxumyJuDSx00nOJuAUe1RgcfdbqAFjvK2I3UQ
+	DJs+KHku8YX4s+jGBTRz1egUTq85Vj54mfsYOuaH0gLllZJ6U4mtaZxhq1RDwE+glPzN1f0jMlJ
+	QiQIzyfVt7T+D9OOULzSxhdJ4jTD9GPawQIkf89FH1C1KSBsrbCc0=
+X-Google-Smtp-Source: AGHT+IEZuPpg1yO7fn0IEIKwi0X1YijuMLbkk9FqYxMx51RJlFRj8VX6O6wgo1ofZTORDUJHHcMrL76AmO0uAA==
+X-Received: from licht.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:f9c])
+ (user=maennich job=sendgmr) by 2002:a05:600c:4704:b0:41f:41fc:318b with SMTP
+ id 5b1f17b1804b1-42108205095mr2453645e9.4.1716896013057; Tue, 28 May 2024
+ 04:33:33 -0700 (PDT)
+Date: Tue, 28 May 2024 11:32:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v9 07/10] lib: add basic KUnit test for lib/math
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
- <20240526180933.1126116-1-devarsht@ti.com>
- <ZlTu_9orsuosNiGk@smile.fi.intel.com> <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240528113243.827490-2-maennich@google.com>
+Subject: [PATCH] kheaders: explicitly define file modes for archived headers
+From: "=?UTF-8?q?Matthias=20M=C3=A4nnich?=" <maennich@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com, maennich@google.com, gprocida@google.com, 
+	stable@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Joel Fernandes <joel@joelfernandes.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+From: Matthias Maennich <maennich@google.com>
 
+Build environments might be running with different umask settings
+resulting in indeterministic file modes for the files contained in
+kheaders.tar.xz. The file itself is served with 444, i.e. world
+readable. Archive the files explicitly with 744,a+X to improve
+reproducibility across build environments.
 
-On 28/05/24 02:08, Andy Shevchenko wrote:
-> On Mon, May 27, 2024 at 11:37:20PM +0300, Andy Shevchenko wrote:
->> On Sun, May 26, 2024 at 11:39:33PM +0530, Devarsh Thakkar wrote:
-> 
-> ...
-> 
->>> +MODULE_LICENSE("GPL");
->>
->> modpost validator won't be happy about this, i.e. missing MODULE_DESCRIPTION().
-> 
-> And obviously + module.h in the inclusion block.
-> 
+--mode=0444 is not suitable as directories need to be executable. Also,
+444 makes it hard to delete all the readonly files after extraction.
 
-The module.h is already included under include/kunit/test.h and that's the
-reason compiler did not give any error. But I can still include it under
-math.h for better readability as you suggested as anyway compiler will not
-re-include if already included by another header file.
+Cc: stable@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Signed-off-by: Matthias Maennich <maennich@google.com>
+---
+ kernel/gen_kheaders.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also I see we were missing a dependency between math_kunit and kunit modules,
-so adding a dependency there too.
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index 6d443ea22bb7..8b6e0c2bc0df 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -84,7 +84,7 @@ find $cpio_dir -type f -print0 |
+ 
+ # Create archive and try to normalize metadata for reproducibility.
+ tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
+-    --owner=0 --group=0 --sort=name --numeric-owner \
++    --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
+     -I $XZ -cf $tarfile -C $cpio_dir/ . > /dev/null
+ 
+ echo $headers_md5 > kernel/kheaders.md5
+-- 
+2.45.1.288.g0e0cd299f1-goog
 
-Regards
-Devarsh
 
