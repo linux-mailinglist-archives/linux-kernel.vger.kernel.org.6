@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-191782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A808D1402
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0CF8D1407
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84571F2427E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7C41F242D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BAC4D11B;
-	Tue, 28 May 2024 05:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Td8z5VNt"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6F14D11B;
+	Tue, 28 May 2024 05:42:26 +0000 (UTC)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA2B40BE5;
-	Tue, 28 May 2024 05:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892E3F9FC;
+	Tue, 28 May 2024 05:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874873; cv=none; b=UCbutdUbNpxtUTUg4qPDUY/scGUh9Dra0Zw+bZiP2YyDHZRIPO9pc+fSmDeKGFwKvsRj4LNlQaRnhXOo7AvvR5dJ/gagzkwsAYCGcyF63lpdHFPClGSs6w8Jn7eH1M6TRJOEimfn/M+8QaSJkllMNcaAKaM8lY3aBC6ttteUV4Y=
+	t=1716874946; cv=none; b=O3WhqjqznybsZny7WuK65ApEYPlS4ToMd00zOwW8blmWE6Tne1oL2pffHzL6uPaSYpDcoVn9c5KyR0QLlT2+lVmajFKbq4MKoojF71GyjPirw8twPFCkze4zY67nkORNoGTfeTGUYaR4TD3tymBOvLadm6U+VMcv/UlBYXMrlLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874873; c=relaxed/simple;
-	bh=Ed6LE+X1MIVzGMmlXw4d0umQaiRtTlhp8W/JqWUNy5s=;
+	s=arc-20240116; t=1716874946; c=relaxed/simple;
+	bh=3DQfssdRW+iUJSUSl6k5ZV4jcESjudzuyWB/cFlaOL0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddeHIXs2galWJh15SA3p+kQn6EfdF/0Zipw49gfdu4/JmUGa8mVraNl9kmd9t2Whgkg5rE0Ed18gT/hlNYIyfM6CBA5ZrwJt5Ldb46AGBjPsZoOLnZL5QcXZKRn0l2YDJd9ypNWRC3y12CNKplb5p5uX8aAKIUFi22YEXHb84so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Td8z5VNt; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716874870;
-	bh=Ed6LE+X1MIVzGMmlXw4d0umQaiRtTlhp8W/JqWUNy5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Td8z5VNtZnV8QpLSTIuL/fqrxdIzYaxeXqlNPGy+KLy+1PhAZML8oSspaR+aU+rJf
-	 b61QAaikCWLrr2lfSrzwbXCFTq+8Xfg3rX0ebGIVoQtsm3DiOKmbIPICBIcwNUJRd+
-	 kkVl/X6cxwMik6SS7oKzSa2Kx5nBRMrxS0U8+Kuc=
-Date: Tue, 28 May 2024 07:41:09 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Pavel Machek <pavel@ucw.cz>, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
-	Mario Limonciello <mario.limonciello@amd.com>, linux-leds@vger.kernel.org, 
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v3 3/4] platform/chrome: cros_kbd_led_backlight: allow
- binding through mfd device
-Message-ID: <4b5d7db0-4454-4c69-b2c4-9ad652eade76@t-8ch.de>
-References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
- <20240526-cros_ec-kbd-led-framework-v3-3-ee577415a521@weissschuh.net>
- <ZlVtnF-ZZ72N2PAG@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9ct47Qq/gX3mfDMUB0HwWfeD8fuvl+Za4SemJhKfRfgI+G3uM/nSY67lnHRimLh3KmWeGoP9TJ89i5nfWTQGxxxSBTeJiffaoanqhO2A6IWsAC8SczMu2v/kBjewFdoMLLHQXroUIje/kmZxU2eVJ/ma+JU0cI5gmA99mmdDps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f47eb21f0aso4022945ad.1;
+        Mon, 27 May 2024 22:42:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716874944; x=1717479744;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fy9n6lh6/7Mb5daFJ2g6ZixLgVz7dPgqfc9MDBTUFyE=;
+        b=FyYxFqF/p+2Tl3u4ut33VI67BjevJiERJI80x2g1vaWvyC5vux/WaQ9DtESoDdk/0+
+         2nC+uoTLkerZ+ecvCI9uDs4xTIAFUqM9KCT7/Akd+zUplVHEKYBHxJ2a/ruXnXzSCA1u
+         rSL/s7cTDoEQXyRDl8lVlnb2nuQLfS0/FfyejVge/6+QEAO6Xk6Cv1bx8uhQI59ynMD2
+         Bjtnl8g09Ygzpbq3XL247X9IAL0SkStwyMGwnh6CeS+j/EklyTKTg6CkAlFcwe65la2+
+         Om8zkxjIX0g4lRdCXO1ZJ7EgjLLjfW8jxaQ8VIDm7LABklyDDF7pzHoNSk7YCYUgsh8c
+         HNsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV57/tpvhJsWkpVip0oOvuEl2dK0N9XE2dKggqrkN5uvpjaqS7c13LRkykjas8XiBAWlpkwI/BSFlkRhV1JdF8Ry5hJ+KWuP+OBTTAQCknYLBM0su3k7c6uaryKhLPqazIL+LmpkaCAZFYP
+X-Gm-Message-State: AOJu0Yx/ulVlg0wzhTrLsgeYVDu2jDcPMxbxnMDUBlDAN2atGvHpKW5S
+	V6bXuI/AhiAVkWS3L5keQ2ky89AD4TWc1bb0zFKVrigTQQ1A0Gd5/NQ12A==
+X-Google-Smtp-Source: AGHT+IG/sGdiCI9ZO/RdX4gnDMM5AfDcrgTo9NdR4VfDVMWu62hTyogSKIItAEkEi9OL/Upsko7wsQ==
+X-Received: by 2002:a17:903:41ce:b0:1eb:4c1d:ed2a with SMTP id d9443c01a7336-1f44871e51bmr125122135ad.27.1716874943969;
+        Mon, 27 May 2024 22:42:23 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f49c155d6bsm29404025ad.229.2024.05.27.22.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 22:42:23 -0700 (PDT)
+Date: Tue, 28 May 2024 05:42:22 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Aditya Nagesh <adityanagesh@linux.microsoft.com>
+Cc: adityanagesh@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] Drivers: hv: Cosmetic changes for hv.c and balloon.c
+Message-ID: <ZlVuvkWTBVmAyrZK@liuwe-devbox-debian-v2>
+References: <1713842326-25576-1-git-send-email-adityanagesh@linux.microsoft.com>
+ <ZlVo6bhEvBCIG_1d@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZlVtnF-ZZ72N2PAG@google.com>
+In-Reply-To: <ZlVo6bhEvBCIG_1d@liuwe-devbox-debian-v2>
 
-On 2024-05-28 05:37:32+0000, Tzung-Bi Shih wrote:
-> On Sun, May 26, 2024 at 08:17:17PM +0200, Thomas Weißschuh wrote:
-> > +#if IS_ENABLED(CONFIG_MFD_CROS_EC_DEV)
-> [...]
-> > +static const struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm_mfd = {
-> > +	.init = keyboard_led_init_ec_pwm_mfd,
-> > +	.brightness_set_blocking = keyboard_led_set_brightness_ec_pwm,
-> > +	.brightness_get = keyboard_led_get_brightness_ec_pwm,
+On Tue, May 28, 2024 at 05:17:29AM +0000, Wei Liu wrote:
+> On Mon, Apr 22, 2024 at 08:18:46PM -0700, Aditya Nagesh wrote:
+> > Fix issues reported by checkpatch.pl script in hv.c and
+> > balloon.c
+> >  - Remove unnecessary parentheses
+> >  - Remove extra newlines
+> >  - Remove extra spaces
+> >  - Add spaces between comparison operators
+> >  - Remove comparison with NULL in if statements
+> > 
+> > No functional changes intended
+> > 
+> > Signed-off-by: Aditya Nagesh <adityanagesh@linux.microsoft.com>
+> > Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 > 
-> They are only available if IS_ENABLED(CONFIG_CROS_EC).
+> Applied to hyperv-fixes, thanks!
 
-config MFD_CROS_EC_DEV
-	depends on CROS_EC
-
-Do you prefer this to be spelled out explicitly somewhere?
+Actually, can you rebase this path to hyperv-fixes and resend? It
+conflicts with other patches in that branch.
 
