@@ -1,63 +1,84 @@
-Return-Path: <linux-kernel+bounces-192549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E775E8D1F03
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:39:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C768D1F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766DE28660D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCFA8B21398
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F2716F91C;
-	Tue, 28 May 2024 14:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DCA16FF5B;
+	Tue, 28 May 2024 14:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCOWIxZL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q+z3D6v5"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D18C16F90B;
-	Tue, 28 May 2024 14:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498E316FF27
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907156; cv=none; b=dDT9WszCW6PG2Vr1aY+E3XXTs/shX1YBt2PV55UdvQxdNBDc5dAhlXm9ouAqQ86t13mvaBL1JP1Vpx3v0Bin6lrXBiNag6tcnwi96NLpEHZWWcI4aecgBhCAigXv/nfAUvpR9CxHFqbIzWYA6v//yaSyDnSnlKZ6iuY1jr/9K0M=
+	t=1716907238; cv=none; b=GD6XauCWMoyCHpSj5WUUjT8wl0huEGvhYiF7lUc9hFUPvB7XtGjBkxE6r/+z+chS+bvGYkL8Bg0YpG/oeQFjP8+Wx8tbKR/k24tWDapQev+8S9qsgVAMkpKOpPl6ya6pm8DZp3u2N8GuCSyRz5NbUkJHMZtnNVT0HJ0ElSk44eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907156; c=relaxed/simple;
-	bh=BiAwdmmi1ES+ggntiOhZUCQzZ3ZPOkkX5GoiWqc7GMc=;
+	s=arc-20240116; t=1716907238; c=relaxed/simple;
+	bh=G/sEAwtqVDZaq/JZ6QDvKHohGloo0nUCVaVRBW7SJR8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beLcXZQ1ZbCqpVhUc5WEWbSajwOAPbIfq9yn7fOBhvvckVywJ8jfgmfKjaAiWF35xw7AxLOSEluwI7AlX83Mhi277ACMuuR1VuYWxC0fFBedScbZGfnUUqcHyHA2GRIrqVT0nzUrdI8AUWCPQBtXjGwObl82oFUxnHLSdPQy028=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCOWIxZL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624BAC3277B;
-	Tue, 28 May 2024 14:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716907155;
-	bh=BiAwdmmi1ES+ggntiOhZUCQzZ3ZPOkkX5GoiWqc7GMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iCOWIxZLGZN5Ke4/ZZd3Vhw6KkP1ZYz3OSfD2Aq6qYyGeWBEsg9ubAz8aMQVSUQAk
-	 5Ej5YVSfVl7UWYqNb6mqNHN/PIvKXjrsFIT+GiXDOzSVV8YszDns6HbozmwDHkeCHV
-	 mIIb0IcO7cXGaXPNiDTVwNfrRN54vWwHofNYePHFGdynKnhU5ZUFb2kXhU/DHadqdf
-	 eohmAY+T/xWMWsENUJjhRJnFMI3Q9p0cDjwq7axFSt2IcCLNdKESiiCwCeC+yhz9Bp
-	 ue99dju5CXHRjLlbF6SDG+anphtMg8B+rCTNLTmGNn+IiA2yesPTiwZD6959gGUts7
-	 Sc+loxeKwni1Q==
-Date: Tue, 28 May 2024 09:39:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Arthur Becker <arthur.becker@sentec.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [EXTERNAL]Re: [PATCH v3 2/2] dt-bindings: iio: light: add
- VEML6040 RGBW-LS bindings
-Message-ID: <20240528143914.GA139191-robh@kernel.org>
-References: <20240527-veml6040-v3-0-6f3bbfd42960@sentec.com>
- <20240527-veml6040-v3-2-6f3bbfd42960@sentec.com>
- <e47de936-8cb4-4cef-a346-74835767e203@kernel.org>
- <ZR1P278MB111779FE0C84DB465C54EEFF81F12@ZR1P278MB1117.CHEP278.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLzBQj30RQbVC4u31YsrAt++4//ok7LlW3tY+H0udSeeKnNrNQYQ9jV09qbMWGB63g4eDmO9VqPxgnXWzeEh12lplM4Q2YqXHM9ypGPqwfdsl5genqK6wRT79zOdAXHaQIvQtBpDnZ24c40pmd36sDwj5ERdsrXPVwry0YxSAc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q+z3D6v5; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e95a883101so11001531fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716907234; x=1717512034; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gGbq2+G0YRbMbOdBIQss5wZtbiI49aMbKPIubZFnKg=;
+        b=Q+z3D6v50qLDx6wTy7qCEUwbqHp0FlKnVchfWEzrA54yLSHKyzu+ynZkh51WpaQT/k
+         xkTpEo7psPn9t6wJZ0Uvb+s8+2eM5J224/T4KtWW6+6FpQcS10o4Xlbap4aNS/DyJBtw
+         t9yixFRFdT9SE0NFnft1dkLiDLUecxElOqE75GiaY7vEaXdxxPGfX5aFbd8SsDhYPLb4
+         PsIm55kLcNidN7koJas0iRvlU9ATExycJAUnTLIAiG7+gn+T7ovcS3QRbVJkxO/2SyOg
+         0eIsFLA4l1eEOve0PXTJI5nIQ39B9qBQiq2bsMoXHqDtXzGb69x/x1yv/3/Dxyt6PSXh
+         DEoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716907234; x=1717512034;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8gGbq2+G0YRbMbOdBIQss5wZtbiI49aMbKPIubZFnKg=;
+        b=im6qPk2Bk9VA+Sb/scaYK+qNdDfQRsPX8S8ZuGYzw5ZlZH+RWo7CruNG3ybcTa5oqp
+         i47nvuhGS1xWSTIQSLyzyfNvrJb3HUwaludTVCpM8Fj/jYAwVMvbIB8JATYb1uVBL7t2
+         +M3QRQ499OQzzbXk4Q94M4cn+pvq5xwYpAkMWsVjCXQr5fj1G1/VHxyghntcJy+1hGmx
+         zCF5axknIPdbgQJoH6NnhVBuGC3E7qRUj2OTXipK8S6ZRColNKU4Kfovms9PQmpB7oBo
+         hHeQRlcfKIy+lRnizNh2P7cSi6BRzFjVBDw3+1Q731c7pW7bdNk2g8SJmQZkaCUthw9H
+         Uo1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvJmYTgAl/4pybyTT/o5QrUli+kgXTbOP8tKvgOXb+Pp8c/5MEG4WoX8JFEUruUseLgpzi1Ig5XBQIZ6GKNir3BEmhhA1v0uA1P8eI
+X-Gm-Message-State: AOJu0YwHyom3JuZPpQK3tf+LrivhkNKoW2cat8d/pn91EpxNK3g2w4GM
+	R81DLSGeNaNaCtroMj4naRwRFALK6tjEnFvVhSPT/YC+jImwoI1QYWvvhD+vrQY=
+X-Google-Smtp-Source: AGHT+IFLOJBz/bELqSb+f+uM0s4cO1qSHnszdkdpYEfD8loMqI9OQBAGzZRt5U9/gt8IksZYdmpK1A==
+X-Received: by 2002:a05:651c:a09:b0:2e9:841d:dacb with SMTP id 38308e7fff4ca-2e9841dddeamr31411951fa.40.1716907234225;
+        Tue, 28 May 2024 07:40:34 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcd7c20sm22927471fa.33.2024.05.28.07.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:40:33 -0700 (PDT)
+Date: Tue, 28 May 2024 17:40:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ricard Wanderlof <ricardw@axis.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] drm: bridge: adv7511: Accept audio sample widths of 32
+ bits via I2S
+Message-ID: <m7sghjgqtm45yjkpzrekeab7doojagxjts7vmw23a3tqtjltdj@v2oencka3uer>
+References: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +87,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZR1P278MB111779FE0C84DB465C54EEFF81F12@ZR1P278MB1117.CHEP278.PROD.OUTLOOK.COM>
+In-Reply-To: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
 
-On Tue, May 28, 2024 at 07:23:03AM +0000, Arthur Becker wrote:
-> Thanks for the Review!
-> Right, I wasn't sure if and how to add the veml6040 to the veml6075 dt-binding file.
-> I'll modify that the next time I make adjustments to the driver.
+On Tue, May 28, 2024 at 12:04:49PM +0200, Ricard Wanderlof wrote:
+> 
+> Even though data is truncated to 24 bits, the I2S interface does
+> accept 32 bit data (the slot widths according to the data sheet
+> can be 16 or 32 bits) so let the hw_params callback reflect this,
+> even if the lowest 8 bits are not used when 32 bits are specified.
+> 
+> This is normally how 24 bit audio data is handled (i.e. as 32 bit
+> data, with the LSB:s unused) and this is also reflected in other
+> bridge drivers which handle audio, for instance sii902x.c and
+> synopsis/dw-hdmi-i2s-audio.c .
+> 
+> Signed-off-by: Ricard Wanderlof <ricard.wanderlof@axis.com>
+> ---
+>  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
 
-Please don't top post, quote replies correctly, and fix your mail setup 
-to not add 'EXTERNAL' to the subject.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Rob
+What about:
 
-> 
-> Kind regards,
-> Arthur
-> 
-> ________________________________________
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 27 May 2024 18:31
-> To: Arthur Becker; Jonathan Cameron; Lars-Peter Clausen; Rob Herring; Krzysztof Kozlowski; Conor Dooley
-> Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: [EXTERNAL]Re: [PATCH v3 2/2] dt-bindings: iio: light: add VEML6040 RGBW-LS bindings
+Fixes: ae053fa234f4 ("drm: bridge: adv7511: Support I2S IEC958 encoded PCM format")
+
+?
 
 
-> 
-> On 27/05/2024 17:12, Arthur Becker via B4 Relay wrote:
-> > From: Arthur Becker <arthur.becker@sentec.com>
-> >
-> > Device tree bindings for the vishay VEML6040 RGBW light sensor iio
-> > driver
-> >
-> > Signed-off-by: Arthur Becker <arthur.becker@sentec.com>
-> > ---
-> > V1 -> V3: Addressed review comments (v1 of the dt-bindings was sent
-> > along with v2 of the driver but not in a set)
-> 
-> It's basically the same as veml6075, so should be put there...
-> 
-> Eh,
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+-- 
+With best wishes
+Dmitry
 
