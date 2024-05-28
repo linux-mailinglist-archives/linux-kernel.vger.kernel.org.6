@@ -1,243 +1,265 @@
-Return-Path: <linux-kernel+bounces-191928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1218D1634
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:26:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9428D1636
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562B41F2296B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:26:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7C1B227B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121413C3F3;
-	Tue, 28 May 2024 08:26:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDEE13B5B9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFF313C8F0;
+	Tue, 28 May 2024 08:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+8mJr+5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E0313C3E6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884779; cv=none; b=Ymql2bn2Lmo1Z6D3eYaW4lrzpgVLXjF3eOD5yw1dpeLt55kE6HyeSrKrwHx7J5mM20kV3jThoqy4anK9yuDkkPHAavhz1ETQb/ZiiozIobXt2GnmRhTk1ywuOLAA1HWhSBFc8VHL6HKQuhQDYpL5qgexwcccLP0a2wNwnMhQmqI=
+	t=1716884781; cv=none; b=IYFARAb6HcjO5eO4kxHAE6Hk5D+KZ6XbH3Vz38fQxn7hYcaQ0tl5MlPkYrC8KLnU7g9x9Wpruj17kCn32yhi0IKwySPBWQ0BZQMnso7fqSFNnZJv3Bl0Kbf+Zjq90jD/hpO1g42AhpE7/etMi95iygP5ravtP/wfg+S9S8MHkQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884779; c=relaxed/simple;
-	bh=x2IHaJM8J5TB06sb2x6TNXAMd6bzS8tMr8l83fqo+4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4qXfETsG/FSgZykO0TrdHPhvdtTj0X0GBwLPuKuYr2tNFp0UWuE6Z457TGtDWF+G4XHa/HfL7lCT8dMgMDOua6/9cv8s8ZQ/SbbGIhb161gdEYFj1uAZBYiiu1V+vzls9WSON1b261ewzE7DpDUwjeOsF0jM4JSNLLkS+FbZ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D455C339;
-	Tue, 28 May 2024 01:26:38 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71A4D3F641;
-	Tue, 28 May 2024 01:26:11 -0700 (PDT)
-Date: Tue, 28 May 2024 09:26:04 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Barry Song <21cnbao@gmail.com>, Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jeff Xie <xiehuan09@gmail.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Michal Hocko <mhocko@suse.com>, Minchan Kim <minchan@kernel.org>,
-	Muchun Song <songmuchun@bytedance.com>,
-	Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	Zach O'Keefe <zokeefe@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] mm: arm64: Fix the out-of-bounds issue in
- contpte_clear_young_dirty_ptes
-Message-ID: <ZlWVHC0e2OadjwIa@J2N7QTR9R3>
-References: <20240524005444.135417-1-21cnbao@gmail.com>
+	s=arc-20240116; t=1716884781; c=relaxed/simple;
+	bh=4X1w2Z4sXtDos1E7KsuOTl8b2Ag/TAWDOHN0yGMtuKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ED/4swIjOsVFvT+M3JeuddCL2MnemiEa9ydJUemcssHaj+0hE3yXyfrNMCNMCaK5lwSFMyb0X92xfF5jBNLuyHIUfat2FWP43jCNmgzRR+6SsZuRZeFBti7C346TztaXCUyoyUxBahuvubo+re4AtLNWuzSwNgVEt0bxxvjY92Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+8mJr+5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716884778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/ywwFqFKE+W7hqEwp1bV+PdXb6Hq1Lf2enfltgy19l4=;
+	b=J+8mJr+53EqPA0QtDZ6NQGqaHMqbzS8G58AKgKAgQO+z6PmMBOLKbDW/5juPFxfWKkDZGw
+	NcS8MRBqL25732bSQJXhnSK72D0t+G0d1xBFTmQyzDwwqF7pBgUKd4otZLlBqIBluZ6AdG
+	BJtUdMsptgfYPYefnxonJvBnagWZI8c=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-m_MJ3G_KOHSlFgrbzwU66A-1; Tue, 28 May 2024 04:26:15 -0400
+X-MC-Unique: m_MJ3G_KOHSlFgrbzwU66A-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a6270b93d0dso34474666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:26:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716884774; x=1717489574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ywwFqFKE+W7hqEwp1bV+PdXb6Hq1Lf2enfltgy19l4=;
+        b=RtTqJbP3a5M8bAEk26C0yu0wcaSrxNfTcWtQns01sDnY5suSso/YuNB9Wdm9ssJFhf
+         M2vDeQ8pfSluC9cj6xXLzCJwbxaflNQFBuDM7C3E/qYOLdMNmB9RQbwOHHd2fToBF2sa
+         yUOY9DTmYh3DI7Muqdq7AOeUlb7rLC/lj6TA4bQ8idDGSenPr/XdNdkzDOtS4EuTRltg
+         mR21dxaWJru5fu+bkRO5p/+9WWJIEJNhmz/Lzj/45YlwR+ytBA6xcx/t3V71wMSFx9c7
+         cGrDlpZkcpBK8Gm835H0znlpuNf9fOZPStELeBd5k0kO/nhG5iqjy/xhB0hiImcPEEDM
+         /K6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuXSdr2ZtH3K4b8MbocaLjQFxeHWedTYY7HT1Pf2BtLUp8ITpPJOqC3Zxo2LyNEw6FwarcPmADUols4pMctjVe4jr7jAUHOOgJPVUc
+X-Gm-Message-State: AOJu0YwBY4INVnwSvAjp6jmMOd9qyAQI6rA0WHzxCP1jRqMc7sHjxK8Y
+	yfY9RVJNTSUfuIhwtUbzv5LD+jb2COliyynY5xMRe0ZDOQYXw9/F0fbip1sbmyc8fXFYR7st+jZ
+	Ope9Q/Koe4Bg1FIYZggN1X7mcw+2taS1X/zlAWwnTmCeMUfTLBuY43RmO7Oqhpg==
+X-Received: by 2002:a17:906:a450:b0:a59:cd00:dafb with SMTP id a640c23a62f3a-a626501c67fmr777532666b.64.1716884774080;
+        Tue, 28 May 2024 01:26:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqtvSVXjyl+IG8JOfqayUWxkmZwin4to2IpgheMjpXnwe8JvfGOoeWVd7R451ZNw+qPP0Hdg==
+X-Received: by 2002:a17:906:a450:b0:a59:cd00:dafb with SMTP id a640c23a62f3a-a626501c67fmr777530466b.64.1716884773533;
+        Tue, 28 May 2024 01:26:13 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817afcsm586947266b.22.2024.05.28.01.26.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 01:26:13 -0700 (PDT)
+Message-ID: <49d3ed29-b542-483b-969c-6b674a8ab0ca@redhat.com>
+Date: Tue, 28 May 2024 10:26:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524005444.135417-1-21cnbao@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hid-asus: use hid for brightness control on keyboard
+To: "Luke D. Jones" <luke@ljones.dev>, jikos@kernel.org
+Cc: ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, bentiss@kernel.org
+References: <20240528013959.14661-1-luke@ljones.dev>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240528013959.14661-1-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 12:54:44PM +1200, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
+Hi Luke,
+
+Thank you for the patch.
+
+On 5/28/24 3:39 AM, Luke D. Jones wrote:
+> On almost all ASUS ROG series laptops the MCU used for the USB keyboard
+> also has a HID packet used for setting the brightness. This is usually
+> the same as the WMI method. But in some laptops the WMI method either
+> is missing or doesn't work, so we should default to the HID control.
+
+It looks like you are doing 2 different things in 1 patch here,
+please split this into 2 patches:
+
+1. Use a different report_id for HID kbd backlight brightness control
+on some models.
+
+2. Skip registering the HID kbd backlight LED class device on some
+models.
+
+2 more remarks inline (below):
+
 > 
-> We are passing a huge nr to __clear_young_dirty_ptes() right
-> now. While we should pass the number of pages, we are actually
-> passing CONT_PTE_SIZE. This is causing lots of crashes of
-> MADV_FREE, panic oops could vary everytime.
-> 
-> Fixes: 89e86854fb0a ("mm/arm64: override clear_young_dirty_ptes() batch helper")
-
-I was seeing ths same thing on v6.10-rc1 (syzkaller splat and reproducer
-included at the end of the mail). The patch makes sense to me, and fixed the
-splat in testing, so:
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-
-Since this only affects arm64 and is already in mainline, I assume the fix
-should go via the arm64 tree even though the broken commit went via mm.
-
-Mark.
-
-> Cc: Lance Yang <ioworker0@gmail.com>
-> Cc: Barry Song <21cnbao@gmail.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Jeff Xie <xiehuan09@gmail.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Muchun Song <songmuchun@bytedance.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Yang Shi <shy828301@gmail.com>
-> Cc: Yin Fengwei <fengwei.yin@intel.com>
-> Cc: Zach O'Keefe <zokeefe@google.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
 > ---
->  arch/arm64/mm/contpte.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/hid/hid-asus.c                     | 19 ++++++++++++-
+>  drivers/platform/x86/asus-wmi.c            |  3 ++-
+>  include/linux/platform_data/x86/asus-wmi.h | 31 ++++++++++++++++++++++
+>  3 files changed, 51 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> index 9f9486de0004..a3edced29ac1 100644
-> --- a/arch/arm64/mm/contpte.c
-> +++ b/arch/arm64/mm/contpte.c
-> @@ -376,7 +376,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_struct *vma,
->  	 * clearing access/dirty for the whole block.
->  	 */
->  	unsigned long start = addr;
-> -	unsigned long end = start + nr;
-> +	unsigned long end = start + nr * PAGE_SIZE;
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 02de2bf4f790..9389a3e733e3 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -101,6 +101,7 @@ struct asus_kbd_leds {
+>  	unsigned int brightness;
+>  	spinlock_t lock;
+>  	bool removed;
+> +	int report_id;
+>  };
 >  
->  	if (pte_cont(__ptep_get(ptep + nr - 1)))
->  		end = ALIGN(end, CONT_PTE_SIZE);
-> @@ -386,7 +386,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_struct *vma,
->  		ptep = contpte_align_down(ptep);
+>  struct asus_touchpad_info {
+> @@ -473,7 +474,7 @@ static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
+>  static void asus_kbd_backlight_work(struct work_struct *work)
+>  {
+>  	struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
+> -	u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4, 0x00 };
+> +	u8 buf[] = { led->report_id, 0xba, 0xc5, 0xc4, 0x00 };
+>  	int ret;
+>  	unsigned long flags;
+>  
+> @@ -492,12 +493,18 @@ static void asus_kbd_backlight_work(struct work_struct *work)
+>   */
+>  static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+>  {
+> +	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+>  	u32 value;
+>  	int ret;
+>  
+>  	if (!IS_ENABLED(CONFIG_ASUS_WMI))
+>  		return false;
+>  
+> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_use_hidraw_led()) {
+> +		hid_info(hdev, "using hidraw for asus::kbd_backlight\n");
+> +		return false;
+> +	}
+> +
+
+You call the helper for this asus_use_hidraw_led() but to me that suggests
+that when the function returns true then userspace will control the brightness
+to /dev/hidraw# where as what you mean is that the in kernel HID driver will
+control the brightness. So please rename the helper to asus_use_hid_led()
+and for the message use:
+
+		hid_info(hdev, "using HID for asus::kbd_backlight\n");
+
+
+>  	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
+>  				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
+>  	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
+> @@ -507,6 +514,12 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+>  	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
+>  }
+>  
+> +static bool asus_kbd_is_input_led(void)
+> +{
+> +	return dmi_match(DMI_PRODUCT_NAME, "GU605")
+> +	    || dmi_match(DMI_PRODUCT_NAME, "GA403");
+> +}
+> +
+>  static int asus_kbd_register_leds(struct hid_device *hdev)
+>  {
+>  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> @@ -549,6 +562,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>  	if (!drvdata->kbd_backlight)
+>  		return -ENOMEM;
+>  
+> +	drvdata->kbd_backlight->report_id = FEATURE_KBD_REPORT_ID;
+> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_kbd_is_input_led())
+> +		drvdata->kbd_backlight->report_id = FEATURE_KBD_LED_REPORT_ID1;
+> +
+>  	drvdata->kbd_backlight->removed = false;
+>  	drvdata->kbd_backlight->brightness = 0;
+>  	drvdata->kbd_backlight->hdev = hdev;
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 3f9b6285c9a6..a58df18a70ad 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -1681,7 +1681,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>  			goto error;
 >  	}
 >  
-> -	__clear_young_dirty_ptes(vma, start, ptep, end - start, flags);
-> +	__clear_young_dirty_ptes(vma, start, ptep, (end - start) / PAGE_SIZE, flags);
+> -	if (!kbd_led_read(asus, &led_val, NULL)) {
+> +	if (!kbd_led_read(asus, &led_val, NULL) && !asus_use_hidraw_led()) {
+> +		pr_info("using asus-wmi for asus::kbd_backlight\n");
+>  		asus->kbd_led_wk = led_val;
+>  		asus->kbd_led.name = "asus::kbd_backlight";
+>  		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 3eb5cd6773ad..79a50102440d 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -160,4 +160,35 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
 >  }
->  EXPORT_SYMBOL_GPL(contpte_clear_young_dirty_ptes);
+>  #endif
 >  
-> -- 
-> 2.34.1
+> +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+> +#if IS_REACHABLE(CONFIG_ASUS_WMI)
 
----->8----
-Syzkaller hit 'KASAN: use-after-free Read in contpte_clear_young_dirty_ptes' bug.
+This should be IS_ENABLED() otherwise if hid-asus is builtin and
+asus-wmi is a module then this will go to the #else when included
+from hid-asus.c and thus always return true causing hid-asus to
+always register the kbd_backlight LED class device.
 
-==================================================================
-BUG: KASAN: use-after-free in __ptep_get arch/arm64/include/asm/pgtable.h:315 [inline]
-BUG: KASAN: use-after-free in __clear_young_dirty_ptes arch/arm64/include/asm/pgtable.h:1309 [inline]
-BUG: KASAN: use-after-free in contpte_clear_young_dirty_ptes+0x264/0x288 arch/arm64/mm/contpte.c:389
-Read of size 8 at addr ffff000018c0d000 by task syz-executor392/193
+> +static bool asus_use_hidraw_led(void)
+> +{
+> +	const char *product, *board;
+> +
+> +	product = dmi_get_system_info(DMI_PRODUCT_FAMILY);
+> +	if (!product)
+> +		return false;
+> +
+> +	/* These product ranges should all be using HID for keyboard LED */
+> +	if (strstr(product, "ROG Zephyrus")
+> +	|| strstr(product, "ROG Strix")
+> +	|| strstr(product, "ROG Flow")
+> +	|| strstr(product, "GA403")
+> +	|| strstr(product, "GU605"))
+> +		return true;
+> +
+> +	board = dmi_get_system_info(DMI_BOARD_NAME);
+> +	if (!board)
+> +		return false;
+> +
+> +	return strstr(board, "RC71L"); /* ROG Ally specific */
+> +}
+> +#else
+> +static inline bool asus_use_hidraw_led(void)
+> +{
+> +	return true;
+> +}
+> +#endif
+> +
+>  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
 
-CPU: 0 PID: 193 Comm: syz-executor392 Not tainted 6.10.0-rc1-00001-g30b7f99b25b6 #1
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0x12c/0x1f8 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x34/0x50 arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x184/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xf4/0x5b0 mm/kasan/report.c:488
- kasan_report+0xc0/0x100 mm/kasan/report.c:601
- __asan_report_load8_noabort+0x20/0x30 mm/kasan/report_generic.c:381
- __ptep_get arch/arm64/include/asm/pgtable.h:315 [inline]
- __clear_young_dirty_ptes arch/arm64/include/asm/pgtable.h:1309 [inline]
- contpte_clear_young_dirty_ptes+0x264/0x288 arch/arm64/mm/contpte.c:389
- clear_young_dirty_ptes arch/arm64/include/asm/pgtable.h:1715 [inline]
- madvise_free_pte_range+0xa5c/0x16d8 mm/madvise.c:767
- walk_pmd_range mm/pagewalk.c:143 [inline]
- walk_pud_range mm/pagewalk.c:221 [inline]
- walk_p4d_range mm/pagewalk.c:256 [inline]
- walk_pgd_range+0xca4/0x1900 mm/pagewalk.c:293
- __walk_page_range+0x4bc/0x5b8 mm/pagewalk.c:395
- walk_page_range+0x4a4/0x840 mm/pagewalk.c:521
- madvise_free_single_vma+0x3a0/0x798 mm/madvise.c:815
- madvise_dontneed_free mm/madvise.c:929 [inline]
- madvise_vma_behavior mm/madvise.c:1046 [inline]
- madvise_walk_vmas mm/madvise.c:1268 [inline]
- do_madvise+0x54c/0x2990 mm/madvise.c:1464
- __do_sys_madvise mm/madvise.c:1481 [inline]
- __se_sys_madvise mm/madvise.c:1479 [inline]
- __arm64_sys_madvise+0x94/0xf8 mm/madvise.c:1479
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x8c/0x2e0 arch/arm64/kernel/syscall.c:48
- el0_svc_common.constprop.0+0xec/0x2a8 arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x4c/0x70 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x160 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x120/0x130 arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:598
+Regards,
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x58c0d
-flags: 0x3fffe0000000000(node=0|zone=0|lastcpupid=0x1ffff)
-raw: 03fffe0000000000 fffffdffc0630388 fffffdffc071cc48 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff000018c0cf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff000018c0cf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff000018c0d000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff000018c0d080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff000018c0d100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
-Syzkaller reproducer:
-# {Threaded:false Repeat:false RepeatTimes:0 Procs:1 Slowdown:1 Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false Wifi:false IEEE802154:false Sysctl:false Swap:false UseTmpDir:false HandleSegv:false Trace:false LegacyOptions:{Collide:false Fault:false FaultCall:0 FaultNth:0}}
-madvise(&(0x7f0000ffd000/0x3000)=nil, 0x3000, 0x17)
-mprotect(&(0x7f0000ffc000/0x4000)=nil, 0x4000, 0x0)
-mprotect(&(0x7f0000800000/0x800000)=nil, 0x800000, 0x1)
-madvise(&(0x7f0000400000/0xc00000)=nil, 0xc00000, 0x8)
-
-
-C reproducer:
-// autogenerated by syzkaller (https://github.com/google/syzkaller)
-
-#define _GNU_SOURCE 
-
-#include <endian.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#ifndef __NR_madvise
-#define __NR_madvise 233
-#endif
-#ifndef __NR_mmap
-#define __NR_mmap 222
-#endif
-#ifndef __NR_mprotect
-#define __NR_mprotect 226
-#endif
-
-int main(void)
-{
-		syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul, /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-	syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul, /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/7ul, /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-	syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul, /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-				if (write(1, "executing program\n", sizeof("executing program\n") - 1)) {}
-	syscall(__NR_madvise, /*addr=*/0x20ffd000ul, /*len=*/0x3000ul, /*advice=MADV_POPULATE_WRITE*/0x17ul);
-	syscall(__NR_mprotect, /*addr=*/0x20ffc000ul, /*len=*/0x4000ul, /*prot=*/0ul);
-	syscall(__NR_mprotect, /*addr=*/0x20800000ul, /*len=*/0x800000ul, /*prot=PROT_READ*/1ul);
-	syscall(__NR_madvise, /*addr=*/0x20400000ul, /*len=*/0xc00000ul, /*advice=*/8ul);
-	return 0;
-}
+Hans
 
 
 
