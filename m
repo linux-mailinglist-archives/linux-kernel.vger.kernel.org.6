@@ -1,193 +1,121 @@
-Return-Path: <linux-kernel+bounces-192690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8B68D20BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:49:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA58D20C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538B11F22EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A34B224E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C30A17166D;
-	Tue, 28 May 2024 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35474171E4F;
+	Tue, 28 May 2024 15:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="pHu/gEqc"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RLYIeefX"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F1A16DED4;
-	Tue, 28 May 2024 15:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F155171E4C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911339; cv=none; b=P06/Bey1SgCZlYjXgHdK5uUKvN4dTMqSaqEILZXe4o00JopZ0Pt33fKkjkKlQ638RWuxn8XUdEOjVNts6OwOL8Fy0U3X6MuLCiVngT4jGYfHPwEkNG2wUZLIG4LfnVqK1y+tuF4ia6LfA5z1PxFXVTGLGrUtX0LOntSuwubNk78=
+	t=1716911454; cv=none; b=RJXao0/2RZwEC5c0IAGJ0Q9e8KnHM1F12vP5FkR9xyhfq70R4Zb/q90CHrcVM7Y+j0xxwlz49ufhJ7JjPquOOs1vMeBN5QZkNjxeiRQloRW9tvLRP4Mojx0eAer0UjJg35F0hSPW9M1gXMb+Pi4c/Yh3+9pf3qzqBBg1UhSrpNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911339; c=relaxed/simple;
-	bh=OVSOTiBiIWojZQscsvd9k/Hmwk2QKxcN28eLBmzzx0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bjdblR4Z9V7s/sC9/7GvXyWsWXnI0wQdrzklQnV5ncAwoLzTb+Gn+LN8J+x/aZjQguigPq/GGuW35LHIkJeeQn0MqFKaRuqrcjMzoH8q/q72wzgjBbAkJ7M4HMvYWgnKXJgEV3Ia4dDcR05wHx8YdjMKMu93nR1bSf4nRXIpxtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=pHu/gEqc; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBz4I-008956-2A;
-	Tue, 28 May 2024 17:48:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2yQ84xH5mxakr7bpMaf2pLZp1+Jqinzbho1ejP4o1eA=; b=pHu/gEqc1rt2T00JZsGyAQV9CF
-	H2z8IXY5CPTEL4mKz4Mn/ZGQPllYvOW6+cT/oQRMxonkbh5BXbBC5H4jN4rl7uhGLdLTkJYiLHiOH
-	GXCnEEh86CYYpyM1MN6yR3LRg1qm4GSb+X8bCPUZ3Z9vFDxR/y7kRosiyhNwrezkjAe6penFw9WNa
-	wj9ar87T6IMrkSwA75jlRTSyzZMptm96a8A7GtNTaAWrSYlmqUBOnPkq1OlIN1DN76WJX49KTJzM2
-	S1WpuDu5jJ0C1yAEI/Nqx0OIHJ4iE0d+aWWmsLVeflQyeBtvz6alKgrek2MIt2eMC+cK3Uwi52BZq
-	pqrrZ/xQ==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBz4E-001uCs-29;
-	Tue, 28 May 2024 17:48:52 +0200
-Date: Tue, 28 May 2024 17:48:49 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
- broonie@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to
- yaml
-Message-ID: <20240528174849.6945343a@aktux>
-In-Reply-To: <20240528-unimpeded-dealing-0128abb54272@spud>
-References: <20240528065756.1962482-1-andreas@kemnade.info>
-	<e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
-	<20240528131622.4b4f8d03@aktux>
-	<f288a1c9-762c-4c66-8611-9a08d6c09bac@kernel.org>
-	<20240528150647.40385d08@aktux>
-	<3a29c775-4131-4047-9777-4146e6c8eed0@kernel.org>
-	<20240528-unimpeded-dealing-0128abb54272@spud>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716911454; c=relaxed/simple;
+	bh=QCCMDxpdmJ+srgqywqKCWhGFPSusYKrZAD6qhc9yhyo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pe1XFCO41YqyXCsqcS2RrXYoO5B9f6JUuS6ad2eYj0lQJVNC+cC3KOxqaq6M+cMcL/N15DiGi/iF3lYQvpuwuRV2bYNGwkDrXIYixuggIMRak0iznAJZe+09kvAsJ/zLwIjJeIQbjRUw0IdPyVSy2eXnaCjifIyLVi5hlmUpuTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RLYIeefX; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: adilger@dilger.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716911450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rHw2YJhhZmTOU02aflNpxbKBHH+JQUb3QTzxIAA3pg4=;
+	b=RLYIeefXzu93uk+UJH1H3eS6ySKm/EMygmtiKO6KHE3y40ACtD0AGJBzMKAtFIlVu9ALcS
+	upZIlPlc1+dPRNBgKopt1kx6uMTF6O7DCLj8WaDXVj9AbcEwWrmg95kAyNrPg9Gr4qa80B
+	GiLZwZo9Dbi6aoN8jnCL5XzjVaAKodc=
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
+  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+In-Reply-To: <20240528105203.2q4gxqz6amgvud4l@quack3> (Jan Kara's message of
+	"Tue, 28 May 2024 12:52:03 +0200")
+References: <20240523111618.17012-1-luis.henriques@linux.dev>
+	<20240524162231.l5r4niz7awjgfju6@quack3> <87h6ej64jv.fsf@brahms.olymp>
+	<87msob45o7.fsf@brahms.olymp> <20240528103602.akx2gui5ownj25l3@quack3>
+	<20240528105203.2q4gxqz6amgvud4l@quack3>
+Date: Tue, 28 May 2024 16:50:46 +0100
+Message-ID: <87h6eirl49.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 28 May 2024 15:36:40 +0100
-Conor Dooley <conor@kernel.org> wrote:
+On Tue 28 May 2024 12:52:03 PM +02, Jan Kara wrote;
 
-> On Tue, May 28, 2024 at 03:54:05PM +0200, Krzysztof Kozlowski wrote:
-> > On 28/05/2024 15:06, Andreas Kemnade wrote:  
-> > > On Tue, 28 May 2024 13:25:29 +0200
-> > > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >   
-> > >> On 28/05/2024 13:16, Andreas Kemnade wrote:  
-> > >>> On Tue, 28 May 2024 12:04:22 +0200
-> > >>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >>>     
-> > >>>> On 28/05/2024 08:57, Andreas Kemnade wrote:    
-> > >>>>> Convert the regulator bindings to yaml files. To allow only the regulator
-> > >>>>> compatible corresponding to the toplevel mfd compatible, split the file
-> > >>>>> into one per device.
-> > >>>>>
-> > >>>>> To not need to allow any subnode name, specify clearly node names
-> > >>>>> for all the regulators.
-> > >>>>>
-> > >>>>> Drop one twl5030 compatible due to no documentation on mfd side and no
-> > >>>>> users of the twl5030.
-> > >>>>>
-> > >>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > >>>>> ---
-> > >>>>> Reason for being RFC:
-> > >>>>> the integration into ti,twl.yaml seems not to work as expected
-> > >>>>> make dt_binding_check crashes without any clear error message
-> > >>>>> if used on the ti,twl.yaml
-> > >>>>>
-> > >>>>>  .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
-> > >>>>>  .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++++++++++
-> > >>>>>  .../regulator/ti,twl6030-regulator.yaml       | 292 +++++++++++++
-> > >>>>>  .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
-> > >>>>>  .../bindings/regulator/twl-regulator.txt      |  80 ----
-> > >>>>>  5 files changed, 935 insertions(+), 81 deletions(-)
-> > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-> > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
-> > >>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
-> > >>>>>  delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
-> > >>>>>
-> > >>>>> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > >>>>> index c2357fecb56cc..4ced6e471d338 100644
-> > >>>>> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > >>>>> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > >>>>> @@ -50,7 +50,7 @@ allOf:
-> > >>>>>            properties:
-> > >>>>>              compatible:
-> > >>>>>                const: ti,twl4030-wdt
-> > >>>>> -
-> > >>>>> +        $ref: /schemas/regulator/ti,twl4030-regulator.yaml      
-> > >>>>
-> > >>>> That's not needed, just like othehr refs below.
-> > >>>>    
-> > >>> but how to prevent error messages like this:
-> > >>>
-> > >>> arch/arm/boot/dts/ti/omap/omap2430-sdp.dtb: twl@48: Unevaluated properties are not allowed ('gpio', 'keypad', 'pwm', 'pwmled', 'regulator-vaux1', 'regulator-vaux2', 'regulator-vaux3', 'regulator-vaux4', 'regulator-vdac', 'regulator-vdd1', 'regulator-vintana1', 'regulator-vintana2', 'regulator-vintdig', 'regulator-vio', 'regulator-vmmc1', 'regulator-vmmc2', 'regulator-vpll1', 'regulator-vpll2', 'regulator-vsim', 'regulator-vusb1v5', 'regulator-vusb1v8', 'regulator-vusb3v1
-> > >>>
-> > >>> esp. the regulator parts without adding stuff to ti,twl.yaml?    
-> > >>
-> > >> Eh? That's a watchdog, not regulator. Why do you add ref to regulator?
-> > >>  
-> > > hmm, wrongly indented? At what level doet it belong? But as the regualor.yaml stuff can
-> > > be shortened, maybe just add it directly to ti,twl.yaml to avoid that trouble.  
-> > 
-> > I don't follow. The diff here and in other two places suggest you add
-> > twl-regulator reference to wdt/gpio/whatnot nodes, not to regulators.  
-> 
-> The diff may look like that, but I think they're just trying to add it
-> as a subnode of the pmic. There are other nodes, like the madc that do
-> this in the same file:
->         madc:
->           type: object
->           $ref: /schemas/iio/adc/ti,twl4030-madc.yaml
->           unevaluatedProperties: false
-> 
-> I guess this is what was being attempted, albeit incorrectly.
+> On Tue 28-05-24 12:36:02, Jan Kara wrote:
+>> On Mon 27-05-24 16:48:24, Luis Henriques wrote:
+>> > On Mon 27 May 2024 09:29:40 AM +01, Luis Henriques wrote;
+>> > >>> +	/*
+>> > >>> +	 * Used to flag an inode as part of the next fast commit; will be
+>> > >>> +	 * reset during fast commit clean-up
+>> > >>> +	 */
+>> > >>> +	tid_t i_fc_next;
+>> > >>> +
+>> > >>
+>> > >> Do we really need new tid in the inode? I'd be kind of hoping we co=
+uld use
+>> > >> EXT4_I(inode)->i_sync_tid for this - I can see we even already set =
+it in
+>> > >> ext4_fc_track_template() and used for similar comparisons in fast c=
+ommit
+>> > >> code.
+>> > >
+>> > > Ah, true.  It looks like it could be used indeed.  We'll still need =
+a flag
+>> > > here, but a simple bool should be enough for that.
+>> >=20
+>> > After looking again at the code, I'm not 100% sure that this is actual=
+ly
+>> > doable.  For example, if I replace the above by
+>> >=20
+>> > 	bool i_fc_next;
+>> >=20
+>> > and set to to 'true' below:
+>
+> Forgot to comment on this one: I don't think you even need 'bool i_fc_nex=
+t'
+> - simply whenever i_sync_tid is greater than committing transaction's tid,
+> you move the inode to FC_Q_STAGING list in ext4_fc_cleanup().
 
-correct. No regulators node, just everything directly as a subnode of
-the pmic. Well, I have now something using patternProperties directly itn ti,twl.yaml
-including a more detailed example which does not upset dt_binding_check.
-I am running dtbs_check to check if anything is odd. the 4030 variant seems
-to be ok, waiting for some dtbs containing 603X now.
+Yeah, I got that from your other comment in the previous email.  And that
+means the actual fix will be a pretty small patch (almost a one-liner).
 
-But somehow I would feel better if I would understand what was syntactically
-wrong with my original proposal. I have totally no idea yet.
+I'm running some more tests on v3, I'll probably send it later today or
+tomorrow.  Thanks a lot for your review (and patience), Jan.
 
-The error message of dt_binding_check is also meaningless:
- CHKDT   Documentation/devicetree/bindings
-Traceback (most recent call last):
-  File "/home/andi/.local/bin/dt-doc-validate", line 64, in <module>
-    ret |= check_doc(f)
-           ^^^^^^^^^^^^
-  File "/home/andi/.local/bin/dt-doc-validate", line 32, in check_doc
-    for error in sorted(dtsch.iter_errors(), key=lambda e: e.linecol):
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/andi/.local/pipx/venvs/dtschema/lib/python3.11/site-packages/dtschema/schema.py", line 125, in iter_errors
-    self.annotate_error(scherr, meta_schema, scherr.schema_path)
-  File "/home/andi/.local/pipx/venvs/dtschema/lib/python3.11/site-packages/dtschema/schema.py", line 104, in annotate_error
-    schema = schema[p]
-             ~~~~~~^^^
-KeyError: 'type'
-  LINT    Documentation/devicetree/bindings
-
-IMHO this should be improved.
-	
-Regards,
-Andreas
+Cheers,
+--=20
+Lu=C3=ADs
 
