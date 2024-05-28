@@ -1,331 +1,310 @@
-Return-Path: <linux-kernel+bounces-192709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBFC8D2107
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B558D2109
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B478228714B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F78D1F25601
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F177F170834;
-	Tue, 28 May 2024 16:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E80172BDF;
+	Tue, 28 May 2024 16:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vol0P5Cc"
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2089.outbound.protection.outlook.com [40.107.6.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN4I56CW"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ABF2561D;
-	Tue, 28 May 2024 16:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912107; cv=fail; b=Dk4MggBfq+yxIj3y8nW2uJr+1IVy4pc0QFGzy68CVLsepnDZMtqJf25OKNx7KZ2Cl+cNp9ckf/Ot3vxpnEY7zt/hI9ixMc2GFNMhEv/sRBf+Xe/MW1l8V4bq3PD6lQeGRP7IQhKmYrlbPR5iRkqnU/z35bIPm0T2DPSmK+vgKzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912107; c=relaxed/simple;
-	bh=bxzsL22r3fPQLXcwWMDm5NZ4PuE7AcupE1uceo7R2kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ksyN6++0VvvO4cGSqMyKp6CQ3FQKMjCTOk/EWismQraAQOs1+NQtWDeeuAYKv2x/9pJegmTkcvLvsf29tWMUquS7hi4nmlcI5qKRd+WbikBBzAx4+KdqBQB+z2CLwwKzczzm8V2u57xKJ3tqe0wM12qvZKfkYX4W+tRX3XhUJMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vol0P5Cc; arc=fail smtp.client-ip=40.107.6.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cyfbM7vSW6frlQRcdMXrfXrWjBTH6uHHN3wGSt7A/HyHqjmfZgHRXb6jSQvG0HmN+sg6rImbsNKVOZvj+HB7XT8AhUdepB7igjMsz8m+tLK3Kj1uY7JRsByLI27pCpJMJotAbcTzCvfkUitK78Il9uJVJKFeboEEFeQocs+/Dq2WXxMeWB5scb6U4L4Inu3tiEspVoMlK1BkLql733KOhnVXSXvbhJUmOXUAcHxkK4yzHjrWBU9sYRa3Q5idEluNQfVif8tYz/8l8kRYkGFwWR/+BvJ4aKJeT4fdET7uTJQWOyhfGoSlRQjtWE4yZHmPhUgbb0woujh+px5MoTxcbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aHyCX0PxWzhsInV2LWN1zWRgnNkSz0TQX4Aiet07JIM=;
- b=H5q6f2IQn6TLRXi9YaABI4rxZkDLAL7+Qdt54BZ+KXJjq+yGv5BcQ9o1S9DWBoCSbRDVvrCm6MKAQIyIFsiBAsccCUi1AQgui54USsDuQfxWZTidfgrSVTvWuKndgWnDMMWd8oNA0B/pvZroAQ9L49VTljQD0uI0rPB6fQb+xWiYOI0yUX0kFVmu6KjAiDtNZxZHRq83t3kE4cnQ4f9TlQCBuibFluE//Vg0Tacy40aVDyWhGT4qUuIn+XhIW70hP+scIbwCoX+Lz/BX82bRtP+txZxWyiMt+FXDWOFT6ivLeQz2h366uOw/2BxntKsNW5CkkrClpMmserzHEb1RfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aHyCX0PxWzhsInV2LWN1zWRgnNkSz0TQX4Aiet07JIM=;
- b=Vol0P5CcX0VpeNL13V/aPEPmOP/aaDUEQkO+ZwSsAYfuJpB51Gp41gfh7PHScHQ6Pai1jmqlKWePtOWiJ7lDJ+qtHR3ie0P0Qzbq/s9emUOqeDIdgiKE2wWgknAClOvvS8Yb5aHvxmAX7aRqyYgks6SGgFxxsjzuSYzf06ky+0M=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB9255.eurprd04.prod.outlook.com (2603:10a6:102:2bb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Tue, 28 May
- 2024 16:01:42 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7611.016; Tue, 28 May 2024
- 16:01:42 +0000
-Date: Tue, 28 May 2024 12:01:34 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: rtc: Convert rtc-fsl-ftm-alarm.txt to
- yaml format
-Message-ID: <ZlX/3ubifkR/RTl8@lizhi-Precision-Tower-5810>
-References: <20240520214614.863539-1-Frank.Li@nxp.com>
- <a3c76bd2-f453-4320-8675-66ecb4bc6fc8@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3c76bd2-f453-4320-8675-66ecb4bc6fc8@kernel.org>
-X-ClientProxiedBy: SJ0PR13CA0040.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CABC17279F;
+	Tue, 28 May 2024 16:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716912110; cv=none; b=rW3IsCqIVe9JFK/+D0Lj148e7z69FtS+nGXEQf91VOPiHuyHFhOga/smH54xv8qG03KQJm5sgaatxhFX98Zq7ExmvZSS2/baoPA9UHebYDxX14q121jSbB/ehGVo8svpm64qJz0mSu8XaElCeXCmSYoG8fyVXMeumB5mcyrRyvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716912110; c=relaxed/simple;
+	bh=910O4hjh2+s+PhCpXIR4jsebgLIipcKRKXjPJ08nqRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ADLlUzevTbPl+oDKzr10A2YV11EymeKkhNU5V8NQZ2jbckwTceLb3ROA1Atvd1TGlRhtTVxg2QBOYA4UkjZTrJXu0WRaZzj3dGHApMMfsQwdH5A5nallDKAbJyKzHPvYKjWs8lu1TNHi+7UXfwv13zXbJ/JryoqmogWX6+UZ/58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN4I56CW; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ab9d01c479so4266986d6.1;
+        Tue, 28 May 2024 09:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716912108; x=1717516908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IgAQEmp/9ugkOjEiZVdx8d+ta4a/jU4FQbSX/JXp4y4=;
+        b=eN4I56CWltApLBUry8jDegSgMJsbqiAjTzYoLst2Wu0063YeKd3hlTTREr+q79NBRo
+         PANcRJtsjz1U2R5YhF2lveX7hjTlpsyAboLVubCBQaqUJmv2iSRC7tmKJQWGZ+0wULKE
+         rwkeUr4LJf41kz6uNHG3Twqth9BVxEdw190zxHF4ws882McsFFlX52+KYXI3oOwFK+0i
+         4u4CaGYK1E8DQ/LFw8ww95atPiN7zLaz4do3Ce69+LwmF5fPO43SvdeoMK/7R5fXUj8x
+         dyusdAOXQxWP5gUGKyev0i+Ly9KL9Xmf9klwmss8Txs0OT0scDkrFpFRsf2u/T4M5lW8
+         Pl3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716912108; x=1717516908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IgAQEmp/9ugkOjEiZVdx8d+ta4a/jU4FQbSX/JXp4y4=;
+        b=cxa3oyPtF33yM5NaqFkBSktxmX9m/S6zzKXBxMJRWq4q1PHtddhmFiZ07QgVa14kAn
+         w3x5Sot8fyYQIGImAN2TDT1yZLUnoojMDwzm6mXvkJS1kxKehx1vuJNX5CbTP68oCua9
+         +x98lcDstgs9Gn+4VFI64W02/dsAqk23a3TvMA+t3tHXUVYusdZ6S1RQ6/lVIlqYjRsc
+         UsMwE3BkkLKo86ZXu5n/z33tKeMM/4T9MDsZ/hHNufGOGNP4HkMrdX9W1Y+uXoXGSixi
+         ZvsaeAOKboIlIy1qmgRyfVBC3B1MPy1fwUul+xX+ea8Vnn7UWYfxF9W/FnvsFDwPmSwg
+         BkbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFk0V9Qe7mInvo3PmZy/2Z4gnrg1ZXdiTlerWH0nv2G4WWcKNS1bZMpbcF1CIZLkaFzw06Pu3mAOLka5tbGtYn1bUAxhFVPzSgncstWTrxe9AvetohBPctBp7nbRH5LTG+WV2Tpf+T
+X-Gm-Message-State: AOJu0Yyw/OcZd7Ca90a0FrDeZuQB+omFjR4BW9uIXADLY+fEBh3ODtH4
+	PRv2wmKI926xfFa6Y25QFQXs7y9pCi3XyOdDws/8R2VgRc4qzcspO2Xr7kCGsWIpvMJRyf/knpM
+	bpHHHoaOnvlwDNV++tof4P3GYC9k=
+X-Google-Smtp-Source: AGHT+IErq1RgS2UwbDZJYY8Aq3VeTlaBalztTGCZ2nGKJoFHybIwsc/cJ515dPOkBjiscIGbF1j71blg3eIfF8RbsI0=
+X-Received: by 2002:a05:6214:4b08:b0:6ad:8073:9043 with SMTP id
+ 6a1803df08f44-6ad807391ccmr67368856d6.11.1716912107862; Tue, 28 May 2024
+ 09:01:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9255:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3dde4e5c-9d54-4811-b114-08dc7f2f777e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|52116005|366007|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LacgbphlDu2YTWmGZHTQJSmZqxTJlihaJsaksBRKUU6BLnar/cjjeAQECNqr?=
- =?us-ascii?Q?Txgoj2r4YKL1a5wk6+2LRVGDTLo4lcYKyRzNimJe46xZ3v6Rq/1qDtFLEAxE?=
- =?us-ascii?Q?ISqmUSDrfQ6CZRfcRex4OTmd/RlpzygTOP/4I2PgCZF8S2wb/ojYmGaVlWHq?=
- =?us-ascii?Q?RiupZA7jL0oPdk+G3C8+MtEm85RyTMvt6vpGOsT8gph6r4XxXVqnBU/6XA8A?=
- =?us-ascii?Q?jujS3y11wcZ021KxJ8P0xWoT3oSMX584JHORzCfbFoVvfHzeddBt+hqfqP8l?=
- =?us-ascii?Q?LwRu1xcZ1lq79E3F9mBYp1wpxY4XzIYXfg5E/qBKx+hZs0nSu/a5SExhtlRr?=
- =?us-ascii?Q?S47c6QmXgE9Bxmw4i/7HlI0mdz2JaacQt1V267hUxg7p6Cyzu985yp+ezfoK?=
- =?us-ascii?Q?uJ5DOVc7NHL4t1O2xViTlbs4nWxEEzqwP9uIwQUo7cSQGOEMLU7gPH+Ei76E?=
- =?us-ascii?Q?N/IfRO1FwFw80VLQj9KqqXqPxzFzbTpPxoHoNkymhMQiJEyTHhCB4zhjXl76?=
- =?us-ascii?Q?aOEkUQeqLALVSc7y5zP8uvY8N1zSKDflKKPOeGrQBqeFxdPFcvnTDUNJiNC2?=
- =?us-ascii?Q?iEABX+UEGiIlXt63H761GnzoyD9Z19eE5eGlqUu+OSeNtUa2lWxWGkYp/BJ9?=
- =?us-ascii?Q?lYXUJfLpXcn2Bg3StrMx+FN132pEhDk4LHinEm8gOkuVk4OYyl2g/ejLRCfo?=
- =?us-ascii?Q?JBsSHV9BhJUL76q/faaZWAH+fnAgmc3Ez3o25GBbT9vdHa1RwKO8ZXb5PFne?=
- =?us-ascii?Q?DqLyRHnSqdjszSy3YSrlI0/gWphRisW50REvFKxpX6aZcwaqv3dQNzDfRHGv?=
- =?us-ascii?Q?06HQLGcFZCUvXJshpd9H0NRaLMPwy+iCO8ga22jw99rj3rTSNQYg/HUh/5Zr?=
- =?us-ascii?Q?PmgHhMT+AjXISkWjByVWcQar0JQvHfkOoegER6Wval9gDdBf4yvf97Bx5bRc?=
- =?us-ascii?Q?YeRBTPpv3Q4xb2jFRiG14gvll3C5jHHakGYA9w8PnWjWXxuXdg4ITs5re9EO?=
- =?us-ascii?Q?c/Tzh0UuV/nFGBibA7JfCyhzkPSpAFmEtrHpzpV5vA9H/Cgi1JaimF90pP/O?=
- =?us-ascii?Q?+NPKvHVfpqTrSsOM25jxsKd1A3kGq4HJu7ed3ZpBgf5boIcR3IdCbYht+ZWV?=
- =?us-ascii?Q?o7xNXfbqYlq09q7Q+zKefCb0WXoUkxengHdLcqID7ENWwPrCZh2ZEhgnG3Ty?=
- =?us-ascii?Q?dBA6QOXBNxUGhpn5xuY7gjw6NC1cvna3QY3riGGbdVRracvnrpX49a+yw41U?=
- =?us-ascii?Q?ydJiEiVoVD7eXenDkWcBe2NOFKWDHW28S45Ysqplu8rIgmbdxGMFxxnzMsyM?=
- =?us-ascii?Q?Xgw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(366007)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/th4eRpPSNo4dr8WjzLm0/yrpAXPyxgoRCCmaiJjS79KjB4zIdHBLu966KY1?=
- =?us-ascii?Q?lFayBzk4x2Oq8XsWCYGoPgoGHNR1Y99fG3LTXWFrIN2i4YQIou4y8suQZ2ih?=
- =?us-ascii?Q?mMUd5UgVFrYu45lZkPClRf3+pr+AbcPsaGY9IcqO84RZnNgQVBZargswZRfm?=
- =?us-ascii?Q?2kY2eFVfdxfDhoHrDgBQYQwpP4hZ8ih+kap9HDyFgp6svF0PcGr4n8ap4Kpq?=
- =?us-ascii?Q?2VWaS0rCre02ykkO+1ZNZYAnJRv5hj06w1b3nzg0H+p9uMwKHxkchNerisUF?=
- =?us-ascii?Q?3fN66Kup6oP3GXcMXxUBdrY0ikaZSBAsARcoFap5+8qA1QGd//4C4cW+6SCA?=
- =?us-ascii?Q?wdl4gKnXJi2k7FmzbkTsTPNmT7/dgkCvBD+nl9Ihk94RmWE0vpcrw4PNQYYS?=
- =?us-ascii?Q?Ay5E7sG8GrDvwdYSLBBBHTaQZBUgW542+X1bW3IOvOlK3/79czEzaYO8pJ8P?=
- =?us-ascii?Q?wHPN9kcL/zSScuGKaD1exgtPDJ0h54uYDyBR8FsOsyjpJWSHkvhFOlW0fIp+?=
- =?us-ascii?Q?OyzIRlnr/5ZZD1xzW4walV0ip0mCCLyK2e1Njothhs/F2J04CBRqCcUxy0rS?=
- =?us-ascii?Q?3g7YY7NKHjxUxKn3CrG9SAvBsSkvgHVQT3J5Q9Mm56W71aHht6mfGeENbYJa?=
- =?us-ascii?Q?kC7qEqBjl6xphp2ApIhgoADYVhHNnp0PuMQydVQtJc+LWlJ7I5xyzY0Am88j?=
- =?us-ascii?Q?+Z8zvKQhL359JlZ+9lr65mO9K1qfaSnCxrjEUW4EBO3ZoMrmW9+QtzUULvKl?=
- =?us-ascii?Q?If88Cu8DVUm7ojKr0lgYt5qepvqIpovuo3kqKweBFChOfJmwzcl4oD15fTG0?=
- =?us-ascii?Q?RSVZ2qEipdixSWq/CthmE/yTXzuyRVFRTQdlm0HTIWEXlyg1ly+L1stbTTTo?=
- =?us-ascii?Q?QzNxrsYXoM49tnHRQ1wyiJ0/LqaDGsgpsewofId3RaYIpiM6K4qrGEqBoDgi?=
- =?us-ascii?Q?76geLZ1+SwFl43qqUbxGFiBETHdn/T/7e3ij/4yUuBV+MGmNBd75f2VITIZU?=
- =?us-ascii?Q?N7KNMxEuiskBblLGlK8zzwoVPmfddE6iHZj7aaQBVHexN+J18MW4r2CQv+eZ?=
- =?us-ascii?Q?afqZOjbhgdqz/ONicZgzdhZRMdHDzMKhmNz8rY2v9p/Ku+3YchVQYq5UClKJ?=
- =?us-ascii?Q?gz018VlBQWsKok7r0IbNnJtKah0sF3LMKyg+si1VenTi+nT2q7ztBQyOR0Y8?=
- =?us-ascii?Q?Ni8PJGbDUpV++VZSHEyw9ZCE/EIviFoy3VKUz28AI1VPsvIYNchBNXwEVL9s?=
- =?us-ascii?Q?vqIxudLQOGC+J9OYSo5BL+ELiwA6RSd1ZprkAfH28VLGYT4aaYggIeMUSXGq?=
- =?us-ascii?Q?59ZV/Eco+Qvlwne5QSQtvG1By0IcNlhLvSPruXbL/r35dzG22AR3nfLEVRHs?=
- =?us-ascii?Q?yKnLoyqunRB4Hfo98CRmhVKVcXTc/rQbUhHPJW7R+Jm8CWoRYc8mLfcx4/FV?=
- =?us-ascii?Q?ap3gp4CCOQbs3tpYh0uDNyvgotU/4WgxFrJg4ytVG/CNZaeLnwj7EIyoLJ5w?=
- =?us-ascii?Q?1YJiBGhBLXpUmfbIBbQY1rJ2z4UAfOOiYzuCumklhzekpvHLhx73LcYVq+do?=
- =?us-ascii?Q?t8NmT65tf4BUD1tYVB8xfI/sH8s6PUo+Ko0bNxKU?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dde4e5c-9d54-4811-b114-08dc7f2f777e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 16:01:42.8037
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9Ww68Evmz4TZFWPxfMKZ4M1a/RsyxIrPHT2TrgjgFeryELS4RCOGbQVKrj2Bdq8EWqITkhmf4dnNqj5lArjjBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9255
+References: <20240528043404.39327-2-flintglass@gmail.com> <20240528043404.39327-5-flintglass@gmail.com>
+In-Reply-To: <20240528043404.39327-5-flintglass@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 28 May 2024 09:01:36 -0700
+Message-ID: <CAKEwX=NcdpgGTp8Kj_kiTkvAK=k8kzayhMo+oeaXGZFA5RuoEw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mm: zswap: proactive shrinking before pool size limit
+ is hit
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 09:59:00AM +0200, Krzysztof Kozlowski wrote:
-> On 20/05/2024 23:46, Frank Li wrote:
-> > Convert dt-binding doc "rtc-fsl-ftm-alarm.txt" to yaml format.
-> > 
-> > Change example's reg to 32bit address and length.
-> > Remove unrelated rcpm@1e34040 in example.
-> > 
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > 
-> > Notes:
-> >     make dt_binding_check DT_SCHEMA_FILES=rtc-fsl-ftm-alarm.yaml
-> >       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-> >       CHKDT   Documentation/devicetree/bindings
-> >       LINT    Documentation/devicetree/bindings
-> >       DTEX    Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dts
-> >       DTC_CHK Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dtb
-> > 
-> >  .../bindings/rtc/rtc-fsl-ftm-alarm.txt        | 36 -----------
-> >  .../bindings/rtc/rtc-fsl-ftm-alarm.yaml       | 61 +++++++++++++++++++
-> >  2 files changed, 61 insertions(+), 36 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> > deleted file mode 100644
-> > index fffac74999da6..0000000000000
-> > --- a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> > +++ /dev/null
-> > @@ -1,36 +0,0 @@
-> > -Freescale FlexTimer Module (FTM) Alarm
-> > -
-> > -Required properties:
-> > -- compatible : Should be "fsl,<chip>-ftm-alarm", the
-> > -	       supported chips include
-> > -	       "fsl,ls1012a-ftm-alarm"
-> > -	       "fsl,ls1021a-ftm-alarm"
-> > -	       "fsl,ls1028a-ftm-alarm"
-> > -	       "fsl,ls1043a-ftm-alarm"
-> > -	       "fsl,ls1046a-ftm-alarm"
-> > -	       "fsl,ls1088a-ftm-alarm"
-> > -	       "fsl,ls208xa-ftm-alarm"
-> > -	       "fsl,lx2160a-ftm-alarm"
-> > -- reg : Specifies base physical address and size of the register sets for the
-> > -  FlexTimer Module.
-> > -- interrupts : Should be the FlexTimer Module interrupt.
-> > -- fsl,rcpm-wakeup property and rcpm node : Please refer
-> > -	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > -
-> > -Optional properties:
-> > -- big-endian: If the host controller is big-endian mode, specify this property.
-> > -  The default endian mode is little-endian.
-> > -
-> > -Example:
-> > -rcpm: rcpm@1e34040 {
-> > -	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-> > -	reg = <0x0 0x1e34040 0x0 0x18>;
-> > -	#fsl,rcpm-wakeup-cells = <6>;
-> > -};
-> > -
-> > -ftm_alarm0: timer@2800000 {
-> > -	compatible = "fsl,ls1088a-ftm-alarm";
-> > -	reg = <0x0 0x2800000 0x0 0x10000>;
-> > -	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-> > -	interrupts = <0 44 4>;
-> > -};
-> > diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
-> > new file mode 100644
-> > index 0000000000000..69b44e9920033
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
-> 
-> fsl,ls-ftm-alarm.yaml
-> 
-> or
-> 
-> fsl,ls1012a-ftm-alarm.yaml
-> 
-> > @@ -0,0 +1,61 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rtc/rtc-fsl-ftm-alarm.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Freescale FlexTimer Module (FTM) Alarm
-> > +
-> > +maintainers:
-> > +  - Frank Li <Frank.Li@nxp.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - fsl,ls1012a-ftm-alarm
-> > +      - fsl,ls1021a-ftm-alarm
-> > +      - fsl,ls1028a-ftm-alarm
-> > +      - fsl,ls1043a-ftm-alarm
-> > +      - fsl,ls1046a-ftm-alarm
-> > +      - fsl,ls1088a-ftm-alarm
-> > +      - fsl,ls208xa-ftm-alarm
-> > +      - fsl,lx2160a-ftm-alarm
-> > +
-> > +  reg:
-> > +    description:
-> > +      Specifies base physical address and size of the register sets for the
-> > +      FlexTimer Module.
-> 
-> Drop description, redundant.
-> 
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    description: Should be the FlexTimer Module interrupt.
-> 
-> Drop description, redundant.
-> 
-> 
-> > +    maxItems: 1
-> > +
-> > +  fsl,rcpm-wakeup:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> Please describe the items (see syscon-like phandles).
-> 
-> > +    description:
-> > +      phandle to rcpm node, Please refer
-> > +      documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > +
-> > +  big-endian:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      If the host controller is big-endian mode, specify this property.
-> > +      The default endian mode is little-endian.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - fsl,rcpm-wakeup
-> > +
-> 
-> Missing allOf with ref to rtc.yaml.
-> 
-> > +unevaluatedProperties: false
-> 
-> becauase otherwise above does not make much sense... unless this is not
-> a RTC?
+On Mon, May 27, 2024 at 9:34=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> This patch implements proactive shrinking of zswap pool before the max
+> pool size limit is reached. This also changes zswap to accept new pages
+> while the shrinker is running.
+>
+> To prevent zswap from rejecting new pages and incurring latency when
+> zswap is full, this patch queues the global shrinker by a pool usage
+> threshold at the middle of 100% and accept_thr_percent, instead of the
+> max pool size.  The pool size will be controlled between 90% to 95% for
+> the default accept_thr_percent=3D90.  Since the current global shrinker
+> continues to shrink until accept_thr_percent, we do not need to maintain
+> the hysteresis variable tracking the pool limit overage in
+> zswap_store().
+>
+> Before this patch, zswap rejected pages while the shrinker is running
+> without incrementing zswap_pool_limit_hit counter. It could be a reason
+> why zswap writethrough new pages before writeback old pages.  With this
+> patch, zswap accepts new pages while shrinking, and zswap increments
+> the counter when and only when zswap rejects pages by the max pool size.
+>
+> The name of sysfs tunable accept_thr_percent is unchanged as it is still
+> the stop condition of the shrinker.
+> The respective documentation is updated to describe the new behavior.
 
-Sorry! which one doesn't make sense? I suppose not "unevaluatedProperties".
+I'm a bit unsure about using this tunable. How would the user
+determine the level at which the zswap pool should be kept empty?
 
-Frank
+I was actually thinking of removing this knob altogether :)
 
-> 
-> > +
-> > +examples:
-> > +  - |
-> > +    timer@2800000 {
-> 
-> timer or rtc?
-> 
-> > +        compatible = "fsl,ls1088a-ftm-alarm";
-> > +        reg = <0x2800000 0x10000>;
-> > +        fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-> > +        interrupts = <0 44 4>;
-> 
-> Include proper header and use defines for GIC and flags.
-> 
-> > +    };
-> 
-> Best regards,
-> Krzysztof
-> 
+>
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> ---
+>  Documentation/admin-guide/mm/zswap.rst | 17 +++++----
+>  mm/zswap.c                             | 49 +++++++++++++++-----------
+>  2 files changed, 37 insertions(+), 29 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/mm/zswap.rst b/Documentation/admin=
+-guide/mm/zswap.rst
+> index 3598dcd7dbe7..a1d8f167a27a 100644
+> --- a/Documentation/admin-guide/mm/zswap.rst
+> +++ b/Documentation/admin-guide/mm/zswap.rst
+> @@ -111,18 +111,17 @@ checked if it is a same-value filled page before co=
+mpressing it. If true, the
+>  compressed length of the page is set to zero and the pattern or same-fil=
+led
+>  value is stored.
+>
+> -To prevent zswap from shrinking pool when zswap is full and there's a hi=
+gh
+> -pressure on swap (this will result in flipping pages in and out zswap po=
+ol
+> -without any real benefit but with a performance drop for the system), a
+> -special parameter has been introduced to implement a sort of hysteresis =
+to
+> -refuse taking pages into zswap pool until it has sufficient space if the=
+ limit
+> -has been hit. To set the threshold at which zswap would start accepting =
+pages
+> -again after it became full, use the sysfs ``accept_threshold_percent``
+> -attribute, e. g.::
+> +To prevent zswap from rejecting new pages and incurring latency when zsw=
+ap is
+> +full, zswap initiates a worker called global shrinker that proactively e=
+victs
+> +some pages from the pool to swap devices while the pool is reaching the =
+limit.
+> +The global shrinker continues to evict pages until there is sufficient s=
+pace to
+> +accept new pages. To control how many pages should remain in the pool, u=
+se the
+> +sysfs ``accept_threshold_percent`` attribute as a percentage of the max =
+pool
+> +size, e. g.::
+>
+>         echo 80 > /sys/module/zswap/parameters/accept_threshold_percent
+>
+> -Setting this parameter to 100 will disable the hysteresis.
+> +Setting this parameter to 100 will disable the proactive shrinking.
+>
+>  Some users cannot tolerate the swapping that comes with zswap store fail=
+ures
+>  and zswap writebacks. Swapping can be disabled entirely (without disabli=
+ng
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 08a6f5a6bf62..0186224be8fc 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -71,8 +71,6 @@ static u64 zswap_reject_kmemcache_fail;
+>
+>  /* Shrinker work queue */
+>  static struct workqueue_struct *shrink_wq;
+> -/* Pool limit was hit, we need to calm down */
+> -static bool zswap_pool_reached_full;
+>
+>  /*********************************
+>  * tunables
+> @@ -118,7 +116,10 @@ module_param_cb(zpool, &zswap_zpool_param_ops, &zswa=
+p_zpool_type, 0644);
+>  static unsigned int zswap_max_pool_percent =3D 20;
+>  module_param_named(max_pool_percent, zswap_max_pool_percent, uint, 0644)=
+;
+>
+> -/* The threshold for accepting new pages after the max_pool_percent was =
+hit */
+> +/*
+> + * The percentage of pool size that the global shrinker keeps in memory.
+> + * It does not protect old pages from the dynamic shrinker.
+> + */
+>  static unsigned int zswap_accept_thr_percent =3D 90; /* of max pool size=
+ */
+>  module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
+>                    uint, 0644);
+> @@ -487,6 +488,14 @@ static unsigned long zswap_accept_thr_pages(void)
+>         return zswap_max_pages() * zswap_accept_thr_percent / 100;
+>  }
+>
+> +/*
+> + * Returns threshold to start proactive global shrinking.
+> + */
+> +static inline unsigned long zswap_shrink_start_pages(void)
+> +{
+> +       return zswap_max_pages() * (100 - (100 - zswap_accept_thr_percent=
+)/2) / 100;
+> +}
+> +
+>  unsigned long zswap_total_pages(void)
+>  {
+>         struct zswap_pool *pool;
+> @@ -504,21 +513,6 @@ unsigned long zswap_total_pages(void)
+>         return total;
+>  }
+>
+> -static bool zswap_check_limits(void)
+> -{
+> -       unsigned long cur_pages =3D zswap_total_pages();
+> -       unsigned long max_pages =3D zswap_max_pages();
+> -
+> -       if (cur_pages >=3D max_pages) {
+> -               zswap_pool_limit_hit++;
+> -               zswap_pool_reached_full =3D true;
+> -       } else if (zswap_pool_reached_full &&
+> -                  cur_pages <=3D zswap_accept_thr_pages()) {
+> -                       zswap_pool_reached_full =3D false;
+> -       }
+> -       return zswap_pool_reached_full;
+> -}
+> -
+>  /*********************************
+>  * param callbacks
+>  **********************************/
+> @@ -1475,6 +1469,8 @@ bool zswap_store(struct folio *folio)
+>         struct obj_cgroup *objcg =3D NULL;
+>         struct mem_cgroup *memcg =3D NULL;
+>         unsigned long value;
+> +       unsigned long cur_pages;
+> +       bool need_global_shrink =3D false;
+>
+>         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+>         VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+> @@ -1497,8 +1493,18 @@ bool zswap_store(struct folio *folio)
+>                 mem_cgroup_put(memcg);
+>         }
+>
+> -       if (zswap_check_limits())
+> +       cur_pages =3D zswap_total_pages();
+> +
+> +       if (cur_pages >=3D zswap_max_pages()) {
+> +               zswap_pool_limit_hit++;
+> +               need_global_shrink =3D true;
+>                 goto reject;
+> +       }
+> +
+> +       /* schedule shrink for incoming pages */
+> +       if (cur_pages >=3D zswap_shrink_start_pages()
+> +                       && !work_pending(&zswap_shrink_work))
+> +               queue_work(shrink_wq, &zswap_shrink_work);
+
+I think work_pending() check here is redundant. If you look at the
+documentation, queue_work only succeeds if zswap_shrink_work is not
+already on the shrink_wq workqueue.
+
+More specifically, if you check the code, queue_work calls
+queue_work_on, which has this check:
+
+if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work)) &&
+   !clear_pending_if_disabled(work)) {
+
+This is the same bit-check as work_pending, which is defined as:
+
+#define work_pending(work) \
+test_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))
+
+
+>
+>         /* allocate entry */
+>         entry =3D zswap_entry_cache_alloc(GFP_KERNEL, folio_nid(folio));
+> @@ -1541,6 +1547,9 @@ bool zswap_store(struct folio *folio)
+>
+>                 WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray error: %d\=
+n", err);
+>                 zswap_reject_alloc_fail++;
+> +
+> +               /* reduce entry in array */
+> +               need_global_shrink =3D true;
+>                 goto store_failed;
+>         }
+>
+> @@ -1590,7 +1599,7 @@ bool zswap_store(struct folio *folio)
+>         zswap_entry_cache_free(entry);
+>  reject:
+>         obj_cgroup_put(objcg);
+> -       if (zswap_pool_reached_full)
+> +       if (need_global_shrink && !work_pending(&zswap_shrink_work))
+>                 queue_work(shrink_wq, &zswap_shrink_work);
+>  check_old:
+>         /*
+> --
+> 2.43.0
+>
 
