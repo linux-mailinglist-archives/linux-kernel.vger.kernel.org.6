@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-192681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F038D2098
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:40:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED4E8D209A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAE72850B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CABB22238
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5049917164D;
-	Tue, 28 May 2024 15:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E882171656;
+	Tue, 28 May 2024 15:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQ7ugF7o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYccBPkb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D340171063;
-	Tue, 28 May 2024 15:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA8616C456;
+	Tue, 28 May 2024 15:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716910835; cv=none; b=RcBrin2oS41UxbdMj27P2EWDDlCTZkowRrXhm0Ofl/xHUBa1LJetZEKyYG0rvA88Aozd49rKJbqDQBptnBUip8QFZ/0hMs5gY9wOohYufPGpbFT7xd30MJ0nb2M83EWywpyM4QARbl+lTCgYOj0/UybySCx6AtkrVlyd1Dj4uHI=
+	t=1716910864; cv=none; b=TMKQ5nbHf/immTRCC29RrFnPV5Zy0ReN/JwhiYt1DkembcN4ZstffhNtu1Xbaflof/+DdPfiby8/rWEVNcAfXS2MZBVRIrxVVNuwc75vDptaZSYsj5rKoKyZdMPukOvziXussoePzeod7gwR3kFvK1q/1AkEWggWDq0t/8nh9gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716910835; c=relaxed/simple;
-	bh=+ka7lAt0AaEKQOhVhdJkYL8d3RJmgi15bjbIH1lkuVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J28CAhsWE/E0UjWzgyLG9EJwa18o7leIpKJIo1hHHEaINsauA5sE6JNNqCEMVz9h3juxQM1xYZD83j3qTus8B1qN+3dzstIQgUBcvaFDYVPhEFNybBl/eybRKVfxcW0i+JCBNoysS58V21BYo/EUM+WIEtzkBO2sYOO57KY/Zto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQ7ugF7o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4197BC3277B;
-	Tue, 28 May 2024 15:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716910835;
-	bh=+ka7lAt0AaEKQOhVhdJkYL8d3RJmgi15bjbIH1lkuVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mQ7ugF7oci9zQMotueSFnxOlJdgSRiTo1pl+/I7Io2p/oLGt1ADaaVRU77uZxsPuH
-	 rtTv+4iuxxOMr2QFWMz+5rPxQein+0RRcvFeJ6GQHxOdY8q69i0M51lcTVSE4BLsCQ
-	 pXnxFVWjEU25VKXaxQSE4toPW/4jrKA/047xXTq9WfVvCi/aey5IGZiQCss5yDqNBt
-	 jFH0Tt5U6Vmv/8bVtmcnFHzJApiGDaxCtxLX69rkaD775rLU458uIMahHRCr4meZ9S
-	 zgLhUSYIy19b6eoSnA2k82xb2gcQd6LfbrY8S9iyDkpeIFSKLGvw+KRr1QSkTpUu5U
-	 P7TIJXaOYZuBw==
-Date: Tue, 28 May 2024 10:40:34 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: festevam@gmail.com, broonie@kernel.org, alsa-devel@alsa-project.org,
-	krzysztof.kozlowski+dt@linaro.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-	Xiubo.Lee@gmail.com, nicoleotsuka@gmail.com,
-	shengjiu.wang@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, perex@perex.cz
-Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: fsl,mqs: Add i.MX95 platform
- support
-Message-ID: <171691083154.676898.17539558632778396948.robh@kernel.org>
-References: <1716347305-18457-1-git-send-email-shengjiu.wang@nxp.com>
- <1716347305-18457-2-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1716910864; c=relaxed/simple;
+	bh=GVjbv65YNJoDuQAJCKR21C5IvkBqp4L9LKrnLr6NVkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Czs8K/j22gKrKUEtOXiU0YbUr5jEgARo6Mj8earJiILae638SoxUhxGTX5xV5kKEm4x5eTJ/zHkzlQtJxFc/ENPlOKJCYJIcNAhbj+r4co4jYMZmvEiyebzf74rRifkD1+DQdq/YyaviYTcvJGVcVcc9wjeIrJihwuLVjer7+Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYccBPkb; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716910862; x=1748446862;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GVjbv65YNJoDuQAJCKR21C5IvkBqp4L9LKrnLr6NVkw=;
+  b=WYccBPkbBItro1d08L708B/1QDC9zPwBADqmWcCM4uDiTih5GE7SBPx9
+   JKPbwwNu0o66GxihH8P/d8/ksYpImq2yDy+erHXNgAmOsmFO3TsAF1Ryl
+   sf3EuzFvxEQXNrcwBB5ZonMoRGGlvT/FCqZzmxdecImhHjkofwv6Ze4xf
+   hVBQ7h9vMk2/4ofh3TFbGzr84lPQhpM0q8cj9SOV1QdahfLIg2M7h87Iw
+   ckrAd/G0dO/gP3HmkFLrRw7PFb55eEMn3OQG+EF1nnLTwVj61c+QwWkEt
+   mHmMVHcEVj7v7nShZZ7xAjix3v6//hlVOJVIOHKDThRxgOo84ZlD8sBcj
+   A==;
+X-CSE-ConnectionGUID: w2W/+0mZQuK10GM3Y81sEw==
+X-CSE-MsgGUID: FUd/xwpJSGaq9592xy7Yaw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23820821"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="23820821"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:41:02 -0700
+X-CSE-ConnectionGUID: ecUxvXzqTTatJ6tfwYl4Ng==
+X-CSE-MsgGUID: qXKXv5P+T/m7mdMmtpI7qQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="35727960"
+Received: from unknown (HELO [10.125.110.237]) ([10.125.110.237])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:41:02 -0700
+Message-ID: <9d5f2625-f3e7-4212-8c9a-c22f137f39d9@linux.intel.com>
+Date: Tue, 28 May 2024 10:41:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1716347305-18457-2-git-send-email-shengjiu.wang@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] soundwire: fix usages of
+ device_get_named_child_node()
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>, linux-sound@vger.kernel.org,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bard Liao <bard.liao@intel.com>,
+ Vinod Koul <vinod.koul@linaro.org>
+References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
+ <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Wed, 22 May 2024 11:08:24 +0800, Shengjiu Wang wrote:
-> There are two MQS instances on the i.MX95 platform.
-> The definition of bit positions in the control register are
-> different. In order to support these MQS modules, define
-> two compatible strings to distinguish them.
+
+On 5/28/24 10:19, Markus Elfring wrote:
+>> Add fwnode_handle_put() to avoid leaked references.
 > 
-> As one instance is in the always-on domain, another is in the
-> net controller domain, so the compatible strings are
-> "fsl,imx95-aonmix-mqs", "fsl,imx95-netcmix-mqs".
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/sound/fsl,mqs.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> Are you going to respond also to my previous patch review
+> in more constructive ways?
+> https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.de/
+> https://lkml.org/lkml/2024/4/29/493
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Sorry about that, both Bard and I missed your comments.
 
+On the Fixes tag: I made a deliberate choice to add all the fixes in one
+patch, to show that the usage was copy-pasted and done 'wrong' in
+multiple places. That makes it really hard to add a Fixes tag since the
+different uses were added in a time interval of about 5 years.
+We could split and have multiple patches if that was desired, but I
+would still not include a Fixes tag since the leaked references are not
+that bad, we read the Manager properties on probe, and the peripheral
+properties are generally not used by codec drivers, so it's unlikely
+that any user will ever see a problem that requires a backport in
+linux-stable. This problem was found by reading the documentation while
+adding new things, not by any user report or test failure.
+
+The error flow was revisited and hardened in a follow-up patchset which
+also adds new properties for MIPI DisCo 2.1 spec [1], we'll share the
+patches in this kernel cycle.
+
+[1] https://github.com/thesofproject/linux/pull/4857
 
