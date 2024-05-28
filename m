@@ -1,225 +1,148 @@
-Return-Path: <linux-kernel+bounces-192882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EFB8D2379
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2938D237B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911671F23F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E1F1F23E32
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07FB179211;
-	Tue, 28 May 2024 18:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fpT9Y7/L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C72017A91B;
+	Tue, 28 May 2024 18:47:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C72176FBE;
-	Tue, 28 May 2024 18:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A390179954;
+	Tue, 28 May 2024 18:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922062; cv=none; b=c/b5nJgMqA7HMVSdKpKu7HtobMU3rVTuJR5jFxEcdVRxfQxcfqcn2mh+Zvoaw6xXUf0OJm3+wK5Fc7mGSz4wNiUU0dCipWtd6h7lAW4jKadUZ8Pb3CzzE8BbaSS5XDdo2KYVtq7AXHdP/deC1Wx3aRDjGcmzjFV4WSKEB5ugbTA=
+	t=1716922066; cv=none; b=hXjT8cuvHc+m4rB1yod6GaZFBpNlCWERDaG3IZCCJyXeVcIDgA/LY4Q14Ddo2JL2BpFLeWJ/E204qSmJd59cUQp88cQg2AuOIyIjd0oy4B/SxvCwsaknG6E7aSiZIEpyt7eE9w34jUxihQgG1kTVjdXYg+y5fbZ4JjZComXmPHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922062; c=relaxed/simple;
-	bh=+cW1FKmICz5yWt4FR2pNW4rOWKXVwnN1+017ENhmnxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ITILNSjyRaYTY0/AHcyJAxBs2FpcIPe/VGcD9PX4vL5aA0YVJMSKFUoDct4XGEJusYk0uJzcqLNjloyzKOqRYmINkv3G98UpDWfWkjqG2Wu/qEprvuVv/XFsUM8eyJ6nbHg0Bky986Rd7OlsrYFrZ2vQlZYgXTdEmkWW2AUrSPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fpT9Y7/L; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716922061; x=1748458061;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+cW1FKmICz5yWt4FR2pNW4rOWKXVwnN1+017ENhmnxI=;
-  b=fpT9Y7/Lpnh79j6d2xKDQC+fDZBTldz8SYXPllA4+dm/Ahi2T2xByU0q
-   eOSBxTtULa2K8I3whiYGmbHq7DME05GBSSCsJeRtJ8T4CqyPDMO3/ZAIu
-   y10T+CjzS3CdslRBpwitUhLHrEeCpPflzvMYvhqk8AM9HHCNm0sSIEf0h
-   +4rwkKvyDI+1FMbvWSRAPyh9NMSrEkoLUO+fCbObJB97Auna94RE4nmKC
-   QFZQAx9GTT1XuFjLaH7ZtOR6m+uogjPkFNND5Uv+Wfs1KwJ3uWV0AdHd/
-   w3G6BAUu6UzcKGCXXlHeKbwl1p1HcN78OANw3/uJ/YfT26j9Xn8tI86tp
-   Q==;
-X-CSE-ConnectionGUID: mL/yk3eRSwyGQevUDl3gRA==
-X-CSE-MsgGUID: YmmQBx6bQDmuQbGke7dfPA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="17121575"
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="17121575"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 11:47:31 -0700
-X-CSE-ConnectionGUID: x/ICtLuYRZKz8pLqelCWdg==
-X-CSE-MsgGUID: S1Y9awmZSRCYnRk7JEJDvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="72605188"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 11:47:31 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 8/8] powercap: intel_rapl: Switch to new Intel CPU model defines
-Date: Tue, 28 May 2024 11:47:20 -0700
-Message-ID: <20240528184720.56259-9-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240528184720.56259-1-tony.luck@intel.com>
-References: <20240528184720.56259-1-tony.luck@intel.com>
+	s=arc-20240116; t=1716922066; c=relaxed/simple;
+	bh=hwmeUbItsm+bV91/Ve29xLJ4dPvWDPNLCD48sqQOZYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SZMb1b37WGl3Iyi677JGjgRunJL0iTxwtz+pR0d4Ktr+y46q5jKdd6obinyJpxBXFnuJx98VAEuFcvNZw/e69hW/qAlr/oVhQbxnzoQWTdUwdUXDCENwLH6XrChXm3HfLgMGyiIdSCXYW53gTmqmcFzAPETNmetaF5qtXsPxDuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D691C32781;
+	Tue, 28 May 2024 18:47:45 +0000 (UTC)
+Date: Tue, 28 May 2024 14:47:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>
+Cc: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>, Linux regressions mailing list
+ <regressions@lists.linux.dev>, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
+ Shutdown/Reboot
+Message-ID: <20240528144743.149e351b@rorschach.local.home>
+In-Reply-To: <CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
+References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
+ <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
+ <20240527183139.42b6123c@rorschach.local.home>
+ <CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-New CPU #defines encode vendor and family as well as model.
+On Tue, 28 May 2024 07:51:30 +0300
+Ilkka Naulap=C3=A4=C3=A4 <digirigawa@gmail.com> wrote:
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/powercap/intel_rapl_common.c | 120 +++++++++++++--------------
- 1 file changed, 60 insertions(+), 60 deletions(-)
+> yeah, the cache_from_obj tracing bug (without panic) has been
+> displayed quite some time now - maybe even since 6.7.x or so. I could
+> try checking a few versions back for this and try bisecting it if I
+> can find when this started.
+>=20
 
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index aac0744011a3..3cffa6c79538 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -1222,66 +1222,66 @@ static const struct rapl_defaults rapl_defaults_amd = {
+OK, so I don't think the commit your last bisect hit is the cause of
+the bug. It added a delay (via RCU) and is causing the real bug to blow
+up more.
+
+Can you add this patch to v6.9.2 and hopefully it crashes in a better
+location that we can find where the mixup happened.
+
+You may need to add the other commit (too if this doesn't trigger.
+
+Thanks,
+
+-- Steve
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 417c840e6403..7af3f696696d 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -50,6 +50,7 @@ static struct inode *tracefs_alloc_inode(struct super_blo=
+ck *sb)
+ 	list_add_rcu(&ti->list, &tracefs_inodes);
+ 	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+=20
++	ti->magic =3D 20240823;
+ 	return &ti->vfs_inode;
+ }
+=20
+@@ -66,6 +67,7 @@ static void tracefs_free_inode(struct inode *inode)
+ 	struct tracefs_inode *ti =3D get_tracefs(inode);
+ 	unsigned long flags;
+=20
++	BUG_ON(ti->magic !=3D 20240823);
+ 	spin_lock_irqsave(&tracefs_inode_lock, flags);
+ 	list_del_rcu(&ti->list);
+ 	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+@@ -271,16 +273,6 @@ static const struct inode_operations tracefs_file_inod=
+e_operations =3D {
+ 	.setattr	=3D tracefs_setattr,
  };
- 
- static const struct x86_cpu_id rapl_ids[] __initconst = {
--	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE_X,	&rapl_defaults_core),
+=20
+-struct inode *tracefs_get_inode(struct super_block *sb)
+-{
+-	struct inode *inode =3D new_inode(sb);
+-	if (inode) {
+-		inode->i_ino =3D get_next_ino();
+-		simple_inode_init_ts(inode);
+-	}
+-	return inode;
+-}
 -
--	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE_X,		&rapl_defaults_core),
--
--	X86_MATCH_INTEL_FAM6_MODEL(HASWELL,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_G,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X,		&rapl_defaults_hsw_server),
--
--	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_G,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_D,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,		&rapl_defaults_hsw_server),
--
--	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,		&rapl_defaults_hsw_server),
--	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(CANNONLAKE_L,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_NNPI,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_X,		&rapl_defaults_hsw_server),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_D,		&rapl_defaults_hsw_server),
--	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ROCKETLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ALDERLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ALDERLAKE_L,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GRACEMONT,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(RAPTORLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(RAPTORLAKE_P,        &rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(RAPTORLAKE_S,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(METEORLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(METEORLAKE_L,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(SAPPHIRERAPIDS_X,	&rapl_defaults_spr_server),
--	X86_MATCH_INTEL_FAM6_MODEL(EMERALDRAPIDS_X,	&rapl_defaults_spr_server),
--	X86_MATCH_INTEL_FAM6_MODEL(LUNARLAKE_M,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ARROWLAKE_H,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ARROWLAKE,		&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(LAKEFIELD,		&rapl_defaults_core),
--
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT,	&rapl_defaults_byt),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,	&rapl_defaults_cht),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT_MID,	&rapl_defaults_tng),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT_MID,	&rapl_defaults_ann),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_PLUS,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_D,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_D,	&rapl_defaults_core),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_L,	&rapl_defaults_core),
--
--	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNL,	&rapl_defaults_hsw_server),
--	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNM,	&rapl_defaults_hsw_server),
-+	X86_MATCH_VFM(INTEL_SANDYBRIDGE,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_SANDYBRIDGE_X,	&rapl_defaults_core),
+ struct tracefs_mount_opts {
+ 	kuid_t uid;
+ 	kgid_t gid;
+@@ -448,6 +440,17 @@ static const struct super_operations tracefs_super_ope=
+rations =3D {
+ 	.show_options	=3D tracefs_show_options,
+ };
+=20
++struct inode *tracefs_get_inode(struct super_block *sb)
++{
++	struct inode *inode =3D new_inode(sb);
++	BUG_ON(sb->s_op !=3D &tracefs_super_operations);
++	if (inode) {
++		inode->i_ino =3D get_next_ino();
++		simple_inode_init_ts(inode);
++	}
++	return inode;
++}
 +
-+	X86_MATCH_VFM(INTEL_IVYBRIDGE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_IVYBRIDGE_X,	&rapl_defaults_core),
-+
-+	X86_MATCH_VFM(INTEL_HASWELL,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_HASWELL_L,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_HASWELL_G,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_HASWELL_X,		&rapl_defaults_hsw_server),
-+
-+	X86_MATCH_VFM(INTEL_BROADWELL,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_BROADWELL_G,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_BROADWELL_D,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_BROADWELL_X,	&rapl_defaults_hsw_server),
-+
-+	X86_MATCH_VFM(INTEL_SKYLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_SKYLAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_SKYLAKE_X,		&rapl_defaults_hsw_server),
-+	X86_MATCH_VFM(INTEL_KABYLAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_KABYLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_CANNONLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ICELAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ICELAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ICELAKE_NNPI,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ICELAKE_X,		&rapl_defaults_hsw_server),
-+	X86_MATCH_VFM(INTEL_ICELAKE_D,		&rapl_defaults_hsw_server),
-+	X86_MATCH_VFM(INTEL_COMETLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_COMETLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_TIGERLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_TIGERLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ROCKETLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ALDERLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ALDERLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,        &rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_METEORLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_METEORLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&rapl_defaults_spr_server),
-+	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,	&rapl_defaults_spr_server),
-+	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE,		&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_LAKEFIELD,		&rapl_defaults_core),
-+
-+	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT,	&rapl_defaults_byt),
-+	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	&rapl_defaults_cht),
-+	X86_MATCH_VFM(INTEL_ATOM_SILVERMONT_MID, &rapl_defaults_tng),
-+	X86_MATCH_VFM(INTEL_ATOM_AIRMONT_MID,	&rapl_defaults_ann),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_D,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_TREMONT,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_TREMONT_D,	&rapl_defaults_core),
-+	X86_MATCH_VFM(INTEL_ATOM_TREMONT_L,	&rapl_defaults_core),
-+
-+	X86_MATCH_VFM(INTEL_XEON_PHI_KNL,	&rapl_defaults_hsw_server),
-+	X86_MATCH_VFM(INTEL_XEON_PHI_KNM,	&rapl_defaults_hsw_server),
- 
- 	X86_MATCH_VENDOR_FAM(AMD, 0x17, &rapl_defaults_amd),
- 	X86_MATCH_VENDOR_FAM(AMD, 0x19, &rapl_defaults_amd),
--- 
-2.45.0
-
+ /*
+  * It would be cleaner if eventfs had its own dentry ops.
+  *
+diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+index f704d8348357..dda7d2708e30 100644
+--- a/fs/tracefs/internal.h
++++ b/fs/tracefs/internal.h
+@@ -16,6 +16,7 @@ struct tracefs_inode {
+ 	};
+ 	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+ 	struct list_head	list;
++	unsigned long		magic;
+ 	unsigned long           flags;
+ 	void                    *private;
+ };
 
