@@ -1,147 +1,117 @@
-Return-Path: <linux-kernel+bounces-193219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C171D8D2891
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB418D2895
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41F81C23A90
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F1F1C20FEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FFF13EFE1;
-	Tue, 28 May 2024 23:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E4A13EFEC;
+	Tue, 28 May 2024 23:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jXAyLE6m"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJY0Lznq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB74B17C6A;
-	Tue, 28 May 2024 23:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C03F17C6A;
+	Tue, 28 May 2024 23:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716937654; cv=none; b=kBrNnxUuiKfyyKmfPodwz4mG6mzMOmgj+K9UYdBwqwCoyasynHRPqzzdij447P65kl4w+vrSxwj58RB7dvtLyFrgLjQx7ckdc6e41IB07uK/supNuYdFh9te0LyKhfRVXZi0P5Z2P5VwsCuxFxTUdKer/QLIlp4Ygggrp4EIABE=
+	t=1716937792; cv=none; b=rcva1/GO/JZV2ey3cqEl0ea1EHS3whag0W98zW4LyiBo0hgEoaq+gjEgpNiol6TikefoHyBrO2H6qZK70IwsmGXeV/Y6f1uPAShJTy81chUix68qLsu6ChxzGZTEcpkTb65HNy3M75uOpZOyDlj9AMwnbC4QiNcmuYtmLbq1njU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716937654; c=relaxed/simple;
-	bh=vBMeZTkhyDDxp+wlSPbDk+sMNIkxvokmcNsBc/EF4/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ni72DkgiGnuLdoo0rrQO1AkttK09+mH4XDCCCniAXq8Lw0j3XvvT/ReaHGCpu1U0m1OJHkFFV5XLEtCR847tHlhGi1VbxtByViJ+YWdr8Q8pBHR9R0uPYeWmceQ1wb/c5CtDFCsHakx1GbkJgHTRJxuNP86KN/+wsu49t/29nQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jXAyLE6m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SMBEm9018067;
-	Tue, 28 May 2024 23:07:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LEWqXxlN8+QgRXFtixWH/P7uFfcQicinWJBWnqLtJmI=; b=jXAyLE6mDs0y1WyA
-	jDyBpGWdDb6HXDC3TdwRxYzlCO2rLNGPT61KoBCX0kxse3oimougxpvAT8Kf9RQr
-	78ncSgTFNGYKlqZyIYSurs6zPtiQuqSYPR9Nw83271X5WSCue5nOsaURyO74bpwf
-	hFF6YZk1bnZOqi0GiTZredB3F2uFdkId6UdhHtHI2RNp5NUPcWswKkwQOhvybD4e
-	bU92h96ay1JPyeaEDY5qgMBtBgTQiiTAp3iRSgCUA7RWlUpSad8ZbzgPJSJ+3hH8
-	1WeLSEc+WGIDZBviLYOF5AlufdR2axsO//4Y+eFhlQZ2xH6MuRSYmUrs7m1GS6MK
-	wRHCKA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2nfhfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:07:21 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SN7IEf009714
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:07:18 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 16:07:17 -0700
-Message-ID: <76b94146-1328-499c-9d17-4f2e8108556e@quicinc.com>
-Date: Tue, 28 May 2024 16:07:17 -0700
+	s=arc-20240116; t=1716937792; c=relaxed/simple;
+	bh=onyWA+d2BlSWT+ML9qSE85yyFiLFQ+oqmdDWiKsYT04=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=aDCMCnbfMemUrqCVYnc6wbb2ge53guWT7+XRdYxSbhiNY2hIsGRx02Uy55Nj+imB5x3PAenCY6g7tkJ7/ZJMStKFAFyTZZr/OQ8G7taI5icak63Kp2ZmHeg59ryS9bV626dARI6ytyKwdExis9bVuGCK7acM22Y7AhK30LJqy7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJY0Lznq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B77C3277B;
+	Tue, 28 May 2024 23:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716937791;
+	bh=onyWA+d2BlSWT+ML9qSE85yyFiLFQ+oqmdDWiKsYT04=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=kJY0LznqSZD8TdDuLyfHr40B7u5c/8/Gbldd3grLHo6tIDaj/svY5WYltsMtMYfWY
+	 l15pysUR0LlQi6+V7uCPLwM9m8GE6Y7skGcSo/Bm077AJ/OQxKWNeXK9poG0dmPCHu
+	 atubP0Ecm9kXzyZiTEk9ubRV10iYJcLdgxvUKZH0a54tq9gtEfnWJftDe55e1SK7Pw
+	 dwlXPnKBxzjFIb+Y/Bx3wjNgYiD0IxXawzwxT1Er8BkUxUcjC5nPrjEzWcgbe1NdM2
+	 hx8dbysWf5mtn/WehHouBRe7Mjuc7QY6u31SOVPgAr5+EUBWuQ7gYjw0kEijPQ9EsL
+	 dbZZpqAAcfYbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] drm/msm/dpu: adjust data width for widen bus case
-Content-Language: en-US
-To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
- <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-2-f797ffba4682@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-2-f797ffba4682@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vLv8xHiONxaDkiG-Lali-YCIBFkea5A5
-X-Proofpoint-GUID: vLv8xHiONxaDkiG-Lali-YCIBFkea5A5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2405280171
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 02:09:45 +0300
+Message-Id: <D1LNNE1FMDBS.3T9J17BAX1D04@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "Stefan Berger" <stefanb@linux.ibm.com>, "Lennart Poettering"
+ <lennart@poettering.net>, "David S. Miller" <davem@davemloft.net>, "open
+ list" <linux-kernel@vger.kernel.org>, "David Howells"
+ <dhowells@redhat.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe"
+ <jgg@ziepe.ca>, "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Mario Limonciello"
+ <mario.limonciello@amd.com>
+Subject: Re: [PATCH v7 5/5] keys: asymmetric: Add tpm2_key_ecdsa
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-6-jarkko@kernel.org>
+ <D1LLSAS0YN47.18EIHL1KRF2UR@kernel.org>
+In-Reply-To: <D1LLSAS0YN47.18EIHL1KRF2UR@kernel.org>
 
+On Wed May 29, 2024 at 12:42 AM EEST, Jarkko Sakkinen wrote:
+> On Wed May 29, 2024 at 12:08 AM EEST, Jarkko Sakkinen wrote:
+> > +	/* Encode the ASN.1 signature: */
+> > +#define TPM2_KEY_ECDSA_SIG_SIZE		(2 + 2 * (2 + SHA256_DIGEST_SIZE) + r=
+_0 + s_0)
+> > +	pr_info("sig_size=3D%d\n", TPM2_KEY_ECDSA_SIG_SIZE);
+> > +	ptr[0] =3D 0x30; /* SEQUENCE */
+> > +	ptr[1] =3D TPM2_KEY_ECDSA_SIG_SIZE - 2;
+> > +#define TPM2_KEY_ECDSA_SIG_R_TAG	2
+> > +#define TPM2_KEY_ECDSA_SIG_R_SIZE	3
+> > +#define TPM2_KEY_ECDSA_SIG_R_BODY	4
+> > +	ptr[TPM2_KEY_ECDSA_SIG_R_TAG] =3D 0x02; /* INTEGER */
+> > +	ptr[TPM2_KEY_ECDSA_SIG_R_SIZE] =3D SHA256_DIGEST_SIZE + r_0;
+> > +	ptr[TPM2_KEY_ECDSA_SIG_R_BODY] =3D 0x00; /* maybe dummy write */
+> > +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_R_BODY + r_0], r, SHA256_DIGEST_SIZE);
+> > +#define TPM2_KEY_ECDSA_SIG_S_TAG	(4 + r_0 + SHA256_DIGEST_SIZE)
+> > +#define TPM2_KEY_ECDSA_SIG_S_SIZE	(5 + r_0 + SHA256_DIGEST_SIZE)
+> > +#define TPM2_KEY_ECDSA_SIG_S_BODY	(6 + r_0 + SHA256_DIGEST_SIZE)
+> > +	ptr[TPM2_KEY_ECDSA_SIG_S_TAG] =3D 0x02; /* INTEGER */
+> > +	ptr[TPM2_KEY_ECDSA_SIG_S_SIZE] =3D SHA256_DIGEST_SIZE + s_0;
+> > +	ptr[TPM2_KEY_ECDSA_SIG_S_BODY] =3D 0x00; /* maybe dummy write */
+> > +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_S_BODY + s_0], s, SHA256_DIGEST_SIZE);
+> > +	ret =3D TPM2_KEY_ECDSA_SIG_SIZE;
+>
+> Stefan, so this how I realized the signature encoding, thanks to
+> your earlier remarks [1]! I found out based on that a few glitches
+> and ended up with this better structured ECDSA signature encoder,
+> so thank you for doing that.
 
+1. SHA384 would fit without any significant changes.
+2. SHA512 will require a single additional byte, i.e. prefix byte 0x81
+   for the sequence (not for coeffients).
+3. SM3 similarly is also trivial to add.
 
-On 5/27/2024 7:21 AM, Jun Nie wrote:
-> data is valid for only half the active window if widebus
-> is enabled
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Both will be also easy to add later on. I would not enlarge this patch
+set from what it is now.
 
-Hi Jun,
+So I think this is pretty well along the lines of:
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+https://datatracker.ietf.org/doc/draft-woodhouse-cert-best-practice/
 
-Thanks,
-
-Jessica Zhang
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> index 225c1c7768ff..f97221423249 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> @@ -168,6 +168,15 @@ static void dpu_hw_intf_setup_timing_engine(struct dpu_hw_intf *intf,
->   
->   	data_width = p->width;
->   
-> +	/*
-> +	 * If widebus is enabled, data is valid for only half the active window
-> +	 * since the data rate is doubled in this mode. But for the compression
-> +	 * mode in DP case, the p->width is already adjusted in
-> +	 * drm_mode_to_intf_timing_params()
-> +	 */
-> +	if (p->wide_bus_en && !dp_intf)
-> +		data_width = p->width >> 1;
-> +
->   	hsync_data_start_x = hsync_start_x;
->   	hsync_data_end_x =  hsync_start_x + data_width - 1;
->   
-> 
-> -- 
-> 2.34.1
-> 
+BR, Jarkko
 
