@@ -1,200 +1,125 @@
-Return-Path: <linux-kernel+bounces-191751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6532A8D139D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08E38D13A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885B71C222B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539D1285090
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29D93F9FC;
-	Tue, 28 May 2024 05:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E7D446A1;
+	Tue, 28 May 2024 05:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0JSsi6S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCvTZfHS"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1149C3D0A9;
-	Tue, 28 May 2024 05:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939273F9C5;
+	Tue, 28 May 2024 05:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716872752; cv=none; b=mgFGJX8RD1u9v7N0jOLXgEoTpcKMvcvw5BOx2kVoG6vSjBVTTUTChJ/X2O4A+eEX0CAi+zFXlUxczI03Lyz7aNyC8rltalN6kv4H6oA0/p+JNBMgruX+2rep//Apdg8enC2E1ThlUYDVdbvqQNWeyXteUrmI+TojZnnCcKSuyJI=
+	t=1716872836; cv=none; b=u7wmjzNr2aeq3xXFGX6CLqhTDILmhiqbWbu0XHA7mGjZwNlGuewTIu0Q4o4EtCOXbkZmYmZH4EboHRxt1I/d+4TyLj7cAot/l5J7i8Ibn5DTHkvIbwEXqx+R/coBt0zXP/+4JQTfxlQQh2aUlEX16I6JVwyvcvFF03RjZborTZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716872752; c=relaxed/simple;
-	bh=Tovpx1FZiQz8QrAsCt+bRrI7/FqIEBYBeBt7CR34S4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTPl+RIdhDuqRwiiAwvjgUbGrhiDk9wy4nHkRhoiFSYB6d0IoPUKdRtJVR4xFxxX+0q5yLFOUoJIrb733lH6mYpl2H+Kj2XLJx7930GjlyqcIXY30TjQlxE68AYJlV36OBNoEmeVxyiNCl3nsfrJqQoeRXouPh1G3ciN0t+eQHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0JSsi6S; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716872751; x=1748408751;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tovpx1FZiQz8QrAsCt+bRrI7/FqIEBYBeBt7CR34S4s=;
-  b=P0JSsi6SKENrWuzmMJTxMm4FnWkhc9zucbwuxnLNh/RhdwXJF71c3RH4
-   MOGaqOLbYQV6eJZBF6B1ovKJcDESUKTXrpuuMQim2N3AQQQ8n4fHgJr0R
-   XGVxRUFtOhDCAn6mtSd0Vlf/aUpR42J+yg4m8qpumUIVtUOcMb2IGn/PE
-   IxS651/fWLJcNcfk2e/l1Vnu1dr3+ht1roCrW7hB5mkQmjCUCGVHv8ox/
-   8ONjXsueWIjRaifBWK0sUSlWyh0YnjKt6KXnsyqYYxJAw43LilObAzroh
-   G8/1H97jh7e5i2qeDrrOEBlYcPNY1tf6TKEP0/Vj47vv+9ouBdwV2gJzn
-   g==;
-X-CSE-ConnectionGUID: M6NfgT+nQUy0HmSSmmBj+g==
-X-CSE-MsgGUID: +IMiLqP2Rp+NxaCUxv3KIg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23754621"
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="23754621"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 22:05:51 -0700
-X-CSE-ConnectionGUID: RvDHCeTkQayOwMhelFDzFA==
-X-CSE-MsgGUID: 56kAMEmLT5Gpex9PNJZSjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="39476804"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.244.201])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 22:05:44 -0700
-Date: Tue, 28 May 2024 08:05:37 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dhruva Gole <d-gole@ti.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Johan Hovold <johan@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] printk: Save console options for
- add_preferred_console_match()
-Message-ID: <ZlVmIcu2NQOXg9rx@tlindgre-MOBL1>
-References: <20240327110021.59793-1-tony@atomide.com>
- <20240327110021.59793-2-tony@atomide.com>
- <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
- <ZlRqz2b0ZrtkxScL@tlindgre-MOBL1>
- <ZlSOc5mtbf4DdI8O@pathway.suse.cz>
+	s=arc-20240116; t=1716872836; c=relaxed/simple;
+	bh=yUShdSmJr46Mgx4i2jipsfc4D+xqm4VZ+NXk6NsJYA0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cR2qXL2JV/nFKcXXamqRsSKwAcLnNCDHREDE2UhawKNUjMLaA9j3sC55cq6EZ6EK6R6B7XShSmm1y6AFniT4Bok90n2mycAaMvP8OpwBU/XO4YbOmnxsV6D3fBz9+mwxFGDHLT8GicDx3bt52ELwL+1m/KhSJDnxz6zDhQQY/4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCvTZfHS; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d1c077b9baso215233b6e.0;
+        Mon, 27 May 2024 22:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716872832; x=1717477632; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9LGkX5CvYSeRWcO/OUCi81i8F2CpNF/Yknz+iuEPMic=;
+        b=eCvTZfHSarr5vCpWFjVYlqoMVtJ5Zp9U7sWi6qB7nA28njSlLgcQKLevFTrc9Py0X0
+         Eo4/uc3pb3ZLecssNlA3e6kZ2rL8Nz07xTTmCB88UwD0k5+QlXHq72xqlD9Hn/5qlghE
+         VZVKqeyJmPe+2qamqQiJxG6A+SlJugvXACxn1re7S/b0nwiZ+9P/ej60ujL/S4bOsWV0
+         DUw+m2JdSRT9Sp46Cd8wfmIpmxRYZt/zzfUpKtvuHRL4LeEiuGLH5NB7XXOZNed1a+wH
+         eSUXZB6Ag8h216k6H3pcIyg/DLsYluFL0fr1Yl5klSZs3yWWncmRS0dB8jrNO/fkwTaX
+         q4Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716872832; x=1717477632;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9LGkX5CvYSeRWcO/OUCi81i8F2CpNF/Yknz+iuEPMic=;
+        b=ocrvkvDVahuRLWqwkf20RQo1Wu6EyvThWtWjPFHEoPN3n2pB+C+cVQs6CUk7mGEgNH
+         g4oPz++nz9bx1lMf/1rCbGripil6+PbGsYBvJ0Ml1PD4S+z4Igzgot64EOi3uHagFzTD
+         fNo5Uk9DUtkLKEtrsJD8ejWFcPg2WF1CBuFCpyGzR4toq++YHybHGk6hobAKJGjt/I79
+         msrmEESRYSmSS8FvGAFBuiSc9VtNNhHkrjzEb4IXtgH24qWjupxt3oG1zuqamgOsXGRt
+         81h/GDqe9U6TnhVCPrEVJRqL8uB4uFhrMkJ/EG3lzohy7AMjRblHtoEsazGbGhBOjSzm
+         eeRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2MRe7V68hH6ZsCshLhWJINDfh6FcNNai+i/6cQu88hhSaROyI8ejzD8QltteQceHCjJ2Uy+BB9b2qXCNfE/PJEJZw02paqIldCmgSubmL4oVra+fTRZeipNkl8bL/UGXlhsMV/pG4vwOBekdYB8DcA+5DdC4/mC0VbBmNDJ1dgUfa/Lk=
+X-Gm-Message-State: AOJu0Yw/YJXKV8hsTtbkp96v2yDNupqRBR/TbuxZedcUZKKvcXaZqhay
+	bXxcrYl/G8/W6aSNlrw+pAPt3ivkie/DZ1PFHsB3fMekhsiz4xFgqvWUrQNP
+X-Google-Smtp-Source: AGHT+IHchZ0MIxn31HdZq/DwBO+sPMGJpEVor0E0NH3BvSt24bhvXtHBVs63rTMcyUTh91G4ODpUSw==
+X-Received: by 2002:a05:6808:15a9:b0:3c8:6468:73f6 with SMTP id 5614622812f47-3d1a85ec475mr14137814b6e.43.1716872831642;
+        Mon, 27 May 2024 22:07:11 -0700 (PDT)
+Received: from my-computer.lan (c-98-39-68-68.hsd1.tx.comcast.net. [98.39.68.68])
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3d1b36825d4sm1238633b6e.6.2024.05.27.22.07.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 22:07:11 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: syzbot+07762f019fd03d01f04c@syzkaller.appspotmail.com
+Cc: benjamin.tissoires@redhat.com,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	jkosina@suse.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	luke@ljones.dev,
+	syzkaller-bugs@googlegroups.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	Andrew Ballance <andrewjballance@gmail.com>
+Subject: [PATCH] hid: asus: asus_report_fixup: fix potential read out of bounds
+Date: Tue, 28 May 2024 00:05:39 -0500
+Message-ID: <20240528050555.1150628-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <000000000000915d550619389e8a@google.com>
+References: <000000000000915d550619389e8a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlSOc5mtbf4DdI8O@pathway.suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 03:45:55PM +0200, Petr Mladek wrote:
-> On Mon 2024-05-27 14:13:19, Tony Lindgren wrote:
-> > To me it seems we can fix this by keeping track of the console position
-> > in the kernel command line. I'll send a fix for this to discuss.
-> 
-> Honestly, I would prefer some alternative solution of the whole
-> problem. From my POV, the current patchset is a kind of a hack.
-> 
->   1. It hides console=DEVNAME:X.Y options so that register_console()
->      does not know about them.
+#syz test
 
-OK let's make register_console() aware of the DEVNAME:X.Y options.
-I like what you're suggesting towards the end of your message for
-this.
+there may be a read out of the bounds of rdesc.
+this adds bounds checks
 
->   2. But wait, register_console() might then enable any random console
->      by default when there are not console= options. For this the 3rd patch
->      added @console_set_on_cmdline variable which would tell
->      register_console(): "Hey, I have hidden some user preferences.
->      I'll tell you about them when the right time comes."
+Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+---
+ drivers/hid/hid-asus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-That's to allow setting up a console when the driver is ready. So that 
-we don't need to rely on the hardcoded device name deciphering at
-console_setup() time. Maybe there's a better way to signal that though.
-
->   3. When port init matches the pattern, it adds the preferred console
->      so that the register_console() would know about it.
-> 
->   4. But wait, the ordering of preferred consoles is important.
->      Which would require more hacks to preserve the ordering.
-
-Preserving the ordering part is probably the smallest issue to deal with
-here :) I agree we should try to make things simpler though and there
-certainly are already lots of magic switches setting up the console.
-
->   5. Also serial_base_add_prefcon() adds the preferred console
->      with the generic name "ttyS" which is not specific
->      for the matched device. It just hopes that the very next
->      "register_console()" call will be the one related to
->      the matching device. Is this really guaranteed on SMP system?
-
-Hmm not sure I get this issue though, when serial_base_add_prefcon() gets
-called we know the device name. The "ttyS" parts are needed to avoid
-relying on the hardcoded device name deciphering at console_setup() time.
-
-If you're thinking about the serial8250_isa_init_ports() related calls,
-the serial port mapping uses SERIAL_PORT_DFNS. And then a hardware
-specific 8250 may take over at some point :)
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 02de2bf4f790..37e6d25593c2 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -1204,8 +1204,8 @@ static __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 	}
  
-> IMHO, the only solution would be to add a function which would
-> return "ttySX" for the fiven device name.
+ 	/* match many more n-key devices */
+-	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+-		for (int i = 0; i < *rsize + 1; i++) {
++	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && *rsize > 15) {
++		for (int i = 0; i < *rsize - 15; i++) {
+ 			/* offset to the count from 0x5a report part always 14 */
+ 			if (rdesc[i] == 0x85 && rdesc[i + 1] == 0x5a &&
+ 			    rdesc[i + 14] == 0x95 && rdesc[i + 15] == 0x05) {
+-- 
+2.45.1
 
-Yes agreed, this will simplify things.
-
-> Honestly, I do not know the hiearachy of the structures in detail.
-> But the documentation in the 7th patch says:
-> 
-> +			The mapping of the serial ports to the tty instances
-> +			can be viewed with:
-> +
-> +			$ ls -d /sys/bus/serial-base/devices/*:*.*/tty/*
-> +			/sys/bus/serial-base/devices/00:04:0.0/tty/ttyS0
-> 
-> BTW: I get on my test system:
-> 
-> # ls -1 -d /sys/bus/serial-base/devices/*:*.*/tty/*
-> /sys/bus/serial-base/devices/00:00:0.0/tty/ttyS0
-> /sys/bus/serial-base/devices/serial8250:0.1/tty/ttyS1
-> /sys/bus/serial-base/devices/serial8250:0.2/tty/ttyS2
-> /sys/bus/serial-base/devices/serial8250:0.3/tty/ttyS3
-> ...
-
-OK
-
-> It looks like it should be possible to provide a function which would
-> return:
-> 
->    "ttyS0" for "00:00:0.0"
->    "ttyS1" for "serial8250:0.1"
->    ...
-> 
-> 
-> This function might then be used in "register_console()"
-> to convert "console=DEVNAME:0.0" option to "ttyS" + "index".
-> 
-> The advantage would be that the relation between "DEVNAME:0.0"
-> and "ttyS0" will be clear. And the code would see the same hiearachy
-> as the user in /sys/bus/serial-base/devices/.
-
-OK makes sense to me.
-
-> Of course, I might be too naive. Maybe, the sysfs hieararchy is
-> created too late. Maybe, it is not easy to go throught the
-> hiearachy...
-> 
-> But still. I wonder if there is a straightforard way which would
-> allow translation between "ttySX" and "DEVNAME:0.0" naming schemes.
-
-We can do that on driver probe time no problem. The issues are mostly
-related to setting up things early on.
-
-Regards,
-
-Tony
 
