@@ -1,81 +1,189 @@
-Return-Path: <linux-kernel+bounces-192567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E9A8D1F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:46:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8B78D1F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67DE28334A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:46:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC2B2338F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6838816FF59;
-	Tue, 28 May 2024 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41393171069;
+	Tue, 28 May 2024 14:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G+uDRZb2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="akYo21qx"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8718B107A0;
-	Tue, 28 May 2024 14:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B107616FF58;
+	Tue, 28 May 2024 14:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907609; cv=none; b=LujmyeoC2PddgifHKgHacNoqITN9wr7q5R2FNTFXOIZvVDZgQ+EsPPwcqdpHWvTcXB6fu1+BBYOvzabyw3V/eLjNbNaJeb3mq1mYfQih1RjhznkiuU2BeP2wewAGwAiOA8ybXX0HgZP+lB8OX8aks5n2N8So1aXf+THkftAiLGw=
+	t=1716907654; cv=none; b=JvV7vBHb4+HwMIdeV8gEt/3YVyYWd5ge/Od5gGNge5QYfkOq20e9FGfODZR0SKdMew9LQzvHEw91aolzj57YG5cOTfmnmFSsEHJIylVYwoTPKukQo8F5F9EJB8QGO4gx72IK0jVRDeFNdZ3qcB+/kRMaeVqSs9mx4NWN1i/8D28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907609; c=relaxed/simple;
-	bh=wtEh5/u99fENnJNQrllCw9vLyimy2XrBJkj9B+2w+vU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxa//st+QbtZ8He6e4KQX0mRpj2Dd6lQqvNiIzWKQmhe+GKP+AQmYX5KVENZ9pzuDRQeBsGBENyiFEDEtJkfB/h6lx+NbAqEZG5nnxYuf3luk3cWSnXnxdgBAjKUKHEhtX7lrLIsT9pdfREgILJI51F9ePjrsXJpZ8GVC7+zadc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=G+uDRZb2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91ECC3277B;
-	Tue, 28 May 2024 14:46:47 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G+uDRZb2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1716907605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W2k0ho4MdAkAbxz9sCr1vHlo4/ijHUp83UPCQgr4Fu4=;
-	b=G+uDRZb280nWJknXkoFHDEKOAqThGHcsdPJF44P2i797gyiiegPyz6dQaj2Sor1BKuUe8+
-	Qe36ym2cXQ2CzkjOD7ehtrwjoQyPDPd8EQ+SLTuf68hdRjhFM4aBEWUXTGegvdkk3bn52P
-	pCKAFh4+0JtjehXmdZaf7MBLI3/oPdA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ece78ccd (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 28 May 2024 14:46:45 +0000 (UTC)
-Date: Tue, 28 May 2024 16:46:41 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v16 0/5] implement getrandom() in vDSO
-Message-ID: <ZlXuUdPM6Fkik_cy@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1716907654; c=relaxed/simple;
+	bh=1hUVOnE6FdNvQ9UmuEpKFIpJIn+C0KyL7AQWfhEh1/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vbpggkaf03YRXOJODsaFCAg1y1tR7aH22YAeF2x8PloxVc4yUdyB/+7yRH2PU3yb2SKQ0MCWNJvlbHEkujKTBlzLAmKFOTLACG5h/eBzsl07h4RsZ4WJOlawifXKfkbT2VlfefINhcglU3yup44GlAzuyccPaLXrN1REF52sq9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=akYo21qx; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SElIR0006175;
+	Tue, 28 May 2024 14:47:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=YoX6MGL9GkOP9j60jFJarnWsdE9khgTiZnqJ48HidSY=;
+ b=akYo21qx+QyPFixPK9gTPha/fMglWd7oAS21hvfBOHaIWR3vdIJSba/zAEOnvdwn/2ht
+ dy6ehpINKOLvIJtGnMRo2pFdYmNlyBi3mFZkvHotPvbNdrmhV+/cwSSqvgfMvRhDMhFg
+ F2G6qriOi9ehVzPt/JNsocS5WjwjEEzoiw1S9zN6EzukEl0UhDbYtdaWbSGZwdXOGSlj
+ vCHBjfI4XBHMlKnQcJcxqtai14qm0ckB1Yug90/gWiwXQhUkVk0B2uE5ORwAG/adHfO0
+ SNaIN3TzxdEZhPao14rUYMJyOa1O/I+e/xjmCu3RfSOT+kYd4k6rCHo54fPHXx5WANo8 tQ== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydhb6800f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 14:47:20 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SERo2E027098;
+	Tue, 28 May 2024 14:47:19 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ybvhkq1eu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 14:47:19 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SElGNT21955090
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 14:47:18 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 22AC05805A;
+	Tue, 28 May 2024 14:47:16 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4DCA658064;
+	Tue, 28 May 2024 14:47:15 +0000 (GMT)
+Received: from [9.61.45.62] (unknown [9.61.45.62])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 May 2024 14:47:15 +0000 (GMT)
+Message-ID: <1966e65d-4cde-4a91-99b3-126d1b5d3d84@linux.ibm.com>
+Date: Tue, 28 May 2024 09:47:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240528122352.2485958-1-Jason@zx2c4.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 16/20] ARM: dts: aspeed: Add IBM P11 Fuji BMC system
+To: Ninad Palsule <ninad@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
+        conor+dt@kernel.org, krzk+dt@kernel.org, andi.shyti@kernel.org,
+        broonie@kernel.org
+References: <20240522192524.3286237-1-eajames@linux.ibm.com>
+ <20240522192524.3286237-17-eajames@linux.ibm.com>
+ <3ac517f0-0394-4310-8840-d806de5ec082@linux.ibm.com>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <3ac517f0-0394-4310-8840-d806de5ec082@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ewznzRPmnToI7745RkNHUUvXi9FSb8Ii
+X-Proofpoint-ORIG-GUID: ewznzRPmnToI7745RkNHUUvXi9FSb8Ii
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_11,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405280111
 
-I've rebased Adhemerval's glibc patches for this and put them here:
 
-    https://git.zx2c4.com/glibc/log/?h=vdso
+On 5/28/24 09:08, Ninad Palsule wrote:
+>
+> Hi Eddie,
+>
+>> +
+>> +		led@6 {
+>> +			reg = <6>;
+>> +			default-state = "keep";
+>> +			label = "opencapi-connector5";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+> is led@7 not connected?
 
-If you're running systemd, you may want to whitelist the syscall in
-order to make use of it:
 
-    https://github.com/seccomp/libseccomp/pull/395
-    https://github.com/systemd/systemd/pull/25519
+Correct.
+
+
+>> +
+>> +		led@8 {
+>> +			reg = <8>;
+>> +			default-state = "keep";
+>> +			label = "vrm4";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+>> +
+>> +		led@9 {
+>> +			reg = <9>;
+>> +			default-state = "keep";
+>> +			label = "vrm5";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+>> +
+>> +		led@10 {
+>> +			reg = <10>;
+>> +			default-state = "keep";
+>> +			label = "vrm6";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+>> +
+>> +		led@11 {
+>> +			reg = <11>;
+>> +			default-state = "keep";
+>> +			label = "vrm7";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+>> +
+>> +		led@12 {
+>> +			reg = <12>;
+>> +			default-state = "keep";
+>> +			label = "vrm12";
+>> +			retain-state-shutdown;
+>> +			type = <PCA955X_TYPE_LED>;
+>> +		};
+> curious about label jump from vrm7 to vrm12.
+
+
+vrm0-3 and 8-11 are on the previous pca chip. I believe this is correct 
+based on the wiring in the spec, though the numberings are really just 
+convention established by the guy who managed the LEDs on the system.
+
+
+>> +			cfam4_i2c10: i2c-bus@a {
+>> +				reg = <10>;	/* OP3A */
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> It will be more readable to have "reg" value in hex too. I have seen similar stuff in this FSI nodes. It will be consistent with other places.
+>> +
+>
+> Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
+>
+
+Sure, thanks!
+
+Eddie
+
+
 
