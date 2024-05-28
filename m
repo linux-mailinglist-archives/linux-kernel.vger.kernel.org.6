@@ -1,89 +1,112 @@
-Return-Path: <linux-kernel+bounces-192934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2168D248A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B8E8D248D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEDB51C279A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26B41C277B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B6A16FF4F;
-	Tue, 28 May 2024 19:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7455E17276E;
+	Tue, 28 May 2024 19:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TD56Zu0F"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9osUkAl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8633E482DD;
-	Tue, 28 May 2024 19:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEADCA6B;
+	Tue, 28 May 2024 19:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716923948; cv=none; b=Tp5E3CW6R+zCFf4G2SLNPt6gDSoaehUXo1N7Zohn5Wg0RUt32ref4WukIH84KD9TSbudfr4cVltTIoJRYwadshToQhhIi/Eu1dfC191ebI4CVUHyyBaqpay17JPgQKqNHK1dB3nqfyRN7URzjDzGYiVIfdjWKCZESkNvOYffh+g=
+	t=1716924094; cv=none; b=D+JzyqbIBRETnmg9mfX4adBhj4Jll3jO4SeXbEzXPB5yIjfWYY08FcV5C3Rbx1aNHCFJSXtgrU1AFstcHUI5HEKdetHGp1qDsfczawzT8bMfSHsw5VfVLJlpbejVuxUlJC8siKGHoj/K3krSn232GPXwCyK9WlCexDXNYeV1hIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716923948; c=relaxed/simple;
-	bh=jdHI0J7SDTYW4bGzdvb5uNGzETKeBQAsx3uwmPZfoxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2mGWQoIUUzzx8waf1w+Ss3EutYTb17jKzhOe3COJdktvUZsOBwOjeVdbxkMIrAaphV/DgdgV8zX49fkxi+5HGuuBNKXz7+50X6e9Pl5V+jxHFbi5y1umVpSYC5HqhvnLHchKcuXo1whqEFTT+nNqjPtHlBcmdNPT9Ki8VhAqCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TD56Zu0F; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C596C0006;
-	Tue, 28 May 2024 19:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716923938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g9Wqr9AGlIlDl+BctXsjSkjtKA+9GIH3O1SeIFRmn7k=;
-	b=TD56Zu0Fm2kj+PUL1K8bxigRiYbZ+fA7NkQ/TYde4y/0u4RPBqpcNTlgeHJ7omy+r9wXGc
-	XDYb7ZgDfnqy0BrGXqu6Ze2ea2u7135U2LSGl78646GAF+RWCaRQJJRTxADjxeaViqVJNS
-	OYeTGn6TwA1iFI4yPdCyZOwMEuVoQMZqDiypw1xEdFFkQ/3iSqAZQwMrpGhUsJzeyFgmfs
-	s5iKP44bXmcejDdnMMkam1igcHvBUx4QeJTfzHXHwWW3BaRpIUz7ML6Q0q+ShymsAvpRaf
-	dhmPVOYdrQL1OAVeHBJ+RJyxx4VcFw7QJn1qTWFNk6Z2pj0+tv3SAvNjXe0WzQ==
-From: alexandre.belloni@bootlin.com
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: pcm: fix typo in comment
-Date: Tue, 28 May 2024 21:18:50 +0200
-Message-ID: <20240528191850.63314-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716924094; c=relaxed/simple;
+	bh=nERATCnJUma75OlFMaPK6NarihzSqRnL0s3MyxC+jXw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=XseE/GpDn049xFxW35cZbiYEEJ9L9K45LNHOjSjcpupSrjaSuGM8T7WlLQhOrnVvq2IYZ5VMeR+hXCfyh1kdjdctsqNiRB7wSvBN7TnE+YU2f6KUnflKeqYJ+MuP2F81mUHnoqn7tkD3uoSf3+g3R3ZgfjXGf58Ugue1wYU2Xj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9osUkAl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB66C3277B;
+	Tue, 28 May 2024 19:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716924094;
+	bh=nERATCnJUma75OlFMaPK6NarihzSqRnL0s3MyxC+jXw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=i9osUkAl4+BTv5JtrEdN8cGs6AbIy7WaSFRz1dFCckYshmOoi2VCALJERIAe7c3oA
+	 qh09EYMPDVVGpBVdfmhM+DnmEc96EFk/2xmYCWvOq6OSr2hseIYzu4lmYzjS5bBTXV
+	 7ijP9hTh49b2u9bN0en3Cd9S8bkpGPePsYeLykPqVJ4JEIBw1J+MLy2IRP84iJgoLJ
+	 bV6WUGQZxGlKERuGzaBJ/vKZ+OyTFfTB4/Z75p9PcTJOuUbr+w08Ur4SS3cZ2QrxdJ
+	 bZZBBc4OHXPhs4J2VajA/uR/T3jsbzFpVHj8+wwKHtOqrznXBeCw/kYqn+hBsout5R
+	 Jo8dqaU6yrKVQ==
+Date: Tue, 28 May 2024 14:21:33 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexandre.belloni@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+ imx@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240528175647.2604295-1-Frank.Li@nxp.com>
+References: <20240528175647.2604295-1-Frank.Li@nxp.com>
+Message-Id: <171692409304.1455174.10633971399777065443.robh@kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: gpio: mpc8xxx: Convert to yaml format
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Fix the typo in the comment for SNDRV_PCM_RATE_KNOT
+On Tue, 28 May 2024 13:56:46 -0400, Frank Li wrote:
+> Convert binding doc from txt to yaml.
+> 
+> Remove redundated "gpio1: gpio@2300000" example.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> 
+> Notes:
+>     Pass dt_binding_check
+>     make dt_binding_check DT_SCHEMA_FILES=fsl,qoriq-gpio.yaml
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       CHKDT   Documentation/devicetree/bindings
+>       LINT    Documentation/devicetree/bindings
+>       DTC_CHK Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.example.dtb
+> 
+>  .../bindings/gpio/fsl,qoriq-gpio.yaml         | 80 +++++++++++++++++++
+>  .../devicetree/bindings/gpio/gpio-mpc8xxx.txt | 53 ------------
+>  2 files changed, 80 insertions(+), 53 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> 
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- include/sound/pcm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/include/sound/pcm.h b/include/sound/pcm.h
-index 61c6054618c8..3edd7a7346da 100644
---- a/include/sound/pcm.h
-+++ b/include/sound/pcm.h
-@@ -124,7 +124,7 @@ struct snd_pcm_ops {
- #define SNDRV_PCM_RATE_768000		(1U<<16)	/* 768000Hz */
- 
- #define SNDRV_PCM_RATE_CONTINUOUS	(1U<<30)	/* continuous range */
--#define SNDRV_PCM_RATE_KNOT		(1U<<31)	/* supports more non-continuos rates */
-+#define SNDRV_PCM_RATE_KNOT		(1U<<31)	/* supports more non-continuous rates */
- 
- #define SNDRV_PCM_RATE_8000_44100	(SNDRV_PCM_RATE_8000|SNDRV_PCM_RATE_11025|\
- 					 SNDRV_PCM_RATE_16000|SNDRV_PCM_RATE_22050|\
--- 
-2.45.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.example.dtb: gpio@1100: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240528175647.2604295-1-Frank.Li@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
