@@ -1,137 +1,194 @@
-Return-Path: <linux-kernel+bounces-192434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E958D1D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:36:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A848B8D1D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992851C223E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBCC287148
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6500116F27B;
-	Tue, 28 May 2024 13:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573A917C7F;
+	Tue, 28 May 2024 13:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xwm/dPkF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTb5wdh+"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EF217C7F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67E16E86E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903396; cv=none; b=qYgtf4PPwEG6BPHjEcOjRxv5Sf+bLMdT09GEEgO1L0TxjIXnSm/QagiC7cd9zgmDR6k4WRXv7sgG+Yapacb2KK2EGM5XCxng8ZFirTEvrfarHmiPlzsHuf+kBL8YYKF/piUFcSz7RWNRH67TYw/gixxDSlqZsCG1n/o7NPiF2SE=
+	t=1716903413; cv=none; b=aXV/F9uRsicrQ+SZER8Syoz6GJX4g1dIK6AJ7MHvpem102Z3XpzMSlaiMlnVED7/vTpHB6HTdyAImPAjqeiCzZJCZq7QHyxL/uR2CG/BL4EE9wUsWD+JlZMqRW2YQNzN5Bhs85ddUuv/CaomeR83hpYunAo5Z1/jl9tt+W+qoo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903396; c=relaxed/simple;
-	bh=yWo20dzYvDi7ZiIY1e+59W1PhblN0WsdSBxs0aYAtmI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kDrE/mVYJOa7uYd6rm+/q3OYX5GDF+SbZPoJLJI/Ilt7Ol128ZsDSYgOLlPeaSeV5coh6aglqkL6CErKY6KaYqPI0yInWMXLM50HnHDfYmrml2a3zqsipuX6tPpwbGj0ZHF4RayiCJ0WMtwzsZ1KZ/QGnHy3+HJ8zVuqn7MQWYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xwm/dPkF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716903394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uP6toEwxY3sPx/XTsu40NEy3MSjBWj1SPFZTpLoAKBc=;
-	b=Xwm/dPkFwKckb7kI51dmk5N0opCsf8HQa2YAFg6gxF5ymEFc9Otjb/cbpGKEJPRibA0+fl
-	U+y2o6SEMDvY51wGRO5ONUb4EhJ74dIJ7498Nn6i1+HlWQQ3k0MqC2n1Yj7f+AJZ0bLuNa
-	CGMlDCTwUhCOa8h8v2eaqM5aLSryDdo=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-iHCEEQJwP--JilwloKfXwg-1; Tue, 28 May 2024 09:36:32 -0400
-X-MC-Unique: iHCEEQJwP--JilwloKfXwg-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5295c944852so130622e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:36:32 -0700 (PDT)
+	s=arc-20240116; t=1716903413; c=relaxed/simple;
+	bh=LcFYy25T3EVBDfPNggp7aNeBJ3nKQigviyyutbZj/ic=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G30cmH3Gl6oRzD5a7g0fTR9t64SYJ3X28GzoHkQXNRhsvb+dUya232Yhr4Cd4DS6vM4nMwb6WvLAgwWdTLCxEDBJWtpdfwSy+5flpYrmYxKViuf7P7tE3lFKcyLXb96YFJbp7CyOP8yFsg7zHVekdSSMAHo3SxBoVN08XkeTodA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jTb5wdh+; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a883101so9993911fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716903410; x=1717508210; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0bYb7kOPdOLKl3Fm8ZrNzYyGK5OCoefcEw1BChMcgKI=;
+        b=jTb5wdh+UozWoOAN2ihLdkippy6N+LSuKVLIEHeX+VCpGOvKfGJVcS6Jynj7C+qzeJ
+         1RhUkhyEivROVups+94YyQDuSe0Nu2M/FevkmfKJDdT+65vWcaLc5PDa1+C3/uAaLV+T
+         XGCbTOMGok//ADntUjcSAXSXgbWXUoZt6vI6UgW//DJQJXaz9Dvep+/cC32nqA5APs3H
+         1BkUOD5wnBtTxqVqd12NAecmB/ra1atKhE44ouHItjXeKuL/Qoxa+XhzO1MxnMnDZ9hz
+         QmVIo2Huar/A34v9IpUGGxJhKnOmz11ZwjbVRm2wsgImfdfdZKGbyGCAlGyWAcJskSbU
+         w2Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716903391; x=1717508191;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uP6toEwxY3sPx/XTsu40NEy3MSjBWj1SPFZTpLoAKBc=;
-        b=olFnmhAfFkxM/qC/zWDBbF+AgO91jFp3c7lIFnmSLa21NuBVb4YpT9rRr/L82hetjg
-         93OrNrdP3PRFpYtccMyS5it2CFwZx4dgFrZL1KDml9OrqDaBuUX0yZzN3lBMkVqtgsxU
-         EL/IXgv3usRrmGXxQ2lSQI6NdIx8ny4Tu34kwJocMZrxveWk/PEFQ+7o2uB9YBf3fnRa
-         706jjMQ18zabYjz/JyX5ynocxKIIhxYv2yKnHm/B8wLVGSbsSOxY/OwtHnCTgYECAu5e
-         YUaoLbezbGJT7qik7BXilzo245dBGOyykABi5MANzdWf2FgZlvl4CStNCSXoqJ3J1HnN
-         n+UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcW4/R8By/pjkILmj+Ulbx1aK/EBWEyt7W+oLhGEBKfn1E3913nRr9B/K5wMwBxIKMqujSlMHHEyKgSXbp2wOWZe3RPEWRS06x9edZ
-X-Gm-Message-State: AOJu0Yzm/NqXPIk+MkGhKA571Afom31WDZb6F1dsqVMGYLHTLga+3Td2
-	R2lSvoLZxUxKqtB4ntF4y/Zuds+YA+FeTMhQ41NxzxjgRbzliiR0kvs9mVglOX4Y/4CT9yGa1Gh
-	RqwhJUcB1rBnpT1iVlYpIXUvEX+FKiZljgd2BQLP79vnQ6aA78FL3qSFDzXAvFA==
-X-Received: by 2002:a2e:874b:0:b0:2e9:8197:eca1 with SMTP id 38308e7fff4ca-2e98197ede1mr30600091fa.5.1716903391168;
-        Tue, 28 May 2024 06:36:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUnJeorTaJbN57wTNY5Jb8i3ycecq6eU1vWkaDHMPSgYis8QLaJYXZQ28DT0NxuvhWSYiBmg==
-X-Received: by 2002:a2e:874b:0:b0:2e9:8197:eca1 with SMTP id 38308e7fff4ca-2e98197ede1mr30599871fa.5.1716903390623;
-        Tue, 28 May 2024 06:36:30 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fb8f4asm175075685e9.41.2024.05.28.06.36.29
+        d=1e100.net; s=20230601; t=1716903410; x=1717508210;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0bYb7kOPdOLKl3Fm8ZrNzYyGK5OCoefcEw1BChMcgKI=;
+        b=r0OjSg2UzbO172VFUcoPOc9J35WRYQfYUK8hW6Xf3seUxUWkdRGEjmpc0VJVZZxaRP
+         aN/jbtsIOBWoHQ+mnTgR6too8bdI7CFtZYCpYNTc8zKtrEhcrEkYQJyupqS7GKaVdGgC
+         jVsu+zGNjkVW6WKy4L1wB/+MAfTp6QYUayzXwjheZp5Du3/3d1OyP6/emXZKLEUvTD8g
+         dO/5RpK7z3/KiQBWjezzlIR01oBVVRQD4mlx6P3m5PaciatOwHr8ouBQgWAPFKCZ0MhH
+         K03bQictR56tkVjnxb2rlleVkLQR8kHjwpDsEKLI99l5deb8qv4iyM9P8x0EqKAwdSsU
+         zd8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfFGX19vP4glscQ/oighA1xpT6D9W2lxNp6R0Zq65q9LBvfQlDdzSNWAdJ0jhUKQo72/xKO688lDVbbs0RGVKS9aX6jGWr8oYFnu9T
+X-Gm-Message-State: AOJu0Yw976ZJpALtRCsHGH+wf2aMSt++NDdPEHRWYVJQ5+0q0LD7ADQz
+	9yM7ReE8Dl7KJ3cTg//l6KnEt1ilA9vu7AY7cbLq6LWjOZ7kc+a6e8mttBcpQEU=
+X-Google-Smtp-Source: AGHT+IHI1raF5XEZx6ugM9rq7xZ+1m35vsCAfIsmrZNbGvF40rrrsZfXEL0MmMw0rXWJdsHE/hDoKg==
+X-Received: by 2002:a2e:8e95:0:b0:2e1:bb65:8306 with SMTP id 38308e7fff4ca-2e95b27ee28mr86320561fa.44.1716903409814;
+        Tue, 28 May 2024 06:36:49 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcd8e4bsm22566981fa.41.2024.05.28.06.36.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 06:36:30 -0700 (PDT)
-Message-ID: <6f596a8bf3f0ff2c498e7b6cf922fa28bd0dbef4.camel@redhat.com>
-Subject: Re: [PATCH net] net: smc91x: Remove commented out code
-From: Paolo Abeni <pabeni@redhat.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>, Nicolas Pitre
- <nico@fluxnic.net>,  "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
- Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 28 May 2024 15:36:28 +0200
-In-Reply-To: <20240527105557.266833-2-thorsten.blum@toblux.com>
-References: <20240527105557.266833-2-thorsten.blum@toblux.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        Tue, 28 May 2024 06:36:48 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 28 May 2024 16:36:48 +0300
+Subject: [PATCH v5] dt-bindings: ufs: qcom,ufs: drop source clock entries
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240528-msm8996-fix-ufs-v5-1-b475c341126e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAO/dVWYC/3XNQW7CMBAF0Ksgr+tqPBkndle9B+rCScZgqSTIh
+ ogqyt0Z2EAVWP75+m9mVTgnLuprM6vMUyppHCTYj43q9mHYsU69ZIWABAheH8rBeV/rmC76HIu
+ ODgLXPfWui0pWx8xS3cXtj+R9Kqcx/90fTOZ2fW9NRoM20LQW2TaE8P2bhpDHzzHv1A2b8Akw1
+ RpAAWoLjXUd1mTdCqieAbcGKgEIQmjJSxGqFUAPgOAFQAIwm4Cujc42/h+wLMsVV2nY2nIBAAA
+ =
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2765;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=LcFYy25T3EVBDfPNggp7aNeBJ3nKQigviyyutbZj/ic=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVd3wjxYDqABMNJG8T5NY0H+WB1xmn+b7lcWY1
+ UEH8pkv8xKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlXd8AAKCRCLPIo+Aiko
+ 1aZGCACuCYcdAXdlGAUU4r4RYvSftl/0cmcCSR3mhiLgGYLGBYCHqAvmzDoLvdh3vD/+sAc2qDd
+ bjFixwJ3a5PrTL9W55wg2zRHdKuQaGfeRrfZr9Gb24wxCvUQoYuoNW7FcHJOWJT9aTJ/Wui77bx
+ hufH5/z2e1vZsHNKmGAvbkJXJ/3tx2vJku+6wSFivZ+/XXs3ixTYFemkuNRjsZ3aYAqFfc2i78w
+ NgScSWVF1N342XvdbTPf6y3pouTmC1nWv6Fztf5FJ6ydyRS7FqIgGv4J4hwKxkzy28NmFuPvPDY
+ Hht6JhNGV0HZxSbieaaXLdCgv98mtPxzizVMYgv0+/nNLEQy
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi,
+There is no need to mention and/or to touch in any way the intermediate
+(source) clocks. Drop them from MSM8996 UFSHCD schema, making it follow
+the example lead by all other platforms.
 
-On Mon, 2024-05-27 at 12:55 +0200, Thorsten Blum wrote:
-> Remove commented out code
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  drivers/net/ethernet/smsc/smc91x.c | 4 ----
->  1 file changed, 4 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/sm=
-sc/smc91x.c
-> index 78ff3af7911a..907498848028 100644
-> --- a/drivers/net/ethernet/smsc/smc91x.c
-> +++ b/drivers/net/ethernet/smsc/smc91x.c
-> @@ -1574,12 +1574,8 @@ smc_ethtool_set_link_ksettings(struct net_device *=
-dev,
->  		    (cmd->base.port !=3D PORT_TP && cmd->base.port !=3D PORT_AUI))
->  			return -EINVAL;
-> =20
-> -//		lp->port =3D cmd->base.port;
->  		lp->ctl_rfduplx =3D cmd->base.duplex =3D=3D DUPLEX_FULL;
-> =20
-> -//		if (netif_running(dev))
-> -//			smc_set_port(dev);
-> -
->  		ret =3D 0;
->  	}
-> =20
-This is net-next material, please re-submit targeting the correct tree
-in the subj prefix.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v5:
+- Rebased on top of linux-next
+- Dropped arm64 / DT patches applied by Bjorn
+- Link to v4: https://lore.kernel.org/r/20240408-msm8996-fix-ufs-v4-0-ee1a28bf8579@linaro.org
 
-Thanks
+Changes in v4:
+- Rebased on top of linux-next to resolve conflict with UFS schema
+  changes
+- Link to v3: https://lore.kernel.org/r/20240218-msm8996-fix-ufs-v3-0-40aab49899a3@linaro.org
 
-Paolo
+Changes in v3:
+- dropped the patch conflicting with Yassine's patch that got accepted
+- Cc stable on the UFS change (Manivannan)
+- Fixed typos in the commit message (Manivannan)
+- Link to v2: https://lore.kernel.org/r/20240213-msm8996-fix-ufs-v2-0-650758c26458@linaro.org
+
+Changes in v2:
+- Dropped patches adding RX_SYMBOL_1_CLK, MSM8996 uses single lane
+  (Krzysztof).
+- Link to v1: https://lore.kernel.org/r/20240209-msm8996-fix-ufs-v1-0-107b52e57420@linaro.org
+---
+ Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+index cd3680dc002f..25a5edeea164 100644
+--- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
++++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+@@ -46,11 +46,11 @@ properties:
+ 
+   clocks:
+     minItems: 7
+-    maxItems: 11
++    maxItems: 9
+ 
+   clock-names:
+     minItems: 7
+-    maxItems: 11
++    maxItems: 9
+ 
+   dma-coherent: true
+ 
+@@ -217,16 +217,14 @@ allOf:
+     then:
+       properties:
+         clocks:
+-          minItems: 11
+-          maxItems: 11
++          minItems: 9
++          maxItems: 9
+         clock-names:
+           items:
+-            - const: core_clk_src
+             - const: core_clk
+             - const: bus_clk
+             - const: bus_aggr_clk
+             - const: iface_clk
+-            - const: core_clk_unipro_src
+             - const: core_clk_unipro
+             - const: core_clk_ice
+             - const: ref_clk
+@@ -287,7 +285,7 @@ allOf:
+           maxItems: 2
+         clocks:
+           minItems: 7
+-          maxItems: 11
++          maxItems: 9
+ 
+ unevaluatedProperties: false
+ 
+
+---
+base-commit: 652f7c84aa3d99568e9e57d74b08cad927adba4e
+change-id: 20240209-msm8996-fix-ufs-f80ae6d4d8cf
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
