@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-191794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06EED8D1427
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:02:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F195B8D1423
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6BFB28226B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:02:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BDE1B21FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D790D6F06E;
-	Tue, 28 May 2024 06:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E661FD7;
+	Tue, 28 May 2024 06:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="O0KrTrko"
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="QiyfBI0K"
 Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191E845014;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191B92E3E4;
 	Tue, 28 May 2024 06:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716876095; cv=none; b=bysnd7RIgzEhUKvvt0XjHP+OO7N95eHsf+SYd5HvPcZ8pmKEKiQty7bnvpKoxZRs+SisKh3Gebv2okI6pWlVN4RhgKwZbQd2YVd/p4LwhkIQm9gOcH3wzwzFXqdggT5XUkuZPiTuByp0dqh75kMdU1G7miQSuFM9xbDcx7vdy/s=
+	t=1716876093; cv=none; b=GmFD1fiE/VE7HAe+uB+XAuJBBxatqgQUs04Gbybr9tqKzvUSBjFNfqx7VmPZ4HFBEZyYbpSD2iJj2SfKcS+SImIgbjsz/yHu5GCvof/2xjxhKQBpDxh1YN9QiAN3rJBAfJbfKYc4IeE8wjvfpSTKpJ9m7UksPsbIz8+gP9ifwxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716876095; c=relaxed/simple;
-	bh=DCLWuz22A6LRbeXJ1nSq7JvGq1P/7r60FFqxWbn65g0=;
+	s=arc-20240116; t=1716876093; c=relaxed/simple;
+	bh=FWwiQJnEWQ1zWGZjioH6FsikxBabtLZV59Yeprqhk24=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uM8Yfp+4wJsq/6ksNvvJGssYGsnJDKqXYotpoE6eP0ohAEamVvis5c0WbXh93+sk5iXdWSaH4BQ1tHRu8aZq6gznHAXLLpAFgGIKqmgk4f1Xd+jIZaFvO+GnhMEmRIL9VBhP1lVlUJCoHurGaFQlg9ZgsCOmGLwW07OIg46JMbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=O0KrTrko; arc=none smtp.client-ip=220.130.44.152
+	 MIME-Version:Content-Type; b=sNujgr/by+y9pp2aQVTfp+54nz4wXsqEiylIXh9ulHYzxz3+rxn3OhNZVb8pAUCGRSjCd10Lm4ZXcTBDAJGVSsMA3tAGFpznETjybLLBrm96Qgr2dd+aSO+pTN4ZXMbakdq0BAo4smRmV+QFHZJ575rPZpT0o+7nTesZ/CU/T9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=QiyfBI0K; arc=none smtp.client-ip=220.130.44.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
 X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1716876089;
-	bh=tc82T5HcbQCEAfjp1FVhza6BdbP3ax5H8YaEorOdQi4=; l=3117;
+	s=richtek; t=1716876090;
+	bh=hWVGDop4CMdttzkZ9iY+AX7rqs58LS042GQleDHAADA=; l=1525;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O0KrTrkoZhkLmW17gxBTjTHgxswnH327n7kwVx34Z2B96adJEZA9iSNEJwJfg333V
-	 qnz9mGSqF5RCeQPJtLxnB6au1w3KZVD8A797TxOfzKE4PV6czRjICAax+IJceqw/Mb
-	 5p1wVqyt128t7qoL+2kP3rg3d63n5vK7zSCYt+4H/XsLVPF/ndrhBH5WAzBWsUnLnN
-	 qOGwkgEvS7cYTpwoad6Ryyu8CD3MRqGm/OOxKbRdhLaYm/9KA6KeIMHnnuDMQa+/QY
-	 idvkOoh6PkoA39WxlAh3Nw5AbB7AR1U14PCF+hk4jOnXUO5JJKOuowTTxvW6VHhgI8
-	 HOr8vJdrefXqA==
+	b=QiyfBI0KtJHR8P31sXeJ+2VT6fVgzjyNB44JC+9qSWqu1OcMWQUaq9P2+zNPDKPrD
+	 acMpLu8j/laCPED1ps/xYJLjV8X0symfd1peIQYogEQDaRwlyAae3HlbOz1KM+RpTm
+	 2ygWCAPloAyshjUok9emIhxijgxS0SPQbkXGrCDQayb63iGVaFL6XV5RhWJyD1tc3a
+	 XKb3KaXMdAI/QDWy3xYa5ls1APoWc6ti6KNuw0dDAd7Za0T16b6424fO726MXR445t
+	 XoRpujyJEcHUA4NzMuqtkSo4gsDUYNPHsmn0qJMeOJoFf+ELVzx9vWNTRzcHBcpNde
+	 nVzJLnzCyZ16w==
 Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213211:0:AUTH_RELAY)
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213192:0:AUTH_RELAY)
 	(envelope-from <alina_yu@richtek.com>)
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 28 May 2024 14:01:21 +0800 (CST)
 Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
- 2024 14:01:20 +0800
+ 2024 14:01:21 +0800
 Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
  (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 28 May 2024 14:01:20 +0800
+ Transport; Tue, 28 May 2024 14:01:21 +0800
 From: Alina Yu <alina_yu@richtek.com>
 To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<alina_yu@richtek.com>, <cy_huang@richtek.com>
-Subject: [RESEND 2/4] regulator: rtq2208: Fix LDO to be compatible with both fixed and adjustable vout
-Date: Tue, 28 May 2024 14:01:14 +0800
-Message-ID: <5ad4c7728c7fa7f6286db36b99d31c9d0f5d16c7.1716870419.git.alina_yu@richtek.com>
+Subject: [RESEND 3/4] regulator: rtq2208: Add fixed LDO VOUT property and check that matches the constraints
+Date: Tue, 28 May 2024 14:01:15 +0800
+Message-ID: <39357ff9e6e5f3dec5a6f7f833a3591c0defc63a.1716870419.git.alina_yu@richtek.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <cover.1716870419.git.alina_yu@richtek.com>
 References: <cover.1716870419.git.alina_yu@richtek.com>
@@ -69,88 +69,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-In this patch, LDO's adjustable and fixed Vout settings are compatible.
-The LDO Vout ability depends on "richtek,fixed-microvolt".
-If adjustable, the Vout can be set to either 1800mV or 3300mV.
-
+A fixed LDO VOUT property has been added to specify the fixed_uV of the regulator_desc.
+Additionally, a check has been included in this version
+to ensure that the fixed_uV matches the constraints.
 
 Signed-off-by: Alina Yu <alina_yu@richtek.com>
 ---
- drivers/regulator/rtq2208-regulator.c | 37 +++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+ drivers/regulator/rtq2208-regulator.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/regulator/rtq2208-regulator.c b/drivers/regulator/rtq2208-regulator.c
-index c31b6dc..f6afa4e 100644
+index f6afa4e..a5c126af 100644
 --- a/drivers/regulator/rtq2208-regulator.c
 +++ b/drivers/regulator/rtq2208-regulator.c
-@@ -219,7 +219,7 @@ static const struct regulator_ops rtq2208_regulator_buck_ops = {
- 	.set_suspend_mode = rtq2208_set_suspend_mode,
- };
- 
--static const struct regulator_ops rtq2208_regulator_ldo_ops = {
-+static const struct regulator_ops rtq2208_regulator_ldo_fix_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
- 	.is_enabled = regulator_is_enabled_regmap,
-@@ -228,6 +228,23 @@ static const struct regulator_ops rtq2208_regulator_ldo_ops = {
- 	.set_suspend_disable = rtq2208_set_suspend_disable,
- };
- 
-+static const struct regulator_ops rtq2208_regulator_ldo_adj_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_active_discharge = regulator_set_active_discharge_regmap,
-+	.set_suspend_enable = rtq2208_set_suspend_enable,
-+	.set_suspend_disable = rtq2208_set_suspend_disable,
-+};
-+
-+static const unsigned int rtq2208_ldo_volt_table[] = {
-+	1800000,
-+	3300000,
-+};
-+
- static struct of_regulator_match rtq2208_ldo_match[] = {
- 	{.name = "ldo2", },
- 	{.name = "ldo1", },
-@@ -331,7 +348,7 @@ static int rtq2208_of_get_ldo_dvs_ability(struct device *dev)
- {
- 	struct device_node *np;
+@@ -350,6 +350,7 @@ static int rtq2208_of_get_ldo_dvs_ability(struct device *dev)
  	struct of_regulator_match *match;
--	struct rtq2208_regulator_desc *rdesc;
-+	struct regulator_desc *desc;
+ 	struct regulator_desc *desc;
  	struct regulator_init_data *init_data;
++	u32 fixed_uV;
  	int ret, i;
  
-@@ -352,13 +369,21 @@ static int rtq2208_of_get_ldo_dvs_ability(struct device *dev)
- 	for (i = 0; i < ARRAY_SIZE(rtq2208_ldo_match); i++) {
- 		match = rtq2208_ldo_match + i;
- 		init_data = match->init_data;
--		rdesc = (struct rtq2208_regulator_desc *)match->driver_data;
-+		desc = (struct regulator_desc *)match->desc;
- 
--		if (!init_data || !rdesc)
-+		if (!init_data || !desc)
+ 	if (!dev->of_node)
+@@ -374,9 +375,15 @@ static int rtq2208_of_get_ldo_dvs_ability(struct device *dev)
+ 		if (!init_data || !desc)
  			continue;
  
--		if (init_data->constraints.min_uV == init_data->constraints.max_uV)
--			rdesc->desc.fixed_uV = init_data->constraints.min_uV;
-+		if (init_data->constraints.min_uV == init_data->constraints.max_uV) {
-+			desc->fixed_uV = init_data->constraints.min_uV;
-+			desc->n_voltages = 1;
-+			desc->fixed_uV = init_data->constraints.min_uV;
-+			desc->ops = &rtq2208_regulator_ldo_fix_ops;
-+		} else {
-+			desc->n_voltages = ARRAY_SIZE(rtq2208_ldo_volt_table);
-+			desc->volt_table = rtq2208_ldo_volt_table;
-+			desc->ops = &rtq2208_regulator_ldo_adj_ops;
-+		}
- 	}
- 
- 	return 0;
+-		if (init_data->constraints.min_uV == init_data->constraints.max_uV) {
+-			desc->fixed_uV = init_data->constraints.min_uV;
++		/* specify working fixed voltage if the propery exists */
++		ret = of_property_read_u32(match->of_node, "richtek,fixed-microvolt", &fixed_uV);
++
++		if (!ret) {
++			if (fixed_uV != init_data->constraints.min_uV ||
++				fixed_uV != init_data->constraints.max_uV)
++				return -EINVAL;
+ 			desc->n_voltages = 1;
++			desc->fixed_uV = fixed_uV;
+ 			desc->fixed_uV = init_data->constraints.min_uV;
+ 			desc->ops = &rtq2208_regulator_ldo_fix_ops;
+ 		} else {
 -- 
 2.7.4
 
