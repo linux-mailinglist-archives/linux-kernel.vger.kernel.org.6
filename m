@@ -1,214 +1,280 @@
-Return-Path: <linux-kernel+bounces-193089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703EF8D26AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB118D26B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F427B2B560
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E142C1F26D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C428417B414;
-	Tue, 28 May 2024 21:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB3D76033;
+	Tue, 28 May 2024 21:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lKIjxef1"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2049.outbound.protection.outlook.com [40.107.212.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozQOsBPs"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C12563
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716930214; cv=fail; b=gOe8RD2BTBZXkflMVoSnvbi+ZY/gMfLXl6t29/cYXA6yElXcgx4UeC5zVnNSJvzEaUKDbt+hbUDiC9uAMY3PMlQKJc63KKQdt9O+mSISulqTIAjrcYa1ppqytwbFWV7n2jsK+q8EXBMxHtkS2xZRLkcA6LXdLoqNl+2OqsjpINY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716930214; c=relaxed/simple;
-	bh=FHEpDN6ZwpwsnI7JfsnSsMJa9+EXSGed3iKUcIlN0Jw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oQBRx+WeACeHmkr5/h/rfJxEjEuYR+ixlCxN9RI2/ZtF900SI9C2uNesALz9GAEjCgyHFxmhWudC0T/7QNjZNJzfA0/MqdvSj3VGTvz3DvDBcTBz24/vr0TYGB5AQMbxgD40/R39EA/1VneKO3v1mbAtksp22a1i4FVE9dU+O6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lKIjxef1; arc=fail smtp.client-ip=40.107.212.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L4/uOwnI+WKu2ZrxKXa/WapuD9ZoXh4KdCDomb5kyPYxfzxcSCm6gI5duJHbfkgPtru6Z0Ew/vf96uyJORd7rgdoEbPLBswxsg4zB7r1IeXjLH1Kv5HJPfhcgCZ8CLd1p7KBNPImW3NZq9b18BagFaIY6Y/nTdl7I62ztwASae2VpRi1w5BmoWAfZZD+0pbQN1ycuXrOYPoloSfAKgyBTdTbeyV+8Np8zFNGvgtZ1URBrDfr/BRHu9TPob0CUcIYcquYGwAJqZI5hKNmj6b9D4wdt34Wdn7rmVVND+j2NLEyVJogrm6HH82P7sXtgD7jn+LcdIlJlrsWa0Ck6Gp3jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TrFwAPgvpKPYzfFe7KPvO+P4TVBNHndb1Jvx1pbos6w=;
- b=Lr8nBJyzL6AClT1yYsBy/aep/M/Bj6HkH4GgwvrhzNP++tMB6adSvieNiFuqAe5vFw2ET1kFps62yezSaVIwo+JytMv+M3U/8pgBHI5soNeMh9sjiHHcR9a2MCf1gpnOUWd86dLbJn9k4RLcB829ZUue1EODYkkt8jh78cz0ugwDxqy0oTBYvEVthiF0M5bZoIuoipn7P9F6T7n7lNoY89UsKod8bh26CiU60CzG4hQc9bZw55KQGXhR2lcoxdpfhp+kK6Am9PqaHYjU/w49sa7aIoc8kOt8n7XiwrGBqS9Ez5hkhHwUHP8asC0mtYOVuQwITW8zvp7sekaxZ8onQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TrFwAPgvpKPYzfFe7KPvO+P4TVBNHndb1Jvx1pbos6w=;
- b=lKIjxef1t7grUYWW24QZ0o3ehqARq8zT2ovL6xPj85MNUSvzkEva1QWmgcVnKox5Ks0Dzn97RiP/NktxuTctH1bhvckKlQBgPkvTgYCjIAPKHp/lycA8HqFwVblNeXy0xKtKCS/6a3f/g+MgyNNXKw/stQ3ZCHO+G0z6msym8uc=
-Received: from DS7PR05CA0050.namprd05.prod.outlook.com (2603:10b6:8:2f::9) by
- CH2PR12MB4103.namprd12.prod.outlook.com (2603:10b6:610:7e::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.30; Tue, 28 May 2024 21:03:30 +0000
-Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
- (2603:10b6:8:2f:cafe::68) by DS7PR05CA0050.outlook.office365.com
- (2603:10b6:8:2f::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.18 via Frontend
- Transport; Tue, 28 May 2024 21:03:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Tue, 28 May 2024 21:03:30 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 28 May
- 2024 16:03:29 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <linux-kernel@vger.kernel.org>, Mario Limonciello
-	<mario.limonciello@amd.com>, Chris Bainbridge <chris.bainbridge@gmail.com>,
-	<hughsient@gmail.com>
-Subject: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
-Date: Tue, 28 May 2024 16:03:19 -0500
-Message-ID: <20240528210319.1242-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B91224D1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716930240; cv=none; b=cXxPMDujgiToMQBXuJ5z9W5ZsvFOViWI9AQlL0FkUZRClpUdsY5AJJU41bFKDGY0lPoTYpZcmAwYxCbKzVXP+s/JEOrxeikiAwNK1A8UxkwXqaJDF/35+W05T/OVs0BI01UpZLeYG0YLBRqBtheu4UGutAI6ha4yEij2Vs6SU0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716930240; c=relaxed/simple;
+	bh=NrCL3ttWtjWyjhUzmrA/40ri0lQhmCPKGkcqsktYAIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ex1ZKSpljgkFeUq/Ay1uhWVyvDucfrulfXkG8DgEjzPPOtpY+wm+DNscG/uWZu+lqVCpaH9OPXOhL0NE2w12gnqtJtWncX9Mw2osyZqKsHA8l1ZPN+xeWmg2N+Q7lb9byRVCbX1ZdM07RNEXHJH9DDjpRKOwNWdVQQ3vZ6+52oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozQOsBPs; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f48e9414e9so2297735ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:03:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716930238; x=1717535038; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RmEhT88aTz3DGDqj6R9iZYqHzSu06mmxBxyiGQRj0OU=;
+        b=ozQOsBPsLV9xtQdcp5pXzFh60IveYz7C5eCIfuOTVGgI/euTNh7lNx3lLUduy56cwg
+         X57aDi+OU/LinOvHy4HPJR/iaSzvjr9csschHFTZugLgVpKxtzWZaDID1XYYcGK9Zzq9
+         pKPGyJ9pOy0TZ2/i1+73prBrKrMeiPsKJOvg/pMF0qI1xPY7IqP7j69zCE6xtSAt4gIw
+         XKrMyZlfXTNZNcevcGRit/cWQ6GlPYvJd5SJs5weNHVCHQvOndsMZKdLNxsyaA2Ssxz6
+         WnnxdK+xtGh9WG8TdQxzi14UAJhh6zC2WGMaCHx5kgyKcFntvLRHFWIkV+VE2S1SpKOY
+         4WyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716930238; x=1717535038;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmEhT88aTz3DGDqj6R9iZYqHzSu06mmxBxyiGQRj0OU=;
+        b=QmMx0wNPXqSb59esUxquwig7JMM5OiSxAdF6ZlfnZlIm4u4X6wWiJkDMSTaUiHreXG
+         gIQ3fU4kHyO2SGNl8+e03EPr34twXzJX9fdhPEBK3mQaHUcLprHuFRloGrLW9rce9g7Y
+         c0aFvZbmKxJEpjaOdSkAtt1ZGFjhrrPfVjF6LLcfGJ09LNxyR/v8thj40zOw5RBvRRAU
+         xGSWBnL5SK87vetQbarZ8e+CD5eSDsEErU2ag8YEJzo8vOqbfkWQtKA3SGmSToYhKFLS
+         TvjKVkFGaqQFnNdMjek8dN5p8HjHesaf8Iq3Rz/Cs5YzSk1NcCGgFBGEKKOv8DylVMEn
+         V+eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW182pXWxv4OkIzvO/xcRPri59B/uzIohFt5CQjpciywtA/j4oXSmXd96eMBWUx0ZGrIb+GUP8O3F2zuxRZQN45TOxkJ6XYfuy/Sz+H
+X-Gm-Message-State: AOJu0Yy12bw1r8tbV55cXRqCCH1rTDknfr+cwfQ33ouAlucFn8FPfF5m
+	75IDkHwLcKyj3LsSL0xAvefrXji4lnn0PE2n8svxEcU94RdVV1ybjiHC8fcmjCg=
+X-Google-Smtp-Source: AGHT+IFSLsuBgNepaa9uXWFhRm7TTE7smDcKQUDGy+q3E60dnDvPx31raQ/EGznET3bpmPoPeK+Vjg==
+X-Received: by 2002:a17:902:d485:b0:1f3:1092:ab45 with SMTP id d9443c01a7336-1f4eaaebf79mr2195525ad.26.1716930238350;
+        Tue, 28 May 2024 14:03:58 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4c7:2691:aa4a:e6b7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c96fd68sm84916855ad.171.2024.05.28.14.03.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 14:03:57 -0700 (PDT)
+Date: Tue, 28 May 2024 15:03:55 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v5 4/7] remoteproc: core introduce
+ rproc_set_rsc_table_on_start function
+Message-ID: <ZlZGu16h1xsM3es5@p14s>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|CH2PR12MB4103:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d0a1bf7-17b5-44cc-bb58-08dc7f59a07e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|7416005|376005|82310400017|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Q8GDRQJXUS7ftPLMh+dM7LE0gNwteXqRJqtWkEXn/LmgJMr4AIGgdLoUVm34?=
- =?us-ascii?Q?3Pa1VrUJpqK2vuWVRbZISf5sIpBGWgi4RHkxhbzgqEfC2NcCq+sii01QRsbW?=
- =?us-ascii?Q?7gBYtwuSUDFwqPVvT3i8ixyDKGWfjFwO9mp26ECVlZJTUmUvogLwIb4TO62t?=
- =?us-ascii?Q?GiYVUBUiySOPs6QqC1AfdwuzpJYn3RkWwNwllu6Lksu7kJdKn7clWaLEuNGn?=
- =?us-ascii?Q?dXkIeALHD4FvnC8KhxcUcXYo7QnQkv6idWLtPqhyatdf7wPH26QJY+j7w+P9?=
- =?us-ascii?Q?5oKL7nmkRk6+BkAGllxugxy0PqQVajAODv4YUqMtnhSJGbhO9yGpY1wFIFTI?=
- =?us-ascii?Q?2b+2AnEDdSpiqDsiCU1xuQiTM58H65gpzWZEB7mO2sQGPJyGdCZwSKFmNzab?=
- =?us-ascii?Q?yX8ZlPp/fiXnYpApmA2NwoQNKe15sDwpsSL9qDE7eXR2vFd4lbueMFe7pjjN?=
- =?us-ascii?Q?lHF4EDTfDkhlcmh8tbeE/fhbBYfBO5fxMd0sn/28oCNIkAiQ6f4tSABzXF+2?=
- =?us-ascii?Q?8f9xOT/XJ/6vP3166yKafnGJMTGl6e+WpaLIfkVSJxw9TSHf0SW6EGLVi3Tp?=
- =?us-ascii?Q?9vg/2ZsGPoPWb1Nkthm0Pv44Or5o1oLEEnJU+vs6QVEhGF7TgCkongdSwWol?=
- =?us-ascii?Q?8MNpY7teixR8maOMVBqenINzXb06rSM4ns0b749h0agADceaLd2BJbVTw1xs?=
- =?us-ascii?Q?BQUN76dVoUxb188o7DFBnHb8pKM8WKy3dQdVQQC1DrSZ4t8hPAsyws22f7YR?=
- =?us-ascii?Q?n7T7QRk4/hGQQ/WFrnxWH/1Fh0bAjfk7LHlBcSZNkqMxiH9lYQHKzGSafzKo?=
- =?us-ascii?Q?07S9ZqnU0bS8stwwO/pfWU/D2JOeIxpSPQsgC3l5SuGKCqRn4YaaJ7d8Jzbe?=
- =?us-ascii?Q?Y/O1Ap+VtQpyGrMFHW64wlJW4i4p589PvoSsPRsuQk+/GQQQVxXy5nODZV+Z?=
- =?us-ascii?Q?XxUVNNokQhpMtLZmWK4RA/Qkrk1F/8Vm/pQ2eVCV0XXWHKvrqENi6fDKN55A?=
- =?us-ascii?Q?bvJ3NAS959G+JP+1rotkS+C22Xa5khH32/6JeqH0WiCkWuDFx/FyHOxeR5BI?=
- =?us-ascii?Q?iMtwecPJaj68unkEcQCoZhka6o3rSfFiw48hkCR0rSng1w5seRjRFKRlZ6+i?=
- =?us-ascii?Q?06QW0x6AWytG05cz4w1B1gcniJ4i1NtucuaS2Yvp8qKCHAH4ne16P2wz8vcR?=
- =?us-ascii?Q?gJTkrPZwnh9jvixyREsQTxZd/qJd+AtQDnVyGkzfd/bgwOpLMdvDOWRNRSNk?=
- =?us-ascii?Q?Pr2Twmeb0ggFmFh3/mrexrJHoiGtL0MWVG5idakQq1bHm11RhW8zyCezLNtv?=
- =?us-ascii?Q?W38BU4bsceKZfk7rvOVN4Xvh?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(376005)(82310400017)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 21:03:30.0464
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d0a1bf7-17b5-44cc-bb58-08dc7f59a07e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521081001.2989417-5-arnaud.pouliquen@foss.st.com>
 
-If the lid on a laptop is closed when eDP connectors are populated
-then it remains enabled when the initial framebuffer configuration
-is built.
+On Tue, May 21, 2024 at 10:09:58AM +0200, Arnaud Pouliquen wrote:
+> Split rproc_start()to prepare the update of the management of
 
-When creating the initial framebuffer configuration detect the ACPI
-lid status and if it's closed disable any eDP connectors.
+I don't see any "splitting" for rproc_start() in this patch.  Please consider
+rewording or removing.
 
-Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-Cc: hughsient@gmail.com
-v1->v2:
- * Match LVDS as well
----
- drivers/gpu/drm/drm_client_modeset.c | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> the cache table on start, for the support of the firmware loading
+> by the TEE interface.
+> - create rproc_set_rsc_table_on_start() to address the management of
+>   the cache table in a specific function, as done in
+>   rproc_reset_rsc_table_on_stop().
+> - rename rproc_set_rsc_table in rproc_set_rsc_table_on_attach()
+> - move rproc_reset_rsc_table_on_stop() to be close to the
+>   rproc_set_rsc_table_on_start() function
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index 31af5cf37a09..0b0411086e76 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include "drm/drm_modeset_lock.h"
-+#include <acpi/button.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-@@ -257,6 +258,34 @@ static void drm_client_connectors_enabled(struct drm_connector **connectors,
- 		enabled[i] = drm_connector_enabled(connectors[i], false);
- }
- 
-+static void drm_client_match_edp_lid(struct drm_device *dev,
-+				     struct drm_connector **connectors,
-+				     unsigned int connector_count,
-+				     bool *enabled)
-+{
-+	int i;
-+
-+	for (i = 0; i < connector_count; i++) {
-+		struct drm_connector *connector = connectors[i];
-+
-+		switch (connector->connector_type) {
-+		case DRM_MODE_CONNECTOR_LVDS:
-+		case DRM_MODE_CONNECTOR_eDP:
-+			if (!enabled[i])
-+				continue;
-+			break;
-+		default:
-+			continue;
-+		}
-+
-+		if (!acpi_lid_open()) {
-+			drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
-+				    connector->base.id, connector->name);
-+			enabled[i] = false;
-+		}
-+	}
-+}
-+
- static bool drm_client_target_cloned(struct drm_device *dev,
- 				     struct drm_connector **connectors,
- 				     unsigned int connector_count,
-@@ -844,6 +873,7 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
- 		memset(crtcs, 0, connector_count * sizeof(*crtcs));
- 		memset(offsets, 0, connector_count * sizeof(*offsets));
- 
-+		drm_client_match_edp_lid(dev, connectors, connector_count, enabled);
- 		if (!drm_client_target_cloned(dev, connectors, connector_count, modes,
- 					      offsets, enabled, width, height) &&
- 		    !drm_client_target_preferred(dev, connectors, connector_count, modes,
--- 
-2.43.0
+This patch is really hard to read due to all 3 operations happening at the same
+time.  Please split in 3 smaller patches.
 
+> 
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 116 ++++++++++++++-------------
+>  1 file changed, 62 insertions(+), 54 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f276956f2c5c..42bca01f3bde 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1264,18 +1264,9 @@ void rproc_resource_cleanup(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL(rproc_resource_cleanup);
+>  
+> -static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+> +static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct resource_table *loaded_table;
+> -	struct device *dev = &rproc->dev;
+> -	int ret;
+> -
+> -	/* load the ELF segments to memory */
+> -	ret = rproc_load_segments(rproc, fw);
+> -	if (ret) {
+> -		dev_err(dev, "Failed to load program segments: %d\n", ret);
+> -		return ret;
+> -	}
+>  
+>  	/*
+>  	 * The starting device has been given the rproc->cached_table as the
+> @@ -1291,6 +1282,64 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>  		rproc->table_ptr = loaded_table;
+>  	}
+>  
+> +	return 0;
+> +}
+> +
+> +static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> +{
+> +	/* A resource table was never retrieved, nothing to do here */
+> +	if (!rproc->table_ptr)
+> +		return 0;
+> +
+> +	/*
+> +	 * If a cache table exists the remote processor was started by
+> +	 * the remoteproc core.  That cache table should be used for
+> +	 * the rest of the shutdown process.
+> +	 */
+> +	if (rproc->cached_table)
+> +		goto out;
+> +
+> +	/*
+> +	 * If we made it here the remote processor was started by another
+> +	 * entity and a cache table doesn't exist.  As such make a copy of
+> +	 * the resource table currently used by the remote processor and
+> +	 * use that for the rest of the shutdown process.  The memory
+> +	 * allocated here is free'd in rproc_shutdown().
+> +	 */
+> +	rproc->cached_table = kmemdup(rproc->table_ptr,
+> +				      rproc->table_sz, GFP_KERNEL);
+> +	if (!rproc->cached_table)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * Since the remote processor is being switched off the clean table
+> +	 * won't be needed.  Allocated in rproc_set_rsc_table_on_start().
+> +	 */
+> +	kfree(rproc->clean_table);
+> +
+> +out:
+> +	/*
+> +	 * Use a copy of the resource table for the remainder of the
+> +	 * shutdown process.
+> +	 */
+> +	rproc->table_ptr = rproc->cached_table;
+> +	return 0;
+> +}
+> +
+> +static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +	int ret;
+> +
+> +	/* load the ELF segments to memory */
+> +	ret = rproc_load_segments(rproc, fw);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to load program segments: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	rproc_set_rsc_table_on_start(rproc, fw);
+> +
+>  	ret = rproc_prepare_subdevices(rproc);
+>  	if (ret) {
+>  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
+> @@ -1450,7 +1499,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	return ret;
+>  }
+>  
+> -static int rproc_set_rsc_table(struct rproc *rproc)
+> +static int rproc_set_rsc_table_on_attach(struct rproc *rproc)
+>  {
+>  	struct resource_table *table_ptr;
+>  	struct device *dev = &rproc->dev;
+> @@ -1540,54 +1589,13 @@ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
+>  
+>  	/*
+>  	 * The clean resource table is no longer needed.  Allocated in
+> -	 * rproc_set_rsc_table().
+> +	 * rproc_set_rsc_table_on_attach().
+>  	 */
+>  	kfree(rproc->clean_table);
+>  
+>  	return 0;
+>  }
+>  
+> -static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> -{
+> -	/* A resource table was never retrieved, nothing to do here */
+> -	if (!rproc->table_ptr)
+> -		return 0;
+> -
+> -	/*
+> -	 * If a cache table exists the remote processor was started by
+> -	 * the remoteproc core.  That cache table should be used for
+> -	 * the rest of the shutdown process.
+> -	 */
+> -	if (rproc->cached_table)
+> -		goto out;
+> -
+> -	/*
+> -	 * If we made it here the remote processor was started by another
+> -	 * entity and a cache table doesn't exist.  As such make a copy of
+> -	 * the resource table currently used by the remote processor and
+> -	 * use that for the rest of the shutdown process.  The memory
+> -	 * allocated here is free'd in rproc_shutdown().
+> -	 */
+> -	rproc->cached_table = kmemdup(rproc->table_ptr,
+> -				      rproc->table_sz, GFP_KERNEL);
+> -	if (!rproc->cached_table)
+> -		return -ENOMEM;
+> -
+> -	/*
+> -	 * Since the remote processor is being switched off the clean table
+> -	 * won't be needed.  Allocated in rproc_set_rsc_table().
+> -	 */
+> -	kfree(rproc->clean_table);
+> -
+> -out:
+> -	/*
+> -	 * Use a copy of the resource table for the remainder of the
+> -	 * shutdown process.
+> -	 */
+> -	rproc->table_ptr = rproc->cached_table;
+> -	return 0;
+> -}
+> -
+>  /*
+>   * Attach to remote processor - similar to rproc_fw_boot() but without
+>   * the steps that deal with the firmware image.
+> @@ -1614,7 +1622,7 @@ static int rproc_attach(struct rproc *rproc)
+>  		goto disable_iommu;
+>  	}
+>  
+> -	ret = rproc_set_rsc_table(rproc);
+> +	ret = rproc_set_rsc_table_on_attach(rproc);
+>  	if (ret) {
+>  		dev_err(dev, "can't load resource table: %d\n", ret);
+>  		goto unprepare_device;
+> -- 
+> 2.25.1
+> 
 
