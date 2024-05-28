@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-192060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C7A8D17E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0798D17E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B811C24A5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69845289508
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA216B74D;
-	Tue, 28 May 2024 09:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A5616C6B2;
+	Tue, 28 May 2024 09:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HHxthk5J"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Cl7TD5xg"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212EE16ABDE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EEF16B72D;
+	Tue, 28 May 2024 09:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890267; cv=none; b=DUK3YPf4OT6WD+Zngris1iQ2qSmB5htkt8F3UZrKLQM2VjLc7T4excgP+StFZjcM92lAgW0gxsuAClfdawnGbiAcus7G16nvO9kUGRKS22qHMOhIXZGGbYqIUuuU+Wt1F3pfAUBeeHGfS6BBpTTK3+L+tH49qcNjMZ00erPzJNY=
+	t=1716890297; cv=none; b=Cg8E8JldQK/YcIVsJnUQlcjqjq5FKIBshjRiH2JvlQ/RCHX2aX21IvC7BSOii5kGRaKLY2kd3KJFYGVRiAOYwsRTGxN13bi5KPeGZ+hpqNuTedduNqPx2w1Ojm3oHl2DUxPeP3C5hrigi7UIj4FKPUi3SjzFCHRkPbUiA5G2zr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890267; c=relaxed/simple;
-	bh=gQ+6diGC/cT1XCTs6Yd4ZS7/4WVjIf0GdpeZRk6oLTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HpBhkOOHFbPbUpDs+SjBVlggWjHrylOXPPtUDd+rJKiAF0PmNSiXNuWRvm5gmeMCAbAzPydzOiX4bQbGGzfWh51QKv55Q8/p88zQblSYrPc0zFZHlulAvnSwb+gk5BPFjzIriJ7IKRc6IhGx/+22oyccDlgl0RONqh63EW6zqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HHxthk5J; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so682337a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716890263; x=1717495063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dBtb9sxLRDcXGg6T4kpyvvh5LLjVNzW7ck19VAz6oTQ=;
-        b=HHxthk5JAKiljWE7jJzVfH5RIq0RTw1/scIFr6GePjNI09VdGyqRKRKBaNz+PSAmCS
-         5lYbylccjqMUgT4vff4ANd5AKE1IVi0S47iOIoX4A+s89NGBIi2dQ0kdTZ/KaAFH2wXe
-         e9zUfO4hueaAASGqMqDIzKrFg37YBrAnhb1QZU1NujoIKOTw7m7pl7oeAYhS+/2HODG9
-         rSl2OGsm3WN7Py/66x1cO+ROcE5EUogWN5yHPoh1+UCOZMel9FZXOS9mrUJWb5LySTHu
-         lF9VhHuO5MtViFsGJgDDSyAO2R9s/G00LYnFSKRS6prmr4L3Tq6NglXPmJoKYdruAxrM
-         z1yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716890263; x=1717495063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dBtb9sxLRDcXGg6T4kpyvvh5LLjVNzW7ck19VAz6oTQ=;
-        b=ePrISOvCBIm08KP1v5s2bQp5eIMOyvHqTrhgf/NfGuMqpfx56VW7IMwpxiB/H8kJz7
-         Jy5vb8b4BT7yDJ2W8m1JCQ6htEu/I92XNW+Hs878WeNZcpAC28fwlm1V/itb/erUKH63
-         scebN9scZaXzh4wunxHKs6BMDtZE/2PvgToTnMQGofTePlHyNdMqRRR/JP8N2yhg81iR
-         Pz5ncehVa84esvXImvZB493wTbL/m6rVsJnsE9tTqM1odSe9PoRanCfhs8cAggud2gZb
-         FsDx7h4CjQP6ooscQyuO8KvHeNoyxgxZ76XJFKO+fmQR3rXcM79jpcmKTLuHhhfvPcU/
-         juEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC/WLdkKK8i7rB8NVyDlg1yDT0JCcdMeLnvYuXn12fWT21+Cd+I0fdhXxO59BAj4hAEq5bhAGMgcVldjihM4Af/jSSGnE9aRANP4Fj
-X-Gm-Message-State: AOJu0Yw5FzG9UTV9ZqeFMwCUXGnIKW1bNqruqFNVTPZfU1cPeTjlu9hq
-	+MliBy3U5tEJeH0DeGJ4ExdSrpsJUUZ9zOt4jrdHzLPgTr/rrBC4bWDG+IA7ha4=
-X-Google-Smtp-Source: AGHT+IFtRHPgBtJJ7YKE0h5+al0s2K/7fUJW1PP+OzptxOIgt2QIKDt2V89BSMY/fYT7iIKjsQLB4g==
-X-Received: by 2002:a50:cd5e:0:b0:578:55f5:1987 with SMTP id 4fb4d7f45d1cf-57855f519dbmr8679786a12.13.1716890263343;
-        Tue, 28 May 2024 02:57:43 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57861cb2dd8sm5818038a12.81.2024.05.28.02.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 02:57:42 -0700 (PDT)
-Date: Tue, 28 May 2024 11:57:41 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v6 26/30] printk: nbcon: Implement emergency
- sections
-Message-ID: <ZlWqlUL5ulTcQ1v7@pathway.suse.cz>
-References: <20240527063749.391035-1-john.ogness@linutronix.de>
- <20240527063749.391035-27-john.ogness@linutronix.de>
+	s=arc-20240116; t=1716890297; c=relaxed/simple;
+	bh=6hx438n+um4riiI14Idj1dDSnLV0yA9H9UwD+GzRrc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRYheXCShhGEg87BVCxkai7hjtFvQcfHTctCIzypIuUpWPfOSz+bLoDCnlT2LE5Re0ALujfI2HelXYV1c2tHeZ4m+E+8D/bFI1zhaOxB9yWUqert+3lShOK0AY/DOQGeKwETpcnNn9zUTYJC4o/YOSTx+vJ2zA3PzXGsf+iJTao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Cl7TD5xg; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716890291; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GXy9MUCK5VGEeup/BbpcBg8zahF6no6zu65zqg0I4xs=;
+	b=Cl7TD5xgG7SNnKhwCtrYG9xMqUBYe8wDcdEjxE36Cqe15bMVQr2EAj+CWNQ1ZVUxrGU/EGBOE8vA7N4Iv85LWxWa9mrPv/u+w3EX/DzqtEgF8aUZHKHndoQylAIghY8loYz+nxxEBUv7yL4/wCgw/DLgXmM45xteQWLOdJa6rg8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W7PIbQB_1716890289;
+Received: from 30.97.48.200(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W7PIbQB_1716890289)
+          by smtp.aliyun-inc.com;
+          Tue, 28 May 2024 17:58:11 +0800
+Message-ID: <9666141f-ad0f-4224-ac48-eba63145c61e@linux.alibaba.com>
+Date: Tue, 28 May 2024 17:58:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527063749.391035-27-john.ogness@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
+ <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, winters.zc@antgroup.com
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
+ <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+ <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
+ <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
+ <20240528-pegel-karpfen-fd16814adc50@brauner>
+ <36c14658-2c38-4515-92e1-839553971477@linux.alibaba.com>
+ <20240528-umstritten-liedchen-30e6ca6632b2@brauner>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240528-umstritten-liedchen-30e6ca6632b2@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 2024-05-27 08:43:45, John Ogness wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> In emergency situations (something has gone wrong but the
-> system continues to operate), usually important information
-> (such as a backtrace) is generated via printk(). Each
-> individual printk record has little meaning. It is the
-> collection of printk messages that is most often needed by
-> developers and users.
-> 
-> In order to help ensure that the collection of printk messages
-> in an emergency situation are all stored to the ringbuffer as
-> quickly as possible, disable console output for that CPU while
-> it is in the emergency situation. The consoles need to be
-> flushed when exiting the emergency situation.
-> 
-> Add per-CPU emergency nesting tracking because an emergency
-> can arise while in an emergency situation.
-> 
-> Add functions to mark the beginning and end of emergency
-> sections where the urgent messages are generated.
-> 
-> Do not print if the current CPU is in an emergency state.
-> 
-> When exiting all emergency nesting, flush nbcon consoles
-> directly using their atomic callback. Legacy consoles are
-> flushed directly if safe, otherwise they are triggered for
-> flushing via irq_work.
-> 
-> Note that the emergency state is not system-wide. While one CPU
-> is in an emergency state, another CPU may continue to print
-> console messages.
-> 
-> Co-developed-by: John Ogness <john.ogness@linutronix.de>
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> Signed-off-by: Thomas Gleixner (Intel) <tglx@linutronix.de>
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Best Regards,
-Petr
+On 2024/5/28 17:32, Christian Brauner wrote:
+> On Tue, May 28, 2024 at 05:13:04PM +0800, Gao Xiang wrote:
+>> Hi Christian,
+>>
+>> On 2024/5/28 16:43, Christian Brauner wrote:
+>>> On Tue, May 28, 2024 at 12:02:46PM +0800, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2024/5/28 11:08, Jingbo Xu wrote:
+>>>>>
+>>>>>
+>>>>> On 5/28/24 10:45 AM, Jingbo Xu wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 5/27/24 11:16 PM, Miklos Szeredi wrote:
+>>>>>>> On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>>
+>>>>>>>> 3. I don't know if a kernel based recovery mechanism is welcome on the
+>>>>>>>> community side.  Any comment is welcome.  Thanks!
+>>>>>>>
+>>>>>>> I'd prefer something external to fuse.
+>>>>>>
+>>>>>> Okay, understood.
+>>>>>>
+>>>>>>>
+>>>>>>> Maybe a kernel based fdstore (lifetime connected to that of the
+>>>>>>> container) would a useful service more generally?
+>>>>>>
+>>>>>> Yeah I indeed had considered this, but I'm afraid VFS guys would be
+>>>>>> concerned about why we do this on kernel side rather than in user space.
+>>>>
+>>>> Just from my own perspective, even if it's in FUSE, the concern is
+>>>> almost the same.
+>>>>
+>>>> I wonder if on-demand cachefiles can keep fds too in the future
+>>>> (thus e.g. daemonless feature could even be implemented entirely
+>>>> with kernel fdstore) but it still has the same concern or it's
+>>>> a source of duplication.
+>>>>
+>>>> Thanks,
+>>>> Gao Xiang
+>>>>
+>>>>>>
+>>>>>> I'm not sure what the VFS guys think about this and if the kernel side
+>>>>>> shall care about this.
+>>>
+>>> Fwiw, I'm not convinced and I think that's a big can of worms security
+>>> wise and semantics wise. I have discussed whether a kernel-side fdstore
+>>> would be something that systemd would use if available multiple times
+>>> and they wouldn't use it because it provides them with no benefits over
+>>> having it in userspace.
+>>
+>> As far as I know, currently there are approximately two ways to do
+>> failover mechanisms in kernel.
+>>
+>> The first model much like a fuse-like model: in this mode, we should
+>> keep and pass fd to maintain the active state.  And currently,
+>> userspace should be responsible for the permission/security issues
+>> when doing something like passing fds.
+>>
+>> The second model is like one device-one instance model, for example
+>> ublk (If I understand correctly): each active instance (/dev/ublkbX)
+>> has their own unique control device (/dev/ublkcX).  Users could
+>> assign/change DAC/MAC for each control device.  And failover
+>> recovery just needs to reopen the control device with proper
+>> permission and do recovery.
+>>
+>> So just my own thought, kernel-side fdstore pseudo filesystem may
+>> provide a DAC/MAC mechanism for the first model.  That is a much
+>> cleaner way than doing some similar thing independently in each
+>> subsystem which may need DAC/MAC-like mechanism.  But that is
+>> just my own thought.
+> 
+> The failover mechanism for /dev/ublkcX could easily be implemented using
+> the fdstore. The fact that they rolled their own thing is orthogonal to
+> this imho. Implementing retrieval policies like this in the kernel is
+> slowly advancing into /proc/$pid/fd/ levels of complexity. That's all
+> better handled with appropriate policies in userspace. And cachefilesd
+> can similarly just stash their fds in the fdstore.
+
+Ok, got it.  I just would like to know what kernel fdstore
+currently sounds like (since Miklos mentioned it so I wonder
+if it's feasible since it can benefit to non-fuse cases).
+I think userspace fdstore works for me (unless some other
+interesting use cases for evaluation later).
+
+Jingbo has an internal requirement for fuse, that is a pure
+fuse stuff, and that is out of my scope though.
+
+Thanks,
+Gao Xiang
 
