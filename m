@@ -1,156 +1,203 @@
-Return-Path: <linux-kernel+bounces-192660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91F08D2048
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E53868D204F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174851C22D75
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101BA1C22F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4094217083D;
-	Tue, 28 May 2024 15:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6922170859;
+	Tue, 28 May 2024 15:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pFVhFRuv"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnWFw6U0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99E9170833
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1890D1E507;
+	Tue, 28 May 2024 15:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909819; cv=none; b=NPdL9zvMjmL7tUOEhPhjEk1m6ShBS8g2ppcqfN2d5ZdpqCZc3YFQVIGOLd05vZkUFq4BW7LSWKcr1PwytQjUvYmkFBSSY4Kku1Cvyhn94ZUfRC2xrYA/YKE3CJNRprB1EvrYmDWJH/7EDedWViERLz9iHiIYINuQ53sZpqAgRE8=
+	t=1716909934; cv=none; b=JqciKMx+LbN4tESplFZHvpErHh4L3jC7/7GtU+vT1gU5bqY1q+C/gWbHrjmOQmWDvCRX12X+tdBAoR8Xj1zSj7/gD9OF/LL0OO/o61bd7AfGlQ1R3T9qy+H0xSu9ko+/A/aHfnFqw8UMrfAoW4wirJQaWL7g+7fSdRNlKzRxLCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909819; c=relaxed/simple;
-	bh=+oY2i3ORszQzqTqLfKsLXN4yVq1csMECzrBqBC5Sd/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TxR/8owpgXLL6UHmY3l+CD/twBsfk5U8TywJ6Yl48gMl7T/0duJnfLqRJ7kcaQbmpu3PGtignVsoYbMVxnNYv0m1uGnCaq92P5gZ4Qxe5l3P+4EQIStPrHncIeWOeRgczMjJ+ZSKA7B9yhFHmpOo/yPxI7Ku4+18b/1AiP4ndUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pFVhFRuv; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52388d9ca98so1652598e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716909816; x=1717514616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jsbJtYVErR8r/q4B3UZZI5IbYruF+B+qko3pEEYjirw=;
-        b=pFVhFRuvC5nPe8sIW4K9nmZp1VXiTJcA2aAVQV07tnqarmbj/9cfBjBmbvQe4l/B+5
-         MSxL3QCsKVJWs5ipePGgKK73/1PwjcIuywR00bX5LxP/+7/51gEfazp3UzxMWDbK4tM5
-         o12abG+nnWHDCWKfc9mKUyJ7JlMFf6cYGBj9cSWPEDgs8p20CBncsEqQT64YO7N63OA6
-         toJZB8RGhR26M5E23trPAiwXo4PS8nkAEqEjqDby3mCaJDhgYFRvV/EepnZL9isG5rnQ
-         ng+16MJPRFxs2DqiSoPcF1wWCthZD52o1ShYDFC8ELKk97sHHcWRFAJVZNYOwf/rfDix
-         ltNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716909816; x=1717514616;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jsbJtYVErR8r/q4B3UZZI5IbYruF+B+qko3pEEYjirw=;
-        b=AZZw6i7zsJSPwstIWIHY2G8/uYkf9Sdn63EzyS34ZqNlfP1mOg+kaNLrMz8Z7lNIfW
-         mOIckszfly9nbcyheb3hRreN5egDukV82Vo+hMRx60GfEG2GXgYr5cG+XsYuzLDhH/zt
-         RKsnJLCRE9jXWz9RrzXClHQtWiV8wVnGlO1ePsOm9Im+epbiR7w4mlCWXGMv1axU0s4l
-         qBIQ179UnihqGI5GVvYltFTDKaOWnbxaR1cd5OyyGuVVHMi3aP17POh9YahXRKVuKKku
-         NxRU6/emrRkArcQkInHY/lmhtqZDN5DiqT+Ml7q9tdiVdes2tjHkk4texaiL2DhxiaE/
-         bdEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmDYkq55ez+lxT5nFoUQs9nPQluk7itPCy63M79k33EwfcI6qPv1pFDEv+qi68E11M2YUpP/37H3y6CT6Eb54Hz4Eb52zYrS9qmSLY
-X-Gm-Message-State: AOJu0YxHGlHXnxoOUPkJvhFzQRwaVmhgmAcGuOjKNs556X4BRg3PD1WV
-	K/fYjVJHfBYAXHgCya1BaMmt2kNUBl3mJmHDwstyNNvqBQcJB6oXjKs8kNUhi0Q=
-X-Google-Smtp-Source: AGHT+IHv+UOhINHAZ7Fq5UJg/jDZV5knNHIr4lPjm300UHSoRr04rGCzGorgsgzk+pXAc6lRduafPA==
-X-Received: by 2002:a19:ad07:0:b0:524:3ce:d4ca with SMTP id 2adb3069b0e04-52966005aadmr9643491e87.37.1716909815989;
-        Tue, 28 May 2024 08:23:35 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817e60sm623136066b.21.2024.05.28.08.23.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 08:23:35 -0700 (PDT)
-Message-ID: <799dca35-b5b7-4bf1-9cdc-25f9fc7c7ba8@linaro.org>
-Date: Tue, 28 May 2024 17:23:33 +0200
+	s=arc-20240116; t=1716909934; c=relaxed/simple;
+	bh=rV0FQQkoN6OTfyaN7zr8uhjf73DI7J/djMv8xhRNln8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ny0H32COgkYQY5fV7PiTv671d9jzwBiQs0aPLPy0sGygDGqOTNjDUs2zkkRUnb0Qe5qaxniikRXhVWiT8Smj6pqjePlPvPAMkkMg3BkdWXBtQKaO7kx4tZ62qK/y3acmysUgTbfFRLm0x8SHupOpj0pg++ZwT3viYfqfrqmABJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnWFw6U0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B0AC3277B;
+	Tue, 28 May 2024 15:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716909933;
+	bh=rV0FQQkoN6OTfyaN7zr8uhjf73DI7J/djMv8xhRNln8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RnWFw6U0WV/NV7iDJUiO6eBWhe0qig7B7ILDW0iK7MoBBMxioQ2cHEnauXhbqID4Z
+	 3IrtKOvjlYGRyLH0q9056W4dNAwIDRlqgR1Ys6eI5A5b9Jsq41Rm8p6eH1LyWpeVYn
+	 MxluOtPorgwryg15U/muYS46kU1nzCX/xVsxcpMFzHsvt2zXo529g81LAIl4sQxzUb
+	 HKP+4NT1IOB32fnM7HJ0PJJGkA47d667+8+UuyA3psLx+NaDDhJ7OoXIT265Twqx8l
+	 1waphiJmjw6uuEBYcWKvNuh4fB6rA24MQv8ntOgOpIjTosXlU+YU48TtYaYbt0+7Pw
+	 LhAssghVg+uvQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Suman Ghosh <sumang@marvell.com>,
+	Simon Horman <horms@kernel.org>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ethernet: octeontx2: avoid linking objects into multiple modules
+Date: Tue, 28 May 2024 17:25:05 +0200
+Message-Id: <20240528152527.2148092-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
- controller
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <cover.1716899600.git.andrea.porta@suse.com>
- <0f263886c0622f43d3a2f4cccaebae0c39ba1bc5.1716899600.git.andrea.porta@suse.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <0f263886c0622f43d3a2f4cccaebae0c39ba1bc5.1716899600.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/05/2024 15:32, Andrea della Porta wrote:
-> The BCM2712 has an SDHCI capable host interface similar to the one found
-> in other STB chipsets. Add the relevant compatible string.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
+From: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Each object file contains information about which module it gets linked
+into, so linking the same file into multiple modules now causes a warning:
 
-Best regards,
-Krzysztof
+scripts/Makefile.build:254: drivers/net/ethernet/marvell/octeontx2/nic/Makefile: otx2_devlink.o is added to multiple modules: rvu_nicpf rvu_nicvf
+
+Change the way that octeontx2 ethernet is built by moving the common
+file into a separate module with exported symbols instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../net/ethernet/marvell/octeontx2/nic/Makefile    | 14 ++++++++------
+ .../ethernet/marvell/octeontx2/nic/otx2_dcbnl.c    | 11 +++++++++++
+ .../ethernet/marvell/octeontx2/nic/otx2_devlink.c  |  6 ++++++
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile b/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
+index 5664f768cb0c..e4c5dc46dd42 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
+@@ -3,16 +3,18 @@
+ # Makefile for Marvell's RVU Ethernet device drivers
+ #
+ 
+-obj-$(CONFIG_OCTEONTX2_PF) += rvu_nicpf.o otx2_ptp.o
+-obj-$(CONFIG_OCTEONTX2_VF) += rvu_nicvf.o otx2_ptp.o
++obj-$(CONFIG_OCTEONTX2_PF) += rvu_nicpf.o otx2_ptp.o otx2_devlink.o
++obj-$(CONFIG_OCTEONTX2_VF) += rvu_nicvf.o otx2_ptp.o otx2_devlink.o
+ 
+ rvu_nicpf-y := otx2_pf.o otx2_common.o otx2_txrx.o otx2_ethtool.o \
+                otx2_flows.o otx2_tc.o cn10k.o otx2_dmac_flt.o \
+-               otx2_devlink.o qos_sq.o qos.o
+-rvu_nicvf-y := otx2_vf.o otx2_devlink.o
++               qos_sq.o qos.o
++rvu_nicvf-y := otx2_vf.o
+ 
+-rvu_nicpf-$(CONFIG_DCB) += otx2_dcbnl.o
+-rvu_nicvf-$(CONFIG_DCB) += otx2_dcbnl.o
++ifdef CONFIG_DCB
++obj-$(CONFIG_OCTEONTX2_PF) += otx2_dcbnl.o
++obj-$(CONFIG_OCTEONTX2_VF) += otx2_dcbnl.o
++endif
+ rvu_nicpf-$(CONFIG_MACSEC) += cn10k_macsec.o
+ 
+ ccflags-y += -I$(srctree)/drivers/net/ethernet/marvell/octeontx2/af
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
+index 28fb643d2917..0d7e611d9a05 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
+@@ -54,6 +54,7 @@ int otx2_pfc_txschq_config(struct otx2_nic *pfvf)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(otx2_pfc_txschq_config);
+ 
+ static int otx2_pfc_txschq_alloc_one(struct otx2_nic *pfvf, u8 prio)
+ {
+@@ -122,6 +123,7 @@ int otx2_pfc_txschq_alloc(struct otx2_nic *pfvf)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(otx2_pfc_txschq_alloc);
+ 
+ static int otx2_pfc_txschq_stop_one(struct otx2_nic *pfvf, u8 prio)
+ {
+@@ -260,6 +262,7 @@ int otx2_pfc_txschq_update(struct otx2_nic *pfvf)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(otx2_pfc_txschq_update);
+ 
+ int otx2_pfc_txschq_stop(struct otx2_nic *pfvf)
+ {
+@@ -282,6 +285,7 @@ int otx2_pfc_txschq_stop(struct otx2_nic *pfvf)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(otx2_pfc_txschq_stop);
+ 
+ int otx2_config_priority_flow_ctrl(struct otx2_nic *pfvf)
+ {
+@@ -321,6 +325,7 @@ int otx2_config_priority_flow_ctrl(struct otx2_nic *pfvf)
+ 	mutex_unlock(&pfvf->mbox.lock);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(otx2_config_priority_flow_ctrl);
+ 
+ void otx2_update_bpid_in_rqctx(struct otx2_nic *pfvf, int vlan_prio, int qidx,
+ 			       bool pfc_enable)
+@@ -385,6 +390,7 @@ void otx2_update_bpid_in_rqctx(struct otx2_nic *pfvf, int vlan_prio, int qidx,
+ 			 "Updating BPIDs in CQ and Aura contexts of RQ%d failed with err %d\n",
+ 			 qidx, err);
+ }
++EXPORT_SYMBOL_GPL(otx2_update_bpid_in_rqctx);
+ 
+ static int otx2_dcbnl_ieee_getpfc(struct net_device *dev, struct ieee_pfc *pfc)
+ {
+@@ -472,3 +478,8 @@ int otx2_dcbnl_set_ops(struct net_device *dev)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(otx2_dcbnl_set_ops);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Marvell RVU dcbnl");
++MODULE_AUTHOR("Sunil Goutham <sgoutham@marvell.com>");
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
+index 99ddf31269d9..440f574d1195 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
+@@ -113,6 +113,7 @@ int otx2_register_dl(struct otx2_nic *pfvf)
+ 	devlink_free(dl);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(otx2_register_dl);
+ 
+ void otx2_unregister_dl(struct otx2_nic *pfvf)
+ {
+@@ -124,3 +125,8 @@ void otx2_unregister_dl(struct otx2_nic *pfvf)
+ 				  ARRAY_SIZE(otx2_dl_params));
+ 	devlink_free(dl);
+ }
++EXPORT_SYMBOL_GPL(otx2_unregister_dl);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Marvell RVU PF/VF Netdev Devlink");
++MODULE_AUTHOR("Sunil Goutham <sgoutham@marvell.com>");
+-- 
+2.39.2
 
 
