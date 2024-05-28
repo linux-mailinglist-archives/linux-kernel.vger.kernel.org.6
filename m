@@ -1,272 +1,285 @@
-Return-Path: <linux-kernel+bounces-192758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69F28D21AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8598D21B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D37E286A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834A42846AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8972F9D6;
-	Tue, 28 May 2024 16:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C575916F27C;
+	Tue, 28 May 2024 16:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RYQ9aFg/"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDinzG4Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1708116F27C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9525779;
+	Tue, 28 May 2024 16:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914021; cv=none; b=CktlmG/xprBsu3UUsCTW6mm3GF8huCWIYuOYMdTUVaaqsw+EN20GevDnrVYwWhX19MPuswyZRtczdlB0RDiYc9DKITwrpImUNzxj/BNtPR9go3+2oRBl/Ob00AjyoGCBDRCN2IXzksNtrkZkrP+v26I0EV3m7J9YIatL8u1/AAA=
+	t=1716914119; cv=none; b=UksfJNZYWojIAZtKOOoUYULvFadfYKqsrYm/CKlZJNZc+50Fq70l/axNnFEcPpnHOzWm0DxAk0oOYzPpBoSZi0chAyL7/DMIrgtHPc4uCugLE/9WErLXyfzIDgzFc3VWGwcgAwNYcOzaDo5YjgdvzB4NAlaZPdpeEGf1QHLwOR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914021; c=relaxed/simple;
-	bh=Xf7BU101+vQcWaBkaOCw1QXITwXxOxJmGpIIXrMPebY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfFJ893iwxODiedpkppUtXc/1714x6v9hnBG+yH7WJG6QIPXf07Gcr6r//Xxn5+iyurybfhuwi+AoPDtkCIUEaOZp6VWPoIRYn6bYfDN9L/QMx4RFA0vZS680ZmRoXyePqdEC6H/M15sewq4l1CONdFt3Ix2CAbSAX+Ju3hx3/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RYQ9aFg/; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e95a7622cfso11628591fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716914017; x=1717518817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ie9rmuEePwENP8TVKYR43Z2dUmRCc5LEf6MyVwtx1xM=;
-        b=RYQ9aFg/Y8djxrcDox0vLsAFpR0+CFR62wwpD86oKWaO9Hfv1BCnS9NsPxChHbKrBa
-         Sj1Sj/AbY8A8wfjRmsybz0tZoa46V3vz3V2r5LV1JDe2iRG2M5cjt/cY2DKp4tOceShv
-         oZ7/CYgSPNvB/HChtRhoiv7RT2B2OAujx+NUJ8V2SzppzlloVkXsvb+xlWu+hGe6Pn1R
-         9o5py4mxiUj3iz/Ty4e9z8BOtCMJqK47tgdXI2fWfwJFmAWbShFZaBlmp1UZTEwQSVO1
-         /tmIOa2qXV22txLVfyJi/q5zIkxQWiXvT1wkyRCcW5rUtjfQgE1k8bT4Ihqej4F9Xa3V
-         2W3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716914017; x=1717518817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ie9rmuEePwENP8TVKYR43Z2dUmRCc5LEf6MyVwtx1xM=;
-        b=XyvFIG8zuSuLEqqe/b2U7NXFvpcDqsws87iIIwOkq5wt4wJZzy3zS8m2C+pm6XPtJh
-         8Cq75My/NGHf4dNDYHljVe5c1eIrWSnoFokA2+xpdRTVyHXTLg/dZbkoUnqlUd4q1r1G
-         kIjOntfgo1Z+AdjpSL0dg+c3q0lIA9JDazhnf7Np+BO9dGJblEVU4Ba52uTGANUAyD0E
-         nFvnQ9nwpRbK7HUwfzSHYeY8XmXRf6X8AHtyp3sgQTOUAbrkc25a88F0Dw18X87N4r84
-         gnx8oFfCFvYRG3X0SMSVBSl0qqb79xKafp/UIsgnvJOQfJeLOzGXDbETQPFRXbSt5vd3
-         AzbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjr0dCnXHKYHE8qMtuuhoHw3VbfAcbM48csx+LHwb/Zbs0uSW/5kIwk2Wl7GRdagwJaBht01bvZvxsHzzz77TxxuIqJIkqhgfVM8Gb
-X-Gm-Message-State: AOJu0Yw19Rbtjz+Lc+VJ6qAEHd7KqCVIFA9IfN7NSzmakaQLTnGs0hs0
-	T+qfu1dmjmopA7yn9cJHz3Tx+fOGuUJATx7D65dNlcuOxiU2UbEjWIk4OPt564Xplim/loEzt16
-	3
-X-Google-Smtp-Source: AGHT+IFB5LWZTFg2VkjLPo4NIFi9cmR6eiqVuJVc97Sj3CdxqZmrN8y9F1ulGwmOCDmU9sOY/McS2Q==
-X-Received: by 2002:a2e:99d4:0:b0:2d4:3d86:54e2 with SMTP id 38308e7fff4ca-2e95b0bd7dbmr66394971fa.27.1716914017119;
-        Tue, 28 May 2024 09:33:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e975432726sm12149811fa.118.2024.05.28.09.33.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 09:33:36 -0700 (PDT)
-Date: Tue, 28 May 2024 19:33:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Prahlad Valluru <quic_vvalluru@quicinc.com>
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_abhinavk@quicinc.com, quic_nankam@quicinc.com, 
-	robh@kernel.org
-Subject: Re: [PATCH v4] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-Message-ID: <qkfiemo6kcelzgcfgzjpeor6flqhupk3dci5puyf63gmdnogqb@5egugb3rmi3v>
-References: <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
- <20240528141954.7567-1-quic_vvalluru@quicinc.com>
- <rs7m73yzuvm5rf52tyax57r33iigalplr2z7rrxm7mktdqa3bf@ecapopn7ufho>
- <20240528162434.GA4578@hu-vvalluru-hyd.qualcomm.com>
+	s=arc-20240116; t=1716914119; c=relaxed/simple;
+	bh=x9GxzSEQyS9faufytQQHuiv461rRXwkNf2zahJ08E7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDA5vEbwgLm6vHroPi+eTypHFbRTKbP5R0Iw1+dMrKm9X4e2jjoqX/lcDYn/jx0Rxip4umfHY/kl1ZuFHLfWR7yZtu485im1aAOZr1/8LNGe1fzJvR0LNqnuRPbBfU4TcFRSnbVChdcEuwWFmqIHbfi7zjpDS+hQvD4IUwdMDK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDinzG4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB3BC3277B;
+	Tue, 28 May 2024 16:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716914119;
+	bh=x9GxzSEQyS9faufytQQHuiv461rRXwkNf2zahJ08E7g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TDinzG4ZCGlBSi4sinMjD1nUT24MMHz/OcEsSsdF4e11EMdzSMnCG87lmG+ORgyvo
+	 ISer6YT715Ypdm7zLjg39xLCyIVHlTVQ+lV46I3juFs5P0cUj5ihvYO6Wk4oWyTZM1
+	 lI0wodXlIy0owdTGvartCA2wEnYNHlQWVz8PvV6H5D9u/b8JbsFqPhhWdgU1kXcG6C
+	 mbAS08KwxjnVJL86P6RCyTmOlxQ3CdIGBvweEAegI/DqoghlXEkHXbbgX36/3czSzK
+	 C4PPcwoI7QLOZUQ5gBKNt7/f4CmByoKp4URwkqNXNOedyJeXKnqKcqjf3ncOOjaUtM
+	 DtYNtkdgY8uWA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	linux-kbuild@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] kbuild: rust: remove now-unneeded `rusttest` custom sysroot handling
+Date: Tue, 28 May 2024 18:35:02 +0200
+Message-ID: <20240528163502.411600-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528162434.GA4578@hu-vvalluru-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 09:54:34PM +0530, Prahlad Valluru wrote:
-> On Tue, May 28, 2024 at 06:00:26PM +0300, Dmitry Baryshkov wrote:
-> > On Tue, May 28, 2024 at 07:49:54PM +0530, Venkata Prahlad Valluru wrote:
-> > > Rb3Gen2 has a lt9611uxc DSI-to-HDMI bridge on i2c0, with
-> > > reset gpio from pm7250b gpio2 and irq gpio from tlmm gpio24.
-> > > Bridge supplies are Vdd connected to input supply directly
-> > > and vcc to L11c. Enable HDMI output, bridge and corresponding
-> > > DSI output.
-> > > 
-> > > Signed-off-by: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
-> > > ---
-> > > v4: added fixed regulator for vdd
-> > 
-> > Please don't send new iterations as replies to the previous iteration.
-> > It might be ignored or mishandled by the tools.
-> Was trying to have the context of discussion captured. Will add links
-> to the patchsets in the history, going forward.
+Since we dropped our custom `alloc` in commit 9d0441bab775 ("rust: alloc:
+remove our fork of the `alloc` crate"), there is no need anymore to keep
+the custom sysroot hack.
 
-I'd suggest using b4 tool, which handles such issues in an automated
-way. It adds links to previous iterations, changelog, etc.
+Thus delete it, which makes the target way simpler and faster too.
 
-> > 
-> > > 
-> > > v3: - Updated commit text
-> > >     - Arranged nodes in alphabetical order
-> > >     - Fixed signoff
-> > >     - Fixed drive strength for lt9611_irq_pin
-> > >     - Removed 'label' from hdmi-connector, which is optional
-> > > 
-> > > v2: Addressed dtschema errors
-> > > 	- Fixed lt9611-irq
-> > > 	- vdd-supply error to be ignored, as it is connected to
-> > > 	  input supply directly, on rb3gen2
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 94 ++++++++++++++++++++
-> > >  1 file changed, 94 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > index a085ff5b5fb2..7f00fca131a2 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > @@ -52,6 +52,25 @@
-> > >  		};
-> > >  	};
-> > >  
-> > > +	hdmi-connector {
-> > > +		compatible = "hdmi-connector";
-> > > +		type = "a";
-> > > +
-> > > +		port {
-> > > +			hdmi_con: endpoint {
-> > > +				remote-endpoint = <&lt9611_out>;
-> > > +			};
-> > > +		};
-> > > +	};
-> > > +
-> > > +	lt9611_1v2: lt9611-vdd12-regulator {
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "LT9611_1V2";
-> > 
-> > Is it the regulator / net name in schematics? Or is it also used by any
-> > other consumers?
-> >
-> VREG_HDMI_OUT_1P2 is the naming in schematic, but i see this naming convention for rb5 based boards.
-> No other consumers for this.
+This also means we are not using Cargo for anything at the moment,
+and that no download is required anymore, so update the main `Makefile`
+and the documentation accordingly.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ Documentation/rust/quick-start.rst | 14 ------
+ Documentation/rust/testing.rst     |  5 +--
+ Makefile                           |  3 +-
+ rust/Makefile                      | 70 ++++--------------------------
+ 4 files changed, 11 insertions(+), 81 deletions(-)
 
-> > > +
-> > > +		regulator-min-microvolt = <1200000>;
-> > > +		regulator-max-microvolt = <1200000>;
-> > > +	};
-> > > +
-> > >  	reserved-memory {
-> > >  		xbl_mem: xbl@80700000 {
-> > >  			reg = <0x0 0x80700000 0x0 0x100000>;
-> > > @@ -530,6 +549,46 @@
-> > >  			   <GCC_WPSS_RSCP_CLK>;
-> > >  };
-> > >  
-> > > +&i2c0 {
-> > > +	clock-frequency = <400000>;
-> > > +	status = "okay";
-> > > +
-> > > +	lt9611_codec: hdmi-bridge@2b {
-> > > +		compatible = "lontium,lt9611uxc";
-> > > +		reg = <0x2b>;
-> > > +
-> > > +		interrupts-extended = <&tlmm 24 IRQ_TYPE_EDGE_FALLING>;
-> > > +		reset-gpios = <&pm7250b_gpios 2 GPIO_ACTIVE_HIGH>;
-> > > +
-> > > +		vdd-supply = <&lt9611_1v2>;
-> > > +		vcc-supply = <&vreg_l11c_2p8>;
-> > > +
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&lt9611_irq_pin &lt9611_rst_pin>;
-> > > +
-> > > +		ports {
-> > > +			#address-cells = <1>;
-> > > +			#size-cells = <0>;
-> > > +
-> > > +			port@0 {
-> > > +				reg = <0>;
-> > > +
-> > > +				lt9611_a: endpoint {
-> > > +					remote-endpoint = <&mdss_dsi0_out>;
-> > > +				};
-> > > +			};
-> > > +
-> > > +			port@2 {
-> > > +				reg = <2>;
-> > > +
-> > > +				lt9611_out: endpoint {
-> > > +					remote-endpoint = <&hdmi_con>;
-> > > +				};
-> > > +			};
-> > > +		};
-> > > +	};
-> > > +};
-> > > +
-> > >  &i2c1 {
-> > >  	status = "okay";
-> > >  
-> > > @@ -587,6 +646,21 @@
-> > >  	remote-endpoint = <&usb_dp_qmpphy_dp_in>;
-> > >  };
-> > >  
-> > > +&mdss_dsi {
-> > > +	vdda-supply = <&vreg_l6b_1p2>;
-> > > +	status = "okay";
-> > > +};
-> > > +
-> > > +&mdss_dsi0_out {
-> > > +	remote-endpoint = <&lt9611_a>;
-> > > +	data-lanes = <0 1 2 3>;
-> > > +};
-> > > +
-> > > +&mdss_dsi_phy {
-> > > +	vdds-supply = <&vreg_l10c_0p88>;
-> > > +	status = "okay";
-> > > +};
-> > > +
-> > >  &mdss_edp {
-> > >  	status = "okay";
-> > >  };
-> > > @@ -711,3 +785,23 @@
-> > >  	function = "gpio";
-> > >  	bias-disable;
-> > >  };
-> > > +
-> > > +&pm7250b_gpios {
-> > > +	lt9611_rst_pin: lt9611-rst-state {
-> > > +		pins = "gpio2";
-> > > +		function = "normal";
-> > > +
-> > > +		output-high;
-> > > +		input-disable;
-> > > +		power-source = <0>;
-> > > +	};
-> > > +};
-> > > +
-> > > +&tlmm {
-> > > +	lt9611_irq_pin: lt9611-irq-state {
-> > > +		pins = "gpio24";
-> > > +		function = "gpio";
-> > > +		drive-strength = <2>;
-> > > +		bias-disable;
-> > > +	};
-> > > +};
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
+diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
+index cc3f11e0d441..5ca13be451f5 100644
+--- a/Documentation/rust/quick-start.rst
++++ b/Documentation/rust/quick-start.rst
+@@ -164,20 +164,6 @@ can be installed manually::
+ The standalone installers also come with ``clippy``.
+ 
+ 
+-cargo
+-*****
+-
+-``cargo`` is the Rust native build system. It is currently required to run
+-the tests since it is used to build a custom standard library that contains
+-the facilities provided by the custom ``alloc`` in the kernel. The tests can
+-be run using the ``rusttest`` Make target.
+-
+-If ``rustup`` is being used, all the profiles already install the tool,
+-thus nothing needs to be done.
+-
+-The standalone installers also come with ``cargo``.
+-
+-
+ rustdoc
+ *******
+ 
+diff --git a/Documentation/rust/testing.rst b/Documentation/rust/testing.rst
+index acfd0c2be48d..568b71b415a4 100644
+--- a/Documentation/rust/testing.rst
++++ b/Documentation/rust/testing.rst
+@@ -131,9 +131,8 @@ Additionally, there are the ``#[test]`` tests. These can be run using the
+ 
+ 	make LLVM=1 rusttest
+ 
+-This requires the kernel ``.config`` and downloads external repositories. It
+-runs the ``#[test]`` tests on the host (currently) and thus is fairly limited in
+-what these tests can test.
++This requires the kernel ``.config``. It runs the ``#[test]`` tests on the host
++(currently) and thus is fairly limited in what these tests can test.
+ 
+ The Kselftests
+ --------------
+diff --git a/Makefile b/Makefile
+index f975b6396328..f368a9167de8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -507,7 +507,6 @@ RUSTDOC		= rustdoc
+ RUSTFMT		= rustfmt
+ CLIPPY_DRIVER	= clippy-driver
+ BINDGEN		= bindgen
+-CARGO		= cargo
+ PAHOLE		= pahole
+ RESOLVE_BTFIDS	= $(objtree)/tools/bpf/resolve_btfids/resolve_btfids
+ LEX		= flex
+@@ -601,7 +600,7 @@ endif
+ export RUSTC_BOOTSTRAP := 1
+ 
+ export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE LD CC HOSTPKG_CONFIG
+-export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN CARGO
++export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
+ export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
+ export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
+ export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+diff --git a/rust/Makefile b/rust/Makefile
+index f70d5e244fee..385378311322 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -44,17 +44,10 @@ rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
+ rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
+ RUST_LIB_SRC ?= $(rustc_sysroot)/lib/rustlib/src/rust/library
+ 
+-ifeq ($(quiet),silent_)
+-cargo_quiet=-q
++ifneq ($(quiet),)
+ rust_test_quiet=-q
+ rustdoc_test_quiet=--test-args -q
+ rustdoc_test_kernel_quiet=>/dev/null
+-else ifeq ($(quiet),quiet_)
+-rust_test_quiet=-q
+-rustdoc_test_quiet=--test-args -q
+-rustdoc_test_kernel_quiet=>/dev/null
+-else
+-cargo_quiet=--verbose
+ endif
+ 
+ core-cfgs = \
+@@ -135,22 +128,21 @@ quiet_cmd_rustc_test_library = RUSTC TL $<
+ 		@$(objtree)/include/generated/rustc_cfg $(rustc_target_flags) \
+ 		--crate-type $(if $(rustc_test_library_proc),proc-macro,rlib) \
+ 		--out-dir $(objtree)/$(obj)/test --cfg testlib \
+-		--sysroot $(objtree)/$(obj)/test/sysroot \
+ 		-L$(objtree)/$(obj)/test \
+ 		--crate-name $(subst rusttest-,,$(subst rusttestlib-,,$@)) $<
+ 
+-rusttestlib-build_error: $(src)/build_error.rs rusttest-prepare FORCE
++rusttestlib-build_error: $(src)/build_error.rs FORCE
+ 	+$(call if_changed,rustc_test_library)
+ 
+ rusttestlib-macros: private rustc_target_flags = --extern proc_macro
+ rusttestlib-macros: private rustc_test_library_proc = yes
+-rusttestlib-macros: $(src)/macros/lib.rs rusttest-prepare FORCE
++rusttestlib-macros: $(src)/macros/lib.rs FORCE
+ 	+$(call if_changed,rustc_test_library)
+ 
+-rusttestlib-bindings: $(src)/bindings/lib.rs rusttest-prepare FORCE
++rusttestlib-bindings: $(src)/bindings/lib.rs FORCE
+ 	+$(call if_changed,rustc_test_library)
+ 
+-rusttestlib-uapi: $(src)/uapi/lib.rs rusttest-prepare FORCE
++rusttestlib-uapi: $(src)/uapi/lib.rs FORCE
+ 	+$(call if_changed,rustc_test_library)
+ 
+ quiet_cmd_rustdoc_test = RUSTDOC T $<
+@@ -159,7 +151,7 @@ quiet_cmd_rustdoc_test = RUSTDOC T $<
+ 	$(RUSTDOC) --test $(rust_common_flags) \
+ 		@$(objtree)/include/generated/rustc_cfg \
+ 		$(rustc_target_flags) $(rustdoc_test_target_flags) \
+-		--sysroot $(objtree)/$(obj)/test/sysroot $(rustdoc_test_quiet) \
++		$(rustdoc_test_quiet) \
+ 		-L$(objtree)/$(obj)/test --output $(rustdoc_output) \
+ 		--crate-name $(subst rusttest-,,$@) $<
+ 
+@@ -192,7 +184,6 @@ quiet_cmd_rustc_test = RUSTC T  $<
+ 	$(RUSTC) --test $(rust_common_flags) \
+ 		@$(objtree)/include/generated/rustc_cfg \
+ 		$(rustc_target_flags) --out-dir $(objtree)/$(obj)/test \
+-		--sysroot $(objtree)/$(obj)/test/sysroot \
+ 		-L$(objtree)/$(obj)/test \
+ 		--crate-name $(subst rusttest-,,$@) $<; \
+ 	$(objtree)/$(obj)/test/$(subst rusttest-,,$@) $(rust_test_quiet) \
+@@ -200,60 +191,15 @@ quiet_cmd_rustc_test = RUSTC T  $<
+ 
+ rusttest: rusttest-macros rusttest-kernel
+ 
+-# This prepares a custom sysroot with our custom `alloc` instead of
+-# the standard one.
+-#
+-# This requires several hacks:
+-#   - Unlike `core` and `alloc`, `std` depends on more than a dozen crates,
+-#     including third-party crates that need to be downloaded, plus custom
+-#     `build.rs` steps. Thus hardcoding things here is not maintainable.
+-#   - `cargo` knows how to build the standard library, but it is an unstable
+-#     feature so far (`-Zbuild-std`).
+-#   - `cargo` only considers the use case of building the standard library
+-#     to use it in a given package. Thus we need to create a dummy package
+-#     and pick the generated libraries from there.
+-#   - The usual ways of modifying the dependency graph in `cargo` do not seem
+-#     to apply for the `-Zbuild-std` steps, thus we have to mislead it
+-#     by modifying the sources in the sysroot.
+-#   - To avoid messing with the user's Rust installation, we create a clone
+-#     of the sysroot. However, `cargo` ignores `RUSTFLAGS` in the `-Zbuild-std`
+-#     steps, thus we use a wrapper binary passed via `RUSTC` to pass the flag.
+-#
+-# In the future, we hope to avoid the whole ordeal by either:
+-#   - Making the `test` crate not depend on `std` (either improving upstream
+-#     or having our own custom crate).
+-#   - Making the tests run in kernel space (requires the previous point).
+-#   - Making `std` and friends be more like a "normal" crate, so that
+-#     `-Zbuild-std` and related hacks are not needed.
+-quiet_cmd_rustsysroot = RUSTSYSROOT
+-      cmd_rustsysroot = \
+-	rm -rf $(objtree)/$(obj)/test; \
+-	mkdir -p $(objtree)/$(obj)/test; \
+-	cp -a $(rustc_sysroot) $(objtree)/$(obj)/test/sysroot; \
+-	echo '\#!/bin/sh' > $(objtree)/$(obj)/test/rustc_sysroot; \
+-	echo "$(RUSTC) --sysroot=$(abspath $(objtree)/$(obj)/test/sysroot) \"\$$@\"" \
+-		>> $(objtree)/$(obj)/test/rustc_sysroot; \
+-	chmod u+x $(objtree)/$(obj)/test/rustc_sysroot; \
+-	$(CARGO) -q new $(objtree)/$(obj)/test/dummy; \
+-	RUSTC=$(objtree)/$(obj)/test/rustc_sysroot $(CARGO) $(cargo_quiet) \
+-		test -Zbuild-std --target $(rustc_host_target) \
+-		--manifest-path $(objtree)/$(obj)/test/dummy/Cargo.toml; \
+-	rm $(objtree)/$(obj)/test/sysroot/lib/rustlib/$(rustc_host_target)/lib/*; \
+-	cp $(objtree)/$(obj)/test/dummy/target/$(rustc_host_target)/debug/deps/* \
+-		$(objtree)/$(obj)/test/sysroot/lib/rustlib/$(rustc_host_target)/lib
+-
+-rusttest-prepare: FORCE
+-	+$(call if_changed,rustsysroot)
+-
+ rusttest-macros: private rustc_target_flags = --extern proc_macro
+ rusttest-macros: private rustdoc_test_target_flags = --crate-type proc-macro
+-rusttest-macros: $(src)/macros/lib.rs rusttest-prepare FORCE
++rusttest-macros: $(src)/macros/lib.rs FORCE
+ 	+$(call if_changed,rustc_test)
+ 	+$(call if_changed,rustdoc_test)
+ 
+ rusttest-kernel: private rustc_target_flags = --extern alloc \
+     --extern build_error --extern macros --extern bindings --extern uapi
+-rusttest-kernel: $(src)/kernel/lib.rs rusttest-prepare \
++rusttest-kernel: $(src)/kernel/lib.rs \
+     rusttestlib-build_error rusttestlib-macros rusttestlib-bindings \
+     rusttestlib-uapi FORCE
+ 	+$(call if_changed,rustc_test)
 
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 -- 
-With best wishes
-Dmitry
+2.45.1
+
 
