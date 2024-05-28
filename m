@@ -1,351 +1,297 @@
-Return-Path: <linux-kernel+bounces-192236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD20E8D1A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D1B8D1A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11271C2272A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6941C22996
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC516D312;
-	Tue, 28 May 2024 11:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C8D16C87B;
+	Tue, 28 May 2024 11:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmxW9OSh"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BBd5r2JU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF264C97;
-	Tue, 28 May 2024 11:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AB34C97;
+	Tue, 28 May 2024 11:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897501; cv=none; b=TMzuBWVG6PrkCNgzBslJNrCV8+ztARP//uUIcUQWhdAQrlzzWguZXK1qVEYZidjpuXuw8kwJdQlWLjy7Efvzpx6O6hFc2moDrL5c9LUDsmDIZpL8GvYqC0MMYi055jF8EQ0OnH8OVdy1ptZnJm4/jV/X9VQdg7iownbsZI8tT18=
+	t=1716897523; cv=none; b=Auolt+LdTLITLbQTW9kQvYjRLox+0WLzF0aFaP7Q9ZHLonFPPrhCEMqxE206XBDKto25C3xFlBzfpnQqewJqUgbSKmSLWAL1Yzb01Z+hK4WNuQ95iXlMZI8bwo7d51g1OTWMCOf1Ko9jYQ2wfR7mG4+5PmBfMS/T16fOqZhfvVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897501; c=relaxed/simple;
-	bh=c1T9GJSdpVsPyNR5q+5dpGu0SwmxQdsjPWZ87hLF/3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XZMn2DD9Mt/chz3acec8E0IJGcShuaaI6F+d74gbnJfvxmVFZXrofnHNCX2s6GDzBAPgSSsAcrDLJkpIpqt+93P6PQ3rZkv1GjHbiNepHjuAPFaVetvNMtzAli7L88tf4Sp+Jw1iITgnwH7E59mAbnxvzIrSmV4UpF/SUbVJ/Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmxW9OSh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396C5C3277B;
-	Tue, 28 May 2024 11:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716897500;
-	bh=c1T9GJSdpVsPyNR5q+5dpGu0SwmxQdsjPWZ87hLF/3U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DmxW9OShLVwMPCTDL0C/+dYYEV7Z9UEPdJn4qMDbsZandgMnLSWszEB0Yq1URnZi6
-	 ayOiGrcCyra6bWLrztk7j+M6Hnji6zbf9SE9gEDDFgkFNKeqlqrZhf1Cet3laja6ev
-	 yezkYk2TLGxqBG1hnFPJgGl79Q/v5M7KLJOCa4vCZHOp/xrTeNYuAVt6PxRCt8TFHB
-	 bSGH1iThQ2w8ZDsbpjN2vou/6IMz5E3zomgA0DF+ljxwgUcONPfhLr5gz1uB2mvuzG
-	 8+9uDi44ykja6Ox6WHx8vbz74OaCK7V0t4UOdCwMD5oyfVimGwUVo03Mt8HWpEXxYL
-	 M9TYMsIhpO1qg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Zhang Lixu <lixu.zhang@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
-Date: Tue, 28 May 2024 13:57:54 +0200
-Message-Id: <20240528115802.3122955-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240528115802.3122955-1-arnd@kernel.org>
-References: <20240528115802.3122955-1-arnd@kernel.org>
+	s=arc-20240116; t=1716897523; c=relaxed/simple;
+	bh=W54KWxQHpl3PzZqGGkYBStAUFhc0S0djsvP/O0XlSK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlEVQ1gCMKPyJn6J8rJA4e2K3QZ0xW3Dk79OLOzBVutHG+L7Ad5lHkcuvC6MlaazpK7YxJ3gU725IpxW+kcuv6AfZb1rhakPhrBF6r+HN57mZY3RObk7ce41xbPrSoQkNKuUN6ibobIujPmxWKMtKIIe8dy12r6LguYu8XyWmCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=BBd5r2JU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2213EC3277B;
+	Tue, 28 May 2024 11:58:42 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BBd5r2JU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1716897519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nGuYm96JeVQ572oVGzlcjPq4VFKf/Vijj/WoTvzHM4=;
+	b=BBd5r2JU+wTLYuKr/OgX741kfjittztnF44jNI14mS6It+Nwu2Y9/Txm1p+DHjYld+XIT+
+	pZnU3NwQ63QIXeTPIWlHcjlScEvjm585blL9k4uWD6hq4O23VKef3x3W6EGzd5PMuaKqxI
+	CbexsMfOf1RhN+VIvELm7JiuZfpNt38=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id dfd12217 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 28 May 2024 11:58:38 +0000 (UTC)
+Date: Tue, 28 May 2024 13:58:35 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <dhildenb@redhat.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-mm@kvack.org
+Subject: Re: [PATCH v15 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZlXG69UxJVKd_7h4@zx2c4.com>
+References: <20240521111958.2384173-1-Jason@zx2c4.com>
+ <20240521111958.2384173-2-Jason@zx2c4.com>
+ <2c943e16-e8f1-4311-b707-1be94d883948@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2c943e16-e8f1-4311-b707-1be94d883948@redhat.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, May 27, 2024 at 03:34:33PM +0200, David Hildenbrand wrote:
+> 
+> 
+> Am 21.05.24 um 13:18 schrieb Jason A. Donenfeld:
+> > The vDSO getrandom() implementation works with a buffer allocated with a
+> > new system call that has certain requirements:
+> > 
+> > - It shouldn't be written to core dumps.
+> >    * Easy: VM_DONTDUMP.
+> > - It should be zeroed on fork.
+> >    * Easy: VM_WIPEONFORK.
+> > 
+> > - It shouldn't be written to swap.
+> >    * Uh-oh: mlock is rlimited.
+> >    * Uh-oh: mlock isn't inherited by forks.
+> > 
+> > - It shouldn't reserve actual memory, but it also shouldn't crash when
+> >    page faulting in memory if none is available
+> >    * Uh-oh: MAP_NORESERVE respects vm.overcommit_memory=2.
+> >    * Uh-oh: VM_NORESERVE means segfaults.
+> > 
+> > It turns out that the vDSO getrandom() function has three really nice
+> > characteristics that we can exploit to solve this problem:
+> > 
+> > 1) Due to being wiped during fork(), the vDSO code is already robust to
+> >     having the contents of the pages it reads zeroed out midway through
+> >     the function's execution.
+> > 
+> > 2) In the absolute worst case of whatever contingency we're coding for,
+> >     we have the option to fallback to the getrandom() syscall, and
+> >     everything is fine.
+> > 
+> > 3) The buffers the function uses are only ever useful for a maximum of
+> >     60 seconds -- a sort of cache, rather than a long term allocation.
+> > 
+> > These characteristics mean that we can introduce VM_DROPPABLE, which
+> > has the following semantics:
+> > 
+> > a) It never is written out to swap.
+> > b) Under memory pressure, mm can just drop the pages (so that they're
+> >     zero when read back again).
+> > c) If there's not enough memory to service a page fault, it's not fatal.
+> > d) It is inherited by fork.
+> > e) It doesn't count against the mlock budget, since nothing is locked.
+> > 
+> > This is fairly simple to implement, with the one snag that we have to
+> > use 64-bit VM_* flags, but this shouldn't be a problem, since the only
+> > consumers will probably be 64-bit anyway.
+> > 
+> > This way, allocations used by vDSO getrandom() can use:
+> > 
+> >      VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
+> > 
+> > And there will be no problem with OOMing, crashing on overcommitment,
+> > using memory when not in use, not wiping on fork(), coredumps, or
+> > writing out to swap.
+> > 
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> > ---
+> >   fs/proc/task_mmu.c             | 3 +++
+> >   include/linux/mm.h             | 8 ++++++++
+> >   include/trace/events/mmflags.h | 7 +++++++
+> >   mm/Kconfig                     | 3 +++
+> >   mm/memory.c                    | 4 ++++
+> >   mm/mempolicy.c                 | 3 +++
+> >   mm/mprotect.c                  | 2 +-
+> >   mm/rmap.c                      | 5 +++--
+> >   8 files changed, 32 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index e5a5f015ff03..b5a59e57bde1 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -706,6 +706,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >   #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+> >   #ifdef CONFIG_X86_USER_SHADOW_STACK
+> >   		[ilog2(VM_SHADOW_STACK)] = "ss",
+> > +#endif
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +		[ilog2(VM_DROPPABLE)]	= "dp",
+> >   #endif
+> >   	};
+> >   	size_t i;
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 9849dfda44d4..5978cb4cc21c 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -321,12 +321,14 @@ extern unsigned int kobjsize(const void *objp);
+> >   #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
+> >   #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
+> >   #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
+> > +#define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
+> >   #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+> >   #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+> >   #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+> >   #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+> >   #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+> >   #define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+> > +#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
+> >   #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+> >   
+> >   #ifdef CONFIG_ARCH_HAS_PKEYS
+> > @@ -357,6 +359,12 @@ extern unsigned int kobjsize(const void *objp);
+> >   # define VM_SHADOW_STACK	VM_NONE
+> >   #endif
+> >   
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +# define VM_DROPPABLE		VM_HIGH_ARCH_6
+> > +#else
+> > +# define VM_DROPPABLE		VM_NONE
+> > +#endif
+> > +
+> >   #if defined(CONFIG_X86)
+> >   # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+> >   #elif defined(CONFIG_PPC)
+> > diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> > index e46d6e82765e..fab7848df50a 100644
+> > --- a/include/trace/events/mmflags.h
+> > +++ b/include/trace/events/mmflags.h
+> > @@ -165,6 +165,12 @@ IF_HAVE_PG_ARCH_X(arch_3)
+> >   # define IF_HAVE_UFFD_MINOR(flag, name)
+> >   #endif
+> >   
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+> > +#else
+> > +# define IF_HAVE_VM_DROPPABLE(flag, name)
+> > +#endif
+> > +
+> >   #define __def_vmaflag_names						\
+> >   	{VM_READ,			"read"		},		\
+> >   	{VM_WRITE,			"write"		},		\
+> > @@ -197,6 +203,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,	"softdirty"	)		\
+> >   	{VM_MIXEDMAP,			"mixedmap"	},		\
+> >   	{VM_HUGEPAGE,			"hugepage"	},		\
+> >   	{VM_NOHUGEPAGE,			"nohugepage"	},		\
+> > +IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,	"droppable"	)		\
+> >   	{VM_MERGEABLE,			"mergeable"	}		\
+> >   
+> >   #define show_vma_flags(flags)						\
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index b4cb45255a54..6cd65ea4b3ad 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -1056,6 +1056,9 @@ config ARCH_USES_HIGH_VMA_FLAGS
+> >   	bool
+> >   config ARCH_HAS_PKEYS
+> >   	bool
+> > +config NEED_VM_DROPPABLE
+> > +	select ARCH_USES_HIGH_VMA_FLAGS
+> > +	bool
+> >   
+> >   config ARCH_USES_PG_ARCH_X
+> >   	bool
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index b5453b86ec4b..57b03fc73159 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -5689,6 +5689,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+> >   
+> >   	lru_gen_exit_fault();
+> >   
+> > +	/* If the mapping is droppable, then errors due to OOM aren't fatal. */
+> > +	if (vma->vm_flags & VM_DROPPABLE)
+> > +		ret &= ~VM_FAULT_OOM;
+> > +
+> >   	if (flags & FAULT_FLAG_USER) {
+> >   		mem_cgroup_exit_user_fault();
+> >   		/*
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index aec756ae5637..a66289f1d931 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -2300,6 +2300,9 @@ struct folio *vma_alloc_folio_noprof(gfp_t gfp, int order, struct vm_area_struct
+> >   	pgoff_t ilx;
+> >   	struct page *page;
+> >   
+> > +	if (vma->vm_flags & VM_DROPPABLE)
+> > +		gfp |= __GFP_NOWARN | __GFP_NORETRY;
+> > +
+> >   	pol = get_vma_policy(vma, addr, order, &ilx);
+> >   	page = alloc_pages_mpol_noprof(gfp | __GFP_COMP, order,
+> >   				       pol, ilx, numa_node_id());
+> > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > index 94878c39ee32..88ff3ecc08a1 100644
+> > --- a/mm/mprotect.c
+> > +++ b/mm/mprotect.c
+> > @@ -622,7 +622,7 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
+> >   				may_expand_vm(mm, oldflags, nrpages))
+> >   			return -ENOMEM;
+> >   		if (!(oldflags & (VM_ACCOUNT|VM_WRITE|VM_HUGETLB|
+> > -						VM_SHARED|VM_NORESERVE))) {
+> > +				  VM_SHARED|VM_NORESERVE|VM_DROPPABLE))) {
+> >   			charged = nrpages;
+> >   			if (security_vm_enough_memory_mm(mm, charged))
+> >   				return -ENOMEM;
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index e8fc5ecb59b2..f23b9f796aae 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1397,7 +1397,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+> >   	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+> >   	VM_BUG_ON_VMA(address < vma->vm_start ||
+> >   			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+> > -	__folio_set_swapbacked(folio);
+> > +	if (!(vma->vm_flags & VM_DROPPABLE))
+> > +		__folio_set_swapbacked(folio);
+> >   	__folio_set_anon(folio, vma, address, true);
+> >   
+> >   	if (likely(!folio_test_large(folio))) {
+> > @@ -1841,7 +1842,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+> >   				 * plus the rmap(s) (dropped by discard:).
+> >   				 */
+> >   				if (ref_count == 1 + map_count &&
+> > -				    !folio_test_dirty(folio)) {
+> > +				    (!folio_test_dirty(folio) || (vma->vm_flags & VM_DROPPABLE))) {
+> >   					dec_mm_counter(mm, MM_ANONPAGES);
+> >   					goto discard;
+> >   				}
+> 
+> If there is any unexpected temporary folio reference (ref_count != 1 + 
+> map_count), you'll end up calling folio_set_swapbacked() and the next swapout 
+> round will write that folio to swap.
 
-The newly added file causes a ton of sparse warnings about the
-incorrect use of __le32 and similar types:
+Thanks, nice call. I'll guard the re-setting of folio_set_swapbacked()
+in that case.
 
-drivers/hid/intel-ish-hid/ishtp/loader.c:179:17: warning: cast from restricted __le32
-drivers/hid/intel-ish-hid/ishtp/loader.c:182:50: warning: incorrect type in assignment (different base types)
-drivers/hid/intel-ish-hid/ishtp/loader.c:182:50:    expected restricted __le32 [usertype] length
-drivers/hid/intel-ish-hid/ishtp/loader.c:182:50:    got restricted __le16 [usertype]
-drivers/hid/intel-ish-hid/ishtp/loader.c:183:50: warning: incorrect type in assignment (different base types)
-drivers/hid/intel-ish-hid/ishtp/loader.c:183:50:    expected restricted __le32 [usertype] fw_off
-drivers/hid/intel-ish-hid/ishtp/loader.c:183:50:    got restricted __le16 [usertype]
-
-Add the necessary conversions and use temporary variables where appropriate
-to avoid converting back.
-
-Fixes: 579a267e4617 ("HID: intel-ish-hid: Implement loading firmware from host feature")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I noticed this one while looking at the bug that was fixed in
-236049723826 ("HID: intel-ish-hid: Fix build error for COMPILE_TEST")
----
- drivers/hid/intel-ish-hid/ishtp/loader.c | 69 +++++++++++++-----------
- drivers/hid/intel-ish-hid/ishtp/loader.h | 33 +++++++-----
- 2 files changed, 58 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/hid/intel-ish-hid/ishtp/loader.c b/drivers/hid/intel-ish-hid/ishtp/loader.c
-index 062d1b25eaa7..1d4cb99d2130 100644
---- a/drivers/hid/intel-ish-hid/ishtp/loader.c
-+++ b/drivers/hid/intel-ish-hid/ishtp/loader.c
-@@ -83,8 +83,8 @@ static int loader_write_message(struct ishtp_device *dev, void *buf, int len)
- static int loader_xfer_cmd(struct ishtp_device *dev, void *req, int req_len,
- 			   void *resp, int resp_len)
- {
--	struct loader_msg_header *req_hdr = req;
--	struct loader_msg_header *resp_hdr = resp;
-+	union loader_msg_header req_hdr;
-+	union loader_msg_header resp_hdr;
- 	struct device *devc = dev->devc;
- 	int rv;
- 
-@@ -92,34 +92,37 @@ static int loader_xfer_cmd(struct ishtp_device *dev, void *req, int req_len,
- 	dev->fw_loader_rx_size = resp_len;
- 
- 	rv = loader_write_message(dev, req, req_len);
-+	req_hdr.val32 = le32_to_cpup(req);
-+
- 	if (rv < 0) {
--		dev_err(devc, "write cmd %u failed:%d\n", req_hdr->command, rv);
-+		dev_err(devc, "write cmd %u failed:%d\n", req_hdr.command, rv);
- 		return rv;
- 	}
- 
- 	/* Wait the ACK */
- 	wait_event_interruptible_timeout(dev->wait_loader_recvd_msg, dev->fw_loader_received,
- 					 ISHTP_LOADER_TIMEOUT);
-+	resp_hdr.val32 = le32_to_cpup(resp);
- 	dev->fw_loader_rx_size = 0;
- 	dev->fw_loader_rx_buf = NULL;
- 	if (!dev->fw_loader_received) {
--		dev_err(devc, "wait response of cmd %u timeout\n", req_hdr->command);
-+		dev_err(devc, "wait response of cmd %u timeout\n", req_hdr.command);
- 		return -ETIMEDOUT;
- 	}
- 
--	if (!resp_hdr->is_response) {
--		dev_err(devc, "not a response for %u\n", req_hdr->command);
-+	if (!resp_hdr.is_response) {
-+		dev_err(devc, "not a response for %u\n", req_hdr.command);
- 		return -EBADMSG;
- 	}
- 
--	if (req_hdr->command != resp_hdr->command) {
--		dev_err(devc, "unexpected cmd response %u:%u\n", req_hdr->command,
--			resp_hdr->command);
-+	if (req_hdr.command != resp_hdr.command) {
-+		dev_err(devc, "unexpected cmd response %u:%u\n", req_hdr.command,
-+			resp_hdr.command);
- 		return -EBADMSG;
- 	}
- 
--	if (resp_hdr->status) {
--		dev_err(devc, "cmd %u failed %u\n", req_hdr->command, resp_hdr->status);
-+	if (resp_hdr.status) {
-+		dev_err(devc, "cmd %u failed %u\n", req_hdr.command, resp_hdr.status);
- 		return -EIO;
- 	}
- 
-@@ -162,25 +165,30 @@ static void release_dma_bufs(struct ishtp_device *dev,
- static int prepare_dma_bufs(struct ishtp_device *dev,
- 			    const struct firmware *ish_fw,
- 			    struct loader_xfer_dma_fragment *fragment,
--			    void **dma_bufs, u32 fragment_size)
-+			    void **dma_bufs, u32 fragment_size, u32 fragment_count)
- {
- 	dma_addr_t dma_addr;
- 	u32 offset = 0;
-+	u32 length;
- 	int i;
- 
- 	for (i = 0; i < fragment->fragment_cnt && offset < ish_fw->size; i++) {
- 		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size, &dma_addr, GFP_KERNEL);
-+		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size,
-+						 &dma, GFP_KERNEL);
- 		if (!dma_bufs[i])
- 			return -ENOMEM;
- 
- 		fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma_addr);
- 
--		memcpy(dma_bufs[i], ish_fw->data + offset, fragment->fragment_tbl[i].length);
-+		memcpy(dma_bufs[i], ish_fw->data + offset, le32_to_cpu(fragment->fragment_tbl[i].length));
- 		dma_wmb();
--		fragment->fragment_tbl[i].length = clamp(ish_fw->size - offset, 0, fragment_size);
--		fragment->fragment_tbl[i].fw_off = offset;
-+		fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma);
-+		length = clamp(ish_fw->size - offset, 0, fragment_size);
-+		fragment->fragment_tbl[i].length = cpu_to_le32(length);
-+		fragment->fragment_tbl[i].fw_off = cpu_to_le32(offset);
- 
--		offset += fragment->fragment_tbl[i].length;
-+		offset += length;
- 	}
- 
- 	return 0;
-@@ -208,17 +216,17 @@ void ishtp_loader_work(struct work_struct *work)
- {
- 	DEFINE_RAW_FLEX(struct loader_xfer_dma_fragment, fragment, fragment_tbl, FRAGMENT_MAX_NUM);
- 	struct ishtp_device *dev = container_of(work, struct ishtp_device, work_fw_loader);
--	struct loader_xfer_query query = {
--		.header.command = LOADER_CMD_XFER_QUERY,
--	};
--	struct loader_start start = {
--		.header.command = LOADER_CMD_START,
--	};
-+	union loader_msg_header query_hdr = { .command = LOADER_CMD_XFER_QUERY, };
-+	union loader_msg_header start_hdr = { .command = LOADER_CMD_START, };
-+	union loader_msg_header fragment_hdr = { .command = LOADER_CMD_XFER_FRAGMENT, };
-+	struct loader_xfer_query query = { .header = cpu_to_le32(query_hdr.val32), };
-+	struct loader_start start = { .header = cpu_to_le32(start_hdr.val32), };
- 	union loader_recv_message recv_msg;
- 	char *filename = dev->driver_data->fw_filename;
- 	const struct firmware *ish_fw;
- 	void *dma_bufs[FRAGMENT_MAX_NUM] = {};
- 	u32 fragment_size;
-+	u32 fragment_count;
- 	int retry = ISHTP_LOADER_RETRY_TIMES;
- 	int rv;
- 
-@@ -228,23 +236,24 @@ void ishtp_loader_work(struct work_struct *work)
- 		return;
- 	}
- 
--	fragment->fragment.header.command = LOADER_CMD_XFER_FRAGMENT;
--	fragment->fragment.xfer_mode = LOADER_XFER_MODE_DMA;
--	fragment->fragment.is_last = 1;
--	fragment->fragment.size = ish_fw->size;
-+	fragment->fragment.header = cpu_to_le32(fragment_hdr.val32);;
-+	fragment->fragment.xfer_mode = cpu_to_le32(LOADER_XFER_MODE_DMA);
-+	fragment->fragment.is_last = cpu_to_le32(1);
-+	fragment->fragment.size = cpu_to_le32(ish_fw->size);
- 	/* Calculate the size of a single DMA fragment */
- 	fragment_size = PFN_ALIGN(DIV_ROUND_UP(ish_fw->size, FRAGMENT_MAX_NUM));
- 	/* Calculate the count of DMA fragments */
--	fragment->fragment_cnt = DIV_ROUND_UP(ish_fw->size, fragment_size);
-+	fragment_count = DIV_ROUND_UP(ish_fw->size, fragment_size);
-+	fragment->fragment_cnt = cpu_to_le32(fragment_count);
- 
--	rv = prepare_dma_bufs(dev, ish_fw, fragment, dma_bufs, fragment_size);
-+	rv = prepare_dma_bufs(dev, ish_fw, fragment, dma_bufs, fragment_size, fragment_count);
- 	if (rv) {
- 		dev_err(dev->devc, "prepare DMA buffer failed.\n");
- 		goto out;
- 	}
- 
- 	do {
--		query.image_size = ish_fw->size;
-+		query.image_size = cpu_to_le32(ish_fw->size);
- 		rv = loader_xfer_cmd(dev, &query, sizeof(query), recv_msg.raw_data,
- 				     sizeof(struct loader_xfer_query_ack));
- 		if (rv)
-@@ -257,7 +266,7 @@ void ishtp_loader_work(struct work_struct *work)
- 			recv_msg.query_ack.version_build);
- 
- 		rv = loader_xfer_cmd(dev, fragment,
--				     struct_size(fragment, fragment_tbl, fragment->fragment_cnt),
-+				     struct_size(fragment, fragment_tbl, fragment_count),
- 				     recv_msg.raw_data, sizeof(struct loader_xfer_fragment_ack));
- 		if (rv)
- 			continue; /* try again if failed */
-diff --git a/drivers/hid/intel-ish-hid/ishtp/loader.h b/drivers/hid/intel-ish-hid/ishtp/loader.h
-index 7aa45ebc3f7b..308b96085a4d 100644
---- a/drivers/hid/intel-ish-hid/ishtp/loader.h
-+++ b/drivers/hid/intel-ish-hid/ishtp/loader.h
-@@ -30,19 +30,23 @@ struct work_struct;
- #define LOADER_XFER_MODE_DMA BIT(0)
- 
- /**
-- * struct loader_msg_header - ISHTP firmware loader message header
-+ * union loader_msg_header - ISHTP firmware loader message header
-  * @command: Command type
-  * @is_response: Indicates if the message is a response
-  * @has_next: Indicates if there is a next message
-  * @reserved: Reserved for future use
-  * @status: Status of the message
-- */
--struct loader_msg_header {
--	__le32 command:7;
--	__le32 is_response:1;
--	__le32 has_next:1;
--	__le32 reserved:15;
--	__le32 status:8;
-+ * @val32: entire header as a 32-bit value
-+ */
-+union loader_msg_header {
-+	struct {
-+		__u32 command:7;
-+		__u32 is_response:1;
-+		__u32 has_next:1;
-+		__u32 reserved:15;
-+		__u32 status:8;
-+	};
-+	__u32 val32;
- };
- 
- /**
-@@ -51,7 +55,7 @@ struct loader_msg_header {
-  * @image_size: Size of the image
-  */
- struct loader_xfer_query {
--	struct loader_msg_header header;
-+	__le32 header;
- 	__le32 image_size;
- };
- 
-@@ -103,7 +107,7 @@ struct loader_capability {
-  * @capability: Loader capability
-  */
- struct loader_xfer_query_ack {
--	struct loader_msg_header header;
-+	__le32 header;
- 	__le16 version_major;
- 	__le16 version_minor;
- 	__le16 version_hotfix;
-@@ -122,7 +126,7 @@ struct loader_xfer_query_ack {
-  * @is_last: Is last
-  */
- struct loader_xfer_fragment {
--	struct loader_msg_header header;
-+	__le32 header;
- 	__le32 xfer_mode;
- 	__le32 offset;
- 	__le32 size;
-@@ -134,7 +138,7 @@ struct loader_xfer_fragment {
-  * @header: Header of the message
-  */
- struct loader_xfer_fragment_ack {
--	struct loader_msg_header header;
-+	__le32 header;
- };
- 
- /**
-@@ -170,7 +174,7 @@ struct loader_xfer_dma_fragment {
-  * @header: Header of the message
-  */
- struct loader_start {
--	struct loader_msg_header header;
-+	__le32 header;
- };
- 
- /**
-@@ -178,10 +182,11 @@ struct loader_start {
-  * @header: Header of the message
-  */
- struct loader_start_ack {
--	struct loader_msg_header header;
-+	__le32 header;
- };
- 
- union loader_recv_message {
-+	__le32 header;
- 	struct loader_xfer_query_ack query_ack;
- 	struct loader_xfer_fragment_ack fragment_ack;
- 	struct loader_start_ack start_ack;
--- 
-2.39.2
-
+Jason
 
