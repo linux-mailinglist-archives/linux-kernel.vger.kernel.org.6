@@ -1,160 +1,203 @@
-Return-Path: <linux-kernel+bounces-192807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FCD8D2278
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256C78D227E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C46A1F243E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9911F2473B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0955174ED3;
-	Tue, 28 May 2024 17:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6A3224D1;
+	Tue, 28 May 2024 17:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vqz2m5Qj"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TdpnJJ5j"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC21DA4C;
-	Tue, 28 May 2024 17:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE917E8E6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917310; cv=none; b=W9Cmc5Y01lC2H6qiJKjs0VeBHQrCj0DURgS9Bkm71cyVrxDyEK06g28fSYqjyt2qi/2MvGHPJrc0sG4LzK0lKyvGnzLYAfqb6GOczzBDyQdCLVzn12OYeZZsuR7TG3ywCS/gA2G1X1sLDETMVYP9BKoE62HMKW64+c6AtbNl4EI=
+	t=1716917435; cv=none; b=nB3uFdorIK7ayk2IqFGyV8/Z0isDs592yvWXvnqJ1AbpVLPXsHB713maXutRZDSOU+J/RTo7cS9ioJVYZq47FQbm8CQu5tY70yeqm7ramBPQBcqIcu+Wu5J+3ex/+u47Vmjm8Jnf7RKXcRCkBhMRULJBRk8YEHpP+NWj9KtVvVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917310; c=relaxed/simple;
-	bh=keLiBMxhiaQ84iw6aj4l2f4RxD/rNX/UUq7Sb/E08Q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxNDWYoJO0HQvSofUfW63AHLfIGeeM1JCdIqwhGv1UItQn7EEJXK03IDfTaAZIO84SboCXqyaT8E1+ig//E2VK8wN/IebZQFd+tiIRuibxixs9PmI9M33qQjTDrXAYMDye1fGuWdolFff4NjGdGdSJ60+at258uqXEU8x7oE9LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vqz2m5Qj; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u1o6iJOkpHwS/LOclFozOycTaolR6RFkB/DiALrvffQ=; b=vqz2m5QjcFshj08py6ocf/DX7w
-	YSPS4Mq8/FpLSvjqJE1qJR+qwxfTIMcdJYgAAyRbrKyaQIpJzpVyYBQISlQfQ5XQashHqZLf9YoyN
-	RnbCtNNk/bcD1c89YlVN1EvJnnWqK4Epz5y3X/4OsMTnA/RVOjkMQZ1IC9l7TM5kdaWVaY6+5XCvx
-	MS/7VGTPV7HLB6NBSYIqkVxxzHOgQPcSD97Q96i8COP7+SXzJzThqaxijkwWDtohCQCUmilQv/Z8H
-	HACaoccR+NKzv80GB5g98DAJrXNbR9hZHCXuU+vpEWBwLAy1UUVp3RaoB6qo3hbLtLnYWmphC/owK
-	rozAQ3MA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44962)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sC0cV-000583-2F;
-	Tue, 28 May 2024 18:28:19 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sC0cW-0003Q7-8H; Tue, 28 May 2024 18:28:20 +0100
-Date: Tue, 28 May 2024 18:28:20 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andi Shyti <andi.shyti@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
-Message-ID: <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
-References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
+	s=arc-20240116; t=1716917435; c=relaxed/simple;
+	bh=KGx/wumGhf3qNCMf0kJPQWaWTf0TglZC8EptQFFR77k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=s5QRyx5zZfE0mhtc22qz98k9ZnjqaMdIiile/YhXedrb6bz/R27fSGE39WFHQdE8+jdIfcplzMzxOOzJ5ikZmSa8Fk+Arj7QfdK8I4J396A/9t/AS1OjzQXLewY/IQYUeRLFW/k0zceXN0J+uEFGPVRUtDipZkCTUl070BvQg5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TdpnJJ5j; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f4a5344ec7so212205ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716917433; x=1717522233; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5NMJAa0oCy+b2YV+284BegcExfEuoJFA55q3jP4zsXs=;
+        b=TdpnJJ5jFN1YU3Cw8HZclIISR9eS9E7QMt5Zj4eMJInCBy22fhFQDpIBySCQ8kKqRK
+         5j/rduumOg1PJstf0mIF5NL5PMmKoyWWtHaeMnkDznOxjzbz5ppGdeHyvtkCmRuHcIFE
+         93ANWIErPyzh4iUy+cwzDhSUTvXsfO+AISBf2YBmgxYzrGQUjnYuRsIuBvxW8+7GAyGP
+         vPenHAL67MU3ceNq6vcUP3vEuIrT7w1wKOHfjOyGr+E6s52u6YxHcGM5kXj5aO9oUZtn
+         b28mTreIVlHDwSFReqlz0GM3abvS09NEwe27eakrIXBmT1hvW6wTJIL6CslOK9AEh0mI
+         p/nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716917433; x=1717522233;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NMJAa0oCy+b2YV+284BegcExfEuoJFA55q3jP4zsXs=;
+        b=alaQNwhs82I2JI2W7ulVC+RIC2K3epQULjTTaPf3eRSU5sSN2YNomqHhRNoCiGTn2z
+         5bBd0JsVBsgPh1gKtnY0SoR1f84/DwEjMjNQVzqghlqiVUOTTEWkwrrk07s0k3D4Wcph
+         auRSgKLZkdGO/a1dlbAIn8biFbSAm3esGEDP1T+tdDaMnDwaCEMFQO8MVtBRN+S2wq+V
+         M2hINoiylfWXKlzQdKLFE+h8TvYAu9OVzdnxlTg377NKYWoFb9U35u/SJc7GTGSyQqU+
+         rrPAVv+TVVOVFIdYljRGUmKgSAci3aWxKsgftaFHp6dALf4Wk9Ib5r5Sx48NEPzuynIK
+         Hc8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV2LmicMzPzeSUCsbK4NNbtPj14DK59dueWbJMGfXD6GO9fxeTehKDDH4iHTueGB9WyF8kUPyW2D+QM2Vr1FVGnCthyNagavUpQrfWA
+X-Gm-Message-State: AOJu0Yyg3nojLQaRpUlMZDQa+uVMNIgVhwzhL6IeHtqk3zpRHz6vnYo+
+	blan7GQiPYxPKNZDbvrysrCrYtEaN5NRD84/dUXbPKzdmEeZOvArIuZvCxXrRQ==
+X-Google-Smtp-Source: AGHT+IHgAHjB4Wlkt4yAEi+JpDmXVPbR1Nq/FEWvgC3tdSoc8iD0g7K399AV/7aeyFCmKvmia2JEHQ==
+X-Received: by 2002:a17:902:d505:b0:1f4:58c6:d5b with SMTP id d9443c01a7336-1f458c60fb1mr187183385ad.28.1716917432641;
+        Tue, 28 May 2024 10:30:32 -0700 (PDT)
+Received: from [192.168.60.239] (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9d899dsm82419885ad.290.2024.05.28.10.30.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 10:30:32 -0700 (PDT)
+Message-ID: <f4f0b38a-1f8e-4cf5-8cf1-6da337a1c3c0@google.com>
+Date: Tue, 28 May 2024 10:30:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+From: Avichal Rakesh <arakesh@google.com>
+Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
+ interval length and buffersize
+To: Michael Grzeschik <mgr@pengutronix.de>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Daniel Scally <dan.scally@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jayant Chowdhary <jchowdhary@google.com>,
+ "etalvala@google.com" <etalvala@google.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+References: <dcad0089-4105-44bc-a2b4-3cfc6f44164b@google.com>
+ <ZifEvUi9-E8M4dp8@pengutronix.de>
+ <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
+ <20240424022806.uo73nwpeg63vexiv@synopsys.com>
+ <ZkE-O0yJ33T9hWa0@pengutronix.de>
+ <20240517014359.p2s44ypl4bix4odm@synopsys.com>
+ <Zk03Ys1rA0I5yiZy@pengutronix.de>
+ <20240522014132.xlf7azgq2urfff2d@synopsys.com>
+ <3f404a27-50e8-42c5-a497-b46751154613@rowland.harvard.edu>
+ <20240522171640.iuol4672rnklc35g@synopsys.com>
+ <Zk4td_0RR0cMJKro@pengutronix.de>
+Content-Language: en-US
+In-Reply-To: <Zk4td_0RR0cMJKro@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-First, note that phylib's policy is if it loses comms with the PHY,
-then the link will be forced down. This is out of control of the SFP
-or phylink code.
 
-I've seen bugs with the I2C emulation on some modules resulting in
-problems with various I2C controllers.
 
-Sometimes the problem is due to a bad I2C level shifter. Some I2C
-level shifter manufacturers will swear blind that their shifter
-doesn't lock up, but strangely, one can prove with an osciloscope
-that it _does_ lock up - and in a way that the only way to recover
-was to possibly unplug the module or poewr cycle the platform.
-
-My advice would be to investigate the hardware in the first instance.
-
-On Tue, May 28, 2024 at 12:57:25PM -0400, Sean Anderson wrote:
-> Hi,
+On 5/22/24 10:37, Michael Grzeschik wrote:
+> On Wed, May 22, 2024 at 05:17:02PM +0000, Thinh Nguyen wrote:
+>> On Wed, May 22, 2024, Alan Stern wrote:
+>>> On Wed, May 22, 2024 at 01:41:42AM +0000, Thinh Nguyen wrote:
+>>> > On Wed, May 22, 2024, Michael Grzeschik wrote:
+>>> > > On Fri, May 17, 2024 at 01:44:05AM +0000, Thinh Nguyen wrote:
+>>> > > > For isoc endpoint IN, yes. If the host requests for isoc data IN while
+>>> > > > no TRB is prepared, then the controller will automatically send 0-length
+>>> > > > packet respond.
+>>> > >
+>>> > > Perfect! This will help a lot and will make active queueing of own
+>>> > > zero-length requests run unnecessary.
+>>> >
+>>> > Yes, if we rely on the current start/stop isoc transfer scheme for UVC,
+>>> > then this will work.
+>>>
+>>> You shouldn't rely on this behavior.  Other device controllers might not
+>>> behave this way; they might send no packet at all to the host (causing a
+>>> USB protocol error) instead of sending a zero-length packet.
+>>
+>> I agree. The dwc3 driver has this workaround to somewhat work with the
+>> UVC. This behavior is not something the controller expected, and this
+>> workaround should not be a common behavior for different function
+>> driver/protocol. Since this behavior was added a long time ago, it will
+>> remain the default behavior in dwc3 to avoid regression with UVC (at
+>> least until the UVC is changed). However, it would be nice for UVC to
+>> not rely on this.
 > 
-> I saw the following warning [1] twice when testing 1000Base-T SFP
-> modules:
+> With "this" you mean exactly the following commit, right?
 > 
-> [ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
-> [ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
-> [ 1481.699910] ------------[ cut here ]------------
-> [ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
-> [ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
-> <snip>
-> [ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
+> (f5e46aa4 usb: dwc3: gadget: when the started list is empty stop the active xfer)
 > 
-> and a second time with some other errors too:
+> When we start questioning this, then lets dig deeper here.
 > 
-> [   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
-> [   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
+> With the fast datarate of at least usb superspeed shouldn't they not all
+> completely work asynchronous with their in flight trbs?
+> 
+> In my understanding this validates that, with at least superspeed we are
+> unlikely to react fast enough to maintain a steady isoc dataflow, since
+> the driver above has to react to errors in the processing context.
+> 
+> This runs the above patch (f5e46aa4) a gadget independent solution
+> which has nothing to do with uvc in particular IMHO.
+> 
+> How do other controllers and their drivers work?
+> 
+>> Side note, when the dwc3 driver reschedules/starts isoc transfer again,
+>> the first transfer will be scheduled go out at some future interval and
+>> not the next immediate microframe. For UVC, it probably won't be a
+>> problem since it doesn't seem to need data going out every interval.
+> 
+> It should not make a difference. [TM]
+> 
 
-I2C driver bug? From what I can see, this occurs when there is further
-data to be read, and id->recv_count hits zero. The I2C controller is
-entirely in control of how many bytes are transferred from the remote
-device, and it should raise a NAK on the last byte before signalling a
-STOP condition during a read.
 
-> I think some part of the stack should implement a retry mechanism, but
-> I'm not sure which part. One idea could be to have mdio-i2c propagate
-> negative errors instead of converting them to successful reads of
-> 0xffff.
+Sorry for being absent for a lot of this discussion.
 
-That would unfortunately break phylib's PHY probing.
+I want to take a step back from the details of how we're 
+solving the problem to what problems we're trying to solve. 
 
-> - Are I2C bus drivers supposed to be flaky like this? That is, are callers of
->   i2c_transfer expected to handle the occasional spurious error?
+So, question(s) for Michael, because I don't see an explicit 
+answer in this thread (and my sincerest apologies if they've 
+been answered already and I missed it):
 
-I2C transfers - to some extent - are supposed to have a number of
-retries, but that's for the I2C device not responding to its address.
-Otherwise, the bus is supposed to be reliable (there is no form of
-error detection however - there's no CRCs or similar.)
+What exactly is the bug (or bugs) we're trying to solve here?
 
-The problem with merely retrying the transaction is a register read
-from a PHY may have side-effects (such as the BMSR's LSTATUS bit
-which is latched in link-fail state until the next read. Or a
-register pointer could be incremented. So it's not simple to solve
-at bus level.
+So far, it looks like there are two main problems being 
+discussed:
 
-> - Similarly, are MDIO bus drivers allowed to be flaky?
+1. Reducing the bandwidth usage of individual usb_requests
+2. Error handling for when transmission over the wire fails.
 
-No.
+Is that correct, or are there other issues at play here?
 
-I think the only realistic method would be for phylib to attempt to
-reprogram the PHY, but that would need lots of changes to phylib.
+(1) in isolation should be relatively easy to solve: Just
+smear the encoded frame across some percentage 
+(prefereably < 100%) of the usb_requests in one 
+video frame interval.
 
-Many drivers now do not check whether the PHY accesses they are
-performing succeeded or not, and rely on the failure being permanent.
+(2) is more complicated, and your suggestion is to have a 
+sentinel request between two video frames that tells the 
+host if the transmission of "current" video frame was 
+successful or not. (Is that correct?) 
 
-> Of course, the best option would be to fix cdns-i2c to not be buggy, but
-> the hardware itself is buggy in at least one of the above cases so that
-> may not be practical.
+Assuming my understanding of (2) is correct, how should
+the host behave if the transmission of the sentinel
+request fails after the video frame was sent 
+successfully (isoc is best effort so transmission is 
+never guaranteed)?
 
-Well, I don't think there's much option. If I2C drivers are flakey maybe
-its better to use GPIOs instead of the broken "inteligent" hardware.
 
-Maybe Andrew has a different view however.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best,
+Avi.
 
