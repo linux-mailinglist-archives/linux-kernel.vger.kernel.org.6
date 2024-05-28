@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-192658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5168D2041
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF498D2046
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7391C23395
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A48E28485D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF55170851;
-	Tue, 28 May 2024 15:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0377317083D;
+	Tue, 28 May 2024 15:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZdELZijr"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuA4epHx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A2616D4DA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6B31E507;
+	Tue, 28 May 2024 15:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909703; cv=none; b=j/BOVNsRYFXbrGEolanL+zBQx+WE8LVWCgpje9Mr65SiYVWT3//sBHyMkizPszipjTTrZuPj2+wbhiC2elL4at1aeeGt5Jt87HR8gHN+2NU62GYx7v8DWtm8XbtvDnysU38v2cI+sNlnsYFJXYZa1hIzv2uyiGY2/AFjESshdEY=
+	t=1716909768; cv=none; b=XN3UuXUh9XZE+O+G0iDzgzSm4a9JBZLk3p3YuQJgLfFo9KzdzBTqg0PKJtBkbamPONDji3zTR1JLwEbtyndm1+PlregbPX1yHKcwPl1EhLiSb2LMDgo78qaS/DJCuyXqt+1owWXCA4DVWuuGmQOyFIFqYponYi/MTWh47Ob0UOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909703; c=relaxed/simple;
-	bh=0Yz2y7QOJfyVBPMZHgZvT/EZ6hOdwvYJIao8t7SoEpc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oZF/U2D9tHUk0/hcUxKKXaFwy2J8ZVxnDCsGwCHManEV93wqj554iJGZjmPev1/1O/KlNMttkqEJIb/nu0BCT2QDdPlq2hV6BuMZlTksqrznrlKHbmnC3wLnBAVxhaPHhEcxlAop/qMR0E+SWbF1Svs2ycDU7UU9OVL47iwS/KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZdELZijr; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df7721f2e70so4618110276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716909701; x=1717514501; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bRBd06u9sCh27O0CX55ErAEywPjabZqaR+RrcX+yUJY=;
-        b=ZdELZijrgmbN4vo4vJlQaB7jZlrjKQ8tU4sE3CQEnDrkNcVTUFcaUH1Qh5kPvXiEGk
-         rqwd1RUNKiyVXID2bmOq7duAJN1Ma6zfSfBAIwA8sEaANUXS72LTvBvpszIfEDSiffSw
-         ZQR8StReqr2wZz1ybHZCwlAgS57al8vX9oyvP6bDTPQ1KrIxmBRbSvDSWzAg4YmLlyFx
-         kQ4QALOtdAAhnvrDxZkTJUerhwZanVmDYyEdA8a7QI3duc8wLz3SIlXdeF7F2tNHvOYL
-         VXl7pcX0a3QV2/eZkNd0iiSJioPUtU9W13zzvsJjViGMHvIGuW3EXEUWlCBkGkiR8qyl
-         d1NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716909701; x=1717514501;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bRBd06u9sCh27O0CX55ErAEywPjabZqaR+RrcX+yUJY=;
-        b=wuZURgjxTrCI0lZDZcmI6HiRB/jjgJ96J13OlRz+9H5v6WmS5idpX1oAn3ek9tmp9s
-         4SPsvuPctcSrnpt3Ppfft6+2geNLn5q1qNjaRBVUEjy72+SHC8M1ve0ipWcN35x9O8Zq
-         w5vVw97702TEF6QKfwXqYH51zGYhOhjLxhUt9p5HMc1dA1y9grftYYBRtwNTjEr0dpj2
-         JYUeSOZlyccayAiei1aQvE+XrCttSHKOFrwxqizoHVxRYmhlkiJEtlNEETxlKFW8Ib82
-         Q2IVtkV3n2ChHLWQ5s1KOl2VxpYGSzuppg83YZ+o6GGUAicilXb++W7bLUy7RoywNToG
-         K8ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMZCvfZ5hEDmtvIlwGfMdwjddLRiPSV5oqmUDyXyQ/6PLuGKpG2Fti9P/XfDy2WcF2AwRYAX4LDX+B8uKO5UsvEuqnqBwuBykbxUGA
-X-Gm-Message-State: AOJu0Yx48DMNW108VIKF+7/oIbm3Wn/rn3cF583QVUpUl1SYcGxg5swu
-	HAJ0bWUns7wucvWOtQdzT1+OqdKhWNa4JaPAP/E8SUAGslqe6nq/5BXA8d7155YE1vDZGacVizV
-	yiQ==
-X-Google-Smtp-Source: AGHT+IFUg0oBR9pemkRQzM4G8p0w9fg1yaIVZjFK83T1P8hqcQyT058SSgYKhk+6Fyn6cEBObfTSHitNrv0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:f11:b0:de5:a44c:25af with SMTP id
- 3f1490d57ef6-df55e78b521mr3033739276.5.1716909701251; Tue, 28 May 2024
- 08:21:41 -0700 (PDT)
-Date: Tue, 28 May 2024 08:21:39 -0700
-In-Reply-To: <9296de25-0d3f-47eb-a98b-e0dcd388cd6b@linux.intel.com>
+	s=arc-20240116; t=1716909768; c=relaxed/simple;
+	bh=wTi+xli6HcY+dE5hQHt0HIl1zh3+zE9RZPz4hC45DyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vdxn6+nFH3LPMwXSvH3dYdko7GmTiC1WJg0fmHT4t1InnIN3mthYjCBLyzUYKENAIsErMoq6jgxAWFAXQnjDyIQ0ESTKmQh8DF5NIEHPLOsRccH2GGB1NR2lJxGOQoXoXGjY30ezb/ItfttAb3eGUx50YVa9tyyAGadc9dSm7Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuA4epHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 790DFC3277B;
+	Tue, 28 May 2024 15:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716909767;
+	bh=wTi+xli6HcY+dE5hQHt0HIl1zh3+zE9RZPz4hC45DyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UuA4epHx7egvOMi6jS4ZFmmTgKjt6C8CCa53rcRGHKIPR412VllMWvVkZbaDkvoWj
+	 3FkvUL8WAl9S4zn3SEeyDluFFw/JitsAmjoE3CmfHJbLPz6ESeiG1jjYczZziStLgv
+	 KExtuJnx51AZoVIaBAtnx2IdzIOZE5OZaqB8ptkTMEC1TjE7h5RjUqBHe+uMvANf55
+	 QoradKfdNj6SGZX/myb9j13ziGOCuwftMv25MuAD93JYzvgOZombc8hqH0E9hOpy3v
+	 /2V6zIG2k+2bW+Od6tt1/jlYV8MMWwxRvvzOQTkf6UQ1PWWu678fqXejcMW8l95RrX
+	 Q3kyQYMUsrHwQ==
+Date: Tue, 28 May 2024 16:22:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH 4/7] riscv: Implement xchg8/16() using Zabha
+Message-ID: <20240528-prenatal-grating-2b6096cc2a1b@spud>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-5-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-34-seanjc@google.com>
- <9296de25-0d3f-47eb-a98b-e0dcd388cd6b@linux.intel.com>
-Message-ID: <ZlX2gxki9tw3Uny8@google.com>
-Subject: Re: [PATCH v2 33/49] KVM: x86: Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0GTOFQLtWJu+ErMd"
+Content-Disposition: inline
+In-Reply-To: <20240528151052.313031-5-alexghiti@rivosinc.com>
 
-On Wed, May 22, 2024, Binbin Wu wrote:
-> 
-> 
-> On 5/18/2024 1:39 AM, Sean Christopherson wrote:
-> > Advertise TSC_DEADLINE_TIMER via KVM_GET_SUPPORTED_CPUID when it's
-> > supported in hardware,
-> 
-> But it's using EMUL_F(TSC_DEADLINE_TIMER) below?
 
-Doh, yeah, the changelog is wrong.  KVM always emulates TSC_DEADLINE_TIMER.
+--0GTOFQLtWJu+ErMd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Tue, May 28, 2024 at 05:10:49PM +0200, Alexandre Ghiti wrote:
+	\
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
+p.h
+> index e17d0078a651..f71ddd2ca163 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -81,6 +81,7 @@
+>  #define RISCV_ISA_EXT_ZTSO		72
+>  #define RISCV_ISA_EXT_ZACAS		73
+>  #define RISCV_ISA_EXT_XANDESPMU		74
+> +#define RISCV_ISA_EXT_ZABHA		75
+> =20
+>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+> =20
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
+e.c
+> index 3ed2359eae35..8d0f56dd2f53 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -257,6 +257,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
+>  	__RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
+>  	__RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
+>  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
+> +	__RISCV_ISA_EXT_DATA(zabha, RISCV_ISA_EXT_ZABHA),
+>  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
+>  	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
+>  	__RISCV_ISA_EXT_DATA(zfhmin, RISCV_ISA_EXT_ZFHMIN),
+
+You're missing a dt-binding patch in this series adding zabha.
+
+Thanks,
+Conor.
+
+--0GTOFQLtWJu+ErMd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlX2wgAKCRB4tDGHoIJi
+0sMPAQDF0+IXL0mMgc3HglnXcCxaxr8V2FlJsd42Fa3JmGHPNAEAwEvb+htVAMAp
+Oz7amAHz+PXP7m/FfiQEjyXQXz+PsQg=
+=ven9
+-----END PGP SIGNATURE-----
+
+--0GTOFQLtWJu+ErMd--
 
