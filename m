@@ -1,131 +1,268 @@
-Return-Path: <linux-kernel+bounces-192991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800F18D2553
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:00:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F058D2555
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06FC1C2628A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C4C2824AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E0417838A;
-	Tue, 28 May 2024 20:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB717838E;
+	Tue, 28 May 2024 20:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cruORaZp"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owCVVocN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B35551012
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9136E29402;
+	Tue, 28 May 2024 20:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926433; cv=none; b=KZCb1UGn66zlv4qWZA8Ex7iM1bJmNTalGlsMU9JI1z31EyJlJGrp/eVOTNrXsPUAdSZowaBekMqLp6LoLQyP8db7uMywcppbtNOxiU9hugFpzu55ngxX94YbzV2qHvf3g9zydrRbfxb5iB/dmmucz1qv53ru5DceeYMECUU5a8A=
+	t=1716926453; cv=none; b=aMyetZNLczYP+hUdizCNDSrEyMmIdLNn2f7HoPverYBTkZ1RreSbzC9At+TD87wn2dljY4tQ7vDrOoRvU5oFlv+IaMt6V4TCPBtfJxcy4GWmzsACg8uFayIQHN9LyqfeJ6IhuvEKyP9FXMZg3MiM1FG9YskDRMwb1j0NvtJvKHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926433; c=relaxed/simple;
-	bh=8YWp68qxwuKrMQMapx0pKX2xFIRrKqbrwhPkeTh8yQQ=;
+	s=arc-20240116; t=1716926453; c=relaxed/simple;
+	bh=nTbDhwyviaLMbfaJtiOxxx3LkcPgQ3xSCNmD1vg86bc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=enREGNtX851CMDfP7jDxe1w0Okz1OesMcWpgF+Hi6NUNOhbRJMTT1HzxCAqQHoXYTfr59aD16UAzXKkmZDLp0Zm9MK8JitxnCsg8h2JEKi5luNlNd3qjvFmS1+MZt7C67zCqtYIGHPlyVyOM9Z/8kj8btuWWsZAQDeDfvhjCExg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cruORaZp; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a626776cc50so142334166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716926430; x=1717531230; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dEtRoS1f3BiXfOOkD6/RyfWg8b94KE276J+eEUHXYvQ=;
-        b=cruORaZp1fEO6fHUqPBS/o+IA89Ds76muFezCuPcc1yD32X4wURefx7j2UslKpxIuM
-         E8ZHy+eRdPb8qiPDndDVgKbBWxU/8v9yeN3ti2vUqk8XX/B3r3cyDYKePjo4m0/iGSDm
-         9Nn6NncLu2zlDqy6RohIo84rh/TEiD0FCvBzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716926430; x=1717531230;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dEtRoS1f3BiXfOOkD6/RyfWg8b94KE276J+eEUHXYvQ=;
-        b=tXDs/hRszqemS73BbXRdK/Wn7nYibWQt1g+mqXsxWCyji4ZjQolF4kFptV0q8+nlle
-         eqbQxhwpx1zRxNMJh/eI6/SwigN1QGUSmVIqg2N6U04tLGm9o81k5SxPBagCALOWJtr5
-         qNm4DZXuqnVs/YhgtWqUbmk6PBZ/qEFTpE0CSnHc0N+FdfXZl0FMENbVmA5LSEAOISIc
-         R9FG+i+7QPObtuG8karQD9aL7uDC5EkdEQe1wLheEeQIKyCVeD1e6PSqw000CMJr9PZl
-         AlI035dZVN4yic/KEtHC+P3kVWS9V3yr+HZCstIclN15lwF5rPiOMWFYKEzX9pzJKn24
-         hBXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP8BbVJpHD9KRjaxk+4knvBnp43Za9mTpXqYCaMig8iuKgr9Z32biYCT7iE+UhHku53ZcG3DDiwr82klMs5mHZhstqlh4LUlyqHota
-X-Gm-Message-State: AOJu0Yzojba80RvuS3eFkx3tGHz0sNwL/7ylsZNE118RF0rP2oh2l0hd
-	byZzBCNo3VUS9B0rgPQCnuamCF/DyymHN8lkJHZpAImCPBY0xGB+FJXDA+oi3l3YA0EcX3xFFks
-	SB5GfnA==
-X-Google-Smtp-Source: AGHT+IG2h0bWo70+yLps81BXFCT3dUeWnme6S9w7/5h1y4ejw1FuNLWJLvGlp+lQeuNX21US7xWjAA==
-X-Received: by 2002:a17:907:7743:b0:a59:aff8:c713 with SMTP id a640c23a62f3a-a62641a69a5mr790388766b.10.1716926429788;
-        Tue, 28 May 2024 13:00:29 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc523d1sm640917666b.134.2024.05.28.13.00.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 13:00:29 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so1285759a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:00:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnAC+O9qmY4S1UalwZaKaT21ErCy+bqFFvtDJ1lkSWMVwS4HF6yrHcq/Z+RJNXY7KdU5/UvuqnZJSd1vulYro4VGox/Y54Q66vbYQ9
-X-Received: by 2002:a17:906:c088:b0:a59:db0f:6bd7 with SMTP id
- a640c23a62f3a-a6265116365mr793210666b.71.1716926428911; Tue, 28 May 2024
- 13:00:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=pnN9HbOjcwumjUKl7ZXc/hYANa7ZolbzFA67232K+YOzcxfKfb5hm6qQVypuM/jHc1Pc5zp34shnUzMiLVGxOgAgAsqCbl08eHbHxktR7wt2xCN0ADOHq2CPCfa7+oay8tNH8WZv1mV2zaq/+/1fRoefpOF1Ilq8o0g/FXkpjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owCVVocN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0171CC32786;
+	Tue, 28 May 2024 20:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716926453;
+	bh=nTbDhwyviaLMbfaJtiOxxx3LkcPgQ3xSCNmD1vg86bc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=owCVVocN8NuAMtXNRgBZCZEwTvdQgWHpV6mACAUokIiIrngzZfjuB3G9VyJrF646h
+	 fCdLJF/pw+uYGcJVHiivPj9lXGa6est3vPsUl6I7qjWSdV/CeqqGUWk3/zcE9eEhh/
+	 7EQyGb6H/HaI9r461E4YKqVCNbjUjF+GUUYc6PI2woCnSrNUtNZODMEac/EDR3V3Wh
+	 Ehzzr/PWHRo4MxDWkgn+b75H4AnSF7iLpcjytXTjQr9A71tr68vPLrjbr2hNj2Hun+
+	 pD9zuzMmuacu/fE76SvZoDAuRx2xNz3IkgIP1BooALKCtTh+gbxhuiZUxya0Uuj57B
+	 g9f74EizWzWaA==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b2fbe85f82so191202eaf.1;
+        Tue, 28 May 2024 13:00:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVOirMGAHOUMeWR7jxe6w/1D2jn5z2GaQYF7VoMTzXHqirhscs2+90njtukflOdrIPUacG0QSadSMuJdE7im2GepGXdW5NqQUas2JvKo+VdbHuX7upiSEZJo4I0RYMhyBPCXa16Z5E=
+X-Gm-Message-State: AOJu0YxEGl7t7P3ixH6GO3RVm/ss9Ad2We12MiZb6JoaYaU4xEjKowuF
+	ipUWgxeNvZWIGB1pbAQlIvtwWo1UuLB7bUAEdzRAp8r7SZ+7QQhxARt37gcrg0Jod3V2zr1XlBV
+	tmM7x2vKXcuuBVQugGjedwEWl2cE=
+X-Google-Smtp-Source: AGHT+IHllD0tfHn/GT604/S3e6+vho1OzOixWyheh0PHIwshIZefDo1hz6aL0GVlHXEZ/M7BizLCS7+NA7hMMir+LUs=
+X-Received: by 2002:a4a:ba86:0:b0:5b2:8017:fb68 with SMTP id
+ 006d021491bc7-5b95cde3ec5mr14458580eaf.0.1716926452133; Tue, 28 May 2024
+ 13:00:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1>
-In-Reply-To: <ZlY0F_lmB37g10OK@x1>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 May 2024 13:00:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg3TciVzg7To1KVueCmwJoDEZZSurGPb+a7Dn7Dij=4YQ@mail.gmail.com>
-Message-ID: <CAHk-=wg3TciVzg7To1KVueCmwJoDEZZSurGPb+a7Dn7Dij=4YQ@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240528121124.3588248-1-arnd@kernel.org> <0edd0485-274a-4b3f-8ecb-60708963db8a@amd.com>
+In-Reply-To: <0edd0485-274a-4b3f-8ecb-60708963db8a@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 28 May 2024 22:00:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iqkR24RjiXET6qKRHeOLxYqKSgrpsp_N87wuJrtdTcAg@mail.gmail.com>
+Message-ID: <CAJZ5v0iqkR24RjiXET6qKRHeOLxYqKSgrpsp_N87wuJrtdTcAg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: amd-pstate: remove global header file
+To: Mario Limonciello <mario.limonciello@amd.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Perry Yuan <perry.yuan@amd.com>, Wyes Karny <wyes.karny@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Meng Li <li.meng@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 May 2024 at 12:44, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Tue, May 28, 2024 at 7:49=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
 >
-> For 'perf record' we're asking for sampling, if the event has the name
-> specified and can't be sampled, skip it, warn the user and even so
-> only if verbose mode is asked, something like:
+> On 5/28/2024 07:09, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > When extra warnings are enabled, gcc points out a global variable
+> > definition in a header:
+> >
+> > In file included from drivers/cpufreq/amd-pstate-ut.c:29:
+> > include/linux/amd-pstate.h:123:27: error: 'amd_pstate_mode_string' defi=
+ned but not used [-Werror=3Dunused-const-variable=3D]
+> >    123 | static const char * const amd_pstate_mode_string[] =3D {
+> >        |                           ^~~~~~~~~~~~~~~~~~~~~~
+> >
+> > This header is only included from two files in the same directory,
+> > and one of them uses only a single definition from it, so clean it
+> > up by moving most of the contents into the driver that uses them,
+> > and making shared bits a local header file.
+> >
+> > Fixes: 36c5014e5460 ("cpufreq: amd-pstate: optimize driver working mode=
+ selection in amd_pstate_param()")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Thanks!
+>
+> Acked-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Yes. I think that's the right rule in general.
+Applied as 6.10-rc material, thanks!
 
-However, the more I have looked at this case, the more I am also
-convinced that "cycles" as a name is special.
-
-It's literally documented to be an alias for cpu-cycles, both in
-examples and in "perf list" output, and that's what the usage is.
-
-So even if you were to have some other PMU in the system that had a
-"cycles" thing, if it's not a core event but some other cycles
-("uncore", bus cycles, bicycles, whatever), it shouldn't be used even
-if it could be used for profiling.
-
-You'd have to use the full PMU name and actually list it out if you
-want to use a non-core counter named "cycles".
-
-And yes, we even have some documentation that says exactly that:
-
-  "e.g usage::
-
-        perf stat -a -e arm_dsu_0/cycles/"
-
-So this isn't even anything new or ambiguous. This is just how things
-*ARE*, and absolutely have to be.
-
-                 Linus
+> > ---
+> >   MAINTAINERS                                   |  1 -
+> >   drivers/cpufreq/amd-pstate-ut.c               |  3 +-
+> >   drivers/cpufreq/amd-pstate.c                  | 34 ++++++++++++++++++=
+-
+> >   .../linux =3D> drivers/cpufreq}/amd-pstate.h    | 33 ----------------=
+--
+> >   4 files changed, 35 insertions(+), 36 deletions(-)
+> >   rename {include/linux =3D> drivers/cpufreq}/amd-pstate.h (82%)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 070a39b2b098..35a75ab8ef05 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1107,7 +1107,6 @@ L:      linux-pm@vger.kernel.org
+> >   S:  Supported
+> >   F:  Documentation/admin-guide/pm/amd-pstate.rst
+> >   F:  drivers/cpufreq/amd-pstate*
+> > -F:   include/linux/amd-pstate.h
+> >   F:  tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py
+> >
+> >   AMD PTDMA DRIVER
+> > diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-psta=
+te-ut.c
+> > index f04ae67dda37..fc275d41d51e 100644
+> > --- a/drivers/cpufreq/amd-pstate-ut.c
+> > +++ b/drivers/cpufreq/amd-pstate-ut.c
+> > @@ -26,10 +26,11 @@
+> >   #include <linux/module.h>
+> >   #include <linux/moduleparam.h>
+> >   #include <linux/fs.h>
+> > -#include <linux/amd-pstate.h>
+> >
+> >   #include <acpi/cppc_acpi.h>
+> >
+> > +#include "amd-pstate.h"
+> > +
+> >   /*
+> >    * Abbreviations:
+> >    * amd_pstate_ut: used as a shortform for AMD P-State unit test.
+> > diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.=
+c
+> > index 1b7e82a0ad2e..91993647e09e 100644
+> > --- a/drivers/cpufreq/amd-pstate.c
+> > +++ b/drivers/cpufreq/amd-pstate.c
+> > @@ -36,7 +36,6 @@
+> >   #include <linux/delay.h>
+> >   #include <linux/uaccess.h>
+> >   #include <linux/static_call.h>
+> > -#include <linux/amd-pstate.h>
+> >   #include <linux/topology.h>
+> >
+> >   #include <acpi/processor.h>
+> > @@ -46,6 +45,8 @@
+> >   #include <asm/processor.h>
+> >   #include <asm/cpufeature.h>
+> >   #include <asm/cpu_device_id.h>
+> > +
+> > +#include "amd-pstate.h"
+> >   #include "amd-pstate-trace.h"
+> >
+> >   #define AMD_PSTATE_TRANSITION_LATENCY       20000
+> > @@ -53,6 +54,37 @@
+> >   #define CPPC_HIGHEST_PERF_PERFORMANCE       196
+> >   #define CPPC_HIGHEST_PERF_DEFAULT   166
+> >
+> > +#define AMD_CPPC_EPP_PERFORMANCE             0x00
+> > +#define AMD_CPPC_EPP_BALANCE_PERFORMANCE     0x80
+> > +#define AMD_CPPC_EPP_BALANCE_POWERSAVE               0xBF
+> > +#define AMD_CPPC_EPP_POWERSAVE                       0xFF
+> > +
+> > +/*
+> > + * enum amd_pstate_mode - driver working mode of amd pstate
+> > + */
+> > +enum amd_pstate_mode {
+> > +     AMD_PSTATE_UNDEFINED =3D 0,
+> > +     AMD_PSTATE_DISABLE,
+> > +     AMD_PSTATE_PASSIVE,
+> > +     AMD_PSTATE_ACTIVE,
+> > +     AMD_PSTATE_GUIDED,
+> > +     AMD_PSTATE_MAX,
+> > +};
+> > +
+> > +static const char * const amd_pstate_mode_string[] =3D {
+> > +     [AMD_PSTATE_UNDEFINED]   =3D "undefined",
+> > +     [AMD_PSTATE_DISABLE]     =3D "disable",
+> > +     [AMD_PSTATE_PASSIVE]     =3D "passive",
+> > +     [AMD_PSTATE_ACTIVE]      =3D "active",
+> > +     [AMD_PSTATE_GUIDED]      =3D "guided",
+> > +     NULL,
+> > +};
+> > +
+> > +struct quirk_entry {
+> > +     u32 nominal_freq;
+> > +     u32 lowest_freq;
+> > +};
+> > +
+> >   /*
+> >    * TODO: We need more time to fine tune processors with shared memory=
+ solution
+> >    * with community together.
+> > diff --git a/include/linux/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
+> > similarity index 82%
+> > rename from include/linux/amd-pstate.h
+> > rename to drivers/cpufreq/amd-pstate.h
+> > index d58fc022ec46..e6a28e7f4dbf 100644
+> > --- a/include/linux/amd-pstate.h
+> > +++ b/drivers/cpufreq/amd-pstate.h
+> > @@ -1,7 +1,5 @@
+> >   /* SPDX-License-Identifier: GPL-2.0-only */
+> >   /*
+> > - * linux/include/linux/amd-pstate.h
+> > - *
+> >    * Copyright (C) 2022 Advanced Micro Devices, Inc.
+> >    *
+> >    * Author: Meng Li <li.meng@amd.com>
+> > @@ -12,11 +10,6 @@
+> >
+> >   #include <linux/pm_qos.h>
+> >
+> > -#define AMD_CPPC_EPP_PERFORMANCE             0x00
+> > -#define AMD_CPPC_EPP_BALANCE_PERFORMANCE     0x80
+> > -#define AMD_CPPC_EPP_BALANCE_POWERSAVE               0xBF
+> > -#define AMD_CPPC_EPP_POWERSAVE                       0xFF
+> > -
+> >   /********************************************************************=
+*
+> >    *                        AMD P-state INTERFACE                      =
+ *
+> >    ********************************************************************=
+*/
+> > @@ -108,30 +101,4 @@ struct amd_cpudata {
+> >       bool    suspended;
+> >   };
+> >
+> > -/*
+> > - * enum amd_pstate_mode - driver working mode of amd pstate
+> > - */
+> > -enum amd_pstate_mode {
+> > -     AMD_PSTATE_UNDEFINED =3D 0,
+> > -     AMD_PSTATE_DISABLE,
+> > -     AMD_PSTATE_PASSIVE,
+> > -     AMD_PSTATE_ACTIVE,
+> > -     AMD_PSTATE_GUIDED,
+> > -     AMD_PSTATE_MAX,
+> > -};
+> > -
+> > -static const char * const amd_pstate_mode_string[] =3D {
+> > -     [AMD_PSTATE_UNDEFINED]   =3D "undefined",
+> > -     [AMD_PSTATE_DISABLE]     =3D "disable",
+> > -     [AMD_PSTATE_PASSIVE]     =3D "passive",
+> > -     [AMD_PSTATE_ACTIVE]      =3D "active",
+> > -     [AMD_PSTATE_GUIDED]      =3D "guided",
+> > -     NULL,
+> > -};
+> > -
+> > -struct quirk_entry {
+> > -     u32 nominal_freq;
+> > -     u32 lowest_freq;
+> > -};
+> > -
+> >   #endif /* _LINUX_AMD_PSTATE_H */
+>
 
