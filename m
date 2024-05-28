@@ -1,627 +1,279 @@
-Return-Path: <linux-kernel+bounces-192379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BD78D1C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:16:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609E88D1CA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C180A2871C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7E1AB21636
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240B016F8E1;
-	Tue, 28 May 2024 13:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEIROk2x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47355173334;
+	Tue, 28 May 2024 13:15:43 +0000 (UTC)
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58A616F846;
-	Tue, 28 May 2024 13:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716902123; cv=none; b=R+zyQcabc6wGb6ZXvwaGorJ2rXIKZUK5FSFRlUpzVGQs7mv1xu/UueYQf/Khj2CvUNyzKTGdC/vzBVRGGIEMpj1Ax/U9RWA8m0oO0LT+veRYrtfS/P6dmBHw0o2T9IcjXLC94Hzq55wrhxqq2oCvt/tMzL4hu12vStpq0CbkFVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716902123; c=relaxed/simple;
-	bh=9WdrhkQ/w3fjmh2OCYNw2/sdwfYWu3wu/kbo44PGz9g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HNnEutw5FtoPwGDd+Hgg8JpNtGsaLlmtg1cu1/itlhZNuK0nUEjbniEvu4eRW6z3hLt+CN/SDnDSBbvwqJX5DJwdB2ag4LWkCMqeDgAkVl9V7o8iomBb6g6zvx7RP+0GtHFHFRJiAwqu8cCoVRr4UwA4ZUXJFzYlH+r9BIFEQfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEIROk2x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC36C4AF0B;
-	Tue, 28 May 2024 13:15:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716902123;
-	bh=9WdrhkQ/w3fjmh2OCYNw2/sdwfYWu3wu/kbo44PGz9g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HEIROk2x0ybH8MKibJDr3gc3KX3tBNuxCc2jIy2Sgdci7ukJCE58iuyAEBx245mQe
-	 udL7mw9oZjItVPC3PGPuyrHM9VlIWNjYMoU1j3fanscAC/JT0ajWTVCNdroR2LBtuN
-	 n6rCErvQJE+TySQN/ep6vu3bHKpdNtVxquacAR4JmCLAFDwZr52yHNamNGVxuoghlK
-	 B2YLe8SYv5qfeBoBgl2TfSBAbNPqKetP5oKU8wBfrwbQikAWdg/2yffj4WbqXkKj2p
-	 sGG5sTuSHyzoSa56xyc6dEFNZhqgV9iOooMbJ70jhQhTiwIj7wcmOXdhJjU9+nji1p
-	 J7M+UxCnNebeA==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Tue, 28 May 2024 15:14:41 +0200
-Subject: [PATCH HID 03/13] HID: bpf: implement HID-BPF through
- bpf_struct_ops
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B208172762;
+	Tue, 28 May 2024 13:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716902142; cv=fail; b=dO8G1j6Q2k2RMVBbFv2cJcIStVhQQI+NgPPJjMG21JemsSwEHFGK4TW/bYCmnQ8n/XIJwzvitsnTUiXwOTc2TUGT5U+6TjtS5ruRoYoWzndzCwBm8iqxFvlRgNdeJ51fayjSHnC0ZgkP4CgRzdnJieAWg/OEOXZ8p0yOGq4oVP0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716902142; c=relaxed/simple;
+	bh=nPWuEFUfME5mAiGqBV0jWAwGt/pVIX5ukwqu0TjT9/E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rMjuF2kyB6ECvSHVJQHH5YqokXL3X1Afqwy77+p1A0eFzlok7bcnuEGOVtSAdqUfMQCpjmjkyAu1KySZ4AZthX5c5wZg3R5oLEH2tv0O2UVDSpIeXv8eBChA/EzwnKKhaWKD9Hqpx99pygV45Qh6PaP/KNQpqTm2fP5mDr3mjLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBn1wI031930;
+	Tue, 28 May 2024 13:14:44 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-id:content-transfer-encoding:content-type:date:fr?=
+ =?UTF-8?Q?om:in-reply-to:message-id:mime-version:references:subject:to;_s?=
+ =?UTF-8?Q?=3Dcorp-2023-11-20;_bh=3DnPWuEFUfME5mAiGqBV0jWAwGt/pVIX5ukwqu0T?=
+ =?UTF-8?Q?jT9/E=3D;_b=3DN9naQQXlsOasPiU0daUGkB0A3SNBVxxVGqic4F/NZRb3h0Sjh?=
+ =?UTF-8?Q?xAmee+bd4mXGg0blAA9_2aIWEAedt4nuFjbnh54p1aY8QIMh0qLEmU6je5USaji?=
+ =?UTF-8?Q?B1I7ccH4diFwtDWpXF1HlvoZH_6V6EG4LRC53erwWOB+Oq05AY7bXQ5AP/q8ld6?=
+ =?UTF-8?Q?ZG40ty0uQDdXXvvBLkGcBTmBrsPPVaQ_hCoJeSCC33E1de84lPzweanG20U19Nn?=
+ =?UTF-8?Q?aL5sQnPj3CdELDOw7YCx5KJLSI5C1IheJnhWd_Uq5OCxFGZMIlEnOm0h7zt5lLD?=
+ =?UTF-8?Q?BwlXowFh2rP059YMXTK9mR3JaqQ+z+icUIoJEu0wvC8_Vg=3D=3D_?=
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g9marb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 13:14:43 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBmnFF009265;
+	Tue, 28 May 2024 13:14:43 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2177.outbound.protection.outlook.com [104.47.58.177])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc52b3un3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 13:14:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Coun4apuUJ4vapozge9SI0xACHRCGk5D6trh6VA7sz+BGQlEWOVGHxWmLYuJ7EX6h/ftrlrqfzafgPoloik/Mtybvq96n66a9zTaSBDkh3w/+vEVLz+S5kar5hKJuDF3a1FgnhhgDttWHEBiVPAqanEniwSgR8hyPMcIZ2w+hkY+139NHyZ12zdfWeZu2qzCW5KFz25niVfw5oxqESo73RhKb8vD4176EXHCichewRiJO+yXZPHnhcqyaZS8wXNfPkESgKEqGYIXwe+SYRtQMu5iki7B+ITT6Y0GRkkdRqiFk14CT63zM/XxbSMMtFuR9pM9rHpXC2LVwlsLqB2mVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nPWuEFUfME5mAiGqBV0jWAwGt/pVIX5ukwqu0TjT9/E=;
+ b=PtUTuQ50eK0b/XBuTNzPzSWZoce7uTZ+ZSfBGaMkScW8vbJIqMBQsz55TncN4Zfgf16rlT/jmhotlBChvyebjgLtZCzjVCCU3646oJhBzHQeQ0vBziIXAkRw164tD5zYLTr/p4JyQRcrL3VcgJeT0WDWum8rxmUYEeScyZirwz544wcnFlRpdFrWmUGPSqUCUs8xiRbniwXVf587S07yAkwHrD9r5WNizKTJRq9S3BGLRLnvb49zrF6tbrhDOq9nut81hkQZs5hZ+R/ZcpKs5bF8njc41RXznsUER75rT44aOIBz3Bqas9MpS/Al1IaTzL9Hfj9lzPY5y78V1KSePA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nPWuEFUfME5mAiGqBV0jWAwGt/pVIX5ukwqu0TjT9/E=;
+ b=qQl6PM/8SMVggstfmMpR5fFVN/+edMSQaJx3jShgshGwzTCBiPDP05Co5sQJHhbOZsvSv3yj9R8g+//8P9TqYvnq8D87AHDACeFThmI4BUfzHLyHB6iUnCRWtkAvTA9+Y6yYRGNFct30+469712M7NGEyhw9GdkOmNreAK628vY=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by DS7PR10MB7323.namprd10.prod.outlook.com (2603:10b6:8:ec::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.17; Tue, 28 May 2024 13:14:41 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.7611.025; Tue, 28 May 2024
+ 13:14:41 +0000
+From: Chuck Lever III <chuck.lever@oracle.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Neil Brown
+	<neilb@suse.de>,
+        Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+        linux-stable <stable@vger.kernel.org>,
+        "patches@lists.linux.dev"
+	<patches@lists.linux.dev>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        Linus Torvalds
+	<torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "patches@kernelci.org" <patches@kernelci.org>,
+        "lkft-triage@lists.linaro.org"
+	<lkft-triage@lists.linaro.org>,
+        "pavel@denx.de" <pavel@denx.de>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sudipm.mukherjee@gmail.com"
+	<sudipm.mukherjee@gmail.com>,
+        "srw@sladewatkins.net" <srw@sladewatkins.net>,
+        "rwarsow@gmx.de" <rwarsow@gmx.de>,
+        "conor@kernel.org" <conor@kernel.org>,
+        "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+        "broonie@kernel.org"
+	<broonie@kernel.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+Thread-Topic: [PATCH 5.15 00/23] 5.15.160-rc1 review
+Thread-Index: AQHasN4Kp5m/MZVFZ0aHe0MmQeirFLGsoDYA
+Date: Tue, 28 May 2024 13:14:41 +0000
+Message-ID: <968E3378-1B38-4519-BB85-5B1C45E3A16A@oracle.com>
+References: <20240523130327.956341021@linuxfoundation.org>
+ <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
+ <2024052541-likeness-banjo-e147@gregkh>
+ <8ddb4da3-49e4-4d96-bec3-66a209bff71b@nvidia.com>
+In-Reply-To: <8ddb4da3-49e4-4d96-bec3-66a209bff71b@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3774.600.62)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|DS7PR10MB7323:EE_
+x-ms-office365-filtering-correlation-id: 0ee63faf-c1f4-42bb-4a3f-08dc7f182253
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230031|376005|366007|7416005|1800799015|38070700009;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?Rk9lZ2l0M1o4a3gzRjFKOHlxeUF5T1NqK25Pa29FK29Uc25FUzFIU3M2WjIz?=
+ =?utf-8?B?SlVxVTlzNUFPbCtQSnFTOXp1SHJnRE9wMXgwNVk5S0RyeDRFMjQwL0tnQmVF?=
+ =?utf-8?B?dEVvdXdsRjByNERzOFRoYnIxTjlncXUvcTJzUml2cTM1aGxEUEhjWVJpYW9W?=
+ =?utf-8?B?WCtiWmVMSlB0OU9UZEVhQkdaMUM0YkkxYnBBd29ZeHdCYlI0bE0rb2xBSTR0?=
+ =?utf-8?B?ZkxQZStDbXpzaFo0K2ZtU0tORVNiVHpta0xTVndHUVpMajNRb0VRYnljU2Rt?=
+ =?utf-8?B?RGhxL3BuQStlcGRmRG1zeVZ2SG1lRW1BRFg1ektHQXhuSEFVTDBrNXFpU3lS?=
+ =?utf-8?B?Y0ZvcHkvU0RYY0orUWlqKzUxZnR3dSs5aldNdTI0NUlEcXpSSjRJNVRvYkRj?=
+ =?utf-8?B?MmdtNmFGN0FKNUxTVHV4aUNYK0Z1YVp4Y2k1eExvTUJ5UTFyanhFNFlZeEdS?=
+ =?utf-8?B?c3phUkJKdXd1K09GQld5OFJpcmtTbzgxMTRlQjFXOEIreklXVWZ1SGFkUWdD?=
+ =?utf-8?B?SkJWVW5CeUY2WWU2TDRpQm9pVnFCd0JGVkhjS0owQ2l4T29NWHdpWE1NYlFk?=
+ =?utf-8?B?U2pRK2Z0Uy9SMDVYUkJSS0pQVGd2QzhpWXBhZk10RzA2cHh0c2lkNXhqZUs4?=
+ =?utf-8?B?QmhLQzFXQkNzUHNVb1VTQXhmZEhNdStaVXFqNUtKTmM4U2E0K001WlNuWVIw?=
+ =?utf-8?B?SDhnbXRvUVc5VEVWaEU2LzQ3YXk0NWtCWjRBdHdSRmRmeG9McGV1RkhsWStM?=
+ =?utf-8?B?SEZjU1ZyYVZ3SEJwbEZiM2VFZit3N01NbEFqbktjZjNoS0xUdHVqeFB5V0pm?=
+ =?utf-8?B?eVNqRStZMWgxNXZtK2pibmI2NUxEc3FKcjRUNmllUDNSSEw4UVFJWEtVenpZ?=
+ =?utf-8?B?cnltRTMwMTc1TlNvdE16M3FQZjBBWmwzR1VFZ3JhNU1EaVREQVV3Mytzb3BK?=
+ =?utf-8?B?MmRjQmJoOGoyTDNURkc5aGtTYzBxZE1xQVJhNkdpaThJYnJteTdrQ08zZDho?=
+ =?utf-8?B?WlBUV3JuMmxLdFd4OC9jMEJ4Q3NjMmRUdUdhSkVVZFQ5WlFPOFhDT3ViM0Fo?=
+ =?utf-8?B?SW8xZTBpVWdtMFJtRUlSMVRCVlpheFYweXgzUXJLWGo0L1FOSUJIY0dsWFVi?=
+ =?utf-8?B?Z2RkTkhBbDZRRldMYnVXVmE5RXNtSHU0bm83T1VBOG4yTWkwY0hGcXlSM1hR?=
+ =?utf-8?B?UVFkbGdNek9BaUpNR1IvU1B2MHE1TmZiRHBqckJkWEcyOVdZOXhvZlFMQUJD?=
+ =?utf-8?B?QS9EaXlVNFNCa2VVV3dFbkE4RmxmTlYyU0xkaG5aUTFHNlpTWDk2a0pjRXQ0?=
+ =?utf-8?B?UEM5NStSRURmM25tYlZ6NzIrT1lLN1NOQW5tWnBwMGl5Um0wTGpFRTBUU3ph?=
+ =?utf-8?B?V2R1M2V5VGdNa0k5bGVFakJua2tnVXVsWWdPeTlBLytUYVhqbTZZQWdlTTdj?=
+ =?utf-8?B?dDlYV2IxWmd2OE54MHVYd2FkUmwxeE1jR1R0bFZVSk9DbStRQzYwblB2WGxq?=
+ =?utf-8?B?QklEeXhmQVgvS2tNZ3JuZzBMRFB3MEFxMXM4Sk5sbFo1b0FqY3RFLzVuNzgy?=
+ =?utf-8?B?WlRsRlkyWW01T0hSbWJ4SHVRMGFqeW1TcSt1TmtSNDFtdGh1cVVKYXQ4M0VL?=
+ =?utf-8?B?cmZCdVpPc3ZHczJ0d1lSTnJvQk1mVTF5N2x5WFlGcU9Ka1pLMFA5RjVkVTVa?=
+ =?utf-8?B?VFNORExDTDZsNGhFUi8xU3l1dFBCQ3BaUVo2emhhNEJBWW1oOUNxZ2FuR3RR?=
+ =?utf-8?Q?TmOsdC6VCQ6NpD1Nns=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?d0N1bGpyYnZHSk00a1V0QTkxU0VwS1JxdDh3VDl2Q0xVdFBTb1A2bTAxdGVq?=
+ =?utf-8?B?ZFBna1Z5VUdtU0JIekVGRG1WZVlDMDAxQ3F4NjZNT1dmb0xmNFhOcVhFYzdG?=
+ =?utf-8?B?eGx0cFFGVS9aTUVIYWlFTkJvKzhoTi9DK2VRSjBNc3dxQzRzWkZlY1BGS2pE?=
+ =?utf-8?B?bnRORkVPb2o4T2IxbTJyK0lueGVlSHRHUmNUakhyOTNFaWt2bDVFblBCZE5Q?=
+ =?utf-8?B?eXJOTUhOT3RCOE1zOVJqbUZvSWFqSURoVG05ZTd5N3ZMb3pNbUx6RUxOTml0?=
+ =?utf-8?B?R2QzajA5L1BkTW0rT2FVSnZuMXRXZVJwNEM2TUVGa2c5enZpbHRsa1JmcFlh?=
+ =?utf-8?B?bDhCUllndm9TWTBUaytjazYwUGd1d3F5NlUydXk3WXpGcUY5ZkJjRzVydmVL?=
+ =?utf-8?B?NEI5VWN2U0p3RkVaNFBxN0N5WVFONzY0SysrQktlKzY5dXlXSzE0bmdWQmFa?=
+ =?utf-8?B?MmRGNUpxNy9mYjlMMGVtNVZERGtrSkFCVGhZNFVEVWlpaTZra1JyZzY0cE5H?=
+ =?utf-8?B?M3FGUXVsVzFhUmdPSVBtazdXUUMyWTR5c0xZMHBNV2FaM3FQS3ErZzBmY2JB?=
+ =?utf-8?B?ODU3VjlSMzllekhhelQ1dEtRQ1ZFZ1hBSXVaZU9GR09pTHBVdzFNQzNDbkxX?=
+ =?utf-8?B?ZGJjSE9sV1hHZGFqZEZONjBDRzdhVmZSaGlGUHZmU0pGREVaV05Ocm9jS3Ry?=
+ =?utf-8?B?Yi9GaG40NEMvbVZrajM1cVl2Wi96RFdqcTdSbWhoZWVkNUlLYmlVSEl0SW9C?=
+ =?utf-8?B?cUc4RjR2cHhYN0lYMFJtYzB6b0o5ekhXTld6L3lJUC9vcHpsQytwSjFxTlgr?=
+ =?utf-8?B?QWRnelFqbnh1YVozREpNU05PYzlKNEQrTmlvdUVCck9TK3lqUS9hbmJvSW1G?=
+ =?utf-8?B?ZXMySm0wL0RwczkxbWwzUjBaWXNOSG1YSExMUjRvdXpaT0Qyc3BEM2NLUWJS?=
+ =?utf-8?B?WlBVRFEvblZYanBqc1V2UVovQUl0Z3k0eTkzLzI4WWlmYWc5TmNZUXFzQ0pw?=
+ =?utf-8?B?WDUwbld4cTd0T0lNck9WMTlnWnNtUFNhWE5BLzU5dmtleDVUNFFRUFluVitl?=
+ =?utf-8?B?SDc0TGZVRUFQSkhFVHVrY3p2SG8zWUpkdnNHZ1hFVnFTTk9vYmFhTXhHcU5x?=
+ =?utf-8?B?UEpiUXF6RXAzQkIxbVVIMGtlcGhNL1AxWG8zSmYvU0hiYXNkMW5XNEh5eCtO?=
+ =?utf-8?B?UmtabjdHd1pxYlgweEwyd3Qya21lNVlTMWpDeS9hRW5Ed2Znc0ErREYyQmRB?=
+ =?utf-8?B?MGw3MnpOSmtIQVBvTk1sZzR2Y0xzOXcxTWNrZURNMWNKS2pJUHRCMzNyemhV?=
+ =?utf-8?B?SWg1RmR6UnFEbkk2eGdiQ2s5OSs3cElnRGs2eVVSdjgvRW12cHNDczZvMzU3?=
+ =?utf-8?B?a2k5eGorYUdsQU9Hc2o1cG9ETEVUamYwZkVPamRNL3VYU3lYZW1sWXBJY2pp?=
+ =?utf-8?B?UmtYaDVTWEFRL3ZVUVFNSFRhRUhNV1JCeGY0L0o5TzNiclFtam9MYnk1WG10?=
+ =?utf-8?B?V01jUnZNclB0eDc1NDd2cU9rQnpyMHdPSkRrekY5czFKVkZDRjRpa0VLdko3?=
+ =?utf-8?B?SGFiS05qNFhrTTc4WnRuaUtWZFhrMDh2TGgxVmxaSzBKWDlpbExIaHBMNU1s?=
+ =?utf-8?B?UzdldWRXSVpoYTVFb05BU01CQ1hZRHl1OHZJRURPbVFnZlZXRy8zMkpad1Ay?=
+ =?utf-8?B?SlJMeWVjdmx6OWlDMFZEa1ZEbmNkMzJ2aDR3cS9ZSGV1eUlMM0ZZNFlFWUJQ?=
+ =?utf-8?B?RTdtRnJqMFVRYUxONERQejBsVFdYeHlQb1h3VUFCQWdTNkJpVFhVMGZoNE9u?=
+ =?utf-8?B?ZGlYTTRYVHl0MCtyVmttbmlUYkZpUWx0NVV1S2JKUEdSRk9FRWxieXVjc1VI?=
+ =?utf-8?B?bTBmYWszZVR2OWkvNlpZNmczV2pGeUtnTVIza0JHZUxKdmZ4SnRJOCtkUmFM?=
+ =?utf-8?B?YmQyczVCcVZsRmw4MERPNU9VMzJLbS8xeWxoeEtOMmk1L0JEWjF1b1hrY0wx?=
+ =?utf-8?B?MmI4YkluQVBzYzZoNUNJbGJIVHJtN2Noc3p6WGdiTHlzS2cyYS9NV0F1b3gw?=
+ =?utf-8?B?a0lzdXlLRks5SVRSQnllSHA2dFYwMFBqVEIyUTZ4SzZianF6STkvb1NIQUlJ?=
+ =?utf-8?B?THYvcTdxK28yYXdPZ0hNbkhYNGlKOW9GenEwZnp6c2ppblZxOU4wSGZqbEY5?=
+ =?utf-8?B?YWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <131968863C9B144BA2DD5534BE06968C@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-hid_bpf_struct_ops-v1-3-8c6663df27d8@kernel.org>
-References: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org>
-In-Reply-To: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org>
-To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716902113; l=17062;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=9WdrhkQ/w3fjmh2OCYNw2/sdwfYWu3wu/kbo44PGz9g=;
- b=K2dE2hE7YkYkC2Yl7vUUciAtCrcsT8MaxGoi2o8dtPCAoQy1/5G5BK2GgfK/onggEMMQE1d/N
- ssbkMjPF+z7CHnPoi08RPlKefWueC5fAxWsKEeISszoVCvnSZkJh9S3
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	le6g0F1lRGlmf87qLI5beJstwKxXLjQfXWlHyxXG0yBOZ4nSituURMpcf/IZiD0DycssJ9+jBm0TbQ4Nr1IPyY6JJSd3e13Z/D56bFAnRh3r0epBotbbpyHNNR35aOOfq/j+86eLqEySFQ8hxLrzHto9YHHtuELBDKQLO9eEHxJQiqVbGnO7XO82d6YYTBGry1ct38D2NDx46NyA/H6JK8OilImTOd8nRgE7xkLjxBQXnFJr+NdsvbPE2TM5d+lJmS74ZtUE06NVhCPimDddoPOxXTQbwzRAmxCSHDJd1hRd8Tod0Wkw5P6ALcn4DVjEetL1TKwOr8gHUDtWkGUZT4o9pne166sGAg2/mb8wPLoktfueU2xDjB/yX7uEge+mmga+a5dwbY4pJAkAQ0f+406TiusVwcGxrxdVreUOHYkGdbB2HTfNoB1M7Xs/T4uRz6QuSuC5fnWNx5RKCAQKZjew5l+W6i1nm1TsqHeZitPd54QTPftT5IVJGmQkkZ0kzFyNW+1JCgw37aj35dok45QaJ5YQRMbtlF5gX77GPSLTQIzeGVQZd5NHfan0ASha4QjvxE0s1ehg7WA+BW8dr/e7QG8MXwstkxFVkdm0uoM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee63faf-c1f4-42bb-4a3f-08dc7f182253
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2024 13:14:41.1297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bV7acQoNYjL8Ca7EE0oF0e2/0mPDCxoB2FIKq06dSbiiowfQwDaAUabodwCf/JEY1yfH2JPsC46T0XynrQrMFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7323
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_09,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 phishscore=0 spamscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405280099
+X-Proofpoint-GUID: brYiUFiGItagcauQjVDBdkjJgd2Vnmab
+X-Proofpoint-ORIG-GUID: brYiUFiGItagcauQjVDBdkjJgd2Vnmab
 
-We do this implementation in several steps to not have the CI failing:
-- first (this patch), we add struct_ops while keeping the existing infra
-  available
-- then we change the selftests, the examples and the existing in-tree
-  HID-BPF programs
-- then we remove the existing trace points making old HID-BPF obsolete
-
-There are a few advantages of struct_ops over tracing:
-- compatibility with sleepable programs (for hid_hw_raw_request() in
-  a later patch)
-- a lot simpler in the kernel: it's a simple rcu protected list
-- we can add more parameters to the function called without much trouble
-- the "attach" is now generic through BPF-core: the caller just needs to
-  set hid_id and flags before calling __load().
-- all the BPF tough part is not handled in BPF-core through generic
-  processing
-- hid_bpf_ctx is now only writable where it needs be
-
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/hid/bpf/Makefile             |   2 +-
- drivers/hid/bpf/hid_bpf_dispatch.c   |  52 +++++++-
- drivers/hid/bpf/hid_bpf_dispatch.h   |   4 +
- drivers/hid/bpf/hid_bpf_jmp_table.c  |   3 +
- drivers/hid/bpf/hid_bpf_struct_ops.c | 246 +++++++++++++++++++++++++++++++++++
- include/linux/hid_bpf.h              |  64 ++++++++-
- 6 files changed, 362 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/hid/bpf/Makefile b/drivers/hid/bpf/Makefile
-index cf55120cf7d6..1cb3f31e9335 100644
---- a/drivers/hid/bpf/Makefile
-+++ b/drivers/hid/bpf/Makefile
-@@ -8,4 +8,4 @@ LIBBPF_INCLUDE = $(srctree)/tools/lib
- obj-$(CONFIG_HID_BPF) += hid_bpf.o
- CFLAGS_hid_bpf_dispatch.o += -I$(LIBBPF_INCLUDE)
- CFLAGS_hid_bpf_jmp_table.o += -I$(LIBBPF_INCLUDE)
--hid_bpf-objs += hid_bpf_dispatch.o hid_bpf_jmp_table.o
-+hid_bpf-objs += hid_bpf_dispatch.o hid_bpf_jmp_table.o hid_bpf_struct_ops.o
-diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_dispatch.c
-index c8bb79ce2354..7216c3c7713d 100644
---- a/drivers/hid/bpf/hid_bpf_dispatch.c
-+++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-@@ -58,6 +58,7 @@ dispatch_hid_bpf_device_event(struct hid_device *hdev, enum hid_report_type type
- 		},
- 		.data = hdev->bpf.device_data,
- 	};
-+	struct hid_bpf_ops *e;
- 	int ret;
- 
- 	if (type >= HID_REPORT_TYPES)
-@@ -70,9 +71,25 @@ dispatch_hid_bpf_device_event(struct hid_device *hdev, enum hid_report_type type
- 	memset(ctx_kern.data, 0, hdev->bpf.allocated_data);
- 	memcpy(ctx_kern.data, data, *size);
- 
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
-+		if (e->hid_device_event) {
-+			ret = e->hid_device_event(&ctx_kern.ctx, type);
-+			if (ret < 0) {
-+				rcu_read_unlock();
-+				return ERR_PTR(ret);
-+			}
-+
-+			if (ret)
-+				ctx_kern.ctx.retval = ret;
-+		}
-+	}
-+	rcu_read_unlock();
-+
- 	ret = hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_DEVICE_EVENT, &ctx_kern);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
-+	ret = ctx_kern.ctx.retval;
- 
- 	if (ret) {
- 		if (ret > ctx_kern.ctx.allocated_size)
-@@ -122,7 +139,10 @@ u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev, u8 *rdesc, unsigned int *s
- 
- 	memcpy(ctx_kern.data, rdesc, min_t(unsigned int, *size, HID_MAX_DESCRIPTOR_SIZE));
- 
--	ret = hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FIXUP, &ctx_kern);
-+	if (hdev->bpf.rdesc_ops)
-+		ret = hdev->bpf.rdesc_ops->hid_rdesc_fixup(&ctx_kern.ctx);
-+	else
-+		ret = hid_bpf_prog_run(hdev, HID_BPF_PROG_TYPE_RDESC_FIXUP, &ctx_kern);
- 	if (ret < 0)
- 		goto ignore_bpf;
- 
-@@ -150,7 +170,7 @@ static int device_match_id(struct device *dev, const void *id)
- 	return hdev->id == *(int *)id;
- }
- 
--static struct hid_device *hid_get_device(unsigned int hid_id)
-+struct hid_device *hid_get_device(unsigned int hid_id)
- {
- 	struct device *dev;
- 
-@@ -164,7 +184,7 @@ static struct hid_device *hid_get_device(unsigned int hid_id)
- 	return to_hid_device(dev);
- }
- 
--static void hid_put_device(struct hid_device *hid)
-+void hid_put_device(struct hid_device *hid)
- {
- 	put_device(&hid->dev);
- }
-@@ -205,7 +225,7 @@ static int __hid_bpf_allocate_data(struct hid_device *hdev, u8 **data, u32 *size
- 	return 0;
- }
- 
--static int hid_bpf_allocate_event_data(struct hid_device *hdev)
-+int hid_bpf_allocate_event_data(struct hid_device *hdev)
- {
- 	/* hdev->bpf.device_data is already allocated, abort */
- 	if (hdev->bpf.device_data)
-@@ -592,14 +612,22 @@ static const struct btf_kfunc_id_set hid_bpf_syscall_kfunc_set = {
- 
- int hid_bpf_connect_device(struct hid_device *hdev)
- {
--	struct hid_bpf_prog_list *prog_list;
-+	bool need_to_allocate = false;
-+	struct hid_bpf_ops *e;
- 
- 	rcu_read_lock();
--	prog_list = rcu_dereference(hdev->bpf.progs[HID_BPF_PROG_TYPE_DEVICE_EVENT]);
-+	list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
-+		if (e->hid_device_event) {
-+			need_to_allocate = true;
-+			break;
-+		}
-+	}
-+	if (rcu_dereference(hdev->bpf.progs[HID_BPF_PROG_TYPE_DEVICE_EVENT]))
-+		need_to_allocate = true;
- 	rcu_read_unlock();
- 
- 	/* only allocate BPF data if there are programs attached */
--	if (!prog_list)
-+	if (!need_to_allocate)
- 		return 0;
- 
- 	return hid_bpf_allocate_event_data(hdev);
-@@ -623,12 +651,15 @@ void hid_bpf_destroy_device(struct hid_device *hdev)
- 	hdev->bpf.destroyed = true;
- 
- 	__hid_bpf_destroy_device(hdev);
-+	__hid_bpf_ops_destroy_device(hdev);
- }
- EXPORT_SYMBOL_GPL(hid_bpf_destroy_device);
- 
- void hid_bpf_device_init(struct hid_device *hdev)
- {
- 	spin_lock_init(&hdev->bpf.progs_lock);
-+	INIT_LIST_HEAD(&hdev->bpf.prog_list);
-+	mutex_init(&hdev->bpf.prog_list_lock);
- }
- EXPORT_SYMBOL_GPL(hid_bpf_device_init);
- 
-@@ -662,6 +693,13 @@ static int __init hid_bpf_init(void)
- 		return 0;
- 	}
- 
-+	/* register struct_ops kfuncs after we are sure we can load our preloaded bpf program */
-+	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &hid_bpf_kfunc_set);
-+	if (err) {
-+		pr_warn("error while setting HID BPF tracing kfuncs: %d", err);
-+		return 0;
-+	}
-+
- 	/* register syscalls after we are sure we can load our preloaded bpf program */
- 	err = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &hid_bpf_syscall_kfunc_set);
- 	if (err) {
-diff --git a/drivers/hid/bpf/hid_bpf_dispatch.h b/drivers/hid/bpf/hid_bpf_dispatch.h
-index fbe0639d09f2..e52c43d81650 100644
---- a/drivers/hid/bpf/hid_bpf_dispatch.h
-+++ b/drivers/hid/bpf/hid_bpf_dispatch.h
-@@ -10,12 +10,16 @@ struct hid_bpf_ctx_kern {
- 	u8 *data;
- };
- 
-+struct hid_device *hid_get_device(unsigned int hid_id);
-+void hid_put_device(struct hid_device *hid);
-+int hid_bpf_allocate_event_data(struct hid_device *hdev);
- int hid_bpf_preload_skel(void);
- void hid_bpf_free_links_and_skel(void);
- int hid_bpf_get_prog_attach_type(struct bpf_prog *prog);
- int __hid_bpf_attach_prog(struct hid_device *hdev, enum hid_bpf_prog_type prog_type, int prog_fd,
- 			  struct bpf_prog *prog, __u32 flags);
- void __hid_bpf_destroy_device(struct hid_device *hdev);
-+void __hid_bpf_ops_destroy_device(struct hid_device *hdev);
- int hid_bpf_prog_run(struct hid_device *hdev, enum hid_bpf_prog_type type,
- 		     struct hid_bpf_ctx_kern *ctx_kern);
- int hid_bpf_reconnect(struct hid_device *hdev);
-diff --git a/drivers/hid/bpf/hid_bpf_jmp_table.c b/drivers/hid/bpf/hid_bpf_jmp_table.c
-index aa8e1c79cdf5..8a54ba447718 100644
---- a/drivers/hid/bpf/hid_bpf_jmp_table.c
-+++ b/drivers/hid/bpf/hid_bpf_jmp_table.c
-@@ -81,6 +81,9 @@ static int hid_bpf_program_count(struct hid_device *hdev,
- 	if (type >= HID_BPF_PROG_TYPE_MAX)
- 		return -EINVAL;
- 
-+	if (type == HID_BPF_PROG_TYPE_RDESC_FIXUP && hdev->bpf.rdesc_ops)
-+		n += 1;
-+
- 	FOR_ENTRIES(i, jmp_table.tail, jmp_table.head) {
- 		struct hid_bpf_prog_entry *entry = &jmp_table.entries[i];
- 
-diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
-new file mode 100644
-index 000000000000..be514a98e55b
---- /dev/null
-+++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-@@ -0,0 +1,246 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ *  HID-BPF support for Linux
-+ *
-+ *  Copyright (c) 2024 Benjamin Tissoires
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/bpf_verifier.h>
-+#include <linux/bpf.h>
-+#include <linux/btf.h>
-+#include <linux/btf_ids.h>
-+#include <linux/filter.h>
-+#include <linux/hid.h>
-+#include <linux/hid_bpf.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/workqueue.h>
-+#include "hid_bpf_dispatch.h"
-+
-+static struct btf *hid_bpf_ops_btf;
-+
-+static int hid_bpf_ops_init(struct btf *btf)
-+{
-+	hid_bpf_ops_btf = btf;
-+	return 0;
-+}
-+
-+static bool hid_bpf_ops_is_valid_access(int off, int size,
-+					  enum bpf_access_type type,
-+					  const struct bpf_prog *prog,
-+					  struct bpf_insn_access_aux *info)
-+{
-+	return bpf_tracing_btf_ctx_access(off, size, type, prog, info);
-+}
-+
-+static int hid_bpf_ops_check_member(const struct btf_type *t,
-+				      const struct btf_member *member,
-+				      const struct bpf_prog *prog)
-+{
-+	u32 moff = __btf_member_bit_offset(t, member) / 8;
-+
-+	switch (moff) {
-+	case offsetof(struct hid_bpf_ops, hid_rdesc_fixup):
-+		break;
-+	default:
-+		if (prog->sleepable)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int hid_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
-+					   const struct bpf_reg_state *reg,
-+					   int off, int size)
-+{
-+	const struct btf_type *state;
-+	const struct btf_type *t;
-+	s32 type_id;
-+
-+	type_id = btf_find_by_name_kind(reg->btf, "hid_bpf_ctx",
-+					BTF_KIND_STRUCT);
-+	if (type_id < 0)
-+		return -EINVAL;
-+
-+	t = btf_type_by_id(reg->btf, reg->btf_id);
-+	state = btf_type_by_id(reg->btf, type_id);
-+	if (t != state) {
-+		bpf_log(log, "only access to hid_bpf_ctx is supported\n");
-+		return -EACCES;
-+	}
-+
-+	/* out-of-bound access in hid_bpf_ctx */
-+	if (off + size > sizeof(struct hid_bpf_ctx)) {
-+		bpf_log(log, "write access at off %d with size %d\n", off, size);
-+		return -EACCES;
-+	}
-+
-+	if (off < offsetof(struct hid_bpf_ctx, retval)) {
-+		bpf_log(log,
-+			"write access at off %d with size %d on read-only part of hid_bpf_ctx\n",
-+			off, size);
-+		return -EACCES;
-+	}
-+
-+	return NOT_INIT;
-+}
-+
-+static const struct bpf_verifier_ops hid_bpf_verifier_ops = {
-+	.is_valid_access = hid_bpf_ops_is_valid_access,
-+	.btf_struct_access = hid_bpf_ops_btf_struct_access,
-+};
-+
-+static int hid_bpf_ops_init_member(const struct btf_type *t,
-+				 const struct btf_member *member,
-+				 void *kdata, const void *udata)
-+{
-+	u32 flags;
-+
-+	switch (member->offset) {
-+	case offsetof(struct hid_bpf_ops, hid_id) * 8:
-+		/* For hid_id and flags fields, this function has to copy it
-+		 * and return 1 to indicate that the data has been handled by
-+		 * the struct_ops type, or the verifier will reject the map if
-+		 * the value of those fields is not zero.
-+		 */
-+		((struct hid_bpf_ops *)kdata)->hid_id = ((struct hid_bpf_ops *)udata)->hid_id;
-+		return 1;
-+	case offsetof(struct hid_bpf_ops, flags) * 8:
-+		flags = ((struct hid_bpf_ops *)udata)->flags;
-+		if (flags & ~HID_BPF_FLAG_MASK)
-+			return -EINVAL;
-+		((struct hid_bpf_ops *)kdata)->flags = flags;
-+		return 1;
-+	}
-+	return 0;
-+}
-+
-+static int hid_bpf_reg(void *kdata)
-+{
-+	struct hid_bpf_ops *ops = kdata;
-+	struct hid_device *hdev;
-+	int count, err = 0;
-+
-+	hdev = hid_get_device(ops->hid_id);
-+	if (IS_ERR(hdev))
-+		return PTR_ERR(hdev);
-+
-+	ops->hdev = hdev;
-+
-+	mutex_lock(&hdev->bpf.prog_list_lock);
-+
-+	count = list_count_nodes(&hdev->bpf.prog_list);
-+	if (count >= HID_BPF_MAX_PROGS_PER_DEV) {
-+		err = -E2BIG;
-+		goto out_unlock;
-+	}
-+
-+	if (ops->hid_rdesc_fixup) {
-+		if (hdev->bpf.rdesc_ops) {
-+			err = -EINVAL;
-+			goto out_unlock;
-+		}
-+
-+		hdev->bpf.rdesc_ops = ops;
-+	}
-+
-+	if (ops->hid_device_event) {
-+		err = hid_bpf_allocate_event_data(hdev);
-+		if (err)
-+			goto out_unlock;
-+	}
-+
-+	if (ops->flags & HID_BPF_FLAG_INSERT_HEAD)
-+		list_add_rcu(&ops->list, &hdev->bpf.prog_list);
-+	else
-+		list_add_tail_rcu(&ops->list, &hdev->bpf.prog_list);
-+
-+out_unlock:
-+	mutex_unlock(&hdev->bpf.prog_list_lock);
-+
-+	if (err) {
-+		if (hdev->bpf.rdesc_ops == ops)
-+			hdev->bpf.rdesc_ops = NULL;
-+		hid_put_device(hdev);
-+	} else if (ops->hid_rdesc_fixup) {
-+		hid_bpf_reconnect(hdev);
-+	}
-+
-+	return err;
-+}
-+
-+static void hid_bpf_unreg(void *kdata)
-+{
-+	struct hid_bpf_ops *ops = kdata;
-+	struct hid_device *hdev;
-+	bool reconnect = false;
-+
-+	hdev = ops->hdev;
-+
-+	/* check if __hid_bpf_ops_destroy_device() has been called */
-+	if (!hdev)
-+		return;
-+
-+	mutex_lock(&hdev->bpf.prog_list_lock);
-+
-+	list_del_rcu(&ops->list);
-+
-+	reconnect = hdev->bpf.rdesc_ops == ops;
-+	if (reconnect)
-+		hdev->bpf.rdesc_ops = NULL;
-+
-+	mutex_unlock(&hdev->bpf.prog_list_lock);
-+
-+	if (reconnect)
-+		hid_bpf_reconnect(hdev);
-+
-+	hid_put_device(hdev);
-+}
-+
-+static int __hid_bpf_device_event(struct hid_bpf_ctx *ctx, enum hid_report_type type)
-+{
-+	return 0;
-+}
-+
-+static int __hid_bpf_rdesc_fixup(struct hid_bpf_ctx *ctx)
-+{
-+	return 0;
-+}
-+
-+static struct hid_bpf_ops __bpf_hid_bpf_ops = {
-+	.hid_device_event = __hid_bpf_device_event,
-+	.hid_rdesc_fixup = __hid_bpf_rdesc_fixup,
-+};
-+
-+static struct bpf_struct_ops bpf_hid_bpf_ops = {
-+	.verifier_ops = &hid_bpf_verifier_ops,
-+	.init = hid_bpf_ops_init,
-+	.check_member = hid_bpf_ops_check_member,
-+	.init_member = hid_bpf_ops_init_member,
-+	.reg = hid_bpf_reg,
-+	.unreg = hid_bpf_unreg,
-+	.name = "hid_bpf_ops",
-+	.cfi_stubs = &__bpf_hid_bpf_ops,
-+	.owner = THIS_MODULE,
-+};
-+
-+void __hid_bpf_ops_destroy_device(struct hid_device *hdev)
-+{
-+	struct hid_bpf_ops *e;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
-+		hid_put_device(hdev);
-+		e->hdev = NULL;
-+	}
-+	rcu_read_unlock();
-+}
-+
-+static int __init hid_bpf_struct_ops_init(void)
-+{
-+	return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
-+}
-+late_initcall(hid_bpf_struct_ops_init);
-diff --git a/include/linux/hid_bpf.h b/include/linux/hid_bpf.h
-index a66103618e6e..96495e977204 100644
---- a/include/linux/hid_bpf.h
-+++ b/include/linux/hid_bpf.h
-@@ -65,11 +65,12 @@ struct hid_bpf_ctx {
-  * @HID_BPF_FLAG_INSERT_HEAD: insert the given program before any other program
-  *                            currently attached to the device. This doesn't
-  *                            guarantee that this program will always be first
-- * @HID_BPF_FLAG_MAX: sentinel value, not to be used by the callers
-  */
- enum hid_bpf_attach_flags {
- 	HID_BPF_FLAG_NONE = 0,
- 	HID_BPF_FLAG_INSERT_HEAD = _BITUL(0),
-+
-+	/* private: internal use only */
- 	HID_BPF_FLAG_MAX,
- };
- 
-@@ -112,6 +113,63 @@ struct hid_ops {
- 
- extern struct hid_ops *hid_ops;
- 
-+/**
-+ * struct hid_bpf_ops - A BPF struct_ops of callbacks allowing to attach HID-BPF
-+ *			programs to a HID device
-+ * @hid_id: the HID uniq ID to attach to. This is writeable before ``load()``, and
-+ *	    cannot be changed after
-+ * @flags: &enum hid_bpf_attach_flags to assign flags before ``load()``.
-+ *	   Writeable only before ``load()``
-+ */
-+struct hid_bpf_ops {
-+	/* hid_id needs to stay first so we can easily change it
-+	 * from userspace.
-+	 */
-+	int			hid_id;
-+	u32			flags;
-+
-+	/* private: internal use only */
-+	struct list_head	list;
-+
-+	/* public: rest is public */
-+
-+/* fast path fields are put first to fill one cache line */
-+
-+	/**
-+	 * @hid_device_event: called whenever an event is coming in from the device
-+	 *
-+	 * It has the following arguments:
-+	 *
-+	 * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
-+	 *
-+	 * Return: %0 on success and keep processing; a positive
-+	 * value to change the incoming size buffer; a negative
-+	 * error code to interrupt the processing of this event
-+	 *
-+	 * Context: Interrupt context.
-+	 */
-+	int (*hid_device_event)(struct hid_bpf_ctx *ctx, enum hid_report_type report_type);
-+
-+/* control/slow paths put last */
-+
-+	/**
-+	 * @hid_rdesc_fixup: called when the probe function parses the report descriptor
-+	 * of the HID device
-+	 *
-+	 * It has the following arguments:
-+	 *
-+	 * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
-+	 *
-+	 * Return: %0 on success and keep processing; a positive
-+	 * value to change the incoming size buffer; a negative
-+	 * error code to interrupt the processing of this device
-+	 */
-+	int (*hid_rdesc_fixup)(struct hid_bpf_ctx *ctx);
-+
-+	/* private: internal use only */
-+	struct hid_device *hdev;
-+} ____cacheline_aligned_in_smp;
-+
- struct hid_bpf_prog_list {
- 	u16 prog_idx[HID_BPF_MAX_PROGS_PER_DEV];
- 	u8 prog_cnt;
-@@ -129,6 +187,10 @@ struct hid_bpf {
- 	bool destroyed;			/* prevents the assignment of any progs */
- 
- 	spinlock_t progs_lock;		/* protects RCU update of progs */
-+
-+	struct hid_bpf_ops *rdesc_ops;
-+	struct list_head prog_list;
-+	struct mutex prog_list_lock;	/* protects RCU update of prog_list */
- };
- 
- /* specific HID-BPF link when a program is attached to a device */
-
--- 
-2.44.0
-
+DQoNCj4gT24gTWF5IDI4LCAyMDI0LCBhdCA1OjA04oCvQU0sIEpvbiBIdW50ZXIgPGpvbmF0aGFu
+aEBudmlkaWEuY29tPiB3cm90ZToNCj4gDQo+IA0KPiBPbiAyNS8wNS8yMDI0IDE1OjIwLCBHcmVn
+IEtyb2FoLUhhcnRtYW4gd3JvdGU6DQo+PiBPbiBTYXQsIE1heSAyNSwgMjAyNCBhdCAxMjoxMzoy
+OEFNICswMTAwLCBKb24gSHVudGVyIHdyb3RlOg0KPj4+IEhpIEdyZWcsDQo+Pj4gDQo+Pj4gT24g
+MjMvMDUvMjAyNCAxNDoxMiwgR3JlZyBLcm9haC1IYXJ0bWFuIHdyb3RlOg0KPj4+PiBUaGlzIGlz
+IHRoZSBzdGFydCBvZiB0aGUgc3RhYmxlIHJldmlldyBjeWNsZSBmb3IgdGhlIDUuMTUuMTYwIHJl
+bGVhc2UuDQo+Pj4+IFRoZXJlIGFyZSAyMyBwYXRjaGVzIGluIHRoaXMgc2VyaWVzLCBhbGwgd2ls
+bCBiZSBwb3N0ZWQgYXMgYSByZXNwb25zZQ0KPj4+PiB0byB0aGlzIG9uZS4gIElmIGFueW9uZSBo
+YXMgYW55IGlzc3VlcyB3aXRoIHRoZXNlIGJlaW5nIGFwcGxpZWQsIHBsZWFzZQ0KPj4+PiBsZXQg
+bWUga25vdy4NCj4+Pj4gDQo+Pj4+IFJlc3BvbnNlcyBzaG91bGQgYmUgbWFkZSBieSBTYXQsIDI1
+IE1heSAyMDI0IDEzOjAzOjE1ICswMDAwLg0KPj4+PiBBbnl0aGluZyByZWNlaXZlZCBhZnRlciB0
+aGF0IHRpbWUgbWlnaHQgYmUgdG9vIGxhdGUuDQo+Pj4+IA0KPj4+PiBUaGUgd2hvbGUgcGF0Y2gg
+c2VyaWVzIGNhbiBiZSBmb3VuZCBpbiBvbmUgcGF0Y2ggYXQ6DQo+Pj4+IGh0dHBzOi8vd3d3Lmtl
+cm5lbC5vcmcvcHViL2xpbnV4L2tlcm5lbC92NS54L3N0YWJsZS1yZXZpZXcvcGF0Y2gtNS4xNS4x
+NjAtcmMxLmd6DQo+Pj4+IG9yIGluIHRoZSBnaXQgdHJlZSBhbmQgYnJhbmNoIGF0Og0KPj4+PiBn
+aXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc3RhYmxlL2xpbnV4
+LXN0YWJsZS1yYy5naXQgbGludXgtNS4xNS55DQo+Pj4+IGFuZCB0aGUgZGlmZnN0YXQgY2FuIGJl
+IGZvdW5kIGJlbG93Lg0KPj4+PiANCj4+Pj4gdGhhbmtzLA0KPj4+PiANCj4+Pj4gZ3JlZyBrLWgN
+Cj4+Pj4gDQo+Pj4+IC0tLS0tLS0tLS0tLS0NCj4+Pj4gUHNldWRvLVNob3J0bG9nIG9mIGNvbW1p
+dHM6DQo+Pj4gDQo+Pj4gLi4uDQo+Pj4gDQo+Pj4+IE5laWxCcm93biA8bmVpbGJAc3VzZS5kZT4N
+Cj4+Pj4gICAgICBuZnNkOiBkb24ndCBhbGxvdyBuZnNkIHRocmVhZHMgdG8gYmUgc2lnbmFsbGVk
+Lg0KPj4+IA0KPj4+IA0KPj4+IEkgYW0gc2VlaW5nIGEgc3VzcGVuZCByZWdyZXNzaW9uIG9uIGEg
+Y291cGxlIGJvYXJkcyBhbmQgYmlzZWN0IGlzIHBvaW50aW5nDQo+Pj4gdG8gdGhlIGFib3ZlIGNv
+bW1pdC4gUmV2ZXJ0aW5nIHRoaXMgY29tbWl0IGRvZXMgZml4IHRoZSBpc3N1ZS4NCj4+IFVnaCwg
+dGhhdCBmaXhlcyB0aGUgcmVwb3J0IGZyb20gb3RoZXJzLiAgQ2FuIHlvdSBjYzogZXZlcnlvbmUg
+b24gdGhhdA0KPj4gYW5kIGZpZ3VyZSBvdXQgd2hhdCBpcyBnb2luZyBvbiwgYXMgdGhpcyBrZWVw
+cyBnb2luZyBiYWNrIGFuZCBmb3J0aC4uLg0KPiANCj4gDQo+IEFkZGluZyBDaHVjaywgTmVpbCBh
+bmQgQ2hyaXMgZnJvbSB0aGUgYnVnIHJlcG9ydCBoZXJlIFswXS4NCj4gDQo+IFdpdGggdGhlIGFi
+b3ZlIGFwcGxpZWQgdG8gdjUuMTUueSwgSSBhbSBzZWVpbmcgc3VzcGVuZCBvbiAyIG9mIG91ciBi
+b2FyZHMgZmFpbC4gVGhlc2UgYm9hcmRzIGFyZSB1c2luZyBORlMgYW5kIG9uIGVudHJ5IHRvIHN1
+c3BlbmQgSSBhbSBub3cgc2VlaW5nIC4uLg0KPiANCj4gRnJlZXppbmcgb2YgdGFza3MgZmFpbGVk
+IGFmdGVyIDIwLjAwMiBzZWNvbmRzICgxIHRhc2tzIHJlZnVzaW5nIHRvDQo+IGZyZWV6ZSwgd3Ff
+YnVzeT0wKToNCj4gDQo+IFRoZSBib2FyZHMgYXBwZWFyIHRvIGhhbmcgYXQgdGhhdCBwb2ludC4g
+U28gbWF5IGJlIHNvbWV0aGluZyBlbHNlIG1pc3Npbmc/DQoNCk5vdGUgdGhhdCB3ZSBkb24ndCBo
+YXZlIGFjY2VzcyB0byBoYXJkd2FyZSBsaWtlIHRoaXMsIHNvDQp3ZSBoYXZlbid0IHRlc3RlZCB0
+aGF0IHBhdGNoIChldmVuIHRoZSB1cHN0cmVhbSB2ZXJzaW9uKQ0Kd2l0aCBzdXNwZW5kIG9uIHRo
+YXQgaGFyZHdhcmUuDQoNClNvLCBpdCBjb3VsZCBiZSBzb21ldGhpbmcgbWlzc2luZywgb3IgaXQg
+Y291bGQgYmUgdGhhdA0KcGF0Y2ggaGFzIGEgcHJvYmxlbS4NCg0KSXQgd291bGQgaGVscCB1cyB0
+byBrbm93IGlmIHlvdSBvYnNlcnZlIHRoZSBzYW1lIGlzc3VlDQp3aXRoIGFuIHVwc3RyZWFtIGtl
+cm5lbCwgaWYgdGhhdCBpcyBwb3NzaWJsZS4NCg0KDQo+IEpvbg0KPiANCj4gWzBdIGh0dHBzOi8v
+bG9yZS5rZXJuZWwub3JnL2xrbWwvYjM2M2UzOTQtNzU0OS00YjllLWI3MWItZDk3Y2QxM2Y5NjA3
+QGFsbGllZHRlbGVzaXMuY28ubnovDQo+IA0KPiAtLSANCj4gbnZwdWJsaWMNCg0KLS0NCkNodWNr
+IExldmVyDQoNCg0K
 
