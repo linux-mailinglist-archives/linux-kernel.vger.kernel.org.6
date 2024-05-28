@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-193071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A0D8D2682
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:50:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2CF8D2684
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41A41F22861
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01F31C20C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA04717B411;
-	Tue, 28 May 2024 20:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BV0Xz7UT"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F014716F85C;
+	Tue, 28 May 2024 20:50:36 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF1E17A924;
-	Tue, 28 May 2024 20:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E94A1C6A5;
+	Tue, 28 May 2024 20:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716929382; cv=none; b=fFw4xbFvlSu0aqXiiTtQdNEu47DplQRSYdBTAOS3nzfmRuFCmnkdwPabYIkUFglqMWriQ0XpVTcI4XghfIP+b520QsYIo5a7WvwntLC9NhDtBO2a/U3dNRoEH1m3mHjTO0rHiEuOWikMuPYSJJqyBk0bkLoP3//K8cZsOzFfAZ4=
+	t=1716929436; cv=none; b=dlzNNq5zfNnUB8Lw3KZyFsz4QQn9rolxyRV5mxwQhGzFz5L/wiM3DbitQ69N9+XUGsHybWoPap2nqd0heQaVimEZj7rimrW4XeyAok/3q2XrNJt7alFOSsPDZX0tsOqP4hvOXc6kS0R4cxIIg5rr+x06q6qj4sqEUg29YNrKtgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716929382; c=relaxed/simple;
-	bh=tVjLiezldTN3tlhT1SQyWBYDQNYD3QQvsYes9mrDLzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYUWJVJdVMrOceKiZHffDohp5p8XX5tuiduBIEgtYUh2BofPJXqGtQvPs4uE3CWy2HVBLgxJGS6vadWjTJ/Sn7HnT0mlvflwf9D+I39yLU5fpJ3lEujMdmJLiqDcQgQ2Ql06topjLUnyTE/fPRm5G6xETCEEmp/gy33lJOEXD+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BV0Xz7UT; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A2F873A2;
-	Tue, 28 May 2024 22:49:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716929375;
-	bh=tVjLiezldTN3tlhT1SQyWBYDQNYD3QQvsYes9mrDLzw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BV0Xz7UTHgn+G+XsdphzhCRA5e5V8ysDW8H3t1XTVkLtdXW+dhMPSRmHIrWUdCIG5
-	 NJcWmxV9c1E95+tarDE4+rusyCNRcJF5/hys+nPJI8keTceBNGVnodJsfVcTIIvKze
-	 D3jAdeN2nen3U47dsUpVbFiQYtI01bXPH8dqmn4o=
-Date: Tue, 28 May 2024 23:49:26 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-pwm@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-Message-ID: <20240528204926.GE8500@pendragon.ideasonboard.com>
-References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
- <20240528190315.3865-2-laurent.pinchart@ideasonboard.com>
- <171692890886.1957549.3597242516268327909.robh@kernel.org>
+	s=arc-20240116; t=1716929436; c=relaxed/simple;
+	bh=C2TO8Qx3rZMZBxfN+j6VufMLMOzKG4ce2Xdl91MmJsg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=L/DZeOxh0crW0SoobzoYBbf8VQLulwkk/YNdq28bMj2kX7kaU3S/6M+N2IYOVl/FKhLu0HSSQqXRfRyGu0FdFs7w0gIk0i+OzIFskeyUVNCG8C07rjWPkwb4na6gtBnitL16ZkFPiBwAK0f2HunMINQXYuBm97n5wG0GBks0t34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (178.176.78.2) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 28 May
+ 2024 23:50:21 +0300
+Subject: Re: [net-next PATCH v4 3/7] net: ravb: Refactor RX ring refill
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+ <20240528150339.6791-4-paul.barker.ct@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <883d4e03-4686-e4dd-01c4-b1f71b661d86@omp.ru>
+Date: Tue, 28 May 2024 23:50:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <171692890886.1957549.3597242516268327909.robh@kernel.org>
+In-Reply-To: <20240528150339.6791-4-paul.barker.ct@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/28/2024 20:41:33
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185560 [May 28 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.2 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.2 in (user) dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.2
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 05/28/2024 20:46:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 5/28/2024 6:54:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Tue, May 28, 2024 at 03:41:48PM -0500, Rob Herring (Arm) wrote:
-> 
-> On Tue, 28 May 2024 22:03:11 +0300, Laurent Pinchart wrote:
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > These bindings model the device as an MFD, and support the GPIO expander
-> > and PWM functions.
-> > 
-> > These bindings support the GPIO and PWM functions.
-> > 
-> > Drop the existing adi,adp5585 and adi,adp5585-02 compatible strings from
-> > trivial-devices.yaml. They have been added there by mistake as the
-> > driver that was submitted at the same time used different compatible
-> > strings. We can take them over safely.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> > I've limited the bindings to GPIO and PWM as I lack hardware to design,
-> > implement and test the rest of the features the chip supports.
-> > 
-> > Changes since v1:
-> > 
-> > - Squash "dt-bindings: trivial-devices: Drop adi,adp5585 and
-> >   adi,adp5585-02" into this patch
-> > - Merge child nodes into parent node
-> > ---
-> >  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 107 ++++++++++++++++++
-> >  .../devicetree/bindings/trivial-devices.yaml  |   4 -
-> >  MAINTAINERS                                   |   7 ++
-> >  3 files changed, 114 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
+On 5/28/24 6:03 PM, Paul Barker wrote:
 
-My bad, I messed up. Will be fixed in v3.
+> To reduce code duplication, we add a new RX ring refill function which
+> can handle both the initial RX ring population (which was split between
+> ravb_ring_init() and ravb_ring_format()) and the RX ring refill after
+> polling (in ravb_rx()).
+> 
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,adp5585.example.dtb: mfd@34: 'gpio' is a required property
-> 	from schema $id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,adp5585.example.dtb: mfd@34: 'gpio' is a required property
-> 	from schema $id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240528190315.3865-2-laurent.pinchart@ideasonboard.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+   Looks sane...
 
--- 
-Regards,
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-Laurent Pinchart
+[...]
+
+MBR, Sergey
 
