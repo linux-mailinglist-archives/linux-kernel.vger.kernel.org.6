@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-192816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84CCC8D22A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:42:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A1848D22A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D792863E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB471C22D11
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B234D446A1;
-	Tue, 28 May 2024 17:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F9E45C07;
+	Tue, 28 May 2024 17:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3DE6HtT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7OLECoC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDC938F87;
-	Tue, 28 May 2024 17:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2AE44C8C;
+	Tue, 28 May 2024 17:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716918103; cv=none; b=FDYcsU/lqnGbDVXsmc+L7LxFaH0mbRJglsg/2Yo7iR8Z4gDXN0eOJ+Amgk7dD9DWFu8HQX2JLuzp/de4gi0a6nUlCnisbhQvi/Wi3L76IsNJtTR/N4VoSAedm3MKEQugROgirja2A+5P4tJp5PkDtnSDDPBv4mBwbQhb+DoK1rA=
+	t=1716918104; cv=none; b=R+1H+C3xMP70hvFLYcMqO++kCZbpUuIb1aok8TEYM8tNxZYhtHmIrgdcBqle+phTEXwdlKQxrG8F9rDkAaYc4VACgLj25c33v4f7xH/OUyQREWOYT/X2uSd4MWek/c6OrXHR8KxfDAMrz+29ic/HtimxYGUWWib2D+ziVDJ+5+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716918103; c=relaxed/simple;
-	bh=RBpYwUrOrov4++YqaMsUXwq/82wkQZJD1OxZ4lr6mPU=;
+	s=arc-20240116; t=1716918104; c=relaxed/simple;
+	bh=e+BPjxe3d8PDjUGG2dqqLNc9UzdlT+DF7Tk18em5PEk=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=I97622stSmgnMKGCIfHjPpN1PAyWpGGEIPjz7E8OvJPdW/Q3/4rzEt5gGJvaBQR2PU0/NM8ivF/De4zYNlvdinHEAZ51x41pTlz7Eo4Qsh5d/4XLjWJGOqOdRuUUKhOFJ4odt5uM3zPzHSTPN+IKO9Fawu7zcczQXb1773h2NJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3DE6HtT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F3F2C32786;
-	Tue, 28 May 2024 17:41:42 +0000 (UTC)
+	 Message-Id:Subject; b=QVNlXzmXYCDBU5Q8RVgQtqb5AxpTnwclFRuj5ZorGnlZlr3HFzvRziNnLzp0PPVAXglvuDXxmMNln+yY29H+7srLPG8Xn/AQx18CctNIPx1L5ewlr2E+c9omr89ToV+ctvnk9gtSHl12wrxnj6A9B7ZJtx17uvUONUtAE4iTYgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7OLECoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CA8C4AF09;
+	Tue, 28 May 2024 17:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716918102;
-	bh=RBpYwUrOrov4++YqaMsUXwq/82wkQZJD1OxZ4lr6mPU=;
+	s=k20201202; t=1716918103;
+	bh=e+BPjxe3d8PDjUGG2dqqLNc9UzdlT+DF7Tk18em5PEk=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=s3DE6HtTk2grBy6f+ooWveg1QYRQhxoI8is4YrM3LWFsW+yszTEOtvDiqXRA4WhGz
-	 jz6XMx7/RSwmOU/eo7H0PqakekwVc9gAq5Gmw9igeW51ew7xOp2ZLomVWh7ypzIuRu
-	 Pm7cHn6RTLpZmE+Pud/HptpQrQFAQsk+mJNssBMRN3mEhF1HH4D11hkbTPYlHX3Pl3
-	 JJWGoVZjfuHlWdhWCjcFxW7j4lNEwKeceudNvyzHTejrH41tNYnfv3nY8Kk3t2yJN1
-	 j8Wuq3UAVeVrB91eIT1LhfCRVqjwOc5iEaVxbqY91KKwwOXvmTdQzkTdasF596TKsp
-	 HzxuMCwPLTaIA==
-Date: Tue, 28 May 2024 12:41:41 -0500
+	b=U7OLECoCWbZiaYv+ryxiyHK1n+Y0z/uH3yfXA6PVTjY/g6ij6djKqsjTCe+cffQGY
+	 IouzQ5ETeMSItUIxySzKTiQoWxOE16q/nUehVNwRo/P+79uqhLVMKYskfWki4d/02T
+	 sTXGXacuSwsWUIT3XIePlA+tTmkNvHyYS6aQOngKWrn7HRzZdzKpnW5zNLpOn1u4SF
+	 Hv9Df/Q1zvidvjytHUQl9bRNxl9+i8JfMiJfV1/8/P1UOMV1Q/qhhH5iDa4jqQ7R/9
+	 qvo9IfiLXANgo5awACX4faw6ujMh6g94vZYLurtC/FkQuCnBcb39GFoTIRi228+gXs
+	 rfVkrxsxBGugw==
+Date: Tue, 28 May 2024 12:41:42 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,54 +50,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: hiago.franco@toradex.com, krzk+dt@kernel.org, ye.li@nxp.com, 
- festevam@gmail.com, leoyang.li@nxp.com, bhelgaas@google.com, 
- linux-clk@vger.kernel.org, peng.fan@nxp.com, linux-kernel@vger.kernel.org, 
- abelvesa@kernel.org, frank.li@nxp.com, ping.bai@nxp.com, 
- m.othacehe@gmail.com, kernel@pengutronix.de, devicetree@vger.kernel.org, 
- shawnguo@kernel.org, hvilleneuve@dimonoff.com, imx@lists.linux.dev, 
- conor+dt@kernel.org, aisheng.dong@nxp.com, s.hauer@pengutronix.de, 
- alexander.stein@ew.tq-group.com, Markus.Niebel@ew.tq-group.com, 
- linux-arm-kernel@lists.infradead.org, joao.goncalves@toradex.com, 
- sboyd@kernel.org, gregor.herburger@ew.tq-group.com, mturquette@baylibre.com, 
- tharvey@gateworks.com, m.felsch@pengutronix.de
-In-Reply-To: <20240527235158.1037971-1-pengfei.li_1@nxp.com>
-References: <20240527235158.1037971-1-pengfei.li_1@nxp.com>
-Message-Id: <171691793305.1180610.12774136629203985071.robh@kernel.org>
-Subject: Re: [PATCH 0/5] arm64: dts: freescale: Add i.MX91 11x11 EVK basic
- support
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Chao Wei <chao.wei@sophgo.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Chen Wang <unicorn_wang@outlook.com>, devicetree@vger.kernel.org, 
+ Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
+References: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
+Message-Id: <171691793360.1180650.2832719288980549545.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Add board support for Sipeed LicheeRV Nano
 
 
-On Mon, 27 May 2024 16:51:53 -0700, Pengfei Li wrote:
-> The design of the i.MX91 platform is very similar to i.MX93.
-> The mainly difference between i.MX91 and i.MX93 is as follows:
-> - i.MX91 removed some clocks and modified the names of some clocks.
-> - i.MX91 only has one A core
+On Mon, 27 May 2024 12:28:16 +0200, Thomas Bonnefille wrote:
+> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+> minimal device tree files for this board to make it boot to a basic
+> shell.
 > 
-> Therefore, i.MX91 can reuse i.MX93 dtsi.
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> ---
+> Thomas Bonnefille (5):
+>       dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
+>       dt-bindings: timer: Add SOPHGO SG2002 clint
+>       dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+>       riscv: dts: sophgo: Add initial SG2002 SoC device tree
+>       riscv: dts: sophgo: Add LicheeRV Nano board device tree
 > 
-> Pengfei Li (5):
->   dt-bindings: clock: Add i.MX91 clock support
->   dt-bindings: clock: Add i.MX91 clock definition
->   arm64: dts: freescale: Add i.MX91 dtsi support
->   dt-bindings: arm: fsl: Add i.MX91 11x11 evk board
->   arm64: dts: freescale: Add i.MX91 11x11 EVK basic support
+>  .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+>  .../devicetree/bindings/riscv/sophgo.yaml          |  4 +++
+>  .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
+>  arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+>  .../boot/dts/sophgo/sg2002-lichee-rv-nano.dts      | 25 ++++++++++++++++++
+>  arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 30 ++++++++++++++++++++++
+>  6 files changed, 62 insertions(+)
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240515-sg2002-93dce1d263be
 > 
->  .../devicetree/bindings/arm/fsl.yaml          |   6 +
->  .../bindings/clock/imx93-clock.yaml           |   1 +
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../boot/dts/freescale/imx91-11x11-evk.dts    | 807 ++++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx91-pinfunc.h | 770 +++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx91.dtsi      |  66 ++
->  include/dt-bindings/clock/imx93-clock.h       |   7 +-
->  7 files changed, 1657 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
->  create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
-> 
+> Best regards,
 > --
-> 2.34.1
+> Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 > 
 > 
 > 
@@ -117,20 +115,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx91-11x11-evk.dtb' for 20240527235158.1037971-1-pengfei.li_1@nxp.com:
+New warnings running 'make CHECK_DTBS=y sophgo/sg2002-lichee-rv-nano.dtb' for 20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com:
 
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: pinctrl@443c0000: 'eqosgrpsleep', 'pdmgrpsleep', 'sai1grpsleep', 'sai3grpsleep', 'spdifgrpsleep', 'usdhc2gpiogrpsleep', 'usdhc2grpsleep', 'usdhc3grpsleep' do not match any of the regexes: 'grp$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/fsl,imx9-pinctrl.yaml#
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: tcpc@50: compatible: ['nxp,ptn5110'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/nxp,ptn5110.yaml#
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: tcpc@50: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/nxp,ptn5110.yaml#
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: tcpc@51: compatible: ['nxp,ptn5110'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/nxp,ptn5110.yaml#
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: tcpc@51: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/nxp,ptn5110.yaml#
-arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb: mmc@42860000: Unevaluated properties are not allowed ('fsl,cd-gpio-wakeup-disable' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/fsl-imx-esdhc.yaml#
+arch/riscv/boot/dts/sophgo/sg2002-lichee-rv-nano.dtb: oscillator: 'clock-frequency' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
 
 
 
