@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-193166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AB98D27E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:22:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9025D8D27EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E311C23630
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402812872A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EAF143759;
-	Tue, 28 May 2024 22:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C07143881;
+	Tue, 28 May 2024 22:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e1jtw4DL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZT9wmLTN"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D613E042
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A7B140E2B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934826; cv=none; b=UwPQQiXak9SIdIvqA1+cJvAjrC5eY82x6Y3+TrI/VsDR/nNdBGGIckUpnzq+VlOrEIGMGiWyozRK0r7+fPzjJnLs2/i6hfztLZJqKDq04DxoAEBvj9gmDXOA5c8w2CsSuvSWWhyCysqw2jpKU7ojV9E9ef8N0PBTc80F3nPH0jU=
+	t=1716934827; cv=none; b=kHMF4w6grfuf6FKjdfdcW8LaUOG1bNWgW7iH8NMFPx6B1BxYO8otkueqrHtlGIc89Q5XLkBlyt4lNuAM2Wco1AuaHGBqzyBqiySZKPdpADW+WdgZPhblElz6tfXlguOHdCEjjO1toO9GP9uQwMDTCgQ6zh7DGbkZm2WHZxw5ruQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934826; c=relaxed/simple;
-	bh=im/Pz9hg/qCEbfF9S4v7tyMMvbxX1QBNERgbrYVF2eo=;
+	s=arc-20240116; t=1716934827; c=relaxed/simple;
+	bh=IorIMWxs/gs9G2e+fIJjKu+T6wnYFb7FW0tiY1sOfW8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zp6uJLBP32SvFKtni7WwTE/Ur9Y82oWvKma5rku6u8VXd9NdgaajnN0LKexVN57A4pns8czOqPGMkIDcrpJcVOozjL0OoQQNVUysifv0S001Dh9mkauaJcEkgSWH1JMvOybCF08zxFYzsWqETc8QnsEvfaRTJ8EiktaZ7dF6hb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e1jtw4DL; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=Wl7WE64XuUum5+QVk+O/9Rth5op0kz29WObQlRsk52OXfmWcIVDbjEzoqOvD5WkMZWQ3SJ2DvK7rFCwM+MzZeItXiVQOBQm0R7iQuuR2nhGDLs1SdYkI0GuxsAfzR4JksK6TLZMd6Dbm527w7fPLIefA02MUlNksa3DZ1emPBLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZT9wmLTN; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716934825; x=1748470825;
+  t=1716934826; x=1748470826;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=im/Pz9hg/qCEbfF9S4v7tyMMvbxX1QBNERgbrYVF2eo=;
-  b=e1jtw4DLdApY2lHY9w5a/8K+T5fA852hvQI6BQR9l4Y1JLtnFzwKFAR4
-   hdwydA+VlFu4Ixh2kKzRt93PshIREG1TcL7gU306tShZUzoFdBvJ98LXn
-   fSR1sr2NvAIPWVukGmMSw1f5Fm7T25ZkvZa/qgLEv0MaU3Xur1FNDQOOi
-   zPKylenaQdBqGA4fQnL43LEYwHNfIRyMw+xCOUktX26NGiSn7NUzq0FRn
-   cnq0lRcoNr+tYC+4r1xKQgu+jf47pXbpXzUR+7QM412xUzp/Df4Rty2Ey
-   iIMso6IVJWlkpaEb2+hWIn2r5yqUoaMGxDyk7JCLUrLYT4PjstRGCLRNS
+  bh=IorIMWxs/gs9G2e+fIJjKu+T6wnYFb7FW0tiY1sOfW8=;
+  b=ZT9wmLTNN0q1jNrKuxzU1rGLI1Pl0ssjV7tVFfUjowlrvbHy/VyfM4tY
+   FtBe7PexNZhgysPTim+CNcEN/GR0Djilbi5b4nnUTFUX///1Azfx7DNZn
+   wYSQ75RlkShh9QIwgxYafVc1dTZJdiw5bdiFCrlx7abhfm4p7Aw2jL6sK
+   1JsrHz+sUF5wsOkdzTN7kC7Hhen5hmJa6OP9z6NtpUB0IWNNls7LNsZad
+   ccyucWEDunHyk2t4DMWgpiaFwWzqHfRRXujVUK2bXXj44Gw+DOVfUpbZ/
+   EPlk2+3dR6/IWd1ejXYuc7tyNO/xUEE5/ICrQniF2EQkm3lrx5WlDD3zT
    w==;
-X-CSE-ConnectionGUID: YTzJzG6iRHm9BE2o6B9Vlw==
-X-CSE-MsgGUID: xwgaQRVESeCthIF12DtcwA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="30812226"
+X-CSE-ConnectionGUID: Ud0znyTTRQySBRCbsWn3OA==
+X-CSE-MsgGUID: vhpvYNSySH+mg7DFR4ZFGg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="30812233"
 X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="30812226"
+   d="scan'208";a="30812233"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 15:20:19 -0700
-X-CSE-ConnectionGUID: jkHzCNU4SBC1GnfbGCmfyw==
-X-CSE-MsgGUID: 3hkeNKh0RqWdZPyGmhO2kQ==
+X-CSE-ConnectionGUID: bAd8cXkbSu2OItmG3YHEDw==
+X-CSE-MsgGUID: L5hHJfCnQne9S7kgBGZymg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="40090750"
+   d="scan'208";a="40090756"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 15:20:18 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v19 13/20] x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC) mode
-Date: Tue, 28 May 2024 15:19:58 -0700
-Message-ID: <20240528222006.58283-14-tony.luck@intel.com>
+Subject: [PATCH v19 14/20] x86/resctrl: Fill out rmid_read structure for smp_call*() to read a counter
+Date: Tue, 28 May 2024 15:19:59 -0700
+Message-ID: <20240528222006.58283-15-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240528222006.58283-1-tony.luck@intel.com>
 References: <20240528222006.58283-1-tony.luck@intel.com>
@@ -84,80 +84,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In SNC mode there are multiple subdirectories in each L3 level monitor
-directory (one for each SNC node). If all the CPUs in an SNC node are
-taken offline, just remove the SNC  directory for that node. In
-non-SNC mode, or when the last SNC node directory is removed, also
-remove the L3 monitor directory.
+mon_event_read() fills out most fields of the struct rmid_read that is
+passed via an smp_call*() function to a CPU that is part of the correct
+domain to read the monitor counters.
+
+The one exception is the sumdomains field that is set by the caller
+(either rdtgroup_mondata_show() or mon_add_all_files()).
+
+When rmid_read.sumdomains is false:
+	The domain field "d" specifies the only domain to read
+	CPU to execute is chosen from d->hdr.cpu_mask
+
+When rmid_read.sumdomains is true:
+	The domain field is NULL.
+	The cache_info field indicates that all domains
+	that are part of that cache instance should be
+	summed.
+	CPU to execute is chosen from ci->shared_cpu_mask
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 39 ++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 28 ++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 6a5c35a176d5..cdcae13d6c6d 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -3011,17 +3011,44 @@ static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
-  * and monitor groups with given domain id.
-  */
- static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
--					   unsigned int dom_id)
-+					   struct rdt_mon_domain *d)
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 3b9383612c35..4e394400e575 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -517,6 +517,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+ 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+ 		    int evtid, int first)
  {
- 	struct rdtgroup *prgrp, *crgrp;
-+	bool remove_all = true;
-+	struct kernfs_node *kn;
-+	char subname[32];
- 	char name[32];
++	cpumask_t *cpumask;
+ 	int cpu;
  
-+	sprintf(name, "mon_%s_%02d", r->name, d->ci->id);
-+	if (r->mon_scope != RESCTRL_L3_CACHE) {
-+		/*
-+		 * SNC mode: If the last domain is being removed, the count of
-+		 * CPUs sharing the L3 cache should be 1 (current CPU).
-+		 */
-+		if (cpumask_weight(&d->ci->shared_cpu_map) > 1) {
-+			remove_all = false;
-+			sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
-+		}
-+	}
+ 	/* When picking a CPU from cpu_mask, ensure it can't race with cpuhp */
+@@ -537,7 +538,8 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+ 		return;
+ 	}
+ 
+-	cpu = cpumask_any_housekeeping(&d->hdr.cpu_mask, RESCTRL_PICK_ANY_CPU);
++	cpumask = rr->sumdomains ? &rr->ci->shared_cpu_map : &d->hdr.cpu_mask;
++	cpu = cpumask_any_housekeeping(cpumask, RESCTRL_PICK_ANY_CPU);
+ 
+ 	/*
+ 	 * cpumask_any_housekeeping() prefers housekeeping CPUs, but
+@@ -546,7 +548,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+ 	 * counters on some platforms if its called in IRQ context.
+ 	 */
+ 	if (tick_nohz_full_cpu(cpu))
+-		smp_call_function_any(&d->hdr.cpu_mask, mon_event_count, rr, 1);
++		smp_call_function_any(cpumask, mon_event_count, rr, 1);
+ 	else
+ 		smp_call_on_cpu(cpu, smp_mon_event_count, rr, false);
+ 
+@@ -575,15 +577,29 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 	resid = md.u.rid;
+ 	domid = md.u.domid;
+ 	evtid = md.u.evtid;
+-
++	rr.sumdomains = md.u.sum;
+ 	r = &rdt_resources_all[resid].r_resctrl;
+-	hdr = rdt_find_domain(&r->mon_domains, domid, NULL);
+-	if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN)) {
 +
- 	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
--		sprintf(name, "mon_%s_%02d", r->name, dom_id);
--		kernfs_remove_by_name(prgrp->mon.mon_data_kn, name);
-+		if (remove_all) {
-+			kernfs_remove_by_name(prgrp->mon.mon_data_kn, name);
-+		} else {
-+			kn = kernfs_find_and_get(prgrp->mon.mon_data_kn, name);
-+			if (kn)
-+				kernfs_remove_by_name(kn, subname);
-+		}
- 
--		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list)
--			kernfs_remove_by_name(crgrp->mon.mon_data_kn, name);
-+		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list) {
-+			if (remove_all) {
-+				kernfs_remove_by_name(crgrp->mon.mon_data_kn, name);
-+			} else {
-+				kn = kernfs_find_and_get(crgrp->mon.mon_data_kn, name);
-+				if (kn)
-+					kernfs_remove_by_name(kn, subname);
++	if (rr.sumdomains) {
++		list_for_each_entry(d, &r->mon_domains, hdr.list) {
++			if (d->ci->id == domid) {
++				rr.ci = d->ci;
++				d = NULL;
++				goto got_cacheinfo;
 +			}
 +		}
+ 		ret = -ENOENT;
+ 		goto out;
++	} else {
++		hdr = rdt_find_domain(&r->mon_domains, domid, NULL);
++		if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN)) {
++			ret = -ENOENT;
++			goto out;
++		}
++		d = container_of(hdr, struct rdt_mon_domain, hdr);
  	}
- }
+-	d = container_of(hdr, struct rdt_mon_domain, hdr);
  
-@@ -3984,7 +4011,7 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
- 	 * per domain monitor data directories.
- 	 */
- 	if (resctrl_mounted && resctrl_arch_mon_capable())
--		rmdir_mondata_subdir_allrdtgrp(r, d->hdr.id);
-+		rmdir_mondata_subdir_allrdtgrp(r, d);
++got_cacheinfo:
+ 	mon_event_read(&rr, r, d, rdtgrp, evtid, false);
  
- 	if (is_mbm_enabled())
- 		cancel_delayed_work(&d->mbm_over);
+ 	if (rr.err == -EIO)
 -- 
 2.45.0
 
