@@ -1,138 +1,250 @@
-Return-Path: <linux-kernel+bounces-192745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5598D2189
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345358D218F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57F861C236CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5078D1C22825
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052A5172BC1;
-	Tue, 28 May 2024 16:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55F3172BC2;
+	Tue, 28 May 2024 16:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HU0AVVPR"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="ki6R0mGC"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBCD172BA4;
-	Tue, 28 May 2024 16:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12E8172BA9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716913362; cv=none; b=pkh6UH4/xrxJhob009r49/4PvMpsh2fmu70uHgOW6ma6GPRnzyjVxVPczaNl9Fj0D2bFkTxtNZHZNaWrb4mupuiNMp+sAfFQdfFWXAyY8NJpcGgmEST2OD1Ge/1gstBCQ7QyoP47gby1GyYgdYXNHg21sEc9Wgaxd33FO884+ls=
+	t=1716913406; cv=none; b=AduOYSij6b652e0pxpbHP5qx7GNtAlDIyjWY5wSwNOFGjqdONaRZgX5+Us6zJ6oWjAk9hldPXAupCiaNiwpzrdWdhRnvZ4iwLzlYNtGH1JTDkdXbNGoA1n8Dvize28nELVC34HEiMcuutN8PQ+CPzakVSkFCT+tTTDbQHCb2W5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716913362; c=relaxed/simple;
-	bh=kpR2fFczl4zrmb4jbIi8NsKzrZZ36Zbggc2EgLO+vSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tg1wk1l4V3X4z3+4+M8qImpeGjUxP2oKP2bh0eIeS9eGZfhmOLKJoxZTRJ7fJUJq7y59R8Tu7Aed0ai1uCw9gRPc+BP0giBEp12Lj3Eo2TBDV0yGM5GmJa136ehjgXphcnfADbDJRIUzyR4pOrfbQLT3pVL15A9Q92T4YkwHriM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HU0AVVPR; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716913344; x=1717518144; i=markus.elfring@web.de;
-	bh=7KM1xuNiCDT4AGTVfn5aUlOhf2Cxr9DbH5hJVtIXgBo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=HU0AVVPRMfIJjsn6LmnbDkx7JtYrWx20cImP/KI3AhFTBlRTgEUPzAzaem13l2Km
-	 8Fo5r0R7QwfenWl5LtdRCIH7aTSyR1deFjKZRgwGKV/swXLgdm1I8fTAUshcxBM++
-	 fRkBJlAfa/8LNGBDzdzSp7D0j80v2US1yc++H2scDAEwge8WBUEr1biNmBEcbySWj
-	 LRG5tlq3yGRf5I6kLCCYqc54FGT/x7OUdrheOLTu/gag9UmujPWOuBNn1o+sLtlWS
-	 T+quZWHUP+cTWU0+GPhJBT1GztH2z0ne9GMPb+UPhXbwdAJASd0/ILBGiOjzlyU7u
-	 uAkjWZq6Aumd7Qn/HQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkEhR-1swe5Z2Ywb-00kXG6; Tue, 28
- May 2024 18:22:24 +0200
-Message-ID: <a2036c46-0527-4ac3-a40b-c9c2cd3e185e@web.de>
-Date: Tue, 28 May 2024 18:22:23 +0200
+	s=arc-20240116; t=1716913406; c=relaxed/simple;
+	bh=YrRYmM2iOnvVpCpxFTLguETPlid9A8LGNFldLjX9+z8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VBxbmEFvxXI3PpdPOyzLVdUpN6uaCoA83QDYosPB0rdievtDXsj6dpBhQTDubxA7voFiwFPvzsnVWcoG61ypR7O/6EYKqeE749eGxm8PjrVrfHrHvOOAle45ZRBcfsFp++iKl2/nGs5RVV/QMCQFFu13po0d7hUxtsXE26Rpo0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=ki6R0mGC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so138967266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks.com; s=google; t=1716913402; x=1717518202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Icz1iULGDWOGvffjSkBVlf/NabTBEP831PPUjJFQD5c=;
+        b=ki6R0mGCpzlgkskgMcxMyyYBewY38KUSVCQFXnaF+KNvdW6D5YO0djHruN2386km5p
+         DmCDYVzcOdGEM/bEqy/zoDahwiT/A6JZ5LSvo+8fF7wJdN05aLNjVN02+ezhIeoeQsg4
+         QC/1KJjV8NSyozJDm1M4Pz5j4MdIOLys0ZU0tLwvpE2aNTLrjg/2krW5q2/TH66NbZ9X
+         JCaYLfIbl/XpWTIUiRvcIXe/sKfKUtn2I0ZqGD6oBhElCMDGP3zZHz6flRuPP4X2ZMIS
+         w3tWFGv7QE0/eNKL2daVsPHKinqxC9ZPetprnYU8Ni/THvxWoqPET4p+Vz9+u6LqoSEO
+         fBoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716913402; x=1717518202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Icz1iULGDWOGvffjSkBVlf/NabTBEP831PPUjJFQD5c=;
+        b=sMwWbP+YZcOGbYQWhVIcOwlOe6QrexYCVb+KQibnmZXAhodiiXqi8LWEyvI0gUgTwy
+         Y1RL1BTTaw2kp3zKDbYvKlsNmT7yS98/U8pefGIvHD5pQTOU5NaUtAQXnTjxcSKFbFnq
+         4FqKtD/w7ODnkgS9oMJyIvDN1A50Pg6c9NpoXQNciHZcb39hskmgXH3lhOlw6vkE/MjP
+         LLLAF7Pv/S5TLnH0E0clwEVqou5rJ9ibsZqztKYY6lEp6xpAKAFGvRzIPmvo1ghzpgYH
+         aqfWr3wJq9p5jFntC1SDzXuVX2PN23KYR+ZSz9C3woZSyst+720uc5YiVyDXhkdsk26c
+         DZ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWekf2qzTWK580iC3rCbSSabvPRg5gu/i3YUtGTTmu/PtbtR36YMESA/HFrl7Aa4p/TD+IWWaG9BAJGWC+3Pc3jA+w/mcVK8dXXQGJp
+X-Gm-Message-State: AOJu0YzpVglrWS4uUw7y8e1HfrOsKE+INFKt187ZyjvdD7mOwQNghJiv
+	YG7ZsSPSUEdv0G+Mv4FkWNYtOK7smEZZlTE2uF/HzS39iT4gtsrTP09rDL8ULGOX1CfyP25Vw7m
+	iHW7hvw0qxFQC78Wx2duSLh/xuAd+BT9gZWkSiw==
+X-Google-Smtp-Source: AGHT+IGfhHltMh6uxJiYUYZJIY3arEfGHNZl4L3jMAUX5mkMEtSLMBjHdCH6foV8SIu5pyn4zoFHWz0SJWajG0Ovtns=
+X-Received: by 2002:a17:906:413:b0:a63:4e95:5639 with SMTP id
+ a640c23a62f3a-a634e95579dmr120722966b.47.1716913402114; Tue, 28 May 2024
+ 09:23:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: soundwire: fix usages of device_get_named_child_node()
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, linux-sound@vger.kernel.org,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bard Liao <bard.liao@intel.com>,
- Vinod Koul <vinod.koul@linaro.org>
-References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
- <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
- <9d5f2625-f3e7-4212-8c9a-c22f137f39d9@linux.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9d5f2625-f3e7-4212-8c9a-c22f137f39d9@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240522215043.3747651-1-tharvey@gateworks.com>
+ <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org> <20240523-vividly-sequester-d85ac7bccbbd@spud>
+ <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
+ <20240524-cavalier-outthink-51805f49c8fb@spud> <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
+ <CAJ+vNU3Rh6f-HrFbBLxNXVP1PwsGh8OyGmmGJBv6+GRwZaTXgw@mail.gmail.com> <20240528155808.GA695520-robh@kernel.org>
+In-Reply-To: <20240528155808.GA695520-robh@kernel.org>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Tue, 28 May 2024 09:23:10 -0700
+Message-ID: <CAJ+vNU225kyG7+AmXU8MTDArj8_6ibD-DkogXg89YpWS57ai=g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley <conor@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BTQELw88TuHdzg24tV+ZDlWviFo3A2UTKj79AOudD3HtO0qZAuG
- OkPxT8mN8jE40HX3GVawWdL54FLL1DiGteLK7mLSlX2NK9dp+3kVCcnLptWLKe+4Dze8jHX
- mg0kWTkvrf+kGRYfYXQHdPGP7D7IDQIJTIJR+EzyLRzsg+3/v1X8embj9lfjKTjAWNeg01X
- sfODsivz9slGbY6MUFbaQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:js6plXQPR28=;NxkUglzSnCjMlmjBbGwe2TU+qT1
- dquw5HV3GSAdqaW4R1byAR1VsCQ+J8a7a//PThtcXar+f0cwLPhY7G0CtAO/ixp9bgaIzgwXe
- d7Quea9tMzGZmZr5KuwEsU/qDPhyGDnECcbGhsVHx4iNoDSBlm7sWwppy3PQCP3QTp7YZ/58j
- Fm4s/ctHoTzwRsokAuVLrDyd3h0wIn6dH7/E7ixjEVHj4IDmtHS6gENzkTLChmB1QxF9/4tUa
- VjPIiQgVEnhq9qKWTey4ZWQimLX6a4TMGFddeafb3/HqL6cvBED1Awhl2s6B62YQ+fb/Ebx+C
- 6cZ7QOPPq8EhI5Qku5yqq5GJGkByHdYJnU04JE/5/W7zrMsSUnPUKhDzg53ID0p/Nxyx30zAx
- HSw3lvOyWD7U8jJjC9RqT8AaHN1DfRF324NmFtku0ITcz7RpQIp2EjGZkm2EwN7UZdSYm2wNF
- DlITDKxgVNgtfpQuS9QHPr3KTPaupIrcnwZ1MI9ZfnffNsPeq/DEB6XlJQOsmKog+63xQJWAJ
- xQfOSw66SIb1Pr5dZBAxxgtb109QuRsjfFWjc0HjKobbIAxNEm9Vrf5bZTB3p9vy/X8mkjTy/
- 2cDVpQ9EYDov5hVxPNG3tYVt6Q2m0n/vxCkYNiNdX+FgT7okMzizN1Sq8x/tIya98ZrpdT2NB
- XDMXnVx5HyZycUoL4DrN5FbGkGRNJqwFNW2vLs5AhfjJtGjMh3ATN/okE4vZqybY1PwgQABHp
- 51wcv4vIvspyJKfL8PemwDeZfHMjJxnl6WYaa60CT7pDUsQrQoCYhGSE0somERX1KlvE07f+B
- 7pdvOyBytyk+J8ZcH94mcKzvn72dvG6nuKBhebxBb32ao=
 
->>> Add fwnode_handle_put() to avoid leaked references.
->>
->> Are you going to respond also to my previous patch review
->> in more constructive ways?
->> https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.d=
-e/
->> https://lkml.org/lkml/2024/4/29/493
+On Tue, May 28, 2024 at 8:58=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> Sorry about that, both Bard and I missed your comments.
+> On Sat, May 25, 2024 at 12:58:18PM -0700, Tim Harvey wrote:
+> > On Sat, May 25, 2024 at 11:34=E2=80=AFAM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> > >
+> > > On 24/05/2024 20:40, Conor Dooley wrote:
+> > > > On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
+> > > >> On Thu, May 23, 2024 at 7:47=E2=80=AFAM Conor Dooley <conor@kernel=
+org> wrote:
+> > > >>>
+> > > >>> On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wro=
+te:
+> > > >>>> On 22/05/2024 23:50, Tim Harvey wrote:
+> > > >>>>> The GW7905 was renamed to GW7500 before production release.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > > >>>>> ---
+> > > >>>>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+> > > >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >>>>>
+> > > >>>>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/D=
+ocumentation/devicetree/bindings/arm/fsl.yaml
+> > > >>>>> index 0027201e19f8..d8bc295079e3 100644
+> > > >>>>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > >>>>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > >>>>> @@ -920,8 +920,8 @@ properties:
+> > > >>>>>                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK B=
+oard
+> > > >>>>>                - fsl,imx8mm-evk            # i.MX8MM EVK Board
+> > > >>>>>                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
+> > > >>>>> +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks=
+ Board
+> > > >>>>
+> > > >>>> That's not even equivalent. You 7500 !=3D 75xx.
+> > > >>>>
+> > > >>>
+> > > >>>>>                - gateworks,imx8mm-gw7904
+> > > >>>>> -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks=
+ Board
+> > > >>>>
+> > > >>>> Compatibles do not change. It's just a string. Fixed string.
+> > > >>>
+> > > >>> I think there's justification here for removing it, per the commi=
+t
+> > > >>> message, the rename happened before the device was available to
+> > > >>> customers.
+> > > >>> Additionally, I think we can give people that upstream things bef=
+ore they're
+> > > >>> publicly available a bit of slack, otherwise we're just discourag=
+ing
+> > > >>> people from upstreaming early.
+> > > >>
+> > > >> Hi Conor,
+> > > >>
+> > > >> Thanks for understanding - that's exactly what happened. I'm in th=
+e
+> > > >> habit of submitting patches early and often and it's no fun when
+> > > >> something like a silly product name gets changed and breaks all th=
+e
+> > > >> hard work.
+> > > >>
+> > > >> The board model number is stored in an EEPROM at manufacturing tim=
+e
+> > > >> and that EEPROM model is used to build a dt name. So instead of GW=
+7905
+> > > >> which would be a one-off custom design it was decided to change th=
+e
+> > > >> product to a GW75xx. The difference between GW7500 and GW75xx is
+> > > >> because we subload components on boards between GW7500/GW7501/GW75=
+02
+> > > >> etc but the dt is the same.
+> > > >>
+> > > >> If there is resistance to a patch that renames it then I guess I'l=
+l
+> > > >> have to submit a patch that removes the obsolete board, then adds =
+back
+> > > >> the same board under a different name. Shall I do that?
+> > > >
+> > > > I think this patch is fine - other than the inconsistency that Krzy=
+sztof
+> > > > pointed out between the "renamed to gw7500" and the "gw75xx" in the=
+ new
+> > > > compatible.
+> > >
+> > > I am not a fan of renaming compatibles because of marketing change,
+> > > because compatible does not have to reflect the marketing name, but
+> > > there was already precedent from Qualcomm which I did not nak, so fin=
+e
+> > > here as well. Double wildcard 75xx is however a bit worrying.
+> > >
+> >
+> > Hi Krzysztof,
+> >
+> > Thanks for understanding. The double-wildcard is again a marketing
+> > tool. All GW75** use the same device-tree by design. The boot firmware
+> > that chooses the device-tree understands this and for a GW7521 for
+> > example would look for gw7521 first, gw752x next, gw75xx last.
+>
+> You haven't documented the other 2 though.
+>
+> How do "all GW75** use the same device-tree", but then there are 3
+> possible DTs for just 1 board?
+>
+> Selecting a DT is not a unique problem. We don't need unique
+> solutions. There's the QCom board-id proposal[1] and OS provided DT[2]
+> which are addressing similar issues.
+>
 
-How could this happen?
+Hi Rob,
 
+I'm not sure those links are really able to address all needs. I see
+some similarity with the concept of a board-id taking the place of the
+don't-cares used in our names but not the concept of marrying a
+baseboard to a SOM with the two different boards creating a named
+combination (both which may have some don't cares). The Gateworks
+Venice product family of boards (imx8m{m,n,p}-gw7***-*x) boards have
+been in the kernel for quite some time now as has been the U-Boot code
+that determines the device tree using a baseboard model number
+combined with a SOM model number.
 
-> On the Fixes tag: I made a deliberate choice to add all the fixes in one
-> patch, to show that the usage was copy-pasted and done 'wrong' in
-> multiple places. That makes it really hard to add a Fixes tag since the
-> different uses were added in a time interval of about 5 years.
+A baseboard with an model of GW7301 (programmed into an EERPOM at mfg
+time) gets coupled with a SOM with the model of GW7000 and this uses a
+device-tree of gw73xx-0x (prepended by the SoC name of imx8mm, imx8mn,
+imx8mp). The don't care's here and the naming convention has been
+chosen by us, the board manufacturer, leaving enough significant
+digits for component subloads that was desired at the time. So a
+GW7300 and a GW7301 are the same schematic, they just have some
+different loading options.
 
-Is it interesting how the affected software components evolved in the mean=
-time?
+I really don't understand the issue here. A board was originally named
+gw7905 when I brought up the prototype in the lab and created its
+device-tree but between then and when it shipped it got moved to the
+more generic 'family' of gw75xx baseboards which get coupled with a
+SOM. I already have a gw71xx, gw72xx, gw73xx out there for years that
+function this way.
 
+Device trees describe hardware using a name... the name changed :(
 
-> We could split and have multiple patches if that was desired, but I
-> would still not include a Fixes tag since the leaked references are not
-> that bad, we read the Manager properties on probe, and the peripheral
-> properties are generally not used by codec drivers, so it's unlikely
-> that any user will ever see a problem that requires a backport in linux-=
-stable.
-=E2=80=A6
+Quite simply there are no boards out there with a GW7905 in the EEPROM
+that need to be supported... they all have a GW7500 programmed in them
+(and some may in the future have a GW7501, GW7502, etc).
 
-I became curious how the exception handling will be completed here.
+Is the problem here the fact that I use don't-cares in the names or
+the fact that a name changed?
 
-* Do you still care for the usage of goto chains?
-  https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+=
-goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resou=
-rces
+Best Regards,
 
-* How do you think about to increase the application of scope-based resour=
-ce management?
-  https://elixir.bootlin.com/linux/v6.10-rc1/source/include/linux/cleanup.=
-h#L124
+Tim
 
-
-Regards,
-Markus
+> Rob
+>
+> [1] https://lore.kernel.org/all/20240521-board-ids-v3-0-e6c71d05f4d2@quic=
+inc.com/
+> [2] https://lists.linaro.org/archives/list/boot-architecture@lists.linaro=
+org/thread/DZCZSOCRH5BN7YOXEL2OQKSDIY7DCW2M/
 
