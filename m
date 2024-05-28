@@ -1,97 +1,103 @@
-Return-Path: <linux-kernel+bounces-192461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AC48D1D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D338D1D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E584EB22205
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8107F284F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC1D17279B;
-	Tue, 28 May 2024 13:49:57 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2E616F831;
+	Tue, 28 May 2024 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="O3wwstS+"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89D1171E62;
-	Tue, 28 May 2024 13:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFF316F291;
+	Tue, 28 May 2024 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904197; cv=none; b=SFoVz4Tu6amBtBVz3wo5MgqX7HYb0JVx8WcWnOvr9BfaFPK+3z62gwyNAfLP2vJ2zxZ2gYnC/be3U5sVhsaNtzTO5Z1e7dEReHIcdhg27vVqWnR7+kHpkGKsu0YMliGhQAFKy0gqhQhCYlFeNt9Tk84oAkSawIaYxiqo4mcifZQ=
+	t=1716904307; cv=none; b=Wue/9EHC6OZdeDvEaubGYBm+HOy4woUd3jhb5xIgFc2wroBzLCQWWi79LbHK8P7djvqY2dfh+yPomQ4bJ6q5LQiM91V0MDtnmJebhk6G1m6P8N01LHW/DXlVRszgXnn5w40tvMTHp+nWBYVCHGgemTOduHSd7OLuTVcBcFVd5LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904197; c=relaxed/simple;
-	bh=Nc6MCCKPcIdAj3+9dNaCNtQ8Lul5I7+BKaFDnHDpSlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tvjG5mF/B18T1VuExvdQP6KsJL/VfqrhuQQqnkByOy7m/1RfuH/0h2ESWHssH70kel/pJB2CDBfsdcCEaCcR2VU3JBIdMBnQ/h/+6Cz144l8HP/YVR4qKz10CXhsuNPeWz/HdBT8bAX+HVzc1GZ4628/WRkeIMO7HY1PLzqyfgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VpYm32mwCz4f3jXs;
-	Tue, 28 May 2024 21:49:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id A1FB21A016E;
-	Tue, 28 May 2024 21:49:48 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAv44FVmYpoPOQ--.23340S3;
-	Tue, 28 May 2024 21:49:48 +0800 (CST)
-Message-ID: <bc582a25-2124-2aa8-f26b-94fd5a50f900@huaweicloud.com>
-Date: Tue, 28 May 2024 21:49:44 +0800
+	s=arc-20240116; t=1716904307; c=relaxed/simple;
+	bh=GNzER6L7ElxxakGvY68xyEAEqNGZrd7YPgg3Kd3uzx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Do2QiDt67rHFI7KEqKVrraFnMkKyed+IJn13sElF85RRBJksEvMlZVG/ncUW8AoODnv4dg9XIe2flbYoRas5ef9UTtRiDh37HtKvB5pguSK39tQNUuXbr3j1DycFsEzUO2e5pzk8ggK0oRbTkCEqdEdYB6gV5TO3tV9Zhdz0yRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=O3wwstS+; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716904301; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=vY7+iAI1WEm3baRaKxv3Iubq1X+fo0lH3fPVRRSyBjg=;
+	b=O3wwstS+CDxQ9k++nN2XAVd1KpRTvGTO6I2TqbAMi1XSgqa7tyDBJJroV6SF8PQfzA1fZJ332WpSwOlfrsJc2qIRXr1WOmZw2PLeff15UDBQJg+N6WMz652SGkYdYxIvxhgp3u2PgHXN9G7ZH4PMabHEQy8Jjenh+z3Yoz8cgkY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W7PmKgL_1716904299;
+Received: from localhost.localdomain(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0W7PmKgL_1716904299)
+          by smtp.aliyun-inc.com;
+          Tue, 28 May 2024 21:51:40 +0800
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: kgraul@linux.ibm.com,
+	alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/2] Change the upper boundary of SMC-R's snd_buf and rcv_buf to 512MB
+Date: Tue, 28 May 2024 21:51:36 +0800
+Message-Id: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] md: make md_flush_request() more readable
-To: Christoph Hellwig <hch@infradead.org>, linan666@huaweicloud.com
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- houtao1@huawei.com, yangerkun@huawei.com
-References: <20240528203149.2383260-1-linan666@huaweicloud.com>
- <ZlXa5mFl9x4Lk4KQ@infradead.org>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <ZlXa5mFl9x4Lk4KQ@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnmAv44FVmYpoPOQ--.23340S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYD7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvE
-	ncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I
-	8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0E
-	jII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
+SMCR_RMBE_SIZES is the upper boundary of SMC-R's snd_buf and rcv_buf.
+The maximum bytes of snd_buf and rcv_buf can be calculated by 2^SMCR_
+RMBE_SIZES * 16KB. SMCR_RMBE_SIZES = 5 means the upper boundary is 512KB.
+TCP's snd_buf and rcv_buf max size is configured by net.ipv4.tcp_w/rmem[2]
+whose defalut value is 4MB or 6MB, is much larger than SMC-R's upper
+boundary.
 
+In some scenarios, such as Recommendation System, the communication
+pattern is mainly large size send/recv, where the size of snd_buf and
+rcv_buf greatly affects performance. Due to the upper boundary
+disadvantage, SMC-R performs poor than TCP in those scenarios. So it
+is time to enlarge the upper boundary size of SMC-R's snd_buf and rcv_buf,
+so that the SMC-R's snd_buf and rcv_buf can be configured to larger size
+for performance gain in such scenarios.
 
-在 2024/5/28 21:23, Christoph Hellwig 写道:
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> .
-As suggested by Kuai, I will use bio_sectors instead of bi_size in v3.
+The SMC-R rcv_buf's size will be transferred to peer by the field
+rmbe_size in clc accept and confirm message. The length of the field
+rmbe_size is four bits, which means the maximum value of SMCR_RMBE_SIZES
+is 15. In case of frequently adjusting the value of SMCR_RMBE_SIZES
+in different scenarios, set the value of SMCR_RMBE_SIZES to the maximum
+value 15, which means the upper boundary of SMC-R's snd_buf and rcv_buf
+is 512MB. As the real memory usage is determined by the value of
+net.smc.w/rmem, not by the upper boundary, set the value of SMCR_RMBE_SIZES
+to the maximum value has no side affects.
 
--       if (bio->bi_iter.bi_size == 0) {
-+       if (!bio_sectors(bio)) {
+Guangguan Wang (2):
+  net/smc: set rmb's SG_MAX_SINGLE_ALLOC limitation only when
+    CONFIG_ARCH_NO_SG_CHAIN is defined
+  net/smc: change SMCR_RMBE_SIZES from 5 to 15
 
-There is no any other changes, could I add your review by in v3?
+ net/smc/smc_core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 -- 
-Thanks,
-Nan
+2.24.3 (Apple Git-128)
 
 
