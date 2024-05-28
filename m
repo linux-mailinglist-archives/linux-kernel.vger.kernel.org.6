@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-191779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CB88D13FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:37:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B087A8D13FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E251F24125
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19641C21A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DC44D59B;
-	Tue, 28 May 2024 05:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE6D4D5AA;
+	Tue, 28 May 2024 05:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJTwfcpM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PEieZndG"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FA24CB2B;
-	Tue, 28 May 2024 05:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C4917E8FF;
+	Tue, 28 May 2024 05:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874657; cv=none; b=RmHSv94+0+9Zu9t3cDsBl7LnPFHfKkr3N2F8zn65xbfwvt18xZpFeGNZv/ID+mrB3y5PBHdj1iFhaB+3PjuP4Yhph4L6BzePu9/nqQxtBDYj8aQ/kQLWgObAP2AhpQiF5eThC+21feSfUEVTTKAYTE+DGJ/m/l1J3dFlaEeplCk=
+	t=1716874698; cv=none; b=TjlNviJGtMA7bk4/4RPIsIhM/D8Wa878+HpdpuZ5RZUH7Q412eDP3OODw+4ZgcPXprwtixcG3JB0F7jhIWKerxb73d5xPg6Vyk7pKC8bFrIsJyrCLPqZoLh72k0oQuk+cNPDFMQXyqSkiS3OCNGws+zGDPBbuRTiSFvHX+f+9QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874657; c=relaxed/simple;
-	bh=y+v/kHdfFry41PCJXe5N+KAUHrNkRTybrDCFiVJtkF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqnPeDn1g7MM3TgmmTuEGVA7Tn0kJDYNscDbVp2FkA/NFytdrChKnfCZ6RRMJ+utLdC7X2sSNl7dvGxHCGgzgsh5hnFjkzcXlcp7Gqy9tGVTXpHVw0MWVcUUoMLjxJmoi7Cz2JILwn1NIPSyCT+R0p8F8kzJSXEEaCyzRPIHaCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJTwfcpM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB887C3277B;
-	Tue, 28 May 2024 05:37:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716874656;
-	bh=y+v/kHdfFry41PCJXe5N+KAUHrNkRTybrDCFiVJtkF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sJTwfcpMSUu6VkZi+MzWKj+Mf5oFrKYeykkA+0GmqwRIZeO9dhd/pD4wWeKD347I2
-	 mXNA6eTct049yBkTSMGrU+Sibj4zmRPClCE4ZPvoHbBjRnKXrbsDTX8bp7JMCNOMOP
-	 kuFxW/cu6ShRKsnHQb4To31/i7lysXTpvP/Tbq5I/isWvMk9Nzd3HSHO4Nx6tIxCN2
-	 DFYqV39001QupNjdURNWrCiuz1B09zo5gctmFbei1Vx55byCorvQEJydzBjgv1maAP
-	 jjbt9eSaCbFg33UEEUcLXLqo/rfIHPrSMUbmJr+gCWcPb7+MaGrHxqPMpKun9tGyH9
-	 hQkDdENocj5lw==
-Date: Tue, 28 May 2024 05:37:32 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-leds@vger.kernel.org,
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v3 3/4] platform/chrome: cros_kbd_led_backlight: allow
- binding through mfd device
-Message-ID: <ZlVtnF-ZZ72N2PAG@google.com>
-References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
- <20240526-cros_ec-kbd-led-framework-v3-3-ee577415a521@weissschuh.net>
+	s=arc-20240116; t=1716874698; c=relaxed/simple;
+	bh=4xaH1vcTb5D0zK65qdwc7aYjq4DbETqLNC0LaBilIWg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=pGe6havEKJd7d59Jz28XIXJYQcDHuAiC/snrA0RjAoal+s/VKHnfiYNRVUbCB/+uji/r0s6uE0QmmBLAr3byRt6pehzDvGcuHy9C47qJmvt+m3hKFeqUFV9IkqD94H9LJsZcNbBF/iWMr1mrax+jmTB1bhEgzH883UCxIsznDBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PEieZndG; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716874686; x=1717479486; i=markus.elfring@web.de;
+	bh=4xaH1vcTb5D0zK65qdwc7aYjq4DbETqLNC0LaBilIWg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PEieZndGlQzwVywZbemaLni1FvyP5K/1sS3dDPOqDNGDyoLaI9Zvw6pM94h9j0dB
+	 jzwDmpVilDfHj0ewhVJk2Zqso1QhKF6lDN1xZMWQU8VNRym96ePqvKoNIZaXjvjYw
+	 J7w3D8Wmt9h2xwWGs/99w2fT8q49aYn2OIxYZ73Bi9KaIBhU6f+KSUKN+1/23zP9N
+	 CqdEh1kanpkVN8rdfcHQg0laHVugHaITEF+MmloaaTVLVLyOUDeMz5HLsM5U/xJF6
+	 In54DFB+yOeUsQMrYMKaUlqIXXWnSbqmZVREr/utqMb1QVH73k7gv/DBxBw/hf/FP
+	 FZF5D5ZN/Ah9Pd6d0g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MA4fI-1sNL2y1mYs-00BcGq; Tue, 28
+ May 2024 07:38:06 +0200
+Message-ID: <eda2a849-c23a-4624-85da-78a2fdef4fe9@web.de>
+Date: Tue, 28 May 2024 07:37:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240526-cros_ec-kbd-led-framework-v3-3-ee577415a521@weissschuh.net>
+User-Agent: Mozilla Thunderbird
+To: Yongsu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
+ Hyunwoo Kim <v4bel@theori.io>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240308121338.1983-1-yongsuyoo0215@gmail.com>
+Subject: Re: [PATCH] media: dvb_ca_en50221: Add a returing EBUSY logic into
+ CA_RESET
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240308121338.1983-1-yongsuyoo0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wWgN9eCFVmmqVlMBdWuJXKl29yHP8BqWvp1V9JUy7CUsJtNdq+E
+ 4xgm9KzyWi07q9r152vgoHsVuSHslkfk/3Boe5aCRu8nEKkTEVAaSUj7XlgDfn3B1fGOazs
+ KEYUK7HSXLEkbaO97ctDbS+8z8VGsVZ7qV+bAeglc/LBibZqZFA8shW2QUCLyhbe0s1W5z+
+ XHnLtNPvy/0iHbM9KSXZw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:B1t3tgGFvP0=;K9KFOl0638mo7D18LQHGpgEBpfd
+ QI0TrJcB0Bx51Ldvmvl1dLoTXvUKQdfg+53ryTxJAnxVrlDmNgk1bf1IzMGasPYGpcCH4uMMn
+ GsE425jL/PnYVOTThj7R19nDACyzG5YRB9k8cfMTHZtz53oezh3bzNFcwCowN4dSqujvjt9TE
+ PkoSWpDaJuEE/roTUbBUEpYfS0BwXmDw4k7aTirvLWzkHG+mduQRtK/XSIT4MrCNftDQZ8ddH
+ xEsGNncjO86xABaTh8Yr5E+BWzGv40M/aWBIBDbWkPIf7y64zVHpGpIv40Qv3pa+pm1WUCLwk
+ 0uJ1Q1Fjc2McZppOXIltb/m+oDHt1hoHV4I5kof2Qirn9BnUiH7GM2KzOoCwVmbdrBbX7T5Bi
+ /5lHN7W3QfMQbQ+Sfy2/mWsRW2MBm57ENcQok02aHA8eGtlR8DYzr9qtHF/fID5oXw/R8uh7k
+ IO6TRxHJ8E5wOy9iM5bpWXisG545WqkLccvrjXyvaDxUY1s+dbiEqgcqTSyEUtgd7XderKEna
+ +lVeHtc9EQYpVi5GRpnzNoF2b0ZW2k7/xmAPqaTcNcDGlwRKuPpiVDERz4GVHZcb9pWnhE1qD
+ V7MOIDeKzMcDw9EVxjghkjnXALtQnX/vTusSO3zRBqtYA9PVIIhpg/Oh7mExtVFeC0ozCbkYv
+ Mg76N3LATfOkxBmMI/NWdZNch81gPYcGMuvK2nixsOEKO5sGZM2bgnDzKWkV2Rt0Tkp3BwzjY
+ +yBW0OQjhfsLTHFPFL4wDKEtpgjMRYmB8NM7Vdom+tU4DjrestRvxLqAWhEdD6VxTDfhsGpy2
+ YWyMKNww/C+G8tKmYPh+Q/zk/leyeYnB5bLDaCYsig16g=
 
-On Sun, May 26, 2024 at 08:17:17PM +0200, Thomas Weißschuh wrote:
-> +#if IS_ENABLED(CONFIG_MFD_CROS_EC_DEV)
-[...]
-> +static const struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm_mfd = {
-> +	.init = keyboard_led_init_ec_pwm_mfd,
-> +	.brightness_set_blocking = keyboard_led_set_brightness_ec_pwm,
-> +	.brightness_get = keyboard_led_get_brightness_ec_pwm,
+=E2=80=A6
+> For preventing this problem from happening, we make CA_RESET ioctl do
+> nothing and only return EBUSY if the ioctl is called during the
+> "transiting" states.
 
-They are only available if IS_ENABLED(CONFIG_CROS_EC).
+Would you like to avoid any typos (in the summary phrase)?
+
+Regards,
+Markus
 
