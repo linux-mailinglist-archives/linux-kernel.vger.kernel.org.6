@@ -1,166 +1,135 @@
-Return-Path: <linux-kernel+bounces-192677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E33A8D208D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672628D208C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD462886B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990661C23420
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B48171678;
-	Tue, 28 May 2024 15:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98969171644;
+	Tue, 28 May 2024 15:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko0jqU8Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKsYmWky"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7B1DFD1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BA51DFD1;
+	Tue, 28 May 2024 15:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716910642; cv=none; b=rSOhLlMeGXOdrCO9dGLpSrymCEVsV3P5lEgXQQf6jbseW0rjk1SSf2nAYk6TtpHLy51ccHN99M1piVaN/K0Aq1gbqiL41lUVvTXizKBys9MzI7V3/Jzf/nyU72mWhYj85lFukUt5C1yWH46FqByefkALP9llIMWSca+FTvVAenw=
+	t=1716910638; cv=none; b=sUptvTwcoSx+qBlO9VO21mPFtFM3+oxjPoN3L0pMRMkFg1LfL5YXbhXi99OMs4vVXpDW+DXrlLtBebA0MH0qXdfAn3C7ptIOXzE20fILPkBM2wncsdEPYMmxBO+1k+gPxzoEkv+W8XnwzHE5EOftZdM5eo2LrGHm6needk6kmVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716910642; c=relaxed/simple;
-	bh=7zmzoPvXFhVUfVCN9/UlOHGCv01xisUHkwCvRfpy594=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cGXiHYXmNPhLaVXQqH5qvO654Aq9os3OeugN2kMaZ+8wF7kxJIRv9Y8lKQ/B56MAU90UmYW1XNGpO/IEx5mwO6INBWO+bkLFDBoDlH2suRb194sBj7cDbPoZcHf9SJI9Bcecz2/tf4g/3SdKs11DzdRER8zZYo5UfwIyK/acGX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko0jqU8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAABC3277B;
-	Tue, 28 May 2024 15:37:19 +0000 (UTC)
+	s=arc-20240116; t=1716910638; c=relaxed/simple;
+	bh=BiYxOQLp3SdeWRN8VT7No5J50/AGacW5/Vwkc78ZvTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AeK/ecz/lwdd20fSIq2MVz+bN2+uDivD2lGOCRNIO/U9RH+K+xx0NLw7f/K14pDjE2UD23wKjRQnbDfGyMmzSW6R+bA6qZ8g3JJBxyeJZQNBNZT265pFYibNViHhUoDzBAU7OtjeCO4QoQ2fJBK0TjzPkSP395WPmevtqfULz94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKsYmWky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFFB0C3277B;
+	Tue, 28 May 2024 15:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716910642;
-	bh=7zmzoPvXFhVUfVCN9/UlOHGCv01xisUHkwCvRfpy594=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ko0jqU8QTZDtHSsT6QIpoHm1NNFx8uIxbu8d2Mik/wtpsGNfimV12494zWAPuruCp
-	 olbSVSNWvhjdZLVXeZT+PHWFIbUkxsqVdnJU9dGzc6iFimTsBH7g05qpBBOisX6Sgo
-	 SBzi0nhuZjNbjXEUBnVZvzzkoZtEbNNFMm9VrVblpoKMR/BAEVEIjCtBhPI2PKi88j
-	 niNjMY1uzbUc3QP+VGbPTadqOfT8KMiGn4+xdYZ3GRt4/iDtnpEg2ImkoyDlJpLXzI
-	 yan0DL+KBgMqv33cpptYPrnU+cY44u0mMjlN/LPmkkacv4+dMDvgV/K5n9rZ4qErgd
-	 7PIlg4QJhSaAQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Baoquan He <bhe@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] arm64/io: add constant-argument check
-Date: Tue, 28 May 2024 17:37:11 +0200
-Message-Id: <20240528153717.2439910-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1716910638;
+	bh=BiYxOQLp3SdeWRN8VT7No5J50/AGacW5/Vwkc78ZvTU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKsYmWkyWNCYpaEfoixgqY9fv9boQp6pD3Knsl62cVH8tUDSuRySIQx/z8qu04MiI
+	 Dkpl8t+DfqI45BdVR0COL/N+E88i9eTYyaTxeeq+I7oHd8IBaY69oDmqroZAvhTETP
+	 EvmeMuqSxgErfMsmW6uYMgmgl19ZtnE7Ka+stCW+DTtK/5FKWGVyInrrBXm96vfner
+	 /Mr55Oo0lDLibPYYFTEocC0mJwAcOyoh8HMz+AoPge3nmSDud4/Q1TfIxTI9XD9/2P
+	 5+vIm0xTjTGtMHVbO+pOh3+kHTo1I4bSo+xCmrr31V+dixBH2DuQOF74tkhqWXufpU
+	 1L3BddJzXOcXQ==
+Date: Tue, 28 May 2024 10:37:15 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: sm8450: Add qfprom node
+Message-ID: <4jopw7qv2jlq7b5ljkxfhjjjdlqclruouentrvbjt43yybxyf6@qzsk4imnmq5m>
+References: <1709727995-19821-1-git-send-email-quic_mojha@quicinc.com>
+ <1709727995-19821-2-git-send-email-quic_mojha@quicinc.com>
+ <45fcf8fb-9d9b-4e6a-a7c5-9bfb96875e64@linaro.org>
+ <69a8c14c-109a-103a-b8dc-d8e303c0f0d5@quicinc.com>
+ <gxi4klvxzwwyrwb2b4h7kmii5dx5mxdypxowwz3kyllvq6grss@6lahaospwtsh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <gxi4klvxzwwyrwb2b4h7kmii5dx5mxdypxowwz3kyllvq6grss@6lahaospwtsh>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Sun, Mar 17, 2024 at 08:21:58PM GMT, Bjorn Andersson wrote:
+> On Thu, Mar 14, 2024 at 10:13:59PM +0530, Mukesh Ojha wrote:
+> > Sorry for the late reply, was on vacation.
+> > 
+> > On 3/6/2024 9:24 PM, Konrad Dybcio wrote:
+> > > 
+> > > 
+> > > On 3/6/24 13:26, Mukesh Ojha wrote:
+> > > > Add the qfprom node for sm8450 SoC.
+> > > > 
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > >   arch/arm64/boot/dts/qcom/sm8450.dtsi | 7 +++++++
+> > > >   1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> > > > b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> > > > index b86be34a912b..02089a388d03 100644
+> > > > --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> > > > +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> > > > @@ -4575,6 +4575,13 @@
+> > > >               };
+> > > >           };
+> > > > +        qfprom: efuse@221c8000 {
+> > > > +            compatible = "qcom,sm8450-qfprom", "qcom,qfprom";
+> > > > +            reg = <0 0x221c8000 0 0x1000>;
+> > > 
+> > > Is is really only 0x1000-long? Also, is the base you put
+> > > here the ECC-corrected part (if that still exists)?
+> > 
+> > No, its not.
+> > 
+> > Entire fuse space is this.
+> > 0x221C0000-0x221Cbfff
+> > 
+> > ECC corrected range is this 0x221C2000-0x221C3fff and High level OS
+> 
+> That's 0x2000. Does this then also imply that the ECC-corrected values
+> are no longer mapped 1:1 with non-corrected, or why do they differ in
+> size?
+> 
+> > does have a access to ECC range however, they are not recommended for
+> > SW usage.
+> > 
+> > Above mentioned SW range(4) in the patch is  one and only accessible range
+> > available out of 0-7 SW ranges(0x221C4000-0x221Cbfff with each
+> > size 0x1000) and does not have ECC fuses.
+> > 
+> 
+> So you're saying that in contrast to other platforms, the 4th software
+> range, dedicated for HLOS, does not have a matching ECC-corrected
+> shadow? If that's the case, then "not recommended for SW usage" sounds
+> wrong.
+> 
+> > All the downstream use cases are getting fulfilled with this.
+> > 
+> 
+> You only need ECC if you're unlucky...
+> 
 
-In some configurations __const_iowrite32_copy() does not get inlined
-and gcc runs into the BUILD_BUG():
+The patch is either incorrect or the commit message is lacking answers
+to the questions from Konrad and myself.
 
-In file included from <command-line>:
-In function '__const_memcpy_toio_aligned32',
-    inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:203:3,
-    inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:199:20:
-include/linux/compiler_types.h:487:45: error: call to '__compiletime_assert_538' declared with attribute error: BUILD_BUG failed
-  487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-      |                                             ^
-include/linux/compiler_types.h:468:25: note: in definition of macro '__compiletime_assert'
-  468 |                         prefix ## suffix();                             \
-      |                         ^~~~~~
-include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
-  487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-      |         ^~~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-   59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-      |                     ^~~~~~~~~~~~~~~~
-arch/arm64/include/asm/io.h:193:17: note: in expansion of macro 'BUILD_BUG'
-  193 |                 BUILD_BUG();
-      |                 ^~~~~~~~~
+Would have appreciated a reply here, but either way I'm marking this as
+"changes requested" and dropping it from the queue.
 
-Move the check for constant arguments into the inline function to ensure
-it is still constant if the compiler decides against inlining it.
-
-Fixes: ead79118dae6 ("arm64/io: Provide a WC friendly __iowriteXX_copy()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2:
- - fix both 32-bit and 64-bit copies
- - remove now-redundant macros
----
- arch/arm64/include/asm/io.h | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 4ff0ae3f6d66..902026f81b97 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -196,21 +196,18 @@ static inline void __const_memcpy_toio_aligned32(volatile u32 __iomem *to,
- 
- void __iowrite32_copy_full(void __iomem *to, const void *from, size_t count);
- 
--static inline void __const_iowrite32_copy(void __iomem *to, const void *from,
--					  size_t count)
-+static inline void __iowrite32_copy(void __iomem *to, const void *from,
-+				    size_t count)
- {
--	if (count == 8 || count == 4 || count == 2 || count == 1) {
-+	if (__builtin_constant_p(count) &&
-+	    (count == 8 || count == 4 || count == 2 || count == 1)) {
- 		__const_memcpy_toio_aligned32(to, from, count);
- 		dgh();
- 	} else {
- 		__iowrite32_copy_full(to, from, count);
- 	}
- }
--
--#define __iowrite32_copy(to, from, count)                  \
--	(__builtin_constant_p(count) ?                     \
--		 __const_iowrite32_copy(to, from, count) : \
--		 __iowrite32_copy_full(to, from, count))
-+#define __iowrite32_copy(to, from, count) __iowrite32_copy(to, from, count)
- 
- static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
- 						 const u64 *from, size_t count)
-@@ -255,21 +252,18 @@ static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
- 
- void __iowrite64_copy_full(void __iomem *to, const void *from, size_t count);
- 
--static inline void __const_iowrite64_copy(void __iomem *to, const void *from,
-+static inline void __iowrite64_copy(void __iomem *to, const void *from,
- 					  size_t count)
- {
--	if (count == 8 || count == 4 || count == 2 || count == 1) {
-+	if (__builtin_constant_p(count) &&
-+	    (count == 8 || count == 4 || count == 2 || count == 1)) {
- 		__const_memcpy_toio_aligned64(to, from, count);
- 		dgh();
- 	} else {
- 		__iowrite64_copy_full(to, from, count);
- 	}
- }
--
--#define __iowrite64_copy(to, from, count)                  \
--	(__builtin_constant_p(count) ?                     \
--		 __const_iowrite64_copy(to, from, count) : \
--		 __iowrite64_copy_full(to, from, count))
-+#define __iowrite64_copy(to, from, count) __iowrite64_copy(to, from, count)
- 
- /*
-  * I/O memory mapping functions.
--- 
-2.39.2
-
+Regards,
+Bjorn
 
