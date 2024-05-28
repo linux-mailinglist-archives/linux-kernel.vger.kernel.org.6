@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-192078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E2D8D1818
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA0C8D181F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EB31F22ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B7921C22F59
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8FA1649DA;
-	Tue, 28 May 2024 10:05:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275BE1581E0;
+	Tue, 28 May 2024 10:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BXWF3DUY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E97351021;
-	Tue, 28 May 2024 10:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B70217E8F4;
+	Tue, 28 May 2024 10:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890718; cv=none; b=V6ycOkaLECMCWN271GL4R1xiIZ1tZXceMLUk4tC8WMQ5V4YE2Knq/abSa+7M6j2dznfGoAXSEc6rbd2IxfHCqpdPjl7adPdHUr0ypIQ8iE9wnWvce+VKE9G2F1Xx/rgPd1ZhW9qHvvptlnfUz2DdcErDi7JDDxI1MHfvDn9iFZs=
+	t=1716890861; cv=none; b=Xd+/OQuA2/RE4mIS/FXBCqBD3G30J5Wh0QitFLtH5jDuhN6GIqmgOi5dEdl58dSvSugNJbXT9011Fqg2wknWuYL5m5QWwgppIDvMV4KDj8kU+tOSXZOE/lDAFkbkhGHJdv6kHgO/eQz8zXmgXM4cnorqz2bU6zkxnavXAkaFcM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890718; c=relaxed/simple;
-	bh=SRcYTZBLE8y2e1/1r9ygLjdIMLPRef74Z1w77qnd6aw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tpBiS3vq9Dd6+xfPVbUejZy20bsZ0MP7zRlUCgE8AuEnxO4ydkx6ezGUh23roXJ/t+2Ww918wXTKhOVyj4m6SoevJtoGul7MHFHEP8ukqTnn0r4jazUvL5c+8KbK6meBIa3G5etJAQyiLGx3i8aAPERFs1OJKiaQuSUxgoVqafM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VpSly22V1z6K9F5;
-	Tue, 28 May 2024 18:04:14 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5022D140B63;
-	Tue, 28 May 2024 18:05:13 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 28 May
- 2024 11:05:12 +0100
-Date: Tue, 28 May 2024 11:05:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Arthur Becker <arthur.becker@sentec.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron
-	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [EXTERNAL]Re: [PATCH v3 2/2] dt-bindings: iio: light: add
- VEML6040 RGBW-LS bindings
-Message-ID: <20240528110511.00006fe5@Huawei.com>
-In-Reply-To: <ZR1P278MB111779FE0C84DB465C54EEFF81F12@ZR1P278MB1117.CHEP278.PROD.OUTLOOK.COM>
-References: <20240527-veml6040-v3-0-6f3bbfd42960@sentec.com>
-	<20240527-veml6040-v3-2-6f3bbfd42960@sentec.com>
-	<e47de936-8cb4-4cef-a346-74835767e203@kernel.org>
-	<ZR1P278MB111779FE0C84DB465C54EEFF81F12@ZR1P278MB1117.CHEP278.PROD.OUTLOOK.COM>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716890861; c=relaxed/simple;
+	bh=+ZYEMFcqmzLwnP01IoBm835po65oMF/BzJpUDPLTk0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LeqOvwxb8LFzr2DxH1IzaFXxAAnBKfF/tW4XjdeJvls5fJfYA87t+VnxmDbBFhuk5/n7kBhj7ZnqtFfn7SOoKpcrswIBT64lWczV777uylhfJ+X8xGRRspufIOuQraDw4j8AzVr06Xxi+9q7cl0hUHALYvLUML0GZ5ZvEdknEoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BXWF3DUY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E03F440E0244;
+	Tue, 28 May 2024 10:07:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 43y5TOyS4lJC; Tue, 28 May 2024 10:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716890847; bh=U0faEDKtC8qncKty9rd5V0UxQxSNEunFpuGzmcnCf24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BXWF3DUYKB7+ko3vv+w4qgq6TEwRTPgDe6d5qcmUGzv82I6EhPJ6pRWiYOI0pr9tQ
+	 KAsvl2Kjs7p584wdBgR7AcMCb7JV+Yrj7Q6u/d5/S+z5qmo8LPIE508fFdyw/+iugC
+	 7cSoL2iHjGcMe/YGvFSDa2Blr8heLFPQ+IsZAxRLSC55ugtPGHlGhjvJEP+t3H850t
+	 gDSJdhu4CAB5/lGZS2B43XOi3YXRnpEq3E0wb6JJ7XE8rCqVZw6A7f2D9w9WqF2QCu
+	 HPFiDt/+GrtGSkmM4xybYz7qBI7OeUJhPM/aZna9iKRZY8XxqxVRgcIN9jBsevO7cG
+	 9luVle83miCdhEbGeq722lR0AooPoA5K2hp79zoyroNr2qt1BvcElLLpJMTm5/kADW
+	 HOz2bevz504iOw9nkEMMUvyONW/s3OIZ41ZdaJbqS7TU4qB6LU5p3CaM5UslPnP9VP
+	 P9rQhMLmDwzzD1NO9IfRXg5G1urVcOHSFDYptI4Nv47RqT/5B1CUm6H5Q+m08VOex4
+	 +WCCy9u7EsWoSBXTP5HBaSWeU7hNlhvwWbWkqBmBBRvpZ6ZY0hWKCDw89xXU2eKdP9
+	 LdznqK/XyQ2aBUZYcUp5lnXHje5Enozq8YD/C3omnEkjqXNDGcewEE9KpsU2mU9Mo9
+	 O+3/MaN2TI1ipAf2/u0CFtfI=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B5BF140E0177;
+	Tue, 28 May 2024 10:07:20 +0000 (UTC)
+Date: Tue, 28 May 2024 12:07:14 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: John Allen <john.allen@amd.com>
+Cc: linux-edac@vger.kernel.org, tony.luck@intel.com, yazen.ghannam@amd.com,
+	linux-kernel@vger.kernel.org, avadhut.naik@amd.com,
+	muralidhara.mk@amd.com
+Subject: Re: [PATCH v4 2/4] RAS/AMD/ATL: Expand helpers for adding and
+ removing base and hole
+Message-ID: <20240528100714.GEZlWs0qL8tmCb9Mw3@fat_crate.local>
+References: <20240506154605.71814-1-john.allen@amd.com>
+ <20240506154605.71814-3-john.allen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240506154605.71814-3-john.allen@amd.com>
 
-On Tue, 28 May 2024 07:23:03 +0000
-Arthur Becker <arthur.becker@sentec.com> wrote:
+On Mon, May 06, 2024 at 03:46:03PM +0000, John Allen wrote:
+> +u64 add_base_and_hole(struct addr_ctx *ctx, u64 addr)
+>  {
+> -	ctx->ret_addr += get_base_addr(ctx);
+> -
+> -	if (add_legacy_hole(ctx))
+> -		return -EINVAL;
+> +	addr += get_base_addr(ctx);
+> +	return add_legacy_hole(ctx, addr);
 
-> Thanks for the Review!
-> Right, I wasn't sure if and how to add the veml6040 to the veml6075 dt-binding file.
-> I'll modify that the next time I make adjustments to the driver.
+	return add_legacy_hole(ctx, addr + get_base_addr(ctx));
 
-It's absolutely fine to have shared bindings even if the
-drivers (because of different register interface etc) are completely
-separate.  It's a good way to keep bindings aligned between
-similar devices.
+That's still readable. :)
 
-Jonathan
+-- 
+Regards/Gruss,
+    Boris.
 
-> 
-> Kind regards,
-> Arthur
-> 
-> ________________________________________
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 27 May 2024 18:31
-> To: Arthur Becker; Jonathan Cameron; Lars-Peter Clausen; Rob Herring; Krzysztof Kozlowski; Conor Dooley
-> Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: [EXTERNAL]Re: [PATCH v3 2/2] dt-bindings: iio: light: add VEML6040 RGBW-LS bindings
-> 
-> On 27/05/2024 17:12, Arthur Becker via B4 Relay wrote:
-> > From: Arthur Becker <arthur.becker@sentec.com>
-> >
-> > Device tree bindings for the vishay VEML6040 RGBW light sensor iio
-> > driver
-> >
-> > Signed-off-by: Arthur Becker <arthur.becker@sentec.com>
-> > ---
-> > V1 -> V3: Addressed review comments (v1 of the dt-bindings was sent
-> > along with v2 of the driver but not in a set)  
-> 
-> It's basically the same as veml6075, so should be put there...
-> 
-> Eh,
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
