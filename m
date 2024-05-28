@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-192739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738EE8D2179
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:18:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B4C8D217E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161181F253DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:18:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA6BB2387E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43269172BAD;
-	Tue, 28 May 2024 16:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E31F172BA9;
+	Tue, 28 May 2024 16:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SckjFfmH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ESZpVPJI"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AC5172786
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100B172786
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716913106; cv=none; b=VAlwDq108F1LWWEeXjpPSUeOaq3jrG+/aYziqsou1OWXcWv8sxKmi9xl1i40mzhEgbtz05iHm4JgzhZBwfOpl1TkbDassVzd6V0Y5jKQtrPe+asZYxQzDD15/WI3iyXYT14pzml4/7PNYAHcSl9P8qpv05kWzpyw4SfzHYD7nWo=
+	t=1716913205; cv=none; b=BygOm9yuXJlnE03ZkPmo+bhWp8A12EWOU5voCXCT85yHX0FcEF3IubNX675Wc9K3x3ebhwrP5bVUroNBAzH0qkJ1bztDYqhIm2hrXijYChBcQcDAU9i5tTkQAF9YMmBqChhQNGWZeK7Bjd9x4q/lXjypbsu3rqDb2X2pqljuDMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716913106; c=relaxed/simple;
-	bh=1VbUIqUs+Iu0R4n6LFXs/qsLl6tg7ekCtkKrs/8XAqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=st+OLUh0ZaHmDzgf6pbQLwoV2ffTIg1a4eLR0pQ3ypgPRWvOtfJEQTJOcIknPPt+u0d9yvSc/wqMcI/AaCWRep61uojUazqsJxLSaVdaCDu5nZirrhvTnHdueSGyO9GzcAQLOC6RzemEyl5C1P/BpLtnCkgK4KB3SxHebB+KpRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SckjFfmH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YrD3h7xnAMYmgs99LNq6GxSV6xHBbPUpPYn32qlIOyw=; b=SckjFfmHkqc2jUeU+XoturfIaG
-	L1+MXwlN0MBNdOb+P47BxiF4/kT4KMvgar5k86uLX8mJftlQqA/kBRUbj4IHsX92E2tNLTw1WmGYJ
-	EwZ2McN57VF6ApdWl8Isn+xm3l+zSX3FhTYrTt2jFSwIUAvhHji89dE2xvngjiWn+BrMCtva76iD6
-	YXXB8+ikkV/tRQGvxlvQpvJ7klDw9z22O8d4GiyGLPmXurSekYwSVkzQjsDFbhBuVbUznnQU0j64y
-	ayVaveq+lQptNjBhelIbyxpdFLUEDG2xjib+f6ktW4ZhuFvtoyu/nIcVkq2TtkQwsdEtLs+b9O1Kl
-	omEVfmjA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBzWj-00000008oWl-0NyW;
-	Tue, 28 May 2024 16:18:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B69E030058E; Tue, 28 May 2024 18:18:16 +0200 (CEST)
-Date: Tue, 28 May 2024 18:18:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	torvalds@linux-foundation.org, paulmck@kernel.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2 10/35] entry: irqentry_exit only preempts for
- TIF_NEED_RESCHED
-Message-ID: <20240528161816.GF26599@noisy.programming.kicks-ass.net>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-11-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1716913205; c=relaxed/simple;
+	bh=GZZkUnJhXUGpV/ed9Q+LF0kd3gDFvBC1YUMWnIRdYzc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TCY+8VIEor0D1+TOjAPsfLUipAo+jeYgp1FPFYiy790Gf5LAzcEeNo0lSmCbPCns7GqglbqTYR9XZe3r3mZecGN4hK0G+yWil+ZDsxK3whM3QpuAMcbhl79zkOBx0sfHNf81eQ+29X258tj4HicouuiPuLpXNtsuAzd/bMi2P3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ESZpVPJI; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso675640b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716913203; x=1717518003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WwozNjHzia8oslBT34REru3KdIh80yY+OvMr8Rvverc=;
+        b=ESZpVPJI960G+6QEfG/7bhDpJQtQjY1TDfT7/XoWDJSPRVHx5/07KB0bptYH1LSzHa
+         FdRsF3HF6PMugggwn18wueVXrpfNBu9TekvDHUp2qf5U/pJuACh+NXIGFDZx4PmClkKG
+         7VS4S/U+mWCWH6KtKHLJP3L5B89OPGcwnz1Fk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716913203; x=1717518003;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WwozNjHzia8oslBT34REru3KdIh80yY+OvMr8Rvverc=;
+        b=VKNap3YmB6FxzvS7z6f8jGUb1S5jv0rxeW+r1OWQAYLLYvVvwGwTa/A9i8136PcJmM
+         SAmLtkwHqabB1WwQmyP7EPTFHjHEssTr1AapFi6+CTTPPMXt2MqMOBtQU3Br5PmH0ziG
+         Um9vrlXMhVtlHN9iX1NUT4zvSh3emjPPUh2wtsOIBX5uWLRZCzzhLo4yZBU1tklJw6mc
+         MiId9WOWCsYedQY1BW/Lx6uvHd+BYCuORWUn7BBDcXyBjXMgSusoDV7fFD6xSzsk77q6
+         KKgb98hg73J14phk2cjnn+bSsvK5S0Aycnd/t9AZzpU6ny0gvLqqIzYQDfHb0jEB0R7O
+         Ns6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUB5zwxiyx6ouOzY9VvBZjc3bO/zjG3V5blQL8MxfdZ3w/3PxdL16cEL3aI3yzQ75GVE97vLkmPmOHVK1hRlXKCJ7ZJ5X0WzZyVNS1t
+X-Gm-Message-State: AOJu0YzWVeYgD9SD985MxBKgony116PxlvxNTcgmxI8MWlX/Lay91CpB
+	n/rlyY2GeEzBHmYhPAJhIfBI2M1Kbovu7EEM3Lz4k0K7cysbaMVpSJl2rom1Xw==
+X-Google-Smtp-Source: AGHT+IG8rDpNehph5P7FZF3+M+WL7sxADGSNYgbXmeSk+9wKTNEhBfeV+JPxzH7+f7NbZBvjBsjVHA==
+X-Received: by 2002:a05:6a00:4405:b0:6f8:e998:3c5c with SMTP id d2e1a72fcca58-6f8f4192fd7mr19286701b3a.34.1716913203651;
+        Tue, 28 May 2024 09:20:03 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:8d59:feec:9939:40d7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822092a678sm6473780a12.11.2024.05.28.09.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 09:20:02 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Ankit Nautiyal <ankit.k.nautiyal@intel.com>, 
+ Imre Deak <imre.deak@intel.com>, Jani Nikula <jani.nikula@intel.com>, 
+ Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ MarileneGarcia <marilene.agarcia@gmail.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240519031027.433751-1-marilene.agarcia@gmail.com>
+References: <20240519031027.433751-1-marilene.agarcia@gmail.com>
+Subject: Re: [PATCH] drm/dp: Fix documentation warning
+Message-Id: <171691320208.2507294.7545188870163730565.b4-ty@chromium.org>
+Date: Tue, 28 May 2024 09:20:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528003521.979836-11-ankur.a.arora@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, May 27, 2024 at 05:34:56PM -0700, Ankur Arora wrote:
-> Use __tif_need_resched(RESCHED_NOW) instead of need_resched() to be
-> explicit that this path only reschedules if it is needed imminently.
-> 
-> Also, add a comment about why we need a need-resched check here at
-> all, given that the top level conditional has already checked the
-> preempt_count().
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Originally-by: Thomas Gleixner <tglx@linutronix.de>
-> Link: https://lore.kernel.org/lkml/87jzshhexi.ffs@tglx/
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
->  kernel/entry/common.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-> index bcb23c866425..c684385921de 100644
-> --- a/kernel/entry/common.c
-> +++ b/kernel/entry/common.c
-> @@ -307,7 +307,16 @@ void raw_irqentry_exit_cond_resched(void)
->  		rcu_irq_exit_check_preempt();
->  		if (IS_ENABLED(CONFIG_DEBUG_ENTRY))
->  			WARN_ON_ONCE(!on_thread_stack());
-> -		if (need_resched())
-> +
-> +		/*
-> +		 * Check if we need to preempt eagerly.
-> +		 *
-> +		 * Note: we need an explicit check here because some
-> +		 * architectures don't fold TIF_NEED_RESCHED in the
-> +		 * preempt_count. For archs that do, this is already covered
-> +		 * in the conditional above.
-> +		 */
-> +		if (__tif_need_resched(RESCHED_NOW))
->  			preempt_schedule_irq();
 
-Seeing how you introduced need_resched_lazy() and kept need_resched() to
-be the NOW thing, I really don't see the point of using the long form
-here?
+On Sun, 19 May 2024 00:10:27 -0300, MarileneGarcia wrote:
+> It fixes the following warnings when
+> the kernel documentation is generated:
+> 
+> ./include/drm/display/drm_dp_helper.h:126:
+> warning: Function parameter or struct member
+> 'mode' not described in 'drm_dp_as_sdp'
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] drm/dp: Fix documentation warning
+      commit: c7ce956bb6d0f32ab921b6ffba1a6a834df96f21
+
+Best regards,
+-- 
+Douglas Anderson <dianders@chromium.org>
 
 
