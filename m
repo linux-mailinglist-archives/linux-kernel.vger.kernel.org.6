@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-192477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100198D1DB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0668D1DA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B871F23D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1554F2858EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC5217166A;
-	Tue, 28 May 2024 13:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D0E16FF33;
+	Tue, 28 May 2024 13:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="d8jzvVBz"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tSQ0mrHG"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A3016F27C;
-	Tue, 28 May 2024 13:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66F16FF28
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904508; cv=none; b=UFbBkbQqCXiBO2papAUQhrqKL79ShLNPxGk02uEHjRveUAjJbYmDpZmM+HBmyEXlgdhDd+ci/taqM47DT30HAbA4UVjvEK92KHD7IodjRnqFpMHd1A6YmmUbJCPrA6LGNmByfgnGJwqJDkusYUM6sSyhvPYWll3SlUPNdSPGUMk=
+	t=1716904459; cv=none; b=uzdg+U1WmT9z659pwUvruWSAUorL7zidh5YiLJa2d38D0ZgE4BTl3XlsLKVMMu+5Q0E59sC3j7Y+hYs96viKq/tRLfXgMWRWjx89T1VsYO1a5VqVXvGSwuakowIzL293rRgnTul5ct8kNMoqUJRUDoUmaq4m7BQMl3uxPDToJ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904508; c=relaxed/simple;
-	bh=9922eDFCfXY0roYiZAm+GU+PhvSKQjhYDQzw9J1N8fs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DsaA3CsoK6Fcw3uM+WnRnjyOXIKRUsID8InilHknSXo8zPP/dQh+Qy4+j/dHwS6ZvggIZjTk4QdsZeMYRVOFayzneVd+zrNyGIgFo6y/gjXOiExoWXsy0/2D/oSllcxqKagIvMYhrmGyAY9pMqrk2Cxw/timcSTZ6IUyGOXP8Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=d8jzvVBz; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SAbsFc001366;
-	Tue, 28 May 2024 06:54:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=I
-	EnWp14u9UbM1IL7j9aMjnmhDh9rwFviGPqlrup4LAc=; b=d8jzvVBzdjkMMwa1b
-	2nWlXrB/UVAGey2YESQyVTK+VzIcM5LCTAiB+bXN5pX/Sn1uuzA0r5l0nWTHNSy1
-	iCQuwA4tJKwV2DC1KVyA+0PyPnaeTCglqOh/kkhUD/mLcEGjG44ZjBmDi8gOYuqv
-	4HhhErI1k0VMFskFRRC9QxzitTL5ROjfO+9FMi4Y0rsn4GfuBXpzEa0r+qD3ebW6
-	4v4Gk6JFY/H79LQcNtdsdi+5ONRzd8kvQNvoSs3jrUZvJ+mibInu8Yfy/osxwo9v
-	ebofraVK+/yraLDLq7/jjwNTMTvD7C5tEeVhR7/TmG9GS48DI0DbkyqKfFO3nB2O
-	iGmHA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3yddnv8pcx-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 06:54:59 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 28 May 2024 06:54:42 -0700
-Received: from bharat-OptiPlex-3070.marvell.com (10.69.176.80) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server id
- 15.2.1544.4 via Frontend Transport; Tue, 28 May 2024 06:54:37 -0700
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <jerinj@marvell.com>,
-        <lcherian@marvell.com>, <richardcochran@gmail.com>
-CC: <bbhushan2@marvell.com>
-Subject: [net-next,v3 8/8] cn10k-ipsec: Enable outbound inline ipsec offload
-Date: Tue, 28 May 2024 19:23:49 +0530
-Message-ID: <20240528135349.932669-9-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240528135349.932669-1-bbhushan2@marvell.com>
-References: <20240528135349.932669-1-bbhushan2@marvell.com>
+	s=arc-20240116; t=1716904459; c=relaxed/simple;
+	bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KkK31Co5oEfRe2logJKoPLyldJtI07282EnZ6I10iycgUYT2I6CP5kO8x7R0CM9IlnDpqoh3rtSUBVjb9Nk1/KzfJUe0ZbVfgPEbd9PZ+KzcYinLGLG5kl9hs9y3s3IYKrpcQIevf1PwGRc631hS/7B5lRov/8ycVn2+t7ojnnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tSQ0mrHG; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df4eb08fd9eso852630276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716904456; x=1717509256; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
+        b=tSQ0mrHG3+n3PGa7X9pcZE1Chu/Ou4kJD5PRZeuVs6X0UgWzGhjAKz12y4MXw9+B08
+         QpdwOLF04csZe9v+E/6RDvFZ3pFEHnNLPHykMSobr+H4Jc8N0qZuVuNMqA7cemTP7E/P
+         Br7A5Q3p7PFXO+QdwqJs3tnZm8XLaFvdTuGZCpqwrfLfYuqi+ZlQxtMsb873oasKObTE
+         Um9H50l7SA449CHzSMzd1Bm8MA6HBYGxHXLL6SYocnxsHjW/yjCkx1XQOQO2wiELJnMf
+         /F+Js73JovAr7xSKVQ+N1cf1wa7OoZ7ij2x61L4Ty6hgGo7c6YGFH+Wp1QI5BM2Mm+z5
+         7JRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716904456; x=1717509256;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
+        b=C24Ox27eWiaxQLqmFTGJnxX+C01MpxbSLFKOdDIYPCtzWOBD0/dMa0/Ul9wBBPOJz6
+         7jd2REid76CF5su/dbzS1xgb3ZmbJNaBlUxrzGnri3mJ4WnDPVOJlUZC+kQXyeY6k23C
+         wdxGni05NHtjMAlGIMNpzXgF7RBBmtHujPdc84/weg4oCSrNCDTEcjnkhrUWX/oO5lpj
+         p1KDpqrdw09ggHvxl3ZxO2cfFyqgmnzdlaDbpMfEImov8G7ixjG/MVVVaC6Tok85fUCr
+         9/rATG6GevuVrv5omD/r3L6nAP+eSx2nkcKBaIjUUzaFP9iVYgVxij6uj+YBpybQ9Co7
+         L7Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUS65XIG5usJ6jo9hqKbHq0tWzcOXCRvbf9x6/U/+krGigT+QBgU5tSUBAom5ZhgODO0kxUPSiH0Q909pcx6uVfPdy8wxBMLEK1fu0+
+X-Gm-Message-State: AOJu0YzZZLFurTl9mqpUMQ+5cMHqnBYRRrB3SMLz2Xf0a0LJOAb3lGF8
+	NAkP7GeZrFMfJNK+1W1ofPGtRrMzqj8+HzQXE36O2MbwiC5JRUxY0Y17/y3Jxo7NLu8r5ZZlIuP
+	ToDhjquu/tXM9TmWffXk45Qou9wx6ebG6kdeRqw==
+X-Google-Smtp-Source: AGHT+IGiPfPdnxrsrhzRu1zp22yduOAlK20srMU3ZfVqa4PYk+PdmHe6VAHg28ob32G6Sc5b0+jA9ivDKnJzxrYwPFU=
+X-Received: by 2002:a25:a545:0:b0:deb:42d2:c299 with SMTP id
+ 3f1490d57ef6-df7721ff9dbmr11796718276.55.1716904456264; Tue, 28 May 2024
+ 06:54:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: fbgg8i0dcEAxw6PXo8EutoeHjrj5ratB
-X-Proofpoint-ORIG-GUID: fbgg8i0dcEAxw6PXo8EutoeHjrj5ratB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_09,2024-05-28_01,2024-05-17_01
+References: <20240527022036.31985-1-user@blabla>
+In-Reply-To: <20240527022036.31985-1-user@blabla>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 28 May 2024 15:54:04 +0200
+Message-ID: <CACRpkdY99LACAUsg_S4ww4U7-KU_EtkLZ+c8dsa0M85i9eJZbA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
+To: liweihao <cn.liweihao@gmail.com>
+Cc: arinc.unal@arinc9.com, sergio.paracuellos@gmail.com, sean.wang@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hardware is initialized and netdev transmit flow is
-hooked up for outbound inline ipsec, so finally enable
-ipsec offload.
+On Mon, May 27, 2024 at 4:21=E2=80=AFAM liweihao <cn.liweihao@gmail.com> wr=
+ote:
 
-Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
----
-v2->v3: 
- - Moved "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to previous patch
-   This fix build error with W=1
+> From: Weihao Li <cn.liweihao@gmail.com>
+>
+> The current version of the pinctrl driver has some issues:
+>
+> 1. Duplicated "gpio" pmx function
+>
+> The common code will add a "gpio" pmx functon to every pin group, so
+> it's not necessary to define a separate "gpio" pmx function in pin
+> groups.
+>
+> 2. Duplicated pmx function name
+>
+> There are some same function name in different pin groups, which will
+> cause some problems. For example, when we want to use PAD_GPIO0 as
+> refclk output function, the common clk framework code will search the
+> entire pin function lists, then return the first one matched, in this
+> case the matched function list only include the PAD_CO_CLKO pin group
+> because there are three "refclk" pin function, which is added by
+> refclk_grp, spi_cs1_grp and gpio_grp.
+>
+> To solve this problem, a simple way is just add a pingrp refix to
+> function name like mt7620 pinctrl driver does.
+>
+> 3. Useless "-" or "rsvd" functon
+>
+> It's really unnecessary to add a reserved pin mux function to the
+> function lists, because we never use it.
+>
+> Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
 
- drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The patch looks good to me and Sergio: patch applied so
+it gets some testing in linux-next.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-index 81f1258cd996..c9a1c494be6b 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-@@ -841,10 +841,10 @@ int cn10k_ipsec_init(struct net_device *netdev)
- 	memset(pf->ipsec.outb_sa->base, 0, sa_size * CN10K_IPSEC_OUTB_MAX_SA);
- 	bitmap_zero(pf->ipsec.sa_bitmap, CN10K_IPSEC_OUTB_MAX_SA);
- 
--	/* Set xfrm device ops
--	 * NETIF_F_HW_ESP is not set as ipsec setup is not yet complete.
--	 */
-+	/* Set xfrm device ops */
- 	netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;
-+	netdev->hw_features |= NETIF_F_HW_ESP;
-+	netdev->hw_enc_features |= NETIF_F_HW_ESP;
- 
- 	mutex_init(&pf->ipsec.lock);
- 	return 0;
--- 
-2.34.1
+If Arinc has issues with it or something else occurs I can
+always drop it again.
 
+Yours,
+Linus Walleij
 
