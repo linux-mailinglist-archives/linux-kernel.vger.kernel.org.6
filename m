@@ -1,92 +1,106 @@
-Return-Path: <linux-kernel+bounces-192121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A468D18A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7086A8D18AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC99B284193
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:34:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054931F22881
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A04716ABEA;
-	Tue, 28 May 2024 10:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VRfbWyuf"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82EA15DBCE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A96B16B72B;
+	Tue, 28 May 2024 10:35:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805D813AD3E;
+	Tue, 28 May 2024 10:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892491; cv=none; b=ppQNgjMD+Eu6bZLfbUg7qn2qeTbn6MBPJPQgKCoJy+P5upsccBhzK5lfxBMdsWn5cdWNqysUaD04M555EEgGI2COUPF/vdtrdS/XGT02qwpUifptgdQZkXXkAsIoivnkkPbyYoL4gKnA1fYEp+0nRDRoCg8dHcq9masnT/1/qrg=
+	t=1716892540; cv=none; b=Ms1VDfwixw3+i7PVzBSdOyefsxTKA1XuJgJ2h8hTITWjl3qMvwx0nyoqdKOncQzJoct2NtsituIKd4D/DtrbDD45G8EIsKJjlOWH5zf23K0YGWh4SJ0z1xxirV8v0hXoaYeXpS/6Whc3gGgg5VpH0pMK9FqGWn8aOLTUYFPvCYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892491; c=relaxed/simple;
-	bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESoJL8JY+NyAChA1KWGcBW/9rekHCsbkZ4Jq/w4Liy8L22fGW7AkfOJS7ZSXz9MKtipmEsTKaBEiV/J7Gsc8RsR36E4cUo/KKUCv+0EmaV66goYUx1ONJFSIp+7tVw33CDznvkreD4Jun89AwB4d/rpKEWl9SC8+ftyOsW3e6wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=VRfbWyuf; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d48ec3so70176066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1716892488; x=1717497288; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
-        b=VRfbWyufqqK5ZZsb1lGQI2YarBtNiVxgRz3DDwAUB3bgbojF3tGCj4eDQlSQcRGMa7
-         //mLg3qsOEKJ4Zhdmp/gySnVXkA4o4Ln/7D4pIJYBGPOS99VUye86v/j5mJnmB0Giq93
-         5TmRTRf1NnJ/LmeYzyoTDPk/kRftCDdITZTe4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716892488; x=1717497288;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
-        b=a2FUoAdbJ0Hm9Ae09d5uV4D8mbxYkPD4HYGaGPC46MldxmkwWUiuFonPKkhoG+6EIV
-         5g/j7krP1HKJYIJpl5K50TzQTIl8MNgcw9B2MhQHP7klMpUm7gSQ9AspbbdCJ1w9TCrE
-         Wy79dxNCSrCwzAhoUYerHJGq43zkfeuupYxVC4YoGBuRrOXNLgkk8XnAI4dvnYl5dQsz
-         HXlupBbO7NGjcII78kz5/h6oVLoCGQVn7ju4aMfZ8LjCv/Y84iTku2A4eWkMztcJOsyx
-         3uPb0ZiL1DpoinMExzlgj7nnXhdY3oKNN0B1dQKkTvAV0rKUohJQoD/4i+ZGh+wHJWhb
-         m+aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAMwT5fQ1FC7mHPWHHrMBmFyLZB+8ycaQvdPGcVoNYvlt/wzpv7phOvu69+3+Qx3s5Z8dpBG3Z3P09qoTewNWNlxV13dHaK0X1l7PP
-X-Gm-Message-State: AOJu0YzRTdt7qjJiTqzeHD1AWE2+6tZVVQARv0WfVHmZ7vIh1pOKXgWh
-	VRVu/tJwlSvOnSVR+D2ebuqMaDFva9Edshn7Y88fxJYI7oZGJTOdOQWwoY08/DiB1FWCnoR/lIH
-	nnklnuz3HWcyARfw3CaMGNZmNojIkPEzGZLsXXw==
-X-Google-Smtp-Source: AGHT+IGf3ZtXXEh5OYJF07HdIQPyKNgiGwm/AnMlXGcrV6HD0/oxru+8FNRPGNaNU9NPkpCQBGpav3hf5+9QEkM2STU=
-X-Received: by 2002:a17:906:6b1b:b0:a5a:84c8:7710 with SMTP id
- a640c23a62f3a-a6264f00dd2mr877227366b.55.1716892487943; Tue, 28 May 2024
- 03:34:47 -0700 (PDT)
+	s=arc-20240116; t=1716892540; c=relaxed/simple;
+	bh=hVV0lCQ/MHFmBqjNr9W7erWq4n/YoJx9UYV3uZmC7Mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MlB5598eyAXnfwUTxDeNEXUHUkcS4i1EERHFdbzU9spflyBPpz5KuivP8QcJLyq0dFbvZHixLQCOpqCx+nbQBEuThkQQo6+73PKeSOnE5hWcMrZgagvo4/BjAi7qX1WMqqD59ltfhtZ9dPUrXexBcTSMS099wUlzW+IZ30v1WX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91403339;
+	Tue, 28 May 2024 03:36:01 -0700 (PDT)
+Received: from [10.57.4.203] (unknown [10.57.4.203])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8559E3F762;
+	Tue, 28 May 2024 03:35:34 -0700 (PDT)
+Message-ID: <fa510ad1-9045-468b-ad37-109c11484d51@arm.com>
+Date: Tue, 28 May 2024 11:35:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528090244.6746-1-ecurtin@redhat.com>
-In-Reply-To: <20240528090244.6746-1-ecurtin@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 May 2024 12:34:36 +0200
-Message-ID: <CAJfpegvoao1jd7HhoPEeWCdS8jWEXhKTENbwvLdo=aMiNaLKQQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: change error message to info for empty lowerdir
-To: Eric Curtin <ecurtin@redhat.com>
-Cc: "open list:OVERLAY FILESYSTEM" <linux-unionfs@vger.kernel.org>, Alexander Larsson <alexl@redhat.com>, 
-	Wei Wang <weiwang@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+ Qais Yousef <qyousef@layalina.io>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, lukasz.luba@arm.com, Dietmar.Eggemann@arm.com,
+ dsmythies@telus.net, yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com>
+ <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
+ <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu>
+ <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 May 2024 at 11:03, Eric Curtin <ecurtin@redhat.com> wrote:
->
-> In some deployments, an empty lowerdir is not considered an error.
+On 5/28/24 10:29, Vincent Guittot wrote:
+> Hi All,
+> 
+> I'm quite late on this thread but this patchset creates a major
+> regression for psci cpuidle driver when using the OSI mode (OS
+> initiated mode).  In such a case, cpuidle driver takes care only of
+> CPUs power state and the deeper C-states ,which includes cluster and
+> other power domains, are handled with power domain framework. In such
+> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+> and others states that include the clusters, are managed by genpd and
+> its governor.
+> 
+> This patch selects cpuidle c-state N-1 as soon as the utilization is
+> above CPU capacity / 64 which means at most a level of 16 on the big
+> core but can be as low as 4 on little cores. These levels are very low
+> and the main result is that as soon as there is very little activity
+> on a CPU, cpuidle always selects WFI states whatever the estimated
+> sleep duration and which prevents any deeper states. Another effect is
+> that it also keeps the tick firing every 1ms in my case.
+> 
+> IMO, we should at least increase the utilization level
+> 
+> Regards,
+> Vincent
 
-I don't think this can be triggered in upstream kernel and can be
-removed completely.
+I looked at teo too and what you describe looks reasonable within my
+expectation.
+Could you describe your workload a bit and details about the (I assume)
+power regression?
+Maybe compare with 64/32/16 as a divisor and a hack that doesn't override
+tick_stop on utilization?
+While /64 might seem aggressive (maybe it is too aggressive) I think it
+tries to avoid cpu_idle_miss on c1 (too deep state selected) much more than
+c0 (too shallow selected), because the latter only costs us some (small?)
+energy while the former costs us performance and energy.
+Basically WFI should already be really efficient and thus selecting
+anything deeper be avoided as long as there is still some utilization.
+But I'd be curious on your numbers.
 
-Or do you have a reproducer?
-
-Thanks,
-Miklos
+Kind Regards,
+Christian
 
