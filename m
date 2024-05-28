@@ -1,242 +1,158 @@
-Return-Path: <linux-kernel+bounces-192335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D118D1BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DCE8D1BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98DA928536A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726A7285448
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3A916E867;
-	Tue, 28 May 2024 12:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F37F16D9D1;
+	Tue, 28 May 2024 12:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wfnDEyPu"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DkmElAN3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8520716D9AE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9E416D4E1;
+	Tue, 28 May 2024 12:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900798; cv=none; b=jfTKSv7UjVtLclcGEnAawStEw/d8xkgBffezu8YDmsy5tPx8Bs63PnglZK3NUazgfybHzI/X/lF7dRZi89WG63LyqiV8qcqPZYd+B4e8+ODFPL3Rv+h18C6DvSdUgjrsdWPzZqQBnUwoJq21GYuCYUtWCUsQdftxxmti71qjOIc=
+	t=1716900870; cv=none; b=asNBoRVPSYm4OXIRhwLWpsg/aBHzUzXo8ZdVHeR4qTQFzt/0EyVWB3jdJAgdwDSJcDd4k9QFE91g7AjEPmkj4sVMG4LD/EQ14LtQDEeCIaEw7nnYyOshK5v1rR0UsVDxgXOMMjdLho6eD6tkNIfEl2hmp4Dq65L6LpYWutu1yVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900798; c=relaxed/simple;
-	bh=nmYSDivuU1fGiaHNtpmlfGXSTR8QMXOhtvK7Fro/hPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMEjSag+8bNxg/Cy6YrV7LvZN6Q/sEbf/0/r/XnGD4UEFRNKGW7CzC0tTegpw9KPDs0JgzeH1jhENj2mX5ZuA17CytYVNvCvcSiJcwh032cNaA7G/D8gtHeuvG1im6/YKyNDu7w7UKoW0FfRC/5oVufqk2HZ9G8w6R/ki7dCK8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wfnDEyPu; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5238b5c080cso920864e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716900794; x=1717505594; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IhfLeEz31nnpbep1wtfE79deZVn4RTMnQcliKUfwmsk=;
-        b=wfnDEyPuX2cffwaxTSNsjQBE5A09Ff0g1vx+EfuWWMJzCNm86zQ5MjkZdrtVi9YisN
-         Y78RWXKmjraKp/baA5UCC/T2V4+hOGthPHeAwt/8Zk+EeV84LBR5TtNgeX9478VXtkmp
-         kJr15kbQZxVcD+JCE7GnyIJ0vLiI8IaNvkL8HXNTvLBBtlOeD8V8mu1Z3ZssBYcIwmyD
-         5tPQgASLDtG0y1BAA1oFA7H7+IotPsAG8/3sWCIqu03PJXwATSKkETCV36Ptl/9WYRF5
-         o8408ChVQiPpylARuPy+hg7smzJem7Nv7D+f/8nxOB7H5Ho4Fu8P0vOQDBiRkZ9lE+3t
-         x47w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716900794; x=1717505594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IhfLeEz31nnpbep1wtfE79deZVn4RTMnQcliKUfwmsk=;
-        b=NZC/cxbliQx/wsiSGxJa1J3Zwr+38vbdD+r5Z5odwiCgMvixta92Z8Q7z9Yz5Nc8sr
-         vIqoJVkzVIxkhWSJx+VcDAS2Kf5hl+eDjSW7rea4i9qfZB4J5ca0gvU+229OOnhRU/Lf
-         Tb3p3pC3koQhgcCXrhDkSv7jAg5yRolJIDygGOUbBEroqh/jhmFMSOou50mXSBFFCEmQ
-         01V2/xD0a7Di8sV6HP5FktsAbmJcfRJpcCSzkRcwFl8chIuSmOauVEVmvuEbvx8XA1M5
-         FkjhcoJmTwXN2NzB9UF2y38g49tzYWaV0Dd+qW9XXo3xLOpZIB7xHnHcOewJUqivTD8n
-         LsiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBNQc4IDu/gFAywjiA6zk3Wu/foILklhQmx8TTeUSuEJHpdaFTaQ7j52x0J5YMb2/pqzDOdtSVdYsukPR31wmsO7+otX0SlawCFKvo
-X-Gm-Message-State: AOJu0YyaInofC3a2xWPpwYuw1kfs3o6aoSNIEaPj+aR1+2aPFRp97FjK
-	MWPq7x5O2DImY+nXOmmCCj9DP2IuxZKdSL5AD3Oh3n0r6D8tyiPYuE+pwFLzYwA=
-X-Google-Smtp-Source: AGHT+IH1jsEV56zssrINk6gB/epPAKvvSKLlj9VGr4Avz+U+gixZrxxt6NkzNDHCNSWzzaaBtLHF6g==
-X-Received: by 2002:a19:380a:0:b0:516:d18b:eae8 with SMTP id 2adb3069b0e04-52964caa6damr6901115e87.41.1716900793703;
-        Tue, 28 May 2024 05:53:13 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c97:23a9:35bc:df2e:d894:2c76? ([2a00:f41:c97:23a9:35bc:df2e:d894:2c76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529712f1c0fsm949009e87.279.2024.05.28.05.53.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 05:53:13 -0700 (PDT)
-Message-ID: <e8e714ac-610e-4507-82ed-27a38c7be8fb@linaro.org>
-Date: Tue, 28 May 2024 14:53:09 +0200
+	s=arc-20240116; t=1716900870; c=relaxed/simple;
+	bh=zhjmPwGF/MUJ8NPPpqQPbAB7QBimAAKgje5xk8TXdTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDt9OCjOCJSSOMFcrT5ajrPUPLRPQraTv0DEnQOiGTpzhuikMA5o4i9T+Ri1jmtdZpVWEgDgQghLoYkNuRwBuPsY5bOmF7Zn44CCik9sCV4uxvzfD3ZrH/Cwqa7VkDbe4NjKC+sGzYo1Xzd7GqDpOIbLp3QLYCGaCruWuMhBC0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DkmElAN3; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716900868; x=1748436868;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zhjmPwGF/MUJ8NPPpqQPbAB7QBimAAKgje5xk8TXdTc=;
+  b=DkmElAN3Nm1lYTMx9PSrokKnmoIp46AXMDKJDeG19P3cp04zlPJHAfa2
+   ECUOuM7MFpRVePWFYgNV0tXpePSsUKKit7RBao1bZQ26DUZWu+pwymCvD
+   FyO+IZzjSB9YxrNnC0gOtxVMXF4xZVq7C4DxauDFuIL8WFommnVgDOrst
+   +tJXxLuP7Qx0yDmICIs0zAsr3p3BGvROG2HZQvqzrD/BMvi0B1Q85swo3
+   koFRTNpxXLTsR4dcR3oZU84ZrrUgs5PfL83kCHKAD0UKQ1oqpPd+iaX6A
+   GTUNYlZDSRw7Ec9AEG2WoavcK3pUy29gcCbbYtjxD8cOSfFme1gwtA0E1
+   g==;
+X-CSE-ConnectionGUID: vfV8GPkGQAi9R3iJlm5B1Q==
+X-CSE-MsgGUID: gC3uA4/qSpKqIuC8ioO4UQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="38624677"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="38624677"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 05:54:23 -0700
+X-CSE-ConnectionGUID: e4TLYlnHQJ+cnQSAui0hEA==
+X-CSE-MsgGUID: vFAolv0hRqCm6fOxmKrqnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="35085290"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 28 May 2024 05:54:21 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBwLL-000CCR-1P;
+	Tue, 28 May 2024 12:54:19 +0000
+Date: Tue, 28 May 2024 20:53:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Naresh Solanki <naresh.solanki@9elements.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (max6639) : Update hwmon init using info
+Message-ID: <202405282012.UaQ1329z-lkp@intel.com>
+References: <20240528091808.863702-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] arm64: dts: qcom: sc8180x: Add USB MP controller
- and phys
-To: Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
- Bjorn Andersson <quic_bjorande@quicinc.com>
-References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
- <20240525-sc8180x-usb-mp-v1-8-60a904392438@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240525-sc8180x-usb-mp-v1-8-60a904392438@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528091808.863702-1-naresh.solanki@9elements.com>
+
+Hi Naresh,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 5fbf8734fb36cf67339f599f0e51747a6aff690c]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Naresh-Solanki/hwmon-max6639-Update-hwmon-init-using-info/20240528-172245
+base:   5fbf8734fb36cf67339f599f0e51747a6aff690c
+patch link:    https://lore.kernel.org/r/20240528091808.863702-1-naresh.solanki%409elements.com
+patch subject: [PATCH v2] hwmon: (max6639) : Update hwmon init using info
+config: i386-buildonly-randconfig-003-20240528 (https://download.01.org/0day-ci/archive/20240528/202405282012.UaQ1329z-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405282012.UaQ1329z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405282012.UaQ1329z-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hwmon/max6639.c:291:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     291 |                 u8 x;
+         |                 ^
+   drivers/hwmon/max6639.c:328:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     328 |                 u8 x;
+         |                 ^
+   2 warnings generated.
 
 
+vim +291 drivers/hwmon/max6639.c
 
-On 5/25/24 20:04, Bjorn Andersson wrote:
-> From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> 
-> The SC8180X platform comes with a multiport DWC3 controller with two
-> ports, each connected to a pair of HighSpeed and QMP SuperSpeed PHYs.
-> 
-> Describe these blocks.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/sc8180x.dtsi | 146 ++++++++++++++++++++++++++++++++++
->   1 file changed, 146 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-> index 9ef3fa40e1d8..0950dc7adb20 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-> @@ -2511,6 +2511,34 @@ usb_sec_hsphy: phy@88e3000 {
->   			status = "disabled";
->   		};
->   
-> +		usb_mp0_hsphy: phy@88e4000 {
+   275	
+   276	static int max6639_read_pwm(struct device *dev, u32 attr, int channel,
+   277				    long *pwm_val)
+   278	{
+   279		struct max6639_data *data = dev_get_drvdata(dev);
+   280		unsigned int val, res;
+   281	
+   282		if (IS_ERR(data))
+   283			return PTR_ERR(data);
+   284	
+   285		switch (attr) {
+   286		case hwmon_pwm_input:
+   287			res = regmap_read(data->regmap, MAX6639_REG_TARGTDUTY(channel), &val);
+   288			*pwm_val = val * 255 / 120;
+   289			return 0;
+   290		case hwmon_pwm_freq:
+ > 291			u8 x;
+   292	
+   293			res = regmap_read(data->regmap, MAX6639_REG_FAN_CONFIG3(channel), &val);
+   294			if (res < 0)
+   295				return res;
+   296			x = val & MAX6639_FAN_CONFIG3_FREQ_MASK;
+   297	
+   298			res = regmap_read(data->regmap, MAX6639_REG_GCONFIG, &val);
+   299			if (res < 0)
+   300				return res;
+   301	
+   302			if (val & MAX6639_GCONFIG_PWM_FREQ_HI)
+   303				x |= 0x4;
+   304			x &= 0x7;
+   305			*pwm_val = freq_table[x];
+   306			return res;
+   307		default:
+   308			return -EOPNOTSUPP;
+   309		}
+   310	}
+   311	
 
-Even though the register names are MPn, I think this is a bit confusing..
-
-There's only one MP controller, so perhaps usb_mp_hsphy0?
-
-[...]
-
-> +			clocks = <&gcc GCC_USB3_MP_PHY_AUX_CLK>,
-> +				 <&gcc GCC_USB3_PRIM_CLKREF_CLK>,
-> +				 <&gcc GCC_USB3_MP_PHY_COM_AUX_CLK>,
-> +				 <&gcc GCC_USB3_MP_PHY_PIPE_0_CLK>;
-
-PIPE_1_CLK
-
-> +			clock-names = "aux", "ref", "com_aux", "pipe";
-
-This could be a vertical list
-
-> +
-> +			resets = <&gcc GCC_USB3_UNIPHY_MP1_BCR>,
-> +				 <&gcc GCC_USB3UNIPHY_PHY_MP1_BCR>;
-> +			reset-names = "phy", "phy_phy";
-> +
-> +			power-domains = <&gcc USB30_MP_GDSC>;
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "usb2_phy1_pipe_clk";
-> +
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->   		usb_sec_qmpphy: phy@88ee000 {
->   			compatible = "qcom,sc8180x-qmp-usb3-dp-phy";
->   			reg = <0 0x088ee000 0 0x18c>,
-> @@ -2662,6 +2738,76 @@ gem_noc: interconnect@9680000 {
->   			qcom,bcm-voters = <&apps_bcm_voter>;
->   		};
->   
-> +		usb_mp: usb@a4f8800 {
-> +			compatible = "qcom,sc8180x-dwc3-mp", "qcom,dwc3";
-> +			reg = <0 0x0a4f8800 0 0x400>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +			dma-ranges;
-> +
-> +			clocks = <&gcc GCC_CFG_NOC_USB3_MP_AXI_CLK>,
-> +				 <&gcc GCC_USB30_MP_MASTER_CLK>,
-> +				 <&gcc GCC_AGGRE_USB3_MP_AXI_CLK>,
-> +				 <&gcc GCC_USB30_MP_SLEEP_CLK>,
-> +				 <&gcc GCC_USB30_MP_MOCK_UTMI_CLK>,
-> +				 <&gcc GCC_USB3_SEC_CLKREF_CLK>;
-
-This is used by the secondary DWC3 (non-MP). Are you sure?
-
-Actually, are we sure that these clocks are really supplying the DWC3s?
-
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "iface",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "xo";
-> +
-> +			interconnects = <&aggre1_noc MASTER_USB3_2 0 &mc_virt SLAVE_EBI_CH0 0>,
-> +					<&gem_noc MASTER_AMPSS_M0 0 &config_noc SLAVE_USB3_2 0>;
-> +			interconnect-names = "usb-ddr", "apps-usb";
-> +
-> +			assigned-clocks = <&gcc GCC_USB30_MP_MOCK_UTMI_CLK>,
-> +					  <&gcc GCC_USB30_MP_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <200000000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 656 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 658 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 657 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&pdc 59 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 46 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 71 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 68 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 7 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&pdc 30 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pwr_event_1", "pwr_event_2",
-> +					  "hs_phy_1",	 "hs_phy_2",
-> +					  "dp_hs_phy_1", "dm_hs_phy_1",
-> +					  "dp_hs_phy_2", "dm_hs_phy_2",
-> +					  "ss_phy_1",	 "ss_phy_2";
-> +
-> +			power-domains = <&gcc USB30_MP_GDSC>;
-> +
-> +			resets = <&gcc GCC_USB30_MP_BCR>;
-> +
-> +			status = "disabled";
-> +
-> +			usb_mp_dwc3: usb@a400000 {
-> +				compatible = "snps,dwc3";
-> +				reg = <0 0x0a400000 0 0xcd00>;
-> +				interrupts = <GIC_SPI 654 IRQ_TYPE_LEVEL_HIGH>;
-> +				iommus = <&apps_smmu 0x60 0>;
-> +				snps,dis_u2_susphy_quirk;
-> +				snps,dis_enblslpm_quirk;
-
-sa8195-usb.dtsi lists a bunch more fluff:
-
-snps,has-lpm-erratum;
-snps,hird-threshold = /bits/ 8 <0x0>;
-snps,is-utmi-l1-suspend;
-snps,ssp-u3-u0-quirk;
-snps,dis-u1-entry-quirk;
-snps,dis-u2-entry-quirk;
-snps,dis_u3_susphy_quirk;
-snps,force-gen1;
-maximum-speed = "super-speed";
-
-the irq numbers look good
-
-Konrad
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
