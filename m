@@ -1,316 +1,215 @@
-Return-Path: <linux-kernel+bounces-193100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE2F8D26CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:09:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7782C8D26B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48691F218A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B45B1F238D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5636B17B4EB;
-	Tue, 28 May 2024 21:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781C17B41A;
+	Tue, 28 May 2024 21:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="U7ORo8WJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h0azVv8S"
-Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4Xp1GuF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B551802DB;
-	Tue, 28 May 2024 21:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F316F0F9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716930495; cv=none; b=GwkzzOVAC39HsPygBCG1Ht78czRXFFQ9RDZOHtvTjFG70PRH4zfPwE3kbYQuxNhifk/9mY0Fbsm3QFUlA4D6smBSDiymEizfe0uNMFVCNYnyRI41l/yoFVsXmn5JQos9Z0optBG2X6pMY+ixSdAtRRmmKy4LClkxIkvuYUZ5kUs=
+	t=1716930287; cv=none; b=bfFpLz9sruIxlmmz16YEs2J5uXVLhDKSxk08ZDGLllfrtjotORoGl1wqLADqYyzcScyMibv4Gf28SSJfMutknu87w4BWf2V6tr2CmOmigAVCSRj9GcJdPgh3PAcJRBK+3iz+b4cOc6kQCPQ1TG+/z3w65SF4fFSRfYfVy/cBxGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716930495; c=relaxed/simple;
-	bh=WwlSHp73GWxFCSZh32w7K5y9ojQ9lghuxJzr9X2rk1k=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=W8e66b0vMeeVYfF9E5zrt/miqJRUiDTXA+//n9J+IafBnN9ncoq/dDqguISFBQQL5P1IbqSv0XIWumkWQWjrzoGV6/3rP4DqqlpgyBCdATsHkaVvl2pPiVC/GHmniVreyBFvIqOc2WFyBsh06nbjAMm6KmZnSLcydCOMVTBdFg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=U7ORo8WJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=h0azVv8S; arc=none smtp.client-ip=64.147.123.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.west.internal (Postfix) with ESMTP id 4234A1C0012A;
-	Tue, 28 May 2024 17:08:12 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Tue, 28 May 2024 17:08:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1716930491; x=1717016891; bh=Tw0Md652eL
-	cdfBVfRxR5aYzBHh4vFiLjMRfFI3sLkTM=; b=U7ORo8WJPslFbXdpcew/hpDeUN
-	tUambX69+49DVpPQweAvvUEnpRFjL698YN4Dn6r00IVbz5bVUtUd5ysVsg6hONn9
-	jx24MdmV+I1WsIGy/cfI2pCz+mU9D4NjjI4fsYjB2P7OnQMLhFp3ZLmwZEaCmYN3
-	A2qAs6eeCqvxf25CZre75A7/+C6rIbzafgID83eKdEtQSzt+tUZC4HJuE7j/Y8yL
-	FYTCwe7HiiAllAzUZNqvIIifXQvOewk7VMF8ukgRxjddAbA12jUpOPVkY69Cdi7Z
-	Sf2xjv6Rej7eXKgW+BQ1fdVbbD6T929li9669p7jUkzZpezdsjZYgBlA4XAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716930491; x=1717016891; bh=Tw0Md652eLcdfBVfRxR5aYzBHh4v
-	FiLjMRfFI3sLkTM=; b=h0azVv8SWmDtSZ6e2gvPTSTsiRinEDpClLCb7C2FBUU1
-	YHofTJI+3m9Bcs39GoA13GYxjWo+cO5zHabaUu20V2oGSJgEpEu6s/HEOULXtmXx
-	m2N1dC4a6iZoEd9euSoGPgtikFwBsOuQAA0KMcG2ajJinzpAsrsv4C26r7GSd8BJ
-	yPIzFhICn0cHEziiUUwjvjtdbxt6nxI2s5mT80AoSlQ/hnMNQZGUo/5zLD4re6MW
-	PNP9oCBvvyug6c9ZoI7RGHsrnOMBZIAU+kk4BhGvTH5AKrPucsr9lWC62T2mpSlW
-	o7UF+82sbKARH8gkIZnyjYw3OZsWZyDoyGiIpGqi8Q==
-X-ME-Sender: <xms:u0dWZlCHU3usqf_x-oj8ZMacc3kOiryySqil_INRt-6VIicw1K-VxA>
-    <xme:u0dWZjiZ2PNvFKB9nIBB66aGV4upS1GPXlxsKODyAm4YBcPjivCcsD18rwBmyElOc
-    skyb8iQPbRv4Ky5Ans>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedguddvlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfn
-    uhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrth
-    htvghrnhepuddtlefgvdegkeeuueetveffleefudekieetudfgvddtuedtteejudduuedv
-    gefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplh
-    hukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:u0dWZgnl4TOHVVz54FphdQwHQalDz5re2iAgVMBPPmN-KyI3swn_kg>
-    <xmx:u0dWZvwGJEIVAoAs0G3GlLrOaZuGumPfjT4OKB_Hp6qHulxEpePF3w>
-    <xmx:u0dWZqQlMbzzkQPltE4ASA2mbP1gEQK-K3Vpb5Q2UuPgTaEHSn2nMQ>
-    <xmx:u0dWZib71LR4d5PkSJhUcH50Q9aCLQz2cUlpepn2tjEACRx6f5e9ug>
-    <xmx:u0dWZgOWTmL5PlVEza4_avBtZTJBojW9jLmnp20fxE9CUlAvdPJxlAmg>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5B4F92340080; Tue, 28 May 2024 17:08:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716930287; c=relaxed/simple;
+	bh=FQKBHUMwkBg9cm1I18Hsi7G/Wdg85FGQc52gDleKmxU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fjfyztETXnnNAvbXL0dbhWhyM/K+XkNVugW6dnmVR+u6y3izRE3BAzYgridPnF8/emIn41Nbxa6IHE0JpRoCujmSEPxwfhbPDwqVkGLq1BUx+5YR5CC7hD0mtVLBK1uNebOmkDRef3CcMyFHdVVt2k+iwIq60oNkvJRcat9ZN9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4Xp1GuF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 280D6C32786
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716930287;
+	bh=FQKBHUMwkBg9cm1I18Hsi7G/Wdg85FGQc52gDleKmxU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T4Xp1GuFRLL1ToWfAXx3Vlkk8rqfejFmIbHOhFcF6hSyyQvD35ztsF5bT2Yd5323b
+	 zR7FQ0fsmYUofuujnDdqOyvVoGdu1DfeW8xv7kDLiAMffzbkWRlYitLhCPoDa0NnVL
+	 iEqX6qOV45rEhiQdjHnMjm9FHwFG4+97bikGcatC1yRwpuOnTdNRszefS3yUSatWvU
+	 uYVXppjby84a9DvpMjV7NWFm4hdNGh2gUuQfUJhhb+LkGZioNK/PTEPUeOqoa2Qn0g
+	 HrpCWdsMDL+95zhnYS6PhfFUIRY0epr4j8roW6Pcm2tu+bqGWJlcGsMKlhadQXFU35
+	 88EVuw5HQupgg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-529644ec0ebso2129992e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:04:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVbIbTfg3ygozkE520nTehY0QqXzgblC4xlaaOOSg2zsqcgDyvlCc3ygwljgwaZcX+iJ4mnAX8QTBF2VtbqQyxYQAESkOMAyNtpL52
+X-Gm-Message-State: AOJu0YyHccuSD1G8XqchsGdupISUx32EQ9+iUcRjmXU/tqZLHY2ufjkB
+	z6SxoR9lpsiJNxTEysYQ/9uVo5/JYIoUyX3h5ktCGBscE9eg9FKuD00XZCfjiFTicl57UHknsqI
+	YqkGp6DD5zAuavoyR3YDZuQoHRQ==
+X-Google-Smtp-Source: AGHT+IH3r7x8C5fW6foR+0V0Ga6GIwmxLEEA8CoeTj8OnCZQxMuj6eV2dscFklGcPHU6QnPqmT9Ohamn038HopG4uso=
+X-Received: by 2002:a19:8c1d:0:b0:51b:9254:91e7 with SMTP id
+ 2adb3069b0e04-529679322a3mr10216024e87.61.1716930285747; Tue, 28 May 2024
+ 14:04:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ac597520-fb5b-40e5-ae1f-de825450d2db@app.fastmail.com>
-In-Reply-To: <5f4799b1-0606-46a9-a347-5a03738db341@amd.com>
-References: <20240528013626.14066-1-luke@ljones.dev>
- <20240528013626.14066-9-luke@ljones.dev>
- <6f4bc109-00d0-47b0-a581-b96a6152545c@amd.com>
- <4d6b9171-7248-4937-87de-7e921ed8e507@app.fastmail.com>
- <5f4799b1-0606-46a9-a347-5a03738db341@amd.com>
-Date: Wed, 29 May 2024 09:04:11 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Mario Limonciello" <mario.limonciello@amd.com>,
- "Hans de Goede" <hdegoede@redhat.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] platform/x86: asus-wmi: add apu_mem setting
-Content-Type: text/plain
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+In-Reply-To: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 28 May 2024 14:04:34 -0700
+X-Gmail-Original-Message-ID: <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
+Message-ID: <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I am spinning a new version for this series to address two issues
+found in this series:
+
+1) Oppo discovered a bug in the following line:
++               ci =3D si->cluster_info + tmp;
+Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
+That is a serious bug but trivial to fix.
+
+2) order 0 allocation currently blindly scans swap_map disregarding
+the cluster->order. Given enough order 0 swap allocations(close to the
+swap file size) the order 0 allocation head will eventually sweep
+across the whole swapfile and destroy other cluster order allocations.
+
+The short term fix is just skipping clusters that are already assigned
+to higher orders.
+
+In the long term, I want to unify the non-SSD to use clusters for
+locking and allocations as well, just try to follow the last
+allocation (less seeking) as much as possible.
+
+Chris
 
 
 
-On Wed, 29 May 2024, at 1:27 AM, Mario Limonciello wrote:
-> >>> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> >>> index f62a36dfcd4b..4b5fbae8c563 100644
-> >>> --- a/drivers/platform/x86/asus-wmi.c
-> >>> +++ b/drivers/platform/x86/asus-wmi.c
-> >>> @@ -855,6 +855,112 @@ static DEVICE_ATTR_RW(cores_enabled);
-> >>>    WMI_SIMPLE_SHOW(cores_max, "0x%x\n", ASUS_WMI_DEVID_CORES_MAX);
-> >>>    static DEVICE_ATTR_RO(cores_max);
-> >>>    
-> >>> +/* Device memory available to APU */
-> >>> +
-> >>> +static ssize_t apu_mem_show(struct device *dev,
-> >>> + struct device_attribute *attr, char *buf)
-> >>> +{
-> >>> + struct asus_wmi *asus = dev_get_drvdata(dev);
-> >>> + int err;
-> >>> + u32 mem;
-> >>> +
-> >>> + err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_APU_MEM, &mem);
-> >>> + if (err < 0)
-> >>> + return err;
-> >>> +
-> >>> + switch (mem) {
-> >>> + case 256:
-> >>> + mem = 0;
-> >>> + break;
-> >>> + case 258:
-> >>> + mem = 1;
-> >>> + break;
-> >>> + case 259:
-> >>> + mem = 2;
-> >>> + break;
-> >>> + case 260:
-> >>> + mem = 3;
-> >>> + break;
-> >>> + case 261:
-> >>> + mem = 4;
-> >>> + break;
-> >>> + case 262:
-> >>> + mem = 8;
-> >>> + break;
-> >>> + case 263:
-> >>> + mem = 5;
-> >>> + break;
-> >>> + case 264:
-> >>> + mem = 6;
-> >>> + break;
-> >>> + case 265:
-> >>> + mem = 7;
-> >>> + break;
-> >>> + default:
-> >>> + mem = 4;
-> >>> + break;
-> >>> + }
-> >>> +
-> >>> + return sysfs_emit(buf, "%d\n", mem);
-> >>> +}
-> >>> +
-> >>> +static ssize_t apu_mem_store(struct device *dev,
-> >>> +     struct device_attribute *attr,
-> >>> +     const char *buf, size_t count)
-> >>> +{
-> >>> + struct asus_wmi *asus = dev_get_drvdata(dev);
-> >>> + int result, err;
-> >>> + u32 mem;
-> >>> +
-> >>> + result = kstrtou32(buf, 10, &mem);
-> >>> + if (result)
-> >>> + return result;
-> >>> +
-> >>> + switch (mem) {
-> >>> + case 0:
-> >>> + mem = 0;
-> >>> + break;
-> >>> + case 1:
-> >>> + mem = 258;
-> >>> + break;
-> >>> + case 2:
-> >>> + mem = 259;
-> >>> + break;
-> >>> + case 3:
-> >>> + mem = 260;
-> >>> + break;
-> >>> + case 4:
-> >>> + mem = 261;
-> >>> + break;
-> >>> + case 5:
-> >>> + mem = 263;
-> >>> + break;
-> >>> + case 6:
-> >>> + mem = 264;
-> >>> + break;
-> >>> + case 7:
-> >>> + mem = 265;
-> >>> + break;
-> >>> + case 8:
-> >>> + mem = 262;
-> >>
-> >> Is case 8 a mistake, or intentionally out of order?
-> > 
-> > Do you mean the `mem = <val>`? Those aren't in order, and I thought it was easier to read if the switch was ordered.
-> > 
-> 
-> I'm wondering if case 5 should be 262, case 6 263, case 7 264 and case 8 
-> 265.  It just stood out to me.
-
-Yeah it's weird but that is what it is. Also verified in ghelper which calls the same WMI interfaces in Windows.
-
-> 
-> If that's all intended then no concerns and I agree sorting the case is 
-> better.
-> 
-> >>
-> >>> + break;
-> >>> + default:
-> >>> + return -EIO;
-> >>> + }
-> >>> +
-> >>> + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_APU_MEM, mem, &result);
-> >>> + if (err) {
-> >>> + pr_warn("Failed to set apu_mem: %d\n", err);
-> >>> + return err;
-> >>> + }
-> >>> +
-> >>> + pr_info("APU memory changed, reboot required\n");
-> >>
-> >> If you're logging something into the logs for this, I'd say make it more
-> >> useful.
-> >>
-> >> "APU memory changed to %d MB"
-> > 
-> > Agreed. There's probably a few other spots I can do this also.
-> > 
-> >>
-> >>> + sysfs_notify(&asus->platform_device->dev.kobj, NULL, "apu_mem");
-> >>
-> >> So this is a case that the BIOS attributes API I mentioned before would
-> >> be REALLY useful.  There is a pending_reboot sysfs file that userspace
-> >> can query to know if a given setting requires a reboot or not.
-> >>
-> >> Fwupd also uses this attribute to know to delay BIOS updates until the
-> >> system has been rebooted.
-> > 
-> > Oh! Yes I'll queue that as an additional patch. There's at least 2 or 3 other spots where that would be good to have.
-> > 
-> 
-> For any "new" attributes it's better to put them in that API than code 
-> duplication of the BIOS attributes API as well as a random sysfs file 
-> API that you can never discard.
-
-Do you mean the firmware_attributes API? If so, I'm not opposed to adding all the existing ROG attributes to it also.
-
-If I'm understanding the docs correctly, for example this apu_mem attr would then become:
-- /sys/class/firmware-attributes/asus-bios/attributes/apu_mem/type
-- /sys/class/firmware-attributes/*/attributes/apu_mem/current_value
-- /sys/class/firmware-attributes/*/attributes/apu_mem/default_value
-- /sys/class/firmware-attributes/*/attributes/apu_mem/display_name
-- /sys/class/firmware-attributes/*/attributes/apu_mem/possible_values
-- ..etc
-
-That's absolutely much better than what I've been doing and I wish I'd known about it sooner.
-
-So if I go ahead and convert all the new attr to this are there any issues with also converting much of the previous attr? And I'm aware of "don't break userspace" so really I'm a bit unsure how best to manage that (would a new module be better here also? "asus-bios.c" perhaps).
-
-What I don't want is a split between platform and firmware_attributes.
-
-> 
-> >>> +
-> >>> + return count;
-> >>> +}
-> >>> +static DEVICE_ATTR_RW(apu_mem);
-> >>> +
-> >>>    /* Tablet mode ****************************************************************/
-> >>>    
-> >>>    static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
-> >>> @@ -4100,6 +4206,7 @@ static struct attribute *platform_attributes[] = {
-> >>>    &dev_attr_panel_fhd.attr,
-> >>>    &dev_attr_cores_enabled.attr,
-> >>>    &dev_attr_cores_max.attr,
-> >>> + &dev_attr_apu_mem.attr,
-> >>>    &dev_attr_mini_led_mode.attr,
-> >>>    &dev_attr_available_mini_led_mode.attr,
-> >>>    NULL
-> >>> @@ -4176,6 +4283,8 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
-> >>>    else if (attr == &dev_attr_cores_enabled.attr
-> >>>    || attr == &dev_attr_cores_max.attr)
-> >>>    ok = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CORES_SET);
-> >>> + else if (attr == &dev_attr_apu_mem.attr)
-> >>> + ok = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_APU_MEM);
-> >>>    else if (attr == &dev_attr_mini_led_mode.attr)
-> >>>    ok = asus->mini_led_dev_id != 0;
-> >>>    else if (attr == &dev_attr_available_mini_led_mode.attr)
-> >>> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> >>> index 5a56e7e97785..efe608861e55 100644
-> >>> --- a/include/linux/platform_data/x86/asus-wmi.h
-> >>> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> >>> @@ -121,6 +121,9 @@
-> >>>     /* Maximum Intel E-core and P-core availability */
-> >>>    #define ASUS_WMI_DEVID_CORES_MAX 0x001200D3
-> >>>    
-> >>> +/* Set the memory available to the APU */
-> >>> +#define ASUS_WMI_DEVID_APU_MEM 0x000600C1
-> >>> +
-> >>>    /* MCU powersave mode */
-> >>>    #define ASUS_WMI_DEVID_MCU_POWERSAVE   0x001200E2
-> >>>    
-> >>
-> 
-> 
+On Fri, May 24, 2024 at 10:17=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
+:
+>
+> This is the short term solutiolns "swap cluster order" listed
+> in my "Swap Abstraction" discussion slice 8 in the recent
+> LSF/MM conference.
+>
+> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+> orders" is introduced, it only allocates the mTHP swap entries
+> from new empty cluster list. That works well for PMD size THP,
+> but it has a serius fragmentation issue reported by Barry.
+>
+> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah=
++NSgNQ@mail.gmail.com/
+>
+> The mTHP allocation failure rate raises to almost 100% after a few
+> hours in Barry's test run.
+>
+> The reason is that all the empty cluster has been exhausted while
+> there are planty of free swap entries to in the cluster that is
+> not 100% free.
+>
+> Address this by remember the swap allocation order in the cluster.
+> Keep track of the per order non full cluster list for later allocation.
+>
+> This greatly improve the sucess rate of the mTHP swap allocation.
+> While I am still waiting for Barry's test result. I paste Kairui's test
+> result here:
+>
+> I'm able to reproduce such an issue with a simple script (enabling all or=
+der of mthp):
+>
+> modprobe brd rd_nr=3D1 rd_size=3D$(( 10 * 1024 * 1024))
+> swapoff -a
+> mkswap /dev/ram0
+> swapon /dev/ram0
+>
+> rmdir /sys/fs/cgroup/benchmark
+> mkdir -p /sys/fs/cgroup/benchmark
+> cd /sys/fs/cgroup/benchmark
+> echo 8G > memory.max
+> echo $$ > cgroup.procs
+>
+> memcached -u nobody -m 16384 -s /tmp/memcached.socket -a 0766 -t 32 -B bi=
+nary &
+>
+> /usr/local/bin/memtier_benchmark -S /tmp/memcached.socket \
+>         -P memcache_binary -n allkeys --key-minimum=3D1 \
+>         --key-maximum=3D18000000 --key-pattern=3DP:P -c 1 -t 32 \
+>         --ratio 1:0 --pipeline 8 -d 1024
+>
+> Before:
+> Totals      48805.63         0.00         0.00         5.26045         1.=
+19100        38.91100        59.64700     51063.98
+> After:
+> Totals      71098.84         0.00         0.00         3.60585         0.=
+71100        26.36700        39.16700     74388.74
+>
+> And the fallback ratio dropped by a lot:
+> Before:
+> hugepages-32kB/stats/anon_swpout_fallback:15997
+> hugepages-32kB/stats/anon_swpout:18712
+> hugepages-512kB/stats/anon_swpout_fallback:192
+> hugepages-512kB/stats/anon_swpout:0
+> hugepages-2048kB/stats/anon_swpout_fallback:2
+> hugepages-2048kB/stats/anon_swpout:0
+> hugepages-1024kB/stats/anon_swpout_fallback:0
+> hugepages-1024kB/stats/anon_swpout:0
+> hugepages-64kB/stats/anon_swpout_fallback:18246
+> hugepages-64kB/stats/anon_swpout:17644
+> hugepages-16kB/stats/anon_swpout_fallback:13701
+> hugepages-16kB/stats/anon_swpout:18234
+> hugepages-256kB/stats/anon_swpout_fallback:8642
+> hugepages-256kB/stats/anon_swpout:93
+> hugepages-128kB/stats/anon_swpout_fallback:21497
+> hugepages-128kB/stats/anon_swpout:7596
+>
+> (Still collecting more data, the success swpout was mostly done early, th=
+en the fallback began to increase, nearly 100% failure rate)
+>
+> After:
+> hugepages-32kB/stats/swpout:34445
+> hugepages-32kB/stats/swpout_fallback:0
+> hugepages-512kB/stats/swpout:1
+> hugepages-512kB/stats/swpout_fallback:134
+> hugepages-2048kB/stats/swpout:1
+> hugepages-2048kB/stats/swpout_fallback:1
+> hugepages-1024kB/stats/swpout:6
+> hugepages-1024kB/stats/swpout_fallback:0
+> hugepages-64kB/stats/swpout:35495
+> hugepages-64kB/stats/swpout_fallback:0
+> hugepages-16kB/stats/swpout:32441
+> hugepages-16kB/stats/swpout_fallback:0
+> hugepages-256kB/stats/swpout:2223
+> hugepages-256kB/stats/swpout_fallback:6278
+> hugepages-128kB/stats/swpout:29136
+> hugepages-128kB/stats/swpout_fallback:52
+>
+> Reported-by: Barry Song <21cnbao@gmail.com>
+> Tested-by: Kairui Song <kasong@tencent.com>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> ---
+> Chris Li (2):
+>       mm: swap: swap cluster switch to double link list
+>       mm: swap: mTHP allocate swap entries from nonfull list
+>
+>  include/linux/swap.h |  18 ++--
+>  mm/swapfile.c        | 252 +++++++++++++++++----------------------------=
+------
+>  2 files changed, 93 insertions(+), 177 deletions(-)
+> ---
+> base-commit: c65920c76a977c2b73c3a8b03b4c0c00cc1285ed
+> change-id: 20240523-swap-allocator-1534c480ece4
+>
+> Best regards,
+> --
+> Chris Li <chrisl@kernel.org>
+>
 
