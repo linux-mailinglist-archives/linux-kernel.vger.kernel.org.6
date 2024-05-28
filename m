@@ -1,133 +1,108 @@
-Return-Path: <linux-kernel+bounces-192113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEBA8D1893
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AEC8D189C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B805A1F23FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768B7B28722
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF54A16B742;
-	Tue, 28 May 2024 10:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5951E16B739;
+	Tue, 28 May 2024 10:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qo0ABDpD"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmZAJ0vr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA57A161314;
-	Tue, 28 May 2024 10:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DAB13CABD;
+	Tue, 28 May 2024 10:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892021; cv=none; b=uLZpZnlUj1RKx1hJP7BrW1RJgEEXRZ60udykJQsRtDLnVpKHwwug3gn6gQI9KSYRN8fVoBDh/eDycx52vMBrevGMDpKRNgw+6GJsa7gpAjGOp+pGAG5z91q5E48nDiTHO8yMzARcO1rHvpCnkzNZ8Rm9rPkHQu+BlIIlIizIUDI=
+	t=1716892140; cv=none; b=Pz4wc+FKkpAAImUAtmudljcCeKYDNX321MAoLGQNxli8NfXPZl7HVdRPT0nuLO4vkXa62ozlVHhZDKb8vTCo9EPvTDm8BK21kiMjEYWSRMAWZxaFLOvrMAzLwGDDLmTRepUiM2vLb0T+OgpGA23CxeXUWUJuKU9/d5B5jCwq7w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892021; c=relaxed/simple;
-	bh=ShbB0egsqc+viF42q6rsRBuCb+8DgZ4kwsWT9hgU0u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRuqkaqr36ZiQJ81r5aqPORTMbHb1PDRoPRmwF8u2Vd2UBcIz91B4jvOJoUbuH/LYiVo8hHX9riN8BbpsuK1qH0NW2XP9KblSQXmbzj1ybZg/baqffglImG1pATip/5xzX9XqBV011Nm8do5oQkBB0sEE9OGGEXMiDTATkCICVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qo0ABDpD; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716892018;
-	bh=ShbB0egsqc+viF42q6rsRBuCb+8DgZ4kwsWT9hgU0u8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qo0ABDpDeGyeb5AM6CvxMAHNti9En+O5JJ7JH2bf5Kz7yu4heP+HUSyNzNLBu9l4v
-	 r6G+r6Xjl5Q34vGGu+TXIib93qalmPg7v5r7lyS330vgVmLB7adu2KP8H+lX7rrfIu
-	 zJzxuXF37jfduvnRfRK/e8nQU1J25bdFgPMWSPOB7M3qUfMJFNBYvZoUeVe2eDL7OI
-	 IhiyY4tRqs1ePuvCQhmrTEcAjzVzMjtN3LeaZzlImY/eHCHvRfjLs4jdpNhm0HiC1L
-	 MeJYVO6vs3cdX8W6jVn4un+D6X7h+XF5EW/FG6J2SfjzNJDaYpsv4bglD9wNkfq/7P
-	 tdkzEA4zshBBg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D4030378215E;
-	Tue, 28 May 2024 10:26:56 +0000 (UTC)
-Message-ID: <430cf0a6-4d8c-4819-8a95-d436eb044eec@collabora.com>
-Date: Tue, 28 May 2024 12:26:56 +0200
+	s=arc-20240116; t=1716892140; c=relaxed/simple;
+	bh=2tllxKCFXVlZmMchKrFmmyFaiwTKz5SDQsRsrUjsJUQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=fuZ6TsRy3LDqHQA3dP/5GH+B1kvcqD7NIJCvbUwW/3n6XCza5ieXb/6bUHbxPQWB/Q2EMXAUC8eLMI8akwv5awZizQRmDtkE314URuk4uW77Ea0sPrT94CgguNuBtjs7N6AgLbSIbhqrQVjqfMUmw2H2p3RwzETfVXbKfV+7jLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmZAJ0vr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D332C3277B;
+	Tue, 28 May 2024 10:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716892140;
+	bh=2tllxKCFXVlZmMchKrFmmyFaiwTKz5SDQsRsrUjsJUQ=;
+	h=Date:Cc:Subject:From:To:From;
+	b=cmZAJ0vrr4PVHYgEixnoGK86FFq5NzMMyUA+uvIlXb2LbmFg2ob0NfUT96DYIvD/8
+	 a55kaNvah8aBiqs9pMlKSDBFBwA/SL5Si5NX9f29e46DKxmR6fiM66mpELbU2Rw3Z6
+	 xr29ISTvsz3hs7AejahI82DWK7rGG750/ANXOJM+3EfDZRnLq6NmrfO3TkdTC7jHF2
+	 wK+iuhdOJPDG7Kiuq8HHREHNXf9jPfYGQSawFb0Xrs6vmrXmA1PSgQVdLga3KEQM3M
+	 jjhh5VYs90ltkWpQjqq7AJ2it+eqgb/AgVVvSxA2OYMbFD0Vp3FuDiVZbGgxsuhLeA
+	 JY72UrxJQyHJA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: mailbox: Add mediatek,gce-props.yaml
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- =?UTF-8?B?Sm9obnNvbiBXYW5nICjnjovogZbpkasp?= <Johnson.Wang@mediatek.com>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?SmFzb24tY2ggQ2hlbiAo6Zmz5bu66LGqKQ==?=
- <Jason-ch.Chen@mediatek.com>, =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?=
- <Shawn.Sung@mediatek.com>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?=
- <Nancy.Lin@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "fshao@chromium.org" <fshao@chromium.org>
-References: <20240124011459.12204-1-jason-jh.lin@mediatek.com>
- <20240124011459.12204-2-jason-jh.lin@mediatek.com>
- <f91d3ac1-0a7d-4ca2-bf0f-c5e471c2f6bb@collabora.com>
- <2a2a939c9cb56de0383ec3e42db9bcf8e8518775.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <2a2a939c9cb56de0383ec3e42db9bcf8e8518775.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 May 2024 13:28:57 +0300
+Message-Id: <D1L7GV7M5K0E.2OPVM82VLFT10@kernel.org>
+Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.10-rc2
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+X-Mailer: aerc 0.17.0
 
-Il 26/05/24 17:04, Jason-JH Lin (林睿祥) ha scritto:
-> Hi Angelo, Jassi,
-> 
-> Could you help me apply this series?
-> Thanks!
-> 
+The following changes since commit 2bfcfd584ff5ccc8bb7acde19b42570414bf880b=
+:
 
-That's not me, it's Jassi - green light from me, btw.
+  Merge tag 'pmdomain-v6.10-rc1' of git://git.kernel.org/pub/scm/linux/kern=
+el/git/ulfh/linux-pm (2024-05-27 08:18:31 -0700)
 
-Cheers,
-Angelo
+are available in the Git repository at:
 
-> Regards,
-> Jason-JH.Lin
-> 
-> On Wed, 2024-01-24 at 09:57 +0100, AngeloGioacchino Del Regno wrote:
->> Il 24/01/24 02:14, Jason-JH.Lin ha scritto:
->>> Add mediatek,gce-props.yaml for common GCE properties that is used
->>> for
->>> both mailbox providers and consumers. We place the common property
->>> "mediatek,gce-events" in this binding currently.
->>>
->>> The property "mediatek,gce-events" is used for GCE event ID
->>> corresponding
->>> to a hardware event signal sent by the hardware or a software
->>> driver.
->>> If the mailbox providers or consumers want to manipulate the value
->>> of
->>> the event ID, they need to know the specific event ID.
->>>
->>> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
->>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->>
->> Reviewed-by: AngeloGioacchino Del Regno <
->> angelogioacchino.delregno@collabora.com>
->>
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
+/tpmdd-next-6.10-rc2
 
+for you to fetch changes up to d3e43a8fa43effdbb62c7edc206df7ac67772205:
 
+  tpm: Enable TCG_TPM2_HMAC by default only for X86_64 (2024-05-28 13:14:29=
+ +0300)
+
+----------------------------------------------------------------
+Hi,
+
+This PR fixes two unaddressed review comments for the HMAC encryption
+patch set. They are cosmetic but we are better off, if such unnecessary
+glitches do not exist in the release.
+
+The priority part of this PR is enabling the HMAC encryption by default
+only on x86-64 because that is the only sufficiently tested arch.
+
+Finally, there is a bug fix for SPI transfer buffer allocation, which
+did not take into account the SPI header size.
+
+BR, Jarkko
+
+----------------------------------------------------------------
+Jarkko Sakkinen (3):
+      tpm: Open code tpm_buf_parameters()
+      tpm: Rename TPM2_OA_TMPL to TPM2_OA_NULL_KEY and make it local
+      tpm: Enable TCG_TPM2_HMAC by default only for X86_64
+
+Matthew R. Ochs (1):
+      tpm_tis_spi: Account for SPI header when allocating TPM SPI xfer buff=
+er
+
+ drivers/char/tpm/Kconfig            |  2 +-
+ drivers/char/tpm/tpm-buf.c          | 26 --------------------------
+ drivers/char/tpm/tpm2-cmd.c         | 10 +++++++++-
+ drivers/char/tpm/tpm2-sessions.c    | 21 +++++++++++++++++++--
+ drivers/char/tpm/tpm_tis_spi_main.c |  3 ++-
+ include/linux/tpm.h                 | 17 -----------------
+ 6 files changed, 31 insertions(+), 48 deletions(-)
 
