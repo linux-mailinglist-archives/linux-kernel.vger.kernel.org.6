@@ -1,83 +1,100 @@
-Return-Path: <linux-kernel+bounces-191823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375DE8D14A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:46:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8408F8D14A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C881C21DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:46:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FF0B210F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C856F08A;
-	Tue, 28 May 2024 06:46:39 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 9C9555027F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586B76D1A9;
+	Tue, 28 May 2024 06:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="SNerNKpz"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8553E1BDD3;
+	Tue, 28 May 2024 06:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878799; cv=none; b=uhPCHNodm1gjLZ+Mkwx0dpaWOpShheYJU3XPbEOdvCJd/P24uTtxmZ126TOyoK5IxkX79qcEb5pfoJUJeJB50zCYj+4v6f/2gdmbM1+fsT6NPSQ9Z2fmy4GEsJ8hx/Y0LS7c3qB18GFRgklrMZbk3bHuSBERpom65AR9PD58Fvk=
+	t=1716878797; cv=none; b=C1y1YRxIszN6UFyprVH72NJB+8omaU6V53ADXBw//4A4o1z8oO4E4omySXPod3tIHx9GwONzZoVW9OUUvlkuq02R+AcVaKP0YxHZSCfFUTErN/ElHaj8SELdgnOpNe0AbAzLpzqOHfHVUY0dycnriduou514P4SefhXXd5+knlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878799; c=relaxed/simple;
-	bh=nMWPmJZVqC4aT0whXmkWZmkHWM8YxD+zyIjlp7n+mwc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fEY0DSIigIoN6QD1efeFrGLMR89yGqpN9W0D891Gf2gXrZ6QtrXBb5WOAL5f5kzPhaBZCiYCc3HB6SLyn0YIH9TZ/0LLBm2jtJtQazZf3dqgz6guNTt8sNG+u/KulYpxrLs3ha8uUS9oPOG/UCzXKbwPGDgmuz1k5KysR8CxRP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [219.141.250.2])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id D9564621BCF3F;
-	Tue, 28 May 2024 14:46:09 +0800 (CST)
-X-MD-Sfrom: kunyu@nfschina.com
-X-MD-SrcIP: 219.141.250.2
-From: kunyu <kunyu@nfschina.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	bristot@redhat.com,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	kunyu <kunyu@nfschina.com>
-Subject: [PATCH] =?UTF-8?q?sched:=20core:=20Remove=20unnecessary=20?= =?UTF-8?q?=E2=80=98NULL=E2=80=99=20values=20from=20pending?=
-Date: Tue, 28 May 2024 14:45:32 +0800
-Message-Id: <20240528064532.42532-1-kunyu@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1716878797; c=relaxed/simple;
+	bh=YzpjJPP0ULvrVx15xyLfh6oMxnTDM3239lcJvqG4GZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMlBLbpih62hjQUq3CmJ6g6+My8MK9r6Vg7iLSHKz/EpTz8CTL62Mnu7y26u5pFPiYGBis0oezyUXkVfLkdX/xdRu5df+BnaEmsBq/AqXnTN7FvcjLa9NqdOldzEmhSMuwpZEMACgQi815JlUxFHk2H0EFIkJ0kohjs+PCFaOJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=SNerNKpz; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=Om+3DdDNz34eTk9PGG2WbSavGEIpa9Fm2b7xW+H1qWQ=;
+	t=1716878795; x=1717310795; b=SNerNKpzgzhW167byRKb3qIOxohQSXsC4as9txGrallQAiZ
+	UajY7PLKyBA/fd0PjfedZbJelP7cbe0FEtwvbksZk2TYpMsVzBkNtMAhjcqiOi6PKTKJYhq74NQjg
+	ghkSygGx93ytyqOWiK1UgZOapwWVtVlsPcXFUEhf+7usXk0dYrRje2lTHb/NlrWsnDMmh3Q80WMGa
+	/PEAn6k3uqGZdmRj500U5CFWVoGuFLKsLeyeGFlTn7TdLMttLE9YuVraPqH8OGoNcZV1YXkU1fa94
+	bhWbUw56khNTSKk8PMQmn0rlQr8tt39UzK/OoceyaKXJ7muUM9e7GaTqAWNOzceQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sBqbP-0007a4-SQ; Tue, 28 May 2024 08:46:31 +0200
+Message-ID: <de703fe7-1cf8-4f51-a282-bdca4a3c6634@leemhuis.info>
+Date: Tue, 28 May 2024 08:46:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.10/regression/bisected commit c4cb23111103 causes sleeping
+ function called from invalid context at kernel/locking/mutex.c:585
+To: Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: regressions@lists.linux.dev, vasant.hegde@amd.com,
+ suravee.suthikulpanit@amd.com, jgg@nvidia.com, jroedel@suse.de,
+ "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Borislav Petkov <bp@alien8.de>
+References: <CABXGCsN1z2gj99zSdhQWynpTXBymrqHejDfF8axxxoiZ_0g_-g@mail.gmail.com>
+ <Zk5hJrY_lGmuW1G9@debian.local>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <Zk5hJrY_lGmuW1G9@debian.local>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716878795;de243872;
+X-HE-SMSGID: 1sBqbP-0007a4-SQ
 
-pending is assigned first, so it does not need to initialize the
-assignment.
+On 22.05.24 23:18, Chris Bainbridge wrote:
+> On Tue, May 21, 2024 at 02:39:06PM +0500, Mikhail Gavrilov wrote:
+>> Yesterday on the fresh kernel snapshot
+>> I spotted a new bug message with follow stacktrace:
+>> [    4.307097] BUG: sleeping function called from invalid context at
+>> kernel/locking/mutex.c:585
+> I am also getting this error on every boot. Decoded stacktrace:
 
-Signed-off-by: kunyu <kunyu@nfschina.com>
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+TWIMC & for the record: Boris also reported this; Vasant Hegde replied
+and said a fix is in the works:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..e32fea8f5830 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2969,7 +2969,7 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
- 	__releases(rq->lock)
- 	__releases(p->pi_lock)
- {
--	struct set_affinity_pending my_pending = { }, *pending = NULL;
-+	struct set_affinity_pending my_pending = { }, *pending;
- 	bool stop_pending, complete = false;
- 
- 	/* Can the task run on the task's current CPU? If so, we're done */
--- 
-2.18.2
+https://lore.kernel.org/all/898d356d-ec7d-41de-82d8-3ed4dc5598b3@amd.com/
 
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+#regzbot dup:
+https://lore.kernel.org/all/CABXGCsN1z2gj99zSdhQWynpTXBymrqHejDfF8axxxoiZ_0g_-g@mail.gmail.com/
 
