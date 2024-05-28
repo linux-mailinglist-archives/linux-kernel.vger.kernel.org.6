@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-192336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E328D1BBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B788D1BC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79761C21F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BBC1C21D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DD316D9D9;
-	Tue, 28 May 2024 12:54:01 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD70D16DECC;
+	Tue, 28 May 2024 12:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJ9tn6zT"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE2E6F08A;
-	Tue, 28 May 2024 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F45616D9AE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900840; cv=none; b=XagDR6IExYxnL/JHlZa3TBlAh1Mhyruf8/uApY832Ho2hQg3qAeJK3zguQsUT7NAbf12kYG4cFwKs8Y4X5E5lAO3uFRfgqoEokOuJzeIxwN8P27MbZAIMzMxgTqcoyWr9YMAYzzQ9dFCIUx05Pea/b/1uE4eJ219DZQHpSXaS1o=
+	t=1716900880; cv=none; b=rfezg2OG8lPhfNblxo/XsKFSpJ+SjADUcg3AKno8NDB3zUMtEvpMSH+AVFYDduLk9nwL7WanU+JHr33DMJKJUXa6N1AMcYRtErqy3wNH+8nA9+DmiKiYvEyfMi/l1A+V2pr3TXFPLu86Ta17AXxMijhB1ea1g7MUwM3HfgfYNPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900840; c=relaxed/simple;
-	bh=K9M37Hvkq5xIoqEJdWpIX/4u+ONW84wTN5k5sEYzc7s=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iauVz0lFeGOBUHNyHJ6WWsktwPKGXmfwM8/7U3kw7brMCVEZrofttnzD8aE7Cx2MZbDDKMT2L9EoA/u0gDC1nWveP+M7chmNmtXFfjcOISjUBtk4f1XCDfBr/HUgJhpEv3dK0Np+fuU4PWR08z34mcFVb6U3DugeNXX20apkup8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VpXWW0hrTz4f3prW;
-	Tue, 28 May 2024 20:53:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1F99F1A0199;
-	Tue, 28 May 2024 20:53:49 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAXKwTb01VmF8qoNw--.9293S3;
-	Tue, 28 May 2024 20:53:49 +0800 (CST)
-Subject: Re: [PATCH 1/2] md: change the return value type of md_write_start to
- void
-To: linan666@huaweicloud.com, song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>, Yu Kuai <yukuai1@huaweicloud.com>
-References: <20240525185257.3896201-1-linan666@huaweicloud.com>
- <20240525185257.3896201-2-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e1c90554-2bfa-1237-bdf7-97a0c1e69489@huaweicloud.com>
-Date: Tue, 28 May 2024 20:53:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716900880; c=relaxed/simple;
+	bh=WHYs4O7Fu2CjoBdYG4P4R2/1sEZnwQQz0IAl+4b3tVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gn1DI30RAx+zsgyFa8N1Kw/drDp7ZEhvye6dHFr7l1GmgJIk1KZdI5hlaMamvcEyS4lk3t6IpYfK2IMo6UzX1ZGJmVR3xvfUzs/Qnns/cuIrzMhRo295HHvcCcbjNnDXrjDNfbx4o9JTZUjedt/seGX1IdeW6P1kxiLd702rLAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJ9tn6zT; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-529614b8c29so1318095e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716900877; x=1717505677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aSTrlh2SCKUUASbHMjU/dT8MYXK+NpaxB9pLENdcjzo=;
+        b=UJ9tn6zTZtjtDDJVKJOZNoN5vJLiF6HgDNi2dXGKtoh3QBCjF+mASVELB1MTDaM9Fy
+         kGgoeNJL95gXpwYTUTJvwCwTY1bebAYN+7IZHiVa5wltBwQJh6wpl2uoSVCppVpZizOk
+         cmW/1GS7YJD1eQJ8C16uehKC/akUI3L+R0tMniPIIG/UhDpmP44Um1GJZosCU7CqmD/v
+         +/YxlEZJRnIStyjyqACRCxuX3BjQEIMHZIfjO7NA+4YKKBaO2ssIth3nbau3Zd1pL7GW
+         bFZxBoUIRuFXkYvJOSh0XWCuwQAOG16/HSVVK3EEkL1L8c5j/NcLNcsnaR8SNsLDKyZ6
+         QcWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716900877; x=1717505677;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aSTrlh2SCKUUASbHMjU/dT8MYXK+NpaxB9pLENdcjzo=;
+        b=waQYqOpUZOhyuXLRB3JBwmj0WFMu2fzxBvPyzEAfnJnqvL96NTWIp8jDZMGKebnNNE
+         LOif1KcWfKbSLc9pFeVx/4ksE2NTWQUERAEtE6l/ArtjEskPn7w45YlS+qqmJRAInLJL
+         iVrSJ4c1hxR9MXy6GzQndVFXVmYIL6tt2hvcrdo4gCM363eXrkwf+1Xer855UQO3KaLm
+         fgSuVYsyNj3MYVKTNQApEeoZHtMD/V2h/imXVaAWOFoHbZsrNysim6I/IwiNT0rQclQU
+         EVygIhNc9vMjt/44BRJUr0NefQfEc95UcT8LWiivXdl05UDdGvXfILeX/kaj/4EaNgmc
+         iieA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTYy+9SrkbBwpEY/HRZ6sVHVm5OZNNXcSWN5eSkxLz3iJUBNUSufBQZGsAodbkOFnstT/WnO3Wd0893asapwwMewQ+yGheUt1Ejq0U
+X-Gm-Message-State: AOJu0YwGDclGTTV/zfQtIzjxrCrmFN4JHL6yG2yqC7piBp8GAFIDncdv
+	1L8ml1sQC16vWZDO7IG4GiHB+Us54JdNm71RmOWuDGp8rLzOHpFbRMEKFIJXxew=
+X-Google-Smtp-Source: AGHT+IGKzu2XIOmakywBVvQVCXPjCqQFFHQbzz7rGWhc+7VQYk4Q9VgfwbtHKoxlTZxsKpchLq1WnA==
+X-Received: by 2002:a19:ad07:0:b0:524:3ce:d4ca with SMTP id 2adb3069b0e04-52966005aadmr9313303e87.37.1716900876850;
+        Tue, 28 May 2024 05:54:36 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:c97:23a9:35bc:df2e:d894:2c76? ([2a00:f41:c97:23a9:35bc:df2e:d894:2c76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e8877a3sm952106e87.36.2024.05.28.05.54.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 05:54:35 -0700 (PDT)
+Message-ID: <68593878-fd39-4961-b7c2-cc33553d6fca@linaro.org>
+Date: Tue, 28 May 2024 14:54:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240525185257.3896201-2-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAXKwTb01VmF8qoNw--.9293S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4xKF47KFW3Wr4rKrW5trb_yoWrZw1rp3
-	y0yFy5Zw4jy3yUX3WUCFWDua45Xw1xKrZ2kFW7G34xXrnxWFWDGa15Xay8tr1Dua4fuwnx
-	tan0ya47u3WIgFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] arm64: dts: qcom: sc8180x-primus: Enable the two MP
+ USB ports
+To: Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
+ Bjorn Andersson <quic_bjorande@quicinc.com>
+References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
+ <20240525-sc8180x-usb-mp-v1-9-60a904392438@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240525-sc8180x-usb-mp-v1-9-60a904392438@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ÔÚ 2024/05/26 2:52, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
+
+
+On 5/25/24 20:04, Bjorn Andersson wrote:
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
-> Commit cc27b0c78c79 ("md: fix deadlock between mddev_suspend() and
-> md_write_start()") aborted md_write_start() with false when mddev is
-> suspended, which fixed a deadlock if calling mddev_suspend() with
-> holding reconfig_mutex(). Since mddev_suspend() now includes
-> lockdep_assert_not_held(), it no longer holds the reconfig_mutex. This
-> makes previous abort unnecessary. Now, remove unnecessary abort and
-> change function return value to void.
-
-Nice cleanup, feel free to add:
-
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> The SC8180X Primus comes with an AUX card with two USB ports, fed by the
+> two multiport ports.
 > 
-> Signed-off-by: Li Nan <linan122@huawei.com>
+> Enable the involved nodes and define two always-on regulators to enable
+> VBUS for these ports.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 > ---
->   drivers/md/md.h     |  2 +-
->   drivers/md/md.c     | 14 ++++----------
->   drivers/md/raid1.c  |  3 +--
->   drivers/md/raid10.c |  3 +--
->   drivers/md/raid5.c  |  3 +--
->   5 files changed, 8 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index ca085ecad504..487582058f74 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -785,7 +785,7 @@ extern void md_unregister_thread(struct mddev *mddev, struct md_thread __rcu **t
->   extern void md_wakeup_thread(struct md_thread __rcu *thread);
->   extern void md_check_recovery(struct mddev *mddev);
->   extern void md_reap_sync_thread(struct mddev *mddev);
-> -extern bool md_write_start(struct mddev *mddev, struct bio *bi);
-> +extern void md_write_start(struct mddev *mddev, struct bio *bi);
->   extern void md_write_inc(struct mddev *mddev, struct bio *bi);
->   extern void md_write_end(struct mddev *mddev);
->   extern void md_done_sync(struct mddev *mddev, int blocks, int ok);
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 509e5638cea1..14d6e615bcbb 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -8638,12 +8638,12 @@ EXPORT_SYMBOL(md_done_sync);
->    * A return value of 'false' means that the write wasn't recorded
->    * and cannot proceed as the array is being suspend.
->    */
-> -bool md_write_start(struct mddev *mddev, struct bio *bi)
-> +void md_write_start(struct mddev *mddev, struct bio *bi)
->   {
->   	int did_change = 0;
->   
->   	if (bio_data_dir(bi) != WRITE)
-> -		return true;
-> +		return;
->   
->   	BUG_ON(mddev->ro == MD_RDONLY);
->   	if (mddev->ro == MD_AUTO_READ) {
-> @@ -8676,15 +8676,9 @@ bool md_write_start(struct mddev *mddev, struct bio *bi)
->   	if (did_change)
->   		sysfs_notify_dirent_safe(mddev->sysfs_state);
->   	if (!mddev->has_superblocks)
-> -		return true;
-> +		return;
->   	wait_event(mddev->sb_wait,
-> -		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags) ||
-> -		   is_md_suspended(mddev));
-> -	if (test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags)) {
-> -		percpu_ref_put(&mddev->writes_pending);
-> -		return false;
-> -	}
-> -	return true;
-> +		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags));
->   }
->   EXPORT_SYMBOL(md_write_start);
->   
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 7b8a71ca66dd..0d80ff471c73 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1687,8 +1687,7 @@ static bool raid1_make_request(struct mddev *mddev, struct bio *bio)
->   	if (bio_data_dir(bio) == READ)
->   		raid1_read_request(mddev, bio, sectors, NULL);
->   	else {
-> -		if (!md_write_start(mddev,bio))
-> -			return false;
-> +		md_write_start(mddev,bio);
->   		raid1_write_request(mddev, bio, sectors);
->   	}
->   	return true;
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index a4556d2e46bf..f8d7c02c6ed5 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -1836,8 +1836,7 @@ static bool raid10_make_request(struct mddev *mddev, struct bio *bio)
->   	    && md_flush_request(mddev, bio))
->   		return true;
->   
-> -	if (!md_write_start(mddev, bio))
-> -		return false;
-> +	md_write_start(mddev, bio);
->   
->   	if (unlikely(bio_op(bio) == REQ_OP_DISCARD))
->   		if (!raid10_handle_discard(mddev, bio))
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index 2bd1ce9b3922..a84389311dd1 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -6078,8 +6078,7 @@ static bool raid5_make_request(struct mddev *mddev, struct bio * bi)
->   		ctx.do_flush = bi->bi_opf & REQ_PREFLUSH;
->   	}
->   
-> -	if (!md_write_start(mddev, bi))
-> -		return false;
-> +	md_write_start(mddev, bi);
->   	/*
->   	 * If array is degraded, better not do chunk aligned read because
->   	 * later we might have to read it again in order to reconstruct
-> 
 
+[...]
+
+> +		gpio = <&pmc8180_1_gpios 9 0>;
+
+GPIO_ACTIVE_HIGH?
+
+> +		enable-active-high;
+> +
+> +		regulator-always-on;
+> +	};
+> +
+> +	vreg_usb3_host_en: regulator-usb3-host-en {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "usb3_host_en";
+> +
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +
+> +		gpio = <&pmc8180_2_gpios 9 0>;
+
+GPIO_ACTIVE_HIGH
+
+with that:
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
 
