@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-192858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADE88D2325
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18078D2322
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598911F228CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868AB1F22468
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFEA482D3;
-	Tue, 28 May 2024 18:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CB482CA;
+	Tue, 28 May 2024 18:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l/zCXUjp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYEP8qQ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907A2481A3;
-	Tue, 28 May 2024 18:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A22B47F60
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716920062; cv=none; b=O1b9rOw4gVI55r59f2mgajxEo9bL4dw+IqvNBhdu9IIODR2q9sZcAR0r5SzFB9/1wu84FTgrZNXHyE6IGCdxgSwRKSkVcZmd4Z01xFF6eJWocIV/osVF6j2eE/UAI+Q/Di+sSdvTmKnSqKaHq5l1eF2z9z/S3/0Ox5/lQl0muRQ=
+	t=1716920054; cv=none; b=Q5/ROG2Vm3TD3asS6okbNXx/BM5gCia8bXvA8C02Xaryg7e4yDNWcJOpUZlv4D50qNyuDY27KNzerOZ6zXOjhzzSwXw/9kFkbRaL2uEZ7tEGEJIdHowf8p2yOmgsv9L+luB3PujiGbkZEGWI7JqxWNc/m5zv0gHQab+H3gKqoIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716920062; c=relaxed/simple;
-	bh=VMjF3tpqPP+iyXgY61yhP4sBKCOnsLB2r908kQBQQJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hENiViiQlhcs2atKJOgV6BXvlSEVGPrRMLUrxA659sAVf1rMJWeEAEgZ3aavYdoahTgv4rAlm8aDesK3QSrKA74mKSiKImITNW4JhikjCTTvag8YIovet3y9RW4CIouuZ8uJJFHJII4lDGOEqQvW/PV0IiUPo5fG/9RWKngqzWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l/zCXUjp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7Zzm0bJuyH51B7I7g2xqGeWwmr5hFPwnNOEhq85FSM8=; b=l/zCXUjp4tOisQWyaPQ9ctrAHJ
-	FrrljttaQZLjSZh152ZzgMBs6e5HeIjTvMCNcWQ3s+LQ0orhMYTEpGnqA4rUjG/7xeJ66rxSHxu47
-	XzLAmGxc59YFFPINcnDXA51neF+hbYZe3c9YuYC+slYG1UKx/8yn4TpYL1GHB0QATO8o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sC1Kj-00GBNi-JS; Tue, 28 May 2024 20:14:01 +0200
-Date: Tue, 28 May 2024 20:14:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Alex Williams <alex.williams@ni.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
-Message-ID: <1398a492-95aa-46d9-b52b-a374fd6e9e77@lunn.ch>
-References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
- <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
- <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
- <ebf93967-81d0-46bc-baf5-b20f9336cfa8@linux.dev>
+	s=arc-20240116; t=1716920054; c=relaxed/simple;
+	bh=eW7J25ArsEyennZdbBf0fqRZKqfZSfVryDcvJEurD+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fy1gV2UmPaW5vHwWmRjHVu/4Bkl9jTWxaVFKTzh7ntgxBlRJUVOWgnHxYVsA7W6mjNZxKsMocSs5u4nF4tfC+Rw27EARobDdhTimOVFAjgWTakTkh37oJukMTObeIsZFspfPC2N8cxnQkI0N7mr4UD7KsSLw8n8AMtFZao42znA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYEP8qQ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3DAC3277B;
+	Tue, 28 May 2024 18:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716920053;
+	bh=eW7J25ArsEyennZdbBf0fqRZKqfZSfVryDcvJEurD+g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SYEP8qQ8SqLJ/em3CQUMJXMkoo6EwxecpN4tuXsY7+4DO+l32IgpWmKVLjCk3oMG1
+	 vYd0o3q4k4oqx1JQaLZCt0RtQqal4FFuuVUtxmA6su9B3Z62rBXiH/rawveGNkOpDT
+	 A9aD9Auzx7x25o/8+VAGSGNCtyfhINqtXyOkNp7/AOT7XaX+RILBoBQ4EPSxITZQBY
+	 VfDVh8YFGiP1sJW3LbwyqNtGyeWM7kLLFeVqJP6FRmrLEvv3uk1+AiP+TDiqRULW1p
+	 TqGfcHz7ebxlzwXCIEdSa+pfJFd6a88c1zUZK6XhCa3MxkjM/KRaTVp/Hj6QkK0t8O
+	 BUxZF9faSfanw==
+Date: Tue, 28 May 2024 15:14:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@alien8.de>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Subject: [PATCH 1/1 fyi] tools arch x86: Sync the msr-index.h copy with the
+ kernel sources
+Message-ID: <ZlYe8jOzd1_DyA7X@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,61 +58,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ebf93967-81d0-46bc-baf5-b20f9336cfa8@linux.dev>
 
-On Tue, May 28, 2024 at 01:52:56PM -0400, Sean Anderson wrote:
-> (forgot to CC Alex)
-> 
-> On 5/28/24 13:50, Sean Anderson wrote:
-> > On 5/28/24 13:28, Russell King (Oracle) wrote:
-> >> First, note that phylib's policy is if it loses comms with the PHY,
-> >> then the link will be forced down. This is out of control of the SFP
-> >> or phylink code.
-> >> 
-> >> I've seen bugs with the I2C emulation on some modules resulting in
-> >> problems with various I2C controllers.
-> >> 
-> >> Sometimes the problem is due to a bad I2C level shifter. Some I2C
-> >> level shifter manufacturers will swear blind that their shifter
-> >> doesn't lock up, but strangely, one can prove with an osciloscope
-> >> that it _does_ lock up - and in a way that the only way to recover
-> >> was to possibly unplug the module or poewr cycle the platform.
-> > 
-> > Well, I haven't seen any case where the bus locks up. I've been able to
-> > recover just by doing
-> > 
-> > 	ip link set net0 down
-> > 	ip link set net0 up
-> > 
-> > which suggests that this is just a transient problem.
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-If you look back over the history, i don't think you will find any
-reports to transient problems with real MDIO busses. Hence any error
-is considered fatal. Also, when you consider the design of MDIO, it is
-actually very hard for an error to be detected. It is basically a
-shift register, shifting out 64 bits for a write, or 48 bits for a
-read, followed by receiving 16 bits for a read. There is no protocol
-to indicate any sort of error. If there is no device at the address,
-the pullup means you receive 1s. End of story.
+Full explanation:
 
-With MDIO over I2C, it is I2C which has problems, not MDIO. Do you
-expect transient problems with I2C?
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-I would also point out that MDIO is not idempotent. Reading an
-interrupt status register often clears it. Reading the link status
-clears the latched link status. If you need to retry the read of the
-interrupt status register, you cannot, the interrupt has been cleared,
-you have lost it, and probably your hardware no longer works because
-you don't know what interrupt to handle.... If you need to re-read the
-link status, you have lost the latched version, and you have missed a
-up or down event.
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
-> >> My advice would be to investigate the hardware in the first instance.
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
 
-I agree with Russell. Figure out why I2C is flaky. Since this is an
-SFP it maybe something as trivial as the contacts need cleaning. Or
-the resistors are wrong, or you have a cheap module which is out of
-spec.
+E.g.:
 
-	Andrew
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+To pick up the changes from these csets:
+
+  53bc516ade85a764 ("x86/msr: Move ARCH_CAP_XAPIC_DISABLE bit definition to its rightful place")
+
+That patch just move definitions around, so this just silences this perf
+build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/asm/msr-index.h | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
+index e72c2b87295799af..e022e6eb766c6405 100644
+--- a/tools/arch/x86/include/asm/msr-index.h
++++ b/tools/arch/x86/include/asm/msr-index.h
+@@ -170,6 +170,10 @@
+ 						 * CPU is not affected by Branch
+ 						 * History Injection.
+ 						 */
++#define ARCH_CAP_XAPIC_DISABLE		BIT(21)	/*
++						 * IA32_XAPIC_DISABLE_STATUS MSR
++						 * supported
++						 */
+ #define ARCH_CAP_PBRSB_NO		BIT(24)	/*
+ 						 * Not susceptible to Post-Barrier
+ 						 * Return Stack Buffer Predictions.
+@@ -192,11 +196,6 @@
+ 						 * File.
+ 						 */
+ 
+-#define ARCH_CAP_XAPIC_DISABLE		BIT(21)	/*
+-						 * IA32_XAPIC_DISABLE_STATUS MSR
+-						 * supported
+-						 */
+-
+ #define MSR_IA32_FLUSH_CMD		0x0000010b
+ #define L1D_FLUSH			BIT(0)	/*
+ 						 * Writeback and invalidate the
+-- 
+2.44.0
+
 
