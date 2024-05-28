@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-191737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0C08D1374
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:34:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A558D1376
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7031B1F23F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0254AB21EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D80524B2F;
-	Tue, 28 May 2024 04:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50841C6B8;
+	Tue, 28 May 2024 04:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg8Y30kd"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekFioCR2"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AD922F19;
-	Tue, 28 May 2024 04:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABAC2837F;
+	Tue, 28 May 2024 04:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716870886; cv=none; b=JNvK+xjNNirLSW0LuGheq26JRKsYy1eopVzO61ZMH3G7XI+k6seM0ukYC5VQjS/RiNoT73eqfYnOkcQBB1MV3y9ZidF9E/WGBQZHZKRYCRptHejFie4s86TYuAYtooyNAWgDVqi9wGZxkXhHJ6lOEyM+ayT3EF586HBB4dQGyw4=
+	t=1716870889; cv=none; b=eLpGxx/oxoHlxzRv8ZdzouaQj/1+Yyh1xsRRESmhxOX9CRpSbzQBAh2vHtRBYbAYQqvo5Dxt+sGdQvTJRSub7Ji/wH1Nn1OCV8bUnh2S8m30l6EwejODejiGpefuqlpljVrEUd3ZDmQjwsMlLRBBKAHhfML2oYqGX4KrdDLkozo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716870886; c=relaxed/simple;
-	bh=zd7BoK2yPEDT3dqyajhY6RYvyU5jTzCjXI4nB2sACME=;
+	s=arc-20240116; t=1716870889; c=relaxed/simple;
+	bh=/RpI2/xF4Y24lM7BtnMG5SoMQmZ0dhWq8ISQ7dpoAfo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k2ZJl0SIFalcT+SJ/PCYk0SIkOGeGc1FcmF9TrVrUiGWpWUefJ0Y+weuJRKzfMzxSn8pxfwTR4e5NEZqU8DD2TL+p/SC5ob7B3SdntSV2XMF08P50K4/zRoIrzchv4+Cyi7S3Z4JoDkbeo10g/o9E54esgMqfs5rLXlLeeWRess=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg8Y30kd; arc=none smtp.client-ip=209.85.161.52
+	 MIME-Version; b=JSX7ccZ8IOvJdKSRUP3HlIFsE+Kn/jSFjb8IBhYG7XxUEFQbhkjNdDYFbuc2LeHYW0TLdw0yzudamMO7bh7BuEojTmqIInJdac3fdBIRPa5rqWuYomGshHdrtXeYdp8NnwrVGHEfSkp6CaqxtJjR5AgBeGazAAZvMj36RL4lrIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekFioCR2; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b9735d7ab4so186349eaf.2;
-        Mon, 27 May 2024 21:34:44 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f12ed79fdfso249339a34.0;
+        Mon, 27 May 2024 21:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716870884; x=1717475684; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716870885; x=1717475685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W0FwtNJwtUXGe6IZ+n9Z0anxXb12NEWwpY37V9CVD5c=;
-        b=Yg8Y30kddOObhv8Qm6MCUPlUFCyHc3LQ2EVDkXTdML3AvmJFb+siG2ekY66/kwQSx1
-         CJhdbdPaquc5w4F2201WPwhnbmGLGM3xh8/vMp5CScwTBe4CQTVRUgNeRE9MXn+qHZa4
-         VTENjdj91tFVUe1LAloU2H9DF1PzI2yzp6wkzXS//id1p8q4yqW9RLL3Z0ei+4qDDJx0
-         U7zihVDVoeOXhsrBV6bMmnnvTXgYXlvT+BgftCc0vy1OmC7fK8kIf/hwaMJW1OWPpVAs
-         z/Xz6hWLRp3Xac2hyUN/Afb/hn+BLGYfN1V7Pd4BCKcJIdzcGGJNchzZGWhoNSPCwwbS
-         OlJg==
+        bh=36ahJbEkFkRc61ECH6sYqp715enbxmd67+pVP96vSYE=;
+        b=ekFioCR268K/awrkEcLCZaN14XZLYJBOv56oKrXtAAEeaNGPyfMhR73VhiZ+J4d7y1
+         WnoJaUBjaGgnP/O1gnRNIDvVczTjEc64CgvksPp+NNoCybwHpRCw+5o/Wnpgj5w9Edat
+         89lknZR9/GRLc0QWl3lkjwC8Ml6wPS/bZzoRWZSRHgk8Ctxl3uHx0hVfDi1euIL1H9RE
+         97PDwN4O3bTFQpMScKO94p3VIo71ocrrKRUTyJdvp6l3DZ2eje6iE8NOuFvkwV/xv/t9
+         Af/BjFMYCTYVuObI/PouMKUE0xyS6LzGaBa4LZ7G7mRhV+i+DfLAYtqf2laTacGb88Fk
+         BXSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716870884; x=1717475684;
+        d=1e100.net; s=20230601; t=1716870885; x=1717475685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W0FwtNJwtUXGe6IZ+n9Z0anxXb12NEWwpY37V9CVD5c=;
-        b=mvly4AXgI1iqECVLB1mmSN9CZRpGw39Td/IQ/96HDgfUQDZJkEtRGG0jyMSXf4Pmin
-         hYj4EC1eb0o59kSAdoceYxU8nANrqs35fNSc0q7j3rulkF4uP9o1ZarcltLvlrcYzJ+d
-         ENLENu7VFSCl9Cy4Y3fRRIzVvagkiW2WAC0xWGhLyNiLo2iXFT5o9ppBs5uFDGRufKJD
-         QbJ92yrJNHkDME4UUNErwJ9d7SnxpLSicv743/GXT1DofO/kNCxjzeLa6KAVR9rpT4Vi
-         WatvC2+ehIhE/KPylNgvhFO7bdZWAO9/LM8d1R7CfBBjKXycv5LUyEQI76sLhznx55XY
-         wMxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBDsVwfas70GHBH0HG5HALsaab8ddQAu9+i6HSSdvFRSHW680uSuzhwkPnT+9gOca4a6Rgwm8/xLfe022oh7Py0FHw3g3K5AMTg0EUFR2plJy24OYcs++y4UuYNhutAH/jLi99521i
-X-Gm-Message-State: AOJu0YyU0ZxOIW2XJ+3t85aFZpDlXc2Mbjwu9NQeB4Whed7Uv2IwVQpL
-	sO+AyRsHnGS2tYgnp4v8Q0n3DS+lCe5lwM1EwRAjp8+51e70d4x5
-X-Google-Smtp-Source: AGHT+IG+M9uCZ37lujmkacVFpRUOUtCzWpjhQ3KyJPVcIXwjbpjOXZt7xy4QwP8AV7IDU0AkNndjrQ==
-X-Received: by 2002:a05:6870:2183:b0:24f:c42e:3124 with SMTP id 586e51a60fabf-24fc42f1cdcmr8469019fac.40.1716870883408;
-        Mon, 27 May 2024 21:34:43 -0700 (PDT)
+        bh=36ahJbEkFkRc61ECH6sYqp715enbxmd67+pVP96vSYE=;
+        b=GEFyx4g0nSrZeGKnImkis3JIB/ml68ZpdpVs7lsyn4tMz7QP60UtoyYcTC9z12kjuB
+         WqCCC27njw5vxf6Xb2UHjCMGvo3dF6kjDZ+xeZIf9RU9d3qgWgbp84eDAkfQ9FLCPsff
+         cUzK+/loUfJrPt8nwLbie7MPLUInvJddTlUzZ/9X8SKlX5dN40FAJd1Nc5uidjdSzr6h
+         yUDv1lPummg9sRuJ3QlJV4bbw/yEs/IxNKIKJr0y0FCnE0twDg2Gp+TtFxktcC1vM0Kj
+         tiHFQKXaraihSjyz2HxbcN2IhRJlExJTRPw2/8by7HrCaeIVvfllw1CxwcdZEjhjWRvQ
+         5DFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl1Ct2qbSCwwYqf0n//aFJohK5JW8+jKYGPpY06jaamCk4C9wkdXdQ+8UhGKABY7GThfcm+Ak17OH02t3Jbd+kdPDrIDRdqnDJe49osnGJuszOW9ifDdVISSLvvzsFMoxe4F5FfYrr
+X-Gm-Message-State: AOJu0YxWs4ieHp+O7yjtSlicoQS71ZnxiHnwG08BPRP7hI90lkh6IWSl
+	L/6UecFrNxcb6N3NJJ/QD02lhKzaBVCXXscKDdviG7/OScOVTH4J
+X-Google-Smtp-Source: AGHT+IFDnpPzLL+0Rgx4NniGVbtCLdQVXzKbNuKb68x21uhgaNXJP54HK5dD4BAlWphqV2kWqKuurA==
+X-Received: by 2002:a05:6871:741e:b0:250:79d:5839 with SMTP id 586e51a60fabf-250079d5d84mr3666204fac.45.1716870885494;
+        Mon, 27 May 2024 21:34:45 -0700 (PDT)
 Received: from cbuild.srv.usb0.net (uw2.srv.usb0.net. [185.197.30.200])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4d57b9sm5620036b3a.193.2024.05.27.21.34.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4d57b9sm5620036b3a.193.2024.05.27.21.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 21:34:43 -0700 (PDT)
+        Mon, 27 May 2024 21:34:45 -0700 (PDT)
 From: Takero Funaki <flintglass@gmail.com>
 To: flintglass@gmail.com,
 	Johannes Weiner <hannes@cmpxchg.org>,
@@ -78,9 +78,9 @@ To: flintglass@gmail.com,
 Cc: linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] mm: zswap: fix global shrinker memcg iteration
-Date: Tue, 28 May 2024 04:34:02 +0000
-Message-ID: <20240528043404.39327-3-flintglass@gmail.com>
+Subject: [PATCH 2/3] mm: zswap: fix global shrinker error handling logic
+Date: Tue, 28 May 2024 04:34:03 +0000
+Message-ID: <20240528043404.39327-4-flintglass@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240528043404.39327-2-flintglass@gmail.com>
 References: <20240528043404.39327-2-flintglass@gmail.com>
@@ -92,142 +92,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch fixes an issue where the zswap global shrinker stopped
-iterating through the memcg tree.
+This patch fixes zswap global shrinker that did not shrink zpool as
+expected.
 
-The problem was that `shrink_worker()` would stop iterating when a memcg
-was being offlined and restart from the tree root.  Now, it properly
-handles the offlining memcg and continues shrinking with the next memcg.
+The issue it addresses is that `shrink_worker()` did not distinguish
+between unexpected errors and expected error codes that should be
+skipped, such as when there is no stored page in a memcg. This led to
+the shrinking process being aborted on the expected error codes.
+
+The shrinker should ignore these cases and skip to the next memcg.
+However,  skipping all memcgs presents another problem. To address this,
+this patch tracks progress while walking the memcg tree and checks for
+progress once the tree walk is completed.
+
+To handle the empty memcg case, the helper function `shrink_memcg()` is
+modified to check if the memcg is empty and then return -ENOENT.
 
 Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
 Signed-off-by: Takero Funaki <flintglass@gmail.com>
 ---
- mm/zswap.c | 76 ++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 56 insertions(+), 20 deletions(-)
+ mm/zswap.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/mm/zswap.c b/mm/zswap.c
-index a50e2986cd2f..0b1052cee36c 100644
+index 0b1052cee36c..08a6f5a6bf62 100644
 --- a/mm/zswap.c
 +++ b/mm/zswap.c
-@@ -775,12 +775,27 @@ void zswap_folio_swapin(struct folio *folio)
+@@ -1304,7 +1304,7 @@ static struct shrinker *zswap_alloc_shrinker(void)
+ 
+ static int shrink_memcg(struct mem_cgroup *memcg)
+ {
+-	int nid, shrunk = 0;
++	int nid, shrunk = 0, stored = 0;
+ 
+ 	if (!mem_cgroup_zswap_writeback_enabled(memcg))
+ 		return -EINVAL;
+@@ -1319,9 +1319,16 @@ static int shrink_memcg(struct mem_cgroup *memcg)
+ 	for_each_node_state(nid, N_NORMAL_MEMORY) {
+ 		unsigned long nr_to_walk = 1;
+ 
++		if (!list_lru_count_one(&zswap_list_lru, nid, memcg))
++			continue;
++		++stored;
+ 		shrunk += list_lru_walk_one(&zswap_list_lru, nid, memcg,
+ 					    &shrink_memcg_cb, NULL, &nr_to_walk);
  	}
++
++	if (!stored)
++		return -ENOENT;
++
+ 	return shrunk ? 0 : -EAGAIN;
  }
  
-+/*
-+ * This function should be called when a memcg is being offlined.
-+ *
-+ * Since the global shrinker shrink_worker() may hold a reference
-+ * of the memcg, we must check and release the reference in
-+ * zswap_next_shrink.
-+ *
-+ * shrink_worker() must handle the case where this function releases
-+ * the reference of memcg being shrunk.
-+ */
- void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+@@ -1329,12 +1336,18 @@ static void shrink_worker(struct work_struct *w)
  {
- 	/* lock out zswap shrinker walking memcg tree */
- 	spin_lock(&zswap_shrink_lock);
--	if (zswap_next_shrink == memcg)
--		zswap_next_shrink = mem_cgroup_iter(NULL, zswap_next_shrink, NULL);
-+
-+	if (READ_ONCE(zswap_next_shrink) == memcg) {
-+		/* put back reference and advance the cursor */
-+		memcg = mem_cgroup_iter(NULL, memcg, NULL);
-+		WRITE_ONCE(zswap_next_shrink, memcg);
-+	}
-+
- 	spin_unlock(&zswap_shrink_lock);
- }
- 
-@@ -1312,25 +1327,38 @@ static int shrink_memcg(struct mem_cgroup *memcg)
- 
- static void shrink_worker(struct work_struct *w)
- {
--	struct mem_cgroup *memcg;
-+	struct mem_cgroup *memcg = NULL;
-+	struct mem_cgroup *next_memcg;
- 	int ret, failures = 0;
+ 	struct mem_cgroup *memcg = NULL;
+ 	struct mem_cgroup *next_memcg;
+-	int ret, failures = 0;
++	int ret, failures = 0, progress;
  	unsigned long thr;
  
  	/* Reclaim down to the accept threshold */
  	thr = zswap_accept_thr_pages();
  
--	/* global reclaim will select cgroup in a round-robin fashion. */
-+	/* global reclaim will select cgroup in a round-robin fashion.
-+	 *
-+	 * We save iteration cursor memcg into zswap_next_shrink,
-+	 * which can be modified by the offline memcg cleaner
-+	 * zswap_memcg_offline_cleanup().
++	/*
++	 * We might start from the last memcg.
++	 * That is not a failure.
 +	 */
- 	do {
- 		spin_lock(&zswap_shrink_lock);
--		zswap_next_shrink = mem_cgroup_iter(NULL, zswap_next_shrink, NULL);
--		memcg = zswap_next_shrink;
-+		next_memcg = READ_ONCE(zswap_next_shrink);
++	progress = 1;
 +
-+		if (memcg != next_memcg) {
-+			/*
-+			 * Ours was released by offlining.
-+			 * Use the saved memcg reference.
-+			 */
-+			memcg = next_memcg;
-+		} else {
-+iternext:
-+			/* advance cursor */
-+			memcg = mem_cgroup_iter(NULL, memcg, NULL);
-+			WRITE_ONCE(zswap_next_shrink, memcg);
-+		}
- 
- 		/*
--		 * We need to retry if we have gone through a full round trip, or if we
--		 * got an offline memcg (or else we risk undoing the effect of the
--		 * zswap memcg offlining cleanup callback). This is not catastrophic
--		 * per se, but it will keep the now offlined memcg hostage for a while.
--		 *
- 		 * Note that if we got an online memcg, we will keep the extra
- 		 * reference in case the original reference obtained by mem_cgroup_iter
- 		 * is dropped by the zswap memcg offlining callback, ensuring that the
-@@ -1345,16 +1373,18 @@ static void shrink_worker(struct work_struct *w)
- 		}
- 
- 		if (!mem_cgroup_tryget_online(memcg)) {
--			/* drop the reference from mem_cgroup_iter() */
--			mem_cgroup_iter_break(NULL, memcg);
--			zswap_next_shrink = NULL;
--			spin_unlock(&zswap_shrink_lock);
--
+ 	/* global reclaim will select cgroup in a round-robin fashion.
+ 	 *
+ 	 * We save iteration cursor memcg into zswap_next_shrink,
+@@ -1366,9 +1379,12 @@ static void shrink_worker(struct work_struct *w)
+ 		 */
+ 		if (!memcg) {
+ 			spin_unlock(&zswap_shrink_lock);
 -			if (++failures == MAX_RECLAIM_RETRIES)
--				break;
--
--			goto resched;
-+			/*
-+			 * It is an offline memcg which we cannot shrink
-+			 * until its pages are reparented.
-+			 * Put back the memcg reference before cleanup
-+			 * function reads it from zswap_next_shrink.
-+			 */
-+			goto iternext;
- 		}
-+		/*
-+		 * We got an extra memcg reference before unlocking.
-+		 * The cleaner cannot free it using zswap_next_shrink.
-+		 */
- 		spin_unlock(&zswap_shrink_lock);
++
++			/* tree walk completed but no progress */
++			if (!progress && ++failures == MAX_RECLAIM_RETRIES)
+ 				break;
  
- 		ret = shrink_memcg(memcg);
-@@ -1368,6 +1398,12 @@ static void shrink_worker(struct work_struct *w)
++			progress = 0;
+ 			goto resched;
+ 		}
+ 
+@@ -1391,10 +1407,15 @@ static void shrink_worker(struct work_struct *w)
+ 		/* drop the extra reference */
+ 		mem_cgroup_put(memcg);
+ 
+-		if (ret == -EINVAL)
+-			break;
++		/* not a writeback candidate memcg */
++		if (ret == -EINVAL || ret == -ENOENT)
++			continue;
++
+ 		if (ret && ++failures == MAX_RECLAIM_RETRIES)
+ 			break;
++
++		++progress;
++		/* reschedule as we performed some IO */
  resched:
  		cond_resched();
  	} while (zswap_total_pages() > thr);
-+
-+	/*
-+	 * We can still hold the original memcg reference.
-+	 * The reference is stored in zswap_next_shrink, and then reused
-+	 * by the next shrink_worker().
-+	 */
- }
- 
- /*********************************
 -- 
 2.43.0
 
