@@ -1,224 +1,123 @@
-Return-Path: <linux-kernel+bounces-192431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9937A8D1D27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44858D1D2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCEE21C22107
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E681F22513
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257A616F85B;
-	Tue, 28 May 2024 13:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83A216E86E;
+	Tue, 28 May 2024 13:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/vZxkx1"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="P8H42N6w"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2631016F27D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7298E17C7F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903257; cv=none; b=X8i592X/gmD8MmGlq6av56cXf/tRO1J2SRcllxx3b+BbxA3gk9KbwSBOXGhK3eX48ErDKvERdxuCwcu7xONNS6BJfA9GhW5E7+TQluow3S0utTV/TIbsuo56PmFtjJOZxF0lhvqfMLPItV9o5iJOFDF3qSbNNxeyPQ6KP4K0TV4=
+	t=1716903342; cv=none; b=XvhB8Dsue/9g9SMgB8twIg0vyhazT1nddtDSwuYj3xGGOBGQwZScIy1bmPksRE4f4H+YXz+Oz3SAmokxlxC2pvYhxPuHJQSRnrMRMr7nFxKtZJCmSuoTB+DroUtzYssPWsGTld096H/Q/fX1cdmFhFHHAf+UlRB/XfpFA9o5kgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903257; c=relaxed/simple;
-	bh=/D/BZxkV8W2P6r6SxTpr8oyRNUh6k8SoRVxsDh/8djY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MSxwjMcV25flugNLUHoN3NsCe03xPgIS4wpIw3cQApqOaHMnjzWEswfQld8KAEeGHpZPPfLzNdAbwyxCSrEFs0wEhia64e+XqfDYBMFt7Me5dH9Vzbe9WVeDsF0kZywWmJOK4if3sqPOQfdN1uz5cTEiozfrwmpQuWHbMEIpmzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/vZxkx1; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4211a86f124so6755635e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:34:13 -0700 (PDT)
+	s=arc-20240116; t=1716903342; c=relaxed/simple;
+	bh=Uygo9Me2+2ccVPrlTpw7gYq/1QDyRkrPpHp3J46wjpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GderHIuOCYK+h079qSCzPhT3mo0e045wV4VcyitdI84e++YE+X+8ItbikIGjoDVe0H1juJ4sH3aYWmA97zYgDBVqZA2dfhxPw+pDiSfK7uMIzgC/UAgt//KLOTIycV/HjJxKwEyz2pfxjI8mQLN/WNGMbq4zcwcgyco/argeyeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=P8H42N6w; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35a264cb831so614848f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716903252; x=1717508052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xtaRbzBW2FmBq00uLRNYJrl9av0hwx9CNWB6QXoBHec=;
-        b=A/vZxkx15IJscvgkx7VhIDjq7gK6oRvhE31Mbt6GKD4dShXHtpEGvjhpFmNuBQUPGZ
-         fNYcSOn0fueYlXPkQEdymwby5k7nrKyRvGJrlM6jMSI+puWcMI7MP94elMp3g7BFJPyT
-         xAC4KYpr/v7lwSq/1us95DsdFgeHeQtJVTL5IwoHqiiuNbg5VHfM+SMxqFeff37KSSH2
-         M2x2l8fQB0sgsh31Svo7auPx1I9VNYlH9o+L2pDM/a35xeBCOLpcdgzJk49iPCB8bpwG
-         k47h3l7sR0/wDAe0dThPX8zmkTXCHQIRG+yCFOhY4fo+H5GSPh/cXwQDyC3aljgqLvWV
-         tyuw==
+        d=ventanamicro.com; s=google; t=1716903340; x=1717508140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjGXaowzOpIF3QbPazGFsBGPsl4FgWIVG9cNH5OZlLw=;
+        b=P8H42N6wNFQhy9Wroo3WW3SQFc6HOa2yqv/gFIoff1lVyxwWk2wozx73UKhW/16mpg
+         r2dETrbVjtkX2qb5hKRauUqm9P03wUEarTXYB10zdR0mnUabAiGwCwml18dzc1VMNj7m
+         T2LbBBSXP6KRfu2QKm4TiSuZFBaHBFNX3GQpF6/G929DZyeJ/eAiGomtyVudAPasgtFB
+         QfXKube1mzgdYF0KVoyEUKjnSdwBN6IBFyl4JMEdGiKf8YP0m7Xhm0vsONtIanizj+b/
+         +SPFXXqiJZ/4sqfVaaO2o8McRp/AYvdFG20+3sHgkpmnSiMeXKsmY3dApkaAj6GH/Jkk
+         kIpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716903252; x=1717508052;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xtaRbzBW2FmBq00uLRNYJrl9av0hwx9CNWB6QXoBHec=;
-        b=poOF/xDU5OWsam5m7595+Umpg3BqLwbXtbuhJE4+mmvfpRx8VNCDJmkuf4ClJUAzb5
-         3FY3suo+ypcZCM+rJO/O/KpYIAHDgjKqnPPcV6KvCIePwPp3Q+3N1YG6Z3tU91/5/El1
-         yyJKj9K73vLb10fRZJoaHtFfAew9NuAXLSncx/qOqJB2nSJ95VMQxQYrvMoemCNog3Ux
-         wlKPlEEZoRF/L4BzzU4wWveCFWBggvtAv2kLlWjhLl+MhrnART2fSboaR+BNKgfh3d5g
-         xfeSjCPvLB6betUHpo6OUw6aO7GHzifmPN7ogxqd9+pLgyCbl4j7yaBDQcWZO60/JYAq
-         mGAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWS/VBpWNWtggNvzirHmRLMTaLCsVGlsFXX1uU8dPGHGz/JMa2+P1wGpYJM5b66VnFT1a+Y8FZ+l6YXGn95bHggRw+8S7tlUbI5SuX6
-X-Gm-Message-State: AOJu0YxB9l82YCpoCqAXuaHXrLbpXhsjwHAqIqqKsFfLGxn4OMr3nPJ0
-	hUPMnASdQjsiOIhT+Sd/uKIOEiDw3Ph3WRZab51/ZyL2fR9glDfKnEzg6r2/XDY=
-X-Google-Smtp-Source: AGHT+IHHeRm/5PPbzVOg65qBFrOHryVw+fWU5RzhUNglYGlZLjg3MKIhQAyFz6f7vlPAODV6LnnStw==
-X-Received: by 2002:a05:600c:558b:b0:41b:d8ef:8dcd with SMTP id 5b1f17b1804b1-42108a1c620mr80958335e9.28.1716903252257;
-        Tue, 28 May 2024 06:34:12 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421212c487csm7821565e9.9.2024.05.28.06.34.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 06:34:11 -0700 (PDT)
-Message-ID: <4765cd08-c105-4a48-ab00-4c44fa104d7f@linaro.org>
-Date: Tue, 28 May 2024 15:34:10 +0200
+        d=1e100.net; s=20230601; t=1716903340; x=1717508140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SjGXaowzOpIF3QbPazGFsBGPsl4FgWIVG9cNH5OZlLw=;
+        b=TZptwDpIhOqP54FFoGfW81TWL7PfN8auPqoZRfdQ9TMaBODToE+86dd7ByilcS+zL6
+         8Koqbc7SV7u+l5uto+5eZDU2Qo2fRbcnrTpLVUj5Zh1iT1JIiA0dw5EZNAVetMtp+dwg
+         igtoVbDoM1CLL3Df2t7HI4ZoBTTvGOun7W3QEJM5Rm7kf5slVgKd3yiIlOQTyGKJE6EO
+         4AlHJBJaatGzmHJuwSwgIpHvLAdjagh+o7pdqx10l77jYQ57g28FODLwdLIr7shHC9vt
+         2ctLdVIV1c2D9gBkcTxgFrXABpuN4xPhdoX32FEquK8K8XlQNfBeGjIvqwMO6bgEOyoC
+         p5fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWl5ugnCzGDP2yiv6+SwKHjkZOEfL2BYzzgJ5kN0fcvbxUmTrQRtNA9m1PnsaHIFo3bJGKSmJuSF+dnq4oofktmmlj3NkI2E1TlCB9
+X-Gm-Message-State: AOJu0Yy/GEV5BcnM06CyfLB1F1aHN74Jd/ZuOmqDm2qkf6lqZcBpnXN5
+	GGAKX0Uds8Rhdlnuo+tHeTqNBLWx5vsU6X58Qq37grSGXApUPYLULaH7xGKTk/k=
+X-Google-Smtp-Source: AGHT+IFbOwoRSz6/nVrWGNSVmDQHjWUjIuJdCuhVXgFdFXelciHbbbL1yL6O7el2JjJ+1u9RO6CYZA==
+X-Received: by 2002:adf:f08e:0:b0:354:dd23:7607 with SMTP id ffacd0b85a97d-3552fdfd438mr8792336f8f.57.1716903339771;
+        Tue, 28 May 2024 06:35:39 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3582917b222sm7268083f8f.93.2024.05.28.06.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 06:35:39 -0700 (PDT)
+Date: Tue, 28 May 2024 15:35:38 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>, xiao.w.wang@intel.com, pulehui@huawei.com, 
+	Charlie Jenkins <charlie@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Pu Lehui <pulehui@huaweicloud.com>, 
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Subject: Re: [PATCH v3 2/2] RISC-V: separate Zbb optimisations requiring and
+ not requiring toolchain support
+Message-ID: <20240528-4a498a28af8d912561d1a103@orel>
+References: <20240528-applaud-violin-facef8d9d846@spud>
+ <20240528-opossum-flavorful-3411811b87e2@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: amlogic: ad402: move thermal-zones to top
- node
-To: Arnd Bergmann <arnd@kernel.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Dmitry Rokosov <ddrokosov@salutedevices.com>,
- Igor Prusov <ivprusov@salutedevices.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240528133215.2266419-1-arnd@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240528133215.2266419-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528-opossum-flavorful-3411811b87e2@spud>
 
-On 28/05/2024 15:31, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 28, 2024 at 12:11:12PM GMT, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> It appears that this accidentally got added into the spi node, causing
-> a warning.
+> It seems a bit ridiculous to require toolchain support for BPF to
+> assemble Zbb instructions, so move the dependency on toolchain support
+> for Zbb optimisations out of the Kconfig option and to the callsites.
 > 
-> arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts:119.16-161.4: Warning (spi_bus_reg): /soc/spi@fd000400/thermal-zones: missing or empty reg property
+> Zbb support has always depended on alternatives, so while adjusting the
+> config options guarding optimisations, remove any checks for
+> whether or not alternatives are enabled.
 > 
-> Fixes: 593ab951232b ("arm64: dts: amlogic: ad402: setup thermal-zones")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->   .../arm64/boot/dts/amlogic/meson-a1-ad402.dts | 62 +++++++++----------
->   1 file changed, 31 insertions(+), 31 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
-> index c8579b6e67cf..6883471a93b4 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
-> @@ -84,37 +84,6 @@ vddio_1v8: regulator-vddio-1v8 {
->   		vin-supply = <&vddao_3v3>;
->   		regulator-always-on;
->   	};
-> -};
-> -
-> -/* Bluetooth HCI H4 */
-> -&uart_AO {
-> -	status = "okay";
-> -	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
-> -	pinctrl-names = "default";
-> -};
-> -
-> -&uart_AO_B {
-> -	status = "okay";
-> -};
-> -
-> -&saradc {
-> -	status = "okay";
-> -	vref-supply = <&vddio_1v8>;
-> -};
-> -
-> -&spifc {
-> -	status = "okay";
-> -	pinctrl-0 = <&spifc_pins>;
-> -	pinctrl-names = "default";
-> -
-> -	flash@0 {
-> -		compatible = "spi-nand";
-> -		status = "okay";
-> -		reg = <0>;
-> -		spi-max-frequency = <96000000>;
-> -		spi-tx-bus-width = <4>;
-> -		spi-rx-bus-width = <4>;
-> -	};
->   
->   	thermal-zones {
->   		soc_thermal: soc_thermal {
-> @@ -161,6 +130,37 @@ map1 {
->   	};
->   };
->   
-> +/* Bluetooth HCI H4 */
-> +&uart_AO {
-> +	status = "okay";
-> +	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
-> +	pinctrl-names = "default";
-> +};
-> +
-> +&uart_AO_B {
-> +	status = "okay";
-> +};
-> +
-> +&saradc {
-> +	status = "okay";
-> +	vref-supply = <&vddio_1v8>;
-> +};
-> +
-> +&spifc {
-> +	status = "okay";
-> +	pinctrl-0 = <&spifc_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	flash@0 {
-> +		compatible = "spi-nand";
-> +		status = "okay";
-> +		reg = <0>;
-> +		spi-max-frequency = <96000000>;
-> +		spi-tx-bus-width = <4>;
-> +		spi-rx-bus-width = <4>;
-> +	};
-> +};
-> +
->   &usb2_phy1 {
->   	phy-supply = <&vcc_3v3>;
->   };
-
-Oops thx for figuring that out
+> v2/v3:
+> - Per Drew's suggestion, drop the stub Kconfig option and instead push
+>   out the toolchain dependency to the relevant callsites.
+> - Delete a bunch of comments about only attempting Zbb if alternatives
+>   are available, since they always are.
+> ---
+>  arch/riscv/Kconfig                    |  4 ++--
+>  arch/riscv/include/asm/arch_hweight.h |  6 +++---
+>  arch/riscv/include/asm/bitops.h       |  4 ++--
+>  arch/riscv/include/asm/checksum.h     |  3 +--
+>  arch/riscv/lib/csum.c                 | 21 +++------------------
+>  arch/riscv/lib/strcmp.S               |  5 +++--
+>  arch/riscv/lib/strlen.S               |  5 +++--
+>  arch/riscv/lib/strncmp.S              |  5 +++--
+>  8 files changed, 20 insertions(+), 33 deletions(-)
 
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
