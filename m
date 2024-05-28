@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-192205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6238D19F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:44:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEC88D19E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A2328E2AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C236B236CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065F516C84D;
-	Tue, 28 May 2024 11:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ExPyb3w9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9BC16C69D;
-	Tue, 28 May 2024 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9035616C847;
+	Tue, 28 May 2024 11:42:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91D16ABEA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896645; cv=none; b=iAYO20wy+MWwE8kYpzeD7XKQRn4qN2qlNAEAiuUjIJ/kx9pLa3TeMZfFASpaGAroujW8CN+nCH4ZMzJ/MIkH3KFoipy+7DbtirKBgMgD/IhAHXvnI0YepiTKeAK25ohPhOWRsVU6vVxYSZAyMHffx+nr/QWH+eaU3SoagG6+yl4=
+	t=1716896576; cv=none; b=UNWp7DXK3kqKyb/l24WH4Y+JDy4LOgqUTnCLnnsxXVtO2JHHOkYGc8duoh7FYrwTNHDY8bnRUS6oKcv1P0GNqc1Li44dkMCEjBp/ibzyKH0TxkUFe/0ZQFtH7GMccLIR3D/vaVsW6MyWZoUBwBEI3HD/suz4Q0/zf0jJeT+Mk7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896645; c=relaxed/simple;
-	bh=M4W+oHkOeOhdlYM/2iz4WIkappOulaLKd7/7AQX4LQI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L6sqHqIATqk0wxM9wlBtNJwm8wxHw6sHFX0pu7qOx8X30SsZCiSDNrCJ7JJW998AK+9RuzcrwjbgdjdSPE6FDGGxJE2hFDoCgL0OGj8L/JSlhgkTez0liqnUD/6vdCmbk1WgPbleDoNpGl1BK1scXjU4TPYntD3tP8kGHzqZN/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ExPyb3w9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SB8JBf001099;
-	Tue, 28 May 2024 11:44:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vTGSCjZG91irllHjXXjKPaqTtQw3nVtYXZ6CCsqxeEQ=; b=ExPyb3w9kO7D2OrQ
-	ZCG3pGZI/VhUpLY5jZ+ZdgCuCyRoUEIo3o6H0qRDE9Qk75mp+Q/cTo6o4f8rlMk0
-	6mDNMYMNq2ZHana0OLXNuTsyFBvHOkXS5aqmHJnvZYWky1m1tSlrio88sgiqSj4x
-	GUV9fChig1Q88W/9hDI+xeZ19QQK/Hk1B8BFJzD4yPHbcmhEyLAGdyHBZufYMLP5
-	4ckibAV93V+Ull5SYKupcwmhRTkI0THpk4h/RhOZ+CmKZU9ughByD+B7a6jY3Ez9
-	pR0gwfgKAgqOCstumTVhV6gdxWVxfJdQ2VPsFWM2GfUxgMcf/DBgpv/hvyDY8uGV
-	ci3e3A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yj5xst-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 11:43:54 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SBhrqt017753
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 11:43:53 GMT
-Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 28 May 2024 04:43:47 -0700
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>, <stable@vger.kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH V3 1/8] clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
-Date: Tue, 28 May 2024 17:12:47 +0530
-Message-ID: <20240528114254.3147988-2-quic_ajipan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
-References: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
+	s=arc-20240116; t=1716896576; c=relaxed/simple;
+	bh=S0VJJBbE5kOXZ/KL0cz9wUfOzpd6ZFwGTVuAidGHwU0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1RGXAnTc+UzcZMQdmxvYhW7+1MFAf/9RxWlZn3GGISHjjVT3V6kjJEVehDvjpllJ+qov/xj0CJZ/+Z+SaY9N+nWiU7xngtDjhGiG+jx4Rk4PfXBh+nwEYeTiu60TGU5f8lMQ0+lKepAI2neGlUqWUL4Yzjk/10usOQ8QUaJ8Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0518D339;
+	Tue, 28 May 2024 04:43:18 -0700 (PDT)
+Received: from [10.1.36.57] (e133649.arm.com [10.1.36.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F5593F762;
+	Tue, 28 May 2024 04:42:50 -0700 (PDT)
+Message-ID: <0387ac04-2dbe-4a73-975a-078a18554654@arm.com>
+Date: Tue, 28 May 2024 12:42:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: e9rOfkIYaCVibs-vSjZcpNqKPptyukRX
-X-Proofpoint-ORIG-GUID: e9rOfkIYaCVibs-vSjZcpNqKPptyukRX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280087
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 5/6] sched/uclamp: Simplify uclamp_eff_value()
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>
+Cc: Qais Yousef <qyousef@layalina.io>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>, pierre.gondois@arm.com,
+ linux-kernel@vger.kernel.org
+References: <cover.1715082714.git.hongyan.xia2@arm.com>
+ <6209eda0b134ad7a0be8855ffdd7b4c747fb8048.1715082714.git.hongyan.xia2@arm.com>
+ <1f8c50f2-6530-49bd-9b41-744437078100@arm.com>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <1f8c50f2-6530-49bd-9b41-744437078100@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In LUCID EVO PLL CAL_L_VAL and L_VAL bitfields are part of single
-PLL_L_VAL register. Update for L_VAL bitfield values in PLL_L_VAL
-register using regmap_write() API in __alpha_pll_trion_set_rate
-callback will override LUCID EVO PLL initial configuration related
-to PLL_CAL_L_VAL bit fields in PLL_L_VAL register.
+On 26/05/2024 23:52, Dietmar Eggemann wrote:
+> On 07/05/2024 14:50, Hongyan Xia wrote:
+> 
+> [...]
+> 
+>> +static inline unsigned long uclamp_eff_value(struct task_struct *p,
+>> +					     enum uclamp_id clamp_id)
+>> +{
+>> +	if (uclamp_is_used() && p->uclamp[clamp_id].active)
+>> +		return p->uclamp[clamp_id].value;
+>> +
+>> +	if (clamp_id == UCLAMP_MIN)
+>> +		return 0;
+>> +
+>> +	return SCHED_CAPACITY_SCALE;
+> 
+> Why not keep using 'return uclamp_none(clamp_id)'  here?
 
-Observed random PLL lock failures during PLL enable due to such
-override in PLL calibration value. Use regmap_update_bits() with
-L_VAL bitfield mask instead of regmap_write() API to update only
-PLL_L_VAL bitfields in __alpha_pll_trion_set_rate callback.
+Reason is that uclamp_none() is in core.c.
 
-Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index d4227909d1fe..62138ed3df88 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1665,7 +1665,7 @@ static int __alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (ret < 0)
- 		return ret;
- 
--	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-+	regmap_update_bits(pll->clkr.regmap, PLL_L_VAL(pll), LUCID_EVO_PLL_L_VAL_MASK,  l);
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
- 
- 	/* Latch the PLL input */
--- 
-2.25.1
-
+I could move uclamp_none() into sched.h if needed.
 
