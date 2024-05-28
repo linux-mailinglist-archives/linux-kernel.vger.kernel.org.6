@@ -1,66 +1,81 @@
-Return-Path: <linux-kernel+bounces-192949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49598D24BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1878D24BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71BA1B226DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4629C1C26E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D97217836A;
-	Tue, 28 May 2024 19:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A9176FBB;
+	Tue, 28 May 2024 19:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CVYoa0I+"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ugVKToeA"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA8613C3E7;
-	Tue, 28 May 2024 19:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043313C3E7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925015; cv=none; b=EcrhiR9o7zNJ/dRdOkaCpo2Rlol860orFFJA/5B4aK9mnB7mGdVGg6GYic+ovHSAO4XctFE9YlG5FyF7qxHWq4K7AcPC8e5jGLnx8B5mIJOFfzWYunj+tmZu3DK6i4P+iknk9LNgQIs1FyYN3yjeVn+jF4kAkAYN49VFJP1AKIc=
+	t=1716925093; cv=none; b=HVV1vxO7FhU3gXbS9Kuzh3dm1ygl2IlLj630gHmy0EEJrvvKDRsKXWrQTuqW2NhyntYLOsR6Z2JFpW4Khz2cTz5OF9u43a1RsNEOQ9tJlyETE0K8AivdLAWbzLMGXWteriQfW9Eq7+kmhY1T8zLoikmtHAQuTGpGbiBGUZng+/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925015; c=relaxed/simple;
-	bh=3qCTckRbSoDeQuWSwNNTDxw8BHRVGSB1bN1w9lT0kis=;
+	s=arc-20240116; t=1716925093; c=relaxed/simple;
+	bh=C+E+TFaQOMPAjrjGZuvwR94cq5624yFiJBlvO7VitAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBYLfwi5eZr+DAKEARlgq4Yhyg0Fl0YOZFup/z+oZ3gkU+Y2kMuP9qeFJKzvvKBGei65FQCpVCP9uMdhaNohleWopFxwgyIfyhFJS1AVZWJFDKPrrzsMUM4xOPUTYeFj59PyOX2SgDTn4gGYM1ol1I+IAMdVN2ukBfSdm/OVaHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CVYoa0I+; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/CfLh9oYnTyEvViq39bmHv8vkZ7XhSHj9YEgQPZXpMI=; b=CVYoa0I+KTYmpfA6iYnEo3pVpL
-	N6NAhUwJpKLo0qhTNRkzDtDrlX/jRDg7UxpgwuCloSxcfT62QhBl2b/r2V79XKU8kgnPn0rqBKovK
-	7OcP7ArDd03iejqlMIrGzjZyqhyjxMF3mdFHp0VgK86aM5hHLFhSqE0ehr80BE1HN7EcomvJGSONE
-	XQ6ofdRBKroCMagf8+yxPuZIdGJjqY0k5mc3Fh0IOCmezlvXy5Ky29YligepWHuHA2jOgPjI5juVj
-	TB9B81+uIX8NFPmMwfjyOJ9d+IQMhFgfoKmijDT25fvvwgcUB/jz/4OKsosvqQzf1wtv/F5ivLX5r
-	eInQWChw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sC2cS-0013LZ-1N;
-	Tue, 28 May 2024 19:36:24 +0000
-Date: Tue, 28 May 2024 20:36:24 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com,
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, brauner@kernel.org, cmllamas@google.com,
-	dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net,
-	gregkh@linuxfoundation.org, joel@joelfernandes.org,
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org,
-	peterz@infradead.org, rust-for-linux@vger.kernel.org,
-	surenb@google.com, tglx@linutronix.de, tkjos@android.com,
-	tmgross@umich.edu, wedsonaf@gmail.com, willy@infradead.org,
-	yakoyoku@gmail.com, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
-Message-ID: <20240528193624.GH2118490@ZenIV>
-References: <20240524213245.GT2118490@ZenIV>
- <20240527160356.3909000-1-aliceryhl@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMiRXZJqreW8teXyzkq2Zpa+MKsiHn9P69vlmJomnwvO1VnZ6ENvPUR/sHh2Yu/7Wry31gDnKTalfU2mejfGFlOqiCfMwfuKiymw1yHtvQ8Sdz9MdwvBjOO8mmS2H6bt4YLB4bYcfgAWVcxM0sbdzz2nB2Op8fL09JXy5Vt25HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ugVKToeA; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f693fb0ab6so1072793b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:38:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716925092; x=1717529892; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVddBXQV2grY6+Zbi//5IkKUEc11Yvlxas92w+1BWrY=;
+        b=ugVKToeAEzEKQLtDNRtPB9QLKLNrVx4xu/54PuP8nlYJUQi+UDTDk9P0erPCG43/RA
+         vmVipNbWBFniVBtUA0D7URPq3Sk3G5rzYYHLcJBB/8GXlL6rpNZSReT9F3kXiofwz6mQ
+         jjXJ8qRPVxRO2PIF5pmeBDeyoq9L1Q+4cjvkOJhFFiC/eYz7YwSnzuGutFSIAoTnUU3r
+         HL7cFzpE8pfvamRurRj0rGgTd4AT8Ul92XaG+OwvEvPOcolTT8aslJeyx3Uc2QpS+4Sf
+         uPYtYlJVBWhnzZ+0GKbLMoSmQZir1scINLQk4vkj5nkZpM62ut0uN8zB9R/v+zWaJ06x
+         aRVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716925092; x=1717529892;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VVddBXQV2grY6+Zbi//5IkKUEc11Yvlxas92w+1BWrY=;
+        b=qTCYd3S0joj4mmz3LMjHNfj4D+7kWo0JgGCHf2eyNyuoXWUpalgw3/WrXHSeq5EYDg
+         poKKBvvQ9pHQrQlFFwqtNM3ikLLUsqt9pfc9ybqGlqFApGH73tKZYYEKTpeY2NvwPMDo
+         IVY1ShAm5cFvXil8BcpbshZtNoRA4fW/27Lcq0M8JCTCbmd/HmrJ346ec+SSIu3gJpK4
+         A/9J8/QejaUQTyHLsJ6ycnwirbCXKDu6PqcXC8ueBS3W8gsV40seUkK9+XKSEUhxyY2n
+         KRKTqD36fG0VSDvP+NLUa5v93yrg9ykCkL8miYPc41BZRLzO7J9spYSHJqcka+OwfR7w
+         UlPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxpKUZAMxD83dqOribvifDmvFti/wYfSz8VAGTUyOzYGS0lE7Wghfl3qUFH24rw49Y4sZ3uxL8QQ+8sylBjXz1lhvJ+6dBqqMHpcwN
+X-Gm-Message-State: AOJu0YwFtv1s7he/NzGHzCr2FubzzgSd5CEOkoxWIVnDa1kW0eFQ55YZ
+	MmDxHO6Eyf3uoI5/KIMKdWzGE40YB/EIotcfeIYN1GbKVsic9bUrh+X7qc1/ifbdtF/xtllnjCK
+	I
+X-Google-Smtp-Source: AGHT+IEr6rxeqSRwySiQWxujQNR2NB+err9HDuAKFDWjAoR3nXctqIoryjD4z/+vQ37/3/hSHtZ01g==
+X-Received: by 2002:a05:6a20:7f9f:b0:1a8:2cc0:290a with SMTP id adf61e73a8af0-1b212d3be66mr14145846637.30.1716925091781;
+        Tue, 28 May 2024 12:38:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4c7:2691:aa4a:e6b7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc373c92sm6948650b3a.96.2024.05.28.12.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 12:38:11 -0700 (PDT)
+Date: Tue, 28 May 2024 13:38:09 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Gwenael Treuveur <gwenael.treuveur@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH] remoteproc: stm32_rproc: Fix mailbox interrupts queuing
+Message-ID: <ZlYyoZzOlXylkQqC@p14s>
+References: <20240521162316.156259-1-gwenael.treuveur@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,71 +84,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527160356.3909000-1-aliceryhl@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240521162316.156259-1-gwenael.treuveur@foss.st.com>
 
-On Mon, May 27, 2024 at 04:03:56PM +0000, Alice Ryhl wrote:
-
-> > In other words, if current->files->count is equal to 1 at fdget() time
-> > we can skip incrementing refcount.  Matching fdput() would need to
-> > skip decrement, of course.  Note that we must record that (borrowed
-> > vs. cloned) in struct fd - the condition cannot be rechecked at fdput()
-> > time, since the table that had been shared at fdget() time might no longer
-> > be shared by the time of fdput().
+On Tue, May 21, 2024 at 06:23:16PM +0200, Gwenael Treuveur wrote:
+> Manage interrupt coming from coprocessor also when state is
+> ATTACHED.
 > 
-> This is great! It matches my understanding. I didn't know the details
-> about current->files and task->files.
+> Fixes: 35bdafda40cc ("remoteproc: stm32_rproc: Add mutex protection for workqueue")
+> Signed-off-by: Gwenael Treuveur <gwenael.treuveur@foss.st.com>
+> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+
+I will pickup this patch but this time only - next time all reviews and tagging
+need to happend on the mailing list.
+
+Mathieu
+
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> You should copy this to the kernel documentation somewhere. :)
-
-Probably, after it's turned into something more coherent - and after
-the description of struct fd scope rules is corrected ;-/
-
-Correction in question: you _are_ allowed to move reference from
-descriptor table while in scope of struct fd; what you are not allowed
-is dropping that reference until the end of scope.
-
-That's what binder_do_fd_close() is about - binder_deferred_fd_close()
-is called in a struct fd scope (anything called from ->unlocked_ioctl()
-instances is).  It *does* remove a struct file reference from
-descriptor table:
-        twcb->file = file_close_fd(fd);
-moves that reference to twcb->file, and subsequent
-                get_file(twcb->file);
-		filp_close(twcb->file, current->files);
-completes detaching it from the table[*] and the reference itself
-is dropped via task_work, which is going to be executed on the
-way out to userland, definitely after we leave the scope of
-struct fd.
-
-Incidentally, I'm very tempted to unexport close_fd(); in addition to
-being a source of bugs when called from ioctl on user-supplied descriptor
-it encourages racy crap - just look at e.g. 1819200166ce
-"drm/amdkfd: Export DMABufs from KFD using GEM handles", where we
-call drm_gem_prime_handle_to_fd(), immediately followed by
-		dmabuf = dma_buf_get(fd);
-		close_fd(fd);
-dup2() from another thread with guessed descriptor number as target and
-you've got a problem...  It's not a violation of fdget() use rules
-(it is called from ioctl, but descriptor is guaranteed to be different
-from the one passed to ioctl(2)), but it's still wrong.  Would take
-some work, though...
-
-"Detaching from the table" bit also needs documenting, BTW.  If you look
-at that thing, you'll see that current->files is converted to fl_owner_t,
-which is an opaque pointer.  What happens is that dnotify and POSIX lock
-use current->files as opaque tags (->dn_owner and ->flc_owner resp.) and
-filp_close() (well, filp_flush() these days) needs to be called to
-purge all of those associated with given struct file and given tag value.
-
-That needs to be done between removal of file reference from table and
-destruction of the table itself and it guarantees that those opaque references
-won't outlive the table (more importantly, don't survive until a different
-files_struct instance is allocated at the same address).
-
-[*] NB: might make sense to export filp_flush(), since that's what this
-sequence boils down to.  We really need a better identifier, though -
-"filp" part is a leftover from OSDI, AFAICT; that's a hungarism for
-"file pointer" and it makes no sense.  file_flush() would be better,
-IMO - or flush_file(), for that matter.
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 88623df7d0c3..8c7f7950b80e 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -294,7 +294,7 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
+>  
+>  	mutex_lock(&rproc->lock);
+>  
+> -	if (rproc->state != RPROC_RUNNING)
+> +	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
+>  		goto unlock_mutex;
+>  
+>  	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+> 
+> base-commit: 4d5ba6ead1dc9fa298d727e92db40cd98564d1ac
+> -- 
+> 2.25.1
+> 
 
