@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-193234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF91F8D28C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035328D2905
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF611F24DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC48F1F25EA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A402F13F43B;
-	Tue, 28 May 2024 23:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4ogkXsa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BCB140378;
+	Tue, 28 May 2024 23:54:49 +0000 (UTC)
+Received: from EX-PRD-EDGE02.vmware.com (ex-prd-edge02.vmware.com [208.91.3.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D838722089;
-	Tue, 28 May 2024 23:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50258140368;
+	Tue, 28 May 2024 23:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.91.3.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716939502; cv=none; b=OFmkIYUTxd2gfoNBmR4ukud9MKcKSSTQ7KU3I4w8eugrBgg3HK1YdbnkBvrdck8rtUV8d+mJqWUDeZpzN+gwkFxhZqOwloY0E4+UGY93Yj8RPqKcDyFLsDwK1bD1JXjS3MIEhaGaVtNusBLwWyzSPLONqPPX7MVCf3mERPfBYME=
+	t=1716940488; cv=none; b=iRhKYyPPySpgxVhSrnA+tX9j4n4XxUpLy99tDJqYy7QageTaqEBdikMofnj3KfgE1ckVe6KSSjtoCvfVRyQLMFkwrUxs+mHqSgr+s6qy328aoL5yrvrqcldPh+48Watfnenh4iiJFzQKqXthtdl7p9C8c/YkkzkDgjYEIrFkXSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716939502; c=relaxed/simple;
-	bh=TpDi1rlY2iMnEAvGzJaWls/kzXNX5boHttjre4NjfoQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fb6LIXyhocGIFpNiKHIuDZo2W+PeiCehpfEs3Fep/gZe/3fXUfs9bfxS0wrZ+nblxmde18DH0AfWfWHNnFGEP/abhI60FP8yL0xhgoWDgOWj8rq59aQ7wDTxVavHBy8+TCMV5xRampq1SNvTLfFn80YICPVhrD/zt3u4SBHAiPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4ogkXsa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FD6C3277B;
-	Tue, 28 May 2024 23:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716939502;
-	bh=TpDi1rlY2iMnEAvGzJaWls/kzXNX5boHttjre4NjfoQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s4ogkXsa+62W8C1AJPuL5IV3P0qrRMShwzi+74VDtJYPSP/tEt6/NMmilxjTxsTxl
-	 OPTBQZ09T7KswYJcGegYOi0YfHDARkYQNisGv3HKyDFX1RHGBwjO+bKyI3dNR9PrIT
-	 4bNq1NiapYAnZ7KMTo792I+1EUtUW7BazK6U+X/gw+Taul/1kkSjlmKR6DszsCZmmI
-	 WXOnX0Oze2PRjc8yY9wZnx/xsPC9VBhNr8oLWeV53N+1HlkaZnYsBpO4OxR74LjFA7
-	 y1pz9Jbgem4Jz+HTKDn+E8k3qhLvD461ls6VQ5sU3hXnuklXemPXEDZz3NddGOAFz5
-	 tOx0uRIBvM66g==
-Date: Wed, 29 May 2024 08:38:18 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Tom Zanussi
- <zanussi@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Tom Zanussi <zanussi@kernel.org>
-Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
-Message-Id: <20240529083818.b7835de167191d4567405ce6@kernel.org>
-In-Reply-To: <20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-References: <171671825710.39694.6859036369216249956.stgit@devnote2>
-	<20240527192907.49c9220f@rorschach.local.home>
-	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716940488; c=relaxed/simple;
+	bh=iScNUZYj9Hl1o8qjxZ4rUlNZplDHdR3KDhNBZxjSiWI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JEoO0sm9ZGAVFyTDGafPzsqU5/XzUdcbM+v3Zlq+PuaCN9NmtWxLlHaExcEhTD8Beu2IJJm12+iDQRA999IGhEdTJC+ViXe2lVc3sk1ZhC+MIon21EDC6fliEC1Xt/d3jM/0ifvV6LfIV3D+bksGjqG6efb+KNp2V9m+4D+UKwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com; spf=pass smtp.mailfrom=vmware.com; arc=none smtp.client-ip=208.91.3.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vmware.com
+Received: from sc9-mailhost1.vmware.com (10.113.161.71) by
+ EX-PRD-EDGE02.vmware.com (10.188.245.7) with Microsoft SMTP Server id
+ 15.1.2375.34; Tue, 28 May 2024 16:38:58 -0700
+Received: from htb-1n-eng-dhcp122.eng.vmware.com (unknown [10.172.6.252])
+	by sc9-mailhost1.vmware.com (Postfix) with ESMTP id BBACD201E4;
+	Tue, 28 May 2024 16:39:17 -0700 (PDT)
+Received: by htb-1n-eng-dhcp122.eng.vmware.com (Postfix, from userid 0)
+	id B54C6B04C9; Tue, 28 May 2024 16:39:17 -0700 (PDT)
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+To: <netdev@vger.kernel.org>
+CC: Ronak Doshi <ronak.doshi@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 net-next 0/4] vmxnet3: upgrade to version 9
+Date: Tue, 28 May 2024 16:39:02 -0700
+Message-ID: <20240528233907.2674-1-ronak.doshi@broadcom.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: SoftFail (EX-PRD-EDGE02.vmware.com: domain of transitioning
+ ronak.doshi@broadcom.com discourages use of 10.113.161.71 as permitted
+ sender)
 
-On Wed, 29 May 2024 01:46:40 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+vmxnet3 emulation has recently added timestamping feature which allows the
+hypervisor (ESXi) to calculate latency from guest virtual NIC driver to all
+the way up to the physical NIC. This patch series extends vmxnet3 driver
+to leverage these new feature.
 
-> On Mon, 27 May 2024 19:29:07 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Sun, 26 May 2024 19:10:57 +0900
-> > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> > 
-> > > Hi,
-> > > 
-> > > Here is a series of some fixes/improvements for the test modules and boot
-> > > time selftest of kprobe events. I found a WARNING message with some boot 
-> > > time selftest configuration, which came from the combination of embedded
-> > > kprobe generate API tests module and ftrace boot-time selftest. So the main
-> > > problem is that the test module should not be built-in. But I also think
-> > > this WARNING message is useless (because there are warning messages already)
-> > > and the cleanup code is redundant. This series fixes those issues.
-> > 
-> > Note, when I enable trace tests as builtin instead of modules, I just
-> > disable the bootup self tests when it detects this. This helps with
-> > doing tests via config options than having to add user space code that
-> > loads modules.
-> > 
-> > Could you do something similar?
-> 
-> OK, in that case, I would like to move the test cleanup code in
-> module_exit function into the end of module_init function. 
-> It looks there is no reason to split those into 2 parts.
+Compatibility is maintained using existing vmxnet3 versioning mechanism as
+follows:
+- new features added to vmxnet3 emulation are associated with new vmxnet3
+   version viz. vmxnet3 version 9.
+- emulation advertises all the versions it supports to the driver.
+- during initialization, vmxnet3 driver picks the highest version number
+supported by both the emulation and the driver and configures emulation
+to run at that version.
 
-Wait, I would like to hear Tom's opinion. I found following usage comments
-in the code.
+In particular, following changes are introduced:
 
- * Following that are a few examples using the created events to test
- * various ways of tracing a synthetic event.
- *
- * To test, select CONFIG_SYNTH_EVENT_GEN_TEST and build the module.
- * Then:
- *
- * # insmod kernel/trace/synth_event_gen_test.ko
- * # cat /sys/kernel/tracing/trace
- *
- * You should see several events in the trace buffer -
- * "create_synth_test", "empty_synth_test", and several instances of
- * "gen_synth_test".
- *
- * To remove the events, remove the module:
- *
- * # rmmod synth_event_gen_test
+Patch 1:
+  This patch introduces utility macros for vmxnet3 version 9 comparison
+  and updates Copyright information.
 
-Tom, is that intended behavior ? and are you expected to reuse these
-events outside of the module? e.g. load the test module and run some
-test script in user space which uses those events?
+Patch 2:
+  This patch adds support to timestamp the packets so as to allow latency
+  measurement in the ESXi.
 
-As far as I can see, those tests are not intended to be embedded in the
-kernel because those are expected to be removed.
+Patch 3:
+  This patch adds support to disable certain offloads on the device based
+  on the request specified by the user in the VM configuration.
 
-Thank you,
+Patch 4:
+  With all vmxnet3 version 9 changes incorporated in the vmxnet3 driver,
+  with this patch, the driver can configure emulation to run at vmxnet3
+  version 9.
 
-> 
-> Thank you,
-> 
-> > 
-> > -- Steve
-> > 
-> > 
-> > > 
-> > > Thank you,
-> > > 
-> > > ---
-> > > 
-> > > Masami Hiramatsu (Google) (3):
-> > >       tracing: Build event generation tests only as modules
-> > >       tracing/kprobe: Remove unneeded WARN_ON_ONCE() in selftests
-> > >       tracing/kprobe: Remove cleanup code unrelated to selftest
-> > > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Changes in v1:
+  - make latency measurement and rdpmc read x86 specific in patch 2.
+  - use BIT macro.
 
+Ronak Doshi (4):
+  vmxnet3: prepare for version 9 changes
+  vmxnet3: add latency measurement support in vmxnet3
+  vmxnet3: add command to allow disabling of offloads
+  vmxnet3: update to version 9
+
+ drivers/net/vmxnet3/Makefile          |   2 +-
+ drivers/net/vmxnet3/vmxnet3_defs.h    |  61 +++++++++-
+ drivers/net/vmxnet3/vmxnet3_drv.c     | 222 +++++++++++++++++++++++++++-------
+ drivers/net/vmxnet3/vmxnet3_ethtool.c |  10 +-
+ drivers/net/vmxnet3/vmxnet3_int.h     |  33 ++++-
+ 5 files changed, 279 insertions(+), 49 deletions(-)
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.11.0
+
 
