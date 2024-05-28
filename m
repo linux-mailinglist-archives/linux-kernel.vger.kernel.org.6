@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-191694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCBA8D12B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5781D8D12B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C821A280C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875A61C2141D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40DE6A339;
-	Tue, 28 May 2024 03:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23C71B4C;
+	Tue, 28 May 2024 03:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmKZnIPn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqFocltI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6D8175AB;
-	Tue, 28 May 2024 03:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECBC71738;
+	Tue, 28 May 2024 03:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716867172; cv=none; b=KmIF8U9FG8kNWv8X77he/bvw55im7Jan1Xd8asrs/MplWk28T3TSc8gdf3f0rzjfT32PaOUdh87VFkZS5VxUDEv+E+NQK3YSvV+5c1u61KPVDMrApAMRncDHLZBHqAtDxOxpsRg+LmeyUbsCcVGFinSkIpOdbgK0Wy000Aort90=
+	t=1716867174; cv=none; b=gtx1opmejEJQrYXMplQE0MleVtlKd/YRSmDncXhuoKWnD4JD+dr3+SBguB5khw91j8+idtC5z1oKHW7BS910yy80VUGsbaUE82iPkuz5QDVXfAXTtJFkt0e1fAlo21sfmlGImD9pGsSqZ2qMbsLbkFc9/jqmuNVOD2rcp4QT4hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716867172; c=relaxed/simple;
-	bh=Pzs6rAl+Os5a8UYy7z9/wmfBQy+KV2M+8MPnC8ZPMEI=;
+	s=arc-20240116; t=1716867174; c=relaxed/simple;
+	bh=3F/iaj0sTdKEfYQ0arvZB59GOP1po3xc0soM7qZz6PU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ctcXC3Spu9jWR9mDVYmrZNqj0E6vDwykvpE+jw1DXmz8R5rGFCsDd69xBYtAr5nFtz0hLHJ/v+RUDW1zwy0cIyTYwGia6KCdI4QgQnergkeFZJT0coySP7SWrIty3xmaZg3dkPs0RolvlLXMtbH4e6UH51DDorBOxarCgpwzq+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmKZnIPn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB38C4AF07;
-	Tue, 28 May 2024 03:32:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Lz5ReMRWtCiab0iyH8aqBxeERnqokQOo6oMGPFbpPAHmJY4sDEWTHetv5iB9Qh1A97zVRu6L0DN1lRIgbLsrDsmHkmqx+YMc+CLV6Pwnp59L5GMlGc51uXYXv7blc4INIyke3mbXgOOYkfwsPCGsyGYqs736VKprHSDPU06n7bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqFocltI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A258AC3277B;
+	Tue, 28 May 2024 03:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716867171;
-	bh=Pzs6rAl+Os5a8UYy7z9/wmfBQy+KV2M+8MPnC8ZPMEI=;
+	s=k20201202; t=1716867174;
+	bh=3F/iaj0sTdKEfYQ0arvZB59GOP1po3xc0soM7qZz6PU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gmKZnIPnNK3g29Wcru+aBtBOQxafD+5woMVduH4CRxyDjuBpCTHaVv1uk6pNtUSA7
-	 0PpMBwbreOJE4pZoQblge+whk405hEozvHOdEfOENRWwOmTULJ1R+BhoFRgKHQv8fn
-	 lIIFV/HfImK0cIvRX86uwQWBPJeoDLF3nLDXk6zOVxPNVJhCw8Efgsd0p9qKxFSuhX
-	 MQGJst2EA5mSGmJo6D+G3heS8pgJDEqgZSA4lA0X5/6imEZdvFD2HQv0tFNEbj3SRP
-	 26dRHO53p0z3CFqPTLA+8GHRizSuJoWQNNah3VwKH2fOhb5Itq6OmRk/JOWYvY5gHo
-	 w2zLcOahoafoQ==
+	b=OqFocltIbdFzaKisUygv8yxZG4W/JiwZFNtF1U5K0YP3gdpSawVb0o+Ck2XaSICV6
+	 xW93I6ZrUGLaDeryGBpjRxAJ+E7skovCP8noKxSmMW+8ZsFPSN0X01wj0504rnXlhK
+	 GLdz2HZNkaC894UnEOLW1bksLMDMSLO2wiYM2NhihvkBvyevbcNSnBUziTgy/K52/9
+	 xW1NgrUYW7g22jN5iu2PLrhHPNAnwaJ0rhigQrpKEOAmVUBNtBqMXUjo1px8s4OBlL
+	 SyiUOqu1S0W89fNnncX0yLBO/g38SM5sfrNQoMzVDrZrDXQQHXNbYLoet3tEurHjP6
+	 Tq96luckpkxTg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Gabor Juhos <j4g8y7@gmail.com>
+	Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 0/2] arm64: add minimal boot support for TP-Link Archer AX55 v1
-Date: Mon, 27 May 2024 22:32:16 -0500
-Message-ID: <171686715171.523693.8312722278124024372.b4-ty@kernel.org>
+	Johan Hovold <johan+linaro@kernel.org>,
+	Steev Klimaszewski <steev@kali.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sc8280xp: Set status = "reserved" on PSHOLD
+Date: Mon, 27 May 2024 22:32:17 -0500
+Message-ID: <171686715156.523693.3470722678035389426.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240326-archer-ax55-v1-v4-0-dc5b54a4bb00@gmail.com>
-References: <20240326-archer-ax55-v1-v4-0-dc5b54a4bb00@gmail.com>
+In-Reply-To: <20240510-topic-8280_off-v1-1-bcc70cda449e@linaro.org>
+References: <20240510-topic-8280_off-v1-1-bcc70cda449e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +66,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 26 Mar 2024 15:52:26 +0100, Gabor Juhos wrote:
-> The purpose of this series to add minimal boot support for the
-> TP-Link Archer AX55 v1 dual-band wireless router.
+On Fri, 10 May 2024 15:39:59 +0200, Konrad Dybcio wrote:
+> On most devices, TZ seems to be blocking access to the PSHOLD reboot
+> register. This seems to be TZ, as even kicking the hypervisor doesn't
+> seem to make it writable.
 > 
-> There are two patches:
->   - the first one adds the compatible for the board into the dt-bindings
->     documentation,
->   - the second patch introduces a minimal device tree source which can be
->     used for booting initramfs images
 > 
-> [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: arm: qcom: add TP-Link Archer AX55 v1
-      commit: 5c59666c443d730991ddbe46b098dc473cf56a55
-[2/2] arm64: dts: qcom: add TP-Link Archer AX55 v1
-      commit: e6d33c8b2f8063e1f195cfc0e7f1c9e21066d13b
+[1/1] arm64: dts: qcom: sc8280xp: Set status = "reserved" on PSHOLD
+      commit: 8a1fd54d007279207c1dfe090084749706fb413b
 
 Best regards,
 -- 
