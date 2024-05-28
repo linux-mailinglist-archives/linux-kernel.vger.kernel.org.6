@@ -1,163 +1,154 @@
-Return-Path: <linux-kernel+bounces-191754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368048D13B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:09:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190AD8D13B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D981C20DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:09:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66F9EB224A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45E3405F8;
-	Tue, 28 May 2024 05:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A6443AD9;
+	Tue, 28 May 2024 05:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jw8UdCnR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="aOUgv6/M"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A12563;
-	Tue, 28 May 2024 05:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DFC182BB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716872974; cv=none; b=ZZY1uj5NkOo2w42+oBifr/TbDMZj08lP6yRgmAWUVPbmNLHmW5laao+IAUxbJxgP9xJA74ebRTwF69hRNi+3aFcO38cvtpEvfKOtM5dF5l/pgWxvXuAMgVSxw6sroaaQJquUOrYj+T92s+iDTEw/N6rq7/BWxC9xi6KTsSO1924=
+	t=1716873167; cv=none; b=WryNuCyRb6e+KO5aEehpT3hiMJ8Vqy3EUCXwOKZEQqof6SOs2GfA63cwMmokFAuJJxejbznDKzQqCXX0mnRNOG/sC5EFJu92JHORuCo809I4wgycjLBzHtgvs3qPP1bktMZpVy21ePwDAYep2WVXqoCZ8TbuJ1lEi5H6itTu6VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716872974; c=relaxed/simple;
-	bh=kpsGV9jcYDW5WH47X5uu4EzSSt+qtbgWJWijGgX7koo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dD13TrBiJM4NlH5eUv3Sa04KAz71ZDryYjPUAZ5dkRP4RC9OMM9DzWtQTsCVkZmfZW7jnYFm1qFVD3NOTU/GWoRktMjUe+XsESykxnOa9amPfOJmUYGHtWI2HORRVA0iLu0ofofOzOvOJUhFXYD7GDhG0/aGSGcvK8qii3s/FEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jw8UdCnR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DFCC3277B;
-	Tue, 28 May 2024 05:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716872973;
-	bh=kpsGV9jcYDW5WH47X5uu4EzSSt+qtbgWJWijGgX7koo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jw8UdCnRTpugfMOeiexIUSTXOeR+Z7O8Tyda/mjBme7P1bw6OTB4+UDom2mZMduXy
-	 Zma14INdm43UEG6aTxz1rVEKqL8pK+VMWF29pqAtnCROYNXSDL3Ycji34KzWAeFk77
-	 lqlhYnamYEy99IEa3HAcd5yFGuDdqoBnyMk1/ghvOYoy8D2HfdXG9VkmFZ+YkH3SIc
-	 DsVN8l/hDhYj2lskZaQCRvpW6+8uAzewAwb2GcqZVXBDrxVT3itmIcHozbgqxWnp0k
-	 VirsDf95IZVSaqUDVswfGziUpudIrH2Ir5q+ZiFqKrwanCJu7hBA7yefFRVW5KxYjs
-	 cVMj7jKb0ex4g==
-Date: Tue, 28 May 2024 05:09:29 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH 4/5] leds: add ChromeOS EC driver
-Message-ID: <ZlVnCX41HdksPwUo@google.com>
-References: <20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net>
- <20240520-cros_ec-led-v1-4-4068fc5c051a@weissschuh.net>
+	s=arc-20240116; t=1716873167; c=relaxed/simple;
+	bh=2ZGZeycdp5GJxWuvBsZV8gpu6cM4WHkuZaGF7VCG6/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cP5rEbEG0KgbtBoX8Z0vt5HrJ00TVrs6bhN+gJaYQB7hYx+53FlVudJCIrvgVICRjhmXARd0IwD9zfkjXIzj8f7G3sLRSpa21VrQjolCuJ2AmkCMDgzW+OP7ODxJ+K+k0iF2/2lRu0WvpKjCGrHnpBgfVz9aOUp+nYfr+mU/PTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=aOUgv6/M; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a633ec1cecdso22087366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 22:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716873164; x=1717477964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sEzBOXaIzbfMi17IPevGDHsDdowwd5GTFXbnEzHCSrk=;
+        b=aOUgv6/MvoCU8iHGHkp26EK5gjdQdCZHrrTzdBdwTVMK0ur4bBtHGtoQLmbHL+pZBz
+         XANS12lTfjoTB+IR7PZQnWvWwL+1W590Y/BMhp0cK4y6SXUM6w6lqyPBemGVjkRf9Iw0
+         pDAMkZJIPiCCiU9kPoSzKPFc64SMW86CKrlue1IJ2ea4iSwSpHumYTjhqJt7drxi0/FO
+         h/nHGeGURQPuokI6OXNCskMKwHhVsT40Il3Hr8p6SsffgSWjbt8Fmgpy959eoj0DijYr
+         1VFpsEbFJnpZw3xFRshPj8yD4L8h7jI/NtFx1vsIil4KvB86I8i3kCPbF8X9E3N3UGGg
+         qiRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716873164; x=1717477964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sEzBOXaIzbfMi17IPevGDHsDdowwd5GTFXbnEzHCSrk=;
+        b=fPeyidj1CtREgnl9JRoBRsvYiIdeZGLvSHcgGMSNFUZI8AWm78oNXQJ/dwRkjBGiok
+         jUcJl3ioIniFhrHVALRg9K/GFRdC0ZLEznK+VKzaywIG4qFXyMk42EVsd+HmXhkEE7lA
+         kvqPly6dUi3HQwfIt60ypWWDoN4wIrhg0+jva738Yl8RwhgmJy6gD8nmmBjzVKygYZNr
+         MAJ6LDE9v1YQj5Zs1xDcMc4uJSbEnH2SgUzsV5YvPOyrcN0SY2HOI4MUgqddourY7vp0
+         R8/UtmtWaKUi7XXLDXbubx/OK6t7ac+riKV5YZfC4Iu1+PJNHVvhCJkZ6JLkpBRtkgRW
+         Z1bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZmTzBSPOB3AdC6r9iddXDkAj7tuQU6EcF2kcSmpSmomWuuGc9+WxULcy0A1cE/abHDJ250DWuGIMGjVxu+BDtTU0hDNRDxiYjr13F
+X-Gm-Message-State: AOJu0YwbVOIRusXEWTRWKrsiTabQk8xFawfXem4tqNBmA2JF/vnfPqMk
+	6VOsz6t8D60A2GJCeK5RnWsehJrtrUWmvWCUTWUuR+D/OYLJwfIpuUfxgmUN+uddlH6jrdA7j5d
+	dDALm+9f9fEZWFtTKYNBG3rBjyX5geEG1dWbs3A==
+X-Google-Smtp-Source: AGHT+IEgxGjpAfcQgJZPSZI09AOkDzjS2yiXb3qyIvWjw9VwAJvJ9LR53vE4/EKu6a8gJSxYcCVxmFt54915XaKYz7w=
+X-Received: by 2002:a17:906:69a:b0:a5a:7ce8:f52c with SMTP id
+ a640c23a62f3a-a62641b1fccmr653519166b.16.1716873163902; Mon, 27 May 2024
+ 22:12:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240520-cros_ec-led-v1-4-4068fc5c051a@weissschuh.net>
+References: <20240527153137.271933-1-alexghiti@rivosinc.com> <ZlSuIu1aFLzAiH_1@krava>
+In-Reply-To: <ZlSuIu1aFLzAiH_1@krava>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 28 May 2024 07:12:31 +0200
+Message-ID: <CAHVXubhSXjFKP_7qfw0GMvrrVinwvCKizAiC2Xeu5EP6U0JpKQ@mail.gmail.com>
+Subject: Re: [PATCH -fixes] bpf: resolve_btfids: Fix integer overflow when
+ calling elf_update()
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 12:00:32PM +0200, Thomas Weißschuh wrote:
-> diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
-[...]
-> + *  ChromesOS EC LED Driver
+Hi Jiri,
 
-s/ChromesOS/ChromeOS/.
+On Mon, May 27, 2024 at 6:00=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Mon, May 27, 2024 at 05:31:37PM +0200, Alexandre Ghiti wrote:
+> > The following error was encoutered in [1]:
+> >
+> > FAILED elf_update(WRITE): no error
+>
+> hi,
+> this fix got already in, check this patch:
+>   https://patchwork.kernel.org/project/netdevbpf/patch/20240514070931.199=
+694-1-friedrich.vock@gmx.de/
 
-> +static int cros_ec_led_trigger_activate(struct led_classdev *led_cdev)
-> +{
-> +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
-> +	union cros_ec_led_cmd_data arg = { };
+Damn, I missed this.
 
-To be neat, { } -> {}.
+If possible, I think that adding the link to the bug report (or at
+least the "FAILED elf_update(WRITE): no error" string) would make
+sense, since it is not a "potential" overflow anymore.
 
-> +static int cros_ec_led_brightness_set_blocking(struct led_classdev *led_cdev,
-> +					       enum led_brightness brightness)
-> +{
-> +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
-> +	union cros_ec_led_cmd_data arg = { };
+Thanks,
 
-Ditto.
+Alex
 
-> +static int cros_ec_led_count_subleds(struct device *dev,
-> +				     struct ec_response_led_control *resp,
-> +				     unsigned int *max_brightness)
-> +{
-> +	unsigned int range, common_range = 0;
-> +	int num_subleds = 0;
-> +	size_t i;
-> +
-> +	for (i = 0; i < EC_LED_COLOR_COUNT; i++) {
-> +		range = resp->brightness_range[i];
-> +
-> +		if (!range)
-> +			continue;
-> +
-> +		num_subleds++;
-> +
-> +		if (!common_range)
-> +			common_range = range;
-> +
-> +		if (common_range != range) {
-> +			/* The multicolor LED API expects a uniform max_brightness */
-> +			dev_warn(dev, "Inconsistent LED brightness values\n");
-> +			return -EINVAL;
-> +		}
-
-What if the array is [0, 1, 1]?
-
-> +static int cros_ec_led_probe_led(struct device *dev, struct cros_ec_device *cros_ec,
-> +				 enum ec_led_id id)
-> +{
-> +	union cros_ec_led_cmd_data arg = { };
-
-Ditto.
-
-> +static int cros_ec_led_probe(struct platform_device *pdev)
-> +{
-[...]
-> +	int ret;
-> +
-> +	for (i = 0; i < EC_LED_ID_COUNT; i++) {
-> +		ret = cros_ec_led_probe_led(dev, cros_ec, i);
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	return ret;
-
-`ret` should be initialized in case EC_LED_ID_COUNT would be somehow 0.
-
-> +static int __init cros_ec_led_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = led_trigger_register(&cros_ec_led_trigger);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = platform_driver_register(&cros_ec_led_driver);
-> +	if (ret)
-> +		led_trigger_unregister(&cros_ec_led_trigger);
-> +
-> +	return ret;
-> +};
-> +module_init(cros_ec_led_init);
-> +
-> +static void __exit cros_ec_led_exit(void)
-> +{
-> +	platform_driver_unregister(&cros_ec_led_driver);
-> +	led_trigger_unregister(&cros_ec_led_trigger);
-> +};
-> +module_exit(cros_ec_led_exit);
-
-I wonder it could use module_led_trigger() and module_platform_driver().
+>
+> thanks,
+> jirka
+>
+> >
+> > elf_update() returns the total size of the file which here happens to b=
+e
+> > a ~2.5GB vmlinux file: this size overflows the integer used to hold the
+> > return value of elf_update() and is then interpreted as being negative.
+> >
+> > So fix this by using the correct type expected by elf_update() which is
+> > off_t.
+> >
+> > Fixes: fbbb68de80a4 ("bpf: Add resolve_btfids tool to resolve BTF IDs i=
+n ELF object")
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218887 [1]
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  tools/bpf/resolve_btfids/main.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids=
+/main.c
+> > index d9520cb826b3..af393c7dee1f 100644
+> > --- a/tools/bpf/resolve_btfids/main.c
+> > +++ b/tools/bpf/resolve_btfids/main.c
+> > @@ -728,7 +728,7 @@ static int sets_patch(struct object *obj)
+> >
+> >  static int symbols_patch(struct object *obj)
+> >  {
+> > -     int err;
+> > +     off_t err;
+> >
+> >       if (__symbols_patch(obj, &obj->structs)  ||
+> >           __symbols_patch(obj, &obj->unions)   ||
+> > --
+> > 2.39.2
+> >
 
