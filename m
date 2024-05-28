@@ -1,201 +1,126 @@
-Return-Path: <linux-kernel+bounces-192856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F818D2320
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADE88D2325
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B2AA1C228E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:13:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598911F228CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF4E4CDEC;
-	Tue, 28 May 2024 18:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFEA482D3;
+	Tue, 28 May 2024 18:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EARHVhWq"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l/zCXUjp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB51547F6C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907A2481A3;
+	Tue, 28 May 2024 18:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716919952; cv=none; b=N2wGH4fgL+jQIdgs/Ee0WlkyNOjmVwCs+CXgd/jBMJ1XlCa53krXgNAaxpQlri3MwqSXpdMMf6wTphVLHeyhNyDpVU5mBBKcQkuCR6LhnVFbQZLjCZq7OsLFCh5q0daomNSAVlFOV+GkQh9PvYEMx70X1pxeHzS/DHOhUWwL9FQ=
+	t=1716920062; cv=none; b=O1b9rOw4gVI55r59f2mgajxEo9bL4dw+IqvNBhdu9IIODR2q9sZcAR0r5SzFB9/1wu84FTgrZNXHyE6IGCdxgSwRKSkVcZmd4Z01xFF6eJWocIV/osVF6j2eE/UAI+Q/Di+sSdvTmKnSqKaHq5l1eF2z9z/S3/0Ox5/lQl0muRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716919952; c=relaxed/simple;
-	bh=uBFofHxY79sXdXXq73E6gE3Zjpo2XLY4SFJJWjwUqS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EajdM2rWYg21hNw1GIVJciUSZbI236YPSi6slDOKbZW9CWeD/9sUty7adnu9umnEpXH+e2TgEuJxkQb0vab7KmkvvpueaIK+zPAbh7qM9P/mmD2WeTRz5PUXS3jOqqFH2Qxu/CmFakSq0UtnBmBvdBHbY+iZ39mjqJDOQkbUb9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EARHVhWq; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57857e0f464so1622910a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716919948; x=1717524748; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWWwKaisjyRPFI3vZm/ptH496eo+7DY2MiI53H9w4ls=;
-        b=EARHVhWq1Q4YvaLt6Tzxy/pgGBiVbplorBwK3/ygFEE5JGc3w/HTZQU1pV4SWnN1WC
-         nulmHQibGiXD49SAob+TsJ3xLqYUz0ohixfQwk9sjiAiZdtr7FBQgU8LeZZiTnlTqWD6
-         9O231ltWPP8ODtlUqKqxIjckhwuf5nNxEpXbo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716919948; x=1717524748;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HWWwKaisjyRPFI3vZm/ptH496eo+7DY2MiI53H9w4ls=;
-        b=ZzuYajyDJ8UcTp1V5aofQFPVTNZWVjAJw7h4u89VEE7CDbYZrb2dEVWr1j6WGvjo2c
-         pgQdDoLhukDsBEJj2ZGzP57ZfIrwpukB4ssMmRQtHVfJVP4gAOvCxRUzZSxosmtJLYvT
-         Ii2aabqJBHM4FI/fOVuaBjeFQxzzHmzPZtUMk52pq+jkBxhYTUtg3N2uMTL5dKy0pIBS
-         FHisacWTjcvLPee5/nwolIAJl6bqld1pCpH1IjGsjnsePuViAWA9CHniQzVETSvqFCcL
-         bZ24yX1V9aC9cPM9HmYlI9ld4AT3hq8kRNNgVx8LPx0rPLXZ7TxMjyvLfZZhVS0in47q
-         z+ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUel4m5qZmK5n/Dd/hSR92n5SmYAgOkml8jjPlKfwu1NxgMET19Y+NivSWVdgfAste1a3uA4LtJQjE8LOPaaY9Tn9UsrqMcxbzMSnb
-X-Gm-Message-State: AOJu0YwMmMKd35tDixTSoCN3E7gUF42Ez2tGC8QEuQi9JYUnrZCZ22DQ
-	i0Iew0ZOWp1R9fO2rIOrrI8KjC157wuCPSs7B1k6UaSxHTbcpJc3yBOaX6R3Th8kzlcqtZV+aJa
-	VZTckrg==
-X-Google-Smtp-Source: AGHT+IFCKcPBXqpALdEktjteiVzeL4/WNsOi/xs7ZvOdx9S8EZHM9U607ZA2s64X08ZZFz8/86m1kg==
-X-Received: by 2002:a50:c30d:0:b0:578:5f9f:89ea with SMTP id 4fb4d7f45d1cf-5785f9f91b2mr8665445a12.31.1716919948217;
-        Tue, 28 May 2024 11:12:28 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57967499969sm4984513a12.22.2024.05.28.11.12.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 11:12:28 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6267778b3aso123165866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:12:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWZWjQdMHOzjXaPVFQw/GeXVhNzLvHBLuDc16Nakon89u6BGkCL6bg8EWZ2STpy+USQR+HoYayXQJ9FvcovYt2SpvdmRCsRPTVfDHKJ
-X-Received: by 2002:a17:906:9b1:b0:a63:3170:14ae with SMTP id
- a640c23a62f3a-a6331701592mr183130366b.9.1716919947490; Tue, 28 May 2024
- 11:12:27 -0700 (PDT)
+	s=arc-20240116; t=1716920062; c=relaxed/simple;
+	bh=VMjF3tpqPP+iyXgY61yhP4sBKCOnsLB2r908kQBQQJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hENiViiQlhcs2atKJOgV6BXvlSEVGPrRMLUrxA659sAVf1rMJWeEAEgZ3aavYdoahTgv4rAlm8aDesK3QSrKA74mKSiKImITNW4JhikjCTTvag8YIovet3y9RW4CIouuZ8uJJFHJII4lDGOEqQvW/PV0IiUPo5fG/9RWKngqzWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l/zCXUjp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7Zzm0bJuyH51B7I7g2xqGeWwmr5hFPwnNOEhq85FSM8=; b=l/zCXUjp4tOisQWyaPQ9ctrAHJ
+	FrrljttaQZLjSZh152ZzgMBs6e5HeIjTvMCNcWQ3s+LQ0orhMYTEpGnqA4rUjG/7xeJ66rxSHxu47
+	XzLAmGxc59YFFPINcnDXA51neF+hbYZe3c9YuYC+slYG1UKx/8yn4TpYL1GHB0QATO8o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sC1Kj-00GBNi-JS; Tue, 28 May 2024 20:14:01 +0200
+Date: Tue, 28 May 2024 20:14:01 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Alex Williams <alex.williams@ni.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
+Message-ID: <1398a492-95aa-46d9-b52b-a374fd6e9e77@lunn.ch>
+References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
+ <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
+ <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
+ <ebf93967-81d0-46bc-baf5-b20f9336cfa8@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com> <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com>
-In-Reply-To: <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 May 2024 11:12:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
-Message-ID: <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Ian Rogers <irogers@google.com>
-Cc: Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebf93967-81d0-46bc-baf5-b20f9336cfa8@linux.dev>
 
-On Tue, 28 May 2024 at 10:40, Ian Rogers <irogers@google.com> wrote:
->
-> I agree it picked the wrong PMU for default events. This was a problem
-> on no systems that anybody was bothering to test with. Having been
-> made aware of the issue I fixed it in this patch, you're welcome.
+On Tue, May 28, 2024 at 01:52:56PM -0400, Sean Anderson wrote:
+> (forgot to CC Alex)
+> 
+> On 5/28/24 13:50, Sean Anderson wrote:
+> > On 5/28/24 13:28, Russell King (Oracle) wrote:
+> >> First, note that phylib's policy is if it loses comms with the PHY,
+> >> then the link will be forced down. This is out of control of the SFP
+> >> or phylink code.
+> >> 
+> >> I've seen bugs with the I2C emulation on some modules resulting in
+> >> problems with various I2C controllers.
+> >> 
+> >> Sometimes the problem is due to a bad I2C level shifter. Some I2C
+> >> level shifter manufacturers will swear blind that their shifter
+> >> doesn't lock up, but strangely, one can prove with an osciloscope
+> >> that it _does_ lock up - and in a way that the only way to recover
+> >> was to possibly unplug the module or poewr cycle the platform.
+> > 
+> > Well, I haven't seen any case where the bus locks up. I've been able to
+> > recover just by doing
+> > 
+> > 	ip link set net0 down
+> > 	ip link set net0 up
+> > 
+> > which suggests that this is just a transient problem.
 
-You didn't just pick it for default events. You also picked it for
-when the user explicitly asks for "profile for cycles"
+If you look back over the history, i don't think you will find any
+reports to transient problems with real MDIO busses. Hence any error
+is considered fatal. Also, when you consider the design of MDIO, it is
+actually very hard for an error to be detected. It is basically a
+shift register, shifting out 64 bits for a write, or 48 bits for a
+read, followed by receiving 16 bits for a read. There is no protocol
+to indicate any sort of error. If there is no device at the address,
+the pullup means you receive 1s. End of story.
 
-> What is still not clear from this is what should the behavior be of:
->
-> $ perf record -e cycles ...
+With MDIO over I2C, it is I2C which has problems, not MDIO. Do you
+expect transient problems with I2C?
 
-Why do you claim that?
+I would also point out that MDIO is not idempotent. Reading an
+interrupt status register often clears it. Reading the link status
+clears the latched link status. If you need to retry the read of the
+interrupt status register, you cannot, the interrupt has been cleared,
+you have lost it, and probably your hardware no longer works because
+you don't know what interrupt to handle.... If you need to re-read the
+link status, you have lost the latched version, and you have missed a
+up or down event.
 
-I've already told you that CLEARLY it's wrong to pick a cycles event
-that doesn't support 'record'.
+> >> My advice would be to investigate the hardware in the first instance.
 
-I've also suggested that you might look at core only PMUs.
+I agree with Russell. Figure out why I2C is flaky. Since this is an
+SFP it maybe something as trivial as the contacts need cleaning. Or
+the resistors are wrong, or you have a cheap module which is out of
+spec.
 
-But more importantly, you should look at documented and historical behavior.
-
-So what is your argument? Because from where I'm sitting, you keep
-making irrelevant arguments about *other* events, not about "cycles".
-
-It used to work. It doesn't any more.
-
-> Should it wildcard all events and open them on all PMUs potentially
-> failing? Well this has always been perf's behavior were the event:
->
-> $ perf record -e inst_retired.any ...
-
-You keep making up irrelevant arguments.
-
-Lookie here: I do "perf list" to just see the events, and what do I
-get? Let me quote that for you:
-
-    List of pre-defined events (to be used in -e or -M):
-    ...
-      cpu-cycles OR cycles                               [Hardware event]
-
-and then later on in the list I get
-
-    general:
-      cpu_cycles
-           [Cycle. Unit: armv8_pmuv3_0]
-
-and dammit, your patch broke the DOCUMENTED way to get  the most
-obvious profiling data: cycles.
-
-So stop making shit up. All your arguments have been bogus garbage
-that have been talking about entirely different things than the one
-thing I reported was broken.
-
-And you *keep* doing that. Days into this, you keep making shit up
-that isn't about this very simple thing.
-
-Every single time I tell you what the problem is, you try to twist to
-be about something entirely different. Either a different 'perf'
-command entirely, or about a different event that is ENTIRELY
-IRRELEVANT.
-
-What the hell is your problem? Why can't you just admit that you
-f*cked up, and fix the thing I told you was broken, and that is very
-clearly broken and there is no "what about" issues AT ALL.
-
-So stop the idiocy already. Face the actual issue. Don't make up other things.
-
-Dammit, if I wanted "arm_dsu_58/cycles/", I would SAY so. I didn't. I
-said "cycles", which is the thing that has always worked across
-architectures, that is DOCUMENTED to be the same as "cpu-cycles", and
-that used to work just fine.
-
-It's literally RIGHT THERE in "perf list". Using "-e cycles" is
-literally also what the man-pages say. This is not me doing something
-odd.
-
-And yes, I use an explicit "-e cycles:pp" because the default is not
-that. and "cycles:pp" does better than the default.
-
-Again, this is all documented, with "man perf-record" literally
-talking about "-e cycles" and then pointing to "man perf-list" for the
-modifier details, which detail that 'pp' as meaning "use maximum
-detected precise level". Which is exactly what I want (even if on this
-machine, it turns out that "p" and "pp" are the same because the armv8
-pmuv3  doesn't have that "correct for instruction drift" that Intel
-does on x86).
-
-Why is this simple thing so hard for you to understand?
-
-The fact is, if you make "cycles" mean ANYTHING ELSE than the
-long-documented actual obvious thing, you have broken perf. It's that
-simple.
-
-So stop the excuses already. Stop making up other stuff that isn't
-relevant. Stop bringing up events or PMU's that are simply not the
-issue.
-
-Face your bug head on, instead of making me have to tell you the same
-thing over and over and over again.
-
-                   Linus
+	Andrew
 
