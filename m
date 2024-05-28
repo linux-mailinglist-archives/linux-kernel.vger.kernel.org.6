@@ -1,199 +1,258 @@
-Return-Path: <linux-kernel+bounces-192891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05AC8D239F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:59:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0208D23A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4351C22E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F00285CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAC5172767;
-	Tue, 28 May 2024 18:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C522B17167A;
+	Tue, 28 May 2024 18:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aaIuOXAP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VnlRwlYn"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4392563;
-	Tue, 28 May 2024 18:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7282563
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922741; cv=none; b=drpkl9y2xYY8u8ltwLSgbLKcL7B1yWX06rMGec2bU8Xd+156XIqk7MKVYu6bXWNoxweMLYqpCrJLeBziVvTIANU6YpxxTuldyNXQrs58TZ3W+wzTIyzL4MoPR2y0CdC1tNRo5eJH+GH94TXKwALkB4GH+xs1NxiWl5eE7N7HUSI=
+	t=1716922754; cv=none; b=CkVX3ssDtbqgR9DHehlvtah2Td3mNAigOZYRRs0DfnMfsy40K5DbLEGz41hYOnIE5KeYXwK0S9ZoPo+1HwfgDnfsHVX4wpfdYLCdarigT7UvmLlx3R289n8vORpsZFuOX1iliyIMQVeuLNQPNibzMIPd/TtxhJZoDQfWDxOynco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922741; c=relaxed/simple;
-	bh=W7NINJAfUE5+sC2Emy6XSjc0tWE68CZdGq0aJ2UO3w0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ar0FEu1dCRue1KYAdkjoNjD3hn5xEkkyEoSgRvVVI9qfKgAnhKTZvgfwmlKjRyYPkLsLyVBaF5WpCZguFqspGSd1ws/jbPTABwrGuZqAobxRSQUVxIUjYfsukFvQvgmS6s1ydE02xfTTmHYp5R9OZnbfixEaVaPxkBqe95lfoKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aaIuOXAP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBk93T020271;
-	Tue, 28 May 2024 18:58:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NXaJLaXWX0TfB8EfTxrbz0twl+rwQq6aFudYwlaH1YY=; b=aaIuOXAPanto0XhG
-	z0dDv1IVN4WIo6NqjaAvBfKLR9nmcdZL628jgXAr56y7q/nW1wcTuwbPpR4/+UIG
-	qapT6Vy3w5bV6v7fVygIV81nmOfHRlaJIFcmM4G9HqUVGnljklyVQsX3gto3AvNZ
-	io9hpANIs/M/fAsP0H9n9WXLrrSix0+Mc9af1L5/e/rrDLtJ3MIRb95lEPqI1j/h
-	DQea/R2GRtKSvs91/tGIoAz5UFPbYYenHej92sr1iZlJNhSIExOJHHcg8jPHs4Za
-	8iOfnBzBVoCuZV8ve0asuAItiFHhWw22/hyAib+2E66KLP+KuV/+Hh0i7/OYKJMQ
-	q0GdQA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h71dd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 18:58:37 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SIwacq005019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 18:58:36 GMT
-Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 11:58:33 -0700
-Message-ID: <029a0d9c-7a8f-40d6-8296-7c6e9915a9cf@quicinc.com>
-Date: Tue, 28 May 2024 11:58:32 -0700
+	s=arc-20240116; t=1716922754; c=relaxed/simple;
+	bh=JugizINjHqR9cpFF0CnjW8t70zU3RksmSvm7HZuLe+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kqX4POZOemWrWCjpC0rXJkcR/Q2Be9R2faGvylO01KX9RIeBDR7IhbOwHaQnzlWNuaxhOdUqYz1aaUkD/N0wUGyrnPPdW+2Ji+Q96OWVfkTjSb1kzAO++F8txT56UBmSnGokguhp81FdQN82WCdNTR+sMxIJPltEMdYjyF4jddw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VnlRwlYn; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43dfe020675so97231cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716922752; x=1717527552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELD/2chU87F21aDYaAH3EcQFIS5J1igS3MiO/QHUtns=;
+        b=VnlRwlYngljvmFF/6OmFFb9TNFCmIbL/c8gCfKzGqTS25EnMoocjHx/Wy2XirzRCDn
+         QtxFqve5IjRl/xX8bJXsFuMxRgsCMWS9mt4k22uYU7o2btVp9rrarSlPIXO20L6mPYuV
+         MISvB0dbXS3jvu0mWCgUCH9NsN33bfO56XvCPKSBfwr+devMWLY6vvWSjwvhAL8aIOPm
+         EdRcyROt8BH5CpmVvmL80nb/0JZHd6PhuwI6D8YI+Ar/bA+V+l8qAoKvR88u5jbyVJHV
+         kxfW8JV9cTKZWcOJ7hdBLjqblnPP0WAmzCHQ0eA8AqoDXzO5yH7WtDvo9Ya9TBCIFMQk
+         v+rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716922752; x=1717527552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ELD/2chU87F21aDYaAH3EcQFIS5J1igS3MiO/QHUtns=;
+        b=gaZu3/d97CpGadSVfZfkDqiFDtuu2Sk/Mc3fR5kUjDFqRQYl7I4Ssdrq9p7oCiDTtG
+         /jBcLlqWweaWqUN7FhteYA7NH0NWV23bQ0hidl6rPhPZESLLnq9x13qXdW8fXTosMnZj
+         PoM2FAXxtqAvLJ6ml25G1Nmf/RFpGcKNhlSQ/LfukqV+D4d46m64guzigMvgcAssvv+O
+         DWdnOX96i35aKZGIC2UkdwJIGT351bsBXLNi070+n+8x++4TIV0MO8cvM8T3+P6uR/HK
+         22kBpe8m0/CBMzCrw5xjcABAxlfcTbA5KpBmjfZlX9Hcp/liMirz9ZLoJOfpHk+o97YR
+         RsGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVBuRqYrx40Waog/ZtYIbvNf2H0yrU+61sBY795e8ZgXlZjXd0VI+Zux4ZNIY0rgxJbuIgkTDbSzSWZnvRRkFKCPU7UpsdBYmRN9le
+X-Gm-Message-State: AOJu0YzyUw1I/eAz41eK5vVmWBqXXDeTgAXk+50tOuydNdA2WBFWkayH
+	vQakoOPLtUhG1rBaURzuxPaOa+6Pw0Ay47exq1rzQvFu5X06Wk5yKhuHKyUj2jhCv30rEn4sen+
+	SHVbiR6Hgyi4fPCOT5acYx3EF8tUvuJgGXBfIaGP3nITXoeqpJHgbehM=
+X-Google-Smtp-Source: AGHT+IGnNIRgwwM8j0F+3ahcPSXWF53AQe7JkGqjY5dz35qv2JbOIoODEI7twGYMBh4iLOF1jVuRR7Pdc56bxdiA80U=
+X-Received: by 2002:a05:622a:5106:b0:43e:e09:d346 with SMTP id
+ d75a77b69052e-43fe0d85cdemr201621cf.5.1716922751982; Tue, 28 May 2024
+ 11:59:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
- tstamp_type for scalabilty
-Content-Language: en-US
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Martin
- KaFai Lau" <martin.lau@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
-CC: <kernel@quicinc.com>, Willem de Bruijn <willemb@google.com>
-References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
- <20240509211834.3235191-2-quic_abchauha@quicinc.com>
- <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
- <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com>
+ <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com> <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
+In-Reply-To: <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 28 May 2024 11:58:57 -0700
+Message-ID: <CAP-5=fVGF6A7fwZyF8o0Sz5nNhtXb0007JoCxaiL2XHCKS3=0A@mail.gmail.com>
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l9YZqY9o3Y-jhkalMgdDcau7VEpPvrJB
-X-Proofpoint-ORIG-GUID: l9YZqY9o3Y-jhkalMgdDcau7VEpPvrJB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=651 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280141
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, May 28, 2024 at 11:13=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 28 May 2024 at 10:40, Ian Rogers <irogers@google.com> wrote:
+> >
+> > I agree it picked the wrong PMU for default events. This was a problem
+> > on no systems that anybody was bothering to test with. Having been
+> > made aware of the issue I fixed it in this patch, you're welcome.
+>
+> You didn't just pick it for default events. You also picked it for
+> when the user explicitly asks for "profile for cycles"
+>
+> > What is still not clear from this is what should the behavior be of:
+> >
+> > $ perf record -e cycles ...
+>
+> Why do you claim that?
+>
+> I've already told you that CLEARLY it's wrong to pick a cycles event
+> that doesn't support 'record'.
+>
+> I've also suggested that you might look at core only PMUs.
+>
+> But more importantly, you should look at documented and historical behavi=
+or.
+>
+> So what is your argument? Because from where I'm sitting, you keep
+> making irrelevant arguments about *other* events, not about "cycles".
+>
+> It used to work. It doesn't any more.
+>
+> > Should it wildcard all events and open them on all PMUs potentially
+> > failing? Well this has always been perf's behavior were the event:
+> >
+> > $ perf record -e inst_retired.any ...
+>
+> You keep making up irrelevant arguments.
+>
+> Lookie here: I do "perf list" to just see the events, and what do I
+> get? Let me quote that for you:
+>
+>     List of pre-defined events (to be used in -e or -M):
+>     ...
+>       cpu-cycles OR cycles                               [Hardware event]
+>
+> and then later on in the list I get
+>
+>     general:
+>       cpu_cycles
+>            [Cycle. Unit: armv8_pmuv3_0]
+>
+> and dammit, your patch broke the DOCUMENTED way to get  the most
+> obvious profiling data: cycles.
+>
+> So stop making shit up. All your arguments have been bogus garbage
+> that have been talking about entirely different things than the one
+> thing I reported was broken.
+>
+> And you *keep* doing that. Days into this, you keep making shit up
+> that isn't about this very simple thing.
+>
+> Every single time I tell you what the problem is, you try to twist to
+> be about something entirely different. Either a different 'perf'
+> command entirely, or about a different event that is ENTIRELY
+> IRRELEVANT.
+>
+> What the hell is your problem? Why can't you just admit that you
+> f*cked up, and fix the thing I told you was broken, and that is very
+> clearly broken and there is no "what about" issues AT ALL.
+>
+> So stop the idiocy already. Face the actual issue. Don't make up other th=
+ings.
+>
+> Dammit, if I wanted "arm_dsu_58/cycles/", I would SAY so. I didn't. I
+> said "cycles", which is the thing that has always worked across
+> architectures, that is DOCUMENTED to be the same as "cpu-cycles", and
+> that used to work just fine.
+>
+> It's literally RIGHT THERE in "perf list". Using "-e cycles" is
+> literally also what the man-pages say. This is not me doing something
+> odd.
 
+But nobody else ever reported the issue, even ARM who maintain the PMU
+driver whose event name conflicts. This hasn't been a problem for
+anybody else.
 
-On 5/28/2024 10:24 AM, Willem de Bruijn wrote:
-> Abhishek Chauhan (ABC) wrote:
-> 
->>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
->>> +						    ktime_t kt, clockid_t clockid)
->>> +{
->>> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
->>> +
->>> +	switch (clockid) {
->>> +	case CLOCK_REALTIME:
->>> +		break;
->>> +	case CLOCK_MONOTONIC:
->>> +		tstamp_type = SKB_CLOCK_MONOTONIC;
->>> +		break;
->>> +	default:
->>
->> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn. 
->> So i think this might result in unnecessary crashes. 
->>
->> Let me know what you think. 
->>
->> Logs which are complaining. 
->> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
-> 
-> I received reports too. Agreed that we need to fix these reports.
-> 
-> The alternative is to limit sk_clockid to supported ones, by failing
-> setsockopt SO_TXTIME on an unsupported clock.
-> 
-> That changes established ABI behavior. But I don't see how another
-> clock can be used in any realistic way anyway.
-> 
-> Putting it out there as an option. It's riskier, but in the end I
-> believe a better fix than just allowing this state to continue.
-> 
-I understand your thought process here, but i think doing this option means 
-no application from userspace can use any other clocks except REALTIME, MONO and TAI.
+> And yes, I use an explicit "-e cycles:pp" because the default is not
+> that. and "cycles:pp" does better than the default.
 
-That being said application which are using different sock options to set other clocks needs
-to change and work with just REALTIME , MONO or TAI. (Meaning the above warning from google compute engine
-would be gone because setsock option itself failed in the first place, I suspect here the clockid being used is 
-CLOCK_BOOTTIME which is similar to CLOCK_MONOTONIC with system suspend time as well)
+This is wrong. cycles:P means use the maximum precision, so if the PMU
+supports it it will use cycles:ppp and on x86 this is often the case.
+The number of 'p's used after the event with :P is read from sysfs:
+```
+$ cat /sys/devices/cpu/caps/max_precise
+3
+```
+The default using cycles:P is intentional and better than cycles:pp.
+If `/sys/devices/cpu/caps/max_precise` is wrong for your PMU driver
+then that should get fixed.
 
-I feel that the options which are exposed by SO_TXTIME are limitless as of today the code 
-lacks basic checks such as not checking if the userspace gave a correct input. Meaning if i set
-value 100 as the clockid and write a small application in userspace to set SO_TXTIME. The funny part is the 
-clockid is successfully set even though there is no clock id 100 in kernel 
+> Again, this is all documented, with "man perf-record" literally
+> talking about "-e cycles" and then pointing to "man perf-list" for the
+> modifier details, which detail that 'pp' as meaning "use maximum
+> detected precise level". Which is exactly what I want (even if on this
+> machine, it turns out that "p" and "pp" are the same because the armv8
+> pmuv3  doesn't have that "correct for instruction drift" that Intel
+> does on x86).
+>
+> Why is this simple thing so hard for you to understand?
+>
+> The fact is, if you make "cycles" mean ANYTHING ELSE than the
+> long-documented actual obvious thing, you have broken perf. It's that
+> simple.
+>
+> So stop the excuses already. Stop making up other stuff that isn't
+> relevant. Stop bringing up events or PMU's that are simply not the
+> issue.
+>
+> Face your bug head on, instead of making me have to tell you the same
+> thing over and over and over again.
 
-example :- 
+I keep saying the same thing as I don't agree with you, you have
+broken perf in 6.10 and are presumably looking to me to pick up the
+pieces. To work around the naming conflict on systems with
+arm_dsu_*/events/cycles/ I don't think it is unreasonable to specify
+armv8_pmuv3_0/cycles/, the blame for this lies with ARM's event name
+within the arm_dsu_* PMU driver, admittedly they didn't know this
+would be an issue given perf's non-uniform handling of legacy events.
+When ARM requested that legacy events be a lower priority than
+sysfs/json then the ball was set in motion for this problem. This was
+done to work around an ARM PMU problem on Apple ARM CPUs.
 
-[root@auto-lvarm-004 ~]# ./a.out -4 -S 192.168.1.1 -D 192.168.1.10 a,10
+Let's say an Apple CPU has a PMU called armv8_pmuv3_0. If you try to
+program a legacy event on it then it will be broken - I lack a system
+to test this but I'm reliably informed (user bugs and by ARM) and heck
+it was a bunch of work to get this working if it was for nobody. To
+fix this perf must read event data for armv8_pmuv3_0/cycles/ from
+sysfs. If you don't specify a PMU then perf will try to program a
+legacy event. This is the behavior in Linux 6.9. Oh, but legacy events
+are broken on my Apple ARM CPU. The change made it so when you don't
+specify a PMU you will use the sysfs/json one first instead of the
+legacy one. Viola, your favorite `perf record -e cycles:pp ..` should
+be fixed on Apple ARM CPUs.
 
-value from getsockopt is 100 <== Which means the setsockopt was successful with clockid 100 (which is junk)
+So I think the revert is a real regression for a larger user base.
+There is a testing issue here, not least I don't possess an Apple ARM
+machine. All of these issues revolve around ARM and yet they do
+minimal to try to fix them, beside complain that I should fix the
+legacy/sysfs/json issue which is how we got here.
 
+There's of course the alternate universe view that I need to admit I'm
+wrong and I should stop going out of my way to break people. Hello
+alternate universe, I admit it, I'm wrong and a terrible person please
+accept my most sincere apologies. Please alternate universe, can you
+tell me how to wild card event names and make them work across PMUs
+without the behavior being specific to certain perf comands or event
+names (which I think is worse than having to specify which PMU you
+think the event should apply)?
 
-I also agree that even without my patch, the code in fragmentation case was defaulting it to CLOCK_REALTIME 
-if the mono_delivery_time bool was not set. (So we tried to keep the logic as close to the one which was available in upstream today)
+Thanks,
+Ian
 
-
-I can propose 2 solutions to this 
-1. Have stricter checks in setsockopt functions to set only REALTIME, MONO and TAI 
-OR
-2. Allow all clock id but only set tstamp_type for TAI, MONO and REALTIME to be forwarded to userspace(logic) 
-
-static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
-						    ktime_t kt, clockid_t clockid)
-{
-	u8 tstamp_type = SKB_CLOCK_REALTIME;
-
-	switch (clockid) {
-	case CLOCK_REALTIME:
-		break;
-	case CLOCK_MONOTONIC:
-		tstamp_type = SKB_CLOCK_MONOTONIC;
-		break;
-	case CLOCK_TAI:
-		tstamp_type = SKB_CLOCK_TAI;
-		break;
-	default:
-		WARN_ON_ONCE(1); <== remove this 
-		kt = 0; <== remove this
-	}
-
-	skb_set_delivery_time(skb, kt, tstamp_type); <== pass kt as ease (as it is done previously too) and tstamp_type internally remains REAL
-}
-
-Let me know what you think. !
-
-> A third option would be to not fail the system call, but silently
-> fall back to CLOCK_REALTIME. Essentially what happens in the datapath
-> in skb_set_delivery_type_by_clockid now. That is surprising behavior,
-> we should not do that.
+>                    Linus
+>
 
