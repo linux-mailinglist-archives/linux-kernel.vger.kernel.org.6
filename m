@@ -1,174 +1,212 @@
-Return-Path: <linux-kernel+bounces-193040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C568D25F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:33:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3349A8D25F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEAB1C231A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:33:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69C5DB271C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F8C178CF1;
-	Tue, 28 May 2024 20:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B9A178CF6;
+	Tue, 28 May 2024 20:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GwcNXMnX"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FA8PMqcO"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2087.outbound.protection.outlook.com [40.107.95.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2040875809
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716928423; cv=none; b=nwPQs7lSxDPISPHWzOdypB7W/Xc7uFSvUyg9ayy8Ko59kh4D1pEHhZMFW5cU0WsWnjnHOlRe5JfDh4ALO+NTGrOvEZQfahn4zeHFPBqqBhf5cNnccqetbGFDGY95edNTbecLc5i1vnIRncSZQENFAaclUGixAPsiiEkG/9QGbUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716928423; c=relaxed/simple;
-	bh=aEL25iZmgeF0VL7mEOr0A6fyqaqdxr20iS+3Q0nmp5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j8mGpsOqIwPRp/9YUvRb/pg19H9uSX5CfcVBPTvrt03RyrYWpYghhuMW9NatReiZO/GxNeaZJEuJhhYZ4soIT6Z8uTKVGPB4JB6kosSYcwoG62IV41yZHkrGzmFVBE7c8J1BeAaVDJ+glYVHWGCwypGY6/SeuRSg1x/J62NUz+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GwcNXMnX; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a626919d19dso36614966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716928420; x=1717533220; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0cw2VGZNkMpKSutYrXYjUYeHF/K9pi3s6qLlxaYukgM=;
-        b=GwcNXMnX3DghfIPcrFNbFYCm7AAC1Kea2l3anl1n82SgOZjD67B0D+yUhc7T4D+jEw
-         e3hmmRC1XvzHq7ED5oz2SLQElvHWM5zuuOscJDgudPz/oQ1u5iLnRqidm2Df1i3QzuG5
-         QtmJ7llw8IVJAprvT+XLeuAXtWZaeznUx3CPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716928420; x=1717533220;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0cw2VGZNkMpKSutYrXYjUYeHF/K9pi3s6qLlxaYukgM=;
-        b=Bx1Wz1MvukuN/jOnW8FvfbnwuAiXdBp81k0chyBPpKF8gATNZVkxdM66A00shp+IUg
-         VqM8FE2iqxlCsILqMRSRMZeGaLuprtBu8f/rCo8c6P12kTUJDEx/vS5De3vv+zq+CSmW
-         smWAEzu88cdgHNvmQNTcoV3GuJ/WCvoiM/kFBLltm56MSoEWMaS0/gSDws8BAoJ7u9x6
-         kRBW60UylVKi18yssR3AK3VUEadIVwDmRVJd4yx/Uhw/rMEetErtjZHt5FpVQRWnLShH
-         Vs2pEx5NUD/pDx2D3dBs/cRbepjtoVdryyujQfl2zb4rxiqs7UdPwP7CWVg1wEWe2XGI
-         Y1yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXA9cdxJ+6hEiP2O30W2/Atp7tIm2ArzocLm5X8/lsu/VzioZ72Whs9HeATrB+2GBzvYrgEEZxMv8JyOh6D7BUR7T9foO1F7D2SOVvd
-X-Gm-Message-State: AOJu0YwGd4lKqFG8X7zZHXm+qU+/slaRdlwoM6boDflamQ48d7Ke4HLT
-	YyD687tvbKOTzxgUt0x5XlrkdFUpmq5BG6oAtAW2xiNtQ4UCDJ/khM5BYogtDAT/FMNetKa3l7J
-	IqPP7aA==
-X-Google-Smtp-Source: AGHT+IELKCzJDebiTSyJS1iJNL+6pVh/JyE3TQml66Oc5r/hLkvoeAAinn2v7+xf5nS7+IfnN1E0CQ==
-X-Received: by 2002:a17:906:417:b0:a55:5520:f43f with SMTP id a640c23a62f3a-a642d37e3famr12101266b.10.1716928420391;
-        Tue, 28 May 2024 13:33:40 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a634e48481esm82566766b.224.2024.05.28.13.33.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 13:33:39 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5789733769dso332199a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:33:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWo8wFjQHprD6IDHK1WF9+WbHlueBVfZbbJcWMlpCoqDP5TS1APXcw/5jTsR5DhOXAyCpRL6xtxEzZRCK2+MGAyktSoOhJqZvZ2l+LG
-X-Received: by 2002:a17:907:174a:b0:a59:c807:72d3 with SMTP id
- a640c23a62f3a-a642d6af823mr14314466b.17.1716928419187; Tue, 28 May 2024
- 13:33:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC12E75809;
+	Tue, 28 May 2024 20:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716928432; cv=fail; b=D04/qLvRjBslJBFiS8vsnNn9JrNMyIMX3FJ1cjOgmSbPOqib2mZcERWwZP10QtiZ5CVGpoBeM6XMTlU5mIZvJFgUTeqmZnJ4e3dg1U0FRaaQFgJ9gNN7uXwuTWYNDStUQt1qcY0BoJZw0voj01mEFkIF69uvb9Glz4nWi9cdVbs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716928432; c=relaxed/simple;
+	bh=yPSHtDPWg6CSgHGt0phVasuFXzajnYcsOhqyLxFH5y4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6aDNYsAKhC2UcJLHxcaWOyrYK1zsFCU8NFlGMgUlmdKxtSha58kWWhNeNWqYNC2Au7IXJGvBpxjtpp/jPjziGyWyZS2TbJ4Gy9AxpqhgtAVg9sdKmQ3FqdHX1VGyXmUXt+hh0cu66k3tFD9lz83yNR6O76fY9auf+DLBzpBq50=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FA8PMqcO; arc=fail smtp.client-ip=40.107.95.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OOMZMmSpAu4saLvE8uavdjdmbYg66De9SczSKAHzeyGa8DBvcP9v6EDs0L5lFgvYmWB/WxPGzozckjWoZ58nxkLT79ALKOIBaz93dfVR7AJINE0ABWXLomQ4lS99fxbYBIqPivHqGaiWOvZhsRuma3TAutePcpNhGn9SGLNV/DHHToF5e3QljmMdZk561YoogMrJlksMqeQfkS7SSQQiwug+hV9Kixbdt8UrRP8JsCLs23l3+coquutlChzRFAV9FSaJtvvHjAKEqu339juL5plmNW4MLuID5OqYkb1pw9ZK9e89GwSJv3GTu9rP5HtGmYJTdfBWVLEIVvXSOLvGxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xmOiQMApXYtCBODx6nUJUQOMZ+RqsfTdu+mjq54iFPM=;
+ b=gk5IK3fUWnuySmclJLs0DowHuEgkZl+MtWkOltrzWK+ur2cF4xYtd59dbY3eMIDyIM0Emxq78k93A33MpY8x5uhwYkBGkmUgFfYMrvclIAN+MSsTqrBjbO6Yr8UM9ry88VLl+3peO5rqIqlHYc7ZOlPlL3lL7unND0ZIei5iI5Pc/uj8oP5WzZfCgnc6//ZmL+8wb/bZQu249nJ2uTu0VuUe0fUSowAfpI6zdqiG490tAtGmyGkGQI7kkbuYDRHWn4EoMMSQWT8MQj5IZrOjxdOMEtv80xmdtAGMIIqhW5KhIJ4cns64Z1DRQmtYDc9Qj5gw95B37pNN4AIQSduA1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xmOiQMApXYtCBODx6nUJUQOMZ+RqsfTdu+mjq54iFPM=;
+ b=FA8PMqcO3qtsM2+Ye23MvGtA5Upz8kZ4OWNJgShq/xzPM6dStgkCf0QMoYvmHm3fBzrdBd27G9n5oOEvkDG7ahhO/0UEFTRYPBqSBD19lzg1Hi2CRN4taCBJeAfisotlAn8/RPCmnlKygRHTrTBhsPtsN5pQQOQRrFp1FG6zGjoKHuJx5YAp4V6ErT66liA0WBQojHW27NoyWUitzXYpo9KQX6qWp2/yUkHUfeavn7Y2XHjhKT+vz+vQuiNpPadpCYafiIomg5bVDCnWHGf19ZV5ic/JJFdAACycV5eG9BDFzdBTL/bnac2pp+MKqdiezRZHe/RlMj/fm0iERQCM0A==
+Received: from BN8PR04CA0009.namprd04.prod.outlook.com (2603:10b6:408:70::22)
+ by DM4PR12MB6253.namprd12.prod.outlook.com (2603:10b6:8:a6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
+ 2024 20:33:45 +0000
+Received: from BN1PEPF00004689.namprd05.prod.outlook.com
+ (2603:10b6:408:70:cafe::46) by BN8PR04CA0009.outlook.office365.com
+ (2603:10b6:408:70::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
+ Transport; Tue, 28 May 2024 20:33:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN1PEPF00004689.mail.protection.outlook.com (10.167.243.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Tue, 28 May 2024 20:33:44 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 13:33:25 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 28 May 2024 13:33:25 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 28 May 2024 13:33:24 -0700
+Date: Tue, 28 May 2024 13:33:23 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <ZlY/kxg0VJf7olXr@Asurada-Nvidia>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlAoN3s96HL7ROth@nvidia.com>
+ <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240524131912.GT20229@nvidia.com>
+ <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com>
- <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com>
- <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
- <CAP-5=fVGF6A7fwZyF8o0Sz5nNhtXb0007JoCxaiL2XHCKS3=0A@mail.gmail.com>
- <CAHk-=wh2yboV-UtCO_NFV2TsbbMeHTw0Fqn4rnovbGQzkZLCJg@mail.gmail.com> <CAP-5=fUwcgsB-AruAmGhw6WVNViMaiJ_iHWuZ8=ksrN7Y3V9QQ@mail.gmail.com>
-In-Reply-To: <CAP-5=fUwcgsB-AruAmGhw6WVNViMaiJ_iHWuZ8=ksrN7Y3V9QQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 May 2024 13:33:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgtb7y-bEh7tPDvDWru7ZKQ8-KMjZ53Tsk37zsPPdwXbA@mail.gmail.com>
-Message-ID: <CAHk-=wgtb7y-bEh7tPDvDWru7ZKQ8-KMjZ53Tsk37zsPPdwXbA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Ian Rogers <irogers@google.com>
-Cc: Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZlY886FT3HHLC8Cf@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004689:EE_|DM4PR12MB6253:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46085eae-35e1-4cb0-193e-08dc7f55787d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|82310400017|7416005|36860700004|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SGWGt1w6bTQWFU6M0g2E6noE+2cDqymP6JBKm1aonXoWLF9Zvd+RmJ3kuOCq?=
+ =?us-ascii?Q?DW6zPDVfRtlWTiHHrCnDgpcQ+B/2LX621AJUftOSyOuQXgWakemD5ymYiFb5?=
+ =?us-ascii?Q?uhD2kKuLHm8fzuwhKdc2x8o3OI1mP/GWhGecP5JXxgG79uyonvKGgY0Am7s/?=
+ =?us-ascii?Q?Bv99kXbNgAJq7IBO29BBS5uq2TEE0DvwkV0cDhQ6oG6X+IchUpmIKzZHoozz?=
+ =?us-ascii?Q?9xnBZ/8fbOppahdvu077ix6VuCzRZUQXAqGxjEsJV7HWxv1gkRhGJDWRr0hA?=
+ =?us-ascii?Q?m4QrLpoaP4oUsT5gbssC6mPC0MU5o87eTuAz1IuNhCTBpP8F26sFJU6gJNir?=
+ =?us-ascii?Q?cFIKCNwzX8/EVpLld0m2tNgkMY1Q76lq9U+KhEw5As3o9YuahraMSPlAgs9L?=
+ =?us-ascii?Q?wrPYFoHE1DNl2VtGU1uAuth0a9FXNJ6QNiIQy5nUxEadpEj8Q1OP/uHjUcm7?=
+ =?us-ascii?Q?tpB5OxDVbliUAmez2s79EWNhiyuAAou1uPHs/8t1IoPKl/w1j8jmUsO4zhWJ?=
+ =?us-ascii?Q?/gWcjLkeGowpsnJmg03zTUq0n3thUBQvilAzhsqLpxnh3D7J5WNJLcAwPmPk?=
+ =?us-ascii?Q?eD1glWSbnF+h4Wdf3MPd57PJOxgBKfCqWisCzIR8eXRQGZW1O+RPXSj+zc+q?=
+ =?us-ascii?Q?t5STT6FXXAxqI1CTdsOarvwy55WdL1Hgf5ZOwfQgqmotD1P7/djkYrHAmFW7?=
+ =?us-ascii?Q?JdcEyrNSCGb1lpJmu544xcT0b8TqBYj3LXOn+jIebNL+7sy2FSNmRzefSNv4?=
+ =?us-ascii?Q?Y3mx/EBUZF9NneKBuqKxHp1l1IeznJiz+2r9maXFe9dAtWTD4PRktyR0J1/R?=
+ =?us-ascii?Q?1aDDvs1997+9toCxCp2Y+TBgVndTPcsjqUdZ9kTB1vKpi97uEiKWjdEiRMtD?=
+ =?us-ascii?Q?bEyHi+fnXm+2ObOzg5Hg9Rvek7Cnv9o/PkbxDIFzNEeCwILh6KZZKBsVHYFj?=
+ =?us-ascii?Q?Mr1C1qRwnxOazppm+WQ3JfnaqAGB4aFIg1zaCXWHM9x6DYXy5gzt8T6+A3kx?=
+ =?us-ascii?Q?cI+KJkrpglZ83wb5wONPHTiROsA2sHoBLp6GjxOxDVrIDVoHr5Dp4UpbQRA4?=
+ =?us-ascii?Q?Xg174mjq/6ZZ6azSqmK1Iik0yiw66Ckr8JgjGr4ec+obCGy8jwbe8fYAi5gm?=
+ =?us-ascii?Q?A0E8yLWmwEAcNVN2vpzMXKBgCtV2SIVBlylpxtVGYw4dO1EloUiixkIkFDY3?=
+ =?us-ascii?Q?IDtJ72Xj/wcWkSCUqyY5REqDy3CPmSbLzDgg5JuRo1LYy/H1sHNlvosJZXfO?=
+ =?us-ascii?Q?zcLNgAXfYnV1/e9K/wjIAXA1wYgiN2KYdYtYgnuDmXZfKifW6uvcWPdl0XNj?=
+ =?us-ascii?Q?/Xrl8zX94sNuOB+ndxFWM6D3d91zAEEJWSorO22IZXVuvpjuYDIGl34//bfm?=
+ =?us-ascii?Q?3c2jPmY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 20:33:44.8305
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46085eae-35e1-4cb0-193e-08dc7f55787d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004689.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6253
 
-On Tue, 28 May 2024 at 13:03, Ian Rogers <irogers@google.com> wrote:
->
-> But you've traded a fix for one set of users with a fix for another.
+On Tue, May 28, 2024 at 01:22:46PM -0700, Nicolin Chen wrote:
+> On Mon, May 27, 2024 at 01:08:43AM +0000, Tian, Kevin wrote:
+> > > From: Jason Gunthorpe <jgg@nvidia.com>
+> > > Sent: Friday, May 24, 2024 9:19 PM
+> > >
+> > > On Fri, May 24, 2024 at 07:13:23AM +0000, Tian, Kevin wrote:
+> > > > I'm curious to learn the real reason of that design. Is it because you
+> > > > want to do certain load-balance between viommu's or due to other
+> > > > reasons in the kernel smmuv3 driver which e.g. cannot support a
+> > > > viommu spanning multiple pSMMU?
+> > >
+> > > Yeah, there is no concept of support for a SMMUv3 instance where it's
+> > > command Q's can only work on a subset of devices.
+> > >
+> > > My expectation was that VIOMMU would be 1:1 with physical iommu
+> > > instances, I think AMD needs this too??
+> > >
+> >
+> > Yes this part is clear now regarding to VCMDQ.
+> >
+> > But Nicoline said:
+> >
+> > "
+> > One step back, even without VCMDQ feature, a multi-pSMMU setup
+> > will have multiple viommus (with our latest design) being added
+> > to a viommu list of a single vSMMU's. Yet, vSMMU in this case
+> > always traps regular SMMU CMDQ, so it can do viommu selection
+> > or even broadcast (if it has to).
+> > "
+> >
+> > I don't think there is an arch limitation mandating that?
+> 
+> What I mean is for regular vSMMU. Without VCMDQ, a regular vSMMU
+> on a multi-pSMMU setup will look like (e.g. three devices behind
+> different SMMUs):
+> |<------ VMM ------->|<------ kernel ------>|
+>        |-- viommu0 --|-- pSMMU0 --|
+> vSMMU--|-- viommu1 --|-- pSMMU1 --|--s2_hwpt
+>        |-- viommu2 --|-- pSMMU2 --|
+> 
+> And device would attach to:
+> |<---- guest ---->|<--- VMM --->|<- kernel ->|
+>        |-- dev0 --|-- viommu0 --|-- pSMMU0 --|
+> vSMMU--|-- dev1 --|-- viommu1 --|-- pSMMU1 --|
+>        |-- dev2 --|-- viommu2 --|-- pSMMU2 --|
 
-No.
-
-You don't seem to understand what "regression" means.
-
-The "no regressions" rule is that we do not introduce NEW bugs.
-
-It *literally* came about because we had an endless dance of "fix two
-bugs, introduce one new one", and that then resulted in a system that
-you cannot TRUST.
-
-We had years of this with suspend/resume in particular, where the
-argument was always exactly "this fixed many more systems" when
-something else broke.
-
-But because random other things kept breaking, it meant that people
-couldn't upgrade the kernel and feel safe about it.
-
-Your old laptop might no longer work, because somebody had deemed that
-all those *new* laptops were more important.
-
-So I introduced that "no regressions" rule something like two decades
-ago, because people need to be able to update their kernel without
-fear of something they relied on suddenly stopping to work.
-
-The fact that the "suddenly stopped working" may be a minority DOES
-NOT MATTER ONE WHIT.
-
-Stability matters.
-
-It's MUCH MUCH better to have legacy bad behavior that you never dealt
-with correctly, than to introduce *new* bugs that hit something that
-used to work.
-
-So something that "perf" has never done correctly is simply not an issue.
-
-You deal with that by saying "that has never worked properly before either".
-
-You might even document it along with (hopefully) possible workarounds.
-
-The whole "one step forward, two steps back" is absolutely fine if you
-are line dancing.
-
-But we're not line dancing.
-
-We take it slow and steady, and if you can't fix something without
-breaking something else, then that thing simply does not get fixed.
-
-And there are always exceptions. Sometimes something may need to be
-broken because it's an acute security issue.
-
-And if it takes a year for somebody to find a regression, and in the
-meantime others have started relying on the new behavior, then at some
-point it's a "yes, that's a regression, but it wasn't reported in a
-timely enough manner".
-
-And sometimes the use-case is basically a museum machine and we retire
-support for it because such a machine should use museum software too.
-
-So it's not like it's some long-term absolute guarantee. But it
-absolutely *is* the #1 rule in the kernel.
-
-A fix that breaks something else is not a fix at all.
-
-And in this case, when the regression was noted within days, and
-within the merge window, there's simply no discussion about it.
-
-              Linus
+I accidentally sent a duplicated one.. Please ignore this reply
+and check the other one. Thanks!
 
