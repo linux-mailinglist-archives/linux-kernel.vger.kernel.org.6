@@ -1,155 +1,163 @@
-Return-Path: <linux-kernel+bounces-192541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A788D1EC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:29:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602DB8D1ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF87285C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5CFEB23530
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7C16F8F7;
-	Tue, 28 May 2024 14:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA595170833;
+	Tue, 28 May 2024 14:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xpc1jwBV"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdFutYW5"
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79B116F859
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978AD16FF5A;
+	Tue, 28 May 2024 14:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906540; cv=none; b=R5K7JFwgkMNtcE/tD9IdEL0wi4XiHdJ/HPyi27piBG0kVOsVVoyewv4vv21JauTC4T0td429wNgYEeGqFmHOaoZv1G4ltULYrHT4pnR1a1xovyBaL3RiRwFZgwO3TFj8jD1p6eCBm/owj6O3GDP31nTZOeTJe028QXRfejv/3p4=
+	t=1716906587; cv=none; b=BnBSBjhLpwqU9E/AMRE5RkNAtj4zdrQNcA54KIeITwNqJ5GEAZlOtiZIPdZcOape2k1vgVau/FkARDoa/ABbYxAqP/TDzTNdyD1/c/hLDnIH+iwVuaiGpbC79ica3LCJx4gi/qsVbVuPzcz4zmvjAFRS3kpUG8Wzh8QmlSqKh84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906540; c=relaxed/simple;
-	bh=FClqH09kFsd0iJr0uhESR8yNfB2UKFuPfOCCTn5CTg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFnuGvKlIqgzDUXwJVZZ7kJQHTnieUL0KtFcRUjm3QDJ+9j1B3FM4J8AW5YrVLPojMgs1ykVjW1fjzTXGZ1POMpIzwFfVm1/eB5pBbm9sgu9JdkQyrA6P1zLPc4dqmGJ0E6Naae+WAhLaJJTddwfZXAwg9r2B8wpOdjrX9xD34k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xpc1jwBV; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linus.walleij@linaro.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716906537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mdB+sx7IWTFnAhjbj+baTMUPxCF5GwKzeCFXC4SL+3o=;
-	b=xpc1jwBVSkzLSfSMm7f9IyrlIQIkooum+19LabhFqqwFkbprzvbE4RSTHOBJ2maohRR1P/
-	QAZTmxoKaissSwhvHa5u+7QppSJbIogAtvgmSW0LUlOpg34hn9Nhx/FoYy1dbXzmFVtw0+
-	JIckkiL1APVFja1ma8Is89ZN/cfA0Pc=
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: linux-gpio@vger.kernel.org
-X-Envelope-To: sai.krishna.potthuri@amd.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-Message-ID: <51d984f5-896e-469f-914d-2c902be91748@linux.dev>
-Date: Tue, 28 May 2024 10:28:51 -0400
+	s=arc-20240116; t=1716906587; c=relaxed/simple;
+	bh=ka61hrwWyt80vXDLIqj6xF9p6ZdwzYeaYhuB6NPdZV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1aSHpO7MNfMUeflQoafZIs2Vs/K7aeJTWT6+MGDpI/erg750ZdVKiR1HhLGI1Jqep+SSDEBf1k476IBZAJnGZS4nLF93TDEhOnVNB87J4pTyYjkKokOgpZISnzPK6WFylo3FO4FwjWYE8na/ttF4585zXG2DRATOADsrCCK/bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdFutYW5; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8052b43d328so130769241.0;
+        Tue, 28 May 2024 07:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716906584; x=1717511384; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fg8y460Xa+j7cx+obTE0cFpPu6S6+u6FQc2pe05Mc/I=;
+        b=FdFutYW5p6K+1vWWZTWEGs+7tad2TzPDGqfaX093Y33VT6GRJ9Ts3is96zhD5uzuhB
+         QCjGkrjBZUhHmpv7YO7yzzRNdesNKTCAscFj8RmdSwZ/r73Fm1sUJnujJNP2Xeshf9hc
+         c0T6vyWU8fZu7lOTDcobq+jli/yJZYH54/qXqEzn/F9HcTcVNtmHPiOuyAdJ5ORWSJSq
+         6YJrT52okV3nF2nKlC5Hlyh2uAofpDKkYf78PzJE9hB1lJW2jwklBv5blNEzQrXRCI2a
+         7MywhOXKYl5ILeYDnRJ+cNx4+xXOdqGS0pF+kDP9yFdRu3cdjbnM7Th6eivLBjeYo4x2
+         9AaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716906584; x=1717511384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fg8y460Xa+j7cx+obTE0cFpPu6S6+u6FQc2pe05Mc/I=;
+        b=tRAvhw1lCgy6AREdna0/Lm+4rmvBr4GxBgrxZo0SCcmK5zIXezIXHoUlCpjDC+WpJT
+         slJQTAdGV+W0wiC2a0Ar8VlW2tFxpShhjSd3tBKYVu4KU6Q7LWijm3XZLhj35b3ITVdS
+         YWini1YyyS2+QxDwD6b2bCBRXQEVjNOUX89Livda4SbJIQKBeS1RptegnkSDu9MeEU6Z
+         gMw9S469kmZ9N0saCVSchW7vYvdPiE7mw8fs7aoG5vHuTL4Y9sw5+RwyalUUawQjGiFU
+         Qk7sraE7R0vzlKIY6+CZIVpjGmVFSiXIUGIEqDyyA48JX9+kf+kmpchHdvAXJx9WAY+e
+         rnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAUaFNmnisOCwhpjtDJpN1wTaEoxU08PYNvD04tUwQq34AnmqRoBItbb7Zef+8fe6CwFEhuxy0JmQIjhtkS///LEwXcPDUd0l2MmrnO/6jC3xCWILEH797VE5gEsyprOAvdf6orZ5dX7K++qEYoWcP0pYnM/tiwEdk6m1G
+X-Gm-Message-State: AOJu0YyFKtLSwqD69YlmOGd1FhpDs9jzwRBiwDrjYcBtHUDZqj6/pifR
+	qGU74oeykABZWUx4z3FLXIoliqqtJ0AZ5YYHhcd0nMBE8fHu+WxSPr0TECZYGf3++6R0w82KnWh
+	aN0dVargg2tK7SosnR/KjqU7hQ8A=
+X-Google-Smtp-Source: AGHT+IE1iPcTI3pn+5wr1fZSALkFdHBU+jz0yKwG86On+gFfOzSfsdcWJsSjZYld6caHgt28iKAiaIMEpj6Eo7JGKbc=
+X-Received: by 2002:a05:6122:7c8:b0:4de:847a:3647 with SMTP id
+ 71dfb90a1353d-4e4f02cac8bmr12828252e0c.11.1716906584536; Tue, 28 May 2024
+ 07:29:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/2] pinctrl: zynqmp: Support muxing individual pins
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
- Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-References: <20240503162217.1999467-1-sean.anderson@linux.dev>
- <CACRpkdbOAoSDNFhXfz3djUZh1_MQ_T75CC+-LmojRXvyCbUusA@mail.gmail.com>
- <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
- <CACRpkdbSsgxtKqF6ORXubufTaegjysHU7zH-tJfDfKNd=Kdoeg@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <CACRpkdbSsgxtKqF6ORXubufTaegjysHU7zH-tJfDfKNd=Kdoeg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240527074456.9310-1-chengen.du@canonical.com>
+ <66549c368764b_268e8229462@willemb.c.googlers.com.notmuch> <CAPza5qe-H6piY6ED7StLOiviiMbWq1rnMpKR_dZu1sehwhji2w@mail.gmail.com>
+In-Reply-To: <CAPza5qe-H6piY6ED7StLOiviiMbWq1rnMpKR_dZu1sehwhji2w@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Tue, 28 May 2024 10:29:07 -0400
+Message-ID: <CAF=yD-J8UV+KD7fUQ-eSJWvHrhqezMs81zXX=VeVgdHR8ZZ7ag@mail.gmail.com>
+Subject: Re: [PATCH v3] af_packet: Handle outgoing VLAN packets without
+ hardware offloading
+To: Chengen Du <chengen.du@canonical.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, loke.chetan@gmail.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/27/24 09:15, Linus Walleij wrote:
-> On Mon, May 6, 2024 at 4:45 PM Sean Anderson <sean.anderson@linux.dev> wrote:
-> 
->> > Then we realize that not everyone need all the modem
->> > control signals provided. What to do. Well this:
->> >
->> > uart0_rxtx_grp = pin_rx, pin_tx:
->> > uart0_modem_grp = pin_cts, pin_dts, pin_dcd;
->> >
->> > mux0:
->> >     function = "uart0";
->> >     groups = "uart0_rxtx_grp";
->> >
->> > Now the CTS, DTS, DCD pins can be reused for something
->> > else such as GPIO.
->> >
->> > I *know* that this breaks ABI: the driver group definitions change
->> > and the device tree needs to be changed too.
-> 
-> Actually I didn't think that over, it is possible to add new groups
-> and retain the old ones.
-> 
-> I.e. retain uart0_grp, but additionally add and use
-> uart0_rxtx and uart0_modem_grp and use one or the
-> other approach.
+On Mon, May 27, 2024 at 11:40=E2=80=AFPM Chengen Du <chengen.du@canonical.c=
+om> wrote:
+>
+> Hi Willem,
+>
+> Thank you for your suggestions on the patch.
+> However, there are some parts I am not familiar with, and I would appreci=
+ate more detailed information from your side.
 
-That is what this patch does.
+Please respond with plain-text email. This message did not make it to
+the list. Also no top posting.
 
->> Well, the pin groups are actually defined in the PMU firmware.
-> 
-> Is that firmware written in such an helpful way that the groups
-> can be extracted from the firmware then, as with SCMI? Or is it
-> a matter of duplicating the info from the PMU in the software-defined
-> groups.
+https://docs.kernel.org/process/submitting-patches.html
+https://subspace.kernel.org/etiquette.html
 
-Fundamentally, the pin muxings are known a priori from the reference
-manual. Because pinmuxing itself has been delegated to the PMU firmware,
-we defer to it when determining what muxings are available. The PMU
-firmware describes muxings in terms of pins and functions; groups are a
-Linux-only concept.
+> > > @@ -2457,7 +2465,8 @@ static int tpacket_rcv(struct sk_buff *skb, str=
+uct net_device *dev,
+> > >       sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
+> > >       sll->sll_family =3D AF_PACKET;
+> > >       sll->sll_hatype =3D dev->type;
+> > > -     sll->sll_protocol =3D skb->protocol;
+> > > +     sll->sll_protocol =3D (skb->protocol =3D=3D htons(ETH_P_8021Q))=
+ ?
+> > > +             vlan_eth_hdr(skb)->h_vlan_encapsulated_proto : skb->pro=
+tocol;
+> >
+> > In SOCK_RAW mode, the VLAN tag will be present, so should be returned.
+>
+> Based on libpcap's handling, the SLL may not be used in SOCK_RAW mode.
 
->> And
->> frankly, I don't see the point of pin "groups" when there are not actual
->> pin groups at the hardware level. The pins can all be muxed
->> individually, so there's no point in adding artificial groups on top.
->> Just mux the pins like the hardware allows and everything is easy. Cuts
->> down on the absurd number of strings too.
-> 
-> So are you going to switch all of Xilinx devicetrees over to using exclusively
-> the new method (muxing individual pins)?
+The kernel fills in the sockaddr_ll fields in tpacket_rcv for both
+SOCK_RAW and SOCK_DGRAM. Libpcap already can use both SOCK_RAW and
+SOCK_DGRAM. And constructs the sll2_header pseudo header that tcpdump
+sees itself, in pcap_handle_packet_mmap.
 
-No. We have to support it anyway for compatibility, so there is no point
-in changing everything for no reason.
+> Do you recommend evaluating the mode and maintaining the original logic i=
+n SOCK_RAW mode,
+> or should we use the same logic for both SOCK_DGRAM and SOCK_RAW modes?
 
-> I'm fine with one (string identified groups) which I encourage, but I
-> let individual pin control pass as well on several occasions.
-> 
-> What I don't want to see is a Franken-solution that mixes the two
-> approaches, even less so on the same system. Someone is going to
-> have to maintain the resulting mess. And this looks like exactly that.
+I suggest keeping as is for SOCK_RAW, as returning data that starts at
+a VLAN header together with skb->protocol of ETH_P_IPV6 would be just
+as confusing as the inverse that we do today on SOCK_DGRAM.
 
-Well, perhaps you should have reviewed the original driver more
-closely.
+> >
+> > I'm concerned about returning a different value between SOCK_RAW and
+> > SOCK_DGRAM. But don't immediately see a better option. And for
+> > SOCK_DGRAM this approach is indistinguishable from the result on a
+> > device with hardware offload, so is acceptable.
+> >
+> > This test for ETH_P_8021Q ignores the QinQ stacked VLAN case. When
+> > fixing VLAN encap, both variants should be addressed at the same time.
+> > Note that ETH_P_8021AD is included in the eth_type_vlan test you call
+> > above.
+>
+> In patch 1, the eth_type_vlan() function is used to determine if we need =
+to set the sll_protocol to the VLAN-encapsulated protocol, which includes b=
+oth ETH_P_8021Q and ETH_P_8021AD.
+> You mentioned previously that we might want the true network protocol ins=
+tead of the inner VLAN tag in the QinQ case (which means 802.1ad?).
+> I believe I may have misunderstood your point.
 
-> If you want to mux individual pins instead of groups and functions, by
-> all means, but please do not mix the two approaches in the same
-> driver, I'm just trying to save Xilinx from themselves here.
+I mean that if SOCK_DGRAM strips all VLAN headers to return the data
+from the start of the true network header, then skb->protocol should
+return that network protocol.
 
-I see no point in creating thousands of groups for every combination of
-pin muxings when we could just switch to the solution in this (or v2 of)
-patch. For compatibility we cannot be rid of the old situation, but we
-can at least fix it. There is no technical problem with them coexisting.
+With vlan stacking, your patch currently returns ETH_P_8021Q.
 
---Sean
+See the packet formats in
+https://en.wikipedia.org/wiki/IEEE_802.1ad#Frame_format if you're
+confused about how stacking works.
+
+> Could you please confirm if both ETH_P_8021Q and ETH_P_8021AD should use =
+the VLAN-encapsulated protocol when VLAN hardware offloading is unavailable=
+?
+> Or are there other aspects that this judgment does not handle correctly?
 
