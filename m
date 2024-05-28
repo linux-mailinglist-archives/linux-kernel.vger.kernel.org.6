@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-192117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AEC8D189C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2BA8D189F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768B7B28722
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:29:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69CFD1C23363
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5951E16B739;
-	Tue, 28 May 2024 10:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmZAJ0vr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8384016B73D;
+	Tue, 28 May 2024 10:31:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DAB13CABD;
-	Tue, 28 May 2024 10:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE04D59B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892140; cv=none; b=Pz4wc+FKkpAAImUAtmudljcCeKYDNX321MAoLGQNxli8NfXPZl7HVdRPT0nuLO4vkXa62ozlVHhZDKb8vTCo9EPvTDm8BK21kiMjEYWSRMAWZxaFLOvrMAzLwGDDLmTRepUiM2vLb0T+OgpGA23CxeXUWUJuKU9/d5B5jCwq7w0=
+	t=1716892265; cv=none; b=YArnchNSKKK7+chz/O5nEYnieQS2evye34GtdjyE3pw80ihGA/aCsitLVYGkkn+4z89kv7zPIEtj216Qekd1QrMgXCGqH2la039zq1JrMYFHyqKPBf70Y4phV1L6A3/SpxT8rwyF0j7NIUR07w+Q3iOwmIIiqFtAtQ8k5kn0xmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892140; c=relaxed/simple;
-	bh=2tllxKCFXVlZmMchKrFmmyFaiwTKz5SDQsRsrUjsJUQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=fuZ6TsRy3LDqHQA3dP/5GH+B1kvcqD7NIJCvbUwW/3n6XCza5ieXb/6bUHbxPQWB/Q2EMXAUC8eLMI8akwv5awZizQRmDtkE314URuk4uW77Ea0sPrT94CgguNuBtjs7N6AgLbSIbhqrQVjqfMUmw2H2p3RwzETfVXbKfV+7jLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmZAJ0vr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D332C3277B;
-	Tue, 28 May 2024 10:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716892140;
-	bh=2tllxKCFXVlZmMchKrFmmyFaiwTKz5SDQsRsrUjsJUQ=;
-	h=Date:Cc:Subject:From:To:From;
-	b=cmZAJ0vrr4PVHYgEixnoGK86FFq5NzMMyUA+uvIlXb2LbmFg2ob0NfUT96DYIvD/8
-	 a55kaNvah8aBiqs9pMlKSDBFBwA/SL5Si5NX9f29e46DKxmR6fiM66mpELbU2Rw3Z6
-	 xr29ISTvsz3hs7AejahI82DWK7rGG750/ANXOJM+3EfDZRnLq6NmrfO3TkdTC7jHF2
-	 wK+iuhdOJPDG7Kiuq8HHREHNXf9jPfYGQSawFb0Xrs6vmrXmA1PSgQVdLga3KEQM3M
-	 jjhh5VYs90ltkWpQjqq7AJ2it+eqgb/AgVVvSxA2OYMbFD0Vp3FuDiVZbGgxsuhLeA
-	 JY72UrxJQyHJA==
+	s=arc-20240116; t=1716892265; c=relaxed/simple;
+	bh=HD72KymgkFuzWQb63KjNA8IH+pct7fnJxoMSm6yaP8E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HmshcRjgGSts1BBh8+4tHQc2Y53HOIFaJEpk997Uso9aAEQUrcy2rDBFiHmB1UhcqQJpvDsn0HM6KimWC3AjQPt73zbW1VF9de56JUt76g5pGPm1Zv10rttEZJb5RqBDstlHAOTmD+WeddtmatzPdTmdl2+bxj3s7d+6vULZTSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3713862bcefso4579795ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:31:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716892263; x=1717497063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bntl/gSvDphBAQnEJNXXaSDjJyEhEpRmpwDuqmdZhbo=;
+        b=w2hY8DLSrg+Ib0w8V16m99DhU1MFh/NimPi/JmaY77lURVAaKJZ4FxjyDwhwu49HCD
+         llDBB2x5FnqT4tqUjlFBsqnihmRWrxWsA/aBVxfbeo0VOnYjyoequbbcMICcWNJnPW1I
+         uDE0UIl4JInOvFwZbJIby2yPR9oOhZjkLGQ+I59qbU+8ueN15CcMP5s72tObSQAoylv1
+         utE4oYghbdOBTxZgSWKCFY6J1FQZqEquiiitqu8+SPa12wwRbpNaGxmhx1X/foq+bdDk
+         1ni49OpHMJYNOici6RdgnpdkoMoVrfG76dMCaQOfDbRUcxbKTT+rM3wKJQmXodZ0Y9Ts
+         ZAeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXA/+N7/RztH0jJGAnx8+ate0tgO61tRf2gYzbvhisxfCYREuhJ+fPQX2FpUmQhUMoZiK60YQIMO7USGinMOAmX+xGfIiIdE9XRpNTk
+X-Gm-Message-State: AOJu0YzAWTgDbk/CTOJS8v3fbDO3KJtuqivQhr/hQxE9aq7lImcBhLjr
+	fhEDni7WeSfvxkw1XNiQiWSRwTxnpy9SyIr6ZsqQEW3iMYpLOVx2vPv1mvmpvSSgdhs8RsnfXQ5
+	NQSoaDu6hQQOVekAKnx7gHLLfOV4+VO6LNkyNgKmETr0Q807isA7QuZA=
+X-Google-Smtp-Source: AGHT+IGQjxvfjJ/zU+SqpTStiVGSkCYxdqO+F1rCAe1GuRDOhKDRrjbDNObtWX97aLrYEKB955Y8Guhs2uUVn3Nn2MDkhbLkiBhG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 May 2024 13:28:57 +0300
-Message-Id: <D1L7GV7M5K0E.2OPVM82VLFT10@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.10-rc2
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-X-Mailer: aerc 0.17.0
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1d83:b0:36c:6080:753d with SMTP id
+ e9e14a558f8ab-37347c2e5a9mr6260795ab.1.1716892263081; Tue, 28 May 2024
+ 03:31:03 -0700 (PDT)
+Date: Tue, 28 May 2024 03:31:03 -0700
+In-Reply-To: <ZlWpDZSqKRJaqLp9@localhost.localdomain>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000075796406198121b1@google.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
+From: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org, 
+	osalvador@suse.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit 2bfcfd584ff5ccc8bb7acde19b42570414bf880b=
-:
+Hello,
 
-  Merge tag 'pmdomain-v6.10-rc1' of git://git.kernel.org/pub/scm/linux/kern=
-el/git/ulfh/linux-pm (2024-05-27 08:18:31 -0700)
+syzbot tried to test the proposed patch but the build/boot failed:
 
-are available in the Git repository at:
+failed to checkout kernel repo git://github.com/leberus/linux.git/hugetlb-vma_resv-enomem: failed to run ["git" "fetch" "--force" "ce94c574238e17bd72d74b088bd1c16ce6447814" "hugetlb-vma_resv-enomem"]: exit status 128
+fatal: unable to connect to github.com:
+github.com[0: 140.82.112.3]: errno=Connection timed out
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
-/tpmdd-next-6.10-rc2
 
-for you to fetch changes up to d3e43a8fa43effdbb62c7edc206df7ac67772205:
 
-  tpm: Enable TCG_TPM2_HMAC by default only for X86_64 (2024-05-28 13:14:29=
- +0300)
 
-----------------------------------------------------------------
-Hi,
+Tested on:
 
-This PR fixes two unaddressed review comments for the HMAC encryption
-patch set. They are cosmetic but we are better off, if such unnecessary
-glitches do not exist in the release.
+commit:         [unknown 
+git tree:       git://github.com/leberus/linux.git hugetlb-vma_resv-enomem
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
+dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
+compiler:       
 
-The priority part of this PR is enabling the HMAC encryption by default
-only on x86-64 because that is the only sufficiently tested arch.
-
-Finally, there is a bug fix for SPI transfer buffer allocation, which
-did not take into account the SPI header size.
-
-BR, Jarkko
-
-----------------------------------------------------------------
-Jarkko Sakkinen (3):
-      tpm: Open code tpm_buf_parameters()
-      tpm: Rename TPM2_OA_TMPL to TPM2_OA_NULL_KEY and make it local
-      tpm: Enable TCG_TPM2_HMAC by default only for X86_64
-
-Matthew R. Ochs (1):
-      tpm_tis_spi: Account for SPI header when allocating TPM SPI xfer buff=
-er
-
- drivers/char/tpm/Kconfig            |  2 +-
- drivers/char/tpm/tpm-buf.c          | 26 --------------------------
- drivers/char/tpm/tpm2-cmd.c         | 10 +++++++++-
- drivers/char/tpm/tpm2-sessions.c    | 21 +++++++++++++++++++--
- drivers/char/tpm/tpm_tis_spi_main.c |  3 ++-
- include/linux/tpm.h                 | 17 -----------------
- 6 files changed, 31 insertions(+), 48 deletions(-)
+Note: no patches were applied.
 
