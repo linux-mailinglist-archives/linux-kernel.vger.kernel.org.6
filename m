@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-191847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5989C8D1513
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DE68D1511
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795861C2171C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99841C2184A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC171753;
-	Tue, 28 May 2024 07:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A777317C;
+	Tue, 28 May 2024 07:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLvZxd2I"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRTN5emJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF673443;
-	Tue, 28 May 2024 07:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C09126AE7;
+	Tue, 28 May 2024 07:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716880390; cv=none; b=gsj7bKWjyS2YlYbOMzap8sp08VW+rd+GeAJFP2WOZf+tvABA9dWjK7LKYfSuXZySzJ76L78xbSz9s2/RkwsRVjsBS6SUQxm3hdlxtBXZhRfNhxJSOoIvZQfkjMzdPIMTwe3mZ9k5cVGl1vb9jjjSu6rP3v6wJ4c6i/TmVJIcDAc=
+	t=1716880360; cv=none; b=p/EtfjFiUJ0gSJVPmeuIC6HU3HLTAaXJhtgyPuEZqVxsi7OMGEYao8Ra4+qVDRoqAWMdVWq5WqXsmGoJzXuwWH6QqOfurFwdLaDnUk872u2h6RJPBV36iCyQtseJ0CzhaZSID/Rlfisvrl2YwZu48Fkl1q2e6iy5tdIvnCZmlJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716880390; c=relaxed/simple;
-	bh=UfhkQVosL+oCl3pxeQc9cyceNU12bsBq4sjRhs/0oQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tg03lEsDn1BuirELl3WFh+heGdif5ZPQdrDNlCdee1qgGvh1q97RvmI+MUcQl9RxheVWosWrTQAyeIzPeHT56ZvwWIoE+w/ocEYy5BVwZPFOlSFFwz1D5VDb3KL2P+rQjA/kLlyHJBEwLgLtPW3ndNs7xiMIXA+mJ9bDYD9MKaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLvZxd2I; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so5846061fa.3;
-        Tue, 28 May 2024 00:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716880387; x=1717485187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IbN8iFA5Vjgo5SuU7PH7u5E08M2Kd/8qmR0Aaqp8vOI=;
-        b=BLvZxd2Ict4bsk5jxWWfFatoXikJ5LkD5bhwdwPPr1lvZM0e5zG6LwYt/YcS3khS6K
-         Z5KgYztmW4Evks5YVTm4thvelUIK8HpyNqUNqHaH5wMGKW82CdcgfWgOg4p4M/mktpPz
-         EZmYozcvyJBxvHNLsx9gSQuRCJTR0QSiG4ijqBLSf6JjpMPXqZiqRyHnsxqadA+q2PXw
-         two0khgzhnwMnRec1Bx1M70EiNvuECyqaEHALan3FsgZIo2+9YRJ8tnwp5PWf1+ANgPh
-         C4d9lYfhLN8NAbwhzfecYbGR6+iI81GMO58H89y4ccS50DnBRYIRqoMsDqfZWuWGxWAG
-         adCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716880387; x=1717485187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IbN8iFA5Vjgo5SuU7PH7u5E08M2Kd/8qmR0Aaqp8vOI=;
-        b=hlf3XXP7/LgmKCgqPE+94qCO77IXz8oCvaFQhIFsJ9WVAbXjsM7Llg9cWuhLkFIjaO
-         cl6k0enLXQGvlm6DZzI/61EtCwHa2zTa1QKL+HC+HlvF6wF3lYma91H84uWy2hh+DLax
-         NBbcMWABSvojWkoUeUHeT5nASxwgF8Swm0QsUPQ1JgoqZ1UmOeAT2G9w0t4AQZM8i0GT
-         ByvhWUzkmXO0IxuFj5vaG+a+0AjtrHmMWJEbza03WlwDjkBHS7L5V2hx4QcwG3urIRte
-         bhq/ZVclesYQDR/nDmu9uD5H7jRGmr7bvXZzmkpDVcFC1jeUYKHGMnjp1B8MV/BfxpOC
-         Zt7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnTvxDhBXnwMm8+KolRkiPFqyBYtUglK4DsrB7ECg+hjwZ++g+reQWc1WA7u4mfHqxcfTJYT8ST0vmaWy5c5rk7ymF/q9nNG6hfgSRT4LzKWT/UErWI+JiIpWH2xdrCIj+B+J88NbZA==
-X-Gm-Message-State: AOJu0YzEl3pCIUL+Tnf1lGLn2ClO9j90K8iGAMqYiJtKSRWz8gtTGP7f
-	uOnP1xepxkFnuz2Bn5RxVvb8V1/iyHF3LODds5wTsFtstpxprcoOxfN0IG3pg4uV5NY7Hq9E3zO
-	uLICxm603eDSb09TYacwLuFTLHPs=
-X-Google-Smtp-Source: AGHT+IFmtTX4poS64Oy5QVA1TRp3+Ayt3egLX2L31ik5nXCN4bjC/nAgnDwJx65RWXovKVj1vqFrVx99XSpwpXNn9TY=
-X-Received: by 2002:a2e:a403:0:b0:2e9:8852:3d16 with SMTP id
- 38308e7fff4ca-2e9885242f1mr5984361fa.35.1716880387386; Tue, 28 May 2024
- 00:13:07 -0700 (PDT)
+	s=arc-20240116; t=1716880360; c=relaxed/simple;
+	bh=s5LXjhdG/tOFAjHbokqLAlt1q4Hh3ZREFJN0r4H4gPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMkL14nmcAf6b7sqWTsBpIzUjipMyfyX+BYrrtlXXPBiQCXP+TOgvZBp7qKInbnZoE2SdeQMSujMfkfTVn0ZFnLoqZMuJzEBCZsJIFJBhpybLRWnfux5udcCw5+QobiBXcxeTQONHQ+EIs68f3h1zLctmdYNIhwJ9mV2KV+7YA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRTN5emJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F62EC3277B;
+	Tue, 28 May 2024 07:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716880359;
+	bh=s5LXjhdG/tOFAjHbokqLAlt1q4Hh3ZREFJN0r4H4gPk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pRTN5emJERfn4+pZMe90zu3qCgJMMr7Bq9Vwf43xanoRW3P6Vct1HurpDByatTCO+
+	 wet9rSfBSovb06LdXe69jgHt/ZO6tEVb6HTpQyfFNhqam3hgF3WVambUhGn71rAOI8
+	 D/8UdED/xPZzCnaQ2iQw0LkumuX7AameCfYNXEKsDtvGBpRvTFbm+MIrAtvmr5O67o
+	 Oq6/OpMJ4ASMwFv0c6vFpZ9D9xDQ9Ck7Hvqp4hgOn/kupNYuo3lZjfN5D6LQXyx+g3
+	 njm41sUWCxQArqFlq4vp298k/KjfuDgU0qcWcnznDJankQhal3k4+1XcQcTJxkLoyj
+	 UPzuYhRFXCBOw==
+Date: Tue, 28 May 2024 09:12:33 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, 
+	"jack@suse.cz" <jack@suse.cz>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>, 
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "alex.aring@gmail.com" <alex.aring@gmail.com>, 
+	"cyphar@cyphar.com" <cyphar@cyphar.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240528-fraglich-abmildern-cca211d1791c@brauner>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org>
+ <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
+ <ZlRzNquWNalhYtux@infradead.org>
+ <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
+ <ZlS0_DWzGk24GYZA@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527202424.1430103-1-andy.shevchenko@gmail.com> <ZlVkgf_XCZcZd388@infradead.org>
-In-Reply-To: <ZlVkgf_XCZcZd388@infradead.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 28 May 2024 10:12:31 +0300
-Message-ID: <CAHp75VftLmV5T9xRnirOMXbJoyvm2eUiG4bDeB6p6hY6jExFQQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] PNP: Export pnp_bus_type for modules
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Guanbing Huang <albanhuang@outlook.com>, 
-	Guanbing Huang <albanhuang@tencent.com>, Woody Suwalski <terraluna977@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZlS0_DWzGk24GYZA@infradead.org>
 
-On Tue, May 28, 2024 at 7:58=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Mon, May 27, 2024 at 11:24:24PM +0300, Andy Shevchenko wrote:
-> > Since we have dev_is_pnp() macro that utilises the address of pnp_bus_t=
-ype
-> > variable, the users, which can be compiled as modules, will be failed t=
-o
-> > build. Export the variable to the modules to prevent build breakage.
->
-> NAK.  Please move dev_is_pnp out of line and export it (as
-> EXPORT_SYMBOL_GPL), please.  bus types should be private unless we have
-> really good reasons for them not to be private.
+On Mon, May 27, 2024 at 09:29:48AM -0700, hch@infradead.org wrote:
+> On Mon, May 27, 2024 at 03:38:40PM +0000, Trond Myklebust wrote:
+> > > It
+> > > does not matter what mount you use to access it.
+> > 
+> > Sure. However if you are providing a path argument, then presumably you
+> > need to know which file system (aka super_block) it eventually resolves
+> > to.
+> 
+> Except that you can't, at least not without running into potential
+> races.  The only way to fix a race vs unmount/remount is to include
+> the fsid part in the kernel generated file handle.
+> 
+> > 
+> > If your use case isn't NFS servers, then what use case are you
+> > targeting, and how do you expect those applications to use this API?
+> 
+> The main user of the open by handle syscalls seems to be fanotify
+> magic.
 
-FWIW, it's not private, it's just not exported to the modules. Are you
-suggesting to hide the bus type completely to make it static? If so,
-this is out of scope of this fix.
+It's also used by userspace for uniquely identifying cgroups via handles
+as cgroups and - even without open_by_handle_at() - to check whether a
+file is still valid.
 
---=20
-With Best Regards,
-Andy Shevchenko
+And again a 64bit mount is is a simple way to race-free go to whatever
+superblock uuid you want. They cannot be recycled and are unique for the
+lifetime of the system.
 
