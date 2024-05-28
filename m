@@ -1,168 +1,99 @@
-Return-Path: <linux-kernel+bounces-192242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92058D1A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598D68D1A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EFDB24DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B23F1C2141A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9377616C877;
-	Tue, 28 May 2024 12:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4592A16D315;
+	Tue, 28 May 2024 12:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbKZgCgM"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa6Gdsms"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4778E13A242;
-	Tue, 28 May 2024 12:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB1713A242
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897679; cv=none; b=e0sUh2FGWOEFAFVkYq+caiumDOnoOWzWyRuR37e9296kHfQxz6+VCRHUTJ6BcFcMnD+VmO7Taw2beksLwgMShX1FIOWj2Rg98Y005rK7OALFgTvcvdlCq3Tz8d8tuFTofVp8qRPsli2DiCLhpf9J/jo0jIUDfXC7o+W6FTvUczc=
+	t=1716897772; cv=none; b=nB+pCNe1PfptCoNfiUVOOCRw5BDXJAO1vWRwKHKS3AcrfEVILFsAXB8Si0CbV+uepmQ4MN4fx+hQUa3BFpfGPxROCZBmmyt9k0WACgGgQhI2wYE/5DE54jacBP223e/+yUvV+9eF8a7OlkVmDTf35ecp/VMljU97Dem/lQ5NKlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897679; c=relaxed/simple;
-	bh=8WRHDTUZ0RTZvELeR+4+qbfh9ozH4kaFF8ljxt36pEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gku19gd/XCFfBfmV9UeKRPhyeZnpAMv3/zua1HcEC13+9aCWqNy2u8Okx02pmEeXdpD70vwctyFylLiI5j+2MhsOqGawfpzApQ/dXOYPBmvsw6MCuL8gtwWTYyaL/D8TcRpiEhTc/g2cR4yf9i2rMVSdKXv+vx8Dej6H14o4jHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbKZgCgM; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5785d466c82so889381a12.3;
-        Tue, 28 May 2024 05:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716897676; x=1717502476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NAgN1LldmRrlrSvzizrGCKqLHlKjnztSUaZS5Nc7Gtg=;
-        b=kbKZgCgMiVQU6z+wB7b/hCP1+KtZ/23hcZjyWvmXE8IPeQHgM7XVzwbrwxj5W9Liil
-         ZG38VIa9LRpT2hoEKkVRz7gz/oMWh8tRkKeeUBNzIM468+XbCc1aB8KQNVolRQ7dh2yr
-         dw3hZUIy3Pf8N/65q6MRdK6uPhpv1olPLHdHwr8Z5KnnwvVsIHjmhhYmmRWEEmW6OYHW
-         VYanJNqOdJuMrNAuWb17q8vcShCNImy5+wpW9I1aIcGoyXP3vqfhOYeDrbZaLetG9wEc
-         nNl2e6MZFYpvQfRoSXE0kB0OfN/wT9D4i1nwjW6+42uLqkvbLW9S/gttcSYCDGfjAH7n
-         j8qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716897676; x=1717502476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NAgN1LldmRrlrSvzizrGCKqLHlKjnztSUaZS5Nc7Gtg=;
-        b=F+0TrEmqexeeHiPEZO4iCgdkLkhZ9K7Omiy4u/cTBXnlU0OK4vlwyDSZEh09u8Mwa9
-         TM+WOehEqqm74ILKyt+9wPziijx/8SLb9+p38iETvDgZcW6uuCalR0ZeV1ssOWbVI9xO
-         55co0dmW7kOJvngoTNoUK+Rfo/9/RkF5qRSyNivao9nrtoG2aqtJwo5oSmBEjZ7ZUVjL
-         yBArVtlXZ68543I7RL/K+ftk0udlTO1fprIfSijR47JkkHt60HzRk7JwznJseadEAMY9
-         SQGJT0N+ZuAyIMeVHONaRSfPODIuYYwIm9bUIHEHKPmbSEKzmQgHRa/Nvyc7q5rIMSkx
-         J+YA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhgCeoFdn8EcVEAkj65GiVbFmNvNaY+ykaBNq+LykukoaCHjnnTZcp6QV0HUBIyVdcsxln63Qc2OVvZR2xxjXm+u+EWBkBTDfxGcAr+9qcYtADBOUnHp1PiphQwjETponsDxnBf66dXg==
-X-Gm-Message-State: AOJu0Yw1V29ouZIxLq0yeysI/4w5G4aOb14guGKZaubkyZ95E35SpxE0
-	BT6JaVT6Y7EcEDt6j0xGnExq9kxfc/i34bpfwwmdvS6O7NLzoADniXJbVMhowam4nQihktD35m7
-	6o157emKGs7JMZTnc65k1HGexACc=
-X-Google-Smtp-Source: AGHT+IGWXAZnzJq/outpGdrrF+BzVco1qSOLCnXc5XWK+E8bGR9GWy0ZahU9VxoRM4PaeRGMN+5E3TDdnybOYtKZhcQ=
-X-Received: by 2002:a17:906:cb8b:b0:a59:c3d0:550c with SMTP id
- a640c23a62f3a-a62643e4d86mr656965266b.43.1716897676330; Tue, 28 May 2024
- 05:01:16 -0700 (PDT)
+	s=arc-20240116; t=1716897772; c=relaxed/simple;
+	bh=8Sj9m5H66IoU8ACiyDTo30Tfi2x2L8Km6KRH00ITSdY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gl65KojvZtBYKXVjEZEan0S4xx5QtAaItS66S2jpj9PIwy4/1HKVXiMNCTRoJGY1I/4pVFgihlycBRbAoeB5MVh0dnsSILQp4/KeBNcda3gsV1h0PAd8MhZIwI7ZtlJ99qFow5E0sYBGTU0aB2zCKX3g9RYaEahJ8mmHMyMJiYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa6Gdsms; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E3BC3277B;
+	Tue, 28 May 2024 12:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716897772;
+	bh=8Sj9m5H66IoU8ACiyDTo30Tfi2x2L8Km6KRH00ITSdY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Pa6Gdsmsd3gU/YG7bvsnP0IOUy9r6KCeSrp1EIQ8uNde0Mk8fqXE2/wR2FE23xJF+
+	 h9iV7r8pgRLViN5RF0+fYynanOkWrleRQZd6sr4ReTx3kv7t6q+Y/77rAuZ2XZl+xZ
+	 lkUNyrzWZbJtH9RV15AI/0mab3moNfHP/e9XCDptDzIZDJ720XaYqPbnbGYU9n3knQ
+	 UZzpBxLtnu9pPCdUJ8QssZoWD+ifm672wPRi8bzvxjeFDdGb8b/GGQIQ1xnMyDjwKJ
+	 IZrgGMpb5bylM4OawPncoAny19/Cxnx5keeKF/2BcoNvGEvk3u3nHpAHURlLFQ14ju
+	 EHHqKEVkdgO9g==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Saeed Nowshadi <saeed.nowshadi@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Ben Levinsky <ben.levinsky@amd.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] mailbox: zynqmp-ipi: drop irq_to_desc() call
+Date: Tue, 28 May 2024 14:02:35 +0200
+Message-Id: <20240528120246.3313723-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527022036.31985-1-user@blabla> <9abb1d5e-fdac-4500-9218-fb9f28ff2c05@web.de>
-In-Reply-To: <9abb1d5e-fdac-4500-9218-fb9f28ff2c05@web.de>
-From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Date: Tue, 28 May 2024 20:01:04 +0800
-Message-ID: <CAPEOAkRjKm_bcfX4CJe3HON=6abcfzBGjXo6VpcnhR-u9OCHzg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, 
-	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	=?UTF-8?B?QXLEsW7DpyDDnG5hbA==?= <arinc.unal@arinc9.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Sean Wang <sean.wang@kernel.org>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Markus Elfring <Markus.Elfring@web.de> =E4=BA=8E2024=E5=B9=B45=E6=9C=8828=
-=E6=97=A5=E5=91=A8=E4=BA=8C 19:37=E5=86=99=E9=81=93=EF=BC=9A
->
-> =E2=80=A6
-> > There are some same function name in different pin groups, =E2=80=A6
->
->                                names?
->
+From: Arnd Bergmann <arnd@arndb.de>
 
-refclk [0][1], pwm [2][3] and some others. For example, without this
-patch, part of the pinmux-functions in the kernel debug fs looks like
-this
+irq_to_desc() is not exported to loadable modules, so this driver now
+fails to link in some configurations:
 
-root@mt7628:/sys/kernel/debug/pinctrl/pinctrl-ralink-pinmux# cat
-pinmux-functions
-function 0: gpio, groups =3D [ pwm1 pwm0 uart2 uart1 i2c refclk perst
-wdt spi sdmode uart0 i2s spi cs1 spis gpio0 wled_an p0led_an p1led_an
-p2led_an p3led_an p4led_an wled_kn p0led_kn p1led_kn p2led_kn p3led_kn
-p4led_kn ]
-function 1: sdxc d6, groups =3D [ pwm1 ]
-function 2: utif, groups =3D [ pwm1 ]
-function 3: gpio, groups =3D [ pwm1 ]
-function 4: pwm1, groups =3D [ pwm1 ]
-function 5: sdxc d7, groups =3D [ pwm0 ]
-function 6: utif, groups =3D [ pwm0 ]
-function 7: gpio, groups =3D [ pwm0 ]
-function 8: pwm0, groups =3D [ pwm0 ]
-function 9: sdxc d5 d4, groups =3D [ uart2 ]
-function 10: pwm, groups =3D [ uart2 ]
-function 11: gpio, groups =3D [ uart2 ]
-function 12: uart2, groups =3D [ uart2 ]
-function 13: sw_r, groups =3D [ uart1 ]
-function 14: pwm, groups =3D [ uart1 ]
-function 15: gpio, groups =3D [ uart1 ]
-function 16: uart1, groups =3D [ uart1 ]
-function 17: -, groups =3D [ i2c ]
-function 18: debug, groups =3D [ i2c ]
-function 19: gpio, groups =3D [ i2c ]
-function 20: i2c, groups =3D [ i2c ]
-function 21: refclk, groups =3D [ refclk ]
-function 22: perst, groups =3D [ perst ]
-function 23: wdt, groups =3D [ wdt ]
-function 24: spi, groups =3D [ spi ]
-function 25: jtag, groups =3D [ sdmode ]
-function 26: utif, groups =3D [ sdmode ]
-function 27: gpio, groups =3D [ sdmode ]
-function 28: sdxc, groups =3D [ sdmode ]
-function 29: -, groups =3D [ uart0 ]
-function 30: -, groups =3D [ uart0 ]
-function 31: gpio, groups =3D [ uart0 ]
-function 32: uart0, groups =3D [ uart0 ]
-function 33: antenna, groups =3D [ i2s ]
-function 34: pcm, groups =3D [ i2s ]
-function 35: gpio, groups =3D [ i2s ]
-function 36: i2s, groups =3D [ i2s ]
-function 37: -, groups =3D [ spi cs1 ]
-function 38: refclk, groups =3D [ spi cs1 ]
+ERROR: modpost: "irq_to_desc" [drivers/mailbox/zynqmp-ipi-mailbox.ko] undefined!
 
+I can't see a purpose for this call, since the return value is unused
+and probably left over from some code refactoring.
 
->
-> =E2=80=A6
-> > To solve this problem, a simple way is just add a pingrp refix to
->
->                                                     pin group prefix?
->
+Address the link failure by just removing the line.
 
-Yes. Just add a pin group prefix like pinctrl-mt7620.c does.
+Fixes: 6ffb1635341b ("mailbox: zynqmp: handle SGI for shared IPI")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> Regards,
-> Markus
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 7c90bac3de21..4acf5612487c 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -850,7 +850,6 @@ static int xlnx_mbox_init_sgi(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
+-	irq_to_desc(pdata->virq_sgi);
+ 	irq_set_status_flags(pdata->virq_sgi, IRQ_PER_CPU);
+ 
+ 	/* Setup function for the CPU hot-plug cases */
+-- 
+2.39.2
 
-[0] https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/mediatek=
-/pinctrl-mt76x8.c#L73
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/mediatek=
-/pinctrl-mt76x8.c#L101
-[2] https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/mediatek=
-/pinctrl-mt76x8.c#L54
-[3] https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/mediatek=
-/pinctrl-mt76x8.c#L61
 
