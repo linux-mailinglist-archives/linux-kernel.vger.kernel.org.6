@@ -1,91 +1,153 @@
-Return-Path: <linux-kernel+bounces-191769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077818D13DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50D78D13E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A9E285B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2274A1C21A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1661FE3;
-	Tue, 28 May 2024 05:28:04 +0000 (UTC)
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C054D59F;
+	Tue, 28 May 2024 05:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JTEx46+Z"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F67461FC3;
-	Tue, 28 May 2024 05:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1886A4CB2B;
+	Tue, 28 May 2024 05:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874084; cv=none; b=Q8qL4ddBz8LWo/v9SwLPR40DHtCurXzpDhrnSvwOa8x56Q4e1u7fnqrPn/JGDhrJSB1nmuYIhtjqZSSjB9RBgXmz1+Pdj75yzhmgnF1uIzfedYzHKwfuNbtSTjMVLOMeTy9qGFx2KnxLPBVO+iNEnm7xGH+acgw6TiG1Hj2cg8k=
+	t=1716874170; cv=none; b=K7MgQ+uEl2A9IX0vDstQRS+X6R6ZRGnWPQ6BaSbGCgfLLuau4pat6t19YU30siruorSO6VsK6ZIoFr5UCfAoN8hwHSUdKGnQdrL/FrXPDzB3UpKHpN7olr30e+2GhoJ5uv/VaMe0w3EHHs31n2pw9OAsb4IICbVKHTm6Gr9Ltjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874084; c=relaxed/simple;
-	bh=1R7MWX4+mwMsp8JZCjM+ndoUuOg2Be0WWXY4SVDxvz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4tAIPWvlGruUTw99ZZCJYgGs83cDk4NQEGZFjRszb5P6zkMzn3XCD13RMb63IyXyNycdFwgJHkHEqPZoruFXxOZtt1b00w+tUwH+L3QioxY2pOpN+ZmZWludabT4r20F7C2/UZyKfRcythbJ/JGGTBd7K98E+1MI8NtNKJPmZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24ca0876a83so202426fac.2;
-        Mon, 27 May 2024 22:28:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716874082; x=1717478882;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t5kFZAqWhL3uMzjEMOl+7Z8/CsSLGsMcTngYdrg2mHg=;
-        b=Ai77oaER1OHm2d9gUIsZbu7u7RiDk58ZzO2Xw9X1lPufEeBjwEdts16slA5WCyNLSG
-         a5/lm8o9icEou/ZecsYFS7502ThTMoQB4lWRPFLGm5DbUh75WmHQSBAJ+2CE7yz0XQ9c
-         ThQzsPtx0RM9OLhBpV3xmSbNS+nEI3hMWVZXkJovaz5ApluraUxag3aQvCzItOLxuHQm
-         cwpNnBXFDacDLjaH6DZZ+anFZk//zX+x0OdCsTuiF6aDDQaUFiij3qk/Cww0lIF09Bi5
-         JlFLLU+hKOWew4Khd+oKq9seiyxOGbA63mDSZ8yqm9vzCIaIn7Vc76+b2o1iBi3zdr3o
-         zmkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLalVNeuTFbPnD4S5udPpmWZZHfPQSyqCDBYTz4/yVyb5ic0+yZY7zLlg27XcjSoTZrkkL7CvfHAEfDWh30e3F8FVa6l+iIxjDnw84ALXWrHzR/qBBe+0yDdJNkLVTgXCNniawZmvdvxx
-X-Gm-Message-State: AOJu0YyKuzaFJRLOx9GR0o97xlhf3kl9aTCEWSWeik9tQ+NpfJaLXxl/
-	swhhdXV72zMUf4eQxu40Tx+Ru+TbXNBdUknXfqeQ7ND3zKzO+myJ
-X-Google-Smtp-Source: AGHT+IEeHHigBGaAlqIJLm6IYOPOft1kONei7wDh3Ic1XUX4/4XHRSboNGAD7brfAkJrisGKGPz/xw==
-X-Received: by 2002:a05:6870:b68c:b0:24c:678c:4282 with SMTP id 586e51a60fabf-24ca14011dfmr10707891fac.44.1716874082135;
-        Mon, 27 May 2024 22:28:02 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4d5b1asm5697366b3a.206.2024.05.27.22.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 22:28:01 -0700 (PDT)
-Date: Tue, 28 May 2024 05:28:00 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	ssengar@microsoft.com, maryhardy@microsoft.com,
-	longli@microsoft.com
-Subject: Re: [PATCH v2] tools: hv: suppress the invalid warning for packed
- member alignment
-Message-ID: <ZlVrYKHhtVwXq2XX@liuwe-devbox-debian-v2>
-References: <1714973938-4063-1-git-send-email-ssengar@linux.microsoft.com>
+	s=arc-20240116; t=1716874170; c=relaxed/simple;
+	bh=XFd0stmfvih21xWWcU4aTX2RVyZ1rCmh9kUw8IaXCU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IkBSahhw/cndFk8rrWqWzqsCJlehLsbOmZudQtG+8jRfggkg2GXwE9ezFIAlUhdQU5dGWuZqhI1QSlqvZ/sCE/z1TVeAYnQN7N9pGfvmapFrnTAS9uBPMBMIS1DZq/mG0AE7fNWg+5/zPo+NDUzZ6YnKga4+5OR6xUEixrjr0rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JTEx46+Z; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44S5SiMX080021;
+	Tue, 28 May 2024 00:28:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716874124;
+	bh=Au+V2jHmMZS62BTdB/hRuB16oG3domx+bjJTJ69vBIk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JTEx46+ZULOZHGGJ5blYxkdyCxjO4aEs3hO+5MFDw4uRuFCOFEZ2h5H36f4gLm52K
+	 IqmMhU4N1kSsZRZ0YW9lp16HALh+6ZCSSuSFnqmUAX2gjxrvJ7kQJEIpwcE/EP8ayY
+	 SIMqg9pVeBmd1x4TXpZus4UPiC/FQ+PcI0pB/5UI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44S5SiGN018043
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 28 May 2024 00:28:44 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
+ May 2024 00:28:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 28 May 2024 00:28:43 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44S5Sa7o030705;
+	Tue, 28 May 2024 00:28:37 -0500
+Message-ID: <a8af43e2-09e9-46ac-86f0-baa48d810fa4@ti.com>
+Date: Tue, 28 May 2024 10:58:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1714973938-4063-1-git-send-email-ssengar@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 3/3] net: ti: icssg-prueth: Add support for
+ ICSSG switch firmware
+Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
+        Vladimir Oltean
+	<vladimir.oltean@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
+        Roger Quadros <rogerq@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20240527052738.152821-1-danishanwar@ti.com>
+ <20240527052738.152821-4-danishanwar@ti.com>
+ <4f5a6d1b-e209-45b1-acec-ce84ca1c856f@lunn.ch>
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <4f5a6d1b-e209-45b1-acec-ce84ca1c856f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sun, May 05, 2024 at 10:38:58PM -0700, Saurabh Sengar wrote:
-> Packed struct vmbus_bufring is 4096 byte aligned and the reporting
-> warning is for the first member of that struct which shouldn't add
-> any offset to create alignment issue.
-> 
-> Suppress the warning by adding -Wno-address-of-packed-member flag to
-> gcc.
-> 
-> Fixes: 45bab4d74651 ("tools: hv: Add vmbus_bufring")
-> Reported-by: kernel test robot <yujie.liu@intel.com>
-> Closes: https://lore.kernel.org/all/202404121913.GhtSoKbW-lkp@intel.com/
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-Applied to hyperv-fixes, thanks.
+
+On 28/05/24 3:44 am, Andrew Lunn wrote:
+> On Mon, May 27, 2024 at 10:57:38AM +0530, MD Danish Anwar wrote:
+>> Add support for ICSSG switch firmware using existing Dual EMAC driver
+>> with switchdev.
+>>
+>> Limitations:
+>> VLAN offloading is limited to 0-256 IDs.
+>> MDB/FDB static entries are limited to 511 entries and different FDBs can
+>> hash to same bucket and thus may not completely offloaded
+>>
+>> Example assuming ETH1 and ETH2 as ICSSG2 interfaces:
+>>
+>> Switch to ICSSG Switch mode:
+>>  ip link add name br0 type bridge
+>>  ip link set dev eth1 master br0
+>>  ip link set dev eth2 master br0
+>>  ip link set dev br0 up
+>>  bridge vlan add dev br0 vid 1 pvid untagged self
+>>
+>> Going back to Dual EMAC mode:
+>>
+>>  ip link set dev br0 down
+>>  ip link set dev eth1 nomaster
+>>  ip link set dev eth2 nomaster
+>>  ip link del name br0 type bridge
+>>
+>> By default, Dual EMAC firmware is loaded, and can be changed to switch
+>> mode by above steps
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>  static int prueth_emac_buffer_setup(struct prueth_emac *emac)
+>>  {
+>>  	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
+>> @@ -321,25 +401,63 @@ static void icssg_init_emac_mode(struct prueth *prueth)
+>>  	/* When the device is configured as a bridge and it is being brought
+>>  	 * back to the emac mode, the host mac address has to be set as 0.
+>>  	 */
+>> +	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
+>> +	int i;
+>>  	u8 mac[ETH_ALEN] = { 0 };
+> 
+> nitpick: Reverse Christmas tree
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+Thanks for the review. I will change this to "Reverse Christmas tree"
+and send next revision.
+
+> 
+>     Andrew
+
+-- 
+Thanks and Regards,
+Danish
 
