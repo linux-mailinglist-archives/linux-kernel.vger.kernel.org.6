@@ -1,385 +1,232 @@
-Return-Path: <linux-kernel+bounces-192763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0588D21C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8432A8D21C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F1A1C21EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF731F25987
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D76172BCA;
-	Tue, 28 May 2024 16:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869C4173326;
+	Tue, 28 May 2024 16:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KR/BNAgw"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2063.outbound.protection.outlook.com [40.107.20.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QKuiVYVr"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7194116C86F;
-	Tue, 28 May 2024 16:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914273; cv=fail; b=godb5m21rQO2Ex4+eWaMWRTtUSck4h+x0rTrtgTvSA7lAgfgC4vB+6dcd/7opV0iSpuqAgpMEYsloi8mnAIb07h0890Vbp7G+qb2FxgC8bnzMOL4t9Dg26Gg9cxCJkDJeBo5cCiT8UgpEWPMm49jmklkA4grThwZrtTsUFVapSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914273; c=relaxed/simple;
-	bh=+d8de66yaT8xiheUwXMRKmPwCEhj+TaoAFr0loD9Gkk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AdA3mBZJTSoJuFfiGcM51T29rVGuB0jfnW4Ue1I/LTDXNiRKSgzBK83DoezyuX4nRmv1XF9RsZYYYBzGlsH0xrAefecttW5JU0lyJCsL3F1g/e1or/0pLK+5q3GKeNL9U0a/juWhr3pA+ldKsIEoitLqaKqnaTntY7jhl5Tacas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=KR/BNAgw; arc=fail smtp.client-ip=40.107.20.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MDa6w2yGc1vjzKByiA5rjDGfO11IAikAGZcNObLzqAT/62tJ7Q2srow03GByyusPf1DcdjJQllmKKOlybpGFo5ftNuti8AtLX8na0KpDgeoFW8mCL4FpozYVaMKJ66AAOR3s1KV23qWyNGtipvSsgwDt0dQ9SSIQQUKj/13i/wyk3VIuTns/Xx3dmO9KqcPBoqwOsb0gKc4w3lJxxMeppbSI0x3v6TC/hWukY6TtT5SKsGgxAU4MqzR6YvhZAyRJXsV3oYdiFn5MH7CcCMeKDPbA/tlVjCN8xUAG9PTfTgGrj8yWKguEsKbQTtVHn9REulzaqdmnixPTHol7LiIJnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b3u9q8cHqVMZURDuomlOuVUsRvMYihu+yaWiEmc8Kwc=;
- b=mcXo3lC4LgV3zfbQF7SdNwncR/4KNWYy3Q35Pn/xZSJ7TDGEuURBJXeIvr8lolr028sWYl+igePv3//yK1MvAHbGd9mQreaY7pJRQg6ouTW4jzQX4g29y4WENxkhdK3N3F0qENA96TDlEuxEuENZEs7QIp4g9fLsPdQr515NwKpP09S++YsvrJCklYODMGuwuFYH4nsPp9R4q3a/VCtdQZgepSbmsfr0BGPAoBcyn/s34RjqKjDg7czp8UgZlENaQRwVA4BtSQT3deboZtCy6bOHpO5xVfv+9JM6R1dFBt3+6vKt/2h+IgjVUyKxpg46OAI/n/bV1kqNViz4wH3Ygw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b3u9q8cHqVMZURDuomlOuVUsRvMYihu+yaWiEmc8Kwc=;
- b=KR/BNAgwDCW+J8DxTRKgSqRHM+QjuV2P5ETiwiC/7tgr9AxKQ/I6aZE1N2eF4Bci0NzCeidD3QbTic+CkYzDNJv89Ig5yxMcNFZziMXO1MInzB/xjMeIi66k/ochMqlr2Gy/Jo2Sz/c0hq1bqWJ1S86+alBAz0yJdmXQwHNdjpg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8416.eurprd04.prod.outlook.com (2603:10a6:20b:3b7::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
- 2024 16:37:48 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7611.016; Tue, 28 May 2024
- 16:37:48 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: krzk@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	vkoul@kernel.org
-Subject: [PATCH v2 1/1] dt-bindings: fsl-qdma: Convert to yaml format
-Date: Tue, 28 May 2024 12:37:34 -0400
-Message-Id: <20240528163734.2471268-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SN7PR04CA0213.namprd04.prod.outlook.com
- (2603:10b6:806:127::8) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C8A172BC9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716914282; cv=none; b=NGa+JFVgclmZS0CrWE8G4KxiyJLlahpqsWITbIs2jNkQ1LzmV8P7ZxdoIxRo0rjqYtFLIsY6ZOO4JFR/c9kgXUHK2XYBiTnfM7ZnQDeThm4PBrMmJWFGob0zhTdA+tuEHFC6zwRYtgkYhEDxr4CQmKJilpXZcJgTnLA9/kwR2hM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716914282; c=relaxed/simple;
+	bh=3ZOe/NyEL4NYG0CoFbAifgplo20ZW+hFcf9C3d6vBio=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WakyODy5SnjU09AoqEHOuzQKKd7AAOLZdMHoFzdPs01ZAtpunNVvdF4c0BmBdbGskwg2gKkOXGXBUaU8llKwygh54xs20Dclb5AE6FjqqaHuaxmqpccW1CtYvg8te/jAmjuh8lAm3U2kQfrY2LRIoLNuy2k/59dttoSB2E82ffg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QKuiVYVr; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627e7734a29so14522417b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716914280; x=1717519080; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jW03SLzQXCK5cXKTLHnT3g1oG6ovCyP3JejlVIXEzpI=;
+        b=QKuiVYVr9MSZ/Vm886MEqCP61q2G/8bmKDNSUbLD3G7eZeslCE1n1cX0dNvzfqGqei
+         09wBmWP6f+FtBOc99abH1tmAcbifZqTaYEvuRy5JUQn9kE58TEdqOwtujJxAoWaZ0VG9
+         AvVdf9xEfyiIvszMKwILUmL0WlRo5xquWizFBtv7qVQGKWS4EgJL9nUDnq8B9pLaJl4H
+         4ur5WMCahwHW7j/tH0iKISQc5bxKF5qrYXBB+0UFL7XPVMSaxqN4LVm74BGyflHy8/y4
+         b2O6ZDDYMIdTugnnG0PSbSZtfPrjSiEJ97OL0gexZQ8p6n87VuhhqD8f0yB538LzANGH
+         G5xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716914280; x=1717519080;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jW03SLzQXCK5cXKTLHnT3g1oG6ovCyP3JejlVIXEzpI=;
+        b=IBfhL3gyFOoO4t+BfiGiUPnMaLdAEPYVNdA68kBz3qGA4f5i29Dgp6l6jmPwFUNDd/
+         nv4hOf8tzinOp7hAN3Z4uWemvv5b5uYUZ32Ko/4orRckUvPMADELobZKe3XQdMtuemT0
+         /Vv3XATzazEu/9VE3hfWfyFpePEKZvayEuFnidm6yi31nzG2+lOT7vaAEIJKQ9lEJlYQ
+         6j+WyiTesspv9HfT6jU8RpLdRTjQO9+vfv0FFvpfQHuotpVV5WWn1y4VwidyKxeCzL0m
+         ycMtCqbGmYCm2kCv/wW/YqLZA1xjZ0tZWw/nBs5Mvu1/1JSFDo0GCuL/Wrse26jtGuEq
+         nicQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPDLOrFBM4lXxmmTxSfIA18tS2OyQFjTlpGseuH+UeyB4WMD2h71BfMyoFRH7ObgKiQ+pXSshAtR1r+RDb+8GLBcteim8pAfvVZ+Qk
+X-Gm-Message-State: AOJu0YxWDoloOJn1q2XKF912uxKnj1RprMt7dxDPdr1EQai7foJDdFPS
+	9017uAdn4QyAGw0rrJsbg3GNLEvdoeqcD0gpBgxZ6tdAJj8LFO18cMKeKtikg+VoYpIW8LlANzj
+	KsWOulrbjQIgNpQ==
+X-Google-Smtp-Source: AGHT+IEeHAL3ZeW6codhun7v67I8gtG3pX20wbsoxTrzUXIW9NcEB+1vJuC4aPjpz7QlEuuQPDo0ihUnHqeFZv8=
+X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
+ (user=tjmercier job=sendgmr) by 2002:a05:690c:6a06:b0:627:e167:f95c with SMTP
+ id 00721157ae682-62a08dcccb2mr35974547b3.4.1716914280240; Tue, 28 May 2024
+ 09:38:00 -0700 (PDT)
+Date: Tue, 28 May 2024 16:37:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8416:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc41cd65-837f-46fd-5cd1-08dc7f34829e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|52116005|366007|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qke0GqrdMhP9E1eaAptvN3HJCVAQanwfLtJtw2IIzgrEIUwYrp7FWP+mElhJ?=
- =?us-ascii?Q?irEJ1VEp94tYNsmyrtbPe2Zp7xbnMVs8eyKBVcQWLtsbfHMGAYVHpA3KdD4D?=
- =?us-ascii?Q?EhgRrkWxjFWJtDQVlBLka3mMfb3TFvrYTgkELJnK4jq/EQwmb3ITGxirRomq?=
- =?us-ascii?Q?R48gV4Lrugf6FmnKRFKFNUfZi0qFGH4w68k2t6Rhf7otOBHeJZYdeq03LE9M?=
- =?us-ascii?Q?A+8f3U+cNVZINfEg81M6XcM23zQnHQFjv+rBm9TizqC+uoOMOdhHS6wNtIcw?=
- =?us-ascii?Q?ACBEMkXGo0jYMT8KC3vkxuIeGa4Uta47UQwv0xlsryRY9DfiCYiccFU1OIpb?=
- =?us-ascii?Q?5kHNyEU5aBZ+Nh3UiIakudtvEg/hBbLzq/Wdv3+zzoWkL/D8TlFJwnIWugRi?=
- =?us-ascii?Q?37Uw6Vs+cV4YGa2O+k9T0p2aytdobUATZ9fskSV0ABZQ6WGva+LC19kCUnn/?=
- =?us-ascii?Q?l8RABDMVjXvgV2hqOGeyrKWzMSa14yEUt6bcdxv2xyg04jEnKXBpPABh6uZN?=
- =?us-ascii?Q?EXWevzU6/bHu2YfTiQPWDSTsFcuiPwjJBeJxxPjKkAN6doX3neyfUvRdYeMq?=
- =?us-ascii?Q?bkX6zyaFnV33+RBKjuWu7+sUVvaoflVLD410xUcDejz/wx4jx7cCR8kRf7my?=
- =?us-ascii?Q?/pZcChENY44OP/XTp1LHMIbGpiEmZ0UDQPRXPVmOg6YoCl7IvVj1vpt1mPWv?=
- =?us-ascii?Q?L6nAuBDw8/l+iZO+Ob6GY6Slpobyo5Xums/p9toaUO8q9eqtR8oKZWOr4CMe?=
- =?us-ascii?Q?cKE+OJZLvC9x2uhcnAAe+UuWSGlbGio6SBse43v63jb7oCTqxYvA9VV0DIZz?=
- =?us-ascii?Q?4e+B8Jq0gcD208kI7mH3YqazhG10fEnEXpT9lY+1FDXY1kru3UtzXmUCgXEK?=
- =?us-ascii?Q?jRSltPskC5qo7zazXWFDFEuYjfC78W2LeCk26WIGjDXpQorgcLjcYI5eqnR0?=
- =?us-ascii?Q?u5poVKE41rqYtPokm7owa0RCOpJGb/nXfIEWXnNjSejBIDnSd4pMyQIJIc+1?=
- =?us-ascii?Q?KaVQobHlAJV4Myh4GKXIeEhxdl9YMSrAJI6wrhYFaKLxxAGEQjOH7VpxqiVg?=
- =?us-ascii?Q?CFvWNYciagvLGQNtEjzWAQOx/2WeqVODP9VyakM5EnF62r08CcEf2M08F9iK?=
- =?us-ascii?Q?Cix1g6984K/+pBssuMg/kuzavvGLpF2lSZlGbyiY69tAs1XcpjQI3mO9Pa6E?=
- =?us-ascii?Q?YiLQy+UZMiNckUKNkDOfKzaubhwleHRSn2Au2EFNLc/KsNItt6OCk2bT+/0t?=
- =?us-ascii?Q?FYNqh4EBZ+OW2dre3Q8Mg5X/IeUPz+BDbLgnYpkcgTNRpWiBfPjTeVjR0K0Q?=
- =?us-ascii?Q?Z+M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(366007)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7EiIHABd5d+P3XoSgMMXyW2awuB6A2AgmaH12hJclH8qA3aD9Vo8/N6g+7ty?=
- =?us-ascii?Q?tt/i3kObkCrPalBb40lbMnvTLDBWZEIgdjnTOK88uydEwRnQPT9LG8WrdfYK?=
- =?us-ascii?Q?yRdva0Piw7b3okZvxvR67voP23U+Me28nCWePbsfbluTwa1cgXkbjW4r6gtn?=
- =?us-ascii?Q?9jLgCf6keDJceKQHB3/0h1G4moqQyXvNnHyCr63GFvYJ8x+50Fa/qD/mfEIr?=
- =?us-ascii?Q?xjQ/xqVB1FjwqZwm10NfrOfd1aCl+dO4UHjBbJDToQ0nIzRgzqFm4y9fXcWa?=
- =?us-ascii?Q?o+06sDdUC0ws76Ocb1B7ivpjLF99Yy6GeOPY/HlRCJi/vGAkHCKXlpveKrIU?=
- =?us-ascii?Q?/NMxYF+I6CpH+tYFuaGXp4PZaDn/WDjJ+Dj/XsHPkBG8Yd3+E90JwidI+saR?=
- =?us-ascii?Q?7ducnvUdNWMsbFdz+u1SqOUP5xsXl0cIMP13v7Wd61ma6rLevjf1h0fd+ZDz?=
- =?us-ascii?Q?9pqOxsll0w0TU1/isoIg99oytP2N0+MFz7Z+LHUk1+yf8EOHLWO8UQFiCvJg?=
- =?us-ascii?Q?zWY3UJfNDB1LLhBzelWjVxKDN+k/4dDano+YcccCimc6INfchqKyswKbJl9A?=
- =?us-ascii?Q?1WC8MA+kgkfAkEaBm9vGLg0gSer7pOezxrE7+Kc33+NrOXi1nwTSTN4jT8Ln?=
- =?us-ascii?Q?AJujDZVVuqUo/pcL+DLTy0JxMaurwOuShtSGskKupVobFoYp57N4pdy5HpQP?=
- =?us-ascii?Q?71Efkz/xDzqTNw+7fN7gFSJyYjfqnT5QDgbfIpIqQ+ekpmy9d0+fB36aH8ZA?=
- =?us-ascii?Q?oVExQIzHktY5wlenQZQ7wXP6VqsDzhfUUYPfFTOCvpitEVd0H3sRgCDCfLQO?=
- =?us-ascii?Q?XvUC4X9gOeccwCD8LahTWKanZPCyFG4DiRWkFrSdSDJR7RxDQ1QG7e1CtQ7I?=
- =?us-ascii?Q?7qB2rMvsn+PbYRjJB8Cr51s+O++vJX66JgmcrjM/z42dQWT39pQy22f02HoE?=
- =?us-ascii?Q?9/+g44szGaXOBrQZbD7JwceGoiQBaBude7IEbIroNoRmIrIn37YsmaB00ASl?=
- =?us-ascii?Q?YDCvcnYjGOwyKeqxCnHEg14calGYN37b3G51dZzYhrDHhMj+FyF3XTAhLaPH?=
- =?us-ascii?Q?VBec6tYI2y1Y8zGeFq1ZstGOpEbKL0SyTKBEo5J5f6CFq644c/NMqYZGUZC3?=
- =?us-ascii?Q?04Y9VylhXsic5ihdfJXt13ZpgB2MvG10gv4sKnO5LvLYHQYaC/NEgK3lk+Yc?=
- =?us-ascii?Q?X/oTunmmXiKYMg4T4MQq2YjQjP80OkHTNighQ8KTWcV56EuCQqK+TGXaILG3?=
- =?us-ascii?Q?jc6rZS5kWYdr0wmaDNWkyTaRe48xL71JicuLjIIezytF2mw7XD/AG3OWlhZI?=
- =?us-ascii?Q?RV9kqfNm+k8HbNBbjm76/i0ABhPXjoD1Y6/BKVK5tjhmNP+f5ZMd1G9Uz6iW?=
- =?us-ascii?Q?1z/IyuX2MWfxrGfTfOPo/WD114i2pEtbdKh3ECcmOmAOgY8ozYmY7aEyRMP3?=
- =?us-ascii?Q?NL2XL93FQNMYpS65+KJB/Nf66/6VmkkKVSt2Cv9NiCjGLGsXE58gPkbmBMRF?=
- =?us-ascii?Q?jCj6rLm0s9h2asYUJaqDhn+nFNKxCrlo3q/B+moUs9sZmnC/0OWXESH2ryyC?=
- =?us-ascii?Q?RhL7Bzskp9yssd1u4tmob850esh77lwvWRnSXm5M?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc41cd65-837f-46fd-5cd1-08dc7f34829e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 16:37:48.7262
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pdi33JhmOcd3f3mGSlAupx2eafAGMm9MN+jw63nRKjri8oiaVrQPMUBzP1UbJYZaf9KK5X9KKqnfVRaS/cWTXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8416
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240528163750.2025330-1-tjmercier@google.com>
+Subject: [PATCH 2/2] cgroup: Remove nr_cgrps
+From: "T.J. Mercier" <tjmercier@google.com>
+To: tjmercier@google.com, mkoutny@suse.com, Tejun Heo <tj@kernel.org>, 
+	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Convert binding doc from txt to yaml.
+nr_cgrps now largely overlaps with nr_css. Use nr_css instead of
+nr_cgrps for v1 so that nr_cgrps can be removed.
 
-Re-order interrupt-names to align example.
-Add #dma-cell in example.
-Change 'reg' in example to 32bit address.
-
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
 ---
+ include/linux/cgroup-defs.h |  3 ---
+ kernel/cgroup/cgroup-v1.c   |  8 ++------
+ kernel/cgroup/cgroup.c      | 31 +++++++++++++++++++++++++------
+ 3 files changed, 27 insertions(+), 15 deletions(-)
 
-Notes:
-    Change from v1 to v2:
-    - dma-channels's minimum and maximum
-    - add Constraints for fsl,dma-queues
-    - move unevaluatedProperties after allof
-    - add interrupts contraints for ls1021.
-    
-    Pass dt_binding_check:
-    
-    make dt_binding_check DT_SCHEMA_FILES=fsl-qdma.yaml
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-      CHKDT   Documentation/devicetree/bindings
-      LINT    Documentation/devicetree/bindings
-      DTEX    Documentation/devicetree/bindings/dma/fsl-qdma.example.dts
-      DTC_CHK Documentation/devicetree/bindings/dma/fsl-qdma.example.dtb
-
- .../devicetree/bindings/dma/fsl-qdma.txt      |  58 --------
- .../devicetree/bindings/dma/fsl-qdma.yaml     | 124 ++++++++++++++++++
- 2 files changed, 124 insertions(+), 58 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/dma/fsl-qdma.txt
- create mode 100644 Documentation/devicetree/bindings/dma/fsl-qdma.yaml
-
-diff --git a/Documentation/devicetree/bindings/dma/fsl-qdma.txt b/Documentation/devicetree/bindings/dma/fsl-qdma.txt
-deleted file mode 100644
-index da371c4d406ce..0000000000000
---- a/Documentation/devicetree/bindings/dma/fsl-qdma.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--NXP Layerscape SoC qDMA Controller
--==================================
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index bc1dbf7652c4..dcd47a717eac 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -576,9 +576,6 @@ struct cgroup_root {
+ 	/* must follow cgrp for cgrp->ancestors[0], see above */
+ 	struct cgroup *cgrp_ancestor_storage;
+ 
+-	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
+-	atomic_t nr_cgrps;
 -
--This device follows the generic DMA bindings defined in dma/dma.txt.
+ 	/*
+ 	 * Number of cgroups using each controller. Includes online and zombies.
+ 	 * Used only for /proc/cgroups.
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index 9bad59486c46..d52dc62803c3 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -675,15 +675,11 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
+ 	 * cgroup_mutex contention.
+ 	 */
+ 
+-	for_each_subsys(ss, i) {
+-		int count = cgroup_on_dfl(&ss->root->cgrp) ?
+-			atomic_read(&ss->root->nr_css[i]) : atomic_read(&ss->root->nr_cgrps);
 -
--Required properties:
--
--- compatible:		Must be one of
--			 "fsl,ls1021a-qdma": for LS1021A Board
--			 "fsl,ls1028a-qdma": for LS1028A Board
--			 "fsl,ls1043a-qdma": for ls1043A Board
--			 "fsl,ls1046a-qdma": for ls1046A Board
--- reg:			Should contain the register's base address and length.
--- interrupts:		Should contain a reference to the interrupt used by this
--			device.
--- interrupt-names:	Should contain interrupt names:
--			 "qdma-queue0": the block0 interrupt
--			 "qdma-queue1": the block1 interrupt
--			 "qdma-queue2": the block2 interrupt
--			 "qdma-queue3": the block3 interrupt
--			 "qdma-error":  the error interrupt
--- fsl,dma-queues:	Should contain number of queues supported.
--- dma-channels:	Number of DMA channels supported
--- block-number:	the virtual block number
--- block-offset:	the offset of different virtual block
--- status-sizes:	status queue size of per virtual block
--- queue-sizes:		command queue size of per virtual block, the size number
--			based on queues
--
--Optional properties:
--
--- dma-channels:		Number of DMA channels supported by the controller.
--- big-endian:		If present registers and hardware scatter/gather descriptors
--			of the qDMA are implemented in big endian mode, otherwise in little
--			mode.
--
--Examples:
--
--	qdma: dma-controller@8390000 {
--			compatible = "fsl,ls1021a-qdma";
--			reg = <0x0 0x8388000 0x0 0x1000>, /* Controller regs */
--			      <0x0 0x8389000 0x0 0x1000>, /* Status regs */
--			      <0x0 0x838a000 0x0 0x2000>; /* Block regs */
--			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "qdma-error",
--				"qdma-queue0", "qdma-queue1";
--			dma-channels = <8>;
--			block-number = <2>;
--			block-offset = <0x1000>;
--			fsl,dma-queues = <2>;
--			status-sizes = <64>;
--			queue-sizes = <64 64>;
--			big-endian;
--		};
--
--DMA clients must use the format described in dma/dma.txt file.
-diff --git a/Documentation/devicetree/bindings/dma/fsl-qdma.yaml b/Documentation/devicetree/bindings/dma/fsl-qdma.yaml
-new file mode 100644
-index 0000000000000..1b689a2529c87
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/fsl-qdma.yaml
-@@ -0,0 +1,124 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/fsl-qdma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++	for_each_subsys(ss, i)
+ 		seq_printf(m, "%s\t%d\t%d\t%d\n",
+ 			   ss->legacy_name, ss->root->hierarchy_id,
+-			   count,
++			   atomic_read(&ss->root->nr_css[i]),
+ 			   cgroup_ssid_enabled(i));
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 1bacd7cf7551..fb4510a28ea3 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1322,12 +1322,15 @@ static void cgroup_destroy_root(struct cgroup_root *root)
+ {
+ 	struct cgroup *cgrp = &root->cgrp;
+ 	struct cgrp_cset_link *link, *tmp_link;
++	struct cgroup_subsys *ss;
++	int ssid;
+ 
+ 	trace_cgroup_destroy_root(root);
+ 
+ 	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+ 
+-	BUG_ON(atomic_read(&root->nr_cgrps));
++	for_each_subsys(ss, ssid)
++		BUG_ON(atomic_read(&root->nr_css[ssid]));
+ 	BUG_ON(!list_empty(&cgrp->self.children));
+ 
+ 	/* Rebind all subsystems back to the default hierarchy */
+@@ -1874,6 +1877,7 @@ int rebind_subsystems(struct cgroup_root *dst_root, u16 ss_mask)
+ 		} else {
+ 			dcgrp->subtree_control |= 1 << ssid;
+ 			static_branch_disable(cgroup_subsys_on_dfl_key[ssid]);
++			atomic_set(&ss->root->nr_css[ssid], 1);
+ 		}
+ 
+ 		ret = cgroup_apply_control(dcgrp);
+@@ -2046,7 +2050,6 @@ void init_cgroup_root(struct cgroup_fs_context *ctx)
+ 	struct cgroup *cgrp = &root->cgrp;
+ 
+ 	INIT_LIST_HEAD_RCU(&root->root_list);
+-	atomic_set(&root->nr_cgrps, 1);
+ 	cgrp->root = root;
+ 	init_cgroup_housekeeping(cgrp);
+ 
+@@ -2065,6 +2068,7 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
+ 	LIST_HEAD(tmp_links);
+ 	struct cgroup *root_cgrp = &root->cgrp;
+ 	struct kernfs_syscall_ops *kf_sops;
++	struct cgroup_subsys *ss;
+ 	struct css_set *cset;
+ 	int i, ret;
+ 
+@@ -2144,7 +2148,9 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
+ 	spin_unlock_irq(&css_set_lock);
+ 
+ 	BUG_ON(!list_empty(&root_cgrp->self.children));
+-	BUG_ON(atomic_read(&root->nr_cgrps) != 1);
++	do_each_subsys_mask(ss, i, ss_mask) {
++		BUG_ON(atomic_read(&root->nr_css[i]) != 1);
++	} while_each_subsys_mask();
+ 
+ 	ret = 0;
+ 	goto out;
+@@ -5368,7 +5374,6 @@ static void css_free_rwork_fn(struct work_struct *work)
+ 			css_put(parent);
+ 	} else {
+ 		/* cgroup free path */
+-		atomic_dec(&cgrp->root->nr_cgrps);
+ 		if (!cgroup_on_dfl(cgrp))
+ 			cgroup1_pidlist_destroy_all(cgrp);
+ 		cancel_work_sync(&cgrp->release_agent_work);
+@@ -5387,12 +5392,27 @@ static void css_free_rwork_fn(struct work_struct *work)
+ 			cgroup_rstat_exit(cgrp);
+ 			kfree(cgrp);
+ 		} else {
++			struct cgroup_root *root = cgrp->root;
+ 			/*
+ 			 * This is root cgroup's refcnt reaching zero,
+ 			 * which indicates that the root should be
+ 			 * released.
+ 			 */
+-			cgroup_destroy_root(cgrp->root);
 +
-+title: NXP Layerscape SoC qDMA Controller
++			/*
++			 * v1 root css are first onlined as v2, then rebound
++			 * to v1 (without re-onlining) where their count is
++			 * initialized to 1. Drop the root counters to 0
++			 * before destroying v1 roots.
++			 */
++			if (root != &cgrp_dfl_root) {
++				int ssid;
 +
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,ls1021a-qdma
-+      - fsl,ls1028a-qdma
-+      - fsl,ls1043a-qdma
-+      - fsl,ls1046a-qdma
-+
-+  reg:
-+    items:
-+      - description: Controller regs
-+      - description: Status regs
-+      - description: Block regs
-+
-+  interrupts:
-+    minItems: 2
-+    maxItems: 5
-+
-+  interrupt-names:
-+    minItems: 2
-+    items:
-+      - const: qdma-error
-+      - const: qdma-queue0
-+      - const: qdma-queue1
-+      - const: qdma-queue2
-+      - const: qdma-queue3
-+
-+  dma-channels:
-+    minimum: 1
-+    maximum: 64
-+
-+  fsl,dma-queues:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Should contain number of queues supported.
-+    minimum: 1
-+    maximum: 4
-+
-+  block-number:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: the virtual block number
-+
-+  block-offset:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: the offset of different virtual block
-+
-+  status-sizes:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: status queue size of per virtual block
-+
-+  queue-sizes:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description:
-+      command queue size of per virtual block, the size number
-+      based on queues
-+
-+  big-endian:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      If present registers and hardware scatter/gather descriptors
-+      of the qDMA are implemented in big endian mode, otherwise in little
-+      mode.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - fsl,dma-queues
-+  - block-number
-+  - block-offset
-+  - status-sizes
-+  - queue-sizes
-+
-+allOf:
-+  - $ref: dma-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - fsl,ls1021a-qdma
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 3
-+        interrupt-names:
-+          maxItems: 3
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    dma-controller@8390000 {
-+        compatible = "fsl,ls1021a-qdma";
-+        reg = <0x8388000 0x1000>, /* Controller regs */
-+              <0x8389000 0x1000>, /* Status regs */
-+              <0x838a000 0x2000>; /* Block regs */
-+        interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "qdma-error", "qdma-queue0", "qdma-queue1";
-+        #dma-cells = <1>;
-+        dma-channels = <8>;
-+        block-number = <2>;
-+        block-offset = <0x1000>;
-+        status-sizes = <64>;
-+        queue-sizes = <64 64>;
-+        big-endian;
-+        fsl,dma-queues = <2>;
-+    };
-+
++				do_each_subsys_mask(ss, ssid, root->subsys_mask) {
++					atomic_dec(&root->nr_css[ssid]);
++				} while_each_subsys_mask();
++			}
++			cgroup_destroy_root(root);
+ 		}
+ 	}
+ }
+@@ -5678,7 +5698,6 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
+ 
+ 	/* allocation complete, commit to creation */
+ 	list_add_tail_rcu(&cgrp->self.sibling, &cgroup_parent(cgrp)->self.children);
+-	atomic_inc(&root->nr_cgrps);
+ 	cgroup_get_live(parent);
+ 
+ 	/*
 -- 
-2.34.1
+2.45.1.288.g0e0cd299f1-goog
 
 
