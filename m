@@ -1,140 +1,99 @@
-Return-Path: <linux-kernel+bounces-192571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691C88D1F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:51:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823348D1F88
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857201C222AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:51:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5037B235BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FEB16FF59;
-	Tue, 28 May 2024 14:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1E517334E;
+	Tue, 28 May 2024 15:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dIDTxp5C"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="nwiK7dkC"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E67FEADA;
-	Tue, 28 May 2024 14:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D1171E59;
+	Tue, 28 May 2024 15:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907871; cv=none; b=gvsSkMJCpGpydYwazRAOrJWMh/320hEowC2mQJrmhCIKJcFocSK2Awqs5eM3GEBUtipwDRV1l2AFXO6M9p4TTXEZ5kqF0dwvzgJUFPwjuYnLJ/kKt/n3VaYhNS9wdAt/BKIfeOKpACzcLFCzoWwytUKXpqUS6dnNlCEnuKx1saw=
+	t=1716908476; cv=none; b=V7MzXZtjg7bCOuv973SAMkrB/jNlZDZUu9rQ9frX9SsU9sSAwrulcL+Jh1xnoiVeJ9G0cMaSxtVpB2ITly2i+g3gtdgP3mBX+UyY5uKjI2l9jfBfIqCRocNWjhem0pL7YU8y/xJFvCElySp5Hkq+Zrw6I3mHAge6MUeuHMos62s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907871; c=relaxed/simple;
-	bh=tf22zZH8M1mDtd6Mbhi1prWLNts2depr/CItM3GeZqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwhFno8XP6uff7I0mi5D3iRYU6BJ3gnhgdHu8TQWcDxK6LZqNQyj0rX1A5750YhmO1rXWydJvX9hucZLmRyTbq4jcVL47+q5MwsntYapJIaEFal3WK/qOuPg5fI2iDKhyXB/kJ4Qad23WI+GH8vh5Kpza2iJ3+BuxSSjaD0cDdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dIDTxp5C; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SEhI5f003610;
-	Tue, 28 May 2024 14:50:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=bYLnu2uRhQiJIzawm02kqqSHPnZb/mNe6+kbvP6fwYk=;
- b=dIDTxp5Cuc4X1w7Wt8O4NO/JAKZPKlB2rTIOArOz6oUXGVwOUY1T/9a/XISQDn0MgIQa
- d3Xpm1/+BtZShQsFfDelWiIszyEMGmkfV7XJ5pLAzajQHfw1QVfqwxHcig+D8jrXK200
- gIwn1k/6lwzldkeFg5srOxcXuft0F2i2OycCg9vFBxA+6nsKwWm+/Q6Vsca/3oMqIrC6
- sjrRCL7McII1jlgwr07Sc9LjyPCIjlrJF4UBIGzJEMpifYLjv9so/uS3WuhR1G0oAj/U
- q4W12yhJ/4aaVLSGN3wUYllE1DUOru5wNgyE+gZXuGolGWP9N536dTHhALYMB8ArzX3c VQ== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydh99g0x8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 14:50:56 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SERo3E027098;
-	Tue, 28 May 2024 14:50:56 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ybvhkq1w2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 14:50:56 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SEoqu424314418
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 14:50:54 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 881CF58066;
-	Tue, 28 May 2024 14:50:52 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4FA858054;
-	Tue, 28 May 2024 14:50:51 +0000 (GMT)
-Received: from [9.61.45.62] (unknown [9.61.45.62])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 May 2024 14:50:51 +0000 (GMT)
-Message-ID: <45724dae-ebe6-48f9-8cb7-d6e27d5fdad9@linux.ibm.com>
-Date: Tue, 28 May 2024 09:50:51 -0500
+	s=arc-20240116; t=1716908476; c=relaxed/simple;
+	bh=N748M5iSZSS97nVSnYySGTHnW84LP/wuTwcaAWQck1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pp9j95El/r72vYm6eY/a2MX251RYmeOsjAm7NOD8D9arQhFbxnqYjv8u9DQhibGGtQwC3hSff1+ghZAUIpi090GPEe/GcHt3Qc3hKHqOs3vYFc14jjuX0h2EPf5YIGxq9FPaq0PGVMAXBIEaCv91Vw31AFtoFVsg89R82Xbt970=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=nwiK7dkC reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
+ id 76ede143058c3e2a; Tue, 28 May 2024 17:01:07 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id F23D36A5015;
+	Tue, 28 May 2024 17:01:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1716908467;
+	bh=N748M5iSZSS97nVSnYySGTHnW84LP/wuTwcaAWQck1w=;
+	h=From:To:Cc:Subject:Date;
+	b=nwiK7dkCIUSAVzZdY9YOAbQX9mIcl/4GnjanAtpNAsTObFzujXeHZ1nr2eEzEAk6v
+	 Hh4m/EzWLXMEDLR0hBGCMlvTS/yTauQEtAoQrGw8isB2zZew0ij2c532dc50GhGnG2
+	 as7Vd38zJlUs4NsorYxWanL13wI27oK1c7/oJme+ncrX82Cn2i6ZBqSsYEk/p7OH/z
+	 JtMg4IN3fOgTXJ2BS3DDAbhHDTv+o18pKO4APIMjW91teZ7nkmrOjVXNqxjGzt716N
+	 7IHJBpxJzY4C0zE7oL+L8KuV7WCzlAH0rguhgCBUPeQ5YGIunRGtt00jyaxqvv0n4H
+	 /VhDdccpT0Idg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject:
+ [PATCH v2 0/8] thermal/debugfs: Assorted improvements for the 6.11 cycle
+Date: Tue, 28 May 2024 16:51:09 +0200
+Message-ID: <5794974.DvuYhMxLoT@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 14/20] ARM: dts: aspeed: Add IBM P11 Blueridge BMC
- system
-To: Ninad Palsule <ninad@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
-        conor+dt@kernel.org, krzk+dt@kernel.org, andi.shyti@kernel.org,
-        broonie@kernel.org
-References: <20240522192524.3286237-1-eajames@linux.ibm.com>
- <20240522192524.3286237-15-eajames@linux.ibm.com>
- <dca4ac91-c18b-4271-a3f9-fbf3b5a3c43d@linux.ibm.com>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <dca4ac91-c18b-4271-a3f9-fbf3b5a3c43d@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Lv0hgdLUj0_GkwgitpXGDZ3pd6ypzCFN
-X-Proofpoint-ORIG-GUID: Lv0hgdLUj0_GkwgitpXGDZ3pd6ypzCFN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=907 lowpriorityscore=0 suspectscore=0 clxscore=1015
- bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405280111
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhr
+ tghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+
+Hi Everyone,
+
+This is an update of
+
+https://lore.kernel.org/linux-pm/12438864.O9o76ZdvQC@kreacher/
+
+which mostly is a rebase on top of the new fixes:
+
+https://lore.kernel.org/linux-pm/12438941.O9o76ZdvQC@kreacher/
+
+but one new patch has been added to the series (patch [5/8]).
+
+The patches in the series address some minor issues in the thermal
+debugfs code and clean it up somewhat.
+
+Please refer to the individual patch changelogs for details.
+
+At one point I'm going to put this series on a separate git branch
+for easier access/testing.
+
+Thanks!
 
 
-On 5/24/24 17:47, Ninad Palsule wrote:
->> +		led@6 {
->> +			reg = <6>;
->> +			default-state = "keep";
->> +			label = "cpu-vrm1";
->> +			retain-state-shutdown;
->> +			type = <PCA955X_TYPE_LED>;
->> +		};
->> +
-> Is there a specific reason for skipping led@7? Its not connected?
-
-
-Yes, again not connected.
-
-
->> +		led@8 {
->> +			reg = <8>;
->> +			default-state = "keep";
->> +			label = "lcd-russel";
->> +			retain-state-shutdown;
->> +			type = <PCA955X_TYPE_LED>;
->> +		};
->> +	};
->> +
->
-> Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
->
-
-Thanks,
-
-Eddie
 
 
