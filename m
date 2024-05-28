@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-192740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B4C8D217E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E548D2180
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA6BB2387E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F223281E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E31F172BA9;
-	Tue, 28 May 2024 16:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0906E172BA9;
+	Tue, 28 May 2024 16:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ESZpVPJI"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SxkxAFRw"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100B172786
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3020A172786
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716913205; cv=none; b=BygOm9yuXJlnE03ZkPmo+bhWp8A12EWOU5voCXCT85yHX0FcEF3IubNX675Wc9K3x3ebhwrP5bVUroNBAzH0qkJ1bztDYqhIm2hrXijYChBcQcDAU9i5tTkQAF9YMmBqChhQNGWZeK7Bjd9x4q/lXjypbsu3rqDb2X2pqljuDMw=
+	t=1716913266; cv=none; b=tXPb+mj4MivMrIzo/rLZEbZYHS7mpFcDmzZTsTQp/efZBl4aXdCP651ggpMommSxC1pub+X5yVa0O5HXfH2R/shAZLSyKg/xcH6elebYkBqVMcY8aa8S/W+7bWad96LP3UHHwZ7i/hzAEYzOCID0kyvHBhN87ba4Hb0OFVUJkNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716913205; c=relaxed/simple;
-	bh=GZZkUnJhXUGpV/ed9Q+LF0kd3gDFvBC1YUMWnIRdYzc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TCY+8VIEor0D1+TOjAPsfLUipAo+jeYgp1FPFYiy790Gf5LAzcEeNo0lSmCbPCns7GqglbqTYR9XZe3r3mZecGN4hK0G+yWil+ZDsxK3whM3QpuAMcbhl79zkOBx0sfHNf81eQ+29X258tj4HicouuiPuLpXNtsuAzd/bMi2P3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ESZpVPJI; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso675640b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716913203; x=1717518003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WwozNjHzia8oslBT34REru3KdIh80yY+OvMr8Rvverc=;
-        b=ESZpVPJI960G+6QEfG/7bhDpJQtQjY1TDfT7/XoWDJSPRVHx5/07KB0bptYH1LSzHa
-         FdRsF3HF6PMugggwn18wueVXrpfNBu9TekvDHUp2qf5U/pJuACh+NXIGFDZx4PmClkKG
-         7VS4S/U+mWCWH6KtKHLJP3L5B89OPGcwnz1Fk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716913203; x=1717518003;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WwozNjHzia8oslBT34REru3KdIh80yY+OvMr8Rvverc=;
-        b=VKNap3YmB6FxzvS7z6f8jGUb1S5jv0rxeW+r1OWQAYLLYvVvwGwTa/A9i8136PcJmM
-         SAmLtkwHqabB1WwQmyP7EPTFHjHEssTr1AapFi6+CTTPPMXt2MqMOBtQU3Br5PmH0ziG
-         Um9vrlXMhVtlHN9iX1NUT4zvSh3emjPPUh2wtsOIBX5uWLRZCzzhLo4yZBU1tklJw6mc
-         MiId9WOWCsYedQY1BW/Lx6uvHd+BYCuORWUn7BBDcXyBjXMgSusoDV7fFD6xSzsk77q6
-         KKgb98hg73J14phk2cjnn+bSsvK5S0Aycnd/t9AZzpU6ny0gvLqqIzYQDfHb0jEB0R7O
-         Ns6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUB5zwxiyx6ouOzY9VvBZjc3bO/zjG3V5blQL8MxfdZ3w/3PxdL16cEL3aI3yzQ75GVE97vLkmPmOHVK1hRlXKCJ7ZJ5X0WzZyVNS1t
-X-Gm-Message-State: AOJu0YzWVeYgD9SD985MxBKgony116PxlvxNTcgmxI8MWlX/Lay91CpB
-	n/rlyY2GeEzBHmYhPAJhIfBI2M1Kbovu7EEM3Lz4k0K7cysbaMVpSJl2rom1Xw==
-X-Google-Smtp-Source: AGHT+IG8rDpNehph5P7FZF3+M+WL7sxADGSNYgbXmeSk+9wKTNEhBfeV+JPxzH7+f7NbZBvjBsjVHA==
-X-Received: by 2002:a05:6a00:4405:b0:6f8:e998:3c5c with SMTP id d2e1a72fcca58-6f8f4192fd7mr19286701b3a.34.1716913203651;
-        Tue, 28 May 2024 09:20:03 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:8d59:feec:9939:40d7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822092a678sm6473780a12.11.2024.05.28.09.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 09:20:02 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Maxime Ripard <mripard@kernel.org>, 
- Ankit Nautiyal <ankit.k.nautiyal@intel.com>, 
- Imre Deak <imre.deak@intel.com>, Jani Nikula <jani.nikula@intel.com>, 
- Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- MarileneGarcia <marilene.agarcia@gmail.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240519031027.433751-1-marilene.agarcia@gmail.com>
-References: <20240519031027.433751-1-marilene.agarcia@gmail.com>
-Subject: Re: [PATCH] drm/dp: Fix documentation warning
-Message-Id: <171691320208.2507294.7545188870163730565.b4-ty@chromium.org>
-Date: Tue, 28 May 2024 09:20:02 -0700
+	s=arc-20240116; t=1716913266; c=relaxed/simple;
+	bh=miDkAeIGeL8VtGuuCoBcxE9mF0TAA/w+xpazhCoV2j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lhv20YmM5mWgsooJ8ey7yphwwZ5XaGG/Mu88YBM+jtgUm3+VNTlFCV0tpJiaPw6eVLi34ZoL57A9Qqm3Q3gED7QuR62FAqn4u0M3ziRzC/7d06nhiJ6h/SJfhPkM1y2aoHwqXEebxGh6B8xqiSXJ6zZZTA7HJCZOj0+pymrsxVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SxkxAFRw; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bigeasy@linutronix.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716913261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kE86HA2Pl0WMSgmbtH/SqDoMVET8ixgS0B8pGBr9o2Y=;
+	b=SxkxAFRwvnEYce/S8woEfiSMwbGyG6lAcmE9c7Z6D8c18JY4ADn3/YM5h1L1Ij1S00/mkq
+	D+D00IFcgn6vNp0+nM2jUOxqS/UQ1GEkAys9zesCfi/Clrx5rsC8yZowR8de1lrfqosZqv
+	w8DlDj9bu4YZ1jjJc2KSMl3MHD3MgvE=
+X-Envelope-To: vbabka@kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: tglx@linutronix.de
+Date: Tue, 28 May 2024 09:20:56 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] memcg: Remove the lockdep assert from
+ __mod_objcg_mlstate().
+Message-ID: <nkgueigu3ybnzyj424ngxyb26jnyph2rbuyroxkgmrcj6ze36h@q6m7xfoiis4r>
+References: <20240528121928.i-Gu7Jvg@linutronix.de>
+ <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
+ <20240528134027.OxDASsS3@linutronix.de>
+ <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
+ <20240528141341.rz_rytN_@linutronix.de>
+ <dk4tgppzjy53qr6274cetbyhqjjvsvmjgtknzrsueagoomuchb@sxolann3nib6>
+ <20240528150856.u4rArjaq@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240528150856.u4rArjaq@linutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-
-On Sun, 19 May 2024 00:10:27 -0300, MarileneGarcia wrote:
-> It fixes the following warnings when
-> the kernel documentation is generated:
+On Tue, May 28, 2024 at 05:08:56PM GMT, Sebastian Andrzej Siewior wrote:
+> On 2024-05-28 07:59:57 [-0700], Shakeel Butt wrote:
+> > One question on VM_WARN_ON_IRQS_ENABLED() in __mod_memcg_lruvec_state().
+> > On a PREEMPT_RT kernel with CONFIG_DEBUG_VM, will that
+> > VM_WARN_ON_IRQS_ENABLED() cause a splat or VM_WARN_ON_IRQS_ENABLED is
+> > special on PREEMPT_RT kernels?
 > 
-> ./include/drm/display/drm_dp_helper.h:126:
-> warning: Function parameter or struct member
-> 'mode' not described in 'drm_dp_as_sdp'
+> we have the following in the header file:
 > 
-> [...]
+> | #ifdef CONFIG_DEBUG_VM_IRQSOFF
+> | #define VM_WARN_ON_IRQS_ENABLED() WARN_ON_ONCE(!irqs_disabled())
+> | #else
+> | #define VM_WARN_ON_IRQS_ENABLED() do { } while (0)
+> | #endif
+> 
+> and this in Kconfig:
+> | config DEBUG_VM_IRQSOFF
+> |         def_bool DEBUG_VM && !PREEMPT_RT
+> |
+> 
+> which means on PREEMPT_RT we end up with "do {…"
 
-Applied, thanks!
-
-[1/1] drm/dp: Fix documentation warning
-      commit: c7ce956bb6d0f32ab921b6ffba1a6a834df96f21
-
-Best regards,
--- 
-Douglas Anderson <dianders@chromium.org>
-
+Thanks for the explanation.
 
