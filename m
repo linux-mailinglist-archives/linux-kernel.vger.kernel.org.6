@@ -1,203 +1,107 @@
-Return-Path: <linux-kernel+bounces-192808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256C78D227E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BAA8D2284
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9911F2473B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E981C2274D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6A3224D1;
-	Tue, 28 May 2024 17:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7BD31A89;
+	Tue, 28 May 2024 17:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TdpnJJ5j"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OF7PnOuG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE917E8E6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC42E400
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917435; cv=none; b=nB3uFdorIK7ayk2IqFGyV8/Z0isDs592yvWXvnqJ1AbpVLPXsHB713maXutRZDSOU+J/RTo7cS9ioJVYZq47FQbm8CQu5tY70yeqm7ramBPQBcqIcu+Wu5J+3ex/+u47Vmjm8Jnf7RKXcRCkBhMRULJBRk8YEHpP+NWj9KtVvVI=
+	t=1716917677; cv=none; b=BlhsNLDrjPoeink9/JLC6XoiEB5TfA2Z981OZQmo0bPkfg5sGVohV4ec8f7rv3v8T0hy7ZjbITWKbflIIl8c9UK60QqjVnp2MH1BMET03R1xfsU3SXpmSvlvUHkRoyfsGSwC+hsBfxTNoQNuCe6FDfoLukN+W4cqjcKPbWH1e9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917435; c=relaxed/simple;
-	bh=KGx/wumGhf3qNCMf0kJPQWaWTf0TglZC8EptQFFR77k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=s5QRyx5zZfE0mhtc22qz98k9ZnjqaMdIiile/YhXedrb6bz/R27fSGE39WFHQdE8+jdIfcplzMzxOOzJ5ikZmSa8Fk+Arj7QfdK8I4J396A/9t/AS1OjzQXLewY/IQYUeRLFW/k0zceXN0J+uEFGPVRUtDipZkCTUl070BvQg5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TdpnJJ5j; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f4a5344ec7so212205ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716917433; x=1717522233; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5NMJAa0oCy+b2YV+284BegcExfEuoJFA55q3jP4zsXs=;
-        b=TdpnJJ5jFN1YU3Cw8HZclIISR9eS9E7QMt5Zj4eMJInCBy22fhFQDpIBySCQ8kKqRK
-         5j/rduumOg1PJstf0mIF5NL5PMmKoyWWtHaeMnkDznOxjzbz5ppGdeHyvtkCmRuHcIFE
-         93ANWIErPyzh4iUy+cwzDhSUTvXsfO+AISBf2YBmgxYzrGQUjnYuRsIuBvxW8+7GAyGP
-         vPenHAL67MU3ceNq6vcUP3vEuIrT7w1wKOHfjOyGr+E6s52u6YxHcGM5kXj5aO9oUZtn
-         b28mTreIVlHDwSFReqlz0GM3abvS09NEwe27eakrIXBmT1hvW6wTJIL6CslOK9AEh0mI
-         p/nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716917433; x=1717522233;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5NMJAa0oCy+b2YV+284BegcExfEuoJFA55q3jP4zsXs=;
-        b=alaQNwhs82I2JI2W7ulVC+RIC2K3epQULjTTaPf3eRSU5sSN2YNomqHhRNoCiGTn2z
-         5bBd0JsVBsgPh1gKtnY0SoR1f84/DwEjMjNQVzqghlqiVUOTTEWkwrrk07s0k3D4Wcph
-         auRSgKLZkdGO/a1dlbAIn8biFbSAm3esGEDP1T+tdDaMnDwaCEMFQO8MVtBRN+S2wq+V
-         M2hINoiylfWXKlzQdKLFE+h8TvYAu9OVzdnxlTg377NKYWoFb9U35u/SJc7GTGSyQqU+
-         rrPAVv+TVVOVFIdYljRGUmKgSAci3aWxKsgftaFHp6dALf4Wk9Ib5r5Sx48NEPzuynIK
-         Hc8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2LmicMzPzeSUCsbK4NNbtPj14DK59dueWbJMGfXD6GO9fxeTehKDDH4iHTueGB9WyF8kUPyW2D+QM2Vr1FVGnCthyNagavUpQrfWA
-X-Gm-Message-State: AOJu0Yyg3nojLQaRpUlMZDQa+uVMNIgVhwzhL6IeHtqk3zpRHz6vnYo+
-	blan7GQiPYxPKNZDbvrysrCrYtEaN5NRD84/dUXbPKzdmEeZOvArIuZvCxXrRQ==
-X-Google-Smtp-Source: AGHT+IHgAHjB4Wlkt4yAEi+JpDmXVPbR1Nq/FEWvgC3tdSoc8iD0g7K399AV/7aeyFCmKvmia2JEHQ==
-X-Received: by 2002:a17:902:d505:b0:1f4:58c6:d5b with SMTP id d9443c01a7336-1f458c60fb1mr187183385ad.28.1716917432641;
-        Tue, 28 May 2024 10:30:32 -0700 (PDT)
-Received: from [192.168.60.239] (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9d899dsm82419885ad.290.2024.05.28.10.30.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 10:30:32 -0700 (PDT)
-Message-ID: <f4f0b38a-1f8e-4cf5-8cf1-6da337a1c3c0@google.com>
-Date: Tue, 28 May 2024 10:30:30 -0700
+	s=arc-20240116; t=1716917677; c=relaxed/simple;
+	bh=oNf7hRVWlT7QmXyu7aUdL8U1XDNCrdBSmqJn/7FvJps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1uFpUKEx2/xM8I93APyZ1NDTWhKVlgYsq4IM8UiW/jta8OtC9+dX8rLqp29hxvKyTD9LTzREbfFHON0ICiLf3JEKUJdbtM4tijcDOHxDdFtLNBr71zzPPHVt9rAoE/W3WEkjocXvfbSf6+xWcavZ4aUdK6l3W3Noi0HTU49AYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OF7PnOuG; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716917676; x=1748453676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oNf7hRVWlT7QmXyu7aUdL8U1XDNCrdBSmqJn/7FvJps=;
+  b=OF7PnOuG7qJFT5a9m4mGN5kDzwE8bpYiJc3S54G3x9y3PrWoAg+ewsXi
+   jyY7y6+wxSy8nTaq8khevP3caR8ZaISuChxYOmlc29OWrunBbUb6NwqY3
+   1Jh71/LDrz04uvROp6UbL2CZI+K0eUtHMcn3sKd85oQ0KJZM19743nWPA
+   U3L4d4MtS8N7ZUs+EWPPF202UGqY8hHTdD4bUDscf5WOlx+7hRSKSD1H2
+   slX4Zs8Kum9Vsb97T4L14y3lmo18DJZhHfKa1ACi3iNv6ihjMD1pxzl6Q
+   4zn3dzvsheQ3DogSiNfK2+xLiMNbm0MuOdANhgno2cwaoeiEWoxi5JJhV
+   w==;
+X-CSE-ConnectionGUID: EF61yraOTf2jTRXqPzkxTw==
+X-CSE-MsgGUID: +w5HsgBVTXSDubdTdTo4HA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24697854"
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="24697854"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 10:34:35 -0700
+X-CSE-ConnectionGUID: tNUwdgtNSTGHbue3FBAK3g==
+X-CSE-MsgGUID: MOZTW1PcQEmEfwBrDomp6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="39649932"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 10:34:35 -0700
+Date: Tue, 28 May 2024 10:34:33 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
+	Thomas Renninger <trenn@suse.de>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v6 00/49] New Intel CPUID families
+Message-ID: <ZlYVqSlx8GLwTJEr@agluck-desk3.sc.intel.com>
+References: <20240520224620.9480-1-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Avichal Rakesh <arakesh@google.com>
-Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
- interval length and buffersize
-To: Michael Grzeschik <mgr@pengutronix.de>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jayant Chowdhary <jchowdhary@google.com>,
- "etalvala@google.com" <etalvala@google.com>,
- Michael Riesch <michael.riesch@wolfvision.net>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-References: <dcad0089-4105-44bc-a2b4-3cfc6f44164b@google.com>
- <ZifEvUi9-E8M4dp8@pengutronix.de>
- <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
- <20240424022806.uo73nwpeg63vexiv@synopsys.com>
- <ZkE-O0yJ33T9hWa0@pengutronix.de>
- <20240517014359.p2s44ypl4bix4odm@synopsys.com>
- <Zk03Ys1rA0I5yiZy@pengutronix.de>
- <20240522014132.xlf7azgq2urfff2d@synopsys.com>
- <3f404a27-50e8-42c5-a497-b46751154613@rowland.harvard.edu>
- <20240522171640.iuol4672rnklc35g@synopsys.com>
- <Zk4td_0RR0cMJKro@pengutronix.de>
-Content-Language: en-US
-In-Reply-To: <Zk4td_0RR0cMJKro@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520224620.9480-1-tony.luck@intel.com>
 
+x86 maintainers,
 
+Thanks for taking thr first couple dozen patches and getting them
+into v6.10-rc1.
 
-On 5/22/24 10:37, Michael Grzeschik wrote:
-> On Wed, May 22, 2024 at 05:17:02PM +0000, Thinh Nguyen wrote:
->> On Wed, May 22, 2024, Alan Stern wrote:
->>> On Wed, May 22, 2024 at 01:41:42AM +0000, Thinh Nguyen wrote:
->>> > On Wed, May 22, 2024, Michael Grzeschik wrote:
->>> > > On Fri, May 17, 2024 at 01:44:05AM +0000, Thinh Nguyen wrote:
->>> > > > For isoc endpoint IN, yes. If the host requests for isoc data IN while
->>> > > > no TRB is prepared, then the controller will automatically send 0-length
->>> > > > packet respond.
->>> > >
->>> > > Perfect! This will help a lot and will make active queueing of own
->>> > > zero-length requests run unnecessary.
->>> >
->>> > Yes, if we rely on the current start/stop isoc transfer scheme for UVC,
->>> > then this will work.
->>>
->>> You shouldn't rely on this behavior.  Other device controllers might not
->>> behave this way; they might send no packet at all to the host (causing a
->>> USB protocol error) instead of sending a zero-length packet.
->>
->> I agree. The dwc3 driver has this workaround to somewhat work with the
->> UVC. This behavior is not something the controller expected, and this
->> workaround should not be a common behavior for different function
->> driver/protocol. Since this behavior was added a long time ago, it will
->> remain the default behavior in dwc3 to avoid regression with UVC (at
->> least until the UVC is changed). However, it would be nice for UVC to
->> not rely on this.
-> 
-> With "this" you mean exactly the following commit, right?
-> 
-> (f5e46aa4 usb: dwc3: gadget: when the started list is empty stop the active xfer)
-> 
-> When we start questioning this, then lets dig deeper here.
-> 
-> With the fast datarate of at least usb superspeed shouldn't they not all
-> completely work asynchronous with their in flight trbs?
-> 
-> In my understanding this validates that, with at least superspeed we are
-> unlikely to react fast enough to maintain a steady isoc dataflow, since
-> the driver above has to react to errors in the processing context.
-> 
-> This runs the above patch (f5e46aa4) a gadget independent solution
-> which has nothing to do with uvc in particular IMHO.
-> 
-> How do other controllers and their drivers work?
-> 
->> Side note, when the dwc3 driver reschedules/starts isoc transfer again,
->> the first transfer will be scheduled go out at some future interval and
->> not the next immediate microframe. For UVC, it probably won't be a
->> problem since it doesn't seem to need data going out every interval.
-> 
-> It should not make a difference. [TM]
-> 
+I'm poking other subsysystem maintainers to pick up patches that
+belong in their trees.
 
+There seem to be around eight patches that still belong to x86
+(at least that appears to be what scripts/get_maintainer.pl tells me).
 
-Sorry for being absent for a lot of this discussion.
+Patch#	File
+16	arch/x86/platform/intel-mid/intel-mid.c
+28	arch/x86/kernel/cpu/intel.c
+29	arch/x86/pci/intel_mid_pci.c
+30	arch/x86/virt/vmx/tdx/tdx.c
+31	x86/events/intel/core.c
+33	arch/x86/include/asm/cpu_device_id.h
+34	arch/x86/boot/cpucheck.c
+43	arch/x86/events/rapl.c
 
-I want to take a step back from the details of how we're 
-solving the problem to what problems we're trying to solve. 
-
-So, question(s) for Michael, because I don't see an explicit 
-answer in this thread (and my sincerest apologies if they've 
-been answered already and I missed it):
-
-What exactly is the bug (or bugs) we're trying to solve here?
-
-So far, it looks like there are two main problems being 
-discussed:
-
-1. Reducing the bandwidth usage of individual usb_requests
-2. Error handling for when transmission over the wire fails.
-
-Is that correct, or are there other issues at play here?
-
-(1) in isolation should be relatively easy to solve: Just
-smear the encoded frame across some percentage 
-(prefereably < 100%) of the usb_requests in one 
-video frame interval.
-
-(2) is more complicated, and your suggestion is to have a 
-sentinel request between two video frames that tells the 
-host if the transmission of "current" video frame was 
-successful or not. (Is that correct?) 
-
-Assuming my understanding of (2) is correct, how should
-the host behave if the transmission of the sentinel
-request fails after the video frame was sent 
-successfully (isoc is best effort so transmission is 
-never guaranteed)?
-
-
-Best,
-Avi.
+-Tony
 
