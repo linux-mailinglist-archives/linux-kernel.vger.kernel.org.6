@@ -1,163 +1,115 @@
-Return-Path: <linux-kernel+bounces-191682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85668D128B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:31:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802B38D128F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E10B220CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B224284189
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F26168DC;
-	Tue, 28 May 2024 03:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FF117BA2;
+	Tue, 28 May 2024 03:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kzUt2c7Q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2nQCujp"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91E182B3;
-	Tue, 28 May 2024 03:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122632563;
+	Tue, 28 May 2024 03:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716867070; cv=none; b=NQDPCZzvRz2TqgbYExDqTFdszGZ5dXOHPizHDQ5fKKWAFoMbjDOygmeBselmFBqg9wq+0KHyNvL1qwljHDcloH/pIwbKGnBXVk036L3ZtJMo+i1pLBmNcs3S2pduRMPBkGGWy8IfNhQpWjKl6MXshX2JIynYLGI+QMLZDL0QcP4=
+	t=1716867143; cv=none; b=MiknGawno85JSsbdO1KanYalcuO92O/I/rlXoQC0y+EwfIDdFo5E3TUo4sqW2pJH1evRsL6hrkYS1tIvMog8QjyIuMVdfk3aKaaO5ZWEgLtuSlYw/ZSAk0DAs/wlLzbdgMX7jD6TwRMupP2R/+lZydYFKR9ApNonhFnrqTOK+yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716867070; c=relaxed/simple;
-	bh=cRuGbE2kT2DLy6FpG59pv2HQi8wldOlEGCVy5Bulv30=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u0cNlwB2RUwGUgc/EnJgg2XvFbN+KByd/RTiFs09vKVd2fLJnQE6STbeXAzPIMRLkH2BPNFfe1L8iTfdEs/flJ6G8EVWJpD54Zkg+MbIQ26aNVREZ/05XQ4vfWTLIQwrLStIsPPLwh7yg8RremmtOGSMjzVatDhTTrMMzFJQXRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kzUt2c7Q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716867065;
-	bh=a/YGT24DW2Pi0REejXJMP4A653WFoC6Gwpyt/TYyVec=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kzUt2c7Qj7o7lvSXSIwwY4S1xawKlORmlzRUONWQ7YB9OrJYF2AIGRkvkwHLGuH6E
-	 YLDsU89ug632uky47hBeFX1HpyRecB+PFnGCUm15UPAYY5uRF2Xld0EFL0L9DDpmkP
-	 xofeg1bm/d4SrnU7MNFx0DntHor9Z6NghLRDlPHJksVl00mBLSWLdxXf2ao7xWQK9V
-	 nqREv9vQu6Wapa7/XDt5DFHgzK5dMr5VjE11oY5nit7rA2piRbxS+nqeF7ixHh1FRx
-	 O6W6SgcS4LndHqlzsFokFAdG5RXzY5rclDzqpx4SUZZKMnjdlPLZP+Q+TYNbAD32/k
-	 s5cGOnfjKCivw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpJ2J4J9Qz4wyw;
-	Tue, 28 May 2024 13:31:04 +1000 (AEST)
-Date: Tue, 28 May 2024 13:31:04 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christian =?UTF-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>, Arnd
- Bergmann <arnd@arndb.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20240528133104.304a1261@canb.auug.org.au>
-In-Reply-To: <20240528104905.58195cbe@canb.auug.org.au>
-References: <20240528104905.58195cbe@canb.auug.org.au>
+	s=arc-20240116; t=1716867143; c=relaxed/simple;
+	bh=ny8m4xCBhnV/0UIeJvOKqCsXclSGkQHmtW+lTaQqHV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GmsT7trDr9xa1+/GCDuvsZf/ihnwXXedu58xLvEJoUgbKOq7GfIjBFqs+xqOvIQrCV/mZIot0WBUgKP0sXwENbV7KAfuVw/K21FEwNOWqewwRtLehD9hyR6dy/Pmxc2MP7xEGNouvqRuucfk07sMORnJu1/R5PBBJTsTRIOVdCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2nQCujp; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6fbd713a4a1so5815b3a.1;
+        Mon, 27 May 2024 20:32:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716867141; x=1717471941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdqVzW0uYQzAgGRGuUdCNdfOkC+1NS25yKoubiH4Tn0=;
+        b=Z2nQCujp2wTqltCY7sHV4JJuz8YhlWZj4qXZBe6POKXuDdq9mMIPTPh7/ks3MaYND5
+         p90GSWyxjiP5qDAvXR6GDhthD+/jBl5+YDxcAOKo/31GpfCtYhp6JQxesU+KtElJih2W
+         STMrXoPNGyFGg1jP7AM5/YQ2lHOhbNzXLxxdTWbnAYZxYtXcqADxrW7s3lV9YUgglVS+
+         qch51sTmcZmHv20HX4lbHA3yk4aM4ozSxOBbDepq9m+Voqwa9BrkzZmWliw7S0aDsYW4
+         LsrvYblgEtmlYrODr+7kv0f1y2Igela0PKlD2OkvzlXeugwhnFg6oU1Tuks8DMFGn7Pk
+         8GuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716867141; x=1717471941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IdqVzW0uYQzAgGRGuUdCNdfOkC+1NS25yKoubiH4Tn0=;
+        b=n2Yvq6u2/9r+9SOVA7X1U5x8BMqeDc4EixHu6gHiZW9yOZhGOKcabQK/qslvrFE/q6
+         SbSGbTX+k3PwX/Jg9J8dKW6qACXLqM3UCgRcLe2JK6K1MTM0rWvgLQaUsxIa0i6N6vdC
+         h7ErwH8tvMesjCqk1zCuIoDyHf/WfKJaCgGfwvl7GVZVtDgKAZwDU6LbsEcg/cbhTAAP
+         PWtf19OZ5VUrmRsyMvULsa4PNty/p2lWvPKnCWR+A3vFej1w9Kx0VblnXCrifnRpkoFy
+         tH0f21Yv1N0gY3SqGN96FXHAeYbpyF6hbI+z0Lz9JTMdBJLTLEs3KYGEC85mx+HzVQGd
+         o8pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMn4gC0MTwka2qZbrtJu9b03IcgfCpZsATPAQAlLbf2a8DMMZ8Y5SZM0nXJP8IbZlwH8/yqstF7G5Iu4Qni/37uccsol05Z+gZP5wwIhMJjQ98Fs6a8pG2x8EnS/M+J/14Xb9g
+X-Gm-Message-State: AOJu0YxdmURmWNowNlG8ZL9mpFd/fqXtzAC9RyGTLmwowY7OPD8kKFQk
+	19C+V0h7exLF4EsuRIuDKF/cqIyzgek14/+QD8pFxNA2ludVJIIq
+X-Google-Smtp-Source: AGHT+IHrcNbVZgElQpq35gSfeTumdbcaSXxticMkDbkmuD8NrdmPjwtGDqQ1qdz2uJUgC3TvjUkgaA==
+X-Received: by 2002:a05:6a00:4a10:b0:6f3:e9c0:a197 with SMTP id d2e1a72fcca58-6f8f184be18mr11713794b3a.0.1716867141321;
+        Mon, 27 May 2024 20:32:21 -0700 (PDT)
+Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcbec62fsm5909651b3a.133.2024.05.27.20.32.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 20:32:20 -0700 (PDT)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ki.chiang65@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2 2/2] xhci: Apply broken streams quirk to Etron EJ188 xHCI host
+Date: Tue, 28 May 2024 11:31:35 +0800
+Message-Id: <20240528033136.14102-1-ki.chiang65@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z9bmRDdU.XvdNV.f=5KL.w4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/z9bmRDdU.XvdNV.f=5KL.w4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+As described in commit 8f873c1ff4ca ("xhci: Blacklist using streams on the
+Etron EJ168 controller"), EJ188 have the same issue as EJ168, where Streams
+do not work reliable on EJ188. So apply XHCI_BROKEN_STREAMS quirk to EJ188
+as well.
 
-Hi all,
-
-On Tue, 28 May 2024 10:49:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> After merging the vfs-brauner tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> fs/xattr.c: In function '__do_sys_setxattrat':
-> fs/xattr.c:709:61: warning: cast to pointer from integer of different siz=
-e [-Wint-to-pointer-cast]
->   709 |         return do_setxattrat(dfd, pathname, at_flags, name, (cons=
-t void __user *)args.value,
->       |                                                             ^
-> fs/xattr.c: In function '__do_sys_getxattrat':
-> fs/xattr.c:855:61: warning: cast to pointer from integer of different siz=
-e [-Wint-to-pointer-cast]
->   855 |         return do_getxattrat(dfd, pathname, at_flags, name, (void=
- __user *)args.value, args.size);
->       |                                                             ^
->=20
-> Introduced by commit
->=20
->   89345b0ac5ac ("fs/xattr: add *at family syscalls")
-
-This became a build failure in the i386 defconfig build, so I applied
-the following fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 28 May 2024 13:20:29 +1000
-Subject: [PATCH] fix up for "fs/xattr: add *at family syscalls"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
 ---
- fs/xattr.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Changes in v2:
+- Porting to latest release
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 8e712795ab80..d0d54ae2f9cb 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -706,7 +706,8 @@ SYSCALL_DEFINE6(setxattrat, int, dfd, const char __user=
- *, pathname, unsigned in
- 	if (error)
- 		return error;
-=20
--	return do_setxattrat(dfd, pathname, at_flags, name, (const void __user *)=
-args.value,
-+	return do_setxattrat(dfd, pathname, at_flags, name,
-+			     (const void __user *)(unsigned long)args.value,
- 			     args.size, args.flags);
- }
-=20
-@@ -852,7 +853,9 @@ SYSCALL_DEFINE6(getxattrat, int, dfd, const char __user=
- *, pathname, unsigned in
- 	if (args.flags !=3D 0)
- 		return -EINVAL;
-=20
--	return do_getxattrat(dfd, pathname, at_flags, name, (void __user *)args.v=
-alue, args.size);
-+	return do_getxattrat(dfd, pathname, at_flags, name,
-+			     (void __user *)(unsigned long)args.value,
-+			     args.size);
- }
-=20
- SYSCALL_DEFINE4(getxattr, const char __user *, pathname,
---=20
-2.43.0
+ drivers/usb/host/xhci-pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index b47d57d80b96..effeec5cf1fa 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -399,6 +399,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_ETRON &&
+ 			pdev->device == PCI_DEVICE_ID_EJ188) {
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
++		xhci->quirks |= XHCI_BROKEN_STREAMS;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+ 	    pdev->device == 0x0014) {
+-- 
+2.25.1
 
---Sig_/z9bmRDdU.XvdNV.f=5KL.w4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVT/gACgkQAVBC80lX
-0GzHQgf+LlYQsQdZOQQJU/c8l/j4ESdIUDOyPxiFRKaDKphZWlADuvAE+RZ45UtG
-Q499df8nTWl13lfZqZYyZ+hCB0E4OE4Ym+ErJT/3glvLphkerMJiQGZqNJneeNxN
-6LEp1BGf1dBwIwEW4Ooy5AR9vgz6+aPd+S5Vj/2w8M+wRoaPmZbTv3+G2y268wng
-ZUs/vLdjXBhZAL6RWjBIMItaexw5MgHAUVAtIQNBM8h1ALyFb9Sv3Zb5uznlTpvG
-gcQy5rvuLy7GAQyBt9mfPUMns61q6xWIjVQZtaG2l+CxtXI7AJKxS2VAMgbdxHYI
-I+lSIshVg0LX0cd9/QG/3PeaZyDxOA==
-=+BTr
------END PGP SIGNATURE-----
-
---Sig_/z9bmRDdU.XvdNV.f=5KL.w4--
 
