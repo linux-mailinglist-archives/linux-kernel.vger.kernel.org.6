@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-192495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A948D1DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5B28D1DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B0F283E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65651285826
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092C16F8F7;
-	Tue, 28 May 2024 14:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FB916F28D;
+	Tue, 28 May 2024 14:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="iMdtq39P"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHgndbKa"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9161D16F287;
-	Tue, 28 May 2024 14:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4FF16DEA5
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905314; cv=none; b=IeZN2rTtCYIDW7L1gzd5W/eJLWkLjXFrBDDwvJ2KC3act7Py8Q+55c3DCwioGwkpiq8Tm18bFMoQcMz1SI+w+8si6NeXOcOk7rZ+ZrCSuEnzey29wYE77ye3QlVzcKEC7sE+sY3W9urUYN0fyhccPuy1bFt/DNyxZ+T6bdFI/BQ=
+	t=1716905174; cv=none; b=L/ow7b+O3yxUTp8ntCCbJHiw3LKc4OqH8DVwFgHGZKvsbNiQ4TgIonimthxYDbF3PW5DVlOjvmhia4OUf6e0wVGvy+zZHPaF8x3YvhnWoIJxiCRKJavHmoeJDRGBv+Sy1SiwT5o7x4FUtIoyywclY7PV9uWyy9mtnqKL1/wimvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905314; c=relaxed/simple;
-	bh=0kYRkuoifz238hYaa7+VBTksrIRPb0Qrje3MA74G5/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WEOy97NY6KGIVwo1rh83q8pS1xtw5LxIzfFWTcta28Zylh12wT85ECcRXchSQgckHZSkuWkqpS0RnaPuEiRDJW74Y2oGMyqXhP2a3sS/6IvolWoXR2fyyv0MJYwMKzwR1qSNMIVvsfRzl09pEOmzKMTCIvMO/7J+JnBCSZjQO2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=iMdtq39P; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SDhLnC025707;
-	Tue, 28 May 2024 16:08:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	WID1Xn8lAVeZgvgjfAvIZ5toir+39YNbyOYV1Sn5tIE=; b=iMdtq39PTNMpN5q0
-	qF5bJ4MgHOGVhw1mZ69E37DDykQPYq78VRyRC8xOcDTIiHo8t1p5l7oZahTlfk0f
-	62z7DDATzMDcsBvM9BD7OGFShvez3iYvQr5XabiKWFIxf1f0351qZxdZyFDmvnxd
-	GoPFlJ3hA3qQASc8S351Qr8UAwzmTx6IN8L35oG2mTJ8HBYVxzGT1rhCD04nT8Q3
-	Un5yiNA+05t0WBvnKJiWdURvtWfMNoYRiQhfDHpDPnRX1HTJLWWgH8tk29MRAEMF
-	ZUoMTJzQW5S2qMI0c3XwQT+lqG3Z0Ree23XiH4o8uAVgvMLxRZfRL4i2crNBTggv
-	eKlDiQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yb9yjuyq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 16:08:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9A0824004B;
-	Tue, 28 May 2024 16:08:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D470621BF47;
-	Tue, 28 May 2024 16:07:23 +0200 (CEST)
-Received: from localhost (10.48.86.103) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 28 May
- 2024 16:07:23 +0200
-From: Maxime MERE <maxime.mere@foss.st.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Rob
- Herring <robh@kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        =?UTF-8?q?Maxime=20M=C3=A9r=C3=A9?= <maxime.mere@foss.st.com>
-Subject: [PATCH v3 4/4] crypto: stm32/cryp - call finalize with bh disabled
-Date: Tue, 28 May 2024 16:05:48 +0200
-Message-ID: <20240528140548.1632562-5-maxime.mere@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240528140548.1632562-1-maxime.mere@foss.st.com>
-References: <20240528140548.1632562-1-maxime.mere@foss.st.com>
+	s=arc-20240116; t=1716905174; c=relaxed/simple;
+	bh=ZN452joR8cCq0gYvyT5tZ9k04wcDCQaSxNmtOAl/gzI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uaqYjipNFX8ngpxDRbRd09fxpXMFMHGlEzbSLynDpWPsL5+RN5AgMiEux3UmjTm+u65IfHKJKExP8nlbbsf85G7ncnumgXMYXNzZpH1rDzq7Rgz5HZW9bn3YugcXQAdEoNyGdL1L0NO+85K0PNpX+7ojwiZXERdjcyyFILY/3n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHgndbKa; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52961b77655so1057408e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716905171; x=1717509971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYW5c0SqQbiRCDOIP27l8OTzCGV5wqVGx+nbqnS3eew=;
+        b=iHgndbKaXkpcmN1XYxOabDty3eoAt1WScxd2+6gynZufCcnpPcz5+zAkYyz9N0tifG
+         cAdLGRyx3xyAPGELhZ3RMDIR3ZYgtBHxXn6cXbg8vJnYWOBYNpFGXcuUjKEnzPHB5lOB
+         eZOkIlI8doALUIdrA1u43rc7Ysg5MGjSS6Wr5N/lafL0NIZF2twaMt3itm+197ymRHmf
+         8CzjbZ4qWCXnXTElK9LUEfHSH+8J3lNNh2lctpxDHeeW3Gz/g5unkGy4/bYBxPSjbNHD
+         pxf7hBzsPprBVRasmMsA2Iwa4Sg8nyfs4zJfay/i9Vqrgo/7CF/eXtooSpusRFjh3Rj9
+         tg+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716905171; x=1717509971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYW5c0SqQbiRCDOIP27l8OTzCGV5wqVGx+nbqnS3eew=;
+        b=eIB79Qf++Wt/RGFniVVUHfVstjY0T3/qJFTWhJnOQ+tQ5b9OR+OtIubFsy/kywz41D
+         eWrWYrmlx4Z8ekytAHNFh9M3ptaniKhCFHoXCQGWLAK/QCYae5D1BN0bLHs0SRGLfH42
+         Oa3usRIT4O/BAekwvZxMlIWGRKYOUgTTISuh5GND4Sn2Z5XvqAZuNtIuPd+pieT+h5+o
+         AupSgPj3cPIyw077+fEu9wYQcppWMRgB8bLB1dD1DDvyvIYaYljLAB2VZPDRtS6R317o
+         DJ8T3a380KJ8qCtZvWxuRCtw6JqcMzELgzGDHegbzVySBs+XHTvwk5zd2dypPBBD9Qfu
+         314w==
+X-Forwarded-Encrypted: i=1; AJvYcCUF8+ve7yxrcBOVSGJqUasDB1vKNGIggZLBMsYYp3BuJcYMURPEjU9SZk2xGMgMxGiPVj/Ud/vQgAegFcmWy4o7e6qBC4e7s1H2hG0I
+X-Gm-Message-State: AOJu0YwlkAxIxS5+GUCpAaQtBZGVd3cRf1e1CVWIjQPmlFoy1nt3Ut+p
+	4XDcRHp6bQPFgK5+3dSUKZ1rDE53lrwI2HkiVcnm0LGsBzI71det
+X-Google-Smtp-Source: AGHT+IGudBhWVmM4V0/6WOrMTk8kNuQ3UqybpJ6HjSxLuQNDu2Z1TX4Z93aBTAL4Dau38a0BOOB0vQ==
+X-Received: by 2002:a05:6512:2350:b0:529:b6b4:7e3c with SMTP id 2adb3069b0e04-529b6b48032mr2679995e87.45.1716905171335;
+        Tue, 28 May 2024 07:06:11 -0700 (PDT)
+Received: from pc636 (host-95-193-70-101.mobileonline.telia.com. [95.193.70.101])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529a640ac48sm703269e87.119.2024.05.28.07.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:06:10 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 28 May 2024 16:06:08 +0200
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>
+Subject: Re: [PATCH 2/2] mm/vmalloc: Use __this_cpu_try_cmpxchg() in
+ preload_this_cpu_lock()
+Message-ID: <ZlXk0EyoGDf80Ild@pc636>
+References: <20240523080136.9863-1-ubizjak@gmail.com>
+ <20240523080136.9863-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523080136.9863-2-ubizjak@gmail.com>
 
-From: Maxime Méré <maxime.mere@foss.st.com>
+> Use __this_cpu_try_cmpxchg() instead of
+> __this_cpu_cmpxchg (*ptr, old, new) == old in
+> preload_this_cpu_lock().  x86 CMPXCHG instruction returns
+> success in ZF flag, so this change saves a compare after cmpxchg.
+> 
+Just a small note. Can you also add a tiny difference in assembly
+language where it is visible? I mean update a commit message.
 
-The finalize operation in interrupt mode produce a produces a spinlock
-recursion warning. The reason is the fact that BH must be disabled
-during this process.
-
-Signed-off-by: Maxime Méré <maxime.mere@foss.st.com>
----
- drivers/crypto/stm32/stm32-cryp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/stm32/stm32-cryp.c b/drivers/crypto/stm32/stm32-cryp.c
-index 445276b848ed..937f6dab8955 100644
---- a/drivers/crypto/stm32/stm32-cryp.c
-+++ b/drivers/crypto/stm32/stm32-cryp.c
-@@ -11,6 +11,7 @@
- #include <crypto/internal/des.h>
- #include <crypto/internal/skcipher.h>
- #include <crypto/scatterwalk.h>
-+#include <linux/bottom_half.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
-@@ -2203,8 +2204,11 @@ static irqreturn_t stm32_cryp_irq_thread(int irq, void *arg)
- 		it_mask &= ~IMSCR_OUT;
- 	stm32_cryp_write(cryp, cryp->caps->imsc, it_mask);
- 
--	if (!cryp->payload_in && !cryp->header_in && !cryp->payload_out)
-+	if (!cryp->payload_in && !cryp->header_in && !cryp->payload_out) {
-+		local_bh_disable();
- 		stm32_cryp_finish_req(cryp, 0);
-+		local_bh_enable();
-+	}
- 
- 	return IRQ_HANDLED;
- }
--- 
-2.25.1
-
+--
+Uladzislau Rezki
 
