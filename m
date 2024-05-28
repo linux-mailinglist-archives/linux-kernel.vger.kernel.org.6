@@ -1,98 +1,127 @@
-Return-Path: <linux-kernel+bounces-191930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478398D163C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:28:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0B48D163F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA471F22C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:28:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3977B1C22BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6FB13C83C;
-	Tue, 28 May 2024 08:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C5813C3E6;
+	Tue, 28 May 2024 08:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="prbu0lei"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHVO2LKj"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9D913C3F3;
-	Tue, 28 May 2024 08:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7560313C3D7;
+	Tue, 28 May 2024 08:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884885; cv=none; b=N6zeOOcSywXkM0Q1PYcH7aU4ywMv8FStZFRAVKQK9eerFNPDH+8Z7B3abAXykdQOhl9pMXJGGWi+LHGpyUU/E+DUrjo7E7eb/fJf2vLcWAnqkJ6C4zVbjyMI4aaeGuJ9UJsoQIi9Sqa11MeBut8dFmdttXjTYHtJ5D1KxIbtNCw=
+	t=1716884926; cv=none; b=fbfZqFYj7c7aECjQ+2QOGcaYmNO2HuP1aNPv/aVh+BMb4MEpqxTRya9Ngog9i405MpKXApW/sou1R7VSYnWzgtB5JzLX8DfH+aBSs6FLs1pjPwjXcVPP2svV2hnPVnOxtv3YcHg+EKyKYknLARA6mxxjnHS6aWmGF/6LKvUiprw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884885; c=relaxed/simple;
-	bh=I4rJx3Vi7g8QyIjXX/Wgz8GsjvztY6q4ysfS3GR5qiI=;
+	s=arc-20240116; t=1716884926; c=relaxed/simple;
+	bh=7+Dmi2a3OCv15TElasSV7hwVIentUngqikUSgH5uZ3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ys65yQbd6XpNBs8PVTyOJ+CBM1w9SKXEpg2O4SH1vFO9eF1md2OK8WTbJHCLFDpMaKipoX40rpFB6cUvwj2mXjdvqc3mig7dw86VNlt3GHMqSSRu/FsRZdGikymdt/1oDO+vNpQlIpzuYCbUHz9l5fijNhrfYhJyWK2XebIWO0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=prbu0lei; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=T1FIunXr6SUrbznzUoW3R7DYmUUGSbdYlhleRsosS7w=; b=prbu0leiIBpQYY5tpyT42PKygl
-	hfa7Y2pw4QeYIZ/EEwGxYajHs/B9jVTVzjL06KaDsUdQb+EvH2qsBNEN8A0u3QME3BlU32oQOltQi
-	2uyG4K9CcQpJYkkz5WaxU25h+BoQnsT0+dU+xvSjZu4/hoDIMvH/2rlAR3It7oJhnHcFV8MpObUcY
-	uKSeEEfDXy3BcX6HUo69J+W0Zn5D1eYtEpAA2o7nxPj0fz9XZKrYJEDZtbjulKhuUlhOtxraKkj09
-	9kHBs/6ow304OJ+aYk7tpbku90oOYylCKgs4xoaC0bnDTDj61WBSR/SUE3n3iiI0KJxKfN4Bqr1yo
-	Jwu/zX5Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBsBc-0000000HTn5-1wEW;
-	Tue, 28 May 2024 08:28:00 +0000
-Date: Tue, 28 May 2024 01:28:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <ZlWVkJwwJ0-B-Zyl@infradead.org>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
- <ZlRy7EBaV04F2UaI@infradead.org>
- <20240527133430.ifjo2kksoehtuwrn@quack3>
- <ZlSzotIrVPGrC6vt@infradead.org>
- <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6boMqvNTIQhnjAaBU0Md7wE36ZhL9tOfMMYA0WOmmlBSBoqrUQdDzo+xFV6L3vnLU8tI/pvQs8J4rL013eMRma8iolARMA7F95qu3+aAF5y2qVm2OUb/G4Hl6LViEavyMKvVzXFwp13AMcASVmGA1tmjAoJ8LPoTLOYCiE/y28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHVO2LKj; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b970a97e8eso296084eaf.1;
+        Tue, 28 May 2024 01:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716884924; x=1717489724; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+NFBxch5o2weMyKmXEPJqUhdy9B3WA/Sx9huWinPs4=;
+        b=kHVO2LKjM6vcoaL0OvmMqtw7rgTa69QA0bsEYDEH4mDmEaQszeB1j7oJJi1O/lO5iJ
+         iVSzMA85F000xOJqU6Hq4u32YnFbZJLIOZfAbnyH/ARJFe9Gwwp3UiVDp9KuPJzv9LPb
+         ocWahzkzmwdb/PgWs7UfiYlYb4KBui/WXhn9//pRhMD7NgECuvN34ABprzOSn+gc5uSt
+         j9QQ1aGWAHCE97YQg3EACAyXgrVlLi2MfpHZc6Mi/FSXdcngoeVVUTHLFUCSBv6b9+90
+         aRuwj6UPlE7aC3c7zFWS/Aud6D4hK8BID/n8whhA7bu+KYrraSH9e+0IhIJOTyxLRpNs
+         MrlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716884924; x=1717489724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D+NFBxch5o2weMyKmXEPJqUhdy9B3WA/Sx9huWinPs4=;
+        b=CCpWdUnE4tj/u7HFC1ghWXgGNRpT7F0yFoVUyzzjmSZPnt8xinhIw9nnbgzmZX+e2J
+         Y7whyOjfhI0gtMUBmdL5lpWWdbz7WBhyzi2Yj02+bwhrzEPnYDmAQcgqfBLMPD/0/bld
+         EzTa4IOBBQEYqwHntLe4NREQnfevF2+Hx+NVVEpkpIEfbjF9S+fV/xs+HRYprN7Ottbg
+         O8Bi1tNiR9opQRG0ywuZvn71hPF8xMSa1JZBtQCeXb6eOSCkmBQ2sGk9+CNp6JLN7z/i
+         FHpfuvIZMP3pQQg3wkCuDujH09JK/YIKZPDAR2sTarFgeBZvpTjf6pfwYqUuFOjLnwYu
+         /XLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrrBaHqLy0oVBRTrmaSBiPxfi9YsszBTGRjAutyBHmi676DNLnpbu19ao7fsC4EHvb1hNJ43ssa3DZRopO3rXP8Qg5ptnEHbkmBFnonWKLXuk868k1AqjrhpG1TrAvAKVETSpB
+X-Gm-Message-State: AOJu0YyFDmyhlhhG8SjHcdvbeJ7f1mwfGqaQ2Q/bdduWSJLRQBFIAwNI
+	fIb6Tl8VJyGUil49rixbiJZXBGB3IycRKGR36H16L+9Z9b6UAV2F
+X-Google-Smtp-Source: AGHT+IG0W2C9Vr08kpDwxSL4GFgML7zehKBlYGDcZ0u/V7Tszz0txTw7IV1F/avSshcLNP5rBHcQzA==
+X-Received: by 2002:a05:6359:4c9f:b0:198:e85c:7f1c with SMTP id e5c5f4694b2df-198e85c7f6cmr151058655d.29.1716884924055;
+        Tue, 28 May 2024 01:28:44 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682265492a9sm6982180a12.68.2024.05.28.01.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 01:28:43 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 39B37181B0975; Tue, 28 May 2024 15:28:38 +0700 (WIB)
+Date: Tue, 28 May 2024 15:28:38 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
+Message-ID: <ZlWVti89yJTy4pRk@archie.me>
+References: <20240527185601.713589927@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="D8/S/B9eUORHrQ2q"
 Content-Disposition: inline
-In-Reply-To: <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240527185601.713589927@linuxfoundation.org>
 
-On Tue, May 28, 2024 at 10:20:21AM +0200, Christian Brauner wrote:
-> > This would solve all the problems in this proposal as well as all the
-> > obvious ones it doesn't solve.
-> 
-> As I've said multiple times on the thread I agree that this is what we
-> should do next and I would be happy to take patches for this. But
-> exposing the 64bit mount id doesn't impede or complicate that work. It's
-> a simple and useful addition that can be done now and doesn't prevent us
-> from doing the proposed work.
 
-I really confuses the user story as we now have not only one but two
-broken modes for the open by handle ops.  We just further go down the
-rabbit hole of mixing a non-persistent identifiers with a persistent
-one.
+--D8/S/B9eUORHrQ2q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hell, if you twist my arm I'll even write the patches for this.
+On Mon, May 27, 2024 at 08:50:47PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.3 release.
+> There are 427 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
 
-I'm also happy to help with that despite very limited time, but I'd
-rather avoid doing the misguided mount ID thing.
+Successfully compiled and installed the kernel on my computer (Acer
+Aspire E15, Intel Core i3 Haswell). No noticeable regressions.
+
+Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--D8/S/B9eUORHrQ2q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZlWVrgAKCRD2uYlJVVFO
+o+H1AQD4r2ke7pmMXyARVMn7KXpZL76cajKE9WetOnCqwO6TywD+Mw8yy6CBN6lj
+fpktwn+SUkaafSH8hnwaf89CsQOeiwY=
+=FJmB
+-----END PGP SIGNATURE-----
+
+--D8/S/B9eUORHrQ2q--
 
