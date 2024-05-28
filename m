@@ -1,212 +1,134 @@
-Return-Path: <linux-kernel+bounces-191727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7798D132C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4E18D132D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAF01C2103C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D2A81C2129F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AD120326;
-	Tue, 28 May 2024 04:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60AD17BD6;
+	Tue, 28 May 2024 04:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WG3/rYO9"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QATxRP8r"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE85724B2F;
-	Tue, 28 May 2024 04:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC151B806
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716868995; cv=none; b=Fbi8cZg+bxMUihe1Zb38EE+luwNYV2duUSfr4WB3eR+t3gcp4ohNHbybAv1z1oTqxMbMXhvHGWy0wdZUxPeTvNWwfMUVy0rcZ9ABGeDx2behhiCRAwRvN2Lcn3JRJHyjf7i935KOaQMEHS5ZBcJzOMZI8OSYrA5JhU2EiJ6dcJM=
+	t=1716869031; cv=none; b=S/PqNleGaOq15SMuKe5nloQwZkLFhRpzTYWC5uod1TZiiYz2FpjjtYYYfjW28TAW1mCxDSJdxZRyERF4kiEaic5+MKbTCb0RC3oZscq0JNmxw3uZ84X4QNOnAPhi/zkh9rfkce0Zh2IcCZRLe0yx1i4FeQmNuf6I26wDgd816Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716868995; c=relaxed/simple;
-	bh=6E8ygxk28fpfpdyMx1qm0N0dBYzXvldxCBmRubCxKvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fWzpi8YcVhKTsHFChNwS5vPoxiYWp4qk4KGl84sEFIj6C0ihEfuoeumfr7giBoGQQXjJJtM7IxF87GNmsc588OWQjxNcHWvhUuVlVyNAfehhCZOk3BQEhXpbhe537TUbijcfYFkGi9r41bMETXLMH09mTYRZhkqS0odTFl4B0uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WG3/rYO9; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44S42xRF038303;
-	Mon, 27 May 2024 23:02:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716868979;
-	bh=OOaSwuoABAU9LolQqVDEADDj+Ow2WIBhN9tfFpUXSKs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=WG3/rYO9uenWkXcFd0itZhbxHI51N1QTczrRTjHq4TKO2XTJVmFY4CDBIkhiHpFvf
-	 t7cqVe50wiQNxXKEgwipkJrtWdbK+RvAs2/f/0d87RJvSHeQeRjXTPSNcgEV+MM/7y
-	 Xhbqp93QDRmROm5lnbG+myqcblejJ/L64LFFzWf4=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44S42xeV025912
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 May 2024 23:02:59 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 27
- May 2024 23:02:59 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 27 May 2024 23:02:59 -0500
-Received: from [172.24.227.36] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44S42s5o066336;
-	Mon, 27 May 2024 23:02:55 -0500
-Message-ID: <046f78a5-e235-4716-8738-7a529353481a@ti.com>
-Date: Tue, 28 May 2024 09:32:54 +0530
+	s=arc-20240116; t=1716869031; c=relaxed/simple;
+	bh=nvmQbMSy/xDnp4t59qze6qqL8MOKPZ+l9BJVovTrLUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHT6WvAxlAl9HXrPUv/PEjrlpuPqTMsORturQmNdDwU21HtcauE5M548Sti8PKUqjJ8jAxQ/WCPZ7eCnDAGLIw4HcbUMU4N55+GD+bQjhbKJOsS/8pu/rGaa14jwOyqAy/q17xyCefUffuRcq8qe6REVWfl6jb0I1634jI0YrFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QATxRP8r; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6819b3c92bbso324247a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 21:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716869029; x=1717473829; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6CEMW9a4/PMVNxLukMbKPAVKxBTND9bevwPFka9vvQ=;
+        b=QATxRP8rav7dsoxqPX844UZj2X1ixRZLe12Pq4RMltsaSeQnsoRSURAuJXhC/TbsBs
+         s60BPjRCNBTYwiT+9RAHf0zjaih/qkJ73clUF9ErD8GjpkmTeeVC9+XG1V/0qUT4CpFU
+         QpAv9K0roMUHRlYEDqCKCzzjKp5y5ZyPniU4B8EsZn+5U92T6mymgNVdi5hZ0KAteVIs
+         60NDBk8gwVryxpzWQlOGSRKm6eibiPou8wX+k5lkdnCHqx49HBuHGuGA9ZxOCG6eHr9X
+         zseTyvDrZTRlXvL5npgbahGp3KVB1PDdMLA9QLEeQnl/LG8/nUZ+4YMbkrA/gf62Hggk
+         zapg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716869029; x=1717473829;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M6CEMW9a4/PMVNxLukMbKPAVKxBTND9bevwPFka9vvQ=;
+        b=jAhSL39++9hX/Gu33o5EcacSVMw+moxM0kASbyZenHSqpy6ndRpC6zIc+xv43xl06A
+         /OiAtIhcVyYrHyTP8CcwCaq4Wj6shUYaQ6gcWIUmBnZfco5JiD0aI5wZV4tuKkTn71Bc
+         iDou9YPpPfBxARp2nujDYj3fgJ2m8YkbGsiRy1X6vFqEU8AUJzxI2R/98UrhbiczjFI0
+         28j5J1bNL7iehb5uKCK6PvB8BvUnl7iliE5lPH/U5QSGlRvA8cQlnHoztFBLfLr46OT+
+         PH2e8yCR/kz1UPFBSeJajOaa78+a9LDy1iew1cZ56DqCbKveDj9Q1nH6EJt+q4EPkP/f
+         eA+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBWDkJM3f/+hfBpRnIsLIWt2AsorVuedBqrSRIJavA6De2g+//3sIR7bGEetkRYJidaScLrKvWonEUR0vAAAqEnb0Its+jVg0uJR02
+X-Gm-Message-State: AOJu0YzM29Se4w8eBme6HM6mfGBUuEHhC6u1jwIXQxlm4K2zpF5UOu4e
+	IS7p14K9brmDqu2ZKzUZB0QVdViP9VXh7u33lIhBF2r8DBQ72kHqv1G0U+k/b3Ma7gWiklbaFBO
+	b
+X-Google-Smtp-Source: AGHT+IGSS9psSLsvm6XTl81wgOYtz9x1Dc2PBuLQ0h/YskIif/iqhFMW0znjZ5di3n0CeT8e3P9Paw==
+X-Received: by 2002:a05:6a20:431e:b0:1a3:b642:5fc3 with SMTP id adf61e73a8af0-1b212df06f3mr17629902637.41.1716869028413;
+        Mon, 27 May 2024 21:03:48 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682273c4503sm6645718a12.83.2024.05.27.21.03.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 21:03:47 -0700 (PDT)
+Date: Tue, 28 May 2024 09:33:45 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Vivek Aknurwar <quic_viveka@quicinc.com>,
+	Mike Tipton <quic_mdtipton@quicinc.com>
+Subject: Re: [PATCH V2] cpufreq: scmi: Avoid overflow of target_freq in fast
+ switch
+Message-ID: <20240528040345.ghw6qkha3cka2pe5@vireshk-i7>
+References: <20240520063732.11220-1-quic_jkona@quicinc.com>
+ <20240520084744.sb2rk7l2pjf4whyd@vireshk-i7>
+ <e3a7c295-28e8-465c-824f-6f14c5977726@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: boot: dts: ti: k3-am68-sk-base-board: Add
- LP8733 and TPS6287 nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <kristo@kernel.org>,
-        <vigneshr@ti.com>, <nm@ti.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>
-CC: <marten.lindahl@axis.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>
-References: <20240527124422.3553828-1-n-francis@ti.com>
- <20240527124422.3553828-2-n-francis@ti.com>
- <547196ae-af25-43bb-801c-9a9dbb6ec134@kernel.org>
-Content-Language: en-US
-From: Neha Malcom Francis <n-francis@ti.com>
-In-Reply-To: <547196ae-af25-43bb-801c-9a9dbb6ec134@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3a7c295-28e8-465c-824f-6f14c5977726@quicinc.com>
 
-Hi Krzysztof,
+On 27-05-24, 15:26, Jagadeesh Kona wrote:
+> 
+> 
+> On 5/20/2024 2:17 PM, Viresh Kumar wrote:
+> > On 20-05-24, 12:07, Jagadeesh Kona wrote:
+> > > Conversion of target_freq to HZ in scmi_cpufreq_fast_switch()
+> > > can lead to overflow if the multiplied result is greater than
+> > > UINT_MAX, since type of target_freq is unsigned int. Avoid this
+> > > overflow by assigning target_freq to unsigned long variable for
+> > > converting it to HZ.
+> > > 
+> > > Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> > > ---
+> > > Changes in V2:
+> > >    - Updated freq variable from u64 to unsigned long to keep it
+> > >      consistent with the rate parameter in scmi .freq_set() callback
+> > >    - Link to v1: https://lore.kernel.org/all/20240517070157.19553-1-quic_jkona@quicinc.com/
+> > > ---
+> > >   drivers/cpufreq/scmi-cpufreq.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > Applied. Thanks.
+> > 
+> 
+> Thanks Viresh for the offline update on applying this patch to cpufreq arm
+> tree. Please help share the git tree details of the same, since we need them
+> to pick this change in Google ACK and downstream tree.
 
-On 27/05/24 19:59, Krzysztof Kozlowski wrote:
-> On 27/05/2024 14:44, Neha Malcom Francis wrote:
->> Add DTS node for LP87334E PMIC and two TPS6287x high current buck
->> converters.
->>
->> LP87334E is responsible for supplying power to the MCU and MAIN domains
->> as well as to LPDDR4. The two TPS6287x supply power to the MAIN
->> domain for AVS and other core supplies.
-> 
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-> 
->>
->> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
->> Link: https://www.ti.com/lit/pdf/slda060
->> ---
->>   .../boot/dts/ti/k3-am68-sk-base-board.dts     | 77 +++++++++++++++++++
->>   1 file changed, 77 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> index d743f023cdd9..74e59035013c 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> @@ -414,6 +414,83 @@ &wkup_uart0 {
->>   	pinctrl-0 = <&wkup_uart0_pins_default>;
->>   };
->>   
->> +&wkup_i2c0 {
->> +	bootph-all;
->> +	status = "okay";
-> 
-> Please order the properties according to DTS coding style:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
-> 
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&wkup_i2c0_pins_default>;
->> +	clock-frequency = <400000>;
->> +
->> +	lp8733: pmic@60 {
->> +		compatible = "ti,lp8733";
->> +		reg = <0x60>;
->> +
->> +		buck0-in-supply = <&vsys_3v3>;
->> +		buck1-in-supply = <&vsys_3v3>;
->> +		ldo0-in-supply = <&vsys_3v3>;
->> +		ldo1-in-supply = <&vsys_3v3>;
->> +
->> +		lp8733_regulators: regulators {
->> +			lp8733_buck0_reg: buck0 {
->> +				/* FB_B0 -> LP8733-BUCK1 - VDD_MCU_0V85 */
->> +				regulator-name = "lp8733-buck0";
->> +				regulator-min-microvolt = <850000>;
->> +				regulator-max-microvolt = <850000>;
->> +				regulator-always-on;
->> +				regulator-boot-on;
->> +			};
->> +
->> +			lp8733_buck1_reg: buck1 {
->> +				/* FB_B1 -> LP8733-BUCK2 - VDD_DDR_1V1 */
->> +				regulator-name = "lp8733-buck1";
->> +				regulator-min-microvolt = <1100000>;
->> +				regulator-max-microvolt = <1100000>;
->> +				regulator-always-on;
->> +				regulator-boot-on;
->> +			};
->> +
->> +			lp8733_ldo0_reg: ldo0 {
->> +				/* LDO0 -> LP8733-LDO1 - VDA_DLL_0V8 */
->> +				regulator-name = "lp8733-ldo0";
->> +				regulator-min-microvolt = <800000>;
->> +				regulator-max-microvolt = <800000>;
->> +				regulator-boot-on;
->> +				regulator-always-on;
->> +			};
->> +
->> +			lp8733_ldo1_reg: ldo1 {
->> +				/* LDO1 -> LP8733-LDO2 - VDA_LN_1V8 */
->> +				regulator-name = "lp8733-ldo1";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +				regulator-boot-on;
->> +			};
->> +		};
->> +	};
->> +
->> +	tps62873a: tps62873@40 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> 
->> +		compatible = "ti,tps62873";
->> +		bootph-pre-ram;
->> +		reg = <0x40>;
->> +		regulator-name = "VDD_CPU_AVS";
->> +		regulator-min-microvolt = <600000>;
->> +		regulator-max-microvolt = <900000>;
->> +		regulator-boot-on;
->> +		regulator-always-on;
->> +	};
->> +
->> +	tps62873b: tps62873@43 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git cpufreq/arm/linux-next
 
-Thanks for the review! I have posted v3.
+I have pushed it out now, it will be there in linux-next soon. My
+branch is not fixed, I may end up rebasing it. Ideally, you shouldn't
+backport anything to android unless it end ups in Linus's tree, only
+then the sha id will be fixed and guaranteed not to change.
 
 -- 
-Thanking You
-Neha Malcom Francis
+viresh
 
