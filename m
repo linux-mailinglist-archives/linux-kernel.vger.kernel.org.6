@@ -1,106 +1,365 @@
-Return-Path: <linux-kernel+bounces-192195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D233D8D19D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6112C8D19D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCC628BE80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A1B1F22F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE5416C85F;
-	Tue, 28 May 2024 11:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gKBOir1Z"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A6E16D4EB
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517B816DED6;
+	Tue, 28 May 2024 11:38:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A4916DEBB;
+	Tue, 28 May 2024 11:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896293; cv=none; b=tbKmquQspYqFq5ILAgZe+t2ygUjx6p4PtdCAE4XEiOtmabB+SRXX83PcjpgAwTQFccXzo96IQTgN+7Jc2SN7zDMQEGsXwT0MUZN5QGb1l+FLw3juVns6OE6Xi/Ptp3+Cds47OYAw5oecXu0TE3mX2OekubHcv+2w8cl13JhB9CI=
+	t=1716896299; cv=none; b=aGDgcDBjAsgDSPjKYJNuMSn07B6BaYtPwt+3R63heQlIyAsgLoPc/g1oRsmyxGL9zfQwqYhXaLEOaVO1iXdTFe77LLPoNKzy66UvUuA68rXMMahOgHfAwNgxyfgmIzg5pR5jlKggYwYiVU4PpreLiWDUUzqpkVM0XEEEzpv/GH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896293; c=relaxed/simple;
-	bh=MzKOsHfMqcEbAgbro03BEkIexxY7ioREoSPx82+mCkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzuA5DWEHJj+xIYGxTLBmq8sAyZAbnT6/L1h2BgUMtgLxYT05gAxpwGVfXHWET7eGRQi2Gs17QnKYnccO0l8q4V23xCiaVXpR9jhQYJA3EkDu2CnL5e7l6TvEQ64IenMVvi3fzcvnVDMQ1GuW7rqAZCX2EPMiLiLlXF1/N7ESc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gKBOir1Z; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-627dfbcf42aso7026937b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716896290; x=1717501090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MzKOsHfMqcEbAgbro03BEkIexxY7ioREoSPx82+mCkI=;
-        b=gKBOir1Zie8eqOyMucZIlB80d/TU2BbtXB1S56vAhaZvADzkvSZt8MkAiZc4M3bbiN
-         gpAzbo/4JQEeN2K7imve4y02j6jceLfp81qPyfvxFEleiMG+oEnSXBSUrvbnwedT0aFM
-         FwaDdti6twq5ZWDFUkwniMFvLugZnYMQ7aZizQSCiuOZ8TWMYC+k87ACQhg6vX532xB+
-         R/It1vqx1lkQySLV3RxmrYmMddSs2NVOUEy0RwK++OjXVrpcBhwl+UkXALk289a3Be0/
-         OnszAkbh+Hpzp6mGy1AEMW7Yutc9kt7Wq4JVtHzmb4HZ5EzXVJcfHNHb5uYLwORk5Yzb
-         QWZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716896290; x=1717501090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzKOsHfMqcEbAgbro03BEkIexxY7ioREoSPx82+mCkI=;
-        b=qAV9xOOZjo0mHXXUEW6Ft1Rb/9P4S44i8aCLNRtCKuOQAZSMbJXqlirr3KcJS5hms7
-         C6Z7HiMsUGxzNB+eczSqn20Six747wK6zF/h/cotyw5hY5KN8FmApUH3BMaYMr2plGg3
-         mg/YoKjfwwUCftgBEoriXpEdL8Rej6EEdBqOsrzv6ZgbQcb/03it7R+A8i+ywlhkl2hH
-         +rHDPluPdg1ZMAI+ZJ6u6+8t5sJsLU/1RxQ6XwNf/rXVWV5OKz2Kf+Ruw+pYijR79Koi
-         xQWowvGFLcu0UPBhyTgCg+GAdFWaCOGsJJ6CfAOQkm5CKMuS2USkgbt5ZMw+p4AeQC5r
-         lQBw==
-X-Gm-Message-State: AOJu0Yw5zRHWaK/QlpfiQRJ0X+Gb3Q8hDOS67l0JBpoMY6hk9ROfbQLz
-	B/M0APoa6bRHovXYOWfGEFFOHh4IKmEZQK+DXI4iOXSQs2jKPt6xPy05TxKxdhNYQcbTh5hnPO5
-	P7Wn9B7HTHSUFE1s9lQC0iHgYVZv8caehD+lPhg==
-X-Google-Smtp-Source: AGHT+IFdWOfI1NoIMu23ncdyzrqayVvCIbtSBXzmT1072SkezYLbTQ/Wy7WEifX1vSkdblVpJ0/GFf7VJPh29VPnHM4=
-X-Received: by 2002:a25:b101:0:b0:de6:197b:ff89 with SMTP id
- 3f1490d57ef6-df772269eb6mr9776298276.64.1716896290645; Tue, 28 May 2024
- 04:38:10 -0700 (PDT)
+	s=arc-20240116; t=1716896299; c=relaxed/simple;
+	bh=ix5QqjvOiMJlSqgylEXpXdAKT28y5M4v8cePiRKVtxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsU+fc8gMyYPUo8E9yn8288Is1Wh3HZeKfcn8XjYdT1ZDwVTkVwtMoX7Q5bjc5xSc/pjKdWpiJSRfHHe+sAcTQqfVLs3B1EI8fR8F0xcVPypkCcdmvIhmOJm8OtpeNeQ568fwcYKYATsG4iWn1PrHH4R7MOptfh327zPfpD9wNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5703339;
+	Tue, 28 May 2024 04:38:40 -0700 (PDT)
+Received: from [10.1.36.57] (e133649.arm.com [10.1.36.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5FAC3F762;
+	Tue, 28 May 2024 04:38:12 -0700 (PDT)
+Message-ID: <ede83265-4107-4c21-bc33-f733326daafe@arm.com>
+Date: Tue, 28 May 2024 12:38:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0109018f85002ae1-6fb831b2-74c2-4559-98f1-a3ef25e72558-000000@ap-south-1.amazonses.com>
-In-Reply-To: <0109018f85002ae1-6fb831b2-74c2-4559-98f1-a3ef25e72558-000000@ap-south-1.amazonses.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 28 May 2024 13:37:59 +0200
-Message-ID: <CACRpkdb6kKrO=-a84NVwmQ=DdSE9KmaO5SdWaHRYi4EDxAEv9A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-tps6594: make tps65224_muxval_remap and
- tps6594_muxval_remap as static to fix sparse warning
-To: Nirmala devi Mal Nadar <m.nirmaladevi@ltts.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, lee@kernel.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 3/6] sched/fair: Use util biases for utilization
+ and frequency
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Qais Yousef <qyousef@layalina.io>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>, pierre.gondois@arm.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <cover.1715082714.git.hongyan.xia2@arm.com>
+ <f0be5911214d2f6f7ea92c6c3eed37270215c590.1715082714.git.hongyan.xia2@arm.com>
+ <a1adc985-056f-4fac-9b2d-d140c3ee9e9b@arm.com>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <a1adc985-056f-4fac-9b2d-d140c3ee9e9b@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 17, 2024 at 7:22=E2=80=AFAM Nirmala devi Mal Nadar
-<m.nirmaladevi@ltts.com> wrote:
+On 26/05/2024 23:52, Dietmar Eggemann wrote:
+> On 07/05/2024 14:50, Hongyan Xia wrote:
+>> Use the new util_avg_bias for task and runqueue utilization. We also
+>> maintain separate util_est and util_est_uclamp signals.
+>>
+>> Now that we have the sum aggregated CFS util value, we do not need to
+> 
+> There is the work uclamp missing somehow here.
 
-> From: Nirmala Devi Mal Nadar <m.nirmaladevi@ltts.com>
->
-> pinctrl: tps6594: Fix sparse warning.
->
-> warning: symbol 'tps65224_muxval_remap' was not declared. Should it be st=
-atic?
-> warning: symbol 'tps6594_muxval_remap' was not declared. Should it be sta=
-tic?
->
-> Signed-off-by: Nirmala Devi Mal Nadar <m.nirmaladevi@ltts.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405111523.9yt759uX-lkp@i=
-ntel.com/
+Ack.
 
-Patch applied!
+>> consult uclamp buckets to know how the frequency should be clamped. We
+>> simply look at the aggregated top level rq->cfs.avg.util_avg +
+>> rq->cfs.avg.util_avg_bias and rq->cfs.avg.util_est_uclamp to know what
+>> frequency to choose and how to place tasks.
+> 
+> [...]
+> 
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 571c8de59508..14376f23a8b7 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -4819,14 +4819,14 @@ static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
+>>   
+>>   static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf);
+>>   
+>> -static inline unsigned long task_util(struct task_struct *p)
+>> +static inline unsigned long task_runnable(struct task_struct *p)
+>>   {
+>> -	return READ_ONCE(p->se.avg.util_avg);
+>> +	return READ_ONCE(p->se.avg.runnable_avg);
+>>   }
+>>   
+>> -static inline unsigned long task_runnable(struct task_struct *p)
+>> +static inline unsigned long task_util(struct task_struct *p)
+>>   {
+>> -	return READ_ONCE(p->se.avg.runnable_avg);
+>> +	return READ_ONCE(p->se.avg.util_avg);
+>>   }
+>>   
+>>   static inline unsigned long _task_util_est(struct task_struct *p)
+>> @@ -4839,6 +4839,52 @@ static inline unsigned long task_util_est(struct task_struct *p)
+>>   	return max(task_util(p), _task_util_est(p));
+>>   }
+> 
+> IMHO, we now have two complete hierarchies of util signals:
+> 
+>         (a)                         (b) (uclamp version of (a))
+> 
+> (1) task_util()                 task_util_uclamp() (+ task_util_bias())
+> 
+> (2) _task_util_est()            _task_util_est_uclamp()
+> 
+> (3) task_util_est()             task_util_est_uclamp()
+> 
+> (4) cpu_util()                  cpu_util_uclamp()
+> 
+> (5) cpu_util_cfs()              cpu_util_cfs_uclamp()
+> 
+> (6) cpu_util_cfs_boost()        cpu_util_cfs_boost_uclamp()
+> 
+> 
+> For (4), (5), (6) we now have:
+> 
+> ---		                   cpu_util()	  cpu_util_uclamp()
+> 			
+> eenv_pd_busy_time()			x
+> 
+> eenv_pd_max_util()					x
+> 
+> find_energy_efficient_cpu()		x		x <-- (A)
+> 
+> cpu_util_without()			x
+> 
+> ---			    cpu_util_cfs()	 cpu_util_cfs_uclamp()
+> 
+> cpu_overutilized()			x		x <-- (B)
+> 
+> update_sg_lb_stats()			x
+> 
+> update_numa_stats()			x
+> 
+> sched_cpu_util()			x
+> 
+> ---                     cpu_util_cfs_boost() cpu_util_cfs_boost_uclamp()
+> 
+> sched_balance_find_src_rq()		x
+> 
+> sugov_get_util()					x
+> 
+> uclamp version falls back to mon-uclamp version for !CONFIG_UCLAMP_TASK.
+> So it looks like taht in this case we calculate the same cpu utilization
+> value twice in (A) and (B).
 
-Yours,
-Linus Walleij
+That is indeed the case. I'll see how I can avoid this duplication, 
+hopefully without too much #ifdef mess.
+
+> [...]
+> 
+>> @@ -4970,134 +5026,29 @@ static inline unsigned long get_actual_cpu_capacity(int cpu)
+>>   }
+>>   
+>>   static inline int util_fits_cpu(unsigned long util,
+>> -				unsigned long uclamp_min,
+>> -				unsigned long uclamp_max,
+>> +				unsigned long util_uclamp,
+>>   				int cpu)
+>>   {
+>>   	unsigned long capacity = capacity_of(cpu);
+>> -	unsigned long capacity_orig;
+>> -	bool fits, uclamp_max_fits;
+>> -
+>> -	/*
+>> -	 * Check if the real util fits without any uclamp boost/cap applied.
+>> -	 */
+>> -	fits = fits_capacity(util, capacity);
+>> -
+>> -	if (!uclamp_is_used())
+>> -		return fits;
+>> -
+>> -	/*
+>> -	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
+>> -	 * uclamp_max. We only care about capacity pressure (by using
+>> -	 * capacity_of()) for comparing against the real util.
+>> -	 *
+>> -	 * If a task is boosted to 1024 for example, we don't want a tiny
+>> -	 * pressure to skew the check whether it fits a CPU or not.
+>> -	 *
+>> -	 * Similarly if a task is capped to arch_scale_cpu_capacity(little_cpu), it
+>> -	 * should fit a little cpu even if there's some pressure.
+>> -	 *
+>> -	 * Only exception is for HW or cpufreq pressure since it has a direct impact
+>> -	 * on available OPP of the system.
+>> -	 *
+>> -	 * We honour it for uclamp_min only as a drop in performance level
+>> -	 * could result in not getting the requested minimum performance level.
+>> -	 *
+>> -	 * For uclamp_max, we can tolerate a drop in performance level as the
+>> -	 * goal is to cap the task. So it's okay if it's getting less.
+>> -	 */
+>> -	capacity_orig = arch_scale_cpu_capacity(cpu);
+>>   
+>> -	/*
+>> -	 * We want to force a task to fit a cpu as implied by uclamp_max.
+>> -	 * But we do have some corner cases to cater for..
+>> -	 *
+>> -	 *
+>> -	 *                                 C=z
+>> -	 *   |                             ___
+>> -	 *   |                  C=y       |   |
+>> -	 *   |_ _ _ _ _ _ _ _ _ ___ _ _ _ | _ | _ _ _ _ _  uclamp_max
+>> -	 *   |      C=x        |   |      |   |
+>> -	 *   |      ___        |   |      |   |
+>> -	 *   |     |   |       |   |      |   |    (util somewhere in this region)
+>> -	 *   |     |   |       |   |      |   |
+>> -	 *   |     |   |       |   |      |   |
+>> -	 *   +----------------------------------------
+>> -	 *         CPU0        CPU1       CPU2
+>> -	 *
+>> -	 *   In the above example if a task is capped to a specific performance
+>> -	 *   point, y, then when:
+>> -	 *
+>> -	 *   * util = 80% of x then it does not fit on CPU0 and should migrate
+>> -	 *     to CPU1
+>> -	 *   * util = 80% of y then it is forced to fit on CPU1 to honour
+>> -	 *     uclamp_max request.
+>> -	 *
+>> -	 *   which is what we're enforcing here. A task always fits if
+>> -	 *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
+>> -	 *   the normal upmigration rules should withhold still.
+>> -	 *
+>> -	 *   Only exception is when we are on max capacity, then we need to be
+>> -	 *   careful not to block overutilized state. This is so because:
+>> -	 *
+>> -	 *     1. There's no concept of capping at max_capacity! We can't go
+>> -	 *        beyond this performance level anyway.
+>> -	 *     2. The system is being saturated when we're operating near
+>> -	 *        max capacity, it doesn't make sense to block overutilized.
+>> -	 */
+>> -	uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+>> -	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
+>> -	fits = fits || uclamp_max_fits;
+>> +	if (fits_capacity(util_uclamp, capacity))
+>> +		return 1;
+>>   
+>> -	/*
+>> -	 *
+>> -	 *                                 C=z
+>> -	 *   |                             ___       (region a, capped, util >= uclamp_max)
+>> -	 *   |                  C=y       |   |
+>> -	 *   |_ _ _ _ _ _ _ _ _ ___ _ _ _ | _ | _ _ _ _ _ uclamp_max
+>> -	 *   |      C=x        |   |      |   |
+>> -	 *   |      ___        |   |      |   |      (region b, uclamp_min <= util <= uclamp_max)
+>> -	 *   |_ _ _|_ _|_ _ _ _| _ | _ _ _| _ | _ _ _ _ _ uclamp_min
+>> -	 *   |     |   |       |   |      |   |
+>> -	 *   |     |   |       |   |      |   |      (region c, boosted, util < uclamp_min)
+>> -	 *   +----------------------------------------
+>> -	 *         CPU0        CPU1       CPU2
+>> -	 *
+>> -	 * a) If util > uclamp_max, then we're capped, we don't care about
+>> -	 *    actual fitness value here. We only care if uclamp_max fits
+>> -	 *    capacity without taking margin/pressure into account.
+>> -	 *    See comment above.
+>> -	 *
+>> -	 * b) If uclamp_min <= util <= uclamp_max, then the normal
+>> -	 *    fits_capacity() rules apply. Except we need to ensure that we
+>> -	 *    enforce we remain within uclamp_max, see comment above.
+>> -	 *
+>> -	 * c) If util < uclamp_min, then we are boosted. Same as (b) but we
+>> -	 *    need to take into account the boosted value fits the CPU without
+>> -	 *    taking margin/pressure into account.
+>> -	 *
+>> -	 * Cases (a) and (b) are handled in the 'fits' variable already. We
+>> -	 * just need to consider an extra check for case (c) after ensuring we
+>> -	 * handle the case uclamp_min > uclamp_max.
+>> -	 */
+>> -	uclamp_min = min(uclamp_min, uclamp_max);
+>> -	if (fits && (util < uclamp_min) &&
+>> -	    (uclamp_min > get_actual_cpu_capacity(cpu)))
+>> +	if (fits_capacity(util, capacity))
+>>   		return -1;
+>>   
+>> -	return fits;
+>> +	return 0;
+> 
+> The possible return values stay the same it seems: 1 if uclamp (and so
+> util_avg) fit, -1 if util_avg fit and 0 if uclamp and uclamp don't fit.
+
+Yes, this is the intended change to address some comments elsewhere and 
+in previous revisions.
+
+> [...]
+> 
+>> @@ -6914,6 +6861,10 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>   			"0 tasks on CFS of CPU %d, but util_avg_bias is %d\n",
+>>   			rq->cpu, rq->cfs.avg.util_avg_bias);
+>>   		WRITE_ONCE(rq->cfs.avg.util_avg_bias, 0);
+>> +		WARN_ONCE(rq->cfs.avg.util_est_uclamp,
+>> +			"0 tasks on CFS of CPU %d, but util_est_uclamp is %u\n",
+>> +			rq->cpu, rq->cfs.avg.util_est_uclamp);
+>> +		WRITE_ONCE(rq->cfs.avg.util_est_uclamp, 0);
+> 
+> Maybe better:
+> 
+> 		if (WARN_ONCE(...
+> 			WRITE_ONCE(rq->cfs.avg.util_est_uclamp, 0);
+> 
+> How can this happen, that there are 0 tasks on rq->cfs hierarcy and
+> rq->cfs.avg.util_est_uclamp is !0 ? Is there a specific code path when
+> this happens?
+
+Ack.
+
+This should never happen. Triggering the warning here means something 
+has gone very wrong in the maths and should be reported.
+
+>>   	}
+>>   #endif
+>>   }
+>> @@ -7485,7 +7436,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+>>   static int
+>>   select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+>>   {
+>> -	unsigned long task_util, util_min, util_max, best_cap = 0;
+>> +	unsigned long task_util, task_util_uclamp, best_cap = 0;
+>>   	int fits, best_fits = 0;
+>>   	int cpu, best_cpu = -1;
+>>   	struct cpumask *cpus;
+>> @@ -7494,8 +7445,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+>>   	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+>>   
+>>   	task_util = task_util_est(p);
+>> -	util_min = uclamp_eff_value(p, UCLAMP_MIN);
+>> -	util_max = uclamp_eff_value(p, UCLAMP_MAX);
+>> +	task_util_uclamp = task_util_est_uclamp(p);
+> 
+> select_idle_sibling() could pass task_util and task_util_uclamp into
+> select_idle_capacity(). This way we would save these calls to
+> task_util_est() and task_util_est_uclamp() here.
+
+Good idea.
+
+>>   	for_each_cpu_wrap(cpu, cpus, target) {
+>>   		unsigned long cpu_cap = capacity_of(cpu);
+>> @@ -7503,7 +7453,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+>>   		if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
+>>   			continue;
+>>   
+>> -		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
+>> +		fits = util_fits_cpu(task_util, task_util_uclamp, cpu);
+>>   
+>>   		/* This CPU fits with all requirements */
+>>   		if (fits > 0)
+> 
+> [...]
+> 
 
