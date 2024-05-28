@@ -1,122 +1,89 @@
-Return-Path: <linux-kernel+bounces-191759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0868D13C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100CB8D13C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BB61C21A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AE01F23825
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC844D5AA;
-	Tue, 28 May 2024 05:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HGGhQwFq"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFBA4BA94;
+	Tue, 28 May 2024 05:17:34 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0364D108
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAA24AEC6;
+	Tue, 28 May 2024 05:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716873410; cv=none; b=dYLCyAmPBWje90TJGENJSjrDNScGSOEUs4ltM0zkCgSm8M7CpEAQgojIwHI2illw/K8PGweH35Q8AOHZGnpn0Xlas+oyFkHNi/nGDv6SfBQY60wfPThkVL4Duh3akGv4AdmUHQBrKNs/zqep9pzI1uup+YSqme+oEuZqL6+PZJQ=
+	t=1716873453; cv=none; b=QRUtcsvEskYqxCwRjrK3/m+kDmsFPQPl5v9W/PZuWArsJl4m5N1wMlZ0IomNK0gCli/gMbv1A6eU9UVbx5T4kyIGBm3qLcjnyHiYsQkqCxKbCwV0C0qsnl48UTZ4ebPKSqb0ZOUlvA/00D3hcOgL17FxuOS6C4p3rLMxrbHxOuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716873410; c=relaxed/simple;
-	bh=NMLkvvg5qObSgClZZbO5bDWOjnVmIgpOQUbiedvX498=;
+	s=arc-20240116; t=1716873453; c=relaxed/simple;
+	bh=IuHMtwTeyqlpqYeXM422lXhrG4rbRJ+Mx575mDzsOgg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIjWdEkkvcG6bHvkIVtdGOfGsiFYcY7C3os/2RpKMBv/6hR5CsWoqtdOQnLhWGnmD7KsgcWYgfBX4CDUZ0ROohtNaw7zyVvuBoQffbS1/Y5ObK4XSRPjrNbHJ4z2WUyw0PHxKM8V8Hjv8OvA646L4QdlBDqmPLnemZOr2lfAK9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HGGhQwFq; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716873406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PvMR9k1pGFigZouPy+tMRVCzX+R62W6OpqFaB67TC8=;
-	b=HGGhQwFq+dRq6k8V3hc0wLl4PSQjCwaiqjWJGTuBoy6sot/EvSMUF9uoO6wgTW9RCaLBnj
-	on9hvRA2ven7pvJ2qnp7M6NxUm6Vgr3vbNIknPjpYBsGp2tW+zIemHk0T9RgVWRV+EZgRc
-	CSOSa25vfYAxSzsOrwyhsrpdD7UbHjs=
-X-Envelope-To: bigeasy@linutronix.de
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tglx@linutronix.de
-Date: Mon, 27 May 2024 22:16:41 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] memcg: simple cleanup of stats update functions
-Message-ID: <n6zstrcbqp7fqpennqf3qgt2nuc2tdrnsc5dmoawyke3zn3xcm@6uirkotvrhe6>
-References: <20240420232505.2768428-1-shakeel.butt@linux.dev>
- <20240527152200.P1rU7FaG@linutronix.de>
- <86006806-4ffc-4330-ab4b-29215ab2c98c@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCC9XQmXFta1ayAeBBBWD8zgx14gnxjSKxbj1JMaDerd81Gry0R760xW9N2vB5pZp35PZ6e6ikJYuWE0NcHzIzky75cKGGnzRmQZZ4OJcQNp+kHU225jWCY2zseLz01dJZlNfmqVCoSS4/1DJJlDY080aMUdCM7lYb2U/mDWOu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f8e9878514so281712b3a.1;
+        Mon, 27 May 2024 22:17:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716873452; x=1717478252;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mwu2A3L+vnaLJrpl04TOxaMqzUnVipp0rU1gzlqdkuo=;
+        b=aHRjPyggbSauRsUIhRYDrekWSlTpfgvHutl/JTs1yJdGVpMmNkr0Tf19kizrQHE3ts
+         1VSmfDDuF2FMGsimYaxYnHh2EpKMmV7BE4dUaYG/AkkVkizgcLQPOKYLAFvDu/SS9BAd
+         P+ecDt6/VGm18MKe/9uVRMAhdgSDlu5osN3wb0aMsk8zTG6Q4kTnN8/ZKq0ZH2TCJedm
+         IIRMKoju0j/Kpc3zhgZgvKmo2+qR8PYsRJZ/tjWJja/n19M6sdgBFCvWfZ4JEZULMW6H
+         lRYtta8FAXXJV0Vcex4CdkjRi2KNWIBg4xKJO4b+gcRJFKQRwVfCh2g9r01XG9nNrUku
+         AEAw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3OC5KwH0dz2PhP9Lzq5yBSPXlrNwA/d6BJ8NI0wQVFBbtWvWCdf8iLZ1rLXRw1tqRFTfeLRMr1KWaomTyvQHO1hyeK1guq2dOXPaP4Tqts8tlf/z8Fr32DkzFTVgcrdZ8c65iNyt9IeBp
+X-Gm-Message-State: AOJu0Yzx+aoE+Y3ChOn6gz3vAGq+cqOReIfTxDe5U3fnpDUGvhs7TJEM
+	RBoS2m51Oc1Y5N3nv3E/VsARVLbq6nOEefQ+S6Ty/oQ0e9VBC4xR
+X-Google-Smtp-Source: AGHT+IFxGawmR0bNdr/hoyLH4cc/hCM4hOcXhFoeTTnkd7P16HJzB7T8Q7mkRXK36PzJy8X41oYjEQ==
+X-Received: by 2002:a05:6a20:d409:b0:1af:d6dc:86b9 with SMTP id adf61e73a8af0-1b212e3520fmr9309648637.53.1716873451770;
+        Mon, 27 May 2024 22:17:31 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9dd375sm70655385ad.288.2024.05.27.22.17.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 22:17:31 -0700 (PDT)
+Date: Tue, 28 May 2024 05:17:29 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Aditya Nagesh <adityanagesh@linux.microsoft.com>
+Cc: adityanagesh@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] Drivers: hv: Cosmetic changes for hv.c and balloon.c
+Message-ID: <ZlVo6bhEvBCIG_1d@liuwe-devbox-debian-v2>
+References: <1713842326-25576-1-git-send-email-adityanagesh@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86006806-4ffc-4330-ab4b-29215ab2c98c@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <1713842326-25576-1-git-send-email-adityanagesh@linux.microsoft.com>
 
-On Mon, May 27, 2024 at 06:34:24PM GMT, Vlastimil Babka (SUSE) wrote:
-> On 5/27/24 5:22 PM, Sebastian Andrzej Siewior wrote:
-> > On 2024-04-20 16:25:05 [-0700], Shakeel Butt wrote:
-> >> mod_memcg_lruvec_state() is never called from outside of memcontrol.c
-> >> and with always irq disabled. So, replace it with the irq disabled
-> >> version and add an assert that irq is disabled in the caller.
-> > 
-> > unless PREEMPT_RT is enabled. In that case IRQs are not disabled as part
-> > of local_lock_irqsave(&memcg_stock.stock_lock, …) leading to:
-
-Sorry about that and thanks for the report.
-
+On Mon, Apr 22, 2024 at 08:18:46PM -0700, Aditya Nagesh wrote:
+> Fix issues reported by checkpatch.pl script in hv.c and
+> balloon.c
+>  - Remove unnecessary parentheses
+>  - Remove extra newlines
+>  - Remove extra spaces
+>  - Add spaces between comparison operators
+>  - Remove comparison with NULL in if statements
 > 
-> But then the "interrupts are handled by a kernel thread that can sleep" part
-> of RT also means it's ok to just have the stock_lock taken with no
-> interrupts disabled as no actual raw interrupt handler will interrupt the
-> holder and deadlock, right?
+> No functional changes intended
 > 
+> Signed-off-by: Aditya Nagesh <adityanagesh@linux.microsoft.com>
+> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-Thanks Vlastimil for jolting my memory on RT reasoning.
-
-> > | ------------[ cut here ]------------
-> > | WARNING: CPU: 0 PID: 1 at mm/memcontrol.c:3150 __mod_objcg_mlstate+0xc2/0x110
-> > | CPU: 0 PID: 1 Comm: systemd Not tainted 6.10.0-rc1-rt0+ #17
-> > | Call Trace:
-> > |  <TASK>
-> > |  mod_objcg_state+0x2b3/0x320
-> > |  __memcg_slab_post_alloc_hook+0x13c/0x340
-> > |  kmem_cache_alloc_lru_noprof+0x2bd/0x2e0
-> > |  alloc_inode+0x59/0xc0
-> > |  iget_locked+0xf0/0x290
-> > 
-> > suggestions?
-> 
-> So in that case the appropriate thing would be to replace the assert with
-> lockdep_assert_held(&memcg_stock.stock_lock);
-> ?
-> 
-> It seems all the code paths leading here have that one.
-> 
-
-Yeah this seems right and reasonable. Should I send a fix or you want to
-send it?
+Applied to hyperv-fixes, thanks!
 
