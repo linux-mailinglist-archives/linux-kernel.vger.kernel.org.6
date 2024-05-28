@@ -1,167 +1,174 @@
-Return-Path: <linux-kernel+bounces-191916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4F08D1607
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D518D160D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6A91C22177
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0385C1C22177
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61FF13B79B;
-	Tue, 28 May 2024 08:13:25 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCCC13B583;
+	Tue, 28 May 2024 08:14:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E1213AA46
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6284DA04
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884005; cv=none; b=iSJ5QS0GiY7bnquzs8LYTRZxMYjMGyynGFckYhzYaPN6V/eNJAX7i5+eZUJeTbf0kdBgmCn94v9kKnewzkPm8iOWxzv9cWic7Naea8Tp0H6sA8iRwVy+p7OR3uw438i0B88Oqnhh/kENoj0xIyJzY8gN7avX+dFLt9dfF60vay0=
+	t=1716884073; cv=none; b=DAGxeCWS0OhWMNUknrBgZNKybtkbNkD7z/L1MHBG+51RgOrP6aIG86Lahuem6ViG+o0obgH783/eQMpAuA1iYAN69CRAmaLRww+7L4JWUhEkcY6yJDHvCt/shQTm2Yjtio54O0HfLoy8nshw7YO9PhKFf0NtzPNIwOQm9N5KHGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884005; c=relaxed/simple;
-	bh=uH34/zMLsDTLWcHo5SncexBXLQJ/4xak05E2pRJC+Lc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XroyTD6M1GOqq6XKY3A8QLJ2g8k0SQ7GkKih7TW8gTTWr/Cqk6Lz+oat3UqIwexLzmoCBa6mHqhmuVEnmTdncoJW6x5/9q0wAPsBpfsSeFiS/Z9VTVf5vKgs9qFzSlMiNRpXABu7du2kMF6A/NN18GRB9GUY24jYsySMiCs9cGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1716884073; c=relaxed/simple;
+	bh=0eWo8k2SiyzsJ9fYOcUPFq5LIaob+zHGyuf05nLWH7A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PjW/iL+RQZhn/kw9PpeZD3LhLIgD6nbdyUjxOqotdExdP9BNWi8nsl1hKgV6O7CbsdUpiGL43c6KVgQB7TweKeGFQLa7hoDQON1IOxppoX2qLWEIXPm723K3qaAE1Ijf4h3w1IxEeb76fU7qeaM8W6IAAHX5mQOMUG0+B12FLw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3738db5b07dso6380105ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:13:23 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-37452cea7easo5793765ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:14:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716884003; x=1717488803;
+        d=1e100.net; s=20230601; t=1716884070; x=1717488870;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=62y7v4snzgkp+7CkNXO5DDgESut5Y/xpHHfPFOBokxg=;
-        b=sYbwpD4nD08ztTzcId0nPYBrqiYwrbp4MkGceoF/9C3g9LaIqJFMxCGrCYbkGKnMGv
-         oysoLBvgwxF8rWOVfzulbze2EAzhYXFmnceKjgTfFAihgV3N0TbeuQZQLIF4S32LB+HW
-         j1FWJ6XVOqQfQIQlKkpzfU4WjRZez8p4b4bFkypxBDhyRXKK5Bx5HKlHJhAe5HnvY/qb
-         leqHORVLkpe9wLbQ0eOO4weXkr97q+BEfgUHTvWPTtnde3b2Rue9gproUWlErwMqkduq
-         HVf7B7zPyVM0dCY+lq/bZbOGdsl2Re9o7nA/HKdcMGYVCBINagAF/S1sVKoZULPLHAUu
-         FHCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHtUAu+3BjJZHSFt6UN4vX/qxyH7Jnj9WtY+tjlZQjk0xL2heoTlCv1vQkrT5IPss5dLAPw4VP0N3InE6nSID4JRYpPmT3MuRI7RaX
-X-Gm-Message-State: AOJu0Yz+tPqlOagGcy2GscJ2h2xKzaLCQcBgeTaxJYqWNVijHS213znw
-	IlabxWjYMScGhEaQlrcGFrbTN2UffK0MuK0LyZCyWwiUURgyab04YVC6xFZKy8RXcZ379HF3L5L
-	EQVACbHwVY0/aolLqo/tD3pOl840rjBN9Hq/5bFq2VDRlp98RHmeISzI=
-X-Google-Smtp-Source: AGHT+IEjnjpbnrWUm6VxMooPc1NuJJj7CjXYC0eeNyOpKbe3kK5lPanbnI/J77AwxR33qqnyunT79I+Q6TkA1s6OgAvJ/Re0M/v+
+        bh=zAUolh23tKq5wYxUqvc7bBcvTVTp+n7VeXwB2rrSAdo=;
+        b=FAc4kiWpWHAEuDhXCQ3OG2VaH9cuRspSVB28Kop1OB3nBB8mRqNaJ5DMZHKqSOjf9s
+         +E9+ZJIFzIFM3VjqshbSP/6kbn7E5apaio8cs9Ct9hL8xdl05xeejbx3UUJOmUGJyJMJ
+         dLbwZsAWiLuijr7DLRHbBBfkXeNABZhBQNZ4m52XVmtu/qyMVrO+AdwEDYssHOUuP7qa
+         zhaFGKrJli/Qt4x9OrRyTSXkjmO8kYUuQhnjfz5JVw4Bx/A8s5nq343N8FgLn+CSs5NB
+         FuvcRIfLd4Q2gHEIX7GQxJMzvCu7uE9w+7WV6Tq+fdfnY6f4L7faSUmtTwlyPXPt//rG
+         f25g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZCu6GgFL0WLwJHTRlW4MIPjl4W3og/fUx8dSCuk/HuaLaQ3ID+mEpL23CA0kvew/SCUJ/Ad6h/lTKSp31Ai/hlsiVl1bsnkBGNon3
+X-Gm-Message-State: AOJu0YxAETmm+Pf6LzhzzO5XkTSPn5Ht/x2PagBXJR1S2sNGIFrXbdmM
+	+V8pWFmUVliOgeBWnOAf8RwKeJURbDgV1Qt+py/0SH4zk1fBYxHhkEOHkDHbX+lLdpDEa0B6QpT
+	iLz0xWRtuVCRzyfs4zqRqL63EUVGbSlwC5YoPP1jWu0IsWYsPoLfar/s=
+X-Google-Smtp-Source: AGHT+IHdDIPe/efUxBHApkpoQj8KwBVey4m9Z9nkIX1iqS9LOA9uWHHZOm5WG8g++TidpPWlotNE3rlPYcEutO+WV0CDktKD2PfY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216e:b0:36b:2731:4084 with SMTP id
- e9e14a558f8ab-3737b2bdafemr6954795ab.2.1716884003060; Tue, 28 May 2024
- 01:13:23 -0700 (PDT)
-Date: Tue, 28 May 2024 01:13:23 -0700
+X-Received: by 2002:a05:6e02:1d09:b0:371:e497:209 with SMTP id
+ e9e14a558f8ab-3737b2ba7a5mr7300575ab.1.1716884070294; Tue, 28 May 2024
+ 01:14:30 -0700 (PDT)
+Date: Tue, 28 May 2024 01:14:30 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001f886b06197f358f@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: array-index-out-of-bounds in bch2_btree_path_traverse_cached_slowpath
-From: syzbot <syzbot+fa3fc4c486ec9c342fcc@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000002174ba06197f39c1@google.com>
+Subject: [syzbot] [dri?] [media?] general protection fault in udmabuf_create (2)
+From: syzbot <syzbot+40c7dad27267f61839d4@syzkaller.appspotmail.com>
+To: christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	kraxel@redhat.com, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	sumit.semwal@linaro.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1674fd44980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa3fc4c486ec9c342fcc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+HEAD commit:    6dc544b66971 Add linux-next specific files for 20240528
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1590bec8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6a363b35598e573d
+dashboard link: https://syzkaller.appspot.com/bug?extid=40c7dad27267f61839d4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2bfcfd58.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c7ed3bb80bed/vmlinux-2bfcfd58.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/93acc5bfbaef/bzImage-2bfcfd58.xz
+disk image: https://storage.googleapis.com/syzbot-assets/334699ab67f8/disk-6dc544b6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4ca32b2218ce/vmlinux-6dc544b6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/400bc5f019b3/bzImage-6dc544b6.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fa3fc4c486ec9c342fcc@syzkaller.appspotmail.com
+Reported-by: syzbot+40c7dad27267f61839d4@syzkaller.appspotmail.com
 
-bcachefs (loop2): journal_replay... done
-bcachefs (loop2): resume_logged_ops... done
-bcachefs (loop2): going read-write
-bcachefs (loop2): done starting filesystem
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in fs/bcachefs/btree_key_cache.c:215:16
-index 66 is out of range for type 'bkey_cached *[16]'
-CPU: 1 PID: 7694 Comm: syz-executor.2 Not tainted 6.10.0-rc1-syzkaller-00013-g2bfcfd584ff5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 PID: 7202 Comm: syz-executor.4 Not tainted 6.10.0-rc1-next-20240528-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:PageTail include/linux/page-flags.h:284 [inline]
+RIP: 0010:const_folio_flags include/linux/page-flags.h:312 [inline]
+RIP: 0010:folio_test_head include/linux/page-flags.h:837 [inline]
+RIP: 0010:folio_test_large include/linux/page-flags.h:858 [inline]
+RIP: 0010:folio_nr_pages include/linux/mm.h:2076 [inline]
+RIP: 0010:udmabuf_create+0xa54/0x11c0 drivers/dma-buf/udmabuf.c:376
+Code: 01 00 00 48 8b 44 24 70 42 80 3c 28 00 48 8b 5c 24 68 74 08 48 89 df e8 fa d5 ee fb 4c 8b 3b 49 8d 5f 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 dd d5 ee fb 48 8b 1b 48 89 de 48
+RSP: 0018:ffffc9000cfcfbe0 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
+RDX: ffffc90009011000 RSI: 0000000000000cc5 RDI: 0000000000000cc6
+RBP: ffffc9000cfcfd70 R08: ffffffff8fad856f R09: 1ffffffff1f5b0ad
+R10: dffffc0000000000 R11: fffffbfff1f5b0ae R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff88801bf793a8 R15: 0000000000000000
+FS:  00007fb83bd9f6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32f21000 CR3: 000000002e5d8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x110/0x150 lib/ubsan.c:429
- bkey_cached_alloc fs/bcachefs/btree_key_cache.c:215 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:329 [inline]
- bch2_btree_path_traverse_cached_slowpath+0x4304/0x4d90 fs/bcachefs/btree_key_cache.c:484
- bch2_btree_path_traverse_cached+0x9ec/0xdc0 fs/bcachefs/btree_key_cache.c:587
- bch2_btree_path_traverse_one+0x16b4/0x2e40 fs/bcachefs/btree_iter.c:1158
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:229 [inline]
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:221 [inline]
- bch2_btree_iter_peek_slot+0x715/0x2450 fs/bcachefs/btree_iter.c:2603
- __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:552 [inline]
- bch2_bkey_get_iter fs/bcachefs/btree_iter.h:566 [inline]
- bch2_inode_peek_nowarn+0x1e3/0x390 fs/bcachefs/inode.c:340
- bch2_inode_peek fs/bcachefs/inode.c:366 [inline]
- bch2_inode_find_by_inum_trans+0x125/0x2a0 fs/bcachefs/inode.c:939
- bch2_vfs_inode_get+0x41f/0x550 fs/bcachefs/fs.c:277
- bch2_mount+0xc81/0x1090 fs/bcachefs/fs.c:1999
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1780
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72f3579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5ee5400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 00000000f5ee5460 RCX: 0000000020011a40
-RDX: 0000000020000040 RSI: 0000000001200014 RDI: 00000000f5ee54a0
-RBP: 00000000f5ee5460 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ udmabuf_ioctl_create_list drivers/dma-buf/udmabuf.c:439 [inline]
+ udmabuf_ioctl+0x3b2/0x4f0 drivers/dma-buf/udmabuf.c:454
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb83b07cee9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb83bd9f0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fb83b1b3f80 RCX: 00007fb83b07cee9
+RDX: 00000000200000c0 RSI: 0000000040087543 RDI: 0000000000000003
+RBP: 00007fb83b0c947f R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fb83b1b3f80 R15: 00007ffd6ccc32c8
  </TASK>
----[ end trace ]---
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:PageTail include/linux/page-flags.h:284 [inline]
+RIP: 0010:const_folio_flags include/linux/page-flags.h:312 [inline]
+RIP: 0010:folio_test_head include/linux/page-flags.h:837 [inline]
+RIP: 0010:folio_test_large include/linux/page-flags.h:858 [inline]
+RIP: 0010:folio_nr_pages include/linux/mm.h:2076 [inline]
+RIP: 0010:udmabuf_create+0xa54/0x11c0 drivers/dma-buf/udmabuf.c:376
+Code: 01 00 00 48 8b 44 24 70 42 80 3c 28 00 48 8b 5c 24 68 74 08 48 89 df e8 fa d5 ee fb 4c 8b 3b 49 8d 5f 08 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 dd d5 ee fb 48 8b 1b 48 89 de 48
+RSP: 0018:ffffc9000cfcfbe0 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
+RDX: ffffc90009011000 RSI: 0000000000000cc5 RDI: 0000000000000cc6
+RBP: ffffc9000cfcfd70 R08: ffffffff8fad856f R09: 1ffffffff1f5b0ad
+R10: dffffc0000000000 R11: fffffbfff1f5b0ae R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff88801bf793a8 R15: 0000000000000000
+FS:  00007fb83bd9f6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32f21000 CR3: 000000002e5d8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 ----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+Code disassembly (best guess):
+   0:	01 00                	add    %eax,(%rax)
+   2:	00 48 8b             	add    %cl,-0x75(%rax)
+   5:	44 24 70             	rex.R and $0x70,%al
+   8:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+   d:	48 8b 5c 24 68       	mov    0x68(%rsp),%rbx
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 fa d5 ee fb       	call   0xfbeed616
+  1c:	4c 8b 3b             	mov    (%rbx),%r15
+  1f:	49 8d 5f 08          	lea    0x8(%r15),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 dd d5 ee fb       	call   0xfbeed616
+  39:	48 8b 1b             	mov    (%rbx),%rbx
+  3c:	48 89 de             	mov    %rbx,%rsi
+  3f:	48                   	rex.W
 
 
 ---
