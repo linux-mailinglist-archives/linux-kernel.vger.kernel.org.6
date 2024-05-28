@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-192817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1848D22A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:42:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129688D22AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB471C22D11
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:42:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7284AB2434E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F9E45C07;
-	Tue, 28 May 2024 17:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B7917106F;
+	Tue, 28 May 2024 17:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7OLECoC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/Xp5bRw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2AE44C8C;
-	Tue, 28 May 2024 17:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA32A47F60;
+	Tue, 28 May 2024 17:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716918104; cv=none; b=R+1H+C3xMP70hvFLYcMqO++kCZbpUuIb1aok8TEYM8tNxZYhtHmIrgdcBqle+phTEXwdlKQxrG8F9rDkAaYc4VACgLj25c33v4f7xH/OUyQREWOYT/X2uSd4MWek/c6OrXHR8KxfDAMrz+29ic/HtimxYGUWWib2D+ziVDJ+5+w=
+	t=1716918106; cv=none; b=DfPtZk7f2FpMs2XZFAHU1CZsaHn5PKXjaY+sSOVA0JVN2nlGTwxye7XDxDMv3aDkfHOJpqwWbesN1098YJ1k+darZvk6H79S7Y5QWOWp6pdepg/+TiY56/p8El8rSc4PXlsqlRKWwKJYPpjHQTFRM3b3gBrwJ4w5CfsZp+tEF6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716918104; c=relaxed/simple;
-	bh=e+BPjxe3d8PDjUGG2dqqLNc9UzdlT+DF7Tk18em5PEk=;
+	s=arc-20240116; t=1716918106; c=relaxed/simple;
+	bh=RLYbWmtB1JSsSqTY7dPzl/obl0aq3fUopxD+P3sLiE8=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=QVNlXzmXYCDBU5Q8RVgQtqb5AxpTnwclFRuj5ZorGnlZlr3HFzvRziNnLzp0PPVAXglvuDXxmMNln+yY29H+7srLPG8Xn/AQx18CctNIPx1L5ewlr2E+c9omr89ToV+ctvnk9gtSHl12wrxnj6A9B7ZJtx17uvUONUtAE4iTYgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7OLECoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CA8C4AF09;
-	Tue, 28 May 2024 17:41:43 +0000 (UTC)
+	 Message-Id:Subject; b=I01LRYJOUO4uqDTLrGj9TbFBsc8BSL3M4J7QaQuTDzOvW/NRX499p6PrUMgNsGJ1w5ACLwNeReNmBEaSbmKDJTdnAoi4hft2yIAtF7gHy1plaekBeUzZNZhfao0r/hy/fbhv590ZHcwxi2o25ddxglF/VYkJi26tkCBvz3tU8cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/Xp5bRw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F78EC32782;
+	Tue, 28 May 2024 17:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716918103;
-	bh=e+BPjxe3d8PDjUGG2dqqLNc9UzdlT+DF7Tk18em5PEk=;
+	s=k20201202; t=1716918105;
+	bh=RLYbWmtB1JSsSqTY7dPzl/obl0aq3fUopxD+P3sLiE8=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=U7OLECoCWbZiaYv+ryxiyHK1n+Y0z/uH3yfXA6PVTjY/g6ij6djKqsjTCe+cffQGY
-	 IouzQ5ETeMSItUIxySzKTiQoWxOE16q/nUehVNwRo/P+79uqhLVMKYskfWki4d/02T
-	 sTXGXacuSwsWUIT3XIePlA+tTmkNvHyYS6aQOngKWrn7HRzZdzKpnW5zNLpOn1u4SF
-	 Hv9Df/Q1zvidvjytHUQl9bRNxl9+i8JfMiJfV1/8/P1UOMV1Q/qhhH5iDa4jqQ7R/9
-	 qvo9IfiLXANgo5awACX4faw6ujMh6g94vZYLurtC/FkQuCnBcb39GFoTIRi228+gXs
-	 rfVkrxsxBGugw==
-Date: Tue, 28 May 2024 12:41:42 -0500
+	b=I/Xp5bRwm2CmB1DjEPopS7cv+o9A3G5woq4FBaf3o60k1PKxJ9QSoeWj3e9TfOpxC
+	 vwNP6Ne0lfNrOp1cetrrdIDRMIvHzK9GfEJurIMsSsqZEZkEq274cNH6vLRfsQs82B
+	 2QnrAO5gtjo+YZoG+W91mS1EdgX2f6Pnmwai/k28Rnof9n/GAdHnVen9Vq3WRCDaex
+	 rXB77GDTMq8CIRDIsPzkbzVDxaLdrwAWbCXH9OPXWLVX7Qh22I2tMRePCP6PmHRQ6L
+	 Wb1dKsMEDxQ2vrPyGNaWyn47q0MCzC1h8vXIOj2E8w50nFiy7ECKKr83zgXJaPhf5G
+	 Abxys47sO/qRw==
+Date: Tue, 28 May 2024 12:41:44 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,52 +50,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Chao Wei <chao.wei@sophgo.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Inochi Amaoto <inochiama@outlook.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
- Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Chen Wang <unicorn_wang@outlook.com>, devicetree@vger.kernel.org, 
- Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
-References: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
-Message-Id: <171691793360.1180650.2832719288980549545.robh@kernel.org>
-Subject: Re: [PATCH 0/5] Add board support for Sipeed LicheeRV Nano
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Sebastian Reichel <sre@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Hans de Goede <hdegoede@redhat.com>, devicetree@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ linux-usb@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
+References: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
+Message-Id: <171691793418.1180687.12564348124831502092.robh@kernel.org>
+Subject: Re: [PATCH v3 0/6] power: supply: Lenovo Yoga C630 EC
 
 
-On Mon, 27 May 2024 12:28:16 +0200, Thomas Bonnefille wrote:
-> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
-> minimal device tree files for this board to make it boot to a basic
-> shell.
+On Mon, 27 May 2024 13:03:45 +0300, Dmitry Baryshkov wrote:
+> This adds binding, driver and the DT support for the Lenovo Yoga C630
+> Embedded Controller, to provide battery information.
 > 
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
-> Thomas Bonnefille (5):
->       dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
->       dt-bindings: timer: Add SOPHGO SG2002 clint
->       dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
->       riscv: dts: sophgo: Add initial SG2002 SoC device tree
->       riscv: dts: sophgo: Add LicheeRV Nano board device tree
+> Support for this EC was implemented by Bjorn, who later could not work
+> on this driver. I've picked this patchset up and updated it following
+> the pending review comments.
 > 
->  .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
->  .../devicetree/bindings/riscv/sophgo.yaml          |  4 +++
->  .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
->  arch/riscv/boot/dts/sophgo/Makefile                |  1 +
->  .../boot/dts/sophgo/sg2002-lichee-rv-nano.dts      | 25 ++++++++++++++++++
->  arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 30 ++++++++++++++++++++++
->  6 files changed, 62 insertions(+)
+> DisplayPort support is still not a part of this patchset. It uses EC
+> messages to provide AltMode information rather than implementing
+> corresponding UCSI commands. However to have a cleaner uAPI story, the
+> AltMode should be handled via the same Type-C port.
+> 
+> Merge strategy: the driver bits depend on the platform/arm64 patch,
+> which adds interface for the subdrivers. I'd either ask to get that
+> patch merged to the immutable branch, which then can be picked up by
+> power/supply and USB trees or, to make life simpler, ack merging all
+> driver bits e.g. through USB subsystem (I'm biased here since I plan to
+> send more cleanups for the UCSI subsystem, which would otherwise result
+> in cross-subsystem conflicts).
+> 
 > ---
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> change-id: 20240515-sg2002-93dce1d263be
+> Changes in v3:
+> - Split the driver into core and power supply drivers,
+> - Added UCSI driver part, handling USB connections,
+> - Fixed Bjorn's address in DT bindings (Brian Masney)
+> - Changed power-role for both ports to be "dual" per UCSI
+> - Link to v2: https://lore.kernel.org/linux-arm-msm/20230205152809.2233436-1-dmitry.baryshkov@linaro.org/
+> 
+> Changes in v2:
+> - Dropped DP support for now, as the bindings are in process of being
+>   discussed separately,
+> - Merged dt patch into the same patchseries,
+> - Removed the fixed serial number battery property,
+> - Fixed indentation of dt bindings example,
+> - Added property: reg and unevaluatedProperties to the connector
+>   bindings.
+> - Link to v1: https://lore.kernel.org/linux-arm-msm/20220810035424.2796777-1-bjorn.andersson@linaro.org/
+> 
+> ---
+> Bjorn Andersson (2):
+>       dt-bindings: power: supply: Add Lenovo Yoga C630 EC
+>       arm64: dts: qcom: c630: Add Embedded Controller node
+> 
+> Dmitry Baryshkov (4):
+>       platform: arm64: add Lenovo Yoga C630 WOS EC driver
+>       usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+>       power: supply: lenovo_yoga_c630_battery: add Lenovo C630 driver
+>       arm64: dts: qcom: sdm845: describe connections of USB/DP port
+> 
+>  .../bindings/power/supply/lenovo,yoga-c630-ec.yaml |  83 ++++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi               |  53 ++-
+>  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      |  76 ++++
+>  drivers/platform/arm64/Kconfig                     |  14 +
+>  drivers/platform/arm64/Makefile                    |   1 +
+>  drivers/platform/arm64/lenovo-yoga-c630.c          | 279 ++++++++++++
+>  drivers/power/supply/Kconfig                       |   9 +
+>  drivers/power/supply/Makefile                      |   1 +
+>  drivers/power/supply/lenovo_yoga_c630_battery.c    | 476 +++++++++++++++++++++
+>  drivers/usb/typec/ucsi/Kconfig                     |   9 +
+>  drivers/usb/typec/ucsi/Makefile                    |   1 +
+>  drivers/usb/typec/ucsi/ucsi_yoga_c630.c            | 189 ++++++++
+>  include/linux/platform_data/lenovo-yoga-c630.h     |  42 ++
+>  13 files changed, 1232 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
+> change-id: 20240527-yoga-ec-driver-76fd7f5ddae8
 > 
 > Best regards,
 > --
-> Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
 > 
 > 
@@ -115,10 +161,12 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y sophgo/sg2002-lichee-rv-nano.dtb' for 20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com:
+New warnings running 'make CHECK_DTBS=y qcom/sdm850-lenovo-yoga-c630.dtb' for 20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org:
 
-arch/riscv/boot/dts/sophgo/sg2002-lichee-rv-nano.dtb: oscillator: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
+arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dtb: pinctrl@3400000: ec-int-state: 'oneOf' conditional failed, one must be fixed:
+	'bias-disable', 'function', 'input-enable', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
+	False schema does not allow True
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sdm845-pinctrl.yaml#
 
 
 
