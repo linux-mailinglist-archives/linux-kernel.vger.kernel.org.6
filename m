@@ -1,158 +1,235 @@
-Return-Path: <linux-kernel+bounces-192074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72168D180E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8028D1811
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5412DB25CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA911C24A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986C216ABE2;
-	Tue, 28 May 2024 10:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0416B73E;
+	Tue, 28 May 2024 10:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="WOnEOFzn"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scIku3bU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68473471;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671D116ABFA;
+	Tue, 28 May 2024 10:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716890668; cv=none; b=CIa7K6l9qo/eU6Juak42oitpALM4FkgyqQaRMj+ISAWx5xp5D9rIcZ4A6nb8mz9iSYZ9fGMMiap4/c+MtzZCMeBSR2qFCjpqQgy6mDOt8k/troLHHpRwypDv2GXnDRzWxdyM3G4d/46eGTLAeu1Z5Ou9TczsI++e85/UyWGOId4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716890668; c=relaxed/simple;
+	bh=nAx+1qaWFdCKWniYdZ782hbeVEaZL+pL+CKrnVgD2rU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bmE0tVEmpePVHXeaLnOEvU6epE4f2QWFFGebV8OUrzBXplZc1+IxQuIc8VunihdcGup2T5Z08wZAOdpWIa0CRWrRf9ZcI1csTUqCxC8VqE+OcbR2mQXPz9VO0hYCO1QY3IrgggjbkJ5TISnozyoU/AFt/PHnFwFk/3ZbMI7qJ38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scIku3bU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97219C3277B;
 	Tue, 28 May 2024 10:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890666; cv=pass; b=dG+TZxGH0TV4fJKVAN1u8rauFWi1PyitYD+4mz0B96GCjsrKDkzcgN6RqFifNkd95CnKyk0GxHvzbTxpwDQ0wiIaCH/iY+082s2CCyh7+M8Qlv2DuUW6SzU38DSGfuh6F3i20WCDYjtARmpFnraG3pxmjdshxs0qvSMOj2i8NLk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890666; c=relaxed/simple;
-	bh=g4CBUXz5T5mu/JCnMt3kyJeUI5ZO8IAT+hqau0JiDts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2LyNHoU7bUUYc53YUFzCUCBA22ISvsSvpHSDLRHEpn7ETGfLQFG0ith9So/xcuEFQKnWXgdlwA88bu33vtTJtDMCiUVb1Kspf4u/gdwWA9lvGEnccTo6176OC40GqVmn+3XQoCqePhAjvLH4R7AqgSqlQ8oouDu5pqGEcVZhD0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=WOnEOFzn; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4VpSm62k6YzySG;
-	Tue, 28 May 2024 13:04:22 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1716890662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oc5lpaoUHfjbT29KeXkb2c/2QzBp2Sez/PsceYiqTG0=;
-	b=WOnEOFznfy1bJ+dBgvLx8Qq+pMpXfi73FseMJSufjRH9XgnTzsLvALFEJDwhIJVUJTBHQC
-	96N9mHo5g8uuLY0eeb5kPU5L39W7U7C4BJDvYrhKbuuJjmsTarQVStq1a3SE/YGegNeyKE
-	rkuMYROAldM798FAU2cE4PtCdaCK/HE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1716890662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oc5lpaoUHfjbT29KeXkb2c/2QzBp2Sez/PsceYiqTG0=;
-	b=loIdKMLRludf7WtdSO+IsQ2eZhxmu1xw9v1ZmqsBJjG5NN84Tmoc3lvyGRaIOjWJZcui0C
-	ohH+dKTyHkpCB8Zop1Ydtcj4oc+mP7OwRE+6KmXBB8B4+BmZZGK8rfKAMV70Oyeyn75exm
-	YtmKsGnWafNIdRTqvEJotGQ0YaRZokI=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1716890662; a=rsa-sha256; cv=none;
-	b=YLcHPXBQiGA8MgaVuUmN3uxrJxdiFu8onLUgkI1lp064qrdhp5/bcTnv7IOPSYqfzJy1GA
-	OkkKLwnELuhxdhQkb507BjbC3pmjPMLftELRqVK9DpAhYctA2bjepW2Bz1+L3o22ZPhfmZ
-	auwqRpHcesisfh0r02ldP9svb/xpTPE=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 33EC0634C93;
-	Tue, 28 May 2024 13:01:22 +0300 (EEST)
-Date: Tue, 28 May 2024 10:01:21 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
- binding
-Message-ID: <ZlWrcTCNBWEz67Tj@valkosipuli.retiisi.eu>
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-2-sylvain.petinot@foss.st.com>
- <8afe1888-5886-45fc-b576-98db3d392d37@linaro.org>
- <ZlWiQTfag5yTA4YM@valkosipuli.retiisi.eu>
- <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716890668;
+	bh=nAx+1qaWFdCKWniYdZ782hbeVEaZL+pL+CKrnVgD2rU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=scIku3bUrnpZ01/wcNGVF4A54/zt3VksG/RMhU9bTDnbgm/sBc1E0CNmurkc0rYkw
+	 5mXVMKmdcVFb1RvS0NiYIHXjL+SSEWXWyU4BDwBCEMbLkkoDZO7MD+ugT6eVKplc6S
+	 G/7iAKR6xgZHcQOf8Wh7H1S5mC7nHYm0ZH2aFJkQ7h2PflFdju2RuD8Q4kUudJU74P
+	 FqZ73FXC0htRYVU74mSOvAfUSiFymE7IuRD+bRvJ1eh7e/zkEA6DV5lJQMu2W7B6JD
+	 CZvJYzw1JjUkntOfBfu3hUH8d+Ltp4mTvVn9SzTiI5gxFKTcu8+KH5TPgBoeh5JPl2
+	 1I39eBtRE/RlA==
+Message-ID: <e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
+Date: Tue, 28 May 2024 12:04:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to
+ yaml
+To: Andreas Kemnade <andreas@kemnade.info>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20240528065756.1962482-1-andreas@kemnade.info>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240528065756.1962482-1-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
-
-On Tue, May 28, 2024 at 11:46:00AM +0200, Krzysztof Kozlowski wrote:
-> On 28/05/2024 11:22, Sakari Ailus wrote:
-> > Hi Krzysztof,
-> > 
-> > On Mon, May 27, 2024 at 09:04:38PM +0200, Krzysztof Kozlowski wrote:
-> >> On 21/05/2024 18:29, Sylvain Petinot wrote:
-> >>> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
-> >>> sensors. Update MAINTAINERS file.
-> >>>
-> >>> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
-> >>
-> >>
-> >>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >>> index ef6be9d95143..554e6861425b 100644
-> >>> --- a/MAINTAINERS
-> >>> +++ b/MAINTAINERS
-> >>> @@ -20885,6 +20885,15 @@ S:	Maintained
-> >>>  F:	Documentation/hwmon/stpddc60.rst
-> >>>  F:	drivers/hwmon/pmbus/stpddc60.c
-> >>>  
-> >>> +ST VD56G3 DRIVER
-> > 
-> > I might add this is a sensor, i.e. "ST VD653G IMAGE SENSOR DRIVER".
-> > 
-> >>> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> >>> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
-> >>> +L:	linux-media@vger.kernel.org
-> >>> +S:	Maintained
-> >>> +T:	git git://linuxtv.org/media_tree.git
-> >>
-> >> This is a friendly reminder during the review process.
-> >>
-> >> It seems my or other reviewer's previous comments were not fully
-> >> addressed. Maybe the feedback got lost between the quotes, maybe you
-> >> just forgot to apply it. Please go back to the previous discussion and
-> >> either implement all requested changes or keep discussing them.
-> > 
-> > The above MAINTAINERS entry is roughly in line with what else we have for
-> > the Media tree. I'm in favour of listing the people who would look after
-> > the driver, not just those who merge the patches (or even send PRs to
-> > Linus).
+On 28/05/2024 08:57, Andreas Kemnade wrote:
+> Convert the regulator bindings to yaml files. To allow only the regulator
+> compatible corresponding to the toplevel mfd compatible, split the file
+> into one per device.
 > 
-> I did not propose to drop the entry.
+> To not need to allow any subnode name, specify clearly node names
+> for all the regulators.
 > 
-> > 
-> > In other words, I think the above entry is fine as-is.
+> Drop one twl5030 compatible due to no documentation on mfd side and no
+> users of the twl5030.
 > 
-> I propose to drop duplicated, redundant git entry. Maintainer of this
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> Reason for being RFC:
+> the integration into ti,twl.yaml seems not to work as expected
+> make dt_binding_check crashes without any clear error message
+> if used on the ti,twl.yaml
+> 
+>  .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
+>  .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++++++++++
+>  .../regulator/ti,twl6030-regulator.yaml       | 292 +++++++++++++
+>  .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
+>  .../bindings/regulator/twl-regulator.txt      |  80 ----
+>  5 files changed, 935 insertions(+), 81 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> index c2357fecb56cc..4ced6e471d338 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -50,7 +50,7 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl4030-wdt
+> -
+> +        $ref: /schemas/regulator/ti,twl4030-regulator.yaml
 
-Ah, I agree, that makes sense.
+That's not needed, just like othehr refs below.
 
-> driver does not have access to git tree and the git tree is already
-> explained in media subsystem entry. If you ever update the git tree, you
-> need to update 100 driver entries which is meaningless...
+>    - if:
+>        properties:
+>          compatible:
+> @@ -63,6 +63,7 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl6030-gpadc
+> +        $ref: /schemas/regulator/ti,twl6030-regulator.yaml
+>    - if:
+>        properties:
+>          compatible:
+> @@ -75,6 +76,7 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl6032-gpadc
+> +        $ref: /schemas/regulator/ti,twl6032-regulator.yaml
+>  
 
--- 
-Regards,
+>  properties:
+>    compatible:
+> diff --git a/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
+> new file mode 100644
+> index 0000000000000..9623c110605ef
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
+> @@ -0,0 +1,402 @@
+> +# SPDX-License-Identifier: (GPL-2.0)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/ti,twl4030-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Regulators in the TWL4030 PMIC
+> +
+> +maintainers:
+> +  - Andreas Kemnade <andreas@kemnade.info>
+> +
+> +properties:
+> +  regulator-vaux1:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +    properties:
+> +      compatible:
+> +        const: "ti,twl4030-vaux1"
 
-Sakari Ailus
+No quotes
+
+> +
+> +      regulator-initial-mode:
+> +        items:
+> +          - items:
+> +              enum:
+> +                - 0x08 # Sleep mode, the nominal output voltage is maintained
+> +                       # with low power consumption with low load current capability
+> +                - 0x0e # Active mode, the regulator can deliver its nominal output
+> +                       # voltage with full-load current capability
+> +
+> +    required:
+> +      - compatible
+> +
+> +  regulator-vaux2:
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +    properties:
+> +      compatible:
+> +        const: "ti,twl4030-vaux2"
+> +
+> +      regulator-initial-mode:
+> +        items:
+> +          - items:
+> +              enum:
+> +                - 0x08 # Sleep mode, the nominal output voltage is maintained
+> +                       # with low power consumption with low load current capability
+> +                - 0x0e # Active mode, the regulator can deliver its nominal output
+> +                       # voltage with full-load current capability
+
+These entries are the same. Just use patternProperties and enum for
+compatible.
+
+
+Best regards,
+Krzysztof
+
 
