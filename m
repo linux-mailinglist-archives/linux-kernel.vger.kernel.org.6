@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-192070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56738D1800
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEDE8D1805
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8975F1F26369
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE45E28940E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA8017E8F4;
-	Tue, 28 May 2024 10:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B54613D887;
+	Tue, 28 May 2024 10:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="SsYsZ3Kl"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="muSwFo9x"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787DB1E4A9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0CDF9DA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890608; cv=none; b=Wpa14sgmDK0dGLCFfo/v/VM0roB+eeBsWHLy29S4HhOPavACb4RXPovfT5YdrNRLBQIqVm7gRFC4IaQrOWaFT9wItMiM3czCe+GWl+pQ3Wne614H0C2W1jpwNUfoVguPELoiXV7IJ00PvHJpe3SkyIp64o+4PNM4sCUaG0LD8Kk=
+	t=1716890634; cv=none; b=fGj/4xdYwPSXs6qfBM8Vb6roti3vNDvP2zFQPiBb7prtSOylL8GK0M9VPXQXsEMf94kJwUF4Xb6+yLJF/vjkGYDG3gAJTt5kwP2DRdo4hzzlzl2YxnnPv0PXEbEtzHv12ZD6vrLFpUJq8Q/768GpkKNQwBHBGPm1+ZoQFSKkcE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890608; c=relaxed/simple;
-	bh=3ZQs+XnucPl5n5LBoNVNaoK/IFXx+wgEWwOilSxoEcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KfDR6DFgUrF8l6hKWc+a51iLrkd2ZVb1r3UkKPImK+zek4+a69k+FEqCueIBM0xF4vYQ/dqu2TuBXs842dTsDqnQeaNkYtNR2nU6NfDkzGEwsqj8s6OjaLigcKDtEDbFe6NSkHzjNY44WTZPMzo/zx8asfAqdfMWIKMpwcsQbFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=SsYsZ3Kl; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7B2D73FE4E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1716890603;
-	bh=6WRU7oiqAgX1SgryE9dbJiu4Oq2IxMJRrC30Dv4YbFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=SsYsZ3KlJNfupE3HEdc4LOe+Ll8lYT/uqAvY/VYJ7UqGyZpclki4yMMijtAx9HxtR
-	 ZbR3K5kJQsfHbGJSL/jNb7Vf44nwsovVVfAXbWRoHLDOG6O9j9G1CB4B3L/XBYFla4
-	 m/Ooe/jmzcm4RIYvv+0n8yB8qe30mDiYx/mvzBQZPBabd4iDH9/Ip9bIZB9yWJ+FIk
-	 B5WCzGeWB84Ebll3+AE80b0Us3Ize95XvzswMH2yTmcT5geeifKgMHjZXB7gESALl/
-	 HFIFUkLJyHgB2ZAbzfNYM56NSa+rNeUXjDD+mYyYMDTYihDups6KJFk26GYoGa9Wj/
-	 MI6M91N0zvbfA==
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-66957d4e293so572655a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:03:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716890601; x=1717495401;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6WRU7oiqAgX1SgryE9dbJiu4Oq2IxMJRrC30Dv4YbFE=;
-        b=jqYDQZKlzrSRAIaV3F4hTGZicU6Pgixjo5Wt832JeNf6fbiFp8xBbrMIPqPPURviLR
-         kQpfmAPKhI8FxODskoXhQAn+hWg/RYiTU4QKe7Zmq5fJCBf+F+sv+jnfLnixD9De43Dp
-         wnSefJv4ZEF7wYrWux5QurviwB1iX6nePoGFYYpihCqs4wGnkozerCbBSKiy47/R1Vrx
-         cgdCyYDmaPtpjOnpazOk3yQssGqzmwvF1b5CkOuwH3r9pvFi0c3W8FaU71Ba/Z83bDzf
-         zoxYutQcyiLmhr00F/EAlvINVqBx0C9CKH2ZRSAZEK9ricSYxiaTSIR84CpJqdeCWffZ
-         Hxfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+sfuieIXSqelyut1LO7scruMpbygivsm+1YEhmsWuT81IZQpO8mg/NJD888TCZTVPcpdMlwyThLg8V+XYFNsXliDZ9JhsJ7zHxsA
-X-Gm-Message-State: AOJu0YwCjmxcsmmIYtrXnA9/aoYrd0e1fAXWB6WTru2XiE1x3nzXtfIu
-	n8TlkdZ46cUnHmCwn2PR2hiu7owJ9nxt781pUNmJuJV/O9QL9RHDkImtVx9PgTbVOdG6fJ/5qLY
-	k4/JcRvIvlGtu90Wl4rTq2vBqlwaLGtWGl9OIPu0LgWEtyu/hop+QJhQl1rxaSHtJ1M6rljZ/EV
-	js+A==
-X-Received: by 2002:a17:902:c40e:b0:1ea:26bf:928 with SMTP id d9443c01a7336-1f4497d4f41mr127749175ad.50.1716890601664;
-        Tue, 28 May 2024 03:03:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFr7mQdxwJ5uObWTqJnfBsmGsiLDRd7S61bF/cj5zmUV790lNuVg+GUHeIftezcSrwY30vjCQ==
-X-Received: by 2002:a17:902:c40e:b0:1ea:26bf:928 with SMTP id d9443c01a7336-1f4497d4f41mr127748755ad.50.1716890601069;
-        Tue, 28 May 2024 03:03:21 -0700 (PDT)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. ([150.116.44.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c96ccfasm76871095ad.147.2024.05.28.03.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 03:03:20 -0700 (PDT)
-From: Ricky Wu <en-wei.wu@canonical.com>
-To: jesse.brandeburg@intel.com
-Cc: anthony.l.nguyen@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rickywu0421@gmail.com,
-	en-wei.wu@canonical.com
-Subject: [PATCH] ice: irdma hardware init failed after suspend/resume
-Date: Tue, 28 May 2024 18:03:15 +0800
-Message-ID: <20240528100315.24290-1-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716890634; c=relaxed/simple;
+	bh=BrWcWsTqAV4gpOrjkMiIV3VNt4iF3Cy06e8mt/ZYCBY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WBsEPozsvMQHL4JwS6ThxQeizVnfr6QA2JhUzH8DYHlcJzkDjWRcMhjXEFqHIzXvlliB7u3+lPqeqM80XjN2HE2tT+guedLsl0rCHut+X8WKoAofoCSdk2u/PRERzBti4YRZoD/UWdRyqqnqaWozpw/EPZkVj1FIBVuqK1b4UwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=muSwFo9x; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=3vkqjShmVbfcAxEtVWL2j8Hci5pLGBTVlar7XdZHH0Y=; b=muSwFo9xnIVZK82AFfhTbeHPvZ
+	2Pjtjzc29ioK5O4DlNZXIXuVCh1zZs5OPxszNAiktQ1SFMmjAXd4p4oMPF8afmIuD35HHB2fpAWhq
+	jE+wV19X785cC32ycJ2vGctRMaLWorWFMoitfK4a3TYGS3ddAdRF9+aHV2AK39c1MCR4v4Jc2HHKE
+	L+QluObx6e9gvMZLDECEzsUuEGVrQpzFCz5ce11B1aYq8bk8lxhW+3Slpwi3vDRBzYkNMCTv3NZaw
+	74WuPAtMvo2qE1bRjgNKoir9oYWrI2ZB1XWsRXng2NDQycYpjNeBOtJNTLE5zV0Yq4Z+QpSfKJzqs
+	5t3gRqBQ==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sBtgL-000FNN-GX; Tue, 28 May 2024 12:03:49 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sBtgK-000P2X-2B;
+	Tue, 28 May 2024 12:03:48 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
+ selectable
+In-Reply-To: <e3aa72af-c824-4b71-a99d-c0b9294bfd8a@kernel.org> (Krzysztof
+	Kozlowski's message of "Tue, 28 May 2024 08:53:26 +0200")
+References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
+	<979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org>
+	<87cypc38gu.fsf@geanix.com>
+	<9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org>
+	<87le3zoatn.fsf@geanix.com>
+	<6c166ad5-8004-4bc4-9107-a47ba9a72161@kernel.org>
+	<87ttijaglp.fsf@geanix.com>
+	<c045f1a4-9ddf-4c53-a69b-22ceb68a1ce8@kernel.org>
+	<87msobaes6.fsf@geanix.com> <87ikyzae7v.fsf@geanix.com>
+	<e3aa72af-c824-4b71-a99d-c0b9294bfd8a@kernel.org>
+Date: Tue, 28 May 2024 12:03:48 +0200
+Message-ID: <87y17ul0cb.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27289/Tue May 28 10:30:59 2024)
 
-A bug in https://bugzilla.kernel.org/show_bug.cgi?id=218906 describes
-that irdma would break and report hardware initialization failed after
-suspend/resume with Intel E810 NIC (tested on 6.9.0-rc5).
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-The problem is caused due to the collision between the irq numbers
-requested in irdma and the irq numbers requested in other drivers
-after suspend/resume.
+> On 27/05/2024 09:47, Esben Haabendal wrote:
+>> 
+>> Ok, I seem to still be confused as to what you want from me. If you are
+>> saying that the kernel is not supposed to care about out-of-tree DTS
+>> (and thereby any bootloader provided DTB), I would like to bring your
+>> attention to arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts in upstream:
+>> 
+>> &ifc {
+>>         #address-cells = <2>;
+>>         #size-cells = <1>;
+>>         /* NOR Flash on board */
+>>         ranges = <0x0 0x0 0x0 0x60000000 0x08000000>;
+>>         status = "okay";
+>> 
+>>         nor@0,0 {
+>>                 #address-cells = <1>;
+>>                 #size-cells = <1>;
+>>                 compatible = "cfi-flash";
+>>                 reg = <0x0 0x0 0x8000000>;
+>>                 big-endian;
+>>                 bank-width = <2>;
+>>                 device-width = <1>;
+>>         };
+>> };
+>> 
+>
+> I don't understand why it took so many emails to answer that (my first)
+> question...
 
-The irq numbers used by irdma are derived from ice's ice_pf->msix_entries
-which stores mappings between MSI-X index and Linux interrupt number.
-It's supposed to be cleaned up when suspend and rebuilt in resume but
-it's not, causing irdma using the old irq numbers stored in the old
-ice_pf->msix_entries to request_irq() when resume. And eventually
-collide with other drivers.
+Because I did not understand the question. Primarely because I was (and
+is) surprised that out-of-tree DTS is not supported. I was convinced
+that out-of-tree DTS was the right way for hardware which is not
+commonly available.
 
-This patch fixes this problem. On suspend, we call ice_deinit_rdma() to
-clean up the ice_pf->msix_entries (and free the MSI-X vectors used by
-irdma if we've dynamically allocated them). On Resume, we call
-ice_init_rdma() to rebuild the ice_pf->msix_entries (and allocate the
-MSI-X vectors if we would like to dynamically allocate them).
+> Sounds good, however you did not update the existing select.
+> Drivers are not supposed to select user-visible symbols (leads to
+> issues), so you need to change it to depends and update defconfigs.
 
-Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
----
- drivers/net/ethernet/intel/ice/ice_main.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Do you wan this split into multiple commits, or a single commit changing
+the Kconfig to make FSL_IFC user-visible, and changing select of it to
+DEPENDS, and updating the related defconfig(s)?
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index f60c022f7960..ec3cbadaa162 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -5544,7 +5544,7 @@ static int ice_suspend(struct device *dev)
- 	 */
- 	disabled = ice_service_task_stop(pf);
- 
--	ice_unplug_aux_dev(pf);
-+	ice_deinit_rdma(pf);
- 
- 	/* Already suspended?, then there is nothing to do */
- 	if (test_and_set_bit(ICE_SUSPENDED, pf->state)) {
-@@ -5624,6 +5624,10 @@ static int ice_resume(struct device *dev)
- 	if (ret)
- 		dev_err(dev, "Cannot restore interrupt scheme: %d\n", ret);
- 
-+	ret = ice_init_rdma(pf);
-+	if (ret)
-+		dev_err(dev, "Reinitialize RDMA during resume failed: %d\n", ret);
-+
- 	clear_bit(ICE_DOWN, pf->state);
- 	/* Now perform PF reset and rebuild */
- 	reset_type = ICE_RESET_PFR;
--- 
-2.43.0
-
+/Esben
 
