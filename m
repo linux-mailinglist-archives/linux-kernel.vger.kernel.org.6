@@ -1,163 +1,202 @@
-Return-Path: <linux-kernel+bounces-193008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6182F8D2587
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02A88D258C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E081281DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24351C26497
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86078178CFD;
-	Tue, 28 May 2024 20:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939CC178CF2;
+	Tue, 28 May 2024 20:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p6XmlauK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nMofiA1b"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F11310A3E;
-	Tue, 28 May 2024 20:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21510A3E;
+	Tue, 28 May 2024 20:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716927148; cv=none; b=pMo/u5lpny7AmjNq1DIGa+7gyGqSidVnGYI2ewuNJZKCACUcdw26J4oPT3LINiXnE15GXxa9ZUCc5T2b06ehcpoBuuEUiQIUFPN4VRXrnu9UyEwLX64AizmO4YgAyAtbQSxoJ8uhcW/7bIOXswzP3PJlgPXYSdmC4YA5aqKSnN0=
+	t=1716927224; cv=none; b=SepqxMxP82uoOdcFsOeJv0i67HV30I6occExiR85ZdNRQ3bOYVmRlLYfIAKtagU6hBzdBy0+ALWoad7jePJAUuOnjas7zYZmyeJYahXKzcUCbZJ6YbK95Q1Ckc53qDuQrRSsWIJyfnuuT2/O6ZDWSsQWariso46LIHhI7wCU9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716927148; c=relaxed/simple;
-	bh=GGwJig3ttNp4mKgisfe/j7TzC6TLTEs7rQFGlngtF3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q/IC9UhQZNR2jyDm4IeVS2cJA3rtPYIpmrXRICGBWfIhQaZ2LpP/ZICubu5j4A3s4aj8RAlB4rNv2TpQQsVT82Xg6vPrVkWA8drS1Rgzcdbds28C/a1xrnnjRQ7hZF+2DQuZdPnoph7C8/pBZP6McVAcLCKjVXuf74ii8/k/w3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p6XmlauK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SACrkJ012744;
-	Tue, 28 May 2024 20:12:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A+o+KTgBoYHGezPhddSl91Bs+jGgLlZo/k87fQRqZFY=; b=p6XmlauKZpBhcR5I
-	tU2Lcj8NOAuUDxDADHzSwGfCL3bH1SJ9cDDvcn5WguMSsogkx1MFNageas/9CAtq
-	a/WE/5rLlpZro2VDeXKuqGoHBX3YbIp1r1F5dGArjS68NEMhD0YZ0z6glOyMGrMt
-	iUdXxJ+WBms2jdgJI/cRgVj/kdtpaTO34s/Y3VJ469krSvZDKb3TqzTRX1hAjdrl
-	PpR0uhWe+6qK6lmqhUHn2YY7KAV3svmntlcu4r6R9zu57IPEcHgwjZlaOfo6bLGu
-	B3/fIpDb+v5OzrP7FcHhRZI44R8G0QEFzvt/3rvWpRkQgZrAje7TENqTX6HsRjcE
-	K2lOng==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k77yj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 20:12:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SKC2uh032206
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 20:12:02 GMT
-Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 13:11:58 -0700
-Message-ID: <c7d66e70-0998-4e2b-94e8-8b19e65ec959@quicinc.com>
-Date: Tue, 28 May 2024 13:11:58 -0700
+	s=arc-20240116; t=1716927224; c=relaxed/simple;
+	bh=5L3qsjsXrrwCrw7oASW9JBM1c2YSWZy3HEB/uxPOve8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUdFQ9S2SEXEjpDoRuMXAGwEBFi2rLoPufWx0osy3tyrq9X0lRGGVX6z9VmClxYUf7Yd9O3j+JYWK3wh68t39HEK9Y4Xe6Fx4uUYnz7Lh5AX0FY/Aer1r7CfhTte+CNqH0Npsos2KfIjP3p/wqThW/G8FsOzkGiiABUTF29ouGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nMofiA1b; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 117D43A2;
+	Tue, 28 May 2024 22:13:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716927217;
+	bh=5L3qsjsXrrwCrw7oASW9JBM1c2YSWZy3HEB/uxPOve8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nMofiA1bIHN2lh+NOTVMAvyYjG6razaHPOVM4c165dmxqPvkwsbm1NMr6Rt+y26bO
+	 7Mh9JhFSniCHo2SuQFoGTVPUAmhSSRSOS0JGBBarh8fFFC4+UCXN5RmyUTab5Qgczh
+	 dHdHaobzg8RqTrLm1nd/N+L47gk8qMjc5KHdZxEE=
+Date: Tue, 28 May 2024 23:13:26 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>
+Subject: Re: [PATCH v2 2/4] mfd: adp5585: Add Analog Devices ADP5585 core
+ support
+Message-ID: <20240528201326.GA8500@pendragon.ideasonboard.com>
+References: <20240528190315.3865-1-laurent.pinchart@ideasonboard.com>
+ <20240528190315.3865-3-laurent.pinchart@ideasonboard.com>
+ <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
- tstamp_type for scalabilty
-Content-Language: en-US
-To: Martin KaFai Lau <martin.lau@linux.dev>,
-        Willem de Bruijn
-	<willemdebruijn.kernel@gmail.com>
-CC: <kernel@quicinc.com>, Willem de Bruijn <willemb@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Halaney
-	<ahalaney@redhat.com>,
-        Martin KaFai Lau <martin.lau@kernel.org>,
-        "Daniel
- Borkmann" <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
-References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
- <20240509211834.3235191-2-quic_abchauha@quicinc.com>
- <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
- <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
- <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <d1c18889-ef48-4cb8-8b81-474b3b7ddd81@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: f-uzHP2IIrVrwzCH6mR_ErYeEBhi9fAF
-X-Proofpoint-GUID: f-uzHP2IIrVrwzCH6mR_ErYeEBhi9fAF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280151
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZlYwJryxeZ2LAKYG@surfacebook.localdomain>
 
-
-
-On 5/28/2024 12:30 PM, Martin KaFai Lau wrote:
-> On 5/28/24 10:24 AM, Willem de Bruijn wrote:
->> Abhishek Chauhan (ABC) wrote:
->>
->>>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
->>>> +                            ktime_t kt, clockid_t clockid)
->>>> +{
->>>> +    u8 tstamp_type = SKB_CLOCK_REALTIME;
->>>> +
->>>> +    switch (clockid) {
->>>> +    case CLOCK_REALTIME:
->>>> +        break;
->>>> +    case CLOCK_MONOTONIC:
->>>> +        tstamp_type = SKB_CLOCK_MONOTONIC;
->>>> +        break;
->>>> +    default:
->>>
->>> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn.
->>> So i think this might result in unnecessary crashes.
->>>
->>> Let me know what you think.
->>>
->>> Logs which are complaining.
->>> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
->>
->> I received reports too. Agreed that we need to fix these reports.
->>
->> The alternative is to limit sk_clockid to supported ones, by failing
->> setsockopt SO_TXTIME on an unsupported clock.
->>
->> That changes established ABI behavior. But I don't see how another
->> clock can be used in any realistic way anyway.
->>
->> Putting it out there as an option. It's riskier, but in the end I
->> believe a better fix than just allowing this state to continue.
+On Tue, May 28, 2024 at 10:27:34PM +0300, Andy Shevchenko wrote:
+> Tue, May 28, 2024 at 10:03:12PM +0300, Laurent Pinchart kirjoitti:
+> > From: Haibo Chen <haibo.chen@nxp.com>
+> > 
+> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > matrix decoder, programmable logic, reset generator, and PWM generator.
+> > This driver supports the chip by modelling it as an MFD device, with two
+> > child devices for the GPIO and PWM functions.
+> > 
+> > The driver is derived from an initial implementation from NXP, available
+> > in commit 8059835bee19 ("MLK-25917-1 mfd: adp5585: add ADI adp5585 core
+> > support") in their BSP kernel tree. It has been extensively rewritten.
 > 
-> Failing early would be my preference also. The current ABI is arguably at least confusing (if not broken) considering other clockid is silently ignored by the kernel.
+> ...
 > 
-
-Okay since we all agree to fix the setsockopt SO_TXTIME  to only limit sk_clockid be set to supported ones (MONO/TAI/REAL).
-All other clocks needs to return -EINVAL for setsockopt. 
-
-I will raise the patch and also add the fixes and reported-by tag accordingly. 
-
->>
->> A third option would be to not fail the system call, but silently
->> fall back to CLOCK_REALTIME. Essentially what happens in the datapath
->> in skb_set_delivery_type_by_clockid now. That is surprising behavior,
->> we should not do that.
+> > +	tristate "Analog Devices ADP5585 MFD driver"
+> > +	select MFD_CORE
+> > +	select REGMAP_I2C
+> > +	depends on I2C && OF
 > 
-> Not sure if it makes sense to go back to this option only after there is breakage report with a legit usage?
+> Why OF?
+
+Because the driver works on OF systems only.
+
+> No COMPILE_TEST?
+
+The driver won't compile without CONFIG_I2C, so I can use
+
+	depends on I2C
+	depends on OF || COMPILE_TEST
+
+Do you think that's better ?
+
 > 
+> ...
+> 
+> + array_size.h
+> + device.h // e.g., devm_kzalloc()
+> 
+> > +#include <linux/module.h>
+> > +#include <linux/moduleparam.h>
+> > +#include <linux/init.h>
+> > +#include <linux/slab.h>
+
+I'll drop those 3 headers, there's not needed anymore.
+
+> > +#include <linux/i2c.h>
+> 
+> > +#include <linux/of.h>
+> > +#include <linux/of_device.h>
+> 
+> You don't need them, instead of proxying...
+
+of.h for of_device_get_match_data() and of_match_ptr(). I'll drop the
+former, but I need the latter, so I'll keep of.h
+
+of_device.h for historical reasons probably, I'll drop it.
+
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/mfd/adp5585.h>
+> 
+> m is earlier than 'o', but with above drop no more issue :-)
+> 
+> ...just include mod_devicetable.h.
+> 
+> > +#include <linux/regmap.h>
+> 
+> + types.h // e.g., u8
+> 
+> ...
+> 
+> > +	regmap_config = of_device_get_match_data(&i2c->dev);
+> 
+> We have i2c_get_match_data().
+
+Sounds good.
+
+> ...
+> 
+> > +#ifndef __LINUX_MFD_ADP5585_H_
+> > +#define __LINUX_MFD_ADP5585_H_
+> > +
+> > +#include <linux/bits.h>
+> 
+> ...
+> 
+> > +#define		ADP5585_MAN_ID(v)		(((v) & 0xf0) >> 4)
+> 
+> GENMASK()
+
+This is not a mask. Or do you mean
+
+	(((v) & GENMASK(7, 4)) >> 4)
+
+? I think that's overkill.
+
+> ...
+> 
+> > +#define		ADP5585_Rx_PULL_CFG_MASK	(3)
+> 
+> GENMASK()
+
+Not here, as this value is meant to be passed to ADP5585_Rx_PULL_CFG().
+
+> Why parentheses in all of them, btw?
+
+Probably for consistency, but I don't mind dropping them.
+
+> ...
+> 
+> > +#define		ADP5585_C4_EXTEND_CFG_MASK	(1U << 6)
+> 
+> > +#define		ADP5585_R4_EXTEND_CFG_MASK	(1U << 5)
+> 
+> > +#define		ADP5585_R3_EXTEND_CFG_MASK	(3U << 2)
+> 
+> > +#define		ADP5585_R0_EXTEND_CFG_MASK	(1U << 0)
+> 
+> > +#define		ADP5585_OSC_FREQ_MASK		(3U << 5)
+> 
+> BIT() / GENMASK()
+
+I'll use GENMASK for the masks.
+
+> > +#endif
+
+-- 
+Regards,
+
+Laurent Pinchart
 
