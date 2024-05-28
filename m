@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel+bounces-192415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA5E8D1D01
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67318D1D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1B61C22524
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0E3287869
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA27916F291;
-	Tue, 28 May 2024 13:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6521116F270;
+	Tue, 28 May 2024 13:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3zK10yf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGCvZfVH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FD216C68B;
-	Tue, 28 May 2024 13:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A697417C7F;
+	Tue, 28 May 2024 13:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903032; cv=none; b=gxA5QA/bHu6jDEdlz+2VKUP9881daqEX78CCZ+BJK4Lt0OS0ko9c54Mbrg9Yp8EPHjiEiYQkVO+7wyiNKaxJ2pAeuRNHKapjh3IiYj4piS9EnJtwknpsGWia5igj3OQ7SWJ0wGlv1RcKZqN6VrEgBMoaC/pmEKYwLauWUBCHz8w=
+	t=1716903104; cv=none; b=SXyDxNBrb2Hfm9ArNJ6Hm3iZu4io2nZZ4wEvdkV4hSQPCiZJkHTIms6x05a9OD+udC4D4e74rcRGp3x55MDu7JybyD9DyB9Xb0amJ1b9ZHAoox6uWQcmeN9xn35HU90BYX9YBAq6iRDZCeDji6Hr+cOBHWfDdT8sjDnGD4FZE9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903032; c=relaxed/simple;
-	bh=MEnlAMANldkFFgFaW2dPY9k/vDKMcxv7qLE2ki50xZI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=B7Uqm59vdnonkMNiKAu0cNrOWDgwbvVuG4Hn3HmaGUYsVQioq7G30zMAupcLkAe4VagZopb8hgbmbpEi9a8LITmVCdBtEowquogbT5itV/YhuyEh8AI58fbD2m/9HdwJhu/ALgc2nKJx/CDmZYAYF9LU7JYedtMpU2Ed/g3p0L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3zK10yf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AE976C32782;
-	Tue, 28 May 2024 13:30:31 +0000 (UTC)
+	s=arc-20240116; t=1716903104; c=relaxed/simple;
+	bh=vAWFowi/ZtCoWVCtCiP9IvNYrXqa5Ge8ez16WM4Swes=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9jaNcFxkJ8CyEtdGDC2IQeodR6IsXEueyozZa2aztlSgre8p5LmzDXA9jwAVLLflmnclDKZP3AIwpvPXbyelnxjaGOUpf2pqAZSCk24DqOsV/U9GUhTCBulcy/XfCkcKvZNIfivYZ+6mxm0DZ8NIfXE6EXxlUU9MW68NBapyPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGCvZfVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFBBC3277B;
+	Tue, 28 May 2024 13:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716903031;
-	bh=MEnlAMANldkFFgFaW2dPY9k/vDKMcxv7qLE2ki50xZI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=r3zK10yf3Ifkfjfm0XilwW/eGTy7OWjNS1rMvVOiA2ti9qwvarr6E7Ym3Z9ty7AHA
-	 ndBZ/RLWdWdgMdrxrey3d9q4M7KCqhmAGf5PGNk+lxRfloIBSe2VnJh+16z/D1ioMX
-	 uC7cEOWT2aGcEg38YOBZ44t8zkvxR/3St5wvXuxRC8Uh8v/0f8mj7J6zRlmCVk5n8u
-	 vW8h0FFyTLvDq4RhZ3VNS+BnEbI90wLPYTTdUEWU4p0PSS2AR+hswj6+gLMQBSrQUQ
-	 Bu2d9g24Ktx3nvaVS5S22VZ4A9xS7hpW9NE622F2pRHqaVUmUMJzbRT94NMDVHgBQ4
-	 862AVCkAtnsdw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 98A36C4361C;
-	Tue, 28 May 2024 13:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1716903104;
+	bh=vAWFowi/ZtCoWVCtCiP9IvNYrXqa5Ge8ez16WM4Swes=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pGCvZfVHhZ3L6Pzx7NnHPDucViDWDEXfo30Quks0js3n/M15sESgT5MwXxE/XAai9
+	 fJQk6BkT+ZZxD9WMXXxk9ycI0azOl7qkJnkYXfmLJVlKI2MCibPbzOfv/h7ih4EZt+
+	 iuLKQMkhCgQAO1p1nQ2OhTnOOz+PA1xtN8YxGXp+tOJKuJraLxxl+BhOKn8GnMCa12
+	 9oTy3b86sC/2D0vyhiNo8O4UFgcxKML9hf+5ka4S1eog8mw8JqUy9X3DszxHPnDgv3
+	 fTwUMSd3rX6hQlKQQsonajId75IWesJxK/f3WmiZbRuxlByQXJ3m0WTRrzwUvXyxPQ
+	 laRSU/cuxHlXA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] udmabuf: add CONFIG_MMU dependency
+Date: Tue, 28 May 2024 15:31:31 +0200
+Message-Id: <20240528133138.2237237-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +63,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/4] net: ethernet: dead struct removals
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171690303161.16079.15088419887819972158.git-patchwork-notify@kernel.org>
-Date: Tue, 28 May 2024 13:30:31 +0000
-References: <20240526172428.134726-1-linux@treblig.org>
-In-Reply-To: <20240526172428.134726-1-linux@treblig.org>
-To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, ionut@badula.org, tariqt@nvidia.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Arnd Bergmann <arnd@arndb.de>
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+There is no !CONFIG_MMU version of vmf_insert_pfn():
 
-On Sun, 26 May 2024 18:24:24 +0100 you wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Hi,
->   This removes a bunch of dead struct's from drivers/net/ethernet.
-> Note the ne2k-pci one is marked obsolete so you might not want
-> to apply it; but since I'd already done it by the time checkpatch
-> told me, I included it on the end of the set.
-> 
-> [...]
+arm-linux-gnueabi-ld: drivers/dma-buf/udmabuf.o: in function `udmabuf_vm_fault':
+udmabuf.c:(.text+0xaa): undefined reference to `vmf_insert_pfn'
 
-Here is the summary with links:
-  - [1/4] net: ethernet: starfire: remove unused structs
-    https://git.kernel.org/netdev/net-next/c/b2ff2698508f
-  - [2/4] net: ethernet: liquidio: remove unused structs
-    https://git.kernel.org/netdev/net-next/c/a09892f6e281
-  - [3/4] net: ethernet: mlx4: remove unused struct 'mlx4_port_config'
-    https://git.kernel.org/netdev/net-next/c/ef7f9febb33d
-  - [4/4] net: ethernet: 8390: ne2k-pci: remove unused struct 'ne2k_pci_card'
-    https://git.kernel.org/netdev/net-next/c/18ae4c093cd2
+Fixes: f7254e043ff1 ("udmabuf: use vmf_insert_pfn and VM_PFNMAP for handling mmap")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/dma-buf/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-You are awesome, thank you!
+diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+index e4dc53a36428..b46eb8a552d7 100644
+--- a/drivers/dma-buf/Kconfig
++++ b/drivers/dma-buf/Kconfig
+@@ -35,6 +35,7 @@ config UDMABUF
+ 	default n
+ 	depends on DMA_SHARED_BUFFER
+ 	depends on MEMFD_CREATE || COMPILE_TEST
++	depends on MMU
+ 	help
+ 	  A driver to let userspace turn memfd regions into dma-bufs.
+ 	  Qemu can use this to create host dmabufs for guest framebuffers.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
 
