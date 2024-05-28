@@ -1,176 +1,96 @@
-Return-Path: <linux-kernel+bounces-192568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8E08D1F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:47:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6208D1F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF621C22B36
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:47:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 993E7B23202
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C81716FF30;
-	Tue, 28 May 2024 14:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F7216FF37;
+	Tue, 28 May 2024 14:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp/uaVtR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="deXF0UgB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B7617C7F;
-	Tue, 28 May 2024 14:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBB217C7F;
+	Tue, 28 May 2024 14:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716907640; cv=none; b=HbzlP4tHa9o0YJbFOpK5ti6Fz0LtCkc0QLOKkzmGrPcb/MXaiArf9Sq01hjqdCQuaHlhWgO+1zjAjNAx6t5iKx8AMAoCfeMBaNfj/ssQ328OFG+7zdmhIrPOU3W72VsTsGeNnZRJQfzpL4gTlrf64z/SOYmoNPg6KeOBVYcnKHE=
+	t=1716907651; cv=none; b=I7qJviX0m/+E+Nd2B4O3c9Fnfu09H48OYY/QgT9Xpg7V5Sn+r4LvlxHWYwN28rJ9kmC6wJesXlEf4OIlTLgGKe3P6bR0H5f1/14JqunuyJMum9+IQtI8tQ55GsggbR9NHSFpg+TSqjQI8/lxwu7jH/7WSBIhyHQsJh9DlaCSAOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716907640; c=relaxed/simple;
-	bh=QO+rILPMmUh4nu8/ho57QXHNcGepvNHxpBMpLTzTy5M=;
+	s=arc-20240116; t=1716907651; c=relaxed/simple;
+	bh=75oAGp/ALt8LJghJjZRrjJGgwjH/DmPA8ZSyKZE3uaY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWKGcaQ6Zr4fkInwDRTLwffHWLf/2Ha0ZXxkxanCYTypHNIKOFVQGOmjj+0nfufrTvyg/HiuHWWAULvlIviphjTxiAbglxoV4NWW4wXa57m65vHw/Ah1RKyP8ZkKjWMHCLng3EhPOADRUWhyGW0lvSBVlVFunaxLeMhOYJ0Ms/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp/uaVtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0C9C3277B;
-	Tue, 28 May 2024 14:47:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckCdfeb7/zGWX8feMNDVXc+k/D4zUIvdEUJbH7SZQYkbpqZpc1b41zGQE/DKwftGsZtVgeVv9tScUSFpgYOQXUTN09iG5llAemZlS4+qy853pS3W78oZnOgbTrohSoMYX9kup4Df7sRNbBX5WmttlNEb9wqID7jhmJH/ylGtIm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=deXF0UgB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8024EC32782;
+	Tue, 28 May 2024 14:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716907640;
-	bh=QO+rILPMmUh4nu8/ho57QXHNcGepvNHxpBMpLTzTy5M=;
+	s=k20201202; t=1716907651;
+	bh=75oAGp/ALt8LJghJjZRrjJGgwjH/DmPA8ZSyKZE3uaY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wp/uaVtRPQN3JEQRoKAgOcLxTTcYrC3WQOyBB5P6gbtJor6dJSUAZFH3W1+Vvo+V/
-	 PUSErp18ZBXRhbJeZAOyDyKgMIEWba7nBc+cR4yFeG5iGBrNc33vzzTCRdOdZLJmpX
-	 psxXdIlzGT4tcKNv6Od3k/Y5JewG/lIHwt+Zy3j5p+O9ITGiGx+IQAWprK6chN8Mhf
-	 gyNsg09aSI/Nw1LH9XHSlRa9BuDagvOEdkSvaQJv2xNA5qObAa27Ubh+dZs+/WGIay
-	 hrKzeuOjUeuTi0KYsn5y8YQO9QQyFQMiOO0sKZxzU8htywBrPulCmNUN1aN29UPKil
-	 gFQyCa1s3bEGw==
-Date: Tue, 28 May 2024 11:47:16 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Artem Savkov <asavkov@redhat.com>
-Cc: Guilherme Amadio <amadio@gentoo.org>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf record: add a shortcut for metrics
-Message-ID: <ZlXudNOs9YLBnLXu@x1>
-References: <20240527101519.356342-1-asavkov@redhat.com>
- <ZlS8pc39t2c1WFye@x1>
- <ZlS9M1vcxZ3Qsx_B@x1>
- <ZlTCvelaGVb6lCia@x1>
- <20240528114525.GA449511@alecto.usersys.redhat.com>
+	b=deXF0UgBXtZqGCnwXbQVAU7ywUPhEcO3MKu/pyCmgbZVCSpJqU8wJpTrM27+O4JGp
+	 sxWNP6247nP+k/s1BGElVOiHIZnsmU7bAGEn3yKCEbXvQjUNyWGoVTKM88GNJ+NoB4
+	 22kbsdeuq42nTXIVeRczrIxrXKGirG0JGhn5mqZCkrgTzrwbERKeMjr0l2mWJWqWp7
+	 a1xVn/2sfWCRYpsyQHmX9JyYww4hITelATN2FqqQvBDmNPgrddO/JCUy4TKyRpnQXz
+	 IUbpPu8Ba8pMhij6lSKvt42UrKZRlTV/gWuz6Yr1vSkfI8IXjWpIfUyKJtrACrVUaV
+	 undMCexnwuECg==
+Date: Tue, 28 May 2024 15:47:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, frank.li@nxp.com,
+	conor+dt@kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v6 1/2] dt-bindings: phy: Add i.MX8Q HSIO SerDes PHY
+ binding
+Message-ID: <20240528-revolving-barometer-7f0559020021@spud>
+References: <1716865154-25044-1-git-send-email-hongxing.zhu@nxp.com>
+ <1716865154-25044-2-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6MUTDMyW2IA39pPQ"
+Content-Disposition: inline
+In-Reply-To: <1716865154-25044-2-git-send-email-hongxing.zhu@nxp.com>
+
+
+--6MUTDMyW2IA39pPQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528114525.GA449511@alecto.usersys.redhat.com>
 
-On Tue, May 28, 2024 at 01:45:25PM +0200, Artem Savkov wrote:
-> On Mon, May 27, 2024 at 02:28:29PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, May 27, 2024 at 02:04:54PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
-> > > > > Add -M/--metrics option to perf-record providing a shortcut to record
-> > > > > metrics and metricgroups. This option mirrors the one in perf-stat.
-> >
-> > > > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
+On Tue, May 28, 2024 at 10:59:13AM +0800, Richard Zhu wrote:
+> Add i.MX8QM and i.MX8QXP HSIO SerDes PHY binding.
+> Introduce one HSIO configuration 'fsl,hsio-cfg', which need be set at
+> initialization according to board design.
 
-<SNIP>
+With Frank's suggestions,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-> > How did you test this?
-> >
-> > I'm trying:
-> >
-> > perf list metric
-> >
-> > pick a metric then:
-> >
-> > perf record -M tma_core_bound
-> >
-> > And it gets in a long loop doing perf_event_open() calls...
-> 
-> [snip]
-> 
-> > (gdb) bt
-> > #0  0x00007ffff6f21804 in close () from /lib64/libc.so.6
-> > #1  0x000000000061fbd2 in perf_evsel__close_fd_cpu (evsel=0xdab470, cpu_map_idx=6) at evsel.c:188
-> > #2  0x000000000061fc22 in perf_evsel__close_fd (evsel=0xdab470) at evsel.c:197
-> > #3  0x000000000061fc9b in perf_evsel__close (evsel=0xdab470) at evsel.c:211
-> > #4  0x00000000004e0b5f in evlist.reset_weak_group ()
-> > #5  0x0000000000423bb9 in __cmd_record.constprop.0 ()
-> > #6  0x00000000004276c5 in cmd_record ()
-> > #7  0x00000000004c4579 in run_builtin ()
-> > #8  0x00000000004c4889 in handle_internal_command ()
-> > #9  0x0000000000410e57 in main ()
-> > (gdb) c
-> > Continuing.
-> > ^C
-> > Program received signal SIGINT, Interrupt.
-> > 0x00007ffff6f21804 in close () from /lib64/libc.so.6
-> > (gdb)
-> >
-> > So you should investigate this further.
-> 
-> I tried a bunch of random metrics from perf list but didn't hit this.
-> 
-> It spins forever in evlist__for_each_entry() loop in record__open() with
-> the same error:
-> 
->         Weak group for TOPDOWN.SLOTS/5 failed
-> 
-> Looks like the culprit is one of those unsupported metrics, will
-> investigate.
+Thanks,
+Conor.
 
-Right, when trying something new, in a different way than the
-pre-existing codebase was envisioned to be used we may uncover latent
-problems, that endless loop seems like something we want fixed :-)
- 
-> > The idea, from my notes, was to be able to have extra columns in 'perf
-> > report' with things like IPC and other metrics, probably not all metrics
-> > will apply. We need to find a way to find out which ones are OK for that
-> > purpose, for instance:
-> >
-> > Opening: cpu_core/topdown-bad-spec/
-> > ------------------------------------------------------------
-> > perf_event_attr:
-> >   type                             4 (cpu_core)
-> >   size                             136
-> >   config                           0x8100 (topdown-bad-spec)
-> >   { sample_period, sample_freq }   4000
-> >   sample_type                      IP|TID|TIME|CPU|PERIOD|IDENTIFIER
-> >   read_format                      ID|LOST
-> >   disabled                         1
-> >   inherit                          1
-> >   freq                             1
-> >   sample_id_all                    1
-> >   exclude_guest                    1
-> > ------------------------------------------------------------
-> > sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8
-> > sys_perf_event_open failed, error -22
-> > switching off PERF_FORMAT_LOST support
-> > Opening: cpu_core/topdown-bad-spec/
-> 
-> Is it just metrics containing unsupported events that need to be skipped
-> or there are other cases that wouldn't make much sense? If the latter
-> maybe it will be easier to just tag the ones that are supported (or not) in
-> pmu-events?
+--6MUTDMyW2IA39pPQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Maybe we can use some criteria to look at the metric and filter out
-things that are not working right now? As you go on studying the
-codebase you will figure out the reasons, sometimes its a bug (the
-forever loop above), sometimes it plain don't make sense and we just
-skip it, leaving things like IPC, i.e. we have instructions, we have
-cycles, that is what needed for IPC, ok, that makes sense and we should
-have an IPC column when collecting both cycles and instructions, just
-like is done in a ad hoc way for IPC in perf stat since forever.
+-----BEGIN PGP SIGNATURE-----
 
-People want to have those columns in 'perf report' and 'perf top'.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlXufgAKCRB4tDGHoIJi
+0hrpAQDtIMLWV/dPOnO/6goc25NA22vAu/uIJ2Ra0/mupzNaAQEA2dgQNokIlLju
+4UGM9OXfVIq+7KWo9Vesx0JLo/HNZAc=
+=olHp
+-----END PGP SIGNATURE-----
 
-- Arnaldo
+--6MUTDMyW2IA39pPQ--
 
