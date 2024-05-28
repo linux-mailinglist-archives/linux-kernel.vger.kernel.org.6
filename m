@@ -1,125 +1,163 @@
-Return-Path: <linux-kernel+bounces-191753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08E38D13A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368048D13B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539D1285090
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D981C20DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E7D446A1;
-	Tue, 28 May 2024 05:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45E3405F8;
+	Tue, 28 May 2024 05:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCvTZfHS"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jw8UdCnR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939273F9C5;
-	Tue, 28 May 2024 05:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A12563;
+	Tue, 28 May 2024 05:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716872836; cv=none; b=u7wmjzNr2aeq3xXFGX6CLqhTDILmhiqbWbu0XHA7mGjZwNlGuewTIu0Q4o4EtCOXbkZmYmZH4EboHRxt1I/d+4TyLj7cAot/l5J7i8Ibn5DTHkvIbwEXqx+R/coBt0zXP/+4JQTfxlQQh2aUlEX16I6JVwyvcvFF03RjZborTZg=
+	t=1716872974; cv=none; b=ZZY1uj5NkOo2w42+oBifr/TbDMZj08lP6yRgmAWUVPbmNLHmW5laao+IAUxbJxgP9xJA74ebRTwF69hRNi+3aFcO38cvtpEvfKOtM5dF5l/pgWxvXuAMgVSxw6sroaaQJquUOrYj+T92s+iDTEw/N6rq7/BWxC9xi6KTsSO1924=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716872836; c=relaxed/simple;
-	bh=yUShdSmJr46Mgx4i2jipsfc4D+xqm4VZ+NXk6NsJYA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cR2qXL2JV/nFKcXXamqRsSKwAcLnNCDHREDE2UhawKNUjMLaA9j3sC55cq6EZ6EK6R6B7XShSmm1y6AFniT4Bok90n2mycAaMvP8OpwBU/XO4YbOmnxsV6D3fBz9+mwxFGDHLT8GicDx3bt52ELwL+1m/KhSJDnxz6zDhQQY/4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCvTZfHS; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d1c077b9baso215233b6e.0;
-        Mon, 27 May 2024 22:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716872832; x=1717477632; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9LGkX5CvYSeRWcO/OUCi81i8F2CpNF/Yknz+iuEPMic=;
-        b=eCvTZfHSarr5vCpWFjVYlqoMVtJ5Zp9U7sWi6qB7nA28njSlLgcQKLevFTrc9Py0X0
-         Eo4/uc3pb3ZLecssNlA3e6kZ2rL8Nz07xTTmCB88UwD0k5+QlXHq72xqlD9Hn/5qlghE
-         VZVKqeyJmPe+2qamqQiJxG6A+SlJugvXACxn1re7S/b0nwiZ+9P/ej60ujL/S4bOsWV0
-         DUw+m2JdSRT9Sp46Cd8wfmIpmxRYZt/zzfUpKtvuHRL4LeEiuGLH5NB7XXOZNed1a+wH
-         eSUXZB6Ag8h216k6H3pcIyg/DLsYluFL0fr1Yl5klSZs3yWWncmRS0dB8jrNO/fkwTaX
-         q4Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716872832; x=1717477632;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9LGkX5CvYSeRWcO/OUCi81i8F2CpNF/Yknz+iuEPMic=;
-        b=ocrvkvDVahuRLWqwkf20RQo1Wu6EyvThWtWjPFHEoPN3n2pB+C+cVQs6CUk7mGEgNH
-         g4oPz++nz9bx1lMf/1rCbGripil6+PbGsYBvJ0Ml1PD4S+z4Igzgot64EOi3uHagFzTD
-         fNo5Uk9DUtkLKEtrsJD8ejWFcPg2WF1CBuFCpyGzR4toq++YHybHGk6hobAKJGjt/I79
-         msrmEESRYSmSS8FvGAFBuiSc9VtNNhHkrjzEb4IXtgH24qWjupxt3oG1zuqamgOsXGRt
-         81h/GDqe9U6TnhVCPrEVJRqL8uB4uFhrMkJ/EG3lzohy7AMjRblHtoEsazGbGhBOjSzm
-         eeRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2MRe7V68hH6ZsCshLhWJINDfh6FcNNai+i/6cQu88hhSaROyI8ejzD8QltteQceHCjJ2Uy+BB9b2qXCNfE/PJEJZw02paqIldCmgSubmL4oVra+fTRZeipNkl8bL/UGXlhsMV/pG4vwOBekdYB8DcA+5DdC4/mC0VbBmNDJ1dgUfa/Lk=
-X-Gm-Message-State: AOJu0Yw/YJXKV8hsTtbkp96v2yDNupqRBR/TbuxZedcUZKKvcXaZqhay
-	bXxcrYl/G8/W6aSNlrw+pAPt3ivkie/DZ1PFHsB3fMekhsiz4xFgqvWUrQNP
-X-Google-Smtp-Source: AGHT+IHchZ0MIxn31HdZq/DwBO+sPMGJpEVor0E0NH3BvSt24bhvXtHBVs63rTMcyUTh91G4ODpUSw==
-X-Received: by 2002:a05:6808:15a9:b0:3c8:6468:73f6 with SMTP id 5614622812f47-3d1a85ec475mr14137814b6e.43.1716872831642;
-        Mon, 27 May 2024 22:07:11 -0700 (PDT)
-Received: from my-computer.lan (c-98-39-68-68.hsd1.tx.comcast.net. [98.39.68.68])
-        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3d1b36825d4sm1238633b6e.6.2024.05.27.22.07.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 22:07:11 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: syzbot+07762f019fd03d01f04c@syzkaller.appspotmail.com
-Cc: benjamin.tissoires@redhat.com,
-	bentiss@kernel.org,
-	jikos@kernel.org,
-	jkosina@suse.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	luke@ljones.dev,
-	syzkaller-bugs@googlegroups.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	Andrew Ballance <andrewjballance@gmail.com>
-Subject: [PATCH] hid: asus: asus_report_fixup: fix potential read out of bounds
-Date: Tue, 28 May 2024 00:05:39 -0500
-Message-ID: <20240528050555.1150628-1-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <000000000000915d550619389e8a@google.com>
-References: <000000000000915d550619389e8a@google.com>
+	s=arc-20240116; t=1716872974; c=relaxed/simple;
+	bh=kpsGV9jcYDW5WH47X5uu4EzSSt+qtbgWJWijGgX7koo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dD13TrBiJM4NlH5eUv3Sa04KAz71ZDryYjPUAZ5dkRP4RC9OMM9DzWtQTsCVkZmfZW7jnYFm1qFVD3NOTU/GWoRktMjUe+XsESykxnOa9amPfOJmUYGHtWI2HORRVA0iLu0ofofOzOvOJUhFXYD7GDhG0/aGSGcvK8qii3s/FEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jw8UdCnR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DFCC3277B;
+	Tue, 28 May 2024 05:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716872973;
+	bh=kpsGV9jcYDW5WH47X5uu4EzSSt+qtbgWJWijGgX7koo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jw8UdCnRTpugfMOeiexIUSTXOeR+Z7O8Tyda/mjBme7P1bw6OTB4+UDom2mZMduXy
+	 Zma14INdm43UEG6aTxz1rVEKqL8pK+VMWF29pqAtnCROYNXSDL3Ycji34KzWAeFk77
+	 lqlhYnamYEy99IEa3HAcd5yFGuDdqoBnyMk1/ghvOYoy8D2HfdXG9VkmFZ+YkH3SIc
+	 DsVN8l/hDhYj2lskZaQCRvpW6+8uAzewAwb2GcqZVXBDrxVT3itmIcHozbgqxWnp0k
+	 VirsDf95IZVSaqUDVswfGziUpudIrH2Ir5q+ZiFqKrwanCJu7hBA7yefFRVW5KxYjs
+	 cVMj7jKb0ex4g==
+Date: Tue, 28 May 2024 05:09:29 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	Dustin Howett <dustin@howett.net>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH 4/5] leds: add ChromeOS EC driver
+Message-ID: <ZlVnCX41HdksPwUo@google.com>
+References: <20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net>
+ <20240520-cros_ec-led-v1-4-4068fc5c051a@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240520-cros_ec-led-v1-4-4068fc5c051a@weissschuh.net>
 
-#syz test
+On Mon, May 20, 2024 at 12:00:32PM +0200, Thomas Weißschuh wrote:
+> diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
+[...]
+> + *  ChromesOS EC LED Driver
 
-there may be a read out of the bounds of rdesc.
-this adds bounds checks
+s/ChromesOS/ChromeOS/.
 
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
----
- drivers/hid/hid-asus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +static int cros_ec_led_trigger_activate(struct led_classdev *led_cdev)
+> +{
+> +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
+> +	union cros_ec_led_cmd_data arg = { };
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 02de2bf4f790..37e6d25593c2 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -1204,8 +1204,8 @@ static __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 	}
- 
- 	/* match many more n-key devices */
--	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
--		for (int i = 0; i < *rsize + 1; i++) {
-+	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && *rsize > 15) {
-+		for (int i = 0; i < *rsize - 15; i++) {
- 			/* offset to the count from 0x5a report part always 14 */
- 			if (rdesc[i] == 0x85 && rdesc[i + 1] == 0x5a &&
- 			    rdesc[i + 14] == 0x95 && rdesc[i + 15] == 0x05) {
--- 
-2.45.1
+To be neat, { } -> {}.
 
+> +static int cros_ec_led_brightness_set_blocking(struct led_classdev *led_cdev,
+> +					       enum led_brightness brightness)
+> +{
+> +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
+> +	union cros_ec_led_cmd_data arg = { };
+
+Ditto.
+
+> +static int cros_ec_led_count_subleds(struct device *dev,
+> +				     struct ec_response_led_control *resp,
+> +				     unsigned int *max_brightness)
+> +{
+> +	unsigned int range, common_range = 0;
+> +	int num_subleds = 0;
+> +	size_t i;
+> +
+> +	for (i = 0; i < EC_LED_COLOR_COUNT; i++) {
+> +		range = resp->brightness_range[i];
+> +
+> +		if (!range)
+> +			continue;
+> +
+> +		num_subleds++;
+> +
+> +		if (!common_range)
+> +			common_range = range;
+> +
+> +		if (common_range != range) {
+> +			/* The multicolor LED API expects a uniform max_brightness */
+> +			dev_warn(dev, "Inconsistent LED brightness values\n");
+> +			return -EINVAL;
+> +		}
+
+What if the array is [0, 1, 1]?
+
+> +static int cros_ec_led_probe_led(struct device *dev, struct cros_ec_device *cros_ec,
+> +				 enum ec_led_id id)
+> +{
+> +	union cros_ec_led_cmd_data arg = { };
+
+Ditto.
+
+> +static int cros_ec_led_probe(struct platform_device *pdev)
+> +{
+[...]
+> +	int ret;
+> +
+> +	for (i = 0; i < EC_LED_ID_COUNT; i++) {
+> +		ret = cros_ec_led_probe_led(dev, cros_ec, i);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	return ret;
+
+`ret` should be initialized in case EC_LED_ID_COUNT would be somehow 0.
+
+> +static int __init cros_ec_led_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = led_trigger_register(&cros_ec_led_trigger);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = platform_driver_register(&cros_ec_led_driver);
+> +	if (ret)
+> +		led_trigger_unregister(&cros_ec_led_trigger);
+> +
+> +	return ret;
+> +};
+> +module_init(cros_ec_led_init);
+> +
+> +static void __exit cros_ec_led_exit(void)
+> +{
+> +	platform_driver_unregister(&cros_ec_led_driver);
+> +	led_trigger_unregister(&cros_ec_led_trigger);
+> +};
+> +module_exit(cros_ec_led_exit);
+
+I wonder it could use module_led_trigger() and module_platform_driver().
 
