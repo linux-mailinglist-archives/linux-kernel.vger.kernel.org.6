@@ -1,257 +1,107 @@
-Return-Path: <linux-kernel+bounces-192410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516F68D1CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:28:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A060A8D1CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A001F25E9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7291F21E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A290416F0E6;
-	Tue, 28 May 2024 13:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77CB16EC0D;
+	Tue, 28 May 2024 13:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iz7cX5nU"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Wm1QN3Ry"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3B316E87B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4BE16E894
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716902882; cv=none; b=tbALBHRLxHitjQ9M1U5m012v7/lf7ti3xSGV3xIbvfWr37ErMyUuSnk3vVb8/y3XX0TQXb2W++0KZqmiqA5/ENMKFDo4d5HfzGxZbGo+amOU1g/mEdM/0gN+JPlAF3+qrdXuletS+YkiJG1kG0dynM3d/lyfoHPcS7PDqRsEy5g=
+	t=1716902913; cv=none; b=U37zfcrXkqMayB6nG1GMeLqIOZPEw4JlPVXBo5CYu4Hil2zL2o5Q3uG2Wy7Di0Wz6hsxEhfG89iKAM0Qflpo5DLwsSgaLm5aP2mEMdpVMVK9Ixhfvh5AqecleGURWzZu2lPTHxbf6pDULOu+93rw/z1Y1y+tiLC9FC+ooucPLik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716902882; c=relaxed/simple;
-	bh=uqJvrqqgKH4Ec/381jSSZ52PTmJenP9/HfohYBBu8t8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I+5z+9YVVyg/wbonYHgRKHsZ/RouQ8NGiXGtYX2wsnFU3fOGwKiXPHUDYjhwKt2o9ZXAEdS+ZuWcQPvPSv2C2+r6SwISAR0RzFMOI2BxUAw6sbU/tXpqvRL0pOHpfU7vQ6ljjK9smsy67rabDrsfMJbLuT/AOcQo83J4/w2bNlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iz7cX5nU; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1716902877; x=1717162077;
-	bh=qqtgzJlmFD04DRomp01Lp8PnnmfNEYuAnmxTd28A+mA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=iz7cX5nUCsaHQ52ilcQPLn8UCQS6kbxIvJYCj1eOLRr1srtopY4o2ivbhPDQlUzHK
-	 6BHbaaKvpcNWNCqh3e5tW+82RM5JcCp5KvNR4KDm4FubnmbcnFjd0SUN2RaZ7nOYEF
-	 QUhuU1pdOxv1xYcM3ISSI4XRFIDyUbndnv83j3AIh5PKZGoB72roa39rIZWMqppKFn
-	 gCBMJmFKi4xHXnD1VdGaQbnaJgQ45lqsAV+HDX9FkoZmyslo/h04c/Yv7QumbgATss
-	 JNic77RjO0rpHPEGuGRN0V/1iKLivB8I/lQS23qUMmRQ2+opsfoeWRT9Tx0VMhaNhm
-	 RKMwSzl2RNm9Q==
-Date: Tue, 28 May 2024 13:27:53 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, =?utf-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, Joel Granados <j.granados@samsung.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, open list <linux-kernel@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [PATCH v2 2/3] rust: block: add rnull, Rust null_blk implementation
-Message-ID: <d7b963f0-060f-44c0-8358-fb8dbd064575@proton.me>
-In-Reply-To: <20240521140323.2960069-3-nmi@metaspace.dk>
-References: <20240521140323.2960069-1-nmi@metaspace.dk> <20240521140323.2960069-3-nmi@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dba9a313b25dad8f775da433a567bc08de8caa87
+	s=arc-20240116; t=1716902913; c=relaxed/simple;
+	bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AI/v1+qhLXZSuHiL+dI3xBlo+TPMGpfWeWQuCgJBQvseSJR18q4TPkptYonDvjLavklzumeDqABLo/yYA8MpnD5vBlPXSqKPFLTaqhjaiTWsNhoFGt5MPtAFuq6d+TUVwBWp/fOsLiRZSa1KnzT4cdMT5jyUMqLQ1ebwX4yTLCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Wm1QN3Ry; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6303e13ffeso98827166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1716902910; x=1717507710; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
+        b=Wm1QN3RyfSowp3OP685y93x0QSYnT927aLF6A0cd+Dr/PPr3kY9GeQaKnWyWwIqKEi
+         kSOmSfvQGe/RlzTCV8BXz1hM78yQtJgcvRvsgU73ezbBBMY2GvU/lxelFVGj8Hm3F8R2
+         WtI+cRhoXatHfGMVm6zMu6kO2ofAGu6bZ0Hos=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716902910; x=1717507710;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBBLOV4U2IFgFSKdFT4Y43aEoeT6Ow1hJwKRcZckZ7w=;
+        b=dSYmotZe+9AEa2T272aiRAJ0ef832bpaLkPP8yPJ4fabgzb58+gLDD+wNGHXHH5gBV
+         yzvcpsFhRXBILaPJ2JENH0uGLNZ+seDFWKz5G32YllyCaHseGAPBLf/VHN9km9kyqqAN
+         Vd3Ng1Jo4EcboSNFnXCK4y97rdFq1IqvSlmcnTUC/2hKmbmu89774X+IegEDRjhVffWv
+         AGG0EaNS7Y1CPATCOwC39C01UuXuJZgDvlewQ2R5DdDza+H3oJqOh4zM5i35swN9aFMJ
+         x5dDBezj9TuktDQU4UCCJSguVDhnRfwkwsOUgQC5rtgm/t4G0JHDn5sqVRjxaIqXPgrX
+         M+8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWGtz0CWQAvHReEdLkxme5E56XqhF4VXLkblX/dFriFr3SFmvt9nBD0eH7K3P9t+SP1UFNODucV5atLA3d+H+fdb0lS2gzPwGcEG+w9
+X-Gm-Message-State: AOJu0YyckyenYVku1cXdSqJmHfxltdlG4+di6yno50YmFuo3DLYpdDpi
+	PZLqqD6XgP4FkxLEG/yjBpgX6yVEbGdEng1d89TAdvx3EzYnS30O0Gpq9G52W1m6cXO3t9D39iC
+	6SBzBpAeRiikE2KmY59W9mJLgeLWGfdLhS0NsBQ==
+X-Google-Smtp-Source: AGHT+IET1YleTWVR5AXg8CRN1Esbkyz90K8kriJOg4HbyfAsDwmoVK/cGg98h3bhg32ByJBXHFEIavMxNd8QwGr8f7g=
+X-Received: by 2002:a17:906:788:b0:a59:adf8:a6e1 with SMTP id
+ a640c23a62f3a-a62651144f1mr794014566b.47.1716902909983; Tue, 28 May 2024
+ 06:28:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <ZlMADupKkN0ITgG5@infradead.org> <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
+ <ZlRy7EBaV04F2UaI@infradead.org> <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org> <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org> <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org> <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
+In-Reply-To: <ZlXaj9Qv0bm9PAjX@infradead.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 May 2024 15:28:18 +0200
+Message-ID: <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to name_to_handle_at(2)
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21.05.24 16:03, Andreas Hindborg wrote:
-> From: Andreas Hindborg <a.hindborg@samsung.com>
->=20
-> This patch adds an initial version of the Rust null block driver.
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> ---
->  drivers/block/Kconfig   |  9 +++++
->  drivers/block/Makefile  |  3 ++
->  drivers/block/rnull.rs  | 86 +++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/block/mq.rs |  4 +-
->  4 files changed, 101 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/block/rnull.rs
->=20
-> diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-> index 5b9d4aaebb81..ed209f4f2798 100644
-> --- a/drivers/block/Kconfig
-> +++ b/drivers/block/Kconfig
-> @@ -354,6 +354,15 @@ config VIRTIO_BLK
->  =09  This is the virtual block driver for virtio.  It can be used with
->            QEMU based VMMs (like KVM or Xen).  Say Y or M.
->=20
-> +config BLK_DEV_RUST_NULL
-> +=09tristate "Rust null block driver (Experimental)"
-> +=09depends on RUST
-> +=09help
-> +=09  This is the Rust implementation of the null block driver. For now i=
-t
-> +=09  is only a minimal stub.
-> +
-> +=09  If unsure, say N.
-> +
->  config BLK_DEV_RBD
->  =09tristate "Rados block device (RBD)"
->  =09depends on INET && BLOCK
-> diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-> index 101612cba303..1105a2d4fdcb 100644
-> --- a/drivers/block/Makefile
-> +++ b/drivers/block/Makefile
-> @@ -9,6 +9,9 @@
->  # needed for trace events
->  ccflags-y=09=09=09=09+=3D -I$(src)
->=20
-> +obj-$(CONFIG_BLK_DEV_RUST_NULL) +=3D rnull_mod.o
-> +rnull_mod-y :=3D rnull.o
-> +
->  obj-$(CONFIG_MAC_FLOPPY)=09+=3D swim3.o
->  obj-$(CONFIG_BLK_DEV_SWIM)=09+=3D swim_mod.o
->  obj-$(CONFIG_BLK_DEV_FD)=09+=3D floppy.o
-> diff --git a/drivers/block/rnull.rs b/drivers/block/rnull.rs
-> new file mode 100644
-> index 000000000000..1d6ab6f0f26f
-> --- /dev/null
-> +++ b/drivers/block/rnull.rs
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! This is a Rust implementation of the C null block driver.
-> +//!
-> +//! Supported features:
-> +//!
-> +//! - blk-mq interface
-> +//! - direct completion
-> +//! - block size 4k
-> +//!
-> +//! The driver is not configurable.
-> +
-> +use kernel::{
-> +    alloc::flags,
-> +    block::mq::{
-> +        self,
-> +        gen_disk::{self, GenDisk},
-> +        Operations, TagSet,
-> +    },
-> +    error::Result,
-> +    new_mutex, pr_info,
-> +    prelude::*,
-> +    sync::{Arc, Mutex},
-> +    types::ARef,
-> +};
-> +
-> +module! {
-> +    type: NullBlkModule,
-> +    name: "rnull_mod",
-> +    author: "Andreas Hindborg",
-> +    license: "GPL v2",
-> +}
-> +
-> +struct NullBlkModule {
-> +    _disk: Pin<Box<Mutex<GenDisk<NullBlkDevice, gen_disk::Added>>>>,
-> +}
-> +
-> +fn add_disk(tagset: Arc<TagSet<NullBlkDevice>>) -> Result<GenDisk<NullBl=
-kDevice, gen_disk::Added>> {
+On Tue, 28 May 2024 at 15:24, Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Tue, May 28, 2024 at 02:04:16PM +0200, Christian Brauner wrote:
+> > Can you please explain how opening an fd based on a handle returned from
+> > name_to_handle_at() and not using a mount file descriptor for
+> > open_by_handle_at() would work?
+>
+> Same as NFS file handles:
+>
+> name_to_handle_at returns a handle that includes a file system
+> identifier.
+>
+> open_by_handle_at looks up the superblock based on that identifier.
 
-Any reason that this is its own function and not in the
-`NullBlkModule::init` function?
+The open file needs a specific mount, holding the superblock is not sufficient.
 
-> +    let block_size: u16 =3D 4096;
-> +    if block_size % 512 !=3D 0 || !(512..=3D4096).contains(&block_size) =
-{
-> +        return Err(kernel::error::code::EINVAL);
-> +    }
-> +
-> +    let mut disk =3D gen_disk::try_new(tagset)?;
-> +    disk.set_name(format_args!("rnullb{}", 0))?;
-> +    disk.set_capacity_sectors(4096 << 11);
-> +    disk.set_queue_logical_block_size(block_size.into());
-> +    disk.set_queue_physical_block_size(block_size.into());
-> +    disk.set_rotational(false);
-> +    disk.add()
-> +}
-> +
-> +impl kernel::Module for NullBlkModule {
-> +    fn init(_module: &'static ThisModule) -> Result<Self> {
-> +        pr_info!("Rust null_blk loaded\n");
-> +        let tagset =3D Arc::pin_init(TagSet::try_new(1, 256, 1), flags::=
-GFP_KERNEL)?;
-> +        let disk =3D Box::pin_init(
-> +            new_mutex!(add_disk(tagset)?, "nullb:disk"),
-> +            flags::GFP_KERNEL,
-> +        )?;
-> +
-> +        Ok(Self { _disk: disk })
-> +    }
-> +}
-> +
-> +struct NullBlkDevice;
-> +
-> +#[vtable]
-> +impl Operations for NullBlkDevice {
-> +    #[inline(always)]
-> +    fn queue_rq(rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-> +        mq::Request::end_ok(rq)
-> +            .map_err(|_e| kernel::error::code::EIO)
-> +            .expect("Failed to complete request");
-
-This error would only happen if `rq` is not the only ARef to that
-request, right?
-
-> +
-> +        Ok(())
-> +    }
-> +
-> +    fn commit_rqs() {}
-> +
-> +    fn complete(rq: ARef<mq::Request<Self>>) {
-
-Am I correct in thinking that this function is never actually called,
-since all requests that are queued are immediately ended?
-
-> +        mq::Request::end_ok(rq)
-> +            .map_err(|_e| kernel::error::code::EIO)
-> +            .expect("Failed to complete request")
-> +    }
-> +}
-> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-> index efbd2588791b..54e032bbdffd 100644
-> --- a/rust/kernel/block/mq.rs
-> +++ b/rust/kernel/block/mq.rs
-> @@ -51,6 +51,7 @@
->  //!
->  //! ```rust
->  //! use kernel::{
-> +//!     alloc::flags,
->  //!     block::mq::*,
->  //!     new_mutex,
->  //!     prelude::*,
-> @@ -77,7 +78,8 @@
->  //!     }
->  //! }
->  //!
-> -//! let tagset: Arc<TagSet<MyBlkDevice>> =3D Arc::pin_init(TagSet::try_n=
-ew(1, 256, 1))?;
-> +//! let tagset: Arc<TagSet<MyBlkDevice>> =3D
-> +//!     Arc::pin_init(TagSet::try_new(1, 256, 1), flags::GFP_KERNEL)?;
-
-This change should probably be in the patch before (seems like an
-artifact from rebasing).
-
----
-Cheers,
-Benno
-
->  //! let mut disk =3D gen_disk::try_new(tagset)?;
->  //! disk.set_name(format_args!("myblk"))?;
->  //! disk.set_capacity_sectors(4096);
-> --
-> 2.44.0
->=20
->=20
-
+Thanks,
+Miklos
 
