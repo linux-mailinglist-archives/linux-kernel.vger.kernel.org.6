@@ -1,67 +1,100 @@
-Return-Path: <linux-kernel+bounces-193229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39408D28B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:24:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72BA8D28B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF8B1C241DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239221F2776B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7035113F01A;
-	Tue, 28 May 2024 23:24:43 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AFD13F445;
+	Tue, 28 May 2024 23:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XmKKgpEe"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFBE13E040
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700C513EFFB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716938683; cv=none; b=CJhuqluoRAklHPpNsboG2eS6iyjIzJ91hKQQ9fUH1v1dtlvLJC4E56NwLwZdi6xiev/b4juwMySe2EqWMPnajSjFqTGglasE5iiPI6sUhzpucx3Nv4CrbNupYkAw0TIrt8XWLe+jqM2wr2tN+PmmlPYy0JorDkt45iJ/y2j0j6I=
+	t=1716938754; cv=none; b=koAyyEJoW1OeRoQKwyufQALmQCRRS/kbDF05vyiNKUbT33gmJ9hl0Eq0D0U0Eu2m2adBrgfXcPYFD6zrZcVYKdabSwNH4FjhxtrNUQdQQILUTFh4x1SPBogPJsYBWbZXXoJ6/EE3ivmBDf4t4UU7poonpliLthO4ze/iVTeR7sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716938683; c=relaxed/simple;
-	bh=5iq5t9rPUVGI9/3Dm5+AlILLc82DGElYeHEacD74FyM=;
+	s=arc-20240116; t=1716938754; c=relaxed/simple;
+	bh=XkXbS1/SIQ5uVCoW76BxhGwPjalxquKHpRLo+Wtr2to=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgiiQ2RgWQe3axS/+7AU5SDHvqBJN4NgL86jv5E385bxaVnIMQ7EHFVSUSRgkjkRIHVlUgl0FI2BWi/sak9Dvk+fa/T6WVX85G2OhaqVU+LRQi42BmxzHw5hMiiKKBYlcdufFHvp5T9gg6FeOW9oXb3MVKAniYyTenM/FupLpbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f8ecafd28cso1103839b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:24:41 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODvqmYM58/X/7XeRxlGkasEcncNusG2Fa7sA2ZJ8BvbAJ+ZOCfDK4foJDLGdR9gxYoLYggeTwaQ1YNt3sc9K+Nco9QI7nEx1Yq9veJ4dk5gXuJIpak4iKXuFvNPzzQlppfNDGPNFnQgpyHB3gidCgF5D7hXW/m5ODlsheQ0KCLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XmKKgpEe; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f44b441b08so10177435ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716938753; x=1717543553; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R/Sgk1Yzp1sgcvMvS0zCkhtYU6du3DHWIlu0PixZMB8=;
+        b=XmKKgpEeh7PjkhdCUkXTMYo4bOcoah4pKM0bExap0GRvt5Uk8jXm+zd+nIbkmJnV+C
+         yt/8jw44FSFDocOSgJJczfeQPGNmHnha4ubpyX6AHjXyAYyI5KQQIUNFz6kEQZD6beWb
+         Vd8OgYyaGG/TG6APDGpH3hqn6xHltlRp+cL0WXIJwLftqa3Un+idkSKBzK5fo9J3eXDk
+         3dbJRJqpmtspweKjtkK0lHW2aDQt7bq7LT5+3Zhh6SIWsKFhs69kw5hJ49b1emUdpHn7
+         aHdmwacH4FD/HvNUFWYfZlTzUuwKsXjxYm1VncXNsXMzb480KWFJi+EA2nUXcncqHLFk
+         CSRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716938681; x=1717543481;
+        d=1e100.net; s=20230601; t=1716938753; x=1717543553;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oNErHy54A1kjJTi2uYYepudf7mP7OyiGpa/dOsZhLcs=;
-        b=KpDxyGIIqvsiCYyC0CBEq+wlQFWTbf2K072xaBvnLcT+MSjXEV85WENEDYHJG6Ycfu
-         9BJCMKj9MKfvBPs7MlglP2375TQDmCu1QknfTcp0zsyDv7gOn4vVm7spEpieuiPaJuNA
-         cs9UCJ33n2L7QBk+gkNjJSEEgUkW4VK2cqXjVPrjek3yxoWOY942xxp6nxxFtxTNobnd
-         ewm94lu0GTb1oVy3eLt/VlfoRzx0CqWZACgoVL5UUYhAwz1epOYm6bYUj0WN1JFNaqzW
-         H7xz/hnIK2rA+wyZOTkOAdDYoQ1s3N1xoIV5Ht72mGuWg8qFcM6Zn+Wn72y/qCrJApUJ
-         2JbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWH41oSYy79XbixcYELrfaX3+kMzQZq0c/3rF4Xc6ivVXxmZo/O4+vQoVhB+MyYh5pfnwL86JG4jH1Fg8fe3PxIA2WvNQHQIZuIc0/R
-X-Gm-Message-State: AOJu0YwBh2wyQ07pBATXV7QK1U5GtQc2uVHRPojEwmsi+JmZJas40oeA
-	d1X9NZHHyCWhQuIqfSZjzUjDzhdIib1nqQ+y7fr6WepaJ0CgFjUC
-X-Google-Smtp-Source: AGHT+IG5FFGbsYGzfoXVPflYrCi7X/CC27bTaHSjh0eS+aRDNo+4B1hhCpfDR9wLsmoWZvlCEWVHiA==
-X-Received: by 2002:a05:6a00:e16:b0:6eb:3d37:ce7a with SMTP id d2e1a72fcca58-6f8f392b718mr13195595b3a.21.1716938681040;
-        Tue, 28 May 2024 16:24:41 -0700 (PDT)
-Received: from snowbird ([136.25.84.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822198a705sm8059634a12.36.2024.05.28.16.24.39
+        bh=R/Sgk1Yzp1sgcvMvS0zCkhtYU6du3DHWIlu0PixZMB8=;
+        b=bQW2mVk5OSwUSpqG6c8tn7zLz4371QOHyo4YogZzav5mSDyQGyKR0LunqLDyt0ppor
+         aJytVyBlq6dj06leln9pBe+XyvAEsPOicYo2mMc7kkTJeSo30gq1dIkkF/BJXvVfAdy+
+         U2LEiuh97ceCoCnFBLIahxJVl2G7DsldJENkvzhjtekcNSMwjdCfWLW7/OGrbKMLN9HN
+         br425iPA9Uqw0cJ+5iqSbk6GKsaeoynzCnWtMJF1huKlJqGsnWEx9GenR/VWq7Cr/0gn
+         7YHadbeOE+iTZ5wBlXYwy4gvm4rhsowEgGO2laNUXG/yFz3Sra8h9j1HYZL8v81zCI54
+         eS/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXC7ZvWF3HB6RBo1fOOeXEjumv2z9vDxpUcoFkvAOV7G4ffWVGVR7eWgDlDzOaZW8A/6uPGoWhQRTYuuPW56SKsszULd2i2VNq9BPeV
+X-Gm-Message-State: AOJu0YxTPQ66o9GDvBV+6JGQtw1vegPnDLltxxFzaPnvzCBXC+jawZ3d
+	2y5S483Q59hJ00u5WA7+xlJyXzcXdsILI47Vscbqk+7y9YePd4F5uSpCYNWwv84=
+X-Google-Smtp-Source: AGHT+IFvGxXkSZRiFaMmOXnG+Q4zsRIFB1iltGUHKeeZD+4PXkh7c9LGLmVlti4z7eKk5Q0uyyP8gA==
+X-Received: by 2002:a17:902:e54e:b0:1f4:ac10:3ee3 with SMTP id d9443c01a7336-1f4ac10802amr60953545ad.20.1716938752369;
+        Tue, 28 May 2024 16:25:52 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c997d0dsm86058635ad.199.2024.05.28.16.25.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 16:24:40 -0700 (PDT)
-Date: Tue, 28 May 2024 16:24:37 -0700
-From: Dennis Zhou <dennis@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, tj@kernel.org, hughd@google.com,
-	vbabka@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4] percpu_counter: add a cmpxchg-based _add_batch variant
-Message-ID: <ZlZntVycT45knbwB@snowbird>
-References: <20240528204257.434817-1-mjguzik@gmail.com>
- <ZlZFGmBiBE1VGQIt@snowbird>
- <20240528141929.ba7e59e4cae89eec01631306@linux-foundation.org>
+        Tue, 28 May 2024 16:25:51 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sC6CT-00Dztd-1B;
+	Wed, 29 May 2024 09:25:49 +1000
+Date: Wed, 29 May 2024 09:25:49 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Trond Myklebust <trondmy@hammerspace.com>,
+	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"alex.aring@gmail.com" <alex.aring@gmail.com>,
+	"cyphar@cyphar.com" <cyphar@cyphar.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	"amir73il@gmail.com" <amir73il@gmail.com>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <ZlZn/fcphsx8u/Ph@dread.disaster.area>
+References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+ <ZlMADupKkN0ITgG5@infradead.org>
+ <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
+ <ZlRzNquWNalhYtux@infradead.org>
+ <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
+ <ZlS0_DWzGk24GYZA@infradead.org>
+ <20240528101152.kyvtx623djnxwonm@quack3>
+ <ZlW4a6Zdt9SPTt80@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,39 +103,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528141929.ba7e59e4cae89eec01631306@linux-foundation.org>
+In-Reply-To: <ZlW4a6Zdt9SPTt80@infradead.org>
 
-Hi Andrew,
-
-On Tue, May 28, 2024 at 02:19:29PM -0700, Andrew Morton wrote:
-> On Tue, 28 May 2024 13:56:58 -0700 Dennis Zhou <dennis@kernel.org> wrote:
+On Tue, May 28, 2024 at 03:56:43AM -0700, hch@infradead.org wrote:
+> On Tue, May 28, 2024 at 12:11:52PM +0200, Jan Kara wrote:
+> > So some fanotify users may use open_by_handle_at() and name_to_handle_at()
+> > but we specifically designed fanotify to not depend on this mount id
+> > feature of the API (because it wasn't really usable couple of years ago
+> > when we were designing this with Amir). fanotify returns fsid + fhandle in
+> > its events and userspace is expected to build a mapping of fsid ->
+> > "whatever it needs to identify a filesystem" when placing fanotify marks.
+> > If it wants to open file / directory where events happened, then this
+> > usually means keeping fsid -> "some open fd on fs" mapping so that it can
+> > then use open_by_handle_at() for opening.
 > 
-> > >  EXPORT_SYMBOL(percpu_counter_add_batch);
-> > >  
-> > >  /*
-> > > -- 
-> > > 2.39.2
-> > > 
-> > 
-> > Andrew you picked up the __this_cpu_try_cmpxchg() patches. At this point
-> > you might as well pick up this too. The cpumask clean ups are likely
-> > going to give me trouble later this week when I rebase so I'll probably
-> > have to base my percpuh hotplug branch on your mm-unstable now.
-> 
-> Well, if it makes more sense to carry these in a different tree, let's
-> do that.
+> Which seems like another argument for my version of the handles to
+> include the fsid.  Although IIRC the fanotify fsid is only 64 bits which
+> isn't really good entropy, so we might have to rev that as well.
 
-Regarding percpu, I've generally care for that allocator and to varying
-degrees corresponding libraries for the last 6 years. I usually take
-them in [1] if I have other stuff to run.
+I'm in agreement with Christoph that the filehandle needs to contain
+the restricted scope information internally. I said that in response
+to an earlier version of the patch here:
 
-The cpumask stuff should not roll up through me, and I think likely you.
-It's just a little unfortunate in timing as I was planning on respinning
-the percpu hotplug stuff this week (not 100% sure anything will conflict
-yet til I do it).
+https://lore.kernel.org/linux-fsdevel/ZlPOd0p7AUn7JqLu@dread.disaster.area/
 
-Thanks,
-Dennis
+	"If filehandles are going to be restricted to a specific container
+	(e.g. a single mount) so that less permissions are needed to open
+	the filehandle, then the filehandle itself needs to encode those
+	restrictions. Decoding the filehandle needs to ensure that the
+	opening context has permission to access whatever the filehandle
+	points to in a restricted environment. This will prevent existing
+	persistent, global filehandles from being used as restricted
+	filehandles and vice versa."
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git
+But no-one has bothered to reply or acknowledge my comments so I'll
+point them out again and repeat: Filehandles generated by
+the kernel for unprivileged use *must* be self describing and self
+validating as the kernel must be able to detect and prevent
+unprivelged users from generating custom filehandles that can be
+used to access files outside the restricted scope of their
+container.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
