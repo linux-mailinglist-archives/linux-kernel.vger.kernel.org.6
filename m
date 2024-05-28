@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-192223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EDE8D1A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903BD8D1A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76EA9B26066
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E2E1C23DD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B4716C856;
-	Tue, 28 May 2024 11:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF9A16D30D;
+	Tue, 28 May 2024 11:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUNRaBey"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D03AwHuD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF40A16ABC1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3319816C87C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897126; cv=none; b=WvB42MZie09y/bOV4mPXBgEezxe1QTSZKqv27JoeQaq9DHcRJ3IiSCq4lhh78DaWEJkIZNLwl1CjcEPtyJDCbsRG4fQnbTumU2IBm7Z5QBwuB/BY/aTHa5JvVLEtNebglXHIiUdyq/CdklH1FIJNVZp3ECiLqsejEe55R4bVhOM=
+	t=1716897160; cv=none; b=sP0ANyzs7S0GJ8qCKpigETNaapE8d2b9Zw/UKTHahvs4OInohjTjIjPNuSOa1xHUVTllv4KB8VfpKp4wbApmBvUDQZ/j84ssXhhyx9K+mcxqzPTLUpbv3Ch6n0ToWZvJ2nSmse4hqkC6mODalYdLqYuo6+Cv472RTP2XMYooZFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897126; c=relaxed/simple;
-	bh=TcxjokVtWXmJOGhnJW9abbtWL0y6hS0Uwog6v9HcmCo=;
+	s=arc-20240116; t=1716897160; c=relaxed/simple;
+	bh=c6HLmHQgr+K+/opF/OiiYVpCKahYXfgVPr1CgHqBTgk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o6tlIjSZd9rFlwDjd9FWMC7ZtSxr6LbQE3YB09bBKFrXwWpMCbU2etrLFsF3Odd1ZXrhSjZ2/zZvejB1Cx3JCz3drnEUEmqLhAXelIR2dH5GtxZzZUby3xQh04djlCiBpTa6GDWKnp6GdwRZ7xWh804RvpdDskpB5iWfK3ql8JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUNRaBey; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F038C32782;
-	Tue, 28 May 2024 11:52:02 +0000 (UTC)
+	 MIME-Version; b=ZYDOtdHwFc6/0l+90f1k9P5YdCrmFp8jold7KlFfDKjpodlSGobS6Totu2xIA4aZnqFdCbw+196F82To2HxKUyT6jrrflxSC1D+889QqKQxOKS5BuBY+dYah+4u8NPKwqoWQtOdvryctVYsxRbuqVe1l+CtAq2A9YmFKvR5hW9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D03AwHuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F68C32782;
+	Tue, 28 May 2024 11:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716897125;
-	bh=TcxjokVtWXmJOGhnJW9abbtWL0y6hS0Uwog6v9HcmCo=;
+	s=k20201202; t=1716897159;
+	bh=c6HLmHQgr+K+/opF/OiiYVpCKahYXfgVPr1CgHqBTgk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AUNRaBeyx6rMagKw2XMqLf9UxVbVUCTU2rz+d4rU4OCqWKbmh5yZKOeCTs6WLWIE0
-	 DZTfDaO43bdToSAa9iTrSUiL8kN6YtVzvgiRhYsxN5MTAEdf/0xSLI3xh6N6sDT9g6
-	 HGUmkVieB7F5nkqMDWqn5t82+8xOjPQJ1oaexjat73SuPNkBc+4Yh/jZwZ1u3xeDxo
-	 ZWInPMfjVS6gn1zkEmqaXBrNQLCu2aWuHvqzTHBYQnwRo45PfdxW86GYzN0tNMqvqN
-	 q77+16Lt9PwE7NVgG0TGTg0/9+IgY6NjTaey2/yGcr2KpcRjlIeXqlz5B+07KCe7PW
-	 8XiA2fM2c7dmQ==
+	b=D03AwHuDsKvcUkDlecqDtEPZZhMjTaMFd/0vPhG4U2wi15wGBBRYxi+a50oIIBAD3
+	 kKAzYiBT1/iSoy4fgo1HuQYlVrjGJRadJCOGeXHrEpHjmtG5x2+kEt/49Zn++EPv+4
+	 yeyFdAE0FhAbD49JWO4q62bg33zoI0vP/C8pwYSFZ30Fh2GsOjzJTbRobGkohqR5rr
+	 +m1pqpaXPIfHzUI95y9nwRik70fTPhQk/0KhuQAFuk92y8DNShIWo2NiRIKgACLAsd
+	 nq64oSyxXi+S9t5Pd+97UwuemMAMEJYbXLnE1eMhYtqw+0vuS/pjB9/noBCtL5TtS4
+	 XbAPM52H58fyQ==
 From: Arnd Bergmann <arnd@kernel.org>
 To: Harry Wentland <harry.wentland@amd.com>,
 	Leo Li <sunpeng.li@amd.com>,
@@ -50,15 +50,21 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
 	David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
-	Roman Li <roman.li@amd.com>,
-	Mounika Adhuri <moadhuri@amd.com>,
-	Martin Leung <martin.leung@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Chaitanya Dhere <chaitanya.dhere@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Joshua Aberback <joshua.aberback@amd.com>,
+	Charlene Liu <charlene.liu@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Wenjing Liu <wenjing.liu@amd.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] [RESEND] drm/amd/display: fix graphics_object_id size
-Date: Tue, 28 May 2024 13:51:19 +0200
-Message-Id: <20240528115146.2870032-2-arnd@kernel.org>
+Subject: [PATCH 3/4] drm/amd/display: avoid large on-stack structures
+Date: Tue, 28 May 2024 13:51:20 +0200
+Message-Id: <20240528115146.2870032-3-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240528115146.2870032-1-arnd@kernel.org>
 References: <20240528115146.2870032-1-arnd@kernel.org>
@@ -72,40 +78,100 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The graphics_object_id structure is meant to fit into 32 bits, as it's
-passed by value in and out of functions. A recent change increased
-the size to 128 bits, so it's now always passed by reference, which
-is clearly not intended and ends up producing a compile-time warning:
+Putting excessively large objects on a function stack causes
+a warning about possibly overflowing the 8KiB of kernel stack:
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_factory.c: In function 'construct_phy':
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_factory.c:743:1: error: the frame size of 1040 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn401/dcn401_resource.c: In function 'dcn401_update_bw_bounding_box':
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn401/dcn401_resource.c:1599:1: error: the frame size of 1196 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+ 1599 | }
+      | ^
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_state.c: In function 'dc_state_create':
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_state.c:221:1: error: the frame size of 1196 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+  221 | }
+      | ^
 
-Add back the bitfields to revert to the original size, while keeping
-the 'enum' type change.
+Use dynamic allocation instead.
 
-fec85f995a4b ("drm/amd/display: Fix compiler redefinition warnings for certain configs")
+Fixes: e779f4587f61 ("drm/amd/display: Add handling for DC power mode")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Originally sent as https://lore.kernel.org/all/20240418083421.3956461-2-arnd@kernel.org/
----
- drivers/gpu/drm/amd/display/include/grph_object_id.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_state.c   | 16 +++++++++++-----
+ .../display/dc/resource/dcn401/dcn401_resource.c | 16 +++++++++++-----
+ 2 files changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/include/grph_object_id.h b/drivers/gpu/drm/amd/display/include/grph_object_id.h
-index 08ee0350b31f..54e33062b3c0 100644
---- a/drivers/gpu/drm/amd/display/include/grph_object_id.h
-+++ b/drivers/gpu/drm/amd/display/include/grph_object_id.h
-@@ -226,8 +226,8 @@ enum dp_alt_mode {
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_state.c b/drivers/gpu/drm/amd/display/dc/core/dc_state.c
+index 70928223b642..8ea9391c60b7 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_state.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_state.c
+@@ -193,7 +193,11 @@ static void init_state(struct dc *dc, struct dc_state *state)
+ struct dc_state *dc_state_create(struct dc *dc, struct dc_state_create_params *params)
+ {
+ #ifdef CONFIG_DRM_AMD_DC_FP
+-	struct dml2_configuration_options dml2_opt = dc->dml2_options;
++	struct dml2_configuration_options *dml2_opt;
++
++	dml2_opt = kmemdup(&dc->dml2_options, sizeof(*dml2_opt), GFP_KERNEL);
++	if (!dml2_opt)
++		return NULL;
+ #endif
+ 	struct dc_state *state = kvzalloc(sizeof(struct dc_state),
+ 			GFP_KERNEL);
+@@ -207,12 +211,14 @@ struct dc_state *dc_state_create(struct dc *dc, struct dc_state_create_params *p
  
- struct graphics_object_id {
- 	uint32_t  id:8;
--	enum object_enum_id  enum_id;
--	enum object_type  type;
-+	enum object_enum_id  enum_id :4;
-+	enum object_type  type :4;
- 	uint32_t  reserved:16; /* for padding. total size should be u32 */
- };
+ #ifdef CONFIG_DRM_AMD_DC_FP
+ 	if (dc->debug.using_dml2) {
+-		dml2_opt.use_clock_dc_limits = false;
+-		dml2_create(dc, &dml2_opt, &state->bw_ctx.dml2);
++		dml2_opt->use_clock_dc_limits = false;
++		dml2_create(dc, dml2_opt, &state->bw_ctx.dml2);
  
+-		dml2_opt.use_clock_dc_limits = true;
+-		dml2_create(dc, &dml2_opt, &state->bw_ctx.dml2_dc_power_source);
++		dml2_opt->use_clock_dc_limits = true;
++		dml2_create(dc, dml2_opt, &state->bw_ctx.dml2_dc_power_source);
+ 	}
++
++	kfree(dml2_opt);
+ #endif
+ 
+ 	kref_init(&state->refcount);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
+index 247bac177d1b..8dfb0a3d21cb 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
+@@ -1581,21 +1581,27 @@ static struct dc_cap_funcs cap_funcs = {
+ 
+ static void dcn401_update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_params)
+ {
+-	struct dml2_configuration_options dml2_opt = dc->dml2_options;
++	struct dml2_configuration_options *dml2_opt;
++
++	dml2_opt = kmemdup(&dc->dml2_options, sizeof(*dml2_opt), GFP_KERNEL);
++	if (!dml2_opt)
++		return;
+ 
+ 	DC_FP_START();
+ 
+ 	dcn401_update_bw_bounding_box_fpu(dc, bw_params);
+ 
+-	dml2_opt.use_clock_dc_limits = false;
++	dml2_opt->use_clock_dc_limits = false;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2);
+ 
+-	dml2_opt.use_clock_dc_limits = true;
++	dml2_opt->use_clock_dc_limits = true;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2_dc_power_source)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
+ 
+ 	DC_FP_END();
++
++	kfree(dml2_opt);
+ }
+ 
+ enum dc_status dcn401_patch_unknown_plane_state(struct dc_plane_state *plane_state)
 -- 
 2.39.2
 
