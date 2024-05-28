@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-191603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BEE8D1155
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:07:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43038D1157
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF5C1C21018
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:07:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80573282121
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10260944F;
-	Tue, 28 May 2024 01:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7CEBE5D;
+	Tue, 28 May 2024 01:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYZjAkd2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="adzrfQvg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41745440C;
-	Tue, 28 May 2024 01:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3347B4683;
+	Tue, 28 May 2024 01:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716858447; cv=none; b=hDg5OBF+EWSCjIdvNV6AuHFFh1qs6dR6qucW5nDSpLEEVJyCKAmJuOUnoWeteWl/Pkb0BS6dolRVlwzQaO2rXODL+R1/2QsLl6P9b+BLZCeE0uY1+Dr4PdPMSnKtUXP107XOV8liOjUfN8pm6A/9AyFtwlchJ313OLSZV1g+VUY=
+	t=1716858465; cv=none; b=ly+CDfH7H6+m/AQ48sT8WQUOESzGP/Ip1xw8ElJb5Vzz20k+8i4rujvp4OTUApGJls/Fnck60B1la5QS631ltnLhjRCg6U419GTD9vcnOiik0qObr+zqBGpaP6qP1qfjxpL3brKDQ9B7L31e0vyO3mceZocEYYIOQzCU7t/Bm/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716858447; c=relaxed/simple;
-	bh=x01mRSeEEp365e3rkUTkz6OZ1lHWe6WZhGNIWXO4aQ4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Xu5eBOFNq4lfLvwt4cVYH0mbJ/WrprVYPHbvLgT/Z7GGYvOA6jy2RgRKP+kipvBy+Xnq6mrYzyeXxOL+Xf1w5McJ0kozQTv17gyBPX29DmLgMu/1YfnrM4LzbhhnKecOhEqcbiLKS7qH/EqgKmo78tfF0dp1XQhYNgt+xaqZfP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYZjAkd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3E6C2BBFC;
-	Tue, 28 May 2024 01:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716858445;
-	bh=x01mRSeEEp365e3rkUTkz6OZ1lHWe6WZhGNIWXO4aQ4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=fYZjAkd2U/cvqzRFU6sGdwfqPEKwUqQymcgvUecyz/a8yMmage9eULg7a9fXX/Ies
-	 ekaI7x6IxdjrD8Rb4EKby33vr/9srXsxmJgc6eRMMekAYCGmeuG0CeW3InIlpeYJqj
-	 OrAz5MfF0o69S/FfczwvHp6/aDiJDblZgOb5xPTHD53kmHqD1T1vR9spztOeULTbPW
-	 G/iDUj+2PpXLNbHZdVLnSjWXwD7WrqYcFJMT3BaEQ/F4GXrbny9s7QT6NzcHor7liA
-	 Px/Ge5Xc4ON1LkgPPtZwF19dfhSraExPTR0rRHTm1qeR1foniCR2a50ZRlAm2zqAeV
-	 Mut5KdkR7onzw==
+	s=arc-20240116; t=1716858465; c=relaxed/simple;
+	bh=u+tFoPxaVdY26Z6BSHRAKdbh15TlsMAxUUPWh11Nqmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W6/dTEymoH1I2zntIEjreDcnbmOGX0pZPR3RFNMOROIFXBKKnTs84dmP4pyb/9tFbjirR+8SfSmCwu2313UDHriXvA0ChNqT/cSZXy9s2mIFOrKIx+019fbz5gN0g8WMCtX/aUOqXOQt6bFX5fMCC5gCzKraoHLnfzIHaXsX59k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=adzrfQvg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716858460;
+	bh=3ZFa+LwBk82BBfT1xKk4cXtURBSQY1TnJISU04EjuHM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=adzrfQvgemEXYbbSOVVh0Z8pED74TUFYB881DgvPs1LQG29ZFeLsdCMRJYJUjGNyV
+	 MN4OMXwq0z7H3kQ3ER2p7Cx1Heh0X+i+MystiyvzYpoNAD5CfpE4txPaa/FIZMX8fy
+	 RZYciBUvlkS1/VibgF1pBci78eKiMV/s3cb289I0XpaJIxm4dYyAxxWfwnVlBzQlvb
+	 Ejbb92KkFIWLfAd5zTNrr1+2X/Uvd/EWCp/dCgMfzcj6wbbcIhSXEHBvvSkzgY+aXa
+	 YQ4ZfETMh2HL2AxqNmvwYh9BQnhvAkPgKb/xfqUZ/Kjlw2bG/D1uS3tj0SsNI3dGUY
+	 SJ9Bm3GbEKM1g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpDrp2Z4nz4x0K;
+	Tue, 28 May 2024 11:07:38 +1000 (AEST)
+Date: Tue, 28 May 2024 11:07:37 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>, Kuan-Wei Chiu
+ <visitorckw@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Coly Li <colyli@suse.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Matthew Mirvish <matthew@mm12.xyz>, Andrew
+ Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the refactor-heap tree with the
+ block tree
+Message-ID: <20240528110737.730a8f40@canb.auug.org.au>
+In-Reply-To: <20240509152745.08af752f@canb.auug.org.au>
+References: <20240509152745.08af752f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/ErfPTUrGblVMXdZjl71eSr8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/ErfPTUrGblVMXdZjl71eSr8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 May 2024 04:07:20 +0300
-Message-Id: <D1KVIVFYFA7K.EZWLOD75W7C7@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Vitor Soares" <ivitro@gmail.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
- <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
- <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
- <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
- <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
- <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
- <D1KJBXOPFWT7.1F14BWQJO29FC@kernel.org>
- <ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com>
- <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
- <6e326fa73968839199378694d4e7cc2544326fa6.camel@HansenPartnership.com>
- <D1KT71LIUIPC.33KKNF1H2SX94@kernel.org>
- <439c3a66a995429f6c8603640477580e17d03104.camel@HansenPartnership.com>
- <D1KVGWCV0E4G.2IA48UYCUED67@kernel.org>
-In-Reply-To: <D1KVGWCV0E4G.2IA48UYCUED67@kernel.org>
 
-On Tue May 28, 2024 at 4:04 AM EEST, Jarkko Sakkinen wrote:
-> On Tue May 28, 2024 at 2:44 AM EEST, James Bottomley wrote:
-> > On Tue, 2024-05-28 at 02:17 +0300, Jarkko Sakkinen wrote:
-> > > On Tue May 28, 2024 at 12:36 AM EEST, James Bottomley wrote:
-> > > > On Mon, 2024-05-27 at 22:53 +0300, Jarkko Sakkinen wrote:
-> > > > > On Mon May 27, 2024 at 8:57 PM EEST, James Bottomley wrote:
-> > > > > > On Mon, 2024-05-27 at 18:34 +0300, Jarkko Sakkinen wrote:
-> > > > [...]
-> > > > > > > While looking at code I started to wanted what was the
-> > > > > > > reasoning for adding *undocumented* "TPM2_OA_TMPL" in
-> > > > > > > include/linux/tpm.h.It should really be in tpm2-sessions.c
-> > > > > > > and named something like TPM2_NULL_KEY_OA or similar.
-> > > > > >=20
-> > > > > > Well, because you asked for it. I originally had all the flags
-> > > > > > spelled out and I'm not a fan of this obscurity, but you have
-> > > > > > to do stuff like this to get patches accepted:
-> > > > > >=20
-> > > > > > https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVIC=
-YHL@suppilovahvero/
-> > > > >=20
-> > > > > I still think the constant does make sense.
-> > > >=20
-> > > > I'm not so sure.=C2=A0 The TCG simply defines it as a collection of
-> > > > flags and every TPM tool set I've seen simply uses a list of flags
-> > > > as well.  The original design was that the template would be in
-> > > > this one place and everything else would call into it.=C2=A0 I thin=
-k the
-> > > > reason all template construction looks similar is for ease of
-> > > > auditing (it's easy to get things, particularly the flags, wrong).
-> > > >=20
-> > > > If it only has one use case, it should be spelled out but if
-> > > > someone else would use it then it should be in the tpm.h shared
-> > > > header.
-> > >=20
-> > > It is used only in tpm2-sessions.c and for the null key so there it
-> > > should be. And it is also lacking the associated documentation. Now
-> > > both name and context it is used is lost.
-> >
-> > The comment above the whole thing says what it is and where it comes
-> > from:
-> >
-> > 	/*
-> > 	 * create the template.  Note: in order for userspace to
-> > 	 * verify the security of the system, it will have to create
-> > 	 * and certify this NULL primary, meaning all the template
-> > 	 * parameters will have to be identical, so conform exactly to
-> > 	 * the TCG TPM v2.0 Provisioning Guidance for the SRK ECC
-> > 	 * key H template (H has zero size unique points)
-> > 	 */
-> >
-> > If we put the broken out flags back it's all fully documented.
+Hi all,
+
+On Thu, 9 May 2024 15:27:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Not the most productive conclusion when refusing to follow properly a
-> trivial request in the review feedback tbh.
+> Today's linux-next merge of the refactor-heap tree got conflicts in:
+>=20
+>   drivers/md/bcache/bset.c
+>   drivers/md/bcache/bset.h
+>   drivers/md/bcache/btree.c
+>   drivers/md/bcache/writeback.c
+>=20
+> between commit:
+>=20
+>   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
+>=20
+> from the block tree and commit:
+>=20
+>   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic=
+ min_heap")
+>=20
+> from the refactor-heap tree.
+>=20
+> Ok, these conflicts are too extensive, so I am dropping the refactor-heap
+> tree for today.  I suggest you all get together and sort something out.
 
-In any case this particular constant can be revisited when otherwise
-changes happen in the area. It is what it is for the time being. I
-just need to use more strict and dense filter when check the patch
-revisions next time.
+It looks as though the patches from the refactor-heap tree are now being
+carried in the mm-nonmm-unstable branch of the mm tree.  Should I
+rmeove the refactor-heap tree from linux-next?  It *will* be dropped for
+today at least.
+--=20
+Cheers,
+Stephen Rothwell
 
-BR, Jarkko
+--Sig_/ErfPTUrGblVMXdZjl71eSr8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVLlkACgkQAVBC80lX
+0Gw63wf+JfCFmVU5p6PZ2eYkfAjYMAnhA+Refe+0aosAcYUoND0OIJweEwr8ZChe
+mnWPAGCD/XEFOCZLgXi/wlFLDgcpZkPfK//QpaXbR2q7TYGjd4Cmj07Di+S69FfT
+hErS9HoxX2m/ef+FMIWSg9GfBVe7EGqA+3bmwkSNn83InFgB7lakxGodrp3usGSa
+wi0WnuhBMkYqETdeKLeILUKhmfL9b7mIt+bck68MLgrxq8HU4bEzPV/WJ/Mr2Foz
+UGvyXjTn8StdgCUXk5WwwE5gXAapYnLy4hcEcD4+vCC52N2W5ulDJfUc1YUoMCIB
+c7YOjbenx52Z3hnmfEyGceOp2+Zpdw==
+=GRr2
+-----END PGP SIGNATURE-----
+
+--Sig_/ErfPTUrGblVMXdZjl71eSr8--
 
