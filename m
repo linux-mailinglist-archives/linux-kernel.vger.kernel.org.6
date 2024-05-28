@@ -1,181 +1,151 @@
-Return-Path: <linux-kernel+bounces-193237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A74C8D28D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558E08D28DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44681F22D76
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:46:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA201F24CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BAF13F454;
-	Tue, 28 May 2024 23:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FF913F45D;
+	Tue, 28 May 2024 23:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RB+thYHk"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m7G5NiJI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED4422089;
-	Tue, 28 May 2024 23:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2022089;
+	Tue, 28 May 2024 23:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716939980; cv=none; b=O43dxqFS6gnVWl9hqd8MKeo4HK2vvlgXkzzAicpnT6b4Yn1A2wIsqwx5+/C4lp7A6DI/7/ND5Rozf3azQbeerchI0TkevVwu+z2QyfMIMDTCFIJLdA1Dxm0asYQd4M3MkFXga1HXe/guhNgdQeyzh0odvtumy5rSV3uuzj/vqE4=
+	t=1716940173; cv=none; b=MtP/IA8AqTDJzbEfmnqP4VuwO7n+jXGrBUSftJDyJcxKX1ZjcDXul73sv6lzVzekmMNV1zwkDe3idvNXM2vTgcAlTzlnctVqwsXifatusITIfBzQNsiW083qoh3WCQAKYUN4E7Z3hbtCgJHJ8uV2I1w1WP1IJEztSPc65eG13OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716939980; c=relaxed/simple;
-	bh=YLqkXKeVVXIKaRanTO4nqmtbsAC4ZBl7oQ9qvXWYfpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYPbfqqXa4vK8I8Nx469n2yYfxPPvrbtb2K4Yk2MfiNwIKjwrVni2a5gU2tOmBvTktMuVDItw3IJvM5dTayqONtR2BZGGpZU7ryYQfNXcnHJM6n7o9swsgYrbjH8eVR6/PXNfyi/zTbpWje2xeRcGBCG46reCAg7xiwT/tCfhkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RB+thYHk; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f8eaa14512so1160948b3a.3;
-        Tue, 28 May 2024 16:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716939978; x=1717544778; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6rGifC2Ni1u+HmrCMWiv1iMCtdV6Wvnc9UrGi2Lwz2U=;
-        b=RB+thYHku6Qa40JpgoUq8h+k99G+ULWZ3vBGw3Gosse1Wsrp+MmVHnhh1LcF0Bc0ah
-         46FxOvVKNPRLoHziMnIvBZdxu1rcsSbf5BM7BgakIz2vDXwYZYNKt4GBD6XqjO5pkMyl
-         BgplIHCfsCA25vMj9/ks1ny2F17HPSu6sW6TJjxbSDW6DZHSuiu4KlkYDc+KFgbGkhoO
-         hjcfKgNtahy/Aa/ec83Ml7F7FYStI0nBtHI9xirxrGDGi72+KdsD/nj85XfO1aLgapYj
-         GCEBVunUxMgC1kEJG84UbvQgLK1hAQyysqmJEwg7RdEy7DcoyLIu5vNTn4VWedi4xck5
-         QODg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716939978; x=1717544778;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6rGifC2Ni1u+HmrCMWiv1iMCtdV6Wvnc9UrGi2Lwz2U=;
-        b=biIyb93kTSmSbgXQXE8rY7aMZionfXI8vA0n+7GySoy26lyz0I6nrKjLLT8TSeauLJ
-         +QsyABQv8m/FaBkOIAwpMN181GxYjpjbVu5taZ9bI0OSjJrcN/B5Lbk+05xiajLW8l6s
-         95FRCagHax0Z5bZuVDWv2+3bpysz0FhqRnvGgyTpArvHItJV97lL6wVB9/9eYMiPPGTC
-         iEcxTTHW7VfIkbTGM0beSQd2+xmRPHos2b0DhWQWK3it1hyLUoxBP1kqfb1/hB3jySnS
-         IWHuDn/B491SV29NOxqIUoMikRVLf/o8hSkrhU5gAg/L8fwLUD3sJUHjOiMYle/EBfUK
-         0meA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFfR4PDC7w2Pbk0jY1tnv2ZQKuF8tpAU4hAvXurWrMmf1aL4/7+UOv7TSeVXVEe6vL08IE8Xf7I+JBNVDAS4oeC0kwUfNjYWCu3FvezJLCDzmsXhYXF9c3X2ZVpUyL265J
-X-Gm-Message-State: AOJu0Yydb2qHFDt6dqz/qEF+hBkbWPXq+1kkJNC3/bquvzM3DIiJG2Ug
-	Si2ZljfJXrpcphR95MQniHdPR4/OJsLbbPiqHvS8a9vKYH/jz0zq
-X-Google-Smtp-Source: AGHT+IGzHwXatJazufht+aUX1oiyytAppXaUsbzFl/OP5WP3nWqHHoFPkIdSzo7EHXl7K/yFpxk+xg==
-X-Received: by 2002:a05:6a20:f3b0:b0:1b1:f7a1:dfa6 with SMTP id adf61e73a8af0-1b212dfe653mr12291813637.38.1716939977891;
-        Tue, 28 May 2024 16:46:17 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-701cdd8fb27sm1591942b3a.7.2024.05.28.16.46.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 16:46:17 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 28 May 2024 13:46:16 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: David Vernet <void@manifault.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	torvalds@linux-foundation.org, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <ZlZsyFl79Zk074eK@slm.duckdns.org>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240502084800.GY30852@noisy.programming.kicks-ass.net>
- <ZjPnb1vdt80FrksA@slm.duckdns.org>
- <20240503085232.GC30852@noisy.programming.kicks-ass.net>
- <ZjgWzhruwo8euPC0@slm.duckdns.org>
- <20240513080359.GI30852@noisy.programming.kicks-ass.net>
- <20240513142646.4dc5484d@rorschach.local.home>
- <20240514000715.4765jfpwi5ovlizj@airbuntu>
- <20240514213402.GB295811@maniforge>
- <20240527212540.u66l3svj3iigj7ig@airbuntu>
+	s=arc-20240116; t=1716940173; c=relaxed/simple;
+	bh=J1EVgTuwrB1/ySa+nzHrhrWiG3u4AZwOSCUgS03zuLw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BhSvAt+4sq7di1n9oOlGsVrTITuSn0TbXxpSFGyupjXn43hLaO9UwnPTll80iMnqX4yHrImiOVlMueB5q7RHVcxwPl/lX+U2X+jM0wF2D3TcTsiXqONeS0qDsVJL8uyhWI+oeq1zkS0gVhii7exVdf1QRBmimqr9eWX8KjLyUlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m7G5NiJI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SKh8wX001482;
+	Tue, 28 May 2024 23:49:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=I3gCoeHpm6zr3IgjiQNbpm
+	ifqhZJpb/+eZbFbmBhDwU=; b=m7G5NiJIwxUDaEYRyDfX2nHTCWhNlJJHScV2MG
+	DPQ2LFkcLFueOt0Hhj6vpt+AA42cWy7U8sJ5Gc/WfhKjTyIGgJbRNoOVoipZKBpi
+	OdsCKWbDN2z5NlCjTl0N73c6jZJoAIg7EVM47UPYqdKH8jR//hJx0kgG5fud3i0w
+	eroYU6SQ6oGtkmHF/jENLMVyhgxQUJMigvU12zndSa3xTv2FjenWU3m4rnQtbI6Z
+	FpgAv0dYuRNSPFaLXNaTbxXA457rECHQF/3EtVVC4TmqOspmCsLyMVt05lVzbfSK
+	tLtVRDetExKa/vR8vr7ogC0YRv/Cfyt/S2T4nS2TNTv1XYQw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k7k9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 23:49:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SNnS4s029343
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 23:49:28 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 16:49:27 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 28 May 2024 16:49:23 -0700
+Subject: [PATCH] lib: crypto: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527212540.u66l3svj3iigj7ig@airbuntu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240528-md-lib-crypto-v1-1-840e468d118b@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAINtVmYC/x3MTQqDMBBA4avIrDuQBk1/rlJcJHFSBzTKjC2Ke
+ HfTLr/FezsoCZPCs9pB6MvKUy64XiqIvc9vQu6KwRpbm8becexw4IBRtnmZMDXW3B7O1S4lKM0
+ slHj9/15tcfBKGMTn2P8uA+fPiqPXhQSO4wRHNi+nfgAAAA==
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
+X-Proofpoint-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280175
 
-Hello,
+Fix the allmodconfig 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libchacha.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libpoly1305.o
 
-BTW, David is off for the week and might be a bit slow to respond. I just
-want to comment on one part.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/crypto/arc4.c      | 1 +
+ lib/crypto/des.c       | 1 +
+ lib/crypto/libchacha.c | 1 +
+ lib/crypto/poly1305.c  | 1 +
+ 4 files changed, 4 insertions(+)
 
-On Mon, May 27, 2024 at 10:25:40PM +0100, Qais Yousef wrote:
-..
-> And I can only share my experience, I don't think the algorithm itself is the
-> bottleneck here. The devil is in the corner cases. And these are hard to deal
-> with without explicit hints.
+diff --git a/lib/crypto/arc4.c b/lib/crypto/arc4.c
+index c2020f19c652..838812d18216 100644
+--- a/lib/crypto/arc4.c
++++ b/lib/crypto/arc4.c
+@@ -71,4 +71,5 @@ void arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
+ }
+ EXPORT_SYMBOL(arc4_crypt);
+ 
++MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/des.c b/lib/crypto/des.c
+index ef5bb8822aba..9518658b97cf 100644
+--- a/lib/crypto/des.c
++++ b/lib/crypto/des.c
+@@ -899,4 +899,5 @@ void des3_ede_decrypt(const struct des3_ede_ctx *dctx, u8 *dst, const u8 *src)
+ }
+ EXPORT_SYMBOL_GPL(des3_ede_decrypt);
+ 
++MODULE_DESCRIPTION("DES & Triple DES EDE Cipher Algorithms");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/libchacha.c b/lib/crypto/libchacha.c
+index dabc3accae05..cc1be0496eb9 100644
+--- a/lib/crypto/libchacha.c
++++ b/lib/crypto/libchacha.c
+@@ -32,4 +32,5 @@ void chacha_crypt_generic(u32 *state, u8 *dst, const u8 *src,
+ }
+ EXPORT_SYMBOL(chacha_crypt_generic);
+ 
++MODULE_DESCRIPTION("ChaCha stream cipher (RFC7539)");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/poly1305.c b/lib/crypto/poly1305.c
+index 26d87fc3823e..5d8378d23e95 100644
+--- a/lib/crypto/poly1305.c
++++ b/lib/crypto/poly1305.c
+@@ -76,3 +76,4 @@ EXPORT_SYMBOL_GPL(poly1305_final_generic);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Martin Willi <martin@strongswan.org>");
++MODULE_DESCRIPTION("Poly1305 authenticator algorithm, RFC7539");
 
-Our perceptions of the scope of the problem space seem very different. To
-me, it seems pretty unexplored. Here's just one area: Constantly increasing
-number of cores and popularization of more complex cache hierarchies.
+---
+base-commit: e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
+change-id: 20240528-md-lib-crypto-f520796646ff
 
-Over a hundred CPUs in a system is fairly normal now with a couple layers of
-cache hierarchy. Once we have so many, things can look a bit different from
-the days when we had a few. Flipping the approach so that we can dynamically
-assign close-by CPUs to related groups of threads becomes attractive.
-
-e.g. If you have a bunch of services which aren't latency critical but are
-needed to maintain system integrity (updates, monitoring, security and so
-on), soft-affining them to a number of CPUs while allowing some CPU headroom
-can give you noticeable gain both in performance (partly from cleaner
-caches) and power consumption while not adding that much to latency. This is
-something the scheduler can and, I believe, should do transparently.
-
-It's not obvious how to do it though. It doesn't quite fit the current LB
-model. cgroup hierarchy seems to provide some hints on how threads can be
-grouped but the boundaries might not match that well. Even if we figure out
-how to define these groups, figuring out group-vs-group competition isn't
-trivial (naive load-sums don't work when comparing across groups spanning
-multiple CPUs).
-
-Also, what about the threads with oddball cpumasks? Should we begin to treat
-CPUs more like other resources, e.g., memory? We don't generally allow
-applications to specify which specific physical pages they get because that
-doesn't buy anything while adding a lot of constraints. If we have dozens
-and hundreds of CPUs, are there fundamental reason to view them differently
-from other resources which are treated fungible?
-
-The claim that the current scheduler has the fundamentals all figured out
-and it's mostly about handling edge cases and educating users seems wildly
-off mark to me.
-
-Maybe we can develop all that in the current framework in a gradual fashion,
-but when the problem space is so wide open, that is not a good approach to
-take. The cost of constricting is likely significantly higher than the
-benefits of having a single code base. Imagine having to develop all the
-features of btrfs in the ext2 code base. It's probably doable, at least
-theoretically, but that would have been massively stifling, maybe to the
-point of most of it not happening.
-
-To the above particular problem of soft-affinity, scx_layered has something
-really simple and dumb implemented and we're testing and deploying it in the
-fleet with noticeable perf gains, and there are early efforts to see whether
-we can automatically figure out grouping based on the cgroup hierarchy and
-possibly minimal xattr hints on them.
-
-I don't yet know what generic form soft-affinity should take eventually,
-but, with sched_ext, we have a way to try out different ideas in production
-and iterate on them learning each step of the way. Given how generic both
-the problem and benefits from solving it are, we'll have to reach some
-generic solution at one point. Maybe it will come from sched_ext or maybe it
-will come from people working on fair like yourself. Either way, sched_ext
-is already showing us what can be achieved and prodding people towards
-solving it.
-
-Thanks.
-
--- 
-tejun
 
