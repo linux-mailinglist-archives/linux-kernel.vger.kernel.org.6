@@ -1,86 +1,80 @@
-Return-Path: <linux-kernel+bounces-192232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA40D8D1A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:56:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E90B8D1A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E51E1F242FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5289B1C22456
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C4016C875;
-	Tue, 28 May 2024 11:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AA74C97;
+	Tue, 28 May 2024 11:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CL3KAjlV"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fK2XAQqT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4B016C841
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E5116C84C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897407; cv=none; b=lsbVmDj1DcNmcu4OEntb7dGn0S2Wn3BvvlcAq4Vjv26XVAp8n7HyNjD4iNp/GnoTwXxC2YFc10HAoU+HnGMmEIs4kRXRmkF4etIs6fMc5E6crxTznX3z+NEzhDdz0kfqI+g1xc+RTcbMMJDXiBKRzlvMNbZG63Z2uice5xpxnnk=
+	t=1716897434; cv=none; b=Tunv9XMvHrPXUJnOEqpovqflHM1xVugjHwciFARib6HxqcFTr3rKuvgsZJwJ4OMHo7yKp8bvqud3e7Bxp5Yenw02YMRRNoZmEzW5HqTqsg/GIYGaC4g1suSvoGgViC1lWqKfbtebAdP68QYOzwr8HNKz5+5PQTzorzqItjx5mac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897407; c=relaxed/simple;
-	bh=JoFKSxnpuAFmFALL4XOOxMVE666JdBUw5hFTodj0Jok=;
+	s=arc-20240116; t=1716897434; c=relaxed/simple;
+	bh=w7aldM16JHgcJeDQZB2/8l7sNkK7STVmVf2OHcFU4Ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFgz77O9ZCWQbFwacrX1gfotDw+CWd2UY6xrRhfyHT+Et1bT49RO5p0/XhNmya3zZm4BGwwcelqvAyYzbhmvLaVOcI7pfLk5Ulfv0rrR7cJ9NiaGRvk1kxAk+9Qc+pFS0UEtN7vTkKx2rUYQpeVLxGS5zsz6CSgM7X5Ar32kMYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CL3KAjlV; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e95a1eff78so9084801fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716897404; x=1717502204; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oCjaRC8Eu5PO/jMlynPBkhbwEoTzC3Pm/rk64eh59dQ=;
-        b=CL3KAjlVydEbiEutMnkbvpPZEB9c+6zsTebZCzS86Av2RbMYEoL69qIlOXbIoTaB3b
-         0TJg7iMaDNNckcHdu1aCR6sMfvNe9m+Yg66kogy/V52HHqdsTTmmOcd6CO7jceZ7YyRA
-         jO9xVCuox2U9pXNT8hoDNkIm/eS9T/b1zhCepcO+pk10dHukfskUjxVovMf4TPTt47SB
-         mhw7YTyPt1FaZY9AS2TZRAQESl9Pooe+ZuF2P/5C1OUQRZkVxwhHRu3h/N+8ExAH7I6y
-         iP2SJCBTDk3Y6Icetwj5D5xUVA1Sg4uNBUHwtCEXt4pBa5lgq9iSFqKlCofW3IcL0XqI
-         xuQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716897404; x=1717502204;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oCjaRC8Eu5PO/jMlynPBkhbwEoTzC3Pm/rk64eh59dQ=;
-        b=dohrGhNg4kd5IS3M6LAJQzV5/hLWeYN9oj6lc8eRE1Ia/ts4bPLIq5kDTS9uP2Zsxm
-         TDC7ay0UPgrdXYBvnIFkQMof24WGpfg624ZaeFkhZkBA/7FjuSgYVv5kufGgPMwPOPBi
-         6MLHbflauA2/DIhjilpcdhQgfpkuQhmONDL9eualVL8fbcr1PJNTeFNbi312ZAL9eBSe
-         rQ4A4a+o3EmQ1l9ayfQDvU9TcMZPuu+6tINf4ex0Jp/rX2REU6m+jHx066Jo2NmnNVrI
-         sbx/QoKC4AvEP4njZUfhzqeVRntaws1txphDraJMLe+TEUjNVq94XZcQp2tddFMJTW3e
-         OlFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRcg6Ud1RRtvoClWZ/V6MJdcoH13jC4IdMpXSU1w0c2WweLRunLfbLnuylG++MPTcFtDBZmr2OUNHR3RdKbk1YYoJ8mPWaGiPbfCLn
-X-Gm-Message-State: AOJu0YyQiJZxR26effcFPf1QVn6hhYatDEHE4CxyVCXga8uF1x2kSGGb
-	lZFfQZmiwiBFoSwlKPBfp36rMhfwYk11cKN/s4IiXtQX3cNfSb2KziE9W1VnGnk=
-X-Google-Smtp-Source: AGHT+IHsJsDnQl+EL8lCVJ54Xb104AElU7vavZkJuJ90hTUqa4aoOEIcclt6lXoq7iXLRtqyt4A4DQ==
-X-Received: by 2002:a2e:b0ef:0:b0:2e9:834e:b9e8 with SMTP id 38308e7fff4ca-2e9834ebb5amr28341211fa.1.1716897404252;
-        Tue, 28 May 2024 04:56:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc4962sm22516371fa.11.2024.05.28.04.56.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 04:56:43 -0700 (PDT)
-Date: Tue, 28 May 2024 14:56:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] drm/msm/dpu: adjust data width for widen bus case
-Message-ID: <sjz2el73774uaht7gfwbyuteprd3nv73gvj6g557putrxh7jut@g34dvy4s23ui>
-References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
- <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-2-f797ffba4682@linaro.org>
- <57sr3ssi6nwermdqtnb2ackmu4tlxs4gcslvp4v6ndafnvbqhb@4npuqfpkzzan>
- <CABymUCOCcgfHsBaFBk63z+CLJu6Lee983nCM14PgPWZjkFFikQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxO/eGhsOWg1dCDc9lrAntiaMIvhGMId4ILr0fCjnAtfIs8TrRK/atnHtYJqVkN78AnEknvbQB6crhbh/3gqwBS10LBtWDXSvvDn6O183gB/wYWMgWXbtwefKjn8cL8qnyiPbdes794YG11oFPW7GScyf+LL+JqWcagsQXZOyu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fK2XAQqT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716897431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIJ8nojhETCDkAUUqhBd0573y1zDKmktkeIXW+mucrc=;
+	b=fK2XAQqTIEiC0vGYje65e89L5NoLuk4Q6XRpAk7mPDFKlxWh+aKFHPxY6k+8JuA48ur4qr
+	D3x+f86SachW6PCjDBc8SygUjQCyvn7kkwV0kKfb49R3/IYreo0+Wi601Z0Tv3Z5bOQYDG
+	32wP1YrsGQl7FKt2Mrs9g7k7lCPWiKA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-61-yZQmyO8MOM2g7Hj2GsF-Ig-1; Tue, 28 May 2024 07:57:08 -0400
+X-MC-Unique: yZQmyO8MOM2g7Hj2GsF-Ig-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D8CA08058DF;
+	Tue, 28 May 2024 11:57:07 +0000 (UTC)
+Received: from alecto.usersys.redhat.com (unknown [10.45.224.59])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 660F840004D;
+	Tue, 28 May 2024 11:57:05 +0000 (UTC)
+Date: Tue, 28 May 2024 13:57:03 +0200
+From: Artem Savkov <asavkov@redhat.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf record: add a shortcut for metrics
+Message-ID: <20240528115703.GB449511@alecto.usersys.redhat.com>
+References: <20240527101519.356342-1-asavkov@redhat.com>
+ <ZlS8pc39t2c1WFye@x1>
+ <ZlS9M1vcxZ3Qsx_B@x1>
+ <ZlTCvelaGVb6lCia@x1>
+ <ZlTG-kPuYUyHLQZ2@x1>
+ <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,58 +84,143 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABymUCOCcgfHsBaFBk63z+CLJu6Lee983nCM14PgPWZjkFFikQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fWmmtagTVfacFZgdhughvU--Dz0=jkoqFB8CP1Qd3o3Yw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Tue, May 28, 2024 at 05:59:13PM +0800, Jun Nie wrote:
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> 于2024年5月28日周二 08:48写道：
+On Mon, May 27, 2024 at 10:01:37PM -0700, Ian Rogers wrote:
+> On Mon, May 27, 2024 at 10:46 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
 > >
-> > On Mon, May 27, 2024 at 10:21:48PM +0800, Jun Nie wrote:
-> > > data is valid for only half the active window if widebus
-> > > is enabled
+> > On Mon, May 27, 2024 at 02:28:32PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Mon, May 27, 2024 at 02:04:54PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > On Mon, May 27, 2024 at 02:02:33PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > > On Mon, May 27, 2024 at 12:15:19PM +0200, Artem Savkov wrote:
+> > > > > > Add -M/--metrics option to perf-record providing a shortcut to record
+> > > > > > metrics and metricgroups. This option mirrors the one in perf-stat.
 > > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> > > index 225c1c7768ff..f97221423249 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> > > @@ -168,6 +168,15 @@ static void dpu_hw_intf_setup_timing_engine(struct dpu_hw_intf *intf,
-> > >
-> > >       data_width = p->width;
-> > >
-> > > +     /*
-> > > +      * If widebus is enabled, data is valid for only half the active window
-> > > +      * since the data rate is doubled in this mode. But for the compression
-> > > +      * mode in DP case, the p->width is already adjusted in
-> > > +      * drm_mode_to_intf_timing_params()
+> > > > > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > > > > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
 > >
-> > Is there any reason for divergence here?
-> 
-> Lots of parameters in dpu_hw_intf_setup_timing_engine() is calculated
-> from timing->width,
-> such as hsync_period and display_v_start. So the width cannot be
-> adjusted beforehand in
-> drm_mode_to_intf_timing_params(). Otherwise, we get below error.
-> 
-> I guess the interface timing configuration differ in silicon, thus the
-> software shall handle the
-> difference. If we adjust the width beforehand for DSI, we get below error.
-> 
-> [    6.625446] [drm:dpu_encoder_frame_done_timeout:2469] [dpu
-> error]enc31 frame done timeout
-> [    6.642369] [drm:dpu_encoder_phys_vid_wait_for_commit_done:525]
-> [dpu error]vblank timeout: 4200c1
-> [    6.642395] [drm:dpu_kms_wait_for_commit_done:493] [dpu error]wait
-> for commit done returned -110
-> 
+> > > How did you test this?
+> >
+> > > The idea, from my notes, was to be able to have extra columns in 'perf
+> > > report' with things like IPC and other metrics, probably not all metrics
+> > > will apply. We need to find a way to find out which ones are OK for that
+> > > purpose, for instance:
+> >
+> > One that may make sense:
+> >
+> > root@number:~# perf record -M tma_fb_full
+> > ^C[ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 3.846 MB perf.data (21745 samples) ]
+> >
+> > root@number:~# perf evlist
+> > cpu_core/CPU_CLK_UNHALTED.THREAD/
+> > cpu_core/L1D_PEND_MISS.FB_FULL/
+> > dummy:u
+> > root@number:~#
+> >
+> > But then we need to read both to do the math, maybe something like:
+> >
+> > root@number:~# perf record -e '{cpu_core/CPU_CLK_UNHALTED.THREAD/,cpu_core/L1D_PEND_MISS.FB_FULL/}:S'
+> > ^C[ perf record: Woken up 40 times to write data ]
+> > [ perf record: Captured and wrote 14.640 MB perf.data (219990 samples) ]
+> >
+> > root@number:~# perf script | head
+> >     cc1plus 1339704 [000] 36028.995981:  2011389 cpu_core/CPU_CLK_UNHALTED.THREAD/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >     cc1plus 1339704 [000] 36028.995981:    26231   cpu_core/L1D_PEND_MISS.FB_FULL/:           1097303 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >     cc1plus 1340011 [001] 36028.996008:  2004568 cpu_core/CPU_CLK_UNHALTED.THREAD/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >     cc1plus 1340011 [001] 36028.996008:    20113   cpu_core/L1D_PEND_MISS.FB_FULL/:            8c23b4 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >       clang 1340462 [002] 36028.996043:  2007356 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
+> >       clang 1340462 [002] 36028.996043:    23481   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb43b045d release_pages+0x3dd ([kernel.kallsyms])
+> >     cc1plus 1339622 [003] 36028.996066:  2004148 cpu_core/CPU_CLK_UNHALTED.THREAD/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >     cc1plus 1339622 [003] 36028.996066:    31935   cpu_core/L1D_PEND_MISS.FB_FULL/:            760874 [unknown] (/usr/libexec/gcc/x86_64-pc-linux-gnu/13/cc1plus)
+> >          as 1340513 [004] 36028.996097:  2005052 cpu_core/CPU_CLK_UNHALTED.THREAD/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
+> >          as 1340513 [004] 36028.996097:    45084   cpu_core/L1D_PEND_MISS.FB_FULL/:  ffffffffb4491d65 __count_memcg_events+0x55 ([kernel.kallsyms])
+> > root@number:~#
+> >
+> > root@number:~# perf report --stdio -F +period | head -20
+> > # To display the perf.data header info, please use --header/--header-only options.
+> > #
+> > #
+> > # Total Lost Samples: 0
+> > #
+> > # Samples: 219K of events 'anon group { cpu_core/CPU_CLK_UNHALTED.THREAD/, cpu_core/L1D_PEND_MISS.FB_FULL/ }'
+> > # Event count (approx.): 216528524863
+> > #
+> > #         Overhead                Period  Command    Shared Object      Symbol
+> > # ................  ....................  .........  .................  ....................................
+> > #
+> >      4.01%   1.09%  8538169256  39826572  podman     [kernel.kallsyms]  [k] native_queued_spin_lock_slowpath
+> >      1.35%   1.17%  2863376078  42829266  cc1plus    cc1plus            [.] 0x00000000003f6bcc
+> >      0.94%   0.78%  1990639149  28408591  cc1plus    cc1plus            [.] 0x00000000003f6be4
+> >      0.65%   0.17%  1375916283   6109515  podman     [kernel.kallsyms]  [k] _raw_spin_lock_irqsave
+> >      0.61%   0.99%  1304418325  36198834  cc1plus    [kernel.kallsyms]  [k] get_mem_cgroup_from_mm
+> >      0.52%   0.42%  1103054030  15427418  cc1plus    cc1plus            [.] 0x0000000000ca6c69
+> >      0.51%   0.17%  1094200572   6299289  podman     [kernel.kallsyms]  [k] psi_group_change
+> >      0.42%   0.41%   893633315  14778675  cc1plus    cc1plus            [.] 0x00000000018afafe
+> >      0.42%   1.29%   887664793  47046952  cc1plus    [kernel.kallsyms]  [k] asm_exc_page_fault
+> > root@number:~#
+> >
+> > That 'tma_fb_full' metric then would be another column, calculated from
+> > the sampled components of its metric equation:
+> >
+> > root@number:~# perf list tma_fb_full | head
+> >
+> > Metric Groups:
+> >
+> > MemoryBW: [Grouping from Top-down Microarchitecture Analysis Metrics spreadsheet]
+> >   tma_fb_full
+> >        [This metric does a *rough estimation* of how often L1D Fill Buffer
+> >         unavailability limited additional L1D miss memory access requests to
+> >         proceed]
+> >
+> > TopdownL4: [Metrics for top-down breakdown at level 4]
+> > root@number:~#
+> >
+> > This is roughly what we brainstormed, to support metrics in other tools
+> > than 'perf stat' but we need to check the possibilities and limitations
+> > of such an idea, hopefully this discussion will help with that,
+>
+> Putting metrics next to code in perf report/annotate sounds good to
+> me, opening all events from a metric as if we want to sample on them
+> less so.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+The idea was to record whatever data was asked on record step and
+provide the list of all metrics that can be calculated out of that data
+in perf report, e.g. you could record tma_info_thread_ipc but report
+will suggest both it and tma_info_thread_cpi.
 
+> We don't have metrics working with `perf stat record`, I
+> think Kan may have volunteered for that, but it seems like something
+> more urgent than expanding `perf record`. Presumably the way the
+> metric would be recorded for that could also benefit this effort.
+>
+> If you look at the tma metrics a number of them have a "Sample with".
+> For example:
+> ```
+> $ perf list -v
+> ...
+>   tma_branch_mispredicts
+>        [This metric represents fraction of slots the CPU has wasted
+> due to Branch Misprediction.
+>         These slots are either wasted by uops fetched from an
+> incorrectly speculated program path;
+>         or stalls when the out-of-order part of the machine needs to
+> recover its state from a
+>         speculative path. Sample with: BR_MISP_RETIRED.ALL_BRANCHES.
+> Related metrics:
+>         tma_info_bad_spec_branch_misprediction_cost,tma_info_bottleneck_mispredictions,
+>         tma_mispredicts_resteers]
+> ...
+> ```
+> It could be logical for `perf record -M tma_branch_mispredicts ...` to
+> be translated to `perf record -e BR_MISP_RETIRED.ALL_BRANCHES ...`
+> rather than to do any form of counting.
 
--- 
-With best wishes
-Dmitry
+Thanks for the pointer, I'll see how this could be done.
+
+--
+ Artem
+
 
