@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-191671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E6E8D1270
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:09:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F898D126F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9581D1F221A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 630B8283C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED1913FEE;
-	Tue, 28 May 2024 03:09:25 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3371D551;
+	Tue, 28 May 2024 03:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvHwy407"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1097C10A3E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2BA1C68E;
+	Tue, 28 May 2024 03:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716865764; cv=none; b=hpLX9t5qS/+aM2CiydYFdKXsarGuIVnSC1SAdwMVM+6IE/YgyOzCckGU7EUAlclBWsF2kNCDJt6Bgha+J8Eqn3cB/EAu5ZGlJp3dkG1WjSS0wyD8GmA4lFp04RLjdSWClvM3s88vVjAKj2AawNPetsw55eH0XDT8tM4hUgvVYA4=
+	t=1716865720; cv=none; b=FHwZwpCwFoCYzMeVVdMEabmep2mk9SQwXELrYZ5Mp2E/k6L8ClcHqyPTVlz3wPa1i41Rcnfz+te9UmVj0GGtcWxttylex7S9K4ICGjlXsjFXMsIoYME6hEPomOD09Zzw51HINEdtW7aLeq2ADq09oWoLPzTbKNaGMzjt15vSmW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716865764; c=relaxed/simple;
-	bh=jZ4nm2tq08j6x7UOKHDDf9E1M3TFeJumzt55PcVdq/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qP6oG6bBo8RnkT5oDcrkkJRjZYBVsIM6hiA0nBgiihSptbaYL0eCRXsFc2vBD9Q/Ysh73JHFI/egAC3sqW9epNOs7IPYp6ostTavpaQP4WT4roKXHrVnjDoasMjXLj7EOdqreT0rFTePCDuyjGsOv2Z2ulQm/EExZCpXFgkPT4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowACnrRHESlVmaI7cBw--.37955S2;
-	Tue, 28 May 2024 11:08:53 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	sam@ravnborg.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	sre@kernel.org,
-	michael.riesch@wolfvision.net
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/panel: sitronix-st7789v: Add check for of_drm_get_panel_orientation
-Date: Tue, 28 May 2024 11:08:32 +0800
-Message-Id: <20240528030832.2529471-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716865720; c=relaxed/simple;
+	bh=d7d5F6caD9/yJ3kRjdZS1IPLThXJka7WSNS5A4PF+fI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpnnAxqKmWdoeux2PNYKnKsSuBqdq3wvf9WO1jTJjPVy8A0uiQMWp4IlO+hAeF38DiSt20xh3VHG50mVCnObW15DAc8Y7HgZMknQlJak441gsfbKkVJdhaFO5BJgTEgcUvH30lJTQe3R2QFzc9HmsKN7ar463UqoUMI3OSWB2Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvHwy407; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 784D4C2BBFC;
+	Tue, 28 May 2024 03:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716865719;
+	bh=d7d5F6caD9/yJ3kRjdZS1IPLThXJka7WSNS5A4PF+fI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RvHwy407wYBqxzTnTcA53k/E8zgm1pDTTfjIQXaUzK3/TpImMrDDUZB3odnqXQyhC
+	 6vPE23w45KBrQ7BtUzZMuThb1bl84dr2YscivnKnXTQsQ0ufMMW14rDEm9Tx3uh+uG
+	 Kdy+HSAyRxk4vCvBNnr5NsOtQqD8eHQeXkA/i+WQIv2z/Cmr5KTX87daCqpAep3H69
+	 18g3xUEkP/CgatryUq61t91zjQcjhHPVr4sGLQwYdGooaF8aaXXMk8dQe9yf2FCEFB
+	 weRefEEoI9zmePnNV7pachBaw4yKpdfeawo9LDU1l0PaaeKZek1vNkkzwv/Zbk+JDK
+	 ZGpzDkDUsEhfA==
+Date: Tue, 28 May 2024 03:08:36 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	"Dustin L. Howett" <dustin@howett.net>,
+	Kieran Levin <ktl@frame.work>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] platform/chrome: cros_ec_lpc: Correct ACPI name for
+ Framework Laptop
+Message-ID: <ZlVKtL7GUHRWkFpf@google.com>
+References: <20240515055631.5775-1-ben@jubnut.com>
+ <20240515055631.5775-6-ben@jubnut.com>
+ <ZkscFnmHeWWma7Nb@google.com>
+ <87jzjk1ibr.fsf@jubnut.com>
+ <Zk_63rrDJFhN1Y1q@google.com>
+ <87cypb12j9.fsf@jubnut.com>
+ <ZlKPwlF86Oe8OPK9@google.com>
+ <877cff2kpb.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACnrRHESlVmaI7cBw--.37955S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw1xCF1xJr48CFW7uF4rXwb_yoWkXrX_C3
-	WUZF9rXr90kryv9rnrZa15XF92vFs5uF4v9w18KasrCF15G3ZrZay0gry5Z3y8X3WUC3s8
-	Jan5ZFWakF47WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JU-miiUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cff2kpb.fsf@jubnut.com>
 
-Add check for the return value of of_drm_get_panel_orientation() and
-return the error if it fails in order to catch the error.
+On Mon, May 27, 2024 at 07:06:40PM +0100, Ben Walsh wrote:
+> Tzung-Bi Shih <tzungbi@kernel.org> writes:
+> 
+> > On Fri, May 24, 2024 at 07:35:22PM +0100, Ben Walsh wrote:
+> 
+> >> I could add a new quirk which provides an alternative ACPI match table
+> >> to be used instead of the default. In the default case the match_table
+> >> will contain only "GOOG0004" as before. But in the Framework EC case the
+> >> match table will be "PNP0C09".
+> >
+> > I think it doesn't work as the current quirk is handling in
+> > cros_ec_lpc_probe() which is after matching.
+> 
+> I was thinking of a new quirk called CROS_EC_LPC_QUIRK_ACPI_MATCH, and
+> putting it in cros_ec_lpc_init(), not cros_ec_lpc_probe(). Do we have to
+> do all quirk handling in cros_ec_lpc_probe()?
 
-Fixes: b27c0f6d208d ("drm/panel: sitronix-st7789v: add panel orientation support")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+No, but there is already code in cros_ec_lpc_probe() for handling quirks and
+we would like to reuse them if we could.
 
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-index 88e80fe98112..8b15e225bf37 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-@@ -643,7 +643,9 @@ static int st7789v_probe(struct spi_device *spi)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to get backlight\n");
- 
--	of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
-+	ret = of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "Failed to get orientation\n");
- 
- 	drm_panel_add(&ctx->panel);
- 
--- 
-2.25.1
+Also a possible issue: MODULE_DEVICE_TABLE() wouldn't work if the table changes
+during runtime.
 
+> 
+> > My original idea: would it be possible to get the `adev` in cros_ec_lpc_probe()
+> > via any lookup API?  If yes, it could still use DMI match and get `adev` if
+> > required.
+> 
+> That works; I've tested it.
+> 
+> In this scenario we're not using the existing PNP0C09 platform device,
+> which means I can't look at
+> /sys/bus/acpi/devices/PNP0C09\:00/physical_node/driver and see the
+> driver. Is this OK?
+> 
+> (Note that ACPI_COMPANION_SET() doesn't fix this. You can use
+> acpi_bind_one() but that seems more like internal plumbing).
+
+As long as ACPI_COMPANION() in the driver can get the correct `adev`, I guess
+it's fine.  Otherwise, put the `adev` to somewhere device specific (e.g.
+struct cros_ec_lpc) should also work.
 
