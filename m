@@ -1,236 +1,164 @@
-Return-Path: <linux-kernel+bounces-193126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B218D272E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCAF8D271C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D571F2209F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481BE283EFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937F417BB2C;
-	Tue, 28 May 2024 21:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9FD17BB1B;
+	Tue, 28 May 2024 21:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="IPDeRljL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hve18XNY"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SroBXdpL"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29C317BB08;
-	Tue, 28 May 2024 21:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313BF17E8EB;
+	Tue, 28 May 2024 21:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932276; cv=none; b=uKEkzD/Bs2fo+d69li+ax72IBWNXAMT/iYfHzGvaSaEbxka2ClwCoBBt5xVpllqnxhngs/U35eqrgkJ1M2y1mMtK1I2pTiBb4BpTb0YyMidbiuXLjKU2UgRo31xlQHAP8z1qHVYd+1vM9okoqzMzSPJbAdWFHq4ojXLUpLqu6zk=
+	t=1716932065; cv=none; b=kIOUszLm2CsnrV4NTHfm+/P3IEdM6L/K3nITqS/SSo9tsL0SePIZjlwhMCTcvIp+8JNiTYabX75zoG6gE43ue8v7SG0Omi2ZGGGnhtgPn7edCiNYZNAK7oGdfu8m76knYbAtEqKGQXdXPgMNiuD8uHh2B0oQ2xGGGzOMwPSQLqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932276; c=relaxed/simple;
-	bh=R/HsicMJlYLrjtAfiU+F9j/7/gZohzq4BEe82lohKfM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=hGn0DmivUQanfEdMuDv8dJduJqvDA44rXQ6yIN7++pN5CDkzHhE1jzLZOaSDAQckSyvCxf66jBmSwkfh2aVYV2B5579RKaxBK1yUw3EYj3Q4lmWCcx54bkZOz1uUx/ObrMeEdm+OT+vqyvq7UArflHgRsQu+nnR3IcDO402yDIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=IPDeRljL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hve18XNY; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id C595B18000C8;
-	Tue, 28 May 2024 17:37:53 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Tue, 28 May 2024 17:37:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1716932273;
-	 x=1717018673; bh=Z4gInH7+jobeFXZ5owoWpleJ3cPNt4nDoKMyy5VdAto=; b=
-	IPDeRljLBbVgK6Hkj/L5hKqpEg49aeMT80ZYbtMB4KxwC1WalCRo+zWeT44Nrfam
-	BEKFoRDwlteTSBuFANbQVt1ADXWL6bnDHDU1aSDkczZBeQYchmcvWK+A5ykozDIy
-	fNrrj1mMW7rxTDRtYmNVT1WlJojKiKbSfBNUf+S/p6VMfHKwJYFLc2M3DBuWGWHq
-	Z8iWbk7iLGUfRUFcpyhS3/rfzBTHLQ45SinRbHqAZh4OBUbnh6Pz5f0UToNnitT7
-	g9ej8yUl/0HWKqzuNr9TbMEmxilW8dHNgM7CbS1gX6oNc3ijOtq03yaMStIxYJRh
-	11e2jMCdfheCvIWohg7+Rg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716932273; x=
-	1717018673; bh=Z4gInH7+jobeFXZ5owoWpleJ3cPNt4nDoKMyy5VdAto=; b=h
-	ve18XNYgcbOos429JBHVkUpBUlJgtyD4O22Nh0UIOSLX64USBdm6YlAkz+iYqMDX
-	c2/HnK3ew3ILwRGjmZYaPW+v+o+95QZtVSnTcPK+BWwxNupQHlE8KF5FIQsZVXmG
-	5qWYT7T23Gvvgv9CxNbXR605wq0dLsAYZsECF9cTO5aGuCkmmildgmmFw/s8rzkc
-	zri8LOMStLypT/gLZjOmo7FPUPfWDwZEd12TZSQwRofhSB9vO4Dckjq4J9ch+/T3
-	zwqFOPQPst61ZdUnFS1xqBfU9/lGiH57X4ihGy9sAeuKH7KoNMvyin6Hr2vAMjvL
-	q8JUFEYEcuUVgdkyYil6Q==
-X-ME-Sender: <xms:sU5WZohDSsTr8NjdHT6nXV5CYxQXGIqwzhC0zltnB0i7uP-00sxQQg>
-    <xme:sU5WZhANocVYCckUIVNG1AkfclCb-trSGVKhIxFi5_sph7f9WQXSpd0FSECk9VEUx
-    PpBAOeWgxDjs-7YY50>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejlecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedfnfhukhgv
-    ucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrh
-    hnpeefuefghfdvueefheeiledvgeefffevgeelhedtvdehgeekteeugedtgeeuhedvleen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvg
-    eslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:sU5WZgFIb7l-S2ekLIQmYlGFX_ljRz-2ZEuXPTnPcFujoEyGxUD3Hw>
-    <xmx:sU5WZpT64XKKTUpegcsgNZpdYuUZ35y4rBjB4ab14Q7-3boDxr-Ztg>
-    <xmx:sU5WZlxtDIbBuI5JwTbcaFEDKO21XHFSckvNoAN8csyodQQLiK8kww>
-    <xmx:sU5WZn7UQVenBlEBCYpaFFcHNHye1kScNi3kF-WLq2Dq2nG2t8To0A>
-    <xmx:sU5WZt8LVQCcGsC3uw1D5ktiW5UlO7OOeHEuqCjBpRVkucBZEXq9NIfw>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 128EA2340080; Tue, 28 May 2024 17:37:53 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716932065; c=relaxed/simple;
+	bh=66jCgIAfVLYODIuS69ZJMzNLkJBlcRvktHQeAOpY69I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iTWvjptikYnTVa4KNVZPGOKxxC6e4up3uM+WQWFKAdChaXTTQ5uwOYwW/8omqAJhZwyoMGl/ZolBcI3cgStNgd9wMY9e6FHy+DQUmFcTzgGTIfQKVd8w3YBH+wjLA1VxwhnshxTeiJtsyUWWb8p9s3y/sjIpdJIG5UMMElOBzcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=SroBXdpL; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716932064; x=1748468064;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=66jCgIAfVLYODIuS69ZJMzNLkJBlcRvktHQeAOpY69I=;
+  b=SroBXdpLIpi11zC9ZpxyjgfwKFea/lX1mpyepsj6qi45H2kOfji0FKze
+   +QChXWp3h7IXLXGrp6AtOBPk04wy0gGlKxVjPdQLzpZp21Q1u9rkXDZ62
+   uEQcwf+Pd5cRnCKgpAlIdRpQCWSx5+l8/HUzCwoygzlQyexPYeJzr7426
+   LfTimYA3Xos8WawSR/sgYpBeM9qAXeUWsz1CPsAfeK9LPXSQRqjisKMAV
+   zE0D6sclxXk5fhTYLCradv2mGB4t0L/T8S+LhXorVOnhlWVDmKoAjI4uj
+   QndOqDPVO77T19AnFXrVthmctnTYjVtM7SA+O0ugR74j3r0qSt8G3SA+V
+   w==;
+X-CSE-ConnectionGUID: 7btE8S4STMGx7zw2VOaPVA==
+X-CSE-MsgGUID: RsSuqp3LTHakwHagEdfHUw==
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="28964721"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 14:34:23 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 28 May 2024 14:34:12 -0700
+Received: from hat-linux.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 28 May 2024 14:34:12 -0700
+From: <Tristram.Ha@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
+	<tristram.ha@microchip.com>
+Subject: [PATCH net] net: phy: Micrel KSZ8061: fix errata solution not taking effect problem
+Date: Tue, 28 May 2024 14:37:34 -0700
+Message-ID: <1716932254-3703-1-git-send-email-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a476aebc-fb31-4236-81cf-70a9e1e564a3@app.fastmail.com>
-In-Reply-To: <4660daf1-f42f-9b65-eaf5-30daf2931058@linux.intel.com>
-References: <20240528013626.14066-1-luke@ljones.dev>
- <20240528013626.14066-8-luke@ljones.dev>
- <4660daf1-f42f-9b65-eaf5-30daf2931058@linux.intel.com>
-Date: Wed, 29 May 2024 09:37:32 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Hans de Goede" <hdegoede@redhat.com>
-Cc: corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/9] platform/x86: asus-wmi: add enable/disable CPU cores
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
+From: Tristram Ha <tristram.ha@microchip.com>
 
+KSZ8061 needs to write to a MMD register at driver initialization to fix
+an errata.  This worked in 4.14 kernel but not in newer kernels.  The
+issue is the main phylib code no longer resets PHY at the very beginning.
+Calling phy resuming code later will reset the chip if it is already
+powered down at the beginning.  This wipes out the MMD register write.
+Solution is to implement a phy resume function for KSZ8061 to take care
+of this problem.
 
-On Tue, 28 May 2024, at 9:27 PM, Ilpo J=C3=A4rvinen wrote:
-> Hi,
->=20
-> Hans, please check my question below.
->=20
-> On Tue, 28 May 2024, Luke D. Jones wrote:
->=20
-> > Exposes the WMI functions for enable/disable of performance and
-> > efficiency cores on some laptop models (largely Intel only).
-> >=20
-> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> > ---
->=20
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Doc=
-umentation/ABI/testing/sysfs-platform-asus-wmi
-> > index 3b4eeea75b7b..ac881e72e374 100644
-> > --- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> > +++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> > @@ -226,3 +226,22 @@ Description:
-> >  Set panel to UHD or FHD mode
-> >  * 0 - UHD,
-> >  * 1 - FHD
-> > +
-> > +What: /sys/devices/platform/<platform>/cores_enabled
-> > +Date: Jun 2024
-> > +KernelVersion: 6.11
-> > +Contact: "Luke Jones" <luke@ljones.dev>
-> > +Description:
-> > + Enable/disable efficiency and performance cores. The format is
-> > + 0x[E][P] where [E] is the efficiency core count, and [P] is
-> > + the perfromance core count. If the core count is a single digit
->=20
-> performance
->=20
-> > + it is preceded by a 0 such as 0x0406; E=3D4, P=3D6, 0x1006; E=3D10=
-, P=3D6
-> > +
-> > +What: /sys/devices/platform/<platform>/cores_max
-> > +Date: Jun 2024
-> > +KernelVersion: 6.11
-> > +Contact: "Luke Jones" <luke@ljones.dev>
-> > +Description:
-> > + Show the maximum performance and efficiency core countin format
-> > + 0x[E][P] where [E] is the efficiency core count, and [P] is
-> > + the perfromance core count.
->=20
-> performance
->=20
-> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/=
-asus-wmi.c
-> > index 4b045f1828f1..f62a36dfcd4b 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -815,6 +815,46 @@ static ssize_t panel_fhd_store(struct device *d=
-ev,
-> >  WMI_SIMPLE_SHOW(panel_fhd, "%d\n", ASUS_WMI_DEVID_PANEL_FHD);
-> >  static DEVICE_ATTR_RW(panel_fhd);
-> > =20
-> > +/* Efficiency and Performance core control ************************=
-**********/
-> > +static ssize_t cores_enabled_store(struct device *dev,
-> > +     struct device_attribute *attr,
-> > +     const char *buf, size_t count)
-> > +{
-> > + struct asus_wmi *asus =3D dev_get_drvdata(dev);
-> > + int result, err;
-> > + u32 cores, max;
-> > +
-> > + result =3D kstrtou32(buf, 16, &cores);
-> > + if (result)
-> > + return result;
-> > +
-> > + err =3D asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CORES_MAX, &max=
-);
-> > + if (err < 0)
-> > + return err;
-> > +
-> > + if (cores > max) {
->=20
-> This only checks one part of it and the P part can contain whatever=20
-> garbage as long as E is small enough?
->=20
-> But I'm not sure if it's good idea to have these two changed through t=
-he=20
-> same sysfs file, I'm leaning more on that it would be better to split =
-the=20
-> interface for P and E.
->=20
-> Hans, what you think about this?
+Fixes: 232ba3a51cc2 ("net: phy: Micrel KSZ8061: link failure after cable connect")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+---
+ drivers/net/phy/micrel.c | 42 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
-I'm inclined to agree. It's no issue to change it.
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 2b8f8b7f1517..618e532ee5d7 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -866,6 +866,17 @@ static int ksz8061_config_init(struct phy_device *phydev)
+ {
+ 	int ret;
+ 
++	/* Chip can be powered down by the bootstrap code. */
++	ret = phy_read(phydev, MII_BMCR);
++	if (ret < 0)
++		return ret;
++	if (ret & BMCR_PDOWN) {
++		ret = phy_write(phydev, MII_BMCR, ret & ~BMCR_PDOWN);
++		if (ret < 0)
++			return ret;
++		usleep_range(1000, 2000);
++	}
++
+ 	ret = phy_write_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_DEVID1, 0xB61A);
+ 	if (ret)
+ 		return ret;
+@@ -2085,6 +2096,35 @@ static int kszphy_resume(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++static int ksz8061_resume(struct phy_device *phydev)
++{
++	int ret;
++
++	/* This function can be called twice when the Ethernet device is on. */
++	ret = phy_read(phydev, MII_BMCR);
++	if (ret < 0)
++		return ret;
++	if (!(ret & BMCR_PDOWN))
++		return 0;
++
++	genphy_resume(phydev);
++	usleep_range(1000, 2000);
++
++	/* Re-program the value after chip is reset. */
++	ret = phy_write_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_DEVID1, 0xB61A);
++	if (ret)
++		return ret;
++
++	/* Enable PHY Interrupts */
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->interrupts = PHY_INTERRUPT_ENABLED;
++		if (phydev->drv->config_intr)
++			phydev->drv->config_intr(phydev);
++	}
++
++	return 0;
++}
++
+ static int kszphy_probe(struct phy_device *phydev)
+ {
+ 	const struct kszphy_type *type = phydev->drv->driver_data;
+@@ -5339,7 +5379,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	.config_intr	= kszphy_config_intr,
+ 	.handle_interrupt = kszphy_handle_interrupt,
+ 	.suspend	= kszphy_suspend,
+-	.resume		= kszphy_resume,
++	.resume		= ksz8061_resume,
+ }, {
+ 	.phy_id		= PHY_ID_KSZ9021,
+ 	.phy_id_mask	= 0x000ffffe,
+-- 
+2.34.1
 
-Ack all reviews. I'll work through them over the week but with a lower p=
-riority while I await both yours and Hans response in other replies with=
- Mario regarding the firmware_attributes change/use.
-
->=20
-> > + pr_warn("Core count 0x%x exceeds max: 0x%x\n", cores, max);
-> > + return -EIO;
-> > + }
-> > +
-> > + err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES_SET, cores, &re=
-sult);
-> > + if (err) {
-> > + pr_warn("Failed to set cores_enabled: %d\n", err);
-> > + return err;
-> > + }
-> > +
-> > + pr_info("Enabled core count changed, reboot required\n");
-> > + sysfs_notify(&asus->platform_device->dev.kobj, NULL, "cores_enable=
-d");
-> > +
-> > + return count;
-> > +}
->=20
-> > @@ -4131,6 +4173,9 @@ static umode_t asus_sysfs_is_visible(struct ko=
-bject *kobj,
-> >  devid =3D ASUS_WMI_DEVID_PANEL_OD;
-> >  else if (attr =3D=3D &dev_attr_panel_fhd.attr)
-> >  devid =3D ASUS_WMI_DEVID_PANEL_FHD;
-> > + else if (attr =3D=3D &dev_attr_cores_enabled.attr
-> > + || attr =3D=3D &dev_attr_cores_max.attr)
->=20
-> Wrong alignment.
->=20
-> --=20
-> i.
->=20
->=20
 
