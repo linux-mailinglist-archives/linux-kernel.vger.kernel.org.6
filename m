@@ -1,259 +1,110 @@
-Return-Path: <linux-kernel+bounces-191663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51828D1258
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796CA8D125C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 553BCB21D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AFD1F21B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7241401C;
-	Tue, 28 May 2024 02:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HxzAjUBV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6577815AC4;
+	Tue, 28 May 2024 03:00:32 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3A8F9D6;
-	Tue, 28 May 2024 02:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2833EEC5;
+	Tue, 28 May 2024 03:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716865176; cv=none; b=UwpDrkC8geEUhL6jctbNkftxRGSNdkRsEFHqRPtvVUz3T66ypSkZJKMqp90Bk9o3YWYMp3GMWk2ILdEUr9c7ItTiYYO43hJH2/pfsmxo4cbk+6osLg2d8eBd/PVAVOmwHFrI2lb1U3Iyiw56d5tYhP8Yvx/h7CRXCFICHC5MRoM=
+	t=1716865232; cv=none; b=IvoaXGWmBnKQHR5Zf8fyABXrQdPPi87Oa67hvNvGDPpQaVHfov75kQt9s1A9gYXWs4H48RAmRdChwcsqfDS/pcndOXKULWRQLD3aX3eL4WTHld7a9n5+CthK9utMFPMQVWA1IgwVd//nD5MHDC4WBx/nAdN+tiqBxreY9p8EPLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716865176; c=relaxed/simple;
-	bh=UN5FMcN0Nsqb2owiOH8OKEjUPEPF+/qY/7U3tdLVF2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EfFxUHXpwEqyLveSKG5UnN+5mSxynJk2dtpamtA0opLdRDrQ7LmFq5VNVJZ7dP6d4Jr2vVVQXa+Wku49BzKzxMkx494od+yaTp/rUZ+IhosetR+uSyEBGuWFndn2xMNi3CSfVr02qBRnuBjmnS0FdDyl8brMnfE5f6YojNFqLmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HxzAjUBV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RNksQa019022;
-	Tue, 28 May 2024 02:59:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uLwn/0F2qkiF8dG8n95JFErj+wpYK4ghprtyfDw+yjA=; b=HxzAjUBVeHcqL377
-	ZnVED9P6zJPQSx3WuQnve56NyMQ1U0kVpZ5eQYgTzqRAHNkcf80ChyKBLHlr9IMi
-	T2oZkdui9N/8J5fEAcxQ4P+uE6Fi/66mD6N2Dj5SnCWOkRT813jGof3CxeLUZm2O
-	2/Tow2RMU0WLPnOIiNm1MlhQJdhHJ2LeBklczvVMrGHc6yM2EIzWu+IhTll6ezBn
-	4OuCVSb1SM3e7+aiGFgc2EwaPJ23oTC+C2+kE/bwVx2fKOueBjkP1TH1ZKu0S6x/
-	mVKv0DX9IgOa0pL/2uNqzptnWf7Ce4d/qlhzKjY3ZGad8mRbH83y9zAUodEHfhES
-	Sgv8ig==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h5061-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 02:59:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44S2xRcB026680
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 02:59:27 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 19:59:23 -0700
-Message-ID: <9c8fd579-e521-4091-81cc-bf693c60d712@quicinc.com>
-Date: Tue, 28 May 2024 10:59:21 +0800
+	s=arc-20240116; t=1716865232; c=relaxed/simple;
+	bh=vdwsbhUlI0b/qUwqYCGO7dXDGP/od7QNsNHkoQLwTeY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hmEglkpvobWMLllHJp5BULYcbIDqvgRG8syzIU9sSN9DFv1tHwGQLCwC7O4YVw1KBlz+LBG0DKzR4B114M2n7A9fY8V7HWfo5dQmtCAx+mLO/vZdVV21d9SOUdD8M3GCgMlXToiaxco3GhZFilHmzUZS13LtB4GggUD7TrmdAKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44S306w241876719, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44S306w241876719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 11:00:06 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 28 May 2024 11:00:06 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 28 May 2024 11:00:06 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Tue, 28 May 2024 11:00:05 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Kalle Valo <kvalo@kernel.org>,
+        "marcin.slusarz@gmail.com"
+	<marcin.slusarz@gmail.com>,
+        "tpkuester@gmail.com" <tpkuester@gmail.com>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        =?utf-8?B?TWFyY2luIMWabHVzYXJ6?= <mslusarz@renau.com>,
+        Larry Finger
+	<Larry.Finger@lwfinger.net>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Thread-Topic: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Thread-Index: AQHasFekMjDEF5R7/k+0650S2/2b8bGrUuCQgACfb4CAAAI8gA==
+Date: Tue, 28 May 2024 03:00:05 +0000
+Message-ID: <bb41155129f844caac955e80915f8b24@realtek.com>
+References: <20240527170137.455671-1-marcin.slusarz@gmail.com>
+ <87jzjf8990.fsf@kernel.org> <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
+In-Reply-To: <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] remoteproc: qcom_q6v5_pas: Add support for SA8775p
- ADSP, CDSP and GPDSP
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>
-CC: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Srini
- Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alex Elder <elder@kernel.org>
-References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
- <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7Ec23MkmQ9BVoHjXfvxJkJv5ih3bpRtX
-X-Proofpoint-ORIG-GUID: 7Ec23MkmQ9BVoHjXfvxJkJv5ih3bpRtX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_06,2024-05-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- spamscore=0 malwarescore=0 bulkscore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280021
 
-
-
-On 5/27/2024 4:43 PM, Bartosz Golaszewski wrote:
-> From: Tengfei Fan <quic_tengfan@quicinc.com>
-> 
-> Add support for PIL loading on ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 on
-> SA8775p SoCs.
-> 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 92 ++++++++++++++++++++++++++++++++++++++
->   1 file changed, 92 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 54d8005d40a3..16053aa99298 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -820,6 +820,23 @@ static const struct adsp_data adsp_resource_init = {
->   	.ssctl_id = 0x14,
->   };
->   
-> +static const struct adsp_data sa8775p_adsp_resource = {
-> +	.crash_reason_smem = 423,
-> +	.firmware_name = "adsp.mdt",
-> +	.pas_id = 1,
-> +	.minidump_id = 5,
-> +	.auto_boot = true,
-> +	.proxy_pd_names = (char*[]){
-> +		"lcx",
-> +		"lmx",
-> +		NULL
-> +	},
-> +	.load_state = "adsp",
-> +	.ssr_name = "lpass",
-> +	.sysmon_name = "adsp",
-> +	.ssctl_id = 0x14,
-> +};
-> +
->   static const struct adsp_data sdm845_adsp_resource_init = {
->   	.crash_reason_smem = 423,
->   	.firmware_name = "adsp.mdt",
-> @@ -933,6 +950,42 @@ static const struct adsp_data cdsp_resource_init = {
->   	.ssctl_id = 0x17,
->   };
->   
-> +static const struct adsp_data sa8775p_cdsp0_resource = {
-> +	.crash_reason_smem = 601,
-> +	.firmware_name = "cdsp0.mdt",
-> +	.pas_id = 18,
-> +	.minidump_id = 7,
-> +	.auto_boot = true,
-> +	.proxy_pd_names = (char*[]){
-> +		"cx",
-> +		"mxc",
-> +		"nsp0",
-
-s/nsp0/nsp/
-
-> +		NULL
-> +	},
-> +	.load_state = "cdsp",
-> +	.ssr_name = "cdsp",
-> +	.sysmon_name = "cdsp",
-> +	.ssctl_id = 0x17,
-> +};
-> +
-> +static const struct adsp_data sa8775p_cdsp1_resource = {
-> +	.crash_reason_smem = 633,
-> +	.firmware_name = "cdsp1.mdt",
-> +	.pas_id = 30,
-> +	.minidump_id = 20,
-> +	.auto_boot = true,
-> +	.proxy_pd_names = (char*[]){
-> +		"cx",
-> +		"mxc",
-> +		"nsp1",
-
-s/nsp1/nsp/
-
-> +		NULL
-> +	},
-> +	.load_state = "nsp",
-> +	.ssr_name = "cdsp1",
-> +	.sysmon_name = "cdsp1",
-> +	.ssctl_id = 0x20,
-> +};
-> +
->   static const struct adsp_data sdm845_cdsp_resource_init = {
->   	.crash_reason_smem = 601,
->   	.firmware_name = "cdsp.mdt",
-> @@ -1074,6 +1127,40 @@ static const struct adsp_data sm8350_cdsp_resource = {
->   	.ssctl_id = 0x17,
->   };
->   
-> +static const struct adsp_data sa8775p_gpdsp0_resource = {
-> +	.crash_reason_smem = 640,
-> +	.firmware_name = "gpdsp0.mdt",
-> +	.pas_id = 39,
-> +	.minidump_id = 21,
-> +	.auto_boot = true,
-> +	.proxy_pd_names = (char*[]){
-> +		"cx",
-> +		"mxc",
-> +		NULL
-> +	},
-> +	.load_state = "gpdsp0",
-> +	.ssr_name = "gpdsp0",
-> +	.sysmon_name = "gpdsp0",
-> +	.ssctl_id = 0x21,
-> +};
-> +
-> +static const struct adsp_data sa8775p_gpdsp1_resource = {
-> +	.crash_reason_smem = 641,
-> +	.firmware_name = "gpdsp1.mdt",
-> +	.pas_id = 40,
-> +	.minidump_id = 22,
-> +	.auto_boot = true,
-> +	.proxy_pd_names = (char*[]){
-> +		"cx",
-> +		"mxc",
-> +		NULL
-> +	},
-> +	.load_state = "gpdsp1",
-> +	.ssr_name = "gpdsp1",
-> +	.sysmon_name = "gpdsp1",
-> +	.ssctl_id = 0x22,
-> +};
-> +
->   static const struct adsp_data mpss_resource_init = {
->   	.crash_reason_smem = 421,
->   	.firmware_name = "modem.mdt",
-> @@ -1315,6 +1402,11 @@ static const struct of_device_id adsp_of_match[] = {
->   	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
->   	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
->   	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-> +	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
-> +	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
-> +	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
-> +	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
-> +	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
->   	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
->   	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
->   	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
-> 
-
--- 
-Thx and BRs,
-Tengfei Fan
+KyBUaW0gSyAocmVwb3J0ZXIpDQoNCkhpIFRpbSwNCg0KQ291bGQgeW91IHBsZWFzZSB0cnkgdGhp
+cyBwYXRjaCBjYW4gaGVscCB5b3VyIHJ0dzg4MjJidT8gDQoNClBpbmctS2UgU2hpaCA8cGtzaGlo
+QHJlYWx0ZWsuY29tPiB3cm90ZToNCj4gS2FsbGUgVmFsbyA8a3ZhbG9Aa2VybmVsLm9yZz4gd3Jv
+dGU6DQo+ID4gbWFyY2luLnNsdXNhcnpAZ21haWwuY29tIHdyaXRlczoNCj4gPg0KPiA+ID4gRnJv
+bTogTWFyY2luIMWabHVzYXJ6IDxtc2x1c2FyekByZW5hdS5jb20+DQo+ID4gPg0KPiA+ID4gUmln
+aHQgbm93IGl0J3MgcG9zc2libGUgdG8gaGl0IE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBpbg0K
+PiA+ID4gcnR3X3J4X2ZpbGxfcnhfc3RhdHVzIG9uIGh3IG9iamVjdCBhbmQvb3IgaXRzIGZpZWxk
+cyBiZWNhdXNlDQo+ID4gPiBpbml0aWFsaXphdGlvbiByb3V0aW5lIGNhbiBzdGFydCBnZXR0aW5n
+IFVTQiByZXBsaWVzIGJlZm9yZQ0KPiA+ID4gcnR3X2RldiBpcyBmdWxseSBzZXR1cC4NCj4gPiA+
+DQo+ID4gPiBUaGUgc3RhY2sgdHJhY2UgbG9va3MgbGlrZSB0aGlzOg0KPiA+ID4NCj4gPiA+IHJ0
+d19yeF9maWxsX3J4X3N0YXR1cw0KPiA+ID4gcnR3ODgyMWNfcXVlcnlfcnhfZGVzYw0KPiA+ID4g
+cnR3X3VzYl9yeF9oYW5kbGVyDQo+ID4gPiAuLi4NCj4gPiA+IHF1ZXVlX3dvcmsNCj4gPiA+IHJ0
+d191c2JfcmVhZF9wb3J0X2NvbXBsZXRlDQo+ID4gPiAuLi4NCj4gPiA+IHVzYl9zdWJtaXRfdXJi
+DQo+ID4gPiBydHdfdXNiX3J4X3Jlc3VibWl0DQo+ID4gPiBydHdfdXNiX2luaXRfcngNCj4gPiA+
+IHJ0d191c2JfcHJvYmUNCj4gPiA+DQo+ID4gPiBTbyB3aGlsZSB3ZSBkbyB0aGUgYXN5bmMgc3R1
+ZmYgcnR3X3VzYl9wcm9iZSBjb250aW51ZXMgYW5kIGNhbGxzDQo+ID4gPiBydHdfcmVnaXN0ZXJf
+aHcsIHdoaWNoIGRvZXMgYWxsIGtpbmRzIG9mIGluaXRpYWxpemF0aW9uIChlLmcuDQo+ID4gPiB2
+aWEgaWVlZTgwMjExX3JlZ2lzdGVyX2h3KSB0aGF0IHJ0d19yeF9maWxsX3J4X3N0YXR1cyByZWxp
+ZXMgb24uDQo+ID4gPg0KPiA+ID4gRml4IHRoaXMgYnkgbW92aW5nIHRoZSBmaXJzdCB1c2Jfc3Vi
+bWl0X3VyYiBhZnRlciBldmVyeXRoaW5nDQo+ID4gPiBpcyBzZXQgdXAuDQo+ID4gPg0KPiA+ID4g
+Rm9yIG1lLCB0aGlzIGJ1ZyBtYW5pZmVzdGVkIGFzOg0KPiA+ID4gWyAgICA4Ljg5MzE3N10gcnR3
+Xzg4MjFjdSAxLTE6MS4yOiBiYW5kIHdyb25nLCBwYWNrZXQgZHJvcHBlZA0KPiA+ID4gWyAgICA4
+LjkxMDkwNF0gcnR3Xzg4MjFjdSAxLTE6MS4yOiBody0+Y29uZi5jaGFuZGVmLmNoYW4gTlVMTCBp
+biBydHdfcnhfZmlsbF9yeF9zdGF0dXMNCj4gPiA+IGJlY2F1c2UgSSdtIHVzaW5nIExhcnJ5J3Mg
+YmFja3BvcnQgb2YgcnR3ODggZHJpdmVyIHdpdGggdGhlIE5VTEwNCj4gPiA+IGNoZWNrcyBpbiBy
+dHdfcnhfZmlsbF9yeF9zdGF0dXMuDQo+ID4gPg0KPiA+ID4gVGhpcyBzaG91bGQgZml4Og0KPiA+
+ID4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtd2lyZWxlc3MmbT0xNjc5MDc2ODgzMTE5NDMm
+dz0yDQo+ID4NCj4gPiBQbGVhc2UgdXNlIHBlcm1hbGlua3MgZnJvbSBsb3JlLmtlcm5lbC5vcmcs
+IG1hcmMgbGlua3MgZG9uJ3QgY29udGFpbiB0aGUNCj4gPiBNZXNzYWdlLUlkIGFuZCBhcmUgaGVu
+Y2UgdW5yZWxpYWJsZS4NCj4gPg0KPiANCj4gVXNlIHRhZ3MgYmVsb3c6DQo+IA0KPiBSZXBvcnRl
+ZC1ieTogVGltIEsgPHRwa3Vlc3RlckBnbWFpbC5jb20+DQo+IENsb3NlczoNCj4gaHR0cHM6Ly9s
+b3JlLmtlcm5lbC5vcmcvbGludXgtd2lyZWxlc3MvQ0Erc2hvV1E3UDQ5amhRYXNvZkRjVGRRaGl1
+YXJQVGpZRURhLS1OaVZWeDQ5NFdjdVF3QG1haWwuZ21haWwuDQo+IGNvbS8NCj4gDQoNCg0K
 
