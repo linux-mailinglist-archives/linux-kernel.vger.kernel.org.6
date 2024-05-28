@@ -1,206 +1,142 @@
-Return-Path: <linux-kernel+bounces-192723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DE68D2146
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C2B8D2142
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5E21F25262
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE8D28191E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14AB173338;
-	Tue, 28 May 2024 16:08:42 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58296172BC6;
+	Tue, 28 May 2024 16:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/lBnBuH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DDA172762;
-	Tue, 28 May 2024 16:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E11172799;
+	Tue, 28 May 2024 16:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912522; cv=none; b=mN1qLsnyBY5BaYIhAU/72+eayBuI0OHjniQ7c5IuCdWKa0DX/sIlYlRPqt2QEeu9PfMnJIRQYL6G/DvhT8i+n9mNCRGB0wdmvpxbLHFyqiljE/BbuBKrtItAk1BYZMsUiKvmvBZntYNhdv8yatsfVoOOHDqIMB3/f3H5FslhUQY=
+	t=1716912515; cv=none; b=uOeJybyxlDtO2EGGRfjvRc0Ko2N8LDSkfm1FZYWHdzj/OlmJFU0ywAJfHmm3+LycG6GpQNIMw7noJvIic8E6nu1RxX2yScUnNisi3QNoPvx0tCJ+DH628qajdr+iK2haG1VWM5x8h5Odd7lbbcAMvU4LPAXc03e8PD35JGTL8uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912522; c=relaxed/simple;
-	bh=bsKmqZdJDKie65RdVR6LNfLZoJpvxeKgk1t+ao8Ji5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t34Y46NzOvzguR0Y0zBptVjc/qGg9ep0WmMwZwMN+C0LeePuo3HMAKMemA8Md/1Krm9/NU5Ak9drSIjURdBMPdLaeek1dgi75jxmnxCx5zqZucp6+hILY4+Z5yd4gC73k02t8mhFrApx9/GPDIWFP76rVmHOtR2WkLY8uS7WveI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso14391531fa.2;
-        Tue, 28 May 2024 09:08:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716912518; x=1717517318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YoSfwcLmd/CqrDTou7v+s7TkGMZevLZ6k2fTsWjn6zg=;
-        b=kXG86l9iqv0t44utRhwsy6q93pHQ/0BFOGzUwxcP82vp9zTzAYel813W+dp4WPZAN4
-         YSzjGo6EmWJDYzHAxKqeoUwHy7y8WGfRAMmvvkHxBliSjOO56UrvosqsKq1Q1lUuLYkA
-         HUDIKYDLpEeejOaTMcvjH874Hkm36SpLSmtDBbQ51Pgs32rQnRelUHQyU2METOURuNcX
-         TXYmmppQWD2eOXxgUFQuDHZMGr83EqzMHEZrCJ9RSHZcQCja7HPzMlmfBj77RlzOiG+h
-         DpOFWyn2hZA3AFsl7DotbHyyndnpF+qRe+XdLhhdtvLnK/OE1oExNhrWykSx2zaX1jxO
-         OcMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnxfa01Qwro9B/BHAMygdoP4gJ0uwbczFjLRsLcOjYPqN3WsLUxjy/GZ6w+dIu4gZ0SYz5zp7waxunw2d4mY4fndQR8spEL2fnZl7S509A4LHkyphKcXHkWf5zM6Y2skvXcW7vJcSbew==
-X-Gm-Message-State: AOJu0YwNTYE5BtojKrlVG44irCWTCxHBxf4iFHTDv4Gh6qNJozAiaTj4
-	yegkbjw/uOnLG52OKBvbP92ll41qpu8wQRF8uHfy/3sf7dtHvJPCfrMLXf1o
-X-Google-Smtp-Source: AGHT+IFASqB07gLVwWidmSChouSBNQtbsCwcI3raY8e1nQ5VCq1i4x+6OfGZ2vN7BPjYYBdoroJJUA==
-X-Received: by 2002:a2e:a304:0:b0:2e1:a504:f9ec with SMTP id 38308e7fff4ca-2e95b0c1546mr100885191fa.23.1716912517565;
-        Tue, 28 May 2024 09:08:37 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcc4ae2sm22512671fa.21.2024.05.28.09.08.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 09:08:37 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so20257731fa.0;
-        Tue, 28 May 2024 09:08:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlxT5czgj1RF1qLRa+RAfvSSD2gHuYPs5u15wCmmYxjYoCuv2UMRZu4wzmBynbDUbkVuqo1IImuBXjT52Soe+/8QI2BdjD7cQfnzQy7RugLpf9hN0EVI9eXatfuZxIo8+Oz1wWCOt3jg==
-X-Received: by 2002:a2e:968a:0:b0:2e1:c448:d61e with SMTP id
- 38308e7fff4ca-2e95b096f52mr96976121fa.15.1716912517177; Tue, 28 May 2024
- 09:08:37 -0700 (PDT)
+	s=arc-20240116; t=1716912515; c=relaxed/simple;
+	bh=dZre33+kTvP3qNM6Wq68jjxZ1j/0HNMDQQ574/KywCs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JPQ7iE7Swl8oXpqPxERhQkJhyZQM/hGPu6ypyODhHW4LboBfBOj84YoPzDU6aHzWIXeaKmtW3Hmlt16y4DIqsbIsX4sqLrOobtIqxw7pRFTv7iSrNFdtOkeRQmNXuerKwHoV2uGjsb3g54ig0yLAHwwnpjSAklziWWmyvZEMkYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/lBnBuH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76B34C3277B;
+	Tue, 28 May 2024 16:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716912515;
+	bh=dZre33+kTvP3qNM6Wq68jjxZ1j/0HNMDQQ574/KywCs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=m/lBnBuHh1e49A8BbMkgzPdBTO4YlWs56vwiUB70FI+UAdMzbD87ggPUiDe/tlJZ6
+	 PV6wYrU8I0Sophj7v7/d6/PDU6G9Q7WbjieXoDj0sBU0LdV9oawFu5EXg9IX0fLXrO
+	 xll2PZnFhUcZbiCZ4+B8MJK/zrQ8WkD5NCVSRC2yEWNo1X8YVYPP4+qTkqzoe7wX+I
+	 oBbWKe75ScEVIXzDIQkgqYTvgIhHLkzJTOlknl2Hjqh05MGSUkSbNzKdOx+d9ms2WG
+	 DOPwIn8/xYplVL56+rPX/7rUUW+UB8+1TgCphkWayA/MJVNY0ecXnS9WhvOsrTyZkc
+	 x/n0JhI39F2OQ==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
+Date: Tue, 28 May 2024 09:08:31 -0700
+Message-Id: <20240528160831.150674-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240527185601.713589927@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9d52e6d338a059618d894abb0764015043330c2b.1714727227.git.dsimic@manjaro.org>
-In-Reply-To: <9d52e6d338a059618d894abb0764015043330c2b.1714727227.git.dsimic@manjaro.org>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 29 May 2024 00:08:25 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67_4MHEZned0X1sFxisySahemHYo6sjn9sttQY+RO=VQw@mail.gmail.com>
-Message-ID: <CAGb2v67_4MHEZned0X1sFxisySahemHYo6sjn9sttQY+RO=VQw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: Add cache information to the SoC
- dtsi for H616
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-sunxi@lists.linux.dev, jernej.skrabec@gmail.com, samuel@sholland.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 3, 2024 at 5:09=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> wr=
-ote:
->
-> Add missing cache information to the Allwinner H616 SoC dtsi, to allow
-> the userspace, which includes lscpu(1) that uses the virtual files provid=
-ed
-> by the kernel under the /sys/devices/system/cpu directory, to display the
-> proper H616 cache information.
->
-> Adding the cache information to the H616 SoC dtsi also makes the followin=
-g
-> warning message in the kernel log go away:
->
->   cacheinfo: Unable to detect cache hierarchy for CPU 0
->
-> Rather conspicuously, almost no cache-related information is available in
-> the publicly available Allwinner H616 datasheet (version 1.0) and H616 us=
-er
-> manual (version 1.0).  Thus, the cache parameters for the H616 SoC dtsi w=
-ere
-> obtained and derived by hand from the cache size and layout specification=
-s
-> found in the following technical reference manual, and from the cache siz=
-e
-> and die revision hints available from the following community-provided da=
-ta
-> and memory subsystem benchmarks:
->
->   - ARM Cortex-A53 revision r0p4 TRM, version J
->   - Summary of the two available H616 die revisions and their differences
->     in cache sizes observed from the CSSIDR_EL1 register readouts, provid=
-ed
->     by Andre Przywara [1][2]
->   - Tinymembench benchmark results of the H616-based OrangePi Zero 2 SBC,
->     provided by Thomas Kaiser [3]
->
-> For future reference, here's a brief summary of the available documentati=
-on
-> and the community-provided data and memory subsystem benchmarks:
->
->   - All caches employ the 64-byte cache line length
->   - Each Cortex-A53 core has 32 KB of L1 2-way, set-associative instructi=
-on
->     cache and 32 KB of L1 4-way, set-associative data cache
->   - The size of the L2 cache depends on the actual H616 die revision (the=
-re
->     are two die revisions), so the entire SoC can have either 256 KB or 1=
- MB
->     of unified L2 16-way, set-associative cache [1]
->
-> Also for future reference, here's the relevant excerpt from the community=
--
-> provided H616 memory subsystem benchmark, [3] which confirms that 32 KB a=
-nd
-> 256 KB are the L1 data and L2 cache sizes, respectively:
->
->     block size : single random read / dual random read
->           1024 :    0.0 ns          /     0.0 ns
->           2048 :    0.0 ns          /     0.0 ns
->           4096 :    0.0 ns          /     0.0 ns
->           8192 :    0.0 ns          /     0.0 ns
->          16384 :    0.0 ns          /     0.0 ns
->          32768 :    0.0 ns          /     0.0 ns
->          65536 :    4.3 ns          /     7.3 ns
->         131072 :    6.6 ns          /    10.5 ns
->         262144 :    9.8 ns          /    15.2 ns
->         524288 :   91.8 ns          /   142.9 ns
->        1048576 :  138.6 ns          /   188.3 ns
->        2097152 :  163.0 ns          /   204.8 ns
->        4194304 :  178.8 ns          /   213.5 ns
->        8388608 :  187.1 ns          /   217.9 ns
->       16777216 :  192.2 ns          /   220.9 ns
->       33554432 :  196.5 ns          /   224.0 ns
->       67108864 :  215.7 ns          /   259.5 ns
->
-> The changes introduced to the H616 SoC dtsi by this patch specify 256 KB =
-as
-> the L2 cache size.  As outlined by Andre Przywara, [2] a follow-up TF-A p=
-atch
-> will perform runtime adjustment of the device tree data, making the corre=
-ct
-> L2 cache size of 1 MB present in the device tree for the boards based on =
-the
-> revision of H616 that actually provides 1 MB of L2 cache.
->
-> [1] https://lore.kernel.org/linux-sunxi/20240430114627.0cfcd14a@donnerap.=
-manchester.arm.com/
-> [2] https://lore.kernel.org/linux-sunxi/20240501103059.10a8f7de@donnerap.=
-manchester.arm.com/
-> [3] https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/resul=
-ts/4knM.txt
->
-> Suggested-by: Andre Przywara <andre.przywara@arm.com>
-> Helped-by: Andre Przywara <andre.przywara@arm.com>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  .../arm64/boot/dts/allwinner/sun50i-h616.dtsi | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/=
-boot/dts/allwinner/sun50i-h616.dtsi
-> index b2e85e52d1a1..4faed88d8909 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-> @@ -26,30 +26,67 @@ cpu0: cpu@0 {
->                         reg =3D <0>;
->                         enable-method =3D "psci";
->                         clocks =3D <&ccu CLK_CPUX>;
-> +                       i-cache-size =3D <0x8000>;
-> +                       i-cache-line-size =3D <64>;
-> +                       i-cache-sets =3D <256>;
-> +                       d-cache-size =3D <0x8000>;
-> +                       d-cache-line-size =3D <64>;
-> +                       d-cache-sets =3D <128>;
-> +                       next-level-cache =3D <&l2_cache>;
+Hello,
 
-This no longer applies due to the CPU DVFS stuff getting merged.
-Can you rebase and resend?
+On Mon, 27 May 2024 20:50:47 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
+> This is the start of the stable review cycle for the 6.9.3 release.
+> There are 427 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 29 May 2024 18:53:20 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.3-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
 
-Thanks
-ChenYu
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
+
+Tested-by: SeongJae Park <sj@kernel.org>
+
+[1] https://github.com/awslabs/damon-tests/tree/next/corr
+[2] c1009266618d ("Linux 6.9.3-rc1")
+
+Thanks,
+SJ
+
+[...]
+
+---
+
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: debugfs_rm_non_contexts.sh
+ok 8 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
+ok 9 selftests: damon: debugfs_target_ids_pid_leak.sh
+ok 10 selftests: damon: sysfs.sh
+ok 11 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 12 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
+ok 13 selftests: damon: sysfs_update_schemes_tried_regions_wss_estimation.py
+ok 14 selftests: damon: damos_quota.py
+ok 15 selftests: damon: damos_apply_interval.py
+ok 16 selftests: damon: reclaim.sh
+ok 17 selftests: damon: lru_sort.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh
+ok 12 selftests: damon-tests: build_m68k.sh
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
