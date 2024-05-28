@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-192506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E65E8D1E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:15:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A898D1E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F042861C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:15:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B5D2B21448
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C822F16F83D;
-	Tue, 28 May 2024 14:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5F116F84D;
+	Tue, 28 May 2024 14:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dY8/4wcG"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="tFa4qhqM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70DB16E86E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA0C1DFDE;
+	Tue, 28 May 2024 14:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905699; cv=none; b=gkQNjl1wKFH9ZRAd2VMrV/Z+O//7opn7Lveceb3/IQRXTL0NlcrRwO3gDGpdkYhlLAmka5WaTkSrL4fUr0vCNKAPnglZdLMPjjNkyfHgKs9TrSSuzktYx0PEfLgb565kViITHup9q6jMxkd5vpE1Il/fYBWSNdB+ad2hegPNegQ=
+	t=1716905751; cv=none; b=K1NX1Z4cshI6SYtgwCC+0Pu/xSRMnLxROSV7PuOctRCgCWYU5u8ILi2W7b8B3KicjSr4vbcedL3c/3efkINCJOsCVkzLhvrLzCO079fIOsrPKCAnWJfD0HWNS5cifG/UTRKOpRsCAsrmbkZMfDGFZ+iSf5YXHiIpUg3wzRr2Tw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905699; c=relaxed/simple;
-	bh=A3B7DkRNnn1sAujL7DnS7K9eFHSqkhpLjb2bEuC8kZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jcKE77YxJZN9FFA3HYb2EeqBNlD3+tgbNCIoznDbqVA4HqxoEP5IPz13vIgyHe/YrZN3htgHl2HWdYVLfefAA50NckJPPc07eDpK+B3HCbzYHjuQYj7oGCkO7Jn5y6EknEav4QHoE6MZoUkK09i1Z05U+wiQNNmevM/atRZI1Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dY8/4wcG; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d1bf479c62so506997b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716905697; x=1717510497; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zittrK0SuyPjIL+AeowzXGFUqlIKj1R5LpUEGnglOow=;
-        b=dY8/4wcGnJVVGatixpN+BfixpO7KcxzhpNc9Fv9i3hjgcwtsrTmWDk1x8hyI2HvWO5
-         rv8sZRvv4tV77Ep7PDV8Y0TLKlOAj6kJ6ZvO0tgHUgFQxN9ki/3eJpnM9C1JaDaw5E1O
-         80zkGRTz/w/swd3siearXlXq0tFEY2WWk4l3A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716905697; x=1717510497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zittrK0SuyPjIL+AeowzXGFUqlIKj1R5LpUEGnglOow=;
-        b=aTNEuHGkPo5BZmpHqOaktoQQoRLuea4fhrPSknaNPJ+8uJTgZAyS8NagdeTIw5xdnU
-         +5eX2tvWiGeLvD4kbbpZVdW+aoRrGGtC2A5P5v/oNGvb7wR2hBHsKcSc/xc0NKeXBGQi
-         fxRplH8rQc08bdTelSLt0bCF1uIkSOayYlgRvXAlmr2WBPx1xlxg/JLUCqAi9eABneyu
-         OsScFtdzXms1CijaP8fU11Zrzq8kPx4BpmUtIi/KYlnrZEQvcqjGdGsVwZ2guTVnxt1B
-         KKS0Xb26hRQLKdZTeffXsWoiPsQh34s6t2Swp/4COAts/lvVeeWegDKH3Gs8b0LxW1mp
-         mm2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXXNPlfwBN10PK/UEBN0gu05XUM7kAKwWiv7xv/KRjOtEIpEJ+f7WOTB89m7IDiHC1azZDGohFT+rcX5X4QDdz/e54lAQpochMwRuKN
-X-Gm-Message-State: AOJu0Yz9ZXDS5GygKJc8dF+eZUaRo+fsgo+OvT7TtVFtCqNet1wnTB0K
-	Qz/I3ADRHUF46arl6oS3wITomEodRx5Dt/kydQXy9IqTGRaj5HnXkPlmdkflpD7XRSELf1aQNDc
-	hbhu5/YKA7GICyA0GPxZKRsaYGmRJjc3xHaEi
-X-Google-Smtp-Source: AGHT+IE06UeLLaV5hXYkhGE8SfRF9xex+t5CAfAb4fwmYcPWSOsWMJuV6/47FzJTHqjm3DXehq6zwtMtgDzPwvfoLSY=
-X-Received: by 2002:a05:6808:989:b0:3c8:665e:1e57 with SMTP id
- 5614622812f47-3d1a5e2d421mr14592426b6e.25.1716905696879; Tue, 28 May 2024
- 07:14:56 -0700 (PDT)
+	s=arc-20240116; t=1716905751; c=relaxed/simple;
+	bh=ZpiZtSugjss1IH3bHnUrUBBvCJmQBU7qym1W53Fl558=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q2vxcP0Cko7IS8GUz/t6gPHM/wi87sQ02DNrvWHDVBm4fIguKL6TWxRSgugOnUrPbyESO0OOj/7dgdnnCqlJJZKcUqGCYDfOod/H6IlexF9dRdwOQa8VM1krPeqp1itVZAQ/VxpNh8pyIQZCwfZE3fKEZZg0MDantyt91v2/F+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=tFa4qhqM; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1716905728; x=1717510528; i=wahrenst@gmx.net;
+	bh=ZpiZtSugjss1IH3bHnUrUBBvCJmQBU7qym1W53Fl558=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tFa4qhqMy2dC8+csEejmBW6eRUibSI1973H/nMfE9r1vp28c5gwjMbOeBN55rv8n
+	 gjSpKMdY2Sq27+7ziQzTr9FnW4Pz6Dh8bjk/WTkz3IzzOU+e924tLtIU/NOqc+xHX
+	 ydpo7baZVEJ6G+sgM/vDDhzpVOrO64dx5IBTeNMPLMuiqD51NDOxSuFEHo3lTPktD
+	 mXAi0LOdphM6XpTSVB31tT/Vu7scvF9nHBrgdjQ9bw1Lz7wIUsKg/VAv8C3Cl/dpT
+	 zYN9JFGDENUscoKXR1n8d/BlADD99Y7y5/2DwsijDrI7u79YQEktFGZZSUc8EGUyI
+	 2/KHuqPN7EqN33rJIQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8GQs-1sXjjU2jgW-014E1j; Tue, 28
+ May 2024 16:15:28 +0200
+Message-ID: <17b76f79-2e83-4957-b240-b7bd5997d508@gmx.net>
+Date: Tue, 28 May 2024 16:15:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528085221.2989315-1-wenst@chromium.org>
-In-Reply-To: <20240528085221.2989315-1-wenst@chromium.org>
-From: Simon Glass <sjg@chromium.org>
-Date: Tue, 28 May 2024 08:14:46 -0600
-Message-ID: <CAFLszTg+Gg=wZDAWX420hA1N04OYM1TY6Yj_JAq4X98TPwaaTw@mail.gmail.com>
-Subject: Re: [PATCH v2] scripts/make_fit: Drop fdt image entry compatible string
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
+ controller
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1716899600.git.andrea.porta@suse.com>
+ <0f263886c0622f43d3a2f4cccaebae0c39ba1bc5.1716899600.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <0f263886c0622f43d3a2f4cccaebae0c39ba1bc5.1716899600.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:oLe0wtPQqWitqt+Z78DgjMVIuWzRxkC8b/uPq2RlmctB2GmVo+m
+ fokurLJQK9muVnCajS8yd56oa/exYtzDrQDLLHONd/DMdjh7KHZQfX4ihRBw4We6ds9A5ov
+ SIXFeTTqi8mtlbvE+C1hf1GUffX5+8gC7vJfKM57UbYjRzaB49OuQJ7ErV2R9S132MMSRCB
+ wNHnlrzu6LKG2myLr9aqA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:u8vm6Rexr5o=;HMwPB9aKOPZ9rWvv8T3eN5y/yfb
+ lFF9q4+FhcH0wzpZuDVCTulLM65QXh6xik1UJYEnlO1rM51Nf6LpF/saN6faiHC1UIS1aA9wI
+ yHa8J7m4L6R9LldlqtHSiD+aDjRGGppPIPdpxhrHl7yl5oTbVd0MVACV9sL36bxPzUIviHkrc
+ fFPykiwMFnWmxCdlIZjs3XO0J2HRiSIRFQ1UD3kOE0UDSLceryeqacQ3pRF1b9hcq322iwOoI
+ XkulbRrsan1rKmoxpYoLgVFrqKUEQmdwfRXCvyIzj1QhcRQhwC0uUmMLFwfqZ+J7LChhAyYCL
+ ugJVGHGwWgWTVPmsFTzunOfAFtCIEVwnUwyxFfMz/beYj2TO3PuUJMiAxe2azJqj7qZroW6RB
+ Yn865s8lCxiesMUZd3aAeecpXR/xqPppODvn3KvFrgmBIn60JZoof543UUJdDDCgMSWv/n9Af
+ wPcLP8i+zMQtK0ivI0g5W5jTNWkioFxwuvezyWkDAGJgmkjS7QDsk8yFG798S8R47PAXP9mut
+ +iDonoK9wzRCDsydJ9UPQCfaeKtqiHk/AVYKUGPSTjKm/5plrz5lxCpppBEGvnTvmqJkfbX4W
+ txwNs+uroED/CEzFqTTtlv4lQ6RTVZD4WU5u+gpEjGr/N1r5wK84RB4xLylxANOsb4UgkEiFE
+ 80NkXzSbJJAsaR08EielTxaVY76FOwR/1gel7LYtDOE21w4elgiDi1/5PLM4LM3a+3YCAGBAy
+ t56x5Wr8C1v9v3oG1tnxgSz2M+DlXZyTpwRVhZL+WJkEXwsWBN5/2pOVimnRsKHoyROHQ1bJx
+ DrhTCt/+inuJvEZVZRSXudFcfrrW2MPl6x3xK3ByCzbZE=
 
-Hi,
-
-On Tue, 28 May 2024 at 02:52, Chen-Yu Tsai <wenst@chromium.org> wrote:
+Am 28.05.24 um 15:32 schrieb Andrea della Porta:
+> The BCM2712 has an SDHCI capable host interface similar to the one found
+> in other STB chipsets. Add the relevant compatible string.
 >
-> According to the FIT image source file format document found in U-boot [1]
-> and the split-out FIT image specification [2], under "'/images' node" ->
-> "Conditionally mandatory property", the "compatible" property is described
-> as "compatible method for loading image", i.e., not the compatible string
-> embedded in the FDT or used for matching.
->
-> Drop the compatible string from the fdt image entry node.
->
-> While at it also fix up a typo in the document section of output_dtb.
->
-> [1] U-boot source "doc/usage/fit/source_file_format.rst", or on the website:
->     https://docs.u-boot.org/en/latest/usage/fit/source_file_format.html
-> [2] https://github.com/open-source-firmware/flat-image-tree/blob/main/source/chapter2-source-file-format.rst
->
-> Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> Changes since v1:
-> - Add clear reference to U-boot docs along with excerpt
-> - Send separately from "disable compression for DTBs" patch
->
->  scripts/make_fit.py | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-
-Reviewed-by: Simon Glass <sjg@chromium.org>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
