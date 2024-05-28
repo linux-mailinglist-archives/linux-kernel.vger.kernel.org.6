@@ -1,119 +1,165 @@
-Return-Path: <linux-kernel+bounces-192702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAA48D20E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:56:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3A88D20EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA25EB22DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E3328951C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115F171E4C;
-	Tue, 28 May 2024 15:56:48 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EC5171E5C;
+	Tue, 28 May 2024 15:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="si2wh7RR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1BF171672;
-	Tue, 28 May 2024 15:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2357716EBE2;
+	Tue, 28 May 2024 15:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911808; cv=none; b=MJ8W0zBDpfg3eB363S0/2SABg0jXxC5sM7/j8iwgzmlaBwWnjsrH8UQLX+zmgGgV9fqVNBfeYniIS7jIgZSzkwrsyU89NIzkNN8s8vk8qn+6O+a7DT6Pu4JSlgVSZFOyNKmQwhSXth2qDrh7C51FhxOC9W3+XhSvnlxqr/4EA+4=
+	t=1716911890; cv=none; b=X+wUDMLb9NymVyBw9muuOovm9435Wwkm/92Kb259brcqjzN7bWNC3cStHdvBlf2BO1JLSG0Q04qLcWjU2T/pGQvmFh7Ree7ErsR2xCllHdlpjfZI+o2cOJV8oCjgTkBens7etAfF+zOvYGIsxKV3K9hr2k6FrqRmG1zJog4m9UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911808; c=relaxed/simple;
-	bh=ysSgJke61ofzGTOSWNXuddZUCwyuvR4kJz+M8yt9lHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nYp/V0d/Sb3pgv07Y7laBFLvRlA13XhJY+AyRkHR4WRLCPyCn2L9y7RkAYi/RNlR3wETY7f6Euypf0iC/lcD5qLmBEqBzTaLXQlIZiqs8Fex0ZaGUuisRnw9mQSkKBYP+5yXqaFYHEralQGmlTczCiJv4tKtQfrR8SrHpBqHHps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-529597d77b4so1284936e87.0;
-        Tue, 28 May 2024 08:56:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716911804; x=1717516604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UvZxaJF28iL5uKpQcCM7Mk+grk1BxPMDMrXsVUajEUM=;
-        b=RQ0V4rDELj0HqzwBT7iRqyTfiv+1dQSCWTp5MIGD12ONQihhp84sXTMoZ+JoLmI23C
-         t07LRWjyvFLp1usq7xDTQz4pYKMjwER8s64ChTMEs2L475vghdWuk9R8tBWYb7SNljIE
-         6lFEAbVebLe1kTbHdVJlIU0Y01FYXEVJxqNyDamLbWA0lv7sAti2uHjIc4nqzYuNu+FM
-         fnA5i0c2/+GxE2h3BVIpo3OPP0Ud5+4MW9sAnBdnBXi6/yoJsOprvNxjnRbXAA0sz98N
-         wr5baPQErfgVSHsV6ZSTAoasIGZAZdrvnm9AL2WqTIJrfFmv+zTffQ9tzSqXc3bpV0XQ
-         JpJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpNgYyX4PL99b3/Hr37MJsHHKnAyDuUehOehjCZ/8nrknWsNGmCuCXH6CklKgjQwpSEpm6SaPoB7utZH48OsSzSxaMdC/55QN4nS+4kItmBDid7wr1a66HwcIgSoBUOfghMDyb8Zy6Jg==
-X-Gm-Message-State: AOJu0Yx5Wyz90Nayg5TD7g1wwgf1jnZmgo0gGhn//9csqfa7bk4CiLAG
-	w96SFo02nYoUFDgWLxGJvD0TTaG3bj/h6uqJjVooUM6hd6PPj80yUpvZ0ONR
-X-Google-Smtp-Source: AGHT+IGCOX+RTRXTm34fkoHu4ucl4/nBu08Dw4YFcfi1caFDIr3Qjeas5gW0w91XqkCx1SdKKFTFEQ==
-X-Received: by 2002:a05:6512:36c1:b0:51f:6132:2803 with SMTP id 2adb3069b0e04-529645e337cmr6457584e87.17.1716911803734;
-        Tue, 28 May 2024 08:56:43 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529b259abf7sm541888e87.304.2024.05.28.08.56.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 08:56:43 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso9990161fa.2;
-        Tue, 28 May 2024 08:56:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwFyNxSDs+VPtXKvLf4SeNYls+3gaQZ4npj6CW6xHyTn/Fh2N9+QZ7/jPBGRIWog9EjFhv7LbqMmJwhP2Ec2M2j7dJ0NheYMn2dTYoi5ab4VW+UFY5Y7prjOFCjZmRHmyVyDJi4YUjpg==
-X-Received: by 2002:a2e:90d9:0:b0:2df:c2b:8c84 with SMTP id
- 38308e7fff4ca-2e95b09452fmr76184881fa.1.1716911803445; Tue, 28 May 2024
- 08:56:43 -0700 (PDT)
+	s=arc-20240116; t=1716911890; c=relaxed/simple;
+	bh=c5lGEXQwzulh39BNNvVK3ComcUQeEWk6Pg0H6NWEfbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppoe03qIJlkCJKYymswiKMIYuiEro2iN56zHPdD5wXNgqJWK0DGPTTFlOvOzkips1Xbhpqnyimut00F/W8vQ7AogKURsQ1do2Fy6pZ69CezNM3PtB/omGLXsSqPxnfeSsaZZkDm3jGH/+aEOOYIq7doe+z91BGMa69oYoUNJWkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=si2wh7RR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76209C3277B;
+	Tue, 28 May 2024 15:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716911889;
+	bh=c5lGEXQwzulh39BNNvVK3ComcUQeEWk6Pg0H6NWEfbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=si2wh7RRadbQhWij7/FlclQAb1uil6gL8wD06Q08zbUhVkIq5tv/8K0cPHIkXVV27
+	 +nzaKAAKApwgOKNnIqsruYCGEx2VC6rKeobQXp+RWqLYzINbTSOR0NO14GkxTvLKLO
+	 L31lR8XlyC1mU3wLB7vJj0xBNokXvUvJQmLr9xrTcGe9oeDMroRnD7aZrza/pDVtph
+	 fX9URt5gU5Aov0kRfrcbQgQAb5hL65AVkSqJ4m/M3VnqKV2HJzJMr0kqODE6PQId04
+	 z282TuXRvFX1/Wchj+O8fCVTJEBjzMf3h38/U/fxYf8LsiYDByZiIT09A/+tt94Pyy
+	 P4BsQUcQyqSFw==
+Date: Tue, 28 May 2024 10:58:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+Message-ID: <20240528155808.GA695520-robh@kernel.org>
+References: <20240522215043.3747651-1-tharvey@gateworks.com>
+ <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org>
+ <20240523-vividly-sequester-d85ac7bccbbd@spud>
+ <CAJ+vNU3fQt=6t3a_QFU_3jb5mTVLGJiptPnGEmWvvXZYGEPOFQ@mail.gmail.com>
+ <20240524-cavalier-outthink-51805f49c8fb@spud>
+ <8007abef-38bb-4d7d-a453-00bb5e6bede5@linaro.org>
+ <CAJ+vNU3Rh6f-HrFbBLxNXVP1PwsGh8OyGmmGJBv6+GRwZaTXgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6a772756c2c677dbdaaab4a2c71a358d8e4b27e9.1714304058.git.dsimic@manjaro.org>
- <49abb93000078c692c48c0a65ff677893909361a.1714304071.git.dsimic@manjaro.org> <171691117471.681554.6744393893618279840.b4-ty@csie.org>
-In-Reply-To: <171691117471.681554.6744393893618279840.b4-ty@csie.org>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 28 May 2024 23:56:31 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64ETOtHxQf1D9n+c9bGivsRTC=O8swDru+2cX2UT=o0qw@mail.gmail.com>
-Message-ID: <CAGb2v64ETOtHxQf1D9n+c9bGivsRTC=O8swDru+2cX2UT=o0qw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: Add cache information to the SoC
- dtsi for H6
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: jernej.skrabec@gmail.com, samuel@sholland.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ+vNU3Rh6f-HrFbBLxNXVP1PwsGh8OyGmmGJBv6+GRwZaTXgw@mail.gmail.com>
 
-On Tue, May 28, 2024 at 11:46=E2=80=AFPM Chen-Yu Tsai <wens@csie.org> wrote=
-:
->
-> On Sun, 28 Apr 2024 13:40:36 +0200, Dragan Simic wrote:
-> > Add missing cache information to the Allwinner H6 SoC dtsi, to allow
-> > the userspace, which includes lscpu(1) that uses the virtual files prov=
-ided
-> > by the kernel under the /sys/devices/system/cpu directory, to display t=
-he
-> > proper H6 cache information.
+On Sat, May 25, 2024 at 12:58:18PM -0700, Tim Harvey wrote:
+> On Sat, May 25, 2024 at 11:34 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 > >
-> > Adding the cache information to the H6 SoC dtsi also makes the followin=
-g
-> > warning message in the kernel log go away:
+> > On 24/05/2024 20:40, Conor Dooley wrote:
+> > > On Thu, May 23, 2024 at 04:04:50PM -0700, Tim Harvey wrote:
+> > >> On Thu, May 23, 2024 at 7:47 AM Conor Dooley <conor@kernel.org> wrote:
+> > >>>
+> > >>> On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wrote:
+> > >>>> On 22/05/2024 23:50, Tim Harvey wrote:
+> > >>>>> The GW7905 was renamed to GW7500 before production release.
+> > >>>>>
+> > >>>>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > >>>>> ---
+> > >>>>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+> > >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >>>>>
+> > >>>>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > >>>>> index 0027201e19f8..d8bc295079e3 100644
+> > >>>>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > >>>>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > >>>>> @@ -920,8 +920,8 @@ properties:
+> > >>>>>                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+> > >>>>>                - fsl,imx8mm-evk            # i.MX8MM EVK Board
+> > >>>>>                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
+> > >>>>> +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Board
+> > >>>>
+> > >>>> That's not even equivalent. You 7500 != 75xx.
+> > >>>>
+> > >>>
+> > >>>>>                - gateworks,imx8mm-gw7904
+> > >>>>> -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
+> > >>>>
+> > >>>> Compatibles do not change. It's just a string. Fixed string.
+> > >>>
+> > >>> I think there's justification here for removing it, per the commit
+> > >>> message, the rename happened before the device was available to
+> > >>> customers.
+> > >>> Additionally, I think we can give people that upstream things before they're
+> > >>> publicly available a bit of slack, otherwise we're just discouraging
+> > >>> people from upstreaming early.
+> > >>
+> > >> Hi Conor,
+> > >>
+> > >> Thanks for understanding - that's exactly what happened. I'm in the
+> > >> habit of submitting patches early and often and it's no fun when
+> > >> something like a silly product name gets changed and breaks all the
+> > >> hard work.
+> > >>
+> > >> The board model number is stored in an EEPROM at manufacturing time
+> > >> and that EEPROM model is used to build a dt name. So instead of GW7905
+> > >> which would be a one-off custom design it was decided to change the
+> > >> product to a GW75xx. The difference between GW7500 and GW75xx is
+> > >> because we subload components on boards between GW7500/GW7501/GW7502
+> > >> etc but the dt is the same.
+> > >>
+> > >> If there is resistance to a patch that renames it then I guess I'll
+> > >> have to submit a patch that removes the obsolete board, then adds back
+> > >> the same board under a different name. Shall I do that?
+> > >
+> > > I think this patch is fine - other than the inconsistency that Krzysztof
+> > > pointed out between the "renamed to gw7500" and the "gw75xx" in the new
+> > > compatible.
 > >
-> > [...]
->
-> Applied to sunxi/dt-for-6.11 in sunxi/linux.git, thanks!
->
-> [1/1] arm64: dts: allwinner: Add cache information to the SoC dtsi for H6
->       https://git.kernel.org/sunxi/linux/c/c8240e4b0fd2
+> > I am not a fan of renaming compatibles because of marketing change,
+> > because compatible does not have to reflect the marketing name, but
+> > there was already precedent from Qualcomm which I did not nak, so fine
+> > here as well. Double wildcard 75xx is however a bit worrying.
+> >
+> 
+> Hi Krzysztof,
+> 
+> Thanks for understanding. The double-wildcard is again a marketing
+> tool. All GW75** use the same device-tree by design. The boot firmware
+> that chooses the device-tree understands this and for a GW7521 for
+> example would look for gw7521 first, gw752x next, gw75xx last.
 
-OK, that's weird. Somehow b4 thought this patch was v2 of the A64 patch [1]=
-.
-Looks like they are threaded together because this patch has "In-Reply-To".
+You haven't documented the other 2 though.
 
-Please avoid it in the future.
+How do "all GW75** use the same device-tree", but then there are 3 
+possible DTs for just 1 board?
 
+Selecting a DT is not a unique problem. We don't need unique 
+solutions. There's the QCom board-id proposal[1] and OS provided DT[2] 
+which are addressing similar issues.
 
-Thanks
-ChenYu
+Rob
 
-[1] https://lore.kernel.org/linux-sunxi/6a772756c2c677dbdaaab4a2c71a358d8e4=
-b27e9.1714304058.git.dsimic@manjaro.org/
+[1] https://lore.kernel.org/all/20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com/
+[2] https://lists.linaro.org/archives/list/boot-architecture@lists.linaro.org/thread/DZCZSOCRH5BN7YOXEL2OQKSDIY7DCW2M/
 
