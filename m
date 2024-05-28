@@ -1,1179 +1,169 @@
-Return-Path: <linux-kernel+bounces-191848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59A48D1517
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:13:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350228D14D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1072830C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C81CF1F22C29
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE9C71B27;
-	Tue, 28 May 2024 07:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABE26F08B;
+	Tue, 28 May 2024 06:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="3Vuv5frC"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LneVG+tZ"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5E6F079;
-	Tue, 28 May 2024 07:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74BC1BDD3;
+	Tue, 28 May 2024 06:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716880429; cv=none; b=W/p8WhyCLordBc98a3EkKsDmhtX6QVoOzuzrP3tqXxajigH38fruP2Vr8U1zZlOW5XOuJYfWvSrSBTtzq+zLGJS5tzrNbdItqfD83QxWKrY0+NJGsbq22tUb+RHql7GECT4xPqDRPlcxbILP2qx5rH3Tx4UYVkOUVZSCyemv30Q=
+	t=1716879553; cv=none; b=XrukjU+DGI7FPePw8GLy/MeJYny0T1Ejbcc++SPkqEVHID2dw5pjvQcDgFLXtvOPOw5PleX0sfuB5a3gTE5++0VMxywdiqtuB+5dWwrdIq4Mp7Fr19eqdgS0Y5TeN2Q2J4kRttfOauShvQAczyygeorVLlOFfwTCMthHL/J8nag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716880429; c=relaxed/simple;
-	bh=RYfVNlAKOzTzjlPX+tX2W1nJbTXUoYMb5XzPX8MB2wM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Uonxzbrqoir9Gg9eUkWki89iGqSA/ubZyPwFRyvs7W6t43uK01i+AibG5odzkyvatDD+DD/r9mutntEg1BjfBU2LUKGAJTaFsNVVfxGu/oTvvkIPMWhI7DENsyPFZNvGArxcK6qnEnNsfyarLRJhMElTrQ3WlWosq4Y3limVcfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=3Vuv5frC; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBqmi-0086Ls-2v;
-	Tue, 28 May 2024 08:58:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GL+aZS1f7q0b9Vpx0YmIWFbutOGrFykefVkuOGBy/G8=; b=3Vuv5frC4zv/TvdgWhbl+mSAcf
-	ZgxF/YGtirY3f54diz0LAs2Q8czQIl6Uy7xppDy4OM34O1haplaj6sJKwWKhkdoyOmEcl/NShZtbJ
-	ivAj/UadZ06nan5QHMyC8WyWIOFahZZrOIj6n5nqlMRddMYVXdX2KqMLV4coEc7MKPMUhTbVrrI0n
-	QlAneEoKI33l/gzjobsTKCmbosvbiAc5Q02ZWcfSX6bqGfqfEfZvOsQQbFYMtVLkGl70KOsUH/woN
-	7a5UGKSjBUsbVOmaRMLv/jvoCde+xSrZwmhap3beHXXoTfhWIfdcF44HDEoguDoYFijgRQ/ZfJJBQ
-	Y3/NJGZQ==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBqmf-001szJ-1E;
-	Tue, 28 May 2024 08:58:10 +0200
-Received: from andi by aktux with local (Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBqmg-008EX9-0g;
-	Tue, 28 May 2024 08:58:10 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andreas@kemnade.info,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to yaml
-Date: Tue, 28 May 2024 08:57:56 +0200
-Message-Id: <20240528065756.1962482-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716879553; c=relaxed/simple;
+	bh=HiRlZLOzSaOMY7blXOfYLPUrJsTTdSBTJvlHnt/Hb24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=atRiBsd3ECEp5FVLkMggKyh0UtYcVjXpgD6oR66a75xQyxtZb2qnq8QPDLMtwGv+HUFFN+2/v+5joGNKtngtWR0Sf7VfLp7d3lNwYFXhZvbwCDI1AM1nxVe/ccAAwTmZrzNjn346q0S0/zOE5NspVtygrWfvbjT59jsvIX1Yw4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LneVG+tZ; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E95F620005;
+	Tue, 28 May 2024 06:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716879547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OI6f+uIxM6o5IsKGD7gigINySmFK/jOGNB2Gg4O3dJI=;
+	b=LneVG+tZiJPidz1EWjz0MJmtxpYZd9klnUiUlwBiGEqdESHNbYuT1/NCJX173KGAXqUMHk
+	vky0zDs5rMzAYHQOK6o3x31btrWi9VsbPhrfK6FVvRL1pt8MRgNYFhp+0lK//QorUONjoK
+	d1LrDaQFbO6cP0UrcPfOwqTVwQ6ua+MCWJIi7+R+RRXVRqZTp0AdnhSmCHpD0U58PFeXdx
+	CTL1TaXV6r5qzVk1lytP8S1E6bzEM9cOnvlpiazx91q0RCgHqdkAkiohvCXiHT2JUiZcAF
+	x17A0g+rikkL3JIvvny2beXx2YqGeG8IdhkJ14qv4BCeJomQ6mbH+EZCyp9J0A==
+Message-ID: <1cfef2c3-3b24-469d-b55a-377f2d42756b@bootlin.com>
+Date: Tue, 28 May 2024 08:59:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: i2c: gpio: Add 'transition-delay-ms'
+ property
+To: Krzysztof Kozlowski <krzk@kernel.org>, Peter Rosin <peda@axentia.se>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Korsgaard <peter.korsgaard@barco.com>,
+ Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, herve.codina@bootlin.com,
+ christophercordahi@nanometrics.ca
+References: <20240527113908.127893-1-bastien.curutchet@bootlin.com>
+ <20240527113908.127893-2-bastien.curutchet@bootlin.com>
+ <4f4db483-6042-4f85-9c64-8d3ad9290506@kernel.org>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <4f4db483-6042-4f85-9c64-8d3ad9290506@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Convert the regulator bindings to yaml files. To allow only the regulator
-compatible corresponding to the toplevel mfd compatible, split the file
-into one per device.
+Hi Krzysztof,
 
-To not need to allow any subnode name, specify clearly node names
-for all the regulators.
+On 5/27/24 16:38, Krzysztof Kozlowski wrote:
+> On 27/05/2024 13:39, Bastien Curutchet wrote:
+>> The i2c-gpio-mux can be used to describe a multiplexer built upon
+>> several i2c isolators having an enable pin (such as LTC4310). These
+>> isolators can need some time between their enable pin's assertion and
+>> the first i2c transfer.
+>>
+>> Add a 'transition-delay-ms' property that indicates the delay to be
+>> respected before doing the first i2c transfer.
+>>
+> 
+> That's quite limited hardware description, comparing to cover letter.
+> Please provide full description here, not in cover letter. This is the
+> binding, so the hardware part.
 
-Drop one twl5030 compatible due to no documentation on mfd side and no
-users of the twl5030.
+Ok, I'll add details in next iteration.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Reason for being RFC:
-the integration into ti,twl.yaml seems not to work as expected
-make dt_binding_check crashes without any clear error message
-if used on the ti,twl.yaml
+> 
+> Anyway, this does not look like property of mux itself. If there is no
+> isolator, the mux would work fine, right?
+> 
+In the case I'm thinking about, there is no mux at all on the hardware, 
+only two isolators. Each of them have several devices behind. I use the 
+i2c-gpio-mux to drive the isolators enable pins to always enable only 
+one of the isolators at a time.
 
- .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
- .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++++++++++
- .../regulator/ti,twl6030-regulator.yaml       | 292 +++++++++++++
- .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
- .../bindings/regulator/twl-regulator.txt      |  80 ----
- 5 files changed, 935 insertions(+), 81 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-index c2357fecb56cc..4ced6e471d338 100644
---- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-@@ -50,7 +50,7 @@ allOf:
-           properties:
-             compatible:
-               const: ti,twl4030-wdt
--
-+        $ref: /schemas/regulator/ti,twl4030-regulator.yaml
-   - if:
-       properties:
-         compatible:
-@@ -63,6 +63,7 @@ allOf:
-           properties:
-             compatible:
-               const: ti,twl6030-gpadc
-+        $ref: /schemas/regulator/ti,twl6030-regulator.yaml
-   - if:
-       properties:
-         compatible:
-@@ -75,6 +76,7 @@ allOf:
-           properties:
-             compatible:
-               const: ti,twl6032-gpadc
-+        $ref: /schemas/regulator/ti,twl6032-regulator.yaml
+> Then why you are not adding this property to every possible bus and I2C
+> controller? I2C isolator could be placed there as well.
+> 
+I actually thought about adding a description of I2C isolators because 
+my real use case is only one I2C isolator on a I2C bus. The isolator has 
+an enable pin that I want to drive low when the bus is unused to save 
+power.
+But I didn't find a proper way to describe it. I think a property for 
+I2C controllers is not ideal to describe the GPIO, the transition-delay 
+and the fact that there could be devices in front of the isolator and/or 
+devices behind it (see below)
  
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-new file mode 100644
-index 0000000000000..9623c110605ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-@@ -0,0 +1,402 @@
-+# SPDX-License-Identifier: (GPL-2.0)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/ti,twl4030-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Regulators in the TWL4030 PMIC
-+
-+maintainers:
-+  - Andreas Kemnade <andreas@kemnade.info>
-+
-+properties:
-+  regulator-vaux1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vaux1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vaux2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vaux2"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vaux3:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vaux3"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vaux4:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vaux4"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vmmc1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vmmc1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vmmc2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vmmc2"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vpll1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vpll1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vpll2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vpll2"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vsim:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vsim"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdac:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vdac"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vintana2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vintana2"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vio:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vio"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdd1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vdd1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdd2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vdd2"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vintana1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vintana1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vintdig:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vintdig"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vusb1v5:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vusb1v5"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vusb1v8:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vusb1v8"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+  regulator-vusb3v1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl4030-vusb3v1"
-+
-+      regulator-initial-mode:
-+        items:
-+          - items:
-+              enum:
-+                - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                       # with low power consumption with low load current capability
-+                - 0x0e # Active mode, the regulator can deliver its nominal output
-+                       # voltage with full-load current capability
-+
-+    required:
-+      - compatible
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    regulator-vaux1 {
-+        compatible = "ti,twl4030-vaux1";
-+        regulator-min-microvolt  = <1000000>;
-+        regulator-max-microvolt  = <3000000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml b/Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
-new file mode 100644
-index 0000000000000..bda4c83a789d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
-@@ -0,0 +1,292 @@
-+# SPDX-License-Identifier: (GPL-2.0)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/ti,twl6030-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Regulators in the TWL6030 PMIC
-+
-+maintainers:
-+  - Andreas Kemnade <andreas@kemnade.info>
-+
-+properties:
-+  regulator-vaux1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vaux1"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vaux2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vaux2"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vaux3:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vaux3"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vmmc:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vmmc"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vpp:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vpp"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vusim:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vusim"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vana:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vana"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vcxio:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vcxio"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdac:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vdac"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vusb:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vusb"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-v1v8:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-v1v8"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-v2v1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-v2v1"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdd1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vdd1"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdd2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vdd2"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vdd3:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6030-vdd3"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    regulator-vaux1 {
-+        compatible = "ti,twl6030-vaux1";
-+        regulator-min-microvolt  = <1000000>;
-+        regulator-max-microvolt  = <3000000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml b/Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
-new file mode 100644
-index 0000000000000..2e9871e178151
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
-@@ -0,0 +1,238 @@
-+# SPDX-License-Identifier: (GPL-2.0)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/ti,twl6032-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Regulators in the TWL6032 PMIC
-+
-+maintainers:
-+  - Andreas Kemnade <andreas@kemnade.info>
-+
-+properties:
-+  regulator-ldo1:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo1"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo2:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo2"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo3:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo3"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo4:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo4"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo5:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo5"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo6:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo6"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldo7:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldo7"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldoln:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldoln"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-ldousb:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-ldousb"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-smps3:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-smps3"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-smps4:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-smps4"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+  regulator-vio:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      compatible:
-+        const: "ti,twl6032-vio"
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
-+    required:
-+      - compatible
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    regulator-ldo1 {
-+        compatible = "ti,twl6032-ldo1";
-+        regulator-min-microvolt  = <1000000>;
-+        regulator-max-microvolt  = <3000000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/regulator/twl-regulator.txt b/Documentation/devicetree/bindings/regulator/twl-regulator.txt
-deleted file mode 100644
-index 549f80436debc..0000000000000
---- a/Documentation/devicetree/bindings/regulator/twl-regulator.txt
-+++ /dev/null
-@@ -1,80 +0,0 @@
--TWL family of regulators
--
--Required properties:
--For twl6030 regulators/LDOs
--- compatible:
--  - "ti,twl6030-vaux1" for VAUX1 LDO
--  - "ti,twl6030-vaux2" for VAUX2 LDO
--  - "ti,twl6030-vaux3" for VAUX3 LDO
--  - "ti,twl6030-vmmc" for VMMC LDO
--  - "ti,twl6030-vpp" for VPP LDO
--  - "ti,twl6030-vusim" for VUSIM LDO
--  - "ti,twl6030-vana" for VANA LDO
--  - "ti,twl6030-vcxio" for VCXIO LDO
--  - "ti,twl6030-vdac" for VDAC LDO
--  - "ti,twl6030-vusb" for VUSB LDO
--  - "ti,twl6030-v1v8" for V1V8 LDO
--  - "ti,twl6030-v2v1" for V2V1 LDO
--  - "ti,twl6030-vdd1" for VDD1 SMPS
--  - "ti,twl6030-vdd2" for VDD2 SMPS
--  - "ti,twl6030-vdd3" for VDD3 SMPS
--For twl6032 regulators/LDOs
--- compatible:
--  - "ti,twl6032-ldo1" for LDO1 LDO
--  - "ti,twl6032-ldo2" for LDO2 LDO
--  - "ti,twl6032-ldo3" for LDO3 LDO
--  - "ti,twl6032-ldo4" for LDO4 LDO
--  - "ti,twl6032-ldo5" for LDO5 LDO
--  - "ti,twl6032-ldo6" for LDO6 LDO
--  - "ti,twl6032-ldo7" for LDO7 LDO
--  - "ti,twl6032-ldoln" for LDOLN LDO
--  - "ti,twl6032-ldousb" for LDOUSB LDO
--  - "ti,twl6032-smps3" for SMPS3 SMPS
--  - "ti,twl6032-smps4" for SMPS4 SMPS
--  - "ti,twl6032-vio" for VIO SMPS
--For twl4030 regulators/LDOs
--- compatible:
--  - "ti,twl4030-vaux1" for VAUX1 LDO
--  - "ti,twl4030-vaux2" for VAUX2 LDO
--  - "ti,twl5030-vaux2" for VAUX2 LDO
--  - "ti,twl4030-vaux3" for VAUX3 LDO
--  - "ti,twl4030-vaux4" for VAUX4 LDO
--  - "ti,twl4030-vmmc1" for VMMC1 LDO
--  - "ti,twl4030-vmmc2" for VMMC2 LDO
--  - "ti,twl4030-vpll1" for VPLL1 LDO
--  - "ti,twl4030-vpll2" for VPLL2 LDO
--  - "ti,twl4030-vsim" for VSIM LDO
--  - "ti,twl4030-vdac" for VDAC LDO
--  - "ti,twl4030-vintana2" for VINTANA2 LDO
--  - "ti,twl4030-vio" for VIO LDO
--  - "ti,twl4030-vdd1" for VDD1 SMPS
--  - "ti,twl4030-vdd2" for VDD2 SMPS
--  - "ti,twl4030-vintana1" for VINTANA1 LDO
--  - "ti,twl4030-vintdig" for VINTDIG LDO
--  - "ti,twl4030-vusb1v5" for VUSB1V5 LDO
--  - "ti,twl4030-vusb1v8" for VUSB1V8 LDO
--  - "ti,twl4030-vusb3v1" for VUSB3V1 LDO
--
--Optional properties:
--- Any optional property defined in bindings/regulator/regulator.txt
--For twl4030 regulators/LDOs:
-- - regulator-initial-mode:
--  - 0x08 - Sleep mode, the nominal output voltage is maintained with low power
--           consumption with low load current capability.
--  - 0x0e - Active mode, the regulator can deliver its nominal output voltage
--           with full-load current capability.
--
--Example:
--
--	xyz: regulator@0 {
--		compatible = "ti,twl6030-vaux1";
--		regulator-min-microvolt  = <1000000>;
--		regulator-max-microvolt  = <3000000>;
--	};
--
--For twl6030 regulators/LDOs:
--
-- - ti,retain-on-reset: Does not turn off the supplies during warm
--                       reset. Could be needed for VMMC, as TWL6030
--                       reset sequence for this signal does not comply
--                       with the SD specification.
--- 
-2.39.2
 
+                                                      +------------+ 
+
+                                                      |   GPIO     | 
+
+                                                      | controller | 
+
+                                                      +------------+ 
+
+   +------------+                                           | 
+
+   |    I2C     |------+-------------+                      | 
+
+   | controller |      |             |                      | 
+
+   +------------+  +---+---+  +------+------+               | 
+
+                   | dev A |  |    I2C    EN|---------------+ 
+
+                   +-------+  |  isolator   | 
+
+                              +------+------+ 
+
+                                     | 
+
+                                     +-------+-----------+------- 
+
+                                             |           | 
+
+                                         +---+---+   +---+---+ 
+
+                                         | dev B |   | dev C | 
+
+                                         +-------+   +-------+ 
+
+
+So I started to describe it as a device itself but then I realized that 
+I was doing something very similar to the i2c-gpio-mux description 
+that's why I finally submitted this patch series.
+
+> So just like RC binding, that's not a property of I2C mux. Maybe this
+> fits usage of GPIO RC / delay binding.
+> 
+
+IMHO that’s more of a MUX property than an RC binding because every MUX 
+needs some time to switch from one bus to another. It’s just that for 
+the vast majority of MUXes, this time is so small that it doesn’t need 
+to be described.
+
+
+Best regards,
+Bastien
 
