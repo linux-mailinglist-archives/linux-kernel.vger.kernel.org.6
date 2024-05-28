@@ -1,245 +1,108 @@
-Return-Path: <linux-kernel+bounces-192516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079428D1E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:20:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3568D1E80
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E391C23080
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:20:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02EA8B22F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC10D16F91C;
-	Tue, 28 May 2024 14:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBDD172BCA;
+	Tue, 28 May 2024 14:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GFRrkoTJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YARx4o7q"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B189216F8F9;
-	Tue, 28 May 2024 14:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A465717106F;
+	Tue, 28 May 2024 14:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906011; cv=none; b=PkUKYs6P90GliI3/A2PKCfyqdO18RG4sg3fLVYXWW3XpeGYbvCnxF1YOO6mRyO7CUc2gBqeabUlvyz5ydltK6PepC0zC43qP3JOi1+K9pEV7eeQS1+jyneXgFxkM2sNj0johqk3gFiH1109/SN6WdEZ1eB0TYFtXAVdgcbFoKoI=
+	t=1716906050; cv=none; b=BfkxKWPvJ/WwLvmbDRD4zkG4oiC9dagvu9aunYytnGoM7E+4ZdKftNRi+ECh7gsPKbVBAQ1IfTOdb62/g9WD4xqFWSqfyWq28Jh/8LhWGo/riJwQKG1bvIUO9N4iMhtr/RT2GH0fAEFViwjyhZM40QnmTEEks2wMRT3oJnRo3BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906011; c=relaxed/simple;
-	bh=1+rOQCPzQu4wnm8yOqRMSgFlDz1Ezy+l2FUt3lEFBhM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=JUc1DWo2ZxmT6lZczHVPulEnMkinHle1CabPZrNeQnfNxq269wpeEkaJfhWuLjMm4Bp1DDmgHLOLAJ43wGLy4E03NFJBknQg/HyOds/t218wVi6VbxY7rmSx21Ce5N5LboiPPzL2B0b+hGKGzPPvH0/Z+N+nIbRIrVuFLi+J9FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GFRrkoTJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SABn8I004417;
-	Tue, 28 May 2024 14:20:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=vKGPqik3ovC6mzbEe2S8aeqPg5Uz19n7KBUYuqPmDec=; b=GF
-	RrkoTJ4bh9Rl9vlkCwPXrPyfOafogozd1rUXWVNLA3f41kVGUgtq331NlewNxHfe
-	T3y9AYL4YjIxDzMb4LY99oIWG5pVNNhMzC/uYwfQ3Hpcg5fzNHbZ6wS8zi8xRlNi
-	b8DDDs83BN8QhgVvJa8fWF/AjjW3juJhDcaStuy8igrmS7wQeSo4qKROjPdWI4UL
-	/JicOIFxzQbJF8JEigOJ+pPaHf/cTKTurG+vQM93MeAPUVqkvtNLjZBO4JloNIZc
-	6ugb1h8/FiNEh+Dy/yCscTNztOG/VW5gzOJHCxK6Gz/muKJpWJHGWsPCD7tuUJMJ
-	oHkr7FiRuhEZ7mCBXqzw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2ppbdt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 14:20:03 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44SEK0oj012595;
-	Tue, 28 May 2024 14:20:00 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 3yb92kpxd6-1;
-	Tue, 28 May 2024 14:20:00 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SEK0kJ012590;
-	Tue, 28 May 2024 14:20:00 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-vvalluru-hyd.qualcomm.com [10.213.106.176])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 44SEJxhd012587;
-	Tue, 28 May 2024 14:20:00 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 482827)
-	id 85FF152D383; Tue, 28 May 2024 19:49:58 +0530 (+0530)
-From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
-To: dmitry.baryshkov@linaro.org
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_abhinavk@quicinc.com, quic_nankam@quicinc.com,
-        quic_vvalluru@quicinc.com, robh@kernel.org
-Subject: [PATCH v4] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-Date: Tue, 28 May 2024 19:49:54 +0530
-Message-Id: <20240528141954.7567-1-quic_vvalluru@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
-References: <CAA8EJpo=Q4_=JU83-9ooSqiSr=xUeHh2awDhzq9q3Xd56h83zw@mail.gmail.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: y2GYyrNt7T8FJHTpc8MuI1cFFEH0RmXn
-X-Proofpoint-ORIG-GUID: y2GYyrNt7T8FJHTpc8MuI1cFFEH0RmXn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280108
+	s=arc-20240116; t=1716906050; c=relaxed/simple;
+	bh=ckK8HV/PJ4m/OmbtPxcBWpY4ly7ROI74ua0Gl+Joj7Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ghmsYqpmbTExnyGg9MCgEq2P2jI/xBjNxcR3ZL0UmYTZ1F1jhPLRexvRffoQDXI++5t3jAwI/DprafwLIhW1R4Z4InqAnu5GlGM/f1VvWQ9kpQFZxXEjII0j47g2hriynW7cz7UT5CYTDOdjiPWRSMZxOJqe6XT7JmloB6tAUCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YARx4o7q; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C7BE24000B;
+	Tue, 28 May 2024 14:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716906044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rcyQBhDqTkZo84eopnmm/cwcP4P/TkQC4sy913CIbEE=;
+	b=YARx4o7qJJytCR2QCrHYofS8SrVdgZB0rLESOVPUdLQSgYlhZY1DnRdzn7mNB5wlAy5N5z
+	GoyHLexz/t/I7kU6XLxln+czq7VRQrHPyl+HtWou1xajI7IhQ5dw0uZCBlKIg/Y6Su15Ax
+	qxzW/izSminS4TFc0b5867IS/Ohp1LiHvja+TRYxlUJZcCGYOLf8FfDcsAsIIrtxMSB9My
+	zGNiZiFV9BTWB85xjh3IVa3YnB0ZaS3w6LZn4psEWo1gYg3j2w2HsXmjP6fPiWKbAoUVne
+	C56a/qGKkS0jHBRVGhinmG29Q9Awag2y4UiMCCfm//p6iqYHvlCIS07LFmHHzg==
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: [PATCH wireless 0/3] wifi: wilc1000: revert SRCU to RCU conversion
+ series
+Date: Tue, 28 May 2024 16:20:27 +0200
+Message-Id: <20240528-wilc_revert_srcu_to_rcu-v1-0-bce096e0798c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACzoVWYC/x2MUQqEMAwFryL5tqDVuq5XESlSoxsQXRK1gnh3g
+ 1/DwLx3gSATCjTJBYwHCa2LSp4mEH79MqGhQR1sZsvM2dpEmoPXEnnzwmH32+oVxn1C1X/zoi5
+ KB7r+M450vs8tRGKcUQS6+34AybG6JXMAAAA=
+To: linux-wireless@vger.kernel.org
+Cc: Ajay Singh <ajay.kathat@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Kalle Valo <kvalo@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-Rb3Gen2 has a lt9611uxc DSI-to-HDMI bridge on i2c0, with
-reset gpio from pm7250b gpio2 and irq gpio from tlmm gpio24.
-Bridge supplies are Vdd connected to input supply directly
-and vcc to L11c. Enable HDMI output, bridge and corresponding
-DSI output.
+This series is a follow-up to the static analyzer warnings raised by Dan
+Carpenter ([1]), and the agreement to proceed with a revert ([2]) due to the
+difficulties involved in fixing the remaining issues.
 
-Signed-off-by: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
+The initial series aimed to simplify the driver by switching it to
+classical RCU, since there was no evidence of SRCU usage legitimity in it.
+The warnings raised after the merge are likely hinting at some technical
+constraints which eventually led to SRCU usage, so put it back.
+Additionally, the series adds some comments to document SRCU usage.
+
+Unfortunately the faulty series reached a tagged release, so this revert
+series targets the wireless tree (ie not the wireless-next).
+
+[1] https://lore.kernel.org/linux-wireless/3b46ec7c-baee-49fd-b760-3bc12fb12eaf@moroto.mountain/
+[2] https://lore.kernel.org/linux-wireless/878qzu8e4k.fsf@kernel.org/
+
 ---
-v4: added fixed regulator for vdd
+Alexis Lothoré (3):
+      Revert "wifi: wilc1000: convert list management to RCU"
+      Revert "wifi: wilc1000: set atomic flag on kmemdup in srcu critical section"
+      wifi: wilc1000: document SRCU usage instead of SRCU
 
-v3: - Updated commit text
-    - Arranged nodes in alphabetical order
-    - Fixed signoff
-    - Fixed drive strength for lt9611_irq_pin
-    - Removed 'label' from hdmi-connector, which is optional
-
-v2: Addressed dtschema errors
-	- Fixed lt9611-irq
-	- vdd-supply error to be ignored, as it is connected to
-	  input supply directly, on rb3gen2
+ drivers/net/wireless/microchip/wilc1000/cfg80211.c | 41 ++++++++++++---------
+ drivers/net/wireless/microchip/wilc1000/hif.c      | 17 +++++----
+ drivers/net/wireless/microchip/wilc1000/netdev.c   | 43 +++++++++++++---------
+ drivers/net/wireless/microchip/wilc1000/netdev.h   | 12 +++++-
+ drivers/net/wireless/microchip/wilc1000/wlan.c     |  5 ++-
+ 5 files changed, 72 insertions(+), 46 deletions(-)
 ---
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 94 ++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+base-commit: 7e81b62cfb9abdd8177606f7c79a0585503bd7ae
+change-id: 20240528-wilc_revert_srcu_to_rcu-57c6a9138345
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index a085ff5b5fb2..7f00fca131a2 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -52,6 +52,25 @@
- 		};
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&lt9611_out>;
-+			};
-+		};
-+	};
-+
-+	lt9611_1v2: lt9611-vdd12-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "LT9611_1V2";
-+
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+	};
-+
- 	reserved-memory {
- 		xbl_mem: xbl@80700000 {
- 			reg = <0x0 0x80700000 0x0 0x100000>;
-@@ -530,6 +549,46 @@
- 			   <GCC_WPSS_RSCP_CLK>;
- };
- 
-+&i2c0 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	lt9611_codec: hdmi-bridge@2b {
-+		compatible = "lontium,lt9611uxc";
-+		reg = <0x2b>;
-+
-+		interrupts-extended = <&tlmm 24 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&pm7250b_gpios 2 GPIO_ACTIVE_HIGH>;
-+
-+		vdd-supply = <&lt9611_1v2>;
-+		vcc-supply = <&vreg_l11c_2p8>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&lt9611_irq_pin &lt9611_rst_pin>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lt9611_a: endpoint {
-+					remote-endpoint = <&mdss_dsi0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				lt9611_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c1 {
- 	status = "okay";
- 
-@@ -587,6 +646,21 @@
- 	remote-endpoint = <&usb_dp_qmpphy_dp_in>;
- };
- 
-+&mdss_dsi {
-+	vdda-supply = <&vreg_l6b_1p2>;
-+	status = "okay";
-+};
-+
-+&mdss_dsi0_out {
-+	remote-endpoint = <&lt9611_a>;
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dsi_phy {
-+	vdds-supply = <&vreg_l10c_0p88>;
-+	status = "okay";
-+};
-+
- &mdss_edp {
- 	status = "okay";
- };
-@@ -711,3 +785,23 @@
- 	function = "gpio";
- 	bias-disable;
- };
-+
-+&pm7250b_gpios {
-+	lt9611_rst_pin: lt9611-rst-state {
-+		pins = "gpio2";
-+		function = "normal";
-+
-+		output-high;
-+		input-disable;
-+		power-source = <0>;
-+	};
-+};
-+
-+&tlmm {
-+	lt9611_irq_pin: lt9611-irq-state {
-+		pins = "gpio24";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
+Best regards,
 -- 
-2.17.1
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
