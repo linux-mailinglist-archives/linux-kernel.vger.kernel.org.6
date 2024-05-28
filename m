@@ -1,97 +1,165 @@
-Return-Path: <linux-kernel+bounces-192865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377BF8D2339
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FAC8D2346
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B29B219FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E821F22D90
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3524CB28;
-	Tue, 28 May 2024 18:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430AC155C8F;
+	Tue, 28 May 2024 18:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTp1GK2h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="erbA/PqX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A1328A0;
-	Tue, 28 May 2024 18:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED254175AB;
+	Tue, 28 May 2024 18:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716920424; cv=none; b=dH0pqCg/4xJW1BydLKgFoTW1+PBzVU/18gfCS37p6/+UFss422GeAAKJnx6uL+MfyTBQ/yE0f+qjWm0u9mXHOWH62H6EFWS0Mj99eLOG/w4jwUbBkSZyrpxWV253+a+Pfrq5IeaOlKlslI11hGJu7SG4loM72TAGU/YMM7YZs9Y=
+	t=1716920583; cv=none; b=iQ1opwFgniqP3ozEKHX+ny0xm0hQvYfPs9K0ChLkd2j7BjvDsqa5t8dC/BjjlxCZFx0Ngao8xmUdca81GTQPzocR70q1oJnOliubdNuvUWS+GMcctzvMKPDhWxA3ouAhAgdBxA9myX/a1Pb3iehailKhScnu/aZoNy8aOps48tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716920424; c=relaxed/simple;
-	bh=42E4r1VKm0B2TmehB7K0UCqmgkW9B1ISSl44r7e27/8=;
+	s=arc-20240116; t=1716920583; c=relaxed/simple;
+	bh=QtUNxodfoUepzLMWfu0cElQDt+Ru0oc5fQ8DaPXi9gQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfIzs1Tyf+MDDI++z/fWF2euRD/mLjW7sBRLmLb6L77Bhnrj/wa7yTr0r4Laq0c2SyPaCJCjCqUXvZn47EqpwpGxxz9bISj0+iqhvxL1r2CxXB4PfeGnjssLXuyswMymaGYRaG8NJhH5MVn/30CTjn3E0z2ngUUXNTOw6flr1Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTp1GK2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93C5C32786;
-	Tue, 28 May 2024 18:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716920424;
-	bh=42E4r1VKm0B2TmehB7K0UCqmgkW9B1ISSl44r7e27/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTp1GK2hlDZ7iq+riwTqYVVdX15uKuvV8PjUteHqu7zjRUy72FTFz2Fyxi+B2+FdA
-	 hALfw0Ku34pkTCp3NyfjPAESt3irqYIxezfBoaE8ttai0rLUkgGWqI+wZylS1hjkEm
-	 kk0ylDMhZE//yhAQEKhv/v0yx8H65LTFkWg8XN45CxaV3/F8oDavD4AWq1KTM7Frn9
-	 +9DpIubaKmCnNvuqzalwnSJfmvef8I3wZQDjwv9fqGsjnGESvK6vpcGjyGzXTH+C6y
-	 WT9TFvyEeynAhK4OKF29OkmwgPNFB95fDAWj/LDh5jWhKYPrRWGVPHt+FfZYdx3MUV
-	 zSA9tRrWWdn0Q==
-Date: Tue, 28 May 2024 19:20:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.9 000/427] 6.9.3-rc1 review
-Message-ID: <4d2d1b28-bb64-4d56-b24c-c42a87618ca2@sirena.org.uk>
-References: <20240527185601.713589927@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DzA9WdnpTFwNY91vQRaWe2TGvsZ2/GWiYPDNEKuUvPzrLX8+tgE7KUaVVBDRlvC6c4XTzJyGKSbnTPsg6+pu4eO44lmeVs9LNf9efDQ2fqIinS10/HfaoRF2WV+kYaaKhGeKi6yuZ8QGMmIZZwvi2yzFiNus7FHOGitteafTW/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=erbA/PqX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hDGUpXuW9Jg+FqGgsoUFDxobgoSVzaRR+6S6ti9ZcBA=; b=erbA/PqXxYvPjxGKphfKhIrXAe
+	CEuEZt6fPkSMvmQpujGJKQBoBjW7EUOFxsdtDqLTjmcdQQZCWXRYI3vdRng+EsArZgLCLcHXWlXKY
+	w3Q2lKFSlDNQ3NjoLV0G6akHY16gDWEK3quH4io8zsPsGjWxO/0FpN79DLTY6E7tWitf3bnhwr9Ej
+	eVNnY0AqzW6Io1eby05A7Wol926cqsWicQX2IIuplm+UaU5sy+ysX9FJ4vPmUAqfV3cbNIwnWVIZ3
+	Z+LowyNdJmvNVrBYoWOov8RMYpmSi/6W1vbBrjwYr3/KUTMe7EPCY7G21dSF2aPqlq0uBme0Q/ilm
+	XSedWBcA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49050)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sC1TJ-0005Ak-1Y;
+	Tue, 28 May 2024 19:22:53 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sC1TK-0003SR-Rt; Tue, 28 May 2024 19:22:54 +0100
+Date: Tue, 28 May 2024 19:22:54 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andi Shyti <andi.shyti@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
+Message-ID: <ZlYg/hDhy6q/Olpr@shell.armlinux.org.uk>
+References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
+ <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
+ <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/YKMmMF7xefc4Dsw"
-Content-Disposition: inline
-In-Reply-To: <20240527185601.713589927@linuxfoundation.org>
-X-Cookie: How do I get HOME?
-
-
---/YKMmMF7xefc4Dsw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, May 27, 2024 at 08:50:47PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.3 release.
-> There are 427 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, May 28, 2024 at 01:50:54PM -0400, Sean Anderson wrote:
+> On 5/28/24 13:28, Russell King (Oracle) wrote:
+> > First, note that phylib's policy is if it loses comms with the PHY,
+> > then the link will be forced down. This is out of control of the SFP
+> > or phylink code.
+> > 
+> > I've seen bugs with the I2C emulation on some modules resulting in
+> > problems with various I2C controllers.
+> > 
+> > Sometimes the problem is due to a bad I2C level shifter. Some I2C
+> > level shifter manufacturers will swear blind that their shifter
+> > doesn't lock up, but strangely, one can prove with an osciloscope
+> > that it _does_ lock up - and in a way that the only way to recover
+> > was to possibly unplug the module or poewr cycle the platform.
+> 
+> Well, I haven't seen any case where the bus locks up. I've been able to
+> recover just by doing
+> 
+> 	ip link set net0 down
+> 	ip link set net0 up
+> 
+> which suggests that this is just a transient problem.
+> 
+> > My advice would be to investigate the hardware in the first instance.
+> 
+> I'll try to keep this in mind, but it's pretty infrequent and I probably
+> won't be able to test anything until I can reproduce it better.
+> 
+> > On Tue, May 28, 2024 at 12:57:25PM -0400, Sean Anderson wrote:
+> >> Hi,
+> >> 
+> >> I saw the following warning [1] twice when testing 1000Base-T SFP
+> >> modules:
+> >> 
+> >> [ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
+> >> [ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
+> >> [ 1481.699910] ------------[ cut here ]------------
+> >> [ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
+> >> [ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
+> >> <snip>
+> >> [ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
+> >> 
+> >> and a second time with some other errors too:
+> >> 
+> >> [   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
+> >> [   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
+> > 
+> > I2C driver bug? From what I can see, this occurs when there is further
+> > data to be read, and id->recv_count hits zero. The I2C controller is
+> > entirely in control of how many bytes are transferred from the remote
+> > device, and it should raise a NAK on the last byte before signalling a
+> > STOP condition during a read.
+> 
+> Commit bbf967b223b3 ("i2c: cadence: Handle transfer_size rollover")
+> makes it seem like a hardware error. E.g. Linux thinks we're done but
+> the hardware thinks there's still more data. I've added Alex to CC;
+> maybe he can comment.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+See https://www.ti.com/lit/an/slva704/slva704.pdf figure 9 and the
+text immediately above it. On a read, the controller is entirely
+in control of how many bytes are transferred from the connected
+device, and the controller has the responsibility to generate the
+ACK after each byte read from the device _if_ it wants another
+byte, or a NAK if it doesn't.
 
---/YKMmMF7xefc4Dsw
-Content-Type: application/pgp-signature; name="signature.asc"
+So, if the controller has been programmed to transfer e.g. 2 bytes,
+but decides to ACK the 2nd byte and proceed to receive a 3rd byte,
+that's nothing to do with the bus or the device, it's entirely down
+to the controller being silly when it knows we only want 2 bytes.
 
------BEGIN PGP SIGNATURE-----
+> > Many drivers now do not check whether the PHY accesses they are
+> > performing succeeded or not, and rely on the failure being permanent.
+> 
+> Well, this driver does, which is how the error gets propagated all the
+> way up to phy_state_machine. 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZWIGAACgkQJNaLcl1U
-h9Dt8gf/djWNXSdKlfvoalK12t5vQdHk1nLX5PlWlrsU0n3Gg1BrTtngq9YX5377
-XQuSnixXOQILWAOyA7aVqL+stQhv+So4+4xd2Vu6CTYqxk4Y1QNSf7sjcEvvrYF3
-bOGuZsxuHvL/225WLRD+EMeXMyjIz5Qd1m9uclWTIDvP9rT03Et2ZpzSfgAxp62n
-9wJ+y/hG+RM+Y6yRV4M6llRcppqWL9ZfZjni/aqkqw6Hui/tmlGO5lt1Ygz9NSYk
-IFHrM7fUW5X/e/OHr+QSPQUOBX3PnsL6XFzm9HPjgPQdZWxwMMgyyDUNZIsJbS0m
-uCu/n4P/OJ37cnvK057aEoRL8pHS4w==
-=TUA6
------END PGP SIGNATURE-----
+While the Marvell driver is good (probably because phylib maintainers
+look after it!), this isn't true of all drivers, and I don't think we
+should add a kind of recovery to the core without sorting out the
+other drivers first.
 
---/YKMmMF7xefc4Dsw--
+Maybe it needs to be something that PHY drivers opt into.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
