@@ -1,180 +1,234 @@
-Return-Path: <linux-kernel+bounces-191621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA25E8D1186
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0619B8D1189
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144E91C2312B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8F31F23E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630D14437A;
-	Tue, 28 May 2024 01:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B9AC8FF;
+	Tue, 28 May 2024 01:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOyAWkg1"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="jmxvTzE7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DxPSZSUe"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3AB446DB;
-	Tue, 28 May 2024 01:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4897DF49;
+	Tue, 28 May 2024 01:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716860231; cv=none; b=rz0T2bsZ+G4Xp9EmEzX9y+G7RuBLEFtSFydZSz7ATZL1iHE2ekrURnm9waVK4WzNYxXapkh1hx2n3tZwbelHtQQxjMil1JVht7eHwBhh/nOR0VeWrjD35bnLZBcit3NosYZnXL8+WkB4myCB3tn3vuYRnxcg+G+bzSL6IxzP+Fw=
+	t=1716860414; cv=none; b=eYl2vbZ7T11EdMi+bB2iUNK5o0y9t5nhlsf29nAA6mkoAbKrZLPExI3N22hCf18oTnBMuTSkcQyZxsE1dpfEnM5WPeJynWan2QlZI5AESvqOL3ZJZsSHXe+2GE9sSGODJpqKDN95GQtweapWJ+jfS9O5QfTRJn8LmN6LchjYnJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716860231; c=relaxed/simple;
-	bh=gRy35OUeiPoftW5As7Ndowu/SYCpl1gyfvy0PbUawa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TiIDWNRFppdpP9YsWKve2XxCM5Tg0lJxIG9ZlysuM5gZKHfo1Bj7/oSPd+dQmw8i1Vwu5ZACvbXzQIZr0hBUz0dYfVNSjIZM1cnwreLjonto/LkFoU9+7ezVI7VfrpA5YQycP+Ahas4cGX0CxL5jzt23G0O0PmVgnXNRLYqujqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOyAWkg1; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6818811ef2dso213134a12.0;
-        Mon, 27 May 2024 18:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716860229; x=1717465029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/zk9vV2YlMycmzWFDOTOhz2mFHoCHmz8RqkeX1scVZQ=;
-        b=KOyAWkg1FSgLxEdmUFfxE8KFAGuoVd/umysLOIDDPeCzSZl1nzZ72c8RC78fNYlwg+
-         x2XYPfiukf1v3UN5WkvEuP3QKDDGCledCZZA7KpOO1lD/ZTgBs7CZO5pO9seeuTtn/de
-         OlnWk9WcTX8TyrWdzU9z7A6wiC1DZjZah+BDhF1yVPNN7Cg6LJdJMTFy/Q2Am3W5o+RV
-         aDrpKyqZx3G0WIa0Iw4Ue1np6UT4RkRqulUGYahAAepSti2PNoFHNYSab+sBN9DiZRuF
-         JRGqMmK8zTEg5Mw9hbhD6/FGkxLEPrCTwKTWBr9Xf32wm+br7nnnDYgaCewcUxUFntcG
-         NHfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716860229; x=1717465029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/zk9vV2YlMycmzWFDOTOhz2mFHoCHmz8RqkeX1scVZQ=;
-        b=Hopo+vw40qCTGvXVjp1dZ+XAK3qSpAqPLl3cFABmWAIz6PfEdujkNv49HTKBBCZ/hm
-         UKy5JcsT10ZBtzTs1ZT++dG1F9xB4zq6Hgg5JHPO3hgI216eUVZAOZsowkA4t9ufW4lu
-         sErOR9/Ar9jeYjfPs3pGxpzkNaxYYXGrQXeWijfIRRxoc/ZZRII7BJCnA0aFw1Uy8Twg
-         EYyczJpqE3z1nE8PQ3KmIF2qY2i9eAnJq+XPVrAMDrzcmZmxE0tCzaOVDCJa5qai06sc
-         VAREFRxlKtcqSlHwDsmj+Whda8U5a/VuCe/o5yh4+y4bQJO69ER9xY819OYElVoS5aQF
-         6Amg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcL5RQ6At5ai3stHy1hi/hAQktI6wz1LJxsOej9P6w/GUe8PxPmy67XbCj9gYAkUSgOW6zVN8sc1eeNaqiCKPLOuy0fAer7UP3bBgYDQCMoGJBj46ppL/1wRrI/WDv315G
-X-Gm-Message-State: AOJu0YxIX7dm3WQYggBycFEeQlL7eZy9WlTebXuUU1sioEf3hD9Thraw
-	xc8j2V4IsCp4PjODScZo/hh6Fz74msIL0sZXgIc4RlZXSwflL0xxgrDftNJklg0OcU/aCur5vZA
-	xlwG23itFrlU+kLc2iQQOrtC4uXu032/EltA+9Q==
-X-Google-Smtp-Source: AGHT+IHNo0JD5HYAnIvsWqv6//ds5GCpX9miQ/PSD8IvV39sh/7bXFiVDS6KX+8DFMu7bg9EoCp8gdSH3bmQsucVq2g=
-X-Received: by 2002:a17:90a:bb8c:b0:2bd:5deb:9d50 with SMTP id
- 98e67ed59e1d1-2bf5f74e014mr9138711a91.39.1716860229503; Mon, 27 May 2024
- 18:37:09 -0700 (PDT)
+	s=arc-20240116; t=1716860414; c=relaxed/simple;
+	bh=6Zda21Jo8keaOvTrsU69xa03MnSQfCWrWoWucqAQV+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhZsZy5Q3ncLSyPDy1DUTLSD5U6eeNz4y2j9uZbJPuNgPy6zHb41K4Snp20TokZd6un9PDVRytXq3WZko0dB6PJb95cxmjAz+ukXFACVCb22fT+JpPd4TrJSY8MNnCGxSXAFWVF8ZiR+KHNnVvprwIpTggMkhdYK3hJolW8OMKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=jmxvTzE7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DxPSZSUe; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B5AA71380149;
+	Mon, 27 May 2024 21:40:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 27 May 2024 21:40:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1716860411; x=1716946811; bh=hfv8F1e+/1YTGPoUag9mn
+	Dwd8gl58J8C/k+Vg3dKLvM=; b=jmxvTzE7v/CTRheWzJ6QaKn73IjXvyqy+Sgls
+	DmqB/CSHo9kgZD+qv/rI33Jq9Eruo38TSAvlCLQWxDixdVqVcrUJa0U+eDZLRQ+U
+	AdFxACu3wD8aHKAratNzpxXq1tnzP+Zy85rIkLbMO4CobBL/Ymhqg4jJUtRBFrxu
+	E4EixCOy4fjy4+/8pCEGhwAe9ml1DWg05/8e8R372sfiAvH7E5x58DfPQlAUayqh
+	76To/XQ9uzicOsSxCNBTcfRSKdvdcCaEqedwmflpjc4k2AAbjT43+rdb3z78NtJG
+	5LxSrce/xBSqnETS1IQsyDkby/9yxK2nfcGDn5R6VuPY3rU6Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716860411; x=1716946811; bh=hfv8F1e+/1YTGPoUag9mnDwd8gl5
+	8J8C/k+Vg3dKLvM=; b=DxPSZSUeqnPC1GmkiHIT+QvdJ3zUImvc5TVCZWkWSREg
+	kyBF6l9z2QaODn/cTgx8V6RDBdBSnZa+g+OIytpaCcLkvGutvC4kggiWpbN3Sqkq
+	qLQEbYGZBp+D0FKR1Gyuq1lKI5+bkHIouRZtTXFczarzFAldDOah3MrpezVsxPpG
+	mDraPw3HjhhUcPjhQ9SXX2FkKK/lSNAcjx/+UZO39GKcItmwovgO9eDlC+EYCUdd
+	PnHCmxdFBee4tZXm+3eqQHLzwxHbpf+cGEaheltb7mAnoeVnV73Oo0Yr1Asr6AK0
+	iwxpKHnK14C2zkdXjaW6J8CG9KtB4G6OiWxXWckgIQ==
+X-ME-Sender: <xms:-zVVZr_kdEvkwVZHm1WqGTbiErXG4VHOnCC-nbXtTWKjfnKoNxjwrQ>
+    <xme:-zVVZnsbU_D7AsUWV1uvBH-lAwk9ElmajmH4ghNOM2hCO83Np6zirI4ga5Eiaj8Zr
+    wPVmQ6pzPCSGi9FOeA>
+X-ME-Received: <xmr:-zVVZpCN1_QCz4XyOc1aW7YKcnRQdV9DzL8r0bAg7WhA25UuIpD6mOP-Ka0G>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedggeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhho
+    nhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthfduudekffefkeeiffdttd
+    dvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:-zVVZncSmo54-I5NG64Y50FOCL1H8g0wdzeu2OUf7yC9pZqULz5CQA>
+    <xmx:-zVVZgOLKJhxROJ_uxF5EM_f-8X8tNYVtEViFK8oUStTo2VxYS64ag>
+    <xmx:-zVVZpl-0nfIX8ThnaP5FBN5OgAJf2kh6s7Ob-76qv5pBCAsqk86Kg>
+    <xmx:-zVVZqvuBvifBhR__VzfvK9UwPVnskj79u3vcAXLnsDi46Yl3wYyGA>
+    <xmx:-zVVZhj6xDbN3qZ1qd2bd3coYnuyecs-Ea9YqhoUMEibBF8rbaN1to4d>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 27 May 2024 21:40:07 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: jikos@kernel.org
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	corentin.chary@gmail.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	bentiss@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH] hid-asus: use hid for brightness control on keyboard
+Date: Tue, 28 May 2024 13:39:59 +1200
+Message-ID: <20240528013959.14661-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527012018.351223-1-zhouzhouyi@gmail.com> <c60b572e-12a8-49b1-a75a-b8a7b7ed674b@amd.com>
-In-Reply-To: <c60b572e-12a8-49b1-a75a-b8a7b7ed674b@amd.com>
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Date: Tue, 28 May 2024 09:36:58 +0800
-Message-ID: <CAABZP2zGfhcYrn6UOhmkXEgtCAPLcN7bgCdbzAi1r+aNrToHKQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon/r100: enhance error handling in r100_cp_init_microcode
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
-	daniel@ffwll.ch, chris@chrisdown.name, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, lance@osuosl.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Thanks for reviewing the patch
+On almost all ASUS ROG series laptops the MCU used for the USB keyboard
+also has a HID packet used for setting the brightness. This is usually
+the same as the WMI method. But in some laptops the WMI method either
+is missing or doesn't work, so we should default to the HID control.
 
-On Mon, May 27, 2024 at 3:58=E2=80=AFPM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> Am 27.05.24 um 03:20 schrieb Zhouyi Zhou:
-> > In r100_cp_init_microcode, if rdev->family don't match any of
-> > if statement,  fw_name will be NULL, which will cause
-> > gcc (11.4.0 powerpc64le-linux-gnu) complain:
-> >
-> > In function =E2=80=98r100_cp_init_microcode=E2=80=99,
-> >      inlined from =E2=80=98r100_cp_init=E2=80=99 at drivers/gpu/drm/rad=
-eon/r100.c:1136:7:
-> > ./include/linux/printk.h:457:44: warning: =E2=80=98%s=E2=80=99 directiv=
-e argument is null [-Wformat-overflow=3D]
-> >    457 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__V=
-A_ARGS__)
-> >
-> > Above warning is emitted during the rcutorture test in
-> > in PPC VM of Opensource Lab of Oregon State Univerisity.
-> >
-> > Enhance error handling in r100_cp_init_microcode, let r100_cp_init_micr=
-ocode
-> > return with -EINVAL when none of chip families is matched.
-> >
-> > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
->
-> > ---
-> >   drivers/gpu/drm/radeon/r100.c | 7 +++++++
-> >   1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r10=
-0.c
-> > index 0b1e19345f43..4f8a1bdd9365 100644
-> > --- a/drivers/gpu/drm/radeon/r100.c
-> > +++ b/drivers/gpu/drm/radeon/r100.c
-> > @@ -1055,6 +1055,11 @@ static int r100_cp_init_microcode(struct radeon_=
-device *rdev)
-> >                  (rdev->family =3D=3D CHIP_RV570)) {
-> >               DRM_INFO("Loading R500 Microcode\n");
-> >               fw_name =3D FIRMWARE_R520;
-> > +     } else {
-> > +             pr_err("radeon_cp: Failed to load firmware \"%d\"\n",
-> > +                     rdev->family);
-> > +             err =3D -EINVAL;
-> > +             goto out;
-> >       }
-> >
-> >       err =3D request_firmware(&rdev->me_fw, fw_name, rdev->dev);
-> > @@ -1067,6 +1072,8 @@ static int r100_cp_init_microcode(struct radeon_d=
-evice *rdev)
-> >               release_firmware(rdev->me_fw);
-> >               rdev->me_fw =3D NULL;
-> >       }
-> > +
-> > +out:
->
-> That looks superfluous, just return -EINVAL directly in the else case abo=
-ve.
->
-> Apart from that this is for ~15year old hardware. I'm a bit reluctant
-> adding code for something that old even when this change here looks
-> harmless.
->
-> Is there a plan to complain about that in an automated checker? If yes
-> then the change is probably justified, if no then I would rather not do i=
-t.
-The warning is emitted when I invoke following commands in ubuntu
-22.04 (ppc64le)
-linux$make allmodconfig
-linux$make drivers/gpu/drm/radeon/r100.o (a quick alternative to 'make -j$n=
-proc)
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/hid/hid-asus.c                     | 19 ++++++++++++-
+ drivers/platform/x86/asus-wmi.c            |  3 ++-
+ include/linux/platform_data/x86/asus-wmi.h | 31 ++++++++++++++++++++++
+ 3 files changed, 51 insertions(+), 2 deletions(-)
 
-But everything is OK when I invoke following commands in ubuntu 22.04 (ppc6=
-4le)
-linux$make allmodconfig LLVM=3D1
-linux$make drivers/gpu/drm/radeon/r100.o LLVM=3D1
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 02de2bf4f790..9389a3e733e3 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -101,6 +101,7 @@ struct asus_kbd_leds {
+ 	unsigned int brightness;
+ 	spinlock_t lock;
+ 	bool removed;
++	int report_id;
+ };
+ 
+ struct asus_touchpad_info {
+@@ -473,7 +474,7 @@ static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
+ static void asus_kbd_backlight_work(struct work_struct *work)
+ {
+ 	struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
+-	u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4, 0x00 };
++	u8 buf[] = { led->report_id, 0xba, 0xc5, 0xc4, 0x00 };
+ 	int ret;
+ 	unsigned long flags;
+ 
+@@ -492,12 +493,18 @@ static void asus_kbd_backlight_work(struct work_struct *work)
+  */
+ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+ {
++	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+ 	u32 value;
+ 	int ret;
+ 
+ 	if (!IS_ENABLED(CONFIG_ASUS_WMI))
+ 		return false;
+ 
++	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_use_hidraw_led()) {
++		hid_info(hdev, "using hidraw for asus::kbd_backlight\n");
++		return false;
++	}
++
+ 	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
+ 				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
+ 	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
+@@ -507,6 +514,12 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+ 	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
+ }
+ 
++static bool asus_kbd_is_input_led(void)
++{
++	return dmi_match(DMI_PRODUCT_NAME, "GU605")
++	    || dmi_match(DMI_PRODUCT_NAME, "GA403");
++}
++
+ static int asus_kbd_register_leds(struct hid_device *hdev)
+ {
+ 	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+@@ -549,6 +562,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+ 	if (!drvdata->kbd_backlight)
+ 		return -ENOMEM;
+ 
++	drvdata->kbd_backlight->report_id = FEATURE_KBD_REPORT_ID;
++	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && asus_kbd_is_input_led())
++		drvdata->kbd_backlight->report_id = FEATURE_KBD_LED_REPORT_ID1;
++
+ 	drvdata->kbd_backlight->removed = false;
+ 	drvdata->kbd_backlight->brightness = 0;
+ 	drvdata->kbd_backlight->hdev = hdev;
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 3f9b6285c9a6..a58df18a70ad 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1681,7 +1681,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 			goto error;
+ 	}
+ 
+-	if (!kbd_led_read(asus, &led_val, NULL)) {
++	if (!kbd_led_read(asus, &led_val, NULL) && !asus_use_hidraw_led()) {
++		pr_info("using asus-wmi for asus::kbd_backlight\n");
+ 		asus->kbd_led_wk = led_val;
+ 		asus->kbd_led.name = "asus::kbd_backlight";
+ 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index 3eb5cd6773ad..79a50102440d 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -160,4 +160,35 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+ }
+ #endif
+ 
++/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
++#if IS_REACHABLE(CONFIG_ASUS_WMI)
++static bool asus_use_hidraw_led(void)
++{
++	const char *product, *board;
++
++	product = dmi_get_system_info(DMI_PRODUCT_FAMILY);
++	if (!product)
++		return false;
++
++	/* These product ranges should all be using HID for keyboard LED */
++	if (strstr(product, "ROG Zephyrus")
++	|| strstr(product, "ROG Strix")
++	|| strstr(product, "ROG Flow")
++	|| strstr(product, "GA403")
++	|| strstr(product, "GU605"))
++		return true;
++
++	board = dmi_get_system_info(DMI_BOARD_NAME);
++	if (!board)
++		return false;
++
++	return strstr(board, "RC71L"); /* ROG Ally specific */
++}
++#else
++static inline bool asus_use_hidraw_led(void)
++{
++	return true;
++}
++#endif
++
+ #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
+-- 
+2.45.1
 
-And I can't reproduce the warning in the x86 environment, so I guess
-this phenomenon
-is toolchain related ;-)
-
-Thanks again
-Regards,
-Zhouyi
->
-> Regards,
-> Christian.
->
-> >       return err;
-> >   }
-> >
->
 
