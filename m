@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-191629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937F28D11A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA208D11A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9720B23541
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863EE1C21656
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8833FD515;
-	Tue, 28 May 2024 02:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB9EDDBE;
+	Tue, 28 May 2024 02:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvuprJdQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="n9QISdfk"
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2653BA41;
-	Tue, 28 May 2024 02:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E013C17
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716862134; cv=none; b=I1rSaa6sGWSILht7gU0EG52dFSN7ps3qL9wVXmb1TJRnqPLRZjTDV0C5j/1fTnN1PE5uKWGrgWYAA3p0C+l8VN16eEPRppwzWdPXUCJEBbT82uNWFeYg+kbIktHFxwRLmRLXxQqQ+IoCUyt5K9c3M4ZSNh9X/YWluG2+qbGwTqU=
+	t=1716862508; cv=none; b=YvlZdMf1dbPB+nwwUNWQq1V0PtGHkX1Vd+A02CxvhBr4mZa49gpOypAURME0bAYeOmNd1SELAcvwo834bkcfGT7vsuR6z4bpCb6GMA0dClTM9gFoDZmWfrSE4Cpm9a8VdL3jbjYHhPSujznxLzdWc5hupTxy2IvZZ8saFl64yHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716862134; c=relaxed/simple;
-	bh=EHKgLQvEv0vj2n0cflzk9NvLm8L9vB++ui8RqfgTcWc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gFDrXNdqRhg3OcMGwA2x64pmIGqbQz6rUQ92NdDIdPPauVqDD+3OIljnlPLHZDyAdE1y/oTxwaTg9N7Drm8zeCixm2CwE3Ia7DXJw9ssApOiVBVTPYa0LpBF1ZwWZvOczRewVBy2xlYkMXrSdTaLJ1D2o/jyT8ZjnekHNeSvqu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvuprJdQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDF7C2BBFC;
-	Tue, 28 May 2024 02:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716862134;
-	bh=EHKgLQvEv0vj2n0cflzk9NvLm8L9vB++ui8RqfgTcWc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WvuprJdQYxXystfbtkrqTfz1NZjWqOPaACFUqwBgoWbxe8yzQxizSzSshAnmh8sSY
-	 AJRzc98LQjnKyFGlWTdk17LkQL7lCF78d6941BxxrkAnBXbB5dw0VqCbR4FWcpHcII
-	 e1ZpL3073tOUrnyzH+0KBHhUsZkwWhOm66XOhqglvMCybMv8tbhtpr9OlfeUXhYU6c
-	 XgKUgeUsLIuizEVqF0qlK0orrsDs0ALbQ9q/u30/cjCzQyxRKRfRnB1E1yaiQjnDHm
-	 +CQmSyRL4r6coIzjkVAbthMWS25pE3UWa2l8BRRexSaRfvJI5BYLRGdLkh85g8dZzx
-	 NWB5Qp/6GAmfg==
-Date: Tue, 28 May 2024 11:08:50 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Beau Belgrave <beaub@linux.microsoft.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- dcook@linux.microsoft.com
-Subject: Re: [PATCH v2 2/2] selftests/user_events: Add non-spacing separator
- check
-Message-Id: <20240528110850.47962854c754f420d1db4685@kernel.org>
-In-Reply-To: <20240423162338.292-3-beaub@linux.microsoft.com>
-References: <20240423162338.292-1-beaub@linux.microsoft.com>
-	<20240423162338.292-3-beaub@linux.microsoft.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716862508; c=relaxed/simple;
+	bh=t8/LJ8L6h0+PIyw5VJ5KkZ4tvRkXejG0UTzWn+qi2+4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=P8WK3mbj5iMK5+JwYHr+5vNiniD6+QiifYgrJJh+6HjwTVIA0yMhePEyCgRoMKKb8R6GpI2ShEdwdYcT43ct0qbg1UpSybnnv1n4f/NaoKhSqveSsOMTnZyF84qhmcVsfKw7ec+ChdPv4I2eZGveI1mu0Mnn8nmBwz2kzpMkJ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=n9QISdfk; arc=none smtp.client-ip=203.205.221.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1716862496; bh=mlF9rXzPzcXAxRx+cJXgPkHyZabDkm26qlONQvRgT24=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=n9QISdfkpHvAB+Ox7A0QTo648ioa34GG5uKdw9Th8+eOINHddLQqalZea4OF6+w2V
+	 qSVyWrwFRnzvovgSi3Zi1269oXW7hy7M1M4BG/k3KEZTuBJxuNIJM3KcBdhtmg0xwJ
+	 5m4WhwQ0ZL9a/9fgNrf0JXvEU5ztq8WLclsSKIwU=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 3B600C85; Tue, 28 May 2024 10:14:54 +0800
+X-QQ-mid: xmsmtpt1716862494tkpl9v87b
+Message-ID: <tencent_0974B3778B662A3DDD36E0973636FE4B8609@qq.com>
+X-QQ-XMAILINFO: OZsapEVPoiO6a68qvbgUUYSm2DO+Ym3ySiJtxG+YNzVa1x57O+VNnpNEYpgWBF
+	 jQuIXFh5JnaXF+sNmUsyYyON9iHTX8iBTXKaYejKNcjAi7ba1dftilVtnNJNwJRERyzjoDoowHvi
+	 gU0hF/b4olF6qGDAyiJ/TMJ0CawkSjfiBZrJtwM9J1WGLt3ogIKf2eroWiytQuK9AM8c4zl22VyO
+	 diSIjI3laxcxyGBUKRKgRVFB4jxhfasIG/IMnR2c61UmaWXW59P9RjGkfpYE8Cax2TXuT4xBYzya
+	 uLORnwB1oQwkk896qOjmDJx/FZVV0bam1Zr54iVuTimwEpMPL0jU6iH1elOZHnG2ZoQcURcZlHlF
+	 yTq1+FzDhPqJCQg0+E4bxIPlie35xxiE4CywAESVz8n9LXejEHK+xs694eCsZLrn0DvQT1H7WP58
+	 vxc3oaDroOtxmY9Kg4NWwJu0fs1IGv+zXxKoFHqXnH7HDKFi+oKf+HNunrdbJiJXiPFa+Pwdn5RW
+	 RLiXWCMhZluAhcAhZV0Algo8v58A/XWA/tfwvfnrQgEZQGlLksic+Dn8K6RWChCfDiYTCrft1cA7
+	 fJ1LBnRNH/eg5TC9GqorPUFd7R9pYDwvmn7cFZVCmn7XreNdUT6pTkjxXno+UW1j5aRNqGoluxxZ
+	 +5a7cYaHf/+hGuu2Z/F4lKBOE0stUIh86gaJ1TmKWmM5BQgGcZUKNzSwQVh3Blxkh+oWiYndyuio
+	 0EQ4AA0x4/pJxofB4/b6j3cPHdfvIhUDWNXjJ3NxokjUfgolW15qsgQTE4jjc5DEW5IzIl5R+P9V
+	 W1bcQ7PXVAcFjPXY/7+0IDNBtC2rcqC/gSjN8a8C1mtbQMrcQ/uhIZ843aNkQRsy3N7mwN4qnYQ3
+	 5pwCjKQ801VlhpyT5I0q8CHXcbng7AYXSi25vCI0Gfhu6x6IuVam23yjW/hgzqeA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+71bfed2b2bcea46c98f2@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nfc?] [net?] KMSAN: uninit-value in nci_ntf_packet (2)
+Date: Tue, 28 May 2024 10:14:54 +0800
+X-OQ-MSGID: <20240528021453.1105390-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007018c0061964aa67@google.com>
+References: <0000000000007018c0061964aa67@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Apr 2024 16:23:38 +0000
-Beau Belgrave <beaub@linux.microsoft.com> wrote:
+please test uv in nci_ntf_packet
 
-> The ABI documentation indicates that field separators do not need a
-> space between them, only a ';'. When no spacing is used, the register
-> must work. Any subsequent register, with or without spaces, must match
-> and not return -EADDRINUSE.
-> 
-> Add a non-spacing separator case to our self-test register case to ensure
-> it works going forward.
-> 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 614da38e2f7a
 
-Looks good to me.
+diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+index 590b038e449e..6b89d596ba9a 100644
+--- a/drivers/nfc/virtual_ncidev.c
++++ b/drivers/nfc/virtual_ncidev.c
+@@ -125,6 +125,10 @@ static ssize_t virtual_ncidev_write(struct file *file,
+ 		kfree_skb(skb);
+ 		return -EFAULT;
+ 	}
++	if (strnlen(skb->data, count) != count) {
++		kfree_skb(skb);
++		return -EINVAL;
++	}
+ 
+ 	nci_recv_frame(vdev->ndev, skb);
+ 	return count;
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks!
-
-> Signed-off-by: Beau Belgrave <beaub@linux.microsoft.com>
-> ---
->  tools/testing/selftests/user_events/ftrace_test.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/user_events/ftrace_test.c b/tools/testing/selftests/user_events/ftrace_test.c
-> index dcd7509fe2e0..0bb46793dcd4 100644
-> --- a/tools/testing/selftests/user_events/ftrace_test.c
-> +++ b/tools/testing/selftests/user_events/ftrace_test.c
-> @@ -261,6 +261,12 @@ TEST_F(user, register_events) {
->  	ASSERT_EQ(0, ioctl(self->data_fd, DIAG_IOCSREG, &reg));
->  	ASSERT_EQ(0, reg.write_index);
->  
-> +	/* Register without separator spacing should still match */
-> +	reg.enable_bit = 29;
-> +	reg.name_args = (__u64)"__test_event u32 field1;u32 field2";
-> +	ASSERT_EQ(0, ioctl(self->data_fd, DIAG_IOCSREG, &reg));
-> +	ASSERT_EQ(0, reg.write_index);
-> +
->  	/* Multiple registers to same name but different args should fail */
->  	reg.enable_bit = 29;
->  	reg.name_args = (__u64)"__test_event u32 field1;";
-> @@ -288,6 +294,8 @@ TEST_F(user, register_events) {
->  	ASSERT_EQ(0, ioctl(self->data_fd, DIAG_IOCSUNREG, &unreg));
->  	unreg.disable_bit = 30;
->  	ASSERT_EQ(0, ioctl(self->data_fd, DIAG_IOCSUNREG, &unreg));
-> +	unreg.disable_bit = 29;
-> +	ASSERT_EQ(0, ioctl(self->data_fd, DIAG_IOCSUNREG, &unreg));
->  
->  	/* Delete should have been auto-done after close and unregister */
->  	close(self->data_fd);
-> -- 
-> 2.34.1
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
