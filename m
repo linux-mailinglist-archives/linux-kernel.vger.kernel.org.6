@@ -1,110 +1,102 @@
-Return-Path: <linux-kernel+bounces-193195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75B98D282B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:42:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3218D282C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A62B1F268C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF28286084
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C7213E3E4;
-	Tue, 28 May 2024 22:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C55213E05D;
+	Tue, 28 May 2024 22:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVmaUyGN"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JlgLHLne";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AkTsNY9f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156BD13DDD2;
-	Tue, 28 May 2024 22:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C7F13DDD2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936157; cv=none; b=HU2d0dUCQsYZ7Vc5pfTteYQ5dUqnWwB1P/s6eR5O1JhUm5JnpAfKwWr7uxJHBWw/lM0hf7Agy9jrHomkjE7qlpts+TwWQBTzNtrjEPymKwxLutk8ZP7eAWiyyT/yBevXlqJ01Z6XGiIX7szFO9iRWx/wSpDxPWemgwhCZaXLlig=
+	t=1716936204; cv=none; b=IvQIYnXn/DG2A+nSDsNlag9tyQ36KFTSRa9AL+4YOXiqlCBbMyMjuSx2gtYELsWHuv9LOck9Zs4EQM+eUuoAZye6YIyrEMgYMDZoHD139l5n98DqeqFgRfgLjzz/7YB93hhVnfAWNSNtufA6xltDfq2m4xGkwRUMySju8qJw/JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936157; c=relaxed/simple;
-	bh=D0HSFpq25DgEVf9kDADMq+qZ9etlDXDt0aOI3IoPHoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYaj0GGaeJHraB4JPy3G4R4N2fwRPRcqQBAyp91myglML/e/5JNLPJYN93tKsjJh3kFGJRBxN6Hy6G1pv5OHWsOY3B3BKvbEKgHu5xM/uOS5PNHxD08LAXwDqPPAu/Z0iwZHYf1AInbapOA6T1Ho1FzAvyn/NpWoHCoR1uxZHA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVmaUyGN; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f693fb0ab6so1239633b3a.1;
-        Tue, 28 May 2024 15:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716936155; x=1717540955; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IzL8p3QJDmj2dei45S+A9A4OpWxd9oLv/TmmXb7owpE=;
-        b=jVmaUyGNjQVLWUR7kyekxyhwyIl1Yq7cpviqEQxL+S414R0aqLSUo95zAfsjlBPEY6
-         8cmMNJ3Kcasn5UMfKPfsX5xrA9IpsSFy1GLK1n2JjjhY8cgz+Yuo4XHpfcUK6rNi2t+S
-         OpH72lGQmsqchNMrFzpK87HMAS1lSdhC4YYfpo3EQk/sVPRiKOEbkPlkqgEvnJV5lyKW
-         JJDpfTakRDH5XyAvMQJu5IuC1zUv5iI5dtVuMKeK5tGUQ339Rxjc5hsaMcEmGMugan06
-         rLI6n9SXgHThvT4S+mzKPx9a+hhMksT9ZKm8q8+jQjWNNUr4kBtcjKNrOoFkoTRptCLO
-         0UDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716936155; x=1717540955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IzL8p3QJDmj2dei45S+A9A4OpWxd9oLv/TmmXb7owpE=;
-        b=TQfwC1fXFRudFSEspZZTHMz82I/eXhMELwSJczzJLMOH+41aofaYKs1U8P7tHZ6KQ/
-         eSh85vuruW2JhGWx/NC/Poiz0V4iys4I3YsJhG0XVHJoWBlZkSGdK7BRN75jhWkMWOaK
-         /epP7gSMUeehFZY4S2aKuyl5Hvmo/kMLJaOUx933lB2gYGk10ZdGLexc5VSQYAafFX6F
-         t5sGw6F6s9i8S2SJA2tq5ssNa6GmEdtDo3L0E4qKAfQi/v5kACiEnMnr3Wv9GheF6bpX
-         lyMdN+yrHDkyhDz5sUiZGnXvExa75wFcA/kzB7fJhBhl6cNzMa4G6cG4c+2QHR4DMvek
-         MCtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAHOfDNqhymYgHpNwwJJP9ihAhtDN91DJHsKRyqBp46bXM38FOU3aGb5IPgUW36VxxYr/kANBV2LF+3uAlXIkPnJPySkZ9m/TFdJBbUPY0JS+NyYe6UnpVKtXM+dU8ebIpXBoa9w==
-X-Gm-Message-State: AOJu0Yw6SyAvPUNj/NLCCAwGBaijvNoHpfY9tswLlgMGPXNGDjKpyuBZ
-	OLLqB0XjQ9YF0MDS0ZMjz4naqYe2+AVP7ihNGG2uNwGGPxb603Ib
-X-Google-Smtp-Source: AGHT+IHTQlljV+UgbG8n2d1mkSGo70004SS7ilxYmVpopUL+CcCUVFdxkakluXc2A6KM3psEfao3zg==
-X-Received: by 2002:a05:6a20:a127:b0:1a3:df1d:deba with SMTP id adf61e73a8af0-1b212d3bffdmr15708748637.31.1716936155224;
-        Tue, 28 May 2024 15:42:35 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682274ba9edsm7968804a12.90.2024.05.28.15.42.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 15:42:33 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 28 May 2024 12:42:32 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
-Message-ID: <ZlZd2EsF7KOqPx7a@slm.duckdns.org>
-References: <20240528163713.2024887-1-tjmercier@google.com>
- <ZlYzzFYd0KgUnlso@slm.duckdns.org>
- <zrvsmkowongdaqcy3yqb6abh76utimen5ejrnkczd4uq3etesl@jv3xb4uso4yk>
- <CABdmKX2vmpFS=j_FoFOadHRVVWaWUsReJYv+dJNHosk1uE_Dvw@mail.gmail.com>
+	s=arc-20240116; t=1716936204; c=relaxed/simple;
+	bh=SZtRXLfUZMgxZ+kR7YKIls4jCTi0FjBz6dHQ+mD/f0Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ul415rDpkphnO7Pw6Ffx1PAzVXZ89g8Tbzxf2qSi+n757u64Ud7mXh0CSh71XnG+9I3M/ArjnDZ4YtLp2mFHedp/ZqPtrRQ84yLl1P818vCgU2/isTCZ/C9xnklrzCQUh0EjSRaZUnWJeEJ5UgaTapkJWXgSZd/u6kgmZkGuElY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JlgLHLne; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AkTsNY9f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716936201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XjMYvHUHg0f90M6ZTnQ/td2tfuCaObJV7OzFaplCbxs=;
+	b=JlgLHLnecygVwuf8ZyTAhKZDY3zlgRQOJKZkMUIaYNGTtEahRqZ2+hIoS5FNkaFpk9GRxR
+	gXc1gBwig43hQLMUiJB4ofkS9NSJy6uwSmNoWtNnT2TS6w1yTtXFum+Yh+B6f5Niy36sEv
+	tQ89k6DlBRCzuOYuCf5lRnOMLVhkbz9ekAM00jk+JH/7TzWzpCuLj9iLPJpGI1lL9WTStI
+	TQKsKhwiNEzY0/crCl6QmF46tTqrLPcg6b5F1KVD8buu1oAsN3EZBcm27wG96pFsaxtx7F
+	Grl1TG8S+LZSUSwKAW9MAin80rg4IgHO5SIgX7tyARtNC1+s4d2Kt/huwCOGmw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716936201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XjMYvHUHg0f90M6ZTnQ/td2tfuCaObJV7OzFaplCbxs=;
+	b=AkTsNY9fKH3f3p+sgtRx7mwi9PtnEiUO+dkF/U8gRd01EzRPKVK4DfBpP+FVEByOxZHT10
+	m4vl8JyGAmAFBuDw==
+To: Lyude Paul <lyude@redhat.com>, "Linux regression tracking
+ (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Mario Limonciello
+ <mario.limonciello@amd.com>, Borislav Petkov <bp@alien8.de>, Linux kernel
+ regressions list <regressions@lists.linux.dev>
+Subject: Re: Early boot regression from f0551af0213 ("x86/topology: Ignore
+ non-present APIC IDs in a present package")
+In-Reply-To: <87sey8g5z6.ffs@tglx>
+References: <3d77cb89857ee43a9c31249f4eab7196013bc4b4.camel@redhat.com>
+ <abbb7d7ca781f6c664e4c5b1dffc19394ac79691.camel@redhat.com>
+ <87le59vw1y.ffs@tglx>
+ <3a0afe545747e5314a9cb6bbaa9ce90b259ddfac.camel@redhat.com>
+ <87edautcmz.ffs@tglx>
+ <3b1d16e357c1f9badeef405366492f05af26c085.camel@redhat.com>
+ <878r11t8zu.ffs@tglx> <016902d9-3858-4c65-b3ec-f7a5103af63c@amd.com>
+ <51d0dff8-2888-463c-95ab-71b491f12a8f@leemhuis.info> <877cg4ppd5.ffs@tglx>
+ <ea927dad269cc21de1d0baf3d6c9f66ee025b862.camel@redhat.com>
+ <d2c6f335a6eb5892b0d894d5df4a6e713fa013b5.camel@redhat.com>
+ <87jzjxn6s5.ffs@tglx>
+ <d3fe5278e7cd5af6c62b470b281b547b67e3959a.camel@redhat.com>
+ <97bd95480a8b9951edc9ee2d2648d1b9c574e3b0.camel@redhat.com>
+ <87bk58n6le.ffs@tglx>
+ <2fd6009d21d606d13f0c472dbaa754a21f3105d9.camel@redhat.com>
+ <87wmntkhak.ffs@tglx>
+ <d4496b4ed8a8a7bb34cf12e4cce65a6ad6705bc0.camel@redhat.com>
+ <874japh4ww.ffs@tglx> <87sey8g5z6.ffs@tglx>
+Date: Wed, 29 May 2024 00:43:20 +0200
+Message-ID: <87ttiha77b.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABdmKX2vmpFS=j_FoFOadHRVVWaWUsReJYv+dJNHosk1uE_Dvw@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, May 28, 2024 at 03:38:01PM -0700, T.J. Mercier wrote:
-> > > I think it would make sense to introduce something in a similar
-> > > fashion. Can't think of a good name off the top of my head but add a
-> > > cgroup. file which lists the controllers in the subtree along with the
-> > > number of css's.
-> >
-> > BTW, there is the 'debug' subsys that has (almost) exactly that:
-> > 'debug.csses' -- it's in v1 fashion though so it won't show hierarchical
-> > sums.
+Lyude!
 
-Yeah, something like that but hierarchical and built into cgroup2 interface.
-Would that work for your use case?
+On Thu, May 23 2024 at 12:47, Thomas Gleixner wrote:
+> Something I wanted to ask before. Is the BIOS of that machine up to
+> date?
 
-Thanks.
+Any update on this? I really don't want to add magic workarounds if
+there is a BIOS update which fixes it.
 
--- 
-tejun
+Thanks,
+
+        tglx
 
