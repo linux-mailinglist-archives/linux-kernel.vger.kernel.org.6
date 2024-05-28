@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-191616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B68D117C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB478D117E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27501F22B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:38:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 995AEB224CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112A61DFF5;
-	Tue, 28 May 2024 01:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679F29D06;
+	Tue, 28 May 2024 01:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="WFyaHz7J";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dPPNYM2x"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="cHIueFw4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WjrlEKKt"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9E1BDD5;
-	Tue, 28 May 2024 01:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD31322313;
+	Tue, 28 May 2024 01:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716860214; cv=none; b=cCf0h97pg8ZZ8EwmGnTzYMNNOjGGgtTHSzasRKufmNXnnxi4Jwck2mD8ZCjPF0cAXzeGHyb9zHCMRyildGyD7b517QmNwEMMutWtNPEu/wjuwF0AmZ2Bk7mhvJAy+INGa/Qxb7t3JBkhp69WotIsDdrJx5duYVLTyixFYB++g2c=
+	t=1716860217; cv=none; b=tzBJOL3RsQ2nEPMD10IhsQ0LxPY5nkgkJ2nkmbRaRYc0Hety5qg8LfnlPUyImwIJA/xQHD5pJi+VJFypSwUVyqy6eqzxc7z4/+i3hFR4mNQfOnjLui2fXYzo0p/soExh5uRFvCMBqaYyeSJStcXXdn6tpVJJbmtSYzesjiPZBTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716860214; c=relaxed/simple;
-	bh=ItassXh+AUFWJJQOX6KSfktnJt4TTmMNonwiy+/h+Zs=;
+	s=arc-20240116; t=1716860217; c=relaxed/simple;
+	bh=zOvd3Ay0azx5vH/QyN7mBktkv8CR/XnOIiqvECdvHVw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bPAIAQMRcT5R+4EqNKq5ZOZ5XJbAUnbrXUf4BVN6odGq48BLzlNF1gTy+Chwt4qOgSAjY773yodWjMK7mW3U+DrsZHPb9dHiA6QKE0MohGLtgHrjS+ayik7zmbO6XGlBSprK7g1Xs0C16Nw0/9+lV2W/tMc0RIdX+zcIao1bsj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=WFyaHz7J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dPPNYM2x; arc=none smtp.client-ip=103.168.172.159
+	 MIME-Version; b=haSzOqB5fOlfBT8+6x8CRZk8CMvqWlPegld8yBNsLAs3WoLs9LMpLyrzz9FNk2ENh5TDwAZCXBbd9wEVEcEV/5QvMsOv0/ZCbcZoYuryig8ekM8kmhnCX855ikgP6Ke89jtH/iPQla1bzRRlGjJxAsXYFdyR8tkire63eVOEq7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=cHIueFw4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WjrlEKKt; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C79BC11400E2;
-	Mon, 27 May 2024 21:36:51 -0400 (EDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id F3102138013D;
+	Mon, 27 May 2024 21:36:54 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 27 May 2024 21:36:51 -0400
+  by compute6.internal (MEProxy); Mon, 27 May 2024 21:36:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1716860211; x=
-	1716946611; bh=hORT7ngd02w+eotRPxOFI1MpB1jcIPhVVq4sYj5WU7k=; b=W
-	FyaHz7JWJMD+s+0nNy9FpUgBjNpDq7zaDks2ThFjWNpExS2+WzqAMeOn8Znh8ajK
-	6g8p2CImVwInvl3I4kzGCLWa7M0igS531+MulVccIj0WObZlIP0cqwScTICxEv7K
-	d/aEVL5gRj5WpO2gusK0Yp0UkIvluvwMeLOobuqFKOtqo/FL09DVj3AuZoqIbY9k
-	sS3TIYXKClttUB9HWz5uw9bRqxmr10hGHIz/CSVhueOdXEQWp+EBiRv25/IACYYo
-	XlmrOKz1OFviTWL9KbGLGftR7Goxwk9J7pRVV1+aRA6p+y+kUDIerFreXUrlDiOi
-	jr0mWKSPpGd/32TG8/HyQ==
+	:reply-to:subject:subject:to:to; s=fm2; t=1716860214; x=
+	1716946614; bh=kwPWX6tvrCbhVRU7E4dBQZXhLYs4bJ8/JTWq8BfSECA=; b=c
+	HIueFw4tmcsP3Unsn1qs9wdhUSV69yCh9YBw8NqYP+icm9Yx4vVBvAXWagQygkfN
+	jbOqddgkWK59L2J5t2+R0do8+6wUt/XvsCC234S7fY8fHXB16EAENqgBRiRFju9a
+	PvVtapmZNIDlQZvKBEMbtXrdC5+RlIsJL5BIeGiHjJuklCw277cnwvXq0dQkVcJ9
+	p+JoFOJ0nwdB+OMX6JG6CtZdNN7vdJyyhcIo9vLZj4KnsgbA+7PVBwzerWOu/Wm8
+	9QtWIbIvRRm0PJmwkl/2n74Ayor7snAcg25KlqEWGb6l7RUhBvIRj1wl9VyZgXJu
+	u6SyI3jRA9z7Ejd/1AJdA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716860211; x=
-	1716946611; bh=hORT7ngd02w+eotRPxOFI1MpB1jcIPhVVq4sYj5WU7k=; b=d
-	PPNYM2xIrR6ZZXuIR2JF2EnYEtd3QVywT8LMGydPtO9QWF9/EOOG3+RHq6hZvOZg
-	BIeMvbZOEfBDYzWyOQRdLuFvXwaaNmBRSICNbYpwGj1k6K2yjviVvhliSEc/7N2X
-	D4J4H5bZ4QIKKVHplGJiqOHzJbKdyRqlu1jl3wlWxfqSXwDQJyfT0R+SFp4I1AeP
-	WCTrILLehUKV6OzyLmPL9uWAHRkplYHHBs3qliVbfCtqgu/fG5SS21i9bPnSwnLd
-	iynDFGNkyinymGbM8RRhtv9Pu8CHogFacuwjUUxWLyNVbJ5unTq8S3Zte2+1Ehkn
-	t1EIZ9TFja+YSTWbnt1QA==
-X-ME-Sender: <xms:MzVVZplQEaXaAXECU2HcW1Zec0eRIPOhxnOf4oPu6WtOj_MD2VORUg>
-    <xme:MzVVZk3jyhmF7MGAN6PFE9TKuyL1QcdZVIM5pakwbhBFlsZI2axp137L4kYXHHbKk
-    e0Cdd34VhwGCogxXQY>
-X-ME-Received: <xmr:MzVVZvpN9ovjpPXKk9sjZ-B9wb3Uz1XX4I9_549nWpajRHvGU1ME_XBgNQa7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedggeejucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716860214; x=
+	1716946614; bh=kwPWX6tvrCbhVRU7E4dBQZXhLYs4bJ8/JTWq8BfSECA=; b=W
+	jrlEKKtC1XHKgRdNBCrRRMX4Nj1ycxd1U7NMrXHdLFGsIUuD+bIpAzGJkUeoJWkn
+	7kix+L/AIUl2iSpMksXSkvjc3BfG/TEPsKRZlojKCklqxFb7wFOZ/P9mHBvPZxW0
+	R8u5K1QxxCVBEhc/Rj1Jzv+dGj6hM8gLjWN3HY+BgW39CLamFghtgaa+CXRsLTdm
+	tq4uXM82jdry8+nFXt1W0/QZDnS3GiYas61YqmqXWQMB3846H2s5nonpcVDchqXH
+	3cmawF/jrkhs5wxL5rD0h7efYJaJMFRpAhAPYuD4PRbTGN8ni15LjJH1S1A5IJN1
+	UsHA1YeP9ctV+hM0mpScQ==
+X-ME-Sender: <xms:NjVVZmG1cmqKiBBINSQ-fJF6ixjEb3Zj-KP5R-C14wzUGNRBIYi6AQ>
+    <xme:NjVVZnV8Lv198h4lEwq9g1DLtgzNlzS2EMS75CAVlnUk8VPWAWIKkaJWFA2k5auCi
+    ipeQqe-9ibkdiqrCUU>
+X-ME-Received: <xmr:NjVVZgJ02LnQOzI9yE9_uHt6n2HKx9SE8niU1WrktKQj9iaIs15lVEOeTjTK>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedggeekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
     ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
     jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgeptden
+    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgepvden
     ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:MzVVZpk7SdXxSj6Xap11PBEe32T1qvy4RVldRdWvumf2Q1LMkr9AcA>
-    <xmx:MzVVZn2aCXeueYnV0TgyTalRrPVb9k_zoLhOUv8Vnrcfl_I5Kwq02w>
-    <xmx:MzVVZouxBaLi4KcwlbEw-g2WFlwsStIl1QZL1ocopKb8k3FrnHv7Zw>
-    <xmx:MzVVZrULscIMOR-xOrcL2PYuI092PgeUtIArxJF7PAch8hjXanCKzg>
-    <xmx:MzVVZn8pgM4-_dFUww2tyHmFd0PyFkxWuP8Fc8trZfywfeVnd3sjnZKR>
+X-ME-Proxy: <xmx:NjVVZgGdHoxZpP-nl1UQrP3gdi9JPJWQFE6Dfhi00xlxr3oEWf2d1w>
+    <xmx:NjVVZsWDRwFbs9kyYf_2bFVGdcOsyUp9lcGjC8Cd8cTNT1JdxEeu6g>
+    <xmx:NjVVZjO1WJz_rLCXYkswR09poD-QG06XKg9wlC2kbZjUMWt6A2QgTA>
+    <xmx:NjVVZj2KMvyx4vCvir5tF1oJ3ZT57CPA4aavuPUq5hNacekJc71AZQ>
+    <xmx:NjVVZmdOPDvGXWO7iF6U82_rdkTa66658RnRH30BjX5RE5BBmK0WMdlB>
 Feedback-ID: i5ec1447f:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 May 2024 21:36:49 -0400 (EDT)
+ 27 May 2024 21:36:52 -0400 (EDT)
 From: "Luke D. Jones" <luke@ljones.dev>
 To: hdegoede@redhat.com
 Cc: ilpo.jarvinen@linux.intel.com,
@@ -86,9 +86,9 @@ Cc: ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 5/9] platform/x86: asus-wmi: use WMI_SIMPLE_SHOW in more places
-Date: Tue, 28 May 2024 13:36:22 +1200
-Message-ID: <20240528013626.14066-6-luke@ljones.dev>
+Subject: [PATCH 6/9] platform/x86: asus-wmi: add panel-fhd functionality
+Date: Tue, 28 May 2024 13:36:23 +1200
+Message-ID: <20240528013626.14066-7-luke@ljones.dev>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240528013626.14066-1-luke@ljones.dev>
 References: <20240528013626.14066-1-luke@ljones.dev>
@@ -100,72 +100,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Further reduce code duplication by using the new macros in a few more
-places.
+Exposes the FHD panel toggle avavilable on new ASUS Duo laptops.
 
 Signed-off-by: Luke D. Jones <luke@ljones.dev>
 ---
- drivers/platform/x86/asus-wmi.c | 30 ++++--------------------------
- 1 file changed, 4 insertions(+), 26 deletions(-)
+ .../ABI/testing/sysfs-platform-asus-wmi       |  9 +++++++++
+ drivers/platform/x86/asus-wmi.c               | 20 +++++++++++++++++++
+ include/linux/platform_data/x86/asus-wmi.h    |  1 +
+ 3 files changed, 30 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
+index 984a04f32fd0..3b4eeea75b7b 100644
+--- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
++++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
+@@ -217,3 +217,12 @@ Description:
+ 		Set if the MCU can go in to low-power mode on system sleep
+ 			* 0 - False,
+ 			* 1 - True
++
++What:		/sys/devices/platform/<platform>/panel_fhd
++Date:		Apr 2024
++KernelVersion:	6.11
++Contact:	"Luke Jones" <luke@ljones.dev>
++Description:
++		Set panel to UHD or FHD mode
++			* 0 - UHD,
++			* 1 - FHD
 diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 5c03e28ff252..260548aa6a42 100644
+index 260548aa6a42..4b045f1828f1 100644
 --- a/drivers/platform/x86/asus-wmi.c
 +++ b/drivers/platform/x86/asus-wmi.c
-@@ -813,19 +813,6 @@ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
- }
+@@ -798,6 +798,23 @@ WMI_ATTR_SIMPLE_RW(panel_od, 0, 1, ASUS_WMI_DEVID_PANEL_OD);
+ WMI_ATTR_SIMPLE_RW(boot_sound, 0, 1, ASUS_WMI_DEVID_BOOT_SOUND);
+ WMI_ATTR_SIMPLE_RO(charge_mode, ASUS_WMI_DEVID_CHARGE_MODE);
  
- /* dGPU ********************************************************************/
--static ssize_t dgpu_disable_show(struct device *dev,
--				   struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_DGPU);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
- /*
-  * A user may be required to store the value twice, typcial store first, then
-  * rescan PCI bus to activate power, then store a second time to save correctly.
-@@ -875,22 +862,11 @@ static ssize_t dgpu_disable_store(struct device *dev,
- 
- 	return count;
- }
++static ssize_t panel_fhd_store(struct device *dev,
++	struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct asus_wmi *asus = dev_get_drvdata(dev);
++	int err;
 +
-+WMI_SIMPLE_SHOW(dgpu_disable, "%d\n", ASUS_WMI_DEVID_DGPU);
- static DEVICE_ATTR_RW(dgpu_disable);
- 
- /* eGPU ********************************************************************/
--static ssize_t egpu_enable_show(struct device *dev,
--				   struct device_attribute *attr, char *buf)
--{
--	struct asus_wmi *asus = dev_get_drvdata(dev);
--	int result;
--
--	result = asus_wmi_get_devstate_simple(asus, ASUS_WMI_DEVID_EGPU);
--	if (result < 0)
--		return result;
--
--	return sysfs_emit(buf, "%d\n", result);
--}
--
- /* The ACPI call to enable the eGPU also disables the internal dGPU */
- static ssize_t egpu_enable_store(struct device *dev,
- 				    struct device_attribute *attr,
-@@ -943,6 +919,8 @@ static ssize_t egpu_enable_store(struct device *dev,
- 
- 	return count;
- }
++	err = rog_tunable_store(asus, &attr->attr, buf, count,
++				0, 1, -1, NULL, ASUS_WMI_DEVID_PANEL_FHD);
++	if (err < 0)
++		return err;
 +
-+WMI_SIMPLE_SHOW(egpu_enable, "%d\n", ASUS_WMI_DEVID_EGPU);
- static DEVICE_ATTR_RW(egpu_enable);
++	pr_info("Panel UHD/FHD display mode changed, reboot required\n");
++	return count;
++}
++WMI_SIMPLE_SHOW(panel_fhd, "%d\n", ASUS_WMI_DEVID_PANEL_FHD);
++static DEVICE_ATTR_RW(panel_fhd);
++
+ /* Tablet mode ****************************************************************/
  
- /* gpu mux switch *************************************************************/
+ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
+@@ -4040,6 +4057,7 @@ static struct attribute *platform_attributes[] = {
+ 	&dev_attr_mcu_powersave.attr,
+ 	&dev_attr_boot_sound.attr,
+ 	&dev_attr_panel_od.attr,
++	&dev_attr_panel_fhd.attr,
+ 	&dev_attr_mini_led_mode.attr,
+ 	&dev_attr_available_mini_led_mode.attr,
+ 	NULL
+@@ -4111,6 +4129,8 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
+ 		devid = ASUS_WMI_DEVID_BOOT_SOUND;
+ 	else if (attr == &dev_attr_panel_od.attr)
+ 		devid = ASUS_WMI_DEVID_PANEL_OD;
++	else if (attr == &dev_attr_panel_fhd.attr)
++		devid = ASUS_WMI_DEVID_PANEL_FHD;
+ 	else if (attr == &dev_attr_mini_led_mode.attr)
+ 		ok = asus->mini_led_dev_id != 0;
+ 	else if (attr == &dev_attr_available_mini_led_mode.attr)
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index 79a50102440d..6c51d41ffc20 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -72,6 +72,7 @@
+ #define ASUS_WMI_DEVID_LID_FLIP_ROG	0x00060077
+ #define ASUS_WMI_DEVID_MINI_LED_MODE	0x0005001E
+ #define ASUS_WMI_DEVID_MINI_LED_MODE2	0x0005002E
++#define ASUS_WMI_DEVID_PANEL_FHD	0x0005001C
+ 
+ /* Storage */
+ #define ASUS_WMI_DEVID_CARDREADER	0x00080013
 -- 
 2.45.1
 
