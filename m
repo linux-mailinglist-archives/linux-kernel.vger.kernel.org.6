@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-192601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CC98D1F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:05:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2F28D1F95
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573621C22616
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BEE41F241A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF531171E6C;
-	Tue, 28 May 2024 15:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7D7176FDF;
+	Tue, 28 May 2024 15:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hu4hsQNM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JJSygCKf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B143D17167A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7133F172773
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908554; cv=none; b=iO1qyjo2j6+bdLJ9z6Z34BfSyQL7x1Bv+66kR55ia6OyXNdU43CB+FqfX5ifvaF0dcvYigFBv3gwjqfGezJtKAWvOxFSAMU/wG8dug9CHk2vdRTDIxq0lgx2tMma7KbWhp9YHC3BmMVsUmX01Jfdeo+FGvH1n+nHSWcxygDvPjs=
+	t=1716908564; cv=none; b=mcPh+ONhYcyLctnOkcXnbLTaNjaEnsbJo4z2URDuVIqXNLK32u5ZDjjgjBIaZRL7sRh7qaxHf/to+FeWOQTFMoS3pg2CbBoiAzX409DnnfQsnH6xXcWzuqEldzzqvdxcGjzO9tujxeY8fj1OmjIRdyy2B1wKxoocJsGjaWWHeAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908554; c=relaxed/simple;
-	bh=2UNAaQ/30oJpeCNFCKdqMqQ017Ee3JxN1z//WtgKcuo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VZh6+4j0fgJHBrdT/imB0y6aKYCwLy8RzBuj8scuZfK+m3JbtZ4NM+rExoKVH76Ie1qub6mUAroTrGhmaELAH07l3F8nslgYWLjtA1UBKi6Yi8jX6qkwooNh7dXW/LbOZORdSIyrgsl445ZA8xS50z4YKoedd2Q/U3tRbEx9WbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hu4hsQNM; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1716908564; c=relaxed/simple;
+	bh=RE9bI6ZUEcvSqXhSN4cyLhZopUW7FnBxeJgo6kcpEXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=W7fYUuARAZY812vq68KXaSXXNHYrDVgxHdLAboOMu5sEqzEE2Bah/ko80ye3rvcAbtRh40bVqOEuEXJAciGg1pEvh83JnBBDSxAvaQTSmzt97pQ7J/xkdOGLbEnUMpqfpmQ/3BJSchj5i0kvqoKfOnA2G56pJRGhRIH3iod7OAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JJSygCKf; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716908551;
+	s=mimecast20190719; t=1716908561;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C3+ZIRNnT7WCQphjrDbOHHUSbOz2wS7xfoUOS89MF08=;
-	b=hu4hsQNMjXIoZZGDLrHPwNXVO/kEiCnfcum+Asa1llEo7HHjOboESCA25agG6GRQky20ov
-	WGRn1c66qS2Hlbh5h7/c1RDfxFzqA1TF7eAm7pPKbXO0UUaDgySMntdtNHnVuMA3yE+5OB
-	YVUE2kxS7F12moQu5lpD5PuY1a2riWY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-DjOuceJ6PYu8wpVAvTKG1g-1; Tue, 28 May 2024 11:02:28 -0400
-X-MC-Unique: DjOuceJ6PYu8wpVAvTKG1g-1
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MSjEvbqNmIrlRH+lx8idqnWZR1BGIt78ZUEpsZ7x8DA=;
+	b=JJSygCKfJs6NI6amubFVlxx/kA3eDlz9qFOKZe7r5ndNfOY91vmdZM4nbNKK4ibgWqf0Os
+	epjBC+6uA1Sk9V3mN6kH/LEofWw0ozpiRT4AewEXVgIefR/foYI0Kk5ExlKLoJkx4Jsv0/
+	7xHCYIHeXMB2CMhzB+P4IofFCVv586o=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-7K0OU6OjOIudfo685XBM9A-1; Tue,
+ 28 May 2024 11:02:36 -0400
+X-MC-Unique: 7K0OU6OjOIudfo685XBM9A-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2010812296;
-	Tue, 28 May 2024 15:02:26 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ADB5A1C0512D;
+	Tue, 28 May 2024 15:02:35 +0000 (UTC)
 Received: from ksundara-mac.redhat.com (unknown [10.74.17.97])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 297AE2873;
-	Tue, 28 May 2024 15:02:18 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C2DAC286E;
+	Tue, 28 May 2024 15:02:28 +0000 (UTC)
 From: Karthik Sundaravel <ksundara@redhat.com>
 To: jesse.brandeburg@intel.com,
 	wojciech.drewek@intel.com,
@@ -76,8 +78,10 @@ Cc: pmenzel@molgen.mpg.de,
 	ksundara@redhat.com,
 	cfontain@redhat.com
 Subject: [PATCH iwl-next v12] ice: Add get/set hw address for VFs using devlink commands
-Date: Tue, 28 May 2024 20:32:12 +0530
-Message-Id: <20240528150213.16771-1-ksundara@redhat.com>
+Date: Tue, 28 May 2024 20:32:13 +0530
+Message-Id: <20240528150213.16771-2-ksundara@redhat.com>
+In-Reply-To: <20240528150213.16771-1-ksundara@redhat.com>
+References: <20240528150213.16771-1-ksundara@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,61 +91,192 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Dear Maintainers,
-    Thanks for the review and suggestions for my patch.
-v11 -> v12
-----------
-- Fix kernel-doc warnings
+Changing the MAC address of the VFs is currently unsupported via devlink.
+Add the function handlers to set and get the HW address for the VFs.
 
-v10 -> v11
-----------
-- rename the function ice_set_vf_mac_fn() to __ice_set_vf_mac()
+Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
+---
+ .../ethernet/intel/ice/devlink/devlink_port.c | 59 ++++++++++++++++++-
+ drivers/net/ethernet/intel/ice/ice_sriov.c    | 34 ++++++++---
+ drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
+ 3 files changed, 91 insertions(+), 10 deletions(-)
 
-v9 -> v10
---------
-- Refactor ice_set_vf_mac() to use reuse the common code blocks
-  for setting the MAC addresses in both netdev and devlink flow.
-
-v8 -> v9
---------
-- Rebasing against dev-queue branch of next-queue tree
-
-v7 -> v8
---------
-- Added const keyword for the parameter ``mac`` in ice_set_vf_fn_mac()
-
-v6 -> v7
---------
-- Addressed Smatch and checkpatch issues
-
-v5 -> v6
---------
-- Changed data type of vf_id to u16
-- Used container_of(port, struct ice_vf, devlink_port) to
-  get the vf instead of ice_get_vf_by_id()/ice_put_vf()
-
-v4 -> v5
---------
-- Cloned ice_set_vf_mac() to ice_set_vf_fn_mac() so that the
-  parameter ice_pf is used instead of net_device of vf
-- removed redundant error handling
-
-v3 -> v4
---------
-- Released the vf device by calling ice_put_vf()
-
-v2 -> v3
---------
-- Fill the extack message instead of dev_err()
-
-v1 -> v2
---------
-- called ice_set_vf_mac() directly from the devlink port function
-  handlers.
-
-RFC -> v1
----------
-- Add the function handlers to set and get the HW address for the
-  VF representor ports.
+diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+index c9fbeebf7fb9..00fed5a61d62 100644
+--- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
++++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+@@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
+ 	devl_port_unregister(&pf->devlink_port);
+ }
+ 
++/**
++ * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink handler
++ * @port: devlink port structure
++ * @hw_addr: MAC address of the port
++ * @hw_addr_len: length of MAC address
++ * @extack: extended netdev ack structure
++ *
++ * Callback for the devlink .port_fn_hw_addr_get operation
++ * Return: zero on success or an error code on failure.
++ */
++static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
++					  u8 *hw_addr, int *hw_addr_len,
++					  struct netlink_ext_ack *extack)
++{
++	struct ice_vf *vf = container_of(port, struct ice_vf, devlink_port);
++
++	ether_addr_copy(hw_addr, vf->dev_lan_addr);
++	*hw_addr_len = ETH_ALEN;
++
++	return 0;
++}
++
++/**
++ * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink handler
++ * @port: devlink port structure
++ * @hw_addr: MAC address of the port
++ * @hw_addr_len: length of MAC address
++ * @extack: extended netdev ack structure
++ *
++ * Callback for the devlink .port_fn_hw_addr_set operation
++ * Return: zero on success or an error code on failure.
++ */
++static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
++					  const u8 *hw_addr,
++					  int hw_addr_len,
++					  struct netlink_ext_ack *extack)
++
++{
++	struct devlink_port_attrs *attrs = &port->attrs;
++	struct devlink_port_pci_vf_attrs *pci_vf;
++	struct devlink *devlink = port->devlink;
++	struct ice_pf *pf;
++	u16 vf_id;
++
++	pf = devlink_priv(devlink);
++	pci_vf = &attrs->pci_vf;
++	vf_id = pci_vf->vf;
++
++	return __ice_set_vf_mac(pf, vf_id, hw_addr);
++}
++
++static const struct devlink_port_ops ice_devlink_vf_port_ops = {
++	.port_fn_hw_addr_get = ice_devlink_port_get_vf_fn_mac,
++	.port_fn_hw_addr_set = ice_devlink_port_set_vf_fn_mac,
++};
++
+ /**
+  * ice_devlink_create_vf_port - Create a devlink port for this VF
+  * @vf: the VF to create a port for
+@@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
+ 	devlink_port_attrs_set(devlink_port, &attrs);
+ 	devlink = priv_to_devlink(pf);
+ 
+-	err = devl_port_register(devlink, devlink_port, vsi->idx);
++	err = devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
++					  &ice_devlink_vf_port_ops);
+ 	if (err) {
+ 		dev_err(dev, "Failed to create devlink port for VF %d, error %d\n",
+ 			vf->vf_id, err);
+diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c b/drivers/net/ethernet/intel/ice/ice_sriov.c
+index 067712f4923f..55ef33208456 100644
+--- a/drivers/net/ethernet/intel/ice/ice_sriov.c
++++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
+@@ -1416,21 +1416,23 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi)
+ }
+ 
+ /**
+- * ice_set_vf_mac
+- * @netdev: network interface device structure
++ * __ice_set_vf_mac - program VF MAC address
++ * @pf: PF to be configure
+  * @vf_id: VF identifier
+  * @mac: MAC address
+  *
+  * program VF MAC address
++ * Return: zero on success or an error code on failure
+  */
+-int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
++int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
+ {
+-	struct ice_pf *pf = ice_netdev_to_pf(netdev);
++	struct device *dev;
+ 	struct ice_vf *vf;
+ 	int ret;
+ 
++	dev = ice_pf_to_dev(pf);
+ 	if (is_multicast_ether_addr(mac)) {
+-		netdev_err(netdev, "%pM not a valid unicast address\n", mac);
++		dev_err(dev, "%pM not a valid unicast address\n", mac);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1459,13 +1461,13 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+ 	if (is_zero_ether_addr(mac)) {
+ 		/* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its MAC */
+ 		vf->pf_set_mac = false;
+-		netdev_info(netdev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
+-			    vf->vf_id);
++		dev_info(dev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
++			 vf->vf_id);
+ 	} else {
+ 		/* PF will add MAC rule for the VF */
+ 		vf->pf_set_mac = true;
+-		netdev_info(netdev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
+-			    mac, vf_id);
++		dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
++			 mac, vf_id);
+ 	}
+ 
+ 	ice_reset_vf(vf, ICE_VF_RESET_NOTIFY);
+@@ -1476,6 +1478,20 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+ 	return ret;
+ }
+ 
++/**
++ * ice_set_vf_mac - .ndo_set_vf_mac handler
++ * @netdev: network interface device structure
++ * @vf_id: VF identifier
++ * @mac: MAC address
++ *
++ * program VF MAC address
++ * Return: zero on success or an error code on failure
++ */
++int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
++{
++	return __ice_set_vf_mac(ice_netdev_to_pf(netdev), vf_id, mac);
++}
++
+ /**
+  * ice_set_vf_trust
+  * @netdev: network interface device structure
+diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.h b/drivers/net/ethernet/intel/ice/ice_sriov.h
+index 8f22313474d6..96549ca5c52c 100644
+--- a/drivers/net/ethernet/intel/ice/ice_sriov.h
++++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
+@@ -28,6 +28,7 @@
+ #ifdef CONFIG_PCI_IOV
+ void ice_process_vflr_event(struct ice_pf *pf);
+ int ice_sriov_configure(struct pci_dev *pdev, int num_vfs);
++int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
+ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);
+ int
+ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi);
+@@ -80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int
++__ice_set_vf_mac(struct ice_pf __always_unused *pf,
++		 u16 __always_unused vf_id, const u8 __always_unused *mac)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline int
+ ice_set_vf_mac(struct net_device __always_unused *netdev,
+ 	       int __always_unused vf_id, u8 __always_unused *mac)
+-- 
+2.39.3 (Apple Git-146)
 
 
