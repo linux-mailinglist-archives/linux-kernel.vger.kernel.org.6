@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-191921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B038D1618
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:18:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100CA8D1621
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321301F24D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:18:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20D91F253B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E25513C80E;
-	Tue, 28 May 2024 08:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B59A6F079;
+	Tue, 28 May 2024 08:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xi6QhMkz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="ISvD7liY"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E198E17E8F9;
-	Tue, 28 May 2024 08:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C1613AA32
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884277; cv=none; b=Imeojv1CDUHc/Tnow0FPjry2Iap2bEZouCDnBnBLaOOQeAtPPEhCKCGbIcAf66vRT2A+QxSqZYbBQhLDblPZaOmP7KR0V6ml/smfiCJztPRHqswP6WjRFpqKMTdD0f7p1dl1OKULO04zfU5ULP9u1y+hJ82TFnjFwHpqHNFXqpI=
+	t=1716884385; cv=none; b=C4n8M9mh7x2yDYLizNff3uf7kZqvLcDQ9X+ZNTg/0b3WIu5+EPsQHT8FzK3IOaiPZZ4FN9IzjHcpPLHSPxaZb0x509t05SMLSZC7l69UU27J6uuGPQon42g9MIqjTdWhgBNctzYJrMBUzbUXySTGOH+9qXbUzlVGg0k3HM8ipz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884277; c=relaxed/simple;
-	bh=Zmj+JQNLsA96GI/qhGfukYbCSPLk5XeJ1/7kCCFGV4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2DBvsQut9FS+sz7fSl9bMbroYnCKouBNikgDmaG3+OEJh3feGwXBkN2bzcdijDc9Uhfy8tkeKE0Rr+9TNMlno7CtKpjYer7yQSJDMdrHeARFfFc95n1ZYRL+ghnNDVVaudFRbf+ImjbLbwUuAS7Vg2uVqQUf5MfC+rC59hSRXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xi6QhMkz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ptdRbhjrU2YQFZDIdErCpj8jdFAb7IMVbRAa0hSntoU=; b=xi6QhMkzi8MZAlFsG0qMB6gZNm
-	zcxFzAM2cfSsbE9P+TkNvq7CG2mdAEnO5Y/+m8EcvAzX7b+Rd0ziS5JekLB8WQhOMwUAqREQwX8Kp
-	eUduX/VeNECDR1NerQqUpLmMGGm5WcxvomQxAjSAUZbCDYy9SKLHG5iicwp0gfnOhkjvv94TooJBM
-	RFSlKSCszCHbn4/G6YYBq4rj4h/Uy+3bGS5aug9WGkKrkhc3RerMcKUWiPm2vGgejAC/7IYR9e4ti
-	m7BCXBpfO1xpI/EMhx2OiKFaNY96Wr8UocUqju/zi4IIb2+ePyxzGdrK6cbVE5o5g5KNQ3zVZ3OdX
-	42dJRckA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33574)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBs1e-0004Ri-3D;
-	Tue, 28 May 2024 09:17:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBs1f-000375-47; Tue, 28 May 2024 09:17:43 +0100
-Date: Tue, 28 May 2024 09:17:42 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Herring <robh@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] clk: sifive: Do not register clkdevs for PRCI clocks
-Message-ID: <ZlWTJvvTSm2hH2ls@shell.armlinux.org.uk>
-References: <20240528001432.1200403-1-samuel.holland@sifive.com>
+	s=arc-20240116; t=1716884385; c=relaxed/simple;
+	bh=APKFV9eb2v+VaT8bLUdlycdrBfJ2rlkBUd7qW2g0UHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XCHgS6ZOwbDaVElNzFTNUTip2r2IwU7iXLaX60kL3p2DyiAGybo40I5RwWb7r9RPIC4HqDbe/ZIMyDNeFVgWTKrsbshMuoW1GcI27rt4PgcPV9VRkB4HvSP50ValA8n2PKNLAwLVow8UIBU5rwz3w3IpcDsCsBkgaez+bLxL3js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ISvD7liY; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6ab9ce64683so3410176d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716884383; x=1717489183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=APKFV9eb2v+VaT8bLUdlycdrBfJ2rlkBUd7qW2g0UHk=;
+        b=ISvD7liYK1sLfzoTUpCqHA+K/e2a9dfp8hMeBD/sByy7tzypcXcD9vov3UIhnInSSN
+         z2PzxiLcOCspIsSqASDG59X6x8JCyVBatdgPYkUzIxsabctzw8UA2pH2HolEAzwFdraC
+         NZWwkirqlxr8nyPY3iejFeN8N4d2zASwpuUqHxY4PGzzA4ROG7YdZYVJ7MccGWcmGnnD
+         lvkMt/y90mdCpQ12Yi1AlZe0vNvNwFim8B7JPwB4v9Y4r9AdJsY+0VBuEkQWv59vpr/e
+         1L2UeYxklQ1LZsOYqsHutTY+XI+kD/P77psBapIMa91iBY7U716xFGEXMFM058GKcM0p
+         UB3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716884383; x=1717489183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=APKFV9eb2v+VaT8bLUdlycdrBfJ2rlkBUd7qW2g0UHk=;
+        b=SsQLijwq6Md7Qrox2b3LovclcuCa6GUYKYt0CL7h8Ie0qMQylJzZrzBmY6ccqyx/Cu
+         67lgihf3DwZ889yNnvCeoYo9gVAPMMu3WwmYf53LDOFs8QZV/WvSiJ4Vc9F+NbFjoJI2
+         FP9ssVC7OElMpQHECBcXTwu/hVWIVJo1DDnticqCMn47F6oi359JjfIcZTGZOKGdGzgH
+         Qq7y4MGI71fpudi83imm7p+4H1t5DcmLLM3UKsROVsdT7PbE/RWaeUrw+7rkGjKgAYMo
+         4wW4Rkv+ge/KkI9XKwYU2FB0EPmxmD1q28c5h1ZMevys9f8LHwQrqzBB/v758U1Qg/v4
+         OY+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXPtpUtGTZA/2wPmHyaayqCQGRhdRgsB5N/5FMoaCFEq9kSvrhORvbLdpGOr2aRHwVL3aZlQSiXtfmlZX83Ybyjwz4A/vwsKEmGi102
+X-Gm-Message-State: AOJu0YwFDAsw8C7k872N+9qSoNxmQJXQMaXbOtT26HtxUoDY3NqodYvZ
+	n8E2pBsbN1H2WkgXHGyg2uG+VCm1//9PFx+L/dl7KNXnPC6wfGrnn7RobPRJGpPibd8ySoitvPa
+	b8QMzUpGAouEoeDVxGksVUTZ/k0oZT273Ilvj1B4EzF3l2STlbp/l
+X-Google-Smtp-Source: AGHT+IG9kXoWpuC4Ix7V4wPnSa5HxxGbI3O7kucQ+Z4K1uR5nDxN08cLZOYJo2Jd8QQ3aZOHyTkIGsHohuSwHfrZh+0=
+X-Received: by 2002:a0c:fe8e:0:b0:6ad:16a5:4842 with SMTP id
+ 6a1803df08f44-6ad16a54a20mr114449566d6.15.1716884382871; Tue, 28 May 2024
+ 01:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528001432.1200403-1-samuel.holland@sifive.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <0000000000009f9447061833d477@google.com> <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
+ <CAG_fn=WmDCOXxAzaEJtDYuEY4b3Nq99Z7=1-tmwTx9Ox7BG0AA@mail.gmail.com>
+In-Reply-To: <CAG_fn=WmDCOXxAzaEJtDYuEY4b3Nq99Z7=1-tmwTx9Ox7BG0AA@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 28 May 2024 10:19:02 +0200
+Message-ID: <CAG_fn=WZ=i2WLAVcLGhXkfm_9CouEf8v9PoLL-zJ0TJZZSXZ6Q@mail.gmail.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_update_i_size_sectors
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: syzbot <syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com>, 
+	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 05:14:12PM -0700, Samuel Holland wrote:
-> These clkdevs were unnecessary, because systems using this driver always
-> look up clocks using the devicetree. And as Russell King points out[1],
-> since the provided device name was truncated, lookups via clkdev would
-> never match.
-> 
-> Recently, commit 8d532528ff6a ("clkdev: report over-sized strings when
-> creating clkdev entries") caused clkdev registration to fail due to the
-> truncation, and this now prevents the driver from probing. Fix the
-> driver by removing the clkdev registration.
-> 
-> Link: https://lore.kernel.org/linux-clk/ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk/ [1]
-> Fixes: 30b8e27e3b58 ("clk: sifive: add a driver for the SiFive FU540 PRCI IP block")
-> Fixes: 8d532528ff6a ("clkdev: report over-sized strings when creating clkdev entries")
+On Thu, May 23, 2024 at 10:15=E2=80=AFAM Alexander Potapenko <glider@google=
+com> wrote:
+>
+> On Thu, May 23, 2024 at 1:49=E2=80=AFAM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > This (and a few others I've looked at) look more likely to be bugs in
+> > KMSAN, not bcachefs.
+>
+> Yeah, this is possible if we are missing some initialization.
+>
+> >
+> > here, the supposedly uninitialized key was read in from disk, so the ke=
+y
+> > couldn't possibly have been legitimately marked uninitialized.
+>
+> Am I right that the key is supposed to be initialized before the first
+> call of memcpy_u64s_small() (the _lower_ "Uninit was stored to memory
+> at:" stack trace)?
+> Do you have an idea what code performed the actual load of the data from =
+disk?
+> If that load was done by some assembly routine, we could've easily
+> missed that - in that case we'll need to annotate it to fix the false
+> positives.
 
-This doesn't really fix this commit, since if someone else is doing the
-same thing, then they too may also fail to boot, so I'd suggest that
-this Fixes tag is removed.
+I thought the initialization here was done by constructing a `struct
+bio` in fs/bcachefs/btree_io.c and passing it to
+submit_bio()/submit_bio_wait(), but I couldn't see return values of
+btree_bounce_alloc() being used in bio_vec elements.
+Are there other places that perform disk I/O?
 
-See https://lore.kernel.org/r/E1sBrzn-00E8GK-Ue@rmk-PC.armlinux.org.uk
-
-for a fix that solves the issue introduced by that commit.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+We need something similar to kmsan_handle_dma()
+(https://elixir.bootlin.com/linux/latest/source/mm/kmsan/hooks.c#L328),
+but for block IO, so that data copied from the device can be marked as
+initialized.
 
