@@ -1,158 +1,399 @@
-Return-Path: <linux-kernel+bounces-192952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EB98D24D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3718D24F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184BF1F297DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD2C1C265DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1A9178371;
-	Tue, 28 May 2024 19:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD817BB0C;
+	Tue, 28 May 2024 19:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a++eu+yR"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="efAkKEai"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2078.outbound.protection.outlook.com [40.107.21.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A842E639
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925164; cv=none; b=R+wSqDq2coWsNz7XYoozULmCzhziSblrPoKxyRbO3RLnQXdviWaPwuaBk/pH3SLd7fk9Ni5d6vYL4RErmbgkBGVTs6G9p7a2CmeSPua+8O79A/iwpyygZw2WEO7qtXyPBhXNlOtXKLsub0RpW1pH/3Rqvk2eIUAytNl5ZD8XudA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925164; c=relaxed/simple;
-	bh=onL8Mw3fVTnsVXTG9+UAfGyF9JpZXOhojGn8QWOqrnA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PPOOrfnXT8u9woIngycz4EA/ON5jvZpARKQFP76CSJRJwGAKUpy9QNc9FB8EKJAbcKlLSOtFzNnou4JkSLgueta2CvWiM27bvSTk7eBJBmzv4Kyz6E/LrHUYJbrAu7g8P+hZ/UqwICIZ5X50FbmSd9Uyd1xbKEsY2EhsmbYCdko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a++eu+yR; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-529b79609cbso2061331e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716925160; x=1717529960; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GsvN+JKnRavl5QSzlBkV48YEdvFno7OOnb/yOsGADHU=;
-        b=a++eu+yRhrVuC/crmCNlWQcRYMF/rwcnBKkxrGLPXQ0UR4qEIR5GTViUeT4p12QcrO
-         eSJwrotadnhqJZ4JTfRbgvDzxrrNSsKzJ0CJY6Y9p1gL5LMc5BKvav/fn918tmm0zIwx
-         TJGys65Fqqm2lu0tQ3SGsuPfq771kI1E4tJH4G1OZzW8Wfkoz/Reg82sGwWYJLyjD/B8
-         yOT+qn94MM605WlaxVU48NGfeGmXBdB8EhExWqdURvg/A5fS1x/vNPJAeJkR9PJOn7f3
-         Guz7o+SQEwmvYKQRrBrq8D0xWFegVLHHX0kBoHqiK28FSkE7Q4acjGBWFtHrFKGtEE4T
-         Hk4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716925160; x=1717529960;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GsvN+JKnRavl5QSzlBkV48YEdvFno7OOnb/yOsGADHU=;
-        b=HQUJbiZzn62CInaoLulqoV5NOAuf0fTWTMtnLX/sjoEadIb1lI3PxlouTdT9GtprTF
-         6pJBW3mYjYYVf44nyTER7YB6Lbjj0eJWaULXXc+BcYQbyRpbviw9g5I/kBt7zi4hIRRh
-         xoVrRsw1vQ0vQZQLSKsp9QJN1jQrZWd+UxPKJrABpzMktbh95xsgdeifv59/LsWiB9Q4
-         cWYE/RAj0oxwVEC+Js62x/gj4IG1ADD8pKFj0ZlXq+eWhqnu1qB5MV5lbe5OkEfpgXO8
-         cZZKXWFvJvMtyFs+d+QpObKOGszufC30o8gwduX+ZXXnpxiC9OBT4MQ2aKNYwAbQ8X13
-         Fb8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6U+nQ9y2m03dbjI1HNbJ4jGbG5seytID0qLjLLZTCwfaDxv9mdSvIIRiLQmMEyWq8ycXpn5uuO6ks0hwnFkgrzjQNKNhhYD3hbIo6
-X-Gm-Message-State: AOJu0YykKGPTdLMXn0IXFZlgeIxmQaZwSzbLgMT5CKYp6W6mzW9WmHBU
-	rpReurG3eRvf+mGEK+Y9Dv/ZUto33GSKSTK+S09rARLIqVXPmRt8d32qcfuj+nI=
-X-Google-Smtp-Source: AGHT+IG4Bg7IjMdNadZXXn/36zsu8ZDorgbs/IEsWcGO+A4iZozCmrOizaHidaPk9MqyT8DHXEBeFg==
-X-Received: by 2002:a05:6512:4004:b0:529:a55d:8d7 with SMTP id 2adb3069b0e04-529a55d0bbfmr6389655e87.14.1716925160173;
-        Tue, 28 May 2024 12:39:20 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529711f96c9sm1045234e87.245.2024.05.28.12.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 12:39:19 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v4 0/3] drm/panel: two fixes for lg-sw43408
-Date: Tue, 28 May 2024 22:39:17 +0300
-Message-Id: <20240528-panel-sw43408-fix-v4-0-330b42445bcc@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EC17B50A;
+	Tue, 28 May 2024 19:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716925200; cv=fail; b=jJR0ehBCY9YQ3AMOftk14stS2ERw9Hg+rYJHtquz417LwpMNkWrNhDgTmBMc/yGW55B9vxsIHt5AyZ4uSXPwhX0IVoHyEqViJIYbCpOLIX+0ObBVp+99ZEEjP4zw496ip/UYNyLsFI8yq5HrVGQvX5TMB6pZV1T7XYYWn2c3rL4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716925200; c=relaxed/simple;
+	bh=xzQ/sdh6rUEzBlHbjXDB3BdPseMVFXbJTzuQD00Xw3s=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=m+nt++6wwhZcrf+BXlpqoxlrj0VNxN2EuGRGOJilNE3UFDT7SezX4NQUvt3cu+7/S0/HV/E7H6rupVpzy4DSHOoQ+AI10PQGeF4twD2Sc4g2TLNXdvXuoSlQvR3T8LkX8MojcYvw6/VYlgwr84z7zT5BrIdi0TUP3aYm8XDuXEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=efAkKEai; arc=fail smtp.client-ip=40.107.21.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=npoNHR3XknOGHEdtS/dMnuCsG6cA7A7oTP3UCfon5RpYoMuzs/FUepl41hG4cRGvZUtDOCrlINyUoGI8SrK+R4DKf1KoPldvB6uS2hNaN5k1AR042gWVFfn2aU44OB/OzBXCwVSPfUQCCePvyycUBYJPsDUfbHYjYNLCtpbQoJYDRtVT+CHx6838ytuaDoD5EU7HAeup+DaZo/rZJ8D7PSOqfhPw6/JELVwQnm1iIT78g4ojItoZNNH7+IPFoQjzf/tPcHxWc7dW++BJ1+OLElPBqehe4YV5C54Kvu6X5ql9wxJaRvyA6u4aVxAw7pLJa/eikIlaY0rkgVOmiwulug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nc47JLvApIG1K14sltKfahrWUjVx+VnkoPE/T3p+JSs=;
+ b=jTYui36vrniRrLLNmfIe/qd1qKbGJbye/5yp75xshzfjcIX2A8Rs6mCAqFep0/ICUu5oB3ZZtbsUNVp0bYkHdSknYvOpYR7iD4x7Eqbq6/lRsd2yB8J0maUyfuR+mWhtCP0SjC203IDL0axwBYou/61uU0sVYz8kdyjZ/HgbKIDB6q+lI6Rr09Ez2DHDvwozyJ8mBvLDZu7sEoXnCoB/6qyBge4m9iqvI1tdoGFMUPqsbpNaLotSfLnanTRL/EIIq/GCS3fjiR5gXjqNm9Tan/erVJB1pFIPQ0dMLa58oc0IbwylGtO2k9ebWpDSAXLhE7Rrv+THAey2jLRAqw+2EQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nc47JLvApIG1K14sltKfahrWUjVx+VnkoPE/T3p+JSs=;
+ b=efAkKEailpJp4T2vVn2zHi4jqPBj3mN0tIWXDXN6qNJZTcXC2SI8+Phvrnw9ZfBOMAlBK6erMHF15cI9AFgPdVIvH96eAmbowmDRVYbzaky/Z39eeCmtv1V+y+YnPDbE8DaALt7j+DsAHprPcX6jEBzypcfns1wn8edAC7lJl2g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8655.eurprd04.prod.outlook.com (2603:10a6:102:21e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
+ 2024 19:39:55 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7611.016; Tue, 28 May 2024
+ 19:39:55 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Date: Tue, 28 May 2024 15:39:18 -0400
+Subject: [PATCH v5 05/12] PCI: imx6: Simplify switch-case logic by involve
+ core_reset callback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240528-pci2_upstream-v5-5-750aa7edb8e2@nxp.com>
+References: <20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com>
+In-Reply-To: <20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pci@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, devicetree@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716925161; l=7024;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=xzQ/sdh6rUEzBlHbjXDB3BdPseMVFXbJTzuQD00Xw3s=;
+ b=/IFX7MJ56McmsJfPS4f8VHp38XUN2x1PUemrjH3NqoRV0CVgd2Q0Yjx46mNVyxggFkFKiT+P5
+ ulpCC1SK/j7AF0MMHw6GRf27ieJPwGRKbag1PSufJkHwnjTYoF3PlIF
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: BYAPR05CA0021.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOUyVmYC/33NTQ6CMBCG4auQrq3pDOXPlfcwLqBMoQlpSWtQQ
- 7i7hY0aicv3S+aZmQXyhgI7JTPzNJlgnI0hDwlTfW074qaNzVCgFBIFH2tLAw93mUpRcm0eXOs
- 8k5UChIZYvBs9xXkzL9fYvQk355/biwnW9Z82ARe8wRK1LjBDiefB2Nq7o/MdW7kJ30QGuwRGo
- gXSFRBBU7Q/RPpBIO4RaSTySiCWWd0qJb6IZVlermC2JjkBAAA=
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Caleb Connolly <caleb.connolly@linaro.org>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Vinod Koul <vkoul@kernel.org>, Caleb Connolly <caleb@connolly.tech>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- kernel test robot <lkp@intel.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1552;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=onL8Mw3fVTnsVXTG9+UAfGyF9JpZXOhojGn8QWOqrnA=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVjLmMvog05l/rjjZInaoUZ1R3/bqphbSLBIfW
- aq0YIVDkQWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlYy5gAKCRCLPIo+Aiko
- 1QNTB/4zOPgYNZ7IwjqDIlZP52hwwALdFOgW40rNUxQK3Bt6S4RFuv5WnMmuoCt5j9FHXYdykoC
- CtUjUijy6ejoLZM0sEpqMUpxzMcvLjY+XONRDuCJQPUx5/4G7PUOxkVwafCxCoKm1DGagx0jEYO
- VnSsUqRcNqmx+em7fuef89wv+7WQIENkqTGMF7hJ/5tiSzTlYcr29p+NkYF1uR+GC5qS5+Up4kt
- ifjq01NFjn4Jp6VqjQJLB8sXMZZurnY0uP/k8i4DCW2HyvFfA8EVqXn/dwwBiUBy9J2l366rpiI
- ypKLjqXG3bsSObFF8OvQitHTwmnrEEcD1LlWNloeahJPpj6N
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57dd02ae-a9d1-43db-2130-08dc7f4df3a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|7416005|1800799015|366007|921011|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NnJpdGJtQ01abURFNjMvRk9LVHkzNFFWZ3JHNlNkRWh3MFBNM1hCcXJxdFk3?=
+ =?utf-8?B?bWtpOVczbjhhR3NBcVFvY1BNM1RvYTNlNWx4UnFScXNKVlp4VXRaSEp6bFVN?=
+ =?utf-8?B?UW5KZUkrWGxGQStrS2pWdTBieGNXc2drc3lhcTl2dXRoNWhrVm96c1E5S1Q2?=
+ =?utf-8?B?aUxRdUF5RGt1alFlUTA4c0NJOHN0ZzRmb3lwV2s2TUpSa2ZZQ05rQUZId3RL?=
+ =?utf-8?B?WHJ3QW8rZFV3QnNVVnBReDBxVnZaK01OK2U0OGxSM3dkT3ZwOEpMenFNTmpS?=
+ =?utf-8?B?b25yaldWazJhYjdaL3NMM1hDVzdvOThBUHhYYllNZmxGcUM1NFB0MGdYdWFI?=
+ =?utf-8?B?YTJWa2lUdVJVbDRoSWI0cTZGaHhFRmEwYUc3Q1VYUWlweGpFUzExTFhobzUv?=
+ =?utf-8?B?dCtUbytoYklCSXVqMFpIRjVjZWJCYjdpYXlncnEyNU9CcG5BNVBYUVJqdHdO?=
+ =?utf-8?B?ZG8rQXl2YXNlZVZOODhtV3IxN3VDa2pKbFdaL2FyemhvbnJuSkVRYlM0M0Jl?=
+ =?utf-8?B?aUdhaG5mUlB6KzhFKzJIS3ZWYncyOFd5cUMrUjhqZGNMMG83ZGp5TFBSb2Mx?=
+ =?utf-8?B?SkNOYUNzZzZqdVAwMGs1WnZGU1hjelZ6K1hXOEFmWkFYMHgxL1d5Tm53bUFM?=
+ =?utf-8?B?VHRKeFFjZWtNRDBtN3RjRXN0dFBtTCtBdmU4ZUh1Q3V2VndPWmFidngwUlI0?=
+ =?utf-8?B?Mk5aMnZxRHRwQm56TFZFblFkYmNrTzFHMnR0bGlYbUZBY01YVnVWQ1ZXbDJE?=
+ =?utf-8?B?Zk41aGtCckZQRzhLNmpRdEVPRWhweW8vK3lpZGltaE1iaENUTFk4eHY0ZVNH?=
+ =?utf-8?B?dlFFWXd5WmtLM0NDRXY4RHlWL1hIc3FFNUdiSWVJVXBwa0RnWDlLZ2FjT1o0?=
+ =?utf-8?B?OTlGK29CNkgyRXJBYlozNEVFSS9HNmdNUkF6T0JBYlFVREI0VU1OS0N4cWxa?=
+ =?utf-8?B?R1l3c2ZpejVvL2FhWnI5TXlUaU1NZW1VTmUyZUlkczgraVhoQ0dCaUg1SnFw?=
+ =?utf-8?B?U1kzUUNzQTllRjVWOS9ORFpnTFlBdmdBZkNYQys5RGlhczMxZ3QvYkVHc2xH?=
+ =?utf-8?B?Z2FDcWZrdVBxOCtJdURYWGNoRVViamRiVnFDelF2K0lYMFUxVHAvZ29CbjM4?=
+ =?utf-8?B?Y3c0eGdzeFVCdSt4R3Y0eDlQMXNWbWRCZkdCYUpnV2pqMkVNK0tLZnoxUXZ0?=
+ =?utf-8?B?RU1XMURVdDVzQ1VwS1JTb05jY2tNSzk0YlNMc2tnNVZWZlBYYlFUNzQwa0gy?=
+ =?utf-8?B?cnlGdC9JUHpNdStNS1ZhUUtpbWlBQ1VqV0FUZDRJNkNENDNxQzA4QXdOdFBT?=
+ =?utf-8?B?Y3VlRHczSThaenpiRldZRGFBUEZYNzU1dVB2WHM3eG1paTZqMWtpNjR5Uks2?=
+ =?utf-8?B?Sk5Fcmd6Q0ppQWh4SUc5enF2MmpkOTJPZWFQUkxpaEVYcHF5NU1KSzc2Vmph?=
+ =?utf-8?B?eU5ydEhuUjBsUnY2VVY3ZUIxY2dRbkg3NjJRQ1AyU3VNMlY0aVJwZXNHWHdE?=
+ =?utf-8?B?WjBkV3ExY01zSytKZmh1NHZPMmVoR21odFBCNVBTQkhOcHRWNjBuR3BXWTBJ?=
+ =?utf-8?B?RTB1ZVJ3Qk9hdjQwR1BwYVFFdDR6SHN5aFZVemJ0bVRzd09ZRnJZbTd5VUdO?=
+ =?utf-8?B?cXptNlJnQThYWkU4WXN2bGswRC96dkczWkJnY214a2ZjZGhCaGh0c3VJb3pP?=
+ =?utf-8?B?eEVTN1Q1OTFUSVNHR2JIZ2ovZDhySmJjMVlrVlJmSmVNalhiNTZ4WWlGUTJD?=
+ =?utf-8?B?SlEzUlBWaVVSZzJKZ2F0NDBEZWtHMGdweUZRbS9kc3h3MzdDS2VKZWtiaU85?=
+ =?utf-8?Q?5vPD1VRQCE+8jV4gWcWupTwDckUs53yf2TCyw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(7416005)(1800799015)(366007)(921011)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TjVCY2JqVGZYblZJTEhQbU1Bdm9LOG1oaW9jcDBPU3h6YzVwRi8wSEFjS29J?=
+ =?utf-8?B?SnFrSW9nNXlzcndEcWprNXFoSWU3cVcrOVdhQ3ZnOG9rRUxYN2VlRVhFc0tN?=
+ =?utf-8?B?ZSt0Q2pjbzdwQnhJMkZyc3dVWnVvSmhtUkVIZzYycTFEd2VjU1k0QVl0OUNj?=
+ =?utf-8?B?d2hHTy9GbzI0OTdpcDBESHk4N0owWkpKc2Z2N0hiSTRuSWZudE5Qb0hkOGk5?=
+ =?utf-8?B?K2NQTm8wRVhWRFFYemljK2QyNmlnTGNreE8rOXhPNGhOZVV6NWR6ZU1QbFVX?=
+ =?utf-8?B?am15UnpUMlpERVFoWG9VOEFuMTRUOC9XZXNvOVpHWkZzM25FVkhxU3hWRjlR?=
+ =?utf-8?B?V3A4Y0ZyZzZ3Q1BxL1lGZzl1TGhyTzBRRC96L0h6a1dKdGFEd1ZpeGFsaHNn?=
+ =?utf-8?B?N1owYjMrcVRSMFNkREt3a1ZxN3VsVUZVaDQ1a3JHR2FsREZrQ0QwZllOOTV1?=
+ =?utf-8?B?WUxQNHRLR0w1bmtvd0hsREs3T3Ftc2xMWFJxMUpoTkkrYXpZOCtlOHl3ejhU?=
+ =?utf-8?B?WVNkMjlKdjFzeXdrNlF1QjFJYXpNMGVRa2wrd2lGRzQwa3ZYUmFXYWlzcDU4?=
+ =?utf-8?B?MDM2ZlNwbHBObkQ0dk1jOVBGeEd5QzFwd2IycmRkbDh3d2svK0EwMFAyUUo3?=
+ =?utf-8?B?Z1RKRVZXbGNENVpaTlRnZ0syS0FlakhYdjBYUHNLazRpZGljY3hWSGltV01j?=
+ =?utf-8?B?UWZPTnFJbERReHF4M0xzaWdVbkYwVXAyb2xqSzJqK212NCtqVE91Qi92Zmg0?=
+ =?utf-8?B?WW1HM2lWaHlUeHZ5bkRQeG96N21OWERyL1ZrMWpYS2MrbExHdFRNbWU4MS96?=
+ =?utf-8?B?QkJjay9nWUhiOE8xTXUySFZYQmh3aWgwRmh4U3puTkNQNVhRZ2t6WFU3VHlz?=
+ =?utf-8?B?TzhHb3dhd1Flb2p1SmE3bzcrdGhra2FxK0F1Q2ZGbThodVJ4aldGRC9wbUt2?=
+ =?utf-8?B?akp0SndUTFQ4eTl3UHNjRHdxSnI4TkdianB3RjhQbjNMRDRYVFdzcGRlY1NJ?=
+ =?utf-8?B?YWdPY25MM1Z0Q2hUWDNnSmVaRENpN0w0dVh4cEhiZ3lNZWhZa2VFS3RvWXRy?=
+ =?utf-8?B?RTBmYkJKZXRnQ2hOM2lGaHZQNFlTczVCbnhIMEZ0QndubHJqQ3M2Q2VWaU9N?=
+ =?utf-8?B?Rm5KWldBYjVaSWlhdTd5L0FoZjdOc1NnUmxtNHQ2NFdCNVB0L3k3eHFWb0ZQ?=
+ =?utf-8?B?YkR1VmxkRHhwZ1pYNWdWZXZJbzdrZ003SUlSMWFDR3V5ekhOYitzSUlndGlM?=
+ =?utf-8?B?TXNQcEU5UlF6TitGWEJ0eGZYdUMxNnNrakVrd1Ryd3ZxYXNUQlpkckdNSFhO?=
+ =?utf-8?B?SHZheGRLQURLZ1d6VVRRc0p2bEo2VW4rR1NIYUJtOW1KY2FlYjY1bGwzbFNr?=
+ =?utf-8?B?QzJLTzQ5cTh5ZXZqd2VlMU5NajN4eE5YWEEvdWZaVElic0JGTWdqdzB1SXdk?=
+ =?utf-8?B?c0MxeEhycGx4M0NaYWNQV3I3NkNRR3BoMjB4K1MzOEpBbXZVQWtvVm91Q1cw?=
+ =?utf-8?B?NmJOL3dDYTdIS2lPU3FubHEwdTZnMUt4Rk8wWXNWdE9DMGFIT2wzYjFaaGhC?=
+ =?utf-8?B?dWZoN210bzVJWHJXNGU3ZHdlMGZDVlJmOTUrUzBEa29OUFhwSVJPYlRBOVNV?=
+ =?utf-8?B?bG1KYytGb2RaNUFsNjBRV0dSdUtlc05QUzBrZi9CaHVtZWVpREdRZHduM0lp?=
+ =?utf-8?B?U3hDN0sxOGFJUnNuS29QU1FnYzU2NHY5dWt3dzREWkZkQjlrdS9GT1BQTHFN?=
+ =?utf-8?B?NURGVHl0UlN6TG9pL1RmZTBSL1RnQ1k2L1ZSeWpYSE1SNDEvY2cyTFdLekI0?=
+ =?utf-8?B?cU5jaUs0ekdSRnVwMWxMM0lhallBc0N0MmgrVmFmNjBtMU82VVhPU0E1T3Js?=
+ =?utf-8?B?L2RhTmFiQXdvSU9Nc2c2V2UwWXlDOE5xMkt1K2NDZEx0Q0psWXZZZmNrTGpW?=
+ =?utf-8?B?eWZUdm80bCtGeVFFV0ZkZk5TaGlMdVBYZE5wOE9JRVd6cVNMR0Rxd0hSQzZF?=
+ =?utf-8?B?aHJFVFRDVTAycGhiUXFTRjVCV1BsTk9ZaElRYTlLcENTMVNuMytaZ2w0d2ps?=
+ =?utf-8?B?cVNSNGhjaGU3WlJOVm5ZaW1Ub05kRXRUajRIUTR6QVdUaTZMcmtFT2FleUdW?=
+ =?utf-8?Q?cDXE=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57dd02ae-a9d1-43db-2130-08dc7f4df3a2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 19:39:55.7303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JKDnMsHbXnIzYKgIHOB3OD+pUeO+2mVafYHJ3gz+1W1BcqCOgxbJItR7vn8TtNQoQ750cV8b3qabA8h7fvMkaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8655
 
-Fix two issues with the panel-lg-sw43408 driver reported by the kernel
-test robot.
+Instead of using the switch case statement to assert/dassert the core reset
+handled by this driver itself, let's introduce a new callback core_reset()
+and define it for platforms that require it. This simplifies the code.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-Changes in v4:
-- Reoder patches so that fixes come first, to be able to land them to
-  drm-misc-fixes
-- Link to v3: https://lore.kernel.org/r/20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org
+ drivers/pci/controller/dwc/pci-imx6.c | 134 ++++++++++++++++++----------------
+ 1 file changed, 71 insertions(+), 63 deletions(-)
 
-Changes in v3:
-- Split DRM_DISPLAY_DSC_HELPER from DRM_DISPLAY_DP_HELPER
-- Added missing Fixes tags
-- Link to v2: https://lore.kernel.org/r/20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index c5d490afa981e..5e21fc942e90e 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -103,6 +103,7 @@ struct imx_pcie_drvdata {
+ 	const struct pci_epc_features *epc_features;
+ 	int (*init_phy)(struct imx_pcie *pcie);
+ 	int (*set_ref_clk)(struct imx_pcie *pcie, bool enable);
++	int (*core_reset)(struct imx_pcie *pcie, bool assert);
+ };
+ 
+ struct imx_pcie {
+@@ -670,35 +671,75 @@ static void imx_pcie_clk_disable(struct imx_pcie *imx_pcie)
+ 	clk_bulk_disable_unprepare(imx_pcie->drvdata->clks_cnt, imx_pcie->clks);
+ }
+ 
++static int imx6sx_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
++{
++	if (assert)
++		regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
++				IMX6SX_GPR12_PCIE_TEST_POWERDOWN);
++
++	/* Force PCIe PHY reset */
++	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR5, IMX6SX_GPR5_PCIE_BTNRST_RESET,
++			   assert ? IMX6SX_GPR5_PCIE_BTNRST_RESET : 0);
++	return 0;
++}
++
++static int imx6qp_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
++{
++	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_SW_RST,
++			   assert ? IMX6Q_GPR1_PCIE_SW_RST : 0);
++	if (!assert)
++		usleep_range(200, 500);
++
++	return 0;
++}
++
++static int imx6q_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
++{
++	if (!assert)
++		return 0;
++
++	regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_TEST_PD);
++	regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_REF_CLK_EN);
++
++	return 0;
++}
++
++static int imx7d_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
++{
++	struct dw_pcie *pci = imx_pcie->pci;
++	struct device *dev = pci->dev;
++
++	if (assert)
++		return 0;
++
++	/*
++	 * Workaround for ERR010728, failure of PCI-e PLL VCO to
++	 * oscillate, especially when cold. This turns off "Duty-cycle
++	 * Corrector" and other mysterious undocumented things.
++	 */
++
++	if (likely(imx_pcie->phy_base)) {
++		/* De-assert DCC_FB_EN */
++		writel(PCIE_PHY_CMN_REG4_DCC_FB_EN, imx_pcie->phy_base + PCIE_PHY_CMN_REG4);
++		/* Assert RX_EQS and RX_EQS_SEL */
++		writel(PCIE_PHY_CMN_REG24_RX_EQ_SEL | PCIE_PHY_CMN_REG24_RX_EQ,
++		       imx_pcie->phy_base + PCIE_PHY_CMN_REG24);
++		/* Assert ATT_MODE */
++		writel(PCIE_PHY_CMN_REG26_ATT_MODE, imx_pcie->phy_base + PCIE_PHY_CMN_REG26);
++	} else {
++		dev_warn(dev, "Unable to apply ERR010728 workaround. DT missing fsl,imx7d-pcie-phy phandle ?\n");
++	}
++	imx7d_pcie_wait_for_phy_pll_lock(imx_pcie);
++	return 0;
++}
++
+ static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+ {
+ 	reset_control_assert(imx_pcie->pciephy_reset);
+ 	reset_control_assert(imx_pcie->apps_reset);
+ 
+-	switch (imx_pcie->drvdata->variant) {
+-	case IMX6SX:
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+-				   IMX6SX_GPR12_PCIE_TEST_POWERDOWN,
+-				   IMX6SX_GPR12_PCIE_TEST_POWERDOWN);
+-		/* Force PCIe PHY reset */
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR5,
+-				   IMX6SX_GPR5_PCIE_BTNRST_RESET,
+-				   IMX6SX_GPR5_PCIE_BTNRST_RESET);
+-		break;
+-	case IMX6QP:
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
+-				   IMX6Q_GPR1_PCIE_SW_RST,
+-				   IMX6Q_GPR1_PCIE_SW_RST);
+-		break;
+-	case IMX6Q:
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
+-				   IMX6Q_GPR1_PCIE_TEST_PD, 1 << 18);
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
+-				   IMX6Q_GPR1_PCIE_REF_CLK_EN, 0 << 16);
+-		break;
+-	default:
+-		break;
+-	}
++	if (imx_pcie->drvdata->core_reset)
++		imx_pcie->drvdata->core_reset(imx_pcie, true);
+ 
+ 	/* Some boards don't have PCIe reset GPIO. */
+ 	gpiod_set_value_cansleep(imx_pcie->reset_gpiod, 1);
+@@ -706,47 +747,10 @@ static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+ 
+ static int imx_pcie_deassert_core_reset(struct imx_pcie *imx_pcie)
+ {
+-	struct dw_pcie *pci = imx_pcie->pci;
+-	struct device *dev = pci->dev;
+-
+ 	reset_control_deassert(imx_pcie->pciephy_reset);
+ 
+-	switch (imx_pcie->drvdata->variant) {
+-	case IMX7D:
+-		/* Workaround for ERR010728, failure of PCI-e PLL VCO to
+-		 * oscillate, especially when cold.  This turns off "Duty-cycle
+-		 * Corrector" and other mysterious undocumented things.
+-		 */
+-		if (likely(imx_pcie->phy_base)) {
+-			/* De-assert DCC_FB_EN */
+-			writel(PCIE_PHY_CMN_REG4_DCC_FB_EN,
+-			       imx_pcie->phy_base + PCIE_PHY_CMN_REG4);
+-			/* Assert RX_EQS and RX_EQS_SEL */
+-			writel(PCIE_PHY_CMN_REG24_RX_EQ_SEL
+-				| PCIE_PHY_CMN_REG24_RX_EQ,
+-			       imx_pcie->phy_base + PCIE_PHY_CMN_REG24);
+-			/* Assert ATT_MODE */
+-			writel(PCIE_PHY_CMN_REG26_ATT_MODE,
+-			       imx_pcie->phy_base + PCIE_PHY_CMN_REG26);
+-		} else {
+-			dev_warn(dev, "Unable to apply ERR010728 workaround. DT missing fsl,imx7d-pcie-phy phandle ?\n");
+-		}
+-
+-		imx7d_pcie_wait_for_phy_pll_lock(imx_pcie);
+-		break;
+-	case IMX6SX:
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR5,
+-				   IMX6SX_GPR5_PCIE_BTNRST_RESET, 0);
+-		break;
+-	case IMX6QP:
+-		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
+-				   IMX6Q_GPR1_PCIE_SW_RST, 0);
+-
+-		usleep_range(200, 500);
+-		break;
+-	default:
+-		break;
+-	}
++	if (imx_pcie->drvdata->core_reset)
++		imx_pcie->drvdata->core_reset(imx_pcie, false);
+ 
+ 	/* Some boards don't have PCIe reset GPIO. */
+ 	if (imx_pcie->reset_gpiod) {
+@@ -1442,6 +1446,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.init_phy = imx_pcie_init_phy,
+ 		.set_ref_clk = imx6q_pcie_set_ref_clk,
++		.core_reset = imx6q_pcie_core_reset,
+ 	},
+ 	[IMX6SX] = {
+ 		.variant = IMX6SX,
+@@ -1457,6 +1462,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.init_phy = imx6sx_pcie_init_phy,
+ 		.set_ref_clk = imx6sx_pcie_set_ref_clk,
++		.core_reset = imx6sx_pcie_core_reset,
+ 	},
+ 	[IMX6QP] = {
+ 		.variant = IMX6QP,
+@@ -1473,6 +1479,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.init_phy = imx_pcie_init_phy,
+ 		.set_ref_clk = imx6q_pcie_set_ref_clk,
++		.core_reset = imx6qp_pcie_core_reset,
+ 	},
+ 	[IMX7D] = {
+ 		.variant = IMX7D,
+@@ -1486,6 +1493,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.init_phy = imx7d_pcie_init_phy,
+ 		.set_ref_clk = imx7d_pcie_set_ref_clk,
++		.core_reset = imx7d_pcie_core_reset,
+ 	},
+ 	[IMX8MQ] = {
+ 		.variant = IMX8MQ,
 
-Changes in v2:
-- use SELECT instead of DEPEND to follow the reverted Kconfig changes
-- Link to v1: https://lore.kernel.org/r/20240420-panel-sw43408-fix-v1-0-b282ff725242@linaro.org
-
----
-Dmitry Baryshkov (3):
-      drm/panel/lg-sw43408: select CONFIG_DRM_DISPLAY_DP_HELPER
-      drm/panel/lg-sw43408: mark sw43408_backlight_ops as static
-      drm/display: split DSC helpers from DP helpers
-
- drivers/gpu/drm/amd/amdgpu/Kconfig       | 1 +
- drivers/gpu/drm/display/Kconfig          | 6 ++++++
- drivers/gpu/drm/display/Makefile         | 3 ++-
- drivers/gpu/drm/i915/Kconfig             | 1 +
- drivers/gpu/drm/msm/Kconfig              | 1 +
- drivers/gpu/drm/panel/Kconfig            | 6 ++++--
- drivers/gpu/drm/panel/panel-lg-sw43408.c | 2 +-
- 7 files changed, 16 insertions(+), 4 deletions(-)
----
-base-commit: 6dc544b66971c7f9909ff038b62149105272d26a
-change-id: 20240420-panel-sw43408-fix-ff6549c121be
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.34.1
 
 
