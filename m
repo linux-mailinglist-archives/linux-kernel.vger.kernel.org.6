@@ -1,248 +1,296 @@
-Return-Path: <linux-kernel+bounces-192812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819338D228F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:37:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893428D2294
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43C81C22C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:37:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A843C1C22D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936DC38DD2;
-	Tue, 28 May 2024 17:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C204224FD;
+	Tue, 28 May 2024 17:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F4p6t/tW"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aQ3x210s"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47622C853
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAC417E8E3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917816; cv=none; b=S0xFGvJcPqs/EfyfeoxYrVGm+0cQh3RwwSxmTcNggiOfA1geapuectOMCJEj/Jtx4SKWES7g83ohuT7cSOLLSjzxAq+vlRt+ZP7mhLoPU4SBOG7Ko/hrQ3RP4gZs4A0jI/xjPbi+T8e8Hpp1mehTZGWxM1M9OA6hXPP9ixCNrqI=
+	t=1716918006; cv=none; b=mrU9YYGFqtHx46DUk7KmKGxFwWkx/rxLGg0as1taPOwR4zmMtr8OoKXBxFX9XswbK0dQIQh+j8+KdkjtxpGzOoxur+0EBzy7iZFMQ1zAU/2/KtdJ88rOXRguvHafHQQolznUrW5cSd4AXbrBsHLYuYYHbTdb05LPE9yjHoIja1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917816; c=relaxed/simple;
-	bh=5jqpjWDjCYeF0iZMmfNh1F02B5hbFSGCHFwvks87kGw=;
+	s=arc-20240116; t=1716918006; c=relaxed/simple;
+	bh=lXSn8ThsYvfxIN0Qd9QHZh3xt5vjFFJUhZrdayvJuDU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jcYQxVMeEG4QJxAIABkVwo7pclp+KhlRiX1A23iiu4p6O5tWqBK0F7sr+u1I0+wm03aidNm68xzmZ7fOPSjV2e5mHYsxrOd7Nz3UjevPFFTurgw+6rJ4SknORLYqAM+IkYL82HY32Hjcdyai0oB7xK6PbUenlP8TJNvwytJzmkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F4p6t/tW; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=rekrpTNch8DQMeZqZNLFlF9A7XECwhWLiYDHHjXcIH/ju4HcAT98zOSAhChK7VSkt/AlD3+1L4YLlkF2+wRI1BdmJkHWZHmEnVrfS4lHYJWLHDhu2zwRTP02dlEK2LNCE7/WncwwP92dBQoiwTJcRowu61oz+IJgN6RxjyLCVbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aQ3x210s; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6269ad9a6fso142246066b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:36:54 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47dbc4b44so12155ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:40:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716917813; x=1717522613; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1716918004; x=1717522804; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h1nTYMe9Sz2kd146CNINlSxaoddIUqGPBCQrAMYzjnQ=;
-        b=F4p6t/tWtjSOVYylJbwcLVV6UTyM4sNrgf29x/I2qiaXmlzGuSs/libx4uluVN+nqU
-         Q1wu6ZyJ+t/J5G4TTactfmH72bg+9gQMI6XUV/JPUvIcgZPTSklK6xODqYbVvKUruZsd
-         qGcZJqKk9SLen5tkhgx7pjnVQN79mjH/J3XY5cJYmSYfwEdHgeAgZgJLCWfItyd1aUlo
-         m8SST44+ucTlAuYiprzs7++Q4aRuTHjVObQuxYwumcTSK42endimDnDiRHgNYuUyIKni
-         X0y60pnKnN3oBLyeEGWlqJk5sfZxG3gqEzLBOt9HDhyBsgJwOczZkJZdgWzCHvs7ja5e
-         tsGw==
+        bh=Kq6ro/o/mynJuC/f6DEQ1M9MUXbyfGiQuVDeIAKrcKs=;
+        b=aQ3x210sHS/DQhhuk3l7YT5qVfh+kFjZvceV6uUJbf+9sznRYtKSgklUCubUItNwdh
+         7Jdx5kQejvPrW5bA9Ggilm5/UHRJQuMhfBg1xQ1gRIfhRewO7tWZjUCKkBKlPOwfU//g
+         kJUM6KJrgfnhArshaITALzGl+FITa234rVNyCJSX09Qu7BIZCt2nPl4BshhDSgSCpg9h
+         +NZwmvQ5cLiZNA/Gmv6rV16gyeffMGLZnwgKmk062Fdud/A5Dw0nPFNHZjMBJDXoblE4
+         803jrl7ZCQWfREJsPGA2pEnknAAvrj/n2ftpeIlOuokLQogpGx4xmSu704ngOPWYTwam
+         nGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716917813; x=1717522613;
+        d=1e100.net; s=20230601; t=1716918004; x=1717522804;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h1nTYMe9Sz2kd146CNINlSxaoddIUqGPBCQrAMYzjnQ=;
-        b=veB9+OfDcT6BVt5KNXdA/0O4e4Y7YeYJ5jYRPKBNIxXru9Z40kH4lQpY9lUfivlfuS
-         DtE2YSwi8Qjhbm3AKfnEJKxeZZKKeTOrfYaWASCApkeQe7G8rlUSP4sDtkfZQ7yYfs6+
-         410mFyJGrwAW+j5EYv+KfsXKxz9BhtfdywaIBdUb5srmOVCCOe8NZ7UubF/7TPwC8nqo
-         bgBRo1KbXL56k1u7BTuqdIZ3VYJmQFxQrbJ3BfRXSIoyGQPeKTeY+L3N+csRBkIm1Kvx
-         C9Anr1NDNRbvDjUaiFQLtrYPxqvidLc61X7+gMT2fHDtR++JdTEPquGuFVt3QIMAaq0W
-         HZGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuOXWWoH9YSqMinErhxRleq9O0b5ceeZYcWl2p6BP2s+QvlZFEQxsbUaNcSQBIl1RqD484us98owfXF0VLDQWAGwCRqvtb1WRc4ewG
-X-Gm-Message-State: AOJu0YzQNzxOemMlWS8LCTV4WolK64xukVgUSium9Y+u69NpBlfVxBRs
-	/J9Pi07cpxdW5DMunOC+UvKVG8v04zK4fquYmCi/dV3wrbJuRUUm0eDUuhwr8LbN1Sl5V/b2mdQ
-	0Rd2CtSSRaj2be0nXs7LI15Bf05Pk01BLbGaQ
-X-Google-Smtp-Source: AGHT+IFf32eXkuapluEvlBEyoJKJxifsmiVKQ0AvF4ow+8ygeGf1col+Xo1abUwIXzRnUJhSc+Yk6CUkl0RPaD3UYic=
-X-Received: by 2002:a17:906:3c1a:b0:a63:42b6:1976 with SMTP id
- a640c23a62f3a-a6342b619f5mr156681366b.68.1716917812713; Tue, 28 May 2024
- 10:36:52 -0700 (PDT)
+        bh=Kq6ro/o/mynJuC/f6DEQ1M9MUXbyfGiQuVDeIAKrcKs=;
+        b=Vy4HFUviPIxVhUEGAtZY9rHnI+Io57n3mv/r/YgTnLZjyhCGMlOgoONRNFO+DzJXmc
+         QuL+vAeGeCjWH4PU4YaN7drgN1b+FFPUOW3+1gq69KxYnbcOQ+LAHyvH20WRWW620/vs
+         1xM4Zp61Ihwse8s2K0qd+vl6nRkTGTEHk5hGgKR4pSQF6FZszT7eee0tAzJkuyaYNF05
+         /X376/mxginuQJoBRqqbZjEnZzLR3oqphlYHhE1p0wyhZGFIZme2oECPlGeZ7cvOyDyT
+         rT5x7wtcCtYfm0CooWbbY9UoAgVjL5sJJVrJngikq+WaqrcQ6eP+LGDGF2A0S4d7Vrfw
+         0eOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUPJ5MVnC/2KPb/4zFviWlthBG9eZvJScVGsYoXZnpYwg7e/C699NJNpcRXrQy4foAR8PKlxxbotWsj6jgIQogwM4XGAaCzHEx/Fhw
+X-Gm-Message-State: AOJu0YxhitWB+FAksZqvIbg7sSu5EYqtfNdmIynTpTsZB9wBdemXgrHZ
+	ibB1idAQHBlWXGhpsVwmZQlxjqbVi87h+HKml2+vhO6LLcG+QLdyy9K9h8ARjQeha+czgWgWVk4
+	vvcp8W05mWBZscGagovCmDVeBeLf3QSbFNjpa
+X-Google-Smtp-Source: AGHT+IHcPxq9NejNLg0S7NcSsj7DSlW0Q8J5NZOFIFmMl8ZpvAt0K5VsvkH971wUprS2568A+M2fFIEUO71ZLFd/3jA=
+X-Received: by 2002:a17:902:e94c:b0:1eb:3f4f:6f02 with SMTP id
+ d9443c01a7336-1f4e79790d5mr75285ad.12.1716918003790; Tue, 28 May 2024
+ 10:40:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510232128.1105145-1-almasrymina@google.com>
- <20240510232128.1105145-12-almasrymina@google.com> <9097e78d-0e7d-43bd-bafd-e53a4872a4d1@davidwei.uk>
-In-Reply-To: <9097e78d-0e7d-43bd-bafd-e53a4872a4d1@davidwei.uk>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 28 May 2024 10:36:40 -0700
-Message-ID: <CAHS8izOe-uYjm0ttQgHOFpvp_Tj4_oRHV6d1Y1sWJAZJdCdCBA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 11/14] tcp: RX path for devmem TCP
-To: David Wei <dw@davidwei.uk>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
+ <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
+ <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+ <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 28 May 2024 10:39:50 -0700
+Message-ID: <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com>
+Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 11:02=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+On Tue, May 28, 2024 at 10:01=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On 2024-05-10 16:21, Mina Almasry wrote:
-> > +/* On error, returns the -errno. On success, returns number of bytes s=
-ent to the
-> > + * user. May not consume all of @remaining_len.
-> > + */
-> > +static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *s=
-kb,
-> > +                           unsigned int offset, struct msghdr *msg,
-> > +                           int remaining_len)
-> > +{
-> > +     struct dmabuf_cmsg dmabuf_cmsg =3D { 0 };
-> > +     struct tcp_xa_pool tcp_xa_pool;
-> > +     unsigned int start;
-> > +     int i, copy, n;
-> > +     int sent =3D 0;
-> > +     int err =3D 0;
-> > +
-> > +     tcp_xa_pool.max =3D 0;
-> > +     tcp_xa_pool.idx =3D 0;
-> > +     do {
-> > +             start =3D skb_headlen(skb);
-> > +
-> > +             if (skb_frags_readable(skb)) {
-> > +                     err =3D -ENODEV;
-> > +                     goto out;
-> > +             }
-> > +
-> > +             /* Copy header. */
-> > +             copy =3D start - offset;
-> > +             if (copy > 0) {
-> > +                     copy =3D min(copy, remaining_len);
-> > +
-> > +                     n =3D copy_to_iter(skb->data + offset, copy,
-> > +                                      &msg->msg_iter);
-> > +                     if (n !=3D copy) {
-> > +                             err =3D -EFAULT;
-> > +                             goto out;
-> > +                     }
-> > +
-> > +                     offset +=3D copy;
-> > +                     remaining_len -=3D copy;
-> > +
-> > +                     /* First a dmabuf_cmsg for # bytes copied to user
-> > +                      * buffer.
-> > +                      */
-> > +                     memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
-> > +                     dmabuf_cmsg.frag_size =3D copy;
-> > +                     err =3D put_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEA=
-R,
-> > +                                    sizeof(dmabuf_cmsg), &dmabuf_cmsg)=
-;
-> > +                     if (err || msg->msg_flags & MSG_CTRUNC) {
-> > +                             msg->msg_flags &=3D ~MSG_CTRUNC;
-> > +                             if (!err)
-> > +                                     err =3D -ETOOSMALL;
-> > +                             goto out;
-> > +                     }
-> > +
-> > +                     sent +=3D copy;
-> > +
-> > +                     if (remaining_len =3D=3D 0)
-> > +                             goto out;
-> > +             }
-> > +
-> > +             /* after that, send information of dmabuf pages through a
-> > +              * sequence of cmsg
-> > +              */
-> > +             for (i =3D 0; i < skb_shinfo(skb)->nr_frags; i++) {
-> > +                     skb_frag_t *frag =3D &skb_shinfo(skb)->frags[i];
-> > +                     struct net_iov *niov;
-> > +                     u64 frag_offset;
-> > +                     int end;
-> > +
-> > +                     /* !skb_frags_readable() should indicate that ALL=
- the
-> > +                      * frags in this skb are dmabuf net_iovs. We're c=
-hecking
-> > +                      * for that flag above, but also check individual=
- frags
-> > +                      * here. If the tcp stack is not setting
-> > +                      * skb_frags_readable() correctly, we still don't=
- want
-> > +                      * to crash here.
-> > +                      */
-> > +                     if (!skb_frag_net_iov(frag)) {
-> > +                             net_err_ratelimited("Found non-dmabuf skb=
- with net_iov");
-> > +                             err =3D -ENODEV;
-> > +                             goto out;
-> > +                     }
-> > +
-> > +                     niov =3D skb_frag_net_iov(frag);
+> On Mon, 27 May 2024 at 22:37, Ian Rogers <irogers@google.com> wrote:
+> >
+> > If you do:
+> >
+> > $ perf stat -e cycles ...
 >
-> Sorry if we've already discussed this.
+> You always talk about "perf stat", because you want to ignore a big
+> part of the issueL
 >
-> We have this additional hunk:
+> > The issue is about legacy events.
 >
-> + if (niov->pp->mp_ops !=3D &dmabuf_devmem_ops) {
-> +       err =3D -ENODEV;
-> +       goto out;
-> + }
+> No.
 >
-> In case one of our skbs end up here, skb_frag_is_net_iov() and
-> !skb_frags_readable(). Does this even matter? And if so then is there a
-> better way to distinguish between our two types of net_iovs?
+> The issue isn't "perf stat".
+>
+> That works. Even with the broken version.
+>
+> > I have a patch that's WIP for this, but I also think we could
+> > also agree that when >1 PMU advertises an event, perf's behavior when
+> > matching should be to open all such events. You avoid this by
+> > specifying a PMU name.
+>
+> Christ. You're still ignoring the elephant in the room.
+>
+> Stop using "perf stat" as an example.  It's bogus. You're ignoring the is=
+sue.
+>
+> Lookie here:
+>
+>     $ perf stat make
+>     ...
+>      Performance counter stats for 'make':
+>
+>               5,262.78 msec task-clock                       #
+> 1.195 CPUs utilized
+>                 46,891      context-switches                 #
+> 8.910 K/sec
+>                      6      cpu-migrations                   #
+> 1.140 /sec
+>                198,402      page-faults                      #
+> 37.699 K/sec
+>         10,238,763,227      cycles                           #
+> 1.946 GHz
+>         16,280,644,955      instructions                     #    1.59
+>  insn per cycle
+>          3,252,743,314      branches                         #
+> 618.066 M/sec
+>             83,702,386      branch-misses                    #
+> 2.57% of all branches
+>
+>            4.405792739 seconds time elapsed
+>
+>            4.287784000 seconds user
+>            0.921132000 seconds sys
+>
+> but then
+>
+>     $ perf record make
+>     Error:
+>     cycles:P: PMU Hardware doesn't support
+> sampling/overflow-interrupts. Try 'perf stat'
+>
+> because that broken thing (a) picked a different cycles than before
+> and (b) your argument that it should pick both IS WRONG BECAUSE ONE OF
+> THEM DOESN'T EVEN WORK.
 
-Thanks for bringing this up, yes, maybe we do need a way to
-distinguish, but it's not 100% critical, no? It's mostly for debug
-checking?
+By default it picked "cycles:P" with this patch it now picks "<core
+pmu>/cycles/P". As your Tested-by attested this does work.
 
-I would say add a helper, like net_iov_is_dmabuf() or net_iov_is_io_uring()=
+> Why is this so hard to just accept? Why do you keep mis-stating the probl=
+em?
+
+I'm not. What your saying is that the arm_dsu_0 PMU advertising cycles
+doesn't work if you use it for perf record. I agree. This change fixed
+the issue. What to do if someone writes "perf record -e cycles" well
+there are two advertised cycles events isn't it reasonable perf record
+try to open them both?
+
+> How hard is it to realize that I DO NOT WANT "perf stat"? The perf
+> error message is bogus crap. If I ask for a "perf record", it
+> shouldn't pick the wrong PMU that can't do it, and then say "do you
+> want to do something else"?
+
+It's not about perf record having some kind of intelligence and
+picking a PMU. perf record either opens an event on the PMU you ask
+for it it wild cards across them all. For legacy events they used to
+be handled differently and I'm trying to fix this. In part so I can
+fix the PMU behavior on the Apple M1 and later CPUs that fail to
+implement legacy events properly in their PMU driver.  You've said you
+used to use Apple CPUs for ARM testing, I'm trying to fix a problem
+that will help you.
+
+> I don't care a whit for "legacy events". I care about the fact that
+> you changed the code to pick the WRONG event, and then you are blaming
+> anything but that.
+
+Sure, I added "if user =3D=3D linus then pick wrong PMU". The code was
+reviewed by IBM and Intel. ARM were on the CC list. The change baked
+on linux-next for a good long while. All of this points to my problem
+that I'm often fixing problems for ARM with a complete lack of
+testing/reviewing/acking... by them.
+
+> If perf would go "Oh, this one doesn't support 'record', let's see if
+> another one does", it would all be good.
+>
+> If perf would go "Oh, let's prioritize core events", it would all be good=
 .
 
-Checking for niov->pp->mp_ops seems a bit hacky to me, and may be
-outright broken. IIRC niov's can be disconnected from the page_pool
-via page_pool_clear_pp_info(), and niov->pp may be null. Abstractly
-speaking the niov type maybe should be a property of the niov itself,
-and not the pp the niov is attached to.
+But as I've pointed out it wouldn't because then you'd break the
+behavior of doing things like gathering memory bandwidth from uncore
+PMUs. An example:
+```
+$ sudo perf stat -e data_read -a sleep 1
 
-It is not immediately obvious to me what the best thing to do here is,
-maybe it's best to add a flag to niov or to use niov->pp_magic for
-this.
+ Performance counter stats for 'system wide':
 
-I would humbly ask that your follow up patchset takes care of this
-bit, if possible. I think mine is doing quite a bit of heavy lifting
-as is (and I think may be close to ready?), when it comes to concerns
-of devmem + io_uring coexisting if you're able to take care, awesome,
-if not, I can look into squashing some fix.
+          4,447.10 MiB  data_read
 
---=20
+       1.001748581 seconds time elapsed
+```
+By making the wildcard only work for core PMUs the best case is you'd make =
+this:
+```
+$ sudo perf stat -e 'imc_free_running/data_read/' -a sleep 1
+
+ Performance counter stats for 'system wide':
+
+          4,454.56 MiB  imc_free_running/data_read/
+
+       1.001865448 seconds time elapsed
+```
+But that wouldn't work again as ARM decided to mess up the naming
+convention, my unmerged fix for that is here:
+https://lore.kernel.org/lkml/20240515060114.3268149-1-irogers@google.com/
+it says Marvell but Marvell followed ARM's lead.
+
+> But no. Your patch actively picked a bad event, and then you try to
+> blame some "legacy" thing.
+>
+> Yes, the legacy thing picked the right event, but it's not even about
+> legacy. You could have picked the right event any number of other
+> ways.
+>
+> It's about "it damn well worked when you didn't go out of your way to
+> pick the wrong event".
+>
+> In other words, this isn't about "legacy" and "new".
+
+I'm not clear what you think is "new". All the events are being picked
+in your case from sysfs, the way this has all worked is years if not
+decades old. What is new is that because of an event name the behavior
+should be uniform, motivated initially by fixing your other ARM test
+platform of Apple.
+
+> This is about "right" and "wrong". The old code picked right - for
+> whatever reasons. The new code picked wrong - also for whatever
+> reasons.
+>
+> Don't try to make it be anything else. Just admit that the new code
+> picked the wrong PMU, instead of trying to make excuses for it.
+
+I agree it picked the wrong PMU for default events. This was a problem
+on no systems that anybody was bothering to test with. Having been
+made aware of the issue I fixed it in this patch, you're welcome.
+
+What is still not clear from this is what should the behavior be of:
+
+$ perf record -e cycles ...
+
+Should it wildcard all events and open them on all PMUs potentially
+failing? Well this has always been perf's behavior were the event:
+
+$ perf record -e inst_retired.any ...
+
+where inst_retired.any could be an event advertised on an accelerator
+or device where sampling doesn't work. If inst_retired.any doesn't
+work for you as an example, pick another event that does. A GPU has
+instructions and cycles so the likelihood of naming conflicts is high.
+
+We can make perf record ignore opening events on PMUs that don't
+support sampling, it's an invasive and non-trivial change not suited
+to landing in 6.10. It is also a behavior change, see this thread for
+how popular those are.
+
+So 6.10 is now in a mess. We likely fail tests, reverting this change
+has a bunch of consequences and presumably I'm expected to dig
+through, figure those out and then provide fixes. Thanks!
+
+For 6.11 I currently suggest we revert the revert and apply this
+patch. This would also I think be the best thing to do for 6.10. I
+appreciate my opinions are worth much less than others. I don't see
+why the priority should be to fix things on an ARM system that nobody
+is actively testing on rather than say Apple devices fixed by the
+reverted change, RISC-V system, etc. Anyway...
+
 Thanks,
-Mina
+Ian
+
+>                Linus
+>
 
