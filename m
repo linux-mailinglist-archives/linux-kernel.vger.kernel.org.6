@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-191630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA208D11A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4A48D11AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863EE1C21656
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126231C21913
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB9EDDBE;
-	Tue, 28 May 2024 02:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1283EED6;
+	Tue, 28 May 2024 02:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="n9QISdfk"
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDZrcfQJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E013C17
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179402563;
+	Tue, 28 May 2024 02:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716862508; cv=none; b=YvlZdMf1dbPB+nwwUNWQq1V0PtGHkX1Vd+A02CxvhBr4mZa49gpOypAURME0bAYeOmNd1SELAcvwo834bkcfGT7vsuR6z4bpCb6GMA0dClTM9gFoDZmWfrSE4Cpm9a8VdL3jbjYHhPSujznxLzdWc5hupTxy2IvZZ8saFl64yHc=
+	t=1716862708; cv=none; b=Zcb5fnqYzxZDLBMpU36j4tj7SYgKyj09gJwU25P0XkE8+a9F8rVZLw7RDNcKlpo1BdrUzvoEUe4gX9+0UoI/0k9SXKPzvdw5SZG2vZ4UHjT7diN/13/rAzO0NZkURUu6aSy8rxtWEnsKC8Evbv77inQpCrJkOc3H0jxiaEgpR/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716862508; c=relaxed/simple;
-	bh=t8/LJ8L6h0+PIyw5VJ5KkZ4tvRkXejG0UTzWn+qi2+4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=P8WK3mbj5iMK5+JwYHr+5vNiniD6+QiifYgrJJh+6HjwTVIA0yMhePEyCgRoMKKb8R6GpI2ShEdwdYcT43ct0qbg1UpSybnnv1n4f/NaoKhSqveSsOMTnZyF84qhmcVsfKw7ec+ChdPv4I2eZGveI1mu0Mnn8nmBwz2kzpMkJ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=n9QISdfk; arc=none smtp.client-ip=203.205.221.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1716862496; bh=mlF9rXzPzcXAxRx+cJXgPkHyZabDkm26qlONQvRgT24=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=n9QISdfkpHvAB+Ox7A0QTo648ioa34GG5uKdw9Th8+eOINHddLQqalZea4OF6+w2V
-	 qSVyWrwFRnzvovgSi3Zi1269oXW7hy7M1M4BG/k3KEZTuBJxuNIJM3KcBdhtmg0xwJ
-	 5m4WhwQ0ZL9a/9fgNrf0JXvEU5ztq8WLclsSKIwU=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 3B600C85; Tue, 28 May 2024 10:14:54 +0800
-X-QQ-mid: xmsmtpt1716862494tkpl9v87b
-Message-ID: <tencent_0974B3778B662A3DDD36E0973636FE4B8609@qq.com>
-X-QQ-XMAILINFO: OZsapEVPoiO6a68qvbgUUYSm2DO+Ym3ySiJtxG+YNzVa1x57O+VNnpNEYpgWBF
-	 jQuIXFh5JnaXF+sNmUsyYyON9iHTX8iBTXKaYejKNcjAi7ba1dftilVtnNJNwJRERyzjoDoowHvi
-	 gU0hF/b4olF6qGDAyiJ/TMJ0CawkSjfiBZrJtwM9J1WGLt3ogIKf2eroWiytQuK9AM8c4zl22VyO
-	 diSIjI3laxcxyGBUKRKgRVFB4jxhfasIG/IMnR2c61UmaWXW59P9RjGkfpYE8Cax2TXuT4xBYzya
-	 uLORnwB1oQwkk896qOjmDJx/FZVV0bam1Zr54iVuTimwEpMPL0jU6iH1elOZHnG2ZoQcURcZlHlF
-	 yTq1+FzDhPqJCQg0+E4bxIPlie35xxiE4CywAESVz8n9LXejEHK+xs694eCsZLrn0DvQT1H7WP58
-	 vxc3oaDroOtxmY9Kg4NWwJu0fs1IGv+zXxKoFHqXnH7HDKFi+oKf+HNunrdbJiJXiPFa+Pwdn5RW
-	 RLiXWCMhZluAhcAhZV0Algo8v58A/XWA/tfwvfnrQgEZQGlLksic+Dn8K6RWChCfDiYTCrft1cA7
-	 fJ1LBnRNH/eg5TC9GqorPUFd7R9pYDwvmn7cFZVCmn7XreNdUT6pTkjxXno+UW1j5aRNqGoluxxZ
-	 +5a7cYaHf/+hGuu2Z/F4lKBOE0stUIh86gaJ1TmKWmM5BQgGcZUKNzSwQVh3Blxkh+oWiYndyuio
-	 0EQ4AA0x4/pJxofB4/b6j3cPHdfvIhUDWNXjJ3NxokjUfgolW15qsgQTE4jjc5DEW5IzIl5R+P9V
-	 W1bcQ7PXVAcFjPXY/7+0IDNBtC2rcqC/gSjN8a8C1mtbQMrcQ/uhIZ843aNkQRsy3N7mwN4qnYQ3
-	 5pwCjKQ801VlhpyT5I0q8CHXcbng7AYXSi25vCI0Gfhu6x6IuVam23yjW/hgzqeA==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+71bfed2b2bcea46c98f2@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nfc?] [net?] KMSAN: uninit-value in nci_ntf_packet (2)
-Date: Tue, 28 May 2024 10:14:54 +0800
-X-OQ-MSGID: <20240528021453.1105390-2-eadavis@qq.com>
+	s=arc-20240116; t=1716862708; c=relaxed/simple;
+	bh=fwEiQiX4cnxFfIKH2+2+aLGcHFwRzp3EH0PqQdljIpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BIs+0YPLys18L7gltOigj0wWJwneq/39lMAo0/Ic9O9dRbIFNahFupLTZ828hR1Fkpz5yLvuQ7R8YNqzfotCVhxZbZX49ZxVVuRbY6RfpGHAfO1TCxBBIkYzIXDql9vNkIslCS6/tfjVZa2mXt2wLvl6oVgDX23LRwNhKXhDr/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDZrcfQJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971AAC2BBFC;
+	Tue, 28 May 2024 02:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716862707;
+	bh=fwEiQiX4cnxFfIKH2+2+aLGcHFwRzp3EH0PqQdljIpQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mDZrcfQJCrXFZI0HvFMoMDPkL/NtRLqwZfB01/dIOO1cK7cxBbHf7OfkeClydmqs8
+	 f/qJxSqes5Rk+x/JHUO1GcSEuwg6yr7m4Yo0m1xGmAGPzXAXscoJ99vI2zebG1P1Gb
+	 /PAXPb/3CBNWur+e3U1V4jGwPJyNyWnezaA0KbNdqkzay6tvY/7wYdf35Y29gOMYhv
+	 beLP/SAYYz4gI+P812f9jkO0GPX4Aoco2qAjYmVf8e97YY+sijweeffv0zJnEhzd9h
+	 MOp8O1JyzhBf0WO5g0FFlbLJRK1+rqzf8uGYAV/5alGdY2bADsNt9w2+P+bzNoEIpU
+	 N08zJakjAnWcg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Sasha Levin <sashal@kernel.org>,
+	sre@kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 1/5] power: supply: cros_usbpd: provide ID table for avoiding fallback match
+Date: Mon, 27 May 2024 22:18:17 -0400
+Message-ID: <20240528021823.3904980-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007018c0061964aa67@google.com>
-References: <0000000000007018c0061964aa67@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.2
 Content-Transfer-Encoding: 8bit
 
-please test uv in nci_ntf_packet
+From: Tzung-Bi Shih <tzungbi@kernel.org>
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 614da38e2f7a
+[ Upstream commit 0f8678c34cbfdc63569a9b0ede1fe235ec6ec693 ]
 
-diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
-index 590b038e449e..6b89d596ba9a 100644
---- a/drivers/nfc/virtual_ncidev.c
-+++ b/drivers/nfc/virtual_ncidev.c
-@@ -125,6 +125,10 @@ static ssize_t virtual_ncidev_write(struct file *file,
- 		kfree_skb(skb);
- 		return -EFAULT;
- 	}
-+	if (strnlen(skb->data, count) != count) {
-+		kfree_skb(skb);
-+		return -EINVAL;
-+	}
+Instead of using fallback driver name match, provide ID table[1] for the
+primary match.
+
+[1]: https://elixir.bootlin.com/linux/v6.8/source/drivers/base/platform.c#L1353
+
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Prashant Malani <pmalani@chromium.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+Link: https://lore.kernel.org/r/20240401030052.2887845-4-tzungbi@kernel.org
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/power/supply/cros_usbpd-charger.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+index b6c96376776a9..8008e31c0c098 100644
+--- a/drivers/power/supply/cros_usbpd-charger.c
++++ b/drivers/power/supply/cros_usbpd-charger.c
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2014 - 2018 Google, Inc
+  */
  
- 	nci_recv_frame(vdev->ndev, skb);
- 	return count;
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
+@@ -711,16 +712,22 @@ static int cros_usbpd_charger_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(cros_usbpd_charger_pm_ops, NULL,
+ 			 cros_usbpd_charger_resume);
+ 
++static const struct platform_device_id cros_usbpd_charger_id[] = {
++	{ DRV_NAME, 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(platform, cros_usbpd_charger_id);
++
+ static struct platform_driver cros_usbpd_charger_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.pm = &cros_usbpd_charger_pm_ops,
+ 	},
+-	.probe = cros_usbpd_charger_probe
++	.probe = cros_usbpd_charger_probe,
++	.id_table = cros_usbpd_charger_id,
+ };
+ 
+ module_platform_driver(cros_usbpd_charger_driver);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("ChromeOS EC USBPD charger");
+-MODULE_ALIAS("platform:" DRV_NAME);
+-- 
+2.43.0
 
 
