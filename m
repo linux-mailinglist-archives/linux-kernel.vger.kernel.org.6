@@ -1,143 +1,157 @@
-Return-Path: <linux-kernel+bounces-192374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D228D1C42
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC878D1C4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E7C1C222C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235161F2357D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A3316DED8;
-	Tue, 28 May 2024 13:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3F016F0F3;
+	Tue, 28 May 2024 13:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="f6/Unv9K"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="th/8RrG3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E06016415
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A539754273;
+	Tue, 28 May 2024 13:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716902030; cv=none; b=ki+Im9WDJBhDGzJeF3g4yRaVfj0Zga6hd33VnkxyKEQHkkhMgTEPjYoyeqD13ImD/ezp8ZMv3H+fX/ZGE9nCFYsiuqQSKgXUCMEFTDaYnA/1LlQojOIEDoHV0bNgUUex57bSSPDfS4+EQrtiP2byo4EQAwqPkiCwrvVu3ZdFPZs=
+	t=1716902116; cv=none; b=cQayZ5OSPN/bLuy9idfrHIvSiiXl020vh+DhIPXlRA8y7jo4CC5LnipqeLTIXPunedkCGiCSMZAbXdZFoApTSIKrdzd3nZXrW0kn5TaHMijzj1mxPJSpoyCM8XL/iXsVcptJHcCzTd3JNpO39qYux0Om7IIG6WjzLorxDE3CQto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716902030; c=relaxed/simple;
-	bh=VMcndx1MyOn/tzGp7W1bciJqyD0f9IArD3yPKz887Vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EfvBLYBAOWhbT/CnOTp8JtA1MzGHACC/4Kv21Om50ia860RxODPnreWfMRp88XK0ZC5RsjmBGHTQinlg2kVY4Xug9w1X46l6o9VKd+vOkHHjqI2bicDGX+HJMrHwfJUg6gH0oFU9PrEUz/rVEOH9rtqUhNVXkBqTRQceouGP8qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=f6/Unv9K; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-354ba5663c9so635397f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716902026; x=1717506826; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VMcndx1MyOn/tzGp7W1bciJqyD0f9IArD3yPKz887Vo=;
-        b=f6/Unv9KSppWLD+eLp3eZolgWr89/fGuBvcmovpV1JEsk1WN/Fqu4sDyaOXqvXU5Q/
-         zIMLBxdaUqYYHTR/Bpgx1bJUunaMepxEHSvO3irN7dFy6xn0SOJ9UZhI/j8A3KUOo0bl
-         pQZoWLQvFQFxMYhGulijP/K0VLl8tnP9U00b8HlmzX6FyOp2ayb3QUJODJubgjvzpnN4
-         jU0PXcilXj6NkqlXcEjS5ZFL0Lz5+i+HkCGZbvXKqhMp9ur9pZO41xnZBnAsaLClfl6R
-         XLrofjrYr41FYlMnaII71OuwHaRF6pliGaKXOyK6LWU22+9vBJI1BTBJUcEhfB8wpMHW
-         mAcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716902026; x=1717506826;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMcndx1MyOn/tzGp7W1bciJqyD0f9IArD3yPKz887Vo=;
-        b=hUuZr+mnHz0MYlk3+QwSbhQTrL7Ek/NGXsVBrK6GTI8gl5F5dL+XnLNe4sMt+kCFDK
-         itSjGc6yDGNm9zD/jWckBsfK4Kxcmlu83gMAyiQw5bbKqET3+LK8i9Rvg6+ZSNqp2Sb/
-         dxc8LrHEURKCdKUYmKyotptFKyZ+4KurKiikRjuwSTFAxubHAZyR1hvxeijHzBflckER
-         Pce000PgCS2MSSmIoEr3qT6AXY4vSaAnQFODiOnjMpMOsZrtFe23jAvGP3DIOK1Rv6z3
-         TmylK5diu3adMQ9XtS+31ek8/maD0WypZZcyxoW4wvzmHa4LnzsrCrER8xQKWakaJmHp
-         +xRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGBrb5nLKrmb2MSSaCP60n3ZQjgfgw4okFWk9l0CG0XchPUrL7j/ijIEGr3ayIeiq4nv6OBmSOnz0UfqB0G6/83IWw3C7pXYbDwr9O
-X-Gm-Message-State: AOJu0Yx63j9nanw7fTkM70ud2msDXSl7MtWT6+J1BdTcguNwQVsgC/nU
-	1cx0K57XqGVLA+s/Vu+sbWKdKFlOUk4U20xY6lek0v62Uzi4UI7JSwRnIqT2SxQ=
-X-Google-Smtp-Source: AGHT+IFcjZPdSjwdhRZc+nZsDK1tBXTV9ToeKuYOV9I7MWvMKdFyTLe3sxT6lJtaaMcKP9OprZr8vQ==
-X-Received: by 2002:adf:e648:0:b0:357:40e8:e574 with SMTP id ffacd0b85a97d-35740e8e60amr5679648f8f.37.1716902025896;
-        Tue, 28 May 2024 06:13:45 -0700 (PDT)
-Received: from [10.3.5.161] (laubervilliers-657-1-248-155.w90-24.abo.wanadoo.fr. [90.24.137.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a090805sm11546560f8f.48.2024.05.28.06.13.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 06:13:45 -0700 (PDT)
-Message-ID: <2e872daa-a9d8-430f-9a6c-90001dd3391e@baylibre.com>
-Date: Tue, 28 May 2024 15:13:43 +0200
+	s=arc-20240116; t=1716902116; c=relaxed/simple;
+	bh=0Dcn58QocAp13x/HKMAWs8UCUi2lZdKM2fgg3VBlWsI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JyLeSjPK2zG3BLY256Dk4QHhTibSRlo/Xa57OKLc+XIQdhtZnyv2K62AZBRnXyUuV/4DT3wpYn+YeOVlyad6xUFvQK8yVWXEyzz+Km3nUf4sb3EEYwEhkR3WHIZk+vmaqtLWQTYdbDnH5QQheDKFaW3nmpJ6ZelpgurYvIETR8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=th/8RrG3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB60C3277B;
+	Tue, 28 May 2024 13:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716902116;
+	bh=0Dcn58QocAp13x/HKMAWs8UCUi2lZdKM2fgg3VBlWsI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=th/8RrG3PUVODqQz0mxOTkhmpMEhIdLqHs2HtYkvimpc5RaRo3dow+yQOXVht6/yI
+	 YyznpVreXGaYrk49R8YSZFIzxBEmwot8VoNvMvcoeziCkRHgiEnsuSlGGtbxr7XQZa
+	 En2VTzHkn+c/Xz8KdtlyvNgR26B1DmzTo1Ta1sjVKT8iNj3yjAdRLopJagnASkgIv/
+	 gV3sjTrjSZphLPEh520IiHt9eGFp8bJPaqwHR2UIUoSWYNRM19ifezE3aKduJWrJKw
+	 9cSYtpEViD1eFSdJfB50SRpOMwXkkZSX7m7tZnTa+N2Nx3MACiDIhz2dC2uqlBKvg0
+	 zpfTfPqTS4u7A==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Subject: [PATCH HID 00/13] HID: convert HID-BPF into using bpf_struct_ops
+Date: Tue, 28 May 2024 15:14:38 +0200
+Message-Id: <20240528-hid_bpf_struct_ops-v1-0-8c6663df27d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8188: Add support for Mali
- GPU on Panfrost
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, mandyjh.liu@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20240527093908.97574-1-angelogioacchino.delregno@collabora.com>
- <20240527093908.97574-6-angelogioacchino.delregno@collabora.com>
- <f553b3f2-d895-446a-a741-7a151ebeb3ed@baylibre.com>
- <4715d477-5f66-47db-973f-af64a3009113@collabora.com>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <4715d477-5f66-47db-973f-af64a3009113@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL7YVWYC/x3MsQ5AMBCA4VeRmzXRo4vZwDOINNThFpoeIpG+u
+ 8b4Df//glBgEqizFwLdLHzsCTrPwG3jvpLiORmwwKowulQbz3byi5UzXO60hxdFJWocEStjDKT
+ QB1r4+ac9tF0DQ4wfWb0XNGkAAAA=
+To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Benjamin Tissoires <bentiss@kernel.org>, 
+ Peter Hutterer <peter.hutterer@who-t.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716902113; l=4153;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=0Dcn58QocAp13x/HKMAWs8UCUi2lZdKM2fgg3VBlWsI=;
+ b=5OTc7Q/Kj2wC43pxEQ7g78VU4O61ffAXopWwD3goDMpArfdWtuj8yPL62UFZxePJv1VYf+E1J
+ eDTFAFt7z1dCB0A1JjtYwTb17ZU++YK55wRcRBhGMgglxrD3wQF6apa
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-On 5/28/24 12:36, AngeloGioacchino Del Regno wrote:
-> Il 27/05/24 16:53, Julien Panis ha scritto:
->> On 5/27/24 11:39, AngeloGioacchino Del Regno wrote:
->>> Add the necessary OPP table for the GPU and also add a GPU node
->>> to enable support for the Valhall-JM G57 MC3 found on this SoC,
->>> using the Panfrost driver.
->>>
->>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>> ---
->>
->> [...]
->>
->>> +        gpu: gpu@13000000 {
->>> +            compatible = "mediatek,mt8188-mali", "arm,mali-valhall-jm";
->>> +            reg = <0 0x13000000 0 0x4000>;
->>> +
->>> +            clocks = <&mfgcfg CLK_MFGCFG_BG3D>;
->>> +            interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH 0>,
->>> +                     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH 0>,
->>> +                     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH 0>;
->>> +            interrupt-names = "job", "mmu", "gpu";
->>> +            operating-points-v2 = <&gpu_opp_table>;
->>> +            power-domains = <&spm MT8188_POWER_DOMAIN_MFG2>,
->>> +                    <&spm MT8188_POWER_DOMAIN_MFG3>,
->>> +                    <&spm MT8188_POWER_DOMAIN_MFG4>;
->>> +            power-domain-names = "core0", "core1", "core2";
->>
->> Hi Angelo,
->>
->> I think you should add something like that here:
->> #cooling-cells = <2>;
->> (the warning is raised when I run 'make dtbs_check')
->>
->> Julien
->>
->
-> I can either add it to a v2 of this series, or you can add it in your patch where
-> you're actually adding the thermal support.
->
-> I have no preferences about who adds it, and I agree that cooling-cells should
-> eventually get there, so I'll leave the choice to you :-)
->
-> Cheers,
-> Angelo
+The purpose of this series is to rethink how HID-BPF is invoked.
+Currently it implies a jmp table, a prog fd bpf_map, a preloaded tracing
+bpf program and a lot of manual work for handling the bpf program
+lifetime and addition/removal.
 
-I will add it to my patch.
-Julien
+OTOH, bpf_struct_ops take care of most of the bpf handling leaving us
+with a simple list of ops pointers, and we can directly call the
+struct_ops program from the kernel as a regular function.
+
+The net gain right now is in term of code simplicity and lines of code
+removal (though is an API breakage), but udev-hid-bpf is able to handle
+such breakages.
+
+In the near future, we will be able to extend the HID-BPF struct_ops
+with entrypoints for hid_hw_raw_request() and hid_hw_output_report(),
+allowing for covering all of the initial use cases:
+- firewalling a HID device
+- fixing all of the HID device interactions (not just device events as
+  it is right now).
+
+The matching user-space loader (udev-hid-bpf) MR is at
+https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/86
+
+I'll put it out of draft once this is merged.
+
+Cheers,
+Benjamin
+
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
+Benjamin Tissoires (13):
+      HID: rename struct hid_bpf_ops into hid_ops
+      HID: bpf: add hid_get/put_device() helpers
+      HID: bpf: implement HID-BPF through bpf_struct_ops
+      selftests/hid: convert the hid_bpf selftests with struct_ops
+      HID: samples: convert the 2 HID-BPF samples into struct_ops
+      HID: bpf: add defines for HID-BPF SEC in in-tree bpf fixes
+      HID: bpf: convert in-tree fixes into struct_ops
+      HID: bpf: remove tracing HID-BPF capability
+      selftests/hid: add subprog call test
+      Documentation: HID: amend HID-BPF for struct_ops
+      Documentation: HID: add a small blurb on udev-hid-bpf
+      HID: bpf: Artist24: remove unused variable
+      HID: bpf: error on warnings when compiling bpf objects
+
+ Documentation/hid/hid-bpf.rst                      | 162 +++---
+ drivers/hid/bpf/Makefile                           |   2 +-
+ drivers/hid/bpf/entrypoints/Makefile               |  93 ----
+ drivers/hid/bpf/entrypoints/README                 |   4 -
+ drivers/hid/bpf/entrypoints/entrypoints.bpf.c      |  25 -
+ drivers/hid/bpf/entrypoints/entrypoints.lskel.h    | 248 ---------
+ drivers/hid/bpf/hid_bpf_dispatch.c                 | 266 +++-------
+ drivers/hid/bpf/hid_bpf_dispatch.h                 |  12 +-
+ drivers/hid/bpf/hid_bpf_jmp_table.c                | 565 ---------------------
+ drivers/hid/bpf/hid_bpf_struct_ops.c               | 246 +++++++++
+ drivers/hid/bpf/progs/FR-TEC__Raptor-Mach-2.bpf.c  |   9 +-
+ drivers/hid/bpf/progs/HP__Elite-Presenter.bpf.c    |   6 +-
+ drivers/hid/bpf/progs/Huion__Kamvas-Pro-19.bpf.c   |   9 +-
+ .../hid/bpf/progs/IOGEAR__Kaliber-MMOmentum.bpf.c  |   6 +-
+ drivers/hid/bpf/progs/Makefile                     |   2 +-
+ .../hid/bpf/progs/Microsoft__XBox-Elite-2.bpf.c    |   6 +-
+ drivers/hid/bpf/progs/Wacom__ArtPen.bpf.c          |   6 +-
+ drivers/hid/bpf/progs/XPPen__Artist24.bpf.c        |  10 +-
+ drivers/hid/bpf/progs/XPPen__ArtistPro16Gen2.bpf.c |  24 +-
+ drivers/hid/bpf/progs/hid_bpf.h                    |   5 +
+ drivers/hid/hid-core.c                             |   6 +-
+ include/linux/hid_bpf.h                            | 109 ++--
+ samples/hid/Makefile                               |   5 +-
+ samples/hid/hid_bpf_attach.bpf.c                   |  18 -
+ samples/hid/hid_bpf_attach.h                       |  14 -
+ samples/hid/hid_mouse.bpf.c                        |  26 +-
+ samples/hid/hid_mouse.c                            |  39 +-
+ samples/hid/hid_surface_dial.bpf.c                 |  10 +-
+ samples/hid/hid_surface_dial.c                     |  53 +-
+ tools/testing/selftests/hid/hid_bpf.c              | 100 +++-
+ tools/testing/selftests/hid/progs/hid.c            | 100 +++-
+ 31 files changed, 744 insertions(+), 1442 deletions(-)
+---
+base-commit: 70ec81c2e2b4005465ad0d042e90b36087c36104
+change-id: 20240513-hid_bpf_struct_ops-e3212a224555
+
+Best regards,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
+
 
