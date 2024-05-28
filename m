@@ -1,277 +1,331 @@
-Return-Path: <linux-kernel+bounces-192845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A34A8D22FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF0F8D2309
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E0A1F250C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED421C22DF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90293175548;
-	Tue, 28 May 2024 18:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9DD481A3;
+	Tue, 28 May 2024 18:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YE8IS4CA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qr4V9Gwk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Lt5UAUnE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF03A16D332;
-	Tue, 28 May 2024 18:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214234C61B;
+	Tue, 28 May 2024 18:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716919513; cv=none; b=jtYgSk4Rbj0tA/NsW9gpQSglE7JMFekeSzTdGPy6++AxKgc+Rwd7VtcFXAXtXWij6cXW5Dzse0wt6iCNZol8w8j3qYhWjUOjluYrikc+5nf8d1lMCphR5r9cUkd//tuChxuxILZ4dNuaVqbUDjfEJhnItkE9gz7v0mfHFBObVsA=
+	t=1716919717; cv=none; b=uylXvNUcIU31yMbLHPu2L95T1hnW42uX7gRnrezTjooXpC1B3UdBMtt87e2IbpanhaIvyjwISMA79Dy0ZRtRGGu/XSBaj2ru4A9SjO6Uptn+0P3dSmsTKMYOsatz9EuCfAMXqNZSxstjalwK2F//VDwwvUyRDDsupyKc5xYw6vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716919513; c=relaxed/simple;
-	bh=QFNOy8KO58uHSxmWuA5wAj4hCAodWrA4dVzimeOI3Rw=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=lMKEQc6vtsna/OuxLXipbDnUJiYeSxm1RdjCJm4AxPtluMhPQ2kgtV7Hss70lyKker9ZdM1flbCpWnJ0hJpUkZQR+kxzjaaBVJ7G/8zTlqLj09HdUBJZFhiaLYEKlNiFkNvO9rN71EWfxXZvWzWwGhYrLYzy0QOotGbiTQY+6gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YE8IS4CA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qr4V9Gwk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 May 2024 18:05:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716919508;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=xYBV1bgSsZnAKnNQ13DuFoV0wvHIy1EsYAIKjWQ2lBM=;
-	b=YE8IS4CAM3GaCoq0eLQjGAB1a+L7M8iUpVhuehmD0WzDGiaT5MT7I+rG4Ieq0iCvNee8Sx
-	1bC0zVu6BAqsya/1HKXZUvP28msRWZSAdwYvGeVBGL9HzAihwtuAFsuawjaXGgXwI9ZWqc
-	CYLd7IV4qeXDPcIoVL6lRPB0+IU1/ALAN7CMcFmoH8fJ2q2ZXL0klaWtYGu6CB6XSgnhbf
-	hAiwG5GWuX3gpKOIWtc6g+vWmA3OqAjuMIvrybb5ifoas3OaLGDVhuWNhpbHzElismB13D
-	UF81tKY/sWkPkNiYGPnezWZH1B8imHHJISTXAMHwTT7oC5cBYqgxAPU1ncmQ0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716919508;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=xYBV1bgSsZnAKnNQ13DuFoV0wvHIy1EsYAIKjWQ2lBM=;
-	b=qr4V9Gwk6eGVApZlu956JGSohufoJmmO7vOH+r8VuRJsCPvZ9GQHkveXE18H3wY5Ei3RyT
-	6ow4GYaSBYHFFVBA==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu/intel: Switch to new Intel CPU model defines
-Cc: Tony Luck <tony.luck@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1716919717; c=relaxed/simple;
+	bh=2yKMgTjOqXjWfjfrByE0mT9XypZOqBrwAjwWIv+56Wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAM6HmCqfieVDZ6aPbW6fUnBaI5Yc/nytHH4tylgcxBF9ewWeyamyxTBJqCt0jM9Lzn2IIdiKhYeTwof9n/R+4TmeiLuVCUSh5wTj2OCaEPaFzKdGft8cXJqEsyX/JtPWyH6HtLjL5G1MT0uD0puwhtTal/gv3qqdmmiDRk6czw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Lt5UAUnE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 15B0E8D0;
+	Tue, 28 May 2024 20:08:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716919710;
+	bh=2yKMgTjOqXjWfjfrByE0mT9XypZOqBrwAjwWIv+56Wk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lt5UAUnEcY0BfE9LUjU1cnbmhA36ai4BC+GCzJxXamNa/RJYkvg8GdyO6Fk/Z+3kW
+	 omzowxn7yvI1voH/AtHq1u/60VYvqe8SE8EkLRTFxvhpUs7dFrxYoA33+rnHHq5GYW
+	 ZnBp0IAE4pzUn/nzH4Pfodvr7oNWwXsvDq7qECuk=
+Date: Tue, 28 May 2024 21:08:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Alexandru Ardelean <alexandru.ardelean@analog.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, Saravana Kannan <saravanak@google.com>
+Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
+ ADP5585
+Message-ID: <20240528180820.GE29970@pendragon.ideasonboard.com>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
+ <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+ <20240521194309.GA8863@pendragon.ideasonboard.com>
+ <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+ <20240522072224.GC8863@pendragon.ideasonboard.com>
+ <92e85dff-ad02-4673-a625-2248b249c262@kernel.org>
+ <20240523231641.GJ6640@pendragon.ideasonboard.com>
+ <20240528151251.GA155664-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171691950780.10875.16399673929501657266.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240528151251.GA155664-robh@kernel.org>
 
-The following commit has been merged into the x86/cpu branch of tip:
+Hi Rob,
 
-Commit-ID:     6568fc18c2f62b4f35092e9680fe39f3500f4767
-Gitweb:        https://git.kernel.org/tip/6568fc18c2f62b4f35092e9680fe39f3500f4767
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Mon, 20 May 2024 15:45:59 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 28 May 2024 10:59:02 -07:00
+On Tue, May 28, 2024 at 10:12:51AM -0500, Rob Herring wrote:
+> On Fri, May 24, 2024 at 02:16:41AM +0300, Laurent Pinchart wrote:
+> > Hi Krzysztof,
+> > 
+> > (There's a question for the GPIO and PWM maintainers below)
+> > 
+> > On Wed, May 22, 2024 at 09:40:02AM +0200, Krzysztof Kozlowski wrote:
+> > > On 22/05/2024 09:22, Laurent Pinchart wrote:
+> > > > On Wed, May 22, 2024 at 08:57:56AM +0200, Krzysztof Kozlowski wrote:
+> > > >> On 21/05/2024 21:43, Laurent Pinchart wrote:
+> > > >>> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
+> > > >>>> On 20/05/2024 21:59, Laurent Pinchart wrote:
+> > > >>>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > > >>>>> matrix decoder, programmable logic, reset generator, and PWM generator.
+> > > >>>>> These bindings model the device as an MFD, and support the GPIO expander
+> > > >>>>> and PWM functions.
+> > > >>>>>
+> > > >>>>> These bindings support the GPIO and PWM functions.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > >>>>> ---
+> > > >>>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
+> > > >>>>> implement and test the rest of the features the chip supports.
+> > > >>>>> ---
+> > > >>>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
+> > > >>>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
+> > > >>>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
+> > > >>>>>  MAINTAINERS                                   |   7 ++
+> > > >>>>>  4 files changed, 195 insertions(+)
+> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> > > >>>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+> > > >>>>>
+> > > >>>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > > >>>>> new file mode 100644
+> > > >>>>> index 000000000000..210e4d53e764
+> > > >>>>> --- /dev/null
+> > > >>>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > > >>>>> @@ -0,0 +1,36 @@
+> > > >>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > >>>>> +%YAML 1.2
+> > > >>>>> +---
+> > > >>>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
+> > > >>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > >>>>> +
+> > > >>>>> +title: Analog Devices ADP5585 GPIO Expander
+> > > >>>>> +
+> > > >>>>> +maintainers:
+> > > >>>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > >>>>> +
+> > > >>>>> +description: |
+> > > >>>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
+> > > >>>>> +  node of the parent MFD device. See
+> > > >>>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
+> > > >>>>> +  well as an example.
+> > > >>>>> +
+> > > >>>>> +properties:
+> > > >>>>> +  compatible:
+> > > >>>>> +    const: adi,adp5585-gpio
+> > > >>>>> +
+> > > >>>>> +  gpio-controller: true
+> > > >>>>> +
+> > > >>>>> +  '#gpio-cells':
+> > > >>>>> +    const: 2
+> > > >>>>> +
+> > > >>>>> +  gpio-reserved-ranges: true
+> > > >>>>
+> > > >>>> There are no resources here, so new compatible is not really warranted.
+> > > >>>> Squash the node into parent.
+> > > >>>
+> > > >>> Child nodes seem (to me) to be the standard way to model functions in
+> > > >>> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
+> > > >>> function iterates over child nodes. I don't mind going a different
+> > > >>
+> > > >> Only to assign of node, which could be skipped as well.
+> > > > 
+> > > > It has to be assigned somehow, otherwise the GPIO and PWM lookups won't
+> > > > work. That doesn't have to be done in mfd_add_device() though, it can
+> > > > also be done manually by the driver. Looking at the example you gave,
+> > > > cs42l43_pin_probe() handles that assignment. I would have considered
+> > > > that a bit of a hack, but if that's your preferred approach, I'm fine
+> > > > with it. Could you confirm you're OK with that ?
+> > > 
+> > > I am fine with the drivers doing that. It's not a hack, for all
+> > > sub-devices (e.g. also auxiliary bus) you won't have automatic of_node
+> > > assignment.
+> > 
+> > I gave this a try, and here's what I came up with to drop the compatible
+> > string. Please ignore for a moment the fact that the child nodes are
+> > still there, that's an orthogonal question which I can address
+> > separately. What I would like is feedback on how the OF nodes are
+> > handled.
+> > 
+> > diff --git a/drivers/gpio/gpio-adp5585.c b/drivers/gpio/gpio-adp5585.c
+> > index 9696a4cdcfc1..8480ceef05ce 100644
+> > --- a/drivers/gpio/gpio-adp5585.c
+> > +++ b/drivers/gpio/gpio-adp5585.c
+> > @@ -174,6 +174,7 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+> >  	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
+> >  	struct adp5585_gpio_dev *adp5585_gpio;
+> >  	struct device *dev = &pdev->dev;
+> > +	struct device_node *node;
+> >  	struct gpio_chip *gc;
+> >  	int ret;
+> > 
+> > @@ -187,6 +188,13 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+> > 
+> >  	mutex_init(&adp5585_gpio->lock);
+> > 
+> > +	node = of_get_child_by_name(dev->parent->of_node, "gpio");
+> > +	if (!node)
+> > +		return dev_err_probe(dev, -ENXIO, "'gpio' child node not found\n");
+> > +
+> > +	dev->of_node = node;
+> > +	dev->fwnode = &node->fwnode;
+> 
+> Use device_set_of_node_from_dev().
 
-x86/cpu/intel: Switch to new Intel CPU model defines
+That only works without child nodes in DT. Here I'm assigning the gpio
+child node, not the node of the parent device.
 
-New CPU #defines encode vendor and family as well as model.
+> > +
+> >  	gc = &adp5585_gpio->gpio_chip;
+> >  	gc->parent = dev;
+> >  	gc->direction_input = adp5585_gpio_direction_input;
+> > @@ -204,6 +212,9 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+> >  	ret = devm_gpiochip_add_data(&pdev->dev, &adp5585_gpio->gpio_chip,
+> >  				     adp5585_gpio);
+> >  	if (ret) {
+> > +		of_node_put(dev->of_node);
+> > +		dev->of_node = NULL;
+> > +		dev->fwnode = NULL;
+> >  		mutex_destroy(&adp5585_gpio->lock);
+> >  		return dev_err_probe(&pdev->dev, ret, "failed to add GPIO chip\n");
+> >  	}
+> > @@ -215,6 +226,10 @@ static void adp5585_gpio_remove(struct platform_device *pdev)
+> >  {
+> >  	struct adp5585_gpio_dev *adp5585_gpio = platform_get_drvdata(pdev);
+> > 
+> > +	of_node_put(pdev->dev.of_node);
+> > +	pdev->dev.of_node = NULL;
+> > +	pdev->dev.fwnode = NULL;
+> > +
+> >  	mutex_destroy(&adp5585_gpio->lock);
+> >  }
+> > 
+> > diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> > index e39a6ea5f794..3b190567ea0b 100644
+> > --- a/drivers/pwm/pwm-adp5585.c
+> > +++ b/drivers/pwm/pwm-adp5585.c
+> > @@ -146,6 +146,8 @@ static const struct pwm_ops adp5585_pwm_ops = {
+> >  static int adp5585_pwm_probe(struct platform_device *pdev)
+> >  {
+> >  	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *node;
+> >  	struct pwm_chip *chip;
+> >  	int ret;
+> > 
+> > @@ -153,16 +155,34 @@ static int adp5585_pwm_probe(struct platform_device *pdev)
+> >  	if (IS_ERR(chip))
+> >  		return PTR_ERR(chip);
+> > 
+> > +	node = of_get_child_by_name(dev->parent->of_node, "pwm");
+> > +	if (!node)
+> > +		return dev_err_probe(dev, -ENXIO, "'pwm' child node not found\n");
+> > +
+> > +	dev->of_node = node;
+> > +	dev->fwnode = &node->fwnode;
+> > +
+> >  	pwmchip_set_drvdata(chip, adp5585->regmap);
+> >  	chip->ops = &adp5585_pwm_ops;
+> > 
+> >  	ret = devm_pwmchip_add(&pdev->dev, chip);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		of_node_put(dev->of_node);
+> > +		dev->of_node = NULL;
+> > +		dev->fwnode = NULL;
+> >  		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
+> > +	}
+> > 
+> >  	return 0;
+> >  }
+> > 
+> > +static void adp5585_pwm_remove(struct platform_device *pdev)
+> > +{
+> > +	of_node_put(pdev->dev.of_node);
+> 
+> Wouldn't the driver core do this already? It's not going to know how or 
+> when of_node was set, so should be doing a put regardless.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/all/20240520224620.9480-29-tony.luck%40intel.com
----
- arch/x86/kernel/cpu/intel.c | 108 +++++++++++++++++------------------
- 1 file changed, 53 insertions(+), 55 deletions(-)
+It does, but only when the struct device is being destroyed. Unbinding
+and rebinding would leak a reference. Using
+device_set_of_node_from_dev() solves that problem, but doesn't work with
+child nodes.
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 3ef4e01..a813089 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -72,19 +72,19 @@ static bool cpu_model_supports_sld __ro_after_init;
-  */
- static void check_memory_type_self_snoop_errata(struct cpuinfo_x86 *c)
- {
--	switch (c->x86_model) {
--	case INTEL_FAM6_CORE_YONAH:
--	case INTEL_FAM6_CORE2_MEROM:
--	case INTEL_FAM6_CORE2_MEROM_L:
--	case INTEL_FAM6_CORE2_PENRYN:
--	case INTEL_FAM6_CORE2_DUNNINGTON:
--	case INTEL_FAM6_NEHALEM:
--	case INTEL_FAM6_NEHALEM_G:
--	case INTEL_FAM6_NEHALEM_EP:
--	case INTEL_FAM6_NEHALEM_EX:
--	case INTEL_FAM6_WESTMERE:
--	case INTEL_FAM6_WESTMERE_EP:
--	case INTEL_FAM6_SANDYBRIDGE:
-+	switch (c->x86_vfm) {
-+	case INTEL_CORE_YONAH:
-+	case INTEL_CORE2_MEROM:
-+	case INTEL_CORE2_MEROM_L:
-+	case INTEL_CORE2_PENRYN:
-+	case INTEL_CORE2_DUNNINGTON:
-+	case INTEL_NEHALEM:
-+	case INTEL_NEHALEM_G:
-+	case INTEL_NEHALEM_EP:
-+	case INTEL_NEHALEM_EX:
-+	case INTEL_WESTMERE:
-+	case INTEL_WESTMERE_EP:
-+	case INTEL_SANDYBRIDGE:
- 		setup_clear_cpu_cap(X86_FEATURE_SELFSNOOP);
- 	}
- }
-@@ -106,9 +106,9 @@ static void probe_xeon_phi_r3mwait(struct cpuinfo_x86 *c)
- 	 */
- 	if (c->x86 != 6)
- 		return;
--	switch (c->x86_model) {
--	case INTEL_FAM6_XEON_PHI_KNL:
--	case INTEL_FAM6_XEON_PHI_KNM:
-+	switch (c->x86_vfm) {
-+	case INTEL_XEON_PHI_KNL:
-+	case INTEL_XEON_PHI_KNM:
- 		break;
- 	default:
- 		return;
-@@ -134,32 +134,32 @@ static void probe_xeon_phi_r3mwait(struct cpuinfo_x86 *c)
-  * - Release note from 20180108 microcode release
-  */
- struct sku_microcode {
--	u8 model;
-+	u32 vfm;
- 	u8 stepping;
- 	u32 microcode;
- };
- static const struct sku_microcode spectre_bad_microcodes[] = {
--	{ INTEL_FAM6_KABYLAKE,		0x0B,	0x80 },
--	{ INTEL_FAM6_KABYLAKE,		0x0A,	0x80 },
--	{ INTEL_FAM6_KABYLAKE,		0x09,	0x80 },
--	{ INTEL_FAM6_KABYLAKE_L,	0x0A,	0x80 },
--	{ INTEL_FAM6_KABYLAKE_L,	0x09,	0x80 },
--	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
--	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
--	{ INTEL_FAM6_BROADWELL,		0x04,	0x28 },
--	{ INTEL_FAM6_BROADWELL_G,	0x01,	0x1b },
--	{ INTEL_FAM6_BROADWELL_D,	0x02,	0x14 },
--	{ INTEL_FAM6_BROADWELL_D,	0x03,	0x07000011 },
--	{ INTEL_FAM6_BROADWELL_X,	0x01,	0x0b000025 },
--	{ INTEL_FAM6_HASWELL_L,		0x01,	0x21 },
--	{ INTEL_FAM6_HASWELL_G,		0x01,	0x18 },
--	{ INTEL_FAM6_HASWELL,		0x03,	0x23 },
--	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
--	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
--	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
-+	{ INTEL_KABYLAKE,	0x0B,	0x80 },
-+	{ INTEL_KABYLAKE,	0x0A,	0x80 },
-+	{ INTEL_KABYLAKE,	0x09,	0x80 },
-+	{ INTEL_KABYLAKE_L,	0x0A,	0x80 },
-+	{ INTEL_KABYLAKE_L,	0x09,	0x80 },
-+	{ INTEL_SKYLAKE_X,	0x03,	0x0100013e },
-+	{ INTEL_SKYLAKE_X,	0x04,	0x0200003c },
-+	{ INTEL_BROADWELL,	0x04,	0x28 },
-+	{ INTEL_BROADWELL_G,	0x01,	0x1b },
-+	{ INTEL_BROADWELL_D,	0x02,	0x14 },
-+	{ INTEL_BROADWELL_D,	0x03,	0x07000011 },
-+	{ INTEL_BROADWELL_X,	0x01,	0x0b000025 },
-+	{ INTEL_HASWELL_L,	0x01,	0x21 },
-+	{ INTEL_HASWELL_G,	0x01,	0x18 },
-+	{ INTEL_HASWELL,	0x03,	0x23 },
-+	{ INTEL_HASWELL_X,	0x02,	0x3b },
-+	{ INTEL_HASWELL_X,	0x04,	0x10 },
-+	{ INTEL_IVYBRIDGE_X,	0x04,	0x42a },
- 	/* Observed in the wild */
--	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
--	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
-+	{ INTEL_SANDYBRIDGE_X,	0x06,	0x61b },
-+	{ INTEL_SANDYBRIDGE_X,	0x07,	0x712 },
- };
- 
- static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
-@@ -173,11 +173,8 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
- 	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
- 		return false;
- 
--	if (c->x86 != 6)
--		return false;
--
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
--		if (c->x86_model == spectre_bad_microcodes[i].model &&
-+		if (c->x86_vfm == spectre_bad_microcodes[i].vfm &&
- 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
- 			return (c->microcode <= spectre_bad_microcodes[i].microcode);
- 	}
-@@ -265,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 	 * need the microcode to have already been loaded... so if it is
- 	 * not, recommend a BIOS update and disable large pages.
- 	 */
--	if (c->x86 == 6 && c->x86_model == 0x1c && c->x86_stepping <= 2 &&
-+	if (c->x86_vfm == INTEL_ATOM_BONNELL && c->x86_stepping <= 2 &&
- 	    c->microcode < 0x20e) {
- 		pr_warn("Atom PSE erratum detected, BIOS microcode update recommended\n");
- 		clear_cpu_cap(c, X86_FEATURE_PSE);
-@@ -298,11 +295,11 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 
- 	/* Penwell and Cloverview have the TSC which doesn't sleep on S3 */
- 	if (c->x86 == 6) {
--		switch (c->x86_model) {
--		case INTEL_FAM6_ATOM_SALTWELL_MID:
--		case INTEL_FAM6_ATOM_SALTWELL_TABLET:
--		case INTEL_FAM6_ATOM_SILVERMONT_MID:
--		case INTEL_FAM6_ATOM_AIRMONT_NP:
-+		switch (c->x86_vfm) {
-+		case INTEL_ATOM_SALTWELL_MID:
-+		case INTEL_ATOM_SALTWELL_TABLET:
-+		case INTEL_ATOM_SILVERMONT_MID:
-+		case INTEL_ATOM_AIRMONT_NP:
- 			set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
- 			break;
- 		default:
-@@ -346,7 +343,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 	 * should be false so that __flush_tlb_all() causes CR3 instead of CR4.PGE
- 	 * to be modified.
- 	 */
--	if (c->x86 == 5 && c->x86_model == 9) {
-+	if (c->x86_vfm == INTEL_QUARK_X1000) {
- 		pr_info("Disabling PGE capability bit\n");
- 		setup_clear_cpu_cap(X86_FEATURE_PGE);
- 	}
-@@ -578,12 +575,13 @@ static void init_intel(struct cpuinfo_x86 *c)
- 			set_cpu_cap(c, X86_FEATURE_PEBS);
- 	}
- 
--	if (c->x86 == 6 && boot_cpu_has(X86_FEATURE_CLFLUSH) &&
--	    (c->x86_model == 29 || c->x86_model == 46 || c->x86_model == 47))
-+	if (boot_cpu_has(X86_FEATURE_CLFLUSH) &&
-+	    (c->x86_vfm == INTEL_CORE2_DUNNINGTON ||
-+	     c->x86_vfm == INTEL_NEHALEM_EX ||
-+	     c->x86_vfm == INTEL_WESTMERE_EX))
- 		set_cpu_bug(c, X86_BUG_CLFLUSH_MONITOR);
- 
--	if (c->x86 == 6 && boot_cpu_has(X86_FEATURE_MWAIT) &&
--		((c->x86_model == INTEL_FAM6_ATOM_GOLDMONT)))
-+	if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm == INTEL_ATOM_GOLDMONT)
- 		set_cpu_bug(c, X86_BUG_MONITOR);
- 
- #ifdef CONFIG_X86_64
-@@ -1199,9 +1197,9 @@ void handle_bus_lock(struct pt_regs *regs)
-  * feature even though they do not enumerate IA32_CORE_CAPABILITIES.
-  */
- static const struct x86_cpu_id split_lock_cpu_ids[] __initconst = {
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_X,	0),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,	0),
--	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_D,	0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_X,	0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_L,	0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_D,	0),
- 	{}
- };
- 
+I'm going to send a v2 that squashes everything in a single DT node,
+which allows usage of device_set_of_node_from_dev(). Let's see if it
+will be more palatable.
+
+> > +	pdev->dev.of_node = NULL;
+> > +	pdev->dev.fwnode = NULL;
+> > +}
+> > +
+> >  static struct platform_driver adp5585_pwm_driver = {
+> >  	.driver	= {
+> >  		.name = "adp5585-pwm",
+> > 
+> > Is this acceptable ? I'm a bit concerned about poking the internals of
+> > struct device directly from drivers.
+> > 
+> > I have also refrained from setting fnode->dev to point back to the
+> > device as fone by cs42l43_pin_probe(), as a comment in struct
+> > fwnode_handle indicates that the dev field is for device links only and
+> > shouldn't be touched by anything else. I'm not sure if I should set it.
+> 
+> I think no, but best for Saravana to comment.
+> 
+> > > >>> routes, could you indicate what you have in mind, perhaps pointing to an
+> > > >>> existing driver as an example ?
+> > > >>
+> > > >> Most of them? OK, let's take the last added driver in MFD directory:
+> > > >> cirrus,cs42l43
+> > > >> It has three children and only two nodes, because only these two devices
+> > > >> actually need/use/benefit the subnodes.
+> > > > 
+> > > > Still trying to understand what bothers you here, is it the child nodes,
+> > > > or the fact that they have a compatible string and are documented in a
+> > > > separate binding ? Looking at the cirrus,cs42l43 bindings and the
+> > > 
+> > > What bothers me (and as expressed in many reviews by us) is representing
+> > > driver structure directly in DT. People model DT based how their Linux
+> > > drivers are represented. I don't care about driver stuff here, but DT/DTS.
+> > 
+> > DT models the hardware as seen from a software point of view. 
+> 
+> True, but it's for all software's PoV, not some specific s/w.
+
+Agreed.
+
+> > It
+> > shouldn't reflect the structure of Linux drivers, but it has to be
+> > usable by drivers.
+> 
+> Either way is usable.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
