@@ -1,498 +1,163 @@
-Return-Path: <linux-kernel+bounces-192428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064CB8D1D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:34:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50648D1D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B0D1F23409
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2E0EB24016
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F7717084F;
-	Tue, 28 May 2024 13:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAE316F298;
+	Tue, 28 May 2024 13:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FfohnRIU"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="yp5FCoOt"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3E016FF26
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B28716F28D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903186; cv=none; b=DH5nEmiNTZ+5brY+Mm9+i+Gj5TA/b1Oz1jXNKRJl955kM/2LlHO5yVTJpn92JfQJf2oMZ7HfW22vs0ahQuHkx7f8NoX5HmI1T1/7GMNKCwHsLIlnCMDlDlrzyTMuu79RhhT5752VjySHe2OLOnktYA0jpEQn+5DXsrt5IFCVk2M=
+	t=1716903197; cv=none; b=smI4H+3r+n7ShAg7Hg4Ap+V+dV+Oi+vxI72bcKSZYWnWrJOh4qGZIpKd/KcSXehmWyyIZCouEUgf4z6IT9ngle1RgT4hmXokr7x5vzQWMjYJ/jNCEmvMEpjozVfJvd8qi29mX2lx/S9eLNugVdQ3+Ni7DEjnpVp38MjFa1y2SHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903186; c=relaxed/simple;
-	bh=uXU5QfaH5qlqXoA4DPbAYFEaIVRvOPrHJFlST/zPwXU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b7QbP12iCIDF9M/UOSsNCWCfOHTVOrE+amjrEy14PwP1eIFw0mwlPGKXSwaUEjOqmsLYWQP7pofwf4FczrDQ/Sef69cxeBXrZExoRff0RmCEC/55DSJqj1V8TYte8h7eP85ZdGpmrQYsE1n1vcXYN9GquFZ2SXYb3/MK69lF23k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FfohnRIU; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1397403a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716903182; x=1717507982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P80V1HVAEHdvXLPhNcgfiUJ7gY/EImR+9FLANrvqAlM=;
-        b=FfohnRIUzn1ntfyFKrSfHK9GaWyK8R//hk5wkMsxD3T45IqugRmBTbixlix8JAnv4d
-         +OlgRyDCn3+NsbVA96aL7afK559sgsqcml2vaSADlB3qwRifniJeENCLC7S5sP+zcwKD
-         +Md6+4QxwujmxbNGZ6UL1PHuk29VDyWN8EkAXV+nVCvxj101wlm3CeAfGUwu59hUCZ1+
-         QlVGaa7FR4+IwYQMwP/evod4pNJatmGij1I9xWoTuhkLb9tI2Sqnt/qBsjvX20/ovskl
-         dzpPYRjJ6fUxp5rl5SPp/PeMTbFZGeCdQZXBmkGNpPhfJAYh8mtMiPlXKNu3yIQU2UBp
-         8oVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716903182; x=1717507982;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P80V1HVAEHdvXLPhNcgfiUJ7gY/EImR+9FLANrvqAlM=;
-        b=Jqj+a45U57VVO1QSpsoAMsssExEnhMl4V7M/e3XwSf7kREKMQFrSh+GBCNjCHI+R51
-         24fh5wMrbQ7rG2/+8jV/Jo8KlWugVMCZxQmpTliwh8bGB3Cv0cw085cDIvbtqqvTxo/c
-         zpvql2d/TSjmD+chc7lrAWCRiA6rindYzqntby5yVShmvkMsUxIAR5DdHDDSUpan5LR6
-         GcJxefcyBcK+xRJGi/P955cMDOrIGJDbx7sXTmtM8dZiHenRZfLrFh84N9BhSgj90o23
-         lHGimk4kFiPuMCXf6GY381rjoQx7/V+c5bhMXHHkpNq3w0PfDD+dhLiZsiEyHAC0ccpJ
-         R3mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWdiz3fhzfGPd9TLlDdy0RG9oW8oMbajt2kxaFfXkUq7xR44hNMy2ycqXyQonpZUK9fOHpBWfoCvhXfPm17i43mo+tISAEhZYpJDSI
-X-Gm-Message-State: AOJu0YwtGw0Op7E11v7+CC8PeruoKFHJzQ2UMPtYdYH4PhEKLyuWezZQ
-	hapye6Y+ew0MJOPbFNneOgn+ZGWTSsKb7qSlRC8Nf6d9l3dUZVYzteiOC/fcbKI=
-X-Google-Smtp-Source: AGHT+IGELtEbebGcHQWaOiwWRS69S906246YVwWPZzjiKGmcQHsU1k3N+kQqdUX11OL0A0zojEZdUA==
-X-Received: by 2002:a05:6402:b0d:b0:579:e690:8349 with SMTP id 4fb4d7f45d1cf-579e6908e1amr2747855a12.15.1716903181893;
-        Tue, 28 May 2024 06:33:01 -0700 (PDT)
-Received: from localhost (host-87-16-233-11.retail.telecomitalia.it. [87.16.233.11])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579c2026406sm4399948a12.37.2024.05.28.06.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 06:33:01 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v4 4/4] arm64: dts: broadcom: Add support for BCM2712
-Date: Tue, 28 May 2024 15:32:41 +0200
-Message-ID: <8dd6997394a01317747ca11b4779f586752b4947.1716899600.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1716899600.git.andrea.porta@suse.com>
-References: <cover.1716899600.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1716903197; c=relaxed/simple;
+	bh=q/vMae1L4yOc2ytS+jEdq+z0LHJ0eTg/q1QB2cL92f4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y+Wla4K2L/ZerQ1/Idgi5XaEUzqdSIV3p24IP28YcU64B9waXXROY6Tc6rErIFfkydI9WbDzHMqfXS1WtlDlYDPdLFMiqRYBoj7R1RBWyALDV8v3h35PyOmFnAi32/NHr2v7CndYuZrKPu07oUp4Dp7y59rLkL/hDt42DE8Cv78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=yp5FCoOt; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=+OlDy71KRIzdA+LVGy9z1RewFWm1WDFmdy93yC8byEM=; b=yp5FCoOteuewC8Nl9TYOsbYNyg
+	CKaOdc1Zk/5mY7ser3Q/DH6EE2tB+ZAGkLTJZ4iNF3mUA5dfOYk7rEjwAdy+EaIdb1nNrzkOPJrpN
+	KBYFEcUqqGiMCRUJmW6EJtHbjh4u7BuDD2JcnNPcjUNaytpc6amsgtDP5HjR8Ed4KjsO8YA+rdmBj
+	A4gpEo+CgbIFKcu2Iv0+36JOsJxAFux7tHZ46NiWwgjCGQj6sv6cMaAumX111q+RRnV5xJ3jM7Hod
+	f9Ur9+Qba2onRu6KXQqQTiDZ7Wr449FhD9vwCYV7cXRyemOcVuT7WvoX2pSKMd77dWJMnjIbpATGx
+	XFzwPG2g==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sBwws-0001Wh-HA; Tue, 28 May 2024 15:33:06 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sBwwr-00068E-36;
+	Tue, 28 May 2024 15:33:05 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  Michael Ellerman
+ <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,  Christophe
+ Leroy <christophe.leroy@csgroup.eu>,  "Aneesh Kumar K.V"
+ <aneesh.kumar@kernel.org>,  "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org,
+  linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
+In-Reply-To: <096662e8-03cf-4c13-baa0-11918cab7511@kernel.org> (Krzysztof
+	Kozlowski's message of "Tue, 28 May 2024 15:00:57 +0200")
+References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
+	<20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
+	<096662e8-03cf-4c13-baa0-11918cab7511@kernel.org>
+Date: Tue, 28 May 2024 15:33:04 +0200
+Message-ID: <87le3ukqnj.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27289/Tue May 28 10:30:59 2024)
 
-The BCM2712 SoC family can be found on Raspberry Pi 5.
-Add minimal SoC and board (Rpi5 specific) dts file to be able to
-boot from SD card and use console on debug UART.
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
----
- arch/arm64/boot/dts/broadcom/Makefile         |   1 +
- .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  64 ++++
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 292 ++++++++++++++++++
- 3 files changed, 357 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> On 28/05/2024 14:28, Esben Haabendal wrote:
+>> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+>> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+>> selected in config snippets.
+>> 
+>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>> ---
+>>  arch/powerpc/configs/85xx-hw.config | 2 ++
+>>  1 file changed, 2 insertions(+)
+>> 
+>> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
+>> index 524db76f47b7..8aff83217397 100644
+>> --- a/arch/powerpc/configs/85xx-hw.config
+>> +++ b/arch/powerpc/configs/85xx-hw.config
+>> @@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
+>>  CONFIG_FSL_CORENET_CF=y
+>>  CONFIG_FSL_DMA=y
+>>  CONFIG_FSL_HV_MANAGER=y
+>> +CONFIG_FSL_IFC=y
+>
+> Does not look like placed according to config order.
 
-diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 8b4591ddd27c..92565e9781ad 100644
---- a/arch/arm64/boot/dts/broadcom/Makefile
-+++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -6,6 +6,7 @@ DTC_FLAGS := -@
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
- 			      bcm2711-rpi-4-b.dtb \
- 			      bcm2711-rpi-cm4-io.dtb \
-+			      bcm2712-rpi-5-b.dtb \
- 			      bcm2837-rpi-3-a-plus.dtb \
- 			      bcm2837-rpi-3-b.dtb \
- 			      bcm2837-rpi-3-b-plus.dtb \
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-new file mode 100644
-index 000000000000..2bdbb6780242
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "bcm2712.dtsi"
-+
-+/ {
-+	compatible = "raspberrypi,5-model-b", "brcm,bcm2712";
-+	model = "Raspberry Pi 5";
-+
-+	aliases {
-+		serial10 = &uart10;
-+	};
-+
-+	chosen: chosen {
-+		stdout-path = "serial10:115200n8";
-+	};
-+
-+	/* Will be filled by the bootloader */
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0 0 0 0x28000000>;
-+	};
-+
-+	sd_io_1v8_reg: sd-io-1v8-reg {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vdd-sd-io";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-settling-time-us = <5000>;
-+		gpios = <&gio_aon 3 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 1>,
-+			 <3300000 0>;
-+	};
-+
-+	sd_vcc_reg: sd-vcc-reg {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-sd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpios = <&gio_aon 4 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+/* The Debug UART, on Rpi5 it's on JST-SH 1.0mm 3-pin connector
-+ * labeled "UART", i.e. the interface with the system console.
-+ */
-+&uart10 {
-+	status = "okay";
-+};
-+
-+/* SDIO1 is used to drive the SD card */
-+&sdio1 {
-+	vqmmc-supply = <&sd_io_1v8_reg>;
-+	vmmc-supply = <&sd_vcc_reg>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-ddr50;
-+	sd-uhs-sdr104;
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-new file mode 100644
-index 000000000000..71b0fa6c9594
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-@@ -0,0 +1,292 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "brcm,bcm2712";
-+
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	interrupt-parent = <&gicv2>;
-+
-+	axi: axi@1000000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x10 0x00000000  0x10 0x00000000  0x01 0x00000000>;
-+
-+		sdio1: mmc@1000fff000 {
-+			compatible = "brcm,bcm2712-sdhci",
-+				     "brcm,sdhci-brcmstb";
-+			reg = <0x10 0x00fff000  0x0 0x260>,
-+			      <0x10 0x00fff400  0x0 0x200>;
-+			reg-names = "host", "cfg";
-+			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_emmc2>;
-+			clock-names = "sw_sdio";
-+			mmc-ddr-3_3v;
-+		};
-+
-+		gicv2: interrupt-controller@107fff9000 {
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			compatible = "arm,gic-400";
-+			reg = <0x10 0x7fff9000  0x0 0x1000>,
-+			      <0x10 0x7fffa000  0x0 0x2000>,
-+			      <0x10 0x7fffc000  0x0 0x2000>,
-+			      <0x10 0x7fffe000  0x0 0x2000>;
-+		};
-+	};
-+
-+	clocks {
-+		/* The oscillator is the root of the clock tree. */
-+		clk_osc: clk-osc {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-output-names = "osc";
-+			clock-frequency = <54000000>;
-+		};
-+
-+		clk_vpu: clk-vpu {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <750000000>;
-+			clock-output-names = "vpu-clock";
-+		};
-+
-+		clk_uart: clk-uart {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <9216000>;
-+			clock-output-names = "uart-clock";
-+		};
-+
-+		clk_emmc2: clk-emmc2 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <200000000>;
-+			clock-output-names = "emmc2-clock";
-+		};
-+	};
-+
-+	cpus: cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Source for L1 d/i cache-line-size, cache-sets, cache-size
-+		 * https://developer.arm.com/documentation/100798/0401/L1-memory-system/About-the-L1-memory-system?lang=en
-+		 * Source for L2 cache-line-size and cache-sets:
-+		 * https://developer.arm.com/documentation/100798/0401/L2-memory-system/About-the-L2-memory-system?lang=en
-+		 * and for cache-size:
-+		 * https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
-+		 */
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x000>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l0>;
-+
-+			l2_cache_l0: l2-cache-l0 {
-+				compatible = "cache";
-+				cache-size = <0x80000>;
-+				cache-line-size = <128>;
-+				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
-+				cache-level = <2>;
-+				cache-unified;
-+				next-level-cache = <&l3_cache>;
-+			};
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l1>;
-+
-+			l2_cache_l1: l2-cache-l1 {
-+				compatible = "cache";
-+				cache-size = <0x80000>;
-+				cache-line-size = <128>;
-+				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
-+				cache-level = <2>;
-+				cache-unified;
-+				next-level-cache = <&l3_cache>;
-+			};
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x200>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l2>;
-+
-+			l2_cache_l2: l2-cache-l2 {
-+				compatible = "cache";
-+				cache-size = <0x80000>;
-+				cache-line-size = <128>;
-+				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
-+				cache-level = <2>;
-+				cache-unified;
-+				next-level-cache = <&l3_cache>;
-+			};
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x300>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l3>;
-+
-+			l2_cache_l3: l2-cache-l3 {
-+				compatible = "cache";
-+				cache-size = <0x80000>;
-+				cache-line-size = <128>;
-+				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
-+				cache-level = <2>;
-+				cache-unified;
-+				next-level-cache = <&l3_cache>;
-+			};
-+		};
-+
-+		/* Source for cache-line-size and cache-sets:
-+		 * https://developer.arm.com/documentation/100453/0401/L3-cache?lang=en
-+		 * Source for cache-size:
-+		 * https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
-+		 */
-+		l3_cache: l3-cache {
-+			compatible = "cache";
-+			cache-size = <0x200000>;
-+			cache-line-size = <64>;
-+			cache-sets = <2048>; // 2MiB(size)/64(line-size)=32768ways/16-way set
-+			cache-level = <3>;
-+			cache-unified;
-+		};
-+	};
-+
-+	psci {
-+		method = "smc";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+	};
-+
-+	rmem: reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		atf@0 {
-+			reg = <0x0 0x0 0x0 0x80000>;
-+			no-map;
-+		};
-+
-+		cma: linux,cma {
-+			compatible = "shared-dma-pool";
-+			size = <0x0 0x4000000>; /* 64MB */
-+			reusable;
-+			linux,cma-default;
-+			alloc-ranges = <0x0 0x00000000 0x0 0x40000000>;
-+		};
-+	};
-+
-+	soc: soc@107c000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		ranges     = <0x7c000000  0x10 0x7c000000  0x04000000>;
-+		/* Emulate a contiguous 30-bit address range for DMA */
-+		dma-ranges = <0xc0000000  0x00 0x00000000  0x40000000>,
-+			     <0x7c000000  0x10 0x7c000000  0x04000000>;
-+
-+		system_timer: timer@7c003000 {
-+			compatible = "brcm,bcm2835-system-timer";
-+			reg = <0x7c003000 0x1000>;
-+			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <1000000>;
-+		};
-+
-+		mailbox: mailbox@7c013880 {
-+			compatible = "brcm,bcm2835-mbox";
-+			reg = <0x7c013880 0x40>;
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <0>;
-+		};
-+
-+		local_intc: local-intc@7cd00000 {
-+			compatible = "brcm,bcm2836-l1-intc";
-+			reg = <0x7cd00000 0x100>;
-+		};
-+
-+		uart10: serial@7d001000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x7d001000 0x200>;
-+			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_uart>, <&clk_vpu>;
-+			clock-names = "uartclk", "apb_pclk";
-+			arm,primecell-periphid = <0x00241011>;
-+			status = "disabled";
-+		};
-+
-+		interrupt-controller@7d517000 {
-+			compatible = "brcm,bcm7271-l2-intc";
-+			reg = <0x7d517000 0x10>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
-+
-+		gio_aon: gpio@7d517c00 {
-+			compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
-+			reg = <0x7d517c00 0x40>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// Don't use GIO_AON as an interrupt controller because it will
-+			// clash with the firmware monitoring the PMIC interrupt via the VPU.
-+			brcm,gpio-bank-widths = <17 6>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
--- 
-2.35.3
+Correct.
 
+> This is not alphabetically sorted, but as Kconfig creates it (make
+> savedefconfig).
+
+Are you sure about this?
+
+It looks very much alphabetically sorted, with only two "errors"
+
+$ diff -u 85xx-hw.config 85xx-hw.config.sorted 
+--- 85xx-hw.config      2024-05-28 15:05:44.665354428 +0200
++++ 85xx-hw.config.sorted       2024-05-28 15:05:56.102019081 +0200
+@@ -15,8 +15,8 @@
+ CONFIG_DMADEVICES=y
+ CONFIG_E1000E=y
+ CONFIG_E1000=y
+-CONFIG_EDAC=y
+ CONFIG_EDAC_MPC85XX=y
++CONFIG_EDAC=y
+ CONFIG_EEPROM_AT24=y
+ CONFIG_EEPROM_LEGACY=y
+ CONFIG_FB_FSL_DIU=y
+@@ -71,10 +71,10 @@
+ CONFIG_MTD_CMDLINE_PARTS=y
+ CONFIG_MTD_NAND_FSL_ELBC=y
+ CONFIG_MTD_NAND_FSL_IFC=y
+-CONFIG_MTD_RAW_NAND=y
+ CONFIG_MTD_PHYSMAP_OF=y
+ CONFIG_MTD_PHYSMAP=y
+ CONFIG_MTD_PLATRAM=y
++CONFIG_MTD_RAW_NAND=y
+ CONFIG_MTD_SPI_NOR=y
+ CONFIG_NETDEVICES=y
+ CONFIG_NVRAM=y
+
+I don't think that this file has ever been Kconfig sorted since it was
+created back in ancient times.
+
+And as it is merged with other config snippets using merge_into_defconfig
+function. I have no idea how to use savedefconfig to maintain such a snippet.
+It would require doing the reverse of the merge_into_defconfig.
+
+>>  CONFIG_FSL_PQ_MDIO=y
+>>  CONFIG_FSL_RIO=y
+>
+> You also missed to update second defconfig - arm64.
+
+Argh. I thought I checked, and it did not need any changes. But it needs
+to have CONFIG_FSL_IFC=y added.
+
+I will add that for v3.
+
+/Esben
 
