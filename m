@@ -1,81 +1,123 @@
-Return-Path: <linux-kernel+bounces-192752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6708D219D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206D38D21A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349901C22E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:27:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78FA1F25862
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D28172BB6;
-	Tue, 28 May 2024 16:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C03172BD4;
+	Tue, 28 May 2024 16:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dZbQd+ij"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D0juCU8p"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852C416F91D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD22172BCB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716913667; cv=none; b=d9xAdHkldnVaN/2NON0RnEpo9XXNJV2stK0ucKetXyaXOREqh6gDeFj1cOy6yabaGVyNI4WouPeT8v+lrWq7V/JVoQn0vQ+6xZmTYYdm0juyq0KwxuRW5LUqeQVf7jqdi1jy2OqIbfJ3hV+VqPBab4zo8BOEgHowk8iKTR3/ZaM=
+	t=1716913684; cv=none; b=lwTo62ov569cGADEN4WGl7qMW8ku7gZ/DBm8RmNZwbN9ohcl6gyPxW0tBUDVZwG3AY7+4f5mnPOG58Qn+Pn+1yGlaN+Ef3urq15lD+01tbKQLq69+8bZKothF6+9kKk5ASmQOeANxOY6yv8ElGvFFS1GP+oKa7p/jVLFLc8uKyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716913667; c=relaxed/simple;
-	bh=vyWFi5wev+0Ypwx2V9LULhYDfKtfswp83P0XAsAbqXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJyPZd18eiIgSoD+5YWFJdoWR+LGvkyY7NStjN3sYIy614GwnW8hncWDoQ9CQmGZL3LQR36P8yReAWnzI20OJ8gVmVwBEqJc331u5j8FtjROYN2h54lBLb9hHOtHBE12+kaCSZwihZnoBXleIVSLHjlKdc37+LrdBiC6gl9N4nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dZbQd+ij; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=H85665RpHSmm8YnMeG0iOy0Fh6cTP7WSYgj5rk9gesg=; b=dZbQd+ij+qNH4zA+bWMdBwFfh7
-	mO0+899ZZ760jpctBrtYrGUXVoSQ+Bc1KijC0V5midtp6ijYrK+A7wM46mKPKWC8GYHNMF8DljDrE
-	TUcFc9VVPq+bVnBjJJq9n9ctNnf9LI+aV6XJlzVg4+GhiatD068tTOezKZYOF9lBurwx3ZPgrZCAw
-	O1iZX5FtwnqDS4zrK+EdA9idBM6hJsx0me7h4u+BnDOVvMr3yxyx19xIBipAs1C3tVkZnhnhB6F9i
-	QupLaHyFShCdtY/Yfgf4Gd2jk1q2CSruRKcqQqv6wOUT+I0Hc+2GUD3wviEPX9qr+krd8iOm5IytG
-	XvJCbDoQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBzfZ-0000000Bjrj-2Psr;
-	Tue, 28 May 2024 16:27:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 39C3430058E; Tue, 28 May 2024 18:27:25 +0200 (CEST)
-Date: Tue, 28 May 2024 18:27:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	torvalds@linux-foundation.org, paulmck@kernel.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 13/35] sched: allow runtime config for PREEMPT_AUTO
-Message-ID: <20240528162725.GH26599@noisy.programming.kicks-ass.net>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-14-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1716913684; c=relaxed/simple;
+	bh=t74W54+/Ll0YLi8c76pQC7uwzEIjWDtBfp3CisuTzmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mmE7cjv7qlnsUMpECF3Yvj51CQ3971QSZcSpghJh4sqiFjefTm4Gix0uX7LJJ1lnvQJOJxZyHLlAVM6P1c2zcHWz3I9NuHpQuLfxHSj3iMChp9J/2TaHTWyeYXkCcSQSiSDEcKLJmzVmRqQI4wkLM27AxvUnB8sEEgxSicRtmws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D0juCU8p; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-43fdc18a89cso3735071cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716913681; x=1717518481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t74W54+/Ll0YLi8c76pQC7uwzEIjWDtBfp3CisuTzmI=;
+        b=D0juCU8pUZP//lXn5tCCCCJJOcaXMhCl0Qi6bLWCnk/aynCZwKnWzhSlTVHysM8f9I
+         lawHkALP+QdtgIFJRbeU8a+ne0kNdmDuwAPvrTpY9cW2k6RNTjkHF8aSW/GSj7VPVgi8
+         LBNdE+tYJCiWHSO7LU1egtt6NuLKc6AIMimHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716913681; x=1717518481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t74W54+/Ll0YLi8c76pQC7uwzEIjWDtBfp3CisuTzmI=;
+        b=cxri3sfxVLDJCI+frwsBSLBo0LZGJhFCBRsa5xgNSzoOkUHL6I75FsiNebA4Aq0M+/
+         D6nbTRPWLYPLOSPpg5YKYZzcQsNj2kE/xboKeXrdCfbkGkv+SdBXK/Hz9M0fPSHT1PEY
+         +3wileie4Sn2NAu1iTYGF/5evgcae3wqSHY7cjH4WRk0Pc9gCHjnk5SJet7/lQGpIPz/
+         3k4sHMxvBMNekOSN+RasTpLhdeIP3jciSsQXbKPzfZVAGth2gWeFmkQN3r18PSXEe07R
+         cx7Lkxl+x0VIxBOg09VNYUCFIQHK4RW7JfhHzLn1gLjkRiyyix6JjISxAc4fMCjr6AR4
+         QUOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNyoLYWpyEi15EK9IO7fFcTAkPlEblp8I9f9zSHGLFvWpFPHHPaxgdDJ4og9Qd3a3+Pe+J1EzYjuLmCd/WO8K/D/EbBgHaOXWjKimo
+X-Gm-Message-State: AOJu0YxBv4oPXZm8r7gjqCz7/91R3h+Q5NNXR4IALczWQf5fG189njp+
+	IdGNfDfMtG3e1qByntz1AH+UEak1L9Q++nqKc/CriAL6r5VWMHWxx+VM3oDOJrDvWEhcVNWJxdc
+	=
+X-Google-Smtp-Source: AGHT+IFoh/C/8yuXe7M8pA+620kHflzwzRsoBbHn6+H1eTZfstQX2c/GdsdqRr17avCc30cNhLgFyQ==
+X-Received: by 2002:a05:622a:148f:b0:43a:712d:414f with SMTP id d75a77b69052e-43fb0eeb3afmr151702351cf.42.1716913681481;
+        Tue, 28 May 2024 09:28:01 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb180456fsm44508601cf.50.2024.05.28.09.28.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 09:28:00 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43e14f0bd75so857341cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:28:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7jDs/oq6XhoRVDkhYeH3W9EXxcXZIm8wmqA2UqAHMEgGbpnBSNmV+8nP5piSQOklwPQzxmJ/MaLr3Ezc6/fAlnF9C8rBv1VgtZgkd
+X-Received: by 2002:a05:622a:1ccb:b0:43d:85ae:bee with SMTP id
+ d75a77b69052e-43fbb0588e9mr7721931cf.7.1716913679727; Tue, 28 May 2024
+ 09:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528003521.979836-14-ankur.a.arora@oracle.com>
+References: <20240422060811.670693-1-xuxinxiong@huaqin.corp-partner.google.com>
+ <CAD=FV=WRLLuOkCJeM6RdAb6xLN-cPH+hfWbOv9-LujB-WMGEFw@mail.gmail.com>
+ <CAGoogDB-mj8_xu04w3V2ZxOBTWoXcPKrVR1NRt6BFcpjHX3-7Q@mail.gmail.com>
+ <CAD=FV=WwsR9e-ZXJRY11FvdUZ66YPy9vqmY_=sGDw5Wqk1eV3w@mail.gmail.com>
+ <CAGoogDBCzfKwkAA-VAs3_Cdw_4oFO94mt7yjy47Sp2RAtqtPxA@mail.gmail.com> <CAD=FV=WYiD-BUpksBnZrkWvORepZqtaAvm5645X-_oJPea0s0w@mail.gmail.com>
+In-Reply-To: <CAD=FV=WYiD-BUpksBnZrkWvORepZqtaAvm5645X-_oJPea0s0w@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 28 May 2024 09:27:43 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WMC0XZBc3UKP+Qzb5aeiWBnXrYDf31PNP5cGeAT-8XcA@mail.gmail.com>
+Message-ID: <CAD=FV=WMC0XZBc3UKP+Qzb5aeiWBnXrYDf31PNP5cGeAT-8XcA@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add panel CSOT MNB601LS1-1
+To: Xuxin Xiong <xuxinxiong@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	hsinyi@google.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 05:34:59PM -0700, Ankur Arora wrote:
-> Reuse sched_dynamic_update() and related logic to enable choosing
-> the preemption model at boot or runtime for PREEMPT_AUTO.
-> 
-> The interface is identical to PREEMPT_DYNAMIC.
+Hi,
 
-Colour me confused, why?!? What are you doing and why aren't just just
-adding AUTO to the existing DYNAMIC thing?
+On Mon, May 6, 2024 at 8:54=E2=80=AFAM Doug Anderson <dianders@chromium.org=
+> wrote:
+>
+> Hi,
+>
+> On Tue, Apr 23, 2024 at 6:55=E2=80=AFPM Xuxin Xiong
+> <xuxinxiong@huaqin.corp-partner.google.com> wrote:
+> >
+> > Hi Doug, thank you!
+> > We had reported this info to the CSOT to correct the vendor id.
+> > If they confirm to fix this with the same product ID, we will submit a
+> > patch to fix this.
+>
+> FYI, "top posting" like this is generally frowned upon on kernel
+> mailing lists. One such reference about this is [1]. Some folks are
+> very passionate about this topic, so please keep it in mind to avoid
+> upsetting people in the community.
+>
+> In any case: did you get any response from CSOT about the improper EDID?
+
+Just following up here. Was there any response from CSOT?
+
+-Doug
 
