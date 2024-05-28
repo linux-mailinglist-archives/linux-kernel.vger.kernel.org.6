@@ -1,101 +1,178 @@
-Return-Path: <linux-kernel+bounces-192361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2168D1C1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70668D1C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D97287718
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9011F24DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE4C16F838;
-	Tue, 28 May 2024 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMyk3/ER"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9516EBE8;
+	Tue, 28 May 2024 13:03:57 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21F717E8F0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C104517E8F0;
+	Tue, 28 May 2024 13:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901410; cv=none; b=URLUCD1AFD5a82KQyIcsNcGlUyk1nSS+FgeSK6OKQ9mBMWAAN1IxBlq6SmPqeTMbW0nMn4Q1DH1O9nMHUTlDLLns9ZEBj7g5oSH/Xicwvaem7rX2ZvHp+vhJ//k9/vpfAK1TvCX5Lu4gh5+EWeciiqPspFfuIY9o803NGDF+Zno=
+	t=1716901437; cv=none; b=pioXJEaxYJS54dbYhHsUQmi+lDz26rZLtxhRmkY6T7vZN7pbrFel+WqGqdKeb6JH9NzVoQ8ZLrc6phLtefisijxIGP5adkF9zrhKeF1iGLXuaNa+Ony91ebGGxnurmANqLCIpG2/BaqqQg+caYlhwGVSZpPrlG2d3EzUVRExrh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901410; c=relaxed/simple;
-	bh=9v4W6iOSUjtGZaBCccF+kLlyiZYLVuG5P+57Ga/1odQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9Qh+QceAY/HRmBqaT0xCo3XOxweTrIUWxxd+fTc3pB5At+uLIoki5U1meFsnVZE3zSR/2vx+3kpw0Bxu0Rxq1pHxI6lUr+cGj3kvTM2H/Pzu4raIdYiSOHH9wwCJOInB9KgM7a7b5f6EnvtSF2NNfnsSoepENgOwqc2LqhzyR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMyk3/ER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B9AC32782;
-	Tue, 28 May 2024 13:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716901410;
-	bh=9v4W6iOSUjtGZaBCccF+kLlyiZYLVuG5P+57Ga/1odQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cMyk3/ERiSHEgU0VZs0WGbWEaoNlPMX74d/mMZrBLgxcpB5wc3XcMtwFiVJZW5fh+
-	 f7gNDIEwQ2B1kRoJR8DW7p0QhwmZ8pBVSozHTprp2fXNLJQTKQOJNzLACaPaasV7fh
-	 B8dzEQoypqqE5+utX+o5HgQySc8TuJPsuPNdojl978DYs9TpUbL3XWyUYVq0+uAwgl
-	 ulIyR4if5KcWn8FeWFjzKbBGGQt0q2x3HHIXA6GCyOWV/hje+JQL7E1b2RT3p2dAcz
-	 uvc2dv/kTKgcIDR9O193xpTFduVJyWzXOZj6rLUW9xRgXyqAe4iSvHi9FfbAMheO8x
-	 p6TRHUIIUeuPQ==
-Date: Tue, 28 May 2024 14:03:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Alina Yu <alina_yu@richtek.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: rtq2208: remove unused
- rtq2208_regulator_ldo_ops
-Message-ID: <56b9bccf-b9fc-494a-97f1-40b5bb0f6767@sirena.org.uk>
-References: <20240528121222.3675312-1-arnd@kernel.org>
- <70125571-5add-47d2-b127-c57e67c59df9@sirena.org.uk>
- <7391d6a4-0c0b-456f-a2ca-cf3dafa67c5a@app.fastmail.com>
+	s=arc-20240116; t=1716901437; c=relaxed/simple;
+	bh=jGiPawFhnCveytE5oBKxLPZgwqkR8QL97W/Ti//959g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KVVXIjR89aus3rXZwZV4FEwPZ/0eDb7GwSC4XRZbUr64KiZdoVeO3dnQpxzt48bO5NwhdExmlIaey8GILhdzQy2pDXErWDwq3n1VOnwsouZeA0QaX9inEzyd4U6ZG20BUI0n70iPdhOktqY5FwFmuR9ym52BVzUHU8CB66B4kLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-df7812c4526so836519276.1;
+        Tue, 28 May 2024 06:03:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716901433; x=1717506233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0lSqiBjQcxkHXiQzsly+X7nKXmBLlE2qDF43dcrCRLw=;
+        b=EFXjF2Drg8lWxhoWdlMOg123HQN3gKx+WapnVjvCDjqDi027Msm78afPpJv/6EXyEj
+         kmdoVCBNYz830KHGbZwP94BvUO7uIirBtHtjxdt4s2N389jNmM2qLvO2wFz0uLyusEIC
+         J2qMnt/ylrP5SpAQTYLjgEQxU6PPRJPZc1UCOKizJZmVlwI213VuS5BwLx77Quyaxu1z
+         Rw15Tw7SvwC0GdnjEDMENORuDeg9y60I2TfUzu8R2t8WIAsvekalVc9bD8IaVdLSOdd6
+         4XFw5Zm8CP+fbAnlkrAJQj4cIeijvq082LQrtGxF1sFfMMGT5Uk/iQNKOcIyxHlRJ+QL
+         GWQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUdaP5+UhNuLVpK4yki73k6k3C582kXqxp2Hic2JPHfPEsbfiNjCsTqANFkpO2EU6dIc5RGdaaEbA1CGa4niBkpgySWAMkxn69EHtYLHSz68CCOOWBMAt7/ESGmao1ZZkbafDovBUAv4jwl1mJvsIHJ79Kmguekzk+cYHIdrwQanOaQZZyBzc17Ru39TY/dejTsZ4f7vIDY0r/CpMHRkxMmiWGnA==
+X-Gm-Message-State: AOJu0Yy+a2EHP2zinbaQCcEITYVSEOCEinadyc1GrhD+81HjYDBjyty7
+	nSYCYcD6VjxZXy07lO1WBt5D4s3fSxcp07J9GYmzN7ERE9IFBauq7boTwu4Z
+X-Google-Smtp-Source: AGHT+IE+RfB2qX5DkAkK1Ooo6FHIkG3gvZtT8LETr34SL5JN5btlVmV3qDUPqUzWpJAMjj+YV9erfQ==
+X-Received: by 2002:a25:b31d:0:b0:df7:955f:9b99 with SMTP id 3f1490d57ef6-df7955fa50amr6987968276.47.1716901432415;
+        Tue, 28 May 2024 06:03:52 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df774677ff8sm1161309276.11.2024.05.28.06.03.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 06:03:51 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df771b45e13so783051276.2;
+        Tue, 28 May 2024 06:03:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWZvk/s02SV9WLuGPgBVEd9ZuJWbB6eXaVxsPiGIMs69B1jwAo8c21F6aq9Usp6IbLx6+ho7wi8XFteQBbJuohi1btI5PVVrwYY5+UyVwQB+M8mTU+P1sDj0u/YocfVRmDhd4KVKCtSfn1MRkQy24/RytRGdXPow/eQwgAHK+Nl2pG6bbGzOwRM+1DAVqkefZwRT8f8B9s0vKjbBM74IhAUsazf6g==
+X-Received: by 2002:a25:874d:0:b0:df7:c087:57a1 with SMTP id
+ 3f1490d57ef6-df7c0876661mr2996466276.51.1716901431685; Tue, 28 May 2024
+ 06:03:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nULyeNePWk0eNBQy"
-Content-Disposition: inline
-In-Reply-To: <7391d6a4-0c0b-456f-a2ca-cf3dafa67c5a@app.fastmail.com>
-X-Cookie: How do I get HOME?
+References: <20240404143424.3279752-1-arnd@kernel.org>
+In-Reply-To: <20240404143424.3279752-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 May 2024 15:03:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWSaQrsx5CtyVQ4A74Qt1FxNitNAUJ+YwoNMpS7xxv2zA@mail.gmail.com>
+Message-ID: <CAMuHMdWSaQrsx5CtyVQ4A74Qt1FxNitNAUJ+YwoNMpS7xxv2zA@mail.gmail.com>
+Subject: Re: [PATCH] [v5] kallsyms: rework symbol lookup return codes
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	Puranjay Mohan <puranjay12@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Zhen Lei <thunder.leizhen@huawei.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Arnd,
 
---nULyeNePWk0eNBQy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Apr 4, 2024 at 4:52=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
+e:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Building with W=3D1 in some configurations produces a false positive
+> warning for kallsyms:
+>
+> kernel/kallsyms.c: In function '__sprint_symbol.isra':
+> kernel/kallsyms.c:503:17: error: 'strcpy' source argument is the same as =
+destination [-Werror=3Drestrict]
+>   503 |                 strcpy(buffer, name);
+>       |                 ^~~~~~~~~~~~~~~~~~~~
+>
+> This originally showed up while building with -O3, but later started
+> happening in other configurations as well, depending on inlining
+> decisions. The underlying issue is that the local 'name' variable is
+> always initialized to the be the same as 'buffer' in the called functions
+> that fill the buffer, which gcc notices while inlining, though it could
+> see that the address check always skips the copy.
+>
+> The calling conventions here are rather unusual, as all of the internal
+> lookup functions (bpf_address_lookup, ftrace_mod_address_lookup,
+> ftrace_func_address_lookup, module_address_lookup and
+> kallsyms_lookup_buildid) already use the provided buffer and either retur=
+n
+> the address of that buffer to indicate success, or NULL for failure,
+> but the callers are written to also expect an arbitrary other buffer
+> to be returned.
+>
+> Rework the calling conventions to return the length of the filled buffer
+> instead of its address, which is simpler and easier to follow as well
+> as avoiding the warning. Leave only the kallsyms_lookup() calling convent=
+ions
+> unchanged, since that is called from 16 different functions and
+> adapting this would be a much bigger change.
+>
+> Link: https://lore.kernel.org/all/20200107214042.855757-1-arnd@arndb.de/
+> Link: https://lore.kernel.org/lkml/20240326130647.7bfb1d92@gandalf.local.=
+home/
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v5: fix ftrace_mod_address_lookup return value,
+>     rebased on top of 2e114248e086 ("bpf: Replace deprecated strncpy with=
+ strscpy")
+> v4: fix string length
+> v3: use strscpy() instead of strlcpy()
+> v2: complete rewrite after the first patch was rejected (in 2020). This
+>     is now one of only two warnings that are in the way of enabling
+>     -Wextra/-Wrestrict by default.
 
-On Tue, May 28, 2024 at 02:38:30PM +0200, Arnd Bergmann wrote:
-> On Tue, May 28, 2024, at 14:25, Mark Brown wrote:
+Aha, commit 06bb7fc0feee32d9 ("kbuild: turn on -Wrestrict by default")
+still made v6.10-rc1, without this one...
 
-> > Fairly sure there should be a reference in _init_regulator_desc().
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> This is how 38bcec0e7cbb ("regulator: rtq2208: Fix
-> LDO discharge register and add vsel setting")] changed
-> the lines:
+Thanks, this fixes
 
-In fact there's a series in flight which adds support for fixed voltage
-mode and fixes this, though we'll need a separate fix for v6.10.
+    kernel/kallsyms.c: In function =E2=80=98__sprint_symbol.constprop=E2=80=
+=99:
+    kernel/kallsyms.c:492:17: warning: =E2=80=98strcpy=E2=80=99 source argu=
+ment is the
+same as destination [-Werror=3Drestrict]
+      492 |                 strcpy(buffer, name);
+          |                 ^~~~~~~~~~~~~~~~~~~~
 
---nULyeNePWk0eNBQy
-Content-Type: application/pgp-signature; name="signature.asc"
+I am seeing with shmobile_defconfig and gcc version 11.4.0 (Ubuntu
+11.4.0-1ubuntu1~22.04).
 
------BEGIN PGP SIGNATURE-----
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZV1h0ACgkQJNaLcl1U
-h9BkWAf+JPFSscJ/OSF/r2NYE1MrG5Kkyepxht/TlcWy01ETWuAU4oKScrCcZREj
-KP7Oyf0KzVp+x8ZfS7KNA25gcIvfuJ8bKWT7FoCbgrIu02LsrZhvTCyiQeO1nSKb
-7wMORHV0qSzW85zngupDxGFr6/J9YxWfhadELkAEXWuGOSDt5XDQZymxbVeIbWTk
-yZGOri9kaX8+lntjx9ng8A8B0jmAGKA8ZHhe0NmWz3fIeTbPJej+HlcqPZHh/kOw
-sw6YeSY+pkCXz8GFrFNvPQAiVwKNPkOE+eqZ2LPVJR21PnHHI692OKHdlx+NqjCQ
-hqiQ+yPzO2BUkmJLBX9mWMAeOLa05w==
-=kfwu
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---nULyeNePWk0eNBQy--
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
