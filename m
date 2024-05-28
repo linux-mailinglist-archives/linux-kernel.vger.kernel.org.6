@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-192973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F428D2518
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 163AE8D251A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5920D1C2350E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472AD1C2491D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD93D176FB8;
-	Tue, 28 May 2024 19:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPBpC5w/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8EA178374;
+	Tue, 28 May 2024 19:49:58 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C22176FB3;
-	Tue, 28 May 2024 19:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F1C3A8CB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925468; cv=none; b=VAW+w7IHS1xnBX0Rc5l2XsLAr38Jijiwhi4Fh2X96MSB5NrnBOAdLix+NCMAEMbdrOjddCEhM5+a1QDBouxXz0Vah11DbAXOFefMiBXqg2lvsUCkx0VwhB+2q11JkIIwXe7WEXfGkAUA5Ax1FRm/l1FAQLpREFYGRU8Eqnnj52E=
+	t=1716925798; cv=none; b=UdKBdBbA0rGgKXoc6oosJqxVfq5/t2wwQQJta/vjCXjK2tceToKeUQVJEQY9Xqd+cfXye/3RfWUz92bwlKFIS7ObFk4jR0GTdkD+T0lOUXMwEO/8Txq2oSU/R6ph63Wc5BQsjvocKsI15S2QQ/0gxaxp972c3G/b7ouySqufMak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925468; c=relaxed/simple;
-	bh=Zfpe/d8xujPU7oFPiM38uFfQeSG19WZQPyurGbXN1iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vejc04JFb2GmoFv36x3rjDA9rCyyQK8FAMqDjTHdqqYCb+6qkt7BGZ6gWvW3aXkmRNUcQhdisr1mu9ItQB2GsvaOZ7c2WpSBYXPukMknhMPURnlO1F58fxYX1d4/Vz5XSE1zo+hzhuITrvAzungJUgI5GVSAn6dEnUpqnDQOYuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPBpC5w/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EB8C3277B;
-	Tue, 28 May 2024 19:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716925467;
-	bh=Zfpe/d8xujPU7oFPiM38uFfQeSG19WZQPyurGbXN1iw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GPBpC5w/6VJV4uYhhO3Dc+esqjymfBN15mZb2EoVmTruGX5nh08bBw083PiCe/TZ6
-	 LUL6jaSOp4QbmQqdJkQwlL9lVDgilYZPNyj9Hfa/h8yM/wAO0LC+JTRbhF5JuFsPzv
-	 eEqSh95iFGbhLzxLxcijieemySz2dVsZDnbpC+IV582KjcT/lmZFZciCbCJZO6+8j1
-	 fEbjk+2wBuvSkxQOGQiOCcceR/7pKVeKc/ixtwBI1CcwfQS0V83rnw40u2d0D0vRlE
-	 MtoF6Ddth0YeAyoUomKVNYmKvGuTkB8wHyPXm1MLQqy9muV0X0w5my3J5wePfBKmW5
-	 vgR1uG/y0eUqg==
-Date: Tue, 28 May 2024 16:44:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Leo Yan <leo.yan@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
- PMUs
-Message-ID: <ZlY0F_lmB37g10OK@x1>
-References: <20240525152927.665498-1-irogers@google.com>
- <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev>
- <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
+	s=arc-20240116; t=1716925798; c=relaxed/simple;
+	bh=uR49CWG0UeYTwW1fa6tgkCtbg0rKg8I1n0NkFO1bw4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OMzNmSvzmKXMUfMe9fY3FHvV+QBWIAbGaYFrMTX62cgXhqrSgmYhB8OH0hmNDGeJsEUluC7/AoIBZJ4RMqWePMIOhPLwbJE4LEpB+HGawBYhRTXt8WSqJgZ5ZpO77ExufLtnjgdVVdeelXjKa0g6LhZDBOJhwxi9m0qP5sYbdzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 73e10ddf-1d2b-11ef-80c1-005056bdfda7;
+	Tue, 28 May 2024 22:49:54 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v2 00/11] pinctrl: pinmux: Embed and reuse struct pinfunction
+Date: Tue, 28 May 2024 22:44:51 +0300
+Message-ID: <20240528194951.1489887-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
 
-On Mon, May 27, 2024 at 10:36:45PM -0700, Ian Rogers wrote:
-> On Mon, May 27, 2024 at 3:58 AM Leo Yan <leo.yan@linux.dev> wrote:
-> > On Sat, May 25, 2024 at 02:14:26PM -0700, Linus Torvalds wrote:
-> > > On Sat, 25 May 2024 at 09:43, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+As promised to Linus W. there is a series that converts struct function_desc
+to use struct pinfunction. With this it both struct group_desc and struct
+function_desc will rely on the generic data types (struct pingroup and struct
+pinfunction respectively). I haven't compiled everything, some builds might
+fail. Anyway, comments, reviews, testing are all appreciated. 
 
-> > > > This makes 'perf record' work for me again.
+In v2:
+- fixed compilation problems found so far by LKP
 
-> > > Oh, wait, no it doesn't.
+Andy Shevchenko (11):
+  pinctrl: berlin: Make use of struct pinfunction
+  pinctrl: equilibrium: Make use of struct pinfunction
+  pinctrl: ingenic: Provide a helper macro INGENIC_PIN_FUNCTION()
+  pinctrl: mediatek: Provide a helper macro PINCTRL_PIN_FUNCTION()
+  pinctrl: pinmux: Add a convenient define PINCTRL_FUNCTION_DESC()
+  pinctrl: pinmux: Embed struct pinfunction into struct function_desc
+  pinctrl: imx: Convert to use func member
+  pinctrl: ingenic: Convert to use func member
+  pinctrl: keembay: Convert to use func member
+  pinctrl: mediatek: Convert to use func member
+  pinctrl: pinmux: Remove unused members from struct function_desc
 
-> > > It makes just the plain "perf record" without any arguments work,
-> > > which was what I was testing because I was lazy.
+ drivers/pinctrl/berlin/berlin.c           |  21 +-
+ drivers/pinctrl/berlin/berlin.h           |   6 -
+ drivers/pinctrl/core.h                    |   2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c   |  14 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.c  |  10 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.h  |   6 +
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c |  32 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c |  42 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7629.c |  20 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7981.c |  34 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.c     |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.h     |  12 -
+ drivers/pinctrl/pinctrl-ingenic.c         | 707 +++++++++++-----------
+ drivers/pinctrl/pinctrl-keembay.c         |  22 +-
+ drivers/pinctrl/pinmux.c                  |  19 +-
+ drivers/pinctrl/pinmux.h                  |  19 +-
+ 17 files changed, 503 insertions(+), 511 deletions(-)
 
-> > > So now
+-- 
+2.45.1
 
-> > >     $ perf record sleep 1
-
-> > > works fine. But
-
-> > >     $ perf record -e cycles:pp sleep 1
-
-> > > is still completely broken (with or without ":p" and ":pp").
-
-> > Seems to me that this patch fails to check if a PMU is a core-attached
-> > PMU that can support common hardware events. Therefore, we should
-> > consider adding the following check.
-
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -1594,6 +1594,9 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-> >         while ((pmu = perf_pmus__scan(pmu)) != NULL) {
-> >                 bool auto_merge_stats;
-> >
-> > +               if (hw_config != PERF_COUNT_HW_MAX && !pmu->is_core)
-> > +                       continue;
-> > +
-> >                 if (parse_events__filter_pmu(parse_state, pmu))
-> >                         continue;
-
-> > To be clear, I only compiled this change but I have no chance to test
-> > it. @Ian, could you confirm this?
- 
-> Hi Leo,
- 
-> so the code is working as intended. I believe it also agrees with what
-> Arnaldo thinks.
- 
-> If you do:
- 
-> $ perf stat -e cycles ...
- 
-> and you have
- 
-> /sys/devices/pmu1/events/cycles
-> /sys/devices/pmu2/events/cycles
- 
-> The output of perf stat should contain counts for pmu1 and pmu2. Were
-> the event 'data_read' or 'inst_retired.any' we wouldn't be having the
-
-Sure, what is being asked is to count events and if those two events in
-those two PMUs can count, then do what the user asked.
-
-For 'perf record' we're asking for sampling, if the event has the name
-specified and can't be sampled, skip it, warn the user and even so
-only if verbose mode is asked, something like:
-
-  root@x1:~# perf record -e cycles -a sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
-  root@x1:~# perf evlist
-  cpu_atom/cycles/
-  cpu_core/cycles/
-  dummy:u
-  root@x1:~#
-
-Cool, there are two 'cycles' events, one in a PMU named 'cpu_atom',
-another in a 'cpu_core' one, both can be sampled, my workload may
-run/use resources on then, I'm interested, sample both.
-
-But if we had some other PMU, to use a name Jiri uses in tests/fake
-PMUs, the 'krava' PMU and it has a 'cycles' event, so 'krava/cycles/'
-and for some reason it doesn't support sampling, skip it, then the
-result should be the same as above.
-
-If the user finds it strange after looking at sysfs that 'krava/cycles/'
-isn't being sampled, the usual workflow is to ask perf for more
-verbosity, using -v (or multiple 'v' letters to get increasing levels of
-verbosity), in which case the user would see:
-
-  root@x1:~# perf record -v -e cycles -a sleep 1
-  WARNING: skipping 'krava/cycles/' event, it doesn't support sampling.
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 1.998 MB perf.data (4472 samples) ]
-  root@x1:~# perf evlist
-
-- Arnaldo
 
