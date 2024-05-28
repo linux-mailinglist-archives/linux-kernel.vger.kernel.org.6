@@ -1,290 +1,367 @@
-Return-Path: <linux-kernel+bounces-193225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3868C8D28A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21A48D28A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12EC288E14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69CE11F27384
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9853513EFFB;
-	Tue, 28 May 2024 23:18:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD7713F425;
+	Tue, 28 May 2024 23:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LyrJwbHb"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D47405F8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115613D88B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716938285; cv=none; b=hPW5PI9jrIP98e1E2wsgf1Srl0Fy2R+v7wIlaXoTOoi+2ZwOc11d6eyrcKYWeULr189gNfT9grrfved57iSzlzBYKsRau4VZld/m6CRgirOvadJ40W2rpoA6d3CfKVdPQ5vzU4IUWxCNIZFI2Bxv5e7+1UlzOQh/tD+Dv0AIbuc=
+	t=1716938360; cv=none; b=E4wDu/zjuY3AdsXolRCuyT3p339ljN5iD5igYV4G4+UiNbg9MbiAxOpM0ebV+Susg8ZE2szqXXBaipKffi4Ok/v2uclffwRxveF9VFmYwLkLHFgxCsR3XCQSbFhtvw9fkI6bm3ReufqEgCTetqC8ejuSTrFmt6sF/l6PBasSkU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716938285; c=relaxed/simple;
-	bh=Aqmx7t7eJ61Ld29gZZuVG5ovtSWSDnuXvkqWTNeJpnI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kE3DYhhEyF9fBXp/OeWkc0QM4ydSLtDuqz21TwwdUzlFXE9YKcP5rK6qEwg3n6ODuSpHILM2JCKMfx9Ebs+KPjq7OOVPlar/LWB2MnCJQVqsV7TXScot0RYMRtKFrsrQZytOGY6e1nLx6FmdauV1a3bqbF4csSDazVHDC96E9nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so187402739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:18:04 -0700 (PDT)
+	s=arc-20240116; t=1716938360; c=relaxed/simple;
+	bh=8Ks/xW44jNpyTbrhv2TT1UP2TH1bfzh/Id8ddDoxTo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AIMFrmJqCFv+wg6cQvbpHOLiyknm0yjLJI344QzdBYNBGaugsQ9RX2709G4SUDKuqwXFeMHNROSZDWHYFjEEFznqtEaOtDczwh5gRlxtXw7S5C3XXzt2DPsYUJBT715QCHr7XYy7c2Qa86Uzsr+p1DW+z4cA5lKmLhnm21FbGsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LyrJwbHb; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f47eb21f0aso12583305ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1716938357; x=1717543157; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQmtZImtTCDF8xM8bsMOtDDZXVcIKr+tvBdyZWpTfLs=;
+        b=LyrJwbHbKtbL+VhyMkk1yXv9qegXnFInG8f+j2mPz0EAi5C4ye3iEESibOT+sZG0wQ
+         yfTWxKMNcrW9npCfvvjVvCae5BUpeuCsYv+qEL9eXIeUXOHcn2rhqEVFMLjp4tp4STZw
+         CbqLeNMLxhYHYIA72bGTmARkGv/18BUgsbOLo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716938283; x=1717543083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DHw0Hv5DFEiICw7Ywk5qSmCz18sTHQoFeblczRwxPI=;
-        b=LdyAYjj2+lCH16oeQf1i6+uJSdWLcjQgvuW/SSKmQoOjS6sqmQT7MmLRW8UQexVyj8
-         lcWQpdpAwehXY8gC4kEmuzMvFPJJhgZjxkHJkJP02so4gNCVmAHXgu6aLYoZ69DiCmdA
-         RBHThOvPGng39r1hHi4AvcK20r47t2JkcCRBAU5Kk2D3TeP4Mxc5fV9RsnDd7MUh16ln
-         s9j/5rDwzAkN3BINC1R4viUK5kFLer4tdsnuLVhOo5iCBUtd9Kzb4mfM9YZ+/hFqQf2R
-         tA27mLDDOybU5zFiM5IYGqrV9qu1ymyEMVTEJ/RvkHLaOLQbZ7A4bdi1d0xazXgsJrg/
-         LPaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiPTJKzhq9cMlRpyZZBsVvO//R3svH6qX3IrnnQft5quz91MGgB8KeNkKYjcbguEC4MAtdRd+iiSqr8cII1mJ9AMmmeU5ItLR72mAg
-X-Gm-Message-State: AOJu0YzTlAD4yvEUt+/GE2A08eD6CwHtSaAV0rKsh8LM8hBgO/zuhxqc
-	Vxyg+Ha2e7fEu5/louRjnVbKfe8DGOuM3LJoFdFn49a+HeXRRzqsfnElm2lx28On6gGrMbeYBDE
-	0FNy5PZXO7QoUcbG37zd1IoAt6+laNyLa+8addjJnIVVGkgmfAKV+AYw=
-X-Google-Smtp-Source: AGHT+IGxUamHdKJom5cAFVtBZw33OTkWa9XqwA0ryKAoChhmhWhF+jgmmj/93QXNHoJzx3a26pi31j4Dh41c+iqX1nWUEGmvKPzm
+        d=1e100.net; s=20230601; t=1716938357; x=1717543157;
+        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aQmtZImtTCDF8xM8bsMOtDDZXVcIKr+tvBdyZWpTfLs=;
+        b=tPayecaX8ZQCz9c5dp24HmYIn+20lRDff1cdstNQXxSrRKfQuJZ+FYOKJ25rPcy7yU
+         aLndl8+O5uCfAw2F243OscRriMqQsgaOMA9p3dtHRyh+68NmmSQ+z31tzZ2npy+WOWNC
+         dgChW2OZJOJ7ViLjXDumskXhiDkOwMTKSd42mQCE2IQ6gPS0hpXruAoORjw8ms37/uYw
+         OYoOIyFIA2Z9I+n4dp9nJeYZJSiYnfJtYyzi5d5IkBBrZ8ZCBZaKD+K6iP1hIPHSe/ab
+         6vZGuObRUQM/Qec7puRLYunDPRpsOPb20hfHdXeRA0rZgtTMROOcIlDkm9/k2OtfpUf3
+         X/GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVWsVvobWY/bCC9iak+6hjD4590TQcmvObQgnUmeTPo2QP2iHUMs1s5Xouk2XDlTvYWoGTgSLD2C7g4j4+e9lyMSTnbqH+tsSsFpwR
+X-Gm-Message-State: AOJu0YwRSVLcFYusBq1PMOUFP8tDwhZcWqWcyuRvKFJ+Bm3zPf7rmdS/
+	xcmFXKdJO9XP7uC1lfybKMxlz0H6sKEi+8pa49MJGkt6kEyKb5psPFkAWsMB1A==
+X-Google-Smtp-Source: AGHT+IF5azFeiotoSKWA4uOUJz9O48YqOQx621jDWxAyiqI+zXtuBnARF8LoyGkAg4qNm+aB9hsl4A==
+X-Received: by 2002:a17:902:f9cb:b0:1f3:4bb7:5e16 with SMTP id d9443c01a7336-1f44873387bmr122173745ad.32.1716938357464;
+        Tue, 28 May 2024 16:19:17 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f481c24d13sm54561465ad.202.2024.05.28.16.19.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 16:19:16 -0700 (PDT)
+Message-ID: <3adb6776-fd13-427e-bc47-fb470e90045b@broadcom.com>
+Date: Tue, 28 May 2024 16:19:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:c017:0:b0:4b1:8aa:af6b with SMTP id
- 8926c6da1cb9f-4b108aab105mr90288173.1.1716938283390; Tue, 28 May 2024
- 16:18:03 -0700 (PDT)
-Date: Tue, 28 May 2024 16:18:03 -0700
-In-Reply-To: <20240528225829.2818-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007ba6d806198bd825@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] arm64: dts: broadcom: Add support for BCM2712
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+References: <cover.1716899600.git.andrea.porta@suse.com>
+ <8dd6997394a01317747ca11b4779f586752b4947.1716899600.git.andrea.porta@suse.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <8dd6997394a01317747ca11b4779f586752b4947.1716899600.git.andrea.porta@suse.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000edb00306198bdc2c"
 
-Hello,
+--000000000000edb00306198bdc2c
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in chrdev_open
+On 5/28/24 06:32, Andrea della Porta wrote:
+> The BCM2712 SoC family can be found on Raspberry Pi 5.
+> Add minimal SoC and board (Rpi5 specific) dts file to be able to
+> boot from SD card and use console on debug UART.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
 
-loop0: detected capacity change from 0 to 4096
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
-Read of size 8 at addr ffff888077a232e8 by task syz-executor.0/5460
+[snip]
 
-CPU: 0 PID: 5460 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- chrdev_open+0x2a9/0x630 fs/char_dev.c:396
- do_dentry_open+0x98b/0x1760 fs/open.c:960
- do_open fs/namei.c:3650 [inline]
- path_openat+0x289f/0x3280 fs/namei.c:3807
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1411
- do_sys_open fs/open.c:1426 [inline]
- __do_sys_openat fs/open.c:1442 [inline]
- __se_sys_openat fs/open.c:1437 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1437
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc31de7dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc31ec9f0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fc31dfabf80 RCX: 00007fc31de7dea9
-RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
-RBP: 00007fc31deca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fc31dfabf80 R15: 00007ffe9eccbdd8
- </TASK>
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> new file mode 100644
+> index 000000000000..71b0fa6c9594
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> @@ -0,0 +1,292 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
+> +	compatible = "brcm,bcm2712";
+> +
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	interrupt-parent = <&gicv2>;
+> +
+> +	axi: axi@1000000000 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges = <0x10 0x00000000  0x10 0x00000000  0x01 0x00000000>;
 
-Allocated by task 5449:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4000 [inline]
- kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4019
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
- new_inode+0x22/0x1d0 fs/inode.c:1033
- ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
- ntfs_create_inode+0x5f1/0x3680 fs/ntfs3/inode.c:1347
- ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:122
- vfs_mknod+0x36d/0x3b0 fs/namei.c:4009
- do_mknodat+0x3ec/0x5b0
- __do_sys_mknodat fs/namei.c:4087 [inline]
- __se_sys_mknodat fs/namei.c:4084 [inline]
- __x64_sys_mknodat+0xa9/0xc0 fs/namei.c:4084
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+That property does not look correct, you want to define an aperture that 
+starts at 0x10_0000_0000 into the CPU's address space, and then have 
+sub-node(s) whose "reg" property is to be encoded using #address-cells = 
+<1> and #size-cells = <1> because that's enough to represent that 
+address space.
 
-Freed by task 8:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2195 [inline]
- slab_free mm/slub.c:4436 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4511
- rcu_do_batch kernel/rcu/tree.c:2535 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- ipv6_get_lladdr+0x295/0x3d0 net/ipv6/addrconf.c:1935
- mld_newpack+0x338/0xa90 net/ipv6/mcast.c:1754
- add_grhead net/ipv6/mcast.c:1849 [inline]
- add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1987
- mld_send_cr net/ipv6/mcast.c:2113 [inline]
- mld_ifc_work+0x68e/0xd90 net/ipv6/mcast.c:2650
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> +
+> +		sdio1: mmc@1000fff000 {
+> +			compatible = "brcm,bcm2712-sdhci",
+> +				     "brcm,sdhci-brcmstb";
+> +			reg = <0x10 0x00fff000  0x0 0x260>,
+> +			      <0x10 0x00fff400  0x0 0x200>;
 
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- __call_rcu_common kernel/rcu/tree.c:3072 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
- __dentry_kill+0x20d/0x630 fs/dcache.c:603
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
- shrink_dcache_parent+0xcb/0x3b0
- do_one_tree+0x23/0xe0 fs/dcache.c:1538
- shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1555
- generic_shutdown_super+0x6a/0x2d0 fs/super.c:621
- kill_block_super+0x44/0x90 fs/super.c:1677
- ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1798
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+That "reg" property should not be including the 0x10_0000_0000 offset at 
+all, and we should just have:
 
-The buggy address belongs to the object at ffff888077a22c40
- which belongs to the cache ntfs_inode_cache of size 1760
-The buggy address is located 1704 bytes inside of
- freed 1760-byte region [ffff888077a22c40, ffff888077a23320)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x77a20
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff888029d33a01
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffefff(slab)
-raw: 00fff00000000040 ffff88801a3928c0 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080110011 00000001ffffefff ffff888029d33a01
-head: 00fff00000000040 ffff88801a3928c0 dead000000000122 0000000000000000
-head: 0000000000000000 0000000080110011 00000001ffffefff ffff888029d33a01
-head: 00fff00000000003 ffffea0001de8801 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5449, tgid 5448 (syz-executor.0), ts 81273391795, free_ts 81190252679
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
- prep_new_page mm/page_alloc.c:1476 [inline]
- get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2264
- allocate_slab+0x5a/0x2e0 mm/slub.c:2427
- new_slab mm/slub.c:2480 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
- __slab_alloc+0x58/0xa0 mm/slub.c:3756
- __slab_alloc_node mm/slub.c:3809 [inline]
- slab_alloc_node mm/slub.c:3988 [inline]
- kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4019
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- iget5_locked+0xa4/0x280 fs/inode.c:1235
- ntfs_iget5+0xd5/0x3b10 fs/ntfs3/inode.c:532
- ntfs_fill_super+0x2619/0x4a20 fs/ntfs3/super.c:1212
- get_tree_bdev+0x3f7/0x570 fs/super.c:1616
- vfs_get_tree+0x90/0x2a0 fs/super.c:1781
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
-page last free pid 45 tgid 45 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
- discard_slab mm/slub.c:2526 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:2994
- put_cpu_partial+0x17c/0x250 mm/slub.c:3069
- __slab_free+0x2ea/0x3d0 mm/slub.c:4306
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4000 [inline]
- __do_kmalloc_node mm/slub.c:4120 [inline]
- kmalloc_node_track_caller_noprof+0x1cd/0x440 mm/slub.c:4141
- kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:597
- __alloc_skb+0x1f3/0x440 net/core/skbuff.c:666
- alloc_skb include/linux/skbuff.h:1308 [inline]
- alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6504
- sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2794
- sock_alloc_send_skb include/net/sock.h:1773 [inline]
- mld_newpack+0x1c3/0xa90 net/ipv6/mcast.c:1746
- add_grhead net/ipv6/mcast.c:1849 [inline]
- add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1987
- mld_send_cr net/ipv6/mcast.c:2113 [inline]
- mld_ifc_work+0x68e/0xd90 net/ipv6/mcast.c:2650
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
-
-Memory state around the buggy address:
- ffff888077a23180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888077a23200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888077a23280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                          ^
- ffff888077a23300: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888077a23380: fc fc fc fc fa fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+			reg = <0xfff000 0x260>,
+			      <0xfff400 0x200>;
 
 
-Tested on:
+> +			reg-names = "host", "cfg";
+> +			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clk_emmc2>;
+> +			clock-names = "sw_sdio";
+> +			mmc-ddr-3_3v;
+> +		};
+> +
+> +		gicv2: interrupt-controller@107fff9000 {
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +			compatible = "arm,gic-400";
+> +			reg = <0x10 0x7fff9000  0x0 0x1000>,
+> +			      <0x10 0x7fffa000  0x0 0x2000>,
+> +			      <0x10 0x7fffc000  0x0 0x2000>,
+> +			      <0x10 0x7fffe000  0x0 0x2000>;
 
-commit:         e0cce98f Merge tag 'tpmdd-next-6.10-rc2' of git://git...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=101ea864980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10cba53c980000
+Likewise, this is supposed to be:
 
+			reg = <0x7fff9000 0x1000>,
+				<0x7fffa000 0x2000>,
+				<0x7fffc000 0x2000>,
+				<0x7fffe000 0x2000>;
+
+[snip]
+
+> +
+> +	soc: soc@107c000000 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		ranges     = <0x7c000000  0x10 0x7c000000  0x04000000>;
+
+That spans the previously defined axi node above (goes up to 
+0x10_8000_0000), once we make the necessary "ranges" adjustments to the 
+axi node as indicated before.
+
+I thought that based upon our conversation in v3, this was all going to 
+be a single "soc" node?
+
+> +		/* Emulate a contiguous 30-bit address range for DMA */
+> +		dma-ranges = <0xc0000000  0x00 0x00000000  0x40000000>,
+> +			     <0x7c000000  0x10 0x7c000000  0x04000000>;
+> +
+> +		system_timer: timer@7c003000 {
+> +			compatible = "brcm,bcm2835-system-timer";
+> +			reg = <0x7c003000 0x1000>;
+> +			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency = <1000000>;
+> +		};
+> +
+> +		mailbox: mailbox@7c013880 {
+> +			compatible = "brcm,bcm2835-mbox";
+> +			reg = <0x7c013880 0x40>;
+> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+> +			#mbox-cells = <0>;
+> +		};
+> +
+> +		local_intc: local-intc@7cd00000 {
+> +			compatible = "brcm,bcm2836-l1-intc";
+> +			reg = <0x7cd00000 0x100>;
+> +		};
+> +
+> +		uart10: serial@7d001000 {
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x7d001000 0x200>;
+> +			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clk_uart>, <&clk_vpu>;
+> +			clock-names = "uartclk", "apb_pclk";
+> +			arm,primecell-periphid = <0x00241011>;
+> +			status = "disabled";
+> +		};
+> +
+> +		interrupt-controller@7d517000 {
+> +			compatible = "brcm,bcm7271-l2-intc";
+> +			reg = <0x7d517000 0x10>;
+> +			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +		};
+> +
+> +		gio_aon: gpio@7d517c00 {
+> +			compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
+> +			reg = <0x7d517c00 0x40>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			// Don't use GIO_AON as an interrupt controller because it will
+> +			// clash with the firmware monitoring the PMIC interrupt via the VPU.
+
+OK, so the comment is intended to explain why there is no 
+'interrupt-controller' property specified when one might expect to find 
+one, and it has nothing to do with the "brcm,gpio-bank-widths" property, 
+because that one is correct and does indicate the number of pins that 
+need to be managed per bank. Some clarification is warranted here IMHO.
+-- 
+Florian
+
+
+--000000000000edb00306198bdc2c
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIPpW69Qb5y9fGH/i
+aMvLA8FPYoQz+nksI6LcsxCyf/gGMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDUyODIzMTkxN1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBnMv/3x5wRK43HKj1ux4TIR9lXhKDWHPsA
+gl3HEYlNdCEmoK0bHZCaERshrCms6cTPAbMappfiV8iqy0bY0yHx4nRZkBnrEzgWkr01KfVlMyQc
+sc5aqQ3RMKeGMF/ClgytyjskhPW1eL/VcsC4RHv8z24Rq0IkipXN1I3oHBfTrag883Rytx97uREG
+To5X9DjodRzNlKGkw0Sl3ChNs0kJDD8R6CAOLu1CnVIEvAAvNSyvP2SyEMwUWby0rIADsEhSFLsY
+dW9d7CNK2xBarpqb+EXXpw3nCPjFN66tofY8zkfhRmc+8JeEwyjeoev+7ir8hldaTG2omKyrmRxt
+GD+m
+--000000000000edb00306198bdc2c--
 
