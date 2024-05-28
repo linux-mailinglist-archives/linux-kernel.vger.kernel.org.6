@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-192357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206558D1C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 468298D1C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A278A1F23769
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42971F23B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E354D16DEBD;
-	Tue, 28 May 2024 13:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mEsIam4J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01EA16F269;
+	Tue, 28 May 2024 13:01:20 +0000 (UTC)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2734916DECA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5F16D306;
+	Tue, 28 May 2024 13:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901265; cv=none; b=C6PnL+85j4lC39em1jtjN8mcKGpTn8RgN9Yv/0SoHUnMGm5fq2+Ks4zYX/jY7she0nNi7YlqfoBXop2QdL+mVEyLdDQv9eV+zvdHQAd1l+Z5e9A6URU2MbtYXuI/3P9ETcAJcZNCBxXqNfF6ELjR4gkn1GiVNeRP+PH0eMleKQA=
+	t=1716901280; cv=none; b=HSzAoNU+TgTB2/SU5ZODJjs4GKnO9M/hrWImidXutQT62YKImjKEWR44avDe/orKgpM1SJ/UcQ3kwaBomRgLLUQgFMtjoEDjshZxbQAR3Iwx2qVligW/B/trKS6eNvHUjxQSAbQ6WbIU9OBOvxlxD4yujcYCudAjK1Q7ZKTaJSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901265; c=relaxed/simple;
-	bh=7y4RVKFrtvKqPEZh7zHGZLwvzx5dhBxk1lFGikboazk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/8FH/jgLJOGythEyh0VHEndgDg6PbBMOu2k9femjuVvWjU2vcZ06or+3Qg6UD1OYfCva9pXORYwHZvkVFCf/ZIDZaNvMmi3pLnxd5NmEqOzo2uc0dd6BkyVD4oGEiVK9GHibnVeWq+boeg2j0tIjXwTGUzG2b3k3gXCiN5F21w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mEsIam4J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAEEC32789;
-	Tue, 28 May 2024 13:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716901264;
-	bh=7y4RVKFrtvKqPEZh7zHGZLwvzx5dhBxk1lFGikboazk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mEsIam4JWoKj1hXy/GIhj4kAUjj6nDvqKng4Ln5AbPLCJ+0886wWIOnDC47XSlTlZ
-	 NlJw5Mpke7QInr/xG5AGxun2i5xQydvSVdASdPjGvu2jPj7jW9EqEVq+nTn//1GbMp
-	 /lqZfjBepg0NzggJ+MUMQUWvfe00mk9B7WWzHQ1eEYz4UWb6Y2vofGEhsUFH3/ZXde
-	 PMf7GFQwXO095XBFlyg5FBkNy71hRxFcnpn3N+OZddToFJwBJ0uPoU5Oas3qukgKKj
-	 imvPjZD6GwvzzR7P7BjpaWOGfCU6gZQtSH+WfoMO8vs71cZqaaLemBCiifXOS5zfl3
-	 tJnngrDjS7ldQ==
-Message-ID: <096662e8-03cf-4c13-baa0-11918cab7511@kernel.org>
-Date: Tue, 28 May 2024 15:00:57 +0200
+	s=arc-20240116; t=1716901280; c=relaxed/simple;
+	bh=hLlgA6EbxtYz87mU4dCUKIO9tvggBl1Ci1zWFw44hyA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gfq6rJzVtoOZTBJAT0hP/FKsTYVAa2yImPlCpmcvh5ltZDq0EI2mI+WaD0RNZDF3banXt6rKCzDp9nEnoYNv2lrmBcNj5Kn1Jqe4t3QPyDC+1wavUyjvv7c9GFlP/NCqGlfXe9+dom+/g134mIxlMmOJwWqi5mejqHlNV0LNg2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df771983aedso810099276.1;
+        Tue, 28 May 2024 06:01:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716901276; x=1717506076;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ca4QTPgVjg9hVugmet1g3QkdknEZA/c9v89K+9HMSV8=;
+        b=UD1NQBJ11PT5kJHJ87R8jyBP806XaVTVOqHrYGOGjob+SFoaY+DS8NnnanT0MyoWt9
+         cZ6sEq+0jGA2CaOB7FqIzjP6hs3J/51l1VwYPpLoFBssFKSFYT5wG9GCved9Ivz9ZUNh
+         ndlXh5Nd5Tx5zeOsSCuRvCQU3bpokFayGx1XKvG0DVH5CNhlkl1fBnbR6MkItY8m8e//
+         I+I0X7ihPDMRoFUg7i8CYgdF+bjtmvgj4wNgnTN8nVSXkR+rslXjxF4NfOzQIg8rJPR1
+         rbnEghCQovbyypv+/vDgb0QJYbsDkPom9tUbcAj4nOWssHLrYhsmFXlqJqtLdiKcVBu2
+         sW2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVDtxaTMi3VwUgD0KL4L5l7DfoaZb5EQeRWg6BgaiN42oxFisVcZ4MlotXStDMgVy+hz+Zn2CoFoAbMDYvQaGbeCCGvWtNU8uMHdvT8juAx/wA+danlnB7zBlFKEeuhCIEkViaVWAJ3Xi7f
+X-Gm-Message-State: AOJu0YxkGdpzHisIo7vTIcZCJAo5LKAb1ljuG6d9D8DkUSkPfgAno0Zp
+	s6/XH668kzL4HKw0y7W0PfJUCUYo81b0sSU9DgcmWVVaAVKcUvfjKcxae4mn
+X-Google-Smtp-Source: AGHT+IEB6kQXqyx3C0KiyHkOhyYCtlRHPqvU7nahgt0PT2gHdClS724hajEl+Jid49JSmJM6ZRhd0w==
+X-Received: by 2002:a25:ae1e:0:b0:df4:df14:61bc with SMTP id 3f1490d57ef6-df7721b7236mr12812647276.29.1716901274732;
+        Tue, 28 May 2024 06:01:14 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df7746accedsm1010360276.32.2024.05.28.06.01.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 06:01:14 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-df771983aedso810005276.1;
+        Tue, 28 May 2024 06:01:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrXXsxvXziASXN4Q7cUuMyEWpBkqPW9zZ/pfNN/bmw5qirnvyxvhk07qDsXYsRHA8OyfwV17WaV/oDyVeVv+qffmN+Bk+naAUWMouBmgSdCHUAaQNJqmhP8DHpvhR2SN5wLeErNX9pgZ0P
+X-Received: by 2002:a25:dfc2:0:b0:df4:e882:2808 with SMTP id
+ 3f1490d57ef6-df77225d6eemr11466590276.56.1716901273306; Tue, 28 May 2024
+ 06:01:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
- user-visible CONFIG_FSL_IFC
-To: Esben Haabendal <esben@geanix.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
- <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240415122037.1983124-1-arnd@kernel.org> <20240415122037.1983124-4-arnd@kernel.org>
+In-Reply-To: <20240415122037.1983124-4-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 May 2024 15:01:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXy2aH6nsZZr2qpqi83S=6_bXEk+qk3RKcDzOcvU13Z1A@mail.gmail.com>
+Message-ID: <CAMuHMdXy2aH6nsZZr2qpqi83S=6_bXEk+qk3RKcDzOcvU13Z1A@mail.gmail.com>
+Subject: Re: [PATCH 3/6] [v3] kbuild: turn on -Wrestrict by default
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Kees Cook <keescook@chromium.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/05/2024 14:28, Esben Haabendal wrote:
-> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
-> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
-> selected in config snippets.
-> 
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
-> ---
->  arch/powerpc/configs/85xx-hw.config | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
-> index 524db76f47b7..8aff83217397 100644
-> --- a/arch/powerpc/configs/85xx-hw.config
-> +++ b/arch/powerpc/configs/85xx-hw.config
-> @@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
->  CONFIG_FSL_CORENET_CF=y
->  CONFIG_FSL_DMA=y
->  CONFIG_FSL_HV_MANAGER=y
-> +CONFIG_FSL_IFC=y
+Hi Arnd,
 
-Does not look like placed according to config order. This is not
-alphabetically sorted, but as Kconfig creates it (make savedefconfig).
+On Mon, Apr 15, 2024 at 2:22=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> All known -Wrestrict warnings are addressed now, so don't disable the war=
+ning
+> any more.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->  CONFIG_FSL_PQ_MDIO=y
->  CONFIG_FSL_RIO=y
+Thanks for your patch, which is now commit 06bb7fc0feee32d9 ("kbuild:
+turn on -Wrestrict by default") in v6.10-rc1.
 
+With shmobile_defconfig and gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.0=
+4):
 
-You also missed to update second defconfig - arm64.
+    kernel/kallsyms.c: In function =E2=80=98__sprint_symbol.constprop=E2=80=
+=99:
+    kernel/kallsyms.c:492:17: warning: =E2=80=98strcpy=E2=80=99 source argu=
+ment is the
+same as destination [-Werror=3Drestrict]
+      492 |                 strcpy(buffer, name);
+          |                 ^~~~~~~~~~~~~~~~~~~~
 
-Best regards,
-Krzysztof
+Reverting the commit fixes the issue.
 
+I assume you just forgot that this depends on "[PATCH] [v5] kallsyms:
+rework symbol lookup return codes"?
+https://lore.kernel.org/r/20240404143424.3279752-1-arnd@kernel.org
+
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -98,7 +98,6 @@ else
+>  # Suppress them by using -Wno... except for W=3D1.
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, unused-but-set-variable)
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, unused-const-variable)
+> -KBUILD_CFLAGS +=3D $(call cc-disable-warning, restrict)
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, packed-not-aligned)
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, format-overflow)
+>  KBUILD_CFLAGS +=3D $(call cc-disable-warning, format-truncation)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
