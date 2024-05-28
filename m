@@ -1,225 +1,332 @@
-Return-Path: <linux-kernel+bounces-192149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18808D1923
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264C78D1924
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A99C289077
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD631F23409
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FAE16C68B;
-	Tue, 28 May 2024 11:09:35 +0000 (UTC)
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B113E039;
-	Tue, 28 May 2024 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716894574; cv=fail; b=OImM6wK+BaFHQjhXZexv41MF+BL1FH1FXaF3tNjKPO5xEpluHTYq3ar2YF82Hilkwxp+1QAb1TEFvsrGnammK4z7J5yznITt0Bq2vMPn6KRTKspG6dPYT9lAg377JJ9z8IEohM8DDs200Holf4/6LkIVMSZu6N3oWJ7d+fD7K9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716894574; c=relaxed/simple;
-	bh=+ny/DxeIfcLAY1nG5YvT2ZYMqQaqzbuSvpG4ggEv0vA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tXs65YRXeQiETjolfynVkqratqLW7hXeYbgpXFVsB07tHFTxECt+7cmZhSl8tTFjylLTAMv8idDX9O14PGVgIJXiUc11vfieJ3LYun6Pcpqvpzyi7OVM4Drsa1bLMgMfRNVz5DhFgZMwnzKQuFagnDluEqrNJgyLeKHRqzGqIUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44S7xHoC003476;
-	Tue, 28 May 2024 11:09:17 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
- =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
- =?UTF-8?Q?3-11-20;_bh=3DcuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=3D;_b?=
- =?UTF-8?Q?=3DgKo5U1sFZeqwP7UVz/Q0zFWHFRIIIIo7eWJ7R2s3+M4/0PM8rsi0sSgVHRzx?=
- =?UTF-8?Q?3EXk2lHY_x3dQkFL95uvYB178bSsvnC5PKwqbrMxhvcyYZN7ngoKVCrcUXuwR2d?=
- =?UTF-8?Q?g5fb7j7kD+EHh5_3lntKofo6wZRSqYwFEycx6V5Vv9TRzge/Obh5JEp/IbX2pLM?=
- =?UTF-8?Q?GvaZXqIzRwo/1BsVbFan_pzLG3n+aVKyyf1WMFC0YUGlBve+vfz0P6IrAjhBMpp?=
- =?UTF-8?Q?FLhvcLoEPXRb70rAHWdUoitwTJ_n0/s8FcN4gpMMPQZOrW6zNk5D6R6NhDr2D0j?=
- =?UTF-8?Q?7iS9Aa95sp5wiD1SYBhbcMrTTKZlt3Ok_yA=3D=3D_?=
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g9m39w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 11:09:17 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44SB1Xgj036785;
-	Tue, 28 May 2024 11:09:16 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50wqm2v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 11:09:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ht9AHqbK5nWXZ4FJClSG5v1xDfIwiVuVfqfAi9VMSj/RhkCKBAe0FxpkzZ3cfEq8GoQiP09i70ekIqsYc6fGlS6JUDhcrCqZQFm/uWtdK7Ca5eoqlbveyBWpwfMmqwM5asyOtFaibIvQ4UIlHI1RA6dR1S+ESra+z381A1St4bG1hGVMoAraSPG9UHk8bw+t/7HvSJXFHeTc+zVRfDX/pqWTt7Tq8wTzll8py5XywDv2ZkMhbrnwuGDUY+sPVyUNIXmqrSctclbNAi/ZdcsnmJhEY028XLWwOtj8ns5gh34zQJzTCbzJWX0dGgVk2cBrUomPzoWU7QaA/TeqVaWr2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=;
- b=bflzRcj4TlcheCAAe07zSPMEKT2h/OnmzZV6T5GL0SjTQ8qNSk2cIln+/WtXzoTbNSx5TmGcN8RKMqI7BPpHANTji3gfggUEBUpwXzEDyAS9BSw4y44qbLN1+Rn3sedF5+erxcqbjEwz1I663BmqPv3kpH/Bgsfhib3n2zZdIeovFXPxZbl9ciWONXcMNNh+pgApMbvRLkAFAE7bB9dpD7PeO4gjoP41o5LJEZbQ5pFEyrhACL+O4inbFTwuR3R7ekKP+NdQmhCnAq3S2P/KgmXESFIqovda2ZYsIKfT+uDHcNd27NO8QxQLLdBVJxDoYFTOCEG7OYTP+1gsppQdIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cuY5/1wM2KWvOgpMHx7qyelT1QbiE0LvxX6O+e3xnYI=;
- b=aKt6i9ugFObw60haHq2wCq+CLGRCTz5bLg3f2+1ZxJyOIGGhcpiY75wigXxaP5Lb8Vs7/vq3dB72l0uRtsstOzdosmYaGZrrD/8RjdThj8KDxP+LIJrVscADBOWOsK6lHfVgxnCPqwnopvm4CZZMyTFZAnoZ5Dkl+RFLaWOrmps=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB6530.namprd10.prod.outlook.com (2603:10b6:510:201::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Tue, 28 May
- 2024 11:09:14 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7611.030; Tue, 28 May 2024
- 11:09:14 +0000
-Message-ID: <0b65cccc-b39a-4121-ac0d-52d49c85632b@oracle.com>
-Date: Tue, 28 May 2024 12:09:02 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org
-References: <20240228061257.GA106651@mit.edu>
- <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
- <Zk89vBVAeny6v13q@infradead.org>
- <4c68c88d-496c-4294-95a8-d2384d380fd3@oracle.com>
- <ZlW4o4O9saBw5Xjr@infradead.org>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <ZlW4o4O9saBw5Xjr@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGXP274CA0004.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::16)
- To DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1516C455;
+	Tue, 28 May 2024 11:09:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A302614373C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716894586; cv=none; b=uypY1nlUfClaZzXjgwNZSfYeoJVkGkIf5Q/hIyZv4n/UAnTtrdd5T5TNHA29tyj4X8zR7b7s9i6QsiGdjfWy6HGLubLfxTRFLb2i+aHw6bFpdVWySDBBGf3E53Gr1nCPxXhxepp9fo5Csjm8o6ZV+HgkrfJdnmR7O33zKREyVIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716894586; c=relaxed/simple;
+	bh=Mt1acxPCnyHW/P4KAXryAu1exCKvXb9y1yr3zEaDZ3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ip+Ij/Qv/PeUWdJHwOP+RmyrhkGBqw3qU27smJs9Lq65QBrRjFhdXaW+JBSNf9fYZH9TjG0edrD7by8/03dGnv9ft3TUDtw1h1g6AEB9FlNpUeaNyqPZXKg14ZNJPpGB6sp42RQVYuIwBrFf9qHMKhiBOeuXGfWk59e3ThqyDTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D324DA7;
+	Tue, 28 May 2024 04:10:08 -0700 (PDT)
+Received: from [10.1.36.57] (e133649.arm.com [10.1.36.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C21F93F762;
+	Tue, 28 May 2024 04:09:40 -0700 (PDT)
+Message-ID: <1b36141c-1ad7-4c34-b293-92003f473465@arm.com>
+Date: Tue, 28 May 2024 12:09:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6530:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdd700ad-f0f4-486e-41e0-08dc7f069bc2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UVFHTjFuTmdqbTRob3dpM3V0TnJ6aFlFelNLMWN0ZmY5RU9oWkxNUng5Zjlm?=
- =?utf-8?B?QXhaWjQ3azk1WEhqa1pGbTVNVjV1OFhFOFhRQWJrWFV5SG9DcjA4ekFVamRS?=
- =?utf-8?B?NWVoSGRZUnJScmQzTStPQTUyQWdySmhhZVkwK0dFdmdyc0cxRWZVL3YzQWZn?=
- =?utf-8?B?bWRyMnhSZmhMNzFoV0t4UER5Z1daQXhldVVsbEd2SHNXSTEraVZKUm9kcTdG?=
- =?utf-8?B?cFk1U0lpNzc3Z3kyZGg0U0FTbXgrWFpISTMwM0s2WG9vOGJJb2UxTXdjbFQr?=
- =?utf-8?B?bE1KZE5Ram91eEpJVVA5SVJPL1g2cUxPQ01OUWpMdTZoSDlMcEFUekFrdVYx?=
- =?utf-8?B?S3FLR2ZoSlVpa2Q3SW5SZnZ5Wi9OVnFpVUJkUWpoV2JjVkJiTXNJamdXaVQz?=
- =?utf-8?B?d1h2dkNNVFVjWkg0bnpndnd1bUlST3IzSjBGTWljRHB6ZEV0aCtpUjV5Skh6?=
- =?utf-8?B?RURIWlUzbkZPSFpaVnZsTmZHWGVhNGpXdzlaOGhaT1I1c0swZUdhaFVIcnFD?=
- =?utf-8?B?TC82aVRQMFVnTW9BQ1hJakV5MXRRU05scUhMeHFPOVhPaW5MaVpCeFhXKzk0?=
- =?utf-8?B?YldUOVhia0RxNG1GYzg4Tkh6eDZHMFNKaGtoelp4dHFtNk1ZUFFVWkNRbFo2?=
- =?utf-8?B?T1NGQzJXQzNlWmxNWWdjUUlZaTZSSDJjWDZwVWZUM2pReVhjY2xDMTU5aHBh?=
- =?utf-8?B?RTFhNm9yaE0rSVY2T2tIaFpGRG9CTFY3QjlRTXJseHFGd3hYbHZIQ2NmeThS?=
- =?utf-8?B?QU5la09SMDB6V3hKcTdBNHh5NmUxR20wSXY2WkpMbnNtdGNSY2FBTGErZW9G?=
- =?utf-8?B?VWt0L3BJZ2hNZGpPUlpPOUQraDNKc1NpeGx1TmVvcjVQL0RndWNSYjkxRE8x?=
- =?utf-8?B?ZlRMS0szcjZXRkZUanRwZzFmUVNxZGhXaGdXR3k0d2xSZjNoWFI4QzJVeFRl?=
- =?utf-8?B?RENCamU3bmpwdnVrakFESlQ2M3RONTZRcmE5VGt5dE4reVFlR2x0STlNejRa?=
- =?utf-8?B?Y1QxZjRSMjJCNFhESzFqcCtvekpleUdKTys1SXk4Z2FIaUc2MlFYOG12NDcz?=
- =?utf-8?B?RkY1UFdpWCtaZ2pOTnBsUnpKSU1HT1E4SnhNeW5uSFNhVE5WR292UWdJcGNS?=
- =?utf-8?B?dWlkaU5TMksrLzdkcHlwTkJCWVQySUJRMWJ0Z1Vad25GTEFNeFJUbHduZUd1?=
- =?utf-8?B?ZGl5RFprZmlSNG5xM2dMQ0ROdjlRWkJXMGYyVEdwWlBPbWIyZHRibmlZS01I?=
- =?utf-8?B?NVZQRHp5cXk4em9RNjEwSXMwOU1Nd2RjQXJoOGZYeXdQY0tqQjJGVlJReG0x?=
- =?utf-8?B?QXNhV3FudnltaVRwWjN0NHRmdHdjaFcyTWhJNHJZN2lYSFl6VEU2UHNFTUR6?=
- =?utf-8?B?ano0VFRRZGlPTGtzRmYwK2pBZDdSTnNvQXlKTEhDSVdrOHVaeFl2RFJvQW5z?=
- =?utf-8?B?ZDhteklLRVVLNXpCTEQwRkZIUGg3TkhzUkQzbHV5YzBJYWpYdTVkc0RicEJr?=
- =?utf-8?B?Q3hFZ1Fyb0g1VG13bUtZUk1TTm1tWWZKSWxWWXM5eHVFVGppaWhJMXNqcUow?=
- =?utf-8?B?R01ZU2Rid3NkL0pMVDJGRjVlNTBKMWVSOTFuWVpXMXJWa3cwTXFNYnErNmNT?=
- =?utf-8?B?Q3JWUEVWTUtQNHIyTXdjK1pHWXRFTkRVS2NHT2plTEVVY2NOTmx5UFlXYVFn?=
- =?utf-8?B?MWRzYytweXgzZWo3b01selU0SVFuakFMeDN3Mk1kTmVzUmxLSmpNNkRRPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YmpTT3FLNW13SGUzZW14emxQdGxmQVBVVVA4MzJsZEUwMkNzTlhSRlVKZDRm?=
- =?utf-8?B?WStUOTcvYksySUFnVERiVFhSNDBTVE5WUzhWZHVyZjdmVHlTQTQveTRWZTlZ?=
- =?utf-8?B?TnJXSkQ2VVJ5eUZrbDZ2VWdUK1YydTZ2RGUwNHNCZW5BcVhCZDVRaFY1RW1Z?=
- =?utf-8?B?eHZpQktTYUIwbXROeCtQSFY1VDc4QzNMbVpkTkhuUzBiVHRpVzZ3K1RwUXNN?=
- =?utf-8?B?WWFMZlV2SDVyY3A3L0FJYmZMZGNKdGwzOUFFTXFwSDlJWVp5cER1ZVo1WCtC?=
- =?utf-8?B?bHZzcG1KaUc5bTlaRHFnUGQ3TjBpSTVDSFpON0ZOci9XbWxPQjdlWUoralVJ?=
- =?utf-8?B?YjB2UlhLeldOZVgxNEkzbnVaVzhiVDNUUk5WczlMeVhsTXNya0poSmhkSzdL?=
- =?utf-8?B?UXJNaDduSllVYTdScDNSaW03MTYxc01EdTNEa0srcC8vcXNzNUQvekMvZ3c1?=
- =?utf-8?B?WkQ0UXE3eUkvTWE5aTYzcitQcjRqYjN2ODVKbXZpekp5VUtWZ2hSRkJqcVdi?=
- =?utf-8?B?bXlGWkxuY2JzZVhvWi9VT1RhYVFucmJ2dW1TNGV4RlB0ald0b05lR01pcXY4?=
- =?utf-8?B?dkxkeTAvOVI5TjZjL2l3VGxUZ1FIV3g0SzY3NncySHYra2xIS2E0bVJRWXN3?=
- =?utf-8?B?ME42SWFXMGJmSWUwUCtWVmp3N1psNEZYaVdGQnI1aDR5ZmVxUklJNkZlcTVh?=
- =?utf-8?B?STZkazJyNWk4NEtQSkRPYXJQaDdiZmd5Z1NYYWowNlQ1bG9obWNZNVp2am1V?=
- =?utf-8?B?Y0xwakRLRWVNRHVWb0o3VGMwTDBuN2hDb3pHODRaR3lOUWlkVFNubXZmeDBK?=
- =?utf-8?B?OGc2ckoyVm42d2IwVnlhV3NJQmFIdFprL0tjemxqbEhUbzJSQWFUdXhaMWhD?=
- =?utf-8?B?NGtCdU42d3dvUkVITHhaMnllQWRQSVladSs0SGNuaWo3UHhNajBleStBTjR4?=
- =?utf-8?B?d2J0Uk1tVXgrL1ZvNFlpUlhoelBJaUNFTUV2MkFRY2ZGcVFCUms3d0h2MExW?=
- =?utf-8?B?WEhJaThHUHdxWXVUaUpmenc1UkZuT0hnSm5uamNwNmIyZ0NYbm1hTTljR25h?=
- =?utf-8?B?RDFIWFRhU0xZbVUwQUNJYWJBdGxIQTRLak1DK3lYYjJ2NHZsaDV5aXRPbi9C?=
- =?utf-8?B?Yjk2a2grV0lyZ3FiTmg5V2FhSW1Oek1GK2JYWVYvRHB0NjJGMEZmNlBadE5I?=
- =?utf-8?B?K0VNSGZkaVFrRkFTaytmdlRiZlZ2VGZqb3ZCbFM1aFppdHlKdkpZYzhQWXR4?=
- =?utf-8?B?VVh3S1I2cUhhNnRLWXVwSnNKMzhJdi9lZUkzNWVRa0E1NTBqZERtb29EUnpH?=
- =?utf-8?B?Rlhvb3BSSjRTL0ZKcHZoK2V5UjI5ekJpbHJ3MUViWjVoak1DMEJTcmcyRllD?=
- =?utf-8?B?QjVsc3dLdWRsenRlemlnV1Q4b0w2RWpBWklBakk4L0UydFQwZ3pqeWlrZkxF?=
- =?utf-8?B?NUZuSTd5Q0tzL0NHWXlSUFlid29kek1McENWcjVaazJxcTI4bkxvbzMrcUFB?=
- =?utf-8?B?TG1yemplVTVnVCtJSDZvcHpWU0ZRUjRSdVZ2OEx0TXlhZ1ZrOG1ZWlI5SS9C?=
- =?utf-8?B?dDBRUnZzMittY2ZIajhhWlQyRHJsQ21oSWNybFo0U2xveGRhVkhpdnVaS0x3?=
- =?utf-8?B?QldkL0t0OThRclF5TGlwQ3BreHRDL0E2dDBBVlFtOWdkWHlzZE1FUS8xYmtt?=
- =?utf-8?B?WjdlMTgvZncvSklkUHErV05hOGlsUXNIL3NabEZvc2dXOUVOVDRqWStmM1Q2?=
- =?utf-8?B?Vy9NbEhtN2ZFdVlKODJYdzI2bjJ4OU1PRjZLYXRldm1nRjB0TkZyeHg3NTU5?=
- =?utf-8?B?allWKysxeXNKUkRIRTFqOEdwSFZ2MXN3dkZXMWp0cVV3MHIzLyttZDZvRUdP?=
- =?utf-8?B?andwM0swV29VUk5GcmM3amxuY242WlVURmFRd1J4L3paK3JSbS9lb0hoN1Ju?=
- =?utf-8?B?eDZ6Skx4Q0ppOUgzS3g5bHZUUnJYZzhwVWo0WlpjTmUwN01pdFd1aHNBaTY2?=
- =?utf-8?B?QmtReE9adDM1OVRIajNUYjh2RW1iMW04YnFXV2VOWTFmTFk0YzhWZ1V4WmNt?=
- =?utf-8?B?SDc2YTdnM3ZhVUx5Y0VaQmQ1L01iYjczMUZnWk9GeVljR0ZHK1cvM2lKcVpY?=
- =?utf-8?B?SGMyUzFNaHVaZUdoWU4rSGFrU1l3d2ZiQitNQUU5MnE1RGswK1BHYWQ2YVFD?=
- =?utf-8?B?TXc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	PxfGa/G53XRUV0inI4PAszP5CLQ5RN3oWTjIb/ZKTMOWGkUxpnSKOJN1kO9OmX7RrX6vYRWZ9ETlsGQ90ZUIzn/EY93Br583JYBFHMt7yKAQt79/IEoD232kXwjUUrx2e3UQ9xqJ3wEzLvcoiDCr4fIgqj647ynwJ7CdZ1uckEgfr7v5tsf+AOnzJU2ys+IeZ2NfGZUKjdo/y4MqNN01Wees/lEwJ+Y7Bm8mBqBepxhnAoLyRuCfSPcmYr/zEdUs5a9dv1cOVaoJOu1mC+NKw6BKW8e4H6fuBtC86nOOLORc1vH9BHovkjEG/r/XCVYKjmd/JoEekVwMncPPnjmaEjr5ErDVinLP6QLHM7Tg1hgTt9m3umvxxUJtEn5ZIbjebByVu9UCGJw+UrYE4cgVcMH6SbsuB127LcoD0yvCw3L2NfZ4e6WoZcKyyJKzcNyHN9xH2YOhosghOfgzX/YSTCSLdYVvoyBvEK2suVrH7Wv2s9KxkLJeZJ5kysYU2HoXW5gGlM7K5iE3qmIy7X0PqbIvxaWmpggRWczxSBXl+dMVRqXx6/jjpgn5phUN4wFh+qJtIyk6O6vMNbdq3Mw4pIJTWjFWplNP5EK/rm/0Bm4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdd700ad-f0f4-486e-41e0-08dc7f069bc2
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 11:09:14.2454
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cmjciTmXh6UE5bUZnte2EhWT4MXb+tl3jD8fsvn8kIyFGsJkOFVIc4lJVJrSaTMeNqieYjpJDs6oyUrgBgf4Sg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6530
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 phishscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405280084
-X-Proofpoint-GUID: qAEU5tOMbd6iKkLY5Jnlk0O_ZAuQBrCA
-X-Proofpoint-ORIG-GUID: qAEU5tOMbd6iKkLY5Jnlk0O_ZAuQBrCA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 2/6] sched/uclamp: Track a new util_avg_bias signal
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>
+Cc: Qais Yousef <qyousef@layalina.io>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>, pierre.gondois@arm.com,
+ linux-kernel@vger.kernel.org
+References: <cover.1715082714.git.hongyan.xia2@arm.com>
+ <2e43dc6b376ea6d785976a398b5d9ffe823cf35d.1715082714.git.hongyan.xia2@arm.com>
+ <fdde3285-6d40-458d-84bd-3d7badc1e592@arm.com>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <fdde3285-6d40-458d-84bd-3d7badc1e592@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 28/05/2024 11:57, Christoph Hellwig wrote:
-> On Tue, May 28, 2024 at 10:21:15AM +0100, John Garry wrote:
->> If so, I am not sure if a mmap interface would work for DB usecase, like
->> PostgreSQL. I can ask.
-> Databases really should be using direct I/O for various reasons.  And if
-> Postgres still isn't doing that we shouldn't work around that in the
-> kernel.
+On 26/05/2024 23:52, Dietmar Eggemann wrote:
+> On 07/05/2024 14:50, Hongyan Xia wrote:
+>> Add a util_avg_bias signal in sched_avg, which is obtained by:
+>>
+>> util_avg_bias = clamp(util_avg, uclamp_min, uclamp_max) - util_avg
+>>
+>> The task utilization after considering uclamp is;
+>>
+>> util_avg_uclamp = util_avg + util_avg_bias
+>>
+>> We then sum up all biases on the same rq and use the total bias to bias
+>> the rq utilization. This is the core idea of uclamp sum aggregation. The
+>> rq utilization will be
+>>
+>> rq_util_avg_uclamp = rq_util_avg + total_util_avg_bias
+>>
+>> Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
+>> ---
+>>   include/linux/sched.h |  4 +++-
+>>   kernel/sched/debug.c  |  2 +-
+>>   kernel/sched/fair.c   | 16 ++++++++++++++++
+>>   kernel/sched/pelt.c   | 39 +++++++++++++++++++++++++++++++++++++++
+>>   kernel/sched/sched.h  | 28 ++++++++++++++++++++++++++++
+>>   5 files changed, 87 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index c75fd46506df..4ea4b8b30f54 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -476,8 +476,10 @@ struct sched_avg {
+>>   	u32				period_contrib;
+>>   	unsigned long			load_avg;
+>>   	unsigned long			runnable_avg;
+>> -	unsigned long			util_avg;
+>> +	unsigned int			util_avg;
+>> +	int				util_avg_bias;
+>>   	unsigned int			util_est;
+>> +	unsigned int			util_est_uclamp;
+> 
+> Looks like you only introduce uclamped util_est functions in 3/6. It's
+> easy to grasp when data changes go together with new functions. Maybe
+> introduce a specific util_est patch before 3/6 "Use util biases for
+> utilization and frequency"?
 
-As I understand, direct IO support for that DB is a work-in-progress, 
-but if and ever it is completed I don't know.
+Makes sense. I can do that in the next rev.
 
-Regardless, my plan is to work towards direct IO kernel support now.
+> 
+>>   } ____cacheline_aligned;
+>>   
+>>   /*
+>> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+>> index 8d5d98a5834d..c4dadb740e96 100644
+>> --- a/kernel/sched/debug.c
+>> +++ b/kernel/sched/debug.c
+>> @@ -682,7 +682,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+>>   			cfs_rq->avg.load_avg);
+>>   	SEQ_printf(m, "  .%-30s: %lu\n", "runnable_avg",
+>>   			cfs_rq->avg.runnable_avg);
+>> -	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
+>> +	SEQ_printf(m, "  .%-30s: %u\n", "util_avg",
+>>   			cfs_rq->avg.util_avg);
+>>   	SEQ_printf(m, "  .%-30s: %u\n", "util_est",
+>>   			cfs_rq->avg.util_est);
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index ef5bb576ac65..571c8de59508 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -1083,6 +1083,7 @@ void post_init_entity_util_avg(struct task_struct *p)
+>>   	}
+>>   
+>>   	sa->runnable_avg = sa->util_avg;
+>> +	sa->util_avg_bias = 0;
+>>   }
+>>   
+>>   #else /* !CONFIG_SMP */
+>> @@ -6801,6 +6802,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>   
+>>   	/* At this point se is NULL and we are at root level*/
+>>   	add_nr_running(rq, 1);
+>> +	util_bias_enqueue(&rq->cfs.avg, p);
+>> +	/* XXX: We should skip the update above and only do it once here. */
+> 
+> By 'above' you're referring to the update in enqueue_entity() ->
+> update_load_avg(..., DO_ATTACH) -> attach_entity_load_avg() ->
+> cfs_rq_util_change() ?
+> 
+> I assume you won't have the problem of having to add a
+> cpufreq_update_util(rq, 0) call after the util_bias enqueue or dequeue
+> with "[PATCH v4] sched: Consolidate cpufreq updates"
+> https://lkml.kernel.org/r/20240516204802.846520-1-qyousef@layalina.io
+> anymore?
 
+Yes. That series would solve this problem nicely.
 
+>> +	cpufreq_update_util(rq, 0);
+>>   
+>>   	/*
+>>   	 * Since new tasks are assigned an initial util_avg equal to
+>> @@ -6892,6 +6896,9 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>   
+>>   	/* At this point se is NULL and we are at root level*/
+>>   	sub_nr_running(rq, 1);
+>> +	util_bias_dequeue(&rq->cfs.avg, p);
+>> +	/* XXX: We should skip the update above and only do it once here. */
+>> +	cpufreq_update_util(rq, 0);
+>>   
+>>   	/* balance early to pull high priority tasks */
+>>   	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
+>> @@ -6900,6 +6907,15 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>   dequeue_throttle:
+>>   	util_est_update(&rq->cfs, p, task_sleep);
+>>   	hrtick_update(rq);
+>> +
+>> +#ifdef CONFIG_UCLAMP_TASK
+>> +	if (rq->cfs.h_nr_running == 0) {
+>> +		WARN_ONCE(rq->cfs.avg.util_avg_bias,
+>> +			"0 tasks on CFS of CPU %d, but util_avg_bias is %d\n",
+>> +			rq->cpu, rq->cfs.avg.util_avg_bias);
+>> +		WRITE_ONCE(rq->cfs.avg.util_avg_bias, 0);
+>> +	}
+>> +#endif
+>>   }
+>>   
+>>   #ifdef CONFIG_SMP
+>> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+>> index ef00382de595..56346988182f 100644
+>> --- a/kernel/sched/pelt.c
+>> +++ b/kernel/sched/pelt.c
+>> @@ -266,6 +266,40 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
+>>   	WRITE_ONCE(sa->util_avg, sa->util_sum / divider);
+>>   }
+>>   
+>> +#ifdef CONFIG_UCLAMP_TASK
+>> +/* avg must belong to the queue this se is on. */
+>> +static void update_util_bias(struct sched_avg *avg, struct task_struct *p)
+> 
+> You could pass a `struct rq *rq` here? I assume this code is already
+> there to include rt-tasks (via per-entity load-tracking in rt class)?
 
+The intention is definitely to make things easier for RT tasks later. We 
+can do CFS like:
+
+	update_util_bias(&rq->cfs.avg, p);
+
+and then do RT like this:
+
+	update_util_bias(&rq->avg_rt, p);
+
+If the signature is update_util_bias(rq, p), then inside this function 
+we need to condition on the type of p to know whether we want to fetch 
+&rq->cfs.avg or &rq->avg_rt, and I think the former idea is simpler.
+
+Unless if I misunderstood something?
+
+>> +{
+>> +	unsigned int util, uclamp_min, uclamp_max;
+>> +	int old, new;
+>> +
+>> +	/*
+>> +	 * We MUST update the rq summed total every time we update the
+>> +	 * util_avg_bias of a task. If we are on a rq but we are not given the
+>> +	 * rq, then the best thing is to just skip this update.
+>> +	 */
+>> +	if (p->se.on_rq && !avg)
+>> +		return;
+>> +
+>> +	util = READ_ONCE(p->se.avg.util_avg);
+>> +	uclamp_min = uclamp_eff_value(p, UCLAMP_MIN);
+>> +	uclamp_max = uclamp_eff_value(p, UCLAMP_MAX);
+>> +	if (uclamp_max == SCHED_CAPACITY_SCALE)
+>> +		uclamp_max = UINT_MAX;
+> 
+> This is done to not cap a task util_avg > 1024 in case the task has
+> default uclamp_max?
+
+Yes. In some corner cases you can end up with util_avg > 1024. If the 
+task has the default uclamp_max of 1024, it certainly doesn't mean we 
+want to have a negative bias here.
+
+I can add some comments.
+
+>> +	old = READ_ONCE(p->se.avg.util_avg_bias);
+>> +	new = (int)clamp(util, uclamp_min, uclamp_max) - (int)util;
+>> +
+>> +	WRITE_ONCE(p->se.avg.util_avg_bias, new);
+>> +	if (!p->se.on_rq)
+>> +		return;
+>> +	WRITE_ONCE(avg->util_avg_bias, READ_ONCE(avg->util_avg_bias) + new - old);
+>> +}
+>> +#else /* !CONFIG_UCLAMP_TASK */
+>> +static void update_util_bias(struct sched_avg *avg, struct task_struct *p)
+>> +{
+>> +}
+>> +#endif
+>> +
+>>   /*
+>>    * sched_entity:
+>>    *
+>> @@ -296,6 +330,8 @@ int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
+>>   {
+>>   	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
+>>   		___update_load_avg(&se->avg, se_weight(se));
+>> +		if (entity_is_task(se))
+>> +			update_util_bias(NULL, task_of(se));
+> 
+> IMHO,
+> 
+> update_util_bias(struct sched_avg *avg, struct sched_entity *se)
+> 
+>      if (!entity_is_task(se))
+>          return;
+> 
+>      ...
+> 
+> would be easier to read.
+
+Yeah, that would work, and might be a good way to prepare for group 
+clamping if it ever becomes a thing.
+
+>>   		trace_pelt_se_tp(se);
+>>   		return 1;
+>>   	}
+>> @@ -310,6 +346,9 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
+>>   
+>>   		___update_load_avg(&se->avg, se_weight(se));
+>>   		cfs_se_util_change(&se->avg);
+>> +		if (entity_is_task(se))
+>> +			update_util_bias(&rq_of(cfs_rq)->cfs.avg,
+>> +					 task_of(se));
+>>   		trace_pelt_se_tp(se);
+>>   		return 1;
+>>   	}
+>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+>> index cb3792c04eea..aec812e6c6ba 100644
+>> --- a/kernel/sched/sched.h
+>> +++ b/kernel/sched/sched.h
+>> @@ -3095,6 +3095,24 @@ static inline bool uclamp_is_used(void)
+>>   {
+>>   	return static_branch_likely(&sched_uclamp_used);
+>>   }
+>> +
+>> +static inline void util_bias_enqueue(struct sched_avg *avg,
+>> +				     struct task_struct *p)
+>> +{
+>> +	int avg_val = READ_ONCE(avg->util_avg_bias);
+>> +	int p_val = READ_ONCE(p->se.avg.util_avg_bias);
+>> +
+>> +	WRITE_ONCE(avg->util_avg_bias, avg_val + p_val);
+>> +}
+>> +
+>> +static inline void util_bias_dequeue(struct sched_avg *avg,
+>> +				     struct task_struct *p)
+>> +{
+>> +	int avg_val = READ_ONCE(avg->util_avg_bias);
+>> +	int p_val = READ_ONCE(p->se.avg.util_avg_bias);
+>> +
+>> +	WRITE_ONCE(avg->util_avg_bias, avg_val - p_val);
+>> +}
+> 
+> Maybe enqueue_util_bias() and dequeue_util_bias() since there is the
+> related update_util_bias()? I know that there is util_est_enqueue() but
+> util_est also has util_est_update().
+
+I don't have much of a strong preference here, so either works for me.
+
+> [...]
 
