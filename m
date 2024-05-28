@@ -1,564 +1,213 @@
-Return-Path: <linux-kernel+bounces-192610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB74A8D1FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C6A8D1FB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECC81C21338
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3DD1C22BD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7093179647;
-	Tue, 28 May 2024 15:04:30 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE6016F8FD;
-	Tue, 28 May 2024 15:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0371017085D;
+	Tue, 28 May 2024 15:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GKTxlkHf"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D1779F6;
+	Tue, 28 May 2024 15:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908669; cv=none; b=iJoFh5hMml143hjNyAWwacCur5YQmCWKGHs+TskmHtfO68MEK0CLl5oCFXEUMIFWoMbAJuNxMpgggUQmo9TUxcMCvCGXUbUY7aBjP/C9Q8xpizIIehbuGkunidpg85SrsmD9SZbgDZtNLqB9YDUVpZvd/jqkl0gUvv1PCC/2a2E=
+	t=1716908692; cv=none; b=f/UXb6Obr7mkZvnfUJQqk/ZJNY/s/3/6Pxe6okazdOvIlpWizQuh2b5qXW3DXFBXcTbTFdCKEp8bL30086XyWiPLtrA76Xpeitw/c5rRS0a/9pvTHXsGfksfIjLKvZQ9+UziJQU0eV2hlzoVQRk30khEQjKQTCZ0MKPm4Z49tEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908669; c=relaxed/simple;
-	bh=jpOOJ8zQBKGeJmsCOupMtF43jtHzPjliqv9a5LtIOjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=st1tIWPyM6bWxruYKbfzXaz/jce6qxtZd4DlbFzS+ZLfZmqpSFzVO5fX0q4nPBaSPc39r/2Rm1K/LnGJjBOjOqsFAEVAgLHJCK7d7/i1Xuk4Wiyib3A51+6TlCcXnQ9ek9ScgUGH5KjpG4By0brYiHrfXT6MfF/Hm0XvP+kJVP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,195,1712588400"; 
-   d="scan'208";a="205944560"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 29 May 2024 00:04:25 +0900
-Received: from renesas-deb12.cephei.uk (unknown [10.226.93.69])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A2059400CF19;
-	Wed, 29 May 2024 00:04:20 +0900 (JST)
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page pool
-Date: Tue, 28 May 2024 16:03:39 +0100
-Message-Id: <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
+	s=arc-20240116; t=1716908692; c=relaxed/simple;
+	bh=BwvsFxWDlcOv3tQAGZN5M4cNSSA1vcWV3iHt2gZ5Rco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqjTSmj38UQ5HxEtg+NoEilLtIaX+8IKvMW3ttsNsHBmq+srU9tA21WdRAuWhJEccluUHRYGfXhaQBp6O738irD5j8KJGUahOeAQuddB1tLcsdRzasHC4Yz+V16NYjOD4cZdvO0qulWYfl3xP3GPxtX4/xkH4wLCQX3rjHJ3rTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GKTxlkHf; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 2CF8820278;
+	Tue, 28 May 2024 17:04:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1716908684;
+	bh=Mw7dQ5Ws41dd40RAuJHYbCmnUUSNoqloqrnpXxX8AmE=; h=From:To:Subject;
+	b=GKTxlkHfChssQjm59qXgvH4xTT0SvaA9SVy9L7JTaDGOK7+o05hB/H+qbbWzd2u9P
+	 rEUyyula8tQ2UfeO61kVG/dIThRWVri1yIRoeQ0icF+JI5/BeoHIwwqAtQB/xIZDph
+	 P+u+0Nwu+R8aPT6kj/oyfQbOkWLdc+Rvukj/ig8YvSegkUkKK97ypht6zx71gusqAj
+	 qgrmB+u0pmDFP+V2Qfvz7dqWI+g3Y3cIzpI323e/yNC83LgeTGolgFE+rOBs/RiYbl
+	 YwMR6mmSoQqNWYhLT2WasY3IveqW+N+SSQ/z0kadq+cx0XYHcYa0Zj03dz/JCtaBR3
+	 4FJHvEfcP952w==
+Date: Tue, 28 May 2024 17:04:40 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Conor Dooley <conor@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: add ti,ads1119
+Message-ID: <20240528150440.GA15947@francesco-nb>
+References: <20240527154050.24975-1-francesco@dolcini.it>
+ <20240527154050.24975-2-francesco@dolcini.it>
+ <20240527-ecosystem-mountable-d9a6eebc7607@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240527-ecosystem-mountable-d9a6eebc7607@spud>
 
-This patch makes multiple changes that can't be separated:
+On Mon, May 27, 2024 at 05:29:37PM +0100, Conor Dooley wrote:
+> On Mon, May 27, 2024 at 05:40:49PM +0200, Francesco Dolcini wrote:
+> > From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> > 
+> > Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
+> > with I2C interface.
+> > 
+> > Datasheet: https://www.ti.com/lit/gpn/ads1119
+> > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> >  .../bindings/iio/adc/ti,ads1119.yaml          | 122 ++++++++++++++++++
+> >  MAINTAINERS                                   |   7 +
+> >  2 files changed, 129 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> > new file mode 100644
+> > index 000000000000..ab4f01199dbe
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+> > @@ -0,0 +1,122 @@
 
-  1) Allocate plain RX buffers via a page pool instead of allocating
-     SKBs, then use build_skb() when a packet is received.
-  2) For GbEth IP, reduce the RX buffer size to 2kB.
-  3) For GbEth IP, merge packets which span more than one RX descriptor
-     as SKB fragments instead of copying data.
+..
 
-Implementing (1) without (2) would require the use of an order-1 page
-pool (instead of an order-0 page pool split into page fragments) for
-GbEth.
+> > +patternProperties:
+> > +  "^channel@([0-6])$":
+> > +    $ref: adc.yaml
+> > +    type: object
+> > +    description: |
+> > +      ADC channels.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: |
+> > +          0: Voltage over AIN0 and AIN1.
+> > +          1: Voltage over AIN2 and AIN3.
+> > +          2: Voltage over AIN1 and AIN2.
+> > +          3: Voltage over AIN0 and GND.
+> > +          4: Voltage over AIN1 and GND.
+> > +          5: Voltage over AIN2 and GND.
+> > +          6: Voltage over AIN3 and GND.
+> 
+> Take a look at diff-channels.
 
-Implementing (2) without (3) would leave us no space to re-assemble
-packets which span more than one RX descriptor.
+Yes, we looked at this and at the beginning we did not think this was a
+right idea. This is pretty much copying what is done in
+Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml.
 
-Implementing (3) without (1) would not be possible as the network stack
-expects to use put_page() or page_pool_put_page() to free SKB fragments
-after an SKB is consumed.
+We could describe this using the diff-channels, however the MUX in the
+ADS1119 cannot do any combination, but only a subset (AIN0-AIN1,
+AIN2-AIN3 and AIN1-AIN2).
 
-RX checksum offload support is adjusted to handle both linear and
-nonlinear (fragmented) packets.
+Are you aware of a way to validate this in the DT?
+Would something like that work?
 
-This patch gives the following improvements during testing with iperf3.
+adc@40 {
+    compatible = "ti,ads1119";
+    reg = <0x40>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+    #io-channel-cells = <1>;
+    
+    channel@0 {
+        reg = <0>;
+        diff-channels = <3 4>;
+	label = "AIN0_AIN1"
+    };
+    
+    channel@1 {
+        reg = <1>;
+        diff-channels = <5 6>;
+	label = "AIN2_AIN3"
+    };
+    
+    channel@2 {
+        reg = <2>;
+        diff-channels = <4 5>;
+	label = "AIN1_AIN2"
+    };
+    
+    channel@3 {
+        reg = <3>;
+	label = "AIN0"
+    };
+    
+    channel@4 {
+        reg = <4>;
+	label = "AIN1"
+    };
+    
+    channel@5 {
+        reg = <5>;
+	label = "AIN2"
+    };
+    
+    channel@6 {
+        reg = <6>;
+	label = "AIN3"
+    };
+};
 
-  * RZ/G2L:
-    * TCP RX: same bandwidth at -43% CPU load (70% -> 40%)
-    * UDP RX: same bandwidth at -17% CPU load (88% -> 74%)
 
-  * RZ/G2UL:
-    * TCP RX: +30% bandwidth (726Mbps -> 941Mbps)
-    * UDP RX: +417% bandwidth (108Mbps -> 558Mbps)
+> > +        items:
+> > +          - minimum: 0
+> > +            maximum: 6
+> > +
+> > +      ti,gain:
+> 
+> What makes this a property of the hardware?
+> Also, missing unit.
 
-  * RZ/G3S:
-    * TCP RX: +64% bandwidth (562Mbps -> 920Mbps)
-    * UDP RX: +420% bandwidth (90Mbps -> 468Mbps)
+This is a hardware gain from the ADC and it is dimensionless.
 
-  * RZ/Five:
-    * TCP RX: +217% bandwidth (145Mbps -> 459Mbps)
-    * UDP RX: +470% bandwidth (20Mbps -> 114Mbps)
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          PGA gain value.
+> > +        enum: [1, 4]
+> > +        default: 1
+> > +
+> > +      ti,datarate:
+> 
+> Ditto here, why's this a property of the hardware? Usually this gets set
+> from sysfs..
 
-There is no significant impact on bandwidth or CPU load in testing on
-RZ/G2H or R-Car M3N.
+The sample rate is a hardware property, you can configure the ADC device
+to do the acquisition at a specific rate.
 
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
----
-Changes v3->v4:
-  * Used a separate page pool for each RX queue.
-  * Passed struct ravb_rx_desc to ravb_alloc_rx_buffer() so that we can
-    simplify the calling function.
-  * Explained the calculation of rx_desc->ds_cc.
-  * Added handling of nonlinear SKBs in ravb_rx_csum_gbeth().
+Both these properties are inspired from
+Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml.
 
- drivers/net/ethernet/renesas/ravb.h      |  10 +-
- drivers/net/ethernet/renesas/ravb_main.c | 230 ++++++++++++++---------
- 2 files changed, 146 insertions(+), 94 deletions(-)
+We could do what you are suggesting here. I am just a concerned on how
+this interacts with the iio/afe/ bindings. Specifically, how could I
+configure the gain or the data rate when this ADC is used by a
+voltage-divider? Maybe iio-rescale driver needs to be extended for such
+use case?
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 6a7aa7dd17e6..f2091a17fcf7 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1050,8 +1050,8 @@ struct ravb_hw_info {
- 	netdev_features_t net_features;
- 	int stats_len;
- 	u32 tccr_mask;
-+	u32 rx_buffer_size;
- 	u32 rx_max_frame_size;
--	u32 rx_max_desc_use;
- 	u32 rx_desc_size;
- 	unsigned aligned_tx: 1;
- 	unsigned coalesce_irqs:1;	/* Needs software IRQ coalescing */
-@@ -1071,6 +1071,11 @@ struct ravb_hw_info {
- 	unsigned half_duplex:1;		/* E-MAC supports half duplex mode */
- };
- 
-+struct ravb_rx_buffer {
-+	struct page *page;
-+	unsigned int offset;
-+};
-+
- struct ravb_private {
- 	struct net_device *ndev;
- 	struct platform_device *pdev;
-@@ -1094,7 +1099,8 @@ struct ravb_private {
- 	struct ravb_tx_desc *tx_ring[NUM_TX_QUEUE];
- 	void *tx_align[NUM_TX_QUEUE];
- 	struct sk_buff *rx_1st_skb;
--	struct sk_buff **rx_skb[NUM_RX_QUEUE];
-+	struct page_pool *rx_pool[NUM_RX_QUEUE];
-+	struct ravb_rx_buffer *rx_buffers[NUM_RX_QUEUE];
- 	struct sk_buff **tx_skb[NUM_TX_QUEUE];
- 	u32 rx_over_errors;
- 	u32 rx_fifo_errors;
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index dd92f074881a..bb7f7d44be6e 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -30,6 +30,7 @@
- #include <linux/reset.h>
- #include <linux/math64.h>
- #include <net/ip.h>
-+#include <net/page_pool/helpers.h>
- 
- #include "ravb.h"
- 
-@@ -113,25 +114,6 @@ static void ravb_set_rate_rcar(struct net_device *ndev)
- 	}
- }
- 
--static struct sk_buff *
--ravb_alloc_skb(struct net_device *ndev, const struct ravb_hw_info *info,
--	       gfp_t gfp_mask)
--{
--	struct sk_buff *skb;
--	u32 reserve;
--
--	skb = __netdev_alloc_skb(ndev, info->rx_max_frame_size + RAVB_ALIGN - 1,
--				 gfp_mask);
--	if (!skb)
--		return NULL;
--
--	reserve = (unsigned long)skb->data & (RAVB_ALIGN - 1);
--	if (reserve)
--		skb_reserve(skb, RAVB_ALIGN - reserve);
--
--	return skb;
--}
--
- /* Get MAC address from the MAC address registers
-  *
-  * Ethernet AVB device doesn't have ROM for MAC address.
-@@ -257,21 +239,10 @@ static void ravb_rx_ring_free(struct net_device *ndev, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	unsigned int ring_size;
--	unsigned int i;
- 
- 	if (!priv->rx_ring[q].raw)
- 		return;
- 
--	for (i = 0; i < priv->num_rx_ring[q]; i++) {
--		struct ravb_rx_desc *desc = ravb_rx_get_desc(priv, q, i);
--
--		if (!dma_mapping_error(ndev->dev.parent,
--				       le32_to_cpu(desc->dptr)))
--			dma_unmap_single(ndev->dev.parent,
--					 le32_to_cpu(desc->dptr),
--					 priv->info->rx_max_frame_size,
--					 DMA_FROM_DEVICE);
--	}
- 	ring_size = priv->info->rx_desc_size * (priv->num_rx_ring[q] + 1);
- 	dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q].raw,
- 			  priv->rx_desc_dma[q]);
-@@ -298,13 +269,14 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 		priv->tx_ring[q] = NULL;
- 	}
- 
--	/* Free RX skb ringbuffer */
--	if (priv->rx_skb[q]) {
--		for (i = 0; i < priv->num_rx_ring[q]; i++)
--			dev_kfree_skb(priv->rx_skb[q][i]);
-+	/* Free RX buffers */
-+	for (i = 0; i < priv->num_rx_ring[q]; i++) {
-+		if (priv->rx_buffers[q][i].page)
-+			page_pool_put_page(priv->rx_pool[q], priv->rx_buffers[q][i].page, 0, true);
- 	}
--	kfree(priv->rx_skb[q]);
--	priv->rx_skb[q] = NULL;
-+	kfree(priv->rx_buffers[q]);
-+	priv->rx_buffers[q] = NULL;
-+	page_pool_destroy(priv->rx_pool[q]);
- 
- 	/* Free aligned TX buffers */
- 	kfree(priv->tx_align[q]);
-@@ -317,35 +289,56 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	priv->tx_skb[q] = NULL;
- }
- 
-+static int
-+ravb_alloc_rx_buffer(struct net_device *ndev, int q, u32 entry, gfp_t gfp_mask,
-+		     struct ravb_rx_desc *rx_desc)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
-+	struct ravb_rx_buffer *rx_buff = &priv->rx_buffers[q][entry];
-+	dma_addr_t dma_addr;
-+	unsigned int size;
-+
-+	size = info->rx_buffer_size;
-+	rx_buff->page = page_pool_alloc(priv->rx_pool[q], &rx_buff->offset, &size,
-+					gfp_mask);
-+	if (unlikely(!rx_buff->page)) {
-+		/* We just set the data size to 0 for a failed mapping
-+		 * which should prevent DMA from happening...
-+		 */
-+		rx_desc->ds_cc = cpu_to_le16(0);
-+		return -ENOMEM;
-+	}
-+
-+	dma_addr = page_pool_get_dma_addr(rx_buff->page) + rx_buff->offset;
-+	dma_sync_single_for_device(ndev->dev.parent, dma_addr,
-+				   info->rx_buffer_size, DMA_FROM_DEVICE);
-+	rx_desc->dptr = cpu_to_le32(dma_addr);
-+
-+	/* The end of the RX buffer is used to store skb shared data, so we need
-+	 * to ensure that the hardware leaves enough space for this.
-+	 */
-+	rx_desc->ds_cc = cpu_to_le16(info->rx_buffer_size
-+				     - SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
-+				     - ETH_FCS_LEN + sizeof(__sum16));
-+	return 0;
-+}
-+
- static u32
- ravb_rx_ring_refill(struct net_device *ndev, int q, u32 count, gfp_t gfp_mask)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
--	const struct ravb_hw_info *info = priv->info;
- 	struct ravb_rx_desc *rx_desc;
--	dma_addr_t dma_addr;
- 	u32 i, entry;
- 
- 	for (i = 0; i < count; i++) {
- 		entry = (priv->dirty_rx[q] + i) % priv->num_rx_ring[q];
- 		rx_desc = ravb_rx_get_desc(priv, q, entry);
--		rx_desc->ds_cc = cpu_to_le16(info->rx_max_desc_use);
- 
--		if (!priv->rx_skb[q][entry]) {
--			priv->rx_skb[q][entry] = ravb_alloc_skb(ndev, info, gfp_mask);
--			if (!priv->rx_skb[q][entry])
-+		if (!priv->rx_buffers[q][entry].page) {
-+			if (unlikely(ravb_alloc_rx_buffer(ndev, q, entry,
-+							  gfp_mask, rx_desc)))
- 				break;
--			dma_addr = dma_map_single(ndev->dev.parent,
--						  priv->rx_skb[q][entry]->data,
--						  priv->info->rx_max_frame_size,
--						  DMA_FROM_DEVICE);
--			skb_checksum_none_assert(priv->rx_skb[q][entry]);
--			/* We just set the data size to 0 for a failed mapping
--			 * which should prevent DMA from happening...
--			 */
--			if (dma_mapping_error(ndev->dev.parent, dma_addr))
--				rx_desc->ds_cc = cpu_to_le16(0);
--			rx_desc->dptr = cpu_to_le32(dma_addr);
- 		}
- 		/* Descriptor type must be set after all the above writes */
- 		dma_wmb();
-@@ -423,15 +416,32 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	unsigned int num_tx_desc = priv->num_tx_desc;
-+	struct page_pool_params params = {
-+		.order = 0,
-+		.flags = PP_FLAG_DMA_MAP,
-+		.pool_size = priv->num_rx_ring[q],
-+		.nid = NUMA_NO_NODE,
-+		.dev = ndev->dev.parent,
-+		.dma_dir = DMA_FROM_DEVICE,
-+	};
- 	unsigned int ring_size;
- 	u32 num_filled;
- 
--	/* Allocate RX and TX skb rings */
--	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
--				  sizeof(*priv->rx_skb[q]), GFP_KERNEL);
-+	/* Allocate RX page pool and buffers */
-+	priv->rx_pool[q] = page_pool_create(&params);
-+	if (IS_ERR(priv->rx_pool[q]))
-+		goto error;
-+
-+	/* Allocate RX buffers */
-+	priv->rx_buffers[q] = kcalloc(priv->num_rx_ring[q],
-+				      sizeof(*priv->rx_buffers[q]), GFP_KERNEL);
-+	if (!priv->rx_buffers[q])
-+		goto error;
-+
-+	/* Allocate TX skb rings */
- 	priv->tx_skb[q] = kcalloc(priv->num_tx_ring[q],
- 				  sizeof(*priv->tx_skb[q]), GFP_KERNEL);
--	if (!priv->rx_skb[q] || !priv->tx_skb[q])
-+	if (!priv->tx_skb[q])
- 		goto error;
- 
- 	/* Allocate all RX descriptors. */
-@@ -717,7 +727,9 @@ static void ravb_get_tx_tstamp(struct net_device *ndev)
- 
- static void ravb_rx_csum_gbeth(struct sk_buff *skb)
- {
-+	struct skb_shared_info *shinfo = skb_shinfo(skb);
- 	__wsum csum_ip_hdr, csum_proto;
-+	skb_frag_t *last_frag;
- 	u8 *hw_csum;
- 
- 	/* The hardware checksum status is contained in sizeof(__sum16) * 2 = 4
-@@ -727,12 +739,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
- 	if (unlikely(skb->len < sizeof(__sum16) * 2))
- 		return;
- 
--	hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
-+	if (skb_is_nonlinear(skb)) {
-+		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
-+		hw_csum = skb_frag_address(last_frag) + skb_frag_size(last_frag) - sizeof(__sum16);
-+	} else {
-+		hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
-+	}
-+
- 	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
- 
- 	hw_csum -= sizeof(__sum16);
- 	csum_ip_hdr = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
--	skb_trim(skb, skb->len - 2 * sizeof(__sum16));
-+
-+	if (skb_is_nonlinear(skb))
-+		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
-+	else
-+		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
- 
- 	/* TODO: IPV6 Rx checksum */
- 	if (skb->protocol == htons(ETH_P_IP) && !csum_ip_hdr && !csum_proto)
-@@ -754,25 +776,11 @@ static void ravb_rx_csum(struct sk_buff *skb)
- 	skb_trim(skb, skb->len - sizeof(__sum16));
- }
- 
--static struct sk_buff *ravb_get_skb_gbeth(struct net_device *ndev, int entry,
--					  struct ravb_rx_desc *desc)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	struct sk_buff *skb;
--
--	skb = priv->rx_skb[RAVB_BE][entry];
--	priv->rx_skb[RAVB_BE][entry] = NULL;
--	dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
--			 ALIGN(priv->info->rx_max_frame_size, 16),
--			 DMA_FROM_DEVICE);
--
--	return skb;
--}
--
- /* Packet receive function for Gigabit Ethernet */
- static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
- 	struct net_device_stats *stats;
- 	struct ravb_rx_desc *desc;
- 	struct sk_buff *skb;
-@@ -816,14 +824,26 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
- 			if (desc_status & MSC_CEEF)
- 				stats->rx_missed_errors++;
- 		} else {
-+			struct ravb_rx_buffer *rx_buff = &priv->rx_buffers[q][entry];
-+			void *rx_addr = page_address(rx_buff->page) + rx_buff->offset;
- 			die_dt = desc->die_dt & 0xF0;
--			skb = ravb_get_skb_gbeth(ndev, entry, desc);
-+			dma_sync_single_for_cpu(ndev->dev.parent, le32_to_cpu(desc->dptr),
-+						desc_len, DMA_FROM_DEVICE);
-+
- 			switch (die_dt) {
- 			case DT_FSINGLE:
- 			case DT_FSTART:
- 				/* Start of packet:
--				 * Set initial data length.
-+				 * Prepare an SKB and add initial data.
- 				 */
-+				skb = napi_build_skb(rx_addr, info->rx_buffer_size);
-+				if (unlikely(!skb)) {
-+					stats->rx_errors++;
-+					page_pool_put_page(priv->rx_pool[q],
-+							   rx_buff->page, 0, true);
-+					break;
-+				}
-+				skb_mark_for_recycle(skb);
- 				skb_put(skb, desc_len);
- 
- 				/* Save this SKB if the packet spans multiple
-@@ -836,14 +856,23 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
- 			case DT_FMID:
- 			case DT_FEND:
- 				/* Continuing a packet:
--				 * Move data into the saved SKB.
-+				 * Add this buffer as an RX frag.
- 				 */
--				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
--							       priv->rx_1st_skb->len,
--							       skb->data,
--							       desc_len);
--				skb_put(priv->rx_1st_skb, desc_len);
--				dev_kfree_skb(skb);
-+
-+				/* rx_1st_skb will be NULL if napi_build_skb()
-+				 * failed for the first descriptor of a
-+				 * multi-descriptor packet.
-+				 */
-+				if (unlikely(!priv->rx_1st_skb)) {
-+					stats->rx_errors++;
-+					page_pool_put_page(priv->rx_pool[q],
-+							   rx_buff->page, 0, true);
-+					break;
-+				}
-+				skb_add_rx_frag(priv->rx_1st_skb,
-+						skb_shinfo(priv->rx_1st_skb)->nr_frags,
-+						rx_buff->page, rx_buff->offset,
-+						desc_len, info->rx_buffer_size);
- 
- 				/* Set skb to point at the whole packet so that
- 				 * we only need one code path for finishing a
-@@ -865,7 +894,16 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
- 				stats->rx_bytes += skb->len;
- 				napi_gro_receive(&priv->napi[q], skb);
- 				rx_packets++;
-+
-+				/* Clear rx_1st_skb so that it will only be
-+				 * non-NULL when valid.
-+				 */
-+				if (die_dt == DT_FEND)
-+					priv->rx_1st_skb = NULL;
- 			}
-+
-+			/* Mark this RX buffer as consumed. */
-+			rx_buff->page = NULL;
- 		}
- 	}
- 
-@@ -882,6 +920,7 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
- static int ravb_rx_rcar(struct net_device *ndev, int budget, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
- 	struct net_device_stats *stats = &priv->stats[q];
- 	struct ravb_ex_rx_desc *desc;
- 	unsigned int limit, i;
-@@ -923,13 +962,20 @@ static int ravb_rx_rcar(struct net_device *ndev, int budget, int q)
- 			if (desc_status & MSC_CEEF)
- 				stats->rx_missed_errors++;
- 		} else {
-+			struct ravb_rx_buffer *rx_buff = &priv->rx_buffers[q][entry];
-+			void *rx_addr = page_address(rx_buff->page) + rx_buff->offset;
- 			u32 get_ts = priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE;
- 
--			skb = priv->rx_skb[q][entry];
--			priv->rx_skb[q][entry] = NULL;
--			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
--					 priv->info->rx_max_frame_size,
--					 DMA_FROM_DEVICE);
-+			skb = napi_build_skb(rx_addr, info->rx_buffer_size);
-+			if (unlikely(!skb)) {
-+				stats->rx_errors++;
-+				page_pool_put_page(priv->rx_pool[q], rx_buff->page, 0, true);
-+				break;
-+			}
-+			dma_sync_single_for_cpu(ndev->dev.parent, le32_to_cpu(desc->dptr),
-+						pkt_len, DMA_FROM_DEVICE);
-+			rx_buff->page = NULL;
-+			skb_mark_for_recycle(skb);
- 			get_ts &= (q == RAVB_NC) ?
- 					RAVB_RXTSTAMP_TYPE_V2_L2_EVENT :
- 					~RAVB_RXTSTAMP_TYPE_V2_L2_EVENT;
-@@ -2595,8 +2641,8 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.rx_buffer_size = SZ_2K + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_max_frame_size = SZ_2K,
--	.rx_max_desc_use = SZ_2K - ETH_FCS_LEN + sizeof(__sum16),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
- 	.internal_delay = 1,
- 	.tx_counters = 1,
-@@ -2619,8 +2665,8 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.rx_buffer_size = SZ_2K + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_max_frame_size = SZ_2K,
--	.rx_max_desc_use = SZ_2K - ETH_FCS_LEN + sizeof(__sum16),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
- 	.aligned_tx = 1,
- 	.gptp = 1,
-@@ -2640,8 +2686,8 @@ static const struct ravb_hw_info ravb_rzv2m_hw_info = {
- 	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.rx_buffer_size = SZ_2K + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_max_frame_size = SZ_2K,
--	.rx_max_desc_use = SZ_2K - ETH_FCS_LEN + sizeof(__sum16),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
- 	.multi_irqs = 1,
- 	.err_mgmt_irqs = 1,
-@@ -2663,8 +2709,8 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.net_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.tccr_mask = TCCR_TSRQ0,
-+	.rx_buffer_size = SZ_2K,
- 	.rx_max_frame_size = SZ_8K,
--	.rx_max_desc_use = 4080,
- 	.rx_desc_size = sizeof(struct ravb_rx_desc),
- 	.aligned_tx = 1,
- 	.coalesce_irqs = 1,
--- 
-2.39.2
+Francesco
 
 
