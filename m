@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-192796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6FC8D223A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:14:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A51C8D223F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E981C225AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:14:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 864E1B23CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874EF174EED;
-	Tue, 28 May 2024 17:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1DC174EC2;
+	Tue, 28 May 2024 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMFZs+x7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQXZGMAO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BC817333F;
-	Tue, 28 May 2024 17:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912117332E;
+	Tue, 28 May 2024 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716916439; cv=none; b=LSBWWlYEVK6pIpvh7M/Vr7rci9b7yCBHIZGV2fjE4pWULQ/W4awiyljjBxKrRkls8LNYSHrLozbJNHHTBsofqQlYbzihPVWqLzEDPbaA9e78R5MZg78a8Y3EsJqgUUwp6ucVB3f6iTFniSbyYzZiESFKzZqtve82KJv4uM3u6j0=
+	t=1716916486; cv=none; b=Zna42g9Z3AdY51pjmTH5bGJ6pgjPcKmQlXyksEPCMxAP70PXonrv0UHkQRgswufWIopDJs1YSFlhseqC6i+feq//arn9qNxitXbUZRZcFsQCbsKLkAXdKbBgmyJFRK7Pgjodz/KDXMvI8doDF5Qs6lG93U53PC0cE9c7EBxP3OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716916439; c=relaxed/simple;
-	bh=BF+bAtAxxwKCW4DJkeefBZDu0K+wuFNxBHFCPnA8enU=;
+	s=arc-20240116; t=1716916486; c=relaxed/simple;
+	bh=qyrjilBChXcbabeuPYMmcl4KCvAVqkL8gOwikW3ih3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtXAs8aDfiVjAwkGMxjkvt/L1fnsFpPTjH3QEWc1zqp/q47QQzelGEUHXOT9R2vLBEBAucDmpd4ff+pqNdjKDgRSfet4rzle9ZejgDOOtkRZjvH4lQc1f2NftksbOreyjlJPuT7xBcdL42ElgKSDfgVlDtuhJA0wYOMFI23IlTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMFZs+x7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1717C3277B;
-	Tue, 28 May 2024 17:13:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQJTkmvAOGMKwckfa8xxDL3ZSXh/tGJm5F6xfyJXhW1yq34fHZyG6SSUgO4qrsqAuUseE1e3HMV9U/hSvt9FAOQDYs0OwYeowhi4ySpdd9gVHmBLY5tJfcVOy889EN4lykTRD9BUlHCH55Tbyo0tA7L5Hw+oCJodPL9+AY5j/TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQXZGMAO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6879C32789;
+	Tue, 28 May 2024 17:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716916439;
-	bh=BF+bAtAxxwKCW4DJkeefBZDu0K+wuFNxBHFCPnA8enU=;
+	s=k20201202; t=1716916486;
+	bh=qyrjilBChXcbabeuPYMmcl4KCvAVqkL8gOwikW3ih3U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bMFZs+x7bluwgOhDpFWlsScecIjnUIpA8wwy44nKxYfhDp21ArJ9EGTXYy1VxEqF1
-	 x9TXpM9QxBZGm4o1v1LqS9mcped9va6UK0lmdFFjkVQ9ubrudgoiehZ3Lz7aYPrcDS
-	 CZcV2KWPGVRc9MF9lJzhe3nDHeJLsvlpYexFNRC/2rCxoOXnChmiFs16/e7IXF/nqt
-	 F+AaJqFSCY3pOPE41ePOAPSLd5WO3qXFyNJl/Bc8i7b3U3AI+tfMNrgblQ08Yw03i1
-	 ZEfdCsCbwqcPqzrlId7esYThtQvQQznFeYTPpondJK/woStogcP0VwGFHXeCNnFk87
-	 kQ0K44ux1N8jg==
-Date: Tue, 28 May 2024 12:13:56 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Nikita Travkin <nikita@trvn.ru>
-Subject: Re: [PATCH v3 6/6] arm64: dts: qcom: c630: Add Embedded Controller
- node
-Message-ID: <njgvpbk4b26qs7zp675xdlmh3pcha6pm2vvvhyrxvrimtltgfx@slyweemaxmhs>
-References: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
- <20240527-yoga-ec-driver-v3-6-327a9851dad5@linaro.org>
- <bbsdvqjo2ikljnuvupolpdfstsaegfqyg2ct7bt24evcorcfjt@3fw5eicxxuik>
- <CAA8EJpr9i=+uJGqxeeVYKwJeMqzQFg6FvqnChKNQqXLLVcB66w@mail.gmail.com>
+	b=DQXZGMAOWpmruXCqCzgdqN+FgfpL0xIelwQi6ettbFGm47F9kLaHUFcm2wZTi0TV7
+	 R0XKnoXQIaCboVzE7ohGePcLfD01H8kZMOnEK/fkNwTolKh0ENqoilPPD/F6Aj2XkL
+	 7sd94QFlMPmltjCQ/1DKassUe8slfYBJ5PtssVIyUihRErPaj6gNFIqqRFdDnn5alz
+	 C4pAk+h74bqzVOwxNh8CrrFLcfeGHCQyf5wmEAmODSgjWmG4LOQsVxSiHL4EfA2vrz
+	 sBeWkfmY+T9P2vbCxywziaDrQM4+HbyBuMyOq+SeuM9zRZFz7cjbs/dKKvfHzOP8gL
+	 YUwu3XQQVtzbA==
+Date: Tue, 28 May 2024 12:14:44 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Saravana Kannan <saravanak@google.com>,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: Re: [PATCH] of: property: Fix fw_devlink handling of interrupt-map
+Message-ID: <171691641513.1016774.9157485411952411160.robh@kernel.org>
+References: <20240528164132.2451685-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,79 +58,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA8EJpr9i=+uJGqxeeVYKwJeMqzQFg6FvqnChKNQqXLLVcB66w@mail.gmail.com>
+In-Reply-To: <20240528164132.2451685-1-maz@kernel.org>
 
-On Tue, May 28, 2024 at 06:12:58PM GMT, Dmitry Baryshkov wrote:
-> On Tue, 28 May 2024 at 18:06, Bjorn Andersson <andersson@kernel.org> wrote:
-> >
-> > On Mon, May 27, 2024 at 01:03:51PM GMT, Dmitry Baryshkov wrote:
-> > > From: Bjorn Andersson <andersson@kernel.org>
-> >
-> > Please align this with the S-o-b - feel free to use either form.
+
+On Tue, 28 May 2024 17:41:32 +0100, Marc Zyngier wrote:
+> Commit d976c6f4b32c ("of: property: Add fw_devlink support for
+> interrupt-map property") tried to do what it says on the tin,
+> but failed on a couple of points:
 > 
-> Ack. I'll check what went wrong.
+> - it confuses bytes and cells. Not a huge deal, except when it
+>   comes to pointer arithmetic
 > 
-> >
-> > >
-> > > The Embedded Controller in the Lenovo Yoga C630 is accessible on &i2c1
-> > > and provides battery and adapter status, as well as altmode
-> > > notifications for the second USB Type-C port.
-> > >
-> > > Add a definition for the EC.
-> > >
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 76 ++++++++++++++++++++++
-> > >  1 file changed, 76 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-> > > index 47dc42f6e936..d975f78eb3ab 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-> > > @@ -370,6 +370,66 @@ zap-shader {
-> > >  &i2c1 {
-> > >       status = "okay";
-> > >       clock-frequency = <400000>;
-> > > +
-> > > +     embedded-controller@70 {
-> > > +             compatible = "lenovo,yoga-c630-ec";
-> > > +             reg = <0x70>;
-> > > +
-> > > +             interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
-> > > +
-> > > +             pinctrl-names = "default";
-> > > +             pinctrl-0 = <&ec_int_state>;
-> > > +
-> > > +             #address-cells = <1>;
-> > > +             #size-cells = <0>;
-> > > +
-> > > +             connector@0 {
-> > > +                     compatible = "usb-c-connector";
-> > > +                     reg = <0>;
-> > > +                     power-role = "dual";
-> > > +                     data-role = "host";
-> >
-> > I was under the impression that this port is wired directly to the SoC
-> > and as such this would support data role switching as well.
-> >
-> > No concern with that, but just out of curiosity, is this not the case?
+> - it doesn't really handle anything but interrupt-maps that have
+>   their parent #address-cells set to 0
 > 
-> It is wired through the external Type-C port controller RTS5437, which
-> also controls the vbus pins, etc. The UCSI firmware reports both ports
-> as host-only and doesn't implement data role switching. So, having it
-> as "host" is a safe bet.
+> The combinations of the two leads to some serious fun on my M1
+> box, with plenty of WARN-ON() firing all over the shop, and
+> amusing values being generated for interrupt specifiers.
+> 
+> Address both issues so that I can boot my machines again.
+> 
+> Fixes: d976c6f4b32c ("of: property: Add fw_devlink support for interrupt-map property")
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Cc: Anup Patel <apatel@ventanamicro.com>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Cc: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  drivers/of/property.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 > 
 
-Thanks for the explanation, that makes sense.
+Applied, thanks!
 
-> I must admit, I also hoped to be able to use this port in gadget mode,
-> but it seems to be nearly impossible.
-> 
-
-Someone must have managed to use the device in peripheral mode to get
-the firmware on there originally...just saying... ;)
-
-Regards,
-Bjorn
 
