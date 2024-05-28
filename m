@@ -1,268 +1,157 @@
-Return-Path: <linux-kernel+bounces-192992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F058D2555
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:01:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2128D255C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C4C2824AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DDEF1C2691E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB717838E;
-	Tue, 28 May 2024 20:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82A217838E;
+	Tue, 28 May 2024 20:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owCVVocN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1aPV9Tb"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9136E29402;
-	Tue, 28 May 2024 20:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C410A3E;
+	Tue, 28 May 2024 20:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926453; cv=none; b=aMyetZNLczYP+hUdizCNDSrEyMmIdLNn2f7HoPverYBTkZ1RreSbzC9At+TD87wn2dljY4tQ7vDrOoRvU5oFlv+IaMt6V4TCPBtfJxcy4GWmzsACg8uFayIQHN9LyqfeJ6IhuvEKyP9FXMZg3MiM1FG9YskDRMwb1j0NvtJvKHk=
+	t=1716926552; cv=none; b=G0u9INm0zeH02keMqvICpUZVGOB2iNJ0XkPhXfoTT3S5MzM7cudwbVRSjl8X+j+hyq+ewHtmjKZMuCRte51U37onUbvej+MyfHMn+ICPHAFdYDBDPI+bPpDTLXKFoy4XxpIQHX2+7T84c1w4HiycNcTiurAKkGwlHRvfQxb0Kr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926453; c=relaxed/simple;
-	bh=nTbDhwyviaLMbfaJtiOxxx3LkcPgQ3xSCNmD1vg86bc=;
+	s=arc-20240116; t=1716926552; c=relaxed/simple;
+	bh=a49CoFAv6vzZffrr9Ef3MZaI4nWMYkH+YQbgTnjVORc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pnN9HbOjcwumjUKl7ZXc/hYANa7ZolbzFA67232K+YOzcxfKfb5hm6qQVypuM/jHc1Pc5zp34shnUzMiLVGxOgAgAsqCbl08eHbHxktR7wt2xCN0ADOHq2CPCfa7+oay8tNH8WZv1mV2zaq/+/1fRoefpOF1Ilq8o0g/FXkpjWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owCVVocN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0171CC32786;
-	Tue, 28 May 2024 20:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716926453;
-	bh=nTbDhwyviaLMbfaJtiOxxx3LkcPgQ3xSCNmD1vg86bc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=owCVVocN8NuAMtXNRgBZCZEwTvdQgWHpV6mACAUokIiIrngzZfjuB3G9VyJrF646h
-	 fCdLJF/pw+uYGcJVHiivPj9lXGa6est3vPsUl6I7qjWSdV/CeqqGUWk3/zcE9eEhh/
-	 7EQyGb6H/HaI9r461E4YKqVCNbjUjF+GUUYc6PI2woCnSrNUtNZODMEac/EDR3V3Wh
-	 Ehzzr/PWHRo4MxDWkgn+b75H4AnSF7iLpcjytXTjQr9A71tr68vPLrjbr2hNj2Hun+
-	 pD9zuzMmuacu/fE76SvZoDAuRx2xNz3IkgIP1BooALKCtTh+gbxhuiZUxya0Uuj57B
-	 g9f74EizWzWaA==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b2fbe85f82so191202eaf.1;
-        Tue, 28 May 2024 13:00:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOirMGAHOUMeWR7jxe6w/1D2jn5z2GaQYF7VoMTzXHqirhscs2+90njtukflOdrIPUacG0QSadSMuJdE7im2GepGXdW5NqQUas2JvKo+VdbHuX7upiSEZJo4I0RYMhyBPCXa16Z5E=
-X-Gm-Message-State: AOJu0YxEGl7t7P3ixH6GO3RVm/ss9Ad2We12MiZb6JoaYaU4xEjKowuF
-	ipUWgxeNvZWIGB1pbAQlIvtwWo1UuLB7bUAEdzRAp8r7SZ+7QQhxARt37gcrg0Jod3V2zr1XlBV
-	tmM7x2vKXcuuBVQugGjedwEWl2cE=
-X-Google-Smtp-Source: AGHT+IHllD0tfHn/GT604/S3e6+vho1OzOixWyheh0PHIwshIZefDo1hz6aL0GVlHXEZ/M7BizLCS7+NA7hMMir+LUs=
-X-Received: by 2002:a4a:ba86:0:b0:5b2:8017:fb68 with SMTP id
- 006d021491bc7-5b95cde3ec5mr14458580eaf.0.1716926452133; Tue, 28 May 2024
- 13:00:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=qSQbB8uJWxTLy28pzwSkoI1vvwNb9GlUNNQpRUn8wi+A2t70Nzl+8PaUP5lekmWhTcJapZgf6VO0X4P/sEin/qZgjarZZMy341Sf4On/JeeLY+kI7WOr1vXHdbO760Q5PAvn9uVQjMh805QnHxhH4DPl5qNMggCMsPfHySLKj3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y1aPV9Tb; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4e160984c30so109486e0c.0;
+        Tue, 28 May 2024 13:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716926549; x=1717531349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TTx/ooqRdBunSGEYWchVYownJq/zl+8o/e9GCfSovAU=;
+        b=Y1aPV9Tb5+TNTF+yuFAzWd6LOrtEPH5tPHDdvLYqgYx9dQkqIy3FnuSSqePiIsqrac
+         tJdZmULW/OsjFRk54nvN0KqKIsU1ZM2ThDnJa1tWEhc3VzFEQt/zvFAtNP14ZXRVGyzn
+         JgzF5F6Kr4j9ZjdRjucn3qqgvjdZ2cFleDqBlFFtrSx07kijKySTopkku54eJVQur5c3
+         hVwn5XGHrf1ZAyev7XQUntvZ7Ya3paX8u1CY9wHhR6vasHzLzyh6nTE3JN28gpWNzvNI
+         uyZ51J9vgDmIF4fgo9Y421h2ZQjStQ5l9fz5wTFetHkTMz1o/I38/kvvo4yFC0goal2+
+         GHzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716926549; x=1717531349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TTx/ooqRdBunSGEYWchVYownJq/zl+8o/e9GCfSovAU=;
+        b=DeRSxfs5ynBT/aYG/n/EtxQa9QqgTlZTtJNGCv0Qu6csEHDrq1z4TTCKqoBvHSTbEX
+         M6ALrRcEnYxGsDIvPMI7e6KHyiPa/p7AyKXNegitevXZJ85ELWyuxGSmAKouFA9Cd3s9
+         qbIQh0fYxVWoCDja5uvLJc5t9GJIyo4VaAz/rR927bdj2qci3o8BAY8n34IE96DUBZF6
+         BKhgEWMAl5y8FO6aWQAvwT31EqzkaUupOLgr8ymaiVh8vLDfzCeaM2V4J6FZEmocCPht
+         ebJAWgcE9JTo6RSshIr2q4ILw+9RiTmu3DJKjaXclXVGyXJRQJkLZu6QUgz1KWhpBoee
+         SRSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRkogBPczrI8F7WmI+PIqwVHikn+a7zygP06teN9PG9YxRfZWIsftwm79TOAHGfGb7aSAx7kBNIlTHJ/POSFewQ33MjX2Q0+Qa49ceOp7886d9zPJcGMJnrxHB+Rd/QCP5siw1fhon5HNW4VR9u2HUUwXpKNK+6aUnAJZnCqVPeQqpOa61qmHu9JD8EZ0qgfqbutq1h9yE1AWTsV2qXQ7wH7ZQSpfiFA==
+X-Gm-Message-State: AOJu0YxnCIRMzA3Wl7t2Fw11oEcLJa4HQrEHQrWqmPmdAISOoD9kx/hs
+	7NO4naLaH9EryPedhcNTl40IKCt0yaE0Ht0gvA0AAV0+MECvvTEopwd6e67Er1883e///Q6QZGl
+	yYRz7tt1McGbJx+MXmBHKGzq50VE=
+X-Google-Smtp-Source: AGHT+IG0kuovQE4k0hCff8p1vnZ05vyu6YmcAALQ008OEkY/0nTugK3OZGuWEhT5ca1TVfMEmIgGhy58tAQXP+xShIY=
+X-Received: by 2002:a05:6122:1da9:b0:4d5:f28b:2c2c with SMTP id
+ 71dfb90a1353d-4e97ba164e9mr90580e0c.3.1716926549096; Tue, 28 May 2024
+ 13:02:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528121124.3588248-1-arnd@kernel.org> <0edd0485-274a-4b3f-8ecb-60708963db8a@amd.com>
-In-Reply-To: <0edd0485-274a-4b3f-8ecb-60708963db8a@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 May 2024 22:00:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iqkR24RjiXET6qKRHeOLxYqKSgrpsp_N87wuJrtdTcAg@mail.gmail.com>
-Message-ID: <CAJZ5v0iqkR24RjiXET6qKRHeOLxYqKSgrpsp_N87wuJrtdTcAg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: amd-pstate: remove global header file
-To: Mario Limonciello <mario.limonciello@amd.com>, Arnd Bergmann <arnd@kernel.org>
-Cc: Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Perry Yuan <perry.yuan@amd.com>, Wyes Karny <wyes.karny@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Meng Li <li.meng@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240423175900.702640-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWwfRvLv9QG2L0orVEFjo88UY45nPFMTs3wEav1TVuWww@mail.gmail.com>
+In-Reply-To: <CAMuHMdWwfRvLv9QG2L0orVEFjo88UY45nPFMTs3wEav1TVuWww@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 28 May 2024 21:01:18 +0100
+Message-ID: <CA+V-a8sVhMSuCn3F988kwDw3DFbR0otzXCiLB7btjaFmaOeeCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/13] pinctrl: renesas: pinctrl-rzg2l: Add support to
+ set pulling up/down the pins
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 7:49=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 5/28/2024 07:09, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > When extra warnings are enabled, gcc points out a global variable
-> > definition in a header:
-> >
-> > In file included from drivers/cpufreq/amd-pstate-ut.c:29:
-> > include/linux/amd-pstate.h:123:27: error: 'amd_pstate_mode_string' defi=
-ned but not used [-Werror=3Dunused-const-variable=3D]
-> >    123 | static const char * const amd_pstate_mode_string[] =3D {
-> >        |                           ^~~~~~~~~~~~~~~~~~~~~~
-> >
-> > This header is only included from two files in the same directory,
-> > and one of them uses only a single definition from it, so clean it
-> > up by moving most of the contents into the driver that uses them,
-> > and making shared bits a local header file.
-> >
-> > Fixes: 36c5014e5460 ("cpufreq: amd-pstate: optimize driver working mode=
- selection in amd_pstate_param()")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thanks!
->
-> Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+Hi Geert,
 
-Applied as 6.10-rc material, thanks!
+Thank you for the review.
 
+On Wed, May 22, 2024 at 2:14=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support to configure bias-disable, bias-pull-up and bias-pull-down
+> > properties of the pin.
+> >
+> > Two new function pointers get_bias_param() and get_bias_val() are
+> > introduced as the values in PUPD register differ when compared to
+> > RZ/G2L family and RZ/V2H(P) SoC,
+> >
+> > Value | RZ/G2L        | RZ/V2H
+> > ---------------------------------
+> > 00b:  | Bias Disabled | Pull up/down disabled
+> > 01b:  | Pull-up       | Pull up/down disabled
+> > 10b:  | Pull-down     | Pull-down
+> > 11b:  | Prohibited    | Pull-up
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > > ---
-> >   MAINTAINERS                                   |  1 -
-> >   drivers/cpufreq/amd-pstate-ut.c               |  3 +-
-> >   drivers/cpufreq/amd-pstate.c                  | 34 ++++++++++++++++++=
--
-> >   .../linux =3D> drivers/cpufreq}/amd-pstate.h    | 33 ----------------=
---
-> >   4 files changed, 35 insertions(+), 36 deletions(-)
-> >   rename {include/linux =3D> drivers/cpufreq}/amd-pstate.h (82%)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 070a39b2b098..35a75ab8ef05 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1107,7 +1107,6 @@ L:      linux-pm@vger.kernel.org
-> >   S:  Supported
-> >   F:  Documentation/admin-guide/pm/amd-pstate.rst
-> >   F:  drivers/cpufreq/amd-pstate*
-> > -F:   include/linux/amd-pstate.h
-> >   F:  tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py
-> >
-> >   AMD PTDMA DRIVER
-> > diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-psta=
-te-ut.c
-> > index f04ae67dda37..fc275d41d51e 100644
-> > --- a/drivers/cpufreq/amd-pstate-ut.c
-> > +++ b/drivers/cpufreq/amd-pstate-ut.c
-> > @@ -26,10 +26,11 @@
-> >   #include <linux/module.h>
-> >   #include <linux/moduleparam.h>
-> >   #include <linux/fs.h>
-> > -#include <linux/amd-pstate.h>
-> >
-> >   #include <acpi/cppc_acpi.h>
-> >
-> > +#include "amd-pstate.h"
-> > +
-> >   /*
-> >    * Abbreviations:
-> >    * amd_pstate_ut: used as a shortform for AMD P-State unit test.
-> > diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.=
-c
-> > index 1b7e82a0ad2e..91993647e09e 100644
-> > --- a/drivers/cpufreq/amd-pstate.c
-> > +++ b/drivers/cpufreq/amd-pstate.c
-> > @@ -36,7 +36,6 @@
-> >   #include <linux/delay.h>
-> >   #include <linux/uaccess.h>
-> >   #include <linux/static_call.h>
-> > -#include <linux/amd-pstate.h>
-> >   #include <linux/topology.h>
-> >
-> >   #include <acpi/processor.h>
-> > @@ -46,6 +45,8 @@
-> >   #include <asm/processor.h>
-> >   #include <asm/cpufeature.h>
-> >   #include <asm/cpu_device_id.h>
-> > +
-> > +#include "amd-pstate.h"
-> >   #include "amd-pstate-trace.h"
-> >
-> >   #define AMD_PSTATE_TRANSITION_LATENCY       20000
-> > @@ -53,6 +54,37 @@
-> >   #define CPPC_HIGHEST_PERF_PERFORMANCE       196
-> >   #define CPPC_HIGHEST_PERF_DEFAULT   166
-> >
-> > +#define AMD_CPPC_EPP_PERFORMANCE             0x00
-> > +#define AMD_CPPC_EPP_BALANCE_PERFORMANCE     0x80
-> > +#define AMD_CPPC_EPP_BALANCE_POWERSAVE               0xBF
-> > +#define AMD_CPPC_EPP_POWERSAVE                       0xFF
-> > +
-> > +/*
-> > + * enum amd_pstate_mode - driver working mode of amd pstate
-> > + */
-> > +enum amd_pstate_mode {
-> > +     AMD_PSTATE_UNDEFINED =3D 0,
-> > +     AMD_PSTATE_DISABLE,
-> > +     AMD_PSTATE_PASSIVE,
-> > +     AMD_PSTATE_ACTIVE,
-> > +     AMD_PSTATE_GUIDED,
-> > +     AMD_PSTATE_MAX,
-> > +};
-> > +
-> > +static const char * const amd_pstate_mode_string[] =3D {
-> > +     [AMD_PSTATE_UNDEFINED]   =3D "undefined",
-> > +     [AMD_PSTATE_DISABLE]     =3D "disable",
-> > +     [AMD_PSTATE_PASSIVE]     =3D "passive",
-> > +     [AMD_PSTATE_ACTIVE]      =3D "active",
-> > +     [AMD_PSTATE_GUIDED]      =3D "guided",
-> > +     NULL,
-> > +};
-> > +
-> > +struct quirk_entry {
-> > +     u32 nominal_freq;
-> > +     u32 lowest_freq;
-> > +};
-> > +
-> >   /*
-> >    * TODO: We need more time to fine tune processors with shared memory=
- solution
-> >    * with community together.
-> > diff --git a/include/linux/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
-> > similarity index 82%
-> > rename from include/linux/amd-pstate.h
-> > rename to drivers/cpufreq/amd-pstate.h
-> > index d58fc022ec46..e6a28e7f4dbf 100644
-> > --- a/include/linux/amd-pstate.h
-> > +++ b/drivers/cpufreq/amd-pstate.h
-> > @@ -1,7 +1,5 @@
-> >   /* SPDX-License-Identifier: GPL-2.0-only */
-> >   /*
-> > - * linux/include/linux/amd-pstate.h
-> > - *
-> >    * Copyright (C) 2022 Advanced Micro Devices, Inc.
-> >    *
-> >    * Author: Meng Li <li.meng@amd.com>
-> > @@ -12,11 +10,6 @@
-> >
-> >   #include <linux/pm_qos.h>
-> >
-> > -#define AMD_CPPC_EPP_PERFORMANCE             0x00
-> > -#define AMD_CPPC_EPP_BALANCE_PERFORMANCE     0x80
-> > -#define AMD_CPPC_EPP_BALANCE_POWERSAVE               0xBF
-> > -#define AMD_CPPC_EPP_POWERSAVE                       0xFF
-> > -
-> >   /********************************************************************=
-*
-> >    *                        AMD P-state INTERFACE                      =
- *
-> >    ********************************************************************=
-*/
-> > @@ -108,30 +101,4 @@ struct amd_cpudata {
-> >       bool    suspended;
-> >   };
-> >
-> > -/*
-> > - * enum amd_pstate_mode - driver working mode of amd pstate
-> > - */
-> > -enum amd_pstate_mode {
-> > -     AMD_PSTATE_UNDEFINED =3D 0,
-> > -     AMD_PSTATE_DISABLE,
-> > -     AMD_PSTATE_PASSIVE,
-> > -     AMD_PSTATE_ACTIVE,
-> > -     AMD_PSTATE_GUIDED,
-> > -     AMD_PSTATE_MAX,
-> > -};
-> > -
-> > -static const char * const amd_pstate_mode_string[] =3D {
-> > -     [AMD_PSTATE_UNDEFINED]   =3D "undefined",
-> > -     [AMD_PSTATE_DISABLE]     =3D "disable",
-> > -     [AMD_PSTATE_PASSIVE]     =3D "passive",
-> > -     [AMD_PSTATE_ACTIVE]      =3D "active",
-> > -     [AMD_PSTATE_GUIDED]      =3D "guided",
-> > -     NULL,
-> > -};
-> > -
-> > -struct quirk_entry {
-> > -     u32 nominal_freq;
-> > -     u32 lowest_freq;
-> > -};
-> > -
-> >   #endif /* _LINUX_AMD_PSTATE_H */
+> > RFC->v2
+> > - New patch
 >
+> Thanks for your patch!
+>
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > @@ -1139,6 +1175,25 @@ static int rzg2l_pinctrl_pinconf_get(struct pinc=
+trl_dev *pctldev,
+> >                 arg =3D rzg2l_read_pin_config(pctrl, SR(off), bit, SR_M=
+ASK);
+> >                 break;
+> >
+> > +       case PIN_CONFIG_BIAS_DISABLE:
+> > +       case PIN_CONFIG_BIAS_PULL_UP:
+> > +       case PIN_CONFIG_BIAS_PULL_DOWN: {
+> > +               if (!(cfg & PIN_CFG_PUPD))
+> > +                       return -EINVAL;
+> > +
+> > +               ret =3D pctrl->data->get_bias_param(rzg2l_read_pin_conf=
+ig(pctrl,
+> > +                                                                      =
+ PUPD(off),
+> > +                                                                      =
+ bit, PUPD_MASK));
+>
+> This is rather long, so please split it in two parts, like is done in
+> other cases in this function:
+>
+>     arg =3D rzg2l_read_pin_config(pctrl, PUPD(off), bit, PUPD_MASK);
+>     ret =3D pctrl->data->get_bias_param(arg);
+>
+Agreed, I'll update it as per your suggestion.
+
+Cheers,
+Prabhakar
 
