@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-193134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFEF8D273F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFBE8D2740
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4EE1C229A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B952825E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2302C13DB9F;
-	Tue, 28 May 2024 21:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE67113DDC5;
+	Tue, 28 May 2024 21:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrL47g/m"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wg6mHbFw"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062BF762DE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A135C13D8BF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932706; cv=none; b=OlquslXj0P0esjpM6IodLwkqhuUnQIOKTDaLfLQmR/AGOs5AyKPPg25LvQo8k2VENDMquwvt3AwpdFelA4vxbuj2OKOPo6Ds3GQdWEwWIP/0HmRPn2Dwl8wCnq3kwveLGDQsNf2SXINOKSuC58tT9deJ/b5QJKXGw+rKuqrPFzI=
+	t=1716932708; cv=none; b=CODiYSvACUy87JLqvlSpKJD5S4UVxvIXIn+GFUtndtyV1hZjt2NtS/pljbKqyG4yEEARj0HKKcz8sgm4dG2MzTILHSCRZ9zQUZ1CHB7JBD3/sH5j9HdnvhTJetGWTqZInkVEiv5rEq8tj2n3zd+Cl4IKdEshsFyozjMrylE6w1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932706; c=relaxed/simple;
-	bh=aGd15yeuSS0/vauBjqe2SQ55pNL9V75UvMvUC0azOPI=;
+	s=arc-20240116; t=1716932708; c=relaxed/simple;
+	bh=z5ChwGBGOUdmpsoWobAtBFD0n6OIyh3CeZqyDF+KAN0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dxT4xZpukDm8PIw1foCWdQezg9KD7yfku3VmjMU4NFjTNXLkPkpH1GjfNJc25dZ8SlI/OuVY+IdzKKMWXnFsB1DSxw666VUPFFkGZ1w6HAChtD/oBealIzwcaXi6E9lya1ZP0kxkPEqhgilEHcCC0nOoA1I6y+VU8JbXg5gd74U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrL47g/m; arc=none smtp.client-ip=95.215.58.185
+	 MIME-Version; b=hh10iUxXYDLt5+MhTM/SZkA5jYS5GRgXFh2/OjSyDpzekjiPhGudBdYqIMJnAwBbdAzyua2ApGiKPJ7JzpFrv1iT50nac5aaZ0zYbNyFaVBXo8BcUs5JzEW5o10/+DPdrcb1AdqpZaSaCdUijOeXlSkREPy96xoN9tOByzZ4ptE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wg6mHbFw; arc=none smtp.client-ip=95.215.58.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: akpm@linux-foundation.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716932702;
+	t=1716932704;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l2pLA/RqNoqlbvbC4p4fDwpEqhgLufpxOxGhK7S1G2o=;
-	b=hrL47g/mD1SQrSO2YhcIljWTdeJXZtuP+O7Sspx8GuL8CyR5bK0pB33DFF/Flum7NaPBcj
-	wuqXxuVDRjfVR4Hq70V1K0YhgI/IldHzP4IpGe0FW+30xwSnmKy8X5nPUvW2IVWvuTOWSK
-	y7K++vRfFd0kmbxOqcAuKddTyqUJAUo=
+	bh=Go08MgcoZFqIURxZ4j9Ru1G8PiEnIRyffZErr6eYIZU=;
+	b=wg6mHbFw/Xr3q1hV392+fUiUTmQFKkNz0r67UJvbRYO+WAM0XjtUpE8IaJX4nEDdQrhogz
+	oxvNZbxdtz2XLB9kBf499yA4zFcMAhNdiwjpKw9XTJPOW+tgiXDxAqX1aMlf1vz+aT2gzy
+	kPBFhLFm7Xfxea+eQgVI5aUOJlBRIo0=
 X-Envelope-To: muchun.song@linux.dev
 X-Envelope-To: hannes@cmpxchg.org
 X-Envelope-To: mhocko@kernel.org
@@ -60,9 +60,9 @@ Cc: Muchun Song <muchun.song@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH v1 13/14] mm: memcg: put cgroup v1-related members of task_struct under config option
-Date: Tue, 28 May 2024 14:44:34 -0700
-Message-ID: <20240528214435.3125304-4-roman.gushchin@linux.dev>
+Subject: [PATCH v1 14/14] MAINTAINERS: add mm/memcontrol-v1.c/h to the list of maintained files
+Date: Tue, 28 May 2024 14:44:35 -0700
+Message-ID: <20240528214435.3125304-5-roman.gushchin@linux.dev>
 In-Reply-To: <20240528214435.3125304-1-roman.gushchin@linux.dev>
 References: <20240528202101.3099300-1-roman.gushchin@linux.dev>
  <20240528214435.3125304-1-roman.gushchin@linux.dev>
@@ -75,141 +75,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Guard cgroup v1-related members of task_struct under the CONFIG_MEMCG_V1
-config option, so that users who adopted cgroup v2 don't have to waste
-the memory for fields which are never accessed.
-
 Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- include/linux/memcontrol.h |  2 +-
- init/Kconfig               |  9 +++++++++
- mm/Makefile                |  3 ++-
- mm/memcontrol-v1.h         | 21 ++++++++++++++++++++-
- mm/memcontrol.c            | 10 +++++++---
- 5 files changed, 39 insertions(+), 6 deletions(-)
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 7474b20a5d3f5..aaa97ec0634f7 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1845,7 +1845,7 @@ static inline bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
- 
- /* Cgroup v1-related declarations */
- 
--#ifdef CONFIG_MEMCG
-+#ifdef CONFIG_MEMCG_V1
- unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 					gfp_t gfp_mask,
- 					unsigned long *total_scanned);
-diff --git a/init/Kconfig b/init/Kconfig
-index febdea2afc3be..5191b6435b4e7 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -969,6 +969,15 @@ config MEMCG
- 	help
- 	  Provides control over the memory footprint of tasks in a cgroup.
- 
-+config MEMCG_V1
-+	bool "Legacy memory controller"
-+	depends on MEMCG
-+	default n
-+	help
-+	  Legacy cgroup v1 memory controller.
-+
-+	  San N is unsure.
-+
- config MEMCG_KMEM
- 	bool
- 	depends on MEMCG
-diff --git a/mm/Makefile b/mm/Makefile
-index 124d4dea20351..d2915f8c9dc01 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -96,7 +96,8 @@ obj-$(CONFIG_NUMA) += memory-tiers.o
- obj-$(CONFIG_DEVICE_MIGRATION) += migrate_device.o
- obj-$(CONFIG_TRANSPARENT_HUGEPAGE) += huge_memory.o khugepaged.o
- obj-$(CONFIG_PAGE_COUNTER) += page_counter.o
--obj-$(CONFIG_MEMCG) += memcontrol.o memcontrol-v1.o vmpressure.o
-+obj-$(CONFIG_MEMCG_V1) += memcontrol-v1.o
-+obj-$(CONFIG_MEMCG) += memcontrol.o vmpressure.o
- ifdef CONFIG_SWAP
- obj-$(CONFIG_MEMCG) += swap_cgroup.o
- endif
-diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
-index 89d4207930481..64b053d7f131e 100644
---- a/mm/memcontrol-v1.h
-+++ b/mm/memcontrol-v1.h
-@@ -75,7 +75,7 @@ unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item);
- int memory_stat_show(struct seq_file *m, void *v);
- 
- /* Cgroup v1-specific declarations */
--
-+#ifdef CONFIG_MEMCG_V1
- void memcg1_remove_from_trees(struct mem_cgroup *memcg);
- 
- static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg)
-@@ -110,4 +110,23 @@ void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
- extern struct cftype memsw_files[];
- extern struct cftype mem_cgroup_legacy_files[];
- 
-+#else	/* CONFIG_MEMCG_V1 */
-+
-+static inline void memcg1_remove_from_trees(struct mem_cgroup *memcg) {}
-+static inline void memcg1_soft_limit_reset(struct mem_cgroup *memcg) {}
-+static inline bool memcg1_wait_acct_move(struct mem_cgroup *memcg) { return false; }
-+static inline void memcg1_css_offline(struct mem_cgroup *memcg) {}
-+
-+static inline bool memcg1_oom_prepare(struct mem_cgroup *memcg, bool *locked) { return true; }
-+static inline void memcg1_oom_finish(struct mem_cgroup *memcg, bool locked) {}
-+static inline void memcg1_oom_recover(struct mem_cgroup *memcg) {}
-+
-+static inline void memcg1_check_events(struct mem_cgroup *memcg, int nid) {}
-+
-+static inline void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s) {}
-+
-+extern struct cftype memsw_files[];
-+extern struct cftype mem_cgroup_legacy_files[];
-+#endif	/* CONFIG_MEMCG_V1 */
-+
- #endif	/* __MM_MEMCONTROL_V1_H */
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 8a28ba4ca93ea..8cbceeb9c7ac4 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4473,18 +4473,20 @@ struct cgroup_subsys memory_cgrp_subsys = {
- 	.css_free = mem_cgroup_css_free,
- 	.css_reset = mem_cgroup_css_reset,
- 	.css_rstat_flush = mem_cgroup_css_rstat_flush,
--	.can_attach = memcg1_can_attach,
- #if defined(CONFIG_LRU_GEN) || defined(CONFIG_MEMCG_KMEM)
- 	.attach = mem_cgroup_attach,
- #endif
--	.cancel_attach = memcg1_cancel_attach,
--	.post_attach = memcg1_move_task,
- #ifdef CONFIG_MEMCG_KMEM
- 	.fork = mem_cgroup_fork,
- 	.exit = mem_cgroup_exit,
- #endif
- 	.dfl_cftypes = memory_files,
-+#ifdef CONFIG_MEMCG_V1
-+	.can_attach = memcg1_can_attach,
-+	.cancel_attach = memcg1_cancel_attach,
-+	.post_attach = memcg1_move_task,
- 	.legacy_cftypes = mem_cgroup_legacy_files,
-+#endif
- 	.early_init = 0,
- };
- 
-@@ -5655,7 +5657,9 @@ static int __init mem_cgroup_swap_init(void)
- 		return 0;
- 
- 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, swap_files));
-+#ifdef CONFIG_MEMCG_V1
- 	WARN_ON(cgroup_add_legacy_cftypes(&memory_cgrp_subsys, memsw_files));
-+#endif
- #if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
- 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, zswap_files));
- #endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7af431daf77bc..cccaf2bcedecd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5584,6 +5584,8 @@ L:	linux-mm@kvack.org
+ S:	Maintained
+ F:	include/linux/memcontrol.h
+ F:	mm/memcontrol.c
++F:	mm/memcontrol-v1.c
++F:	mm/memcontrol-v1.h
+ F:	mm/swap_cgroup.c
+ F:	samples/cgroup/*
+ F:	tools/testing/selftests/cgroup/memcg_protection.m
 -- 
 2.45.1
 
