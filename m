@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-191770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8ED8D13DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 077818D13DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80C9285B27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A9E285B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46F14DA14;
-	Tue, 28 May 2024 05:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p3jyiMrs"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1661FE3;
+	Tue, 28 May 2024 05:28:04 +0000 (UTC)
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB59661FC5;
-	Tue, 28 May 2024 05:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F67461FC3;
+	Tue, 28 May 2024 05:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874085; cv=none; b=D1M1/d8w4Y56pyZPUiimgyWviTLf3u/0itHDLBef/+4t9WRx7WwrkSVmCywZtA0Aex7UTN9lz3mz9WAl+N8DEE7XD7IuB5eQx8tTAopmtn1sME2WJfgER+YgiHCND89Umg0y6nCUN/qDKJdHjcE/A+2rKYqcu890W7Kah5pCLdM=
+	t=1716874084; cv=none; b=Q8qL4ddBz8LWo/v9SwLPR40DHtCurXzpDhrnSvwOa8x56Q4e1u7fnqrPn/JGDhrJSB1nmuYIhtjqZSSjB9RBgXmz1+Pdj75yzhmgnF1uIzfedYzHKwfuNbtSTjMVLOMeTy9qGFx2KnxLPBVO+iNEnm7xGH+acgw6TiG1Hj2cg8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874085; c=relaxed/simple;
-	bh=vQuCQ35yXCs6hcRok3+RmXSxZqsl6J5tco0sBsH6438=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VKRgcl4RdsZOzRIM4YPItHchDzlnQ3/G5H0zqsf5YfS7QrePkYu1zSsrgVCPs5sfHVsO4zTyqsp3vksGfD1L53yyfKLXksoLGK/5gdobABeGZu9ofElhIJt/4untBRnZwVYfpX/jmpHeshPbQG64Nx5zjQmMRa2cBoxS+Os0bAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p3jyiMrs; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44S5Reep058660;
-	Tue, 28 May 2024 00:27:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716874060;
-	bh=T3TALpaDS0cEvHlhWZRF7Tn4VCwpSQzhTkj0dNYWvDc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=p3jyiMrsmKjifKYXTt/tJ4Md9/K/SPWPu/dOHaRIk8hmQqwaUHNt+BpUTNUeSDmhl
-	 lCZ4MsWrQdahvpZtKvuKF0PLfYr0DwXeyCPBN/PbSA9REL8ZLmsRk1rvAupQtGMrHj
-	 Z9TOIdrvaSfKeF7EYhYgexInHQ8mmj1LBBoxphik=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44S5ReB4017579
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 28 May 2024 00:27:40 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
- May 2024 00:27:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 28 May 2024 00:27:40 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44S5RXkB064234;
-	Tue, 28 May 2024 00:27:34 -0500
-Message-ID: <9b16c10c-a08a-4b37-8ffc-6ae19b1c70d2@ti.com>
-Date: Tue, 28 May 2024 10:57:33 +0530
+	s=arc-20240116; t=1716874084; c=relaxed/simple;
+	bh=1R7MWX4+mwMsp8JZCjM+ndoUuOg2Be0WWXY4SVDxvz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q4tAIPWvlGruUTw99ZZCJYgGs83cDk4NQEGZFjRszb5P6zkMzn3XCD13RMb63IyXyNycdFwgJHkHEqPZoruFXxOZtt1b00w+tUwH+L3QioxY2pOpN+ZmZWludabT4r20F7C2/UZyKfRcythbJ/JGGTBd7K98E+1MI8NtNKJPmZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24ca0876a83so202426fac.2;
+        Mon, 27 May 2024 22:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716874082; x=1717478882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t5kFZAqWhL3uMzjEMOl+7Z8/CsSLGsMcTngYdrg2mHg=;
+        b=Ai77oaER1OHm2d9gUIsZbu7u7RiDk58ZzO2Xw9X1lPufEeBjwEdts16slA5WCyNLSG
+         a5/lm8o9icEou/ZecsYFS7502ThTMoQB4lWRPFLGm5DbUh75WmHQSBAJ+2CE7yz0XQ9c
+         ThQzsPtx0RM9OLhBpV3xmSbNS+nEI3hMWVZXkJovaz5ApluraUxag3aQvCzItOLxuHQm
+         cwpNnBXFDacDLjaH6DZZ+anFZk//zX+x0OdCsTuiF6aDDQaUFiij3qk/Cww0lIF09Bi5
+         JlFLLU+hKOWew4Khd+oKq9seiyxOGbA63mDSZ8yqm9vzCIaIn7Vc76+b2o1iBi3zdr3o
+         zmkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtLalVNeuTFbPnD4S5udPpmWZZHfPQSyqCDBYTz4/yVyb5ic0+yZY7zLlg27XcjSoTZrkkL7CvfHAEfDWh30e3F8FVa6l+iIxjDnw84ALXWrHzR/qBBe+0yDdJNkLVTgXCNniawZmvdvxx
+X-Gm-Message-State: AOJu0YyKuzaFJRLOx9GR0o97xlhf3kl9aTCEWSWeik9tQ+NpfJaLXxl/
+	swhhdXV72zMUf4eQxu40Tx+Ru+TbXNBdUknXfqeQ7ND3zKzO+myJ
+X-Google-Smtp-Source: AGHT+IEeHHigBGaAlqIJLm6IYOPOft1kONei7wDh3Ic1XUX4/4XHRSboNGAD7brfAkJrisGKGPz/xw==
+X-Received: by 2002:a05:6870:b68c:b0:24c:678c:4282 with SMTP id 586e51a60fabf-24ca14011dfmr10707891fac.44.1716874082135;
+        Mon, 27 May 2024 22:28:02 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4d5b1asm5697366b3a.206.2024.05.27.22.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 22:28:01 -0700 (PDT)
+Date: Tue, 28 May 2024 05:28:00 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	ssengar@microsoft.com, maryhardy@microsoft.com,
+	longli@microsoft.com
+Subject: Re: [PATCH v2] tools: hv: suppress the invalid warning for packed
+ member alignment
+Message-ID: <ZlVrYKHhtVwXq2XX@liuwe-devbox-debian-v2>
+References: <1714973938-4063-1-git-send-email-ssengar@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 1/3] net: ti: icssg-prueth: Add helper
- functions to configure FDB
-Content-Language: en-US
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
-        Vladimir Oltean
-	<vladimir.oltean@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
-        Roger Quadros <rogerq@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240527052738.152821-1-danishanwar@ti.com>
- <20240527052738.152821-2-danishanwar@ti.com>
- <3cf97632-4d77-4f28-bed6-7d40d61d958f@lunn.ch>
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <3cf97632-4d77-4f28-bed6-7d40d61d958f@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1714973938-4063-1-git-send-email-ssengar@linux.microsoft.com>
 
-
-
-On 28/05/24 3:34 am, Andrew Lunn wrote:
->> +struct mgmt_cmd {
->> +	u8 param;
->> +	u8 seqnum;
->> +	u8 type;
->> +	u8 header;
->> +	u32 cmd_args[3];
->> +} __packed;
+On Sun, May 05, 2024 at 10:38:58PM -0700, Saurabh Sengar wrote:
+> Packed struct vmbus_bufring is 4096 byte aligned and the reporting
+> warning is for the first member of that struct which shouldn't add
+> any offset to create alignment issue.
 > 
-> There is a general dislike for __packed. Since your structures are
-> naturally well aligned, it is probably not needed. You could be
-> paranoid and add BUILD_BUG_ON(sizeof(struct mgmt_cmd) != 16);
+> Suppress the warning by adding -Wno-address-of-packed-member flag to
+> gcc.
 > 
+> Fixes: 45bab4d74651 ("tools: hv: Add vmbus_bufring")
+> Reported-by: kernel test robot <yujie.liu@intel.com>
+> Closes: https://lore.kernel.org/all/202404121913.GhtSoKbW-lkp@intel.com/
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-Sure, I will drop __packed as it's not needed and send next revision.
-
-> 	 Andrew
-
--- 
-Thanks and Regards,
-Danish
+Applied to hyperv-fixes, thanks.
 
