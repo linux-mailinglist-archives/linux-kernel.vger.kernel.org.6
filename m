@@ -1,144 +1,264 @@
-Return-Path: <linux-kernel+bounces-191832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F18B8D14D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0618D14D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DC61285919
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F72B283AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2407316F;
-	Tue, 28 May 2024 06:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705726F08E;
+	Tue, 28 May 2024 07:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tBV6bLoE"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C3PWiycy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC3A71748;
-	Tue, 28 May 2024 06:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716879559; cv=none; b=pPwwPZp/glfXSWAecYp74c0l6Te0BdtyXaD7ug7JbXi8+wZblBIsncyOxWGowo/tlAcoRLcfXvZUN/LZtG2fftD+1VRRL4UBQlByj6II/GulSu9Px664ZzJ7nLhK3QBfEQP+FdCneEyLy0aDn/voWMvP5hIqji81Kx1VwIT0SoQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716879559; c=relaxed/simple;
-	bh=/Yf0JW8LDSFnss/0AtKBiH9oDph8w4srLwrP3mK8GV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNfzvt4c17BhjJQGS+bMrevVHsp5ov+tLYk3CQnixRkMBm9lPV0jmJzDSiugi0n1R+VMEd9Wcv/rL8vH23+dfmolpbx+v3ecG1U0pLiecK/HADaaDoO4kFuacT5EIi0SSpcmmTLJ5jD9j9MlqSJBcEJpRZx3BeH9xGkrECT+8+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tBV6bLoE; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716879553; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=lGfdc1RsIqK8uE57Ip0a1BffAQvQcBg5SDFMlNn4XIM=;
-	b=tBV6bLoENcZBaUATwZkvWn23ci1Oxb1aC1yku1QO4bocaEVRgZsgTNnaZRuexEc2ojzZfvMi01cvocA1749t3a2ckhWewHBznVJNts2M7eRga4BJr9aHtsejj3A0JVm5an9TCexi7Kj/RtaTFNzdOiNhPpn7arcVqDpTw38gEkM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7OoVNI_1716879551;
-Received: from 30.221.100.241(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0W7OoVNI_1716879551)
-          by smtp.aliyun-inc.com;
-          Tue, 28 May 2024 14:59:13 +0800
-Message-ID: <0560e117-6f2c-4dbc-a1a9-4df7164ab129@linux.alibaba.com>
-Date: Tue, 28 May 2024 14:59:09 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0DD45024;
+	Tue, 28 May 2024 07:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716879671; cv=fail; b=fRDpUtq3f9U2NNIR4Egt8UwuaD8/hE2mD5Tc/jr+HKjX9TX9rD1u2DlxYBWrQ8h0MhtHGCaxT6siz8IyzSSxAUK6lbD+P3ZWmA7QW3BrbXfEq5kz0PTgbAiThgLCAe7ONkNlhiwTV+23sp3W4T9PKeapgzHF0SNTl7jG+hr2nUU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716879671; c=relaxed/simple;
+	bh=vHQQcWQMPN7fOYX54UvEvZ8sC3GdupOM3UXAPhXpMww=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=pVtg+v/cp4k06k0reqqbaVi3C/cptBbUq2ULd+//w318MfKOXS71b4LtJxo9Fw8l2Y5iVAewDwS/xBtk90FKkNLPKi0RLVz0y4fQMhoKvhpI7MOdjYDaYAqAhPGaSRlvBgtCIvSXUYhwR8F4xBip2ypAYutW06ezdT2BPRYfh+c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C3PWiycy; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716879670; x=1748415670;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vHQQcWQMPN7fOYX54UvEvZ8sC3GdupOM3UXAPhXpMww=;
+  b=C3PWiycyEhET0DAxJjqQqC4AtoJ0EBmGoFOTSHHFYlphCaTw/Y6WzHQ1
+   vdmEaENr/eboJJGAJC53PgFuE9jZmLnJ8XhBhhTnKSWK7lcHlKcsCrGLI
+   OckiJ691CXa0V4cYgNSUtLx/UqSB/ED80lv3xpBsy05DheWXqqLis47PV
+   8ZEOdpizyuDZ2xGYfXS+/daTquEEpdF0ng6tvxAuEzCjkBEJf+ebQ7B+V
+   pkdEVrkJzw3oIYG0uESxPfKezUIvljub5ZuBbWSyFIifkl6vnKtam6DUf
+   fyjMixF+pPU8X07/IWS3aBPcRbEm/HySzGa5IzSwQTabJENkTkro5/VMe
+   g==;
+X-CSE-ConnectionGUID: a8uN3oMPSqi0NFV1WKWgXA==
+X-CSE-MsgGUID: 7U3KrIjvTce4O7l9kYZyjg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13374358"
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="13374358"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 00:01:09 -0700
+X-CSE-ConnectionGUID: LYQ8bqFHRPGnl0zSuu/vQQ==
+X-CSE-MsgGUID: JIVsre+BS4m0uFiIaPzowg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="39405818"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 May 2024 00:01:08 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 28 May 2024 00:01:08 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 28 May 2024 00:01:07 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 28 May 2024 00:01:07 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 28 May 2024 00:01:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RFumsz6TvgF6I2P2B0LOOw+3Gx5AG6xxb07rvMDXezIITA/DZ3c7sDd6xQpjcCxQwQFrxwpAIUcBfihsIHloUAO7j39dyu7YAEa/2bP1JpB5vvMy4FCDReStpJ6ozeSfzV9BkTtjw9crc+AzZOChyvDuTu3en0YSxuPVkmjGHg51Nq0CP72cXEj3azdV1MpcN/ooK0wPnt7IDhcJsWqVeOVXUglwU0ly9GmNe0njrMLZEZNzQBrtzsN1guRJTOSJ2213th4f08+qOQJLRzvNg7Qd8YQlZzbV4GB5zKGX4UxnMLWf+rHC0ey/+wIr9lx+yIOkokycZnmajNFuebcwGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UjVirfZbyIO1/kSSpjCrOQdOQLat+h53MY5GiFhf/wI=;
+ b=ZEUEp+XsXOXCYMZ8vpdS/pKVsi9r2iEyeq3x0atiLu21qXFdNKkVEWJ8HbM424SyuQAXdk5rXfq3GmBafIm+SsGBlDK9w748uMlnvSCPpMN7iDsaKhtAWAwUGB5zW+llUH+5UXdjeScY/VOWZWQIniEHOUGl8WXFDTiTebqtgigFFVITUaFfkBayDlkpJ77u/5hilf0AyG9LeFUkzHPKcRK8o33GyeJXqc4Sj+w9UkK/OjGIx4JtrNgyKMC/bn9BI3Xm+vYJ8cfTFFxGzFrGCqn5798XYi/I1hVRwptKFzYb5dsoj5trUcd+tdcLCA/aNXnTnwLAmZz3kRp/x9Q0AQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH8PR11MB6777.namprd11.prod.outlook.com (2603:10b6:510:1c8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Tue, 28 May
+ 2024 07:01:04 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7611.025; Tue, 28 May 2024
+ 07:01:04 +0000
+Date: Tue, 28 May 2024 15:00:54 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: York Jasper Niebuhr <yjnworkstation@gmail.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox
+	<willy@infradead.org>, Kees Cook <keescook@chromium.org>,
+	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-security-module@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [mm]  ba42b524a0: segfault_at_ip_sp_error
+Message-ID: <202405281425.92ece916-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR06CA0192.apcprd06.prod.outlook.com (2603:1096:4:1::24)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: some questions about restrictions in SMC-R v2's implementation
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Wen Gu <guwen@linux.alibaba.com>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, jaka@linux.ibm.com, kgraul@linux.ibm.com
-References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
- <c3c13531-f8be-4159-b8df-b316adb2d3fc@linux.ibm.com>
- <38c8a10a-339f-402e-836b-baf38994c7b2@linux.alibaba.com>
- <9be5a19c-1641-4b2e-8dac-d2d715cadd42@linux.ibm.com>
-Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <9be5a19c-1641-4b2e-8dac-d2d715cadd42@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH8PR11MB6777:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8aa8f15e-c440-4440-0c6a-08dc7ee3f095
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pCO0IKWd7UYMzerLGaFaZMs1s65NdbP/HCPVZu98njT/OhlwLDMUyhsXTbEp?=
+ =?us-ascii?Q?5Hr0XAhGenzdoAsUIXEtR/t/4PRhB6B4N+nQWif1tBeXH9dK0eY0P6HXbkF6?=
+ =?us-ascii?Q?dXNn5zYR1dMJBGOng0qEokbTY+gvuBZ8cZjDdUdB2T0C6IdS2dMZpE7gSV6m?=
+ =?us-ascii?Q?QoRh4yqbCoQAjWQXDeu5EIm9gIdudHmmWXnWT7rDFQh0Q43AMLF7TjQeO8/o?=
+ =?us-ascii?Q?F1VHValmxCqVZGxb4v5mX+BfpglASQdvTdwgK6q2BUZ/MazLTkweg45oOxi4?=
+ =?us-ascii?Q?tcUrIsz815OkRyx8P5jKsRjLta2yL78EIRw97yD6MTV0QT4gmNYgINniHyUA?=
+ =?us-ascii?Q?4Zsdz3iItihnRvB68+AGZmU1n7lkm+huVVFvMu8RpgRuNrlj7nd9ueY5T5NF?=
+ =?us-ascii?Q?UfnfZWgw/e7oUsOnn6GQUvi5+QSzFaYPoKtJya9hA+r1x82F5knZpBktzJsh?=
+ =?us-ascii?Q?TUg21qls6M2IToelNITrsnC3o9R69vxGgUWHDH1MU2jfNaYd8XXbVG+p1MNK?=
+ =?us-ascii?Q?fTAfWES6wHfHtVpprphOGao3ew71OYgU4xk4T4hmgvY8GVAWBjhzvvlLCP9L?=
+ =?us-ascii?Q?cRQDnoE05GH5TEthGiC/Lgu890OKjapql4Sn7Y59EfFskgvV0vExIZuotYd0?=
+ =?us-ascii?Q?DN898ImNl5xWew2p73lfTupzTJ5rF4BP8QxmxmO3Y4ELyvdMRvMlS/kOQnA8?=
+ =?us-ascii?Q?/dtVGKHJiaWwZtrMKHKIQO+0pO9pNWNytU3PUYsq5wMWaqefW3grNYvmHJ7d?=
+ =?us-ascii?Q?9+pkBPFbJbGDL4efKvR+29Yo7weJ7Q8tRsLiXEDY/6gU3Mxu8I5A5gDPGTrj?=
+ =?us-ascii?Q?j4n7hwrv9W5AQ22Vb3rx/NiLVF0zdohE2AWKoFirsjwbk7HNo7er4WI7wAuY?=
+ =?us-ascii?Q?YVzABvtSmm5e8+az964z8CoxGLO7AE+n+m7T9CVpLRnf9ZRZ92MSPlEy74aQ?=
+ =?us-ascii?Q?MNENTZgyXZNK2fEhe/dbpB8q0c27ImoQ+8NuB+fuVIHSZeHDkIDvmoVzziEG?=
+ =?us-ascii?Q?MRE7ED/n8biMYlGEP7SshYRyMcy8Xrqfym2QXebe2XQMVYFMDqgNjlKB2f8Y?=
+ =?us-ascii?Q?OFF7PzVkImxrOPC6tk40TKVrT30x4vHQFnFN617+m+59vY5aWLa6BLTg+cF6?=
+ =?us-ascii?Q?Eqg8Nx43BAsYUJhhGIr8+JYckby6pmImo7DoZq9pni6Eui7NHedS3sQ4xZ7j?=
+ =?us-ascii?Q?tZRZIJtYucMfPChOhjwCXNgaQ0l380CBmrLRgytUHtkHq7L9C6ZeB6Kpiig?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ubgEzSH/K2haSLHeOUDWcBhUDo6E82NfW2+gU5rqe12wyj/lBgleUJYAK13u?=
+ =?us-ascii?Q?8V7xl6dR+I3yMewAFX6yIoDZM/T09fs3ajX5i+ml9qjdvA6xHo/CHNWVe1gg?=
+ =?us-ascii?Q?FaNF3HCXJ/932pxLTJkMzevXcrOAKgdlWd1XEp+bnSORBzCtSXqlSZmXQfM6?=
+ =?us-ascii?Q?eP1sCiUB5q2JPUxJE8+RlWAlU/uD/6Ns5YJg4vwAOFlg9jEAmHpeHuds9QCK?=
+ =?us-ascii?Q?W9whm5zLxsujplVwLj4raeYPLBVjnjld0zb/w4pH3aldhIujWbMYttYiLzFA?=
+ =?us-ascii?Q?avl/4aQIYIzJuLcWdv7Z7vw6PgAcXcVxeMCJDouaHEa3pDRaUpOygX1j9i1+?=
+ =?us-ascii?Q?yYsoIk13Judaqv7OzDwfdzZC1OCjroPbO3L6GDIQ3Y2HMp+Mt83idLPf0YIT?=
+ =?us-ascii?Q?kLUwAPJsQUZY01/+ueZP8h7nkuGMQvzEZDC6ZxeewZc22uNa6r+mBVhQX/kj?=
+ =?us-ascii?Q?BRxunCVlz7/due7RLdJhlSWswujbwQR+fUqHaMYNfdWTm60scONhiX49V15B?=
+ =?us-ascii?Q?icHB0Gl0IHgbYQQJlExWoS1cCqfl0YuX1sSYTfuMt/IGl9d+JNONd2dVb+nM?=
+ =?us-ascii?Q?8bZvxfn3S5ZkQF2iw9wGnbGQ0abN6ypk37l2qs0153gaFU5A8faDhGTa82Z7?=
+ =?us-ascii?Q?78iiHEEFOjFF2xCJxAKovxVJ2iztm/Up+OMv2ZS8d7jHvn7qZaVx3XU3aOyE?=
+ =?us-ascii?Q?eHRbSE8f1Pe3Laa/Ooeuove+WKlNaFHJjnnsc6txs055WIT8fJm5CsVjST85?=
+ =?us-ascii?Q?Yb2Gvrkygn+klVqixqfDAktS3MV4fgkl2PO+SVLAMPCE+OIq1Ecru59eJzd1?=
+ =?us-ascii?Q?0+wh67urazA0QI/Mf4F/Z2cVC5lwVCaWZex7HUyo8c19xMFs0wLZ9YmqO1b3?=
+ =?us-ascii?Q?AR4z57PJ95bHilvE3BFRyDFWwGJZgS7AyclsiMUCerQkyaa/oC/VSkDVL/nI?=
+ =?us-ascii?Q?1uT6XS+Bq0S6RryOeBUCdhFYBrN2OhM252wNCnIX93wXYNR+IM7hkjWbJEID?=
+ =?us-ascii?Q?z44MktiClYBa7QSC9G6TpcZof6qnZENQ/oEAMGQi/zVjhzrxJz5ZgZqFxu8w?=
+ =?us-ascii?Q?/rmk/qLV0WySq38gvaSb6EA6CWnY0A+nojOtkI1B0ae8sdLOm4/GDPeG2gi8?=
+ =?us-ascii?Q?YbwDDaBz0GKKDZxDxZHg8CQWt6V0NFi4jex73t0rdi0C35kBpen+IciEv6OT?=
+ =?us-ascii?Q?rxRmWDgetJFk6FE3DIqmlACZgfeD636GEQVgC3Me+Y46dnO8I+AW7vNZzcbP?=
+ =?us-ascii?Q?PjqJniSXHnd5jKBiqFw2XjgYypKMpQxRRxRxFfOxs9cQ4k7ys4S0IeCkkc90?=
+ =?us-ascii?Q?G+Pm9yjrYJSTdkrJqvCyfg+CEBhHdTIncyCwrvT8Upb8pDlJEFIroWX+Ivm1?=
+ =?us-ascii?Q?DTLiVdpWIPF4kxmUurZBbDd9ZbKYtf3c6WfQTaxx8tZErX/r2/8zxqtFRzvH?=
+ =?us-ascii?Q?wzwyY1Jr8ayoUnXrSu7QWTiLJ60n/ufKrE+K1hcrDSg4PBP/YEHWFC0rEFF6?=
+ =?us-ascii?Q?4pzzRCBcMgQwyDEmzaPofMAuDF69i1GoHHuxfF3eQMW0QnfXnwj0UhJ45qdy?=
+ =?us-ascii?Q?eUbkhCbQ0uvGsXgxbSSyHFYOo7F+ZqfZdmjMb0BT9aRJkmPYm9AX977G0T8v?=
+ =?us-ascii?Q?Ag=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aa8f15e-c440-4440-0c6a-08dc7ee3f095
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 07:01:03.9613
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VRK5g3BiENF8ePV8DldGo8nw/VT34KXcBuVC15wxPS0/ZCSwfnTAq28EwqAb/ZUDaWfolz+w+dTNRIMzQGc/jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6777
+X-OriginatorOrg: intel.com
 
 
 
-On 2024/5/27 22:57, Wenjia Zhang wrote:
-> 
-> 
-> On 21.05.24 12:52, Guangguan Wang wrote:
->>
->>
->> On 2024/5/17 15:41, Wenjia Zhang wrote:
->>>
->>>
->>> On 07.05.24 07:54, Guangdong Wang wrote:
->>>> Hi, Wenjia and Jan,
->>>>
->>>> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
->>>> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
->>>>
->>>
->>> Hi Guangguan and Wen,
->>>
->>> please see my answer below.
->>>> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
->>>> ...
->>>>
->>> The purpose of the restriction is to simplify the IP routing topology allowing IP routing to use the destination host's subnet route. Because each host must also have a valid IP route to the peer’s RoCE IP address to create RC QP. If the IP route used is the same IP Route as the associated TCP/IP connection, the reuse of the IP routing topology could be achieved. I think it is what the following sentence means in the doc https://www.ibm.com/support/pages/system/files/inline-files/IBM%20Shared%20Memory%20Communications%20Version%202_2.pdf
->>>
->>> "
->>> For HA, multiple RoCE adapters should be provisioned along with multiple equal cost IP routes to the peer host (i.e., reusing the TCP/IP routing topology).
->>> "
->>> And the "Figure 19. SMC-Rv2 with RoCEv2 Connectivity" in the doc also mentions the restriction.
->>>
->>> The SMCRv2 on linux is indeed implemented with this purpose. Please see the function smc_ib_modify_qp_rtr(). During the first contact processing, the Mac address of the next hop IP address for the IP route is resolved by performing e.g. ARP and used to create the RoCEv2 RC QP. If the route is not usable for the RoCE IP address to reach the peer's RoCE IP address i.e. without this restriction, the UDP/IP packets would not be transported in a right way.
->>>
->>
->> Hi, Wenjia
->>
->> Thanks for the answer.
->>
->> I am clear about the restriction of subnet matching.
->>
->>> BTW, the fallback would still happen without the restriction. Because at the end of the CLC handshake(TCP/IP traffic), the first link will be created by sending and receiving LLC confirm message (SMCRv2 traffic). If one peer can just send but not receive the LLC confirm message, he will send CLC decline message with the reason "Time Out".
->>>
->>> Now let's have a look at your examples above. Both of your RDMA related device have another IP route as the TCP/IP connection, so that the reuse of the IP routing topology is not possible.
->>>
->>> Any thought still?
->>>
->>>> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
->>>> ...
->>>> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
->>>> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
->>>> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
->>>> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
->>>> And more, why check the symmetric configuration of routing only when server is indirect route?
->>>>
->>> That is to check if the IP routing topology is the same on both sides. Then I'd like to ask why you use asymmetric routing for your connection? From the perspective of Networking set up, does it make any sense that the peers communicate with each other with different IP routing topology?
->>
->> I have looked into the configuration of my testing environment's routing table and found that the configuration can be optimized.
->> And the sketch in the attachment used to describe the topology and route configuration of my testing environment.
->> After optimizing the route setting, the fallback disappear.
->>
->> But why check the symmetric configuration of routing only when server is indirect route is still not clear.
->>
->>
->> Thanks,
->> Guangguan Wang
-> 
-> The optimized configuration looks much more reasonable to me. Thus, why do we need to do the symmetric check when the server is direct route? Don't we expect for a direct route on the client's side? If not, I have to repeat my question: does it make any sense that the peers communicate with each other with different IP routing topology structures, like your first version of configuration? If yes, I need convincing argument.
+Hello,
 
-I agree it is more reasonable that peers communicate with each other in same IP routing topology structures.
+kernel test robot noticed "segfault_at_ip_sp_error" on:
 
-My question is that when server is direct routing, why do not check the route configuration in client side?
-For routing configuration, I think it is equal for both sides, either server or client can be misconfigured.
+commit: ba42b524a0408b5f92bd41edaee1ea84309ab9ae ("mm: init_mlocked_on_free_v3")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-Thanks,
-Guangguan Wang
+[test failed on linus/master      c760b3725e52403dc1b28644fb09c47a83cacea6]
+[test failed on linux-next/master 3689b0ef08b70e4e03b82ebd37730a03a672853a]
 
-> 
-> Thanks,
-> Wenjia
+in testcase: rcutorture
+version: 
+with following parameters:
+
+	runtime: 300s
+	test: default
+	torture_type: tasks-tracing
+
+
+
+compiler: gcc-13
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+we didn't see clear hint in below dmesg information, but by further runs, the
+issue looks quite persistent:
+
+
+6c47de3be3a021d8 ba42b524a0408b5f92bd41edaee
+---------------- ---------------------------
+       fail:runs  %reproduction    fail:runs
+           |             |             |
+           :30         100%          30:30    dmesg.segfault_at_ip_sp_error
+
+
+so report this FYI what we observed and captured in our tests.
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202405281425.92ece916-lkp@intel.com
+
+
+
+[  OK  ] Started /etc/rc.local Compatibility.
+[  OK  ] Started Getty on tty1.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Reached target Multi-User System.
+Starting watchdog daemon...
+[  351.243261][ T1844] watchdog[1844]: segfault at 0 ip 00000000 sp bfd01fac error 4 in watchdog[49d000+2000] likely on CPU 1 (core 1, socket 0)
+[ 351.245577][ T1844] Code: Unable to access opcode bytes at 0xffffffd6.
+
+Code starting with the faulting instruction
+===========================================
+[  351.253843][ T1846] watchdog[1846]: segfault at 0 ip 00000000 sp bfd01f9c error 4 in watchdog[49d000+2000] likely on CPU 0 (core 0, socket 0)
+[ 351.256126][ T1846] Code: Unable to access opcode bytes at 0xffffffd6.
+
+Code starting with the faulting instruction
+===========================================
+[FAILED] Failed to start watchdog daemon.
+See 'systemctl status watchdog.service' for details.
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240528/202405281425.92ece916-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
