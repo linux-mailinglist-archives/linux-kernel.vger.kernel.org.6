@@ -1,245 +1,314 @@
-Return-Path: <linux-kernel+bounces-191654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A378D1216
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:29:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481CD8D1226
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 04:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC84283F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:29:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 997DEB21364
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18991101DE;
-	Tue, 28 May 2024 02:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AF91094E;
+	Tue, 28 May 2024 02:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWNHhXYf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="o8JdtkU5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iJJmpoCY"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7BD2563;
-	Tue, 28 May 2024 02:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716863389; cv=fail; b=YS6DuC3c3v0s4FcbYMb/T5V0wBjYOAuGwXDX2FcTrPVZylSczjOBDZ51O+cwAD5mhiWf74U19m+Bu0bcH5MbYX0qsTV9uDnWQVNwN8QPylQRKWUyIMfVnAvQMpd7Gx8pKgc03zfMP9H+bk6p5DxUjKjYODAojNqfpCA1hBnfDco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716863389; c=relaxed/simple;
-	bh=SZ8TCnMQ+Bmj9Xwum7m9EsSPD9gvGnosQw1JhDPN9x4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=arBbpKHfaScUYArZa5JmpeopBXWtglJFk5fL8fMJ79BfmadO61zmeBR2TodLZh5EKs7vPIzZJPpVz706hBstYtyshqsmnwuhCOgdzQcDJsPmkPtafQoprgIhv3wZKgAFuZo5CZ48wHsF6pdhM1+I7OlA3n649sqeGXwPAJxQGGs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWNHhXYf; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716863387; x=1748399387;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=SZ8TCnMQ+Bmj9Xwum7m9EsSPD9gvGnosQw1JhDPN9x4=;
-  b=FWNHhXYfOTqMbcpqEH2L8ctweukWkuSnBJIpY4vEAhTduWMajD0edgNF
-   Vm20WT7E6BUhtKfSRptDhMq+Wqltx+O9o4Qfa7QmzchNtTMWa7gkvRFWE
-   ilPf+8th3XVVSIYEULw+DIFDm6r04Nm098CzZjZiDrkRb3ufepwD4+fVW
-   GTpLHJZJPPGGU4bSTym3xHTKjly0NvNKkOjDarVpSVDorBBSCCNPMloTl
-   HUZAJPTunTOMaSyhztU/w89t8Vd1ZiOZEq1TbkrSGamuzw4WNKN8fhPLv
-   cpjJgKu1bHLkrQZ/iufmJZ1NxgKbd1tD3rLEzgEyYK1Yx3N+LC3FRLqWX
-   g==;
-X-CSE-ConnectionGUID: MF4mdiN9RL+BvhviJu4Vfg==
-X-CSE-MsgGUID: WrBWbdBDSTCFnFKF/hkWeA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="11719755"
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="11719755"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 19:29:46 -0700
-X-CSE-ConnectionGUID: K/xFa69fRc+GhZl7ZBQP7w==
-X-CSE-MsgGUID: 3c4AVBnPRkOtQVXCrOjQqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="58096461"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 May 2024 19:29:46 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 27 May 2024 19:29:45 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 27 May 2024 19:29:45 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 27 May 2024 19:29:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=huPJnNvXDb53VnJRp0vzT4ikthCLdJ6rHYcRSGofRMrgX2WPWgrHz1SyUpbfJfDoRZfW2Kqg4q6CtY2X0Dj8IMnJXOFXC+jHznGvnjhxJWLanBnIT4gxmmu6JWSQZ7c4y6285iTBqPwN6RrgKtN2FWsKcObXTxMFCOC0WLjZ8Sxrhn5ey8aUB7h0Z1fzBKWkvkfNk3Pm4shYh2VJrE/wKju0TkpchTuAGosAg4+Nn0+EAe79BHbSMsy+9r9kyX7CR7CzO73OTbKcTNta3YdsUTX1MZ/G8CF7NJbA+Yaljn8N/zHNvjlW+N5JIP9O1Cxb/EpGVoagU+PeK+kl9igpuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Aw/RfiZ4Rp7wrND/AIvhqRGUS7sDBEtD5yO7dAGu+6U=;
- b=OEHUM76ayGUyE1Occs5KzCBsNPnrSYD0m8HOwGIGDW5WddWxZ9IckInJjnay9WjaqzIcH3VJhOOO9w1tSzQJTlVjoOntL6LWTZl7uXLHqJlxQ6wtDL66EMqZKcOnppvv1SEatcqa1aT4FV63Za5izgaH2WfUMKmzrNKpaEkTWMjKq1vo1J9oDmg4WPRqI4Krfr6AMDTrrnneXwBgOYgUIJPb5LQcjnsGnjwjy2z0lJ+N8L5S3l5TfgGl4bfOa2uCdcZ13L8NienKX7W2y3YevfjwQmOKPTCEBDxebUfL3FOSl3I6avju//ahJuvTymEVhwTveo0+1MDyhuqUAx4dGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5751.namprd11.prod.outlook.com (2603:10b6:8:12::16) by
- DM4PR11MB5230.namprd11.prod.outlook.com (2603:10b6:5:39a::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.29; Tue, 28 May 2024 02:29:43 +0000
-Received: from DM8PR11MB5751.namprd11.prod.outlook.com
- ([fe80::4046:430d:f16c:b842]) by DM8PR11MB5751.namprd11.prod.outlook.com
- ([fe80::4046:430d:f16c:b842%4]) with mapi id 15.20.7611.025; Tue, 28 May 2024
- 02:29:43 +0000
-From: "Ng, Boon Khai" <boon.khai.ng@intel.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
-	<joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Ang, Tien Sung" <tien.sung.ang@intel.com>,
-	"G Thomas, Rohan" <rohan.g.thomas@intel.com>, "Looi, Hong Aun"
-	<hong.aun.looi@intel.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Ilpo Jarvinen
-	<ilpo.jarvinen@linux.intel.com>
-Subject: RE: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
- stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
-Thread-Topic: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
- stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
-Thread-Index: AQHasBkLCj07Z540QUGXqLg1tlacPLGrb/8AgAB3OtA=
-Date: Tue, 28 May 2024 02:29:43 +0000
-Message-ID: <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
-References: <20240527093339.30883-1-boon.khai.ng@intel.com>
- <20240527093339.30883-2-boon.khai.ng@intel.com>
- <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
-In-Reply-To: <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5751:EE_|DM4PR11MB5230:EE_
-x-ms-office365-filtering-correlation-id: 2f7b063b-6c40-4daf-e5a2-08dc7ebe0883
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?SnCsTyWKCOce2xDHGo/S1Qm3yj5m9HPa9yFd0hDVjUnzr3B/Mzv1FAPbY2yR?=
- =?us-ascii?Q?Td7uSlsC0Dg/mDZbq5SNxRE+aw8klyWfP6PEwn0Yf3ERlgtWGMTGUuDwCEsJ?=
- =?us-ascii?Q?BtnIn6AapJZbkiFdx4ZGfDptpVcKimd3lK1H7SVC6cYzv6SEph+4NsbjA3y5?=
- =?us-ascii?Q?Jlzo8ub9H1sN7ECNrROdRPY+DCWDT3ZKlzcTH7KY+n4bgDU03JbAnj63Nb/N?=
- =?us-ascii?Q?EwiJsnQRdhJbtG8w3eaKp81japjEWaIFZeIDRLb0Pg/YZZ2ZkEQrUw6KUPwc?=
- =?us-ascii?Q?U3yhrs8yF47AA9O4DICpns+uTFll8ECn7ZMshEepyhi18cFy7X5blpQ/z1rc?=
- =?us-ascii?Q?VlZvs/jAHLNaA4rR8bLR16xtlf0w9ynq9YTzBTaGYJVeDA6BGF+9JqU3PwLQ?=
- =?us-ascii?Q?XS0xGfHBSnHyHEKToMfnLXJ7002olCXUnd1H/EcCuaGgw/csYuIE5yQDGl71?=
- =?us-ascii?Q?M8IcVYt9qrWzxyE/ppISgO5hdbk+bToE5K2iKittOSTOcXo3ar01rZJjcC4N?=
- =?us-ascii?Q?BYCEHyYzzmxi/l3ToXvBP+uAbQ6gMpKeOWhxHpezPSEKGGKqISs7Ge6n2ut1?=
- =?us-ascii?Q?O6Ie/ToLRwEEH76At0GsOxLLFDIySoUZg5we7gspb3ThZ+cE7NMQs8rrBZog?=
- =?us-ascii?Q?52nfdS6FXq2/hiwBZp6Qf9G+FytwJzqscYxL+3aQIdKzT0YHrE8pf11P+H9K?=
- =?us-ascii?Q?Dgihzv2C1p6nxEE5ccAzvmGnjtRcJMI9uSnaF0uTyxazemFATVd5CQhvhKmv?=
- =?us-ascii?Q?2q4vr+XGYBmpA1lQbgucrh+rg1JqY3Ahg1qA8bioI+6pQMKswE0LDyz4sit1?=
- =?us-ascii?Q?PhqAL9rBaUMdVJq55YDgIs3lXWhxkUfOI+ntjxDs15tx6IT/AqzdR1o9syGE?=
- =?us-ascii?Q?3JIyJLd3mxZkLboGxQ41+p01kV2pcI8iAPqW6asex7GV5wlF/NBWCT5TPSO8?=
- =?us-ascii?Q?oPpTdbB0r0IFlCffv0+jR7HohBzEZg+3EQtiDvI/6SIWl5ZsOf77/zUumpNr?=
- =?us-ascii?Q?d498Dvz4cFsVKQQ10OY0n2ezJ0+Rkq1xlJpE23onEE9aH5CF7mg9/QLTXPLO?=
- =?us-ascii?Q?ULlNULANElZOT0wauoTqTpp9j8yWLUN0Q2wKuj8RDn3amDPNvflNMIDSjZpQ?=
- =?us-ascii?Q?QNFSIh/fjz5EK9oXj3zmOTuOgnjnTwbdin1e24sfXI7S8ad0vYd+8wmPOtZr?=
- =?us-ascii?Q?T5BheabW0515eDYV546y03k2WeZTkho8q5tA9bPB6AWYoi4hkLns6QX54XSM?=
- =?us-ascii?Q?9rzqWVp0d6XwvB5Kn4lyNmWcUl9g124XeK/h4ZvvaaJJE58jn7eWm23kgQNG?=
- =?us-ascii?Q?sT0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5751.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gf4jCZj85XvSDZjGwQz4uLPv4INdNYyf0Y5F2kjpR2XkaWacn6dWJCr7jD/v?=
- =?us-ascii?Q?uo+bnR2M96aIebM7SnDp2aqIDPHSjWOQTp8FIJ5/iRFet5Ux6Pwly3MlpSls?=
- =?us-ascii?Q?8Vbxt1WGPbsv1o+HQv77DrX5EaGBqqBNX6NpeDLLAfeoaM8lnzef/vsUMDff?=
- =?us-ascii?Q?+HWIQSDb0lAlIXfEyT1cqxG2sCSTilAkTdB9z/RD/ybLsftUSe9roETktDD1?=
- =?us-ascii?Q?4trfgEPK91fKB29OUQBOUuJfs40M14+9ZCAVq3LZtQUN7z+/M9hzo+dWH5yz?=
- =?us-ascii?Q?pIyDiyUE6i1Oii8rwcZUKaHcVPBWadHpgrd4V7wsyx8rIsxVRcC00W43K9HE?=
- =?us-ascii?Q?mrMGn6kdTwAmBZ7+HstUWFYbB2jI40/pDe7QuIhQa6aFlUDJOyeXt+GgAuHO?=
- =?us-ascii?Q?auAGjQUzWeihL/0HyDyxV4HsW5yU3Q5bUouVGFMW8MDEBzontMorcWdsaxxd?=
- =?us-ascii?Q?b1JXlpsYK9DK2n+m+6Llxl4+oWQAU5SMtIOPq8OIr7dZ91f8DRK7Upocm9RL?=
- =?us-ascii?Q?VyoZTqH2cP/JJ8eDcOrYZYqfv0+FmuDEGM6XApawUng+2aHkxl6FWmsrKBdu?=
- =?us-ascii?Q?6AfuNW/z2K/MblVEs1R8GOMw/6tE9g19slw7+je6ryr4AoS/6O4zPq4TzLQ0?=
- =?us-ascii?Q?6gMsG9YLyZckqKBTtrAFkzClmlkQ8ClViJA+5JGm5Un7dU/KOuTzF6oCRpy9?=
- =?us-ascii?Q?edthuCWBjto/qQnWa/xF/lpSf891kU8uhw4U6NcaBSQne4eHaClxYWAtvWFD?=
- =?us-ascii?Q?SSpcqfVbOuBuWSCfZ205DjL/l1vZV0goizBPWzq2CGRdTXPzV11IQNbmF+2m?=
- =?us-ascii?Q?p7EpnZg4YEMF0nEGCpVjko/3NT0f5Z/olyNeyUR/tNzNgL7rav3iE8exnoqK?=
- =?us-ascii?Q?I7+5z2QhGeIGm4WRizqniZIy8PaDSNBNQeWZah+1Lu8Tbkfbv5PhV29Qv92K?=
- =?us-ascii?Q?paLHTvCFN28xtc/3BAg/nnxSA9D9GXII2GB5gsV0ajj2T92HxUDanVeGosHE?=
- =?us-ascii?Q?wvyfoGM4nbKmx3QrPv+A2T1u9GRy5oViK6piVjqstZ6lRGwXQgM49FVLzs/o?=
- =?us-ascii?Q?vNv3ffNLmO5W3SB3Xh4NU03HvnqE8SVZxxoXsIg9AANHrZCIRaUwf/BfV2RX?=
- =?us-ascii?Q?0VHaJBXqkZ+kCGGi1grHxj/nk75pXovDS90XA5hfoDZYwproeP9k6j2cgBMr?=
- =?us-ascii?Q?meidlsZKxgvM9oayI655+4onBUUfN+wXdx9j0rJMtrV4Hti8Z6O4TiUW1TZe?=
- =?us-ascii?Q?AKaErXBnAN1RL2rpg+Zcqu98Ja81cKfb4LK0eZzbo8Dr71UG0qpWBgksZtx7?=
- =?us-ascii?Q?J6hiUKuF/JiQ9Us4dKeibGx2drvSTQsSNNnVqDi7tW7hFZyFjhQZi6r3rImE?=
- =?us-ascii?Q?7jGuwHbAoZzCjAKAAlGb8paHls3rleZKG0eFVjo7U64ZRQMgMVIPEm2Y6OVG?=
- =?us-ascii?Q?4xewaeC2TCWHGLYajJTmEsCdgGS4PYlMgN8z1Mk+M5DTGSFYE8wZRragPSCT?=
- =?us-ascii?Q?VcWNgHILGyM4tgmMlwpL/VjtO9OfXWeGpbvx/mr8FJjuDETMtCuzd2lA0yrw?=
- =?us-ascii?Q?5ij88YYd5O56MCLVPJyp/D4f0nkISAg2i07WpBLW?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136789450;
+	Tue, 28 May 2024 02:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716864041; cv=none; b=ZWBvrzgm11GPj8yHZmsmqca+ySvQU/l0C3ETXVNXei1aqjrZCJk/h7qBa4NmKCI0FabUkrzbrQ6ZwGzfxiJctIxnerX1jU6T9VspkY0kmzuV/ZJMsyzoRGFwAaUt5yprKQ0Cfp3JLcgZdNtq7gvZzbsXJIImPke0OkGEXEiF898=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716864041; c=relaxed/simple;
+	bh=ewfBrueWLzV+N3bVPD/YYNaAozgn/nzEyTFsuRpWHkM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=guWpYlbRI7VZNFIADK9F/Ke+UmD3o84m+G5f8ltiABgReN7kGGBcKEeSFrsl6mgNwGHZ52sep2wecPDopRTKvsyMmVNnBS61TpzP7otKN6asRO/1tDgwK1ys4o330fTtPy2zwP/3FOXBhe5zqwZrful1QX4QcXEWsninq6BiYkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=o8JdtkU5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iJJmpoCY; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 0C03E138013F;
+	Mon, 27 May 2024 22:40:37 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Mon, 27 May 2024 22:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1716864037; x=1716950437; bh=Z1aE0lr7Zh
+	HwLd6CortI1ST4aAF2DsoLetuYiDvFoPs=; b=o8JdtkU57gexH94gcepXGbEyLP
+	JRS9NBvOTHTwe2uiRtTdjZeS2to6yPzGU2Nh/BpyNILK81SONobmltR7MnZvqW9f
+	Ab3baRHV0+GLtE2qzcM/lnyN2Nlm+qI9ThtAPABQBYqe2I9lFapApNfdD/rX+h0w
+	IqlfKb4Iuxuu+Y2jOXiYYmXb77ct+JUlOLad60IWaj+vKQby5YRSXho8dxwSlCdC
+	1md12HVhU+16JBjt1E08DJLIcbsJh4zbn0QHNNYCTevKJlD8pd6GG62c3Pv4CTAC
+	oW08fwLl67o+LfAU8WX9CeYt2E11mDg+cS7T2oOG4bdZ28cSo+f0lUa0IY1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716864037; x=1716950437; bh=Z1aE0lr7ZhHwLd6CortI1ST4aAF2
+	DsoLetuYiDvFoPs=; b=iJJmpoCYer33+39XX5UYbUX6hRPyhnZBeIOUQfHVF89K
+	oBL0hlzUGpJk0BYWMPtLCKosLRk4rHWCEqCjNu4TqJ8B8e6kNyCaCemrXJfamxM9
+	OUsqv5YJxs5q/J+benU3iLT7LJVnk7MJJk1lCSPwg4kXE1+MPSofFXvqHVjg0q3b
+	yiUBu3aaGFbmTWhrODXVoufY+/AnZ2UYTH9pKF/vazaAfrWZQypcIA/ynzBac2bg
+	wwbwkQgZjCS/m4lcnjz9Y/URniRVvVisp3kKVZpSsBweHLMX03KraHJJ5XcLi2nZ
+	HTeAHsX75W2Q9pU/68aWR3fiCdVFgs3eFEkhvSpZsw==
+X-ME-Sender: <xms:JERVZvrnpv0--6f9rJMqV9oCvQfh-F2NG5y22bglEkJL2lkLifHkOw>
+    <xme:JERVZpp96eJ1dPmOeyu_oe3Ir76sZdBEDHGBVcshA4KcGx4OtRyaV-BnfTdQZi-Va
+    gMDNi6x2t1uGsAbZ2g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejhedgieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
+    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpedutdelgfdvgeekueeuteevffelfedukeeitedugfdvtdeutdetjeduudeuvdeg
+    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:JERVZsMum7HChN6whCzfxxgntJyNya0LbU5JXQlGMJwrJcEgnKF4dQ>
+    <xmx:JERVZi6HvYW6LfHLF4NXp4Dfvo72qaqln2jz6RpRSDVc0KRBRNy7PQ>
+    <xmx:JERVZu6m0ffMXuL4w8RjT6JVbewc235Fsqfx1YeaZqDlWW9G4uJgxQ>
+    <xmx:JERVZqiDjKgsEtUEN4xcdTQjWCrYaiLLj9rtqKMb6ddl8WC1CVmVgQ>
+    <xmx:JURVZp3SXM8KZ1INgvBfge3BTHmDpuFQQ5US5BQRlAmfbEyzLqaQVboM>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 96FF52340080; Mon, 27 May 2024 22:40:36 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5751.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f7b063b-6c40-4daf-e5a2-08dc7ebe0883
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2024 02:29:43.1333
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3Y9htBblrlIqwWG1L+dpoGwQHk1UaGrgqCyDuFrjL7NRk1t5RK4dzrlBB5cNQy+O5sLeLzGhzii3A134vPTqvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5230
-X-OriginatorOrg: intel.com
+Message-Id: <4d6b9171-7248-4937-87de-7e921ed8e507@app.fastmail.com>
+In-Reply-To: <6f4bc109-00d0-47b0-a581-b96a6152545c@amd.com>
+References: <20240528013626.14066-1-luke@ljones.dev>
+ <20240528013626.14066-9-luke@ljones.dev>
+ <6f4bc109-00d0-47b0-a581-b96a6152545c@amd.com>
+Date: Tue, 28 May 2024 14:40:16 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Hans de Goede" <hdegoede@redhat.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ corentin.chary@gmail.com, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] platform/x86: asus-wmi: add apu_mem setting
+Content-Type: text/plain
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Tuesday, May 28, 2024 3:00 AM
-> To: Ng, Boon Khai <boon.khai.ng@intel.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>; Jose Abreu
-> <joabreu@synopsys.com>; David S . Miller <davem@davemloft.net>; Eric
-> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
-> Abeni <pabeni@redhat.com>; Maxime Coquelin
-> <mcoquelin.stm32@gmail.com>; netdev@vger.kernel.org; linux-stm32@st-
-> md-mailman.stormreply.com; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Ang, Tien Sung <tien.sung.ang@intel.com>; G
-> Thomas, Rohan <rohan.g.thomas@intel.com>; Looi, Hong Aun
-> <hong.aun.looi@intel.com>; Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com>; Ilpo Jarvinen
-> <ilpo.jarvinen@linux.intel.com>
-> Subject: Re: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
-> stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
->=20
-> > This implementation was ported from the dwmac4 driver.
->=20
-> How does it differ from dwmac4? Can the dwmac4 implementation just be
-> used, rather than duplicating all the code/bugs.
 
-Hi Andrew, 5 years ago the driver was initially implemented separately, may=
-be need David S. Miller help to clarify this.
-https://github.com/torvalds/linux/blob/master/drivers/net/ethernet/stmicro/=
-stmmac/dwxgmac2_core.c
-https://github.com/torvalds/linux/blob/master/drivers/net/ethernet/stmicro/=
-stmmac/dwmac4_core.c
 
-If you take a look at the code, the register mapping looks different at the=
-ir TX MAC Configuration register and RX MAC Configuration register.
-https://github.com/torvalds/linux/blob/master/drivers/net/ethernet/stmicro/=
-stmmac/dwxgmac2.h
-https://github.com/torvalds/linux/blob/master/drivers/net/ethernet/stmicro/=
-stmmac/dwmac4.h
+On Tue, 28 May 2024, at 2:19 PM, Limonciello, Mario wrote:
+> 
+> 
+> On 5/27/2024 8:36 PM, Luke D. Jones wrote:
+> > Exposes the APU memory setting available on a few ASUS models such as
+> > the ROG Ally.
+> > 
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> > ---
+> >   .../ABI/testing/sysfs-platform-asus-wmi       |   8 ++
+> >   drivers/platform/x86/asus-wmi.c               | 109 ++++++++++++++++++
+> >   include/linux/platform_data/x86/asus-wmi.h    |   3 +
+> >   3 files changed, 120 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
+> > index ac881e72e374..d221a3bc1a81 100644
+> > --- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
+> > +++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
+> > @@ -245,3 +245,11 @@ Description:
+> >   Show the maximum performance and efficiency core countin format
+> >   0x[E][P] where [E] is the efficiency core count, and [P] is
+> >   the perfromance core count.
+> > +
+> > +What: /sys/devices/platform/<platform>/apu_mem
+> > +Date: Jun 2024
+> > +KernelVersion: 6.11
+> > +Contact: "Luke Jones" <luke@ljones.dev>
+> > +Description:
+> > + Set the maximum available system memory for the APU.
+> > +   * Min=0, Max=8
+> 
+> What is the unit?  It seems like multiples of something?
 
-So, for this XGMAC VLAN patch, the idea of getting the VLAN id from the des=
-criptor is the same, but=20
-The register bit filed of getting the VLAN packet VALID is different. Thus,=
- it need to be implemented separately.=20
+It's GB, looks like I didn't save my work when I did a rebase and update of this patch. I'll add to my todo list for next version
 
->=20
-> 	Andrew
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> > index f62a36dfcd4b..4b5fbae8c563 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -855,6 +855,112 @@ static DEVICE_ATTR_RW(cores_enabled);
+> >   WMI_SIMPLE_SHOW(cores_max, "0x%x\n", ASUS_WMI_DEVID_CORES_MAX);
+> >   static DEVICE_ATTR_RO(cores_max);
+> >   
+> > +/* Device memory available to APU */
+> > +
+> > +static ssize_t apu_mem_show(struct device *dev,
+> > + struct device_attribute *attr, char *buf)
+> > +{
+> > + struct asus_wmi *asus = dev_get_drvdata(dev);
+> > + int err;
+> > + u32 mem;
+> > +
+> > + err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_APU_MEM, &mem);
+> > + if (err < 0)
+> > + return err;
+> > +
+> > + switch (mem) {
+> > + case 256:
+> > + mem = 0;
+> > + break;
+> > + case 258:
+> > + mem = 1;
+> > + break;
+> > + case 259:
+> > + mem = 2;
+> > + break;
+> > + case 260:
+> > + mem = 3;
+> > + break;
+> > + case 261:
+> > + mem = 4;
+> > + break;
+> > + case 262:
+> > + mem = 8;
+> > + break;
+> > + case 263:
+> > + mem = 5;
+> > + break;
+> > + case 264:
+> > + mem = 6;
+> > + break;
+> > + case 265:
+> > + mem = 7;
+> > + break;
+> > + default:
+> > + mem = 4;
+> > + break;
+> > + }
+> > +
+> > + return sysfs_emit(buf, "%d\n", mem);
+> > +}
+> > +
+> > +static ssize_t apu_mem_store(struct device *dev,
+> > +     struct device_attribute *attr,
+> > +     const char *buf, size_t count)
+> > +{
+> > + struct asus_wmi *asus = dev_get_drvdata(dev);
+> > + int result, err;
+> > + u32 mem;
+> > +
+> > + result = kstrtou32(buf, 10, &mem);
+> > + if (result)
+> > + return result;
+> > +
+> > + switch (mem) {
+> > + case 0:
+> > + mem = 0;
+> > + break;
+> > + case 1:
+> > + mem = 258;
+> > + break;
+> > + case 2:
+> > + mem = 259;
+> > + break;
+> > + case 3:
+> > + mem = 260;
+> > + break;
+> > + case 4:
+> > + mem = 261;
+> > + break;
+> > + case 5:
+> > + mem = 263;
+> > + break;
+> > + case 6:
+> > + mem = 264;
+> > + break;
+> > + case 7:
+> > + mem = 265;
+> > + break;
+> > + case 8:
+> > + mem = 262;
+> 
+> Is case 8 a mistake, or intentionally out of order?
+
+Do you mean the `mem = <val>`? Those aren't in order, and I thought it was easier to read if the switch was ordered.
+
+> 
+> > + break;
+> > + default:
+> > + return -EIO;
+> > + }
+> > +
+> > + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_APU_MEM, mem, &result);
+> > + if (err) {
+> > + pr_warn("Failed to set apu_mem: %d\n", err);
+> > + return err;
+> > + }
+> > +
+> > + pr_info("APU memory changed, reboot required\n");
+> 
+> If you're logging something into the logs for this, I'd say make it more 
+> useful.
+> 
+> "APU memory changed to %d MB"
+
+Agreed. There's probably a few other spots I can do this also.
+
+> 
+> > + sysfs_notify(&asus->platform_device->dev.kobj, NULL, "apu_mem");
+> 
+> So this is a case that the BIOS attributes API I mentioned before would 
+> be REALLY useful.  There is a pending_reboot sysfs file that userspace 
+> can query to know if a given setting requires a reboot or not.
+> 
+> Fwupd also uses this attribute to know to delay BIOS updates until the 
+> system has been rebooted.
+
+Oh! Yes I'll queue that as an additional patch. There's at least 2 or 3 other spots where that would be good to have.
+
+> > +
+> > + return count;
+> > +}
+> > +static DEVICE_ATTR_RW(apu_mem);
+> > +
+> >   /* Tablet mode ****************************************************************/
+> >   
+> >   static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
+> > @@ -4100,6 +4206,7 @@ static struct attribute *platform_attributes[] = {
+> >   &dev_attr_panel_fhd.attr,
+> >   &dev_attr_cores_enabled.attr,
+> >   &dev_attr_cores_max.attr,
+> > + &dev_attr_apu_mem.attr,
+> >   &dev_attr_mini_led_mode.attr,
+> >   &dev_attr_available_mini_led_mode.attr,
+> >   NULL
+> > @@ -4176,6 +4283,8 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
+> >   else if (attr == &dev_attr_cores_enabled.attr
+> >   || attr == &dev_attr_cores_max.attr)
+> >   ok = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CORES_SET);
+> > + else if (attr == &dev_attr_apu_mem.attr)
+> > + ok = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_APU_MEM);
+> >   else if (attr == &dev_attr_mini_led_mode.attr)
+> >   ok = asus->mini_led_dev_id != 0;
+> >   else if (attr == &dev_attr_available_mini_led_mode.attr)
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> > index 5a56e7e97785..efe608861e55 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -121,6 +121,9 @@
+> >    /* Maximum Intel E-core and P-core availability */
+> >   #define ASUS_WMI_DEVID_CORES_MAX 0x001200D3
+> >   
+> > +/* Set the memory available to the APU */
+> > +#define ASUS_WMI_DEVID_APU_MEM 0x000600C1
+> > +
+> >   /* MCU powersave mode */
+> >   #define ASUS_WMI_DEVID_MCU_POWERSAVE   0x001200E2
+> >   
+> 
 
