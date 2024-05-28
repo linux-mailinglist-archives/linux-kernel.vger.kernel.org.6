@@ -1,90 +1,161 @@
-Return-Path: <linux-kernel+bounces-192187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70998D19BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4D38D19BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A013286C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF131C227C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2BC16D315;
-	Tue, 28 May 2024 11:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A192F16C845;
+	Tue, 28 May 2024 11:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW7XZVeg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v4i+jrAp"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF33B16C87C;
-	Tue, 28 May 2024 11:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F77816ABCC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896164; cv=none; b=fVKn/y43/Vp42jEmejAB8M7WxTzYbsB1sTN1acamIrvSW1nrJXsAPnCgjJllVVXXfd2M6vxUKRdhP7GyInZad42ZyfCP2pfHFzGsXynqfA7oVaCe6d31CIfgwozDLkn/d1cu053DJ5DdxJ45WLxGbvEXhvzRGNd00VA7tucegOU=
+	t=1716896215; cv=none; b=c5c+/2QaD9DjF34LDC1fchCor2T3O0C0qpbbWFBwcsgJ8HhwEqtMm//PEDTcgTz3hqmFclRDlwILBfyNpRaYwM+90QB3/llHl+sDoRgG7YJCaqWUeqw+PtmxVRdlMS8TKwbmPX2QkQcTOY01MO8e9ALdlnbO3mGFesqqRyE6P0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896164; c=relaxed/simple;
-	bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=heGMoSMk+nHWntia7PAi4aB0KD8Qu9ZFpgjTeCswymLmcb0tbNg0O5V3TCkdAci9x4YsF/muY1L8gF1RHxnmMVBhtealelJod8kSeiJOsbQhuSysMQSq0JrJblce+WvzfL7Fzg3wykpvu59GQSEdNTbAW9VMZQI2cW8ZFAj54xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW7XZVeg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADCDC32781;
-	Tue, 28 May 2024 11:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896163;
-	bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VW7XZVegE8FtPMBbS75NLk8DYqs++BK4z91RrBoZR9Xu7fd2gDOrZ8olygjjXfqEV
-	 sxcNWBPYymECHRNz3We2E8ap3gjbikMQw1RdblIXZeW1M6D8Q7Bx+PTo6xqtS34Uxz
-	 hyk6GXMoFOtBU1GDEJcWLnPM4I4wNMxuH64+V2v2w6dO7hhZfjw2LpoLN1M24KNjr1
-	 kzhu+7wpluYL4eRLHNq+26YLOsm19KEo/wSSFK6ADmrGGxq/jn0dNnOVZf1T62VE2a
-	 CqJX2dbCBLwARc8HaamWR6iLkVir4XVnTr1mu+T7g7xQOSbusSCPaLA/pZxlDPbMdN
-	 jQZrjunq5fPCg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: hfs: add MODULE_DESCRIPTION()
-Date: Tue, 28 May 2024 13:35:47 +0200
-Message-ID: <20240528-massieren-rekord-0836253ed999@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-hfs-v1-1-4be79ef7e187@quicinc.com>
-References: <20240527-md-fs-hfs-v1-1-4be79ef7e187@quicinc.com>
+	s=arc-20240116; t=1716896215; c=relaxed/simple;
+	bh=M0MaGrmyVgPDZ5O+a4ObngblY3U7Ng60oW1EiVKZdNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VW+Yld+OX/0SuzyHp7dq5G/BJjW64xByzUOL6voSo8GHAAGW8RjpNLdf3Yrw3MSwgOj310PBQxA0+8F1Hwl19YcFaoM4J9fAW2p5lDd5Lvo4MWKZn22uIOaNT1ziQYFa8+rIIQBEbnsOXu6JLhUxaXDQv2u7HDt1zRQlSgRL8Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v4i+jrAp; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6ab9d01cb11so4202196d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716896213; x=1717501013; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5+fy7bxhmTSYRqmL4m3IRHCvKHkrSDKxVpOHKJ74CWc=;
+        b=v4i+jrApphkfH7mcoJKI5zVjB4itgKSGZ2HFlkTD7h43d56AyRZq3dltB/wJ0IAh+E
+         cpIidJBaGW6SkbWx3lRACVkNXrHKlk77GQdLzBHDdu9uHEazyYA4qMWxCVv6v05/Bypg
+         PO+zf+ggzh4C8GGEK2UDbHu461Yf7CpQVztYPCXHpbInUFGkkc7NLVSW1iLv0COcXHFH
+         SaKhx3EcEIaxcjJmtZbsBbBFqa9vK8+JymgrK9DZa/yWz0OaiYL0JGofLtqgAREm3TpV
+         EFCCwIqDTNEmJSeisn3DjZlGbfC4DUhX7doQKqB93Up12YmM3bpPaIUzKUsY8hsMzgUz
+         uNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716896213; x=1717501013;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5+fy7bxhmTSYRqmL4m3IRHCvKHkrSDKxVpOHKJ74CWc=;
+        b=og7DwptlkVjGtxv0bD55GGfDvvO013789xzYkTyvbApASoVzq57w9iJ0F4MnYyPL61
+         aqeuz2zSabujNcxpj9sanmvzvR6wt/HLbaVInDAfm5Gq9Sbs5kaRiJmeNepPwjPlwURk
+         +I19l1H9JtsZmi8UfWcPA95s8VvFvmvt3E4W1LPwY64nZEykN+6LpqMVyb5cvgjPWB+H
+         g2Nz4N72kD2VD1BnQG5rANYzS7vnWEm2XEg9u344dvDn706sasdkthCwMK0MtKy0XELZ
+         j+nZUXRgole4actXWugbqZ0kJ+r2KRnhOtYaWBk+wt43f7cELbgO0jyP8a+2S+j0UIpX
+         S54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAaS7ydFCo4zGPLOmpVpNEZ8yxNxaV3lk26x/kbVRyh+WdBSszpNOOQA5+8QX0tEs0S5p7kcsifB1JHz0TyXGQ6hC5uKzPR0GNWX+O
+X-Gm-Message-State: AOJu0Ywpx/MkmLjKXQuZPOOnSFmBrxBnG4FDbkCYDL7nfTEUM7GMFKpO
+	WD7LuVDfEfZbPzaL/ZVa6OSkxG2+T0lujeMnc7Oa7hwZZusvHFQiCaga5QBYy3AE3ycYb/q0NfW
+	ualwFVX5A+xt/z803/pwkyY8GBliLgOer8stf
+X-Google-Smtp-Source: AGHT+IEg6PbfYyP0aS02Mv0srCCx6EfAtwyybRhD4r3hX01VAgUGGxblt8OUbvO4llpryD8LyAH3/0ceqAYcq/6J4a4=
+X-Received: by 2002:a05:6214:4602:b0:6ab:92b7:5903 with SMTP id
+ 6a1803df08f44-6abbbcb0b35mr137433736d6.21.1716896213239; Tue, 28 May 2024
+ 04:36:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=brauner@kernel.org; h=from:subject:message-id; bh=U9gFCkMWya+ry4Kiu+T18mTeq5AtTLdpRjpaXQOZEes=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHpyzzqf5kvO5+6a2Zzf/c3x8u/ORntnfypBjcp6eq g+UgtKndpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE4wTD/6qXRb5TvzdsvXL9 h3OtcabJy4Mqk0vKvUsYzix1/rWnu5Dhf+lhyYOLp3rM4q0Tl3juV1Ny2SLYMLzniM1p9vq7RaJ 32AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
+ <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+ <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com> <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
+ <jqj6do7lodrrvpjmk6vlhasdigs23jkyvznniudhebcizstsn7@6cetkluh4ehl>
+In-Reply-To: <jqj6do7lodrrvpjmk6vlhasdigs23jkyvznniudhebcizstsn7@6cetkluh4ehl>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 28 May 2024 13:36:11 +0200
+Message-ID: <CAG_fn=Vp+WoxWw_aA9vr9yf_4qRvu1zqfLDWafR8J41Zd9tX5g@mail.gmail.com>
+Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
+To: Kent Overstreet <kent.overstreet@linux.dev>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org, 
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 May 2024 10:53:08 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hfs/hfs.o
-> 
-> 
+On Fri, May 24, 2024 at 7:30=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Fri, May 24, 2024 at 12:04:11PM -0400, Mathieu Desnoyers wrote:
+> > On 2024-05-24 11:35, Mathieu Desnoyers wrote:
+> > > [ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
+> > >
+> > > On 2024-05-24 11:28, Kent Overstreet wrote:
+> > > > On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
+> > > > > Hi Kent,
+> > > > >
+> > > > > Looking around in the bcachefs code for possible causes of this K=
+MSAN
+> > > > > bug report:
+> > > > >
+> > > > > https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.=
+com/
+> > > > >
+> > > > > I notice the following pattern in the bcachefs structures: zero-l=
+ength
+> > > > > arrays members are inserted in structures (not always at the end)=
+,
+> > > > > seemingly to achieve a result similar to what could be done with =
+a
+> > > > > union:
+> > > > >
+> > > > > fs/bcachefs/bcachefs_format.h:
+> > > > >
+> > > > > struct bkey_packed {
+> > > > >          __u64           _data[0];
+> > > > >
+> > > > >          /* Size of combined key and value, in u64s */
+> > > > >          __u8            u64s;
+> > > > > [...]
+> > > > > };
+> > > > >
+> > > > > likewise:
+> > > > >
+> > > > > struct bkey_i {
+> > > > >          __u64                   _data[0];
+> > > > >
+> > > > >          struct bkey     k;
+> > > > >          struct bch_val  v;
+> > > > > };
 
-Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-Patches in the v6.10-rc1 branch should appear in linux-next soon.
+I took a glance at the LLVM IR for fs/bcachefs/bset.c, and it defines
+struct bkey_packed and bkey_i as:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+    %struct.bkey_packed =3D type { [0 x i64], i8, i8, i8, [0 x i8], [37 x i=
+8] }
+    %struct.bkey_i =3D type { [0 x i64], %struct.bkey, %struct.bch_val }
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+, which more or less looks as expected, so I don't think it could be
+causing problems with KMSAN right now.
+Moreover, there are cases in e.g. include/linux/skbuff.h where
+zero-length arrays are used for the same purpose, and KMSAN handles
+them just fine.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Yet I want to point out that even GCC discourages the use of
+zero-length arrays in the middle of a struct:
+https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html, so Clang is not
+unique here.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: v6.10-rc1
-
-[1/1] fs: hfs: add MODULE_DESCRIPTION()
-      https://git.kernel.org/vfs/vfs/c/7c50209f1e6a
+Regarding the original KMSAN bug, as noted in
+https://lore.kernel.org/all/0000000000009f9447061833d477@google.com/T/,
+we might be missing the event of copying data from the disk to
+bcachefs structs.
+I'd appreciate help from someone knowledgeable about how disk I/O is
+implemented in the kernel.
 
