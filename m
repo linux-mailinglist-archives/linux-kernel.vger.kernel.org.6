@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-192488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5B28D1DDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC938D1DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65651285826
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E6E3B21DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FB916F28D;
-	Tue, 28 May 2024 14:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF9416F903;
+	Tue, 28 May 2024 14:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHgndbKa"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IHI6j8fB"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4FF16DEA5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0643916F830
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905174; cv=none; b=L/ow7b+O3yxUTp8ntCCbJHiw3LKc4OqH8DVwFgHGZKvsbNiQ4TgIonimthxYDbF3PW5DVlOjvmhia4OUf6e0wVGvy+zZHPaF8x3YvhnWoIJxiCRKJavHmoeJDRGBv+Sy1SiwT5o7x4FUtIoyywclY7PV9uWyy9mtnqKL1/wimvI=
+	t=1716905268; cv=none; b=Wt8UaM028Yd6vK/8x7Af0qANjaowfW4Y1TZiD5aHwerIN70p3qGFCBjbcBS7rfJMbRWWvITHb93pZ6zYhYS9msEgVk7qCAvVqYctM7BrvFo0LhfzsdKP4aFydVsD1+uqbSaSLNrU4OkzT1+EVrsI6ldIA9S1orbyRwIfkAK3wu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905174; c=relaxed/simple;
-	bh=ZN452joR8cCq0gYvyT5tZ9k04wcDCQaSxNmtOAl/gzI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uaqYjipNFX8ngpxDRbRd09fxpXMFMHGlEzbSLynDpWPsL5+RN5AgMiEux3UmjTm+u65IfHKJKExP8nlbbsf85G7ncnumgXMYXNzZpH1rDzq7Rgz5HZW9bn3YugcXQAdEoNyGdL1L0NO+85K0PNpX+7ojwiZXERdjcyyFILY/3n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHgndbKa; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52961b77655so1057408e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:06:13 -0700 (PDT)
+	s=arc-20240116; t=1716905268; c=relaxed/simple;
+	bh=jdjdppB75uoAt13BI5M5/Jjmnh9buSmpCU+OTqJ0D1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b+9at6JuMwBQyQ0Gi0pmscCi5CrE3KUGRmNRdYsHIHg7WQNE0qPYQSmc+jUL8HJo1pXTSNYNHlzqGicS33xSXyH67I4Av3ZdXtu9/s0D9zHGB/4LUDTW0QajXmp3jeONoJCrrn8t/PbAfYoa/v/oLYPYFsHwPiXScNWX+mT4xyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IHI6j8fB; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-681ad26f277so668172a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:07:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716905171; x=1717509971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYW5c0SqQbiRCDOIP27l8OTzCGV5wqVGx+nbqnS3eew=;
-        b=iHgndbKaXkpcmN1XYxOabDty3eoAt1WScxd2+6gynZufCcnpPcz5+zAkYyz9N0tifG
-         cAdLGRyx3xyAPGELhZ3RMDIR3ZYgtBHxXn6cXbg8vJnYWOBYNpFGXcuUjKEnzPHB5lOB
-         eZOkIlI8doALUIdrA1u43rc7Ysg5MGjSS6Wr5N/lafL0NIZF2twaMt3itm+197ymRHmf
-         8CzjbZ4qWCXnXTElK9LUEfHSH+8J3lNNh2lctpxDHeeW3Gz/g5unkGy4/bYBxPSjbNHD
-         pxf7hBzsPprBVRasmMsA2Iwa4Sg8nyfs4zJfay/i9Vqrgo/7CF/eXtooSpusRFjh3Rj9
-         tg+g==
+        d=linaro.org; s=google; t=1716905266; x=1717510066; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwJrJJBUm5Uf3A9xKcODYfkmrzU5XrykNEQneC58gf8=;
+        b=IHI6j8fBZu0S6hYIvQbK6wSIdMb5m6jpNfbQ/U7MLlW5VdcoqYeYmOsGsgdj61iY4/
+         FqoVb5r4K6p1pf4mfWV5bfr+yqV4VLCtiQ3L7iOOXl3nNh1upzQgaBceSRs5uQy8hkV+
+         k4XzfxGNfMLPTl/shOhGg5nrH3+a0ogCAJ6ab9xzNCoTe3D3D+1srupHacVLVuRWU7MK
+         WUVLnr0srG7WPh51HS6Ubjr6WAuvWue4k+VUPqJKteWoYl0Y5NHx2zRLn9HsGoGlu9Zs
+         iWJ8GYfbmzOw3uY+Vkxc05zEs6eD3uLAHG/8cx1JJKhiGv+5pbhFLDjV3hMO+Zqq9lwA
+         zePA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716905171; x=1717509971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vYW5c0SqQbiRCDOIP27l8OTzCGV5wqVGx+nbqnS3eew=;
-        b=eIB79Qf++Wt/RGFniVVUHfVstjY0T3/qJFTWhJnOQ+tQ5b9OR+OtIubFsy/kywz41D
-         eWrWYrmlx4Z8ekytAHNFh9M3ptaniKhCFHoXCQGWLAK/QCYae5D1BN0bLHs0SRGLfH42
-         Oa3usRIT4O/BAekwvZxMlIWGRKYOUgTTISuh5GND4Sn2Z5XvqAZuNtIuPd+pieT+h5+o
-         AupSgPj3cPIyw077+fEu9wYQcppWMRgB8bLB1dD1DDvyvIYaYljLAB2VZPDRtS6R317o
-         DJ8T3a380KJ8qCtZvWxuRCtw6JqcMzELgzGDHegbzVySBs+XHTvwk5zd2dypPBBD9Qfu
-         314w==
-X-Forwarded-Encrypted: i=1; AJvYcCUF8+ve7yxrcBOVSGJqUasDB1vKNGIggZLBMsYYp3BuJcYMURPEjU9SZk2xGMgMxGiPVj/Ud/vQgAegFcmWy4o7e6qBC4e7s1H2hG0I
-X-Gm-Message-State: AOJu0YwlkAxIxS5+GUCpAaQtBZGVd3cRf1e1CVWIjQPmlFoy1nt3Ut+p
-	4XDcRHp6bQPFgK5+3dSUKZ1rDE53lrwI2HkiVcnm0LGsBzI71det
-X-Google-Smtp-Source: AGHT+IGudBhWVmM4V0/6WOrMTk8kNuQ3UqybpJ6HjSxLuQNDu2Z1TX4Z93aBTAL4Dau38a0BOOB0vQ==
-X-Received: by 2002:a05:6512:2350:b0:529:b6b4:7e3c with SMTP id 2adb3069b0e04-529b6b48032mr2679995e87.45.1716905171335;
-        Tue, 28 May 2024 07:06:11 -0700 (PDT)
-Received: from pc636 (host-95-193-70-101.mobileonline.telia.com. [95.193.70.101])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529a640ac48sm703269e87.119.2024.05.28.07.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 07:06:10 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 28 May 2024 16:06:08 +0200
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH 2/2] mm/vmalloc: Use __this_cpu_try_cmpxchg() in
- preload_this_cpu_lock()
-Message-ID: <ZlXk0EyoGDf80Ild@pc636>
-References: <20240523080136.9863-1-ubizjak@gmail.com>
- <20240523080136.9863-2-ubizjak@gmail.com>
+        d=1e100.net; s=20230601; t=1716905266; x=1717510066;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwJrJJBUm5Uf3A9xKcODYfkmrzU5XrykNEQneC58gf8=;
+        b=s0y16x4caAS7XeTEiHdd7po3mCaRsM2P6xEjgXOOSRtYmUytvWOboIz7lMwf6j3ftT
+         mophEW+kDRxETKyn73cGQbpnO0RKUTwgFLI9CgvPiP+Ib7LDcZ3PVUDHynhZ00+gjHGt
+         lQ09o0UTm2eySw+ECjLemWmjuMKMu2jOEqskyWcZCa+jEXpvZNLqg1pSyaKz7dT3uHEh
+         3tRuPy0Uasq/prYQxiVHC7k19PVfPbAAcbPpLUlDGBIYycKsKeVzz4Lx3WjuUz//oSdD
+         1lLHIHtxcnzAb68Vgvnsg78i08A+7sIZHhD/5wsfh2MECZfgv90Zwh3pvr1n9UstmTb7
+         yC+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDKKCay2AHO00XqW4FTLuS6sxznoD1TCaAT/ImjQrqMJG2jEda3rLFhLwLydHiZ8XoXJnxaxp6TuvLFuJj/SM3NVbu+r4q2mKT50kw
+X-Gm-Message-State: AOJu0Yy9FbxnAU7VRhlqhSLsCyOk3QnhsqWTZsXlgVQB9CpVkHKTwOv4
+	nwfXbhmniHwo2VyKeZbXW4HARPclYx2cpca1MuQd9lGGx9+btS7RUNtzZXL0rsooWGssq0cnBca
+	aE18PlXAkZTnuJ7KPh1DZVUkVvM6eBNkH58Rq4A==
+X-Google-Smtp-Source: AGHT+IEfwlmpC2oQXwwC97Lmjwd4sJMzx+QH6X//LGVcOb6JZk1p/eCzTzAhxtmSsjQTHOqzJmFdujAdomBQnJrwjPk=
+X-Received: by 2002:a17:90b:3641:b0:2bf:5730:1f54 with SMTP id
+ 98e67ed59e1d1-2bf5e14b627mr11482907a91.15.1716905266207; Tue, 28 May 2024
+ 07:07:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523080136.9863-2-ubizjak@gmail.com>
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu> <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
+In-Reply-To: <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 28 May 2024 16:07:35 +0200
+Message-ID: <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	Dietmar.Eggemann@arm.com, dsmythies@telus.net, yu.chen.surf@gmail.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Qais Yousef <qyousef@layalina.io>
+Content-Type: text/plain; charset="UTF-8"
 
-> Use __this_cpu_try_cmpxchg() instead of
-> __this_cpu_cmpxchg (*ptr, old, new) == old in
-> preload_this_cpu_lock().  x86 CMPXCHG instruction returns
-> success in ZF flag, so this change saves a compare after cmpxchg.
-> 
-Just a small note. Can you also add a tiny difference in assembly
-language where it is visible? I mean update a commit message.
+On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+> Hi Vincent,
+>
+> On 5/28/24 10:29, Vincent Guittot wrote:
+> > Hi All,
+> >
+> > I'm quite late on this thread but this patchset creates a major
+> > regression for psci cpuidle driver when using the OSI mode (OS
+> > initiated mode).  In such a case, cpuidle driver takes care only of
+> > CPUs power state and the deeper C-states ,which includes cluster and
+> > other power domains, are handled with power domain framework. In such
+> > configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+> > and others states that include the clusters, are managed by genpd and
+> > its governor.
+> >
+> > This patch selects cpuidle c-state N-1 as soon as the utilization is
+> > above CPU capacity / 64 which means at most a level of 16 on the big
+> > core but can be as low as 4 on little cores. These levels are very low
+> > and the main result is that as soon as there is very little activity
+> > on a CPU, cpuidle always selects WFI states whatever the estimated
+> > sleep duration and which prevents any deeper states. Another effect is
+> > that it also keeps the tick firing every 1ms in my case.
+>
+> Thanks for reporting this.
+> Could you add what regression it's causing, please?
+> Performance or higher power?
 
---
-Uladzislau Rezki
+It's not a perf but rather a power regression. I don't have a power
+counter so it's difficult to give figures but I found it while running
+a unitary test below on my rb5:
+run 500us every 19457ms on medium core (uclamp_min: 600).
+
+With this use case, the idle time is more than 18ms (the 500us becomes
+1ms as we don't run at max capacity) but the tick fires every 1ms
+while the system is fully idle (all 8 cpus are idle) and as cpuidle
+selects WFI, it prevents the full cluster power down. So even if WFI
+is efficient, the power impact should be significant.
+
+For a 5 sec test duration, the system doesn't spend any time in
+cluster power down state with this patch but spent 3.9 sec in cluster
+power down state without
+
+
+> Do you have some handy numbers, so we can see the problem size?
+>
+> >
+> > IMO, we should at least increase the utilization level
+>
+> Something worth to discuss, or make it configurable even.
+>
+> Regards,
+> Lukasz
+>
+> >
+> > Regards,
+> > Vincent
 
