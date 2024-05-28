@@ -1,52 +1,73 @@
-Return-Path: <linux-kernel+bounces-192528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3568D1E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B778D1E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02EA8B22F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B607B22572
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBDD172BCA;
-	Tue, 28 May 2024 14:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YARx4o7q"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A465717106F;
-	Tue, 28 May 2024 14:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906050; cv=none; b=BfkxKWPvJ/WwLvmbDRD4zkG4oiC9dagvu9aunYytnGoM7E+4ZdKftNRi+ECh7gsPKbVBAQ1IfTOdb62/g9WD4xqFWSqfyWq28Jh/8LhWGo/riJwQKG1bvIUO9N4iMhtr/RT2GH0fAEFViwjyhZM40QnmTEEks2wMRT3oJnRo3BI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906050; c=relaxed/simple;
-	bh=ckK8HV/PJ4m/OmbtPxcBWpY4ly7ROI74ua0Gl+Joj7Y=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ghmsYqpmbTExnyGg9MCgEq2P2jI/xBjNxcR3ZL0UmYTZ1F1jhPLRexvRffoQDXI++5t3jAwI/DprafwLIhW1R4Z4InqAnu5GlGM/f1VvWQ9kpQFZxXEjII0j47g2hriynW7cz7UT5CYTDOdjiPWRSMZxOJqe6XT7JmloB6tAUCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YARx4o7q; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C7BE24000B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BDD16FF39;
 	Tue, 28 May 2024 14:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716906044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rcyQBhDqTkZo84eopnmm/cwcP4P/TkQC4sy913CIbEE=;
-	b=YARx4o7qJJytCR2QCrHYofS8SrVdgZB0rLESOVPUdLQSgYlhZY1DnRdzn7mNB5wlAy5N5z
-	GoyHLexz/t/I7kU6XLxln+czq7VRQrHPyl+HtWou1xajI7IhQ5dw0uZCBlKIg/Y6Su15Ax
-	qxzW/izSminS4TFc0b5867IS/Ohp1LiHvja+TRYxlUJZcCGYOLf8FfDcsAsIIrtxMSB9My
-	zGNiZiFV9BTWB85xjh3IVa3YnB0ZaS3w6LZn4psEWo1gYg3j2w2HsXmjP6fPiWKbAoUVne
-	C56a/qGKkS0jHBRVGhinmG29Q9Awag2y4UiMCCfm//p6iqYHvlCIS07LFmHHzg==
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Subject: [PATCH wireless 0/3] wifi: wilc1000: revert SRCU to RCU conversion
- series
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BbDzZe5Z"
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309A416F82C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716906042; cv=none; b=shMZqXslVa/B1LZRsBsoa5D+dWL64XiIsY1US3JJPOmVJPwq2S2sH3/ieSivb8tPfZoS3yLSuRGv4fLYcduinY84NHvXlrgLXVtD2ADdo/g+tGAxwwU2CcOadvH2as9t6WJUfdxHfQnLVcn/v+AZOiJsde+FqQF536BvfA/LYzY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716906042; c=relaxed/simple;
+	bh=gk7NHdXOoOeTuJGZ9jKJwuWhY5+mWOQJr9Na9Basnbs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=o17oqL/k7AODO+k2yrStaOS45vTqwjZHAhuqHKpHtL3y70WZEYlCBY4cG1Ptg1HG/YiNr7HcEa1yvnkIGOaoqBVOfhPbSLoiYYa9cSUl1QSC5j2YjI8cnDgYO0ncZ27PSprcBZ7crUV7ULrz9enKfd09tf2Tgqu1Q+KTQngsBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BbDzZe5Z; arc=none smtp.client-ip=209.85.221.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-354f51ac110so859275f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716906037; x=1717510837; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HDS2GchM/PEgnuAUR9pIjZfZOk1XHpFRPkADGX4AV1Q=;
+        b=BbDzZe5Zcr9V84tUmtkjGOwRvgwqPfSgcG1EOVS4F2Xhj7+LXcr5IZu9Jtp2hK0jWJ
+         UOuWAtu4+vRoicPYKiBos5A2IYN1GFSE5+2SZeMA+AFoqwVmm5PA2s8Hi4szIKTvx9it
+         JMfWdaY3QqChxgN+43kll/3FqEPLJPCRvpQIJ/Ay/wDITAaRzsH6rXKovgno8X3SpTWk
+         +GYIZEANpIon6c7gL5Hzvv1o5A+gtcyTy/3ZH7wCautxzezcWoEYXoY35wU1XlhDcRoe
+         kVyUnf3yT2yA6PRoE3NTiBPDjQ1vHnP3i1u0LyiM2xGLiKcVaV9RgNk03rhQtM1KUmCU
+         Eziw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716906037; x=1717510837;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HDS2GchM/PEgnuAUR9pIjZfZOk1XHpFRPkADGX4AV1Q=;
+        b=aPNT5O7krcj2OnGlKliPPxc0pYNBsqIdDFfajUinxykPcpGA7SE2q9Tb5YibKsQkZ1
+         7V6pHz0GcC5xJtDZvz+Z0CTOiCL98zgrBbOIiemXE9JZeT6om1jooYThe4sDHpNUPth4
+         J3MNIJukMNmL+BIs2kYqJv2QYpGhFjM7DuRCazVNWQ1FdSjCZipO+iMo0KcIJw3izrxL
+         Re409UMp7obkBGDR8MvMnj3fI9L0hb42HkcSLUQFM9oWQr5/RZL8Bm3krmlcxgNPO1yR
+         o1YXKO/FXlwfZvGnkNeAj+MvXzVupRmf3DSp/ANmuFfn6iKsKkc/TozA0FudDUhj6tHK
+         UnHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8cc1939Qwdvcd0ijotw4iAPGJOk6ol8+D7OhYCjDEGQkM3LmWcaqdWdjZ2VVlyTwZB+Q/BB7iztKA9EZwpOG5OP6XTrghwLyG95Aa
+X-Gm-Message-State: AOJu0Yy4DmuI3uD/wlknFepMr3WRCnHwVFtUVglWtyd1CBnWjNoNWlnI
+	akaCAMr3Pnsk9ILPvi711CnrDvmpPqwjwO/mDKxm22N0g0oqYDeW+sDMCmDl9Vk=
+X-Google-Smtp-Source: AGHT+IFJNXj6vjqo92nrqygLL93P7kLGEaXHWhFhTVSX7MvfyNiIbt9B1awJPSQA0Jp8pppZC5298Q==
+X-Received: by 2002:a5d:4751:0:b0:358:1a9a:e19c with SMTP id ffacd0b85a97d-3581a9ae6c3mr5940571f8f.68.1716906037293;
+        Tue, 28 May 2024 07:20:37 -0700 (PDT)
+Received: from [192.168.1.63] ([2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7db5esm11999275f8f.15.2024.05.28.07.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:20:37 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v7 0/7] iio: adc: add new ad7380 driver
 Date: Tue, 28 May 2024 16:20:27 +0200
-Message-Id: <20240528-wilc_revert_srcu_to_rcu-v1-0-bce096e0798c@bootlin.com>
+Message-Id: <20240528-adding-new-ad738x-driver-v7-0-4cd70a4c12c8@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,54 +76,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIACzoVWYC/x2MUQqEMAwFryL5tqDVuq5XESlSoxsQXRK1gnh3g
- 1/DwLx3gSATCjTJBYwHCa2LSp4mEH79MqGhQR1sZsvM2dpEmoPXEnnzwmH32+oVxn1C1X/zoi5
- KB7r+M450vs8tRGKcUQS6+34AybG6JXMAAAA=
-To: linux-wireless@vger.kernel.org
-Cc: Ajay Singh <ajay.kathat@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Kalle Valo <kvalo@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIACvoVWYC/33OQQrCMBAF0KuUrI0kTdJUV95DXDTJtB3QVBKJL
+ aV3Ny2IIOhu/od5MzOJEBAiORYzCZAw4uBz0LuC2L7xHVB0OZOSlZIJzmnjHPqOenjmUYt6pC5
+ ggkBVezBK5s5qSfL6PUCL40afLzn3GB9DmLZLSa3tGz38RpOijFrQrmVMWjDiZJrpiibA3g43s
+ rqp+liK/XkwVdkSlmnJuZK6rL+sZVle3yB3rQ8BAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Stefan Popa <stefan.popa@analog.com>
 X-Mailer: b4 0.13.0
-X-GND-Sasl: alexis.lothore@bootlin.com
 
-This series is a follow-up to the static analyzer warnings raised by Dan
-Carpenter ([1]), and the agreement to proceed with a revert ([2]) due to the
-difficulties involved in fixing the remaining issues.
+Taking over this series with David Lechner's approval, to add some
+fixes, proper handling of pseudo differential parts and
+some extra commits to add support for 4-channel compatible parts.
 
-The initial series aimed to simplify the driver by switching it to
-classical RCU, since there was no evidence of SRCU usage legitimity in it.
-The warnings raised after the merge are likely hinting at some technical
-constraints which eventually led to SRCU usage, so put it back.
-Additionally, the series adds some comments to document SRCU usage.
+Here is David's cover letter:
 
-Unfortunately the faulty series reached a tagged release, so this revert
-series targets the wireless tree (ie not the wireless-next).
+This series is adding a new driver for the Analog Devices Inc. AD7380,
+AD7381, AD7383, and AD7384 ADCs. These chips are part of a family of
+simultaneous sampling SAR ADCs.
 
-[1] https://lore.kernel.org/linux-wireless/3b46ec7c-baee-49fd-b760-3bc12fb12eaf@moroto.mountain/
-[2] https://lore.kernel.org/linux-wireless/878qzu8e4k.fsf@kernel.org/
+To keep things simple, the initial driver implementation only supports
+the 2/4-channel differential chips listed above. There are also 4-channel
+single-ended chips in the family that can be added later.
 
+Furthermore, the driver is just implementing basic support for capturing
+data. Additional features like interrupts, CRC, etc. can be added later.
+
+This work is being done by BayLibre and on behalf of Analog Devices Inc.
+hence the maintainers are @analog.com.
+
+Changes in v7:
+- Removing oversampling support and resolution boost from this series. 
+  They will be submitted along with David's series about multiple scan
+  types [1], thus removing the RFC tag.
+
+ [1]: https://lore.kernel.org/all/20240524-iio-add-support-for-multiple-scan-types-v2-0-a6c328fdfab7@baylibre.com/
+
+- Link to v6: https://lore.kernel.org/r/20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com
+
+Changes in v6:
+- Added a comment for math in IIO_CHAN_INFO_OFFSET
+- Added a comment for raw buffer
+- use iio_device_claim_direct_scoped instead of iio_device_claim_direct_mode
+
+Adding the following commits on top of v5:
+- add oversampling support
+- add resolution boost support
+
+- Link to v5: https://lore.kernel.org/r/20240319-adding-new-ad738x-driver-v5-0-ce7df004ceb3@baylibre.com
+
+Changes in v5:
+- make ad7380_regmap_config static
+  Reported-by: kernel test robot <lkp@intel.com>
+  Closes: https://lore.kernel.org/oe-kbuild-all/202401280629.5kknB57C-lkp@intel.com/
+- don't use bool in FIELD_PREP
+  Reported-by: kernel test robot <lkp@intel.com>
+  Closes: https://lore.kernel.org/oe-kbuild-all/202401280629.5kknB57C-lkp@intel.com/
+- fix rx/tx buffer for regmap access
+- add datasheet links of supported parts
+- move reading reference voltage to probe function
+- removed DIFFERENTIAL from a few macro names
+
+Adding the following commits on top of the v4
+- add supplies for pseudo-differential chips
+- prepare driver to add more compatible parts
+- add support for 4-channel compatible parts
+
+- Link to v4: https://lore.kernel.org/all/20240110-ad7380-mainline-v4-0-93a1d96b50fa@baylibre.com
+
+Changes in v4:
+- Dropped SPI bindings patch.
+- Removed `spi-rx-bus-channels` from the adi,ad7380 bindings.
+- Link to v3: https://lore.kernel.org/r/20231215-ad7380-mainline-v3-0-7a11ebf642b9@baylibre.com
+
+Changes in v3:
+- dt-bindings:
+    - Picked up Conor's Reviewed-By on the adi,ad7380 bindings
+- driver:
+    - Removed extra indent in DEFINE_AD7380_DIFFERENTIAL_2_CHANNEL macro
+    - Removed scan mask that included timestamp channel
+    - Removed parent device assignment
+    - Picked up Nuno's Reviewed-by
+- Link to v2: https://lore.kernel.org/r/20231213-ad7380-mainline-v2-0-cd32150d84a3@baylibre.com
+
+Changes in v2:
+- dt-bindings:
+    - Added new patch with generic spi-rx-bus-channels property
+    - Added maxItems to reg property
+    - Replaced adi,sdo-mode property with spi-rx-bus-channels
+    - Made spi-rx-bus-channels property optional with default value of 1
+      (this made the if: check more complex)
+    - Changed example to use gpio for interrupt
+- driver:
+    - Fixed CONFIG_AD7380 in Makefile
+    - rx_buf = st->scan_data.raw instead of rx_buf = &st->scan_data
+    - Moved iio_push_to_buffers_with_timestamp() outside of if statement
+    - Removed extra blank lines
+    - Renamed regulator disable function
+    - Dropped checking of adi,sdo-mode property (regardless of the actual
+      wiring, we can always use 1-wire mode)
+    - Added available_scan_masks
+    - Added check for missing driver match data
+- Link to v1: https://lore.kernel.org/r/20231208-ad7380-mainline-v1-0-2b33fe2f44ae@baylibre.com
+
+To: Lars-Peter Clausen <lars@metafoo.de>
+To: Michael Hennerich <Michael.Hennerich@analog.com>
+To: Nuno Sá <nuno.sa@analog.com>
+To: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 ---
-Alexis Lothoré (3):
-      Revert "wifi: wilc1000: convert list management to RCU"
-      Revert "wifi: wilc1000: set atomic flag on kmemdup in srcu critical section"
-      wifi: wilc1000: document SRCU usage instead of SRCU
+David Lechner (4):
+      dt-bindings: iio: adc: Add binding for AD7380 ADCs
+      iio: adc: ad7380: new driver for AD7380 ADCs
+      dt-bindings: iio: adc: ad7380: add pseudo-differential parts
+      iio: adc: ad7380: add support for pseudo-differential parts
 
- drivers/net/wireless/microchip/wilc1000/cfg80211.c | 41 ++++++++++++---------
- drivers/net/wireless/microchip/wilc1000/hif.c      | 17 +++++----
- drivers/net/wireless/microchip/wilc1000/netdev.c   | 43 +++++++++++++---------
- drivers/net/wireless/microchip/wilc1000/netdev.h   | 12 +++++-
- drivers/net/wireless/microchip/wilc1000/wlan.c     |  5 ++-
- 5 files changed, 72 insertions(+), 46 deletions(-)
+Julien Stephan (3):
+      iio: adc: ad7380: prepare for parts with more channels
+      dt-bindings: iio: adc: ad7380: add support for ad738x-4 4 channels variants
+      iio: adc: ad7380: add support for ad738x-4 4 channels variants
+
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 148 +++++
+ MAINTAINERS                                        |  10 +
+ drivers/iio/adc/Kconfig                            |  16 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad7380.c                           | 612 +++++++++++++++++++++
+ 5 files changed, 787 insertions(+)
 ---
-base-commit: 7e81b62cfb9abdd8177606f7c79a0585503bd7ae
-change-id: 20240528-wilc_revert_srcu_to_rcu-57c6a9138345
+base-commit: 9900e7a54764998ba3a22f06ec629f7b5fe0b422
+change-id: 20240311-adding-new-ad738x-driver-5f9b54ad7c74
 
 Best regards,
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Julien Stephan <jstephan@baylibre.com>
 
 
