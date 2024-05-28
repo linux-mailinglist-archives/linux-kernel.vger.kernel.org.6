@@ -1,113 +1,195 @@
-Return-Path: <linux-kernel+bounces-192970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF998D2511
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:45:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E8C8D2514
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C228306B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E70284B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2D1179202;
-	Tue, 28 May 2024 19:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4F9179654;
+	Tue, 28 May 2024 19:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7AlGgMU"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUH3YT0r"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE48176FBD;
-	Tue, 28 May 2024 19:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC3C2E639;
+	Tue, 28 May 2024 19:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716925392; cv=none; b=puOxeGzA28m4lrzv7fOGNzJlJfIyNRv7zmBeHnO10L51cO5eOesdb1mVRjJdJY74wohgy5n2fXxk78NzmmnW4yUfykoYckxjt6iVWpdH27zWmq8h9nb0AJa2NQ0UyG5vyiRhrdg5Mvjga57ZCJvclJao8EKZB5ugsMRsJneB23o=
+	t=1716925420; cv=none; b=hZvDsGo1QDK9WpI0Q1e0C6rPu34KYxoNaXCY5pHFRx21TOa2u4Kl+esD/HhKT6F++O1id7jMrh3kqtBuxQHTtl1Eaffc0ZDrzGyTxnelYD9ySPd0miuvW2qCMM9VjhYnXLEIEBBcFqvI4jw03gm22nvu2GTqQbp944QNFv8pRDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716925392; c=relaxed/simple;
-	bh=ThEsUIZg0oGl9jo2RSi+9PVPHwNBf83WEij7LLS/WDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3KfyTYn5WhEx8KOlMsQXREAQAGq/t0Hmf98LgRfXIlTdcb91j31O9dErkpjpPlLs+xqFsfmpzUifgq7sRHaJdb8Xq2LoL9JQ+QjV+FB8G8Y/dExn9aa+XlxbfhBJwiDhzz17UMsUCfrvjk/r48LxiBqG8Z74dE6eo7+Jag0oS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7AlGgMU; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1716925420; c=relaxed/simple;
+	bh=vMgVK30cNI3c6myI3dh/lKotl174su6ZxGyEzgBQDMU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p1JFWh4kMeXCMVd6ffvudI7ZzuI+0n2muvd1krkhCxj2TPzLJqdmQfTQjq+gcSEb+IzkC4YauiwIam5WGhUT5RY1TM2j4masoD1gEdMk2gZWzYPdUyAqNOgUJP45OxoOVc23uE4ogujdPqq1ttQ3/13Pyq7jLGzBQGAab3SU+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUH3YT0r; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b9b72c4e71so749229eaf.1;
-        Tue, 28 May 2024 12:43:10 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4211245e889so9812885e9.2;
+        Tue, 28 May 2024 12:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716925390; x=1717530190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/QuNdJaoaItLZOmxJxJS3BmtxeHxA8HRBPVP5gnc2IE=;
-        b=P7AlGgMU/cYpJV8sDRSn0TmxF+gQordROwlINalWrCV3PVe7HpfIlDiRv1s5xc1aUH
-         Nz/tpTaqwhu0EzYztoYXXoF2Jbgkojk8TNDXEyMVAhv8S6m/HQCLuTBmwxlDLdfV6C8h
-         TkXaLjxqF1SJZbUrOwNEruXN6OIz3toawMfYpsF5Ps09szLgyg3vVRl51JU30EiciDJd
-         XwDpygd2d01C7lRK2R5+Jv958rQOOPFa5RqrHWIANrvSVSC3OG6I59pXwEoQKTNSmC+H
-         0Kp/uZKdgzvhdORSxFmSSvT7rjO1P7R8sWmbqjduC6zM+itPCYI9n9JgkWHo11TQLjzF
-         qPIg==
+        d=gmail.com; s=20230601; t=1716925417; x=1717530217; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOgU5Pv9vLAMtMzfb5HowXi9zg9SbrF3W9s32WW+p8M=;
+        b=lUH3YT0ra3bgsk3/+kcZYnutDziZInGnWMzBT0z3Sz5DKf1fF/kETEmOnCvFJqlmDZ
+         ak53rZJ1AWhkTYC1e1RTejCifgkw7a4Dmvf+2enYbx6kh8gyqcdilwhuwZe/iKqkLeyh
+         VhFL68Qw1YEv8Xrvs4ywnZ6e+zVtCSDo7fEbC18NgrPtsD8y97wrhT++sXZ8PtrJkawG
+         R5ccJ9vdWxHudg0cncvMtl0gABh9l1NPwEbC94QEoxnUUNtNSFebyg35RUjhbeerkRVA
+         xZA3Ab6F5Cfe/uiUaEVRzzIF2PjGePQ6xLMZHsgWkXYwxbF+n9ml1bgGOj7pD7zH366Z
+         Tzug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716925390; x=1717530190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/QuNdJaoaItLZOmxJxJS3BmtxeHxA8HRBPVP5gnc2IE=;
-        b=tJwLOT6IIluOKCTl61CQXebJ6C6nvmOXyP8GmyO5m3T1lOSrl/WHdESOasMOQ5hkpo
-         oerWq1Nj7KNisgyW23fe+zlLNjtLAxpADJNMEMFH3/3cxxUn9rhrdqFPvM6HOXjaKTsW
-         stFS+N1zjIe4aQn3wSmrqE3zpU39B+Iqr2BfVUR3j9SkapfxeWaN2an2B8BPcoVI3B6w
-         1W+TrR5mzW7Aqfrvye8/iLAX5pyX2Z2BXgnZntg144zosO5epsFsDQrNLtmNZOyODuzo
-         +SmPUaF5wr+8dqQBevnaM6p6crV8emXlt+3nCRL40ywhwUoJn0JhCIJNPHzGzJZZHAA7
-         P5qw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/XaqCpAvPDBmeq3osEcSUiHlSRzMIDDwJ/FQUi8RG57q6d5ELa9ZqiCJbUFneB2S9XvcxFm4F/YmwJFItva98zdhfBhYP6xgUa44xhMNCZZ7g9uwJGT31kGoiZ/GAsB0e8fFpNQ==
-X-Gm-Message-State: AOJu0YxxR4IuBoRzruTrwnFHkMUW9c/U+3tAHNJQT+ujK/E/LyXztIyj
-	sBbInttUOWAZqfQabJkAGPt7JaSYxMVq+yT62ODgvh0+ZAoJMJB1
-X-Google-Smtp-Source: AGHT+IFKo4BSozMj0AbdEJnOud+9Zr12zM68wz1B+h4zUwAhRheMyh20Ao6AFtJZ0FZgtIRZOgXH1w==
-X-Received: by 2002:a05:6358:668b:b0:186:249a:c8de with SMTP id e5c5f4694b2df-197e50caf7emr1663193755d.5.1716925389891;
-        Tue, 28 May 2024 12:43:09 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682274ba9c8sm7929282a12.78.2024.05.28.12.43.09
+        d=1e100.net; s=20230601; t=1716925417; x=1717530217;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gOgU5Pv9vLAMtMzfb5HowXi9zg9SbrF3W9s32WW+p8M=;
+        b=JBVuEH6PDOehtX5KeTpHC3/GpaJp8MLSO4Fi4VxVE8Uz1cyfxiQQcY29QGSWGTrPUb
+         gCpV/WYMI6mhV4Gd66Dr2QzpSso7w09HGZHa7wbVjIWacon8rknRlL2ventzWWMMu8wY
+         ICKbdcRNrpAoAg8adhURMMZXl9QBJGygxU+e5qOkGNFo+uOlAXyhnblAWFixQQZ6nuGY
+         VMUg9l2lnUMZwVdY59vYELZQ8kAiOI4UOVQV3DN3V8vPS7UYn93wmsVFTLgb9jh9PVDr
+         Rmyt8bpyo6KJmZqmh1LXOGVuysJa3O7lt01qg37Z2LHohBuG/1i2M6jqpNw03h8f83Tf
+         SOHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrlU2oKRvsfzDnhsBNsS/8E/zUQLbxQCzCe0Pbik6uKJ7otfnzf4kL5Hf/Nf+LAjAUHZ4f7gWzvY+SqC5L8JkDYFf6IO6ArMSx9Tar
+X-Gm-Message-State: AOJu0YzrPAoyoWj63Nwu5uYXYOIABZMyjrBGqmWpNVZxZe4y9AatMJt/
+	XkcqtYtZuta/ZdJYVnD0zLc0d1MdEV4JQ2yjHXE+4F+YXXTjLHnr
+X-Google-Smtp-Source: AGHT+IGKbSgiilhOSBJxmKHEzGKuWzqlCk3N/VsqD/9S1jtOwU/1lBz6xW1FQ1871m5BxQiTTa4Fng==
+X-Received: by 2002:a7b:ce18:0:b0:420:18e9:86d5 with SMTP id 5b1f17b1804b1-421089f8242mr107646795e9.10.1716925416880;
+        Tue, 28 May 2024 12:43:36 -0700 (PDT)
+Received: from [192.168.1.130] (BC249212.unconfigured.pool.telekom.hu. [188.36.146.18])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f134cesm183709915e9.18.2024.05.28.12.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 12:43:09 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 28 May 2024 09:43:08 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: mkoutny@suse.com, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
-Message-ID: <ZlYzzFYd0KgUnlso@slm.duckdns.org>
-References: <20240528163713.2024887-1-tjmercier@google.com>
+        Tue, 28 May 2024 12:43:36 -0700 (PDT)
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+Date: Tue, 28 May 2024 21:43:30 +0200
+Subject: [PATCH] drm/msm/adreno: Add A306A support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528163713.2024887-1-tjmercier@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240528-a306a-v1-1-03a66dacd8c7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOEzVmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyML3URjA7NEXROLVENzY3MjkxSzZCWg2oKi1LTMCrA50bG1tQDHRkq
+ pVwAAAA==
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+X-Mailer: b4 0.13.0
 
-Hello,
+From: Otto Pflüger <otto.pflueger@abscue.de>
 
-On Tue, May 28, 2024 at 04:37:12PM +0000, T.J. Mercier wrote:
-> The number of cgroups using a controller is an important metric since
-> kernel memory is used for each cgroup, and some kernel operations scale
-> with the number of cgroups for some controllers (memory, io). So users
-> have an interest in minimizing/tracking the number of them.
+Add support for Adreno 306A GPU what is found in MSM8917 SoC.
+This GPU marketing name is Adreno 308.
 
-I agree that this can be a useful metric but am not sure /proc/cgroups is
-the right place to put it. Its use of v1 controller names, listing of
-controllers that don't exist in v2 and the unnecessary column are rather
-ugly and unnecessary. Also, it isn't hierarchical which can make
-understanding where the css's are staying allocated difficult.
+Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+[use internal name of the GPU, reword the commit message]
+Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+---
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c      | 14 +++++++++++---
+ drivers/gpu/drm/msm/adreno/adreno_device.c | 11 +++++++++++
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  6 ++++++
+ 3 files changed, 28 insertions(+), 3 deletions(-)
 
-In v2, cgroup.controllers and cgroup.subtree_control govern which
-controllers are available and enabled in the subtree. I think it would make
-sense to introduce something in a similar fashion. Can't think of a good
-name off the top of my head but add a cgroup. file which lists the
-controllers in the subtree along with the number of css's.
+diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+index 5273dc849838..b46ff49f47cf 100644
+--- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+@@ -145,6 +145,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+ 		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
+ 		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x0000000a);
+ 		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x0000000a);
++	} else if (adreno_is_a306a(adreno_gpu)) {
++		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
++		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x00000010);
++		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x00000010);
+ 	} else if (adreno_is_a320(adreno_gpu)) {
+ 		/* Set up 16 deep read/write request queues: */
+ 		gpu_write(gpu, REG_A3XX_VBIF_IN_RD_LIM_CONF0, 0x10101010);
+@@ -237,7 +241,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+ 	gpu_write(gpu, REG_A3XX_UCHE_CACHE_MODE_CONTROL_REG, 0x00000001);
+ 
+ 	/* Enable Clock gating: */
+-	if (adreno_is_a305b(adreno_gpu) || adreno_is_a306(adreno_gpu))
++	if (adreno_is_a305b(adreno_gpu) ||
++	    adreno_is_a306(adreno_gpu) ||
++	    adreno_is_a306a(adreno_gpu))
+ 		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xaaaaaaaa);
+ 	else if (adreno_is_a320(adreno_gpu))
+ 		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xbfffffff);
+@@ -334,8 +340,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+ 		gpu_write(gpu, REG_A3XX_CP_PFP_UCODE_DATA, ptr[i]);
+ 
+ 	/* CP ROQ queue sizes (bytes) - RB:16, ST:16, IB1:32, IB2:64 */
+-	if (adreno_is_a305(adreno_gpu) || adreno_is_a306(adreno_gpu) ||
+-			adreno_is_a320(adreno_gpu)) {
++	if (adreno_is_a305(adreno_gpu) ||
++	    adreno_is_a306(adreno_gpu) ||
++	    adreno_is_a306a(adreno_gpu) ||
++	    adreno_is_a320(adreno_gpu)) {
+ 		gpu_write(gpu, REG_AXXX_CP_QUEUE_THRESHOLDS,
+ 				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB1_START(2) |
+ 				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB2_START(6) |
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+index c3703a51287b..198b2b5b67fb 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -86,6 +86,17 @@ static const struct adreno_info gpulist[] = {
+ 		.gmem  = SZ_128K,
+ 		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+ 		.init  = a3xx_gpu_init,
++	}, {
++		.chip_ids = ADRENO_CHIP_IDS(0x03000620),
++		.family = ADRENO_3XX,
++		.revn  = 308,
++		.fw = {
++			[ADRENO_FW_PM4] = "a300_pm4.fw",
++			[ADRENO_FW_PFP] = "a300_pfp.fw",
++		},
++		.gmem  = SZ_128K,
++		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
++		.init  = a3xx_gpu_init,
+ 	}, {
+ 		.chip_ids = ADRENO_CHIP_IDS(
+ 			0x03020000,
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index 77526892eb8c..2645f6f4ad83 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -268,6 +268,12 @@ static inline bool adreno_is_a306(const struct adreno_gpu *gpu)
+ 	return adreno_is_revn(gpu, 307);
+ }
+ 
++static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
++{
++	/* a306a marketing name is a308 */
++	return adreno_is_revn(gpu, 308);
++}
++
+ static inline bool adreno_is_a320(const struct adreno_gpu *gpu)
+ {
+ 	return adreno_is_revn(gpu, 320);
 
-Thanks.
+---
+base-commit: 6dc544b66971c7f9909ff038b62149105272d26a
+change-id: 20240528-a306a-48e173724d6c
 
+Best regards,
 -- 
-tejun
+Barnabás Czémán <trabarni@gmail.com>
+
 
