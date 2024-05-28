@@ -1,104 +1,126 @@
-Return-Path: <linux-kernel+bounces-192011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EA18D1735
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 462318D173B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DE51C22DBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7703A1C2252C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B414D710;
-	Tue, 28 May 2024 09:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784BD154439;
+	Tue, 28 May 2024 09:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BCP5g6DC"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f8LxA3gk"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB000140E5E;
-	Tue, 28 May 2024 09:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD71153BF9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716888158; cv=none; b=SpxsiRRnd6TI24vMAIAAnIxBSddOObxZl0tqAYdZdOIHeCVeM5QJQQBFk2u+kSQkdAVqGyiRGzFv9fYoSvWIatF+bXM/H/IS2qXkq2tz5suzsOBi3oGILrnHZ7ybLz/9a/22KwAo7n3MmMnaYynpb4qu3TX2v7hsDlLHXTsDubw=
+	t=1716888340; cv=none; b=fZ6fMOoMqwQeG6shl1MMOZRs6BbEhcVs31qWTcc7VCht6Yr9uO3gIAM50fL/OQ6pw9tRJFcHGN1UhIkwT3Co5qTMZUcYgmbnUlkfOV7HnZV2/t4t4lfZV/UL43RDcdHZCSfYOkXfcFjjNujm1Q/D0aOeVRELj5xmzxdjTwiBk2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716888158; c=relaxed/simple;
-	bh=GwLFmpw97dTVYyGyXOWlFoh5Bpf1I6pea4ghGTgTLHA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=JrZZSt6AfELDsGs9vPS93qr/jD4gJfjzCCOAo+ibJxVXSypAfhxbPga9AyZynNh4kKJRQFLj2yUbyBtX4QzrzZddJXZmJAhEr+cDVmR3+dBh2jrY9lb9a2d23rpuExjMuDMacD1mVlkvJsFFotmFnoXJg7VZvQ9Wm4y0dwFhv7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BCP5g6DC; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716888144; x=1717492944; i=markus.elfring@web.de;
-	bh=KK4Se9epQ/qlMcMAbFV7gUJ2n7pL1maRb0tzRBLSB0M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BCP5g6DCabvTJVw7DA6C1tR+bAwAGCopnt5wzzgHi6Tn2IO2a0lt+Rh8h0pzWPu8
-	 T8aUrXGPTXqjDXND6uRZs35R+QxOsEOjvscrC+JPGOpK/7QsTLx/dP/2pgO+RAh+a
-	 4hl6MbhVFOT+O6tqY2OumtHxyzszX/YgDt/BaLVyTvWPbSYQIk+qzl2GQI31Ejdr4
-	 pyiGTKLV1rlJOBGCji3op6HwuKNBmRCSYOnIS+Aq7aQgEA7ztXiYyUWr+cyRbrWK8
-	 n9Q2zwjuwstgmjVen+8n79GjEy6vEx2TXoBVjgPU+9BtZw+m19gj0qsOxU3tWnLTC
-	 QnDfcNLlqa/J8M19MA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1sGoio2xM2-00Dn4P; Tue, 28
- May 2024 11:22:24 +0200
-Message-ID: <534687df-c200-4741-ad00-a847e8fb8b12@web.de>
-Date: Tue, 28 May 2024 11:22:23 +0200
+	s=arc-20240116; t=1716888340; c=relaxed/simple;
+	bh=OsYS7DkCn8nNtCFD65MUYsKRym72b+wJESsGapm9jiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNmQFxX1nDybdoTE0M9vScvJsWpikcEwfKJ+bXBTaCtMja6HbUrpAHO79eJ49mz3uQNzj6Rm3C75b3T5h1Ksc3LYNz7o2sAlDANkXDr1ibi0FBrmSqd3n2+1SkDkns0TeGuwlhHAMZpnujeQ/c4qtMAJTtWCCub4TsJmV89lKV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f8LxA3gk; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-529be98ad96so253442e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716888337; x=1717493137; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7gzbi64k1Z/YC0Cdr+2B8FH5cQuGNXkpk1kzN13Mv8=;
+        b=f8LxA3gkjwRgFquSZRtlde46RPiEmCa0Xa/leBIivPx87yaOi16NtXH63Th5+1gqkk
+         avGS2yRH8cIGMuidHxp4LqZd7PJ0KRg8ATHCQ8u/yfKzTGPKJF6GB5LmpzAKiOsvRLMR
+         8Z5H0b67iLO6Q8TkvTL5XzTJJCFpdGaEM99kiArkz+e6HlrfrdrNL+DnxDErQ48flerS
+         Sn2HIvv7x1u+CAq8IgN6USeWLoJKoKAT8mjJef78N4sMnC54jpjB3PWsrntoZTBpmdfE
+         FnWiPTU+CLSAcBcxNxjJ17CTwJZaU7gfGuFQ85I+Sh4ZgcN0S1S/YahGgyp866lAI2Pa
+         0n1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716888337; x=1717493137;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7gzbi64k1Z/YC0Cdr+2B8FH5cQuGNXkpk1kzN13Mv8=;
+        b=ak70vmoRjlSlKd+ZIU6zyRGHqT/IQ9KmTg2yDOAxoHzuXTYYsLbqdUhpQUJejFPWJZ
+         ITCl6G5K6ObfxUCXLeu2ktwNcq9rmxB/SYUAL3jiTIkHxfK0xakdoaw0WjXRtWXfFaH8
+         RqBXaekYkZHdVSKG/RyJetKchL21/gUrfnEjITlQiadYqtMIAmlWxE+ITxXP0MJ3bCaZ
+         ZyKG/rsV5v0EHOqvfevrHk/KnUVdDWJR1QBt+OYYiW5K7ykIkSy9dcC9jo1t8/kegrXw
+         ZA0qz8ounCbJkNLxwt7IqJCpjO2InqTYknSY1SVZ/UqLFMajZLiFGQ1Q4PgL35N9xjF4
+         FTMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAUyJmvioELeYhsx3Vby5w8adfCVyKp6AxPAw05cLYspI3fPYHKZ+j+tueARMgjVNmNqbZtCXJb+WZASrK33Wrb0YT+5C+7iiQ5Rb1
+X-Gm-Message-State: AOJu0YxTzSFdef17QHLZTNxM1K9sOCmZh3Zk0wspCPHo9c+K/geGStJY
+	18MObS+/i6AZ30c1UyUmUGIgCW38m9Y+eqB2bNCWnp2T4g3WjANbS33QdLbv3jM=
+X-Google-Smtp-Source: AGHT+IHp84txR1MlPRb+aUhMu7G2+lw7W/QUySdZsZd9yNkSp9JrXsZVz+sK5xQ4n6Nplmjdc1t8LA==
+X-Received: by 2002:a2e:9ad9:0:b0:2e4:e15d:40b0 with SMTP id 38308e7fff4ca-2e95b2566eemr77100521fa.32.1716888337212;
+        Tue, 28 May 2024 02:25:37 -0700 (PDT)
+Received: from myrica ([2.221.137.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c9570sm11072618f8f.68.2024.05.28.02.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 02:25:36 -0700 (PDT)
+Date: Tue, 28 May 2024 10:25:28 +0100
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu: Return right value in iommu_sva_bind_device()
+Message-ID: <20240528092528.GA2482616@myrica>
+References: <20240528042528.71396-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Li zeming <zeming@nfschina.com>, linux-block@vger.kernel.org,
- Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240318025525.16439-1-zeming@nfschina.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_blk-zoned=3A_Remove_unnecessary_?=
- =?UTF-8?B?4oCYMOKAmSB2YWx1ZXMgZnJvbSByZXQ=?=
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240318025525.16439-1-zeming@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eM83rr2d+zGxhfDZp62dOSXDrvp87wT2RucariXmvV4AU2oKs/e
- lnyxVqawxhdmBoiRoZ/sYbo7IpxR1LIz8stnY+iviVZgFJWuXhMtho7gP+1/sbsZHOa4BCT
- MrTnn2nmk0hpQOw5qst9MlO9GuX9iKoBb9lo1CNRkrGRv6PWiImpEUHRCk5o67XeoLudQUY
- deChX3bHs6L7v07b3VD9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4oaWStMKZV4=;4V9uRLua0azCPe4/J6EQ+VvExt2
- wQblOJ4PAX5S92ilATNsmXfG8vboBHf3M3pWcaKwsuU01yrMxJWQf9SqKoEENj9apkPe24LS0
- pi/8+NuJObbamUHL8C48uupKW/Olta9ktqWccD2riSEZbJmLBk3kVLV+n4cORfN9HXG69coiw
- /mE+vPQOev40xCf9nbqPqEZGaYnvUuL9BJk2mqz/UXQljJufkcz6TQ5fR7AHQr+9j/vecmRGX
- e2mwUYfmdqOpNEZDkjYN3X78vbO8H+CaZkR3P6clcmiIvgVNpuvnBUgQ/Lm/HiB7/kabJaVRW
- LNfAeX78YYl5RO/5nmCFg0NZDx12c843NGci6qRpxUXuqhGswQ9VAyHXWxt2tcB32rvEqpS0F
- yS+2Whsc8rfPqrUAilfZUEl3oOR3lwVirwlgu7tblhcRumr41R2FDC6BY9I93duj4djif9Be7
- kKC2jb3FDsch3FB+TkfqscdDAECkUVwHkWfjlWdKBY0Br30HSLvOa5Bp3GgZ7SnoG1jStduCL
- xpWlbEGfNJvfIV4bQBOgUnthzzHo8MDXYS352e3WMuQJFE2viZPvGDfsSzxyuqR7j3X3vrF6G
- f4sgrxpVMqYcfHLSX2oNCzQgoS62LhMLMAEHiYTs+hY5RgjnnBaOpfSEUNyo0ZncOq5/je7Mw
- P7nlF8vrADWIXDrfqFkk3J5QPUlNFUmANy7RhoPeMB9JnN+/UbsTpRSca4atUhCb6qRLw1V7N
- aEdKHv1YcO+9KwD8NIrJ/DU16KzDY0ik64Wozk9iBPHn+XpKVpgSEJwRJSYzns14FUGQUerYf
- bRTVugUhx/qb/wghrPAYh19Wuvj/FSnBUk6mM5rsO2DAg=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528042528.71396-1-baolu.lu@linux.intel.com>
 
-> ret is assigned first, so it does not need to initialize the assignment.
+On Tue, May 28, 2024 at 12:25:28PM +0800, Lu Baolu wrote:
+> iommu_sva_bind_device() should return either a sva bond handle or an
+> ERR_PTR value in error cases. Existing drivers (idxd and uacce) only
+> check the return value with IS_ERR(). This could potentially lead to
+> a kernel NULL pointer dereference issue if the function returns NULL
+> instead of an error pointer.
+> 
+> In reality, this doesn't cause any problems because iommu_sva_bind_device()
+> only returns NULL when the kernel is not configured with CONFIG_IOMMU_SVA.
+> In this case, iommu_dev_enable_feature(dev, IOMMU_DEV_FEAT_SVA) will
+> return an error, and the device drivers won't call iommu_sva_bind_device()
+> at all.
+> 
+> Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-* Would a wording approach (like the following) be a bit nicer?
+Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 
-  The variable =E2=80=9Cret=E2=80=9D will eventually be set to an appropri=
-ate value
-  a bit later. Thus omit the explicit initialisation at the beginning.
-
-* How do you think about to use the summary phrase
-  =E2=80=9CDelete an unnecessary initialisation in blkdev_zone_mgmt()=E2=
-=80=9D?
-
-
-Regards,
-Markus
+> ---
+>  include/linux/iommu.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 7bc8dff7cf6d..17b3f36ad843 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -1533,7 +1533,7 @@ struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+>  static inline struct iommu_sva *
+>  iommu_sva_bind_device(struct device *dev, struct mm_struct *mm)
+>  {
+> -	return NULL;
+> +	return ERR_PTR(-ENODEV);
+>  }
+>  
+>  static inline void iommu_sva_unbind_device(struct iommu_sva *handle)
+> -- 
+> 2.34.1
+> 
 
