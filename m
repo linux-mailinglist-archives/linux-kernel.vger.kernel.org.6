@@ -1,108 +1,160 @@
-Return-Path: <linux-kernel+bounces-191587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB948D1129
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BC28D112C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA44281C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55331F2135D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6407BEADB;
-	Tue, 28 May 2024 00:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA1EBA41;
+	Tue, 28 May 2024 00:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SrXXUt1A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrS9xzYM"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1302D515;
-	Tue, 28 May 2024 00:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFEB1C2E;
+	Tue, 28 May 2024 00:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716857552; cv=none; b=nvicFtaC30S6trWuFT/Li3f+49bDX97TA2G9aoYys81o1dzdZClDdk/fdgBjUVsyUsvxrfTLTGghh6KqAA2zWas4LYP8PDJ4Ca3q4JZLio12TwhzwVX+mDSWC+p/AJs/TZs7flZcz9ql2sCJEplKTlS8OtbagiNp+YrRkEuXlMw=
+	t=1716857813; cv=none; b=M4RASYVn4UxjqyQTLKgQuK5BvqRvBqbUrAEBMiv904monuTv4HK8RjemoOeEGpwG2M53ktvIkG0OxY1V/36QHPIfA4pkbUSp2a/W8SjQUWEZxy1pQIEsoEKFwAg01nyhcxdlyWCUKtRHJ6R35KRYhsLJ88/TWFpjLXCYoAeMuxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716857552; c=relaxed/simple;
-	bh=L+VGQ6NWofYTWLNAe93oPBfriTky8plktD2yHWKTgEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DDLGI0AcZRLM+lCJGXi2BesD7CRK0j9DYqSRkGkZmQyLlhz0U3MUc3htGZNLAJjd4Qdx976DVLUilsTctX1RVzFz9DtUXNMhe9TkqaaJ+cbVpoJx2W02s3sz7iFwGYgNM+wvmKQUfHCaiYc6+T4piIJWcazVv1C9IHFYF8Ux3n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SrXXUt1A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716857548;
-	bh=L+VGQ6NWofYTWLNAe93oPBfriTky8plktD2yHWKTgEM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SrXXUt1A2R6yPA/vIcGMlmCoB+BLvGCxLJOwTjlaIs0Dg1MFLIcMWJBZUfrh9ArwE
-	 SEYCdcDxBOSFU7GtJUWSJjzKWL5engnEzWfagnYnkjVdYurZQrXb9p+P22YZkZbNFq
-	 iNM36wCK0UV3ZlY5CX/YvrpNVOevPHDi3UFBAot2AXb29moEYZNIOStOcUQHh1o1u3
-	 N33f6/MdxVocuiyxB3w2f8IAdjORXPbuG7pERWTx4CMkVHvd1ysWgPlyJqeC1U4YNH
-	 /v2cZbKrm+PjZr2PTPfKmvaRuBRZ3zufLqG8JkM+RlJenmrOVlKJ8eZjGnzgtD7TR5
-	 QExVts/WSS9yQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpDWJ3KThz4wyw;
-	Tue, 28 May 2024 10:52:28 +1000 (AEST)
-Date: Tue, 28 May 2024 10:52:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Alex Deucher
- <alexander.deucher@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, Likun Gao
- <Likun.Gao@amd.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the i2c-host tree
-Message-ID: <20240528105227.003df9eb@canb.auug.org.au>
-In-Reply-To: <c0cd58d3-f01a-4852-bf8b-fee4c865e4e2@gmail.com>
-References: <20240522104128.37c646af@canb.auug.org.au>
-	<c0cd58d3-f01a-4852-bf8b-fee4c865e4e2@gmail.com>
+	s=arc-20240116; t=1716857813; c=relaxed/simple;
+	bh=VIByQsRIRWXyiavO0JopjOwT9I3BGWmXRDeKDW0vxaE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sun5kcXPkTPMi8JwupydPuMs/WHVVSbdHES6+t4rENZ2w+2ZxSEsld8+vd+eHgxGUNDKzZGMGhmtMbV45ExqhxZ+0hzkohrYmgAXt/nBpq6HjeRRy+OrTSc/Y69XVBJ/qDhofeoHP456f2mrzFejyZAM2VwCz1LnMJZOOnRaoNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrS9xzYM; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-627ebbefd85so2861187b3.3;
+        Mon, 27 May 2024 17:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716857811; x=1717462611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ez0J0qtAkKq9DhtNvT58fIFshyeGP2st4dotGSlOno=;
+        b=JrS9xzYMzyRDBwIWQwT+K9C8NajlO5du6VfXZBSreZrgJKWhKWr1JzLQbu3oy52xS0
+         hBxN2XJLle2wz1ZCno8A16uk6q5GIgdIMle62v44H9ufDduY2K8HWNhzORehZUKrgPq1
+         l9ElMJpGgjIrlDM4PgYcpnmURz93TEhBSFYOKVSptwubft2CHuekrgFQ2S9truGv+AiV
+         ipsGuY0s5zZQnSCP1xVxgcz98TC+T5Kl5MG4AegkF2ShXXEiOB7rZn8C19DKdmRu92zH
+         O6s+IsmJl7/8VmUtPpQMgiGf60tXK7Z8OHnK8j7HRmI9JZrqcNyVU40nizW3gR0F2g1l
+         CYfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716857811; x=1717462611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Ez0J0qtAkKq9DhtNvT58fIFshyeGP2st4dotGSlOno=;
+        b=rfcP3JmwKT1qZLrXyts4sGQlqfbCw8i/XmylQcfzzV0a2gxKRiZnihKwrraCkAECuM
+         2s3OWqqbSHOE8hwXKGS4B5HSBEYVH8QjdUoBn+q7gTGxot7iShyN5fMw52eXi/5Bc8P7
+         v+HIG1WiTG707KY2SlvQAxZ6Nx2GCsLwSO5ZpM5qwXvgoWjpExH7eD7W3xqRC60XgEmF
+         TcAkTZe2mzEq0mwRonlKwvHWieHTSMbnn1evoit2kprOdcFUnwyWW3H3+dWDiRSuzF2s
+         7XhVyLLU0+oOUPAIhhjh+g0hwNJiOfuzzzafgBvncndXFbqqnIUyMhrsvzpHYUxxJ+oQ
+         +RAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyBB1VQWa8aW8QbL2E+j6f/5t8bx+hJ1W+fHVcIEGa6N3jJMUTsSm67Q4JKnUf33+AGeQ2MQqyqseTfua3O7hQ+vqu57Prd8MzmQYgXg4DrjQ4PZk3Cj8uc0EU8Zc1A5hrutIgF63+JRRXa5UJFmZNn5Gv0Wmz8ZoevCWQ6PFcZQ==
+X-Gm-Message-State: AOJu0Yx6oQLKj67/PaXLBzAX+wnzt4BHudhP8gt4xCSRqoNLk+jhpOYg
+	r1sYCO3+HX5NWKvwV1j4NRidRlCEA1HcF3Sk0NQBC2XSDFho/x1lldGr+w==
+X-Google-Smtp-Source: AGHT+IFtIWzXOyFRH+mmAemFEAEjq0S6YTXWPFy1QE68aOtKfOPGRU/J566TydAC2cqpZmcJMXliyQ==
+X-Received: by 2002:a0d:e897:0:b0:61a:f59a:c1b5 with SMTP id 00721157ae682-62a08db6ef6mr107669807b3.23.1716857810435;
+        Mon, 27 May 2024 17:56:50 -0700 (PDT)
+Received: from localhost ([2601:344:8301:57f0:35f3:16c3:302:8fdb])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a3bf743sm18245997b3.40.2024.05.27.17.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 17:56:49 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	rcu@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Christoph Lameter <cl@linux.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Dennis Zhou <dennis@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zefan Li <lizefan.x@bytedance.com>
+Subject: [PATCH 0/6] Cleanup cpumask.h inclusion in core headers
+Date: Mon, 27 May 2024 17:56:42 -0700
+Message-Id: <20240528005648.182376-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/m.CJ=+/i/Y1Ul7Ro9H8fH8d";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/m.CJ=+/i/Y1Ul7Ro9H8fH8d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Many core headers include linux/cpumask.h for nothing, and some others
+include it just for types. We already have nodemask_types.h, and this
+series adds cpumask_types.h to optimize core headers inclusion paths.
 
-Hi Heiner,
+Interestingly, it doesn't improve on build time for me, but the headers
+cleanup work should keep going.
 
-On Wed, 22 May 2024 07:33:03 +0200 Heiner Kallweit <hkallweit1@gmail.com> w=
-rote:
->
-> This conflict has been resolved by:
-> e22e0e483b2c ("drm/amd/pm: remove deprecated I2C_CLASS_SPD support from n=
-ewly added SMU_14_0_2")
+Yury Norov (6):
+  MAINTAINERS: add linux/nodemask_types.h to BITMAP API
+  sched: pre-caculate ilog2(TASK_REPORT_MAX)
+  cpumask: split out include/linux/cpumask_types.h
+  sched: drop dependency on cpumask.h
+  cpumask: cleanup core headers inclusion
+  cpumask: make core headers including cpumask_types.h where possible
 
-Sure, but that patch is not in the i2c-host tree (or a branch that the
-i2c-host tree includes), so I am still getting this failure.
+Yury Norov (6):
+  MAINTAINERS: add linux/nodemask_types.h to BITMAP API
+  sched: pre-caculate ilog2(TASK_REPORT_MAX)
+  cpumask: split out include/linux/cpumask_types.h
+  sched: drop dependency on cpumask.h
+  cpumask: cleanup core headers inclusion
+  cpumask: make core headers including cpumask_types.h where possible
 
---=20
-Cheers,
-Stephen Rothwell
+ MAINTAINERS                                  |  2 +
+ include/linux/cacheinfo.h                    |  2 +-
+ include/linux/cgroup.h                       |  1 -
+ include/linux/clockchips.h                   |  2 +-
+ include/linux/cpu.h                          |  1 -
+ include/linux/cpu_cooling.h                  |  1 -
+ include/linux/cpu_rmap.h                     |  2 +-
+ include/linux/cpumask.h                      | 56 +----------------
+ include/linux/cpumask_types.h                | 66 ++++++++++++++++++++
+ include/linux/interrupt.h                    |  2 +-
+ include/linux/irqchip/irq-partition-percpu.h |  2 +-
+ include/linux/kernel_stat.h                  |  1 -
+ include/linux/msi.h                          |  2 +-
+ include/linux/node.h                         |  1 -
+ include/linux/percpu.h                       |  1 -
+ include/linux/pm_domain.h                    |  2 +-
+ include/linux/profile.h                      |  1 -
+ include/linux/rcupdate.h                     |  1 -
+ include/linux/sched.h                        |  7 ++-
+ include/linux/seq_file.h                     |  1 -
+ include/linux/stop_machine.h                 |  2 +-
+ include/linux/torture.h                      |  2 +-
+ include/linux/tracepoint.h                   |  1 -
+ include/linux/workqueue.h                    |  2 +-
+ 24 files changed, 83 insertions(+), 78 deletions(-)
+ create mode 100644 include/linux/cpumask_types.h
 
---Sig_/m.CJ=+/i/Y1Ul7Ro9H8fH8d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+2.40.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVKssACgkQAVBC80lX
-0Gy7ZAf+O54iSP4naE2104t3+/M2DJrDGYF0gxTI+kAX/h4as7OjsByj+sMsS8Or
-I9QOaEHL9RwdZQ4mqE3AYhUlVlRueKfg0go26qrRU23x0ZxGck03CTxb6rfMSi+8
-ojIR+J/x+1HMqyQvU9YanQlmAmp8E0I1rccblRqK+q/KqkglhMeNDk7wZwvbvv8L
-IQVifQ2G4Ooa0T69GMehrtEmhZo4725ZF9i7G9gxXJLfBTh10/udP7cl/cE490HQ
-WD+6gx9MzwgZYG+U+Han0E0ccdIkZUUN605BWL3EMWAAb7P46UX98BhEw7TfHJcv
-MTl9P4RoeVJW4/sJ8g/PY4HExWpbxw==
-=R/Wj
------END PGP SIGNATURE-----
-
---Sig_/m.CJ=+/i/Y1Ul7Ro9H8fH8d--
 
