@@ -1,109 +1,199 @@
-Return-Path: <linux-kernel+bounces-192890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBE18D2394
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05AC8D239F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0663C1C22E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4351C22E5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D1E174ED0;
-	Tue, 28 May 2024 18:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAC5172767;
+	Tue, 28 May 2024 18:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BvKLadwi"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aaIuOXAP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FB516F8F0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4392563;
+	Tue, 28 May 2024 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716922607; cv=none; b=s0b91mSkQuepBf1RbjiPQ47y0cWtLAbx2+ESTKwAVSP0GVpNVCb13suKiakapqVsEQd7G/UMw0Af49cPNvGCebpzx1xIBBfcwySOJuPdd35F7kRMcnt3ZPncG6BfgXFBt8JT0BxptR/4OY+DdYpuG63gQ3xRhb4MiRhKnqUWq3M=
+	t=1716922741; cv=none; b=drpkl9y2xYY8u8ltwLSgbLKcL7B1yWX06rMGec2bU8Xd+156XIqk7MKVYu6bXWNoxweMLYqpCrJLeBziVvTIANU6YpxxTuldyNXQrs58TZ3W+wzTIyzL4MoPR2y0CdC1tNRo5eJH+GH94TXKwALkB4GH+xs1NxiWl5eE7N7HUSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716922607; c=relaxed/simple;
-	bh=7VzGZDtBSooFkxUd9OAZGtectfy+uwG4/bUmSmiL7y4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hqIWXWJQfI1HjOGrlzIc2AAKx6+A0cX9WuwLChiBTvE1cuaH9GHMv7D2aNaEM1+KKVkknB+Coy4FqAYWcGEjy5Xa/U9fREgFByT85xrAq0vhhNd7hrnf4XXQjuBRKXBoyonFev6PT4ykG2TKSVvV5K8wAlbxMTELFSxyLrzyWwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BvKLadwi; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2bdf44bdb46so1087979a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716922605; x=1717527405; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4Hp5OPdGF5QAC5ejV2ec7ZNjyRf7XQzcBDRWuz3U2Q=;
-        b=BvKLadwiu1EUp6B/W7QzDf0vC1qmVA4xA9GlGAhJTIYmUKR4aXx37KdHJfazVVcYXD
-         LLY9oCg8xuQPAia6vvNwmi1CCDxqQJSO1yTVcISCtOoGx9SDFcCC/IP48sK3kwIWB5d2
-         DgdKyyPXggomEr1PFGIzaciu026AyQHfCJvMeigaEaxyk3QadlQnJD4B32EX5d+6Otxx
-         tzwLKy0NSNrGJ+3tkXscX7t3VocrA/StXLCGgiqbAerBwXMNqGREOfD/GX+pGSr4jRQm
-         5z8kyuogd933XlZzGOAeuaAf7Y76xitBVzPHskHuqoJ8rksyBLfnOwwVb23u7//VuZbo
-         4Aew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716922605; x=1717527405;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4Hp5OPdGF5QAC5ejV2ec7ZNjyRf7XQzcBDRWuz3U2Q=;
-        b=KvfwMjNVXx8plq6qiO71u930OS/GnPtIZD0MkqNXo3L7CGUSmCceMxUkdhRColYD1l
-         sJy+pQckY2lN8tXZxh3X+G++aBvN5VvrRSvn6/A9jVfnsCA98jzrgj263baX1aYoEJDM
-         WBzv24l/gSAmqtQqbPovQpKMDpd26OYs+ESsHpCRgqZYKTpKPk8pi238rf9jeIs11CjR
-         V227aBjInlSnrdO3IfMaa2DnF90n08TY+8IVaP2gkQgJHBgIbFjYJ2yJ5fAcT5R/kqXl
-         GhL63AgNRGdKCHl1oL8MzDRsOORWw5PwhCO+MG63+eiu3KmngrjWr8GsURfKt2QyU01A
-         T2Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGUJTN3a+FaKNRAbAfRYPXfIdK6B667nTaCCxa42lWGG9DOFML0pF8uUzFmsnUGN2Uvt4Z5GlsC3hMfsX67rJY3EmRJHxmPZCPa15u
-X-Gm-Message-State: AOJu0YzMX2Z+HGbT1Ga6418jC1KalOoZ+vpQ9MIVnbLoldmycJAbXYlg
-	DHgrPCYHilJ/59qZsvZUf2OqlL07aDkcxeBPyzAkasqGJZO3iU7xPeCGIlKoFRJNpizrpSpaCPS
-	Baw==
-X-Google-Smtp-Source: AGHT+IHoqr+ISQcH8/FCagbfJ2nL98ZUcD/8qvK2Uon7Hq2ULc+/vLDNTGE1sbxP/IfziOZcYq1e9FeGTCM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:19ce:b0:2bd:6abb:e9f7 with SMTP id
- 98e67ed59e1d1-2bf5e09d490mr35783a91.0.1716922605104; Tue, 28 May 2024
- 11:56:45 -0700 (PDT)
-Date: Tue, 28 May 2024 11:56:43 -0700
-In-Reply-To: <18f52be4-6449-4761-a178-1ca87124c28d@linux.intel.com>
+	s=arc-20240116; t=1716922741; c=relaxed/simple;
+	bh=W7NINJAfUE5+sC2Emy6XSjc0tWE68CZdGq0aJ2UO3w0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ar0FEu1dCRue1KYAdkjoNjD3hn5xEkkyEoSgRvVVI9qfKgAnhKTZvgfwmlKjRyYPkLsLyVBaF5WpCZguFqspGSd1ws/jbPTABwrGuZqAobxRSQUVxIUjYfsukFvQvgmS6s1ydE02xfTTmHYp5R9OZnbfixEaVaPxkBqe95lfoKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aaIuOXAP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBk93T020271;
+	Tue, 28 May 2024 18:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NXaJLaXWX0TfB8EfTxrbz0twl+rwQq6aFudYwlaH1YY=; b=aaIuOXAPanto0XhG
+	z0dDv1IVN4WIo6NqjaAvBfKLR9nmcdZL628jgXAr56y7q/nW1wcTuwbPpR4/+UIG
+	qapT6Vy3w5bV6v7fVygIV81nmOfHRlaJIFcmM4G9HqUVGnljklyVQsX3gto3AvNZ
+	io9hpANIs/M/fAsP0H9n9WXLrrSix0+Mc9af1L5/e/rrDLtJ3MIRb95lEPqI1j/h
+	DQea/R2GRtKSvs91/tGIoAz5UFPbYYenHej92sr1iZlJNhSIExOJHHcg8jPHs4Za
+	8iOfnBzBVoCuZV8ve0asuAItiFHhWw22/hyAib+2E66KLP+KuV/+Hh0i7/OYKJMQ
+	q0GdQA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2h71dd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 18:58:37 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SIwacq005019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 18:58:36 GMT
+Received: from [10.110.47.143] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 11:58:33 -0700
+Message-ID: <029a0d9c-7a8f-40d6-8296-7c6e9915a9cf@quicinc.com>
+Date: Tue, 28 May 2024 11:58:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-13-seanjc@google.com>
- <18f52be4-6449-4761-a178-1ca87124c28d@linux.intel.com>
-Message-ID: <ZlYo67vO5JJ6aCAK@google.com>
-Subject: Re: [PATCH v2 12/49] KVM: x86: Reject disabling of MWAIT/HLT
- interception when not allowed
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
+ tstamp_type for scalabilty
+Content-Language: en-US
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Martin
+ KaFai Lau" <martin.lau@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+CC: <kernel@quicinc.com>, Willem de Bruijn <willemb@google.com>
+References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
+ <20240509211834.3235191-2-quic_abchauha@quicinc.com>
+ <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
+ <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l9YZqY9o3Y-jhkalMgdDcau7VEpPvrJB
+X-Proofpoint-ORIG-GUID: l9YZqY9o3Y-jhkalMgdDcau7VEpPvrJB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=651 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280141
 
-On Wed, May 22, 2024, Binbin Wu wrote:
-> On 5/18/2024 1:38 AM, Sean Christopherson wrote:
-> > @@ -4726,15 +4740,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-> >   		r = KVM_CLOCK_VALID_FLAGS;
-> >   		break;
-> >   	case KVM_CAP_X86_DISABLE_EXITS:
-> > -		r = KVM_X86_DISABLE_EXITS_PAUSE;
-> > -
-> > -		if (!mitigate_smt_rsb) {
-> > -			r |= KVM_X86_DISABLE_EXITS_HLT |
-> > -			     KVM_X86_DISABLE_EXITS_CSTATE;
-> > -
-> > -			if (kvm_can_mwait_in_guest())
-> > -				r |= KVM_X86_DISABLE_EXITS_MWAIT;
-> > -		}
-> > +		r |= kvm_get_allowed_disable_exits();
+
+
+On 5/28/2024 10:24 AM, Willem de Bruijn wrote:
+> Abhishek Chauhan (ABC) wrote:
 > 
-> Nit: Just use "=".
+>>> +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
+>>> +						    ktime_t kt, clockid_t clockid)
+>>> +{
+>>> +	u8 tstamp_type = SKB_CLOCK_REALTIME;
+>>> +
+>>> +	switch (clockid) {
+>>> +	case CLOCK_REALTIME:
+>>> +		break;
+>>> +	case CLOCK_MONOTONIC:
+>>> +		tstamp_type = SKB_CLOCK_MONOTONIC;
+>>> +		break;
+>>> +	default:
+>>
+>> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn. 
+>> So i think this might result in unnecessary crashes. 
+>>
+>> Let me know what you think. 
+>>
+>> Logs which are complaining. 
+>> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
+> 
+> I received reports too. Agreed that we need to fix these reports.
+> 
+> The alternative is to limit sk_clockid to supported ones, by failing
+> setsockopt SO_TXTIME on an unsupported clock.
+> 
+> That changes established ABI behavior. But I don't see how another
+> clock can be used in any realistic way anyway.
+> 
+> Putting it out there as an option. It's riskier, but in the end I
+> believe a better fix than just allowing this state to continue.
+> 
+I understand your thought process here, but i think doing this option means 
+no application from userspace can use any other clocks except REALTIME, MONO and TAI.
 
-Yowsers, that's more than a nit, that's downright bad code, it just happens to be
-functionally ok.  Thanks again for the reviews!
+That being said application which are using different sock options to set other clocks needs
+to change and work with just REALTIME , MONO or TAI. (Meaning the above warning from google compute engine
+would be gone because setsock option itself failed in the first place, I suspect here the clockid being used is 
+CLOCK_BOOTTIME which is similar to CLOCK_MONOTONIC with system suspend time as well)
+
+I feel that the options which are exposed by SO_TXTIME are limitless as of today the code 
+lacks basic checks such as not checking if the userspace gave a correct input. Meaning if i set
+value 100 as the clockid and write a small application in userspace to set SO_TXTIME. The funny part is the 
+clockid is successfully set even though there is no clock id 100 in kernel 
+
+example :- 
+
+[root@auto-lvarm-004 ~]# ./a.out -4 -S 192.168.1.1 -D 192.168.1.10 a,10
+
+value from getsockopt is 100 <== Which means the setsockopt was successful with clockid 100 (which is junk)
+
+
+I also agree that even without my patch, the code in fragmentation case was defaulting it to CLOCK_REALTIME 
+if the mono_delivery_time bool was not set. (So we tried to keep the logic as close to the one which was available in upstream today)
+
+
+I can propose 2 solutions to this 
+1. Have stricter checks in setsockopt functions to set only REALTIME, MONO and TAI 
+OR
+2. Allow all clock id but only set tstamp_type for TAI, MONO and REALTIME to be forwarded to userspace(logic) 
+
+static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
+						    ktime_t kt, clockid_t clockid)
+{
+	u8 tstamp_type = SKB_CLOCK_REALTIME;
+
+	switch (clockid) {
+	case CLOCK_REALTIME:
+		break;
+	case CLOCK_MONOTONIC:
+		tstamp_type = SKB_CLOCK_MONOTONIC;
+		break;
+	case CLOCK_TAI:
+		tstamp_type = SKB_CLOCK_TAI;
+		break;
+	default:
+		WARN_ON_ONCE(1); <== remove this 
+		kt = 0; <== remove this
+	}
+
+	skb_set_delivery_time(skb, kt, tstamp_type); <== pass kt as ease (as it is done previously too) and tstamp_type internally remains REAL
+}
+
+Let me know what you think. !
+
+> A third option would be to not fail the system call, but silently
+> fall back to CLOCK_REALTIME. Essentially what happens in the datapath
+> in skb_set_delivery_type_by_clockid now. That is surprising behavior,
+> we should not do that.
 
