@@ -1,149 +1,97 @@
-Return-Path: <linux-kernel+bounces-193152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988678D27D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDE18D27DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE0C288579
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 403AC1C24266
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9F113E025;
-	Tue, 28 May 2024 22:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5D13E3E4;
+	Tue, 28 May 2024 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i17B1wgR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g1I50eiD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E7713D8A5;
-	Tue, 28 May 2024 22:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEA813E041;
+	Tue, 28 May 2024 22:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934776; cv=none; b=mXou4mdHxzfDVfVNlQ3g9QTrP0TB4QUraw9WG/Jq6KCq0FBmt2OVYUcgsSMYE006QXO0q9Pp3f8etb5lWoDgJXBXzuNN19vVcWA9sb3URg1HeDrisZ6/zFH0OAy0nPhrzkkXA96eqcjNmQM7iiBV05XjOZ0v0NvBcLyHxQTPX2o=
+	t=1716934781; cv=none; b=gsscZDuOod2zGVreaw92DXOB/Dmnc0Mck59QW6HlfGQP2TpBFtUX8qQiSaidlYx3HRS8EEkUZvR5tGhdeFoEtlh1gmS5eR9x4VmQBJvqYpwUDnsKWCCRxC9Qgo8i6LxmvEz5TZcvrolgSe8aMWv23CWLDEAlhtHG0aDkkfo5ZPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934776; c=relaxed/simple;
-	bh=QmsGFOJ3NP/a+J6xydble1Si5wrUV1bN84MF4Ukp8FU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ooAlIPWk9GNrSyNNuK5NEJr8rF2sQ3RdhBccb/HqB/mZgpGpptgwt1YyzgocGCYJBrwhlKB2bwy+1T1N1phU14OcuFyabX0Mv7y3Cau1RONalHqezquBygjRRloie316NhemphptnKHStwZDZvP7PZ1AQgnpVnVDIHQjvMGejb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i17B1wgR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SJDZtZ001837;
-	Tue, 28 May 2024 22:19:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JVDAh13cOOeebYG0CpM6TZ7QvUqlsO6PYs9SBehirfo=; b=i17B1wgRuYhVYPxD
-	ZNo10owxbyEGvdD4DzOUa/mj168mEEAuTuv4nyiWxtHFwvnyTSrFyMm8eTOvuTOE
-	rW79iK8fDna5e4Yoal95e5Jbv9+TAn7ytwxo1KyB3Xv0nYyJfkPLOjJrCug+NAKS
-	BtsWtdzmfvETdWIwjoSRcFCjyk8Sy7R4RSgmilnJeQ201kDYpNJqdd8qEbj29b7E
-	3qoBBfTdjlPsitv3RMB+zqceMOG0P++GoKW6bMpaNUDaBhA17XhyVFlru/0h2kcR
-	rzjgu/TOPnvWrZlJkEsJtEL7pniPtD7Zh9A7tz86vuMPW/iwqac3OMhP5ZTxxgap
-	FuUxfw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g7gt7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:19:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SMJNcF023308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:19:23 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 15:19:21 -0700
-Message-ID: <d756ce42-3fa4-40df-b2e6-409a70aa5c2e@quicinc.com>
-Date: Tue, 28 May 2024 15:19:18 -0700
+	s=arc-20240116; t=1716934781; c=relaxed/simple;
+	bh=lYPnDtug50F8QASrDPJzWb+QIrScHIMC+Trew3ug4IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kYZUeJ4t61IaX2TxJL734VqmIRY2KoS86SMNKA4hFvWpMg2y8r2koqrh8HIQmAgxK5FgJaR3+MqBxofT7kqgN7dxja2MTNh6cH4eNdl2S/S2fDKE/Q+xauqMwvLHqLTFVS+yDVTlPswVwCnDFd1QEVBRlJITVfhk/w8s3pO+Ap0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g1I50eiD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716934771;
+	bh=d+GlOgAKL4NNoPih8NFaDHSXIOlkAQvMbfW9zUY/L6o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=g1I50eiD9TKpWOJBSyhBTO1kpL8n/sIQef4CBdhPQtuM1ubL3l5JoYjvb++kND+rw
+	 Vap9DSXiHgCR8ZrLEJ07/nGZNUFZluIJgSrr5NfAH7DNLbxd9G8Uic7W+bMyIAlQq6
+	 lpZbgnzZxZxiDoM0CcOzwCOQec3xeanSxqkIS2U4S0D1Pr79wKDe7PLsyhZV4XY7rO
+	 obEFhtXIznmSp89ioXhB5Aj5S4kA2IGo3+hNSvoiS3KP2F09x0NyN0GpXtlFwigOeK
+	 xjniaVoyytVfqrlTnX0BYXFjS5j7QOlJtmagWkvOAaGDZSGiodPWPDQ5envKMGdIAp
+	 jxqox09g3zBfQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vpn4M4XW8z4x2J;
+	Wed, 29 May 2024 08:19:31 +1000 (AEST)
+Date: Wed, 29 May 2024 08:19:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the tpmdd tree
+Message-ID: <20240529081930.487f7290@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/6] drm/msm/dsi: add a comment to explain pkt_per_line
- encoding
-Content-Language: en-US
-To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Jonathan
- Marek" <jonathan@marek.ca>
-References: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-0-f797ffba4682@linaro.org>
- <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-6-f797ffba4682@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240527-msm-drm-dsc-dsi-video-upstream-4-v5-6-f797ffba4682@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OrdfE5N2c4cnJANWNmu6Lp6jUl2qHGly
-X-Proofpoint-ORIG-GUID: OrdfE5N2c4cnJANWNmu6Lp6jUl2qHGly
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280165
+Content-Type: multipart/signed; boundary="Sig_/LJgjHhHwl5pVvvsSHm6=HFz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/LJgjHhHwl5pVvvsSHm6=HFz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 5/27/2024 7:21 AM, Jun Nie wrote:
-> From: Jonathan Marek <jonathan@marek.ca>
-> 
-> Make it clear why the pkt_per_line value is being "divided by 2".
-> 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+The following commit is also in Linus Torvalds' tree as a different
+commit (but the same patch):
 
-Hi Jun,
+  7df9ef4f7b1e ("tpm_tis_spi: Account for SPI header when allocating TPM SP=
+I xfer buffer")
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
+--Sig_/LJgjHhHwl5pVvvsSHm6=HFz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Jessica Zhang
+-----BEGIN PGP SIGNATURE-----
 
-> ---
->   drivers/gpu/drm/msm/dsi/dsi_host.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 7252d36687e6..4768cff08381 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -885,7 +885,11 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
->   	/* DSI_VIDEO_COMPRESSION_MODE & DSI_COMMAND_COMPRESSION_MODE
->   	 * registers have similar offsets, so for below common code use
->   	 * DSI_VIDEO_COMPRESSION_MODE_XXXX for setting bits
-> +	 *
-> +	 * pkt_per_line is log2 encoded, >>1 works for supported values (1,2,4)
->   	 */
-> +	if (pkt_per_line > 4)
-> +		drm_warn_once(msm_host->dev, "pkt_per_line too big");
->   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_PKT_PER_LINE(pkt_per_line >> 1);
->   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EOL_BYTE_NUM(eol_byte_num);
->   	reg |= DSI_VIDEO_COMPRESSION_MODE_CTRL_EN;
-> 
-> -- 
-> 2.34.1
-> 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZWWHIACgkQAVBC80lX
+0GyFMAf/dnNg4Iig+09v7opTjl4EXIX9SVEGUBl94gOq4QCF91F5mOralyEbhUzE
+5mP272mwV7HNJdBcRLErauoQ8g9aBQ7tVAyxRsI8B4EiNIhlYDXA1mu74R/86dkS
+lK9I2+HZtO51B5fGvBalYlm8m/OrbYy82S8Y8x6C/x/22bzCvmOeKqn8/oTWHo5W
+CVC4k2WK0R31tJb4ztCZ7rwoGsYo0MR7Ehhvtt5cSlpB6FGjdH7mKvBa5EmvlewD
+QD9o5OGJze9ZlBMA7uH6sSf/gV4JoBzi4IGIR7/jrfukAzh7gY2PJ9a4Si85WS1j
+YzEGPGT8PcYxmYEnkWvfQqtBo5qweA==
+=zBTB
+-----END PGP SIGNATURE-----
+
+--Sig_/LJgjHhHwl5pVvvsSHm6=HFz--
 
