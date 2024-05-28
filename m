@@ -1,128 +1,233 @@
-Return-Path: <linux-kernel+bounces-192470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0668D1DA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:55:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA47C8D1DA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1554F2858EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3D01C22A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D0E16FF33;
-	Tue, 28 May 2024 13:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06CF16F844;
+	Tue, 28 May 2024 13:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tSQ0mrHG"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxtqWQYb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66F16FF28
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE66916F28D;
+	Tue, 28 May 2024 13:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904459; cv=none; b=uzdg+U1WmT9z659pwUvruWSAUorL7zidh5YiLJa2d38D0ZgE4BTl3XlsLKVMMu+5Q0E59sC3j7Y+hYs96viKq/tRLfXgMWRWjx89T1VsYO1a5VqVXvGSwuakowIzL293rRgnTul5ct8kNMoqUJRUDoUmaq4m7BQMl3uxPDToJ4I=
+	t=1716904453; cv=none; b=kaI10S4bASOpcNgmgPhmj4h97luLzr0W5PC01TexXCfkHoL98E//fOiOmJwIwqtpXjBaF08zXzFbdlCzPG3aKwO2vNtuBUzqH4y3xo48BULUl7kMX8CahoLYfSZjxTDmeQy/sslrFym+BnzKKv7dqUtwMqgXZXy+F6eiEGBXMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904459; c=relaxed/simple;
-	bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KkK31Co5oEfRe2logJKoPLyldJtI07282EnZ6I10iycgUYT2I6CP5kO8x7R0CM9IlnDpqoh3rtSUBVjb9Nk1/KzfJUe0ZbVfgPEbd9PZ+KzcYinLGLG5kl9hs9y3s3IYKrpcQIevf1PwGRc631hS/7B5lRov/8ycVn2+t7ojnnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tSQ0mrHG; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df4eb08fd9eso852630276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716904456; x=1717509256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
-        b=tSQ0mrHG3+n3PGa7X9pcZE1Chu/Ou4kJD5PRZeuVs6X0UgWzGhjAKz12y4MXw9+B08
-         QpdwOLF04csZe9v+E/6RDvFZ3pFEHnNLPHykMSobr+H4Jc8N0qZuVuNMqA7cemTP7E/P
-         Br7A5Q3p7PFXO+QdwqJs3tnZm8XLaFvdTuGZCpqwrfLfYuqi+ZlQxtMsb873oasKObTE
-         Um9H50l7SA449CHzSMzd1Bm8MA6HBYGxHXLL6SYocnxsHjW/yjCkx1XQOQO2wiELJnMf
-         /F+Js73JovAr7xSKVQ+N1cf1wa7OoZ7ij2x61L4Ty6hgGo7c6YGFH+Wp1QI5BM2Mm+z5
-         7JRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716904456; x=1717509256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7FRvHhRIIGYDk4+qwxfvO9/uo5NTHqwlQyzNXACIsqE=;
-        b=C24Ox27eWiaxQLqmFTGJnxX+C01MpxbSLFKOdDIYPCtzWOBD0/dMa0/Ul9wBBPOJz6
-         7jd2REid76CF5su/dbzS1xgb3ZmbJNaBlUxrzGnri3mJ4WnDPVOJlUZC+kQXyeY6k23C
-         wdxGni05NHtjMAlGIMNpzXgF7RBBmtHujPdc84/weg4oCSrNCDTEcjnkhrUWX/oO5lpj
-         p1KDpqrdw09ggHvxl3ZxO2cfFyqgmnzdlaDbpMfEImov8G7ixjG/MVVVaC6Tok85fUCr
-         9/rATG6GevuVrv5omD/r3L6nAP+eSx2nkcKBaIjUUzaFP9iVYgVxij6uj+YBpybQ9Co7
-         L7Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS65XIG5usJ6jo9hqKbHq0tWzcOXCRvbf9x6/U/+krGigT+QBgU5tSUBAom5ZhgODO0kxUPSiH0Q909pcx6uVfPdy8wxBMLEK1fu0+
-X-Gm-Message-State: AOJu0YzZZLFurTl9mqpUMQ+5cMHqnBYRRrB3SMLz2Xf0a0LJOAb3lGF8
-	NAkP7GeZrFMfJNK+1W1ofPGtRrMzqj8+HzQXE36O2MbwiC5JRUxY0Y17/y3Jxo7NLu8r5ZZlIuP
-	ToDhjquu/tXM9TmWffXk45Qou9wx6ebG6kdeRqw==
-X-Google-Smtp-Source: AGHT+IGiPfPdnxrsrhzRu1zp22yduOAlK20srMU3ZfVqa4PYk+PdmHe6VAHg28ob32G6Sc5b0+jA9ivDKnJzxrYwPFU=
-X-Received: by 2002:a25:a545:0:b0:deb:42d2:c299 with SMTP id
- 3f1490d57ef6-df7721ff9dbmr11796718276.55.1716904456264; Tue, 28 May 2024
- 06:54:16 -0700 (PDT)
+	s=arc-20240116; t=1716904453; c=relaxed/simple;
+	bh=UtW80uEs+aWVSEa5xEsRYkywVYopLJrIjVEObYGzDgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PhSykQWNpxJLzsZ5zurAY4rUD3s3uhjW7NmoJHobuNKtYeSWK8wuxq7Pdotsz/k0mCgd+8aOtqukKViO6HPlz/SBUcrjr5Hbf0KTu7foIC9hJjxa+0pI3NdpBPaRLUeKJrPqvI0TZUh7ibzgmOdqQqp12kqCgzG5lU4so/RCNsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxtqWQYb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE38BC3277B;
+	Tue, 28 May 2024 13:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716904452;
+	bh=UtW80uEs+aWVSEa5xEsRYkywVYopLJrIjVEObYGzDgw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RxtqWQYbWJDPqjds4o2wDNQrwyx5K3/6iGNFwIsyvcRrXcmeVYs+2c1pO5C6w5CA9
+	 qiz/BA7QSwMr0ctptZui2bblTMWKc4KrTMHkkmFoTeNyYl6CfijIaKVszE9YF2oohX
+	 6RVNDZFWOuMFasRmmmi/8GBNrwxMo+zN3Dc0js0FU8oKRD9GK+9wsTxble6Lzk1+ef
+	 wazA8+J1BNlBanmbIDHCJefQPHvkJovyNP3xx8bqVsaKpftdmUbKJmZl6gFzFaOAzS
+	 rfUxYWlzjYEbN8PaElRGBYr8denMZAl54KKNsu/pCNcsVhqDF8XmYLjcMbCFsGAEwm
+	 OC1vP32nVpB3A==
+Message-ID: <3a29c775-4131-4047-9777-4146e6c8eed0@kernel.org>
+Date: Tue, 28 May 2024 15:54:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527022036.31985-1-user@blabla>
-In-Reply-To: <20240527022036.31985-1-user@blabla>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 28 May 2024 15:54:04 +0200
-Message-ID: <CACRpkdY99LACAUsg_S4ww4U7-KU_EtkLZ+c8dsa0M85i9eJZbA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
-To: liweihao <cn.liweihao@gmail.com>
-Cc: arinc.unal@arinc9.com, sergio.paracuellos@gmail.com, sean.wang@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to
+ yaml
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20240528065756.1962482-1-andreas@kemnade.info>
+ <e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
+ <20240528131622.4b4f8d03@aktux>
+ <f288a1c9-762c-4c66-8611-9a08d6c09bac@kernel.org>
+ <20240528150647.40385d08@aktux>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240528150647.40385d08@aktux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 27, 2024 at 4:21=E2=80=AFAM liweihao <cn.liweihao@gmail.com> wr=
-ote:
+On 28/05/2024 15:06, Andreas Kemnade wrote:
+> On Tue, 28 May 2024 13:25:29 +0200
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>> On 28/05/2024 13:16, Andreas Kemnade wrote:
+>>> On Tue, 28 May 2024 12:04:22 +0200
+>>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>   
+>>>> On 28/05/2024 08:57, Andreas Kemnade wrote:  
+>>>>> Convert the regulator bindings to yaml files. To allow only the regulator
+>>>>> compatible corresponding to the toplevel mfd compatible, split the file
+>>>>> into one per device.
+>>>>>
+>>>>> To not need to allow any subnode name, specify clearly node names
+>>>>> for all the regulators.
+>>>>>
+>>>>> Drop one twl5030 compatible due to no documentation on mfd side and no
+>>>>> users of the twl5030.
+>>>>>
+>>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>>>> ---
+>>>>> Reason for being RFC:
+>>>>> the integration into ti,twl.yaml seems not to work as expected
+>>>>> make dt_binding_check crashes without any clear error message
+>>>>> if used on the ti,twl.yaml
+>>>>>
+>>>>>  .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
+>>>>>  .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++++++++++
+>>>>>  .../regulator/ti,twl6030-regulator.yaml       | 292 +++++++++++++
+>>>>>  .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
+>>>>>  .../bindings/regulator/twl-regulator.txt      |  80 ----
+>>>>>  5 files changed, 935 insertions(+), 81 deletions(-)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
+>>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
+>>>>>  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
+>>>>>  delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>>>> index c2357fecb56cc..4ced6e471d338 100644
+>>>>> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+>>>>> @@ -50,7 +50,7 @@ allOf:
+>>>>>            properties:
+>>>>>              compatible:
+>>>>>                const: ti,twl4030-wdt
+>>>>> -
+>>>>> +        $ref: /schemas/regulator/ti,twl4030-regulator.yaml    
+>>>>
+>>>> That's not needed, just like othehr refs below.
+>>>>  
+>>> but how to prevent error messages like this:
+>>>
+>>> arch/arm/boot/dts/ti/omap/omap2430-sdp.dtb: twl@48: Unevaluated properties are not allowed ('gpio', 'keypad', 'pwm', 'pwmled', 'regulator-vaux1', 'regulator-vaux2', 'regulator-vaux3', 'regulator-vaux4', 'regulator-vdac', 'regulator-vdd1', 'regulator-vintana1', 'regulator-vintana2', 'regulator-vintdig', 'regulator-vio', 'regulator-vmmc1', 'regulator-vmmc2', 'regulator-vpll1', 'regulator-vpll2', 'regulator-vsim', 'regulator-vusb1v5', 'regulator-vusb1v8', 'regulator-vusb3v1
+>>>
+>>> esp. the regulator parts without adding stuff to ti,twl.yaml?  
+>>
+>> Eh? That's a watchdog, not regulator. Why do you add ref to regulator?
+>>
+> hmm, wrongly indented? At what level doet it belong? But as the regualor.yaml stuff can
+> be shortened, maybe just add it directly to ti,twl.yaml to avoid that trouble.
 
-> From: Weihao Li <cn.liweihao@gmail.com>
->
-> The current version of the pinctrl driver has some issues:
->
-> 1. Duplicated "gpio" pmx function
->
-> The common code will add a "gpio" pmx functon to every pin group, so
-> it's not necessary to define a separate "gpio" pmx function in pin
-> groups.
->
-> 2. Duplicated pmx function name
->
-> There are some same function name in different pin groups, which will
-> cause some problems. For example, when we want to use PAD_GPIO0 as
-> refclk output function, the common clk framework code will search the
-> entire pin function lists, then return the first one matched, in this
-> case the matched function list only include the PAD_CO_CLKO pin group
-> because there are three "refclk" pin function, which is added by
-> refclk_grp, spi_cs1_grp and gpio_grp.
->
-> To solve this problem, a simple way is just add a pingrp refix to
-> function name like mt7620 pinctrl driver does.
->
-> 3. Useless "-" or "rsvd" functon
->
-> It's really unnecessary to add a reserved pin mux function to the
-> function lists, because we never use it.
->
-> Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
+I don't follow. The diff here and in other two places suggest you add
+twl-regulator reference to wdt/gpio/whatnot nodes, not to regulators.
 
-The patch looks good to me and Sergio: patch applied so
-it gets some testing in linux-next.
+> 
+>> ...
+>>
+>>>>> +
+>>>>> +  regulator-vaux2:
+>>>>> +    type: object
+>>>>> +    $ref: regulator.yaml#
+>>>>> +    unevaluatedProperties: false
+>>>>> +    properties:
+>>>>> +      compatible:
+>>>>> +        const: "ti,twl4030-vaux2"
+>>>>> +
+>>>>> +      regulator-initial-mode:
+>>>>> +        items:
+>>>>> +          - items:
+>>>>> +              enum:
+>>>>> +                - 0x08 # Sleep mode, the nominal output voltage is maintained
+>>>>> +                       # with low power consumption with low load current capability
+>>>>> +                - 0x0e # Active mode, the regulator can deliver its nominal output
+>>>>> +                       # voltage with full-load current capability    
+>>>>
+>>>> These entries are the same. Just use patternProperties and enum for
+>>>> compatible.
+>>>>  
+>>> hmm, if I am using that, how do I prevent e.g. constructions like this to be
+>>> valid?
+>>>
+>>> regulator-vaux2 {
+>>> 	compatible = "ti,twl4030-vaux1";
+>>> };
+>>>   
+>>
+>> Why would node name matter if you have compatible? The entire point of
+>> compatibles is to not to rely on node names.
+>>
+> Hmm, even if we rely on them, it should somehow match what is inside that node
+> usually. We have @xx and reg=<xx>; e.g. So relax the stuff to allowing
 
-If Arinc has issues with it or something else occurs I can
-always drop it again.
+I don't follow what reg has anything to do with it. There are no reg
+properties in regulator nodes.
 
-Yours,
-Linus Walleij
+> any regulator-.* as node name independently of the contents?
+
+As I said: patternProperties+enum
+
+BTW, the example in MFD (so main node) is heavily incomplete. This
+should be full, complete, passing dt_binding_check example.
+
+> 
+> And since that all is then shorter, maybe add stuff just directly to ti,twl.yaml?
+
+Sure.
+
+
+Best regards,
+Krzysztof
+
 
