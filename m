@@ -1,292 +1,267 @@
-Return-Path: <linux-kernel+bounces-191905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCBA8D15EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7178D15F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EFA21C21F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613D71C2252E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CCD13D89D;
-	Tue, 28 May 2024 08:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C53413C820;
+	Tue, 28 May 2024 08:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W35IUspS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kEUiImQO"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C229C13D509;
-	Tue, 28 May 2024 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716883798; cv=none; b=Hkv3gVY8diotrhJyEeIqdgHLzQgCPL9MEvyZTxnEig74z+aatG3hykQMvRkFe3hhQiWZ1Gs/aXN30cK/+otwUqKRI/zkQUKge2MGmSCeP9gdjxcsYyBONuyTg3POhaPQtYrQwT+XPFxw6/dt3mrzTJrC5w9XZTTem0HeKWmJjws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716883798; c=relaxed/simple;
-	bh=qKXzA71iQazzuaFwaRvE/GV0og5PaxKwQ3vjJNhpXjE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KGvq2cNr7Mea9B4H75LctpXaHkqXtVrJssRhQZq9tOtI+dLq7EvX6GHazvW+wLcJYUmAtSru6oIVXW0J8Hr2r3t+meX9LyrNXI8mo41sWJk/RmqmD+/w/eF+aHP/RrHzzmRukrgEKLAoXc6ZzHfsuhmuB6zrZ1h1l++t1tx06kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W35IUspS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BCCC4AF11;
-	Tue, 28 May 2024 08:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716883798;
-	bh=qKXzA71iQazzuaFwaRvE/GV0og5PaxKwQ3vjJNhpXjE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W35IUspSwyuF49bxl1m5dcTOkoeHnbXPJ3p9muwi4d4kcF9r/pgB5Ri8i+btv10iw
-	 GUBjeZVdikxX8DuobP9ePw/nWC0xIqrLlkqOyiE5YomEB4V/ItlZ8XQzuAwbwfKVLI
-	 FJfNz0RSxJ125oVtddeqjcFYcwBTWvHZTW6PFrNZ7ZE0z44c5fDSE6CwHXBezhF/Nc
-	 qgD5djV1g1+4AVt5IvuPYgJ5wnEq8hg4ERzKLG4xLTHbHQtfLWwURyvfft3q9tj/Fe
-	 cdsyQ1nt7unpHQ/GEC1tgQMuDfOwfaXw8GcUM00H8TfBXzshB3/zkEmrztb7iiTMFn
-	 plSc4SNzLPyDA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 28 May 2024 10:09:18 +0200
-Subject: [PATCH net-next v2 3/3] doc: new 'mptcp' page in 'networking'
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF6213C69A;
+	Tue, 28 May 2024 08:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716883817; cv=fail; b=up0YlmfUJhAlf9nSaYjqkADcotlLr8ypVL6f4PjHiJ8v3+CI5ECgNxrP2GB3o5fHV/YdaZFyMwZh+9gIDre3IOmG6F5s6tej6xrOMSxrrlkYyZlzySpq/fYRZIbdY/q0rmKQp4LsD0Lc2/XEiiw20DAY9BxaBTrB0SD1r8cjM/0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716883817; c=relaxed/simple;
+	bh=Elev43n3Ex41i8c8cGqw7ytf56dSEA+j4EQIu22IX94=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TA7cCa3EXzpWsNSlp9Ii8W8/Yuy1HnV0oTmw6WiYEZxn3dluxidwWABTo0o0xokO0vvqxAYDu4JTHoNKuxzH7oHABbecGZ5F6CuMQB6b5yAjiOXunCsQaGC4Eabb0kFxQJSFcbASTGtWIcvHCzx9M+b4hcAsLSql46Ck6fkEMYE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kEUiImQO; arc=fail smtp.client-ip=40.107.93.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BgFlVDKd6VTzIugoLSQDq4TwxVlRQ+FtFYplGYqtiBbunRfRkufQf7mARPduRiYAOIGVaJbbVnqnzMBSLOepMhPAnmpSPkRSx0f7OHCRWKAw5Sq8rpXuqfQJL7CYruGXX0685Bp1Ys9Wf+CujUa2SNUpeTeKxOdNww1o1cWBXji6AjW4+O7MJViN5jKkE4dHTWgr9rWk+xe5HnAuVpAQ6NW06dd9HWbLK8Tv0+WcXD59zfx6PSq0yeUrYx4fUfhmcixiheP9i6qcTLdVW7okJxOh0UmKozAeUp6c9lZFuAOeltPDCaQHcIQOMmf62vOR8cYfpX0yncub2jxSzk3WEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q1CNvsGwc2hW261nt8obtGsLqIggtQvD/xfHAhj7bao=;
+ b=e5JseA8IUOhtc4Pxjdg7vlCYlcZmu09k3mPCrxRxIt+Ycwd2lbEi4Ize3wQdFjmYY4uredMeIk1igaREeFRM3PMmx1T1urPX7fmgwQ8CJ3aFFG82SeBmyrSOh6fagGBZbwWPrHENcEYnl5tyJ7uzgCfxMSukYQAhfqFNLIDPdvzvncsKvlu2MTwDvMQ5nS+gJ/2Nmmz6nHZtQaGHHDSVY89buukwtfne54X5/2MGOlbbmI+DY2UVsFqPXaEzlqnhnze+avQLvsI4XFMM5YFvlO1/c9Z50SSfWUIOZwEuLBf6faphknqxC8PGSfD91dWNZXGnqA7KRLHBRwIuN/DWrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q1CNvsGwc2hW261nt8obtGsLqIggtQvD/xfHAhj7bao=;
+ b=kEUiImQOIJyH0fM1M9lJxP8YDR70O2I0DPPzMN9rLPa3flPSoz8ZzJ4tMl6w1LfcuJ9Vrj25hXwFp/X9FFAbE99hrmiOiHN5aJDxaxPzFrWaHKlfmEqcBzzamrZkW+FmdoA/ybrFLDf2ubI3922lPrBml79kxkDOKYtScBW+dDYgtkQzb5icPiABpIFYW6ZswAnoWqqIiLfhpssN8cUQsHmN1SjL2hogA8mSjo5mvYs0Ie8BnUxGmbXE1zn1UA5Mw7z8ypqz1h2Mp//MBAgtEIrWWTBeltCydGDuaLUYcYFHuWxGVCSHugcUHHDKiri1KZ2+b0ek2AulR4dCvJhXcA==
+Received: from DM6PR06CA0034.namprd06.prod.outlook.com (2603:10b6:5:120::47)
+ by MW4PR12MB7438.namprd12.prod.outlook.com (2603:10b6:303:219::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
+ 2024 08:10:10 +0000
+Received: from CY4PEPF0000E9DB.namprd05.prod.outlook.com
+ (2603:10b6:5:120:cafe::8f) by DM6PR06CA0034.outlook.office365.com
+ (2603:10b6:5:120::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
+ Transport; Tue, 28 May 2024 08:10:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000E9DB.mail.protection.outlook.com (10.167.241.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Tue, 28 May 2024 08:10:10 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 01:09:59 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 28 May 2024 01:09:58 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 28 May 2024 01:09:58 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>, <robin.murphy@arm.com>, <jgg@nvidia.com>
+CC: <joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
+	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: [PATCH v8 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Date: Tue, 28 May 2024 01:09:48 -0700
+Message-ID: <cover.1716883239.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-upstream-net-20240520-mptcp-doc-v2-3-47f2d5bc2ef3@kernel.org>
-References: <20240528-upstream-net-20240520-mptcp-doc-v2-0-47f2d5bc2ef3@kernel.org>
-In-Reply-To: <20240528-upstream-net-20240520-mptcp-doc-v2-0-47f2d5bc2ef3@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
- Gregory Detal <gregory.detal@gmail.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8617; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=qKXzA71iQazzuaFwaRvE/GV0og5PaxKwQ3vjJNhpXjE=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmVZFJFGQixHB6d3jeu0DsGyE7HJqOJjptlAB5J
- WRZ01yikteJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZlWRSQAKCRD2t4JPQmmg
- cxm3EACBfK5oHE9qdXvOHHqk5OMxscBfnKth+55JAtsGifWCH69VD+nCLOaT+V9INOKOBfHptCP
- vQIcaFMzcu2DZXhM6xU0dsc/F3jQxp9Y/SO1FsXsW9ktsak8m6r9AOYWBgCS34aOSD2ptGk4PGX
- Wqu7YbY8FHFAzJHWSP3lE+Pllx99cK5OTGVAYEbhq+TOirPeXxTlj+lOpjN8qdMs/W9pc1w/5mm
- 1HqkbuSGMtJdRBisActQhuJUCSQAMZJSCqcEY/1m8NasXkbUt2gXwqBA2snYFqzI0801X79lWt8
- Bh343rI5VB1yN4fKs8hxca5TXby5kDIU/l4OKeaScUoSE2NEqVXlgOQS3dox501MMEXIeJ7VCGj
- CXxhrAjlKhWsTzzgFY+i/HZkEWDu+d1efM1v/LpZr1hSPkxzdxY9y4cHw46wYeM94r/3I0jsfEd
- tdBmOwJPlTKNvphQsT0uMnXP/IV+wjGhf7padDtLVQW+jBPOYQFAmm4Ocswd/QgAtf6vqZgvcpI
- AeOdV961eTWCIVytsB6XICzIhVCEGl8ced1voP4W/ZcCvGlQh1eCTU4CMFvxQP6PBDGUVtUvL12
- QM8rvNinP6ICHqgjizU0h8z38yFUNz0fJGOzR7ZdQ4bROSpH1C9peOManvgUnWO9b9/qtcAg/YZ
- oCdyGXpZh44XLCA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DB:EE_|MW4PR12MB7438:EE_
+X-MS-Office365-Filtering-Correlation-Id: acb4d57c-08e2-4a43-0efc-08dc7eed9808
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|1800799015|82310400017|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g3SfhJx8W3Q1Ms72MMFc+JYBcVGAVZXCMs+uCS0ZMFHJZiSUjC6jfoa+DBy0?=
+ =?us-ascii?Q?EJwVMh14Z9zlIuczQS4WC3l+e1ZrrqwIlWmt8w3XqFbGlpngjYdcvng2gvYX?=
+ =?us-ascii?Q?jXJLsIQbONf1MaECWVMEapZhVzxtq0gxcT84BVvGuWc2E9O3LTRSmsxXYxs+?=
+ =?us-ascii?Q?F4JMo+p0btPb4pNt7Clw+GrO0hQKal1SIJeInttMxh11GInhcfUSh6sGVZ0c?=
+ =?us-ascii?Q?BMmEUAlc9sx7HV/+lFjIikSq5NXhBj+CNEshxWf6FK22/iKmmAMsQE+VHEiJ?=
+ =?us-ascii?Q?o20AuEERGUEwzDJ2ZYwmz6srzgFZnznJmntKw4l0Ktl+0vzUS8a4Auwc6ciw?=
+ =?us-ascii?Q?/Wi4HFpHoXqYIqvKrm9coh4Jt6NUO93AclwzxJ6TtSW3jXEm+x01JmRSox1Q?=
+ =?us-ascii?Q?W4IrcmNVwjSk+D43xGYq27twG6ip27O3fLbZReZ9fUmkvBJhXehajFCduL3C?=
+ =?us-ascii?Q?Mv5XjT0xRbtR1bIpSlrD9N8+vNgSnR0sHct+hYoqUPdWl11cipWyiJMw78Nm?=
+ =?us-ascii?Q?hG3Ihi9uz7eiCxnUzXgzpjezP6m71bMvns7qAGBCsVmJwtTes97N4rY3qQRL?=
+ =?us-ascii?Q?HYrE+kAxI+KBRrGfIg779spN8KtaOmuKB9PV1aDz5ZO4lq9a8jevWAS2855M?=
+ =?us-ascii?Q?OW/eXcv8UwJs5eRAzKwgM4fD5rxuRtsaK082+iBRN+8QWf775xfyzxelx6mW?=
+ =?us-ascii?Q?0g2cic/xLqJZe3+WaeQVWmNZPAhwBnF+i/QeotRBMRMjjEUqkwlh5qf21G9L?=
+ =?us-ascii?Q?p9NKISCzZ4r9wQD1L2LDSnaLUdYZ4r4urmhTjO6iaD45fh7Hc5UfHWElYY2s?=
+ =?us-ascii?Q?/SyNBmRNE6j+jlHswSWehsNw4HwzHRb0awDcHjqx38Eo+UhQz9OkMsPaC01v?=
+ =?us-ascii?Q?F74v+JujpEJU+NIpKSl69B/B0SI/CxyjPrzQRvksP/TdlYPDF34unStCZslC?=
+ =?us-ascii?Q?Linuv41ixtcr8a/yTqa/lB+8rsbszfoVlvkgfgakzKfY4SQbZ+V1c6tF997S?=
+ =?us-ascii?Q?G4Lu7L10IGoWhRN2vptZQWaxKxLvhxFDAVCiqvqnkkk713HTAdOTQqhTh6cg?=
+ =?us-ascii?Q?5xCzOxCdR4GsLgmylRWUSzK0AOTG95DvAqV1dZc8ii7bKtdc8/0AvqGfZCL5?=
+ =?us-ascii?Q?G54dofGDrTbVwJMY0TqHua5AIcmcaZ/LPc8qqcrZc1DerhK9lEI5XBQ4Ml8j?=
+ =?us-ascii?Q?XTtub7zrAYxV21AzHR0kv2Y/WK/AIrCq5IYb3cYi/hR4z2xHDJzjE77LpPm7?=
+ =?us-ascii?Q?Wk3V2SnvRacV7TgyKedUkYdOhMgJCDss6/YS0XzUMQUoWsxtsVygQI5O9gCb?=
+ =?us-ascii?Q?gpiMF625wyZpvhVRD3LytiFC3Sa8O6YAR9jS6JGzWKE/A1ofeNUbe6TMRluK?=
+ =?us-ascii?Q?T4y/CtB54m7lhbEu3e0j5aOPpnN+?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(1800799015)(82310400017)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 08:10:10.1688
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: acb4d57c-08e2-4a43-0efc-08dc7eed9808
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9DB.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7438
 
-A general documentation about MPTCP was missing since its introduction
-in v5.6.
+NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
+that extends standard ARM SMMUv3 to support multiple command queues with
+virtualization capabilities. Though this is similar to the ECMDQ in SMMU
+v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
+to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
+can only execute a limited set of commands, mainly invalidation commands
+when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
 
-Most of what is there comes from our recently updated mptcp.dev website,
-with additional links to resources from the kernel documentation.
+Thus, there are two parts of patch series to add its support: the basic
+in-kernel support as part 1, and the user-space support as part 2.
 
-This is a first version, mainly targeting app developers and users.
+The in-kernel support is to detect/configure the CMDQV hardware and then
+allocate a VINTF with some VCMDQs for the kernel/hypervisor to use. Like
+ECMDQ, CMDQV also allows the kernel to use multiple VCMDQs, giving some
+limited performance improvement: up to 20% reduction of TLB invalidation
+time was measured by a multi-threaded DMA unmap benchmark, compared to a
+single queue.
 
-Link: https://www.mptcp.dev
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
-  - v2:
-    - Fix mptcp.dev link syntax.
----
- Documentation/networking/index.rst |   1 +
- Documentation/networking/mptcp.rst | 156 +++++++++++++++++++++++++++++++++++++
- MAINTAINERS                        |   2 +-
- 3 files changed, 158 insertions(+), 1 deletion(-)
+The user-space support is to provide uAPIs (via IOMMUFD) for hypervisors
+in user space to passthrough VCMDQs to VMs, allowing these VMs to access
+the VCMDQs directly without trappings, i.e. no VM Exits. This gives huge
+performance improvements: 70% to 90% reductions of TLB invalidation time
+were measured by various DMA unmap tests running in a guest OS, compared
+to a nested SMMU CMDQ (with trappings).
 
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index 7664c0bfe461..a6443851a142 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -72,6 +72,7 @@ Contents:
-    mac80211-injection
-    mctp
-    mpls-sysctl
-+   mptcp
-    mptcp-sysctl
-    multiqueue
-    multi-pf-netdev
-diff --git a/Documentation/networking/mptcp.rst b/Documentation/networking/mptcp.rst
-new file mode 100644
-index 000000000000..ee0ae68ca271
---- /dev/null
-+++ b/Documentation/networking/mptcp.rst
-@@ -0,0 +1,156 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================
-+Multipath TCP (MPTCP)
-+=====================
-+
-+Introduction
-+============
-+
-+Multipath TCP or MPTCP is an extension to the standard TCP and is described in
-+`RFC 8684 (MPTCPv1) <https://www.rfc-editor.org/rfc/rfc8684.html>`_. It allows a
-+device to make use of multiple interfaces at once to send and receive TCP
-+packets over a single MPTCP connection. MPTCP can aggregate the bandwidth of
-+multiple interfaces or prefer the one with the lowest latency, it also allows a
-+fail-over if one path is down, and the traffic is seamlessly reinjected on other
-+paths.
-+
-+For more details about Multipath TCP in the Linux kernel, please see the
-+official website: `mptcp.dev <https://www.mptcp.dev>`_.
-+
-+
-+Use cases
-+=========
-+
-+Thanks to MPTCP, being able to use multiple paths in parallel or simultaneously
-+brings new use-cases, compared to TCP:
-+
-+- Seamless handovers: switching from one path to another while preserving
-+  established connections, e.g. to be used in mobility use-cases, like on
-+  smartphones.
-+- Best network selection: using the "best" available path depending on some
-+  conditions, e.g. latency, losses, cost, bandwidth, etc.
-+- Network aggregation: using multiple paths at the same time to have a higher
-+  throughput, e.g. to combine fixed and mobile networks to send files faster.
-+
-+
-+Concepts
-+========
-+
-+Technically, when a new socket is created with the ``IPPROTO_MPTCP`` protocol
-+(Linux-specific), a *subflow* (or *path*) is created. This *subflow* consists of
-+a regular TCP connection that is used to transmit data through one interface.
-+Additional *subflows* can be negotiated later between the hosts. For the remote
-+host to be able to detect the use of MPTCP, a new field is added to the TCP
-+*option* field of the underlying TCP *subflow*. This field contains, amongst
-+other things, a ``MP_CAPABLE`` option that tells the other host to use MPTCP if
-+it is supported. If the remote host or any middlebox in between does not support
-+it, the returned ``SYN+ACK`` packet will not contain MPTCP options in the TCP
-+*option* field. In that case, the connection will be "downgraded" to plain TCP,
-+and it will continue with a single path.
-+
-+This behavior is made possible by two internal components: the path manager, and
-+the packet scheduler.
-+
-+Path Manager
-+------------
-+
-+The Path Manager is in charge of *subflows*, from creation to deletion, and also
-+address announcements. Typically, it is the client side that initiates subflows,
-+and the server side that announces additional addresses via the ``ADD_ADDR`` and
-+``REMOVE_ADDR`` options.
-+
-+Path managers are controlled by the ``net.mptcp.pm_type`` sysctl knob -- see
-+mptcp-sysctl.rst. There are two types: the in-kernel one (type ``0``) where the
-+same rules are applied for all the connections (see: ``ip mptcp``) ; and the
-+userspace one (type ``1``), controlled by a userspace daemon (i.e. `mptcpd
-+<https://mptcpd.mptcp.dev/>`_) where different rules can be applied for each
-+connection. The path managers can be controlled via a Netlink API, see
-+netlink_spec/mptcp_pm.rst.
-+
-+To be able to use multiple IP addresses on a host to create multiple *subflows*
-+(paths), the default in-kernel MPTCP path-manager needs to know which IP
-+addresses can be used. This can be configured with ``ip mptcp endpoint`` for
-+example.
-+
-+Packet Scheduler
-+----------------
-+
-+The Packet Scheduler is in charge of selecting which available *subflow(s)* to
-+use to send the next data packet. It can decide to maximize the use of the
-+available bandwidth, only to pick the path with the lower latency, or any other
-+policy depending on the configuration.
-+
-+Packet schedulers are controlled by the ``net.mptcp.scheduler`` sysctl knob --
-+see mptcp-sysctl.rst.
-+
-+
-+Sockets API
-+===========
-+
-+Creating MPTCP sockets
-+----------------------
-+
-+On Linux, MPTCP can be used by selecting MPTCP instead of TCP when creating the
-+``socket``:
-+
-+.. code-block:: C
-+
-+    int sd = socket(AF_INET(6), SOCK_STREAM, IPPROTO_MPTCP);
-+
-+Note that ``IPPROTO_MPTCP`` is defined as ``262``.
-+
-+If MPTCP is not supported, ``errno`` will be set to:
-+
-+- ``EINVAL``: (*Invalid argument*): MPTCP is not available, on kernels < 5.6.
-+- ``EPROTONOSUPPORT`` (*Protocol not supported*): MPTCP has not been compiled,
-+  on kernels >= v5.6.
-+- ``ENOPROTOOPT`` (*Protocol not available*): MPTCP has been disabled using
-+  ``net.mptcp.enabled`` sysctl knob, see mptcp-sysctl.rst.
-+
-+MPTCP is then opt-in: applications need to explicitly request it. Note that
-+applications can be forced to use MPTCP with different techniques, e.g.
-+``LD_PRELOAD`` (see ``mptcpize``), eBPF (see ``mptcpify``), SystemTAP,
-+``GODEBUG`` (``GODEBUG=multipathtcp=1``), etc.
-+
-+Switching to ``IPPROTO_MPTCP`` instead of ``IPPROTO_TCP`` should be as
-+transparent as possible for the userspace applications.
-+
-+Socket options
-+--------------
-+
-+MPTCP supports most socket options handled by TCP. It is possible some less
-+common options are not supported, but contributions are welcome.
-+
-+Generally, the same value is propagated to all subflows, including the ones
-+created after the calls to ``setsockopt()``. eBPF can be used to set different
-+values per subflow.
-+
-+There are some MPTCP specific socket options at the ``SOL_MPTCP`` (284) level to
-+retrieve info. They fill the ``optval`` buffer of the ``getsockopt()`` system
-+call:
-+
-+- ``MPTCP_INFO``: Uses ``struct mptcp_info``.
-+- ``MPTCP_TCPINFO``: Uses ``struct mptcp_subflow_data``, followed by an array of
-+  ``struct tcp_info``.
-+- ``MPTCP_SUBFLOW_ADDRS``: Uses ``struct mptcp_subflow_data``, followed by an
-+  array of ``mptcp_subflow_addrs``.
-+- ``MPTCP_FULL_INFO``: Uses ``struct mptcp_full_info``, with one pointer to an
-+  array of ``struct mptcp_subflow_info`` (including the
-+  ``struct mptcp_subflow_addrs``), and one pointer to an array of
-+  ``struct tcp_info``, followed by the content of ``struct mptcp_info``.
-+
-+Note that at the TCP level, ``TCP_IS_MPTCP`` socket option can be used to know
-+if MPTCP is currently being used: the value will be set to 1 if it is.
-+
-+
-+Design choices
-+==============
-+
-+A new socket type has been added for MPTCP for the userspace-facing socket. The
-+kernel is in charge of creating subflow sockets: they are TCP sockets where the
-+behavior is modified using TCP-ULP.
-+
-+MPTCP listen sockets will create "plain" *accepted* TCP sockets if the
-+connection request from the client didn't ask for MPTCP, making the performance
-+impact minimal when MPTCP is enabled by default.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 27367ad339ea..1a65444adb21 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15753,7 +15753,7 @@ B:	https://github.com/multipath-tcp/mptcp_net-next/issues
- T:	git https://github.com/multipath-tcp/mptcp_net-next.git export-net
- T:	git https://github.com/multipath-tcp/mptcp_net-next.git export
- F:	Documentation/netlink/specs/mptcp_pm.yaml
--F:	Documentation/networking/mptcp-sysctl.rst
-+F:	Documentation/networking/mptcp*.rst
- F:	include/net/mptcp.h
- F:	include/trace/events/mptcp.h
- F:	include/uapi/linux/mptcp*.h
+This is the part-1 series:
+ - Preparatory changes to share the existing SMMU functions
+ - A new CMDQV driver and extending the SMMUv3 driver to interact with
+   the new driver
+ - Limit the commands for a guest kernel.
+
+It's available on Github:
+https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v8
+
+And the part-2 RFC series is also sent for discussion:
+https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
+
+Note that this in-kernel support isn't confined to host kernels running
+on Grace-powered servers, but is also used by guest kernels running on
+VMs virtualized on those servers. So, those VMs must install the driver,
+ideally before the part 2 is merged. So, later those servers would only
+need to upgrade their host kernels without bothering the VMs.
+
+Thank you!
+
+Changelog
+v8:
+ * Added "Reviewed-by" lines from Jason
+ * Replaced memset with a simple "cmd[1] = 0"
+ * Replaced MMIO read/write helpers with REG_* macros
+ * Dropped the racy static string in lvcmdq_error_header()
+ * Added a few lines of comments to arm_smmu_get_cmdq at the line
+   calling tegra241_cmdqv_get_cmdq()
+v7:
+ https://lore.kernel.org/all/cover.1715147377.git.nicolinc@nvidia.com/
+ * Moved all public symbols into one single patch
+ * Enforced a command batch to use the same cmdq
+ * Enforced the use of arm_smmu_cmdq_build_sync_cmd()
+ * Reworked the tegra241-cmdqv driver patch
+   - Dropped logging macros, cmdqv->dev, and atomic
+   - Dropped devm_* and added tegra241_cmdqv_device_remove()
+   - Moved all structure allocations to cmdqv's probe() from
+     device_reset() where only register configurations remains
+   - Switched the config macros to inline functions
+   - Optimized ISR routine with 64-bit reading MMIO
+   - Scan once per batch against command list
+   - Reorganized function locations
+   - Minor readability changes
+v6:
+ https://lore.kernel.org/all/cover.1714451595.git.nicolinc@nvidia.com/
+ * Reordered the patch sequence to fix git-bisect break
+ * Added a status cache to cmdqv/vintf/vcmdq structure
+ * Added gerror/gerrorn value match in hw_deinit()
+ * Minimized changes in __arm_smmu_cmdq_skip_err()
+ * Preallocated VCMDQs to VINTFs for stablility
+v5:
+ https://lore.kernel.org/all/cover.1712977210.git.nicolinc@nvidia.com/
+ * Improved print/mmio helpers
+ * Added proper register reset routines
+ * Reorganized init/deinit functions to share with VIOMMU callbacks in
+   the upcoming part-2 user-space series (RFC)
+v4:
+ https://lore.kernel.org/all/cover.1711690673.git.nicolinc@nvidia.com/
+ * Rebased on v6.9-rc1
+ * Renamed to "tegra241-cmdqv", following other Grace kernel patches
+ * Added a set of print and MMIO helpers
+ * Reworked the guest limitation patch
+v3:
+ https://lore.kernel.org/all/20211119071959.16706-1-nicolinc@nvidia.com/
+ * Dropped VMID and mdev patches to redesign later based on IOMMUFD
+ * Separated HYP_OWN part for guest support into a new patch
+ * Added new preparatory changes
+v2:
+ https://lore.kernel.org/all/20210831025923.15812-1-nicolinc@nvidia.com/
+ * Added mdev interface support for hypervisor and VMs
+ * Added preparatory changes for mdev interface implementation
+ * PATCH-12 Changed ->issue_cmdlist() to ->get_cmdq() for a better
+   integration with recently merged ECMDQ-related changes
+v1:
+ https://lore.kernel.org/all/20210723193140.9690-1-nicolinc@nvidia.com/
+
+Nate Watterson (1):
+  iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace)
+    CMDQV
+
+Nicolin Chen (5):
+  iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
+  iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
+  iommu/arm-smmu-v3: Enforce arm_smmu_cmdq_build_sync_cmd
+  iommu/arm-smmu-v3: Add CS_NONE quirk for CONFIG_TEGRA241_CMDQV
+  iommu/tegra241-cmdqv: Limit CMDs for guest owned VINTF
+
+ MAINTAINERS                                   |   1 +
+ drivers/iommu/Kconfig                         |  11 +
+ drivers/iommu/arm/arm-smmu-v3/Makefile        |   1 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 175 ++--
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  67 +-
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 876 ++++++++++++++++++
+ 6 files changed, 1064 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
 
 -- 
 2.43.0
