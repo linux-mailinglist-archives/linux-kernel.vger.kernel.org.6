@@ -1,151 +1,322 @@
-Return-Path: <linux-kernel+bounces-193238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558E08D28DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CD88D28E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA201F24CF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A581F25572
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FF913F45D;
-	Tue, 28 May 2024 23:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E559013FD9F;
+	Tue, 28 May 2024 23:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m7G5NiJI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V+jw15C8"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2022089;
-	Tue, 28 May 2024 23:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD5A224FD
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716940173; cv=none; b=MtP/IA8AqTDJzbEfmnqP4VuwO7n+jXGrBUSftJDyJcxKX1ZjcDXul73sv6lzVzekmMNV1zwkDe3idvNXM2vTgcAlTzlnctVqwsXifatusITIfBzQNsiW083qoh3WCQAKYUN4E7Z3hbtCgJHJ8uV2I1w1WP1IJEztSPc65eG13OE=
+	t=1716940271; cv=none; b=UoHplC9urAnC31SM2kHzZSnZCoh39Q9T8emiWWDkmcHrdY/pMxWnpRKznBehu6gK0h1shIZCjjgTIsyPgzEVYXhGVkpCSAMpikGd9MN0vf8OEn3GUdMihsv1naqCsTRSVcXMO0aJbhGwvx2yvm/peJaKNLDmF2pX3QY4DX1rXPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716940173; c=relaxed/simple;
-	bh=J1EVgTuwrB1/ySa+nzHrhrWiG3u4AZwOSCUgS03zuLw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BhSvAt+4sq7di1n9oOlGsVrTITuSn0TbXxpSFGyupjXn43hLaO9UwnPTll80iMnqX4yHrImiOVlMueB5q7RHVcxwPl/lX+U2X+jM0wF2D3TcTsiXqONeS0qDsVJL8uyhWI+oeq1zkS0gVhii7exVdf1QRBmimqr9eWX8KjLyUlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m7G5NiJI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SKh8wX001482;
-	Tue, 28 May 2024 23:49:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=I3gCoeHpm6zr3IgjiQNbpm
-	ifqhZJpb/+eZbFbmBhDwU=; b=m7G5NiJIwxUDaEYRyDfX2nHTCWhNlJJHScV2MG
-	DPQ2LFkcLFueOt0Hhj6vpt+AA42cWy7U8sJ5Gc/WfhKjTyIGgJbRNoOVoipZKBpi
-	OdsCKWbDN2z5NlCjTl0N73c6jZJoAIg7EVM47UPYqdKH8jR//hJx0kgG5fud3i0w
-	eroYU6SQ6oGtkmHF/jENLMVyhgxQUJMigvU12zndSa3xTv2FjenWU3m4rnQtbI6Z
-	FpgAv0dYuRNSPFaLXNaTbxXA457rECHQF/3EtVVC4TmqOspmCsLyMVt05lVzbfSK
-	tLtVRDetExKa/vR8vr7ogC0YRv/Cfyt/S2T4nS2TNTv1XYQw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k7k9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:49:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SNnS4s029343
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:49:28 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 16:49:27 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 28 May 2024 16:49:23 -0700
-Subject: [PATCH] lib: crypto: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1716940271; c=relaxed/simple;
+	bh=U6rd2u/yCnU0MQ4VXeRi1hcrtx+O94VJz7DpKLJXgOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOeURW2I5Q1RJrB/fT2f08v3DZwrpZDaP/vu7EmO7DLQwkI9Y/EbUsYoU284ayuJP554F+j7Ynof59vlgJewrCTA3UX1K12fOVOmJLrHkmiV9Mfv9DXoaUrt3mejnad9R0NTRsp2Xe2VDbI982IE2h9wu0829nuUUhiFw/iVy+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V+jw15C8; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-420180b58c5so12948935e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716940267; x=1717545067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dnSBP1y73hXcLVKI9OFBOJOQjY/3gyc0Iux1Jkwjjpo=;
+        b=V+jw15C8+aar+vke7hh19d3HSdFtotGesTwDabLAiIWPpsYkyOmbqFNVoK1LTc6ski
+         8ONRe5Qv5OnVBg6Ci/T2Esy6t3OiQLX/ugXiHJDzLeiIE2ebVDSElwjQ3EfpYwnUZ1re
+         dpkYlTrWCaO34j8keqaXwCZKx7iqMRsIUt5QhvGXFbAfJLejjXlY0baSaHpNUn34Jc5m
+         ctAeevP8knFXDO4ZDVgwnKdzdqmmJl+W0+qrNXXhBr50UAqIOmQfrPLksTvM5M6a3zyE
+         VzakXif8U9hpDuX2lsPRoXHKGdQOwOHScUWQxr9Rc9RCrnwaymXVh2VF3LD3yiVQENix
+         /z2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716940267; x=1717545067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dnSBP1y73hXcLVKI9OFBOJOQjY/3gyc0Iux1Jkwjjpo=;
+        b=RC409WimwX6D/3CxtgtQidrZcBjbwHTRu90zPXVwA12wHHecggpd9OhopQysnefRL0
+         vLAVECQQnRFOacM0Cn5MnxjtNytx+l5cs9+/wzN5oBKj5OeYeodtv1AHWuh6dx0uMvmD
+         3+y3FcshVl/PO+qusg1wJHCeh5Q6Q3xlJYIYo90QphDgLjuKG/nMvur3Lkiv2ro9oV4d
+         QqFd0fdoWrAaZlWAE9b5GSQqsMy56J+mfYRhzNTNZfaVNnQQ/lyfhbQkZHPh9a79bpnB
+         v5bukw+K5vKlQ9sHoCwJ0bFC6nLF7pBnIYRUyug+TMbHgU6WLaZixdApGMJYTcnZDsAS
+         v+cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU56dqWyKxGRr+8JtatIfp3gX1jyPDDDiAXhwWeDZBrBGY6/XmT8HyNcCQ5j7rtQCEFl8IWuWXK8I4njsjs61g/tSIKgxx5YX9QH2i+
+X-Gm-Message-State: AOJu0Yy7MnshZGhtJPw+XWeYeIsBN3s3Kp+Ig7Uk1rXw0IZmTORCIBry
+	WSIax7DwuCSU8CFpQNYkkzJcUcarx89eXQJ4vvZAeTPBLPcahvwzwMsttBSss5A=
+X-Google-Smtp-Source: AGHT+IGW+PMxhqpCnMYFAJtAcLClSa/LPe6M4D7yxH9tVsegfjt88HkF3gmo6+nhSpDmBiJRq2Ux+g==
+X-Received: by 2002:a05:600c:3595:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-421089f9828mr115015805e9.38.1716940266996;
+        Tue, 28 May 2024 16:51:06 -0700 (PDT)
+Received: from [192.168.0.23] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100eeb962sm193040335e9.1.2024.05.28.16.51.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 16:51:06 -0700 (PDT)
+Message-ID: <2b76f27e-f223-4ff9-880e-9e232ce9ddc6@linaro.org>
+Date: Wed, 29 May 2024 00:51:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] platform: arm64: add Lenovo Yoga C630 WOS EC
+ driver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Nikita Travkin <nikita@trvn.ru>
+References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
+ <20240528-yoga-ec-driver-v4-2-4fa8dfaae7b6@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240528-yoga-ec-driver-v4-2-4fa8dfaae7b6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240528-md-lib-crypto-v1-1-840e468d118b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAINtVmYC/x3MTQqDMBBA4avIrDuQBk1/rlJcJHFSBzTKjC2Ke
- HfTLr/FezsoCZPCs9pB6MvKUy64XiqIvc9vQu6KwRpbm8becexw4IBRtnmZMDXW3B7O1S4lKM0
- slHj9/15tcfBKGMTn2P8uA+fPiqPXhQSO4wRHNi+nfgAAAA==
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
-X-Proofpoint-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280175
 
-Fix the allmodconfig 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libchacha.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libpoly1305.o
+On 28/05/2024 21:44, Dmitry Baryshkov wrote:
+> Lenovo Yoga C630 WOS is a laptop using Snapdragon 850 SoC. Like many
+> laptops it uses embedded controller (EC) to perform various platform
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+an embedded controller
+
+> operations, including, but not limited, to Type-C port control or power
+> supply handlng.
+> 
+> Add the driver for the EC, that creates devices for UCSI and power
+> supply devices.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/platform/arm64/Kconfig                 |  14 ++
+>   drivers/platform/arm64/Makefile                |   1 +
+>   drivers/platform/arm64/lenovo-yoga-c630.c      | 279 +++++++++++++++++++++++++
+>   include/linux/platform_data/lenovo-yoga-c630.h |  42 ++++
+>   4 files changed, 336 insertions(+)
+> 
+> diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
+> index 8fdca0f8e909..8c103b3150d1 100644
+> --- a/drivers/platform/arm64/Kconfig
+> +++ b/drivers/platform/arm64/Kconfig
+> @@ -32,4 +32,18 @@ config EC_ACER_ASPIRE1
+>   	  laptop where this information is not properly exposed via the
+>   	  standard ACPI devices.
+>   
+> +config EC_LENOVO_YOGA_C630
+> +	tristate "Lenovo Yoga C630 Embedded Controller driver"
+> +	depends on I2C
+> +	help
+> +	  Driver for the Embedded Controller in the Qualcomm Snapdragon-based
+> +	  Lenovo Yoga C630, which provides battery and power adapter
+> +	  information.
+> +
+> +	  This driver provides battery and AC status support for the mentioned
+> +	  laptop where this information is not properly exposed via the
+> +	  standard ACPI devices.
+> +
+> +	  Say M or Y here to include this support.
+> +
+>   endif # ARM64_PLATFORM_DEVICES
+> diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
+> index 4fcc9855579b..b2ae9114fdd8 100644
+> --- a/drivers/platform/arm64/Makefile
+> +++ b/drivers/platform/arm64/Makefile
+> @@ -6,3 +6,4 @@
+>   #
+>   
+>   obj-$(CONFIG_EC_ACER_ASPIRE1)	+= acer-aspire1-ec.o
+> +obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
+> diff --git a/drivers/platform/arm64/lenovo-yoga-c630.c b/drivers/platform/arm64/lenovo-yoga-c630.c
+> new file mode 100644
+> index 000000000000..3d1d5acde807
+> --- /dev/null
+> +++ b/drivers/platform/arm64/lenovo-yoga-c630.c
+> @@ -0,0 +1,279 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2024, Linaro Ltd
+> + * Authors:
+> + *    Bjorn Andersson
+> + *    Dmitry Baryshkov
+> + */
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/platform_data/lenovo-yoga-c630.h>
+> +
+> +#define LENOVO_EC_RESPONSE_REG		0x01
+> +#define LENOVO_EC_REQUEST_REG		0x02
+> +
+> +#define LENOVO_EC_UCSI_WRITE		0x20
+> +#define LENOVO_EC_UCSI_READ		0x21
+> +
+> +#define LENOVO_EC_READ_REG		0xb0
+> +#define LENOVO_EC_REQUEST_NEXT_EVENT	0x84
+> +
+> +struct yoga_c630_ec {
+> +	struct i2c_client *client;
+> +	struct mutex lock;
+> +	struct blocking_notifier_head notifier_list;
+> +};
+> +
+> +static int yoga_c630_ec_request(struct yoga_c630_ec *ec, u8 *req, size_t req_len,
+> +				u8 *resp, size_t resp_len)
+> +{
+> +	int ret;
+> +
+> +	WARN_ON(!mutex_is_locked(&ec->lock));
+> +
+> +	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_REQUEST_REG,
+> +					     req_len, req);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_RESPONSE_REG,
+> +					     resp_len, resp);
+> +}
+> +
+> +int yoga_c630_ec_read8(struct yoga_c630_ec *ec, u8 addr)
+> +{
+> +	u8 req[2] = { LENOVO_EC_READ_REG, };
+> +	int ret;
+> +	u8 val;
+> +
+> +	mutex_lock(&ec->lock);
+> +	req[1] = addr;
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &val, 1);
+> +	mutex_unlock(&ec->lock);
+> +
+> +	return ret < 0 ? ret : val;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read8);
+> +
+> +int yoga_c630_ec_read16(struct yoga_c630_ec *ec, u8 addr)
+> +{
+> +	u8 req[2] = { LENOVO_EC_READ_REG, };
+> +	int ret;
+> +	u8 msb;
+> +	u8 lsb;
+> +
+> +	mutex_lock(&ec->lock);
+> +
+> +	req[1] = addr;
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	req[1] = addr + 1;
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
+> +
+> +out:
+> +	mutex_unlock(&ec->lock);
+> +
+> +	return ret < 0 ? ret : msb << 8 | lsb;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_read16);
+> +
+> +u16 yoga_c630_ec_ucsi_get_version(struct yoga_c630_ec *ec)
+> +{
+> +	u8 req[3] = { 0xb3, 0xf2, 0x20};
+
+You have a define above for the read_reg and write_reg commands, could 
+you not define 0xb3 as LENOVO_EC_GET_VERSION ?
+
+All of the other commands here seem to have a named define.
+
+> +	int ret;
+> +	u8 msb;
+> +	u8 lsb;
+> +
+> +	mutex_lock(&ec->lock);
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &lsb, 1);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	req[2]++;
+
+why not set reg[2] = 0x21;
+
+also is req[2] some kind of address ?
+
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &msb, 1);
+> +
+> +out:
+> +	mutex_unlock(&ec->lock);
+> +
+> +	return ret < 0 ? ret : msb << 8 | lsb;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_get_version);
+> +
+> +int yoga_c630_ec_ucsi_write(struct yoga_c630_ec *ec,
+> +			    const u8 req[YOGA_C630_UCSI_WRITE_SIZE])
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&ec->lock);
+> +	ret = i2c_smbus_write_i2c_block_data(ec->client, LENOVO_EC_UCSI_WRITE,
+> +					     YOGA_C630_UCSI_WRITE_SIZE, req);
+> +	mutex_unlock(&ec->lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_write);
+> +
+> +int yoga_c630_ec_ucsi_read(struct yoga_c630_ec *ec,
+> +			   u8 resp[YOGA_C630_UCSI_READ_SIZE])
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&ec->lock);
+> +	ret = i2c_smbus_read_i2c_block_data(ec->client, LENOVO_EC_UCSI_READ,
+> +					    YOGA_C630_UCSI_READ_SIZE, resp);
+> +	mutex_unlock(&ec->lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +EXPORT_SYMBOL_GPL(yoga_c630_ec_ucsi_read);
+> +
+> +static irqreturn_t yoga_c630_ec_intr(int irq, void *data)
+> +{
+> +	u8 req[] = { LENOVO_EC_REQUEST_NEXT_EVENT };
+> +	struct yoga_c630_ec *ec = data;
+> +	u8 event;
+> +	int ret;
+> +
+> +	mutex_lock(&ec->lock);
+> +	ret = yoga_c630_ec_request(ec, req, sizeof(req), &event, 1);
+> +	mutex_unlock(&ec->lock);
+> +	if (ret < 0)
+> +		return IRQ_HANDLED;
+> +
+> +	pr_info("NOTIFY %x\n", event);
+
+why not dev_info() ?
+
 ---
- lib/crypto/arc4.c      | 1 +
- lib/crypto/des.c       | 1 +
- lib/crypto/libchacha.c | 1 +
- lib/crypto/poly1305.c  | 1 +
- 4 files changed, 4 insertions(+)
-
-diff --git a/lib/crypto/arc4.c b/lib/crypto/arc4.c
-index c2020f19c652..838812d18216 100644
---- a/lib/crypto/arc4.c
-+++ b/lib/crypto/arc4.c
-@@ -71,4 +71,5 @@ void arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
- }
- EXPORT_SYMBOL(arc4_crypt);
- 
-+MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/des.c b/lib/crypto/des.c
-index ef5bb8822aba..9518658b97cf 100644
---- a/lib/crypto/des.c
-+++ b/lib/crypto/des.c
-@@ -899,4 +899,5 @@ void des3_ede_decrypt(const struct des3_ede_ctx *dctx, u8 *dst, const u8 *src)
- }
- EXPORT_SYMBOL_GPL(des3_ede_decrypt);
- 
-+MODULE_DESCRIPTION("DES & Triple DES EDE Cipher Algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/libchacha.c b/lib/crypto/libchacha.c
-index dabc3accae05..cc1be0496eb9 100644
---- a/lib/crypto/libchacha.c
-+++ b/lib/crypto/libchacha.c
-@@ -32,4 +32,5 @@ void chacha_crypt_generic(u32 *state, u8 *dst, const u8 *src,
- }
- EXPORT_SYMBOL(chacha_crypt_generic);
- 
-+MODULE_DESCRIPTION("ChaCha stream cipher (RFC7539)");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/poly1305.c b/lib/crypto/poly1305.c
-index 26d87fc3823e..5d8378d23e95 100644
---- a/lib/crypto/poly1305.c
-+++ b/lib/crypto/poly1305.c
-@@ -76,3 +76,4 @@ EXPORT_SYMBOL_GPL(poly1305_final_generic);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Martin Willi <martin@strongswan.org>");
-+MODULE_DESCRIPTION("Poly1305 authenticator algorithm, RFC7539");
-
----
-base-commit: e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
-change-id: 20240528-md-lib-crypto-f520796646ff
-
+bod
 
