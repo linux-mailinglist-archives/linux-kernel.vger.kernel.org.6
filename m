@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-192260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BAE8D1AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881D58D1AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0CF1C23467
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEB51F24362
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7703416DEA7;
-	Tue, 28 May 2024 12:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130A516D4C9;
+	Tue, 28 May 2024 12:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8GNfx7j"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJSyZlHI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178616D9AA;
-	Tue, 28 May 2024 12:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F4516D9AA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716898326; cv=none; b=GA07f/jGJeGzzmt8iCqmwxm0/zsMaAzF6fg78x7dvLL8oIcmpKmBLHfGjPyHev+FeVNbJkrVN5h0iWFiRxgUXy2d04hGKcUpQZGA616t/wgAzJYTtqaha/9hBbepxPYAoar5Y0m8rLVavNZiPlrE+Ac0HeqdfCLeqnSxY1WnIb8=
+	t=1716898319; cv=none; b=LM7qWwXylcay5GrbkcImJSEuUe2RX36V/Xu6UhUaveremVyc7b6OlhtBLbjpA/vmRRabpyZhoPayj3Nds+vAhar5Qy3mf/V2kkautAcL2AksioAwD0wuAih56dQZxCOdIwfUHz3t165z9mBtN5IAZaIqJanUskQgq6ypgr1NhnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716898326; c=relaxed/simple;
-	bh=/ipaOxFtBwyfIXHF4ggyxVFLnpuptNMK5y8P54jR0Og=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HzdldbCUs4yn1annbkDmSyQHW7vdeN3ay0BQvWGuOMTQ776mh8zMOwU8xXv8HeBUqHPT+WPWVxqSwsShSKf1KU8DzjPiStmoxHpjBEOe3ZUmE3ZRtBqzzEcZEQzEw8dIOf5hmxeKLB7+UQAur0onNBoV3AGiulO5s4jyWzLbPQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8GNfx7j; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so4894675e9.1;
-        Tue, 28 May 2024 05:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716898323; x=1717503123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYZXJmyumgms+Q7J/J6ShT1VOA9/iNpIXyrtMkKuYf0=;
-        b=Z8GNfx7jTkXKBMrX6gen1AHHctHOrpsSTOsRT6cvFeZR7SfG3FmWeuVJU9tP+2VV3P
-         JX14QrOcXWHtGd4GBARqjJRZsACl2EIMn+H2S3ISPgrzPLt/rR/warsOc7nC+iQa5l6h
-         QPuYU85DZcJUlA89pUrE7pSKPhKS22MiKlEArwfuy/ToiL/DB2hOgpoQBScX3Zsc2c9T
-         cY9aA3HxOB397QuNEC23B39lBrZrhfSkaHTTRUjBLy/649rFkZa/ryQKjG22SLBQ1gIx
-         Hbr3xK3mIUzm9L33kqeHYrRi1tOwmaJbU3f1MO5y8Twx/8qGXidN9bSknwx6F5FymiFw
-         sB3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716898323; x=1717503123;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYZXJmyumgms+Q7J/J6ShT1VOA9/iNpIXyrtMkKuYf0=;
-        b=rWmKBd93VlwlcQ1dag7c7DACBz5Y7K4HezNNeKJ1M06MVbk3TALtj4W5VunmPOjklj
-         hiK6Lyv79v3S+pHqOJm7y16LERPDdZY0wla7grOW09QqaCqlxmA/2MHjWC+5DVgAq9C9
-         TAKYoMfexD36uj5OAXVjHWH5ybH6ETsorQV0+tP449iwkqgxjczrc4QRXUsaCb/YOXwY
-         m67pUxa8AB+dDyrj2fW1vlctBsf1etdFP49l8d0UEVqHzxnSSFFQe0VeBd2lmgPXgRrQ
-         yjqAzvgj0ODZoncX1MZ+eCxm2iMetG6MjRMZkb/wW0Nvy4JQ401otjhnWrJsFtAhg/sf
-         2UvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW/U40vt/T6joa3Gnpm75bsc1VprGChKSe8F+LFXPZjMD9iY5dY9sND01ZEz5Val2wGnw/GdTaprI5X2I87ESoJLaCYuA0Rirx7XBfZp323hjuitD8VI6mvFKko8/Q+DfCrR00hdtbAIuKWCcK
-X-Gm-Message-State: AOJu0Yz7fRA3HbPosOxLulFIb3/2VP5o71Qvji9bfBJ72D25976YMHoe
-	7BKhG/iftkkuxAKfUHRgR5iM0DCiQaXgffYSVtW82oWML+AbsqmgjUAKmg==
-X-Google-Smtp-Source: AGHT+IFT1iIJjlzSvoYUAMuY1FlDD6EgzXr3GmIMeE4KKsPkc5VuKSEc/7DWXt1hjPQOBYg9GyPeUw==
-X-Received: by 2002:a05:600c:ac9:b0:41a:fa9a:d86b with SMTP id 5b1f17b1804b1-421089d3390mr100343155e9.11.1716898323449;
-        Tue, 28 May 2024 05:12:03 -0700 (PDT)
-Received: from turbo.teknoraver.net (net-5-94-218-116.cust.vodafonedsl.it. [5.94.218.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f69850sm168281625e9.26.2024.05.28.05.12.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 05:12:03 -0700 (PDT)
-From: Matteo Croce <technoboy85@gmail.com>
-X-Google-Original-From: Matteo Croce <teknoraver@meta.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net-next 2/2] selftests: net: tests net.core.{r,w}mem_{default,max} sysctls in a netns
-Date: Tue, 28 May 2024 14:11:39 +0200
-Message-ID: <20240528121139.38035-3-teknoraver@meta.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240528121139.38035-1-teknoraver@meta.com>
-References: <20240528121139.38035-1-teknoraver@meta.com>
+	s=arc-20240116; t=1716898319; c=relaxed/simple;
+	bh=9oJf2W4YAfo1/U1RW70Nztdk9rsBysYzDxvEI53bdjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kxaRpGux9ToQ97nL1Qlb+M/TfdJh5tCDICc1JRRyGnURa7RIpv2rEE+bqIdjsfbG6D2Lt5tXTEYqQuaMh2NQNd3HNNYnyUbRbTcZYMG6bNcfxNzOhLDdwoQrwcMpFob+tFkgHD+aCJ3DG3jf6SBpl9fT0XFhvsCdXdhIsEA41sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJSyZlHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1A3C32782;
+	Tue, 28 May 2024 12:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716898319;
+	bh=9oJf2W4YAfo1/U1RW70Nztdk9rsBysYzDxvEI53bdjs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MJSyZlHI0WYHrLNyrRjCTzSWsdD2LVY3KA0gAIpOJg/d5RvdhncnoFz/WoXlKEf3+
+	 Iko7OBFXWIla86aPmDZNNm3eRW86dPBME03RXXvWdyXMg1zMjHKml1ZKolsu0e96UE
+	 d5a/zRh7Z0ljpIbY2JftU9WpIuwPmO0U7ZVQKk+dW9esXzBimvK4UnuaFSU6JGB6zk
+	 0FWSNDLkuvwYRv2ETvdT997UOKhde/cH2G2hKEklOBLQV1xcsHiy7hHF2O5HZs61gj
+	 9wg2gV1raSuOT6+nHFdbjDJhOn6Fti/sxsoug7tLBVbQ+1EHJh0c6a7lq7JFxhLULY
+	 37SjnGU2nruNw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	kgdb-bugreport@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kdb: address -Wformat-security warnings
+Date: Tue, 28 May 2024 14:11:48 +0200
+Message-Id: <20240528121154.3662553-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,50 +62,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a selftest which checks that the sysctl is present in a netns,
-that the value is read from the init one, and that it's readonly.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Matteo Croce <teknoraver@meta.com>
+When -Wformat-security is not disabled, using a string pointer
+as a format causes a warning:
+
+kernel/debug/kdb/kdb_io.c: In function 'kdb_read':
+kernel/debug/kdb/kdb_io.c:365:36: error: format not a string literal and no format arguments [-Werror=format-security]
+  365 |                         kdb_printf(kdb_prompt_str);
+      |                                    ^~~~~~~~~~~~~~
+kernel/debug/kdb/kdb_io.c: In function 'kdb_getstr':
+kernel/debug/kdb/kdb_io.c:456:20: error: format not a string literal and no format arguments [-Werror=format-security]
+  456 |         kdb_printf(kdb_prompt_str);
+      |                    ^~~~~~~~~~~~~~
+
+Use an explcit "%s" format instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/testing/selftests/net/Makefile        |  1 +
- tools/testing/selftests/net/netns-sysctl.sh | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
- create mode 100755 tools/testing/selftests/net/netns-sysctl.sh
+ kernel/debug/kdb/kdb_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index bd01e4a0be2c..6da63d1831c1 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -53,6 +53,7 @@ TEST_PROGS += bind_bhash.sh
- TEST_PROGS += ip_local_port_range.sh
- TEST_PROGS += rps_default_mask.sh
- TEST_PROGS += big_tcp.sh
-+TEST_PROGS += netns-sysctl.sh
- TEST_PROGS_EXTENDED := toeplitz_client.sh toeplitz.sh
- TEST_GEN_FILES =  socket nettest
- TEST_GEN_FILES += psock_fanout psock_tpacket msg_zerocopy reuseport_addr_any
-diff --git a/tools/testing/selftests/net/netns-sysctl.sh b/tools/testing/selftests/net/netns-sysctl.sh
-new file mode 100755
-index 000000000000..b948ba67b13a
---- /dev/null
-+++ b/tools/testing/selftests/net/netns-sysctl.sh
-@@ -0,0 +1,15 @@
-+#!/bin/bash -e
-+
-+for sc in {r,w}mem_{default,max}; do
-+	# change the value in the host netns
-+	sysctl -qw "net.core.$sc=300000"
-+
-+	# check that the value is read from the init netns
-+	[ "$(unshare -n sysctl -n "net.core.$sc")" -eq 300000 ]
-+
-+	# check that this isn't writeable in a netns
-+	! unshare -n [ -w "/proc/sys/net/core/$sc" ]
-+	! unshare -n sysctl -w "net.core.$sc=100000"
-+done
-+
-+echo 'Test passed OK'
+diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+index 3131334d7a81..7da3fa7beffd 100644
+--- a/kernel/debug/kdb/kdb_io.c
++++ b/kernel/debug/kdb/kdb_io.c
+@@ -362,7 +362,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ 			if (i >= dtab_count)
+ 				kdb_printf("...");
+ 			kdb_printf("\n");
+-			kdb_printf(kdb_prompt_str);
++			kdb_printf("%s",  kdb_prompt_str);
+ 			kdb_printf("%s", buffer);
+ 			if (cp != lastchar)
+ 				kdb_position_cursor(kdb_prompt_str, buffer, cp);
+@@ -453,7 +453,7 @@ char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
+ {
+ 	if (prompt && kdb_prompt_str != prompt)
+ 		strscpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+-	kdb_printf(kdb_prompt_str);
++	kdb_printf("%s", kdb_prompt_str);
+ 	kdb_nextline = 1;	/* Prompt and input resets line number */
+ 	return kdb_read(buffer, bufsize);
+ }
 -- 
-2.45.1
+2.39.2
 
 
