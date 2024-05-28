@@ -1,216 +1,132 @@
-Return-Path: <linux-kernel+bounces-191962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383B08D16A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:51:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE72B8D16A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAA91F23326
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E37282CA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A0913D296;
-	Tue, 28 May 2024 08:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1303C13C3F4;
+	Tue, 28 May 2024 08:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="jagiKPpz"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2119.outbound.protection.outlook.com [40.107.7.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lfRrZi6O";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lfRrZi6O"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B9F17E8FC
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.119
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716886258; cv=fail; b=EhtDi0f1Jh8HWOoKc3GPk0c2s1E21u2g6zB2EvHZ2DO4GWk5gTR2EcwMSDsRD00SA8kNonSGTUSqIBpVH1mXLpjAvbIzK8Lcx6fr8zY1l4ueh9C/nIE8QTCulrR6dxgzXOw3u5mF2K56Hbren1j/Y4y0ztk9KPcgmSw7ygeJ0AM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716886258; c=relaxed/simple;
-	bh=PbNiiaO5Eanmiq0PvtEFyjLqC+3E6aAmWvlKkHE5Jek=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TKmywMdZwXdVUll3nGqRbBUevbXTwJONdLRcjiM58C9s1FdWAGd1V4TnCW0ccRw0racYaEyXtF+6wS4xpptv3K4DqZ1dQhiRn4oTX8oQys+yuaGIt5fVrWR2y/AUC6MO6R64bh+Y3ZP38BF70JdIg15F8KjD1YsUJdz3SeWdcQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=jagiKPpz; arc=fail smtp.client-ip=40.107.7.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F0MYR/DTGEHUNGI7KHtLLrQxYgwO92zuZzhgVODKJd3ySlAwWXfH3oU5TUuCpiimIf1Q2Xbb5I0a/mjEg/JXOwlKpsBgiye77cJWPrYSBs21gTkIO2JDyOhz90NHIdybB75uIFzhZqmBBcrobFxhiWyRcE9gfQrn926QEPJpsNxNvOrTkKZn/IHtMJBHhnefo6usjpy8sfTBmfuDgqultYg76GW8jebMed6IdCXF4O4lgTEyf7HeT4YTWTBncKPZilDbL8t7vPSU1ptwHGqlqRumJxQaKWuzFt/MCKbz18mqAT9JLzBUUih4eKymOi/04aQ8T87oEdDiPoE8B/L1zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qI+kH/IftyhFbLymgeeh1N3ClCxUMYdDosdpgRQllo8=;
- b=cOmMgAC0ZuObWUHelWZWcyHjPC5Bls7c9cfCR3JxbBOsERLNAV0PYFHhsg46kkU1R4P0Ej385bZEg2LFaceFso/HXalWtP47ZWMGFPzahau201qHErlA3q8h27OZY80yrPvlFhfMaqGhRy1RmDlqlWw7e3g0VeBOTRZGDTeIzH9B0Ha8B8x2mzC8d5YFgCEukQZs6VlHfnodEMAq9e05d8XcvSqOVeXRqeKFiXVdPGA+CgORNUTvZPE2LE14VugzyCndROnEWdF687rROsadxrQKuHjhxXjLWCQDWFCYZ90mmDueNxb9WG6dmpY8RTjjTG5OFEvTgcgYu0OUF3Ihig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wolfvision.net; dmarc=pass action=none
- header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qI+kH/IftyhFbLymgeeh1N3ClCxUMYdDosdpgRQllo8=;
- b=jagiKPpzBiUmsjn2Kle3xxCryjUDVw6Qo7EcqTjiGk/ExjuZDuKbYaY+DpOpnurPRAAKA7GGkIm8YzY+WJSqJScxOnVH4OXWh7+sZUhPV5jyK/FH6s09lS3C/dPuzskPo/x8G8Mm9M4PCGhkkgvYDHuNbUoY73DkXQGiAhmtt/c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wolfvision.net;
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com (2603:10a6:10:416::5)
- by PAWPR08MB11068.eurprd08.prod.outlook.com (2603:10a6:102:471::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Tue, 28 May
- 2024 08:50:51 +0000
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d]) by DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d%7]) with mapi id 15.20.7587.030; Tue, 28 May 2024
- 08:50:51 +0000
-Message-ID: <bedeec1d-d4eb-4154-a6f4-21b8d873a416@wolfvision.net>
-Date: Tue, 28 May 2024 10:50:48 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panel: sitronix-st7789v: Add check for
- of_drm_get_panel_orientation
-To: Chen Ni <nichen@iscas.ac.cn>, neil.armstrong@linaro.org,
- quic_jesszhan@quicinc.com, sam@ravnborg.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, sre@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240528030832.2529471-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@wolfvision.net>
-Organization: WolfVision GmbH
-In-Reply-To: <20240528030832.2529471-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1P190CA0007.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:802:2b::20) To DU0PR08MB9155.eurprd08.prod.outlook.com
- (2603:10a6:10:416::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B358017579;
+	Tue, 28 May 2024 08:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716886317; cv=none; b=lyW/ICIPqNZER8S1s5PzhsQD1m7zrCpPM0wKy928cCTv/T9ceyId8kP1xivoy3cgLtsjGPwSSyOQSQ9SODCXZxrFY1qW/3P/tdRVDZ4onSDP5DW82l4IMOLMdn3lfJYFn8/ogFCNwXufFo9c5xEPD9CTDSuymU1CNmHcb3uqCIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716886317; c=relaxed/simple;
+	bh=S7ikE0htQsSrGnTr7qsQAYsEBAbPNGxm7ZCXgikJmZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6bcXSI9zfeglAMvaqD7wHLbb6vs4JL5gPzNIgGiiC/BmfUcq+A2D8zpDconi+wzzpJ/JAcKqrNgA5uxTeVo4e/6IgKc8F6sCtJRIGDCaf5hF/moK6p5UaomvwQNAuH4ZEbweGtiRyINB9qvyuZXjvhQSQ9C5/Uj5wiZrtXRg64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lfRrZi6O; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lfRrZi6O; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B4003201D9;
+	Tue, 28 May 2024 08:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716886313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kt4MNglgqeU2blxMJ/lY93Og0sDSLSr/kWZ7uEkYdcw=;
+	b=lfRrZi6Oug66VGr7HDyKUS1qP5Gqyd5jXS2AiLAHPdoeu6rKElfM3IUJvEGHneXqrZQ29T
+	nHt78mShzF00z4uqoUfj1Vo4vEvmcriXiaqx7jH8oL6p8Qxj/VADu+mmmplpnLEa3FWipz
+	U20IC2bwuvugQfe0o9QDUrDUG+AVYEs=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716886313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kt4MNglgqeU2blxMJ/lY93Og0sDSLSr/kWZ7uEkYdcw=;
+	b=lfRrZi6Oug66VGr7HDyKUS1qP5Gqyd5jXS2AiLAHPdoeu6rKElfM3IUJvEGHneXqrZQ29T
+	nHt78mShzF00z4uqoUfj1Vo4vEvmcriXiaqx7jH8oL6p8Qxj/VADu+mmmplpnLEa3FWipz
+	U20IC2bwuvugQfe0o9QDUrDUG+AVYEs=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F72413A6B;
+	Tue, 28 May 2024 08:51:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dSsBICmbVWZUeQAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 28 May 2024 08:51:53 +0000
+Date: Tue, 28 May 2024 10:51:52 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
+ references in startup code
+Message-ID: <ZlWbKDZh18KHTsgX@tiehlicka>
+References: <2024051738-CVE-2024-35802-959d@gregkh>
+ <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9155:EE_|PAWPR08MB11068:EE_
-X-MS-Office365-Filtering-Correlation-Id: f715cb35-6a7c-4328-b551-08dc7ef3470c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|376005|7416005|1800799015|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dDAwaENlWTZwbk5OTVpSOFUyRGVtYlRNaEx4TVN3NzZZU1BqNUROUnpiakpx?=
- =?utf-8?B?TTVjSHZMamVPblhKc2htZFpzbFo0WE9vQmhBWWhpY3J3ZUg4ajd5RDVvendl?=
- =?utf-8?B?VU5yWlBycDhpSStEKzNKY2ltMkN1enJtZGFuRzFkdjhJVDV0ci9uVEJORUdM?=
- =?utf-8?B?YW9vWE81SW9RQjJwRHFtMStpbVd5bFIwelE4T25iOFZHRk1yVCthRFhLN0xT?=
- =?utf-8?B?QmNZZldSYzYyZXlna0RrRXJ3VkZvUC9UdDU0L3F5MmdkNVRaeHp4M0ZrRG5I?=
- =?utf-8?B?UzN3SGxrZkxyRHJjMnAvaG5Uam9XZTYvdHYvTm1oS3l0M3FoU1djM2F4cXQ0?=
- =?utf-8?B?MkpYaXRsZFlEWTFmb21JRHgwWDlOcXU2aXM1MWN1T1lvN0o4SHZOcTJWOWJJ?=
- =?utf-8?B?UDdhTVhwazJZZUcvamw4amtzQzROZVFGSEU2M1Z5NzBGOVdUZ0I4OE9WaExx?=
- =?utf-8?B?UzJkL0Q1TUNTaWMxaGdEUlJxdVgyQ2dWT1doRVdKb3hmaEFMb3Q1ZzFDMThG?=
- =?utf-8?B?TlBlSjBiZXNtSUFRWGtLRjZFaUVBb28rRHBLM0J0Z2E4RU4ycUh3TlM5Nk1o?=
- =?utf-8?B?T3dRVkMxRUFXcDNUWXhRMUlwK2dWUGZoT2RiQkVxUEkybUNBTXlqdXB6OUNM?=
- =?utf-8?B?UndSRFM5eUZleVBHWmRFejBFeTlQY3hoVXJSOU1zeWlxOXc5VFJxQWR1bHFM?=
- =?utf-8?B?aGpkYXBpbURuWEFKUm44Kzg2dUJNeCsveWxQeHluQlAwaG53RzhtR0pxL2M5?=
- =?utf-8?B?MENUZmNRZmplTU9HTW44TlVjWU0wUEtHbHR3L2tLSzlHN3R6aDFWNEt6RkI3?=
- =?utf-8?B?VElZc0lVZzc0dHdBSC9JU3FKT0xaMWVWQ1hwZTR1R0E2NWV5b3BKSlVxWGtE?=
- =?utf-8?B?Z3ZLQzZsa0MxdGk2TWp0MEJQREp6L0NGZWNlbXQwQWRMN25XVDhjbE9abGE0?=
- =?utf-8?B?UnRzL3NNRkRXRU5XS1lwSG82eWtYTVJ0cXZpa3ZHYzN2cXhzSmIyams1ODVp?=
- =?utf-8?B?TGNZWUlNMUxCNWRVbkJqNWw4TGwzek04ZnNQTGJuV0ZDNjNQRm9saEQ0Ujhv?=
- =?utf-8?B?ZzRLeGhBeEo0K1k3aVVoL2ZWY0FoUkZtWGVjODJGMHZqMnhrc2ZDOFJHVEN6?=
- =?utf-8?B?RDB4MlBueEhReEpSM2ZIbUZuZGNtekhBS3kyVllDdjZkZWUzNU5oQUpDUElj?=
- =?utf-8?B?YW9JVzBZY3lnVDVSVDY3T2dqeGFYdlhuR3Zhd1dsL01BWFhRQWxEWlYzS1lP?=
- =?utf-8?B?Zi9waGFWRi9HcnBJbzE3cnRpMWtCWVkxdUM5UTE4S0lHMWFxMGhIQ2lldmFI?=
- =?utf-8?B?MytoNm1OVGNZaGIzZHQrc2J1TDlMWURPaVc0enQ3dDRhZDA3N2FvU1RlZzFp?=
- =?utf-8?B?MU5IVGZxOVl4NkhHWXJTNjRiTnZiNUxmV3k3eC83NkZ6bFFES25vUjI5S3Q2?=
- =?utf-8?B?NHZ6L0QrNWJ0cjFtZzRvQjM4M2YrczhyenEwTThaUk05S2w2WmtuMVVZRVgy?=
- =?utf-8?B?SGN5UXAwQzdKMkpGUmdVd2pwRGdXSUdhY0s5alFhUW5MdUxCRjVQZFM3TDFI?=
- =?utf-8?B?TXZjaHl2ajNQYVB4ZlFWSXRIT0lFb3pZMVhRZTY0cVhrR0hEbXBtT20xd0Jw?=
- =?utf-8?B?dUdHSGZ2cyt1UHBNLzF5dEM3djJJTjN6M2Q5RzVMOUlXNDFLYkhPQ0NzTEFX?=
- =?utf-8?B?N0VSSFgzQ0Z5UG9aSzFrQndGYmJ1MVVLNk85R3E3S09LUGNWL1pZbm1iZnlE?=
- =?utf-8?Q?ttSBhXfyr4oWmIq0GD1aXwhz6wokGSVmZrjUPaN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9155.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(921011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dFo3cGlhejJBaWVQSVZDalEyd0hBOTFXSytCL2wwT3UvZ3phT3hUTUh6WmZm?=
- =?utf-8?B?MDllQTA1V1VDZkFNT1dLN202MmxoUDIxQUh2cnFoRUVxZktYUmV0UmVPNkhy?=
- =?utf-8?B?eUJValRwLzJwL3d5Y29ySGZZZnFVcFl1bU9DUVkweERZUGp0am50Q05WYWox?=
- =?utf-8?B?Z2xwM052T0k4cVdud1hoNVhkY2wzV3NkcXZiajNFV1NwOTNNS2FIZ25GVTVR?=
- =?utf-8?B?bnV6S3FQYWt4THVIQklXWVFFRlBwQmFWWmJrR1lNaEU0ZnJPUVpocjhscU00?=
- =?utf-8?B?Ym5HSmYzclJVMmdnZUthTTNWUDg0Q2ZjNlp0bnc1aGFQaVFuTHNVZjE5ZkNY?=
- =?utf-8?B?UWdtcU9RWHJ0NEdEMzZqTUhxOEZONnFYNSs0M0hRRnlQcFhLVHJHeFozS1NX?=
- =?utf-8?B?a21Ca21JdXl5bDk4NkpHbm1RbDRGZzVOUWpWSnhnMTZ5YnVJV1Y0aFJsYzlk?=
- =?utf-8?B?dDdoZFJ3cHpESnJpMWtxcEhNWURYbEtGdEFlaWlvRmpnUUVrUDlaN01Sa1JO?=
- =?utf-8?B?SThoY09JQjNTd2ZmQmNNVjJETnZFZko4UGtUQzFYUS82T0JJUEs3TUgybkRi?=
- =?utf-8?B?N2JCRXdOWnA4NUk0ZTNuRjZrYk51REFRS2lJYUNZSXJVUGFaRDd2WnU5aHFC?=
- =?utf-8?B?ZGhxVVltNG8rd29ubzh4WkxYaW5FOUI5M1hiNUUwaUZ3OGh3d1pKRy9kWTZp?=
- =?utf-8?B?ekJ1Vk90OFFPb3RubE5hN0JEWUJkdk5melYvUFJHRmVzUmxINDBCVStvNEZ2?=
- =?utf-8?B?djZDRmIvNHhHRnExN0Nkb1RBN0NhT1BMdWxpUm8wYWFndjY0MnhtZTIwVExO?=
- =?utf-8?B?WDB0NXlVRkl5MDhMKzFJbmE1TUhXaHdDTExJNzBJOFNjdlZTMzYvMHo2YlBY?=
- =?utf-8?B?N25PK3htdUp4R0M4K0Y3T0NLSVRpdmh2b1BwRGpWNGp6aVNQT3RTYml5NGdD?=
- =?utf-8?B?NkFIZ01hVE5sVUFqYWZla203OEsva1hPcUFpT3ZjdjE2VktGbm9KWm13WUZB?=
- =?utf-8?B?ZkNqeThYQlpBR045c0Y1MjhhL2NpQ2QzaWhDSnVFN0hoWGRmRDZQcjBSV3hI?=
- =?utf-8?B?MmJFOFdWVDJEMHM5MDA3TnJxcW81WSthZTdBYjNNdUpnemtzMzMzaVJWcllx?=
- =?utf-8?B?ZzM4Tm91U2Y5T3ZsaExCUEZHV05ERWsweVJxZWk1TnFuR1ZXRGRWeE9qb0ZM?=
- =?utf-8?B?VmpoTi9rV2pHMXI5Wmo2VlkyTU1ZN08rT0RBNVhzYzd3Mks5dytKaTFRVjd0?=
- =?utf-8?B?VXJYNEdSSk5ZcEFGS21SR2N3aXdPTmplbi94bG5MQVduZVJjT0hrZ2hwbGdB?=
- =?utf-8?B?ekZkOFF5c0FoejZJRVM3UlAwdDhXR3NMUEpXcHFWN0RiTng4UnFvOHhyU1RV?=
- =?utf-8?B?MVF4OWJzVGRXUU9KMHA2eS9Ra2NTdGlWWWYwbEs4b2JmOHgvR1FsaGxNMDNw?=
- =?utf-8?B?ZmxqWnVlM0lOdFdZdVlyQW5vYjJBRldDTlBEcHJpT1k0UTEvbFJvK3dmbXRu?=
- =?utf-8?B?b2xFYnRiRTBDV1Vsd1IvU1FOb3ZhRWZSVC84WGpDZ0h5NWhDcitpaThQa0tE?=
- =?utf-8?B?cUxjNGtCOEwveFA1QVNaTUhoeHF1c3hicjRhRURoaHdES1pxL2xIWXRQZG5H?=
- =?utf-8?B?NDVMVHhSQjYweWhNSUQ0M0dIZVg3YTBTdmJPQitITU5GQUx1cjdreFRFK29r?=
- =?utf-8?B?WmZsNERmZE5GNXU2U3lqc3BreTZjTzBPZzlheUZ2a3hSVEk2Nks4OEhNNXFH?=
- =?utf-8?B?a2tuMm5Xb3p0Q2FMWnZ2VmtCTTRGaXJ0L2liTTFOcXpDTmRpa2N2ZjhSNlNC?=
- =?utf-8?B?VDB4SCtyY25aMjZ1ejdycDlDVkZEMjFyL2xHVTB2TzFidGxQYkpaNk5FRHRU?=
- =?utf-8?B?WUVuRGN5MzBBNWI1VmIyaDdyQW10cTIyMDl6M2R1MDVpR0xOSXVnWTBiYjdZ?=
- =?utf-8?B?TU1weTBuSnBYOWZtSTdiSnppVGtMTm8welJIcXdoajByVEd0T0FrRXA5b3Z3?=
- =?utf-8?B?Mktad0RXVVI4U1Y3THE2L2FPNnlwNm5GWjBiWnJKTVozTDRaZFErY1d5S1JZ?=
- =?utf-8?B?NUJUbjNNV2JhaVJITWNJSWQxc1huOHM1R05TZXMwTHZmdVdKUGREMFZxeWZr?=
- =?utf-8?B?NGd2dngwUW16OW9qOHNERjloZkVyejQ3amsvN0tTaEpCbm1sY2ZqSW5RVGlk?=
- =?utf-8?B?V0E9PQ==?=
-X-OriginatorOrg: wolfvision.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: f715cb35-6a7c-4328-b551-08dc7ef3470c
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9155.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 08:50:51.5322
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nFByHJZDeoZ/fhkwTurE92xFAuswmMOjNBqKSy+PLB8uTs3X6+VwAaBF88QAj/5dh22ZSLphEcCQpLp4hBVAsnHbfSuNXYWcuSaLPiFGKoY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB11068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.79
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.79 / 50.00];
+	BAYES_HAM(-2.99)[99.97%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-Hi Chen Ni,
+On Thu 23-05-24 14:14:57, Nikolay Borisov wrote:
+[...]
+> I'd like to dispute this CVE since it doesn't constitute a security related
+> bug. Sure, it might crash a SEV guest during boot but it doesn't constitute
+> a security issue per-se.
 
-On 5/28/24 05:08, Chen Ni wrote:
-> Add check for the return value of of_drm_get_panel_orientation() and
-> return the error if it fails in order to catch the error.
-> 
-> Fixes: b27c0f6d208d ("drm/panel: sitronix-st7789v: add panel orientation support")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> index 88e80fe98112..8b15e225bf37 100644
-> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> @@ -643,7 +643,9 @@ static int st7789v_probe(struct spi_device *spi)
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to get backlight\n");
->  
-> -	of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
-> +	ret = of_drm_get_panel_orientation(spi->dev.of_node, &ctx->orientation);
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret, "Failed to get orientation\n");
->  
->  	drm_panel_add(&ctx->panel);
+Let me add analysis by Joerg here:
+: This is not a security issue. The patch works around clangs compiler behavior
+: where it inserts absolute references to kernel addresses. This breaks kernel
+: boot because at the time this code runs the kernel still runs direct-mapped and
+: needs to rely on RIP-relative addressing only.
+: 
+: Any breakage there would be detected at early boot of the kernel by a fatal
+: crash, which can not be exploited. Also, our kernels are not compiled with
+: clang, so from that perspective this is also not an issue for us either.
 
-I was worried that this effectively makes "rotation" a required property
-(although it is not marked required in the bindings documentation) but
-it turns out that of_drm_get_panel_orientation handles a missing
-"rotation" property gracefully.
-
-Also, all other panel drivers I checked handle the
-of_drm_get_panel_orientation call as you suggested. Nice to see this
-becoming aligned.
-
-Reviewed-by: Michael Riesch <michael.riesch@wolfvision.net>
-
-Thanks and best regards,
-Michael
+So this is a functional fix for clang builds.
+-- 
+Michal Hocko
+SUSE Labs
 
