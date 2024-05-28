@@ -1,142 +1,117 @@
-Return-Path: <linux-kernel+bounces-191955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98AE8D168F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B538D1691
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3441F216FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E716E2842A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB9A13C90A;
-	Tue, 28 May 2024 08:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E19913D618;
+	Tue, 28 May 2024 08:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sa/sbfRd"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeYy/teY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38D813D255
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613657346A;
+	Tue, 28 May 2024 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885783; cv=none; b=aPOSoHAuoPwIG8/k6uJPP6n/NZrkJYF0S85t3IoQlHD7ztWeOPcTzDaw40tcLLK/43LFofko+feWPdYnXyRSUT+XIp0zFVTbpJYFAcxBaXNUWqu8a39/quZ95Yj22ku9nRaH4EVCYTB+GAyZWoTtYwHVsRlZVhW62rQMQvi20Sg=
+	t=1716885800; cv=none; b=MRxGrB8XXr7vwewEMKxvtgFdPDvLlEFdJkI6WAehS6cjgW+iax9OLTXBWD2U9ZZpKwiQU64CphxVABk7xq58dWUQiUfVDqlqnciCrX77p/spmB3EW8Bg0NacUBmAq+DKfWvnrvDaZEq6CYHSaK8RtEcNmt5ilcb1jkD4o2q/dzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885783; c=relaxed/simple;
-	bh=Y6f9O1rB7bAdaik8Ya5stBAwGWAwYs7mHE+WNyPAEOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fLh5mLsTGXJQgfSWIU42nzpGaSzBwilJtVbKkEwYKeI/d7zucb/tAh5GOCBqZuCyIUVZSRjvbvHxHpZnXURqkqCHzUssrAfZdSaapa336oKJuOboV8CKJ+Y9jpmiGHwfEid9UccBNTMxxKgCVEy2PSTox2VDEcfWYr9jZov63I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sa/sbfRd; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-578972defb3so645144a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716885780; x=1717490580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BDOzOVJxnG+3KEM1LGz7y97uf9duOTHpiqETF8V1CyI=;
-        b=Sa/sbfRdKnz8/QMS+xeYM3nSHA4bJisg2W0l25IlBxTxty4NiXGvKntownbMHodJzp
-         tITa4FnuRTwj/iW57gW2YpY1FtzaZsh2cZBy3u7j9+1DoH0do0vzwd5zeh28ty/BYNd1
-         wq7I7CvDy/HpeR5LSdeCPZF1OIwueGV55tCuYXt76fGjPc5a3kVlIr7C48gVI67C3K+W
-         oVsUUdRPpTdKUw1u9NXqw5pPv3JoMavC98Sr0y8XLJpcaNUDcB5XhJeDBu0b1aCHl5Pc
-         7smTUTEtiJbRY9fdWSEjbWUT2ob75jgy8fKva8xkFqI7/zUnZ+S/SJV3q/jTt3CVKkuX
-         F+vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716885780; x=1717490580;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDOzOVJxnG+3KEM1LGz7y97uf9duOTHpiqETF8V1CyI=;
-        b=YjTwvWAJ6xjsy1OOXBcWihvz5qt7x4NB7OW75C7s04C7N36smN8mTBsD8edXlkezxL
-         5phlKWO6sVKlwbqiLSpyhP1HCEON+WWahQH/oSwLzOZ8WSVLVSuhoWuklDAoSl5NOnkH
-         YOGXUAmztfieBzPMGXMuzmNHXtt57OoZcRlMtRniByuTffH9+6881efpSazg7L/9rwuY
-         7Wj23tN7LdqtJhbjvDNzJRTFTOz1oI9PlnYke1sQxCKgAp67woqHoppPIvXCgWr3rgQL
-         iyJE7JU1zuXYxCQEkxdWgaWEu5oSNOkJQdHZPsrEsJHjUBpsM096VuV2mY+kw5T6Mjac
-         cU4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/TBmvsrzAC9zlV3cYpftwZlnv0EJXrU6ivbopB3MAQpAdv7oeQKP8674jvJpC+AECAxHNMut3p5vdiI8Jn31ET4RFizz6EVj54xV5
-X-Gm-Message-State: AOJu0Yy1RUMP5+mZmgWg1w+rDu24Q44P36bbazSyb1B6VNRKftnTKptO
-	a6a3zzvcoGmwl0/xW3d2n1NGkTl49wHDzcWqcRespi/sGM71NHk0TbfHR2/KycM=
-X-Google-Smtp-Source: AGHT+IFnwFpVgBPbSYYelUXVLbDbkXbUh2jkTNCogIsjRLaryTZNhcVpgseQGExAcVHtIzwZZr7icw==
-X-Received: by 2002:a17:906:69d0:b0:a59:9c4d:da3c with SMTP id a640c23a62f3a-a62643ec91cmr716821266b.40.1716885780045;
-        Tue, 28 May 2024 01:43:00 -0700 (PDT)
-Received: from ?IPV6:2001:a61:139b:bf01:e8eb:4d8f:8770:df82? ([2001:a61:139b:bf01:e8eb:4d8f:8770:df82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8170cbsm585860666b.20.2024.05.28.01.42.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 01:42:59 -0700 (PDT)
-Message-ID: <9a0073a0-d598-4c1a-bb32-328d0a279152@suse.com>
-Date: Tue, 28 May 2024 10:42:58 +0200
+	s=arc-20240116; t=1716885800; c=relaxed/simple;
+	bh=Pcq/VfFNSx3LV1OpnIdsY399L7rZ2gsWs5zwW4FGTBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PusAm/XByZ89NQdh6tZ8f+bBIWLr1QaXP6y3zbuP1aUaOtrMEl5qzx5gqFGdgOoVeSJ7iUFkKdjdH36nE2fhbxIVCpIWDuGPIO16ydkwSDdCHUyMb4KZKgVaZTCbiIngiQkvzuZzSDJi+Sp6gw248x5hEHGwdrG8s5KCK4Oj9zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeYy/teY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48042C3277B;
+	Tue, 28 May 2024 08:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716885799;
+	bh=Pcq/VfFNSx3LV1OpnIdsY399L7rZ2gsWs5zwW4FGTBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BeYy/teYm/Qu3kgYiJPKjPjEx9Dw52ryKkc4HUoQql+S2VgPrPoIk9c/Gco57sAau
+	 Fx/32gaPSOHvRvce/3HEy6Plam8A8FWw7pqPUGdOMV1+e1jBVPrk5mYmKfNvS2ivF+
+	 Ksh/wDdX+Aj5kol7IDEivUm2u8R+1U85froMbJPAMpdZ1l9Xnh0c6Ua9DkQYkzpddp
+	 7Qd7i99r1V/p2gXNX04xYtDzN7A3GfsdKtRhfu18ypgZ2F3EOolWbQyN+aZQ46tm2w
+	 MLwaVEtWGKeIXrkZi4g415T4tue4d89JK0gkaUkkJ99VUhsf1FyTXV6Hqcizp1f++i
+	 tS+NVfr06gd7Q==
+Date: Tue, 28 May 2024 10:43:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	winters.zc@antgroup.com
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+Message-ID: <20240528-pegel-karpfen-fd16814adc50@brauner>
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com>
+ <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+ <6a3c3035-b4c4-41d9-a7b0-65f72f479571@linux.alibaba.com>
+ <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] power: supply: lenovo_yoga_c630_battery: add
- Lenovo C630 driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Oliver Neukum <oneukum@suse.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
-References: <20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org>
- <20240527-yoga-ec-driver-v3-4-327a9851dad5@linaro.org>
- <ceb1f7b3-2787-4166-846f-2427b44b3e62@suse.com>
- <vc5nd5dl4czkuxzikazn7ndy6wghlchqsrcgxf7n5w53w3o3m2@spyfgp5pwy4y>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <vc5nd5dl4czkuxzikazn7ndy6wghlchqsrcgxf7n5w53w3o3m2@spyfgp5pwy4y>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ce886be9-41d3-47b6-82e9-57d8f1f3421f@linux.alibaba.com>
 
-On 28.05.24 01:15, Dmitry Baryshkov wrote:
-> On Mon, May 27, 2024 at 02:26:36PM +0200, Oliver Neukum wrote:
->> On 27.05.24 12:03, Dmitry Baryshkov wrote:
-
-Hi,
-
->>> +struct yoga_c630_psy {
->>> +	struct yoga_c630_ec *ec;
->>> +	struct device *dev;
->>> +	struct device_node *of_node;
->>> +	struct notifier_block nb;
->>> +	struct mutex lock;
->>> +
->>> +	struct power_supply *adp_psy;
->>> +	struct power_supply *bat_psy;
->>> +
->>> +	unsigned long last_status_update;
->>> +
->>> +	bool adapter_online;
->>> +
->>> +	bool unit_mA;
->>> +
->>> +	unsigned int scale;
->>
->> why do you store unit_mA and scale? This looks redundant and like a source
->> of confusion to me.
+On Tue, May 28, 2024 at 12:02:46PM +0800, Gao Xiang wrote:
 > 
-> Here we just followed the AML code in ACPI tables. The unit_mA is a
-> returned from the_BIX method, the 'scale' is used internally in the DSDT.
-> If you think that it's better, I can change all '* scale * 1000' to
-> 'if unit_mA then foo = bar * 10000 else foo = bar * 1000'.
+> 
+> On 2024/5/28 11:08, Jingbo Xu wrote:
+> > 
+> > 
+> > On 5/28/24 10:45 AM, Jingbo Xu wrote:
+> > > 
+> > > 
+> > > On 5/27/24 11:16 PM, Miklos Szeredi wrote:
+> > > > On Fri, 24 May 2024 at 08:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+> > > > 
+> > > > > 3. I don't know if a kernel based recovery mechanism is welcome on the
+> > > > > community side.  Any comment is welcome.  Thanks!
+> > > > 
+> > > > I'd prefer something external to fuse.
+> > > 
+> > > Okay, understood.
+> > > 
+> > > > 
+> > > > Maybe a kernel based fdstore (lifetime connected to that of the
+> > > > container) would a useful service more generally?
+> > > 
+> > > Yeah I indeed had considered this, but I'm afraid VFS guys would be
+> > > concerned about why we do this on kernel side rather than in user space.
+> 
+> Just from my own perspective, even if it's in FUSE, the concern is
+> almost the same.
+> 
+> I wonder if on-demand cachefiles can keep fds too in the future
+> (thus e.g. daemonless feature could even be implemented entirely
+> with kernel fdstore) but it still has the same concern or it's
+> a source of duplication.
+> 
+> Thanks,
+> Gao Xiang
+> 
+> > > 
+> > > I'm not sure what the VFS guys think about this and if the kernel side
+> > > shall care about this.
 
-I think that would indeed be better. Implementation details of the DSDT
-should not dictate data structures in a kernel driver.
+Fwiw, I'm not convinced and I think that's a big can of worms security
+wise and semantics wise. I have discussed whether a kernel-side fdstore
+would be something that systemd would use if available multiple times
+and they wouldn't use it because it provides them with no benefits over
+having it in userspace.
 
-	Regards
-		Oliver
-
+Especially since it implements a lot of special semantics and policy
+that we really don't want in the kernel. I think that's just not
+something we should do. We should give userspace all the means to
+implement fdstores in userspace but not hold fds ourselves.
 
