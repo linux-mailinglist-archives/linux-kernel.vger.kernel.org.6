@@ -1,199 +1,144 @@
-Return-Path: <linux-kernel+bounces-191950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE988D1682
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102A28D1684
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68C5283952
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4F0283BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDB13C91A;
-	Tue, 28 May 2024 08:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCs2QOAY"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9B013C90A;
+	Tue, 28 May 2024 08:42:19 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629796D1A6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9388213C67D;
+	Tue, 28 May 2024 08:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885721; cv=none; b=McxfD5IAaqNhpk2pqFgyIekkrAazwFoJD9de2bLnFvHMEyZgdi8ly7EKIh1H0EzQADaQiNbqsCgjkwsEtPb+rKi9m1kvas9obT4uEIT1Vml1ll/XsL6+4/7GCuO0RU5hkD5DxLsT56cyrJlnRXdL3OSRaoxoCAYYLbTiOEQT8Wo=
+	t=1716885738; cv=none; b=t/NfctrccjjshZZwAo47570nQ66FA4MRT9eI2esBKAvf9agBNNub+NGvAbyxxZ0+/TUcv883gSqnNx9FhPMPEeqqLzLWMCDHo2RZax5O369ocsiL2hH3m8vPn6fu6om3agPYj8GEou67AgeIu84b5jwZJhh/ytXF4jyXZkxSxbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885721; c=relaxed/simple;
-	bh=iXf/xBSZbXbRyTAieBsxS0pwSufFB+gzmegcfsajFxY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hX0LlNDk38FYB+M+CMW3K3d+Z9R0bhTStVJlF52wh/TiA2TUX4Cfrn7uP0D0AhXsW96zYjjhQ4p6obkmr0bLp5gputoH7JKMpKq40/JHD+9rzdLCroXaMz5ES4AabFYicvFBe0Dcgw3zlLeMH4Vui/TPHBmX9MFFSWrRAVXhoks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCs2QOAY; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-529b79609cbso952874e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716885717; x=1717490517; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQM6HYhZbxPatU25g9nxoYtgAi0elYZKvX9/9nM9Kkg=;
-        b=GCs2QOAYwI/cNnGULvv2DzlwG3xdNzoktih0xQXBcgeBi59ZSwQEf0Rzx1QKOFnsI2
-         v6DPhkN+vrPBIJvCIk7GafZyAhrEN0NSfIZSlKP9C4wreG3u5PIQIhq5EnM6uPCI3oTB
-         m3itAyus5HS9GOCXmueqxjZDYWr4MCjKz2B57L8h/Z4mLsvA88OL5pPj9OcgWqfN2cml
-         M/ALOd1T0zFU/GbEhkVIzyk36sJYR4NxLezOpA0npHmaK0wUG0RbASl6yXlhuVQkstfO
-         p7bJWKgeKtpyNS97OOcrHhRIphOlgyK6aUHOhF+L7xyjEvVpRcxFo7jvhza065Np0IQD
-         Usvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716885717; x=1717490517;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kQM6HYhZbxPatU25g9nxoYtgAi0elYZKvX9/9nM9Kkg=;
-        b=dpwAOmErJ/lctJbEgsrFqEuxT9iJQx3gkeU49Nn+JGVCSz2D8cn7bQPU0wkrRBbPYi
-         tVvxw5ounFwP7jAwJqNR9WHW5iHR/RZKe9/eYnqczpu4npdv5HpYIDQrdpw8qQci3k9P
-         XEjsTfV1N2ubQRbEzVcsx850PounVaO7pa03HBRCGjTwZyr2rCusJcIa0O0o8wWYuKRo
-         9Ay3ifmiDAl7Jot3FaXpIWqdfbOnAGao/xshCo1xW2dzKpETcryeiN527NGQmuL81We2
-         YO3Jv7qwkIZYSWJ0doBACHDHrJoVIq2obk6PZ3of4q/WEDAVLAWQGkBxhJ8lbacEQR+C
-         dFiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSPqV4IIXCJm/Qn/UY+Ho7376DDPOsIvGw9DD5x83AyKt6fzy4oCF+y9jnlhWf3AIq5sfhlCHfypIqWofDYsLHH7lc+VXKUX4GHGiG
-X-Gm-Message-State: AOJu0YxA9eHNsXtgCnuj9LNZMLXWDPWrU1QOef0VcyOhfx0urltf9iSn
-	57Jd17A756JQ4OniZnNBjn5JESkBkZtqrmHMJhAI31RiEoHktbIqihHpExOeDPc=
-X-Google-Smtp-Source: AGHT+IHSmbsd+w6NOeeMhcyPQNGVPQBayOgoB5Rg4ZeNC9bV0ohtGlQncUQuOB9hXyz9tT97E7C4MA==
-X-Received: by 2002:a05:6512:3e13:b0:524:43b2:d326 with SMTP id 2adb3069b0e04-52964ca75d5mr8748177e87.37.1716885717433;
-        Tue, 28 May 2024 01:41:57 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4210896676bsm135394835e9.4.2024.05.28.01.41.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 01:41:57 -0700 (PDT)
-Message-ID: <2f074d47-3021-4d81-93cd-c8e4593f0b0f@linaro.org>
-Date: Tue, 28 May 2024 10:41:56 +0200
+	s=arc-20240116; t=1716885738; c=relaxed/simple;
+	bh=6tLri2pEFjfAp0kWhBiSqF77STHOqDPuVw+K04apsJc=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QQlZxBj5G0M7X0+AD70Md8yh003dF3n6Nzvljq6vHRACLIKFIZxKuDHWrySsb1/HK4UhJb0MQos9K5LfnK3MIpF7Iuddg5BPQfVeJK8J0YfIniOUf9u68gYgawx+eXFM8LVttwuBHKTGoIVMWvRtZYCVcy8/63WduE+3PjKVjTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VpQrp2M27zxQvK;
+	Tue, 28 May 2024 16:38:18 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41D6A180AA5;
+	Tue, 28 May 2024 16:42:06 +0800 (CST)
+Received: from [10.173.135.154] (10.173.135.154) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 28 May 2024 16:42:05 +0800
+Subject: Re: [linus:master] [mm] d99e3140a4:
+ BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report
+To: David Hildenbrand <david@redhat.com>, kernel test robot
+	<oliver.sang@intel.com>, Matthew Wilcox <willy@infradead.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, <linux-mm@kvack.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <202405281431.c46a3be9-lkp@intel.com>
+ <8aba80ed-7b3e-4c8c-99e8-d8a2e0b112fc@redhat.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <4b0d996a-7499-6fce-ee19-3357f8d323cd@huawei.com>
+Date: Tue, 28 May 2024 16:42:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/3] pmdomain: amlogic: Add support for A4 power domains
- controller
-To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
- <20240528-a4_secpowerdomain-v1-2-2a9d7df9b128@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240528-a4_secpowerdomain-v1-2-2a9d7df9b128@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8aba80ed-7b3e-4c8c-99e8-d8a2e0b112fc@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-On 28/05/2024 10:39, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 2024/5/28 15:43, David Hildenbrand wrote:
+> Am 28.05.24 um 09:11 schrieb kernel test robot:
+>>
+>>
+>> Hello,
+>>
+>> kernel test robot noticed "BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report" on:
+>>
+>> commit: d99e3140a4d33e26066183ff727d8f02f56bec64 ("mm: turn folio_test_hugetlb into a PageType")
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>>
+>> [test failed on linus/master      c760b3725e52403dc1b28644fb09c47a83cacea6]
+>> [test failed on linux-next/master 3689b0ef08b70e4e03b82ebd37730a03a672853a]
+>>
+>> in testcase: trinity
+>> version: trinity-i386-abe9de86-1_20230429
+>> with following parameters:
+>>
+>>     runtime: 300s
+>>     group: group-04
+>>     nr_groups: 5
+>>
+>>
+>>
+>> compiler: gcc-13
+>> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+>>
+>> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>>
+>>
+>> we noticed this issue does not always happen. we also noticed there are
+>> different random KCSAN issues for both this commit and its parent. but below
+>> 4 only happen on this commit with not small rate and keep clean on parent.
+>>
 > 
-> Add support for A4 power controller. A4 power control
-> registers are in secure domain, and should be accessed by SMC.
+> Likely that's just a page_type check racing against concurrent
+> mapcount changes.
 > 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 28 ++++++++++++++++++++++++++++
->   1 file changed, 28 insertions(+)
+> In __folio_rmap_sanity_checks() we check
+>     VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
 > 
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index 4d5bda0d60fc..3a84d8a74a5e 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -14,6 +14,7 @@
->   #include <dt-bindings/power/amlogic,c3-pwrc.h>
->   #include <dt-bindings/power/meson-s4-power.h>
->   #include <dt-bindings/power/amlogic,t7-pwrc.h>
-> +#include <dt-bindings/power/amlogic,a4-pwrc.h>
->   #include <linux/arm-smccc.h>
->   #include <linux/firmware/meson/meson_sm.h>
->   #include <linux/module.h>
-> @@ -136,6 +137,24 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
->   	SEC_PD(RSA,	0),
->   };
->   
-> +static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
-> +	SEC_PD(A4_AUDIO,	0),
-> +	SEC_PD(A4_SDIOA,	0),
-> +	SEC_PD(A4_EMMC,	0),
-> +	SEC_PD(A4_USB_COMB,	0),
-> +	SEC_PD(A4_ETH,		0),
-> +	SEC_PD(A4_VOUT,		0),
-> +	SEC_PD(A4_AUDIO_PDM,	0),
-> +	/* DMC is for DDR PHY ana/dig and DMC, and should be always on */
-> +	SEC_PD(A4_DMC,	GENPD_FLAG_ALWAYS_ON),
-> +	/* WRAP is secure_top, a lot of modules are included, and should be always on */
-> +	SEC_PD(A4_SYS_WRAP,	GENPD_FLAG_ALWAYS_ON),
-> +	SEC_PD(A4_AO_I2C_S,	0),
-> +	SEC_PD(A4_AO_UART,	0),
-> +	/* IR is wake up trigger source, and should be always on */
-> +	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
-> +};
-> +
->   static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
->   	SEC_PD(C3_NNA,		0),
->   	SEC_PD(C3_AUDIO,	0),
-> @@ -311,6 +330,11 @@ static struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
->   	.count = ARRAY_SIZE(a1_pwrc_domains),
->   };
->   
-> +static struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
-> +	.domains = a4_pwrc_domains,
-> +	.count = ARRAY_SIZE(a4_pwrc_domains),
-> +};
-> +
->   static struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
->   	.domains = c3_pwrc_domains,
->   	.count = ARRAY_SIZE(c3_pwrc_domains),
-> @@ -331,6 +355,10 @@ static const struct of_device_id meson_secure_pwrc_match_table[] = {
->   		.compatible = "amlogic,meson-a1-pwrc",
->   		.data = &meson_secure_a1_pwrc_data,
->   	},
-> +	{
-> +		.compatible = "amlogic,a4-pwrc",
-> +		.data = &amlogic_secure_a4_pwrc_data,
-> +	},
->   	{
->   		.compatible = "amlogic,c3-pwrc",
->   		.data = &amlogic_secure_c3_pwrc_data,
+> To make sure we don't get hugetlb folios in the wrong rmap code path. That
+> can easily race with concurrent mapcount changes, just like any other
+> page_type checks that end up in folio_test_type/page_has_type e.g., from
+> PFN walkers.
 > 
+> Load tearing in these functions shouldn't really result in false positives
+> (what we care about), but READ_ONCE shouldn't hurt or make a difference.
+> 
+> 
+> From b03dc9bf27571442d886d8da624a4e4f737433f2 Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Tue, 28 May 2024 09:37:20 +0200
+> Subject: [PATCH] mm: read page_type using READ_ONCE
+> 
+> KCSAN complains about possible data races: while we check for a
+> page_type -- for example for sanity checks -- we might concurrently
+> modify the mapcount that overlays page_type.
+> 
+> Let's use READ_ONCE to avoid laod tearing (shouldn't make a difference)
+> and to make KCSAN happy.
+> 
+> Note: nothing should really be broken besides wrong KCSAN complaints.
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202405281431.c46a3be9-lkp@intel.com
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+LGTM. Thanks for fixing.
+
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Thanks.
+.
+
 
