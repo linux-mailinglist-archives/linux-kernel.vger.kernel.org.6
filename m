@@ -1,204 +1,100 @@
-Return-Path: <linux-kernel+bounces-191876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6188D1571
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:43:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3B78D1575
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABF01F219A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:43:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 439D3B223C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8811173470;
-	Tue, 28 May 2024 07:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C9B73537;
+	Tue, 28 May 2024 07:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LUWuTtid"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="koTBL2vk"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D773447
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C45A15AC4
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 07:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716882227; cv=none; b=GC0s7kyQI5nRuKnvX3ML7sw55AdS2Pf8v+9WhUjZmdL/ISyaegIRUG87L/wZwfz/OWfSLs9frk8Zwf0bwu7rs/I9hFzR7Dw8/wurVMLe4HcXh3clR8GuZTH2g4kCYllcm9FFlOByj+NOI6qPz5aiZhy5zkt5iZoGXLO1wOrBB/0=
+	t=1716882315; cv=none; b=GV13BT/c04jMSksaHhFhVxZQ/vZxcu2eLW9qEDyvamox1c7lRHEe0FmRWvNfgZZUpQ7qZ+aPPh3W1w5xDaJ4e2WJQVhwdhCl1r6iDw+PPfPYs/OyccK2xSoMIqDFD3fZHUO++ueIhuEp9UeMwwwN+urXydtkkHnRMHRfB1teMHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716882227; c=relaxed/simple;
-	bh=Ze0C8ZZPqtt/t1xyZayQh6LuGP+VHLULOICCJ7Dbowo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XvvCBG0n5EDN5Iv8ndc/itPuhyBiCoOmOVCW2F1R+of7C80G9AYEH4xzkQuCTQbycYZg1FoGKNvEfY4I01J4ZQfCo1G/VmtOVdw3/aRr71wwSilC+55TpCP1kEzk+bXJoZZsGkMIaSoGS5Qd8rFzVdJejknUW05bvFQ/MCqIO68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LUWuTtid; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716882225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tlYH/skdvPZBpSXPZaME8NdBvlZ6QuaFWdBuSnU2HNg=;
-	b=LUWuTtidjzECG0TH6XDXITbCBPJBgJoBi+0EedmfbPavTNd+tsPgpQuMdk5u48uCQqd7Nx
-	I03p8EDss+5DQ9ZdwRQyFxoDhuvULopE6VWsPTOwSKtGLfDCOOBLRoKFgRIPNuEV/tVckC
-	BxVHKI9yBhgMJrjXhDCGrZP9Z4enkgk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-14-T8OYAUTRN7eNl4WvldoE4Q-1; Tue, 28 May 2024 03:43:43 -0400
-X-MC-Unique: T8OYAUTRN7eNl4WvldoE4Q-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a6269ad7288so24750266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:43:43 -0700 (PDT)
+	s=arc-20240116; t=1716882315; c=relaxed/simple;
+	bh=s4AFXr6m9coBBvMRw4NwmMAzWfc+AaAO9stgcQr/ywo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fF9B7W5ahSzyB0OCdVSQY33R04MbaB62k+ocebGHfwxU/8TACDhA9J/XivjUuRTx98V1i35j7AniSdZXWJxuvC7KB5y48LJRX/QSdo8fc6iJFEs83ejgd1/up7SLnrI4UXVLZNIJVXpJXGWnTEO7z5Vsvd+Z9s88nLkQg8nSwNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=koTBL2vk; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so515387a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1716882312; x=1717487112; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJZQOx7zTUcF2zXADbetDAFVrZmcB1mlQ8M5pp4q2Fc=;
+        b=koTBL2vkQ3nFS8BCdXkF5HDv+sL/PeuMbRafLXnSvVbw2bju3x/T5rBCzU4LVXqjRg
+         qIcn4dpbGQrRVkuOVUKPXEQYPiFeXHI7e3KYKuSwJBp0RKmXDadpzjxMnDgXIFE1BzmK
+         BBbxe+H/p4BU1o4wjh/BoPUiH4oV745Z2gk9o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716882222; x=1717487022;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tlYH/skdvPZBpSXPZaME8NdBvlZ6QuaFWdBuSnU2HNg=;
-        b=pyJD6naHZXIRFBH7aDqSTDVV92OigI2xFoPh5ThIZlrwRZBzInQW+uiIH/fgFS8SOr
-         C9QXo+rSF/e9AVvJe9pzn+jW8NK7aP+lRhokthVFVdbt07HczviKu2YCgOOa/Vlqy0W9
-         X3akpWzofzmPrGiArpCAgUuwWRSqTeq9uoen8A+7K3NAIXTNq4cwd33i+6yR6DNnr2+y
-         onRBxJILoffsF4H2iIfgPOcy/N6X33HP1Kc4Y7VGH4RKqJ9UHRqydEmp8HhUXIp3hWwG
-         0pIsKoZnKBpOjbeCJ5ICO6i5OAalyEcW2xtSMT1GdnU4hJRffnyYUSwq0fS9gnoyJdaj
-         SExQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQH1V4nJp6w8nI4tcrDzYW6dMqu6js5r5AK7cfeWIil9UmeFcjUJr++/OMLoq9chEfoGIZzMADi2I0A7+YXc4kSOG7RRS3aw4/WLfx
-X-Gm-Message-State: AOJu0YyaAoiXS3rpPbrnbwR8xHeMF0cvhzLk0sOilRzwmYvmdFKaKShb
-	qCRNOagARgStHYbaobpHjGcVJBCTZXhQpsomGOk9vp4ZH/YEkSpoFXpO6t54Me3iAaFS/zgK2+j
-	/wopU1kj4c4OsuFbUiQ90kCnnk9aDJwg45C32t/xhkArKMd2nqtiP9cjG0oczeA==
-X-Received: by 2002:a17:906:408a:b0:a62:bc74:a883 with SMTP id a640c23a62f3a-a62bc74a9aemr473698566b.21.1716882222086;
-        Tue, 28 May 2024 00:43:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGR/TBxPqJ+AxHlEy/X81c9ePzyGnghsIq5S1S5T3yXRoQDlv2KLbRtG+H9BBjIc4/qTw2EHQ==
-X-Received: by 2002:a17:906:408a:b0:a62:bc74:a883 with SMTP id a640c23a62f3a-a62bc74a9aemr473697366b.21.1716882221615;
-        Tue, 28 May 2024 00:43:41 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4600:d3a7:6c26:54cf:e01e? (p200300d82f284600d3a76c2654cfe01e.dip0.t-ipconnect.de. [2003:d8:2f28:4600:d3a7:6c26:54cf:e01e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93ae41sm582682866b.62.2024.05.28.00.43.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 00:43:41 -0700 (PDT)
-Message-ID: <8aba80ed-7b3e-4c8c-99e8-d8a2e0b112fc@redhat.com>
-Date: Tue, 28 May 2024 09:43:39 +0200
+        d=1e100.net; s=20230601; t=1716882312; x=1717487112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DJZQOx7zTUcF2zXADbetDAFVrZmcB1mlQ8M5pp4q2Fc=;
+        b=w7EeBUh81gTWNIbun/g21ciL74AdyBJxHt2+7SCB9xetPk9wuh55DYXItLULvj1AxH
+         tk9wRlEfk2//QMNDywISvy74dOv8I+hqvQ4IpzAh1C0eIWtJaummDzFS6nDgGBtc9yhn
+         PM0dNYiJKgjBZhNB8zP2rUaRkBjjtJutu2eAuJORyvFOlncC9S42M5e8chaMMnsoUIXN
+         ThLhxMX0vyDzDi8eceIzIkcARI9zSOejN1CP9RA6koSHOSVUoSdy5JOu63vqK5MY66Ka
+         k8DabjWQ2h9+b69Aesxlq8M2zi7RQj3h+7De2Omk4HJlW2Lp1oZSKqK51hdUyT/jDc8/
+         eDVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0u3zCYDPkj1eRDmOjYzBEY4OhchCTXFNko+oW6kumYopAC3gqfJBBnoSRLZ1VlbuWGW4U6elerpdHRxBZDPYxhp3X7Gs7JYxpGpYx
+X-Gm-Message-State: AOJu0YwgGhNpWOBtw3IP+Cd8S/vNZUIWYjJec6KqexhiDj8a5dq4Cogx
+	r8NEFPcrdKfrxhYm9TRmcmOK3ZI8hyuOWWCYs1n72PECNxxTf42kV/Q5NIPnXWmfTGYZRHKyslH
+	6x0jJmu1i/SLzjJAE+kJ8eFwGfVjHqF4srsg2xDS7+A4EBhVu
+X-Google-Smtp-Source: AGHT+IFJPIYHUs6LwME8kXfa3gU6qPJ1bQAgQIPu17zC9f1lE6na7kF+nMquELBaMF+aMeltHP3/Ih+Q4eQl77eoKmU=
+X-Received: by 2002:a17:906:d8da:b0:a59:d133:87db with SMTP id
+ a640c23a62f3a-a62642e0799mr786093666b.42.1716882311557; Tue, 28 May 2024
+ 00:45:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] d99e3140a4:
- BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report
-To: kernel test robot <oliver.sang@intel.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Luis Chamberlain <mcgrof@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-References: <202405281431.c46a3be9-lkp@intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <202405281431.c46a3be9-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguS3PBi-rNtnR2KH1ZS1t4s2HnB_pt4UvnN1orvkhpMew@mail.gmail.com> <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+In-Reply-To: <858d23ec-ea81-45cb-9629-ace5d6c2f6d9@linux.alibaba.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 May 2024 09:45:00 +0200
+Message-ID: <CAJfpegsyyFPUDmoi3T8vkS7+jpgfOqeUZBdKW8=Y7R8-b7ch2w@mail.gmail.com>
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	winters.zc@antgroup.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am 28.05.24 um 09:11 schrieb kernel test robot:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:KCSAN:data-race_in_folio_remove_rmap_ptes/print_report" on:
-> 
-> commit: d99e3140a4d33e26066183ff727d8f02f56bec64 ("mm: turn folio_test_hugetlb into a PageType")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/master      c760b3725e52403dc1b28644fb09c47a83cacea6]
-> [test failed on linux-next/master 3689b0ef08b70e4e03b82ebd37730a03a672853a]
-> 
-> in testcase: trinity
-> version: trinity-i386-abe9de86-1_20230429
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-04
-> 	nr_groups: 5
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> we noticed this issue does not always happen. we also noticed there are
-> different random KCSAN issues for both this commit and its parent. but below
-> 4 only happen on this commit with not small rate and keep clean on parent.
-> 
+On Tue, 28 May 2024 at 04:45, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 
-Likely that's just a page_type check racing against concurrent
-mapcount changes.
+> Yeah I indeed had considered this, but I'm afraid VFS guys would be
+> concerned about why we do this on kernel side rather than in user space.
+>
+> I'm not sure what the VFS guys think about this and if the kernel side
+> shall care about this.
 
-In __folio_rmap_sanity_checks() we check
-	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+Yes, that is indeed something that needs to be discussed.
 
-To make sure we don't get hugetlb folios in the wrong rmap code path. That
-can easily race with concurrent mapcount changes, just like any other
-page_type checks that end up in folio_test_type/page_has_type e.g., from
-PFN walkers.
+I often find, that when discussing something like this a lot of good
+ideas can come from different directions, so it can help move things
+forward.
 
-Load tearing in these functions shouldn't really result in false positives
-(what we care about), but READ_ONCE shouldn't hurt or make a difference.
+Try something really simple first, and post a patch.  Don't overthink
+the first version.
 
-
- From b03dc9bf27571442d886d8da624a4e4f737433f2 Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Tue, 28 May 2024 09:37:20 +0200
-Subject: [PATCH] mm: read page_type using READ_ONCE
-
-KCSAN complains about possible data races: while we check for a
-page_type -- for example for sanity checks -- we might concurrently
-modify the mapcount that overlays page_type.
-
-Let's use READ_ONCE to avoid laod tearing (shouldn't make a difference)
-and to make KCSAN happy.
-
-Note: nothing should really be broken besides wrong KCSAN complaints.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202405281431.c46a3be9-lkp@intel.com
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-  include/linux/page-flags.h | 6 +++---
-  1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 104078afe0b1..e46ccbb9aa58 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -955,9 +955,9 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
-  #define PG_slab		0x00001000
-  
-  #define PageType(page, flag)						\
--	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-+	((READ_ONCE(page->page_type) & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-  #define folio_test_type(folio, flag)					\
--	((folio->page.page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-+	((READ_ONCE(folio->page.page_type) & (PAGE_TYPE_BASE | flag))  == PAGE_TYPE_BASE)
-  
-  static inline int page_type_has_type(unsigned int page_type)
-  {
-@@ -966,7 +966,7 @@ static inline int page_type_has_type(unsigned int page_type)
-  
-  static inline int page_has_type(const struct page *page)
-  {
--	return page_type_has_type(page->page_type);
-+	return page_type_has_type(READ_ONCE(page->page_type));
-  }
-  
-  #define FOLIO_TYPE_OPS(lname, fname)					\
--- 
-2.45.1
-
-
--- 
 Thanks,
-
-David / dhildenb
-
+Miklos
 
