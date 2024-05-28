@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-192997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354B78D256A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012328D256E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA87E1F2994B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3166C1C2351D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C368178CC8;
-	Tue, 28 May 2024 20:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A61F178CFA;
+	Tue, 28 May 2024 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WiSaEb4t"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="m0yBI/G9"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA6510A3E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D4217838A;
+	Tue, 28 May 2024 20:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926607; cv=none; b=bVTUs8hyar1GXS6UbeOF7W1XRFAvkxxZi4QsIUuVYheHmycW/yaXNeGmvlSDBnkvn68uRihTvCPcnuMDHAS0344EofMunO/Eedc4WmH7sQ/06+RRN1fZO4JhOMumfNyHN1zTaIiXdCZZ/faQWZTIVmkCt57tI07KrJyIIF+OrL8=
+	t=1716926718; cv=none; b=i87adYjdZ++0iCAFsTr0mNHwJulQYiFjrll8vtHmtwbtL9m000Q8ErfjcAur9XS98l4WiGiTnbMGTpojNtqIjs+SZCYutMXZjBp6Vadm6XTFUmU8e93QM4CVt6thabfCO949NheEu9QtzBFxBpUScRO4hXyUjFSszSgeYqC6OWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926607; c=relaxed/simple;
-	bh=s9G0X2bLnZX2HF1sepAYNajMW296p4Wn4BHLPj+pKwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pYWbt1HRZ377lgYHTnoOo1YUF6wS3w4vdH+3cNDVjMHGQBRElznIo3cs3xrEtDtpJOE6PQ/msxeE8Op8NUYWeprERtAGtVNEpOGZp2h69zvRY+IxOHoZzTQ5KdddCKlUwyN+1ioIr2TpKRlb8H0Jj596tVJnnv8QP9uKIBIz6BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WiSaEb4t; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-43f87dd6866so96531cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716926604; x=1717531404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MtVVbl9WsyTR4oADIzXjjbNJialS1FI7rnlVmASQ+MY=;
-        b=WiSaEb4tfSCgTPpOm8d0OFWtBm/YjbaEETjMHkgMTaKyKKpM52TMy/DQi6swJQTpH5
-         YbZPR718fH+edOmXuDMsXK4D13WDlzJzsbybOZzaQFqj8Ky0E3PNnJaH2w2wR7nJlsrt
-         UF8QLWihKxmOVWZuj0ykQoF27xDSDolbYbTZAxMZ/JdRfac1dmPN/AWlWl6nCLNOan5u
-         XxZYojO5pz1RBPVU9kpjnO9LzKCs+HmESDYDBsQRQcs6XfDD5xrOEKusV9EEb0dvTsjd
-         SqP9fdpQoI+RRnqn7mMxnEFVE+AOb6F7R1aTqQWr/cGny5xlTcUo3n+8AmLMNq1S4Yb4
-         DicA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716926604; x=1717531404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MtVVbl9WsyTR4oADIzXjjbNJialS1FI7rnlVmASQ+MY=;
-        b=I0SjA+q3sSaJWiPKRvFiF9e5HSYtOuNzRuxaYw1G4JQrhhprFyQQ5TyBG0vQOUycp/
-         /KcNvbOgjEeFFvFbdCMQ4LSH9TR0DvHvK2nZVVdxqBPE2QFbcUd+q5jNspVgMWj2TnHt
-         2rlf8/hEowwZW/MtZaeRldbDRfl4JPFTrrM+0e63o6lVqraNrTIK1LxRfTzHqXNKp4Vf
-         QyH1jDMnR6CVT66JEL7KnRP1yQqrTa94Ul2Snw4uz8dLZatA+Dtl0SCXuzJgOThkLiYg
-         UVQxumwWOoaxuVHxzkyELg/7VqTD3pQlqYc2bFxwmFXY/0KMhNFm5CvwLuPfHuOOceb4
-         DfPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoHeJgCD9V0+e2RM5zJLUVpGLIptMxK2KZeVw7djMeGZpH9/MRjjOkYuSHzkmAuH6BMYhsgHHxLzI4yhVraOYFgZEY0BQEyGhEcj7m
-X-Gm-Message-State: AOJu0YyS3yGMvkwQJ75xALPtYlDdnCzNumhmfZYyIpqnYkRxVMEP+rA8
-	wG4D5IeTD++31KD0zTszZF5gwNFybj0NCFtQZ5IAdokLGRelgd7eHkzL7akyYjOcmd/IuNFHhrk
-	s+cX4W1k3TwVRXgRog0HPGo+R7+u38Lujb/Vc2YWdqrfTtKagvbYEp+M=
-X-Google-Smtp-Source: AGHT+IFrx4P+qJ0MdheUBLT+6DpdE+LTBQRRpkk4ZKWOQQ2aixPRlPCXBnll3hfB7PJJzURbz7reixdLlY9Zsxkc2U0=
-X-Received: by 2002:a05:622a:5c95:b0:43e:3d52:3e0b with SMTP id
- d75a77b69052e-43fe0f3ee9bmr359531cf.16.1716926604452; Tue, 28 May 2024
- 13:03:24 -0700 (PDT)
+	s=arc-20240116; t=1716926718; c=relaxed/simple;
+	bh=iiKhQmFNByPcXspe2bsUME4YrkiJ8ckmRbNWS2vPbdk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bxO2fLk8HggoeZ2a/4/oiur5Tgqab5pjIXkT8jK/QneBS4NWcCCl2vuoKhPr0au528jdRWfYl9W/v8GfM1uPh/MdVGIHZjTb0Q22GdLdZkcc1pjDIgbRgvw94/FEFxvlmIXwbwlQA8EYWDTTUb+bXW/tQnwiEGoVyy2CgSNDBeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=m0yBI/G9; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716926707;
+	bh=iiKhQmFNByPcXspe2bsUME4YrkiJ8ckmRbNWS2vPbdk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=m0yBI/G9ILhDGIJkxe7P9EpwJ20bJPNKxEvHfJg1Efujskaxc+Se7rywCsZxcmUSF
+	 z91W2HK1FUICl9XkN0CBIPbe/blJH+bm/rLRrlztzUrS0nj6r0FhwPM5YMA1rra5oH
+	 sQekHa8N3cXk8QZTVVxz++umRFGJ8TG6UH7z7MGs=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
+Date: Tue, 28 May 2024 22:04:09 +0200
+Message-Id: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525152927.665498-1-irogers@google.com> <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <CAHk-=wgcoODsCbba423uZwQqOjJ8r29GZyCd472K6L6Dt-NbPg@mail.gmail.com>
- <CAP-5=fUp+gSoLC90vT50X7So_SyAC9OprAMvh_Jj_8NTuO6j_w@mail.gmail.com>
- <CAHk-=wiDheOd3pdZ4vdLwrMbbVs3LUcSD=afASEWbND-HZhuPA@mail.gmail.com>
- <CAP-5=fVGF6A7fwZyF8o0Sz5nNhtXb0007JoCxaiL2XHCKS3=0A@mail.gmail.com> <CAHk-=wh2yboV-UtCO_NFV2TsbbMeHTw0Fqn4rnovbGQzkZLCJg@mail.gmail.com>
-In-Reply-To: <CAHk-=wh2yboV-UtCO_NFV2TsbbMeHTw0Fqn4rnovbGQzkZLCJg@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 28 May 2024 13:03:11 -0700
-Message-ID: <CAP-5=fUwcgsB-AruAmGhw6WVNViMaiJ_iHWuZ8=ksrN7Y3V9QQ@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALk4VmYC/3WNwQ6CMBBEf4Xs2ZoWBYon/8MQA2Wxm5iW7CJqC
+ P9uJV49vpnMmwUEmVDglC3AOJNQDAnyXQbOt+GGivrEkOv8qAtdKsdRruhUajm1LoaJ412Vtih
+ NhRZ7W0Eaj4wDvTbxpUnsSabI7+1nNt/0pzT1P+VslFZdOxx00buq7uz5iSQizj/8PuAEzbquH
+ 1mzYn3BAAAA
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
+ Dustin Howett <dustin@howett.net>, 
+ Stephen Horvath <s.horvath@outlook.com.au>, 
+ Rajas Paranjpe <paranjperajas@gmail.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716926706; l=1698;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=iiKhQmFNByPcXspe2bsUME4YrkiJ8ckmRbNWS2vPbdk=;
+ b=a838ZxPgon4i1+SbW6pRgcmX7Q4jxi4EREHrFP59RVRrYS3/X8/W6oq1lFgF0JRqFmaFpFHHF
+ O9s2L3hAktuDk4hHDHjiZg9pNRasJDuP7jZKhL1hBgrN+AAVwOWD6rk
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Tue, May 28, 2024 at 12:45=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 28 May 2024 at 11:59, Ian Rogers <irogers@google.com> wrote:
-> >
-> > But nobody else ever reported the issue, even ARM who maintain the PMU
-> > driver whose event name conflicts. This hasn't been a problem for
-> > anybody else.
->
-> I'm not blaming you for having had a bug.
->
-> I'm blaming you for NOT DEALING WITH THE BUG APPROPRIATELY.
->
-> Taking some time to fix the bug is fine.
->
-> But that's not what you've been doing.
+Add a power supply driver that supports charge thresholds and behaviour
+configuration.
 
-On LKML:
+This is a complete rework of
+"platform/chrome: cros_ec_framework_laptop: new driver" [0], which used
+Framework specific EC commands.
 
-Issue reported:
-2024-05-25  1:31 ` Linus Torvalds [this message]..
-Fix posted:
-2024-05-25 15:32 ` Ian Rogers [this message]
+The driver propsed in this series only uses upstream CrOS functionality.
 
-The only thing I've tried to clear up is the ambiguity of when an
-event doesn't have a PMU what does it mean? Perf's metrics don't
-specify PMUs and have uncore events. We can't restrict non-PMU
-specifying events to just core events without rewriting them even if
-it best matches your mental model, perf has never worked this way.
+Tested on a Framework 13 AMD, Firmware 3.05.
 
-> Since then, pretty much ALL you have done is argue about irrelevant
-> thingas that weren't about the regression in question.
->
-> The fact that you still don't agree, having broken documented
-> behavior, and still argue against just having it fixed, I can't do
-> anything about.
->
-> > So I think the revert is a real regression for a larger user base.
->
-> I didn't have much choice, did I? You refuse to even acknowledge the
-> bug I hit. I'd have been happy if you had just fixed the bug. You
-> didn't.  You just argued.
->
-> > There is a testing issue here, not least I don't possess an Apple ARM
-> > machine.
->
-> This is not an Apple ARM machine. I have one of those too, but this
-> isn't it. It's an Ampere Computing system, based on an ARM Neoverse N1
-> (and the ARM PMU's both for the core and for the interconnect).
->
-> But that is pretty much irrelevant by now.
->
-> The issue is that you don't fix bugs you leave behind, forcing the revert=
-.
+[0] https://lore.kernel.org/lkml/20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net/
 
-But you've traded a fix for one set of users with a fix for another. I
-suspect the number of ARM neoverse N1 users of the PMU are small, not
-least as these devices tend to be in the cloud where PMU support is
-deliberately limited. As test expectations were for the patch applied,
-I think things are further regressed. I'm glad you're happy.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Accept "0" as charge_start_threshold
+- Don't include linux/kernel.h
+- Only bind to the first found battery
+- Import EC_CMD_CHARGE_CONTROL v3 headers
+- Add support for v1 and v3 commands
+- Sort mfd cell entry alphabetically
+- Link to v1: https://lore.kernel.org/r/20240519-cros_ec-charge-control-v1-0-baf305dc79b8@weissschuh.net
 
-Thanks,
-Ian
+---
+Thomas Weißschuh (3):
+      platform/chrome: Update binary interface for EC-based charge control
+      power: supply: add ChromeOS EC based charge control driver
+      mfd: cros_ec: Register charge control subdevice
 
-> I'm happy to test any patches. But I'm done arguing. The "cycles"
-> thing needs to work. This is not a "pretty please".
->
-> This is a "if you can't understand that and acknowledge that without
-> arguing, just work on something else, ok?"
->
->                   Linus
->
+ MAINTAINERS                                    |   6 +
+ drivers/mfd/cros_ec_dev.c                      |   1 +
+ drivers/power/supply/Kconfig                   |  12 +
+ drivers/power/supply/Makefile                  |   1 +
+ drivers/power/supply/cros_charge-control.c     | 353 +++++++++++++++++++++++++
+ include/linux/platform_data/cros_ec_commands.h |  49 +++-
+ 6 files changed, 420 insertions(+), 2 deletions(-)
+---
+base-commit: e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
+change-id: 20240506-cros_ec-charge-control-685617e8ed87
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
