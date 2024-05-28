@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-192444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365A78D1D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C2D8D1D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681981C2277A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6691C2278E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8AA16F281;
-	Tue, 28 May 2024 13:46:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CA916F85D;
+	Tue, 28 May 2024 13:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIIXfed2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947441DFEB
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AFF11187;
+	Tue, 28 May 2024 13:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716903973; cv=none; b=ZsVQ0J0nDzyi7l4U0tn8alJZCZUhoM/+mluUaQ4DKgIpyzZ2TyrXOe46WXPN5ugIftSDOgXIHbUaz0INto2FY4z3e9bnWXXNmva+gI7vSRLqWgW4rjC3RCsfV/tCXNH/s9zXV25mAYQsD+a7Acl5glkUgNpIR+O3X07D1lpa7Gc=
+	t=1716903985; cv=none; b=CIUVjG1yg8yn5da1H+L81lHrR2oHjfhuMsjGLSzy/NHJJuIWxlOo062vYiFfFceq4VeJJWTjmSjrvhywwDXmfOnRS3B6PK4BK/x3U+Vq9NR1UnuJTUhTFahBSl4atQKVFeqJJTlsVoN3883jj3o69J9TknDact8yz6N/n3gL1Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716903973; c=relaxed/simple;
-	bh=KcBKNOc/a0yWDzrzTnBHacI/v+q0k5/IM/NT7bw/qN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcoYO2tH9ouAgmW6lWyykqUwAPAWYEmyLDBXlt17rY0orh4lOxJMm5CiJCC1W7F60RWA47A2IVWmgYn8bNW+ZEAXswZUT7V4oBgzrXbCg1K/J5+GTN3EM+tS0lIamMi+6yFrVwhId5bmIwjKMU2dZQuRcxItqMJIBdfsfSp9oDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sBx9R-0002U4-Hb; Tue, 28 May 2024 15:46:05 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sBx9Q-003Kpq-MF; Tue, 28 May 2024 15:46:04 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1sBx9Q-001NB5-1x;
-	Tue, 28 May 2024 15:46:04 +0200
-Date: Tue, 28 May 2024 15:46:04 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: Nas Chung <nas.chung@chipsnmedia.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
-	sebastian.fricke@collabora.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
- condition
-Message-ID: <ZlXgHN4DPfRtZaPS@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
-	linux-media@vger.kernel.org, sebastian.fricke@collabora.com,
+	s=arc-20240116; t=1716903985; c=relaxed/simple;
+	bh=Ts9yUWNKtkjmp8jkRt/lYz8+oFlaYVa9VT7q+TSy+GA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H/HfQxeOj39qfCEhlp4MeiweLMuwrSoR9sXA6fCBta4JiTC0b1s2Ty0795KtaYY52nkq5V54BH7JcWPm0DXjhAcSH0rZ2/49XSOIRc4Bggjdzz/pzkPr0v6o/8KV53Gt8JT5XJh2uYPD9uxpwFgGfaoc2Bscx9BDXrrv4bYsIXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIIXfed2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7EA6C3277B;
+	Tue, 28 May 2024 13:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716903984;
+	bh=Ts9yUWNKtkjmp8jkRt/lYz8+oFlaYVa9VT7q+TSy+GA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jIIXfed2H9nZ3neZm7Uy5Y4sQ5Kij55dKAmJaqx4068TDpoLN2N9onFvTKo7AV51p
+	 t4BfzcZqr+fmT3b0D+o41yznt/cIcfvJPGZxG6aBMdFfxvS76mP9FdFA3/0lvQpv+Z
+	 vC28fE2X6+8jVIfzkCjJk780MmrUWUzvKVSnvJGo+abTi7Adna192KwVeg5pROLzzq
+	 BMgbafBsQj4BT4/LJj/O/NduHqm5lZupm0As1xch35eClyUEiHKwv33/BKYqOa74Vl
+	 2e7LapBvTLYw6lOqvJP3Wtv2vVkEblQ35Wems/zYBv6W1oPStgh/G54XOS9N2Q/G4L
+	 AxONyfICITszA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	ath11k@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-References: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
+Subject: [PATCH] dt-bindings: net: wireless: ath11k: Drop "qcom,ipq8074-wcss-pil" from example
+Date: Tue, 28 May 2024 08:46:09 -0500
+Message-ID: <20240528134610.4075204-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 May 2024 11:04:25 +0900, Nas Chung wrote:
-> Explicitly compare a buffer type only with valid buffer types,
-> to avoid matching the buffer type outside of valid buffer
-> type set.
-> 
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+Convention for examples is to only show what's covered by the binding,
+so drop the provider "qcom,ipq8074-wcss-pil". It is also not documented
+by a schema which caused a warning.
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../devicetree/bindings/net/wireless/qcom,ath11k.yaml    | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-> ---
->  include/uapi/linux/videodev2.h | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index fe6b67e83751..fa2b7086e480 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -157,6 +157,10 @@ enum v4l2_buf_type {
->  	V4L2_BUF_TYPE_PRIVATE              = 0x80,
->  };
->  
-> +#define V4L2_TYPE_IS_VALID(type)		\
-> +	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
-> +	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
-> +
->  #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
->  	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
->  	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> @@ -171,7 +175,8 @@ enum v4l2_buf_type {
->  	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
->  	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
->  
-> -#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
-> +#define V4L2_TYPE_IS_CAPTURE(type)	\
-> +	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
->  
->  enum v4l2_tuner_type {
->  	V4L2_TUNER_RADIO	     = 1,
-> -- 
-> 2.25.1
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+index a2d55bf4c7a5..ff5763dc66a8 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+@@ -265,15 +265,6 @@ allOf:
+ 
+ examples:
+   - |
+-
+-    q6v5_wcss: remoteproc@cd00000 {
+-        compatible = "qcom,ipq8074-wcss-pil";
+-        reg = <0xcd00000 0x4040>,
+-              <0x4ab000 0x20>;
+-        reg-names = "qdsp6",
+-                    "rmb";
+-    };
+-
+     wifi0: wifi@c000000 {
+         compatible = "qcom,ipq8074-wifi";
+         reg = <0xc000000 0x2000000>;
+-- 
+2.43.0
+
 
