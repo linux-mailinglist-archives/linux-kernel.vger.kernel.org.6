@@ -1,87 +1,141 @@
-Return-Path: <linux-kernel+bounces-192804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C983C8D225E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A89B8D226D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4301F23EA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8FE1F24981
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB1174EC7;
-	Tue, 28 May 2024 17:24:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A47174EDF;
+	Tue, 28 May 2024 17:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mok5sHVq"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF24C7D07D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5B97D07D;
+	Tue, 28 May 2024 17:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917045; cv=none; b=Zm9+yJ3OP29wDiY73GDqFTDNSvT5EKzW6vjgry2Ycgi6got8BxkyQpKuo+HTs6oHI8ExPF54+GMq4usIkzZCjJK7/+zZg+BIU7Ej8BfSxgmDGEWKP87c2BYny6iaP61aheqYnQcHZQNcSSjjmakWiC9i2Sxo9mrCBkI21VjdceE=
+	t=1716917079; cv=none; b=maui89gzaBihvKVQ6LZnStWFRMiu83n9P54orIOdWUYsTTH0YKEmSX6l/VC0zqfsieFE6MX/n81L/fjIZGOQbkKSBgAFzAKXycrkCCbqFWqzGmjsjKWBtLnyJ5Jmt72uuQVrmDEXTcOJopF99XdNOK+aBmm1htpdigbDrNHDwLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917045; c=relaxed/simple;
-	bh=NwVtVqmDmpgrpeeU20NOiY4IDvcu6si3adnNSFoLIcw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hmu1FJx5qBPnWvZqlNL5kNXyKKFaxCER9hTkujugxtlBnKWDvwYNQEhp4tqLGtoR+l8GOuZ9TTjFdcwK6f091rbzgZzo0/UlWrzZiguFbsH90ywsKvQEq+r5McgGX41D1UAOEE8//gEVTMrMJ0IwLLNt1Q+l5F+vKlP237tkp4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ead3d6a782so96859439f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:24:03 -0700 (PDT)
+	s=arc-20240116; t=1716917079; c=relaxed/simple;
+	bh=JpfOrfm/RN6ZNydj18l4u8gIZn6ywPDO/Ii8ISAxU9g=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=JNeIB/LRvk4rimzHQwPK34YoX9IBUPra9/atBWDSAVQ8/6Xh6oKdlz0Qoxu69Ay9r8gK+VdniCwq9v0uZp9mzKsIQ1rfH40AMrvt7AyeYXhMhUq2t22tKXXpW2ZC/93Lc9Gbmd3K5jfpHFkwIVTLSitJ9sBhiZVJtEKSUjr90RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mok5sHVq; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43fb094da40so297991cf.0;
+        Tue, 28 May 2024 10:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716917076; x=1717521876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ThOVm46gYp9/Cn7ASNZ0mQAfmQpKcIWWQc+98ymb318=;
+        b=Mok5sHVqgQRDScxstnDJJladEh+s+Hgi9F7K+UcKsm4+c0CCtlAIvVaB7mlH6MljXl
+         GRH7ISpBI6cRao3nrXJWUgPdGuIFjGZgde9OZBMsbsaCFyp7gxvT8Wl7m77Iu4pIxfWS
+         5yUnOPJOuQdjnHv99FTPV09R5QBaxMEWPjaSTnPS7blSvmOi/dscHTG7Rfk8w6CGPzle
+         sHEqEDXufY09efL5D2AY0PWUJLzl1kohW3AVZE1/TL4cZ8g/1Rw+w8eWDTDpMLdxTPK5
+         3v0q1m3XphWnS3oar5UxG74fEMF2ink+suib3w5dURhqJ1cj/1UPfWodF7kbnNaGOi1l
+         TVoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716917043; x=1717521843;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yNlsejU5OKeaQhEzar8+GaIUKly5Zi3CGh7ZerUnuo=;
-        b=IUJYqPim8ojmy5keqHqF66G8YUP0Iyv/ApSjZ4ygjHYQaxtpFRhrrRYDkLMvFMEFsV
-         sglnXT1zA8nwPdV2SudI1humE4QiIPrj9QfHrGzEstEK7sCoRt1AlvyV7dDdSpSbDBGJ
-         HbfqlmKslG2NPf0nvuUD7YciZTjx4YzHYsIQSV7JOPc6WFNsSRKmtf0S/pR84NJDqpIx
-         NfPdQDrvFgjBrm61ApiWwhuEazlemJKQ87WBcDh633psT7VxuwZglhIRfVJlvTN2+b6T
-         2CgsWRkU5e2uBoTmrKUYbSC9VVsYLuUNQ8gkG4SiVvRleugKVWXC4egK9nquL+1jGsDW
-         0f6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ9XvIsedjt0C65H7UAV3n8b0lqaB1uP0FUNLsUeVPlUlYsYsoL4Zv+fl+MOjlS4dJUiyTylPdpCKqpHKMavLLC7XDKn+dWY8ex87y
-X-Gm-Message-State: AOJu0YzNYUKzhvoZSsNkJKDER47F1gO1IxExTxG0IhxLIJ1R77uYH+Vg
-	VmiK+oJp94teBCIYECP6xl+nfipQbKD7xkm0cwBnPQGjiaRR44ziHW69eJwU81NIniqw4zqCbZF
-	GW0rt5vJfV60TXjnTixev9qXvb0cjfKaDt1BbFulY9WxN+BqxPOcm0y8=
-X-Google-Smtp-Source: AGHT+IG30kQLtKtkvjC2J6X5T5H0ua9sojkjqLBvu8WWwXDx31u9u2cxlt161wplXgK8/zmVo2ftC8Qefn7vAEuFgzp1fcfrBGmL
+        d=1e100.net; s=20230601; t=1716917076; x=1717521876;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ThOVm46gYp9/Cn7ASNZ0mQAfmQpKcIWWQc+98ymb318=;
+        b=rnku5NdqDYxdA86Eda/FR7n9q2pnN26rW9QbJQfagdF9KUcbi2rYiGw9ITbpjOUp8M
+         0x/S3nQAYLSPH2EPzS/ABvvLv5Mk2dQByX0Ov8a9pFjbJgIL85xAAqvSlwtj0nfsJ7aW
+         UI6jugaiaSS+tGWSUUmmHEd8HiOywDRI7so/JRfuUEednmS6c42Pgc6S0a1E1RmU4QsR
+         dauQZ7mNKCs3XF8L3Rcqbis01/6biri06fnREf9bk+dB68elrcsGqQblWmz498nCzBoj
+         EpFUrfRlmnR+DMwk3Up8vZHb/qQR4liS6Mcc4cgLU3htOLy19PHM0ksVPoutdCUImm+V
+         g63Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX4EQnptR0KGOKDvepvOK0RsvKKbknRtyh1aiMK3ZnL+inlshb1cKu4Ixfg+J+xhuIzUzvCr+DYqYBGP4XuhxAHsjq3kcJ7vQmegjJbFsT8bIYJNBdRC2bxQ7WSuicc4Nw23bv25MQAECm2i2BUaKfs+IrBy4hwgs4q
+X-Gm-Message-State: AOJu0YytZaukA/uvgOBVqgptJGCkvrDQp9+VwtpEIgYf4pukgb9v0kgr
+	KPlUuLIIzi71aRN6to1XEdXj4wqfLvh2lIAP9BFwbKjiJgyz6nBu
+X-Google-Smtp-Source: AGHT+IHmE7KwWW/A6BnWKuk+2M8Ye5aS8UEuzeJBkO8gGRyfB9v09wmMfK5BrpYl8vMuNh2Iux6GXg==
+X-Received: by 2002:a05:622a:1346:b0:43c:7755:961c with SMTP id d75a77b69052e-43fa7431750mr305065511cf.5.1716917076577;
+        Tue, 28 May 2024 10:24:36 -0700 (PDT)
+Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fd54f4a5dsm11821051cf.97.2024.05.28.10.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 10:24:35 -0700 (PDT)
+Date: Tue, 28 May 2024 13:24:35 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Martin KaFai Lau <martin.lau@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ bpf <bpf@vger.kernel.org>
+Cc: kernel@quicinc.com, 
+ Willem de Bruijn <willemb@google.com>
+Message-ID: <665613536e82e_2a1fb929437@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
+References: <20240509211834.3235191-1-quic_abchauha@quicinc.com>
+ <20240509211834.3235191-2-quic_abchauha@quicinc.com>
+ <6bdba7b6-fd22-4ea5-a356-12268674def1@quicinc.com>
+Subject: Re: [PATCH bpf-next v8 1/3] net: Rename mono_delivery_time to
+ tstamp_type for scalabilty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a02:cc1a:0:b0:488:c743:c19 with SMTP id
- 8926c6da1cb9f-4b03fb9b001mr473972173.4.1716917043060; Tue, 28 May 2024
- 10:24:03 -0700 (PDT)
-Date: Tue, 28 May 2024 10:24:03 -0700
-In-Reply-To: <ZlYIoPEq7avOkjCW@localhost.localdomain>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000076009c061986e67f@google.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
-From: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org, 
-	osalvador@suse.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Abhishek Chauhan (ABC) wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > +static inline void skb_set_delivery_type_by_clockid(struct sk_buff *skb,
+> > +						    ktime_t kt, clockid_t clockid)
+> > +{
+> > +	u8 tstamp_type = SKB_CLOCK_REALTIME;
+> > +
+> > +	switch (clockid) {
+> > +	case CLOCK_REALTIME:
+> > +		break;
+> > +	case CLOCK_MONOTONIC:
+> > +		tstamp_type = SKB_CLOCK_MONOTONIC;
+> > +		break;
+> > +	default:
+> 
+> Willem and Martin, I was thinking we should remove this warn_on_once from below line. Some systems also use panic on warn. 
+> So i think this might result in unnecessary crashes. 
+> 
+> Let me know what you think. 
+> 
+> Logs which are complaining. 
+> https://syzkaller.appspot.com/x/log.txt?x=118c3ae8980000
 
-Reported-and-tested-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
+I received reports too. Agreed that we need to fix these reports.
 
-Tested on:
+The alternative is to limit sk_clockid to supported ones, by failing
+setsockopt SO_TXTIME on an unsupported clock.
 
-commit:         c80d58cd mm/hugetlb: Do not call vma_add_reservation u..
-git tree:       https://github.com/leberus/linux.git hugetlb-vma_resv-enomem
-console output: https://syzkaller.appspot.com/x/log.txt?x=1763ba0c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+That changes established ABI behavior. But I don't see how another
+clock can be used in any realistic way anyway.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Putting it out there as an option. It's riskier, but in the end I
+believe a better fix than just allowing this state to continue.
+
+A third option would be to not fail the system call, but silently
+fall back to CLOCK_REALTIME. Essentially what happens in the datapath
+in skb_set_delivery_type_by_clockid now. That is surprising behavior,
+we should not do that.
 
