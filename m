@@ -1,128 +1,105 @@
-Return-Path: <linux-kernel+bounces-191942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B05E8D1664
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:38:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD208D1666
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919261F2275B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF9D283F2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59EA13C83E;
-	Tue, 28 May 2024 08:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A7B13C83C;
+	Tue, 28 May 2024 08:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SglXt0ew"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9UlsoCF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B98428373;
-	Tue, 28 May 2024 08:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7499B6EB64;
+	Tue, 28 May 2024 08:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885472; cv=none; b=VAYUPCqvi7IeNfQP3GN9QfYGqDGBVeYon71yC0B8LcEhE6OP3SXyjZKKP3u+/9GnmpQ4KyXgcymHexoHfkzoFpj2ZIL3/lj3MN1GUPTdCvVnjUYTb6DZ+/lJ4pTctPbEv2xXGcumyoTkiR4VnhdY/T6PtittstW7fw9kW4IyNZA=
+	t=1716885516; cv=none; b=fK1678+SB27ckdZY6lLcaZQLALnn/iU5budP8Qpe02HPcUQBuhGIA7biAXClTjJq/8KQ7/VZ8B74WvqUAIzoG2KFddg5HQzyq9jQZk0KUTcrIDNB/nYd7nQaSJprs528QOOE/urBbhdqbwHguOGXuH9F5ziz9v7duq+NpeL7Yz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885472; c=relaxed/simple;
-	bh=TW1jNG1PIoyG2+so13309xJlYyhVgbq9D68UAfsajzA=;
+	s=arc-20240116; t=1716885516; c=relaxed/simple;
+	bh=Pp1h9rKnlXC+BzTr3QzZgGdZk7UnGky0ZpYWvwodtdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+CXEdOnQV94TibemSC8ACROXppZBVxnslsC8Itk4Chk/40lPX/JUQsMdK8k59bMgQpuq5Nr4Y7aH4EwpHVTb075jUMF+wXWVeX+qmDduIOnDjtcWWDdOc2Yo0MxO034mQjG4mnuO9/zMHtU7ziehNQCgJvM9+hrJ508hDGH9cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SglXt0ew; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716885468;
-	bh=TW1jNG1PIoyG2+so13309xJlYyhVgbq9D68UAfsajzA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFgFncxxHy5gdSBPzLu5ZhXc5vdk5jYITCfYt0MXbGK/i9cPa8CNWax4UhqejMwNDSAiyhxK9SXzaqAKEAXZZ2xNnN9TvT24e/svGP4yD8AU6uJ2xcF+7HHmzm/xq+nGNSgJQwimGmNyUb9B4lObU4B4ZwyiYbE0hizqXkYYMvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9UlsoCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E79C32781;
+	Tue, 28 May 2024 08:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716885515;
+	bh=Pp1h9rKnlXC+BzTr3QzZgGdZk7UnGky0ZpYWvwodtdA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SglXt0ewsfNVjfgOblte5DXxYe8Odk5aHidxhfv8ZQblVTG7GI9Yc/cFxq62NVZ7X
-	 5DZcv5LCwqa1F6GRv/DV1AwNsaoEZ5rDEWEEepby4GPPxZ3wcUEyNQzKr1Z3cuCU6L
-	 S4+/xEECPAvyyx+UAARquesFnxxjqRtKt1FpNoAPJ5Gr4vj44frFNffkL+EyOYaqGK
-	 NgCuhF8j+H9Xb4RH+6q8YUiXKwO0ZyBs0N3B9ja+Xm8j+6CS4YhqluGnOsyuNBW8Mj
-	 xjbHL5U6lUueOIcVNsA1BXMacHvIMgYXFRVKf3Q/gLlDL1PahnVG5/cwRlnPMfumCI
-	 Bv+WWc54qsaVg==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5C2603782157;
-	Tue, 28 May 2024 08:37:48 +0000 (UTC)
-Date: Tue, 28 May 2024 10:37:47 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Alex Bee <knaerzche@gmail.com>,
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: media: rockchip,vpu: Document RK3128
- compatible
-Message-ID: <20240528083747.z55laxnmioorzaru@basti-XPS-13-9310>
-References: <20240523185633.71355-1-knaerzche@gmail.com>
- <20240523185633.71355-2-knaerzche@gmail.com>
- <3639993.hdfAi7Kttb@diego>
+	b=J9UlsoCFveDXOijNN7ysl3SGOeVuvAmdhwmZ590h1U4JzkLrD1hXQK9F7g0i/9K/h
+	 zWldbRoimxOPTKDupJ8fI71QoLUJKTmpk+hI3ooGNs1eknT2xgmwh9LRatComsjVe3
+	 48K5vKpBGZKn84GvBjKs4QHZ/JXy0JesDITJecj51ZGlgeCrxbpvD4fqBA0UZrXR9Q
+	 wYCvNYhm6UOD7a99xeGfWTD+3qiBfepeCmZkagNlHYSUJ/D3dJbN1tKn3GJH8oU5U1
+	 543HYmApBJGRZK+XvOyjQoEY2UulgaCOE/p7OBpoNcw7ANc8XECxoMNANXE7N9osYz
+	 RhyM5wlJVXBpA==
+Date: Tue, 28 May 2024 10:38:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, winters.zc@antgroup.com
+Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+Message-ID: <20240528-jucken-inkonsequent-60b0a15d7ede@brauner>
+References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3639993.hdfAi7Kttb@diego>
+In-Reply-To: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
 
-Hey Heiko,
+On Fri, May 24, 2024 at 02:40:28PM +0800, Jingbo Xu wrote:
+> Background
+> ==========
+> The fd of '/dev/fuse' serves as a message transmission channel between
+> FUSE filesystem (kernel space) and fuse server (user space). Once the
+> fd gets closed (intentionally or unintentionally), the FUSE filesystem
+> gets aborted, and any attempt of filesystem access gets -ECONNABORTED
+> error until the FUSE filesystem finally umounted.
+> 
+> It is one of the requisites in production environment to provide
+> uninterruptible filesystem service.  The most straightforward way, and
+> maybe the most widely used way, is that make another dedicated user
+> daemon (similar to systemd fdstore) keep the device fd open.  When the
+> fuse daemon recovers from a crash, it can retrieve the device fd from the
+> fdstore daemon through socket takeover (Unix domain socket) method [1]
+> or pidfd_getfd() syscall [2].  In this way, as long as the fdstore
+> daemon doesn't exit, the FUSE filesystem won't get aborted once the fuse
+> daemon crashes, though the filesystem service may hang there for a while
+> when the fuse daemon gets restarted and has not been completely
+> recovered yet.
+> 
+> This picture indeed works and has been deployed in our internal
+> production environment until the following issues are encountered:
+> 
+> 1. The fdstore daemon may be killed by mistake, in which case the FUSE
+> filesystem gets aborted and irrecoverable.
 
-On 28.05.2024 10:19, Heiko Stübner wrote:
->Am Donnerstag, 23. Mai 2024, 20:56:31 CEST schrieb Alex Bee:
->> The integration for this SoC is similar to RK3066/RK3188.
->>
->> Document it's compatible.
->>
->> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->
->Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->
->Media people, can you apply this patch alone from the series?
+That's only a problem if you use the fdstore of the per-user instance.
+The main fdstore is part of PID 1 and you can't kill that. So really,
+systemd needs to hand the fds from the per-user instance to the main
+fdstore.
 
-Yes, will do got this on my list already :).
+> 2. In scenarios of containerized deployment, the fuse daemon is deployed
+> in a container POD, and a dedicated fdstore daemon needs to be deployed
+> for each fuse daemon.  The fdstore daemon could consume a amount of
+> resources (e.g. memory footprint), which is not conducive to the dense
+> container deployment.
+> 
+> 3. Each fuse daemon implementation needs to implement its own fdstore
+> daemon.  If we implement the fuse recovery mechanism on the kernel side,
+> all fuse daemon implementations could reuse this mechanism.
 
->
->Thanks
->Heiko
-
-Regards,
-Sebastian
-
->
->> ---
->>  Documentation/devicetree/bindings/media/rockchip-vpu.yaml | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
->> index c57e1f488895..d1b47b14ca57 100644
->> --- a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
->> +++ b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
->> @@ -26,7 +26,9 @@ properties:
->>            - rockchip,rk3568-vpu
->>            - rockchip,rk3588-av1-vpu
->>        - items:
->> -          - const: rockchip,rk3188-vpu
->> +          - enum:
->> +              - rockchip,rk3128-vpu
->> +              - rockchip,rk3188-vpu
->>            - const: rockchip,rk3066-vpu
->>        - items:
->>            - const: rockchip,rk3228-vpu
->>
->
->
->
->
->
+You can just the global fdstore. That is a design limitation not an
+inherent limitation.
 
