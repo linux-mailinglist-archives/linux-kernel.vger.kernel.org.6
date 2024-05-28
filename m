@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-192120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E768D18A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A468D18A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CD51F22B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC99B284193
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CEB16B72D;
-	Tue, 28 May 2024 10:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A04716ABEA;
+	Tue, 28 May 2024 10:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XSl0VC+Y"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VRfbWyuf"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F9F17C7F;
-	Tue, 28 May 2024 10:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82EA15DBCE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892383; cv=none; b=u55uTCFMQJUR0sP12huBdLq+orx6/NXle0ESVc6ioNnQSh9t5sRwHTtPkox1csS+PxP++xgMYlU8CGvRow+VfiLXvKiGFS2cO5A9xNP35w8pKoz4yc42EB2J6n7g4na72MjUWstFOojIVQ+SLDodGirKYK6LDMG5zrTX/Qop+yQ=
+	t=1716892491; cv=none; b=ppQNgjMD+Eu6bZLfbUg7qn2qeTbn6MBPJPQgKCoJy+P5upsccBhzK5lfxBMdsWn5cdWNqysUaD04M555EEgGI2COUPF/vdtrdS/XGT02qwpUifptgdQZkXXkAsIoivnkkPbyYoL4gKnA1fYEp+0nRDRoCg8dHcq9masnT/1/qrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892383; c=relaxed/simple;
-	bh=kJszahZmfi51bW87cVG6RHvXrE/UgDhUeaaij8xzOac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sRi9VKo3rNv1TtIy5GXu4ktwAf1ad0uJq0GgkLkorLAhBzl2aosA3sZydgchBAeBvBI/FzGN5hV9K/X24pg0hif1Dq2cXgINLsghlDW2DfdNNGMfeGYvSpYb1C11fiHVe1EIjFTBJDrGh4yDRMSCThs93HsiXK9aaGp2sxSVSbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XSl0VC+Y; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SAWeAJ016018;
-	Tue, 28 May 2024 05:32:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716892360;
-	bh=fhM8umhhiFzOsQ7NzwP9rqG6fzIi2j17UUh3XrA9av4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=XSl0VC+Yfi+BjJdSXwgKkRbMPnFl8ZZzczn/3EpXy35kecRoYRg9rq/hOlqHaNGMo
-	 mM/F77gLUPG0lC4/TCkbvtH1QrRfLe/HiLUrof7efeosumfH7Xc7CqoRSGoojwEVAU
-	 w8ckzDWUiLp18RSvJlaLKQUqYpe7asoJgCTXXcI4=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SAWewA017903
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 28 May 2024 05:32:40 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
- May 2024 05:32:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 28 May 2024 05:32:40 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SAWVsL025055;
-	Tue, 28 May 2024 05:32:32 -0500
-Message-ID: <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
-Date: Tue, 28 May 2024 16:02:30 +0530
+	s=arc-20240116; t=1716892491; c=relaxed/simple;
+	bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ESoJL8JY+NyAChA1KWGcBW/9rekHCsbkZ4Jq/w4Liy8L22fGW7AkfOJS7ZSXz9MKtipmEsTKaBEiV/J7Gsc8RsR36E4cUo/KKUCv+0EmaV66goYUx1ONJFSIp+7tVw33CDznvkreD4Jun89AwB4d/rpKEWl9SC8+ftyOsW3e6wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=VRfbWyuf; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d48ec3so70176066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1716892488; x=1717497288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
+        b=VRfbWyufqqK5ZZsb1lGQI2YarBtNiVxgRz3DDwAUB3bgbojF3tGCj4eDQlSQcRGMa7
+         //mLg3qsOEKJ4Zhdmp/gySnVXkA4o4Ln/7D4pIJYBGPOS99VUye86v/j5mJnmB0Giq93
+         5TmRTRf1NnJ/LmeYzyoTDPk/kRftCDdITZTe4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716892488; x=1717497288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rMIZmynHxQlTJRn0wXZDXuqK/c1wUSB5d1m9RwF0rDE=;
+        b=a2FUoAdbJ0Hm9Ae09d5uV4D8mbxYkPD4HYGaGPC46MldxmkwWUiuFonPKkhoG+6EIV
+         5g/j7krP1HKJYIJpl5K50TzQTIl8MNgcw9B2MhQHP7klMpUm7gSQ9AspbbdCJ1w9TCrE
+         Wy79dxNCSrCwzAhoUYerHJGq43zkfeuupYxVC4YoGBuRrOXNLgkk8XnAI4dvnYl5dQsz
+         HXlupBbO7NGjcII78kz5/h6oVLoCGQVn7ju4aMfZ8LjCv/Y84iTku2A4eWkMztcJOsyx
+         3uPb0ZiL1DpoinMExzlgj7nnXhdY3oKNN0B1dQKkTvAV0rKUohJQoD/4i+ZGh+wHJWhb
+         m+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAMwT5fQ1FC7mHPWHHrMBmFyLZB+8ycaQvdPGcVoNYvlt/wzpv7phOvu69+3+Qx3s5Z8dpBG3Z3P09qoTewNWNlxV13dHaK0X1l7PP
+X-Gm-Message-State: AOJu0YzRTdt7qjJiTqzeHD1AWE2+6tZVVQARv0WfVHmZ7vIh1pOKXgWh
+	VRVu/tJwlSvOnSVR+D2ebuqMaDFva9Edshn7Y88fxJYI7oZGJTOdOQWwoY08/DiB1FWCnoR/lIH
+	nnklnuz3HWcyARfw3CaMGNZmNojIkPEzGZLsXXw==
+X-Google-Smtp-Source: AGHT+IGf3ZtXXEh5OYJF07HdIQPyKNgiGwm/AnMlXGcrV6HD0/oxru+8FNRPGNaNU9NPkpCQBGpav3hf5+9QEkM2STU=
+X-Received: by 2002:a17:906:6b1b:b0:a5a:84c8:7710 with SMTP id
+ a640c23a62f3a-a6264f00dd2mr877227366b.55.1716892487943; Tue, 28 May 2024
+ 03:34:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v9 06/10] math.h: Add macros for rounding to closest value
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
-References: <20240526175655.1093707-1-devarsht@ti.com>
- <20240526180856.1124470-1-devarsht@ti.com>
- <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
+References: <20240528090244.6746-1-ecurtin@redhat.com>
+In-Reply-To: <20240528090244.6746-1-ecurtin@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 May 2024 12:34:36 +0200
+Message-ID: <CAJfpegvoao1jd7HhoPEeWCdS8jWEXhKTENbwvLdo=aMiNaLKQQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: change error message to info for empty lowerdir
+To: Eric Curtin <ecurtin@redhat.com>
+Cc: "open list:OVERLAY FILESYSTEM" <linux-unionfs@vger.kernel.org>, Alexander Larsson <alexl@redhat.com>, 
+	Wei Wang <weiwang@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Andy,
+On Tue, 28 May 2024 at 11:03, Eric Curtin <ecurtin@redhat.com> wrote:
+>
+> In some deployments, an empty lowerdir is not considered an error.
 
-Thanks for the review.
+I don't think this can be triggered in upstream kernel and can be
+removed completely.
 
-On 28/05/24 02:02, Andy Shevchenko wrote:
-> On Sun, May 26, 2024 at 11:38:56PM +0530, Devarsh Thakkar wrote:
-..
+Or do you have a reproducer?
 
->> +/**
->> + * round_closest_up - round closest to be multiple of specified value (which is
->> + *                    power of 2) with preference to rounding up
->> +
-> 
-> Not that big deal, but missing '*' here. Personally I would not even put
-> a blank line between Summary and Field Descriptions.
-> 
-
-My bad. Yes I would remove the blank line here. This is picked up as warning
-from kernel-doc too.
-
->> + * @x: the value to round
->> + * @y: multiple to round closest to (must be a power of 2)
->> + *
->> + * Rounds @x to closest multiple of @y (which must be a power of 2).
->> + * The value can be either rounded up or rounded down depending upon rounded
->> + * value's closeness to the specified value. If there are two closest possible
->> + * values, i.e. the difference between the specified value and it's rounded up
->> + * and rounded down values is same then preference is given to rounded up
->> + * value.
->> + *
->> + * To perform arbitrary rounding to closest value (not multiple of 2), use
->> + * roundclosest().
->> + *
->> + * Examples :
-> 
-> What is this suppose to be rendered to?
-> 
-
-The file math.h is not rendered as part of kernel-doc right now. I can put
-this under Documentation/core-api/kernel-api.rst perhaps I can create a new
-section as below:
-
-Rounding, absolute diff and 32bit division macros
--------------------------------------------------
-
-under the section:
-CRC and Math Functions in Linux
-
-===============================
-
-is that okay ?
-
->> + * round_closest_up(17, 4) = 16
->> + * round_closest_up(15, 4) = 16
->> + * round_closest_up(14, 4) = 16
-> 
-> Btw, is kernel-doc validator happy about all kernel docs you added?
-> 
-
-Yes, except the aforementioned blank line.
-
-Regards
-Devarsh
+Thanks,
+Miklos
 
