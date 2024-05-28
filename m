@@ -1,190 +1,148 @@
-Return-Path: <linux-kernel+bounces-192087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E158B8D183A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:15:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3F18D1848
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02CB5B2288F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:15:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB0C284A95
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D58413D89F;
-	Tue, 28 May 2024 10:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9313616C685;
+	Tue, 28 May 2024 10:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="iEW19tZ8"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpcorp.com header.i=@smtpcorp.com header.b="DhE1b/ye";
+	dkim=pass (2048-bit key) header.d=asem.it header.i=@asem.it header.b="lGWlM9AN"
+Received: from e2i187.smtp2go.com (e2i187.smtp2go.com [103.2.140.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20613C80E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4524E16B75D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.140.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716891315; cv=none; b=CXcGKEI/GlV0OgAtUNMkATAJLwK3NEEV62S/Hcul4n3TkH2HrowW78UhRks9S3garz04e86XFxnZ9PPe2jcI3uAKg4GWH6yHeTEGaFodNrPL7jsY3S8sXadkA+NbpCw0HcoOGjFvHUC/heiPGJCn0l+IyPFp60XRw+s3yxY3Gt8=
+	t=1716891390; cv=none; b=cJDiO8xYxXRoUk8ucHALdQMoYaox3pIubtCWhqAN/0Qk03UtNHi/iKPiwMAkos8SQAKlMRj7xpRev9WUEUW1NX+hEIh+g8WEXiOJKBFr9chX5u874GJVlVlDtD7b9vyTLcUZXjuhT4+4Az9HRLxK5SYUTq6cH9med/s2VEpIDts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716891315; c=relaxed/simple;
-	bh=E7sKFLfev1mNkIg5WjRCuKqrgXi1JgkmqpVqr6lz4Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HwOD7cVfhEZ7FeXSXdKHxunJiVpOHwNmG/lCemxG9v5bQQsii8mzUZxghr8gxu1T0EVoJHfOewPOvTePhlsZZKvHF2qa+OzV0idGo/2K50oMa72gQNQGNLj+NG9MzrJf6t6qlb2viEAkCtSSazKWNLPRB56z4xqxcN4+BmYSg1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=iEW19tZ8; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e97d6e7707so207901fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716891312; x=1717496112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KJo11HxnJz9bNWmT6d/DDh++L1djwhjY6e39n68+9tM=;
-        b=iEW19tZ8ty/EWCD26onWEnqxICI99g3aN81564s9xkENO7t7zMXn9qXSCDxWAG1lPo
-         G3D2/22QvPa336pHIyPoPdGLolsgxBAg1lDON6ncIph2TENlljhMLMCTh5NS1F0Ztx/G
-         4LgGo7WuQS4WebmtGkgKRuVmkMGc2Vuq64Vc4vMoOMYGYeiI3OCsHwvqhOXOMJcYIbtp
-         lX9gXNcmuZz9NUXyZcJEPpmwUZz2LkrDFYvXtW4Vj5HXy5gb7cGOuOMk0gO0lII0MeHS
-         a1fK/IeCOD9WgTbz78C+uprrAuFY1ckvvivtFz0Go+n6dAbBVfDj6Qtqs8tx93SwNKWj
-         4t3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716891312; x=1717496112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJo11HxnJz9bNWmT6d/DDh++L1djwhjY6e39n68+9tM=;
-        b=GHteTGsiJqI5gC62yp+ZT/cAP2y1I2Vh7b+y62L57fD2d+VHlHPh6zTwVNAts1A/A2
-         M2Exf5K8r2KiWGQzG2Rq5x9SLwqXwmD4myTEW2JWEiZ0fYOCUcnA86vLL5+/wc78LVRT
-         af6AMyvZ36jm07GON8M2is2BuL1Ot9M/kCfOZ8EeVJREHj97Kz5Tbq6UP1RMebPQYSxj
-         m1ACXR79XllSPMlUpaOZJwn2H+TDxigc6xL+PHOqKNcpbGx+w+bgTd7m0rLdUMQ7Zw6G
-         xol2laHGGw3BcgQEgalmTnS2ozH8Sp2oKiGlKqj7aKh5orvrxNBo4rP0t+Wc2mGPF5qU
-         BwmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6T0OQ8HvND+NRKF7qr/nVhAIVEWZUvN4R3gRIaTtFWJpTReaXapKptRtM32qOLrmJuBfgyXd1z5rLgCUSM9NlEWodY+EKitNVGfeF
-X-Gm-Message-State: AOJu0Yzy4cTqr6EndOcFIHmATejbuig1iv2srqIqMeR7gglBhD4cc+OR
-	P0+szLl3FlcZrImKijIDZLD4p1fyta+JfiaeWWOVCf7wGhq2OewxLxbfHmyp5vU=
-X-Google-Smtp-Source: AGHT+IGJQCkm1zvi3G2nkrY7snFxSIlGT1jUS1f8uJE8FtpINZx4K4WXRaEt0TWwggZ5ofXJB3NyLA==
-X-Received: by 2002:a05:651c:2106:b0:2de:42d0:faf8 with SMTP id 38308e7fff4ca-2e95b33028cmr80465331fa.5.1716891310532;
-        Tue, 28 May 2024 03:15:10 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:999:a3a0:deaf:e457:42a:ab9? ([2a01:e0a:999:a3a0:deaf:e457:42a:ab9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35586a15f56sm11303694f8f.109.2024.05.28.03.15.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 03:15:10 -0700 (PDT)
-Message-ID: <40da6797-faab-41f3-b4bd-766e6a117468@rivosinc.com>
-Date: Tue, 28 May 2024 12:15:09 +0200
+	s=arc-20240116; t=1716891390; c=relaxed/simple;
+	bh=bK8clUyAHSzXZLRJypon/9/cndNSHirh31wv3eY35Ac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ot4CeEDNbr+5ya5X5ROyGQSNgAmaRbfTyM9rW6hbjveno7+2qc2btGyIz5StKirdhE/8EJJJ5+QKcRIUNTzu02FeTUY62L8ObVEPr14GPUuHPs0cTFs6t4nYf01+mEjh4qdjtTAel0qEtr+AiYIzGV0v6LePcAzX86J0pM7aPQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asem.it; spf=pass smtp.mailfrom=em1174574.asem.it; dkim=pass (2048-bit key) header.d=smtpcorp.com header.i=@smtpcorp.com header.b=DhE1b/ye; dkim=pass (2048-bit key) header.d=asem.it header.i=@asem.it header.b=lGWlM9AN; arc=none smtp.client-ip=103.2.140.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asem.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174574.asem.it
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpcorp.com; s=a1-4; h=Feedback-ID:X-Smtpcorp-Track:Message-Id:Date:
+	Subject:To:From:Reply-To:Sender:List-Unsubscribe:List-Unsubscribe-Post;
+	bh=w4ZAWZTNg1euJmLaEWbFNw2s9ni8efmSIaUdOd2VsbQ=; b=DhE1b/yetBHHFRLmxGbLVU/Mmx
+	MX7GYetXCdITIXKkFLNpEULcDTO/Oex9mcphwQa1x4nsvWiFDEtOBy0zCbnTMSXytLBAyO+7HwOmw
+	raQU4eeGEvojbEJ/eFcJMGAtEL4v+NLKr48h7z6UBAxOvpov4upvJttLpsbCvuszTgGK4VfOcYgmg
+	gtT7J7WxdtHg6d5C301/iPSykkcwtOwdzrJGzf4aHJoarQGSlEtjd70U0+Po9uhLBBnet6YCSrvuu
+	fL+uai2Q16PRL0G9Xr5TSV91o44050K2Rd2rBKNrKwWE8U4RWnvS5pGXx65YVMkg/xG2pWyMHgHKJ
+	fGmDZ1kA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asem.it;
+ i=@asem.it; q=dns/txt; s=s1174574; t=1716891389; h=from : subject : to
+ : message-id : date; bh=w4ZAWZTNg1euJmLaEWbFNw2s9ni8efmSIaUdOd2VsbQ=;
+ b=lGWlM9ANQ1P70EPvOLAEJb8ggLcgj6+/uaREnVTvNmlI1B7qrQpDc4wI/1BL2tebVQ8PW
+ gnml0npxu+kqT4xJzL899QGCsExx5S2Q487Tm2FnvpqImi5UHxDvZPbJlk0o0l8zQb4rj0H
+ L3ktStbdG3E1guS9Jdf5raBSx8LYdX5QmR7Hmvfs5GYryhZD+JzIQe4rBbGo058ROqltu0Y
+ qE7I5SRL7NKPSkQsxzP3dKlWvagKg2iK31s4fqdBo5LQlUpm74lM7z6Y77nOcSYHgJymU//
+ kD7qv1dg/3MXU0qpUfQJ0Qyx7f7IAc1mkwLb+PoXu2FjUBEFm4GdkfVGINeA==
+Received: from [10.45.56.87] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <f.suligoi@asem.it>)
+ id 1sBtsQ-Y8PCFe-L6; Tue, 28 May 2024 10:16:18 +0000
+Received: from [10.86.249.198] (helo=asas054.asem.intra)
+ by smtpcorp.com with esmtpa (Exim 4.97-S2G)
+ (envelope-from <f.suligoi@asem.it>) id 1sBtsO-FnQW0hPuHwL-dstN;
+ Tue, 28 May 2024 10:16:16 +0000
+Received: from flavio-x.asem.intra ([172.16.18.47]) by asas054.asem.intra with
+ Microsoft SMTPSVC(10.0.14393.4169); Tue, 28 May 2024 12:16:14 +0200
+From: Flavio Suligoi <f.suligoi@asem.it>
+To: "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Adam Ford <aford173@gmail.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH v4 0/5] arm64: dts: remove tx-sched-sp property in snps,dwmac
+Date: Tue, 28 May 2024 12:15:48 +0200
+Message-Id: <20240528101553.339214-1-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/5] RISC-V: KVM: add support for
- SBI_FWFT_PTE_AD_HW_UPDATING
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>,
- linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org
-Cc: greentime.hu@sifive.com, vincent.chen@sifive.com, alex@ghiti.fr,
- Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-kernel@vger.kernel.org
-References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
- <20240524103307.2684-5-yongxuan.wang@sifive.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20240524103307.2684-5-yongxuan.wang@sifive.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 28 May 2024 10:16:14.0231 (UTC)
+ FILETIME=[1208AA70:01DAB0E8]
+X-Smtpcorp-Track: q4lhSraF7qzx.p2TOe8zgkmwd.xArrvAqGSu2
+Feedback-ID: 1174574m:1174574aXfMg4B:1174574s6j27gZQMC
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
+In the ethernet stmmac device driver:
 
+- drivers/net/ethernet/stmicro/stmmac/
 
-On 24/05/2024 12:33, Yong-Xuan Wang wrote:
-> Add support for SBI_FWFT_PTE_AD_HW_UPDATING to set the PTE A/D bits
-> updating behavior for Guest/VM.
-> 
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> ---
->  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  2 +-
->  arch/riscv/kvm/vcpu_sbi_fwft.c             | 38 +++++++++++++++++++++-
->  2 files changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> index 7b7bcc5c8fee..3614a44e0a4a 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> @@ -11,7 +11,7 @@
->  
->  #include <asm/sbi.h>
->  
-> -#define KVM_SBI_FWFT_FEATURE_COUNT	1
-> +#define KVM_SBI_FWFT_FEATURE_COUNT	2
->  
->  struct kvm_sbi_fwft_config;
->  struct kvm_vcpu;
-> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> index 89ec263c250d..14ef74023340 100644
-> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
-> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> @@ -71,6 +71,36 @@ static int kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
->  	return SBI_SUCCESS;
->  }
->  
-> +static int kvm_sbi_fwft_adue_supported(struct kvm_vcpu *vcpu)
-> +{
-> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
-> +		return SBI_ERR_NOT_SUPPORTED;
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvm_sbi_fwft_set_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
-> +				 unsigned long value)
-> +{
-> +	if (value)
-> +		vcpu->arch.cfg.henvcfg |= ENVCFG_ADUE;
-> +	else
-> +		vcpu->arch.cfg.henvcfg &= ~ENVCFG_ADUE;
-> +
-> +	return SBI_SUCCESS;
-> +}
-> +
-> +static int kvm_sbi_fwft_get_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
-> +				 unsigned long *value)
-> +{
-> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
-> +		return SBI_ERR_NOT_SUPPORTED;
-> +
-> +	*value = !!(vcpu->arch.cfg.henvcfg & ENVCFG_ADUE);
-> +
-> +	return SBI_SUCCESS;
-> +}
+The "Strict priority" for the tx scheduler is by default in Linux driver,
+so the tx-sched-sp property was removed in commit aed6864035b1 ("net:
+stmmac: platform: Delete a redundant condition branch").
 
-Hi Yong-Xuan,
+This patch series remove this property from the following device-tree
+files:
 
-vcpu->arch.cfg.henvcfg seems to be used to update the HENVCFG CSR  only
-during vcpu_load()/vcpu_put(). So if this extension updates it there and
-stays in the execution loop (kvm_arch_vcpu_ioctl_run()) then, it seems
-like the HENVCFG CSR won't be updated immediately but on the next
-vcpu_load(). Is there something I'm missing ?
+- arch/arm64/boot/dts/freescale/imx8mp-beacon-som.dtsi
+- arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+- arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
+- arch/arm64/boot/dts/qcom/sa8540p-ride.dts
+- arch/arm64/boot/dts/qcom/sa8775p-ride.dts
 
-Thanks,
+There is no problem if that property is still used in these DTS,
+since, as seen above, it is a default property of the driver.
 
-Clément Léger
+The property is also removed, in a separate patch, from the corresponding
+dt_bindings file:
+- Documentation/devicetree/bindings/net/snps,dwmac.yaml
 
-> +
->  static struct kvm_sbi_fwft_config *
->  kvm_sbi_fwft_get_config(struct kvm_vcpu *vcpu, enum sbi_fwft_feature_t feature)
->  {
-> @@ -177,7 +207,13 @@ static const struct kvm_sbi_fwft_feature features[] = {
->  		.supported = kvm_sbi_fwft_misaligned_delegation_supported,
->  		.set = kvm_sbi_fwft_set_misaligned_delegation,
->  		.get = kvm_sbi_fwft_get_misaligned_delegation,
-> -	}
-> +	},
-> +	{
-> +		.id = SBI_FWFT_PTE_AD_HW_UPDATING,
-> +		.supported = kvm_sbi_fwft_adue_supported,
-> +		.set = kvm_sbi_fwft_set_adue,
-> +		.get = kvm_sbi_fwft_get_adue,
-> +	},
->  };
->  
->  static_assert(ARRAY_SIZE(features) == KVM_SBI_FWFT_FEATURE_COUNT);
+**************************************************************************
+NOTE about this v4 patch series: resending this v4 version of the patches,
+     I omitted the word "RESEND" in the subject line, since I added a new
+     tag in the patch num. 5/5.
+**************************************************************************
+
+v4 - Resend after some weeks and added the tag "Reviewed-by: Krzysztof
+     Kozlowski <krzysztof.kozlowski@linaro.org>" in patch num. 5/5.
+v3 - Removed the tag "Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>"
+     in patches num. 1/5, 2/5, 3/5 and 5/5 (it was added by mistake).
+     Added history in each of the patches, as well as in the cover-letter.
+v2 - This patch is the 2nd version of a previous patch, where both the DTS
+     and the yaml files were included toghether. Then I split this 1st
+     patch series in two, as suggested by Krzysztof.
+v1 - Original version of the patch where, in addition to these DTS patches,
+     there was also the one related to the correspondent snps,dwmac.yaml
+     dt_binding file.
+
+Flavio Suligoi (5):
+  arm64: dts: freescale: imx8mp-beacon: remove tx-sched-sp property
+  arm64: dts: freescale: imx8mp-evk: remove tx-sched-sp property
+  arm64: dts: freescale: imx8mp-verdin: remove tx-sched-sp property
+  arm64: dts: qcom: sa8540p-ride: remove tx-sched-sp property
+  arm64: dts: qcom: sa8775p-ride: remove tx-sched-sp property
+
+ arch/arm64/boot/dts/freescale/imx8mp-beacon-som.dtsi | 1 -
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts         | 1 -
+ arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi     | 1 -
+ arch/arm64/boot/dts/qcom/sa8540p-ride.dts            | 2 --
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts            | 2 --
+ 5 files changed, 7 deletions(-)
+
+-- 
+2.34.1
+
 
