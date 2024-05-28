@@ -1,90 +1,154 @@
-Return-Path: <linux-kernel+bounces-192119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2BA8D189F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E768D18A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69CFD1C23363
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CD51F22B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8384016B73D;
-	Tue, 28 May 2024 10:31:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CEB16B72D;
+	Tue, 28 May 2024 10:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XSl0VC+Y"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE04D59B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F9F17C7F;
+	Tue, 28 May 2024 10:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892265; cv=none; b=YArnchNSKKK7+chz/O5nEYnieQS2evye34GtdjyE3pw80ihGA/aCsitLVYGkkn+4z89kv7zPIEtj216Qekd1QrMgXCGqH2la039zq1JrMYFHyqKPBf70Y4phV1L6A3/SpxT8rwyF0j7NIUR07w+Q3iOwmIIiqFtAtQ8k5kn0xmc=
+	t=1716892383; cv=none; b=u55uTCFMQJUR0sP12huBdLq+orx6/NXle0ESVc6ioNnQSh9t5sRwHTtPkox1csS+PxP++xgMYlU8CGvRow+VfiLXvKiGFS2cO5A9xNP35w8pKoz4yc42EB2J6n7g4na72MjUWstFOojIVQ+SLDodGirKYK6LDMG5zrTX/Qop+yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892265; c=relaxed/simple;
-	bh=HD72KymgkFuzWQb63KjNA8IH+pct7fnJxoMSm6yaP8E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HmshcRjgGSts1BBh8+4tHQc2Y53HOIFaJEpk997Uso9aAEQUrcy2rDBFiHmB1UhcqQJpvDsn0HM6KimWC3AjQPt73zbW1VF9de56JUt76g5pGPm1Zv10rttEZJb5RqBDstlHAOTmD+WeddtmatzPdTmdl2+bxj3s7d+6vULZTSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3713862bcefso4579795ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716892263; x=1717497063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bntl/gSvDphBAQnEJNXXaSDjJyEhEpRmpwDuqmdZhbo=;
-        b=w2hY8DLSrg+Ib0w8V16m99DhU1MFh/NimPi/JmaY77lURVAaKJZ4FxjyDwhwu49HCD
-         llDBB2x5FnqT4tqUjlFBsqnihmRWrxWsA/aBVxfbeo0VOnYjyoequbbcMICcWNJnPW1I
-         uDE0UIl4JInOvFwZbJIby2yPR9oOhZjkLGQ+I59qbU+8ueN15CcMP5s72tObSQAoylv1
-         utE4oYghbdOBTxZgSWKCFY6J1FQZqEquiiitqu8+SPa12wwRbpNaGxmhx1X/foq+bdDk
-         1ni49OpHMJYNOici6RdgnpdkoMoVrfG76dMCaQOfDbRUcxbKTT+rM3wKJQmXodZ0Y9Ts
-         ZAeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXA/+N7/RztH0jJGAnx8+ate0tgO61tRf2gYzbvhisxfCYREuhJ+fPQX2FpUmQhUMoZiK60YQIMO7USGinMOAmX+xGfIiIdE9XRpNTk
-X-Gm-Message-State: AOJu0YzAWTgDbk/CTOJS8v3fbDO3KJtuqivQhr/hQxE9aq7lImcBhLjr
-	fhEDni7WeSfvxkw1XNiQiWSRwTxnpy9SyIr6ZsqQEW3iMYpLOVx2vPv1mvmpvSSgdhs8RsnfXQ5
-	NQSoaDu6hQQOVekAKnx7gHLLfOV4+VO6LNkyNgKmETr0Q807isA7QuZA=
-X-Google-Smtp-Source: AGHT+IGQjxvfjJ/zU+SqpTStiVGSkCYxdqO+F1rCAe1GuRDOhKDRrjbDNObtWX97aLrYEKB955Y8Guhs2uUVn3Nn2MDkhbLkiBhG
+	s=arc-20240116; t=1716892383; c=relaxed/simple;
+	bh=kJszahZmfi51bW87cVG6RHvXrE/UgDhUeaaij8xzOac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sRi9VKo3rNv1TtIy5GXu4ktwAf1ad0uJq0GgkLkorLAhBzl2aosA3sZydgchBAeBvBI/FzGN5hV9K/X24pg0hif1Dq2cXgINLsghlDW2DfdNNGMfeGYvSpYb1C11fiHVe1EIjFTBJDrGh4yDRMSCThs93HsiXK9aaGp2sxSVSbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XSl0VC+Y; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SAWeAJ016018;
+	Tue, 28 May 2024 05:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716892360;
+	bh=fhM8umhhiFzOsQ7NzwP9rqG6fzIi2j17UUh3XrA9av4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XSl0VC+Yfi+BjJdSXwgKkRbMPnFl8ZZzczn/3EpXy35kecRoYRg9rq/hOlqHaNGMo
+	 mM/F77gLUPG0lC4/TCkbvtH1QrRfLe/HiLUrof7efeosumfH7Xc7CqoRSGoojwEVAU
+	 w8ckzDWUiLp18RSvJlaLKQUqYpe7asoJgCTXXcI4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SAWewA017903
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 28 May 2024 05:32:40 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
+ May 2024 05:32:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 28 May 2024 05:32:40 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SAWVsL025055;
+	Tue, 28 May 2024 05:32:32 -0500
+Message-ID: <86f9ed66-c58e-0b2d-dd2b-4372ff26a3c3@ti.com>
+Date: Tue, 28 May 2024 16:02:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d83:b0:36c:6080:753d with SMTP id
- e9e14a558f8ab-37347c2e5a9mr6260795ab.1.1716892263081; Tue, 28 May 2024
- 03:31:03 -0700 (PDT)
-Date: Tue, 28 May 2024 03:31:03 -0700
-In-Reply-To: <ZlWpDZSqKRJaqLp9@localhost.localdomain>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075796406198121b1@google.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
-From: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org, 
-	osalvador@suse.com, syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v9 06/10] math.h: Add macros for rounding to closest value
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
+        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
+        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
+        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+References: <20240526175655.1093707-1-devarsht@ti.com>
+ <20240526180856.1124470-1-devarsht@ti.com>
+ <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <ZlTt-YWzyRyhmT9n@smile.fi.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Hi Andy,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Thanks for the review.
 
-failed to checkout kernel repo git://github.com/leberus/linux.git/hugetlb-vma_resv-enomem: failed to run ["git" "fetch" "--force" "ce94c574238e17bd72d74b088bd1c16ce6447814" "hugetlb-vma_resv-enomem"]: exit status 128
-fatal: unable to connect to github.com:
-github.com[0: 140.82.112.3]: errno=Connection timed out
+On 28/05/24 02:02, Andy Shevchenko wrote:
+> On Sun, May 26, 2024 at 11:38:56PM +0530, Devarsh Thakkar wrote:
+..
 
+>> +/**
+>> + * round_closest_up - round closest to be multiple of specified value (which is
+>> + *                    power of 2) with preference to rounding up
+>> +
+> 
+> Not that big deal, but missing '*' here. Personally I would not even put
+> a blank line between Summary and Field Descriptions.
+> 
 
+My bad. Yes I would remove the blank line here. This is picked up as warning
+from kernel-doc too.
 
+>> + * @x: the value to round
+>> + * @y: multiple to round closest to (must be a power of 2)
+>> + *
+>> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+>> + * The value can be either rounded up or rounded down depending upon rounded
+>> + * value's closeness to the specified value. If there are two closest possible
+>> + * values, i.e. the difference between the specified value and it's rounded up
+>> + * and rounded down values is same then preference is given to rounded up
+>> + * value.
+>> + *
+>> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+>> + * roundclosest().
+>> + *
+>> + * Examples :
+> 
+> What is this suppose to be rendered to?
+> 
 
-Tested on:
+The file math.h is not rendered as part of kernel-doc right now. I can put
+this under Documentation/core-api/kernel-api.rst perhaps I can create a new
+section as below:
 
-commit:         [unknown 
-git tree:       git://github.com/leberus/linux.git hugetlb-vma_resv-enomem
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
-compiler:       
+Rounding, absolute diff and 32bit division macros
+-------------------------------------------------
 
-Note: no patches were applied.
+under the section:
+CRC and Math Functions in Linux
+
+===============================
+
+is that okay ?
+
+>> + * round_closest_up(17, 4) = 16
+>> + * round_closest_up(15, 4) = 16
+>> + * round_closest_up(14, 4) = 16
+> 
+> Btw, is kernel-doc validator happy about all kernel docs you added?
+> 
+
+Yes, except the aforementioned blank line.
+
+Regards
+Devarsh
 
