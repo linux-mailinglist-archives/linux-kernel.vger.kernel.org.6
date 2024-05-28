@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-192943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2A18D24A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF618D24AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623851C26BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6224128BD25
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C9A172786;
-	Tue, 28 May 2024 19:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6CF17554C;
+	Tue, 28 May 2024 19:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZayzUQF/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jR4cC4OT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0875024E;
-	Tue, 28 May 2024 19:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E4174EE4
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716924673; cv=none; b=t7qFkjh0kGr3YrrPgi0/obv43sA3FRBlKv3O+9g/rQBrCydVY0RJhHmI2pcxu7evrdeZ825hN3q1gDZMDoukfwdIVl0h79jMgyy2gausjz81bPoIe93OZfxvUcDY8TggRcAWzuJZoO8/16ZVbGtV0IUcWDFNz56Z1/tCKxyH6qk=
+	t=1716924677; cv=none; b=ANGyucaWaBotgLrpWhH4LYAVoHSQFXdLkd9TCToU5HjQymxYAPKdQ9Njbvb2/ebDp2wiYy1mh2mtpsmAdACqS9wx1N2I5gYExPUCI17x6Sjjq48eUd2gc/uh2b1O/c2ZtP6UNaTDv0Gznn3zWrq323HvCg6zNA3PNctd1oQvWgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716924673; c=relaxed/simple;
-	bh=ZGRsY2ZQZErkGb3Ve4FDnyIZLkQj3AbizzUfJX7D1JU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gig5GqedvCzONmHV6QqQp/UPHfOGDRgBL/ehq9sTlHCBY1aalVeuLdgC4lQoUcSVnTJCBkAmoDw8ruwwHK2l0evsO24V+Nw6jWX/J88QF+CK7x1lZat38M91mvSlGl3zyjE3j6auQAkhfY4kn37qNd5utdd04Xwd4+cwT6GyjkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZayzUQF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A7C3277B;
-	Tue, 28 May 2024 19:31:11 +0000 (UTC)
+	s=arc-20240116; t=1716924677; c=relaxed/simple;
+	bh=Q/SKZhYssyNzbFU7Ep/1zhoqA/l8WmeLyFzvgcCE9aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GExk5ik6M6sefor0d76NSdFT5y/8CzACrD1NMgGi/R8wl58iVGfc9MlMGxWYEWixcjdvcxubEd+ajYn0htIai1rW6izZaap1L8XZb+Fo6dLnRwrj81DpBejH/Yz/9a2dykVDBZJmNKpmuzrfXqyWzW7vPbPr302qf36wxrRi3ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jR4cC4OT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A66C32781;
+	Tue, 28 May 2024 19:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716924673;
-	bh=ZGRsY2ZQZErkGb3Ve4FDnyIZLkQj3AbizzUfJX7D1JU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZayzUQF/CRwyHEDjHYOegUqd6PFEA3IZd5BZH3OyeQhARI7ku7s8PLJbxIz2x/DFv
-	 lQu9iInAWM7uPnIH+KM5mWrQYL37cocZgHQJ5WZDp9fyjWE6y/ca/t/JYB733zosP8
-	 mT8ILP083xKJBmeQtllIgtwIiFaCHUAc7DvK2uptb0HfYrG7N3SJy+kttBGHYRLfYi
-	 44iNjWoOwcAtxyFKW+iZa3LW8JGIqLxOAFE0p9grtDvqdjj2eIhR1fAvDnwHEepZOy
-	 P057DWgxD0WH4PjcKHTf11k/e2jTSFCO8ZRYFazwFlgBkl3lQw0s51mTYc+DkrRs2t
-	 YxQgeWrlEYBpQ==
-Date: Tue, 28 May 2024 12:31:10 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/7] riscv: Implement cmpxchg8/16() using Zabha
-Message-ID: <20240528193110.GA2196855@thelio-3990X>
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-3-alexghiti@rivosinc.com>
+	s=k20201202; t=1716924677;
+	bh=Q/SKZhYssyNzbFU7Ep/1zhoqA/l8WmeLyFzvgcCE9aI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jR4cC4OTiSJn4VbM0JvMOrSivGMU8ByssV+tlAXbfojb1eQNsgULTrsOitmTHGEwY
+	 DR8naK+4u+v+sPq+Jt0x9VomguuLzEF7z4MLYvu+aZG0a/eJt7ETtMQGFCmA4UyiLh
+	 dX5DfkfCZsSxxQKXG602iQdmoOoxPdS/dh8joNIGdRkrkYrjT70GztLS6rM/I3pb5X
+	 NE3wpChqR3+tL9fHSvR1qKepWSTIrBKxoSt5im2H0sMsD6/yASv31TzhKbSLWbN+a0
+	 Pxinnoyfq3Sr7SJfMGvfmjxY+lQXHtvbXqZV+44AdwXrSrt/VBSqbi5NXzbhAokrrr
+	 fYXmZo6pSd8FQ==
+Date: Tue, 28 May 2024 16:31:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michael Roth <michael.roth@amd.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 1/1 fyi] tools headers UAPI: Sync kvm headers with the kernel
+ sources
+Message-ID: <ZlYxAdHjyAkvGtMW@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,227 +61,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528151052.313031-3-alexghiti@rivosinc.com>
 
-Hi Alexandre,
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-On Tue, May 28, 2024 at 05:10:47PM +0200, Alexandre Ghiti wrote:
-> This adds runtime support for Zabha in cmpxchg8/16 operations.
-> 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/Kconfig               | 16 ++++++++++++++++
->  arch/riscv/Makefile              | 10 ++++++++++
->  arch/riscv/include/asm/cmpxchg.h | 26 ++++++++++++++++++++++++--
->  3 files changed, 50 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index b443def70139..05597719bb1c 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -579,6 +579,22 @@ config RISCV_ISA_V_PREEMPTIVE
->  	  preemption. Enabling this config will result in higher memory
->  	  consumption due to the allocation of per-task's kernel Vector context.
->  
-> +config TOOLCHAIN_HAS_ZABHA
-> +	bool
-> +	default y
-> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zabha)
-> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zabha)
+Full explanation:
 
-This test does not take into account the need for
-'-menable-experimental-extensions' and '1p0' in the '-march=' value with
-clang 19, so it can never be enabled even if it is available.
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-I am not really sure how to succinctly account for this though, other
-than duplicating and modifying the cc-option checks with a dependency on
-either CC_IS_GCC or CC_IS_CLANG. Another option is taking the same
-approach as the _SUPPORTS_DYNAMIC_FTRACE symbols and introduce
-CLANG_HAS_ZABHA and GCC_HAS_ZABHA? That might not make it too ugly.
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
-I think the ZACAS patch has a similar issue, it just isn't noticeable
-with clang 19 but it should be with clang 17 and 18.
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
 
-> +	depends on AS_HAS_OPTION_ARCH
-> +
-> +config RISCV_ISA_ZABHA
-> +	bool "Zabha extension support for atomic byte/half-word operations"
-> +	depends on TOOLCHAIN_HAS_ZABHA
-> +	default y
-> +	help
-> +	  Adds support to use atomic byte/half-word operations in the kernel.
-> +
-> +	  If you don't know what to do here, say Y.
-> +
->  config TOOLCHAIN_HAS_ZACAS
->  	bool
->  	default y
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index d5b60b87998c..f58ac921dece 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -89,6 +89,16 @@ else
->  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) := $(riscv-march-y)_zacas
->  endif
->  
-> +# Check if the toolchain supports Zabha
-> +ifdef CONFIG_AS_IS_LLVM
-> +# Support for experimental Zabha was merged in LLVM 19.
-> +KBUILD_CFLAGS += -menable-experimental-extensions
-> +KBUILD_AFLAGS += -menable-experimental-extensions
-> +riscv-march-y := $(riscv-march-y)_zabha1p0
+E.g.:
 
-This block should have some dependency on CONFIG_TOOLCHAIN_HAS_ZABHA as
-well right? Otherwise, the build breaks with LLVM toolchains that do not
-support zabha, like LLVM 18.1.x:
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
 
-  clang: error: invalid arch name 'rv64imac_zihintpause_zacas1p0_zabha1p0', unsupported version number 1.0 for extension 'zabha'
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
 
-I think the zacas patch has the same bug.
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
 
-I think that it would be good to consolidate the adding of
-'-menable-experimental-extensions' to the compiler and assembler flags
-to perhaps having a hidden symbol like CONFIG_EXPERIMENTAL_EXTENSIONS
-that is selected by any extension that is experimental for the
-particular toolchain version.
+To pick the changes in:
 
-config EXPERIMENTAL_EXTENSIONS
-    bool
+  4af663c2f64a8d25 ("KVM: SEV: Allow per-guest configuration of GHCB protocol version")
+  4f5defae708992dd ("KVM: SEV: introduce KVM_SEV_INIT2 operation")
+  26c44aa9e076ed83 ("KVM: SEV: define VM types for SEV and SEV-ES")
+  ac5c48027bacb1b5 ("KVM: SEV: publish supported VMSA features")
+  651d61bc8b7d8bb6 ("KVM: PPC: Fix documentation for ppc mmu caps")
 
-config TOOLCHAIN_HAS_ZABHA
-    def_bool y
-    select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG
-    ...
+That don't change functionality in tools/perf, as no new ioctl is added
+for the 'perf trace' scripts to harvest.
 
-config TOOLCHAIN_HAS_ZACAS
-    def_bool_y
-    # ZACAS was experimental until Clang 19: https://github.com/llvm/llvm-project/commit/95aab69c109adf29e183090c25dc95c773215746
-    select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG && CLANG_VERSION < 190000
-    ...
+This addresses these perf build warnings:
 
-Then in the Makefile:
+  Warning: Kernel ABI header differences:
+    diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
+    diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
 
-ifdef CONFIG_EXPERIMENTAL_EXTENSIONS
-KBUILD_AFLAGS += -menable-experimental-extensions
-KBUILD_CFLAGS += -menable-experimental-extensions
-endif
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michael Roth <michael.roth@amd.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/uapi/asm/kvm.h | 22 ++++++++++++++++++++--
+ tools/include/uapi/linux/kvm.h        |  4 ++--
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-> +else
-> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) := $(riscv-march-y)_zabha
-> +endif
-> +
->  # Remove F,D,V from isa string for all. Keep extensions between "fd" and "v" by
->  # matching non-v and non-multi-letter extensions out with the filter ([^v_]*)
->  KBUILD_CFLAGS += -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index 1c50b4821ac8..65de9771078e 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -103,8 +103,14 @@
->   * indicated by comparing RETURN with OLD.
->   */
->  
-> -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
-> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
->  ({									\
-> +	__label__ zabha, end;						\
-> +									\
-> +	asm goto(ALTERNATIVE("nop", "j %[zabha]", 0,			\
-> +			     RISCV_ISA_EXT_ZABHA, 1)			\
-> +			: : : : zabha);					\
-> +									\
->  	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
->  	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
->  	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
-> @@ -131,6 +137,17 @@
->  		: "memory");						\
->  									\
->  	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
-> +	goto end;							\
-> +									\
-> +zabha:									\
-> +	__asm__ __volatile__ (						\
-> +		prepend							\
-> +		"	amocas" cas_sfx " %0, %z2, %1\n"		\
-
-This should probably have some dependency on CONFIG_RISCV_ISA_ZABHA? I get the
-following with GCC 13.2.0:
-
-  include/linux/atomic/atomic-arch-fallback.h: Assembler messages:
-  include/linux/atomic/atomic-arch-fallback.h:2108: Error: unrecognized opcode `amocas.w a4,a3,0(s1)'
-
-> +		append							\
-> +		: "+&r" (r), "+A" (*(p))				\
-> +		: "rJ" (n)						\
-> +		: "memory");						\
-> +end:									\
-
-I get a lot of warnings from this statement and the one added by the
-previous patch for zacas, which is a C23 extension:
-
-  include/linux/atomic/atomic-arch-fallback.h:4234:9: warning: label at end of compound statement is a C23 extension [-Wc23-extensions]
-  include/linux/atomic/atomic-arch-fallback.h:89:29: note: expanded from macro 'raw_cmpxchg_relaxed'
-     89 | #define raw_cmpxchg_relaxed arch_cmpxchg_relaxed
-        |                             ^
-  arch/riscv/include/asm/cmpxchg.h:219:2: note: expanded from macro 'arch_cmpxchg_relaxed'
-    219 |         _arch_cmpxchg((ptr), (o), (n), "", "", "")
-        |         ^
-  arch/riscv/include/asm/cmpxchg.h:200:3: note: expanded from macro '_arch_cmpxchg'
-    200 |                 __arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,              \
-        |                 ^
-  arch/riscv/include/asm/cmpxchg.h:150:14: note: expanded from macro '__arch_cmpxchg_masked'
-    150 | end:                                                                    \
-        |                                                                         ^
-
-This resolves it:
-
-diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-index ba3ffc2fcdd0..57aa4a554278 100644
---- a/arch/riscv/include/asm/cmpxchg.h
-+++ b/arch/riscv/include/asm/cmpxchg.h
-@@ -147,7 +147,7 @@ zabha:									\
- 		: "+&r" (r), "+A" (*(p))				\
- 		: "rJ" (n)						\
- 		: "memory");						\
--end:									\
-+end:;									\
- })
+diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
+index ef11aa4cab42536c..9fae1b73b529caf5 100644
+--- a/tools/arch/x86/include/uapi/asm/kvm.h
++++ b/tools/arch/x86/include/uapi/asm/kvm.h
+@@ -457,8 +457,13 @@ struct kvm_sync_regs {
  
- #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
-@@ -180,7 +180,7 @@ zacas:									\
- 		: "+&r" (r), "+A" (*(p))				\
- 		: "rJ" (n)						\
- 		: "memory");						\
--end:									\
-+end:;									\
- })
+ #define KVM_STATE_VMX_PREEMPTION_TIMER_DEADLINE	0x00000001
  
- #define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
+-/* attributes for system fd (group 0) */
+-#define KVM_X86_XCOMP_GUEST_SUPP	0
++/* vendor-independent attributes for system fd (group 0) */
++#define KVM_X86_GRP_SYSTEM		0
++#  define KVM_X86_XCOMP_GUEST_SUPP	0
++
++/* vendor-specific groups and attributes for system fd */
++#define KVM_X86_GRP_SEV			1
++#  define KVM_X86_SEV_VMSA_FEATURES	0
+ 
+ struct kvm_vmx_nested_state_data {
+ 	__u8 vmcs12[KVM_STATE_NESTED_VMX_VMCS_SIZE];
+@@ -689,6 +694,9 @@ enum sev_cmd_id {
+ 	/* Guest Migration Extension */
+ 	KVM_SEV_SEND_CANCEL,
+ 
++	/* Second time is the charm; improved versions of the above ioctls.  */
++	KVM_SEV_INIT2,
++
+ 	KVM_SEV_NR_MAX,
+ };
+ 
+@@ -700,6 +708,14 @@ struct kvm_sev_cmd {
+ 	__u32 sev_fd;
+ };
+ 
++struct kvm_sev_init {
++	__u64 vmsa_features;
++	__u32 flags;
++	__u16 ghcb_version;
++	__u16 pad1;
++	__u32 pad2[8];
++};
++
+ struct kvm_sev_launch_start {
+ 	__u32 handle;
+ 	__u32 policy;
+@@ -856,5 +872,7 @@ struct kvm_hyperv_eventfd {
+ 
+ #define KVM_X86_DEFAULT_VM	0
+ #define KVM_X86_SW_PROTECTED_VM	1
++#define KVM_X86_SEV_VM		2
++#define KVM_X86_SEV_ES_VM	3
+ 
+ #endif /* _ASM_X86_KVM_H */
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index ea32b101b9999d20..d03842abae5784cf 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -1221,9 +1221,9 @@ struct kvm_vfio_spapr_tce {
+ /* Available with KVM_CAP_SPAPR_RESIZE_HPT */
+ #define KVM_PPC_RESIZE_HPT_PREPARE _IOR(KVMIO, 0xad, struct kvm_ppc_resize_hpt)
+ #define KVM_PPC_RESIZE_HPT_COMMIT  _IOR(KVMIO, 0xae, struct kvm_ppc_resize_hpt)
+-/* Available with KVM_CAP_PPC_RADIX_MMU or KVM_CAP_PPC_MMU_HASH_V3 */
++/* Available with KVM_CAP_PPC_MMU_RADIX or KVM_CAP_PPC_MMU_HASH_V3 */
+ #define KVM_PPC_CONFIGURE_V3_MMU  _IOW(KVMIO,  0xaf, struct kvm_ppc_mmuv3_cfg)
+-/* Available with KVM_CAP_PPC_RADIX_MMU */
++/* Available with KVM_CAP_PPC_MMU_RADIX */
+ #define KVM_PPC_GET_RMMU_INFO	  _IOW(KVMIO,  0xb0, struct kvm_ppc_rmmu_info)
+ /* Available with KVM_CAP_PPC_GET_CPU_CHAR */
+ #define KVM_PPC_GET_CPU_CHAR	  _IOR(KVMIO,  0xb1, struct kvm_ppc_cpu_char)
+-- 
+2.44.0
 
->  })
->  
->  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
-> @@ -175,8 +192,13 @@ end:									\
->  									\
->  	switch (sizeof(*__ptr)) {					\
->  	case 1:								\
-> +		__arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,		\
-> +					prepend, append,		\
-> +					__ret, __ptr, __old, __new);    \
-> +		break;							\
->  	case 2:								\
-> -		__arch_cmpxchg_masked(sc_sfx, prepend, append,		\
-> +		__arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,		\
-> +					prepend, append,		\
->  					__ret, __ptr, __old, __new);	\
->  		break;							\
->  	case 4:								\
-> -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
