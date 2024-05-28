@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-193171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FAC8D27ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA588D27EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1D5B22553
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:22:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3491C209F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820E914533F;
-	Tue, 28 May 2024 22:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2F145A0C;
+	Tue, 28 May 2024 22:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H18qe2s+"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7en//bj"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA28A143754
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0264914388F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934829; cv=none; b=kZgHZCjScjXQACNJn93LWBgTi/3RgSiQY9LR8Mxqv99h4K3fezOQIIHoU7WgaREwxVd33ztR5EN0axyLD3rQM/l5EboWjlOGM5tPDs503KcUxnk5DXa0pJ7viShpRDpQ/QMWOqn3ibsUkzWJ0JKc6eCNpAuUmXgG3ZDVEuxH4VM=
+	t=1716934830; cv=none; b=eeIQzYzbBeGVLQ2gOW2dD4D7TJTRlCahiofmPGq+oD2f7L4640aWpYBKyQy4QYxZsuKHXzjc7OmyIzZPzTPEPADa1L4wFrCzlUtiI8yqm0ivFaE3hKgUqMfuzuQNY65ihW1tmK+tMyXdxThc+Tr58LO6fs8tA2j0aUs+3O8t108=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934829; c=relaxed/simple;
-	bh=ae2net2an2bG2zA//O2uZIIe0Gsj90vooANwSwQeDp0=;
+	s=arc-20240116; t=1716934830; c=relaxed/simple;
+	bh=5GfAF4d64QU3XOAsHg5jauTIBzHoAkFgwTZurK76Vu8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qDi0n18UOOQKwpMqXKBE5vISY+hPLL21x0sXAgRawiMRfwyHeEfAaPnBScfjOCXrbUotHR43UHryQmyA6S1AmNAkE1qGjtHi52aTua8MsEwJwGjKvMMogz1sVG2/s5sz089jpoXhtgCjGRkkzNE8y8hBZ35PRNpyeNzWXMPQCgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H18qe2s+; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=d3jdzBD+B53ad2uFZLxtVd0p5YbpSHbCOTDUY3L6s9uB2mA7UAfKlKlk2cxEueblVyao72TTh9ycN38bsHwTUNv61qUXAHurSsgXvtftVP2f99+cFk7cdQRfEhsx33nzw0okUjIN6/q06YPAcPLA0jhlBghZY/j4uuFNpoZvc7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7en//bj; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716934828; x=1748470828;
+  t=1716934829; x=1748470829;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ae2net2an2bG2zA//O2uZIIe0Gsj90vooANwSwQeDp0=;
-  b=H18qe2s+HPeMwv+pu72wa/kVE0f8qaoTG/uiH2p3ub26RW2r6ptvbZXz
-   9SfJYIfipC8Uc82sE8pCw9GtmYWml15MmAzxi159utnBV4aS0QjFxEkLg
-   PK/NFbE3Z6y4fAMKPzHdM5PM6GkR4ovhG8gU/p7jxymwPofm4aHG5sO87
-   Ww/RjSHimQ987l7S56Q8rBt0hTd27X5ShaekQoYXHRGxNMRV5QSdLF0Oh
-   mtnKCKm4qXg2y9vPrm5rI6O4xd8osYcuO23w/IfeCBIJ7RcYqZ8pAZ1ak
-   /H+Tbx3b5sq4ilp3ox+DwL+HwQv+lR1WYhgVaDIpXJuTpPsL2qjbnjiIj
-   w==;
-X-CSE-ConnectionGUID: 5tn2roWBTmWGmtMGa7RMUw==
-X-CSE-MsgGUID: 6IaNmqx3Tp+svNdFesGIJA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="30812254"
+  bh=5GfAF4d64QU3XOAsHg5jauTIBzHoAkFgwTZurK76Vu8=;
+  b=U7en//bjhoRqeqhePPfQMCNXrRzIXDqmY6uBKov26YsjiBfDAyeOHNgZ
+   ncubh0bEXzjM15CJGApRnh1pamB9qOJmInhpbQ3b2QCXnwNZq2ralOCnf
+   rP8J5ihjiTQmbwuoQG0yBYDJfPdbh53tvvKqkpydvOKEBnV3AAXt8wmFI
+   xc3x7Nr8yeedWeIrBcK4YKWF1zy8UWV6jqT6d015WafL6Rym7EtgKb3yN
+   cVlKMlgIhzbyczrK3c4KJcmm1DB4AM0keRX4PtLNKEU18V36euJx8151M
+   b3lJTtjPiXL9obmObjmbqD0sgsoKh2v4XKPEc5D2FTkeJEAGfD1JVOHtg
+   g==;
+X-CSE-ConnectionGUID: LiC+DGyiQh+cgvrw0YFYkg==
+X-CSE-MsgGUID: oChf0C6TRouw761fOuhL8g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="30812261"
 X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="30812254"
+   d="scan'208";a="30812261"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 15:20:20 -0700
-X-CSE-ConnectionGUID: QD3PTiOTSc2KlcgwAcUijA==
-X-CSE-MsgGUID: 7T08vKT8SCKRDTa9rx+H2Q==
+X-CSE-ConnectionGUID: Gdv81BkWQd+PmSNCI+Vv2g==
+X-CSE-MsgGUID: LKu/UuMkQSaPr3K9+a86Wg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="40090773"
+   d="scan'208";a="40090780"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 15:20:19 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v19 17/20] x86/resctrl: Update CPU sanity checks when reading RMID counters
-Date: Tue, 28 May 2024 15:20:02 -0700
-Message-ID: <20240528222006.58283-18-tony.luck@intel.com>
+Subject: [PATCH v19 18/20] x86/resctrl: Enable RMID shared RMID mode on Sub-NUMA Cluster (SNC) systems
+Date: Tue, 28 May 2024 15:20:03 -0700
+Message-ID: <20240528222006.58283-19-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240528222006.58283-1-tony.luck@intel.com>
 References: <20240528222006.58283-1-tony.luck@intel.com>
@@ -84,50 +84,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When reading from a single domain the existing check that current CPU is
-in the domain is accurate.
+There is an MSR which configures how RMIDs are distributed across SNC
+nodes. When SNC is enabled bit 0 of this MSR must be cleared.
 
-But when summing across multiple domains that share an L3 cache instance
-it is sufficient to run on any CPU in the shared_map for that cache.
-
-Split the check into the two separate cases.
+Add an architecture specific hook into domain_add_cpu_mon() to call
+a function to set the MSR.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/monitor.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/msr-index.h       |  1 +
+ arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
+ arch/x86/kernel/cpu/resctrl/monitor.c  | 26 ++++++++++++++++++++++++++
+ 4 files changed, 31 insertions(+)
 
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index e022e6eb766c..3cb8dd6311c3 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -1164,6 +1164,7 @@
+ #define MSR_IA32_QM_CTR			0xc8e
+ #define MSR_IA32_PQR_ASSOC		0xc8f
+ #define MSR_IA32_L3_CBM_BASE		0xc90
++#define MSR_RMID_SNC_CONFIG		0xca0
+ #define MSR_IA32_L2_CBM_BASE		0xd10
+ #define MSR_IA32_MBA_THRTL_BASE		0xd50
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 7957fc38b71c..08520321f5d0 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -532,6 +532,8 @@ static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
+ 
+ int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
+ 
++void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d);
++
+ /*
+  * Get the cacheinfo structure of the cache associated with @cpu at level @level.
+  * cpuhp lock must be held.
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 95ef8fe3cb50..1930fce9dfe9 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -615,6 +615,8 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+ 	}
+ 	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
+ 
++	arch_mon_domain_online(r, d);
++
+ 	if (arch_domain_mbm_alloc(r->num_rmid, hw_dom)) {
+ 		mon_domain_free(hw_dom);
+ 		return;
 diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index c9dd6ec68fcd..e7a8e96821e5 100644
+index e7a8e96821e5..c7559735e33a 100644
 --- a/arch/x86/kernel/cpu/resctrl/monitor.c
 +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -308,9 +308,6 @@ static int resctrl_arch_rmid_read_one(struct rdt_resource *r, struct rdt_mon_dom
+@@ -1069,6 +1069,32 @@ static void l3_mon_evt_init(struct rdt_resource *r)
+ 		list_add_tail(&mbm_local_event.list, &r->evt_list);
+ }
  
- 	resctrl_arch_rmid_read_context_check();
- 
--	if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
--		return -EINVAL;
--
- 	ret = __rmid_read(cpu, rmid, eventid, &msr_val);
- 	if (ret)
- 		return ret;
-@@ -338,8 +335,15 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
- 	int ret;
- 
- 	*val = 0;
--	if (!sum)
-+	if (!sum) {
-+		if (!cpumask_test_cpu(cpu, &d->hdr.cpu_mask))
-+			return -EINVAL;
++/*
++ * The power-on reset value of MSR_RMID_SNC_CONFIG is 0x1
++ * which indicates that RMIDs are configured in legacy mode.
++ * This mode is incompatible with Linux resctrl semantics
++ * as RMIDs are partitioned between SNC nodes, which requires
++ * a user to know which RMID is allocated to a task.
++ * Clearing bit 0 reconfigures the RMID counters for use
++ * in Sub-NUMA Cluster mode. This mode is better for Linux.
++ * The RMID space is divided between all SNC nodes with the
++ * RMIDs renumbered to start from zero in each node when
++ * counting operations from tasks. Code to read the counters
++ * must adjust RMID counter numbers based on SNC node. See
++ * logical_rmid_to_physical_rmid() for code that does this.
++ */
++void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d)
++{
++	u64 val;
 +
- 		return resctrl_arch_rmid_read_one(r, d, cpu, rmid, eventid, val);
-+	}
++	if (snc_nodes_per_l3_cache == 1)
++		return;
 +
-+	if (!cpumask_test_cpu(cpu, &ci->shared_cpu_map))
-+		return -EINVAL;
- 
- 	list_for_each_entry(d, &r->mon_domains, hdr.list) {
- 		if (d->ci->id != ci->id)
++	rdmsrl(MSR_RMID_SNC_CONFIG, val);
++	val &= ~BIT_ULL(0);
++	wrmsrl(MSR_RMID_SNC_CONFIG, val);
++}
++
+ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ {
+ 	unsigned int mbm_offset = boot_cpu_data.x86_cache_mbm_width_offset;
 -- 
 2.45.0
 
