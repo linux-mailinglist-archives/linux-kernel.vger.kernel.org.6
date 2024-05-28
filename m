@@ -1,172 +1,154 @@
-Return-Path: <linux-kernel+bounces-192598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818208D1F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:04:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0891E8D1F8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E25AEB22C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BA82B22E5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A749170851;
-	Tue, 28 May 2024 15:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F8017165C;
+	Tue, 28 May 2024 15:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="SrjPBIbO"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="opoXfCNq"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404EF16FF30;
-	Tue, 28 May 2024 15:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773717083F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716908513; cv=none; b=FUaOhkPKPLNwWfGsaE/3RG3FP6DWPpKoQCZqu3IHXJ6BWHhUXnYVyVOIeeLRje7qu77U+TiHbl5zNsuiE/AEd7V/dYW1X6ki3jeI66ohuMc2kXTibbXq+aXVlUGK/ybA5jfVju2FptZJLGbsgV1dO5T8pn1Ed48kBS8y0/lQPLw=
+	t=1716908538; cv=none; b=tMgRDWzxkRsdQbGrJvJT3P5Sq8240lQI3fMNL+zVvPmiHKNIWEFAefj/eEfVcCje6eDq007EmXjcWpo6hqbQvHH5ACc/+QwTqADhfFhB6/vc2mSePyyaFd3AYcuF8Bpnyx6ok/GwKalssepfJGjEmkz4imcki/KvahwsL3AY7A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716908513; c=relaxed/simple;
-	bh=+c4A3JerB0xupH1a7XXNQREUxEJtN/+ZzWnCqhsCUPc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=FrUI4Ord8sCQqb+Jb3buoehIaJqfgYsQ8/gf5oYDD3hwTfELz40tDFCavfCBwriNx2Ej/2f4XO9/pVK/rT4zFrF81498NL0X9PhA9DZ1kXmux5XDRu32KJsER+0LjH/JxWr9ur8fqSvavYkq7jBEhexhHSjPBAMV+yxbT9Duc9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=SrjPBIbO; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1716908538; c=relaxed/simple;
+	bh=5ZHpZGACX2Frn3dDPf3fXyWybxr2L7JiyfRf2W2/hW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vj82fLF2FirYHwl02ErILOtsbdoVgyU8um7mjZw8DjNEHu4nuUh8+h8Z8ac9zGFqkpP8IMhztoh4BxxkQJfVLCppzXDFW4BKcCpMIN3n18aODLuOeHQD9vDClTXXHHjsnMaPOJppjknOcYJgdIQJSyxSfLAhXRpK/dnkMAeZjWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=opoXfCNq; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: glider@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716908532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dKnPZ9OJHpypgolMUhUxX3o8dY3J/6CO95tM7cGqfv8=;
+	b=opoXfCNqL0eaKrPq9sbb09xqDBlnVf51DlM6AdAAiU/XeLeu4KiMfvs8PGhdiophKkgpNx
+	4GMqFrplyQMupkP+yleNmZRmTkTXWHz5B0AWJMb6bufOkv6bZSG3IUOYbdoG9kCJZwp3/z
+	J71p/VMOEAsFEaZQ3BGiLIx0kDif3Xc=
+X-Envelope-To: mathieu.desnoyers@efficios.com
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: keescook@chromium.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: elver@google.com
+X-Envelope-To: dvyukov@google.com
+X-Envelope-To: kasan-dev@googlegroups.com
+X-Envelope-To: nathan@kernel.org
+X-Envelope-To: ndesaulniers@google.com
+X-Envelope-To: morbo@google.com
+X-Envelope-To: justinstitt@google.com
+X-Envelope-To: llvm@lists.linux.dev
+Date: Tue, 28 May 2024 11:02:05 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Alexander Potapenko <glider@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org, Marco Elver <elver@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev
+Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
+Message-ID: <63zx2cnrf5u2slmabde2wptxvq6a3opvrj2zrkcolw3gdkjdpf@bttdonbctura>
+References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
+ <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+ <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
+ <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
+ <jqj6do7lodrrvpjmk6vlhasdigs23jkyvznniudhebcizstsn7@6cetkluh4ehl>
+ <CAG_fn=Vp+WoxWw_aA9vr9yf_4qRvu1zqfLDWafR8J41Zd9tX5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1716908509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pTliwcQUwlXfpyzNkH7+3TEPpHv8Li6OUQHn1YDk4Fc=;
-	b=SrjPBIbOw4eZdlN/lXyx4lnXvyGApnt42U//NCwDoha9Dj2K/3HO+djVQnT1dkkoouYQme
-	6ObDD7JR1vSs5lLmyM2GIoe4rZZQTSZA4XyTkCwlPcuEXTC0HsJQK7W0DYmIbGGipU+080
-	/33zX+GipGSCAnw3U6Rm0+6QDwVXyd+pUXrjYLXEpp6Xqa+bi/5NDwLoOTOAPP8xXGfpHW
-	RK8oX4E9Ei8SvzhHQ43fF0Y9fkeezFpU9soRoljKia3sNBtBYn47rlz3E6LDuwbEa9Xo13
-	XOgiq7xnQzwsyTMf8CyBLfUIbSqLL1IVyyjy6hdnL4W9pABMgOLBST3YzbEO7w==
-Date: Tue, 28 May 2024 17:01:48 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Alexey Charkov <alchark@gmail.com>, Quentin Schulz
- <quentin.schulz@cherry.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Viresh
- Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, Diederik de
- Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] RK3588 and Rock 5B dts additions: thermal, OPP and
- fan
-In-Reply-To: <5122636.irdbgypaU6@phil>
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <CABjd4YyuDsWGbSfNyqcW3s=59p8adVf5Js79PYyKFqfyM71dxA@mail.gmail.com>
- <ea2311d7a41162a847d37ce05d0fc441@manjaro.org> <5122636.irdbgypaU6@phil>
-Message-ID: <8727e1c29bd6f562a7fc3de0ddac62cf@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+In-Reply-To: <CAG_fn=Vp+WoxWw_aA9vr9yf_4qRvu1zqfLDWafR8J41Zd9tX5g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-05-28 16:34, Heiko Stuebner wrote:
-> Am Dienstag, 28. Mai 2024, 16:05:04 CEST schrieb Dragan Simic:
->> On 2024-05-28 11:49, Alexey Charkov wrote:
->> > On Mon, May 6, 2024 at 1:37 PM Alexey Charkov <alchark@gmail.com>
->> > wrote:
->> >>
->> >> This enables thermal monitoring and CPU DVFS on RK3588(s), as well as
->> >> active cooling on Radxa Rock 5B via the provided PWM fan.
->> >>
->> >> Some RK3588 boards use separate regulators to supply CPUs and their
->> >> respective memory interfaces, so this is handled by coupling those
->> >> regulators in affected boards' device trees to ensure that their
->> >> voltage is adjusted in step.
->> >>
->> >> This also enables the built-in thermal sensor (TSADC) for all boards
->> >> that don't currently have it enabled, using the default CRU based
->> >> emergency thermal reset. This default configuration only uses on-SoC
->> >> devices and doesn't rely on any external wiring, thus it should work
->> >> for all devices (tested only on Rock 5B though).
->> >>
->> >> The boards that have TSADC_SHUT signal wired to the PMIC reset line
->> >> can choose to override the default reset logic in favour of GPIO
->> >> driven (PMIC assisted) reset, but in my testing it didn't work on
->> >> Radxa Rock 5B - maybe I'm reading the schematic wrong and it doesn't
->> >> support PMIC assisted reset after all.
->> >>
->> >> Fan control on Rock 5B has been split into two intervals: let it spin
->> >> at the minimum cooling state between 55C and 65C, and then accelerate
->> >> if the system crosses the 65C mark - thanks to Dragan for suggesting.
->> >> This lets some cooling setups with beefier heatsinks and/or larger
->> >> fan fins to stay in the quietest non-zero fan state while still
->> >> gaining potential benefits from the airflow it generates, and
->> >> possibly avoiding noisy speeds altogether for some workloads.
->> >>
->> >> OPPs help actually scale CPU frequencies up and down for both cooling
->> >> and performance - tested on Rock 5B under varied loads. I've dropped
->> >> those OPPs that cause frequency reductions without accompanying
->> >> decrease
->> >> in CPU voltage, as they don't seem to be adding much benefit in day to
->> >> day use, while the kernel log gets a number of "OPP is inefficient"
->> >> lines.
->> >>
->> >> Note that this submission doesn't touch the SRAM read margin updates
->> >> or
->> >> the OPP calibration based on silicon quality which the downstream
->> >> driver
->> >> does and which were mentioned in [1]. It works as it is (also
->> >> confirmed by
->> >> Sebastian in his follow-up message [2]), and it is stable in my
->> >> testing on
->> >> Rock 5B, so it sounds better to merge a simple version first and then
->> >> extend when/if required.
->> >>
->> >> [1]
->> >> https://lore.kernel.org/linux-rockchip/CABjd4YzTL=5S7cS8ACNAYVa730WA3iGd5L_wP1Vn9=f83RCORA@mail.gmail.com/
->> >> [2]
->> >> https://lore.kernel.org/linux-rockchip/pkyne4g2cln27dcdu3jm7bqdqpmd2kwkbguiolmozntjuiajrb@gvq4nupzna4o/
->> >>
->> >> Signed-off-by: Alexey Charkov <alchark@gmail.com>
->> >> ---
->> >
->> > Hi Heiko,
->> >
->> > Do you think this can be merged for 6.11? Looks like there hasn't been
->> > any new feedback in a while, and it would be good to have frequency
->> > scaling in place for RK3588.
->> >
->> > Please let me know if you have any reservations or if we need any
->> > broader discussion.
+On Tue, May 28, 2024 at 01:36:11PM +0200, Alexander Potapenko wrote:
+> On Fri, May 24, 2024 at 7:30 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > On Fri, May 24, 2024 at 12:04:11PM -0400, Mathieu Desnoyers wrote:
+> > > On 2024-05-24 11:35, Mathieu Desnoyers wrote:
+> > > > [ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
+> > > >
+> > > > On 2024-05-24 11:28, Kent Overstreet wrote:
+> > > > > On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
+> > > > > > Hi Kent,
+> > > > > >
+> > > > > > Looking around in the bcachefs code for possible causes of this KMSAN
+> > > > > > bug report:
+> > > > > >
+> > > > > > https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.com/
+> > > > > >
+> > > > > > I notice the following pattern in the bcachefs structures: zero-length
+> > > > > > arrays members are inserted in structures (not always at the end),
+> > > > > > seemingly to achieve a result similar to what could be done with a
+> > > > > > union:
+> > > > > >
+> > > > > > fs/bcachefs/bcachefs_format.h:
+> > > > > >
+> > > > > > struct bkey_packed {
+> > > > > >          __u64           _data[0];
+> > > > > >
+> > > > > >          /* Size of combined key and value, in u64s */
+> > > > > >          __u8            u64s;
+> > > > > > [...]
+> > > > > > };
+> > > > > >
+> > > > > > likewise:
+> > > > > >
+> > > > > > struct bkey_i {
+> > > > > >          __u64                   _data[0];
+> > > > > >
+> > > > > >          struct bkey     k;
+> > > > > >          struct bch_val  v;
+> > > > > > };
 > 
-> not really reservations, more like there was still discussion going on
-> around the OPPs. Meanwhile we had more discussions regarding the whole
-> speed binning Rockchip seems to do for rk3588 variants.
+> I took a glance at the LLVM IR for fs/bcachefs/bset.c, and it defines
+> struct bkey_packed and bkey_i as:
 > 
-> And waiting for the testing Dragan wanted to do ;-) .
+>     %struct.bkey_packed = type { [0 x i64], i8, i8, i8, [0 x i8], [37 x i8] }
+>     %struct.bkey_i = type { [0 x i64], %struct.bkey, %struct.bch_val }
+> 
+> , which more or less looks as expected, so I don't think it could be
+> causing problems with KMSAN right now.
+> Moreover, there are cases in e.g. include/linux/skbuff.h where
+> zero-length arrays are used for the same purpose, and KMSAN handles
+> them just fine.
+> 
+> Yet I want to point out that even GCC discourages the use of
+> zero-length arrays in the middle of a struct:
+> https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html, so Clang is not
+> unique here.
+> 
+> Regarding the original KMSAN bug, as noted in
+> https://lore.kernel.org/all/0000000000009f9447061833d477@google.com/T/,
+> we might be missing the event of copying data from the disk to
+> bcachefs structs.
+> I'd appreciate help from someone knowledgeable about how disk I/O is
+> implemented in the kernel.
 
-I'm sorry for the delays.
-
-> So this should definitly make it into 6.11 though, as there is still
-> a lot of time.
-> 
->> As I promised earlier, I was going to test this patch series in 
->> detail.
->> Alas, I haven't managed to do that yet, :/ due to many reasons, but
->> I still remain firmly committed to doing that.
->> 
->> Is -rc4 the cutoff for 6.11?  If so, there's still time and I'll do my
->> best to test and review these patches as soon as possible.
-> 
-> As early as possible, the hard cutoff would be -rc6 though.
-> I guess I'll just start picking the easy patches from the series.
-
-I'll do my best to have the patches tested and reviewed in detail ASAP.
-As a suggestion, perhaps it would be better to take the series as a 
-whole,
-so we don't bring partial merging into the mix.
+If that was missing I'd expect everything to be breaking. What's the
+helper that marks memory as initialized?
 
