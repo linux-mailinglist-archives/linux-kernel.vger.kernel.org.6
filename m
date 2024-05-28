@@ -1,223 +1,137 @@
-Return-Path: <linux-kernel+bounces-192158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C518D193F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:16:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781328D1943
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9661D2885C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34295281C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8250F16C69B;
-	Tue, 28 May 2024 11:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="VtSWMyWz"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9854C16C690;
+	Tue, 28 May 2024 11:20:24 +0000 (UTC)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09E038F9C;
-	Tue, 28 May 2024 11:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2938F9C;
+	Tue, 28 May 2024 11:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716894989; cv=none; b=Mowim6EGLIDR7UHhmBjdnbJKQVfcHj14nfh0F9ikjBaFfd7euEeg1E+u5GNVg1UyoF8srWWLV1OECldxaMUzrt6rErLVxWKTRobu1jhAdieuTBMmbKryf6W9ahPxyarZ6EwA26sGnRcAY8R+0s/TDuBOXJtOJz8iGoZzr5jTlig=
+	t=1716895224; cv=none; b=HHKbXyU/Qf/NzYdH+44prd/jIXCOiOedYwoMJSWJWN2KEJhlYUg3MTG4hiM+pU5w5RfscUs8OMdPM50g4kfHTUNLKwB2t13myvBuRlpcrtd3fxdAkE374wY+WqnKizetDAGbGCrJxzy4vT8/GDZGknpGONjqdI38MKR+YGkkRH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716894989; c=relaxed/simple;
-	bh=ddjKtq7RFYMNYFg22zslRU3jdlC10pSzFW4Bsm3Q9kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ndjKeIT1NMtoJI+/2eBYSKJzXLHpydVMCUUOb7C2kvSO/Jl/RtOzjS/4AmoEkC8/msBnH5+jFU0io0jHwEfzRlBXV8hqmtWU+AA4N9TiMZk0K8oBpf7NeJbXdOYDE4ncXYTkN/0Jl2FKufrhWLrjsu2pxf+IR7bXlab/UtXd27c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=VtSWMyWz; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBuoa-00873f-0r;
-	Tue, 28 May 2024 13:16:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JrfHFnuvkrvmQFg0pUCXychWxb4GoBRV6FZ978Cui2Y=; b=VtSWMyWzUVFTf8Bzaqej9wUJjV
-	ZA9BIHF1lJ8+8C/S6Np8/OO2UUvWdqHSd9QVbOlM55ralWqTlJjgkVxt8vOx5SW9P9w263DkGUGtS
-	CVo6kOzZiH8xVfoE6t7tmbBA/zYMBsCRxevy7V+FqHIusHt2M/ju7rVvdDg7PR8elGoB9vKiDk0Fi
-	pZuvRSHNFzb2Ux79UIdFnZW3DXBfxWdtLy/dGM1aamSZZnCZjGeEtkG98CJafdpKU2Iiyp+DZWc0Q
-	5CjqvaTPCBlwJxuL1e5d0VDn0Rpou97ERJswXyYws+06taKJyhigm+08m6Kp9SzW8UriiAkUPWKFb
-	W8G3+eGA==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sBuoZ-001tdQ-20;
-	Tue, 28 May 2024 13:16:24 +0200
-Date: Tue, 28 May 2024 13:16:22 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: regulator: twl-regulator: convert to
- yaml
-Message-ID: <20240528131622.4b4f8d03@aktux>
-In-Reply-To: <e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
-References: <20240528065756.1962482-1-andreas@kemnade.info>
-	<e497498c-f3da-4ab9-b6d4-f9723c10471c@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716895224; c=relaxed/simple;
+	bh=8AOe/BleNnP0CIoRBQm0Zw5AmK0p47fRi8znDX1W7R4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H3+WAIaF3WX8PDOuky48QMogJm/jUeIsIDnm8SzuRoIla3XI4xDYQXBThI2Pq9i76m3Tm9XFXjPfUwDDSeby/MWQYafWU4HXgPYwWe6kcdvMz9q/jWrrdM4SIAsGZ6K4K8WXqgfiOn+aslCUWrdRBlBbMTYMEb3aCZBcfu2TulY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SAk10m025534;
+	Tue, 28 May 2024 11:19:04 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Dibm.com;_h=3Dcc?=
+ =?UTF-8?Q?:content-transfer-encoding:content-type:date:from:in-reply-to:m?=
+ =?UTF-8?Q?essage-id:mime-version:references:subject:to;_s=3Dpp1;_bh=3DAc2?=
+ =?UTF-8?Q?oGUA/aYJP//WzOPJKhx/MViZXpqQqjAELcfa5yHM=3D;_b=3DGihh02UALLnyXI?=
+ =?UTF-8?Q?yBbbJMzCcahOvodvLU07+NxyBFlpma+Vw0wlibo/SpSNGroL1vicED_c3MEG3ZT?=
+ =?UTF-8?Q?JO4h9i4WTnOyVLVCK5abeQTkfKONu1MoAI69apVJ08//dYK0339TaKiDbOcK_HF?=
+ =?UTF-8?Q?gppbp0L+KvbNjWSqSnWvXKGQXRAOcSMOwzLvbuuakr97tOAGb0mqppG/JX3iqjQ?=
+ =?UTF-8?Q?729_PWqQ3Rc/UqD8JGuhNNooFU74eG3TVgF4I8dLc6Ab008E1J+CTkXx0MnhIBH?=
+ =?UTF-8?Q?hapCvbiz+_reEAdm3nEjXaANHP91RUH3aj5qW9G0coe0VzR2WRRzNKz+QcC2PQh?=
+ =?UTF-8?Q?7npwo6TwC8jjmmS_mA=3D=3D_?=
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydd3br68n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 11:19:04 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44S8w849011118;
+	Tue, 28 May 2024 11:19:03 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ybtq06pj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 11:19:03 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SBJ0rY12780230
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 11:19:02 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1BF6358055;
+	Tue, 28 May 2024 11:19:00 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 950175804B;
+	Tue, 28 May 2024 11:18:59 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 May 2024 11:18:59 +0000 (GMT)
+Message-ID: <0e3bfc37-53d6-422d-adb0-3ee23bbb0a8a@linux.ibm.com>
+Date: Tue, 28 May 2024 07:18:59 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20240527202840.4818-1-jarkko@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240527202840.4818-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rTpVYHwhO9S8DVZtKgnM0A06BJPf_XbF
+X-Proofpoint-GUID: rTpVYHwhO9S8DVZtKgnM0A06BJPf_XbF
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 suspectscore=0 clxscore=1015 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405280085
 
-On Tue, 28 May 2024 12:04:22 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> On 28/05/2024 08:57, Andreas Kemnade wrote:
-> > Convert the regulator bindings to yaml files. To allow only the regulator
-> > compatible corresponding to the toplevel mfd compatible, split the file
-> > into one per device.
-> > 
-> > To not need to allow any subnode name, specify clearly node names
-> > for all the regulators.
-> > 
-> > Drop one twl5030 compatible due to no documentation on mfd side and no
-> > users of the twl5030.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> > Reason for being RFC:
-> > the integration into ti,twl.yaml seems not to work as expected
-> > make dt_binding_check crashes without any clear error message
-> > if used on the ti,twl.yaml
-> > 
-> >  .../devicetree/bindings/mfd/ti,twl.yaml       |   4 +-
-> >  .../regulator/ti,twl4030-regulator.yaml       | 402 ++++++++++++++++++
-> >  .../regulator/ti,twl6030-regulator.yaml       | 292 +++++++++++++
-> >  .../regulator/ti,twl6032-regulator.yaml       | 238 +++++++++++
-> >  .../bindings/regulator/twl-regulator.txt      |  80 ----
-> >  5 files changed, 935 insertions(+), 81 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6030-regulator.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/ti,twl6032-regulator.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > index c2357fecb56cc..4ced6e471d338 100644
-> > --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > @@ -50,7 +50,7 @@ allOf:
-> >            properties:
-> >              compatible:
-> >                const: ti,twl4030-wdt
-> > -
-> > +        $ref: /schemas/regulator/ti,twl4030-regulator.yaml  
+
+On 5/27/24 16:28, Jarkko Sakkinen wrote:
+> Public key blob is not just x and y concatenated. It follows RFC5480
+> section 2.2. Address this by re-documenting the function with the
+> correct description of the format.
 > 
-> That's not needed, just like othehr refs below.
-> 
-but how to prevent error messages like this:
+> Link: https://datatracker.ietf.org/doc/html/rfc5480
+> Fixes: 4e6602916bc6 ("crypto: ecdsa - Add support for ECDSA signature verification")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-arch/arm/boot/dts/ti/omap/omap2430-sdp.dtb: twl@48: Unevaluated properties are not allowed ('gpio', 'keypad', 'pwm', 'pwmled', 'regulator-vaux1', 'regulator-vaux2', 'regulator-vaux3', 'regulator-vaux4', 'regulator-vdac', 'regulator-vdd1', 'regulator-vintana1', 'regulator-vintana2', 'regulator-vintdig', 'regulator-vio', 'regulator-vmmc1', 'regulator-vmmc2', 'regulator-vpll1', 'regulator-vpll2', 'regulator-vsim', 'regulator-vusb1v5', 'regulator-vusb1v8', 'regulator-vusb3v1
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-esp. the regulator parts without adding stuff to ti,twl.yaml?
-
-> >    - if:
-> >        properties:
-> >          compatible:
-> > @@ -63,6 +63,7 @@ allOf:
-> >            properties:
-> >              compatible:
-> >                const: ti,twl6030-gpadc
-> > +        $ref: /schemas/regulator/ti,twl6030-regulator.yaml
-> >    - if:
-> >        properties:
-> >          compatible:
-> > @@ -75,6 +76,7 @@ allOf:
-> >            properties:
-> >              compatible:
-> >                const: ti,twl6032-gpadc
-> > +        $ref: /schemas/regulator/ti,twl6032-regulator.yaml
-> >    
+> ---
+> It is a bug fix that does not really need a stable backport. Still
+> categorizes as a bug because by following the existing documentation
+> you end up with an error code.
+>   crypto/ecdsa.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> >  properties:
-> >    compatible:
-> > diff --git a/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-> > new file mode 100644
-> > index 0000000000000..9623c110605ef
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/regulator/ti,twl4030-regulator.yaml
-> > @@ -0,0 +1,402 @@
-> > +# SPDX-License-Identifier: (GPL-2.0)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/regulator/ti,twl4030-regulator.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Regulators in the TWL4030 PMIC
-> > +
-> > +maintainers:
-> > +  - Andreas Kemnade <andreas@kemnade.info>
-> > +
-> > +properties:
-> > +  regulator-vaux1:
-> > +    type: object
-> > +    $ref: regulator.yaml#
-> > +    unevaluatedProperties: false
-> > +    properties:
-> > +      compatible:
-> > +        const: "ti,twl4030-vaux1"  
-> 
-> No quotes
-> 
-Ack.
-
-> > +
-> > +      regulator-initial-mode:
-> > +        items:
-> > +          - items:
-> > +              enum:
-> > +                - 0x08 # Sleep mode, the nominal output voltage is maintained
-> > +                       # with low power consumption with low load current capability
-> > +                - 0x0e # Active mode, the regulator can deliver its nominal output
-> > +                       # voltage with full-load current capability
-> > +
-> > +    required:
-> > +      - compatible
-> > +
-> > +  regulator-vaux2:
-> > +    type: object
-> > +    $ref: regulator.yaml#
-> > +    unevaluatedProperties: false
-> > +    properties:
-> > +      compatible:
-> > +        const: "ti,twl4030-vaux2"
-> > +
-> > +      regulator-initial-mode:
-> > +        items:
-> > +          - items:
-> > +              enum:
-> > +                - 0x08 # Sleep mode, the nominal output voltage is maintained
-> > +                       # with low power consumption with low load current capability
-> > +                - 0x0e # Active mode, the regulator can deliver its nominal output
-> > +                       # voltage with full-load current capability  
-> 
-> These entries are the same. Just use patternProperties and enum for
-> compatible.
-> 
-hmm, if I am using that, how do I prevent e.g. constructions like this to be
-valid?
-
-regulator-vaux2 {
-	compatible = "ti,twl4030-vaux1";
-};
-
-Regards,
-Andreas
+> diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+> index 258fffbf623d..55114146ff84 100644
+> --- a/crypto/ecdsa.c
+> +++ b/crypto/ecdsa.c
+> @@ -215,9 +215,8 @@ static int ecdsa_ecc_ctx_reset(struct ecc_ctx *ctx)
+>   }
+>   
+>   /*
+> - * Set the public key given the raw uncompressed key data from an X509
+> - * certificate. The key data contain the concatenated X and Y coordinates of
+> - * the public key.
+> + * Set the public ECC key as defined by RFC5480 section 2.2 "Subject Public
+> + * Key". Only the uncompressed format is supported.
+>    */
+>   static int ecdsa_set_pub_key(struct crypto_akcipher *tfm, const void *key, unsigned int keylen)
+>   {
 
