@@ -1,179 +1,112 @@
-Return-Path: <linux-kernel+bounces-192255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E94F8D1ABA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BA28D1AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0727C1F24388
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:09:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07D81C22C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3876A16D325;
-	Tue, 28 May 2024 12:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B8A16D4CC;
+	Tue, 28 May 2024 12:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPZENJsp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYzt21HN"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788DA71753;
-	Tue, 28 May 2024 12:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985DE16D335;
+	Tue, 28 May 2024 12:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716898188; cv=none; b=WpGGRNY0Q1/YeokMwVFVJPoQ04tOud82yhL7OgN0wiDRGb2iMXjBIVuehGjUf7mdfV4tsuYMNBXM7q6qx0FVYlazFrzAptUjoYhA5UhlUYphwXvE/AG2x7Epm4XYd6vPLSAkSzI+dpsfacYgxuwyB8rIXab4AJXkYxHJDM7LyMI=
+	t=1716898309; cv=none; b=sGs8niuezLv5GrOluR9tHWnriObYhj4zCZpzUbvJ8wOjrzvZKEDCMJ2aul+EGvvyRfNkHZvy6xwBVj4d4OL+Ld6MHUb31K5TCqarPeyaN/DyPoyx9LP7278tGZskSHacuk4udDHy680f2lz7AaTFxpcg9/an5UVTuwvVlqGuMNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716898188; c=relaxed/simple;
-	bh=fo/eQlCwe1cy2Moyf0G+7NTSc2277UXsnpEILM0Ot2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Or0HPXvJuT6EM8WK5zx3JO38J2RwO8wHrZfO9r4Nl5Dqfko5ZnAFLIUkVy1Fkc7ZFvYqWDkiF/3/WWu0v15wS9lmTpEhG4IICmTWe4n/HBXdCOa+p9rXESeBUPUYQV88PwPdEveNHlRzdrAULqQZexKQwLnJSXUIUekiB2g+vnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPZENJsp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852DEC3277B;
-	Tue, 28 May 2024 12:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716898188;
-	bh=fo/eQlCwe1cy2Moyf0G+7NTSc2277UXsnpEILM0Ot2Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GPZENJspXF1cekh0/6zssWOaKbbXcox0NfLSFBCBcIxK/1wgrUNW6+B5TpPAQGX37
-	 WmbbnwrZFVxHBJh45ajSlXgGdU3MWsYso4WSjnpHInKPd6oslP4kpN9deRlVcT7I7D
-	 hbt3c6viLR8Q9E06XPBjB4I5j87pm9iMVEs1gyFL8iaMxqN2qtfAFkHQ8q45NFRDf9
-	 vF5i5RKCwx/e9UQ3J1WbZesEsJ6tKhUro9zDP2G+7TuUUfFn1XsivWGii5OJ3RT3AG
-	 j/g5fWfnxncasF1FCrGoeEIbGLyuFFPx6ZMblae/jA1hRTca0+EZ2iSauMu71ACdU5
-	 2Zm1hHNhcM5NA==
-Message-ID: <4774e4c9-55f5-4ce9-9433-86f9ae1bc610@kernel.org>
-Date: Tue, 28 May 2024 15:09:41 +0300
+	s=arc-20240116; t=1716898309; c=relaxed/simple;
+	bh=qqDnq+8DCihtvxh2tA4h1Nwr54ScpfDmHOuPXfX8yLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ei9Chhtasw7CifKBmq/8A1E/2R7RLNxGMdT1MbyVBuTLHmtfXxNbmbF18MqKp33tU/PLfkVwpn/D4m+QWf+059E+2m8KyWiSFZJygG8PUohjjN+bgKBKCQVvUzjFtdeZSMA35I8MecOOdVWhhltWv2xsfxE9lJOHthW9lZeNO2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYzt21HN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4210c9d1df6so5558075e9.2;
+        Tue, 28 May 2024 05:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716898305; x=1717503105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+ePbf6YYVyuLoatenDzEi9t+2512ijImy79nCfIO9g=;
+        b=fYzt21HNVrye5aWn8MxFHPmY+aPY9U6ImJb04XYSJ879jUdFrdpnRTvPPB05q7SIaC
+         MJXPPGkTvd6RY6SBLPdbSAlqqrQGINytr+6lhapaFFH+roRcihOxwMDnicDTUlyB9PXi
+         /38VRh5rfijq5mKVPXfb/8Mt3LN5ep5o07Gh6rO7k7/zvTv1L6cf/djSLcJBf3v6Ispa
+         41QrIYuI9q3yi6ODYkQZHHejdjikceZV6ztulaXfDE5kKevAcvFs431Nw5+Ue7fbG7Tg
+         iw9ylbVYHOUfZ/bqTqboOIDoI3Et/Qo57ca6utj8xMly1kVBd18w6UukiI4EOE+4FDNk
+         StCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716898305; x=1717503105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z+ePbf6YYVyuLoatenDzEi9t+2512ijImy79nCfIO9g=;
+        b=e7Rwfb9Rnkz/xCn6UAeSu+E488GhBbDNCi4RJjtBiwly4KehCLI0wFn9Jux0IkKDpx
+         wp5Zw2ruJAzcq76wRLQ4bKwbzvTSC4vYzn61apDJj8SzW+/MV7U8cHBNhJGbtj6XKU8j
+         eJZnLmXrFiYI5bg4bleecoEYEAX/8ooZd1K9Hh21UJOIYElhgvFEx3Y48I2HS9xgz4wS
+         U5tqMrT2vqQEBJFo9nIBD8ZPOpX49tg4YHF220sX1BcqOQhcgdgpS6d9GuSTylWnKyN9
+         PMZ5I8Bp6TYmmq+TAOKIv0WMknG72NhVbtg11Z3eIlZ4DWe1SYor+SDk+PO5qYGAnruG
+         0puw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZXq6h6aUKDE0aT7iydkz/3u8+UE0fiJz18nhiMsqZG/odEE3oAOp0659j53tid9dunstK7ySB1jZMwd5OaG933v8CbjTx4MjjcmE6I6pF93SzQPkK4kUlwzJCQA3dHoyRA0Qm+aoJW/aII9Vl
+X-Gm-Message-State: AOJu0YyfSBCFH3K0cRZEjyHMv2LGtSd6n7yfkfgFGo7MB35h+7T3HlXI
+	C9u2IM3n1Lh/Umh7v6uhfMZ22eNUX+GRjX5CW/nrgTELDTEfYxbvz6jx4g==
+X-Google-Smtp-Source: AGHT+IFDlJcvMVj+yiLB8KL1ut3q/gSiu/kNbiPa+Dqq5iB1EJsvgQsI/x10RVemjSr0FOHmQP64DQ==
+X-Received: by 2002:a05:600c:1c83:b0:420:110b:4211 with SMTP id 5b1f17b1804b1-42108a150a1mr83145125e9.39.1716898304649;
+        Tue, 28 May 2024 05:11:44 -0700 (PDT)
+Received: from turbo.teknoraver.net (net-5-94-218-116.cust.vodafonedsl.it. [5.94.218.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f69850sm168281625e9.26.2024.05.28.05.11.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 05:11:44 -0700 (PDT)
+From: Matteo Croce <technoboy85@gmail.com>
+X-Google-Original-From: Matteo Croce <teknoraver@meta.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH net-next 0/2] net: visibility of memory limits in netns
+Date: Tue, 28 May 2024 14:11:37 +0200
+Message-ID: <20240528121139.38035-1-teknoraver@meta.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] arm64: dts: ti: k3-j722s-main: Add support for
- SERDES0
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
- afd@ti.com, kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, danishanwar@ti.com,
- srk@ti.com
-References: <20240524090514.152727-1-s-vadapalli@ti.com>
- <20240524090514.152727-2-s-vadapalli@ti.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240524090514.152727-2-s-vadapalli@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Some programs need to know the size of the network buffers to operate
+correctly, export the following sysctls read-only in network namespaces:
 
+- net.core.rmem_default
+- net.core.rmem_max
+- net.core.wmem_default
+- net.core.wmem_max
 
-On 24/05/2024 12:05, Siddharth Vadapalli wrote:
-> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> 
-> AM62P's DT source files are reused for J722S inorder to
+Matteo Croce (2):
+  net: make net.core.{r,w}mem_{default,max} namespaced
+  selftests: net: tests net.core.{r,w}mem_{default,max} sysctls in a
+    netns
 
-inorder/in order
-
-> avoid duplication of nodes. But J722S has additional
-> peripherals that are not present in AM62P.
-> 
-> Introduce a -main.dtsi to define such additional main
-> domain peripherals and define the SERDES0 node.
-> 
-> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> v2:
-> https://lore.kernel.org/r/20240513114443.16350-2-r-gunasekaran@ti.com/
-> Changes since v2:
-> - Renamed serdes0_ln_ctrl to serdes_ln_ctrl to keep the format
->   consistent across SoCs where a single node is sufficient to
->   represent the Lane-Muxing for all instances of the Serdes.
-> 
-> v1:
-> https://lore.kernel.org/r/20240429120932.11456-2-r-gunasekaran@ti.com/
-> Changes since v1:
-> - Newly introduced k3-j722s-main.dtsi to add main domain peripherals
->   that are additionally present in J722S.
-> - Used generic node names - renamed "clock-cmnrefclk" to "clk-0",
->   "wiz@f000000" to "phy@f000000"
-> 
->  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 64 +++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-> new file mode 100644
-> index 000000000000..0dac8f1e1291
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-> @@ -0,0 +1,64 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree file for the J722S main domain peripherals
-> + * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
-> + */
-> +
-> +#include <dt-bindings/phy/phy-ti.h>
-> +
-> +/ {
-> +	serdes_refclk: clk-0 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +};
-> +
-> +&cbass_main {
-> +	serdes_wiz0: phy@f000000 {
-> +		compatible = "ti,am64-wiz-10g";
-> +		ranges = <0x0f000000 0x0 0x0f000000 0x00010000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		power-domains = <&k3_pds 279 TI_SCI_PD_EXCLUSIVE>;
-> +		clocks = <&k3_clks 279 0>, <&k3_clks 279 1>, <&serdes_refclk>;
-> +		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-> +		num-lanes = <1>;
-> +		#reset-cells = <1>;
-> +		#clock-cells = <1>;
-> +
-> +		assigned-clocks = <&k3_clks 279 1>;
-> +		assigned-clock-parents = <&k3_clks 279 5>;
-> +
-> +		serdes0: serdes@f000000 {
-> +			compatible = "ti,j721e-serdes-10g";
-> +			reg = <0x0f000000 0x00010000>;
-> +			reg-names = "torrent_phy";
-> +			resets = <&serdes_wiz0 0>;
-> +			reset-names = "torrent_reset";
-> +			clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
-> +				 <&serdes_wiz0 TI_WIZ_PHY_EN_REFCLK>;
-> +			clock-names = "refclk", "phy_en_refclk";
-> +			assigned-clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
-> +					  <&serdes_wiz0 TI_WIZ_PLL1_REFCLK>,
-> +					  <&serdes_wiz0 TI_WIZ_REFCLK_DIG>;
-> +			assigned-clock-parents = <&k3_clks 279 1>,
-> +						 <&k3_clks 279 1>,
-> +						 <&k3_clks 279 1>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			#clock-cells = <1>;
-> +
-> +			status = "disabled"; /* Needs lane config */
-> +		};
-> +	};
-> +};
-> +
-> +&main_conf {
-> +	serdes_ln_ctrl: mux-controller@4080 {
-> +		compatible = "reg-mux";
-> +		reg = <0x4080 0x4>;
-> +		#mux-control-cells = <1>;
-> +		mux-reg-masks = <0x0 0x3>; /* SERDES0 lane0 select */
-> +	};
-> +};
+ net/core/sysctl_net_core.c                  | 75 ++++++++++++---------
+ tools/testing/selftests/net/Makefile        |  1 +
+ tools/testing/selftests/net/netns-sysctl.sh | 15 +++++
+ 3 files changed, 58 insertions(+), 33 deletions(-)
+ create mode 100755 tools/testing/selftests/net/netns-sysctl.sh
 
 -- 
-cheers,
--roger
+2.45.1
+
 
