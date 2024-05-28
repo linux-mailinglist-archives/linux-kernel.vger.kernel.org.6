@@ -1,187 +1,107 @@
-Return-Path: <linux-kernel+bounces-193115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABEE8D2706
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:30:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16D38D270B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F121C1C20FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:30:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867C828495A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06C517B431;
-	Tue, 28 May 2024 21:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163AD17B4ED;
+	Tue, 28 May 2024 21:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wc594tiK"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g5TU9e63"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B305199B8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B912FB2;
+	Tue, 28 May 2024 21:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716931843; cv=none; b=b+C8TK5FzWGKobE7rE628uxQ2Uenq+MLhU2iIWO6x9ehVdSTLNwsCemYecTE1/uXBFi547if4JyGSVb3QpOp5Gq1/EgHuU4VhpHkNddtfWBnIh6UdwmSzee1lPvknTKAsE/uGSb1ArtjvAfgL+iwgpiIDvvD1/otYdSQZCaon0o=
+	t=1716931874; cv=none; b=BN4DECeJGtnFvGF5X1hcflaMH1PHTOP6TzNFgKNeZzO03tb8S3wdNbBKwJoz5tu+Gx/fUiBbW7ugJTLgX28jKiwUlQeBb9ppvuiESFkrvxn9sETpuMEZhH9peLuWbr4+dOofIL2C6x2Nk+SnUIr2NAWGCWi6EFmEAp7sJTKlESI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716931843; c=relaxed/simple;
-	bh=5rJ6C2fvM31iHiu5ju1m5SG2s+zChPz9rDT003tlYZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7JOJsh1GUf13kigYljjT+c+mkSEdTWHNgOSrsrxexQrKemETK4HVq+1akK3TL1HLAE5mAvruxk+qbMwiZZo5/frIMGEeNTj9etAeQsQFqmfhYVw3kL5WHAVk3997aEGHqIW4pdFWHwbPZc5lojKNtIuVBl6VdE3wmmATyQcju8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wc594tiK; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f44b59f8daso10385945ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716931841; x=1717536641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/886KhgNlZLfUXdG7YdFOApfJCvvDP8iK4brhkLxPE=;
-        b=wc594tiKNC7VBSM9g457bt+sTju58yY6+dkPGKAWyOY/GecwCGOeKJRZOo6XkLGT89
-         lxUpQNZoKNHgATwuD+ERmGE6f6Hx4SFYUIQgBVIv7ve5nhaRyD3c4gcxQnEEWUrcBeB0
-         amHEm/85B2Y65i+30pbEhjV81AOCGdX7h2yQmHBr/71Hv6AjT5S4lxOugKPhoj14VLJn
-         bGF3AA8vynTtPimXEh/JPNQFR3fmf3uvvIYbHfT9Al+Yr6zNEMXK2R5LjRDBXtqfTlkb
-         e7YuwXGJeaUYpwYO7+6vu7fnw02CiB0h54n3KSHtwM8yHycF98wnEAz8zYzOJ0NBxLfY
-         DAow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716931841; x=1717536641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/886KhgNlZLfUXdG7YdFOApfJCvvDP8iK4brhkLxPE=;
-        b=uc3wjiBoy/4sWJX/zmnFPQo/TwC/8bS0K9c8tOT/I0bfYtCDpL4nB9yg1aWBKuL6sf
-         eO5OtwGBP+VMECX9mpEC4kMnUpyHjxfC+vWLRAqNnfSDyUbJ5eSFDSra0KkwV62Ivfq+
-         xhRPQWnbjNNLNNs7g2mH0IcWfEmXNqv3SApwbiDULbnACu3gqnF7HDL4KOsCRJF4mcCi
-         uvkXPWyHTaDfU7HK3IBTVh58GagQCU+e1fL2BarpEVc8cUnuMfHdpAfiNVwkgyJY7dS1
-         4J5tA+s+bg9WADdEGuNwhN0Pl2kOpr85yuqqdVvwWlQreMC7BNONcFva0rgTdY1fpQPZ
-         zrlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyAmyCuz11/DrwYBq5MLKEFAkWFv1a7TrMRy8L85dV0LfmExo91tAA6LphcyXv23MeP1QTioDbzKq386g7YMB6d5onTmzL2bw62s5J
-X-Gm-Message-State: AOJu0YwiEIg8798Nns1+LAiE+diFABGnBrhLkNpqtQ2qjg7S27IIq3WA
-	wTLkXYcQ19sLZRepahQFdhIIfGetftIblHt1wU/2KRFlN4xv6WyeIB7I+5lt/Kyh4SiDMIPEF7D
-	R
-X-Google-Smtp-Source: AGHT+IEP4vGis8cJF35Vj03cY02Mx4GSJp1qf2JV+6D5QpG98m20SLH34o1uGa6a3mw4BJaNA2Si8g==
-X-Received: by 2002:a17:903:2283:b0:1f2:fb89:1d3e with SMTP id d9443c01a7336-1f4486bd871mr151487525ad.7.1716931841312;
-        Tue, 28 May 2024 14:30:41 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:4c7:2691:aa4a:e6b7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9a50fbsm84917215ad.217.2024.05.28.14.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 14:30:40 -0700 (PDT)
-Date: Tue, 28 May 2024 15:30:38 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
-Message-ID: <ZlZM/hgSO4EeRVqS@p14s>
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1716931874; c=relaxed/simple;
+	bh=qhikkG0+J3ao9eUj/gAqD8DTEQECSMaXK+bVgpJ4E1s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i7ujkgUQyQsmmGWGQtKr5mG1g7njwxWXL1qzf69Zi0A8rurTGMCW5Noih2F+W8n2vfn+2OrQOwF7N9ibGcYJKBoWMZlw0RkSeY+1qfl9y7TGGV+suMa6YVz+KAXLIkmikWq3/MxT+2HxANk2yH4SUVu1hHWX8EJ4XFwa/Sp0Pw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=g5TU9e63; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716931873; x=1748467873;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=qhikkG0+J3ao9eUj/gAqD8DTEQECSMaXK+bVgpJ4E1s=;
+  b=g5TU9e639SuOhYJRrE0Oe3L7LRtXLPVlb7OM4JjqED83PPTl9MtGw6wN
+   +K3SR/mYDl55KFrj4LBstIOz4Oly4Mxmr0JQFeA+DGgeeVTSiJbhCtoXz
+   KDFb/rLTDY2Yc88z+Jz0ldyNC8EX4rCOyy51AsClMnfLQK0yq2I8nyGZw
+   ctWImbjVAE4B3QEQV7KXm7cDTyTxFMfcwcOgMXLbpcFHSILZkHJs24Oz4
+   /+RY2EXgshujKpfWNWDiG/TAc4FlDkxaPl1nssShzeu8hN9UvBb4vwLj9
+   LB84M+fw69ywm11Nds6gbkvhVpQ4cu/G9k28xfQUBtEkEZILGbseN2bwO
+   A==;
+X-CSE-ConnectionGUID: /9I5zD/kRmu9YPlRbLYtAg==
+X-CSE-MsgGUID: Oe2pBzO0RKiwpp5fvrsyVw==
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="26625587"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 14:31:07 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 28 May 2024 14:31:05 -0700
+Received: from hat-linux.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 28 May 2024 14:31:04 -0700
+From: <Tristram.Ha@microchip.com>
+To: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
+	<tristram.ha@microchip.com>
+Subject: [PATCH net] net: dsa: microchip: fix RGMII error in KSZ DSA driver
+Date: Tue, 28 May 2024 14:34:26 -0700
+Message-ID: <1716932066-3342-1-git-send-email-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain
 
-On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
-> 1) on start:
-> - Using the TEE loader, the resource table is loaded by an external entity.
-> In such case the resource table address is not find from the firmware but
-> provided by the TEE remoteproc framework.
-> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
-> - test that rproc->cached_table is not null before performing the memcpy
-> 
-> 2)on stop
-> The use of the cached_table seems mandatory:
-> - during recovery sequence to have a snapshot of the resource table
->   resources used,
-> - on stop to allow  for the deinitialization of resources after the
->   the remote processor has been shutdown.
-> However if the TEE interface is being used, we first need to unmap the
-> table_ptr before setting it to rproc->cached_table.
-> The update of rproc->table_ptr to rproc->cached_table is performed in
-> tee_remoteproc.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 42bca01f3bde..3a642151c983 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
->  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct resource_table *loaded_table;
-> +	struct device *dev = &rproc->dev;
->  
->  	/*
->  	 * The starting device has been given the rproc->cached_table as the
-> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
->  	 * this information to device memory. We also update the table_ptr so
->  	 * that any subsequent changes will be applied to the loaded version.
->  	 */
-> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-> -	if (loaded_table) {
-> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
-> -		rproc->table_ptr = loaded_table;
-> +	if (rproc->tee_interface) {
-> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
-> +		if (IS_ERR(loaded_table)) {
-> +			dev_err(dev, "can't get resource table\n");
-> +			return PTR_ERR(loaded_table);
-> +		}
-> +	} else {
-> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
->  	}
->  
-> +	if (loaded_table && rproc->cached_table)
-> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
-> +
+From: Tristram Ha <tristram.ha@microchip.com>
 
-Why is this not part of the else {} above as it was the case before this patch?
-And why was an extra check for ->cached_table added?
+The driver should return RMII interface when XMII is running in RMII mode.
 
-This should be a simple change, i.e introduce an if {} else {} block to take
-care of the two scenarios.  Plus the comment is misplaced now. 
+Fixes: 0ab7f6bf1675 ("net: dsa: microchip: ksz9477: use common xmii function")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+Acked-by: Arun Ramadoss <arun.ramadoss@microchip.com>
+Acked-by: Jerry Ray <jerry.ray@microchip.com>
+---
+ drivers/net/dsa/microchip/ksz_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-More comments tomorrow.
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 1e0085cd9a9a..2818e24e2a51 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -3142,7 +3142,7 @@ phy_interface_t ksz_get_xmii(struct ksz_device *dev, int port, bool gbit)
+ 		else
+ 			interface = PHY_INTERFACE_MODE_MII;
+ 	} else if (val == bitval[P_RMII_SEL]) {
+-		interface = PHY_INTERFACE_MODE_RGMII;
++		interface = PHY_INTERFACE_MODE_RMII;
+ 	} else {
+ 		interface = PHY_INTERFACE_MODE_RGMII;
+ 		if (data8 & P_RGMII_ID_EG_ENABLE)
+-- 
+2.34.1
 
-Thanks,
-Mathieu
-
-> +	rproc->table_ptr = loaded_table;
-> +
->  	return 0;
->  }
->  
-> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
->  	kfree(rproc->clean_table);
->  
->  out:
-> -	/*
-> -	 * Use a copy of the resource table for the remainder of the
-> -	 * shutdown process.
-> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
-> +	 * before updating the proc->table_ptr reference.
->  	 */
-> -	rproc->table_ptr = rproc->cached_table;
-> +	if (!rproc->tee_interface) {
-> +		/*
-> +		 * Use a copy of the resource table for the remainder of the
-> +		 * shutdown process.
-> +		 */
-> +		rproc->table_ptr = rproc->cached_table;
-> +	}
->  	return 0;
->  }
->  
-> -- 
-> 2.25.1
-> 
 
