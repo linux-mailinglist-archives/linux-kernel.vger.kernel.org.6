@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-192318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F988D1B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EDD8D1B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2E81F221CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796021F226E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7D616D9A6;
-	Tue, 28 May 2024 12:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D6E16D9A7;
+	Tue, 28 May 2024 12:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ErO7BW/3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TF5asrHG"
-Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WxOEBSRX"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5DB1EB3F;
-	Tue, 28 May 2024 12:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1CE1EB3F;
+	Tue, 28 May 2024 12:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900005; cv=none; b=UGpiBIxbCKTA3erotsrHZ7M4H2c+bkGx0NRlm5ynu4fYQwn31jpKisFyOfIXpzU0ZA26YWg+wzmKoF3xqQrSdmGiLGtzmaySQNFAWtkm8UjaMCMRGGLZtbMfNdII0YSXDALB8LIsqA6XLqkeKfUgJ0woMyR5pq4Ki9M44cFKev4=
+	t=1716900014; cv=none; b=aFhKw8aEcdy/C4GxLQn6zY42sfqnvf+sjV+HbcF71V2VNh4E1GswBfWqUAFAAnPLOkImYguNK45SV3QCclfsD6m5r7YnI4qm3E99iCLYzQGgCXClFEtk7OUleX7Yc6w9DBmtUED63amK5zcpnvHoa0u2IgQOBmLzSPgHIq1D4FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900005; c=relaxed/simple;
-	bh=oADpfUByb6ZsVZGiNMSLcMAtWeb14tWOetB3qQbtyqI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=DG+92nRKmgwJpoJadsRXJTOQxSv4/5rY4T/FrD8oiA/+rGLVq4CadFgXqV5KjATZKHBxd1q1ytpkkDDJpu0uAnAMV1QG3UyGZrYeibxft4JSlHqVYQW1zCz8KvXtG1km2oQ6kF1ZKP7WyVa2fY0gBIgrCkIgadowq7RD0JY4pxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ErO7BW/3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TF5asrHG; arc=none smtp.client-ip=64.147.123.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 78E5F1C0007B;
-	Tue, 28 May 2024 08:40:03 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 28 May 2024 08:40:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716900003; x=1716986403; bh=OmI1Dq3U3A
-	rGACTcSmJww/utlElpqB+W6TxnFsCrp9I=; b=ErO7BW/3gM6miuD00wFOZ6/YzG
-	90XDMKy6/XMjinwoauMFQMYNvFQGiJ9dbKJfwcG1F/ZZKKmaFz3F5yVT+Cq2X8fV
-	kAdIIpY1x/LkHoNeo9elmp0/b3xHsKlIzT1qgdumJG5M9XPqunNq3XqzCII9LYhH
-	zUcRcmddFAMm5RYFNyAJrDs06BJKVTfDRoiBZgdDQ5yxmGgzaz2cgRS6v6ph8N3y
-	POrdQCSSDFINzQcT9xovbwCp22T7lhK7GcTlMyc2Qjw48HBkMEKThtFEhHEe2LCK
-	4b3yKOBAVn73gnKIkZdFImZlegQOJ7Ka149NryN4i/vorVtPvOmgKvooGDgA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716900003; x=1716986403; bh=OmI1Dq3U3ArGACTcSmJww/utlElp
-	qB+W6TxnFsCrp9I=; b=TF5asrHGWRMaNYZvl/p10JD5IzazLwIYP8+MDynZIO3u
-	NoKaL2upCvEfnlR2ypo5SynosI+gQxecm8hd3WASXQELIJFe2LNBhXH6DvGnszIC
-	CtwIaE2oI7/66AuY3Y17//xISIDBSzLBXKCvd2oOLfLbUGUWN5PAlB7sZ6IDOI5U
-	4XGzcPMhmD92HMKP+7FFp6W24YuwrPkcA/qb5bRUMFJwUnirR59vFLYl1grQ5FYS
-	l+SKzFZ/HeZ/Mo89RvlqdjwSby51xmDvEAXUJlGkWwgtTTdXCJrZ3agoT57rKrDJ
-	DbrrJVqylaf8SUxCzBXQQetPvL+SC+5cCa4SdnwmoA==
-X-ME-Sender: <xms:otBVZvZLLRFGZgZ1pKHj6x0mWY2yijDHXKSwDobaWYEfBuVQdrfhhg>
-    <xme:otBVZuZ3RqXyGowNAim-iIT43IipbsSgckuulsONPu53ZPKl4WPOyhe79oGq2vVbm
-    RghNuq7b7CoylCG0TY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedgvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:otBVZh8JIqJ9a5iaQYmdaSkj2u4dpL49fAONHO1ObMAV8dRRVJJWsg>
-    <xmx:otBVZlooJyw-M95YHSyVyLgkh61n2AP9CzWWOoF0pKq0al5t3bR8og>
-    <xmx:otBVZqrOKHZf9wuS-hh3QYAToiUbsdb9lcineeN1_WOF9tPkHKhKxA>
-    <xmx:otBVZrRWq2ofWqKq2Z-Rs1V98hHRsWO2Jlhe5clCbAPngW-epug-VQ>
-    <xmx:o9BVZjlet05Mh11Jn0uHDiVGVzuu87t0zwzMkg-ZO_i-nRC5Lxiw5rK0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A17CFB6008D; Tue, 28 May 2024 08:40:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716900014; c=relaxed/simple;
+	bh=4SZb5316HoMm9LNOOZ3NjsmNjeuq0xc25cnVq+4jA4U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ym93MMwmjGQ2ETGmIeZD1hfz8HzBDN5P3XkFpTzHLrSvIkRTKrQqdqRUEG1s0aW6qSKzCQ/NxNJut0bw3UWLC7h8T+vEDi/xdAfW4yFGW/qoa5UJJh3UgONPY6GQJ5ftxaC0EVpba/M593fRzqSUvv3Ntotyym71ayeG2cpyh0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WxOEBSRX; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SCe6xM070292;
+	Tue, 28 May 2024 07:40:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716900006;
+	bh=jTsHTaofRi+cGKXVUS/i5zj6YDkm9QSUpwme8f7QUag=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=WxOEBSRXU79o/dP1pm+GaCR+mYfXR53bhePfBk9EXpHzvorekjxTIm9wXZ31jDvNu
+	 gmT4DAjNrVNUeRxy4zPDOfGMJV3a5oW1cyRy5ds4DqK9opRbExy50psWvYsp274rLC
+	 cPTheQnxXm5Tc42SsJMYBeRzVnsvQXvV0L6q7RgQ=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SCe68O024318
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 28 May 2024 07:40:06 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
+ May 2024 07:40:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 28 May 2024 07:40:05 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SCe4oi080379;
+	Tue, 28 May 2024 07:40:05 -0500
+Date: Tue, 28 May 2024 18:10:04 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+Subject: Re: [PATCH v3 3/7] arm64: dts: ti: k3-j722s-evm: Update USB0 and USB1
+Message-ID: <17d2bcb8-084d-4b44-871a-28e5750f2636@ti.com>
+References: <20240524090514.152727-1-s-vadapalli@ti.com>
+ <20240524090514.152727-4-s-vadapalli@ti.com>
+ <db1a0b2d-1bf9-4bd4-98f5-8a38f46d6749@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d6ddfe21-8596-4311-a229-4b1501fa84b4@app.fastmail.com>
-In-Reply-To: <20240528133104.304a1261@canb.auug.org.au>
-References: <20240528104905.58195cbe@canb.auug.org.au>
- <20240528133104.304a1261@canb.auug.org.au>
-Date: Tue, 28 May 2024 14:39:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Christian Brauner" <brauner@kernel.org>
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <db1a0b2d-1bf9-4bd4-98f5-8a38f46d6749@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, May 28, 2024, at 05:31, Stephen Rothwell wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 28 May 2024 13:20:29 +1000
-> Subject: [PATCH] fix up for "fs/xattr: add *at family syscalls"
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/xattr.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 8e712795ab80..d0d54ae2f9cb 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -706,7 +706,8 @@ SYSCALL_DEFINE6(setxattrat, int, dfd, const char 
-> __user *, pathname, unsigned in
->  	if (error)
->  		return error;
+On Tue, May 28, 2024 at 03:18:25PM +0300, Roger Quadros wrote:
+
+[...]
+
+> > +	dr_mode = "host";
+> > +	maximum-speed = "super-speed";
+> > +	phys = <&serdes0_usb_link>;
+> > +	phy-names = "cdns3,usb3-phy";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> > index c75744edb143..61b64fae1bf4 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> > @@ -87,3 +87,8 @@ &oc_sram {
+> >  	reg = <0x00 0x70000000 0x00 0x40000>;
+> >  	ranges = <0x00 0x00 0x70000000 0x40000>;
+> >  };
+> > +
+> > +/* Include bus peripherals that are additionally
+> > + * present in J722S
+> > + */
+> > + #include "k3-j722s-main.dtsi"
+> > diff --git a/arch/arm64/boot/dts/ti/k3-serdes.h b/arch/arm64/boot/dts/ti/k3-serdes.h
 > 
-> -	return do_setxattrat(dfd, pathname, at_flags, name, (const void 
-> __user *)args.value,
-> +	return do_setxattrat(dfd, pathname, at_flags, name,
-> +			     (const void __user *)(unsigned long)args.value,
->  			     args.size, args.flags);
->  }
-> 
+> The k3-serdes.h changes should be in a separate independent patch.
 
-We have a u64_to_user_ptr() helper to make this slightly
-more readable.
+Ok. Will create a new patch in v4 addressing your comments on patch 5 of
+this series to combine Serdes1 changes as well into the same patch.
 
-      Arnd
+Regards,
+Siddharth.
 
