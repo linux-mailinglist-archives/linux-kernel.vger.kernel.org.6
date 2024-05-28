@@ -1,173 +1,190 @@
-Return-Path: <linux-kernel+bounces-192086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AB98D1835
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E158B8D183A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9DA1C21E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02CB5B2288F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77D216B722;
-	Tue, 28 May 2024 10:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D58413D89F;
+	Tue, 28 May 2024 10:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QPvj0P87";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKTC01+L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QPvj0P87";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKTC01+L"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="iEW19tZ8"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EC617E8F4;
-	Tue, 28 May 2024 10:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20613C80E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716891123; cv=none; b=WYByCfCiH1kvsTiYAbd4hL0btgSnpX45Jb9PVj/+CCskzrmS1sy3ZKCkCHN706fJoyFVES5kr53MBItuDsSU1+RRpCAlCJn2q+ntQm22gYI3FZz98bYcolT3RAGhL8nQXXffZY4LHF1SufEEB8tBS2JOu1qpUxFvcmix0g07SxE=
+	t=1716891315; cv=none; b=CXcGKEI/GlV0OgAtUNMkATAJLwK3NEEV62S/Hcul4n3TkH2HrowW78UhRks9S3garz04e86XFxnZ9PPe2jcI3uAKg4GWH6yHeTEGaFodNrPL7jsY3S8sXadkA+NbpCw0HcoOGjFvHUC/heiPGJCn0l+IyPFp60XRw+s3yxY3Gt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716891123; c=relaxed/simple;
-	bh=6ww0aWOR9HDUfIV67S+8vHtHtSWfUePyxXgSYSgpox8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qa9ohIL+TsdXpRkXIeKq8HB6K6n3RMPrAeftWglcIF+CsXeCMEhfmj/bviq6C0ImWgFi3aMmqP3WVG8c1afhJepo0F4IRIAuqjk7lBCf82ctPrbrfrodlqXcZnlRCjXRaXR3ZNO5G+nlj90ct545k5RREyjkYJjwt0bm5eH4TNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QPvj0P87; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKTC01+L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QPvj0P87; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKTC01+L; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 65F8222749;
-	Tue, 28 May 2024 10:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716891117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ExYjX0uos6DCU6GHCyPg9wwFspVknw4CNT/cnsm3P7A=;
-	b=QPvj0P87mJKpCsarWj7GQrCEnpob5RUz/1yS00zF70fdA31q8vQJ2Bq1VC7PoMWnAMHvDQ
-	55Igr36s4pWfYVXubCEO4dMM6xVrR8U9ZRn1jdUe+fmI01pzM98O303rNjVSlzm2GHpCly
-	5M0J2K+ObPIRsX6lChXMRqtNP82jrHA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716891117;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ExYjX0uos6DCU6GHCyPg9wwFspVknw4CNT/cnsm3P7A=;
-	b=TKTC01+LLoOSgAj7Bx3pa6bsQY5wO1AaewNQ2UA2FPcZpvX5+9mHvKjmyFOasscmHgxFp5
-	ssuPNfrLaoAJssCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716891117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ExYjX0uos6DCU6GHCyPg9wwFspVknw4CNT/cnsm3P7A=;
-	b=QPvj0P87mJKpCsarWj7GQrCEnpob5RUz/1yS00zF70fdA31q8vQJ2Bq1VC7PoMWnAMHvDQ
-	55Igr36s4pWfYVXubCEO4dMM6xVrR8U9ZRn1jdUe+fmI01pzM98O303rNjVSlzm2GHpCly
-	5M0J2K+ObPIRsX6lChXMRqtNP82jrHA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716891117;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ExYjX0uos6DCU6GHCyPg9wwFspVknw4CNT/cnsm3P7A=;
-	b=TKTC01+LLoOSgAj7Bx3pa6bsQY5wO1AaewNQ2UA2FPcZpvX5+9mHvKjmyFOasscmHgxFp5
-	ssuPNfrLaoAJssCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5482913A5D;
-	Tue, 28 May 2024 10:11:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a4lYFO2tVWbRZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 28 May 2024 10:11:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EDCB1A07D0; Tue, 28 May 2024 12:11:52 +0200 (CEST)
-Date: Tue, 28 May 2024 12:11:52 +0200
-From: Jan Kara <jack@suse.cz>
-To: "hch@infradead.org" <hch@infradead.org>
-Cc: Trond Myklebust <trondmy@hammerspace.com>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"alex.aring@gmail.com" <alex.aring@gmail.com>,
-	"cyphar@cyphar.com" <cyphar@cyphar.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <20240528101152.kyvtx623djnxwonm@quack3>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <30137c868039a3ae17f4ae74d07383099bfa4db8.camel@hammerspace.com>
- <ZlRzNquWNalhYtux@infradead.org>
- <86065f6a4f3d2f3d78f39e7a276a2d6e25bfbc9d.camel@hammerspace.com>
- <ZlS0_DWzGk24GYZA@infradead.org>
+	s=arc-20240116; t=1716891315; c=relaxed/simple;
+	bh=E7sKFLfev1mNkIg5WjRCuKqrgXi1JgkmqpVqr6lz4Bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HwOD7cVfhEZ7FeXSXdKHxunJiVpOHwNmG/lCemxG9v5bQQsii8mzUZxghr8gxu1T0EVoJHfOewPOvTePhlsZZKvHF2qa+OzV0idGo/2K50oMa72gQNQGNLj+NG9MzrJf6t6qlb2viEAkCtSSazKWNLPRB56z4xqxcN4+BmYSg1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=iEW19tZ8; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e97d6e7707so207901fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716891312; x=1717496112; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KJo11HxnJz9bNWmT6d/DDh++L1djwhjY6e39n68+9tM=;
+        b=iEW19tZ8ty/EWCD26onWEnqxICI99g3aN81564s9xkENO7t7zMXn9qXSCDxWAG1lPo
+         G3D2/22QvPa336pHIyPoPdGLolsgxBAg1lDON6ncIph2TENlljhMLMCTh5NS1F0Ztx/G
+         4LgGo7WuQS4WebmtGkgKRuVmkMGc2Vuq64Vc4vMoOMYGYeiI3OCsHwvqhOXOMJcYIbtp
+         lX9gXNcmuZz9NUXyZcJEPpmwUZz2LkrDFYvXtW4Vj5HXy5gb7cGOuOMk0gO0lII0MeHS
+         a1fK/IeCOD9WgTbz78C+uprrAuFY1ckvvivtFz0Go+n6dAbBVfDj6Qtqs8tx93SwNKWj
+         4t3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716891312; x=1717496112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJo11HxnJz9bNWmT6d/DDh++L1djwhjY6e39n68+9tM=;
+        b=GHteTGsiJqI5gC62yp+ZT/cAP2y1I2Vh7b+y62L57fD2d+VHlHPh6zTwVNAts1A/A2
+         M2Exf5K8r2KiWGQzG2Rq5x9SLwqXwmD4myTEW2JWEiZ0fYOCUcnA86vLL5+/wc78LVRT
+         af6AMyvZ36jm07GON8M2is2BuL1Ot9M/kCfOZ8EeVJREHj97Kz5Tbq6UP1RMebPQYSxj
+         m1ACXR79XllSPMlUpaOZJwn2H+TDxigc6xL+PHOqKNcpbGx+w+bgTd7m0rLdUMQ7Zw6G
+         xol2laHGGw3BcgQEgalmTnS2ozH8Sp2oKiGlKqj7aKh5orvrxNBo4rP0t+Wc2mGPF5qU
+         BwmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6T0OQ8HvND+NRKF7qr/nVhAIVEWZUvN4R3gRIaTtFWJpTReaXapKptRtM32qOLrmJuBfgyXd1z5rLgCUSM9NlEWodY+EKitNVGfeF
+X-Gm-Message-State: AOJu0Yzy4cTqr6EndOcFIHmATejbuig1iv2srqIqMeR7gglBhD4cc+OR
+	P0+szLl3FlcZrImKijIDZLD4p1fyta+JfiaeWWOVCf7wGhq2OewxLxbfHmyp5vU=
+X-Google-Smtp-Source: AGHT+IGJQCkm1zvi3G2nkrY7snFxSIlGT1jUS1f8uJE8FtpINZx4K4WXRaEt0TWwggZ5ofXJB3NyLA==
+X-Received: by 2002:a05:651c:2106:b0:2de:42d0:faf8 with SMTP id 38308e7fff4ca-2e95b33028cmr80465331fa.5.1716891310532;
+        Tue, 28 May 2024 03:15:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:999:a3a0:deaf:e457:42a:ab9? ([2a01:e0a:999:a3a0:deaf:e457:42a:ab9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35586a15f56sm11303694f8f.109.2024.05.28.03.15.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 03:15:10 -0700 (PDT)
+Message-ID: <40da6797-faab-41f3-b4bd-766e6a117468@rivosinc.com>
+Date: Tue, 28 May 2024 12:15:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlS0_DWzGk24GYZA@infradead.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[hammerspace.com,suse.cz,oracle.com,vger.kernel.org,kernel.org,gmail.com,cyphar.com,zeniv.linux.org.uk];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,infradead.org:email,suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 4/5] RISC-V: KVM: add support for
+ SBI_FWFT_PTE_AD_HW_UPDATING
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+ linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org
+Cc: greentime.hu@sifive.com, vincent.chen@sifive.com, alex@ghiti.fr,
+ Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-kernel@vger.kernel.org
+References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
+ <20240524103307.2684-5-yongxuan.wang@sifive.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20240524103307.2684-5-yongxuan.wang@sifive.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon 27-05-24 09:29:48, hch@infradead.org wrote:
-> On Mon, May 27, 2024 at 03:38:40PM +0000, Trond Myklebust wrote:
-> > If your use case isn't NFS servers, then what use case are you
-> > targeting, and how do you expect those applications to use this API?
+
+
+On 24/05/2024 12:33, Yong-Xuan Wang wrote:
+> Add support for SBI_FWFT_PTE_AD_HW_UPDATING to set the PTE A/D bits
+> updating behavior for Guest/VM.
 > 
-> The main user of the open by handle syscalls seems to be fanotify
-> magic.
+> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  2 +-
+>  arch/riscv/kvm/vcpu_sbi_fwft.c             | 38 +++++++++++++++++++++-
+>  2 files changed, 38 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+> index 7b7bcc5c8fee..3614a44e0a4a 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+> @@ -11,7 +11,7 @@
+>  
+>  #include <asm/sbi.h>
+>  
+> -#define KVM_SBI_FWFT_FEATURE_COUNT	1
+> +#define KVM_SBI_FWFT_FEATURE_COUNT	2
+>  
+>  struct kvm_sbi_fwft_config;
+>  struct kvm_vcpu;
+> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> index 89ec263c250d..14ef74023340 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_fwft.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> @@ -71,6 +71,36 @@ static int kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
+>  	return SBI_SUCCESS;
+>  }
+>  
+> +static int kvm_sbi_fwft_adue_supported(struct kvm_vcpu *vcpu)
+> +{
+> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
+> +		return SBI_ERR_NOT_SUPPORTED;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kvm_sbi_fwft_set_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
+> +				 unsigned long value)
+> +{
+> +	if (value)
+> +		vcpu->arch.cfg.henvcfg |= ENVCFG_ADUE;
+> +	else
+> +		vcpu->arch.cfg.henvcfg &= ~ENVCFG_ADUE;
+> +
+> +	return SBI_SUCCESS;
+> +}
+> +
+> +static int kvm_sbi_fwft_get_adue(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf,
+> +				 unsigned long *value)
+> +{
+> +	if (!riscv_isa_extension_available(vcpu->arch.isa, SVADU))
+> +		return SBI_ERR_NOT_SUPPORTED;
+> +
+> +	*value = !!(vcpu->arch.cfg.henvcfg & ENVCFG_ADUE);
+> +
+> +	return SBI_SUCCESS;
+> +}
 
-So some fanotify users may use open_by_handle_at() and name_to_handle_at()
-but we specifically designed fanotify to not depend on this mount id
-feature of the API (because it wasn't really usable couple of years ago
-when we were designing this with Amir). fanotify returns fsid + fhandle in
-its events and userspace is expected to build a mapping of fsid ->
-"whatever it needs to identify a filesystem" when placing fanotify marks.
-If it wants to open file / directory where events happened, then this
-usually means keeping fsid -> "some open fd on fs" mapping so that it can
-then use open_by_handle_at() for opening.
+Hi Yong-Xuan,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+vcpu->arch.cfg.henvcfg seems to be used to update the HENVCFG CSR  only
+during vcpu_load()/vcpu_put(). So if this extension updates it there and
+stays in the execution loop (kvm_arch_vcpu_ioctl_run()) then, it seems
+like the HENVCFG CSR won't be updated immediately but on the next
+vcpu_load(). Is there something I'm missing ?
+
+Thanks,
+
+Clément Léger
+
+> +
+>  static struct kvm_sbi_fwft_config *
+>  kvm_sbi_fwft_get_config(struct kvm_vcpu *vcpu, enum sbi_fwft_feature_t feature)
+>  {
+> @@ -177,7 +207,13 @@ static const struct kvm_sbi_fwft_feature features[] = {
+>  		.supported = kvm_sbi_fwft_misaligned_delegation_supported,
+>  		.set = kvm_sbi_fwft_set_misaligned_delegation,
+>  		.get = kvm_sbi_fwft_get_misaligned_delegation,
+> -	}
+> +	},
+> +	{
+> +		.id = SBI_FWFT_PTE_AD_HW_UPDATING,
+> +		.supported = kvm_sbi_fwft_adue_supported,
+> +		.set = kvm_sbi_fwft_set_adue,
+> +		.get = kvm_sbi_fwft_get_adue,
+> +	},
+>  };
+>  
+>  static_assert(ARRAY_SIZE(features) == KVM_SBI_FWFT_FEATURE_COUNT);
 
