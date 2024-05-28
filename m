@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-192245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581DE8D1A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042A08D1A9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2A41F23673
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5BE1F23674
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A9316D4C7;
-	Tue, 28 May 2024 12:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEA216D9D8;
+	Tue, 28 May 2024 12:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dG/8WVC0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWj8ZvqO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EEE13A242;
-	Tue, 28 May 2024 12:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88B916B743;
+	Tue, 28 May 2024 12:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897862; cv=none; b=B+HX6jVlnlajYtIZ5qwJ/a37UOsFYopdgirouU31nZ/FR5UWM6gAyGqKC0h8ERq1ggMXJfgGh2CbripRUxVgjv76U7nh6sb59QodOgfJf1wf2dqKVbh0sjpDum4vKk0MfGaZN7tC/fsR6gPoZP3bZR8vGHPC+iZccqgU8T4YBh0=
+	t=1716897872; cv=none; b=pCX5dolmBWQdARLWazFI1pIf6sKbiT4z0Yyf/7X5A3RVZTEIGNVR+qSuanqEsC+9JnpiTVVe60uFq/WTCPw8532RLcKvZa0dIE2vCS5g1dWEiqMYhKgSPo61HVyl8O3duoxHfSNBPwoEUBudZCYto7vVLoPRKeO+AY8IpErzCoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897862; c=relaxed/simple;
-	bh=58egx2ps+6Wd1SWHNZP2itAP+QAyWA4OV5HwePJdVbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBgtR9SehTIWMbB59T/tJwkanzocgAla0OG8Eysi/qbpARcoCIv9exjuVWhI9lkvZRZ+C8G+meI5337BHZc4apNbYiR1uWmldy6IgpdNU2LqtJuOMe5AZL9Sv+sceVyQmp0B2X+rodqQdncIKMnKegR1A97eL5yPiTjAxCVcJAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dG/8WVC0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88CA4C3277B;
-	Tue, 28 May 2024 12:04:18 +0000 (UTC)
+	s=arc-20240116; t=1716897872; c=relaxed/simple;
+	bh=geFzxgDm7W4HA50i8vXt3CLQRJwI4FU8uG+93ofHFxY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EFuU6234aGJNUbhvm+8mJcS/C0Amb74pHbyCO8FUNTMTqdoBZ4ILNsQ4Im+Pjg9rOLyoukqO7oruJAb/I1WMpunZUJE446+mVGAvgdlseUwnX7ihNrNSNuM4NJi6lvOAK6Ts8Dz6qDIjww9eOVPVO2cliue88MbJN2ihP6mH0sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWj8ZvqO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83895C32782;
+	Tue, 28 May 2024 12:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716897861;
-	bh=58egx2ps+6Wd1SWHNZP2itAP+QAyWA4OV5HwePJdVbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dG/8WVC00ObIsjXJb4Rbw4GYINkQAmvMhB+ACGZyZPnoB3/5W17IxpBbpRhLMH/Zt
-	 RYKOYgWMBur6TREpatnG8wplU6AoVFE98XARvDOmb43Qb+6tZdtrfNyu0/P6kIz8au
-	 c+rz3CsefuHcMmUDeaf3FmgKn86NOHJ4aKsNGzIceAAFGpJqRkFFI5/rID5S31ortM
-	 B8WbdEi6TkVmwyfZwDexHs5Q7hr0Glk7Piwul4Wl6pxq3R4yOeW251LE90IrJTDdNd
-	 YHKmSEmphEyaIUZfA302dT0s6MS5hU6ijm7HwddSKztskCa0cS7q9GIVPNL2F62t6w
-	 A9PthY+zBZStw==
-Date: Tue, 28 May 2024 14:04:16 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <20240528-gipfel-dilemma-948a590a36fd@brauner>
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
- <ZlMADupKkN0ITgG5@infradead.org>
- <20240526.184753-detached.length.shallow.contents-jWkMukeD7VAC@cyphar.com>
- <ZlRy7EBaV04F2UaI@infradead.org>
- <20240527133430.ifjo2kksoehtuwrn@quack3>
- <ZlSzotIrVPGrC6vt@infradead.org>
- <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
- <ZlWVkJwwJ0-B-Zyl@infradead.org>
- <20240528-gesell-evakuieren-899c08cbfa06@brauner>
- <ZlW4IWMYxtwbeI7I@infradead.org>
+	s=k20201202; t=1716897871;
+	bh=geFzxgDm7W4HA50i8vXt3CLQRJwI4FU8uG+93ofHFxY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nWj8ZvqO4QYiburakoYAcexvxmbveCbUU//HDUl7nERTKp6g9s8UoYzLPvtik1c9r
+	 E5dkiPoJgdwlZc342vma5XxmBxFTDLj05IzI1+cP/U6Ie6kKKJkq+Jc20mISDYZ+/F
+	 NiEG85XE+an8l0XRshU6+Yl0Ox0nOjpi5TKuBgNMGOXABd24d6MMfC9J4geeb5BaUM
+	 nChOeg0guxtb9N0GmRqjF2G2xqdJkoo2v3/8tyqtEppXWWmtKCeWv65l28h8pt8Zjl
+	 N43yo6BdlcQ8etlQ24KYJz5KJQ20Q3v7sSTUFXtKY8bnYrKwOGvxtU6GPXzuK9l8zi
+	 O4hDR15XJkplg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: dsa: realtek: add LEDS_CLASS dependency
+Date: Tue, 28 May 2024 14:03:46 +0200
+Message-Id: <20240528120424.3353880-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZlW4IWMYxtwbeI7I@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 03:55:29AM -0700, Christoph Hellwig wrote:
-> On Tue, May 28, 2024 at 11:17:58AM +0200, Christian Brauner wrote:
-> > As I've said earlier, independent of the new handle type returning the
-> > new mount id is useful and needed because it allows the caller to
-> > reliably generate a mount fd for use with open_by_handle_at() via
-> > statmount(). That won't be solved by a new handle type and is racy with
-> > the old mount id. So I intend to accept a version of this patch.
-> 
-> The whole point is that with the fsid in the handle we do not even need
-> a mount fd for open_by_handle_at.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Can you please explain how opening an fd based on a handle returned from
-name_to_handle_at() and not using a mount file descriptor for
-open_by_handle_at() would work?
+This driver fails to link when LED support is disabled:
+
+ERROR: modpost: "led_init_default_state_get" [drivers/net/dsa/realtek/rtl8366.ko] undefined!
+ERROR: modpost: "devm_led_classdev_register_ext" [drivers/net/dsa/realtek/rtl8366.ko] undefined!
+
+Add a dependency that prevents this configuration.
+
+Fixes: 32d617005475 ("net: dsa: realtek: add LED drivers for rtl8366rb")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/dsa/realtek/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/dsa/realtek/Kconfig b/drivers/net/dsa/realtek/Kconfig
+index 6989972eebc3..6c90a83c71da 100644
+--- a/drivers/net/dsa/realtek/Kconfig
++++ b/drivers/net/dsa/realtek/Kconfig
+@@ -39,6 +39,7 @@ config NET_DSA_REALTEK_RTL8365MB
+ config NET_DSA_REALTEK_RTL8366RB
+ 	tristate "Realtek RTL8366RB switch driver"
+ 	depends on NET_DSA_REALTEK_SMI || NET_DSA_REALTEK_MDIO
++	depends on LEDS_CLASS
+ 	select NET_DSA_TAG_RTL4_A
+ 	help
+ 	  Select to enable support for Realtek RTL8366RB.
+-- 
+2.39.2
+
 
