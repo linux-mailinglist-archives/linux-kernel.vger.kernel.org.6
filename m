@@ -1,70 +1,80 @@
-Return-Path: <linux-kernel+bounces-193226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21A48D28A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:19:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C928D28AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69CE11F27384
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451061C243D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD7713F425;
-	Tue, 28 May 2024 23:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DAF13F42E;
+	Tue, 28 May 2024 23:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LyrJwbHb"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SPxm7FC4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115613D88B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF4E13E032;
+	Tue, 28 May 2024 23:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716938360; cv=none; b=E4wDu/zjuY3AdsXolRCuyT3p339ljN5iD5igYV4G4+UiNbg9MbiAxOpM0ebV+Susg8ZE2szqXXBaipKffi4Ok/v2uclffwRxveF9VFmYwLkLHFgxCsR3XCQSbFhtvw9fkI6bm3ReufqEgCTetqC8ejuSTrFmt6sF/l6PBasSkU4=
+	t=1716938481; cv=none; b=BUnKG8RQqJJSU1MNUVlaZWgwMhx5eNkAJ5GJUqDg1PmLy+V+cwKFcDNqKGDiUbyA2rxUFL76HvUNNI52GS/o+2ARkYQKOJzKy+d2SQw8UlvkJ/aMZV+bKKHnpvNLm1K/nT7iv3FpJ67qNDwmEoTR3ifAd0fuwq9ziZyKJj8BQ0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716938360; c=relaxed/simple;
-	bh=8Ks/xW44jNpyTbrhv2TT1UP2TH1bfzh/Id8ddDoxTo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AIMFrmJqCFv+wg6cQvbpHOLiyknm0yjLJI344QzdBYNBGaugsQ9RX2709G4SUDKuqwXFeMHNROSZDWHYFjEEFznqtEaOtDczwh5gRlxtXw7S5C3XXzt2DPsYUJBT715QCHr7XYy7c2Qa86Uzsr+p1DW+z4cA5lKmLhnm21FbGsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LyrJwbHb; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f47eb21f0aso12583305ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1716938357; x=1717543157; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQmtZImtTCDF8xM8bsMOtDDZXVcIKr+tvBdyZWpTfLs=;
-        b=LyrJwbHbKtbL+VhyMkk1yXv9qegXnFInG8f+j2mPz0EAi5C4ye3iEESibOT+sZG0wQ
-         yfTWxKMNcrW9npCfvvjVvCae5BUpeuCsYv+qEL9eXIeUXOHcn2rhqEVFMLjp4tp4STZw
-         CbqLeNMLxhYHYIA72bGTmARkGv/18BUgsbOLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716938357; x=1717543157;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aQmtZImtTCDF8xM8bsMOtDDZXVcIKr+tvBdyZWpTfLs=;
-        b=tPayecaX8ZQCz9c5dp24HmYIn+20lRDff1cdstNQXxSrRKfQuJZ+FYOKJ25rPcy7yU
-         aLndl8+O5uCfAw2F243OscRriMqQsgaOMA9p3dtHRyh+68NmmSQ+z31tzZ2npy+WOWNC
-         dgChW2OZJOJ7ViLjXDumskXhiDkOwMTKSd42mQCE2IQ6gPS0hpXruAoORjw8ms37/uYw
-         OYoOIyFIA2Z9I+n4dp9nJeYZJSiYnfJtYyzi5d5IkBBrZ8ZCBZaKD+K6iP1hIPHSe/ab
-         6vZGuObRUQM/Qec7puRLYunDPRpsOPb20hfHdXeRA0rZgtTMROOcIlDkm9/k2OtfpUf3
-         X/GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVWsVvobWY/bCC9iak+6hjD4590TQcmvObQgnUmeTPo2QP2iHUMs1s5Xouk2XDlTvYWoGTgSLD2C7g4j4+e9lyMSTnbqH+tsSsFpwR
-X-Gm-Message-State: AOJu0YwRSVLcFYusBq1PMOUFP8tDwhZcWqWcyuRvKFJ+Bm3zPf7rmdS/
-	xcmFXKdJO9XP7uC1lfybKMxlz0H6sKEi+8pa49MJGkt6kEyKb5psPFkAWsMB1A==
-X-Google-Smtp-Source: AGHT+IF5azFeiotoSKWA4uOUJz9O48YqOQx621jDWxAyiqI+zXtuBnARF8LoyGkAg4qNm+aB9hsl4A==
-X-Received: by 2002:a17:902:f9cb:b0:1f3:4bb7:5e16 with SMTP id d9443c01a7336-1f44873387bmr122173745ad.32.1716938357464;
-        Tue, 28 May 2024 16:19:17 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f481c24d13sm54561465ad.202.2024.05.28.16.19.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 16:19:16 -0700 (PDT)
-Message-ID: <3adb6776-fd13-427e-bc47-fb470e90045b@broadcom.com>
-Date: Tue, 28 May 2024 16:19:14 -0700
+	s=arc-20240116; t=1716938481; c=relaxed/simple;
+	bh=pavINxNQb0wpTkr0z/OU1wApUVEUvATkfET9/xJlDHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WZ1enGM6LoUQDLbZuRYZ1v866nOx2o4iG4LJjlWxSjyU0/5Eyjnd1SWqeQg5J1fMdNWNaQb8Pm+3nKpzpj6OEl8INvwiTqm+d1vgs2JQ+N53jaY8+YfWvMmy8HvWPDq+wwaPFrmfo3/6kF+IoKZ625u6n903uZYt9LnjcjMmmEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SPxm7FC4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SN6IkP025924;
+	Tue, 28 May 2024 23:21:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=UECEOXZUODNQWxGmp7QlJ9QXvMbeAl1iWJQXorr2fdg=;
+ b=SPxm7FC4PyGTaxQrodBSblks07quArUTtu56sF2DDe4rACBPIgTVJWx6r+LQkFqFNglR
+ ABQGiIotKMUy/m01ZYkpI0rak+QVdbmavfv6JHCk29u9Wi5pot0o/Ua7OifgRiGIC0Tp
+ NqIZgyKNRMn8jtGuKTZTRy6M064H0okYL9Xn1v1wWfT5QIMGmZQOyXbEor3S6vIDa56F
+ QopZwBwqrMbvONCZvVvDANjDTavOX8+oiHpmXMBQVsTzvX8BBn02dKj75C2nLH+dTgTH
+ nzraYzTkfug5ZXP65HkI5MrDyYsXroiL6vv+Ao5dsfX6CRD6LY3ZFBUkUPQ1Yv9j8V4e mw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydra601sg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 23:21:02 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SNL2q7015042;
+	Tue, 28 May 2024 23:21:02 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydra601se-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 23:21:02 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SKWI8Y026795;
+	Tue, 28 May 2024 23:21:01 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpd2gn8g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 23:21:01 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SNKwYV46399838
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 23:21:01 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B26775804B;
+	Tue, 28 May 2024 23:20:58 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 681E958055;
+	Tue, 28 May 2024 23:20:57 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 May 2024 23:20:57 +0000 (GMT)
+Message-ID: <12cc5fd9-6537-4a0b-b7d9-1221da3bf9f7@linux.ibm.com>
+Date: Tue, 28 May 2024 19:20:56 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,296 +82,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: broadcom: Add support for BCM2712
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <cover.1716899600.git.andrea.porta@suse.com>
- <8dd6997394a01317747ca11b4779f586752b4947.1716899600.git.andrea.porta@suse.com>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <8dd6997394a01317747ca11b4779f586752b4947.1716899600.git.andrea.porta@suse.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000edb00306198bdc2c"
-
---000000000000edb00306198bdc2c
+Subject: Re: [PATCH v7 1/5] crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-crypto@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-2-jarkko@kernel.org>
 Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240528210823.28798-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1vI7w9ooeitD5nv9F-JsXpWJtJsmzusW
+X-Proofpoint-GUID: n_x_kn-cLPZDHQ4nzJ8O-lyNP5E27KxR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 spamscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 bulkscore=0 clxscore=1015 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405280172
 
-On 5/28/24 06:32, Andrea della Porta wrote:
-> The BCM2712 SoC family can be found on Raspberry Pi 5.
-> Add minimal SoC and board (Rpi5 specific) dts file to be able to
-> boot from SD card and use console on debug UART.
+
+
+On 5/28/24 17:08, Jarkko Sakkinen wrote:
+> ASN.1 template is required for TPM2 asymmetric keys, as it needs to be
+> piggy-packed with the input data before applying TPM2_RSA_Decrypt. This
+
+piggy-backed
+
+> patch prepares crypto subsystem for the addition of those keys.
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
 > ---
-
-[snip]
-
-> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+>   crypto/rsa-pkcs1pad.c         | 16 ++++++++++------
+>   include/crypto/rsa-pkcs1pad.h | 20 ++++++++++++++++++++
+>   2 files changed, 30 insertions(+), 6 deletions(-)
+>   create mode 100644 include/crypto/rsa-pkcs1pad.h
+> 
+> diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
+> index cd501195f34a..00b6c14f861c 100644
+> --- a/crypto/rsa-pkcs1pad.c
+> +++ b/crypto/rsa-pkcs1pad.c
+> @@ -7,6 +7,7 @@
+>   
+>   #include <crypto/algapi.h>
+>   #include <crypto/akcipher.h>
+> +#include <crypto/rsa-pkcs1pad.h>
+>   #include <crypto/internal/akcipher.h>
+>   #include <crypto/internal/rsa.h>
+>   #include <linux/err.h>
+> @@ -79,11 +80,7 @@ static const u8 rsa_digest_info_sha3_512[] = {
+>   	0x05, 0x00, 0x04, 0x40
+>   };
+>   
+> -static const struct rsa_asn1_template {
+> -	const char	*name;
+> -	const u8	*data;
+> -	size_t		size;
+> -} rsa_asn1_templates[] = {
+> +static const struct rsa_asn1_template rsa_asn1_templates[] = {
+>   #define _(X) { #X, rsa_digest_info_##X, sizeof(rsa_digest_info_##X) }
+>   	_(md5),
+>   	_(sha1),
+> @@ -101,7 +98,13 @@ static const struct rsa_asn1_template {
+>   	{ NULL }
+>   };
+>   
+> -static const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
+> +/**
+> + * rsa_lookup_asn1() - Lookup the ASN.1 digest info given the hash
+> + * name:	hash algorithm name
+> + *
+> + * Returns the ASN.1 digest info on success, and NULL on failure.
+> + */
+> +const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
+>   {
+>   	const struct rsa_asn1_template *p;
+>   
+> @@ -110,6 +113,7 @@ static const struct rsa_asn1_template *rsa_lookup_asn1(const char *name)
+>   			return p;
+>   	return NULL;
+>   }
+> +EXPORT_SYMBOL_GPL(rsa_lookup_asn1);
+>   
+>   struct pkcs1pad_ctx {
+>   	struct crypto_akcipher *child;
+> diff --git a/include/crypto/rsa-pkcs1pad.h b/include/crypto/rsa-pkcs1pad.h
 > new file mode 100644
-> index 000000000000..71b0fa6c9594
+> index 000000000000..32c7453ff644
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> @@ -0,0 +1,292 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +++ b/include/crypto/rsa-pkcs1pad.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * RSA padding templates.
+> + */
 > +
-> +/ {
-> +	compatible = "brcm,bcm2712";
+> +#ifndef _CRYPTO_RSA_PKCS1PAD_H
+> +#define _CRYPTO_RSA_PKCS1PAD_H
 > +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
+> +/*
+> + * Hash algorithm name to ASN.1 template mapping.
+> + */
+> +struct rsa_asn1_template {
+> +	const char *name;
+> +	const u8 *data;
+> +	size_t size;
+> +};
 > +
-> +	interrupt-parent = <&gicv2>;
+> +const struct rsa_asn1_template *rsa_lookup_asn1(const char *name);
 > +
-> +	axi: axi@1000000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x10 0x00000000  0x10 0x00000000  0x01 0x00000000>;
-
-That property does not look correct, you want to define an aperture that 
-starts at 0x10_0000_0000 into the CPU's address space, and then have 
-sub-node(s) whose "reg" property is to be encoded using #address-cells = 
-<1> and #size-cells = <1> because that's enough to represent that 
-address space.
-
-> +
-> +		sdio1: mmc@1000fff000 {
-> +			compatible = "brcm,bcm2712-sdhci",
-> +				     "brcm,sdhci-brcmstb";
-> +			reg = <0x10 0x00fff000  0x0 0x260>,
-> +			      <0x10 0x00fff400  0x0 0x200>;
-
-That "reg" property should not be including the 0x10_0000_0000 offset at 
-all, and we should just have:
-
-			reg = <0xfff000 0x260>,
-			      <0xfff400 0x200>;
-
-
-> +			reg-names = "host", "cfg";
-> +			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clk_emmc2>;
-> +			clock-names = "sw_sdio";
-> +			mmc-ddr-3_3v;
-> +		};
-> +
-> +		gicv2: interrupt-controller@107fff9000 {
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			compatible = "arm,gic-400";
-> +			reg = <0x10 0x7fff9000  0x0 0x1000>,
-> +			      <0x10 0x7fffa000  0x0 0x2000>,
-> +			      <0x10 0x7fffc000  0x0 0x2000>,
-> +			      <0x10 0x7fffe000  0x0 0x2000>;
-
-Likewise, this is supposed to be:
-
-			reg = <0x7fff9000 0x1000>,
-				<0x7fffa000 0x2000>,
-				<0x7fffc000 0x2000>,
-				<0x7fffe000 0x2000>;
-
-[snip]
-
-> +
-> +	soc: soc@107c000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		ranges     = <0x7c000000  0x10 0x7c000000  0x04000000>;
-
-That spans the previously defined axi node above (goes up to 
-0x10_8000_0000), once we make the necessary "ranges" adjustments to the 
-axi node as indicated before.
-
-I thought that based upon our conversation in v3, this was all going to 
-be a single "soc" node?
-
-> +		/* Emulate a contiguous 30-bit address range for DMA */
-> +		dma-ranges = <0xc0000000  0x00 0x00000000  0x40000000>,
-> +			     <0x7c000000  0x10 0x7c000000  0x04000000>;
-> +
-> +		system_timer: timer@7c003000 {
-> +			compatible = "brcm,bcm2835-system-timer";
-> +			reg = <0x7c003000 0x1000>;
-> +			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-> +			clock-frequency = <1000000>;
-> +		};
-> +
-> +		mailbox: mailbox@7c013880 {
-> +			compatible = "brcm,bcm2835-mbox";
-> +			reg = <0x7c013880 0x40>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			#mbox-cells = <0>;
-> +		};
-> +
-> +		local_intc: local-intc@7cd00000 {
-> +			compatible = "brcm,bcm2836-l1-intc";
-> +			reg = <0x7cd00000 0x100>;
-> +		};
-> +
-> +		uart10: serial@7d001000 {
-> +			compatible = "arm,pl011", "arm,primecell";
-> +			reg = <0x7d001000 0x200>;
-> +			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clk_uart>, <&clk_vpu>;
-> +			clock-names = "uartclk", "apb_pclk";
-> +			arm,primecell-periphid = <0x00241011>;
-> +			status = "disabled";
-> +		};
-> +
-> +		interrupt-controller@7d517000 {
-> +			compatible = "brcm,bcm7271-l2-intc";
-> +			reg = <0x7d517000 0x10>;
-> +			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +		};
-> +
-> +		gio_aon: gpio@7d517c00 {
-> +			compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
-> +			reg = <0x7d517c00 0x40>;
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			// Don't use GIO_AON as an interrupt controller because it will
-> +			// clash with the firmware monitoring the PMIC interrupt via the VPU.
-
-OK, so the comment is intended to explain why there is no 
-'interrupt-controller' property specified when one might expect to find 
-one, and it has nothing to do with the "brcm,gpio-bank-widths" property, 
-because that one is correct and does indicate the number of pins that 
-need to be managed per bank. Some clarification is warranted here IMHO.
--- 
-Florian
-
-
---000000000000edb00306198bdc2c
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIPpW69Qb5y9fGH/i
-aMvLA8FPYoQz+nksI6LcsxCyf/gGMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUyODIzMTkxN1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBnMv/3x5wRK43HKj1ux4TIR9lXhKDWHPsA
-gl3HEYlNdCEmoK0bHZCaERshrCms6cTPAbMappfiV8iqy0bY0yHx4nRZkBnrEzgWkr01KfVlMyQc
-sc5aqQ3RMKeGMF/ClgytyjskhPW1eL/VcsC4RHv8z24Rq0IkipXN1I3oHBfTrag883Rytx97uREG
-To5X9DjodRzNlKGkw0Sl3ChNs0kJDD8R6CAOLu1CnVIEvAAvNSyvP2SyEMwUWby0rIADsEhSFLsY
-dW9d7CNK2xBarpqb+EXXpw3nCPjFN66tofY8zkfhRmc+8JeEwyjeoev+7ir8hldaTG2omKyrmRxt
-GD+m
---000000000000edb00306198bdc2c--
+> +#endif /* _CRYPTO_RSA_PKCS1PAD_H */
 
