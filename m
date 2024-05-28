@@ -1,163 +1,160 @@
-Return-Path: <linux-kernel+bounces-192542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602DB8D1ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CE38D1EE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5CFEB23530
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A45283ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA595170833;
-	Tue, 28 May 2024 14:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B916F82F;
+	Tue, 28 May 2024 14:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdFutYW5"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mUGXXBLk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bpRwgVbJ"
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978AD16FF5A;
-	Tue, 28 May 2024 14:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51CC1DFDE;
+	Tue, 28 May 2024 14:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906587; cv=none; b=BnBSBjhLpwqU9E/AMRE5RkNAtj4zdrQNcA54KIeITwNqJ5GEAZlOtiZIPdZcOape2k1vgVau/FkARDoa/ABbYxAqP/TDzTNdyD1/c/hLDnIH+iwVuaiGpbC79ica3LCJx4gi/qsVbVuPzcz4zmvjAFRS3kpUG8Wzh8QmlSqKh84=
+	t=1716906735; cv=none; b=o+2TW5lqxvZiI4KRi0i2V7K03ZxaID0Sb7t5l1kuodWFR/eYWmFtcQ+/8FPyoSPMCH56qwHMwlSmqGdTZpd0q/9FURv764OkPI4OnpCtb6bhSP2UmOtTrsr90RnBWhDbxC/xxDaIj2+6ojt+//a23/kyHYYMmPSclnVkaYpYOe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906587; c=relaxed/simple;
-	bh=ka61hrwWyt80vXDLIqj6xF9p6ZdwzYeaYhuB6NPdZV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1aSHpO7MNfMUeflQoafZIs2Vs/K7aeJTWT6+MGDpI/erg750ZdVKiR1HhLGI1Jqep+SSDEBf1k476IBZAJnGZS4nLF93TDEhOnVNB87J4pTyYjkKokOgpZISnzPK6WFylo3FO4FwjWYE8na/ttF4585zXG2DRATOADsrCCK/bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdFutYW5; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8052b43d328so130769241.0;
-        Tue, 28 May 2024 07:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716906584; x=1717511384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fg8y460Xa+j7cx+obTE0cFpPu6S6+u6FQc2pe05Mc/I=;
-        b=FdFutYW5p6K+1vWWZTWEGs+7tad2TzPDGqfaX093Y33VT6GRJ9Ts3is96zhD5uzuhB
-         QCjGkrjBZUhHmpv7YO7yzzRNdesNKTCAscFj8RmdSwZ/r73Fm1sUJnujJNP2Xeshf9hc
-         c0T6vyWU8fZu7lOTDcobq+jli/yJZYH54/qXqEzn/F9HcTcVNtmHPiOuyAdJ5ORWSJSq
-         6YJrT52okV3nF2nKlC5Hlyh2uAofpDKkYf78PzJE9hB1lJW2jwklBv5blNEzQrXRCI2a
-         7MywhOXKYl5ILeYDnRJ+cNx4+xXOdqGS0pF+kDP9yFdRu3cdjbnM7Th6eivLBjeYo4x2
-         9AaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716906584; x=1717511384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fg8y460Xa+j7cx+obTE0cFpPu6S6+u6FQc2pe05Mc/I=;
-        b=tRAvhw1lCgy6AREdna0/Lm+4rmvBr4GxBgrxZo0SCcmK5zIXezIXHoUlCpjDC+WpJT
-         slJQTAdGV+W0wiC2a0Ar8VlW2tFxpShhjSd3tBKYVu4KU6Q7LWijm3XZLhj35b3ITVdS
-         YWini1YyyS2+QxDwD6b2bCBRXQEVjNOUX89Livda4SbJIQKBeS1RptegnkSDu9MeEU6Z
-         gMw9S469kmZ9N0saCVSchW7vYvdPiE7mw8fs7aoG5vHuTL4Y9sw5+RwyalUUawQjGiFU
-         Qk7sraE7R0vzlKIY6+CZIVpjGmVFSiXIUGIEqDyyA48JX9+kf+kmpchHdvAXJx9WAY+e
-         rnWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAUaFNmnisOCwhpjtDJpN1wTaEoxU08PYNvD04tUwQq34AnmqRoBItbb7Zef+8fe6CwFEhuxy0JmQIjhtkS///LEwXcPDUd0l2MmrnO/6jC3xCWILEH797VE5gEsyprOAvdf6orZ5dX7K++qEYoWcP0pYnM/tiwEdk6m1G
-X-Gm-Message-State: AOJu0YyFKtLSwqD69YlmOGd1FhpDs9jzwRBiwDrjYcBtHUDZqj6/pifR
-	qGU74oeykABZWUx4z3FLXIoliqqtJ0AZ5YYHhcd0nMBE8fHu+WxSPr0TECZYGf3++6R0w82KnWh
-	aN0dVargg2tK7SosnR/KjqU7hQ8A=
-X-Google-Smtp-Source: AGHT+IE1iPcTI3pn+5wr1fZSALkFdHBU+jz0yKwG86On+gFfOzSfsdcWJsSjZYld6caHgt28iKAiaIMEpj6Eo7JGKbc=
-X-Received: by 2002:a05:6122:7c8:b0:4de:847a:3647 with SMTP id
- 71dfb90a1353d-4e4f02cac8bmr12828252e0c.11.1716906584536; Tue, 28 May 2024
- 07:29:44 -0700 (PDT)
+	s=arc-20240116; t=1716906735; c=relaxed/simple;
+	bh=E0twsAQJp0cxsMgxYktc9tQCh6ugKHehv97qng9KsZI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=GVa76KvDyHXT7Z60NS7umgmT0py8Qvr40ATsszQULYIKMG2ke83sKTiv1b8pxuwDUIsK/HvsbnrAwkrXd+tN7R0N5e6P7ZB/6ndEBVdg5+KE97V2MQJsu5pW0vnbai6cakcTToaFnMIgMkNSq6UZxIvUjTIrQ1sp6bUdfnqfslQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mUGXXBLk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bpRwgVbJ; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id A549D18000E9;
+	Tue, 28 May 2024 10:32:12 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Tue, 28 May 2024 10:32:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1716906732;
+	 x=1716993132; bh=GkVpBdu2u/m4Dx1VMyzxVy0HTZ7tx3XoPoYCq0553jo=; b=
+	mUGXXBLkuIo2GMHF/8Wjuji5S0T+SwcCjPC6Y/t8okus5g5P5Ytg9L9ABI+oTP2S
+	w15ecJMQ8txN9TQYxYfZ81iDPa/tk8YNsJQ7n9xUOOc6/PNlo79I+/S2vViHOwGF
+	ingBjfO7ZOjCVTRA6/MebPtZ1oPxRBPLHp81WKMsC/0jzlOrbX2KKKGJ2XFT+Gxi
+	BTeR5Cf/6BmGnUP1pUZ7t7+hiUywVJFUsuDgZVqgQ6oqmIl3vhGyLxrQ5lFEWnRW
+	6SqQ3qznT78wKGEvdwNCQU8yXb6YPw6xJUOBFz1gBaRqra/ffRi9/juFSC12Pj8R
+	MpLtziQ5u/De7FC0dtwH9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716906732; x=
+	1716993132; bh=GkVpBdu2u/m4Dx1VMyzxVy0HTZ7tx3XoPoYCq0553jo=; b=b
+	pRwgVbJRWzHY/6JbV1MbwXFdlRTnV/kbCz1Bq5V34L6sRlD7INXw3b2J84rDNa+s
+	27V2VDXem5tqa0H4wzGWzQLhFcA9hfKJHjKm9iy8WvweJ2OP9RUMwf7YXgW88sJl
+	efWuAZ5TY/wtE7/2EjjvFxe9a+k+C21ImbR/CqJOc+B3eSnhQd5zBBpeP3lz63yx
+	7bmelkjPjC47zbJ7/lK7pRsMyxRipD007hFRpO/3rTfwGWUswizWSkjuDPnYNckP
+	hcRXY5i4jr4FqSq/REIwiILrGb8ydm5jHa8WIHfRw4Uvl1Fkz9w/duAhLIbWO5nn
+	/9ymi1llhl5wFA5s6Gk+Q==
+X-ME-Sender: <xms:6-pVZjx9Ej-TnDdWZvrPhfgL_CpQSv9iHDzHhMsFwT4RCdHV5UVBIQ>
+    <xme:6-pVZrRWqTodgLtqEjNkyQCD5yHVfNdfaPgv8PM6oB4jsswUKjxp3gpilR0MHVQHi
+    thuUK9D0DRG_Obiyww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:6-pVZtX6TxtsDTv_MTgnGnLg4bMsinjkYpY0E2hAmdSf0PxDOmv_Dw>
+    <xmx:6-pVZtiWqLN-ZC1dUO4cErPzhyjW8iM4DBwkwta1SD0CrRcz8lf_nA>
+    <xmx:6-pVZlAOspG1OQhL87AxSBA5Rfso90uOaZdJQVhZ4MXE3bUHbvE14g>
+    <xmx:6-pVZmKUUhTP88RB8P1-RQ06W2rrG158dmzjmf2OL9szF6iW_1xd1Q>
+    <xmx:7OpVZo7Qq5YyLR4-OjzWXxg_bpvPJmgJu_M9FMc5qy5GE96zmMHlO6wz>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 8E16A36A0074; Tue, 28 May 2024 10:32:11 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527074456.9310-1-chengen.du@canonical.com>
- <66549c368764b_268e8229462@willemb.c.googlers.com.notmuch> <CAPza5qe-H6piY6ED7StLOiviiMbWq1rnMpKR_dZu1sehwhji2w@mail.gmail.com>
-In-Reply-To: <CAPza5qe-H6piY6ED7StLOiviiMbWq1rnMpKR_dZu1sehwhji2w@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Tue, 28 May 2024 10:29:07 -0400
-Message-ID: <CAF=yD-J8UV+KD7fUQ-eSJWvHrhqezMs81zXX=VeVgdHR8ZZ7ag@mail.gmail.com>
-Subject: Re: [PATCH v3] af_packet: Handle outgoing VLAN packets without
- hardware offloading
-To: Chengen Du <chengen.du@canonical.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, loke.chetan@gmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <558b1d58-08a5-410d-97b8-e77def7c1cf8@app.fastmail.com>
+In-Reply-To: <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
+References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+ <87sey3b6de.ffs@tglx> <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
+Date: Tue, 28 May 2024 15:31:52 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for MIPS/Loongson64
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 11:40=E2=80=AFPM Chengen Du <chengen.du@canonical.c=
-om> wrote:
+
+
+=E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
+=8D=885:32=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=
+=E5=8D=884:51=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
+>> Jiaxun!
+>>
+> Hi Thomas,
+> [...]
+>>
+>> What's this indirection for? Why dont you update=20
+> [...]
+>>
+>>> +static struct clocksource nodecnt_clocksource =3D {
+>>> +	.name	=3D "nodecnt",
+>>> +	.read	=3D nodecnt_clocksource_read,
+>>
+>> the read function pointer here and spare the indirection?
+> Smart! sched_clock takes slightly different function pointer argument =
+type
+> but as we don't use the argument anyway, it should be safe to relax th=
+is
+> indirection.
+
+Sadly, I'm unable to remove it with force type catsing :-/
+
+drivers/clocksource/loongson-nodecnt.c: In function =E2=80=98nodecnt_clo=
+cksource_init=E2=80=99:
+drivers/clocksource/loongson-nodecnt.c:89:36: warning: cast between inco=
+mpatible function types from =E2=80=98u64 (*)(void)=E2=80=99 {aka =E2=80=
+=98long long unsigned int (*)(void)=E2=80=99} to =E2=80=98u64 (*)(struct=
+ clocksource *)=E2=80=99 {aka =E2=80=98long long unsigned int (*)(struct=
+ clocksource *)=E2=80=99} [-Wcast-function-type]
+   89 |         nodecnt_clocksource.read =3D (u64 (*)(struct clocksource=
+ *))nodecnt_read_fn;
+
+I'll leave it here.
+
+Thanks
 >
-> Hi Willem,
+> Will fix in v3.
 >
-> Thank you for your suggestions on the patch.
-> However, there are some parts I am not familiar with, and I would appreci=
-ate more detailed information from your side.
-
-Please respond with plain-text email. This message did not make it to
-the list. Also no top posting.
-
-https://docs.kernel.org/process/submitting-patches.html
-https://subspace.kernel.org/etiquette.html
-
-> > > @@ -2457,7 +2465,8 @@ static int tpacket_rcv(struct sk_buff *skb, str=
-uct net_device *dev,
-> > >       sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
-> > >       sll->sll_family =3D AF_PACKET;
-> > >       sll->sll_hatype =3D dev->type;
-> > > -     sll->sll_protocol =3D skb->protocol;
-> > > +     sll->sll_protocol =3D (skb->protocol =3D=3D htons(ETH_P_8021Q))=
- ?
-> > > +             vlan_eth_hdr(skb)->h_vlan_encapsulated_proto : skb->pro=
-tocol;
-> >
-> > In SOCK_RAW mode, the VLAN tag will be present, so should be returned.
+> Thanks
+>>
+>> Thanks
+>>
+>>         tglx
 >
-> Based on libpcap's handling, the SLL may not be used in SOCK_RAW mode.
+> --=20
+> - Jiaxun
 
-The kernel fills in the sockaddr_ll fields in tpacket_rcv for both
-SOCK_RAW and SOCK_DGRAM. Libpcap already can use both SOCK_RAW and
-SOCK_DGRAM. And constructs the sll2_header pseudo header that tcpdump
-sees itself, in pcap_handle_packet_mmap.
-
-> Do you recommend evaluating the mode and maintaining the original logic i=
-n SOCK_RAW mode,
-> or should we use the same logic for both SOCK_DGRAM and SOCK_RAW modes?
-
-I suggest keeping as is for SOCK_RAW, as returning data that starts at
-a VLAN header together with skb->protocol of ETH_P_IPV6 would be just
-as confusing as the inverse that we do today on SOCK_DGRAM.
-
-> >
-> > I'm concerned about returning a different value between SOCK_RAW and
-> > SOCK_DGRAM. But don't immediately see a better option. And for
-> > SOCK_DGRAM this approach is indistinguishable from the result on a
-> > device with hardware offload, so is acceptable.
-> >
-> > This test for ETH_P_8021Q ignores the QinQ stacked VLAN case. When
-> > fixing VLAN encap, both variants should be addressed at the same time.
-> > Note that ETH_P_8021AD is included in the eth_type_vlan test you call
-> > above.
->
-> In patch 1, the eth_type_vlan() function is used to determine if we need =
-to set the sll_protocol to the VLAN-encapsulated protocol, which includes b=
-oth ETH_P_8021Q and ETH_P_8021AD.
-> You mentioned previously that we might want the true network protocol ins=
-tead of the inner VLAN tag in the QinQ case (which means 802.1ad?).
-> I believe I may have misunderstood your point.
-
-I mean that if SOCK_DGRAM strips all VLAN headers to return the data
-from the start of the true network header, then skb->protocol should
-return that network protocol.
-
-With vlan stacking, your patch currently returns ETH_P_8021Q.
-
-See the packet formats in
-https://en.wikipedia.org/wiki/IEEE_802.1ad#Frame_format if you're
-confused about how stacking works.
-
-> Could you please confirm if both ETH_P_8021Q and ETH_P_8021AD should use =
-the VLAN-encapsulated protocol when VLAN hardware offloading is unavailable=
-?
-> Or are there other aspects that this judgment does not handle correctly?
+--=20
+- Jiaxun
 
