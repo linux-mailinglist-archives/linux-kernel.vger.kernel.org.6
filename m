@@ -1,262 +1,204 @@
-Return-Path: <linux-kernel+bounces-192760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6898D21B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:36:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766C58D21BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B85E1C2279B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0668928658D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B782E172BB6;
-	Tue, 28 May 2024 16:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD578172BC2;
+	Tue, 28 May 2024 16:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="to9eUQna"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H/1j5USv"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49E3F9D6;
-	Tue, 28 May 2024 16:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3E216D4FF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914177; cv=none; b=llyLSHZF3zG/lcmEOgrbf6HywGnJGrlCPyHS5+gOUdvA7t3HTsFcgxY79WEH4I9JXN60Uwn1MPQ7K768bDPp/883GUYA8kUknlLAFJUz4pSezdvHGV6LwWzqRSOprm6EA+7UbpgWsqIksXav8kgMDQ7+yFaF38EIU4rIsgORd7s=
+	t=1716914258; cv=none; b=TBWy7NkAX4PiKqmau/p2JhsltAeu0O+yk7rP2JVz+WRku7k8r6pSVYqxd5Ga8qNcNRIppLfuGQdXAFok0RrNCPxX6ix+IExrOt8jVnMpj9c6ZCakOUdMyorkMf3NGAJc3bm33gTNQ1vcZHTJ0yByDPdWHyi8w4DH83qPpbaCFrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914177; c=relaxed/simple;
-	bh=NuefzrUj9FO/t6wc3pR2TCeJn0nDqx9DSuM502grMnQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rRAudfS+efjJ9IkVpT9/10vZneEXEFTgC5Jdjzxw45kf7VeOM4WNZDCkmAQ/m5dj9o/qDejxw6VVkYWF2/hyJUWAoU5lEkIkPoLjB1mFvsreFMYdRfM93N4ZDF5J+SGhHviof7hNLKS4yeKCN26rCaSGHaBa/+a2ZLR3yQtat6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=to9eUQna; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBF4C3277B;
-	Tue, 28 May 2024 16:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716914177;
-	bh=NuefzrUj9FO/t6wc3pR2TCeJn0nDqx9DSuM502grMnQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=to9eUQnaJbyB7NCzJ2G4rbqeNYs95A7m70tx9yOFS+k39aec+WOxXgptyeEFQ9uIV
-	 PBt5BTLemlb5fAei1Sh+nhoO4t2l4X/AZnerO88r0qBjBI68FlKOWAoInpfg1nBivx
-	 dGKkV2d+D4Dwf+exD/Wn3qPLgzxjnLLZlFu3en8GHPagFjuW2tFsL+7u2GiA/3D/ZL
-	 FnXeRLtkz4FVYOH0kLVoOKKZuPkN2ZxX2bvLk87+LryQQxoiNuO9qc2ja4uRPYL2k7
-	 F/KsXvNzc4kX+h4zWwx4yx9ZN2zU6e9wH/nMACyNnKlWxWfhZS/lyk1aQF2olZQ983
-	 s3xGwztL+4Rrw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sBzo6-00GNJS-Sr;
-	Tue, 28 May 2024 17:36:15 +0100
-Date: Tue, 28 May 2024 17:36:14 +0100
-Message-ID: <86ed9lnbb5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4] of: property: Add fw_devlink support for interrupt-map property
-In-Reply-To: <20240509120820.1430587-1-apatel@ventanamicro.com>
-References: <20240509120820.1430587-1-apatel@ventanamicro.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1716914258; c=relaxed/simple;
+	bh=/r/SLL08HjdI46x3LF0p3F/u9Isqs916m5IdhjUo0RM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bsf4vknn7Ad7r9zaEKyWHx9SyAtWOxfC42de8PHmWfwhthaaf1CvcE0XxoEvFUDvsOxR+AoANUowV9uEBdEAhunREO1usV9rXNhtHMdEvaBh4QYz8tDRxiWMIq04TaaHGxkdQ7hhkdPs8GYT5JlYiZIcn/EGLj/trLuC0r/BFNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H/1j5USv; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df771b4eacbso1760839276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716914254; x=1717519054; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6GEC5jqmiiBW2QPmiEul4IbzhqqHXLiTP01MQ0qoF6U=;
+        b=H/1j5USvXTvJmWhwuOmLQmLvHdkM1QA1Yt5EkrBom21ZMXsaobXqIvximIHr4pIvzY
+         AFpA9EjUNSeJeRveYgHTrvsz1MAkhGVR7bGra7fVK5OfpjPYNQ4Tl7Ol1Bs07WxqFp5x
+         3bOseOJaSUmMSr1HHAJdHkhr5j5Ml2kCDwDOO3K3PES15sZjSGQ8V4qkd205rgw0BkKG
+         HUfx5HrrQNkRa5RF6aCii//d2Se+BublsMptqKOqKKnWAZy5ciXvmNvzr1zAgy6Fk1N2
+         wl71h1PIRqXQSNzFS79DwWA/b2SYk2FlcX/ZJjMBVWUWlYnlLzsiaSnHOpIex6zMYAvI
+         pMXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716914254; x=1717519054;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GEC5jqmiiBW2QPmiEul4IbzhqqHXLiTP01MQ0qoF6U=;
+        b=d/jHUNrA4JoJwvrpcqbzN+ivO9y/6Ndmtye9cZAWeAhSlYKQI6Es65DFWZQnlLToXX
+         CJYzPaaSgPB5qIjGUFO+6TFaGIhd+5q1+ZUvVP142/d1iEmH+YqyGiM/xrIVYv99/TiZ
+         mgIUwDAhc0KMqkse4+WEQgAkNhiCG8+V09O3oMOgZ3MXGqJiJSvZjfaXWSkxlj8ZPEyd
+         1JGdBgg4UTfQ7Kdhhtm6AflDT/LZVIfGjvTSGsXW1No6twQAG0wGkJC8/4So1YKlvIK6
+         AgPVOE1Sn+ZgKmW5Z1kfTLJ673SIjDvIgXBcrN+fEYNlAroo2Yagvtr9/AsbUfq6SkNj
+         0/8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVqdY2AppMKR9iIpUavModeA22UtdK7xGg8Q3P8951laEpb83Jz+RPnjqbeWTsW4G5lhWrEzmWzJXE7eJv1vHtASl3cWJyS4r3StFnE
+X-Gm-Message-State: AOJu0YzuVI0aUvtHZfXD6aCbbVHqc/xet7OwSZqNMm5hV9F8vAwzXEHx
+	4AN7NYmR2u3gp3MyXIz3PE5+lQDmkDI8JRH6+vcCpXN2EZCiTJIAdi8jjUS0HLuQYOvD8PAC5/4
+	Pu2N7oNL/igojvA==
+X-Google-Smtp-Source: AGHT+IFCM8agQwohlgmz/X20yI5XC7cbVbMVjBbNM657wC++i+TlAhU6zWE3+cMrzjDCjID8rBD8gKeQnEhFQnM=
+X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
+ (user=tjmercier job=sendgmr) by 2002:a05:6902:f85:b0:de6:166f:3250 with SMTP
+ id 3f1490d57ef6-df7721c1a20mr3534064276.2.1716914254444; Tue, 28 May 2024
+ 09:37:34 -0700 (PDT)
+Date: Tue, 28 May 2024 16:37:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: apatel@ventanamicro.com, robh@kernel.org, saravanak@google.com, palmer@dabbelt.com, paul.walmsley@sifive.com, atishp@atishpatra.org, ajones@ventanamicro.com, sunilvl@ventanamicro.com, anup@brainfault.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240528163713.2024887-1-tjmercier@google.com>
+Subject: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
+From: "T.J. Mercier" <tjmercier@google.com>
+To: tjmercier@google.com, mkoutny@suse.com, Tejun Heo <tj@kernel.org>, 
+	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 09 May 2024 13:08:20 +0100,
-Anup Patel <apatel@ventanamicro.com> wrote:
-> 
-> Some of the PCI host controllers (such as generic PCI host controller)
-> use "interrupt-map" DT property to describe the mapping between PCI
-> endpoints and PCI interrupt pins. This is the only case where the
-> interrupts are not described in DT.
-> 
-> Currently, there is no fw_devlink created based on "interrupt-map"
-> DT property so interrupt controller is not guaranteed to be probed
-> before the PCI host controller. This affects every platform where
-> both PCI host controller and interrupt controllers are probed as
-> regular platform devices.
-> 
-> This creates fw_devlink between consumers (PCI host controller) and
-> supplier (interrupt controller) based on "interrupt-map" DT property.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> Reviewed-by: Saravana Kannan <saravanak@google.com>
-> ---
-> Changes since v3:
-> - Added a comment about of_irq_parse_raw()
-> - Removed redundant NULL assignments to sup_args.np
-> Changes since v2:
-> - No need for a loop to find #interrupt-cells property value
-> - Fix node de-reference leak when index is greater than number
->   of entries in interrupt-map property
-> Changes since v1:
-> - Updated commit description based on Rob's suggestion
-> - Use of_irq_parse_raw() for parsing interrupt-map DT property
+The /proc/cgroups documentation says that the num_cgroups value is,
+"the number of control groups in this hierarchy using this controller."
 
-This patch breaks badly on my M1 Mini, with a continuous stream of
-boot time warnings lasting about 100 seconds:
+The value printed is simply the total number of cgroups in the hierarchy
+which is correct for v1, but not for the shared v2 hierarchy.
 
-[   97.832335] ------------[ cut here ]------------
-[   97.836955] /soc/pcie@690000000/pci@2,0 interrupt-map failed, using interrupt-controller
-[   97.845072] WARNING: CPU: 0 PID: 1 at drivers/of/irq.c:277 of_irq_parse_raw+0x620/0x730
-[   97.853087] Modules linked in:
-[   97.856139] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.10.0-rc1 #2915
-[   97.864163] Hardware name: Apple Mac mini (M1, 2020) (DT)
-[   97.869570] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[   97.876546] pc : of_irq_parse_raw+0x620/0x730
-[   97.880907] lr : of_irq_parse_raw+0x620/0x730
-[   97.885267] sp : ffffc000800538a0
-[   97.888581] x29: ffffc000800538a0 x28: 0000000000000000 x27: ffffffffff5ffc68
-[   97.895732] x26: ffffc000800539a4 x25: ffffffffff5ffbbc x24: ffffc00080053a48
-[   97.902883] x23: ffffe3ff73284e68 x22: ffffb7889aede6d0 x21: ffffe3ff735f9320
-[   97.910034] x20: ffffc00080053964 x19: ffffb7889aede6d0 x18: ffffffffffffffff
-[   97.917185] x17: 7075727265746e69 x16: 20676e697375202c x15: 64656c6961662070
-[   97.924336] x14: 616d2d7470757272 x13: 72656c6c6f72746e x12: 6f632d7470757272
-[   97.931487] x11: 65746e6920676e69 x10: ffffe3ff740bcb68 x9 : ffffe3ff72335b38
-[   97.938639] x8 : 00000001000028a4 x7 : ffffe3ff740afc08 x6 : 00000000000038a4
-[   97.945789] x5 : 00000000000067b0 x4 : c0000001000028a4 x3 : 0000000000000000
-[   97.952940] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffb784c16ade00
-[   97.960092] Call trace:
-[   97.962534]  of_irq_parse_raw+0x620/0x730
-[   97.966545]  parse_interrupt_map+0xfc/0x188
-[   97.970731]  of_fwnode_add_links+0x170/0x1e0
-[   97.975004]  fw_devlink_parse_fwtree+0x44/0x98
-[   97.979452]  fw_devlink_parse_fwtree+0x6c/0x98
-[   97.983899]  fw_devlink_parse_fwtree+0x6c/0x98
-[   97.988347]  device_add+0x610/0x6a8
-[   97.991836]  of_device_add+0x4c/0x70
-[   97.995411]  of_platform_device_create_pdata+0xa0/0x160
-[   98.000644]  of_platform_bus_create+0x184/0x370
-[   98.005178]  of_platform_populate+0x68/0x160
-[   98.009451]  of_platform_default_populate_init+0xf4/0x118
-[   98.014859]  do_one_initcall+0x4c/0x320
-[   98.018695]  do_initcalls+0xf4/0x1d8
-[   98.022271]  kernel_init_freeable+0x12c/0x280
-[   98.026632]  kernel_init+0x2c/0x1f8
-[   98.030120]  ret_from_fork+0x10/0x20
-[   98.033696] ---[ end trace 0000000000000000 ]---
+Consider:
+controllers="cpuset cpu io memory hugetlb pids rdma misc"
+for c in $controllers
+do
+  echo +$c > /sys/fs/cgroup/cgroup.subtree_control
+  mkdir /sys/fs/cgroup/$c
+  echo +$c > /sys/fs/cgroup/$c/cgroup.subtree_control
+  for i in `seq 100`; do mkdir /sys/fs/cgroup/$c/$i; done
+done
+cat /proc/cgroups
 
-which comes from 10a20b34d735f ("of/irq: Don't ignore
-interrupt-controller when interrupt-map failed").
+cpuset	0	809	1
+cpu	0	809	1
+cpuacct	0	809	1
+blkio	0	809	1
+memory	0	809	1
+devices	0	809	1
+freezer	0	809	1
+net_cls	0	809	1
+perf_event	0	809	1
+net_prio	0	809	1
+hugetlb	0	809	1
+pids	0	809	1
+rdma	0	809	1
+misc	0	809	1
+debug	0	809	1
 
-Each of the 3 PCIe ports are described as such:
+A count of 809 is reported for each controller, but only 109 should be
+reported for most of them since each controller is enabled in only part
+of the hierarchy. (Note that io depends on memcg, so its count should be
+209.)
 
-	port02: pci@2,0 {
-		device_type = "pci";
-		reg = <0x1000 0x0 0x0 0x0 0x0>;
-		reset-gpios = <&pinctrl_ap 33 GPIO_ACTIVE_LOW>;
+The number of cgroups using a controller is an important metric since
+kernel memory is used for each cgroup, and some kernel operations scale
+with the number of cgroups for some controllers (memory, io). So users
+have an interest in minimizing/tracking the number of them.
 
-		#address-cells = <3>;
-		#size-cells = <2>;
-		ranges;
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
 
-		interrupt-controller;
-		#interrupt-cells = <1>;
+---
+Changes from RFC:
+Don't manually initialize the atomic counters to 0 since they are
+kzalloced - Michal Koutny
 
-		interrupt-map-mask = <0 0 0 7>;
-		interrupt-map = <0 0 0 1 &port02 0 0 0 0>,
-				<0 0 0 2 &port02 0 0 0 1>,
-				<0 0 0 3 &port02 0 0 0 2>,
-				<0 0 0 4 &port02 0 0 0 3>;
-		status = "disabled";
-	};
+Also return the CSS count for utility controllers instead of the cgroup
+count - Michal Koutny
 
-and get probed *972 times*, which seem... excessive, given that there
-are only 4 entries per port.
+ include/linux/cgroup-defs.h | 6 ++++++
+ kernel/cgroup/cgroup-v1.c   | 8 ++++++--
+ kernel/cgroup/cgroup.c      | 2 ++
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/of/property.c | 52 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index a6358ee99b74..2d749a18b037 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1311,6 +1311,57 @@ static struct device_node *parse_interrupts(struct device_node *np,
->  	return of_irq_parse_one(np, index, &sup_args) ? NULL : sup_args.np;
->  }
->  
-> +static struct device_node *parse_interrupt_map(struct device_node *np,
-> +					       const char *prop_name, int index)
-> +{
-> +	const __be32 *imap, *imap_end, *addr;
-> +	struct of_phandle_args sup_args;
-> +	u32 addrcells, intcells;
-> +	int i, imaplen;
-> +
-> +	if (!IS_ENABLED(CONFIG_OF_IRQ))
-> +		return NULL;
-> +
-> +	if (strcmp(prop_name, "interrupt-map"))
-> +		return NULL;
-> +
-> +	if (of_property_read_u32(np, "#interrupt-cells", &intcells))
-> +		return NULL;
-> +	addrcells = of_bus_n_addr_cells(np);
-> +
-> +	imap = of_get_property(np, "interrupt-map", &imaplen);
-> +	if (!imap || imaplen <= (addrcells + intcells))
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index ea48c861cd36..bc1dbf7652c4 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -579,6 +579,12 @@ struct cgroup_root {
+ 	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
+ 	atomic_t nr_cgrps;
+ 
++	/*
++	 * Number of cgroups using each controller. Includes online and zombies.
++	 * Used only for /proc/cgroups.
++	 */
++	atomic_t nr_css[CGROUP_SUBSYS_COUNT];
++
+ 	/* Hierarchy-specific flags */
+ 	unsigned int flags;
+ 
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index b9dbf6bf2779..9bad59486c46 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -675,11 +675,15 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
+ 	 * cgroup_mutex contention.
+ 	 */
+ 
+-	for_each_subsys(ss, i)
++	for_each_subsys(ss, i) {
++		int count = cgroup_on_dfl(&ss->root->cgrp) ?
++			atomic_read(&ss->root->nr_css[i]) : atomic_read(&ss->root->nr_cgrps);
++
+ 		seq_printf(m, "%s\t%d\t%d\t%d\n",
+ 			   ss->legacy_name, ss->root->hierarchy_id,
+-			   atomic_read(&ss->root->nr_cgrps),
++			   count,
+ 			   cgroup_ssid_enabled(i));
++	}
+ 
+ 	return 0;
+ }
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index e32b6972c478..1bacd7cf7551 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -5362,6 +5362,7 @@ static void css_free_rwork_fn(struct work_struct *work)
+ 		ss->css_free(css);
+ 		cgroup_idr_remove(&ss->css_idr, id);
+ 		cgroup_put(cgrp);
++		atomic_dec(&ss->root->nr_css[ss->id]);
+ 
+ 		if (parent)
+ 			css_put(parent);
+@@ -5504,6 +5505,7 @@ static int online_css(struct cgroup_subsys_state *css)
+ 		atomic_inc(&css->online_cnt);
+ 		if (css->parent)
+ 			atomic_inc(&css->parent->online_cnt);
++		atomic_inc(&ss->root->nr_css[ss->id]);
+ 	}
+ 	return ret;
+ }
 
-This is "interesting". You compare a number of *bytes* with a number
-of cells. Only off by a factor of 4...
-
-Also, you need a minimum of one extra cell to hold the phandle, and a
-yet unknown number of cells for whatever follows the phandle.
-
-> +		return NULL;
-> +	imap_end = imap + imaplen;
-
-Same problem, with pointer arithmetic this time.
-
-> +
-> +	while (imap < imap_end) {
-> +		addr = imap;
-> +		imap += addrcells;
-> +
-> +		sup_args.np = np;
-> +		sup_args.args_count = intcells;
-> +		for (i = 0; i < intcells; i++)
-> +			sup_args.args[i] = be32_to_cpu(imap[i]);
-> +		imap += intcells;
-> +
-> +		/*
-> +		 * Upon success, the function of_irq_parse_raw() returns
-> +		 * interrupt controller DT node pointer in sup_args.np.
-> +		 */
-> +		if (of_irq_parse_raw(addr, &sup_args))
-> +			return NULL;
-> +
-> +		if (!index)
-> +			return sup_args.np;
-> +
-> +		of_node_put(sup_args.np);
-> +		imap += sup_args.args_count + 1;
-
-This really doesn't map (pun intended) to the way the interrupt-map
-entries are built. You need to account for the parent address size as
-well.
-
-I'll post a patch fixing both issues.
-
-	M.
-
+base-commit: 6fbf71854e2ddea7c99397772fbbb3783bfe15b5
 -- 
-Without deviation from the norm, progress is not possible.
+2.45.1.288.g0e0cd299f1-goog
+
 
