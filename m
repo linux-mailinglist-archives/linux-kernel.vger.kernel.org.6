@@ -1,115 +1,179 @@
-Return-Path: <linux-kernel+bounces-192099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12718D185E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:21:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D768D1869
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF481F23F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23373B23E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4186F16C691;
-	Tue, 28 May 2024 10:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F3016C44D;
+	Tue, 28 May 2024 10:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eTYE/3jd"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFrT9xP9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA58916B72D;
-	Tue, 28 May 2024 10:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3D1667FE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716891637; cv=none; b=If2ACMpu5ziaeTqZHjWelRMf3GxMz8ibP9/kWvrgnE9GWvX6lDyY7YrpmvDIS12yeXUR2cnpdgztDKH07KRvYw6xuqb2BCvByT09yn6sQrXVn2l6+V0MghCPNH37tFVMAKCDW1J+C5/ey1W86aW9ZprHfqzp6yDm/JyzKEA2SNw=
+	t=1716891668; cv=none; b=VP2Lttuo9jOT9he2EaL53yTNN0IMCEqE8EDyO4L9OndXvLaSM0bWkUhI9VCwTLJzNohbQX5hqWNX3cyYUFj8AbJY2dk/4SGMThKm1bx33/Sf0urFiOo4LqCP7PfFbYs9h+i36JrltGo/zOuVblCnJU1zdw+NwNd5Hc3ssm6z4FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716891637; c=relaxed/simple;
-	bh=lMCM/A3Z7snAmnLzSGIr7jM7SrSUs1WYwlorRMK6qr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cRCmAOXLQ1j4TJb3ruORDeWyrKxlmRqoiGeRjyadpI3QvqefQXdZjpJioi/V+7IP0Qo1eSiEK06gD009qzD/2LMCP63RR/WsOfSYCojADev76tB+Qgr2stU5d/F5pXamGV5jLuUJTqOv2C4hzrpn8Q44BTXHl0+CA/S+XgrUgP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eTYE/3jd; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id B72CF240006;
-	Tue, 28 May 2024 10:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716891634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qsG4a+QexdrWaD9z2b31NrWRE7fUVEl7ydWLvlxj0hU=;
-	b=eTYE/3jdhGs5GEmTPLjC0zOErFPdwpIx6cL82ctXvsH22SFUCPeUB17Hsoo6/SHf3kkiGV
-	xdIxWufJv5otteYpxjkhpbOtucCY8cv0tNs9Sh8y7dYGQ3dbK8ZNbqcGdieCedb9ahbkvd
-	aDpqUPn5El7xZnIcCjS9tP7Eu+ggm2v68DEssTyT8Qd9DkmQOnSzfixwG8faZ8q9Lo6ttz
-	BH+PPK/KQu5/mI1pXUnZSdZaiMfhPJRXQlJZndR1ekCy8Gsbvl9KRbq5J6kxE9oXCIhouS
-	5AeZZ1ekOh28JdrPbzkQdZwA253A0j3QMDjQkZsmHwSRkRNyga/HxfCMAJOMeQ==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bin Liu <b-liu@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	herve.codina@bootlin.com,
-	christophercordahi@nanometrics.ca,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH 4/4] usb: musb: da8xx: Implement BABBLE recovery
-Date: Tue, 28 May 2024 12:20:26 +0200
-Message-ID: <20240528102026.40136-5-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240528102026.40136-1-bastien.curutchet@bootlin.com>
-References: <20240528102026.40136-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1716891668; c=relaxed/simple;
+	bh=5vFNElkdAUyolYsOKXvEn8wCDhpVG0vf+KTOYWYGHRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=arLC35wg6Z3tUQoB5Kxw3233TJQAo3UNxayA983bE59ckBb2Zzct1KK1T7GoCyLiMm/XLyglYVz+Tc8wr8LuRo7WmA3ZCubQdwsSN/oLYdCa5c14mV4fyY39WSfMIRj8nWF4i3nrM1FJubGIcXrLaSbcTpvmun6logPXei26+tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFrT9xP9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F8EC3277B;
+	Tue, 28 May 2024 10:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716891668;
+	bh=5vFNElkdAUyolYsOKXvEn8wCDhpVG0vf+KTOYWYGHRg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tFrT9xP9ODXnXrXSB8j5uw+Qrgvt8m9hlAz8Nvwcon4f/58q6ocO/keRapJLTAMCL
+	 cWTqZubo4PJXQcIBe7eo+7uN0WLw5zyct7gdM7KMdJu9S22Ogw/MqmNPXnthMSxvq4
+	 unEu1UbRq0xbl/tXNZsTpENpeMyqAgJsArdLQbG/Y8qmIA+Er9c8jqwtncXJn02cck
+	 8HZd4caZLFcduTkfQ8eJqBnalIHqXpWQbFfESn6lUbbxYCj2VUH8RvdNwbYi29t+uY
+	 TcUaKh0SFN3BJPACBUemnopxs4siptPpRgwWROftUeuXqubglRfB3HI0suJOMOGu1A
+	 2KCJu76RpOH5w==
+Message-ID: <ccdacf52-1b31-43a1-a8fd-33a252e24d51@kernel.org>
+Date: Tue, 28 May 2024 12:21:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
+ selectable
+To: Esben Haabendal <esben@geanix.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
+ <979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org> <87cypc38gu.fsf@geanix.com>
+ <9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org> <87le3zoatn.fsf@geanix.com>
+ <6c166ad5-8004-4bc4-9107-a47ba9a72161@kernel.org> <87ttijaglp.fsf@geanix.com>
+ <c045f1a4-9ddf-4c53-a69b-22ceb68a1ce8@kernel.org> <87msobaes6.fsf@geanix.com>
+ <87ikyzae7v.fsf@geanix.com> <e3aa72af-c824-4b71-a99d-c0b9294bfd8a@kernel.org>
+ <87y17ul0cb.fsf@geanix.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <87y17ul0cb.fsf@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There is no specific behaviour implemented to recover from a babble
-error. When a BABBLE error happens, recovery fails as connected sticks
-are no longer detected by the USB controller.
+On 28/05/2024 12:03, Esben Haabendal wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
+> 
+>> On 27/05/2024 09:47, Esben Haabendal wrote:
+>>>
+>>> Ok, I seem to still be confused as to what you want from me. If you are
+>>> saying that the kernel is not supposed to care about out-of-tree DTS
+>>> (and thereby any bootloader provided DTB), I would like to bring your
+>>> attention to arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts in upstream:
+>>>
+>>> &ifc {
+>>>         #address-cells = <2>;
+>>>         #size-cells = <1>;
+>>>         /* NOR Flash on board */
+>>>         ranges = <0x0 0x0 0x0 0x60000000 0x08000000>;
+>>>         status = "okay";
+>>>
+>>>         nor@0,0 {
+>>>                 #address-cells = <1>;
+>>>                 #size-cells = <1>;
+>>>                 compatible = "cfi-flash";
+>>>                 reg = <0x0 0x0 0x8000000>;
+>>>                 big-endian;
+>>>                 bank-width = <2>;
+>>>                 device-width = <1>;
+>>>         };
+>>> };
+>>>
+>>
+>> I don't understand why it took so many emails to answer that (my first)
+>> question...
+> 
+> Because I did not understand the question. Primarely because I was (and
+> is) surprised that out-of-tree DTS is not supported. I was convinced
+> that out-of-tree DTS was the right way for hardware which is not
+> commonly available.
 
-Implement the recover callback of the MUSB operation to reset the USB
-controller when a BABBLE happens.
+Even some non-GA hardware could, and IMHO should, be upstreamed, at
+least some parts of it. This gives the user/upstreamer reason to do
+changes. Otherwise you might get questions for contributions: why you
+are doing and why this is worth?
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/usb/musb/da8xx.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Downstream or any fork is not really answer to such questions, because
+they are allowed to make whatever stupid choices they want (not saying
+it was done here, but in general), which should not be a reason to do
+anything upstream. If downstream creates wrong DTS files, shall we
+create wrong device drivers or bindings for them? No.
 
-diff --git a/drivers/usb/musb/da8xx.c b/drivers/usb/musb/da8xx.c
-index c5cf733673a2..fcf06dcf2d61 100644
---- a/drivers/usb/musb/da8xx.c
-+++ b/drivers/usb/musb/da8xx.c
-@@ -220,6 +220,13 @@ static void __maybe_unused da8xx_musb_try_idle(struct musb *musb, unsigned long
- 	mod_timer(&musb->dev_timer, timeout);
- }
- 
-+static int da8xx_babble_recover(struct musb *musb)
-+{
-+	dev_dbg(musb->controller, "resetting controller to recover from babble\n");
-+	musb_writel(musb->ctrl_base, DA8XX_USB_CTRL_REG, DA8XX_SOFT_RESET_MASK);
-+	return 0;
-+}
-+
- static irqreturn_t da8xx_musb_interrupt(int irq, void *hci)
- {
- 	struct musb		*musb = hci;
-@@ -480,6 +487,7 @@ static const struct musb_platform_ops da8xx_ops = {
- #ifndef CONFIG_USB_MUSB_HOST
- 	.try_idle	= da8xx_musb_try_idle,
- #endif
-+	.recover	= da8xx_babble_recover,
- 
- 	.set_vbus	= da8xx_musb_set_vbus,
- };
--- 
-2.44.0
+
+> 
+>> Sounds good, however you did not update the existing select.
+>> Drivers are not supposed to select user-visible symbols (leads to
+>> issues), so you need to change it to depends and update defconfigs.
+> 
+> Do you wan this split into multiple commits, or a single commit changing
+> the Kconfig to make FSL_IFC user-visible, and changing select of it to
+> DEPENDS, and updating the related defconfig(s)?
+
+One commit for Kconfigs (nand and memory), additional commits for
+defconfigs, one per each arch, because defconfigs might go via arch tree.
+
+
+Best regards,
+Krzysztof
 
 
