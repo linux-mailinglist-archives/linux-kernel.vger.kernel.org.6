@@ -1,140 +1,178 @@
-Return-Path: <linux-kernel+bounces-191541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E328D10E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:25:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715008D10E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E6CDB2148B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EED281F6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFA746BA;
-	Tue, 28 May 2024 00:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59A68F48;
+	Tue, 28 May 2024 00:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dyBn2MF/"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nP6U08Tq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A946E7E6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E45440C;
+	Tue, 28 May 2024 00:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716855924; cv=none; b=Sd+2qkvTS5SbqSu8o7BJhE7lA1xZ8TsU6LLRVKb8M+y/R0vMbWtwJCMWXAF2qRARf1IsAk0oxdMeBn4UqBLXEKYNxl69OKsR7ccia/tDGJ/6FDzf770In6uBgu+C1pWxEpljV4Pnj3PveTCl5Xkr8LMeGfvClvnOW0lNQalfROk=
+	t=1716856268; cv=none; b=NRCXVfiYymv1tBvYEPNgULchNpm1ea5WTXj9Q2t9JX8pAoyJLtKCt/JsnoEDelnwB/njxZ9ZGSSKzs/sgLG7lPx8zE7UJxo69Wk/VMbNiAZeCPGhCAcdldKQQYIZruFxDM01zM6KPGzfBpdGH3k0utxhfX094RWpWc+fpZ6VoXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716855924; c=relaxed/simple;
-	bh=bQ9jnVlFMDLqet6U9mvB6TyOpAqNzrCKFNL44Oc6YOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uGSdHomJP+U5fddNUTm6Y2KMBkVhA7Kg2lals4wNTBolJ9+ftH/IOQRir6wfBFxhiFNdgaX/bQJ78H0+P3wu/S55GqUOEG4qQm6bAkdrXJL2Qy8foa61ZQFyfT8J3YxzuZpb3JP4xxKlnhPlzcixacoQubm1dql5S8QNKrLmQpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dyBn2MF/; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=aR/3UyH7ymKWvCntIj02AXZeP9BrNGE9Clo/EC6gyU8=; b=dyBn2MF/9zgWyRVS
-	zUowKr1zbD80bNz70+XwCvDdxXWYY9yHF/zj+CaY0kn/7E2Js9YCkcMOMNC+xaSF/GwslIgncRgYy
-	1w3V9lWK3DFvxImEsbRSl+q2LS8066dqsbEJ2oKCSX8wTUu0PjvTeVrsUU6a4p+g7cuQef9ujrUoM
-	MOdjSslfauM5oqQlFkEjXOQd4R9tKB3ELM5Kl8KZ3bqUIYCJBRht3KG4HoGH58MGFqM+U49MB8jx+
-	+fnij6Z6xhSrfdHxl5z3m8/yYKYiVfM2ms0bO3rF28CeAfUO4G5yTGb2mp2ilBi6dXq/yjlgbU4dU
-	giqc1GyzCUODNOV+1g==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sBkeV-002ps3-0F;
-	Tue, 28 May 2024 00:25:19 +0000
-From: linux@treblig.org
-To: mporter@kernel.crashing.org,
-	alex.bou9@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] rapidio: removse some dead defines
-Date: Tue, 28 May 2024 01:25:15 +0100
-Message-ID: <20240528002515.211366-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716856268; c=relaxed/simple;
+	bh=P0/LfQaKGoP69x5KXxg8N7p9+FFI1udCwW9JW2WzM08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPRMBF/I4kImCwfGgDOB7VQVMzoBC+JpQd4nGAuFeLDJBX6wqpez7sVz+bhekh19mzTEFUnsGuZtQ1EnIiMhCWHSaA+91vdj1tjf01w1bakisuFH/eyEgkxY560epYguRZNUYekxckzK9VT9+cJeF3pSYLXD2HJKjOz2h9dBFiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nP6U08Tq; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716856267; x=1748392267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P0/LfQaKGoP69x5KXxg8N7p9+FFI1udCwW9JW2WzM08=;
+  b=nP6U08TqxJhSFfHzjbNB9MUESa1k+o3/zX4alFnIEGOXcCYc/fKvDv2u
+   6mNguHNrROJVONT7p1UqLhZqYsllWS3JPFI6AbDDhPJKKO4XVWsvEX+aN
+   qvSC3B9oJjaiVCVZmpiDxtFKwwLzGWnd19YTa8nWfqtn0ITEEK+qIaCVY
+   HpHh1GL8Dc/9F0vlcLHOgiGTVGhCnz7NMiSQ532Tim/l4ZRfMGxqEvbUr
+   isspiHS7Uoz8cE5LHNC7nryEOZQyC75m9IkeYAxEBPQogc8hOWGwIA9QW
+   pPlA/HbV7UqzlZFuIOMiL91nWCBJHMiUrRooiOriDh72bqg41dZGjIcoP
+   g==;
+X-CSE-ConnectionGUID: 2SulOJdDQs+wmd90HmBFrg==
+X-CSE-MsgGUID: PM9cuNvFSU6w6PqJDLNoYA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23739165"
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="23739165"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 17:31:06 -0700
+X-CSE-ConnectionGUID: 6fE9edj0SF+S12iXuccd1w==
+X-CSE-MsgGUID: 2uN9A4pzSzKI4Z9OaDJrkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="66098716"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 27 May 2024 17:31:01 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sBkjy-000BED-2N;
+	Tue, 28 May 2024 00:30:58 +0000
+Date: Tue, 28 May 2024 08:30:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+Subject: Re: [PATCH v1 05/11] pinctrl: pinmux: Add a convenient define
+ PINCTRL_FUNCTION_DESC()
+Message-ID: <202405280821.FcDAyD2b-lkp@intel.com>
+References: <20240527212742.1432960-6-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527212742.1432960-6-andy.shevchenko@gmail.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Andy,
 
-'mport_dma_buf', 'rio_mport_dma_map' and 'MPORT_MAX_DMA_BUFS' were
-added in the original
-commit e8de370188d0 ("rapidio: add mport char device driver")
-but never used.
+kernel test robot noticed the following build errors:
 
-'rio_cm_work' was unused since the original
-commit b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging
-driver")
-but never used.
+[auto build test ERROR on linusw-pinctrl/devel]
+[also build test ERROR on linusw-pinctrl/for-next linus/master v6.10-rc1 next-20240523]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Remove them.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-berlin-Make-use-of-struct-pinfunction/20240528-053304
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20240527212742.1432960-6-andy.shevchenko%40gmail.com
+patch subject: [PATCH v1 05/11] pinctrl: pinmux: Add a convenient define PINCTRL_FUNCTION_DESC()
+config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240528/202405280821.FcDAyD2b-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405280821.FcDAyD2b-lkp@intel.com/reproduce)
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/rapidio/devices/rio_mport_cdev.c | 20 --------------------
- drivers/rapidio/rio_cm.c                 |  6 ------
- 2 files changed, 26 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405280821.FcDAyD2b-lkp@intel.com/
 
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-index 27afbb9d544b..5c83741c3005 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -97,18 +97,6 @@ module_param(dbg_level, uint, S_IWUSR | S_IWGRP | S_IRUGO);
- MODULE_PARM_DESC(dbg_level, "Debugging output level (default 0 = none)");
- #endif
- 
--/*
-- * An internal DMA coherent buffer
-- */
--struct mport_dma_buf {
--	void		*ib_base;
--	dma_addr_t	ib_phys;
--	u32		ib_size;
--	u64		ib_rio_base;
--	bool		ib_map;
--	struct file	*filp;
--};
--
- /*
-  * Internal memory mapping structure
-  */
-@@ -131,14 +119,6 @@ struct rio_mport_mapping {
- 	struct file *filp;
- };
- 
--struct rio_mport_dma_map {
--	int valid;
--	u64 length;
--	void *vaddr;
--	dma_addr_t paddr;
--};
--
--#define MPORT_MAX_DMA_BUFS	16
- #define MPORT_EVENT_DEPTH	10
- 
- /*
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index 9135227301c8..97287e838ce1 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -198,12 +198,6 @@ struct cm_peer {
- 	struct rio_dev *rdev;
- };
- 
--struct rio_cm_work {
--	struct work_struct work;
--	struct cm_dev *cm;
--	void *data;
--};
--
- struct conn_req {
- 	struct list_head node;
- 	u32 destid;	/* requester destID */
+All errors (new ones prefixed by >>):
+
+>> drivers/pinctrl/pinmux.c:880:11: error: assigning to 'struct function_desc *' from incompatible type 'struct function_desc'; take the address with &
+     880 |         function = PINCTRL_FUNCTION_DESC(name, groups, ngroups, data);
+         |                  ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                    &(                                                )
+   1 error generated.
+
+
+vim +880 drivers/pinctrl/pinmux.c
+
+   849	
+   850	/**
+   851	 * pinmux_generic_add_function() - adds a function group
+   852	 * @pctldev: pin controller device
+   853	 * @name: name of the function
+   854	 * @groups: array of pin groups
+   855	 * @num_groups: number of pin groups
+   856	 * @data: pin controller driver specific data
+   857	 */
+   858	int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
+   859					const char *name,
+   860					const char * const *groups,
+   861					const unsigned int ngroups,
+   862					void *data)
+   863	{
+   864		struct function_desc *function;
+   865		int selector, error;
+   866	
+   867		if (!name)
+   868			return -EINVAL;
+   869	
+   870		selector = pinmux_func_name_to_selector(pctldev, name);
+   871		if (selector >= 0)
+   872			return selector;
+   873	
+   874		selector = pctldev->num_functions;
+   875	
+   876		function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
+   877		if (!function)
+   878			return -ENOMEM;
+   879	
+ > 880		function = PINCTRL_FUNCTION_DESC(name, groups, ngroups, data);
+   881	
+   882		error = radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+   883		if (error)
+   884			return error;
+   885	
+   886		pctldev->num_functions++;
+   887	
+   888		return selector;
+   889	}
+   890	EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
+   891	
+
 -- 
-2.45.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
