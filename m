@@ -1,266 +1,608 @@
-Return-Path: <linux-kernel+bounces-192128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBB88D18CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7698D18DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0700DB25400
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0C4284483
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426EA16B757;
-	Tue, 28 May 2024 10:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC3D16B753;
+	Tue, 28 May 2024 10:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NrDsRiEP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="VKUjT7ya"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CDB13AD3E;
-	Tue, 28 May 2024 10:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716892996; cv=fail; b=WGaahUL17aHi9VfJIMASQznDEIl2bMDwXcr7kE23WYzHi8KV555x0RVtkrSDk/SXeUNTz7K6THHsYTwJGlLMpq7mDUOeUgkSRnC/cRXhrKFd8cTOJlVYkyvnfvtn5kLv3benvN6/sA6JUOQnu/XRMm5kQFndhMm14n0KGtFuaKQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716892996; c=relaxed/simple;
-	bh=niVGndCkwD4ZvR5tGi88Mn8T48SAgIiceCpvD0lZvYI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OwXNGGVY7WG0vOYEznfp8COs/0lE/CIfUVb6JdwbATgjRjN935AEOrsULmKAJrgeQjMH8TvQcrNlsNXAhXaockauOpm381coAoCpJgSDBEnHgB/jdzQuKmbcJwsUQh37feZbNluStXqVve+Rghu4G4HyWIIpevNu5fABNiqdlVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NrDsRiEP; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716892994; x=1748428994;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=niVGndCkwD4ZvR5tGi88Mn8T48SAgIiceCpvD0lZvYI=;
-  b=NrDsRiEPlBoPIePECw+NJGBJMW5/qX0Bzke++FXdJqqdyVZtwT2dhPzd
-   6aklqJN5nQyy/boLYju86G/uPDth2kMRYfBkiFqjrw89+N14CEO/0e19/
-   Lv3lgsRa+nmehY1OCSb9qB+52LXvxdxu+QUsCVHJ/VLFPhakB6J2+pxeQ
-   julaT0Q83MjjpTT73HPriSm7I/Qt1MpvVEq+lofnADEXJf6zN29+g6O6Y
-   zXpIt9EKEPVdafO2swGMtD7C9TsNmhcuYqxItiOsKLbZM2VdIMA1rt5sT
-   +KRVSDdJOpFEPnm/gosZM9KLNfcREAC6GXotowVkgILkYfOKq3TC/tbG0
-   Q==;
-X-CSE-ConnectionGUID: 2mFUnC2oTa2cxHouaf8ylA==
-X-CSE-MsgGUID: DhmS5BsfQ5mBVDKEcbnQGg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13054413"
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="13054413"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 03:43:14 -0700
-X-CSE-ConnectionGUID: Kqdcr7GDRjinxo4+0VnJdw==
-X-CSE-MsgGUID: tO6ard4kQxyzR9Zx1SckDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="35513042"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 May 2024 03:43:14 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 28 May 2024 03:43:13 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 28 May 2024 03:43:13 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 28 May 2024 03:43:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jzCI3BTKJPm9Y1S5c4njgscMHbt4Tm7TL0Ic5N+P475KKZ2djoa8Kz+7EG8rhZmiZAZJ32LAeWkR7JftVu8xi8V/sAC/RC9UACXsjGm9y0nbD5jVfwyaOQ2hg0hXRmlLRxbZ6n0tu5yvCLEHgX8Y7Rs7hLqJEY06u0jJumRkO+19r8VJOD5kP9C92iIRkBtU9OFl4qJeRqU6XNLK6mMrbjNAICyOVK2axmZJpECM8Nr9DguzZ0MY6Pmk5lDiUUCPTfePjweiVqqoYQ6GpaoYey6ZzHPxNDfstvyLqcJLiUGgZRXrAq3Jejgyitq8N7vVya+e84yZcZwl8KSj+v/WrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JptZ7XwNXvcna8MjAbsH1qrUiWNiltaSNXCivkyCy9Q=;
- b=bC4L7X6sj1NGIgNvMZ2wkwGJfTaKFT85s9gltfe8WolJIOGgKss8kmH98ofZVlhSUdrFm5KGf6c72SAxOgLXH3CBck2+eTvB7ZqiSlzlLu+Tcu4N3SKk+7EdkPGpFhasKmXUvz1WnfLsO3NhrVEgzMyxfibFz8SbePjk1wuf3ogLdOop9BGjpmBrpdPKabFC+zQ6J633ewxZ9jJpeEMlJ8XW95VT1X4ydGKkiO+cjUwuqkCHI6IbWoRzgEmQvB7xz5Q/Z/L/7V1vxwzwc23XCY3x24ybDCmt4l7YUi29Ukik2+e7CG6++A5gEoS78yP3GaYhbqfK8OF/1QxwYQYHTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9)
- by SJ0PR11MB5183.namprd11.prod.outlook.com (2603:10b6:a03:2d9::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.17; Tue, 28 May
- 2024 10:43:11 +0000
-Received: from MW4PR11MB5776.namprd11.prod.outlook.com
- ([fe80::4bea:b8f6:b86f:6942]) by MW4PR11MB5776.namprd11.prod.outlook.com
- ([fe80::4bea:b8f6:b86f:6942%5]) with mapi id 15.20.7611.025; Tue, 28 May 2024
- 10:43:11 +0000
-Message-ID: <43e74464-029d-431f-93e2-809d64371c4c@intel.com>
-Date: Tue, 28 May 2024 12:43:05 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ice: irdma hardware init failed after suspend/resume
-To: Ricky Wu <en-wei.wu@canonical.com>, <jesse.brandeburg@intel.com>
-CC: <anthony.l.nguyen@intel.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rickywu0421@gmail.com>, Michal Swiatkowski
-	<michal.swiatkowski@linux.intel.com>
-References: <20240528100315.24290-1-en-wei.wu@canonical.com>
-Content-Language: en-US
-From: Wojciech Drewek <wojciech.drewek@intel.com>
-In-Reply-To: <20240528100315.24290-1-en-wei.wu@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR2P278CA0041.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:47::10) To MW4PR11MB5776.namprd11.prod.outlook.com
- (2603:10b6:303:183::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA6817E8F0
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716893210; cv=none; b=RGk+h0DG6iJmHsZ/0hafpMUigp8z7bv3DPGPcb3gdpCkadzNwvCvESdm71ug0xmNPB4h4C/uxe5wi9r7yghLRj+qs/RCZFTb2mSlq30YbKQSmxldZoJt2iUxZ8MGPBJlh0CKTtbqDLNY8qqWwXQnmhT8kFo2aqaWHLGOOdK4+iA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716893210; c=relaxed/simple;
+	bh=+LFqwk0T9BTpho0w/5hCjt8lu0k/iXZRaB2kk5rGlbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ajc92pI/4HZCObZEU938GeIu0Y4AdF2syDEcPENg2LVYGAkCg1oV7OeE//FJSYq5r5reCClG7dxi5OH/o1VEQmW5Yh62cby71X/uK9ymclG9jZsYvnB964UUtTp8R5HcaYWKaoAyt6XDY3p0u040eL8CvFnhM6CaTdqyo992c5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=VKUjT7ya; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57857e0f45cso785244a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716893206; x=1717498006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYUMG/oOF7KzG2twqtpaluS6EY8hWEw6iX5ET7GP+pc=;
+        b=VKUjT7yaRIXJUBYRsy0RAguwL620vlLfGO0MOOQXKwEKKgLSlRLaefxaEs+nTx146M
+         R8gZq8Mt3iS83CyQW4qbLHk1KpjEApuqjRGSpRp/da3/e7Oz1NQCFQHmbwikKxe0o3fM
+         yW30pkRjIBE0DIkOsZoP6kbBUS8Gf68CtLjxvaDASJyfhkIislA1OyODrG8yjaNEVnkL
+         mqfp25AAntgKk15MkFernFtcFTdqADyJQFLpelmT1NhwoJc42WN4vNWYvnJ5HVa6qIeF
+         utXaCLs8fbRlq0BAWYKzzmhXBwb5FwBFQJB8/CnbHuCLITo2q2/jHNTJObU89VWGNd3H
+         1koA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716893206; x=1717498006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DYUMG/oOF7KzG2twqtpaluS6EY8hWEw6iX5ET7GP+pc=;
+        b=OXpZBjqs7q0Za9OnYnxJEnlRRgnLG17qg41JDVCNwcDUh8WvoCVmBFnIbzXLd/Mi8U
+         djsmf/ZAfCdrk/S7x0XOWSTO9RWpMEy1pcN+b/Kff6p39qfOXU7Qj4OhOq9CGZ/TbRFL
+         z0iOc9s1TRRTPQRWYFnNlJyxBQaOBbfx2tjQXhQf79CGb2dVxbcArfC8ltBC7ZELvzAA
+         ONeP73eRFJgqNVMBjnm3FyZjLr1bYsJWde4XnID2R9mCOnUi5e1Cr4uD0sq6UVeh3Pnq
+         SSEA1vKgnzxSrRnj/EWkH+Htf/j6niHR+qj4VR77UorUHCLxfn7XQXZ6g9cRoYWQdqXz
+         2FHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpbhAPXZfnFkkmvm+nPZPSznooZw6XpU3FlgmpBZR6GJuxNUPiUXMyMGGI0ZUf7lFNEL8tBmIu2aiU9biAU/7GrMDBIlaxVyONl5sA
+X-Gm-Message-State: AOJu0Ywejgdm/1bmvioeqDY2gtyD4mH57IDx5sE7pkXeYiuCrrBN4N7s
+	bxEMbbsIdBfRie3bwc9emrIlWpDoeSocMKU2CNgsiyPM+bhUdWyoHd5lH5AzuA8=
+X-Google-Smtp-Source: AGHT+IFCq3BGFnBCOMmFqQbYIc5KnY2WOKVg/eJ/ReLEk3aHXa6LHqk/D2w+ilJW4ls3mZ9969tt/Q==
+X-Received: by 2002:a17:907:971c:b0:a62:cecd:26e3 with SMTP id a640c23a62f3a-a62cecd2767mr552224866b.39.1716893205894;
+        Tue, 28 May 2024 03:46:45 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda1a97sm601160066b.188.2024.05.28.03.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 03:46:45 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Nicolas Pitre <nico@fluxnic.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Breno Leitao <leitao@debian.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH net-next] net: smc91x: Refactor SMC_* macros
+Date: Tue, 28 May 2024 12:44:23 +0200
+Message-ID: <20240528104421.399885-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB5776:EE_|SJ0PR11MB5183:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab54a552-9c38-4a7f-22c9-08dc7f02f848
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UkRmZ3FwZnBzZndqcGllR2hlaDlmV0pWTUNTY0RFWkdZL1BwTng4N3Y5MGFa?=
- =?utf-8?B?OTVqRDZEWjJTWWczYUFWNG96ZDZSNWpmMGN6aTU3dE1yemlDQlhESzl5dmVm?=
- =?utf-8?B?RFFMcmIraDk3RW5qeXFGSTU2bk1Tc3VPck5seWZXaDFicVJCUWdwUnV6akZw?=
- =?utf-8?B?S0oxbStOMlFsSVdOZlg5R0w1OFNCNTMybnE4NEFCeFNacXdmbC9ZMkhpTlpZ?=
- =?utf-8?B?bDZLS0hMc0tzTjJZb092ZDZpVTFBeWpGN1NTV3dHU0c0V2VsM3loaGJUWHJF?=
- =?utf-8?B?d1dBSlNlNkhzNmtXc3Voa0crUUtOZWFScGZHVnJ6TlRSUnlPT3JEVW9iSFBa?=
- =?utf-8?B?VEFuOVZsRVg3RjR1VmdDTlhObUpIM0ROUmMybTc2RSsyN25wNjBaWnJnS1ZD?=
- =?utf-8?B?ZUJudU15Zk9VVW9Uc1JtT0RPRTBubG9TUnVuWWYrZ3JDWEVpZDN0RXlMVHMz?=
- =?utf-8?B?blpqbk5LMlo3Tk1HMEgvTlZpZDJuWkRSUmRBWjhyOHhxTmI2TCt0WDZ3NWl0?=
- =?utf-8?B?RThPbzZmOGFBYVJWVCtQZ3lkMGVrSmN1WWQyb3FmTDQ1TzhOM0V3RXZkZFFQ?=
- =?utf-8?B?WHBFYVd6RlF4aEdyUUptQjlud1Y2ZGhLaFM2cEoyR3kzYmI2bW1IZTNnaWNy?=
- =?utf-8?B?bTJ3eXo2U05Id29BUVdDcDR5ZWFTRGQ1dzZON01wRG9ESDVrendxZmpvaklQ?=
- =?utf-8?B?RlJTRGVqUHJvRkYzTi9zM0JSUkIzUDJLZWIrSi9YYk1wOEsxYloxa05qQmpS?=
- =?utf-8?B?SXZhUzBHbit2VFcwamRZU1RlK3Uya2RGU3dLOUEyQUZKN1JCS1ZYaTZRRXg3?=
- =?utf-8?B?bXduZ1Myc3B5d1p6UGMrOXNkOGNSU0pzUUdWNDFzVkJYVnBEQi94VnJuRXFC?=
- =?utf-8?B?aGFWVVJGZTlaMEZPWU9uc2NHc0lUaVlWVXl2amVDTktobW5MQmdnYy9DRGRR?=
- =?utf-8?B?ZVRybkRObHY4TGxpeE0zV1JBMnROUjdRSUNIL0gyZnNPSEZQSVBwVFI4MjNh?=
- =?utf-8?B?TzZsZmxmdlFEbkVub2lDNTA0L0ZBRXpIUkJvb0gvbytDQVQrRUMrL2VNanFN?=
- =?utf-8?B?cGphaTBHSVRidjJtZXhCQ28yZk9wY0ZLRTI5RGpoOGlKWnF0YnVrQ0NUR0Rm?=
- =?utf-8?B?Y3A4azJBbjZIdTYyU0JzQVgxaGZFTFZNaTl0c3hoN2g5MXJFUlFEcUQzUkZF?=
- =?utf-8?B?WmtDVE83RTB4cG8wY0ZacmhaaExqQTJMYWNjV01KOXVJMXN0cDJ1M0ZjYXJL?=
- =?utf-8?B?QVVOd001OUxPY2l2MVdRekJvRnJkclBqRWN5WmJXWVN2K3ZZOEpGTFF1Szkr?=
- =?utf-8?B?SzQvOXBLRlVub3RweEp2a0xES3hET2tBQU1ydVRHVzk1NERRVXhhL1VSTGFo?=
- =?utf-8?B?T202Y0pzQlJ0VEwzYnBxUGR0N1NWREdsN0NQYnJFd0hEUHFzS3lvZ2tMUE4z?=
- =?utf-8?B?ZFgxNFRwUWJicHdmZDhaYXAvMFVhQzBka1Q4Y3F5eU8rc2o3NllyNitlNUp0?=
- =?utf-8?B?Mm4xMGFHL2NTZnJIeGpIZnR6dGJUMkpLSEJIKzFvc21pc1YvSkR5NFhyQ0lu?=
- =?utf-8?B?Sk1ZSG9iZFBNVFZtRGdpZmwxZTFENndPbjRUdVIybTNnR0NEZHNHOHFnTDFI?=
- =?utf-8?Q?CtczkqAHtZc8RnSSJHc/1vR7BVDF4IGtSGBSTxtdB2Qs=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5776.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cHFDZkhVZmh6QzFyZThHai9QUWlRZFZqSXl3V3JzT1lEOHh6T1RkdWlBUnJv?=
- =?utf-8?B?a0lGUnJFUnpaMnJ2VjF4U0l2akVYWDRKRFVJUk9wYjZlazFhZjV4M1l5R1ZH?=
- =?utf-8?B?b2xrUjFrQ1Z3STYxVzd5UldsbnFoQ3QxeGF3dUpRMHJ2cllDbVQwVXd3NTJw?=
- =?utf-8?B?UjRuaHdaZWJ6cnNXbUFlMlVXMkxidFkzcXBWald3RXlwQk82RjZXTUVIWVUx?=
- =?utf-8?B?ZGkvMHlNSFFBeWEwWUNiL21OM0VNdzJ6YmNMWS9DSlU3VGJic3A4VFBoNy9h?=
- =?utf-8?B?RmNtMSt6eWkySVE4WWtJR1Azb2VJWFhscWlrNjZYcFpWb2U0c2tWVStRKzBJ?=
- =?utf-8?B?aUlrcGtKL3ZWOXFQWFExKzlvWFJoSnR0VEJ3bDRaNkxhNVZjZUh0dVZzME9M?=
- =?utf-8?B?dzVSQlVjLzUyNXk0ellGUmc4WlpReDFsVWlpeWFtZzFwWXhKdU9yUVFzOTFI?=
- =?utf-8?B?TDJMSXZkRnIzdC8xU1ZrNXJ1bWdlOGNkM0gvU3pWaUR3OENNRlFCckxnWFFk?=
- =?utf-8?B?SkFHWVBFRk9GY2UwdFF6SG5DM1pWQmJkSUdGekdIc3pYcndLR01mVDRXVWNj?=
- =?utf-8?B?MnhlRXRBd25qcHRtbm5nV3RzMmhrVmdNSHZLQkZKbjVmbTdxWm1kVjV2YjFO?=
- =?utf-8?B?NWh5ZEZhWmZ3cnZhOVl1amUxaWZxVExMNWZJZ2djRmhtODNoVzF2TERVcHFR?=
- =?utf-8?B?S2NMSlhiMnVaYVppMGZjdkVjZVNNa3lNS2JzdkpIUzJlWTUzd051MHpDaUNv?=
- =?utf-8?B?aU94cFR2UWZzbGNhaDBRbUk4TG53VWN2OC9xZDZXWmQ5UUR2WjFIZFk3Tncx?=
- =?utf-8?B?TEN6Qkt4dWY3QXluUzlVMkpmanVBRklkMEdGTXpmOUZyYlRtQ2ZuMERhc3Fh?=
- =?utf-8?B?ZWhCTlpzMWc4TFZKUDd1dmVxTVJpNXNZbzFkeVdORXVtckMrVFNYa01uTmkr?=
- =?utf-8?B?WklDTE9PbFErOUtqSWM4andqZ1JuTzg4cXYzV3ROTzVCMFBmTEtRQUpZUGdL?=
- =?utf-8?B?MElUdS9uMW1mYWt3bUxSWW9qTW1wcmV3dFgyQURuT25xS3dFQkxDcDUwdVZG?=
- =?utf-8?B?bk1WSDB2ZmNPNjhZdHZqMHlNZG11Qm5Geno5R2V6RGJ0VEJXY0N4TFhlQXgw?=
- =?utf-8?B?ZURFU2g5RGFFdCtiR2g4OWQ1cmFpSG9Cdlk4elRRbU1pa0wvNHVaQXJtcHZO?=
- =?utf-8?B?SUpjTE1XeHJqSHFTVWZCR0VHS21hTnhtMUwrVGNoeFhjZ0U1eWpqcGJMY2dG?=
- =?utf-8?B?WTZSeFQ5YnNaSjh6UTR5MnBNV3NWNlZsYVdLenVKOHlKUWFiek8wUWIxZXB0?=
- =?utf-8?B?S0o1TlQ2ODl5UHlzbFlUSnR2SmZna2cycERvQStldEpNc0MzMHlaSmtxUzBj?=
- =?utf-8?B?bVprL0ZSNVR6RXNIR3p0cWk5aDFlbnFmbjhkMmZmU3Z6aGpKblppQUxTL29x?=
- =?utf-8?B?eEQ4NWZRYlZ6eGdJM0dlV0ZLQmEwc2ZKejZNTlh6cTdLZ0RjOHJnVXYzbUJX?=
- =?utf-8?B?bWt5czBSeUY0bkQzandwK3dXN0UrVkYwZ3JRbkV0aDBvVFhXYXM3S1NsSi9Y?=
- =?utf-8?B?eHpPdjNSOWtjOTQ0emY5cUMvZllPNWVrM0tHR2FpOUNzd1pJWGhwSUI2dEtH?=
- =?utf-8?B?bXRsWTBaK09rNWprU1lEZVBtY0V1QnhGWk9WbGh5dXNIRHBta2RnVjRnZTN4?=
- =?utf-8?B?c1E0a1ptZkpIL1lSV3o4SHNFeUZyUzIrL1pNVnc0RVZPcEJFanZSMVMxNEFP?=
- =?utf-8?B?UG9XTEtwWVZHWkhHQ2RabFZyYStXT0tvVTdWd1RKRThCRmwzcVFZdi8yMFpB?=
- =?utf-8?B?VUpFQmlydmZlbDBHckNsTjNrZkRnajJpUStaQUlZWjYzTG5IQ3hhMU9zWkMv?=
- =?utf-8?B?ejFIQmtiVFVuSENzRjN5ZGtubWxCYW5nUTZycFNkTjNyTndVVG1zTjMyRXNV?=
- =?utf-8?B?ckFVK2dlWlJOZ2hJL3R3M0hkcFBDdzFiVWtiN2NLNUVndElhY3pjazFRZ1o0?=
- =?utf-8?B?ZXBhR0gyVXZiR0w2VFlNSG13Y0NyMXVCU0R3K0pIcFlYQzNQN3BUTGJySlZW?=
- =?utf-8?B?cGp0cThaanVMUUFTTTBCM0VBVnd6ajBjTEw3eGVEa2ZCdFpXOCs2WFFtdHNP?=
- =?utf-8?B?U3p0RHhGbmUyb3hPMUloQ0lvSStibzZLQXAvN3dIWElNeURvVzkvbWpwM0pn?=
- =?utf-8?B?Q3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab54a552-9c38-4a7f-22c9-08dc7f02f848
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5776.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 10:43:11.4358
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n2Ok18jz/82tZobyMhR4yBjdAwecNBxJlfavw0CSygeu94fiI26Uqm/XjC+z15GT+Vx0wHTVlwxk6L8lS2B6OlHeHSXq3VeS2wTLtcOGgUE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5183
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
+Use the macro parameter lp directly instead of relying on ioaddr being
+defined in the surrounding scope.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+---
+ drivers/net/ethernet/smsc/smc91x.c |  24 +----
+ drivers/net/ethernet/smsc/smc91x.h | 152 ++++++++++++++---------------
+ 2 files changed, 77 insertions(+), 99 deletions(-)
 
-On 28.05.2024 12:03, Ricky Wu wrote:
-> A bug in https://bugzilla.kernel.org/show_bug.cgi?id=218906 describes
-> that irdma would break and report hardware initialization failed after
-> suspend/resume with Intel E810 NIC (tested on 6.9.0-rc5).
-> 
-> The problem is caused due to the collision between the irq numbers
-> requested in irdma and the irq numbers requested in other drivers
-> after suspend/resume.
-> 
-> The irq numbers used by irdma are derived from ice's ice_pf->msix_entries
-> which stores mappings between MSI-X index and Linux interrupt number.
-> It's supposed to be cleaned up when suspend and rebuilt in resume but
-> it's not, causing irdma using the old irq numbers stored in the old
-> ice_pf->msix_entries to request_irq() when resume. And eventually
-> collide with other drivers.
-> 
-> This patch fixes this problem. On suspend, we call ice_deinit_rdma() to
-> clean up the ice_pf->msix_entries (and free the MSI-X vectors used by
-> irdma if we've dynamically allocated them). On Resume, we call
-> ice_init_rdma() to rebuild the ice_pf->msix_entries (and allocate the
-> MSI-X vectors if we would like to dynamically allocate them).
-> 
-> Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
-> ---
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 78ff3af7911a..2518953fe565 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -239,7 +239,6 @@ static inline void PRINT_PKT(u_char *buf, int length) { }
+ static void smc_reset(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int ctl, cfg;
+ 	struct sk_buff *pending_skb;
+ 
+@@ -333,7 +332,6 @@ static void smc_reset(struct net_device *dev)
+ static void smc_enable(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	int mask;
+ 
+ 	DBG(2, dev, "%s\n", __func__);
+@@ -367,7 +365,6 @@ static void smc_enable(struct net_device *dev)
+ static void smc_shutdown(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	struct sk_buff *pending_skb;
+ 
+ 	DBG(2, dev, "%s: %s\n", CARDNAME, __func__);
+@@ -399,7 +396,6 @@ static void smc_shutdown(struct net_device *dev)
+ static inline void  smc_rcv(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int packet_number, status, packet_len;
+ 
+ 	DBG(3, dev, "%s\n", __func__);
+@@ -540,7 +536,6 @@ static void smc_hardware_send_pkt(struct tasklet_struct *t)
+ {
+ 	struct smc_local *lp = from_tasklet(lp, t, tx_task);
+ 	struct net_device *dev = lp->dev;
+-	void __iomem *ioaddr = lp->base;
+ 	struct sk_buff *skb;
+ 	unsigned int packet_no, len;
+ 	unsigned char *buf;
+@@ -590,7 +585,7 @@ static void smc_hardware_send_pkt(struct tasklet_struct *t)
+ 	SMC_PUSH_DATA(lp, buf, len & ~1);
+ 
+ 	/* Send final ctl word with the last byte if there is one */
+-	SMC_outw(lp, ((len & 1) ? (0x2000 | buf[len - 1]) : 0), ioaddr,
++	SMC_outw(lp, ((len & 1) ? (0x2000 | buf[len - 1]) : 0), lp->base,
+ 		 DATA_REG(lp));
+ 
+ 	/*
+@@ -630,7 +625,6 @@ static netdev_tx_t
+ smc_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int numPages, poll_count, status;
+ 	unsigned long flags;
+ 
+@@ -703,7 +697,6 @@ smc_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ static void smc_tx(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int saved_packet, packet_no, tx_status;
+ 	unsigned int pkt_len __always_unused;
+ 
+@@ -762,7 +755,6 @@ static void smc_tx(struct net_device *dev)
+ static void smc_mii_out(struct net_device *dev, unsigned int val, int bits)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int mii_reg, mask;
+ 
+ 	mii_reg = SMC_GET_MII(lp) & ~(MII_MCLK | MII_MDOE | MII_MDO);
+@@ -784,7 +776,6 @@ static void smc_mii_out(struct net_device *dev, unsigned int val, int bits)
+ static unsigned int smc_mii_in(struct net_device *dev, int bits)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int mii_reg, mask, val;
+ 
+ 	mii_reg = SMC_GET_MII(lp) & ~(MII_MCLK | MII_MDOE | MII_MDO);
+@@ -809,7 +800,6 @@ static unsigned int smc_mii_in(struct net_device *dev, int bits)
+ static int smc_phy_read(struct net_device *dev, int phyaddr, int phyreg)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int phydata;
+ 
+ 	SMC_SELECT_BANK(lp, 3);
+@@ -840,7 +830,6 @@ static void smc_phy_write(struct net_device *dev, int phyaddr, int phyreg,
+ 			  int phydata)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 
+ 	SMC_SELECT_BANK(lp, 3);
+ 
+@@ -902,7 +891,6 @@ static void smc_phy_detect(struct net_device *dev)
+ static int smc_phy_fixed(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	int phyaddr = lp->mii.phy_id;
+ 	int bmcr, cfg1;
+ 
+@@ -1005,7 +993,6 @@ static void smc_phy_powerdown(struct net_device *dev)
+ static void smc_phy_check_media(struct net_device *dev, int init)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 
+ 	if (mii_check_media(&lp->mii, netif_msg_link(lp), init)) {
+ 		/* duplex state has changed */
+@@ -1034,7 +1021,6 @@ static void smc_phy_configure(struct work_struct *work)
+ 	struct smc_local *lp =
+ 		container_of(work, struct smc_local, phy_configure);
+ 	struct net_device *dev = lp->dev;
+-	void __iomem *ioaddr = lp->base;
+ 	int phyaddr = lp->mii.phy_id;
+ 	int my_phy_caps; /* My PHY capabilities */
+ 	int my_ad_caps; /* My Advertised capabilities */
+@@ -1158,7 +1144,6 @@ static void smc_phy_interrupt(struct net_device *dev)
+ static void smc_10bt_check_media(struct net_device *dev, int init)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int old_carrier, new_carrier;
+ 
+ 	old_carrier = netif_carrier_ok(dev) ? 1 : 0;
+@@ -1182,7 +1167,6 @@ static void smc_10bt_check_media(struct net_device *dev, int init)
+ static void smc_eph_interrupt(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned int ctl;
+ 
+ 	smc_10bt_check_media(dev, 0);
+@@ -1202,7 +1186,6 @@ static irqreturn_t smc_interrupt(int irq, void *dev_id)
+ {
+ 	struct net_device *dev = dev_id;
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	int status, mask, timeout, card_stats;
+ 	int saved_pointer;
+ 
+@@ -1325,7 +1308,6 @@ static void smc_poll_controller(struct net_device *dev)
+ static void smc_timeout(struct net_device *dev, unsigned int txqueue)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	int status, mask, eph_st, meminfo, fifo;
+ 
+ 	DBG(2, dev, "%s\n", __func__);
+@@ -1367,7 +1349,6 @@ static void smc_timeout(struct net_device *dev, unsigned int txqueue)
+ static void smc_set_multicast_list(struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 	unsigned char multicast_table[8];
+ 	int update_multicast = 0;
+ 
+@@ -1625,7 +1606,6 @@ static int smc_write_eeprom_word(struct net_device *dev, u16 addr, u16 word)
+ {
+ 	u16 ctl;
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 
+ 	spin_lock_irq(&lp->lock);
+ 	/* load word into GP register */
+@@ -1653,7 +1633,6 @@ static int smc_read_eeprom_word(struct net_device *dev, u16 addr, u16 *word)
+ {
+ 	u16 ctl;
+ 	struct smc_local *lp = netdev_priv(dev);
+-	void __iomem *ioaddr = lp->base;
+ 
+ 	spin_lock_irq(&lp->lock);
+ 	/* set the EEPROM address to get the data from */
+@@ -1773,7 +1752,6 @@ static const struct net_device_ops smc_netdev_ops = {
+  */
+ static int smc_findirq(struct smc_local *lp)
+ {
+-	void __iomem *ioaddr = lp->base;
+ 	int timeout = 20;
+ 	unsigned long cookie;
+ 
+diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+index 38aa4374e813..2be9ea33a36c 100644
+--- a/drivers/net/ethernet/smsc/smc91x.h
++++ b/drivers/net/ethernet/smsc/smc91x.h
+@@ -839,190 +839,190 @@ static const char * chip_ids[ 16 ] =  {
+ #define SMC_MUST_ALIGN_WRITE(lp)	SMC_32BIT(lp)
+ 
+ #define SMC_GET_PN(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, PN_REG(lp)))	\
+-				: (SMC_inw(ioaddr, PN_REG(lp)) & 0xFF))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, PN_REG(lp)))	\
++				: (SMC_inw(lp->base, PN_REG(lp)) & 0xFF))
+ 
+ #define SMC_SET_PN(lp, x)						\
+ 	do {								\
+ 		if (SMC_MUST_ALIGN_WRITE(lp))				\
+-			SMC_outl((x)<<16, ioaddr, SMC_REG(lp, 0, 2));	\
++			SMC_outl((x)<<16, lp->base, SMC_REG(lp, 0, 2));	\
+ 		else if (SMC_8BIT(lp))				\
+-			SMC_outb(x, ioaddr, PN_REG(lp));		\
++			SMC_outb(x, lp->base, PN_REG(lp));		\
+ 		else							\
+-			SMC_outw(lp, x, ioaddr, PN_REG(lp));		\
++			SMC_outw(lp, x, lp->base, PN_REG(lp));		\
+ 	} while (0)
+ 
+ #define SMC_GET_AR(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, AR_REG(lp)))	\
+-				: (SMC_inw(ioaddr, PN_REG(lp)) >> 8))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, AR_REG(lp)))	\
++				: (SMC_inw(lp->base, PN_REG(lp)) >> 8))
+ 
+ #define SMC_GET_TXFIFO(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, TXFIFO_REG(lp)))	\
+-				: (SMC_inw(ioaddr, TXFIFO_REG(lp)) & 0xFF))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, TXFIFO_REG(lp)))	\
++				: (SMC_inw(lp->base, TXFIFO_REG(lp)) & 0xFF))
+ 
+ #define SMC_GET_RXFIFO(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, RXFIFO_REG(lp)))	\
+-				: (SMC_inw(ioaddr, TXFIFO_REG(lp)) >> 8))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, RXFIFO_REG(lp)))	\
++				: (SMC_inw(lp->base, TXFIFO_REG(lp)) >> 8))
+ 
+ #define SMC_GET_INT(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, INT_REG(lp)))	\
+-				: (SMC_inw(ioaddr, INT_REG(lp)) & 0xFF))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, INT_REG(lp)))	\
++				: (SMC_inw(lp->base, INT_REG(lp)) & 0xFF))
+ 
+ #define SMC_ACK_INT(lp, x)						\
+ 	do {								\
+ 		if (SMC_8BIT(lp))					\
+-			SMC_outb(x, ioaddr, INT_REG(lp));		\
++			SMC_outb(x, lp->base, INT_REG(lp));		\
+ 		else {							\
+ 			unsigned long __flags;				\
+ 			int __mask;					\
+ 			local_irq_save(__flags);			\
+-			__mask = SMC_inw(ioaddr, INT_REG(lp)) & ~0xff; \
+-			SMC_outw(lp, __mask | (x), ioaddr, INT_REG(lp)); \
++			__mask = SMC_inw(lp->base, INT_REG(lp)) & ~0xff; \
++			SMC_outw(lp, __mask | (x), lp->base, INT_REG(lp)); \
+ 			local_irq_restore(__flags);			\
+ 		}							\
+ 	} while (0)
+ 
+ #define SMC_GET_INT_MASK(lp)						\
+-	(SMC_8BIT(lp)	? (SMC_inb(ioaddr, IM_REG(lp)))	\
+-				: (SMC_inw(ioaddr, INT_REG(lp)) >> 8))
++	(SMC_8BIT(lp)	? (SMC_inb(lp->base, IM_REG(lp)))	\
++				: (SMC_inw(lp->base, INT_REG(lp)) >> 8))
+ 
+ #define SMC_SET_INT_MASK(lp, x)					\
+ 	do {								\
+ 		if (SMC_8BIT(lp))					\
+-			SMC_outb(x, ioaddr, IM_REG(lp));		\
++			SMC_outb(x, lp->base, IM_REG(lp));		\
+ 		else							\
+-			SMC_outw(lp, (x) << 8, ioaddr, INT_REG(lp));	\
++			SMC_outw(lp, (x) << 8, lp->base, INT_REG(lp));	\
+ 	} while (0)
+ 
+-#define SMC_CURRENT_BANK(lp)	SMC_inw(ioaddr, BANK_SELECT)
++#define SMC_CURRENT_BANK(lp)	SMC_inw(lp->base, BANK_SELECT)
+ 
+ #define SMC_SELECT_BANK(lp, x)					\
+ 	do {								\
+ 		if (SMC_MUST_ALIGN_WRITE(lp))				\
+-			SMC_outl((x)<<16, ioaddr, 12<<SMC_IO_SHIFT);	\
++			SMC_outl((x)<<16, lp->base, 12<<SMC_IO_SHIFT);	\
+ 		else							\
+-			SMC_outw(lp, x, ioaddr, BANK_SELECT);		\
++			SMC_outw(lp, x, lp->base, BANK_SELECT);		\
+ 	} while (0)
+ 
+-#define SMC_GET_BASE(lp)		SMC_inw(ioaddr, BASE_REG(lp))
++#define SMC_GET_BASE(lp)		SMC_inw(lp->base, BASE_REG(lp))
+ 
+-#define SMC_SET_BASE(lp, x)	SMC_outw(lp, x, ioaddr, BASE_REG(lp))
++#define SMC_SET_BASE(lp, x)	SMC_outw(lp, x, lp->base, BASE_REG(lp))
+ 
+-#define SMC_GET_CONFIG(lp)	SMC_inw(ioaddr, CONFIG_REG(lp))
++#define SMC_GET_CONFIG(lp)	SMC_inw(lp->base, CONFIG_REG(lp))
+ 
+-#define SMC_SET_CONFIG(lp, x)	SMC_outw(lp, x, ioaddr, CONFIG_REG(lp))
++#define SMC_SET_CONFIG(lp, x)	SMC_outw(lp, x, lp->base, CONFIG_REG(lp))
+ 
+-#define SMC_GET_COUNTER(lp)	SMC_inw(ioaddr, COUNTER_REG(lp))
++#define SMC_GET_COUNTER(lp)	SMC_inw(lp->base, COUNTER_REG(lp))
+ 
+-#define SMC_GET_CTL(lp)		SMC_inw(ioaddr, CTL_REG(lp))
++#define SMC_GET_CTL(lp)		SMC_inw(lp->base, CTL_REG(lp))
+ 
+-#define SMC_SET_CTL(lp, x)	SMC_outw(lp, x, ioaddr, CTL_REG(lp))
++#define SMC_SET_CTL(lp, x)	SMC_outw(lp, x, lp->base, CTL_REG(lp))
+ 
+-#define SMC_GET_MII(lp)		SMC_inw(ioaddr, MII_REG(lp))
++#define SMC_GET_MII(lp)		SMC_inw(lp->base, MII_REG(lp))
+ 
+-#define SMC_GET_GP(lp)		SMC_inw(ioaddr, GP_REG(lp))
++#define SMC_GET_GP(lp)		SMC_inw(lp->base, GP_REG(lp))
+ 
+ #define SMC_SET_GP(lp, x)						\
+ 	do {								\
+ 		if (SMC_MUST_ALIGN_WRITE(lp))				\
+-			SMC_outl((x)<<16, ioaddr, SMC_REG(lp, 8, 1));	\
++			SMC_outl((x)<<16, lp->base, SMC_REG(lp, 8, 1));	\
+ 		else							\
+-			SMC_outw(lp, x, ioaddr, GP_REG(lp));		\
++			SMC_outw(lp, x, lp->base, GP_REG(lp));		\
+ 	} while (0)
+ 
+-#define SMC_SET_MII(lp, x)	SMC_outw(lp, x, ioaddr, MII_REG(lp))
++#define SMC_SET_MII(lp, x)	SMC_outw(lp, x, lp->base, MII_REG(lp))
+ 
+-#define SMC_GET_MIR(lp)		SMC_inw(ioaddr, MIR_REG(lp))
++#define SMC_GET_MIR(lp)		SMC_inw(lp->base, MIR_REG(lp))
+ 
+-#define SMC_SET_MIR(lp, x)	SMC_outw(lp, x, ioaddr, MIR_REG(lp))
++#define SMC_SET_MIR(lp, x)	SMC_outw(lp, x, lp->base, MIR_REG(lp))
+ 
+-#define SMC_GET_MMU_CMD(lp)	SMC_inw(ioaddr, MMU_CMD_REG(lp))
++#define SMC_GET_MMU_CMD(lp)	SMC_inw(lp->base, MMU_CMD_REG(lp))
+ 
+-#define SMC_SET_MMU_CMD(lp, x)	SMC_outw(lp, x, ioaddr, MMU_CMD_REG(lp))
++#define SMC_SET_MMU_CMD(lp, x)	SMC_outw(lp, x, lp->base, MMU_CMD_REG(lp))
+ 
+-#define SMC_GET_FIFO(lp)	SMC_inw(ioaddr, FIFO_REG(lp))
++#define SMC_GET_FIFO(lp)	SMC_inw(lp->base, FIFO_REG(lp))
+ 
+-#define SMC_GET_PTR(lp)		SMC_inw(ioaddr, PTR_REG(lp))
++#define SMC_GET_PTR(lp)		SMC_inw(lp->base, PTR_REG(lp))
+ 
+ #define SMC_SET_PTR(lp, x)						\
+ 	do {								\
+ 		if (SMC_MUST_ALIGN_WRITE(lp))				\
+-			SMC_outl((x)<<16, ioaddr, SMC_REG(lp, 4, 2));	\
++			SMC_outl((x)<<16, lp->base, SMC_REG(lp, 4, 2));	\
+ 		else							\
+-			SMC_outw(lp, x, ioaddr, PTR_REG(lp));		\
++			SMC_outw(lp, x, lp->base, PTR_REG(lp));		\
+ 	} while (0)
+ 
+-#define SMC_GET_EPH_STATUS(lp)	SMC_inw(ioaddr, EPH_STATUS_REG(lp))
++#define SMC_GET_EPH_STATUS(lp)	SMC_inw(lp->base, EPH_STATUS_REG(lp))
+ 
+-#define SMC_GET_RCR(lp)		SMC_inw(ioaddr, RCR_REG(lp))
++#define SMC_GET_RCR(lp)		SMC_inw(lp->base, RCR_REG(lp))
+ 
+-#define SMC_SET_RCR(lp, x)		SMC_outw(lp, x, ioaddr, RCR_REG(lp))
++#define SMC_SET_RCR(lp, x)		SMC_outw(lp, x, lp->base, RCR_REG(lp))
+ 
+-#define SMC_GET_REV(lp)		SMC_inw(ioaddr, REV_REG(lp))
++#define SMC_GET_REV(lp)		SMC_inw(lp->base, REV_REG(lp))
+ 
+-#define SMC_GET_RPC(lp)		SMC_inw(ioaddr, RPC_REG(lp))
++#define SMC_GET_RPC(lp)		SMC_inw(lp->base, RPC_REG(lp))
+ 
+ #define SMC_SET_RPC(lp, x)						\
+ 	do {								\
+ 		if (SMC_MUST_ALIGN_WRITE(lp))				\
+-			SMC_outl((x)<<16, ioaddr, SMC_REG(lp, 8, 0));	\
++			SMC_outl((x)<<16, lp->base, SMC_REG(lp, 8, 0));	\
+ 		else							\
+-			SMC_outw(lp, x, ioaddr, RPC_REG(lp));		\
++			SMC_outw(lp, x, lp->base, RPC_REG(lp));		\
+ 	} while (0)
+ 
+-#define SMC_GET_TCR(lp)		SMC_inw(ioaddr, TCR_REG(lp))
++#define SMC_GET_TCR(lp)		SMC_inw(lp->base, TCR_REG(lp))
+ 
+-#define SMC_SET_TCR(lp, x)	SMC_outw(lp, x, ioaddr, TCR_REG(lp))
++#define SMC_SET_TCR(lp, x)	SMC_outw(lp, x, lp->base, TCR_REG(lp))
+ 
+ #ifndef SMC_GET_MAC_ADDR
+ #define SMC_GET_MAC_ADDR(lp, addr)					\
+ 	do {								\
+ 		unsigned int __v;					\
+-		__v = SMC_inw(ioaddr, ADDR0_REG(lp));			\
++		__v = SMC_inw(lp->base, ADDR0_REG(lp));			\
+ 		addr[0] = __v; addr[1] = __v >> 8;			\
+-		__v = SMC_inw(ioaddr, ADDR1_REG(lp));			\
++		__v = SMC_inw(lp->base, ADDR1_REG(lp));			\
+ 		addr[2] = __v; addr[3] = __v >> 8;			\
+-		__v = SMC_inw(ioaddr, ADDR2_REG(lp));			\
++		__v = SMC_inw(lp->base, ADDR2_REG(lp));			\
+ 		addr[4] = __v; addr[5] = __v >> 8;			\
+ 	} while (0)
+ #endif
+ 
+ #define SMC_SET_MAC_ADDR(lp, addr)					\
+ 	do {								\
+-		SMC_outw(lp, addr[0] | (addr[1] << 8), ioaddr, ADDR0_REG(lp)); \
+-		SMC_outw(lp, addr[2] | (addr[3] << 8), ioaddr, ADDR1_REG(lp)); \
+-		SMC_outw(lp, addr[4] | (addr[5] << 8), ioaddr, ADDR2_REG(lp)); \
++		SMC_outw(lp, addr[0] | (addr[1] << 8), lp->base, ADDR0_REG(lp)); \
++		SMC_outw(lp, addr[2] | (addr[3] << 8), lp->base, ADDR1_REG(lp)); \
++		SMC_outw(lp, addr[4] | (addr[5] << 8), lp->base, ADDR2_REG(lp)); \
+ 	} while (0)
+ 
+ #define SMC_SET_MCAST(lp, x)						\
+ 	do {								\
+ 		const unsigned char *mt = (x);				\
+-		SMC_outw(lp, mt[0] | (mt[1] << 8), ioaddr, MCAST_REG1(lp)); \
+-		SMC_outw(lp, mt[2] | (mt[3] << 8), ioaddr, MCAST_REG2(lp)); \
+-		SMC_outw(lp, mt[4] | (mt[5] << 8), ioaddr, MCAST_REG3(lp)); \
+-		SMC_outw(lp, mt[6] | (mt[7] << 8), ioaddr, MCAST_REG4(lp)); \
++		SMC_outw(lp, mt[0] | (mt[1] << 8), lp->base, MCAST_REG1(lp)); \
++		SMC_outw(lp, mt[2] | (mt[3] << 8), lp->base, MCAST_REG2(lp)); \
++		SMC_outw(lp, mt[4] | (mt[5] << 8), lp->base, MCAST_REG3(lp)); \
++		SMC_outw(lp, mt[6] | (mt[7] << 8), lp->base, MCAST_REG4(lp)); \
+ 	} while (0)
+ 
+ #define SMC_PUT_PKT_HDR(lp, status, length)				\
+ 	do {								\
+ 		if (SMC_32BIT(lp))					\
+-			SMC_outl((status) | (length)<<16, ioaddr,	\
++			SMC_outl((status) | (length)<<16, lp->base,	\
+ 				 DATA_REG(lp));			\
+ 		else {							\
+-			SMC_outw(lp, status, ioaddr, DATA_REG(lp));	\
+-			SMC_outw(lp, length, ioaddr, DATA_REG(lp));	\
++			SMC_outw(lp, status, lp->base, DATA_REG(lp));	\
++			SMC_outw(lp, length, lp->base, DATA_REG(lp));	\
+ 		}							\
+ 	} while (0)
+ 
+ #define SMC_GET_PKT_HDR(lp, status, length)				\
+ 	do {								\
+ 		if (SMC_32BIT(lp)) {				\
+-			unsigned int __val = SMC_inl(ioaddr, DATA_REG(lp)); \
++			unsigned int __val = SMC_inl(lp->base, DATA_REG(lp)); \
+ 			(status) = __val & 0xffff;			\
+ 			(length) = __val >> 16;				\
+ 		} else {						\
+-			(status) = SMC_inw(ioaddr, DATA_REG(lp));	\
+-			(length) = SMC_inw(ioaddr, DATA_REG(lp));	\
++			(status) = SMC_inw(lp->base, DATA_REG(lp));	\
++			(length) = SMC_inw(lp->base, DATA_REG(lp));	\
+ 		}							\
+ 	} while (0)
+ 
+@@ -1031,10 +1031,10 @@ static const char * chip_ids[ 16 ] =  {
+ 		if (SMC_32BIT(lp)) {				\
+ 			void *__ptr = (p);				\
+ 			int __len = (l);				\
+-			void __iomem *__ioaddr = ioaddr;		\
++			void __iomem *__ioaddr = lp->base;		\
+ 			if (__len >= 2 && (unsigned long)__ptr & 2) {	\
+ 				__len -= 2;				\
+-				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
++				SMC_outsw(lp->base, DATA_REG(lp), __ptr, 1); \
+ 				__ptr += 2;				\
+ 			}						\
+ 			if (SMC_CAN_USE_DATACS && lp->datacs)		\
+@@ -1042,12 +1042,12 @@ static const char * chip_ids[ 16 ] =  {
+ 			SMC_outsl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+ 			if (__len & 2) {				\
+ 				__ptr += (__len & ~3);			\
+-				SMC_outsw(ioaddr, DATA_REG(lp), __ptr, 1); \
++				SMC_outsw(lp->base, DATA_REG(lp), __ptr, 1); \
+ 			}						\
+ 		} else if (SMC_16BIT(lp))				\
+-			SMC_outsw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
++			SMC_outsw(lp->base, DATA_REG(lp), p, (l) >> 1);	\
+ 		else if (SMC_8BIT(lp))				\
+-			SMC_outsb(ioaddr, DATA_REG(lp), p, l);	\
++			SMC_outsb(lp->base, DATA_REG(lp), p, l);	\
+ 	} while (0)
+ 
+ #define SMC_PULL_DATA(lp, p, l)					\
+@@ -1055,7 +1055,7 @@ static const char * chip_ids[ 16 ] =  {
+ 		if (SMC_32BIT(lp)) {				\
+ 			void *__ptr = (p);				\
+ 			int __len = (l);				\
+-			void __iomem *__ioaddr = ioaddr;		\
++			void __iomem *__ioaddr = lp->base;		\
+ 			if ((unsigned long)__ptr & 2) {			\
+ 				/*					\
+ 				 * We want 32bit alignment here.	\
+@@ -1080,9 +1080,9 @@ static const char * chip_ids[ 16 ] =  {
+ 			__len += 2;					\
+ 			SMC_insl(__ioaddr, DATA_REG(lp), __ptr, __len>>2); \
+ 		} else if (SMC_16BIT(lp))				\
+-			SMC_insw(ioaddr, DATA_REG(lp), p, (l) >> 1);	\
++			SMC_insw(lp->base, DATA_REG(lp), p, (l) >> 1);	\
+ 		else if (SMC_8BIT(lp))				\
+-			SMC_insb(ioaddr, DATA_REG(lp), p, l);		\
++			SMC_insb(lp->base, DATA_REG(lp), p, l);		\
+ 	} while (0)
+ 
+ #endif  /* _SMC91X_H_ */
+-- 
+2.45.1
 
-Thanks for the patch!
-
->  drivers/net/ethernet/intel/ice/ice_main.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-> index f60c022f7960..ec3cbadaa162 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_main.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
-> @@ -5544,7 +5544,7 @@ static int ice_suspend(struct device *dev)
->  	 */
->  	disabled = ice_service_task_stop(pf);
->  
-> -	ice_unplug_aux_dev(pf);
-> +	ice_deinit_rdma(pf);
-
-I think this should be called later in the reset path IMO.
-You should call ice_deinit_rdma in ice_prepare_for_reset (replace ice_unplug_aux_dev),
-
->  
->  	/* Already suspended?, then there is nothing to do */
->  	if (test_and_set_bit(ICE_SUSPENDED, pf->state)) {
-> @@ -5624,6 +5624,10 @@ static int ice_resume(struct device *dev)
->  	if (ret)
->  		dev_err(dev, "Cannot restore interrupt scheme: %d\n", ret);
->  
-> +	ret = ice_init_rdma(pf);
-> +	if (ret)
-> +		dev_err(dev, "Reinitialize RDMA during resume failed: %d\n", ret);
-
-And ice_init_rdma should be moved to ice_rebuild (replace ice_plug_aux_dev)
-
-> +
->  	clear_bit(ICE_DOWN, pf->state);
->  	/* Now perform PF reset and rebuild */
->  	reset_type = ICE_RESET_PFR;
 
