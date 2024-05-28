@@ -1,161 +1,108 @@
-Return-Path: <linux-kernel+bounces-191845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C0D8D150C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:12:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5989C8D1513
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E8E1C20B06
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:12:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795861C2171C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E22776050;
-	Tue, 28 May 2024 07:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC171753;
+	Tue, 28 May 2024 07:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxlBBuSW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLvZxd2I"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431F774405;
-	Tue, 28 May 2024 07:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF673443;
+	Tue, 28 May 2024 07:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716880326; cv=none; b=RVJYax3PNnOFOa45b9W0zalVi/K74DgWw6mbyzIwzWjXGSpJ7rp6s9z5T7aUfOt6SB9FeP1O9bBBlvgEV8AAiXNGIussLTrmtDCVbwXrzHUdHIf2JLDs+1uVKpcdWUmY8H8J3J6OXWRS5OGgS2VxHQ4+NwBIqvPywO9Qy65Vh7Q=
+	t=1716880390; cv=none; b=gsj7bKWjyS2YlYbOMzap8sp08VW+rd+GeAJFP2WOZf+tvABA9dWjK7LKYfSuXZySzJ76L78xbSz9s2/RkwsRVjsBS6SUQxm3hdlxtBXZhRfNhxJSOoIvZQfkjMzdPIMTwe3mZ9k5cVGl1vb9jjjSu6rP3v6wJ4c6i/TmVJIcDAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716880326; c=relaxed/simple;
-	bh=uPygDd1nw48qnwBlYqSuCwek4hR2YJO99HQXE1Joqb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvMIECC5xfGV2FR7P/grvxWy4ePiegN4xydpSiEUMJ+J+GJfzJeas6L06v1ywFv15fMKY7d6ZaK6nMzQWl1GjaTmLjcj/4iAdv4FfBKyYSwIVu6D4NjI4Xz0lgtTWgUoQ8kjqav/ieSpZKGTTNul+wsY4Y9cve2kFnlOtskUC/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxlBBuSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E07D1C32781;
-	Tue, 28 May 2024 07:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716880325;
-	bh=uPygDd1nw48qnwBlYqSuCwek4hR2YJO99HQXE1Joqb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nxlBBuSWSpPbjEBARf5U2GZZdCeakTErnnH3AwNmxvC8NQSV49uQvBJ44f64w6ucz
-	 MsQ5QwgCirCWTgB6UKoO+roGKzZ0aGWK4alVGwzxA4PwWFk2mQrd4NhAPa4MnTfbDM
-	 rvr8gNw7W8S/hqtoBUKX2kGbSEYiUSkv8ylzMCSeTQNsZddgGv0vDnM7aHWY43SYNy
-	 OHmnRt5EGs28D8/HRTr8puCkf6wB/vBN2Uf/W3yuE5ni/eWhBeHef+oFjJHmTOqIyG
-	 oWjQoGh2/fLZkWgCjLdQHedhE7HSgT0s6vc2qRP0tnYwtrm71a2bI2U8RwLM+pN+8s
-	 GbkgirE9EUP4w==
-Date: Tue, 28 May 2024 09:11:59 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	robh@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	vidyas@nvidia.com, linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [PATCH] PCI: tegra194: Add check for host and endpoint modes
-Message-ID: <ZlWDv6k1AwUbAKmr@ryzen.lan>
-References: <20240513154900.127612-1-manivannan.sadhasivam@linaro.org>
- <Zky0XkvmOoFCxnDx@x1-carbon.wireless.wdc>
+	s=arc-20240116; t=1716880390; c=relaxed/simple;
+	bh=UfhkQVosL+oCl3pxeQc9cyceNU12bsBq4sjRhs/0oQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tg03lEsDn1BuirELl3WFh+heGdif5ZPQdrDNlCdee1qgGvh1q97RvmI+MUcQl9RxheVWosWrTQAyeIzPeHT56ZvwWIoE+w/ocEYy5BVwZPFOlSFFwz1D5VDb3KL2P+rQjA/kLlyHJBEwLgLtPW3ndNs7xiMIXA+mJ9bDYD9MKaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLvZxd2I; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so5846061fa.3;
+        Tue, 28 May 2024 00:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716880387; x=1717485187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IbN8iFA5Vjgo5SuU7PH7u5E08M2Kd/8qmR0Aaqp8vOI=;
+        b=BLvZxd2Ict4bsk5jxWWfFatoXikJ5LkD5bhwdwPPr1lvZM0e5zG6LwYt/YcS3khS6K
+         Z5KgYztmW4Evks5YVTm4thvelUIK8HpyNqUNqHaH5wMGKW82CdcgfWgOg4p4M/mktpPz
+         EZmYozcvyJBxvHNLsx9gSQuRCJTR0QSiG4ijqBLSf6JjpMPXqZiqRyHnsxqadA+q2PXw
+         two0khgzhnwMnRec1Bx1M70EiNvuECyqaEHALan3FsgZIo2+9YRJ8tnwp5PWf1+ANgPh
+         C4d9lYfhLN8NAbwhzfecYbGR6+iI81GMO58H89y4ccS50DnBRYIRqoMsDqfZWuWGxWAG
+         adCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716880387; x=1717485187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IbN8iFA5Vjgo5SuU7PH7u5E08M2Kd/8qmR0Aaqp8vOI=;
+        b=hlf3XXP7/LgmKCgqPE+94qCO77IXz8oCvaFQhIFsJ9WVAbXjsM7Llg9cWuhLkFIjaO
+         cl6k0enLXQGvlm6DZzI/61EtCwHa2zTa1QKL+HC+HlvF6wF3lYma91H84uWy2hh+DLax
+         NBbcMWABSvojWkoUeUHeT5nASxwgF8Swm0QsUPQ1JgoqZ1UmOeAT2G9w0t4AQZM8i0GT
+         ByvhWUzkmXO0IxuFj5vaG+a+0AjtrHmMWJEbza03WlwDjkBHS7L5V2hx4QcwG3urIRte
+         bhq/ZVclesYQDR/nDmu9uD5H7jRGmr7bvXZzmkpDVcFC1jeUYKHGMnjp1B8MV/BfxpOC
+         Zt7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvnTvxDhBXnwMm8+KolRkiPFqyBYtUglK4DsrB7ECg+hjwZ++g+reQWc1WA7u4mfHqxcfTJYT8ST0vmaWy5c5rk7ymF/q9nNG6hfgSRT4LzKWT/UErWI+JiIpWH2xdrCIj+B+J88NbZA==
+X-Gm-Message-State: AOJu0YzEl3pCIUL+Tnf1lGLn2ClO9j90K8iGAMqYiJtKSRWz8gtTGP7f
+	uOnP1xepxkFnuz2Bn5RxVvb8V1/iyHF3LODds5wTsFtstpxprcoOxfN0IG3pg4uV5NY7Hq9E3zO
+	uLICxm603eDSb09TYacwLuFTLHPs=
+X-Google-Smtp-Source: AGHT+IFmtTX4poS64Oy5QVA1TRp3+Ayt3egLX2L31ik5nXCN4bjC/nAgnDwJx65RWXovKVj1vqFrVx99XSpwpXNn9TY=
+X-Received: by 2002:a2e:a403:0:b0:2e9:8852:3d16 with SMTP id
+ 38308e7fff4ca-2e9885242f1mr5984361fa.35.1716880387386; Tue, 28 May 2024
+ 00:13:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zky0XkvmOoFCxnDx@x1-carbon.wireless.wdc>
+References: <20240527202424.1430103-1-andy.shevchenko@gmail.com> <ZlVkgf_XCZcZd388@infradead.org>
+In-Reply-To: <ZlVkgf_XCZcZd388@infradead.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 28 May 2024 10:12:31 +0300
+Message-ID: <CAHp75VftLmV5T9xRnirOMXbJoyvm2eUiG4bDeB6p6hY6jExFQQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] PNP: Export pnp_bus_type for modules
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Guanbing Huang <albanhuang@outlook.com>, 
+	Guanbing Huang <albanhuang@tencent.com>, Woody Suwalski <terraluna977@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 04:49:02PM +0200, Niklas Cassel wrote:
-> On Mon, May 13, 2024 at 05:49:00PM +0200, Manivannan Sadhasivam wrote:
-> > Tegra194 driver supports both the host and endpoint mode, but there are no
-> > checks to validate whether the corresponding mode is enabled in kernel
-> > config or not. So if the driver tries to function without enabling the
-> > required mode (CONFIG_PCIE_TEGRA194_HOST/CONFIG_PCIE_TEGRA194_EP), then it
-> > will result in driver malfunction.
-> > 
-> > So let's add the checks in probe() before doing the mode specific config
-> > and fail probe() if the corresponding mode is not enabled.
-> > 
-> > But this also requires adding one redundant check in
-> > pex_ep_event_pex_rst_assert() for pci_epc_deinit_notify(). Because the
-> > function is called outside of probe() and the compiler fails to spot the
-> > dependency in probe() and still complains about the undefined reference to
-> > pci_epc_deinit_notify().
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202405130815.BwBrIepL-lkp@intel.com
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c | 21 ++++++++++++++++++++-
-> >  1 file changed, 20 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > index d2223821e122..e02a9bca70ef 100644
-> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > @@ -1715,7 +1715,16 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
-> >  	if (ret)
-> >  		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
-> >  
-> > -	pci_epc_deinit_notify(pcie->pci.ep.epc);
-> > +	/*
-> > +	 * We do not really need the below guard as the driver won't probe
-> > +	 * successfully if it tries to probe in EP mode and
-> > +	 * CONFIG_PCIE_TEGRA194_EP is not enabled. But since this function is
-> > +	 * being called outside of probe(), compiler fails to spot the
-> > +	 * dependency in probe() and hence this redundant check.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_PCIE_TEGRA194_EP))
-> > +		pci_epc_deinit_notify(pcie->pci.ep.epc);
-> > +
-> 
-> This big comment is a bit ugly. It would be nice if it could be avoided.
-> 
-> (pci-epc.h does not provide any dummy implementations for any of the
-> functions, so I suggest that we leave it like that.)
-> 
-> However, if we look at dw_pcie_ep_init_notify(), it is called from
-> pex_ep_event_pex_rst_deassert(), and we do not get a build warning for that.
-> 
-> The reason is that dw_pcie_ep_init_notify() has a dummy implementation
-> in pcie-designware.h.
-> 
-> May I suggest that we add a dw_pcie_ep_deinit_notify() wrapper around
-> pci_epc_deinit_notify(), while also providing a dummy implementation
-> in pcie-designware.h ?
-> 
-> That way, the code in pcie-tegra194.c (and pcie-qcom-ep.c) would be
-> more symmetrical, calling dw_pcie_ep_init_notify() for init notification,
-> and dw_pcie_ep_deinit_notify() for deinit notification.
-> 
-> (Instead of dw_pcie_ep_init_notify() + pci_epc_deinit_notify())
+On Tue, May 28, 2024 at 7:58=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Mon, May 27, 2024 at 11:24:24PM +0300, Andy Shevchenko wrote:
+> > Since we have dev_is_pnp() macro that utilises the address of pnp_bus_t=
+ype
+> > variable, the users, which can be compiled as modules, will be failed t=
+o
+> > build. Export the variable to the modules to prevent build breakage.
+>
+> NAK.  Please move dev_is_pnp out of line and export it (as
+> EXPORT_SYMBOL_GPL), please.  bus types should be private unless we have
+> really good reasons for them not to be private.
 
-Ping.
+FWIW, it's not private, it's just not exported to the modules. Are you
+suggesting to hide the bus type completely to make it static? If so,
+this is out of scope of this fix.
 
-
-The branch:
-pci/endpoint
-
-Which has commit:
-commit f94f2844f28c968364af8543414fbea9c8b3005d
-Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date:   Tue Apr 30 11:43:48 2024 +0530
-
-    PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers
-
-still fails to link using certain arm64-randconfigs.
-
-See:
-https://lore.kernel.org/linux-pci/202405270544.yKgcokbA-lkp@intel.com/T/#u
-
-The patch in $subject was meant to fix that, but it hasn't been merged yet.
-
-Considering that the pci/endpoint branch is currently broken, I think it
-should be high priority to get a patch in to fix this.
-(Otherwise the patches in pci/endpoint might get 'deferred' yet another
-release cycle.)
-
-Any thoughts on my review comments on this patch?
-
-
-Kind regards,
-Niklas
+--=20
+With Best Regards,
+Andy Shevchenko
 
