@@ -1,232 +1,117 @@
-Return-Path: <linux-kernel+bounces-192704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8358D20F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:59:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17658D2100
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0641F238D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:59:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20BA3B22B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E88171E4A;
-	Tue, 28 May 2024 15:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96878171E4F;
+	Tue, 28 May 2024 16:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="khXtSJOW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ldc7Ke4N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jcQXp7B/"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0A317166F;
-	Tue, 28 May 2024 15:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F1416C688
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911988; cv=none; b=PRYIar43d2wSupCwaVju3Jm2CplHeA915Ruf02sIM91boe9GVv1pz8Tscpn+7AQiG1t99japQZuMYtLCXHvO2P5vv/nnvsnsiMbnGufGyp8RYYzwOP0A6l6EcY2VfkJy0P0+Y5iKApTzAZmyzm0ThQy6x+Cq7yndDL8qgis88ZU=
+	t=1716912082; cv=none; b=CWvRmwIVGBWWr+43M/1bx1UMGW2XqGEf0iedLzVymCj+br/cv2s6GDM5YhwYwlfVl1W3NrT5p43Hsibxx3YuMY8QzpHpE6820Nhpgnf+HKKWSvkW8C1zx3LDrSRqcIjYfvKU2QGBSz8NYgrYN8zvdoN9mSwSuGesNPOfHY1sdbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911988; c=relaxed/simple;
-	bh=4KjGV65nevJzZN9wUt2+pF2L7560wk8uKOA51KlaV64=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=CUEfX2sK1xKWw7GxVcOgxXmYFVjSbxjNJsWJr1GAIRyba3R/rnE1qSyqnv3/mFtFROGIc+l/q5LuP6rg3F6IKhpdL3fDcQMSZsy7ZTiodRBGNyysbQRJrSX0JG296QSrVRM7cWSfuCKRttQYJ7vZSzMPH+gH+oBCJoTSrcT1jNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=khXtSJOW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ldc7Ke4N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 May 2024 15:59:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716911985;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=edCrTL82cmdksGojdYAeBOaO8yEUnIrwiSSwOTbuEYE=;
-	b=khXtSJOW3MbTMKBgg+llYpz//J3KOlOCj0lyQsoH7qqMQ7nHWnQg0S1nNjwOyuNqSJ9Jl9
-	dw1T5HWg8hr/efeoL/usehyIx3on8Ot1VS3Ibu0LVkBMUa4ob3JDCcx9665wnf5q2XYkma
-	5pP5HG8/l5Yq4Sri68/xD6/lzga9IM9K5uejPNTyCRbc7eAtFEaF2Q3rf8484tusP6FFwM
-	kRsd497DkdpRF7ZT/w7UKpVptQYJUSiZAuI5uF/CVkaHqbMvTGDPTHy9gpMUSul9pvXZOw
-	tq61q7yhmT3UIj+8BcZ6TlC9ldCWdS6jb1zU25YIdKbGI5iQ+d2Z7QWiWSFRnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716911985;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=edCrTL82cmdksGojdYAeBOaO8yEUnIrwiSSwOTbuEYE=;
-	b=Ldc7Ke4N8xA1edPs1AQpjbF1KpjzpeVPofXCFmHNrUphewPlG+kOuHbagzYvAG/3Y+LdD8
-	ImdBNeCpCLGx1nCg==
-From: "tip-bot2 for Alison Schofield" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Remove useless work in detect_tme_early()
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1716912082; c=relaxed/simple;
+	bh=XLoTvNeTfS0Z+Xmo5LFQXXdmRX9EJkbbxeer+BFVM1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7/8wTsCK3IYU+y3SRF3iVKvaocuncvpzqgyaTSoPYCmv7hMF5KNboYm++RjS9oadzIz+mWyvnY8yoZhJnuEmBwZqyblU6YFlR87YrhT3a2Wk6XUJb6KR5nGFlWf5KMWj84YaOQam/Dtpxh7pr/YnGM1sicQX6Q5+SK9Jo/gH+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jcQXp7B/; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-529c0d5001eso82864e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716912079; x=1717516879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jw0FtTciCXQX3h6CcIOAWgqPfMRJPygWAg+dmYzhfxo=;
+        b=jcQXp7B/vlttlCNFS+XMQ5wyb/JVYufPy8pc4EN5syxlBRFTkfBCpBCUSlnmv/4pxe
+         TyREqBghByK7bJw9Uwn6SVqQIF4XYzO6JCw3ihWTIuxOqXqrZxVuemnCIcqaJkoDdN7t
+         58F0PfcJLFWfb5/DGsT4E4TPneyNp8h6nIw6nRe+SKht1fO9P3qvPwOQC1G1PjZL0o4Q
+         jTMBz8Qa49m0kbbxMeupw1yJwgRzSNhZgvHuRUEJgalhBF8/xZ1x7+YM3o8dFP1fjW3I
+         71L7QqdTXR8QkojLWDrNoHTsP7Ocaijbj7UqL5e4PlhPCrmzvLuOQJTuZxTVndczlImm
+         +nYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716912079; x=1717516879;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jw0FtTciCXQX3h6CcIOAWgqPfMRJPygWAg+dmYzhfxo=;
+        b=aAVji3G5KmMGNYy3jviGIc+2MK3SQccgd6mGki9d6T8c6kyy4EreyYxMb7Cjj1i7Lc
+         7k15dtOQ7zM8qdCIUSsCuXauPppPdatpvQId5QuyqL43ZRNV5nFhgKTDyGlE2sp8qvUt
+         DaWr+7Z8ajcYZWvLZqcCaIeHaLBCo5WdzB4/fjfCjyOGhyXTycixfv94jVi9SsJ9lm7M
+         4NRx+NRZVTSXC5NJ+0OKkDqyhIEXf6bjnI0DWXm/0jAvA6kBfLAYGhhmzMfwpHPIkY6t
+         3YBlw6yhs//9bVbjhu5ZrRuG+GLQYNkqih75hkK0jd+gXbgX6BbfmW1wvSUgJ2dKq3PL
+         JMDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEfTKI7rT1BfualfCYI9ndVP8ejEKLGfQ8iOUoPXKE85LYX+SuuGwr7PcjpncUoZRVN6fVcAeIzUQ/4jbiZeEVffAMmcPnyJco9YN4
+X-Gm-Message-State: AOJu0YwENsiAlEkyeNjqyADrn1qrn/SBr37rOnhv5r5uQvy4MHmKy/Lj
+	enX361+d6+rWtNOUHJeXK/BcV5odJTWEQCEmkjL9SGUrH/fffVy6/KXQne5KisU=
+X-Google-Smtp-Source: AGHT+IEyQ11RRAiPP9QgNTCWBO2LMoWgZ5tDLIEbBtOI6wcxJ4QNn4AUbE6uD+dbnOOySm4vCify4A==
+X-Received: by 2002:a05:6512:3b8d:b0:520:85cf:db7f with SMTP id 2adb3069b0e04-52965479b50mr10969426e87.28.1716912079313;
+        Tue, 28 May 2024 09:01:19 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f465sm621137866b.120.2024.05.28.09.01.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 09:01:18 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Nicolas Pitre <nico@fluxnic.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Breno Leitao <leitao@debian.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH net-next] net: smc91x: Remove commented out code
+Date: Tue, 28 May 2024 18:00:37 +0200
+Message-ID: <20240528160036.404946-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171691198482.10875.2782971348706799296.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+Remove commented out code
 
-Commit-ID:     98b83cf0c1e22390ebfeb96b3c1b40f7189c558a
-Gitweb:        https://git.kernel.org/tip/98b83cf0c1e22390ebfeb96b3c1b40f7189c558a
-Author:        Alison Schofield <alison.schofield@intel.com>
-AuthorDate:    Mon, 06 May 2024 21:24:21 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 28 May 2024 08:45:17 -07:00
-
-x86/cpu: Remove useless work in detect_tme_early()
-
-TME (Total Memory Encryption) and MKTME (Multi-Key Total Memory
-Encryption) BIOS detection were introduced together here [1] and
-are loosely coupled in the Intel CPU init code.
-
-TME is a hardware only feature and its BIOS status is all that needs
-to be shared with the kernel user: enabled or disabled. The TME
-algorithm the BIOS is using and whether or not the kernel recognizes
-that algorithm is useless to the kernel user.
-
-MKTME is a hardware feature that requires kernel support. MKTME
-detection code was added in advance of broader kernel support for
-MKTME that never followed. So, rather than continuing to spew
-needless and confusing messages about BIOS MKTME status, remove
-most of the MKTME pieces from detect_tme_early().
-
-Keep one useful message: alert the user when BIOS enabled MKTME
-reduces the available physical address bits. Recovery of the MKTME
-consumed bits requires a reboot with MKTME disabled in BIOS.
-
-There is no functional change for the user, only a change in boot
-messages. Below is one example when both TME and MKTME are enabled
-in BIOS with AES_XTS_256 which is unknown to the detect tme code.
-
-Before:
-[] x86/tme: enabled by BIOS
-[] x86/tme: Unknown policy is active: 0x2
-[] x86/mktme: No known encryption algorithm is supported: 0x4
-[] x86/mktme: enabled by BIOS
-[] x86/mktme: 127 KeyIDs available
-
-After:
-[] x86/tme: enabled by BIOS
-[] x86/mktme: BIOS enable: x86_phys_bits reduced by 8
-
-[1]
-commit cb06d8e3d020 ("x86/tme: Detect if TME and MKTME is activated by BIOS")
-
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Link: https://lore.kernel.org/all/86dfdf6ced8c9b790f9376bf6c7e22b5608f47c2.1715054189.git.alison.schofield%40intel.com
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- arch/x86/kernel/cpu/intel.c | 72 ++++++------------------------------
- 1 file changed, 12 insertions(+), 60 deletions(-)
+ drivers/net/ethernet/smsc/smc91x.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 3c3e7e5..3ef4e01 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -190,83 +190,35 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
- #define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
- #define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 78ff3af7911a..907498848028 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -1574,12 +1574,8 @@ smc_ethtool_set_link_ksettings(struct net_device *dev,
+ 		    (cmd->base.port != PORT_TP && cmd->base.port != PORT_AUI))
+ 			return -EINVAL;
  
--#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	/* Bits 7:4 */
--#define TME_ACTIVATE_POLICY_AES_XTS_128	0
--
- #define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/* Bits 35:32 */
+-//		lp->port = cmd->base.port;
+ 		lp->ctl_rfduplx = cmd->base.duplex == DUPLEX_FULL;
  
--#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
--#define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
+-//		if (netif_running(dev))
+-//			smc_set_port(dev);
 -
--/* Values for mktme_status (SW only construct) */
--#define MKTME_ENABLED			0
--#define MKTME_DISABLED			1
--#define MKTME_UNINITIALIZED		2
--static int mktme_status = MKTME_UNINITIALIZED;
--
- static void detect_tme_early(struct cpuinfo_x86 *c)
- {
--	u64 tme_activate, tme_policy, tme_crypto_algs;
--	int keyid_bits = 0, nr_keyids = 0;
--	static u64 tme_activate_cpu0 = 0;
-+	u64 tme_activate;
-+	int keyid_bits;
- 
- 	rdmsrl(MSR_IA32_TME_ACTIVATE, tme_activate);
- 
--	if (mktme_status != MKTME_UNINITIALIZED) {
--		if (tme_activate != tme_activate_cpu0) {
--			/* Broken BIOS? */
--			pr_err_once("x86/tme: configuration is inconsistent between CPUs\n");
--			pr_err_once("x86/tme: MKTME is not usable\n");
--			mktme_status = MKTME_DISABLED;
--
--			/* Proceed. We may need to exclude bits from x86_phys_bits. */
--		}
--	} else {
--		tme_activate_cpu0 = tme_activate;
--	}
--
- 	if (!TME_ACTIVATE_LOCKED(tme_activate) || !TME_ACTIVATE_ENABLED(tme_activate)) {
- 		pr_info_once("x86/tme: not enabled by BIOS\n");
--		mktme_status = MKTME_DISABLED;
- 		clear_cpu_cap(c, X86_FEATURE_TME);
- 		return;
+ 		ret = 0;
  	}
--
--	if (mktme_status != MKTME_UNINITIALIZED)
--		goto detect_keyid_bits;
--
--	pr_info("x86/tme: enabled by BIOS\n");
--
--	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
--	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS_128)
--		pr_warn("x86/tme: Unknown policy is active: %#llx\n", tme_policy);
--
--	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
--	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS_128)) {
--		pr_err("x86/mktme: No known encryption algorithm is supported: %#llx\n",
--				tme_crypto_algs);
--		mktme_status = MKTME_DISABLED;
--	}
--detect_keyid_bits:
-+	pr_info_once("x86/tme: enabled by BIOS\n");
- 	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
--	nr_keyids = (1UL << keyid_bits) - 1;
--	if (nr_keyids) {
--		pr_info_once("x86/mktme: enabled by BIOS\n");
--		pr_info_once("x86/mktme: %d KeyIDs available\n", nr_keyids);
--	} else {
--		pr_info_once("x86/mktme: disabled by BIOS\n");
--	}
--
--	if (mktme_status == MKTME_UNINITIALIZED) {
--		/* MKTME is usable */
--		mktme_status = MKTME_ENABLED;
--	}
-+	if (!keyid_bits)
-+		return;
  
- 	/*
--	 * KeyID bits effectively lower the number of physical address
--	 * bits.  Update cpuinfo_x86::x86_phys_bits accordingly.
-+	 * KeyID bits are set by BIOS and can be present regardless
-+	 * of whether the kernel is using them. They effectively lower
-+	 * the number of physical address bits.
-+	 *
-+	 * Update cpuinfo_x86::x86_phys_bits accordingly.
- 	 */
- 	c->x86_phys_bits -= keyid_bits;
-+	pr_info_once("x86/mktme: BIOS enabled: x86_phys_bits reduced by %d\n",
-+		     keyid_bits);
- }
- 
- static void early_init_intel(struct cpuinfo_x86 *c)
+-- 
+2.45.1
+
 
