@@ -1,154 +1,112 @@
-Return-Path: <linux-kernel+bounces-193123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB298D2727
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:35:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC02F8D270F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E06B1F26DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD1F283E2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7C117BB2A;
-	Tue, 28 May 2024 21:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB8C17BB08;
+	Tue, 28 May 2024 21:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeU4xdkR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nDcJBBXz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5BF17B4FA;
-	Tue, 28 May 2024 21:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4AD17E8EB;
+	Tue, 28 May 2024 21:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716932119; cv=none; b=h3Y7+YmkgL3bOOA9kvM1/fR1etxkHuEeCxOkBrVjPvWjq19Z10vqnIV9TjrzdOXIcdgmBmmYTkvB8sfVBbCUK2hCbDbI+6XdlkVCcfYzuv2fkqxa5BbPJ0Ksm+7LW4+H5sWyLz7KYfpz+X6tHJq/ueMUQdpa9tf/SRF5jAdjKtw=
+	t=1716931976; cv=none; b=L+EtK6Cb8YoUlm53Eumk+UTUYBZ2M5NWcBAfNO0pu9OBqNlO5Og2QM5sTuK1lt/YGeiAcBKWFPOPr20fw42gfja6cR24RuzarqfSf6f2Ud+lE8e0aUUVoxhOnfHHxlbH3x5UPFHua7SQ1tNAEgnGG19lLtViL92HeyFndiYP8K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716932119; c=relaxed/simple;
-	bh=TTH6TAAHwNlQVXAyaogzfwBqkN2ZRzQ1G1pQrDnBJck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeXVN7Ij9eTczx8gKgJKkJhw9Bg4owjBXNNwT62ZXCO+81hSxxmVhy0zI61H5KSsz2owPW++lfM+me+ND92wJQ7cyTIyQA8P3CkOvamgVbCjgrqf659E8xCo9VrNGMfEQtFWf8b4pv/XLQcfbNtVZPa/7f6eus1vVS6Pz9uqWFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeU4xdkR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912C7C3277B;
-	Tue, 28 May 2024 21:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716932118;
-	bh=TTH6TAAHwNlQVXAyaogzfwBqkN2ZRzQ1G1pQrDnBJck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oeU4xdkRJ3X0RbaYEe79r7B1TPu84xeNqYBWKsrZxaMGxOC4XE9s7C/4kRLbJ0Aj0
-	 XEchBORaoDtvvgb/RDIptSSPBfgAUX9UqhFd0E3frxQikLwi35DH0omy5OuCWh3TAH
-	 0AxyXUmioNEpY0e4njH2E969CC7mvkf7YrMRz95tLZcaFXhwbXHiR7zMbvzgeX27SE
-	 fB12XzBMONchtmgAdH5sX+VDItHOlyPPDiv+A3Xcwre/07lWvk5CoQ9Cy2ojvuTg8u
-	 dkHdk9P65p7TglO/ZnmRyItggxNKVv+eGGzavQ/HF3CKHFhc/2EZ1Fp/fqch2jBKqw
-	 su59ULvI41eOw==
-Date: Tue, 28 May 2024 16:35:15 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>, Mohammad Rafi Shaik <quic_mohs@quicinc.com>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH DNM 2/2] arm64: dts: qcom: qcm6490-fairphone-fp5: Add
- DisplayPort sound support
-Message-ID: <hqwrfe2tcb6vlxybmn52k3j2xrxbt3vw5rqwudindbhj3s3nez@obkr3ayos6gm>
-References: <20240510-sc7280-apr-v1-0-e9eabda05f85@fairphone.com>
- <20240510-sc7280-apr-v1-2-e9eabda05f85@fairphone.com>
+	s=arc-20240116; t=1716931976; c=relaxed/simple;
+	bh=RL/H/Q1tC4LaABceTiz3iOJPxQ9kUUPRC95anWM/vSc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JDl1p7TTnER0SWdIfOGJASiCaJtncqEPMdiV29+DJe6CuXgJH61KqC4xc79b9IDqei9sE0T3OQg08uInBPwb8iS+qdzdmV0mkxz1lqQX7fovWLIlN4AkdF+vVPEe1QyHaD72so9SJN4qHqtMGHzYkOpc03oWsLT+8GIn9ijmHNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nDcJBBXz; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716931975; x=1748467975;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=RL/H/Q1tC4LaABceTiz3iOJPxQ9kUUPRC95anWM/vSc=;
+  b=nDcJBBXzHgBe6DGPPO3sW5SLo5oSikQv3XXDy2UzpwQGqggOLdoEKCDA
+   fEM4/5SlPIcnphAFQ8DEbDvkkb0egpsDQnDS39nWA7SyQgmxumchnVCGg
+   f7ZjNVahc+UrNfDlNEDZlZiKvuclOUhIDB8PJYfzyh4EYSq+YEdglUydb
+   JR04r+ZAzvdzv36+0CTH5HSfxZYuFp33UQ4jPv1/U4eQ62uhCHmKJURYP
+   uc5ypWYX7kUOCiv5FpPfTvjHR7sf8vvtFO7rWE10bRW64IAKK+iEDdyGz
+   ShuX9FCtJHBitIBLc8ZjsI3/WJMtLNJhPd0hLQEHRa2dTH8bSG/PES4cu
+   g==;
+X-CSE-ConnectionGUID: S+VNDRXWTBKEljlE51EzHA==
+X-CSE-MsgGUID: W7LI/10jRveUlOb8Da9BJw==
+X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
+   d="scan'208";a="26629078"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2024 14:32:54 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 28 May 2024 14:32:24 -0700
+Received: from hat-linux.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 28 May 2024 14:32:23 -0700
+From: <Tristram.Ha@microchip.com>
+To: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
+	<tristram.ha@microchip.com>
+Subject: [PATCH net] net: dsa: microchip: fix initial port flush problem
+Date: Tue, 28 May 2024 14:35:45 -0700
+Message-ID: <1716932145-3486-1-git-send-email-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-sc7280-apr-v1-2-e9eabda05f85@fairphone.com>
+Content-Type: text/plain
 
-On Fri, May 10, 2024 at 02:27:09PM GMT, Luca Weiss wrote:
-> Add the required nodes for sound playback via a connected external
-> display (DisplayPort over USB-C).
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
-> Depends on a bunch of patches upstream doing bringup of Display (DSI),
-> DisplayPort, GPU, and then finally audio could land. But we're blocked
-> on DPU 1:1:1 topology for all of that unfortunately.
-> 
-> And also machine driver for sound just exists a bit hackily.
+From: Tristram Ha <tristram.ha@microchip.com>
 
-Thanks for sharing this, Luca. Can you please resubmit this once it's
-ready to be merged, so that I don't need to keep track of it?
+The very first flush in any port will flush all learned addresses in all
+ports.  This can be observed by unplugging a cable from one port while
+additional ports are connected and dumping the fdb entries.
 
-Regards,
-Bjorn
+This problem is caused by the initially wrong value programmed to the
+register.  After the first flush the value is reset back to the normal so
+the next port flush will not cause such problem again.
 
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 36 ++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> index 05bbf1da5cb8..2bbbcaeff95e 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -14,6 +14,8 @@
->  #include <dt-bindings/leds/common.h>
->  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +#include <dt-bindings/sound/qcom,q6afe.h>
-> +#include <dt-bindings/sound/qcom,q6asm.h>
->  #include "sc7280.dtsi"
->  #include "pm7250b.dtsi"
->  #include "pm7325.dtsi"
-> @@ -774,6 +776,12 @@ &pon_resin {
->  	status = "okay";
->  };
->  
-> +&q6afedai {
-> +	dai@104 {
-> +		reg = <DISPLAY_PORT_RX>;
-> +	};
-> +};
-> +
->  &qup_spi13_cs {
->  	drive-strength = <6>;
->  	bias-disable;
-> @@ -847,6 +855,34 @@ &sdhc_2 {
->  	status = "okay";
->  };
->  
-> +&sound {
-> +	compatible = "fairphone,fp5-sndcard";
-> +	model = "Fairphone 5";
-> +
-> +	mm1-dai-link {
-> +		link-name = "MultiMedia1";
-> +		cpu {
-> +			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-> +		};
-> +	};
-> +
-> +	displayport-rx-dai-link {
-> +		link-name = "DisplayPort Playback";
-> +
-> +		cpu {
-> +			sound-dai = <&q6afedai DISPLAY_PORT_RX>;
-> +		};
-> +
-> +		platform {
-> +			sound-dai = <&q6routing>;
-> +		};
-> +
-> +		codec {
-> +			sound-dai = <&mdss_dp>;
-> +		};
-> +	};
-> +};
-> +
->  &spi13 {
->  	status = "okay";
->  
-> 
-> -- 
-> 2.45.0
-> 
+Fixes: b987e98e50ab ("dsa: add DSA switch driver for Microchip KSZ9477")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+---
+ drivers/net/dsa/microchip/ksz9477.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
+index f8ad7833f5d9..7cc92b90ffea 100644
+--- a/drivers/net/dsa/microchip/ksz9477.c
++++ b/drivers/net/dsa/microchip/ksz9477.c
+@@ -356,8 +356,7 @@ int ksz9477_reset_switch(struct ksz_device *dev)
+ 
+ 	/* default configuration */
+ 	ksz_read8(dev, REG_SW_LUE_CTRL_1, &data8);
+-	data8 = SW_AGING_ENABLE | SW_LINK_AUTO_AGING |
+-	      SW_SRC_ADDR_FILTER | SW_FLUSH_STP_TABLE | SW_FLUSH_MSTP_TABLE;
++	data8 |= SW_AGING_ENABLE | SW_LINK_AUTO_AGING | SW_SRC_ADDR_FILTER;
+ 	ksz_write8(dev, REG_SW_LUE_CTRL_1, data8);
+ 
+ 	/* disable interrupts */
+-- 
+2.34.1
+
 
