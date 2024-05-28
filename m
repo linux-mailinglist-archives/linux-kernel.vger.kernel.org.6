@@ -1,167 +1,143 @@
-Return-Path: <linux-kernel+bounces-192870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BC68D2353
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:36:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE698D2356
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F71284C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A301C225CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664DF4E1DD;
-	Tue, 28 May 2024 18:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/vNHNOb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2FA16D4FC;
+	Tue, 28 May 2024 18:38:18 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0411C6A5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 18:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805371C6A5;
+	Tue, 28 May 2024 18:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716921366; cv=none; b=l/DyU3I/VLZYIB1fifijwjdjotsg9G/yCLSbqWAG8f6loRCGsmlPbY9e+KOeqgnGj06qy4QizKI7bJXda77mmn3VeptFsojVNegSuzUSz+D44WGjOi2/0RcwpPeh2RbsEiddmJuxJ5Qs1dh2uOtucpQlZjf91ML1gVDTCvsabtQ=
+	t=1716921498; cv=none; b=RE4/YFsMj6KDHdLnNaIiT88vWFbecUceHdYwGy+usAxMeJzfdVRp8zMFIJgPFcJDtsjuzUp1Vv5qheWvefFVPsUp5kl96eJQDJPhVCQWQUta6zvQZcwck9XM4ZAchd8JggJ97gAO/ax8jLwFhsG+uPnByXOrJ+h40YqrmrVv04k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716921366; c=relaxed/simple;
-	bh=rXtUrXLXV0OhPXCJZls3z+Z2nTXyO3iCbX5GfLKNHyc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ht2wYt5jW1WGt2kRcbVsY+cCuQsWrbsd6oDGNLYY1U7BxgqEoq9J6iSjGn0b79FFXEwZt33usSSsIsM2O9XRP/OdlivSM30YDdBZgKrDnQeOnOpq6ZGAJY1tj+I4mi+KZYBWPJDDB4vGV4DIWHkhS9DtAT2tEquygF1I/zTASN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/vNHNOb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so92081e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:36:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716921363; x=1717526163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Meei9ZVa20+5yNphV/wKrB9x+kwpXFk7nEopIQ+RSs=;
-        b=P/vNHNObUlMC+ifIv/dYOowOFR5MBaVdF9QHXFilETYrZOwv0zH7dbu/NOU417Bt2q
-         bVxFM61/V4RPgu2O1Eci1h0aHVKho0bAWVMqYiNOVlfZH1GonJ2jyb/OtoFQyGNaf5Ep
-         0HYtiudMzaXTXFWFQHxUBgixP/lTDyWlYfiVspxaDUhnYCnxYel1gnuxTRlSwBVapozp
-         9laYZFUaDqvc+oQOazkUNVL54sHDOXFCKRYVSbRPFnXwZX2H9m2dn3kQJ6zciIEOfHDQ
-         fWYK9zSuME0aUMNCZpI06ygeDFrxUO89iPFU1OrU8yuqlI13lssoFFwHrlPJUpTootDM
-         +SrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716921363; x=1717526163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Meei9ZVa20+5yNphV/wKrB9x+kwpXFk7nEopIQ+RSs=;
-        b=iNVbqYbVWnbvfcM7hVfn2jyO3M08l/N/Ii/wUhuyBVzUJhOA/FtmTX4yXIT3y4mOSq
-         wDd560HsU6QzNOrepf8e/cKIqwask0q4OxKg/nqyFRa3VP5+O8Pf/Q1NiOZzRXynR5iR
-         ffOCmb9+lvbEHN1+u+xAxRomEzawO6/wFPh2OiQo72C5AYxgiYEeXA+zBC7sIR3SG6U7
-         FlG+Ibie5Gxd5unkYe16Hm2sNOchQt8QsOx4hSg6A4Olap71OXx3xywusFbulO7KFq7J
-         RXO1iU3HLxKgl8WEyhZOesclWNyuMz/+JSq19hRlatSq8nQ6kCTCbUJ2RCrffDLzw3+g
-         m+rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtmJDG2IYnU691I4LLCZBgJvHr1CgILRWuq+4MoxeNPCbSy+6lVQmaEZCjd+n2FO344AVVFdksLhSxYy2EotUzJPOtKmFR3NLV2xbj
-X-Gm-Message-State: AOJu0Yy4e7TOe9nQrV4EX0mOOUWXwLLnPcRHd3RjkEUSWUoYMUgG3wLO
-	rBhiufqELHPOhMYLhwGndw7bxerjf/b/vCSU8BXoYmOAjQce6rDx
-X-Google-Smtp-Source: AGHT+IFVUefm7Mk6czVp9/GpMy/YUIkaBBT9/L/RHCDAKhAAUwuSnac7GGCBChmy3RuqdnVm8VCXZw==
-X-Received: by 2002:ac2:4c2d:0:b0:51f:c153:c3e7 with SMTP id 2adb3069b0e04-527ef4f5c29mr5136415e87.12.1716921362881;
-        Tue, 28 May 2024 11:36:02 -0700 (PDT)
-Received: from pc636 (host-95-193-70-101.mobileonline.telia.com. [95.193.70.101])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529be969ab2sm160302e87.150.2024.05.28.11.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 11:36:02 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 28 May 2024 20:36:00 +0200
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH v2 2/2] mm/vmalloc: Use __this_cpu_try_cmpxchg() in
- preload_this_cpu_lock()
-Message-ID: <ZlYkEIDqiot10w1s@pc636>
-References: <20240528144345.5980-1-ubizjak@gmail.com>
- <20240528144345.5980-2-ubizjak@gmail.com>
+	s=arc-20240116; t=1716921498; c=relaxed/simple;
+	bh=dWDoz0X/mYRcpwkIRGqglgh6THVbSl0vAvvqDr5ihkA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vmfw5k2KVAqLeRvIhqSmmhriVAJJDVVouyhd9drWntKzOFfJHqdRhxw0Wz06UnXG1vyOY+j7/xIJopqxizRvDz0/NPrRbC97UuPAs5P+WvmEifqlaZoQjbujzc/6zh19UJadu9efzI8WJQK+toQhKWDfcG4Xbu5+tV4x+SyqqNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 28 May
+ 2024 21:38:11 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 28 May
+ 2024 21:38:11 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<accessrunner-general@lists.sourceforge.net>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
+	<syzbot+00c18ee8497dd3be6ade@syzkaller.appspotmail.com>
+Subject: [PATCH] usb: atm: cxacru: fix endpoint checking in cxacru_bind()
+Date: Tue, 28 May 2024 11:38:07 -0700
+Message-ID: <20240528183807.3832-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528144345.5980-2-ubizjak@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Tue, May 28, 2024 at 04:43:14PM +0200, Uros Bizjak wrote:
-> Use __this_cpu_try_cmpxchg() instead of
-> __this_cpu_cmpxchg (*ptr, old, new) == old in
-> preload_this_cpu_lock().  x86 CMPXCHG instruction returns
-> success in ZF flag, so this change saves a compare after cmpxchg.
-> 
-> The generated code improves from:
-> 
->     4bb6:	48 85 f6             	test   %rsi,%rsi
->     4bb9:	0f 84 10 fa ff ff    	je     45cf <...>
->     4bbf:	4c 89 e8             	mov    %r13,%rax
->     4bc2:	65 48 0f b1 35 00 00 	cmpxchg %rsi,%gs:0x0(%rip)
->     4bc9:	00 00
->     4bcb:	48 85 c0             	test   %rax,%rax
->     4bce:	0f 84 fb f9 ff ff    	je     45cf <...>
-> 
-> to:
-> 
->     4bb6:	48 85 f6             	test   %rsi,%rsi
->     4bb9:	0f 84 10 fa ff ff    	je     45cf <...>
->     4bbf:	4c 89 e8             	mov    %r13,%rax
->     4bc2:	65 48 0f b1 35 00 00 	cmpxchg %rsi,%gs:0x0(%rip)
->     4bc9:	00 00
->     4bcb:	0f 84 fe f9 ff ff    	je     45cf <...>
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Uladzislau Rezki <urezki@gmail.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Lorenzo Stoakes <lstoakes@gmail.com>
-> Cc: Dennis Zhou <dennis@kernel.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> ---
-> v2: Show generated code improvement in the commit message.
-> ---
->  mm/vmalloc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 5d3aa2dc88a8..4f34d935d648 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -1816,7 +1816,7 @@ static void free_vmap_area(struct vmap_area *va)
->  static inline void
->  preload_this_cpu_lock(spinlock_t *lock, gfp_t gfp_mask, int node)
->  {
-> -	struct vmap_area *va = NULL;
-> +	struct vmap_area *va = NULL, *tmp;
->  
->  	/*
->  	 * Preload this CPU with one extra vmap_area object. It is used
-> @@ -1832,7 +1832,8 @@ preload_this_cpu_lock(spinlock_t *lock, gfp_t gfp_mask, int node)
->  
->  	spin_lock(lock);
->  
-> -	if (va && __this_cpu_cmpxchg(ne_fit_preload_node, NULL, va))
-> +	tmp = NULL;
-> +	if (va && !__this_cpu_try_cmpxchg(ne_fit_preload_node, &tmp, va))
->  		kmem_cache_free(vmap_area_cachep, va);
->  }
->  
-> -- 
-> 2.42.0
-> 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Syzbot is still reporting quite an old issue [1] that occurs due to
+incomplete checking of present usb endpoints. As such, wrong
+endpoints types may be used at urb sumbitting stage which in turn
+triggers a warning in usb_submit_urb().
 
-Thanks!
+Fix the issue by verifying that required endpoint types are present
+for both in and out endpoints, taking into account cmd endpoint type.
 
---
-Uladzislau Rezki
+Unfortunately, this patch has not been tested on real hardware.
+
+[1] Syzbot report:
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 0 PID: 8667 at drivers/usb/core/urb.c:502 usb_submit_urb+0xed2/0x18a0 drivers/usb/core/urb.c:502
+Modules linked in:
+CPU: 0 PID: 8667 Comm: kworker/0:4 Not tainted 5.14.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:usb_submit_urb+0xed2/0x18a0 drivers/usb/core/urb.c:502
+..
+Call Trace:
+ cxacru_cm+0x3c0/0x8e0 drivers/usb/atm/cxacru.c:649
+ cxacru_card_status+0x22/0xd0 drivers/usb/atm/cxacru.c:760
+ cxacru_bind+0x7ac/0x11a0 drivers/usb/atm/cxacru.c:1209
+ usbatm_usb_probe+0x321/0x1ae0 drivers/usb/atm/usbatm.c:1055
+ cxacru_usb_probe+0xdf/0x1e0 drivers/usb/atm/cxacru.c:1363
+ usb_probe_interface+0x315/0x7f0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:517 [inline]
+ really_probe+0x23c/0xcd0 drivers/base/dd.c:595
+ __driver_probe_device+0x338/0x4d0 drivers/base/dd.c:747
+ driver_probe_device+0x4c/0x1a0 drivers/base/dd.c:777
+ __device_attach_driver+0x20b/0x2f0 drivers/base/dd.c:894
+ bus_for_each_drv+0x15f/0x1e0 drivers/base/bus.c:427
+ __device_attach+0x228/0x4a0 drivers/base/dd.c:965
+ bus_probe_device+0x1e4/0x290 drivers/base/bus.c:487
+ device_add+0xc2f/0x2180 drivers/base/core.c:3354
+ usb_set_configuration+0x113a/0x1910 drivers/usb/core/message.c:2170
+ usb_generic_driver_probe+0xba/0x100 drivers/usb/core/generic.c:238
+ usb_probe_device+0xd9/0x2c0 drivers/usb/core/driver.c:293
+
+Reported-and-tested-by: syzbot+00c18ee8497dd3be6ade@syzkaller.appspotmail.com
+Fixes: 902ffc3c707c ("USB: cxacru: Use a bulk/int URB to access the command endpoint")
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+P.S. While the driver is orphaned, it might still make sense to
+suppress the syzbot report, seeing how ancient it is.
+P.P.S. checkpatch complains about outdated format of debug printing
+but I decided to keep it in tune with the rest of the driver. 
+
+ drivers/usb/atm/cxacru.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/atm/cxacru.c b/drivers/usb/atm/cxacru.c
+index 4ce7cba2b48a..8a8e94a601c6 100644
+--- a/drivers/usb/atm/cxacru.c
++++ b/drivers/usb/atm/cxacru.c
+@@ -1131,7 +1131,8 @@ static int cxacru_bind(struct usbatm_data *usbatm_instance,
+ 	struct cxacru_data *instance;
+ 	struct usb_device *usb_dev = interface_to_usbdev(intf);
+ 	struct usb_host_endpoint *cmd_ep = usb_dev->ep_in[CXACRU_EP_CMD];
+-	int ret;
++	struct usb_endpoint_descriptor *in, *out;
++	int ret = -1;
+ 
+ 	/* instance init */
+ 	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+@@ -1177,6 +1178,19 @@ static int cxacru_bind(struct usbatm_data *usbatm_instance,
+ 		goto fail;
+ 	}
+ 
++	if (usb_endpoint_xfer_int(&cmd_ep->desc))
++		ret = usb_find_common_endpoints(intf->cur_altsetting,
++						NULL, NULL, &in, &out);
++	else
++		ret = usb_find_common_endpoints(intf->cur_altsetting,
++						&in, &out, NULL, NULL);
++
++	if (ret) {
++		usb_dbg(usbatm_instance, "cxacru_bind: interface has incorrect endpoints\n");
++		ret = -ENODEV;
++		goto fail;
++	}
++
+ 	if ((cmd_ep->desc.bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+ 			== USB_ENDPOINT_XFER_INT) {
+ 		usb_fill_int_urb(instance->rcv_urb,
 
