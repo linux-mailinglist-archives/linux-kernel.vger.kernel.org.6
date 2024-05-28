@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-192027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFE58D1772
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491AE8D1770
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29861F2455F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11951F2271F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B0916B729;
-	Tue, 28 May 2024 09:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E1516ABD5;
+	Tue, 28 May 2024 09:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZPrCAB8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlSLy4w8"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DC8169AC3;
-	Tue, 28 May 2024 09:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B14F169AC9;
+	Tue, 28 May 2024 09:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716889369; cv=none; b=pxAX38MwgG1vkCQB4Sa/xLvZMgfy2JD8XITFha1JiNyi8M4KyYu6hPY6JDcdZ28pLkP+K/U1l1phHjT7XHFjVH46QC6lOX6wfaXawjksXDPx+6zeqB6gAj2g4uBZQD5kKCOK/IgfBFxz/+j7DZprTi0ckqS9VpWPRSPQjhsKaYM=
+	t=1716889363; cv=none; b=Nk9du9jvWARmp9D1JDOVO9J/5cCOsb0mGtZq/9+9WCpmi6A/WRM+KNApyOLGxpX+20Uo4vnHbg61iINew3YUkEpiAFcTHh87y8dklJHxbDSTLN2xpzls2lTJsL0HADsa6nYTsKpl+D8hPVgMJ2NYTFvJoF3EDVYfsndtOkIoaKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716889369; c=relaxed/simple;
-	bh=UfrUJRalN+JaGQvgCby9CCp8D+8wPcMEPVXbXjcaw80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TNdxnYWoLxOcei25k1ybXox4yLGdFauDyTPc9HGtj2mI8dy4+Fur4yL7LsU/faMf9boEJ24oGkpk9vkQQYTz050hqsNNuFa3WQBCEReJP+fg37xI57O2ICGWFdkBy93td5pQugGr43RlZ+jmOZ0AFKoeYVACrSX3CDw/mEJQhKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZPrCAB8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1704EC32782;
-	Tue, 28 May 2024 09:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716889369;
-	bh=UfrUJRalN+JaGQvgCby9CCp8D+8wPcMEPVXbXjcaw80=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mZPrCAB8rwfqX4hWOHBg2tn++8h//L9a7xXm/e10VmN5moXr0TPRti3yxqU/2AwmP
-	 6SMmzKuSk+Ouoqf/Sy1+TB+Mn8k65HkKm05meoWuJv4DkkYLK9pZ2IEtFPH+hg+bph
-	 gy/xjakhUgdm/u941YOEvnpexuRwhcn4kmbbyQfgwC8yYtpGnsqsdI+4wsLuOxH100
-	 CRqGQg0zImD3OaHN0+leMQ2RHM+aNpKYUJ10wymxJdqfuz6oyPq+ovVsF4b2DcTiwr
-	 TysycplcJ7pC5VILIO0W1zl2De2VZpjztudpKumPAJqDpUuFFJoJ+qDOVi+RmAToQP
-	 4EK1Q/lB1Aw1g==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b2e8d73bfcso76706eaf.1;
-        Tue, 28 May 2024 02:42:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEM6KTiIO6qLMrqHSLZasBjfZ8TTgMBpyraS1G0Krl+dPOayO29Tgm9e+3wqUNVPkPGNHVQqymI7+HseFFhTuRhL8ifh3aVX41KnTUNT6o6tB53bNxYL9nTIaOtnWlOijFqdS5xB6tbQ==
-X-Gm-Message-State: AOJu0YxaGCHC0DVTGR+UeAu5aLOHj/860yYNDUNnYDhA8tJ9TqX92ooh
-	JvMt8Xh7v7u3ldt5QnNbm0KhYX42K3LLHkfhN7//xX9+wuLD9hm4y7MUNIgwbLfJ/QHys/Gk3zs
-	KaBLsFGfDfgmDnjOAPV6sbAJtQF4=
-X-Google-Smtp-Source: AGHT+IHScf/e/h5yrs0MCreiIIj2/v8nyVYmRkV0idFLCUnsAHi3hysArgPR9VGhqstXneHzgo1UBaqEkeIfAtgjCzA=
-X-Received: by 2002:a05:6820:2e02:b0:5aa:3e4f:f01e with SMTP id
- 006d021491bc7-5b961b691eemr11367417eaf.1.1716889368402; Tue, 28 May 2024
- 02:42:48 -0700 (PDT)
+	s=arc-20240116; t=1716889363; c=relaxed/simple;
+	bh=qfLyJtmax/jZ+eAaCvC7e67XX9TGTXKhgERpUQNkjH8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsS8w4vl4LH5+fODbiMNUZj5rg5OWMUFzuu3YgtGW6rhvQrSohruM55E0H5QFmR4sMKXZ0F+IAJh5X3x5p42qsZptj5Q/cUiRiWI20gf0kEnkmY7ipSyWiaKLUWcVknR0olOdUNQw1wD8TTIWw7PaNKzY2+EMj5XtclgQZpxa3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlSLy4w8; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52389c1308dso785920e87.3;
+        Tue, 28 May 2024 02:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716889359; x=1717494159; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGOI2J3FbR+ob+LmVGOsGjzCJpew9van2Zh3gScMtnI=;
+        b=PlSLy4w8caOEn8GkGAMk9ozPxv4rZ/aqpyRuFpOW1tGLO2gwptft0fWg/FY/io3fmL
+         sxb5lDOss3SGQSZNKe9MtgfojgSfZBsEbeusMCr3FNxR6S57Aw7fjX74yosxPK9UceRk
+         lS80zblMNqHISaRd1UHocxZfPn49JS07AcjMxtR4Ehn2Xqtu+ZF12cTJNJy4aa+7uc8d
+         qaoPLXXKgkXQC3Ef/o6Qau7GXuTBeDIiOn6LN5UgDfmuUrmy9MPTvzY3KrFrk5mlWCZr
+         lWFFOvt1bh37zlOdyfN3yfDVi7KDaK583eunL1BjyLhoo1D17sK7sOalrM1O1Fr/KsAG
+         7BTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716889359; x=1717494159;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGOI2J3FbR+ob+LmVGOsGjzCJpew9van2Zh3gScMtnI=;
+        b=nxq38ZWTJTRqGf6xUXe7CQNf8VXG55VlIqzx7UqPI6XvGsffNqx2UIebqM61fxXjhz
+         qYjwpVsJw0MeQxJ6ECHy24a7pAAlhIdh3PaUlgKLVaHrta/MLf8SpvzmLGNSAUNEkjZL
+         iM3QEIp4Na8mFuRXw80/KUrrVlkx4HPwkT2xzus8rl1QCZtzbGb2sPC/n06/U8RXuRUr
+         Gx50yPmyh/k2nWc81SFJd6y0MQ6xO5bwrDDkMPzanosf4rmluAU1XP3AeEmAtfLYtycV
+         isOS7Hw44ex+fWDJU9dJjm617wF+Cp8zx1zeQ/1wMPrIVKiNfstm49Z1ImXVRZtg4fXi
+         Wcgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2rbpDeAYwynGDrNKLShGLQ91q7h4Ostw/rd47VTIJpG4MrvaLo/q0AuKhjbwXvOCEOA+51oQYFPS0Xq6CptTyK2gGEimnLEFryGn7997Sdd7G0r1cTKjlNY1x2gHlda04wRKpAIHis/8qXnps5aJeRQQ0H6qAS/2kc/qfaw==
+X-Gm-Message-State: AOJu0Yxzn7EprNu/qe4Q1tV1k9mngf7Pk7dkWbp/CSZ6Pkgvyr4Wxhxz
+	NFxNLN/y+XGiZpwUrhqJnTsQYDkQKs9EKbItS703lnNdQiyzRpgM
+X-Google-Smtp-Source: AGHT+IFlYhYgNNNQ1wITN1+9f9HdlVJxGanJiZQ7t7o1+FR679Fx/NlkuEWMH/d5GYnhY4Rz+401iA==
+X-Received: by 2002:a05:6512:2396:b0:51a:f596:9d53 with SMTP id 2adb3069b0e04-529664dad37mr9975256e87.42.1716889359003;
+        Tue, 28 May 2024 02:42:39 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-420fd37f19fsm130468165e9.1.2024.05.28.02.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 02:42:38 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 28 May 2024 11:42:37 +0200
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH 0/3] kbuild: remove PROVIDE() and refactor vmlinux_link
+ steps
+Message-ID: <ZlWnDT1S7n4XrAb5@krava>
+References: <20240522114755.318238-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527202424.1430103-1-andy.shevchenko@gmail.com>
-In-Reply-To: <20240527202424.1430103-1-andy.shevchenko@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 May 2024 11:42:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i8N-SuKyzm1o601G-G9Jis4uciu3gxO-08GN-X-z0LUA@mail.gmail.com>
-Message-ID: <CAJZ5v0i8N-SuKyzm1o601G-G9Jis4uciu3gxO-08GN-X-z0LUA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] PNP: Export pnp_bus_type for modules
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Guanbing Huang <albanhuang@outlook.com>, 
-	Guanbing Huang <albanhuang@tencent.com>, Woody Suwalski <terraluna977@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522114755.318238-1-masahiroy@kernel.org>
 
-On Mon, May 27, 2024 at 10:24=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> Since we have dev_is_pnp() macro that utilises the address of pnp_bus_typ=
-e
-> variable, the users, which can be compiled as modules, will be failed to
-> build. Export the variable to the modules to prevent build breakage.
->
-> Reported-by: Woody Suwalski <terraluna977@gmail.com>
-> Closes: https://lore.kernel.org/r/cc8a93b2-2504-9754-e26c-5d5c3bd1265c@gm=
-ail.com
-> Fixes: 2a49b45cd0e7 ("PNP: Add dev_is_pnp() macro")
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->  drivers/pnp/driver.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pnp/driver.c b/drivers/pnp/driver.c
-> index 0a5d0d8befa8..1394d17bd6f7 100644
-> --- a/drivers/pnp/driver.c
-> +++ b/drivers/pnp/driver.c
-> @@ -265,6 +265,7 @@ const struct bus_type pnp_bus_type =3D {
->         .pm      =3D &pnp_bus_dev_pm_ops,
->         .dev_groups =3D pnp_dev_groups,
->  };
-> +EXPORT_SYMBOL(pnp_bus_type);
+On Wed, May 22, 2024 at 08:47:52PM +0900, Masahiro Yamada wrote:
+> 
+>  - Remove PROVIDE() in the linker script
+>  - Merge temporary vmlinux link steps for BTF and kallsyms
+> 
+> 
+> 
+> Masahiro Yamada (3):
+>   kbuild: refactor variables in scripts/link-vmlinux.sh
+>   kbuild: remove PROVIDE() for kallsyms symbols
+>   kbuild: merge temp vmlinux for CONFIG_DEBUG_INFO_BTF and
+>     CONFIG_KALLSYMS
 
-Why not EXPORT_SYMBOL_GPL()?
+lgtm, fyi I ran bpf CI on top of this change and passed
 
->  int pnp_register_driver(struct pnp_driver *drv)
->  {
-> --
-> 2.45.1
->
->
+https://github.com/kernel-patches/bpf/pull/7104
+
+jirka
+
+> 
+>  include/asm-generic/vmlinux.lds.h | 19 -------
+>  kernel/kallsyms_internal.h        |  5 --
+>  scripts/kallsyms.c                |  6 ---
+>  scripts/link-vmlinux.sh           | 87 ++++++++++++++++---------------
+>  4 files changed, 45 insertions(+), 72 deletions(-)
+> 
+> -- 
+> 2.40.1
+> 
+> 
 
