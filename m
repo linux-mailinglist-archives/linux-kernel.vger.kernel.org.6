@@ -1,232 +1,116 @@
-Return-Path: <linux-kernel+bounces-192764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8432A8D21C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFF98D21C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF731F25987
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21F428971E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869C4173326;
-	Tue, 28 May 2024 16:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75305172BC1;
+	Tue, 28 May 2024 16:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QKuiVYVr"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FKd0jzub"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C8A172BC9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9102216F902
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716914282; cv=none; b=NGa+JFVgclmZS0CrWE8G4KxiyJLlahpqsWITbIs2jNkQ1LzmV8P7ZxdoIxRo0rjqYtFLIsY6ZOO4JFR/c9kgXUHK2XYBiTnfM7ZnQDeThm4PBrMmJWFGob0zhTdA+tuEHFC6zwRYtgkYhEDxr4CQmKJilpXZcJgTnLA9/kwR2hM=
+	t=1716914343; cv=none; b=S+5NhwdNEI3nQZQDl1FcrgrUN4M6MV7jAuvpxJYOTdkv0nh+DBCIEXFwg3RWOkKNjtpxkgW4vcLz6vsUPh7olEztamvTme0h5K3kkhAEMysd+qpCbiAQXIc7W35Xzdu1OH3J3Bh6clMD/wfylVmwiQEx5Czujql6omemSu/QScg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716914282; c=relaxed/simple;
-	bh=3ZOe/NyEL4NYG0CoFbAifgplo20ZW+hFcf9C3d6vBio=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WakyODy5SnjU09AoqEHOuzQKKd7AAOLZdMHoFzdPs01ZAtpunNVvdF4c0BmBdbGskwg2gKkOXGXBUaU8llKwygh54xs20Dclb5AE6FjqqaHuaxmqpccW1CtYvg8te/jAmjuh8lAm3U2kQfrY2LRIoLNuy2k/59dttoSB2E82ffg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QKuiVYVr; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627e7734a29so14522417b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:38:00 -0700 (PDT)
+	s=arc-20240116; t=1716914343; c=relaxed/simple;
+	bh=Nw71NudQFvADv7Bhi1iggO+PhwrkQU+67xNone5Hy5g=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+aMN55yCKQyj/eFaWVITsqvOjTljQSESsOa8qsrEtXzMM0qiqXR0zT51rXli+rowpoVa6hOvXChfT1+dUrHhGZJy/q2hMhRpWnk/kcHaxyY1ZVKwMEKu+s2ox1+MbxMgqSxRdI2psnWoWsVyZ/F7aU89ApwOmLc8H5rv2deqqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FKd0jzub; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-354be94c874so901107f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716914280; x=1717519080; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jW03SLzQXCK5cXKTLHnT3g1oG6ovCyP3JejlVIXEzpI=;
-        b=QKuiVYVr9MSZ/Vm886MEqCP61q2G/8bmKDNSUbLD3G7eZeslCE1n1cX0dNvzfqGqei
-         09wBmWP6f+FtBOc99abH1tmAcbifZqTaYEvuRy5JUQn9kE58TEdqOwtujJxAoWaZ0VG9
-         AvVdf9xEfyiIvszMKwILUmL0WlRo5xquWizFBtv7qVQGKWS4EgJL9nUDnq8B9pLaJl4H
-         4ur5WMCahwHW7j/tH0iKISQc5bxKF5qrYXBB+0UFL7XPVMSaxqN4LVm74BGyflHy8/y4
-         b2O6ZDDYMIdTugnnG0PSbSZtfPrjSiEJ97OL0gexZQ8p6n87VuhhqD8f0yB538LzANGH
-         G5xg==
+        d=suse.com; s=google; t=1716914340; x=1717519140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5tCjk/1mXFG8ICJoXb/9fn8uz0vdilIBJSVF/91XJA=;
+        b=FKd0jzub8kIVR3/Z/s1Xpf/2ylEVZ4DMbb8y+jTwQUtFFykMKSuvX7KeM+9MqodSLf
+         THgfxgxjTPhw1GIjVeCjN3nvyOrf4ayrrwcto8NFqrsqVn/C5sXBPbuWCn7//cWMVzjY
+         K0q5J+88G1/HxivvpJhodn4hcO1ox7r9QF0iLj7kcuhBA1EX8xBUoshdse3qSirYysFj
+         jDIsilJbyQ1eGPZAqEKqxFDmo9Oy9KlD1ZGqcBXiR0InM27ItfDs+PQjt/MDPu5tdiqc
+         zk77djvbppg5g7aWZnKgn3hPn9mne9b37sJEbD1wiVPFwR02eeJQJLSulrdmd9q/w6mw
+         Ftdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716914280; x=1717519080;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jW03SLzQXCK5cXKTLHnT3g1oG6ovCyP3JejlVIXEzpI=;
-        b=IBfhL3gyFOoO4t+BfiGiUPnMaLdAEPYVNdA68kBz3qGA4f5i29Dgp6l6jmPwFUNDd/
-         nv4hOf8tzinOp7hAN3Z4uWemvv5b5uYUZ32Ko/4orRckUvPMADELobZKe3XQdMtuemT0
-         /Vv3XATzazEu/9VE3hfWfyFpePEKZvayEuFnidm6yi31nzG2+lOT7vaAEIJKQ9lEJlYQ
-         6j+WyiTesspv9HfT6jU8RpLdRTjQO9+vfv0FFvpfQHuotpVV5WWn1y4VwidyKxeCzL0m
-         ycMtCqbGmYCm2kCv/wW/YqLZA1xjZ0tZWw/nBs5Mvu1/1JSFDo0GCuL/Wrse26jtGuEq
-         nicQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPDLOrFBM4lXxmmTxSfIA18tS2OyQFjTlpGseuH+UeyB4WMD2h71BfMyoFRH7ObgKiQ+pXSshAtR1r+RDb+8GLBcteim8pAfvVZ+Qk
-X-Gm-Message-State: AOJu0YxWDoloOJn1q2XKF912uxKnj1RprMt7dxDPdr1EQai7foJDdFPS
-	9017uAdn4QyAGw0rrJsbg3GNLEvdoeqcD0gpBgxZ6tdAJj8LFO18cMKeKtikg+VoYpIW8LlANzj
-	KsWOulrbjQIgNpQ==
-X-Google-Smtp-Source: AGHT+IEeHAL3ZeW6codhun7v67I8gtG3pX20wbsoxTrzUXIW9NcEB+1vJuC4aPjpz7QlEuuQPDo0ihUnHqeFZv8=
-X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
- (user=tjmercier job=sendgmr) by 2002:a05:690c:6a06:b0:627:e167:f95c with SMTP
- id 00721157ae682-62a08dcccb2mr35974547b3.4.1716914280240; Tue, 28 May 2024
- 09:38:00 -0700 (PDT)
-Date: Tue, 28 May 2024 16:37:49 +0000
+        d=1e100.net; s=20230601; t=1716914340; x=1717519140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5tCjk/1mXFG8ICJoXb/9fn8uz0vdilIBJSVF/91XJA=;
+        b=BYlr1nV1iU/dnshYZQkmUgR87lsBrI9qPmSQAaCveFJttuTcO5j3EG5eQidya1sGJ3
+         Z4j4vDrGow9AvzlQvj5KGtK8PsU8Z7h2jklYoGqoKaPl+qPqk3/ng8XwEA4iR/Dp5xfJ
+         HKPa99r6YtWcwyUsKPEzbSoTkp2HVEQXdc14gjkzdA5quAwBbsmHkUe2pSq1kiu0L9IM
+         hZKwJo8C+RNEixwBUEPit6DSwk5xNkyarwz8SGw/NaUZSDBA+BOzJZidOFSrLLMwwF5K
+         2bTfFQdNgId8CJz5tg6ei1eBsW6DhSGoGiEgojzJMbmsnjqeubK+nuFu8umdTOsAiYYv
+         I9Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQi3Zf18WRTfChVPu+pPq1IL455+P4nIowGvAGxAA05Mw2Oq6qo3RD6ShNBU85e4EsqFgBoyAKHA+ae7V8iP5UHl4fF7Iz6yf+KXdQ
+X-Gm-Message-State: AOJu0YxvXlSDf6xwN7l4y5lQ0F5H8pNGRYyGqIFcS4jkNG9OFtjvanv9
+	vpn/CvdBpMCgHKIOGhzsqmnFZEDvg36GR6lycMAUqzISyaA2/vXbQwSgecSzB2AaqUUocl/4oD2
+	1
+X-Google-Smtp-Source: AGHT+IF8DHQjXjm4+wKe0ifxlTmxWtxEXH6QUsVsSV1wjDskW/0w+Mv9jPx+FLRiy5/C3+ovHz3OfA==
+X-Received: by 2002:adf:f38f:0:b0:354:f536:31d1 with SMTP id ffacd0b85a97d-35526c37b5dmr11901454f8f.25.1716914339930;
+        Tue, 28 May 2024 09:38:59 -0700 (PDT)
+Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3579354abd1sm8852837f8f.59.2024.05.28.09.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 09:38:59 -0700 (PDT)
+From: Oscar Salvador <osalvador@suse.com>
+X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
+Date: Tue, 28 May 2024 18:38:56 +0200
+To: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
+Message-ID: <ZlYIoPEq7avOkjCW@localhost.localdomain>
+References: <0000000000004096100617c58d54@google.com>
+ <000000000000f9561b06196ef5b3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240528163750.2025330-1-tjmercier@google.com>
-Subject: [PATCH 2/2] cgroup: Remove nr_cgrps
-From: "T.J. Mercier" <tjmercier@google.com>
-To: tjmercier@google.com, mkoutny@suse.com, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc: shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000f9561b06196ef5b3@google.com>
 
-nr_cgrps now largely overlaps with nr_css. Use nr_css instead of
-nr_cgrps for v1 so that nr_cgrps can be removed.
+On Mon, May 27, 2024 at 05:50:24AM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    66ad4829ddd0 Merge tag 'net-6.10-rc1' of git://git.kernel...
+> git tree:       net-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15c114aa980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17770d72980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10db1592980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/05c6f2231ef8/disk-66ad4829.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5f4fc63b22e3/vmlinux-66ad4829.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/67f5c4c88729/bzImage-66ad4829.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
 
-Signed-off-by: T.J. Mercier <tjmercier@google.com>
----
- include/linux/cgroup-defs.h |  3 ---
- kernel/cgroup/cgroup-v1.c   |  8 ++------
- kernel/cgroup/cgroup.c      | 31 +++++++++++++++++++++++++------
- 3 files changed, 27 insertions(+), 15 deletions(-)
+#syz test https://github.com/leberus/linux.git hugetlb-vma_resv-enomem
+ 
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index bc1dbf7652c4..dcd47a717eac 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -576,9 +576,6 @@ struct cgroup_root {
- 	/* must follow cgrp for cgrp->ancestors[0], see above */
- 	struct cgroup *cgrp_ancestor_storage;
- 
--	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
--	atomic_t nr_cgrps;
--
- 	/*
- 	 * Number of cgroups using each controller. Includes online and zombies.
- 	 * Used only for /proc/cgroups.
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 9bad59486c46..d52dc62803c3 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -675,15 +675,11 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
- 	 * cgroup_mutex contention.
- 	 */
- 
--	for_each_subsys(ss, i) {
--		int count = cgroup_on_dfl(&ss->root->cgrp) ?
--			atomic_read(&ss->root->nr_css[i]) : atomic_read(&ss->root->nr_cgrps);
--
-+	for_each_subsys(ss, i)
- 		seq_printf(m, "%s\t%d\t%d\t%d\n",
- 			   ss->legacy_name, ss->root->hierarchy_id,
--			   count,
-+			   atomic_read(&ss->root->nr_css[i]),
- 			   cgroup_ssid_enabled(i));
--	}
- 
- 	return 0;
- }
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 1bacd7cf7551..fb4510a28ea3 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1322,12 +1322,15 @@ static void cgroup_destroy_root(struct cgroup_root *root)
- {
- 	struct cgroup *cgrp = &root->cgrp;
- 	struct cgrp_cset_link *link, *tmp_link;
-+	struct cgroup_subsys *ss;
-+	int ssid;
- 
- 	trace_cgroup_destroy_root(root);
- 
- 	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
- 
--	BUG_ON(atomic_read(&root->nr_cgrps));
-+	for_each_subsys(ss, ssid)
-+		BUG_ON(atomic_read(&root->nr_css[ssid]));
- 	BUG_ON(!list_empty(&cgrp->self.children));
- 
- 	/* Rebind all subsystems back to the default hierarchy */
-@@ -1874,6 +1877,7 @@ int rebind_subsystems(struct cgroup_root *dst_root, u16 ss_mask)
- 		} else {
- 			dcgrp->subtree_control |= 1 << ssid;
- 			static_branch_disable(cgroup_subsys_on_dfl_key[ssid]);
-+			atomic_set(&ss->root->nr_css[ssid], 1);
- 		}
- 
- 		ret = cgroup_apply_control(dcgrp);
-@@ -2046,7 +2050,6 @@ void init_cgroup_root(struct cgroup_fs_context *ctx)
- 	struct cgroup *cgrp = &root->cgrp;
- 
- 	INIT_LIST_HEAD_RCU(&root->root_list);
--	atomic_set(&root->nr_cgrps, 1);
- 	cgrp->root = root;
- 	init_cgroup_housekeeping(cgrp);
- 
-@@ -2065,6 +2068,7 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
- 	LIST_HEAD(tmp_links);
- 	struct cgroup *root_cgrp = &root->cgrp;
- 	struct kernfs_syscall_ops *kf_sops;
-+	struct cgroup_subsys *ss;
- 	struct css_set *cset;
- 	int i, ret;
- 
-@@ -2144,7 +2148,9 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
- 	spin_unlock_irq(&css_set_lock);
- 
- 	BUG_ON(!list_empty(&root_cgrp->self.children));
--	BUG_ON(atomic_read(&root->nr_cgrps) != 1);
-+	do_each_subsys_mask(ss, i, ss_mask) {
-+		BUG_ON(atomic_read(&root->nr_css[i]) != 1);
-+	} while_each_subsys_mask();
- 
- 	ret = 0;
- 	goto out;
-@@ -5368,7 +5374,6 @@ static void css_free_rwork_fn(struct work_struct *work)
- 			css_put(parent);
- 	} else {
- 		/* cgroup free path */
--		atomic_dec(&cgrp->root->nr_cgrps);
- 		if (!cgroup_on_dfl(cgrp))
- 			cgroup1_pidlist_destroy_all(cgrp);
- 		cancel_work_sync(&cgrp->release_agent_work);
-@@ -5387,12 +5392,27 @@ static void css_free_rwork_fn(struct work_struct *work)
- 			cgroup_rstat_exit(cgrp);
- 			kfree(cgrp);
- 		} else {
-+			struct cgroup_root *root = cgrp->root;
- 			/*
- 			 * This is root cgroup's refcnt reaching zero,
- 			 * which indicates that the root should be
- 			 * released.
- 			 */
--			cgroup_destroy_root(cgrp->root);
-+
-+			/*
-+			 * v1 root css are first onlined as v2, then rebound
-+			 * to v1 (without re-onlining) where their count is
-+			 * initialized to 1. Drop the root counters to 0
-+			 * before destroying v1 roots.
-+			 */
-+			if (root != &cgrp_dfl_root) {
-+				int ssid;
-+
-+				do_each_subsys_mask(ss, ssid, root->subsys_mask) {
-+					atomic_dec(&root->nr_css[ssid]);
-+				} while_each_subsys_mask();
-+			}
-+			cgroup_destroy_root(root);
- 		}
- 	}
- }
-@@ -5678,7 +5698,6 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
- 
- 	/* allocation complete, commit to creation */
- 	list_add_tail_rcu(&cgrp->self.sibling, &cgroup_parent(cgrp)->self.children);
--	atomic_inc(&root->nr_cgrps);
- 	cgroup_get_live(parent);
- 
- 	/*
 -- 
-2.45.1.288.g0e0cd299f1-goog
-
+Oscar Salvador
+SUSE Labs
 
