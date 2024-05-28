@@ -1,189 +1,229 @@
-Return-Path: <linux-kernel+bounces-193075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783F98D268C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5608D268E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D31292C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC7B292FC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6845A76033;
-	Tue, 28 May 2024 20:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D01178CCD;
+	Tue, 28 May 2024 20:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SMDNGdD2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pHenuFy/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mJq/oUDs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cE0EMu7N"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I+ULAkiC"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2060.outbound.protection.outlook.com [40.107.101.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6A45024
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716929613; cv=none; b=GsoJaKCg8w/c3XtZJErNMTY5bBuVlaLJa8nzH62IvKyFR2lNnXi+ke8GuIAtipa0xDMLwRn1QwP2jjbJGWx3z2a1y/aiaLTDNurzdkzfeoGTIupdfXNOrVErczOsvGldtSjXV85mTWPUz+Z0MtFgNRgoPrHfP0Ry2sgR4Y337Hs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716929613; c=relaxed/simple;
-	bh=yout4lE/69Ndq9ktj93xfEwYhHC3lXUZBM+E2QimnfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WdsjxOACMnnpp19C4U1UT1WfIjK4lDQq7SC6+dToWA9f3IPlXETI94OYktHZW3DcflOFf4ja6KSHuo5G5qNIvnrfevkOgTs6hWLEyR0NRsbotIbxfvKXyKIP9C8vocFvt2uQO+GkuLvfAuvYTm9Pdm2NmM/5AM/o+raukjj0RPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SMDNGdD2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pHenuFy/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mJq/oUDs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cE0EMu7N; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73DD921DFF;
-	Tue, 28 May 2024 20:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716929609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nPM8/5iyaxn91F5FasQwKg49PMvS+vUFJtBXhbVxWmg=;
-	b=SMDNGdD22P0C4uH2aqVY1PLOLm287seK9UMiCyzjsHZET0/c1fn9c/t0J9cNok7tfNY22X
-	LTh6ie0iT7ksJQKjxWjlWbPF54lpWifpRTn7WhtVDs/ztYNqW/Qp8WMza+dgTIDZX2DrKl
-	bxnfV35KnUolkpveqAR+493DHB2dHBY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716929609;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nPM8/5iyaxn91F5FasQwKg49PMvS+vUFJtBXhbVxWmg=;
-	b=pHenuFy/l0U7a3ZJtt248LPOzMdQ7X2uXabie+KXo/j+Wd3fiVxMIkaSgguj4opRm6MIz8
-	euoVLf0D7Ki2eqAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="mJq/oUDs";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cE0EMu7N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716929608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nPM8/5iyaxn91F5FasQwKg49PMvS+vUFJtBXhbVxWmg=;
-	b=mJq/oUDs9jaUsxIRgP/bGB0xFqDKVyajM7HTMMwXNPs34PCaqeM2N44FHojNPmM8krgYWC
-	EsGAncgBp+cApro51J6FO7qAr7JP2ccOlQc/72ObKhlOZ7dfSk0iO7qLX4YueHDlq3rVrA
-	f3DKapoogQlZpPE5j0LyIc1sdzYcCBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716929608;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nPM8/5iyaxn91F5FasQwKg49PMvS+vUFJtBXhbVxWmg=;
-	b=cE0EMu7NbAKf1Se3PxBJLKSYA+UZzGv79MBqPqvHCqw/0sslaproiBoFzXuLERizxvtk2z
-	XIt5r4oN7l01jbCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 09C1413A6B;
-	Tue, 28 May 2024 20:53:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e2PSOkdEVmY2cAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 28 May 2024 20:53:27 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	Breno Leitao <leitao@debian.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
-Subject: [PATCH] mm/hugetlb: Do not call vma_add_reservation upon ENOMEM
-Date: Tue, 28 May 2024 22:53:23 +0200
-Message-ID: <20240528205323.20439-1-osalvador@suse.de>
-X-Mailer: git-send-email 2.44.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F223D4C627;
+	Tue, 28 May 2024 20:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716929666; cv=fail; b=bEd5RgiC2O0n3X4/8t4zYJkuOAQY/zh5bKDgZ1qQ1TarwpbaDmPE8MUn97p1AeEtZVgh2YpRY92SVMx74JA/dbCv8stJmbFW+KXQx8Dm1xN/WZkTH1D65F250nnB2149NIMYCcojBptPh5KH++zR5Pydel3ta7rThuguQzXNhMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716929666; c=relaxed/simple;
+	bh=n5r11H/RYv2tpd0gl6Wd3ZuYqraeHaYeK+lES9K9Szg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jQAlgknBvByGGCAkF++OfQAkcydzsZJt5Vk0Uh057uZ4pd5zOIZ6kmDyEg5TGI0nbbdcd5dhf5MWHa6NCNGjr+P9JQC5OAukv62/fDraoP9twfoUi+iA2L1wJOLXh/fStqyXgKrUOg+F6Yf1mmquApyhF23ahmVvnfdQSTAq4Ww=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I+ULAkiC; arc=fail smtp.client-ip=40.107.101.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jQJ4uxEY1Rg9s0qrWGhrKEzn44jm/vH+VYqdg3rDHGbJqaFutxTFE5feQukpQvvW1uB7pxtTQlKTNqROESuqozUyhVvJwKgUaBkpLCESjyEFER7d2PGADBEZgjomH9Laes06JU1wX/dSI5agFC4T2pXV1BkzuTbOV/fpw4WzJwDC319EAJfRRmv3bkjWoWTkkrU7YWxVY2qataY+KE+MxsjFWqH0bmm44hZZsOogoSQEkk0GEhQJIbdPkptJ6QCwhOTK1OG4JpabBP2vEiLBx0cmM9re6fEzQE9LCcCZIwBEccMslNY0Ae5O0bFoCff6OMCkOIve+ZUqf/+rgqFzWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9SXaRiPXqCCc3/UMcyi2a3LepkN/skWXQwQ5K5Bp7R8=;
+ b=m0VnZJtwnD9LymGPXwgQ12vhUGHWeNjAtfh+KsROPdf9Ppw0PWQryKGDBHkVJ+RcjVz3IvCs+n9OvTRcB44rYVQV/tcrmXRC/Q4CP1hLa2l2P25o4axclMiOfiQDket7nMH8zbrHE+guNOog63eUkfakYK697PEu2TSImQW+VhUXC2EH8sB4heyuqZJKS7G6ZZZISK85C9uHrR/X9dUFFYUaVGdHCh/0sl9mge0WfarbBIES05oS6dMk1uWZgk0aTA8v6mcBE223owkwMscq5AlyH2DVEsW+CuC+Jw4dst6bFpatkPsPDXkRaAdj8u60pLFc0q5RcqWQ2OMqHcUNwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9SXaRiPXqCCc3/UMcyi2a3LepkN/skWXQwQ5K5Bp7R8=;
+ b=I+ULAkiCtXsNzRiyYus0tN6qWyg/hllcO4ALoFMaouYnPKVYQsNyKR3dK1Hb7b6MbLe224xeqfedGaI/AWyHl/bQf3VTD6tpjjpBMZfLsLLJr5y7GYFXe7Ua5CVyzTK98wLcbwbsOEsFyv/ezV83/jCA8vcm3irKLpqcRqsrjBeQBEupZX9TB2oVPdU7AMM6w3WTFN9NouPYRufIl4LGLns/Y9kWEAc+Pg5Wv9difd9oMAXqYSo9AAnG3RmpzTIn0Zl+VKoN2+wMIc8x8LcHEbYGZS+O21f8ojfAeQmRUhI88kXaRG0/OpZMPxlAVojavQC3/6ERP3gP/cwFR6oPiA==
+Received: from CH2PR14CA0039.namprd14.prod.outlook.com (2603:10b6:610:56::19)
+ by SA1PR12MB6970.namprd12.prod.outlook.com (2603:10b6:806:24d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Tue, 28 May
+ 2024 20:54:21 +0000
+Received: from CH2PEPF00000149.namprd02.prod.outlook.com
+ (2603:10b6:610:56:cafe::24) by CH2PR14CA0039.outlook.office365.com
+ (2603:10b6:610:56::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29 via Frontend
+ Transport; Tue, 28 May 2024 20:54:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000149.mail.protection.outlook.com (10.167.244.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.15 via Frontend Transport; Tue, 28 May 2024 20:54:21 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 13:54:09 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 28 May
+ 2024 13:54:08 -0700
+Message-ID: <9042e305-051e-49a6-9f8a-e19424509a20@nvidia.com>
+Date: Tue, 28 May 2024 13:54:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -1.50
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 73DD921DFF
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.50 / 50.00];
-	BAYES_HAM(-2.99)[99.94%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[d3fe2dc5ffe9380b714b];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/user_events: silence a clang warning:
+ address of packed member
+To: Nathan Chancellor <nathan@kernel.org>
+CC: Shuah Khan <shuah@kernel.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mark Brown <broonie@kernel.org>,
+	"Naresh Kamboju" <naresh.kamboju@linaro.org>, sunliming
+	<sunliming@kylinos.cn>, "Masami Hiramatsu" <mhiramat@kernel.org>, Valentin
+ Obst <kernel@valentinobst.de>, <linux-kselftest@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+References: <20240527214704.300444-1-jhubbard@nvidia.com>
+ <20240528202833.GB2680415@thelio-3990X>
+ <20240528203515.GC2680415@thelio-3990X>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20240528203515.GC2680415@thelio-3990X>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000149:EE_|SA1PR12MB6970:EE_
+X-MS-Office365-Filtering-Correlation-Id: d931bbf2-8c13-4235-df5c-08dc7f58595a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|7416005|376005|82310400017|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y0VZOHFXT21QcFVydy8yQ0hsbzRuTzMyby9Ec01hcTlWSjc4RmRiN2swaG85?=
+ =?utf-8?B?d1hBWWV5UEdQcmFZRmdXV29BaUkvSW53WFRUTEN4Z3dvTk9lVisyek9GUWZk?=
+ =?utf-8?B?eFBhdVZLV0tJQjRYMkJENm5JWEdsbmRuWnhxbUdvbzlkOHIzZkc2Qm5HYjl2?=
+ =?utf-8?B?ZFR1bVJnSkc1cWNaUXFnOHR6bkFOYjZMbndNQ2txQmd5SVZ6dHFKRG9WZDAr?=
+ =?utf-8?B?MTBoQWo1YkNHSGJUMFFtYWRTdVRMY0lydGxzd3E2d2ZzWXdhZEJuVEZhVDdj?=
+ =?utf-8?B?YldKWUU2REdNTFBSdHJBQmtaa2hiVXN2a1lPbXlMOUFJdWp2NHU5b2hRYXBE?=
+ =?utf-8?B?RU42UWYxeWJGR09xZmwvdjFWRHAzUnE1NFFNTVJ4eDJYMThhcExZYjVhbFk4?=
+ =?utf-8?B?THo1MkpRU0xKUTM2WkV3VjAxK2tzWDVhcUFEMDZvaThXZXhYQzZ6bzU2YVUz?=
+ =?utf-8?B?dzFuUHpuelJvL2VMa3JOaEIvaUhONGVwZWZENDNrRmErTk4vUldObkttSkFi?=
+ =?utf-8?B?SGdSYnJnc0RXeXdid0RkbmgwOU9LalhQL3p1MU1Gb0dkakNBdXNXZEtDQzNO?=
+ =?utf-8?B?SG80L0YzcnFWb3dQaFdhandRTmZPdU8yREx1OXQ2bFZpcXVpdmVnR3BQK1dS?=
+ =?utf-8?B?YkhlWDNLK2psNWZMOG1reXdVZk0xYmhXRU5IeS8xZU9mQ1d5bFR1cTkyS2po?=
+ =?utf-8?B?ZFZzdWZJMUNXaDIwSXYyUVBqNFdWYSszaE8ra0ZFcVlsbXA1Yk5EbXBOSFM3?=
+ =?utf-8?B?VHFrS3k3TkcvNi9BUERoTHJ5Mm9jSzF4bkg5c1A0d3FlRjdsUUFvU0h1TzlP?=
+ =?utf-8?B?eEpneGo3MUxUTjVzWkg3bVRQSkZXL1IrQWJXazlZYjJrakxzdUp5SHlmYWJt?=
+ =?utf-8?B?aXMvT0I0cDRONEJsNmhycEdlRnRmTHpxV2Y4UG1VOHE5eGZoUm1qZllWUVd4?=
+ =?utf-8?B?dVJrM0I4NzZzMStWRWJDam9qZEl0MHluSkE1bFV3UFBRWHFidjdpRUI2OEdp?=
+ =?utf-8?B?NEVLTEhTZW54NEdYWHZPWjJZQXFWbDNVOVZLam96UWJsRDJ4VkphWnpSV0xh?=
+ =?utf-8?B?V2RIcnE0dCsrcFEwbmlHSDFnUkJQMHVQeXhTWkl6dVd0U3BHOFBXNmJ2QThv?=
+ =?utf-8?B?eFFPZ29lRXh3bWxqbUluV1VOTnV5S29yaE9JUXZSeUxVYlhJaVRibVE2eTdk?=
+ =?utf-8?B?WkxCOGdVanJKbVVJQS9VR0RpZHAxOHVvclR0Y2x0TnhrRTlTUnNaVTYzTmNY?=
+ =?utf-8?B?bkM5TXI5Z09SWjd1blVRVGpHY3hWT241aTVzemxnRzA5N3p0V2FJRGFjTEdn?=
+ =?utf-8?B?d0paOTE5T21wY1NSNVNobklJbUlRUVVaOGY2U3hsMTFRVzhrQVpqNi9hZnlF?=
+ =?utf-8?B?eXBobis3Z2F3R00wNUVDbzBVazhQWmJZRHoyS2tINUlSL3VUU3N1enIrMnlE?=
+ =?utf-8?B?YXZZS0tEQ29WY2g0YzJBdFZjR1htS0cvRG4yQnp3OHZpSzNMNEFWM1g4ZlpE?=
+ =?utf-8?B?NGN5eDl1YXNzRjNqUVdOOFlaQ0tHd0l5YjdoRzZoQUxIR0tZRFpwNXpmZmoz?=
+ =?utf-8?B?ZzJNc25mRUZqeEpLOGFSWmpWeGcvNUhITWw0RzJlQVNER0ZVUjJDVGF2RVVl?=
+ =?utf-8?B?eUtVcDR0N1ZEY2xPVnBtSW1HZnFZOTNWUmthNk94OUlwZFpwN29Fb0NyV3lQ?=
+ =?utf-8?B?QlVPaVFWTlNibnpMK0NtdkRwdDNyeUxoMklPaGZYUS9XZWNjUUlKelpNYzZD?=
+ =?utf-8?B?aWFQbk1JdHJaZUlsdWR2eWZoSGxxeGlzcW1aWHFrWGNaakVzUEJHdnVDUEhi?=
+ =?utf-8?B?NXZlME8xUFZ6MktBSDFLcnRmMWZ5R2hOT0IvOWFSYndYREZRNlBzNVhqVHhB?=
+ =?utf-8?Q?KjoieEvkldrC+?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(82310400017)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2024 20:54:21.1026
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d931bbf2-8c13-4235-df5c-08dc7f58595a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000149.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6970
 
-sysbot reported a splat [1] on __unmap_hugepage_range().
-This is because vma_needs_reservation() can return -ENOMEM if
-allocate_file_region_entries() fails to allocate the file_region struct for
-the reservation.
-Check for that and do not call vma_add_reservation() if that is the case,
-otherwise region_abort() and region_del() will see that we do not have any
-file_regions.
+On 5/28/24 1:35 PM, Nathan Chancellor wrote:
+> On Tue, May 28, 2024 at 01:28:33PM -0700, Nathan Chancellor wrote:
+..
+>>> diff --git a/tools/testing/selftests/user_events/Makefile b/tools/testing/selftests/user_events/Makefile
+>>> index 10fcd0066203..617e94344711 100644
+>>> --- a/tools/testing/selftests/user_events/Makefile
+>>> +++ b/tools/testing/selftests/user_events/Makefile
+>>> @@ -1,5 +1,10 @@
+>>>   # SPDX-License-Identifier: GPL-2.0
+>>>   CFLAGS += -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
+>>> +
+>>> +ifneq ($(LLVM),)
+>>
+>> Perhaps it would be better if this were
+>>
+>>    ifeq ($(CC),clang)
+>>
+>> as that would catch both CC=clang and LLVM=1 users? I haven't tested
+>> this though.
 
-If we detect that vma_needs_reservation() returned -ENOMEM, we clear the
-hugetlb_restore_reserve flag as if this reservation was still consumed,
-so free_huge_folio() will not increment the resv count.
+That exact fix wouldn't quite work for the LLVM=1 case, because there,
+CC is set to a horrible long mess, like this:
 
-[1] https://lore.kernel.org/linux-mm/0000000000004096100617c58d54@google.com/T/#ma5983bc1ab18a54910da83416b3f89f3c7ee43aa
+     CC = clang --target=x86_64-pc-linux-gnu -fintegrated-as
 
-Fixes: df7a6d1f6405 ("mm/hugetlb: restore the reservation if needed")
-Reported-and-tested-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-mm/0000000000004096100617c58d54@google.com/
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/hugetlb.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+..but I see what you mean. It's not covering the CC=clang case.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6be78e7d4f6e..f35abff8be60 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5768,8 +5768,20 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * do_exit() will not see it, and will keep the reservation
- 		 * forever.
- 		 */
--		if (adjust_reservation && vma_needs_reservation(h, vma, address))
--			vma_add_reservation(h, vma, address);
-+		if (adjust_reservation) {
-+			int rc = vma_needs_reservation(h, vma, address);
-+
-+			if (rc < 0)
-+				/* Pressumably allocate_file_region_entries failed
-+				 * to allocate a file_region struct. Clear
-+				 * hugetlb_restore_reserve so that global reserve
-+				 * count will not be incremented by free_huge_folio.
-+				 * Act as if we consumed the reservation.
-+				 */
-+				folio_clear_hugetlb_restore_reserve(page_folio(page));
-+			else if (rc)
-+				vma_add_reservation(h, vma, address);
-+		}
- 
- 		tlb_remove_page_size(tlb, page, huge_page_size(h));
- 		/*
+> 
+> Hmmm, now that I am actually looking at tools/testing/selftests/lib.mk,
+> it seems like CC is only set to clang when $(LLVM) is set, so keeping it
+> the way it is now is probably best. Sorry about that, I am not too
+> familiar with the tools build system.
+> 
+
+That's true, and the patch here was admittedly only attempting to fix
+the LLVM=1 case. However, I recall someone is building these kselftests
+via "make CC=clang", which caught me by surprise, so I suppose that
+should be fixed too. Maybe all of these checks (there are a few other
+patches, but none merged yet) should be effectively:
+
+     "if LLVM==1 or CC==clang, then apply the clang fix(es)"
+	
+
+>> Additionally, I think it would be good to mention that
+>> -Wno-address-of-packed-member is GCC's default, whereas Clang enables
+>> -Waddress-of-packed-member by default.
+
+OK, I'll add that to a short comment nearby.
+
+>>
+>>> +    CFLAGS += -Wno-address-of-packed-member
+>>> +endif
+>>> +
+>>>   LDLIBS += -lrt -lpthread -lm
+>>>   
+>>>   TEST_GEN_PROGS = ftrace_test dyn_test perf_test abi_test
+>>>
+>>> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+>>> -- 
+>>> 2.45.1
+>>>
+>>>
+>>
+
+thanks,
 -- 
-2.45.1
+John Hubbard
+NVIDIA
 
 
