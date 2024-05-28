@@ -1,107 +1,66 @@
-Return-Path: <linux-kernel+bounces-193082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7708D269C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA658D2699
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91A0B2943E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1817A289E25
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22B317A933;
-	Tue, 28 May 2024 20:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDFv+7qH"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5611C17A930;
+	Tue, 28 May 2024 20:57:04 +0000 (UTC)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E165A76033;
-	Tue, 28 May 2024 20:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B63D97A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716929859; cv=none; b=MfkWa7LI9gjuht8myHiyWbg0rOpAW+c6ko2EIlyu4yDXofaCN4eHF/wHDhbnUHivJJlotBfELluxHIa8OFXuJCHKyGupjsdwpzihDk8Eva66m8j7E8nVDcpAS6NWhabszJPrT/HW4UHdigOw5p88XxLzXUNznDpq02CYaricRco=
+	t=1716929823; cv=none; b=D/KwrqhiVLwVRWP5UmZ9qfUEf01zZYYmwoKx+QjQDSMuGoYpf/+G2uwX2CcJ2nj44PQTC/qvpYyHvRckb6Q84ggo9UUZAeZn1viaMnIqPn1mKfXJNhyk2TYujz4DJ7CfGM8W55hOvKyMXfSH3f2xF35hstr0138GvfY1WUmo9pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716929859; c=relaxed/simple;
-	bh=ivfEB51V5RQtcXwdoSkKOwsDvxwkOeFQsSAmsFWKswY=;
+	s=arc-20240116; t=1716929823; c=relaxed/simple;
+	bh=oqkZbOS9aShq4ws+YJiDWlmR9oBcDuCfEPDgZNLUP8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+16BTEHcwve9W1KvT35Zkpb7pL6r9wndLlo3qDC4sp4ZPQ++rYlD2AAdxP2M6uR7ExY3roY4+L3I64I6LzM/0+5I1yanFOPRSUTCIv5kGtPULlKl7A520NBxT6RGEKIzkuEsa4BJXdLuI01Yx5WocETu67/7AdFz7HvN9L41es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDFv+7qH; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNAqKy8xtEKO42b0hda8MDtfLjywfwf7oRyfFKhZaDpxxQ2wmG4Mc9TKLujy2N2JZ8yOUSV1PNK2FEH02a2/ibnoEGVdf4AfKbF9wCKm74M/Qa8bo8HYDoaUi7iqvDv8ZocLmXbodpoPXYr9IsiwJR9h8gYFPEEuBTZNzso6n/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-43f87ba7d3eso6587561cf.0;
-        Tue, 28 May 2024 13:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716929857; x=1717534657; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vNVzbgaDjGFb56BGv6sqmcfumRGJbiIuHpwPOS++Khk=;
-        b=SDFv+7qHlSRYJQG1n/LwgS2Te7udR+w2xcAltBnjCsESG8npdVYuAcEkQTIjwIFSqu
-         OZyweoagsKygTkI06PTPEEx3PgLlythjKx4Rty0mtnv3CLAIf9txbdFbNMt3gRh2c3tN
-         ClQz1/xZ2Dao82OA4qhRTj/8hJGPPECfBv1koAmGhk67HXznj33KwjZtd4tbT4uRROVY
-         OEbv55bnX105O2QSWVq6z0w3nwGhn8GFaRpvAwZyVB8/HLpnjwH1O0i2R1QrKUjGuqHH
-         s0qfNEkiKdEfghq8g1KrD3cy8hmS7cgMKiJTDYfa9gfB/icyy0Jd72OHzKVT3Td97mse
-         p6Hg==
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2bf5ee192b1so171568a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:57:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716929857; x=1717534657;
+        d=1e100.net; s=20230601; t=1716929822; x=1717534622;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vNVzbgaDjGFb56BGv6sqmcfumRGJbiIuHpwPOS++Khk=;
-        b=EfAzrrvv7d8oZpAC74cPTFPJwrvhbnrxApiyPV3rnx9yUGVh9TO779zwtmFn7qPtBD
-         XBBthXKG0o+QjsJkWsRmzB7+n65HxdT15+6xesUn5f0Dee6ENrW7KCNmjXz2wfagRkV1
-         qRWL1kBQEA7ZWEJAdYJT4B5uBjjSVbyqC/UabfA+4GjGnNk13Pg97+UEgqk+d2AoBTMW
-         qm3WP7SwPnVEuYa7DpnIuHVImu6TX4gIbsSDOwFZqDHlj8Yaj9bLeOyqLWBRyeKwFd+I
-         GfIzz1MN74QNipdbO9y8oGzUf6yh7/dfhX9Ugz6sw1vXtFgwjkepgxa7P8SInt0s5u93
-         /BXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC53OzOdyX+HnDVTFvi3kvzhWWweh3+4WjwFCe7UQEkDh2aM5u8ir9mFp9TE0jvb84nyFqpEcEbxjplce5O3HMnZLLtDO4ANqk04g2zR2cu4DikL01BUROzwQjjRSCoQFU8xrqyEoCz+fYVGtr
-X-Gm-Message-State: AOJu0Yw19z5ZE0nYFLqFkgepIpuNCtUJW/jbzIluaO2Rxa+fwb/+IgbA
-	QcE6Kn2D6aaXPcC787JK+Vyh8JGM9HdEE2ZauVbM5nFVieAEeCTl
-X-Google-Smtp-Source: AGHT+IGcAQMHf+4v9rvLoc8FOG8VwWn00vA6mIkiy2I1OVfKzEtmFRla7gikOtMn0NcjxJqZViY0UQ==
-X-Received: by 2002:ac8:5f94:0:b0:43c:5d51:9e84 with SMTP id d75a77b69052e-43fb0e8880fmr111297301cf.19.1716929856255;
-        Tue, 28 May 2024 13:57:36 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fe0310886sm2018811cf.96.2024.05.28.13.57.35
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=07IIU5/iLq0mpEKlNBbglcpKnHcrqOpairoOpNeunHM=;
+        b=BzIQeswrIFIdx5buMoAEeZJqyk7sgiFQZKUUEYaCGQ1NCyj1lgjVqJKkps6/VDCgjJ
+         +eiWEHZDx1FOLarDa22C0DhcT8+FUjArMEJZ3bO0yxvs8wCvGcrOSHVu65CQ0A+8PoOJ
+         ERXVOUdU4s0LyB7vBaY2243SO/BG4xPIbMzLtbjN2Ks04Lsrq0MOC8pHwcrlR2W1yIzY
+         npXrnR7CE9Zs7ZP66EjXKstZdGbrQfkoyA6vzCGNgPo1DJWfiTYOhmUJxJeJGmXDDD8f
+         ASpDjZra5hba8pfDcGEW5YhYQGsUaKV1BKDIe5QLk5WJ3Nu2LFjpuTxBHZLWuSF/1llx
+         jIYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdIWB7CHIMFdUU4LU7xmlwxo/w/0r0FwH8cOQGn9Q4EqlEMmhgzw3EFUlpHalwEBu0ePD+khqsRyTlCeL5uiZfUxikOwYzAAU4szYV
+X-Gm-Message-State: AOJu0YwX16Ig083X4LmbaBa9T9B+iDmmyM/mpJFz4hjgBCUNHy3fqsNq
+	WbDtQDK++Lj/VrhAHfllW4rSdoAO2XN8wOmfBBpCd3ikVmbZA0we
+X-Google-Smtp-Source: AGHT+IGtnpj/yAqJkRmgY6bYx6gFBwzXCLnDfWllgsMjTowHKCPmryfeOYsafjqkBKAXhIDB2PAtQg==
+X-Received: by 2002:a17:90a:5d91:b0:2bd:eb72:9fd4 with SMTP id 98e67ed59e1d1-2c02ec62d38mr257568a91.23.1716929821575;
+        Tue, 28 May 2024 13:57:01 -0700 (PDT)
+Received: from snowbird ([136.25.84.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f61272fsm8249740a91.27.2024.05.28.13.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 13:57:35 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 2E5331200066;
-	Tue, 28 May 2024 16:57:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 28 May 2024 16:57:35 -0400
-X-ME-Sender: <xms:P0VWZknGOCpzYS9tWqmv2CoPBp3NWoYIx7tl1-jL90RxEpOqKrvvcQ>
-    <xme:P0VWZj0flF0vyJ77iWtDaX1aef4uv6Ag12-wI8_zXD43VSu3KrLX7fqPdyZBU4MrS
-    xS9Q8Z0XLwnT8uXsw>
-X-ME-Received: <xmr:P0VWZipzvpVNBUP9L3j3rOaC_pKBFhCEK7GOGYUTjMxz1Dqt2pOijqgV_49TNg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeeg
-    vddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
-    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
-    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:P0VWZgkxKrljk0CTLl7ZPPfR42zS81AQO3rGPmtkhjqSzm4BdFATgw>
-    <xmx:P0VWZi27lP0oJZa1m21qHvWsCZcVEuCVHYcwCCE1JqM7GHWI3TVNYQ>
-    <xmx:P0VWZnu84KycSJ6DGwQ6bqGXub1k0OdglFM3OV891-IHQuBJuYt_Yw>
-    <xmx:P0VWZuVTCGOdHQDqGUXTkva_wRc5DJSZn-9W5fmnYHQvuyQp22wm-A>
-    <xmx:P0VWZl1DuJvax9v5EaQuBDicNdcS1cKUwsfK4c0WOwN8V21tzGT_fu2Z>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 May 2024 16:57:34 -0400 (EDT)
-Date: Tue, 28 May 2024 13:56:54 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] locking/ww_mutex/test: add MODULE_DESCRIPTION()
-Message-ID: <ZlZFFuo7tmzK7Iy_@boqun-archlinux>
-References: <20240528-md-test-ww_mutex-v2-1-a2a19e920b12@quicinc.com>
+        Tue, 28 May 2024 13:57:01 -0700 (PDT)
+Date: Tue, 28 May 2024 13:56:58 -0700
+From: Dennis Zhou <dennis@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: tj@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+	vbabka@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4] percpu_counter: add a cmpxchg-based _add_batch variant
+Message-ID: <ZlZFGmBiBE1VGQIt@snowbird>
+References: <20240528204257.434817-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,42 +69,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528-md-test-ww_mutex-v2-1-a2a19e920b12@quicinc.com>
+In-Reply-To: <20240528204257.434817-1-mjguzik@gmail.com>
 
-On Tue, May 28, 2024 at 01:16:24PM -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+On Tue, May 28, 2024 at 10:42:57PM +0200, Mateusz Guzik wrote:
+> Interrupt disable/enable trips are quite expensive on x86-64 compared to
+> a mere cmpxchg (note: no lock prefix!) and percpu counters are used
+> quite often.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Moved the MODULE_DESCRIPTION() after MODULE_AUTHOR()
-
-Thanks!
-
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-
-Regards,
-Boqun
-
-
-> - Link to v1: https://lore.kernel.org/r/20240524-md-test-ww_mutex-v1-1-4fb8c106fe21@quicinc.com
-> ---
->  kernel/locking/test-ww_mutex.c | 1 +
->  1 file changed, 1 insertion(+)
+> With this change I get a bump of 1% ops/s for negative path lookups,
+> plugged into will-it-scale:
 > 
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-> index 78719e1ef1b1..10a5736a21c2 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -697,3 +697,4 @@ module_exit(test_ww_mutex_exit);
+> void testcase(unsigned long long *iterations, unsigned long nr)
+> {
+>         while (1) {
+>                 int fd = open("/tmp/nonexistent", O_RDONLY);
+>                 assert(fd == -1);
+> 
+>                 (*iterations)++;
+>         }
+> }
+> 
+> The win would be higher if it was not for other slowdowns, but one has
+> to start somewhere.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+> 
+> v4:
+> - fix a misplaced paren in unlikely(), reported by lkp:
+> https://lore.kernel.org/oe-lkp/ZlZAbkjOylfZC5Os@snowbird/T/#t
+> 
+> v3:
+> - add a missing word to the new comment
+> 
+> v2:
+> - dodge preemption
+> - use this_cpu_try_cmpxchg
+> - keep the old variant depending on CONFIG_HAVE_CMPXCHG_LOCAL
+> 
+> 
+>  lib/percpu_counter.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 39 insertions(+), 5 deletions(-)
+> 
+> diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+> index 44dd133594d4..51bc5246986d 100644
+> --- a/lib/percpu_counter.c
+> +++ b/lib/percpu_counter.c
+> @@ -73,17 +73,50 @@ void percpu_counter_set(struct percpu_counter *fbc, s64 amount)
+>  EXPORT_SYMBOL(percpu_counter_set);
 >  
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Intel Corporation");
-> +MODULE_DESCRIPTION("API test facility for ww_mutexes");
+>  /*
+> - * local_irq_save() is needed to make the function irq safe:
+> - * - The slow path would be ok as protected by an irq-safe spinlock.
+> - * - this_cpu_add would be ok as it is irq-safe by definition.
+> - * But:
+> - * The decision slow path/fast path and the actual update must be atomic, too.
+> + * Add to a counter while respecting batch size.
+> + *
+> + * There are 2 implementations, both dealing with the following problem:
+> + *
+> + * The decision slow path/fast path and the actual update must be atomic.
+>   * Otherwise a call in process context could check the current values and
+>   * decide that the fast path can be used. If now an interrupt occurs before
+>   * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counters),
+>   * then the this_cpu_add() that is executed after the interrupt has completed
+>   * can produce values larger than "batch" or even overflows.
+>   */
+> +#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
+> +/*
+> + * Safety against interrupts is achieved in 2 ways:
+> + * 1. the fast path uses local cmpxchg (note: no lock prefix)
+> + * 2. the slow path operates with interrupts disabled
+> + */
+> +void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+> +{
+> +	s64 count;
+> +	unsigned long flags;
+> +
+> +	count = this_cpu_read(*fbc->counters);
+> +	do {
+> +		if (unlikely(abs(count + amount) >= batch)) {
+> +			raw_spin_lock_irqsave(&fbc->lock, flags);
+> +			/*
+> +			 * Note: by now we might have migrated to another CPU
+> +			 * or the value might have changed.
+> +			 */
+> +			count = __this_cpu_read(*fbc->counters);
+> +			fbc->count += count + amount;
+> +			__this_cpu_sub(*fbc->counters, count);
+> +			raw_spin_unlock_irqrestore(&fbc->lock, flags);
+> +			return;
+> +		}
+> +	} while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount));
+> +}
+> +#else
+> +/*
+> + * local_irq_save() is used to make the function irq safe:
+> + * - The slow path would be ok as protected by an irq-safe spinlock.
+> + * - this_cpu_add would be ok as it is irq-safe by definition.
+> + */
+>  void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+>  {
+>  	s64 count;
+> @@ -101,6 +134,7 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+>  	}
+>  	local_irq_restore(flags);
+>  }
+> +#endif
+>  EXPORT_SYMBOL(percpu_counter_add_batch);
+>  
+>  /*
+> -- 
+> 2.39.2
 > 
-> ---
-> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-> change-id: 20240524-md-test-ww_mutex-c18c263bc483
-> 
+
+Andrew you picked up the __this_cpu_try_cmpxchg() patches. At this point
+you might as well pick up this too. The cpumask clean ups are likely
+going to give me trouble later this week when I rebase so I'll probably
+have to base my percpuh hotplug branch on your mm-unstable now.
+
+Acked-by: Dennis Zhou <dennis@kernel.org>
+
+Feel free to toss my ack on the __this_cpu_try_cmpxchg() too.
+
+Thanks,
+Dennis
 
