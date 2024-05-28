@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-193002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07FE8D2574
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A40018D2575
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E15371C2362C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A3E1C26952
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79D3178CFA;
-	Tue, 28 May 2024 20:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4741B17839C;
+	Tue, 28 May 2024 20:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubQpDH4e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VAE1xyi7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DD0178395;
-	Tue, 28 May 2024 20:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70110A3E;
+	Tue, 28 May 2024 20:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926741; cv=none; b=OyVrTg4UldRDRGEKj9iSkEzFZkjsrWVwBkUQRHt6eZnJGMYJDv4c300wXl7D7jgDP8drFaTFv/G1+BsbBB+EQg5cRmkm089kiPGYk1lx73SSXJ0XHwlJ1BNOkSCCXlX7h2iitEnrzT2h1Zo0MUYnK4+BMeqejG2QMndKRX0v4mY=
+	t=1716926835; cv=none; b=sBOoeLIqXrFIU+0mSql8ePM8R9toHqAs4jJZNRNeFj12FcaPv4r0Q4cxCc7tRacXSkJ/YxwhasS4VfhdU7y5CLXY62NB1jWejX9W2EkFHHw+NW2bE2dTnYBS0rHazM8mitohfHuZx/Rurf3HYX3bbByGD4E922xsNFlldAUJ9w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926741; c=relaxed/simple;
-	bh=K427WA9x1O0/8ZynfZWw6aTk3ce73m8Q0shpDlKZ7jo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ry8cJkxCQOhc2ntghayAWZ26I85LScF6+ZLc8PKKklm/Au8DNC1ePGGv9GZShYaEMbArUghBCgFo2oV5t33fB+Xumi3YsoaSZVqUrZsknvr3PJFnrvTn5EPrSnoPCoKKEdp+XX2AHiokF5cGFFQqG1n3TifCuJdUc1qS+RBAQb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubQpDH4e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF32C3277B;
-	Tue, 28 May 2024 20:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716926740;
-	bh=K427WA9x1O0/8ZynfZWw6aTk3ce73m8Q0shpDlKZ7jo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ubQpDH4eT1mxROtWMAC0av/QM9bjC3USsFEIkAxL1YqWU8twE0zth+mGAtlUrT1Ud
-	 fMbXvNsplD5DqB1c+5OQGYoQ4TS2y34FLVwr2ANvB/cab17exke+YaLFPGJEHiJq50
-	 X0NZcT6EOFIKtOUQZBTOYV+9sxUVPZLFX4KOkWqaAhJ4myCMLHCaPVuxPBuDb+BxQ2
-	 dYmzpp/wUvKOtVnPJsPEdABogyYB3zCw5QE9QBN8PDTeGjUKyr1sh93qmMPzjJ3q8g
-	 oSz5gO9QxggvIvHUsvykgrlIWjB84tkVoZg3Loe64cmfFYlVlZXRN6sitY7pKmkDDj
-	 GlYfi5avYxkxQ==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b97f09cde3so209434eaf.0;
-        Tue, 28 May 2024 13:05:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBvunMPb4XXgd8r+NwZPXFzuD5QJsQFDq0f3BvfCdrEJmNoY+no+LwH70Vny+/1LPvKoskKBPWebAfiGj880tKK3UqrULB7lA8e722RQhKxtY1W0loeBwvck3mm1mDgifzHXG21p4=
-X-Gm-Message-State: AOJu0YwDPWQYHBE1XPv+QHqtWOAy59viDayDo7/DpMpG/fmf9VHrGq1B
-	u1q1MI7JLbJiG0G3RAAF+lmONbBlgKLkCyeO7DKx42bgypWwsfNeNLzfF04ye4+A1b+l8V1w4XF
-	MyafyMkXSfMI3zcplMoz5VOxlw7c=
-X-Google-Smtp-Source: AGHT+IE39lzzrMCMFgqaGSM1YNGwA5bF3tH7fIP6yHvy4U78ji+WxRUmhTJ+bMVXK2lJvNwP+naGVUgREY+JqvZp5N4=
-X-Received: by 2002:a4a:e6d8:0:b0:5b2:7aa7:7b29 with SMTP id
- 006d021491bc7-5b96195f885mr13928240eaf.1.1716926739910; Tue, 28 May 2024
- 13:05:39 -0700 (PDT)
+	s=arc-20240116; t=1716926835; c=relaxed/simple;
+	bh=N6vwJeSmmvYBNdjtiWxQ1nwJbre93PhEvl+twzPPdwA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ctyvSuG67RooiM6nRuvxGVPcWw2Wcp6mu+0eSCn6Fzu3IPX8VSm1r7esFKJI9OTdrS3WVsgzDLEAF79zp1guDApwAYuJJI8n7P/sscX6pvEEfODiOvM/10ns8oQn+afKoUEk28AqszBdFP3RYPcVipVJOTuEvyxwcHkZi8/g+lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VAE1xyi7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBY0Zu007985;
+	Tue, 28 May 2024 20:06:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+A2p0eTGmhORMiKBsVfkaO
+	iYDcBr3l0hvpb+y9Zsx3I=; b=VAE1xyi7gcWrB+xUVHqHJyItlBwRJbcwNGjCqT
+	X6dnTuaVz4z21NLdzbL9jqBGUkLl5i3JLxzL696eOZU+hT2H+Pk8ltuCgPeCxKJ0
+	JvCWJE/I7no1CE+E0wf2Ck5fkFDXGQ2UAvPXXQ5K6BMEnPwjb9jlZD/XFBY3MUIp
+	V784cio0tvBZykkGWrdJCIqg+ubYhqsgQ3oZZ61uh6evPrcUZ/ZH56Y7+a299SSL
+	7Koj35tojSxbXfngsJQ/wu4uEgT8eiFxM1NApfMkv9V397c5+yyUjllaFrajFETZ
+	5Idc4vFXMQe3yHYdXBF5oSRq/FWf84u6ke3zulaGLYed2L9w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0pq47t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:06:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SK6jIQ022490
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:06:45 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 13:06:45 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 28 May 2024 13:06:44 -0700
+Subject: [PATCH] KVM: x86: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527051128.110091-1-Dhananjay.Ugwekar@amd.com> <929aec0d-690b-4277-90b0-d0b4adb437d3@amd.com>
-In-Reply-To: <929aec0d-690b-4277-90b0-d0b4adb437d3@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 May 2024 22:05:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hz+RzrtD=JUvf_W7g0vSHTmtfiTcJC23fvVvb_N9AiHg@mail.gmail.com>
-Message-ID: <CAJZ5v0hz+RzrtD=JUvf_W7g0vSHTmtfiTcJC23fvVvb_N9AiHg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: amd-pstate: Fix the inconsistency in max
- frequency units
-To: Mario Limonciello <mario.limonciello@amd.com>, 
-	Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Cc: rafael@kernel.org, ray.huang@amd.com, viresh.kumar@linaro.org, 
-	gautham.shenoy@amd.com, ananth.narayan@amd.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Perry.Yuan@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240528-md-kvm-v1-1-c1b86f0f5112@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFM5VmYC/x3M0QqDMAyF4VeRXC9QO5WxVxm7SGvUsLWOZBNBf
+ PdVLz/4z9nAWIUN7tUGyouYzLmgvlQQJ8ojo/TF4J1vXOtvmHp8LQmv3eBdiA21wUGJP8qDrOf
+ R41kcyBiDUo7TMX9L/q2YyL6ssO9/FMiW8XcAAAA=
+To: Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini
+	<pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tC9DMFtnNQiPYPiD6BqMuqaddMurqHOP
+X-Proofpoint-GUID: tC9DMFtnNQiPYPiD6BqMuqaddMurqHOP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=566 bulkscore=0
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 adultscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280150
 
-On Mon, May 27, 2024 at 4:40=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 5/27/2024 00:11, Dhananjay Ugwekar wrote:
-> > The nominal frequency in cpudata is maintained in MHz whereas all other
-> > frequencies are in KHz. This means we have to convert nominal frequency
-> > value to KHz before we do any interaction with other frequency values.
-> >
-> > In amd_pstate_set_boost(), this conversion from MHz to KHz is missed,
-> > fix that.
-> >
-> > Tested on a AMD Zen4 EPYC server
-> >
-> > Before:
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq | uniq
-> > 2151
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_min_freq | uniq
-> > 400000
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq | uniq
-> > 2151
-> > 409422
-> >
-> > After:
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq | uniq
-> > 2151000
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_min_freq | uniq
-> > 400000
-> > $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq | uniq
-> > 2151000
-> > 1799527
-> >
->
-> Cc: stable@vger.kernel.org
->
-> > Fixes: ec437d71db77 ("cpufreq: amd-pstate: Introduce a new AMD P-State =
-driver to support future processors")
-> > Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
->
-> Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+Fix the following allmodconfig 'make W=1' warnings when building for x86:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-intel.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-amd.o
 
-Applied as 6.10-rc material, thanks!
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/x86/kvm/svm/svm.c | 1 +
+ arch/x86/kvm/vmx/vmx.c | 1 +
+ virt/kvm/kvm_main.c    | 1 +
+ 3 files changed, 3 insertions(+)
 
-> > ---
-> >   drivers/cpufreq/amd-pstate.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.=
-c
-> > index 1b7e82a0ad2e..cde3b91b4422 100644
-> > --- a/drivers/cpufreq/amd-pstate.c
-> > +++ b/drivers/cpufreq/amd-pstate.c
-> > @@ -669,7 +669,7 @@ static int amd_pstate_set_boost(struct cpufreq_poli=
-cy *policy, int state)
-> >       if (state)
-> >               policy->cpuinfo.max_freq =3D cpudata->max_freq;
-> >       else
-> > -             policy->cpuinfo.max_freq =3D cpudata->nominal_freq;
-> > +             policy->cpuinfo.max_freq =3D cpudata->nominal_freq * 1000=
-;
-> >
-> >       policy->max =3D policy->cpuinfo.max_freq;
-> >
->
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index c8dc25886c16..bdd39931720c 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -53,6 +53,7 @@
+ #include "svm_onhyperv.h"
+ 
+ MODULE_AUTHOR("Qumranet");
++MODULE_DESCRIPTION("KVM SVM (AMD-V) extensions");
+ MODULE_LICENSE("GPL");
+ 
+ #ifdef MODULE
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6051fad5945f..956e6062f311 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -74,6 +74,7 @@
+ #include "posted_intr.h"
+ 
+ MODULE_AUTHOR("Qumranet");
++MODULE_DESCRIPTION("KVM VMX (Intel VT-x) extensions");
+ MODULE_LICENSE("GPL");
+ 
+ #ifdef MODULE
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 14841acb8b95..b03d06ca29c4 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -74,6 +74,7 @@
+ #define ITOA_MAX_LEN 12
+ 
+ MODULE_AUTHOR("Qumranet");
++MODULE_DESCRIPTION("Kernel-based Virtual Machine driver for Linux");
+ MODULE_LICENSE("GPL");
+ 
+ /* Architectures should define their poll value according to the halt latency */
+
+---
+base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+change-id: 20240528-md-kvm-36f20bc4a5b0
+
 
