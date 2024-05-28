@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-192750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832168D2198
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C403C8D219C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A9284EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 009621C227D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE653172BB1;
-	Tue, 28 May 2024 16:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8179172BCA;
+	Tue, 28 May 2024 16:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T5s+JUTi"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFqO3m1c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C475316F91D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C621172786;
+	Tue, 28 May 2024 16:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716913590; cv=none; b=DhgjvBi8mUID/LNUhPPXXzFDTJwEgc7W12kdHSFDGunmPxaMfD6K14+1l6aziPF/Fe9KYmisLoaWlplCPDl4W/VHy9EWNNKNTEgDZEQhpKVblKR7Tab6HPb72CIT3D7qimI0i7WroNvOBYqOeZ5J3Fa2Vdli1wZ+S/tQeTEtgf4=
+	t=1716913619; cv=none; b=lF6Io9240GiERtqbLvPVAXz+1XLZW02O3JTtsqusqD4Wbk9LV4d+5naEnELZvllYC/HgJZ3rDOseZzjtC2qteuoXu2dP7Idn0McXB9Xdt7DApmy8KBWJSXZ9jvbZYNqe7Tfhd5X5KJbmuPCqPStPLPD+bTaEbHQkO8i+aUCkTCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716913590; c=relaxed/simple;
-	bh=T+N5NCYcb/1CJ58rc8kq2NIC8cRUS+4Az8GxC7eQp3o=;
+	s=arc-20240116; t=1716913619; c=relaxed/simple;
+	bh=qdXP/32lX1/6i73zn1P1xe6RliYLeJS0GT4JVheWLVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbqFGZQ3U22dbBcWzKvFj9fQVVqc3MipXuL1o+dROHOcyg2ufiZmn8bgwXdF50EBSa6LFuk/qA5jHW6eU5flU9V4gxd0+zBw2FOHfzeMnpuXhfoaOh6tSd+w//m4MEK4HEZqgjHNbq2xHQY6J3JWdARrh67w8ksTVrMeucmbEKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T5s+JUTi; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wSXL2SlOjEvveaaFF85+qhUrKzO5LhurNd/gv2GGsio=; b=T5s+JUTi6lcAVjA5PIaUX1c/mz
-	C4tyNT9U3VRd7tFO5C9kEAPPexiEFVxeiJgF4WBLwiSamy0fY6VrpjjX6/szW6ONJdbHQQr7v/Z07
-	ik0cFPlB63q7W7E7Jlw7F+UxwmcewSwNfsMDKe5SWmiJXr0MaQ2UB8cCObBkxlq64k0WMzyu9DN8N
-	cTvva43gOk/MK0lIY4t7vA907WVqcu2/qjl/cMij6AG7PFmU4LT6dz5yUtEXiP6S/oKkGizP0xZNM
-	ZtRVl9t0r0L6d0WdWwLqLHkW3852Un4IVhDeQ0e9NMz+LNFQFMuN+kLdrha1olomSSc9k8BM7MVhV
-	WN3KIGxQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sBzdn-0000000Bjaz-1Hfx;
-	Tue, 28 May 2024 16:25:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AFC3B30058E; Tue, 28 May 2024 18:25:34 +0200 (CEST)
-Date: Tue, 28 May 2024 18:25:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	torvalds@linux-foundation.org, paulmck@kernel.org,
-	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
-	joel@joelfernandes.org, raghavendra.kt@amd.com,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 12/35] sched: separate PREEMPT_DYNAMIC config logic
-Message-ID: <20240528162534.GG26599@noisy.programming.kicks-ass.net>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-13-ankur.a.arora@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqtbWhniaI6qZ+niJMIzrgtJWnddl2J7Z+GMdnTzYsnC8PzxdXZ7eQ7w7xiPdXl9Xc0VnkhNOWv3sarUPHS4kSc38j0n3HwRxpyRd+4cOc6wQ9UyLof9MmsZhFVDKaMAQ9tRhZgUPny0kL9EBh078r0V2zBmcrYZtvqRAh/isr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFqO3m1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57AB3C3277B;
+	Tue, 28 May 2024 16:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716913618;
+	bh=qdXP/32lX1/6i73zn1P1xe6RliYLeJS0GT4JVheWLVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RFqO3m1cQn/BFnvd0GC7RVrsnSw0aZWw4rhKFXxQqzIPWCJpjRAe5W/Tnh2p9/Gyf
+	 T1PTZmNjYVrS0+vEe8f2BSzznK+dtvm6ekBUevafYCqoyN3x1wDgmE4QLc7UjL6b3Z
+	 +ZBTHr/XtWGiB4DKaaQACU/AHUmAuGEVnZsC9g4N9UueBZQRXbvrF8nY7g2TRCFyPJ
+	 +DkXV8fg+v5x0VHjPypF/CQJTY2UjwbynmmkBK3BVNR+Mu367p/Gy2wBK/TygYImnD
+	 qBql2otbXnICig6MryWmmpEYbiehHLoelKkqrt16g83CPM0/WVUn1FeqGJDOszm3jH
+	 Z/DhhKJFPmhpA==
+Date: Tue, 28 May 2024 11:26:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v4 2/6] dt-bindings: firmware: add i.MX95 SCMI Extension
+ protocol
+Message-ID: <171691361410.864372.12807947613760127551.robh@kernel.org>
+References: <20240524-imx95-bbm-misc-v2-v4-0-dc456995d590@nxp.com>
+ <20240524-imx95-bbm-misc-v2-v4-2-dc456995d590@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,248 +66,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528003521.979836-13-ankur.a.arora@oracle.com>
+In-Reply-To: <20240524-imx95-bbm-misc-v2-v4-2-dc456995d590@nxp.com>
 
-On Mon, May 27, 2024 at 05:34:58PM -0700, Ankur Arora wrote:
-> Pull out the PREEMPT_DYNAMIC setup logic to allow other preemption
-> models to dynamically configure preemption.
 
-Uh what ?!? What's the point of creating back-to-back #ifdef sections ?
-
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+On Fri, 24 May 2024 16:56:44 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add i.MX SCMI Extension protocols bindings for:
+> - Battery Backed Module(BBM) Protocol
+>   This contains persistent storage (GPR), an RTC, and the ON/OFF button.
+>   The protocol can also provide access to similar functions implemented via
+>   external board components.
+> - MISC Protocol.
+>   This includes controls that are misc settings/actions that must be exposed
+>   from the SM to agents. They are device specific and are usually define to
+>   access bit fields in various mix block control modules, IOMUX_GPR, and
+>   other GPR/CSR owned by the SM.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  kernel/sched/core.c | 165 +++++++++++++++++++++++---------------------
->  1 file changed, 86 insertions(+), 79 deletions(-)
+>  .../devicetree/bindings/firmware/arm,scmi.yaml     |  5 ++-
+>  .../bindings/firmware/nxp,imx95-scmi.yaml          | 43 ++++++++++++++++++++++
+>  2 files changed, 47 insertions(+), 1 deletion(-)
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0c26b60c1101..349f6257fdcd 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8713,6 +8713,89 @@ int __cond_resched_rwlock_write(rwlock_t *lock)
->  }
->  EXPORT_SYMBOL(__cond_resched_rwlock_write);
->  
-> +#if defined(CONFIG_PREEMPT_DYNAMIC)
-> +
-> +#define PREEMPT_MODE "Dynamic Preempt"
-> +
-> +enum {
-> +	preempt_dynamic_undefined = -1,
-> +	preempt_dynamic_none,
-> +	preempt_dynamic_voluntary,
-> +	preempt_dynamic_full,
-> +};
-> +
-> +int preempt_dynamic_mode = preempt_dynamic_undefined;
-> +static DEFINE_MUTEX(sched_dynamic_mutex);
-> +
-> +int sched_dynamic_mode(const char *str)
-> +{
-> +	if (!strcmp(str, "none"))
-> +		return preempt_dynamic_none;
-> +
-> +	if (!strcmp(str, "voluntary"))
-> +		return preempt_dynamic_voluntary;
-> +
-> +	if (!strcmp(str, "full"))
-> +		return preempt_dynamic_full;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static void __sched_dynamic_update(int mode);
-> +void sched_dynamic_update(int mode)
-> +{
-> +	mutex_lock(&sched_dynamic_mutex);
-> +	__sched_dynamic_update(mode);
-> +	mutex_unlock(&sched_dynamic_mutex);
-> +}
-> +
-> +static void __init preempt_dynamic_init(void)
-> +{
-> +	if (preempt_dynamic_mode == preempt_dynamic_undefined) {
-> +		if (IS_ENABLED(CONFIG_PREEMPT_NONE)) {
-> +			sched_dynamic_update(preempt_dynamic_none);
-> +		} else if (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY)) {
-> +			sched_dynamic_update(preempt_dynamic_voluntary);
-> +		} else {
-> +			/* Default static call setting, nothing to do */
-> +			WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT));
-> +			preempt_dynamic_mode = preempt_dynamic_full;
-> +			pr_info("%s: full\n", PREEMPT_MODE);
-> +		}
-> +	}
-> +}
-> +
-> +static int __init setup_preempt_mode(char *str)
-> +{
-> +	int mode = sched_dynamic_mode(str);
-> +	if (mode < 0) {
-> +		pr_warn("%s: unsupported mode: %s\n", PREEMPT_MODE, str);
-> +		return 0;
-> +	}
-> +
-> +	sched_dynamic_update(mode);
-> +	return 1;
-> +}
-> +__setup("preempt=", setup_preempt_mode);
-> +
-> +#define PREEMPT_MODEL_ACCESSOR(mode) \
-> +	bool preempt_model_##mode(void)						 \
-> +	{									 \
-> +		WARN_ON_ONCE(preempt_dynamic_mode == preempt_dynamic_undefined); \
-> +		return preempt_dynamic_mode == preempt_dynamic_##mode;		 \
-> +	}									 \
-> +	EXPORT_SYMBOL_GPL(preempt_model_##mode)
-> +
-> +PREEMPT_MODEL_ACCESSOR(none);
-> +PREEMPT_MODEL_ACCESSOR(voluntary);
-> +PREEMPT_MODEL_ACCESSOR(full);
-> +
-> +#else /* !CONFIG_PREEMPT_DYNAMIC */
-> +
-> +static inline void preempt_dynamic_init(void) { }
-> +
-> +#endif /* !CONFIG_PREEMPT_DYNAMIC */
-> +
->  #ifdef CONFIG_PREEMPT_DYNAMIC
->  
->  #ifdef CONFIG_GENERIC_ENTRY
-> @@ -8749,29 +8832,6 @@ EXPORT_SYMBOL(__cond_resched_rwlock_write);
->   *   irqentry_exit_cond_resched <- irqentry_exit_cond_resched
->   */
->  
-> -enum {
-> -	preempt_dynamic_undefined = -1,
-> -	preempt_dynamic_none,
-> -	preempt_dynamic_voluntary,
-> -	preempt_dynamic_full,
-> -};
-> -
-> -int preempt_dynamic_mode = preempt_dynamic_undefined;
-> -
-> -int sched_dynamic_mode(const char *str)
-> -{
-> -	if (!strcmp(str, "none"))
-> -		return preempt_dynamic_none;
-> -
-> -	if (!strcmp(str, "voluntary"))
-> -		return preempt_dynamic_voluntary;
-> -
-> -	if (!strcmp(str, "full"))
-> -		return preempt_dynamic_full;
-> -
-> -	return -EINVAL;
-> -}
-> -
->  #if defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
->  #define preempt_dynamic_enable(f)	static_call_update(f, f##_dynamic_enabled)
->  #define preempt_dynamic_disable(f)	static_call_update(f, f##_dynamic_disabled)
-> @@ -8782,7 +8842,6 @@ int sched_dynamic_mode(const char *str)
->  #error "Unsupported PREEMPT_DYNAMIC mechanism"
->  #endif
->  
-> -static DEFINE_MUTEX(sched_dynamic_mutex);
->  static bool klp_override;
->  
->  static void __sched_dynamic_update(int mode)
-> @@ -8807,7 +8866,7 @@ static void __sched_dynamic_update(int mode)
->  		preempt_dynamic_disable(preempt_schedule_notrace);
->  		preempt_dynamic_disable(irqentry_exit_cond_resched);
->  		if (mode != preempt_dynamic_mode)
-> -			pr_info("Dynamic Preempt: none\n");
-> +			pr_info("%s: none\n", PREEMPT_MODE);
->  		break;
->  
->  	case preempt_dynamic_voluntary:
-> @@ -8818,7 +8877,7 @@ static void __sched_dynamic_update(int mode)
->  		preempt_dynamic_disable(preempt_schedule_notrace);
->  		preempt_dynamic_disable(irqentry_exit_cond_resched);
->  		if (mode != preempt_dynamic_mode)
-> -			pr_info("Dynamic Preempt: voluntary\n");
-> +			pr_info("%s: voluntary\n", PREEMPT_MODE);
->  		break;
->  
->  	case preempt_dynamic_full:
-> @@ -8829,20 +8888,13 @@ static void __sched_dynamic_update(int mode)
->  		preempt_dynamic_enable(preempt_schedule_notrace);
->  		preempt_dynamic_enable(irqentry_exit_cond_resched);
->  		if (mode != preempt_dynamic_mode)
-> -			pr_info("Dynamic Preempt: full\n");
-> +			pr_info("%s: full\n", PREEMPT_MODE);
->  		break;
->  	}
->  
->  	preempt_dynamic_mode = mode;
->  }
->  
-> -void sched_dynamic_update(int mode)
-> -{
-> -	mutex_lock(&sched_dynamic_mutex);
-> -	__sched_dynamic_update(mode);
-> -	mutex_unlock(&sched_dynamic_mutex);
-> -}
-> -
->  #ifdef CONFIG_HAVE_PREEMPT_DYNAMIC_CALL
->  
->  static int klp_cond_resched(void)
-> @@ -8873,51 +8925,6 @@ void sched_dynamic_klp_disable(void)
->  
->  #endif /* CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
->  
-> -static int __init setup_preempt_mode(char *str)
-> -{
-> -	int mode = sched_dynamic_mode(str);
-> -	if (mode < 0) {
-> -		pr_warn("Dynamic Preempt: unsupported mode: %s\n", str);
-> -		return 0;
-> -	}
-> -
-> -	sched_dynamic_update(mode);
-> -	return 1;
-> -}
-> -__setup("preempt=", setup_preempt_mode);
-> -
-> -static void __init preempt_dynamic_init(void)
-> -{
-> -	if (preempt_dynamic_mode == preempt_dynamic_undefined) {
-> -		if (IS_ENABLED(CONFIG_PREEMPT_NONE)) {
-> -			sched_dynamic_update(preempt_dynamic_none);
-> -		} else if (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY)) {
-> -			sched_dynamic_update(preempt_dynamic_voluntary);
-> -		} else {
-> -			/* Default static call setting, nothing to do */
-> -			WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT));
-> -			preempt_dynamic_mode = preempt_dynamic_full;
-> -			pr_info("Dynamic Preempt: full\n");
-> -		}
-> -	}
-> -}
-> -
-> -#define PREEMPT_MODEL_ACCESSOR(mode) \
-> -	bool preempt_model_##mode(void)						 \
-> -	{									 \
-> -		WARN_ON_ONCE(preempt_dynamic_mode == preempt_dynamic_undefined); \
-> -		return preempt_dynamic_mode == preempt_dynamic_##mode;		 \
-> -	}									 \
-> -	EXPORT_SYMBOL_GPL(preempt_model_##mode)
-> -
-> -PREEMPT_MODEL_ACCESSOR(none);
-> -PREEMPT_MODEL_ACCESSOR(voluntary);
-> -PREEMPT_MODEL_ACCESSOR(full);
-> -
-> -#else /* !CONFIG_PREEMPT_DYNAMIC */
-> -
-> -static inline void preempt_dynamic_init(void) { }
-> -
->  #endif /* #ifdef CONFIG_PREEMPT_DYNAMIC */
->  
->  /**
-> -- 
-> 2.31.1
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
