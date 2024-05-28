@@ -1,113 +1,195 @@
-Return-Path: <linux-kernel+bounces-192682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED4E8D209A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3946A8D209D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CABB22238
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C2791C2352D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E882171656;
-	Tue, 28 May 2024 15:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13538171652;
+	Tue, 28 May 2024 15:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYccBPkb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QeEqJxVj"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA8616C456;
-	Tue, 28 May 2024 15:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B7B16C456;
+	Tue, 28 May 2024 15:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716910864; cv=none; b=TMKQ5nbHf/immTRCC29RrFnPV5Zy0ReN/JwhiYt1DkembcN4ZstffhNtu1Xbaflof/+DdPfiby8/rWEVNcAfXS2MZBVRIrxVVNuwc75vDptaZSYsj5rKoKyZdMPukOvziXussoePzeod7gwR3kFvK1q/1AkEWggWDq0t/8nh9gE=
+	t=1716910883; cv=none; b=m+LIk7FfsNf7BbvUW013nfNuy6YeQs69GkarA49NhghxUJqAIFb04aXB4IOI7BcKMn06aIPfi6rs5zfaVlPorqsn2PvUovCsccDhFr4Kv5qk4Ol5vifS3UG0Pr9/CEYq97N0YBGS7L4khy+BZKck43zz7YibtDKx0bbxEUd6z4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716910864; c=relaxed/simple;
-	bh=GVjbv65YNJoDuQAJCKR21C5IvkBqp4L9LKrnLr6NVkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Czs8K/j22gKrKUEtOXiU0YbUr5jEgARo6Mj8earJiILae638SoxUhxGTX5xV5kKEm4x5eTJ/zHkzlQtJxFc/ENPlOKJCYJIcNAhbj+r4co4jYMZmvEiyebzf74rRifkD1+DQdq/YyaviYTcvJGVcVcc9wjeIrJihwuLVjer7+Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYccBPkb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716910862; x=1748446862;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GVjbv65YNJoDuQAJCKR21C5IvkBqp4L9LKrnLr6NVkw=;
-  b=WYccBPkbBItro1d08L708B/1QDC9zPwBADqmWcCM4uDiTih5GE7SBPx9
-   JKPbwwNu0o66GxihH8P/d8/ksYpImq2yDy+erHXNgAmOsmFO3TsAF1Ryl
-   sf3EuzFvxEQXNrcwBB5ZonMoRGGlvT/FCqZzmxdecImhHjkofwv6Ze4xf
-   hVBQ7h9vMk2/4ofh3TFbGzr84lPQhpM0q8cj9SOV1QdahfLIg2M7h87Iw
-   ckrAd/G0dO/gP3HmkFLrRw7PFb55eEMn3OQG+EF1nnLTwVj61c+QwWkEt
-   mHmMVHcEVj7v7nShZZ7xAjix3v6//hlVOJVIOHKDThRxgOo84ZlD8sBcj
-   A==;
-X-CSE-ConnectionGUID: w2W/+0mZQuK10GM3Y81sEw==
-X-CSE-MsgGUID: FUd/xwpJSGaq9592xy7Yaw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23820821"
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="23820821"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:41:02 -0700
-X-CSE-ConnectionGUID: ecUxvXzqTTatJ6tfwYl4Ng==
-X-CSE-MsgGUID: qXKXv5P+T/m7mdMmtpI7qQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="35727960"
-Received: from unknown (HELO [10.125.110.237]) ([10.125.110.237])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 08:41:02 -0700
-Message-ID: <9d5f2625-f3e7-4212-8c9a-c22f137f39d9@linux.intel.com>
-Date: Tue, 28 May 2024 10:41:00 -0500
+	s=arc-20240116; t=1716910883; c=relaxed/simple;
+	bh=pqJKnCRBIjENJflCKkvhY+fveTWQh6vIao0ZlVHi+lw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=DaL/+aPoQzhZ1j1b7g8RNg4qPONE+udN49E8ZlSF5lot4ZilrQJKx5fCccapQKE7YpiJpIOpvwRRoVCdClwI45OwQRSLLvM56PGmztTRkgTDbau+78jMxvvnFyvkEHQ2U+PQ5zp4aNF6Zd7lptDx3rt9Z5/djdRusND2rLKv6Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QeEqJxVj; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] soundwire: fix usages of
- device_get_named_child_node()
-To: Markus Elfring <Markus.Elfring@web.de>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, linux-sound@vger.kernel.org,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bard Liao <bard.liao@intel.com>,
- Vinod Koul <vinod.koul@linaro.org>
-References: <20240528063533.26723-1-yung-chuan.liao@linux.intel.com>
- <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <0080bd18-58e1-4e82-96e0-e64d2fa978c9@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1716910877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kCx4sci/j/ylDmcMcirdOkvH40gRMFOmC34x4Z8Beas=;
+	b=QeEqJxVjm2/QOiCLBaUc2sOWKWUxXKZNDOmWLeInuCCi4/oeFnQzeBxkcNSHpETwkoEnv2
+	TMv4WSP3ngi11r2vlmRL+uSs8gQBEm3Xjv9VMOd9BY+kuteaBay1CtWpvTJnA1sZx15gT6
+	pVH7xNO+80gJWPJ/0dOMEs3ytCatm/LimXQTXnINOWCV9RZ5P3QYrml8uuX7LVIvu8p/vC
+	FOIeBCCdYBG8nkLKbzzPY3h/rC02+NzmArb+kIRPc4btJKi7WsnQC62RQSKlEObiZi38Ax
+	jxBbJTNG6MorI7Vrk6xN0PaILzqBInDleUcsWU6Ht/7pSkqCFR5Qcul3mB5Crw==
+Date: Tue, 28 May 2024 17:41:17 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Alexey Charkov <alchark@gmail.com>, Quentin Schulz
+ <quentin.schulz@cherry.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Viresh
+ Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, Diederik de
+ Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] RK3588 and Rock 5B dts additions: thermal, OPP and
+ fan
+In-Reply-To: <6230150.aeNJFYEL58@phil>
+References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
+ <5122636.irdbgypaU6@phil> <8727e1c29bd6f562a7fc3de0ddac62cf@manjaro.org>
+ <6230150.aeNJFYEL58@phil>
+Message-ID: <e67ee8b92ff657a3cf4a1046450639e7@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-
-
-On 5/28/24 10:19, Markus Elfring wrote:
->> Add fwnode_handle_put() to avoid leaked references.
+On 2024-05-28 17:16, Heiko Stuebner wrote:
+> Am Dienstag, 28. Mai 2024, 17:01:48 CEST schrieb Dragan Simic:
+>> On 2024-05-28 16:34, Heiko Stuebner wrote:
+>> > Am Dienstag, 28. Mai 2024, 16:05:04 CEST schrieb Dragan Simic:
+>> >> On 2024-05-28 11:49, Alexey Charkov wrote:
+>> >> > On Mon, May 6, 2024 at 1:37 PM Alexey Charkov <alchark@gmail.com>
+>> >> > wrote:
+>> >> >>
+>> >> >> This enables thermal monitoring and CPU DVFS on RK3588(s), as well as
+>> >> >> active cooling on Radxa Rock 5B via the provided PWM fan.
+>> >> >>
+>> >> >> Some RK3588 boards use separate regulators to supply CPUs and their
+>> >> >> respective memory interfaces, so this is handled by coupling those
+>> >> >> regulators in affected boards' device trees to ensure that their
+>> >> >> voltage is adjusted in step.
+>> >> >>
+>> >> >> This also enables the built-in thermal sensor (TSADC) for all boards
+>> >> >> that don't currently have it enabled, using the default CRU based
+>> >> >> emergency thermal reset. This default configuration only uses on-SoC
+>> >> >> devices and doesn't rely on any external wiring, thus it should work
+>> >> >> for all devices (tested only on Rock 5B though).
+>> >> >>
+>> >> >> The boards that have TSADC_SHUT signal wired to the PMIC reset line
+>> >> >> can choose to override the default reset logic in favour of GPIO
+>> >> >> driven (PMIC assisted) reset, but in my testing it didn't work on
+>> >> >> Radxa Rock 5B - maybe I'm reading the schematic wrong and it doesn't
+>> >> >> support PMIC assisted reset after all.
+>> >> >>
+>> >> >> Fan control on Rock 5B has been split into two intervals: let it spin
+>> >> >> at the minimum cooling state between 55C and 65C, and then accelerate
+>> >> >> if the system crosses the 65C mark - thanks to Dragan for suggesting.
+>> >> >> This lets some cooling setups with beefier heatsinks and/or larger
+>> >> >> fan fins to stay in the quietest non-zero fan state while still
+>> >> >> gaining potential benefits from the airflow it generates, and
+>> >> >> possibly avoiding noisy speeds altogether for some workloads.
+>> >> >>
+>> >> >> OPPs help actually scale CPU frequencies up and down for both cooling
+>> >> >> and performance - tested on Rock 5B under varied loads. I've dropped
+>> >> >> those OPPs that cause frequency reductions without accompanying
+>> >> >> decrease
+>> >> >> in CPU voltage, as they don't seem to be adding much benefit in day to
+>> >> >> day use, while the kernel log gets a number of "OPP is inefficient"
+>> >> >> lines.
+>> >> >>
+>> >> >> Note that this submission doesn't touch the SRAM read margin updates
+>> >> >> or
+>> >> >> the OPP calibration based on silicon quality which the downstream
+>> >> >> driver
+>> >> >> does and which were mentioned in [1]. It works as it is (also
+>> >> >> confirmed by
+>> >> >> Sebastian in his follow-up message [2]), and it is stable in my
+>> >> >> testing on
+>> >> >> Rock 5B, so it sounds better to merge a simple version first and then
+>> >> >> extend when/if required.
+>> >> >>
+>> >> >> [1]
+>> >> >> https://lore.kernel.org/linux-rockchip/CABjd4YzTL=5S7cS8ACNAYVa730WA3iGd5L_wP1Vn9=f83RCORA@mail.gmail.com/
+>> >> >> [2]
+>> >> >> https://lore.kernel.org/linux-rockchip/pkyne4g2cln27dcdu3jm7bqdqpmd2kwkbguiolmozntjuiajrb@gvq4nupzna4o/
+>> >> >>
+>> >> >> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+>> >> >> ---
+>> >> >
+>> >> > Hi Heiko,
+>> >> >
+>> >> > Do you think this can be merged for 6.11? Looks like there hasn't been
+>> >> > any new feedback in a while, and it would be good to have frequency
+>> >> > scaling in place for RK3588.
+>> >> >
+>> >> > Please let me know if you have any reservations or if we need any
+>> >> > broader discussion.
+>> >
+>> > not really reservations, more like there was still discussion going on
+>> > around the OPPs. Meanwhile we had more discussions regarding the whole
+>> > speed binning Rockchip seems to do for rk3588 variants.
+>> >
+>> > And waiting for the testing Dragan wanted to do ;-) .
+>> 
+>> I'm sorry for the delays.
 > 
-> Are you going to respond also to my previous patch review
-> in more constructive ways?
-> https://lore.kernel.org/lkml/eb15ab0a-e416-4ae9-98bb-610fdc04492c@web.de/
-> https://lkml.org/lkml/2024/4/29/493
+> Was definitly _not_ meant as blame ;-) .
 
-Sorry about that, both Bard and I missed your comments.
+Thanks, but I do blame myself a bit for not doing it earlier. :)
 
-On the Fixes tag: I made a deliberate choice to add all the fixes in one
-patch, to show that the usage was copy-pasted and done 'wrong' in
-multiple places. That makes it really hard to add a Fixes tag since the
-different uses were added in a time interval of about 5 years.
-We could split and have multiple patches if that was desired, but I
-would still not include a Fixes tag since the leaked references are not
-that bad, we read the Manager properties on probe, and the peripheral
-properties are generally not used by codec drivers, so it's unlikely
-that any user will ever see a problem that requires a backport in
-linux-stable. This problem was found by reading the documentation while
-adding new things, not by any user report or test failure.
+> The series has just too many discussions threads to unravel on half
+> an afternoon.
 
-The error flow was revisited and hardened in a follow-up patchset which
-also adds new properties for MIPI DisCo 2.1 spec [1], we'll share the
-patches in this kernel cycle.
+Yes, we've touched quite a few areas, for some of which I've already
+started working on the associated patches.  That was one of the reasons
+for the delays.
 
-[1] https://github.com/thesofproject/linux/pull/4857
+>> > So this should definitly make it into 6.11 though, as there is still
+>> > a lot of time.
+>> >
+>> >> As I promised earlier, I was going to test this patch series in
+>> >> detail.
+>> >> Alas, I haven't managed to do that yet, :/ due to many reasons, but
+>> >> I still remain firmly committed to doing that.
+>> >>
+>> >> Is -rc4 the cutoff for 6.11?  If so, there's still time and I'll do my
+>> >> best to test and review these patches as soon as possible.
+>> >
+>> > As early as possible, the hard cutoff would be -rc6 though.
+>> > I guess I'll just start picking the easy patches from the series.
+>> 
+>> I'll do my best to have the patches tested and reviewed in detail 
+>> ASAP.
+>> As a suggestion, perhaps it would be better to take the series as a
+>> whole,
+>> so we don't bring partial merging into the mix.
+> 
+> Patches need to work individually anyway (in correct order of course),
+> so like starting at the top with the general thermal stuff should not
+> create issues ;-)
+
+Of course, but I might actually have some comments and suggestions
+for some of the patches, and addressing those suggestions, if we end up
+agreeing on them, would be a bit messy if some of the patches in the
+series become merged first.
 
