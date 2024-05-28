@@ -1,59 +1,95 @@
-Return-Path: <linux-kernel+bounces-192037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A368D1799
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:54:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6008D179C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1751F230D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDDC280DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4509E16ABF8;
-	Tue, 28 May 2024 09:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D46516ABEB;
+	Tue, 28 May 2024 09:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8W/XxLB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dZgkR5Ls"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E53157E61;
-	Tue, 28 May 2024 09:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C366217E8F4;
+	Tue, 28 May 2024 09:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890083; cv=none; b=Ty/4t54QUciC8eksyMA5bd2SuPSopF3WiOMwj6kaEBUefy0KJkvr90+t1ALj03lN8dwHADceewLtz8B8ET3cvlqhM/RYkxkCAFkjb3MdbraN7j83gn2Y9vLwKTgECHwp1NYhBfPKkiPJiikmHz49yotVMzzAXQw3+3xB7uoLwT0=
+	t=1716890136; cv=none; b=FfOggH2zBz5T1rE3sf1FoPpt4xDpLHVotrTTSjYacIM3HKLma2xq1wIGwXJ3E3fp87XuZ08L9RrYFxGUXzOk6K9l+lAGXlR8gBObAA32Whp5tJX1bXoZSG5ICp3ee6fEG0z1+bj7bzAwsyk3ZtmFiquEG7RcsuWZI9X/1WXM5oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890083; c=relaxed/simple;
-	bh=UoqEy8pe0oo6Q6KLGXA6s4y3pv5XRjR1eEUiP0TzPYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gDkgQ+kdEKzPqbJeknaqtvme2W0+Tucp0tE24aKBq2jpLu4VNM7xBd7PZROyxRqO5aX8eKvdCzdbZBQ4SaOOpKYE2UxMUwtwgaZxRHM4eleZMU0vaHYwhe/bk2FOJN71X+oA1hN2er18zy3YUjFs1G3CLYKjLzpF5bFEkmzYzqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8W/XxLB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1F5C32782;
-	Tue, 28 May 2024 09:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716890083;
-	bh=UoqEy8pe0oo6Q6KLGXA6s4y3pv5XRjR1eEUiP0TzPYg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P8W/XxLBNi4IcCSCy0bmbc+Yvf1q2uC+2oqptIgkXrnrcwgqFvc1xRMe4U0/ksgd7
-	 dkHSXB2n8Op0lDnHD8Mb31OW/KMRIw12HHPEIYOnECPF3tByo9rfcQj9nUjh7p3JDe
-	 4f4iI2MF4rNisJWRGntg+URtETUlcA/FIJqERgjLTJN5FBfaftgxctUI61V5wm0Bq8
-	 aP1YA6eB0dV6I9wu3NoGuewBnjZps65c6T0hJ9B07w1IynPY5ags4cfMsOP9uYV4IZ
-	 byIrItxkQt0m0JiYDmVmA7X6TVVVqouROYS4rrFDXK2vSKFjC12JDkK9EPRSSQcVcV
-	 zqz4sFaMBx46A==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Stefan Berger <stefanb@linux.ibm.com>,
+	s=arc-20240116; t=1716890136; c=relaxed/simple;
+	bh=huXOPXxBBmooXDv7Jaxf8rN49Ys2JGANH6aq7ipaCDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D+Mm4yTnO+duLH/ZG/QeeL97wNsX3e1/eFgX4nqZkqJsSJF0RWijUVL/DzC3JCTAkicB9BDJ/LAckNXMkIr5Z7n4Yd911y8Q+LaU+THV0tA1w32oL65CGQRR9G0BAyx5vaDN/Q48d6L+43EmXZvKqgl8iDFZW75vIBvWla/to+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dZgkR5Ls; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716890134; x=1748426134;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=huXOPXxBBmooXDv7Jaxf8rN49Ys2JGANH6aq7ipaCDU=;
+  b=dZgkR5LsoW4UMrmwMwAJiNNCAKmGciq+S4hqjVX+man4qoGYnm0fSOBq
+   c54wKQxP91I7tRivJmKQRkmXAT1C2Joe6RNeQbKLOW7xWSBNVL6XOZbGy
+   RUMU4xYOF2odoCkFXTfsOdQBkQngMYhOz4smuUzFXJqUjuZdIB30ABvZ5
+   M5qQnZSllpdNvxhb7Io7qkVYViM5iaGnXFfqzzTBFqRNCIrtsySt33F1g
+   jUK/ndu3qTKwyIJ5fssbdSSaiuvR43nHrpGfmG+oZi0vUGe8f0XDZzeW5
+   +igImcjra35A/RZ1cbuMTFV4NXwggNjlmGhYIntp1xFuuqquhsULxTjQ0
+   w==;
+X-CSE-ConnectionGUID: boZZbx1+S7e4Wii/0waItw==
+X-CSE-MsgGUID: G6V+P9otSFi/c+GgUjJctQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13097631"
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="13097631"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 02:55:33 -0700
+X-CSE-ConnectionGUID: QeQ88LlTQHmXZBOwKDT1KQ==
+X-CSE-MsgGUID: 3F9Oadd5Q4+gAgq9uE9iNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="34951647"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 28 May 2024 02:55:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 26228184; Tue, 28 May 2024 12:55:25 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe  <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
 	Ard Biesheuvel <ardb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
+	Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: Rename TPM2_OA_TMPL to TPM2_OA_NULL_KEY and make it local
-Date: Tue, 28 May 2024 12:54:33 +0300
-Message-ID: <20240528095438.1857-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
+Subject: [PATCHv11 00/19] x86/tdx: Add kexec support
+Date: Tue, 28 May 2024 12:55:03 +0300
+Message-ID: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,105 +98,157 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename and document TPM2_OA_TMPL, as originally requested in the patch
-set review, but left unaddressed without any appropriate reasoning. The
-new name is TPM2_OA_NULL_KEY, has a documentation and is local only to
-tpm2-sessions.c.
+The patchset adds bits and pieces to get kexec (and crashkernel) work on
+TDX guest.
 
-Link: https://lore.kernel.org/linux-integrity/ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com/
-Link: https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@suppilovahvero/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
+The last patch implements CPU offlining according to the approved ACPI
+spec change poposal[1]. It unlocks kexec with all CPUs visible in the target
+kernel. It requires BIOS-side enabling. If it missing we fallback to booting
+2nd kernel with single CPU.
+
+Please review. I would be glad for any feedback.
+
+[1] https://lore.kernel.org/all/13356251.uLZWGnKmhe@kreacher
+
+v11:
+  - Rebased onto current tip/master;
+  - Rename CONFIG_X86_ACPI_MADT_WAKEUP to CONFIG_ACPI_MADT_WAKEUP;
+  - Drop CC_ATTR_GUEST_MEM_ENCRYPT checks around x86_platform.guest.enc_kexec_*
+    callbacks;
+  - Rename x86_platform.guest.enc_kexec_* callbacks;
+  - Report error code in case of vmm call fail in __set_memory_enc_pgtable();
+  - Update commit messages and comments;
+  - Add Reviewed-bys;
+v10:
+  - Rebased to current tip/master;
+  - Preserve CR4.MCE instead of setting it unconditionally;
+  - Fix build error in Hyper-V code after rebase;
+  - Include Ashish's patch for real;
+v9:
+  - Rebased;
+  - Keep page tables that maps E820_TYPE_ACPI (Ashish);
+  - Ack/Reviewed/Tested-bys from Sathya, Kai, Tao;
+  - Minor printk() message adjustments;
+v8:
+  - Rework serialization of around conversion memory back to private;
+  - Print ACPI_MADT_TYPE_MULTIPROC_WAKEUP in acpi_table_print_madt_entry();
+  - Drop debugfs interface to dump info on shared memory;
+  - Adjust comments and commit messages;
+  - Reviewed-bys by Baoquan, Dave and Thomas;
+v7:
+  - Call enc_kexec_stop_conversion() and enc_kexec_unshare_mem() after shutting
+    down IO-APIC, lapic and hpet. It meets AMD requirements.
+  - Minor style changes;
+  - Add Acked/Reviewed-bys;
+v6:
+  - Rebased to v6.8-rc1;
+  - Provide default noop callbacks from .enc_kexec_stop_conversion and
+    .enc_kexec_unshare_mem;
+  - Split off patch that introduces .enc_kexec_* callbacks;
+  - asm_acpi_mp_play_dead(): program CR3 directly from RSI, no MOV to RAX
+    required;
+  - Restructure how smp_ops.stop_this_cpu() hooked up in crash_nmi_callback();
+  - kvmclock patch got merged via KVM tree;
+v5:
+  - Rename smp_ops.crash_play_dead to smp_ops.stop_this_cpu and use it in
+    stop_this_cpu();
+  - Split off enc_kexec_stop_conversion() from enc_kexec_unshare_mem();
+  - Introduce kernel_ident_mapping_free();
+  - Add explicit include for alternatives and stringify.
+  - Add barrier() after setting conversion_allowed to false;
+  - Mark cpu_hotplug_offline_disabled __ro_after_init;
+  - Print error if failed to hand over CPU to BIOS;
+  - Update comments and commit messages;
+v4:
+  - Fix build for !KEXEC_CORE;
+  - Cleaner ATLERNATIVE use;
+  - Update commit messages and comments;
+  - Add Reviewed-bys;
+v3:
+  - Rework acpi_mp_crash_stop_other_cpus() to avoid invoking hotplug state
+    machine;
+  - Free page tables if reset vector setup failed;
+  - Change asm_acpi_mp_play_dead() to pass reset vector and PGD as arguments;
+  - Mark acpi_mp_* variables as static and __ro_after_init;
+  - Use u32 for apicid;
+  - Disable CPU offlining if reset vector setup failed;
+  - Rename madt.S -> madt_playdead.S;
+  - Mark tdx_kexec_unshare_mem() as static;
+  - Rebase onto up-to-date tip/master;
+  - Whitespace fixes;
+  - Reorder patches;
+  - Add Reviewed-bys;
+  - Update comments and commit messages;
 v2:
-- linux/tpm.h is not a place for AES_* constants. Move them also to
-  drivers/char/tpm/tpm2-sessions.c.
-- Remove the comment related to TPM2_OA_TMPL as "key tcg documents"
-  is not a legit xerf, and thus only adds obfuscation.
----
- drivers/char/tpm/tpm2-sessions.c | 21 +++++++++++++++++++--
- include/linux/tpm.h              | 15 ---------------
- 2 files changed, 19 insertions(+), 17 deletions(-)
+  - Rework how unsharing hook ups into kexec codepath;
+  - Rework kvmclock_disable() fix based on Sean's;
+  - s/cpu_hotplug_not_supported()/cpu_hotplug_disable_offlining()/;
+  - use play_dead_common() to implement acpi_mp_play_dead();
+  - cond_resched() in tdx_shared_memory_show();
+  - s/target kernel/second kernel/;
+  - Update commit messages and comments;
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index ea8860661876..907ac9956a78 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -80,6 +80,9 @@
- /* maximum number of names the TPM must remember for authorization */
- #define AUTH_MAX_NAMES	3
- 
-+#define AES_KEY_BYTES	AES_KEYSIZE_128
-+#define AES_KEY_BITS	(AES_KEY_BYTES*8)
-+
- static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
- 			       u32 *handle, u8 *name);
- 
-@@ -954,6 +957,20 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL(tpm2_start_auth_session);
- 
-+/*
-+ * A mask containing the object attributes for the kernel held null primary key
-+ * used in HMAC encryption. For more information on specific attributes look up
-+ * to "8.3 TPMA_OBJECT (Object Attributes)".
-+ */
-+#define TPM2_OA_NULL_KEY ( \
-+	TPM2_OA_NO_DA | \
-+	TPM2_OA_FIXED_TPM | \
-+	TPM2_OA_FIXED_PARENT | \
-+	TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
-+	TPM2_OA_USER_WITH_AUTH | \
-+	TPM2_OA_DECRYPT | \
-+	TPM2_OA_RESTRICTED)
-+
- /**
-  * tpm2_parse_create_primary() - parse the data returned from TPM_CC_CREATE_PRIMARY
-  *
-@@ -1018,7 +1035,7 @@ static int tpm2_parse_create_primary(struct tpm_chip *chip, struct tpm_buf *buf,
- 	val = tpm_buf_read_u32(buf, &offset_t);
- 
- 	/* object properties */
--	if (val != TPM2_OA_TMPL)
-+	if (val != TPM2_OA_NULL_KEY)
- 		return -EINVAL;
- 
- 	/* auth policy (empty) */
-@@ -1178,7 +1195,7 @@ static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
- 	tpm_buf_append_u16(&template, TPM_ALG_SHA256);
- 
- 	/* object properties */
--	tpm_buf_append_u32(&template, TPM2_OA_TMPL);
-+	tpm_buf_append_u32(&template, TPM2_OA_NULL_KEY);
- 
- 	/* sauth policy (empty) */
- 	tpm_buf_append_u16(&template, 0);
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index b3217200df28..21a67dc9efe8 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -394,21 +394,6 @@ enum tpm2_object_attributes {
- 	TPM2_OA_SIGN			= BIT(18),
- };
- 
--/*
-- * definitions for the canonical template.  These are mandated
-- * by the TCG key template documents
-- */
--
--#define AES_KEY_BYTES	AES_KEYSIZE_128
--#define AES_KEY_BITS	(AES_KEY_BYTES*8)
--#define TPM2_OA_TMPL	(TPM2_OA_NO_DA |			\
--			 TPM2_OA_FIXED_TPM |			\
--			 TPM2_OA_FIXED_PARENT |			\
--			 TPM2_OA_SENSITIVE_DATA_ORIGIN |	\
--			 TPM2_OA_USER_WITH_AUTH |		\
--			 TPM2_OA_DECRYPT |			\
--			 TPM2_OA_RESTRICTED)
--
- enum tpm2_session_attributes {
- 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
- 	TPM2_SA_AUDIT_EXCLUSIVE		= BIT(1),
+Ashish Kalra (1):
+  x86/mm: Do not zap page table entries mapping unaccepted memory table
+    during kdump.
+
+Borislav Petkov (1):
+  x86/relocate_kernel: Use named labels for less confusion
+
+Kirill A. Shutemov (17):
+  x86/acpi: Extract ACPI MADT wakeup code into a separate file
+  x86/apic: Mark acpi_mp_wake_* variables as __ro_after_init
+  cpu/hotplug: Add support for declaring CPU offlining not supported
+  cpu/hotplug, x86/acpi: Disable CPU offlining for ACPI MADT wakeup
+  x86/kexec: Keep CR4.MCE set during kexec for TDX guest
+  x86/mm: Make x86_platform.guest.enc_status_change_*() return errno
+  x86/mm: Return correct level from lookup_address() if pte is none
+  x86/tdx: Account shared memory
+  x86/mm: Add callbacks to prepare encrypted memory for kexec
+  x86/tdx: Convert shared memory back to private on kexec
+  x86/mm: Make e820__end_ram_pfn() cover E820_TYPE_ACPI ranges
+  x86/acpi: Rename fields in acpi_madt_multiproc_wakeup structure
+  x86/acpi: Do not attempt to bring up secondary CPUs in kexec case
+  x86/smp: Add smp_ops.stop_this_cpu() callback
+  x86/mm: Introduce kernel_ident_mapping_free()
+  x86/acpi: Add support for CPU offlining for ACPI MADT wakeup method
+  ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed
+
+ arch/x86/Kconfig                     |   7 +
+ arch/x86/coco/core.c                 |   1 -
+ arch/x86/coco/tdx/tdx.c              |  96 ++++++++-
+ arch/x86/hyperv/ivm.c                |  22 +-
+ arch/x86/include/asm/acpi.h          |   7 +
+ arch/x86/include/asm/init.h          |   3 +
+ arch/x86/include/asm/pgtable.h       |   5 +
+ arch/x86/include/asm/pgtable_types.h |   1 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/smp.h           |   1 +
+ arch/x86/include/asm/x86_init.h      |  13 +-
+ arch/x86/kernel/acpi/Makefile        |   1 +
+ arch/x86/kernel/acpi/boot.c          |  86 +-------
+ arch/x86/kernel/acpi/madt_playdead.S |  28 +++
+ arch/x86/kernel/acpi/madt_wakeup.c   | 292 +++++++++++++++++++++++++++
+ arch/x86/kernel/crash.c              |  12 ++
+ arch/x86/kernel/e820.c               |   9 +-
+ arch/x86/kernel/process.c            |   7 +
+ arch/x86/kernel/reboot.c             |  18 ++
+ arch/x86/kernel/relocate_kernel_64.S |  25 ++-
+ arch/x86/kernel/x86_init.c           |   8 +-
+ arch/x86/mm/ident_map.c              |  73 +++++++
+ arch/x86/mm/init_64.c                |  16 +-
+ arch/x86/mm/mem_encrypt_amd.c        |   8 +-
+ arch/x86/mm/pat/set_memory.c         |  74 +++++--
+ drivers/acpi/tables.c                |  14 ++
+ include/acpi/actbl2.h                |  19 +-
+ include/linux/cc_platform.h          |  10 -
+ include/linux/cpu.h                  |   2 +
+ kernel/cpu.c                         |  12 +-
+ 30 files changed, 707 insertions(+), 166 deletions(-)
+ create mode 100644 arch/x86/kernel/acpi/madt_playdead.S
+ create mode 100644 arch/x86/kernel/acpi/madt_wakeup.c
+
 -- 
-2.45.1
+2.43.0
 
 
