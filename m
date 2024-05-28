@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-192033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5188D1789
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519388D178D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8091C21E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD46286E42
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA38B16ABC0;
-	Tue, 28 May 2024 09:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE93B167271;
+	Tue, 28 May 2024 09:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UzhZOFAc"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijPY4OqH"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8ED73471
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C020D13D89B;
+	Tue, 28 May 2024 09:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716889876; cv=none; b=DLFQC85sioIaBhVYJg4VQt3/Rlgivu50zhv8eo9SLf1NmVML9BdYwCBEBMpDLBwD38JeU1w9ArbcZUrqp+ljrI1PGmzyf4V7Zvu4gWr+Ci/zkfZDjjnQDuaepa9iFxonD8+Z44nnaNSorOuS1/VbvYfDlVdBlNRTsmTuLFEkED8=
+	t=1716889989; cv=none; b=L9SjFhrVd3KXG5iRAFYQ+cqvOrFJKdNPO04vmDWTnqKJ03ixQYiVoD0qmgZm3Plvp6fIsSjXmrs8HuUXYAfW3b87ToyCv/zBawvZgNT/cbY4UsWsib/yoJAZeJSHuWwDXvarPU+x41xmEoIsCzyGYB5O/eyktelNTffc9AtcbrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716889876; c=relaxed/simple;
-	bh=JU3piwwWDnGNvMBVf2RzteFj95j2LOLHb8lXn+PWxAw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0g66LoJOZjT5pTJX18toA1ji3sw448ToDqYH9rPuUnEXFT+CXST05Clst9v6bxAY0EB7kup+/c7OOZ0NE5Xj9inb/JWDT4orf97uSq0VuzFeK90XtKo0hQFd/3H8u9rJHIzH0S7RDAZYYF3FSqHYWX3/XyqNUt12MM/y9c8K4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UzhZOFAc; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4202c1d19d5so4458325e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 02:51:12 -0700 (PDT)
+	s=arc-20240116; t=1716889989; c=relaxed/simple;
+	bh=w7VJZ0cKWwjQ3VbY/fJF02GZdaxEQ3KlxTZ+whkRYsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X9yTkJHLvXl0Orc4fq8H5WMwJLm3JcJMlKkzzAhvS22Pp8nnyOMVAsyx0phVKKHrOn9Ewlu3gU5G9wCIhv12H7M8r5XXiPbRiORS5yxBx9xfS6rtR+0euf/qpnFQlW4csrv+I4axVrJt/5BGqmCTFihROSzFImuZXVfccEtezxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijPY4OqH; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5d67064885so89014366b.1;
+        Tue, 28 May 2024 02:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716889871; x=1717494671; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lOMADtoLxjzHsEY5TtQ05a0/T1hSTypXFShuTybFu8I=;
-        b=UzhZOFAcE8iXRrGzF6Vshq0XfFUjnDh+YU08zGOUJpS7oDd/xT5XMGUlwi8EmoJCl4
-         mmPMp6qs2WVm5DQqgBMeR85ERjC9gnpRquwVQ9em2GVSKGdUEjNcdBIkyFYq8sdvWqlX
-         l7kw+h4CtKdwFQRokpTH6j58atiah3fIWw/QiJLHSoodyRTGiEIDE5Z8b5nQci55ZMFh
-         SgQ0nRp7VGBAG3zHWl26l5pu2cLYktgP7+db+SFJd8vv3oLCZMLYj5N1pmD9Ccx6q7Yn
-         kCAYy3cAtV9ODgxKxt/RtNgxEdUzD62OhRxlt4UVlEdQnUi6XrYo7LvGYtWlj8gExm4Y
-         WKTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716889871; x=1717494671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716889986; x=1717494786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lOMADtoLxjzHsEY5TtQ05a0/T1hSTypXFShuTybFu8I=;
-        b=VsPQDIqtn78sKtddCuUF5TZi/AKy6TY14woKBZ11VxaSkvH/w4F2HmAn0h7t9hG6uk
-         8pkCwbXp3kfkXtrCsgyh8MibX/QTmMMIRbLD9gZVuBm7thaQfAW/9uhNYSksZesd15lQ
-         b2Yn65Kd7SvT+ux85XR4Vi+eCpus2vd61VPW4LoA8+vYtD5aXavnBUFoszRoHUB6XyPo
-         4LSiihpVXxYfcI0Pux3CXsX1GoQJA2sQNrrq+9WLTmvmOCGTAI0oWQ3fKEJmmipnSvhv
-         9lXbS5K1SRNUUl9r12a1LQXEiULpN1mCt1ZyNkDLolhjMcUReWiSt2CHVsy7EOGtKs0z
-         X7Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgzF5KgZP8ubjNCfnqPoSx30ySHgUyekWS7fmtPnMqk2/FFKEcnqFG64TnKIPFcG1KX5mwp1HhnkNyXSHlvJnnVY2wrJoqIicNiZnW
-X-Gm-Message-State: AOJu0YyiWgcWi9dI9Gt4fOM6fSn6KXBK674kDh+HPL2EERfF95gWtb8b
-	ddtx+NLRW+fM/1yTwiwTy31kkgN8GikihDD2H28cMvq46Wkcvf1PTuVGarz0at8mnVM3F3Pn35/
-	WfFo=
-X-Google-Smtp-Source: AGHT+IF1iZ7fRzvumXkXE9sSLGZIvaAZFZDfvWIf6ZUq4dr8v2NP/LY9fgTAxRxapBiCuGYnLQ05kw==
-X-Received: by 2002:a7b:ce0f:0:b0:41f:fca0:8c04 with SMTP id 5b1f17b1804b1-421089cd231mr99790625e9.11.1716889871476;
-        Tue, 28 May 2024 02:51:11 -0700 (PDT)
-Received: from localhost.localdomain (62.83.84.125.dyn.user.ono.com. [62.83.84.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fbb140sm169410525e9.44.2024.05.28.02.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 02:51:11 -0700 (PDT)
-From: Oscar Salvador <osalvador@suse.com>
-X-Google-Original-From: Oscar Salvador <osalvador@suse.de>
-Date: Tue, 28 May 2024 11:51:09 +0200
-To: syzbot <syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, muchun.song@linux.dev, netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] kernel BUG in __vma_reservation_common
-Message-ID: <ZlWpDZSqKRJaqLp9@localhost.localdomain>
-References: <0000000000004096100617c58d54@google.com>
- <000000000000f9561b06196ef5b3@google.com>
+        bh=w7VJZ0cKWwjQ3VbY/fJF02GZdaxEQ3KlxTZ+whkRYsQ=;
+        b=ijPY4OqH68KPSIH6pYFEYNkCr+Uw0bQ9gjWa3u/bba5hf5eEAiaMTc5LK1/3bV7noN
+         5DprflwHXvEU2SGCYzXtTmosWJCCMQ5o83VKwoe1genwiIURqUIu1tnB5P9IdrtGgjNB
+         5nBJlWmd+vveYimx0SWOJfA4RAMS3uXIZM1T0GrG8DDYToN8YRvmm1bO+ECUYkad2rgH
+         9eiKdewV22bzKpKsN9+m5on1+xWpTJOqKPdprcWuzYpU8aaC07gCv3ptEpD7A8AxplFD
+         phAuB4Whd9FdSUKX2P3A8iDIm/o+KJQ1nEhc1bHyJVjHx5vzbM64Nbpy/ugymzJLlQ//
+         ysOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716889986; x=1717494786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w7VJZ0cKWwjQ3VbY/fJF02GZdaxEQ3KlxTZ+whkRYsQ=;
+        b=A8rAlw5Foy1C7Vx/e7O4IVM/MPKloawgKvN1nRTeLgkrA5KfQmUfbeQ6FAOOhrCgSN
+         FxDKjq2OwIJYuLnVgsD1NhjJb5T1pqhTX0h1dXGzFYta1Yd+wVXzTOWRi94zwJcFinF7
+         V/D+6RhGvZYkKAl8MNPGyP3BT1o4clFzQfmC6Hrv3/qPEM5f9Ls3CXPtqhAM/jgv2rit
+         64Ft0dJSOLfPegFnnp5HpOZko3FohaGp4tB9tC6AI2hVyxi3DUDN1tYxZ5WcI54Z6zug
+         Uonn0eQc6ccEmwtbLotCAkFqQsXMUV1MVsOkW+cSXfVRQs0wfaj7R3Qy7i53CXSlC+Hc
+         9Myw==
+X-Forwarded-Encrypted: i=1; AJvYcCXj7C0ZoUiplYf1StWLH/4MI7PNJ2a1r3e5uNr9QfjASCM+9PiplBlHcmW72bkh8Mv2yTtsWpAUZ8BkN0u/SZTXigG+z86j3TUmMrWEgm7pcKuOu+B/GF3mSAYmfdRGVSDPzlLgDkNADg==
+X-Gm-Message-State: AOJu0YznddAb6xP3kOKUyzYxzKgL+sCsEBc7pv1y6BDiLB2AOdXnZoX2
+	CbVDCdwuNKFXSYfcctoI8ShYWc4lrInu+W4rLhn7T9zCLMFAFRq2pDHZICpvAYE8G8Cekh0QhE2
+	pSYn7Y6uNe80QSgHPoLFdcHLc1Sk=
+X-Google-Smtp-Source: AGHT+IF8aVYcQYVGlXYdgjNwO2xeFVRdGHyx9scEp3Sd4m9SUmEO4DJP72Uo1Uf/CGfjFcj6oJY/ORHS3GuzC/ZLq5E=
+X-Received: by 2002:a17:906:3505:b0:a5a:5b23:c150 with SMTP id
+ a640c23a62f3a-a62646d591bmr1222043966b.41.1716889985903; Tue, 28 May 2024
+ 02:53:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000f9561b06196ef5b3@google.com>
+References: <20240527202424.1430103-1-andy.shevchenko@gmail.com> <CAJZ5v0i8N-SuKyzm1o601G-G9Jis4uciu3gxO-08GN-X-z0LUA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i8N-SuKyzm1o601G-G9Jis4uciu3gxO-08GN-X-z0LUA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 28 May 2024 12:52:28 +0300
+Message-ID: <CAHp75VeOX3NqPxFWduRAXGhw8zDA1a4E1jk6L3DzvfjKX-KjVA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] PNP: Export pnp_bus_type for modules
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Guanbing Huang <albanhuang@outlook.com>, 
+	Guanbing Huang <albanhuang@tencent.com>, Woody Suwalski <terraluna977@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2024 at 05:50:24AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    66ad4829ddd0 Merge tag 'net-6.10-rc1' of git://git.kernel...
-> git tree:       net-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15c114aa980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=48c05addbb27f3b0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d3fe2dc5ffe9380b714b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17770d72980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10db1592980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/05c6f2231ef8/disk-66ad4829.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5f4fc63b22e3/vmlinux-66ad4829.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/67f5c4c88729/bzImage-66ad4829.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d3fe2dc5ffe9380b714b@syzkaller.appspotmail.com
+On Tue, May 28, 2024 at 12:42=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
+> On Mon, May 27, 2024 at 10:24=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > Since we have dev_is_pnp() macro that utilises the address of pnp_bus_t=
+ype
+> > variable, the users, which can be compiled as modules, will be failed t=
+o
+> > build. Export the variable to the modules to prevent build breakage.
 
-#syz test: git://github.com/leberus/linux.git hugetlb-vma_resv-enomem
+..
 
+> > +EXPORT_SYMBOL(pnp_bus_type);
+>
+> Why not EXPORT_SYMBOL_GPL()?
 
--- 
-Oscar Salvador
-SUSE Labs
+To be consistent with the rest, but in any case Christoph suggested
+something else, where _GPL is assumed to be.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
