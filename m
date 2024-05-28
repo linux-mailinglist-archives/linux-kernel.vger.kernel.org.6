@@ -1,148 +1,248 @@
-Return-Path: <linux-kernel+bounces-192811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1078D2286
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819338D228F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65F7287A14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43C81C22C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B323219F9;
-	Tue, 28 May 2024 17:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936DC38DD2;
+	Tue, 28 May 2024 17:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RXtwgXo0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F4p6t/tW"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7192563
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47622C853
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716917806; cv=none; b=iH/EcYJ1afTjgLi1G05ObTnRZi1GLhIJ2fRel5TcBpkJ0f1o4E9CFo78Hz4d8uA0EDi6+uEkm1xfDBgcKQWJ0isoLih0C5wSGIVnzf2d0fW/ytJfNVoRVVc/890719/Q3mdouY3LBRJtcGfuV8sCZWmU1kgS/SOsngHaVy5GmaQ=
+	t=1716917816; cv=none; b=S0xFGvJcPqs/EfyfeoxYrVGm+0cQh3RwwSxmTcNggiOfA1geapuectOMCJEj/Jtx4SKWES7g83ohuT7cSOLLSjzxAq+vlRt+ZP7mhLoPU4SBOG7Ko/hrQ3RP4gZs4A0jI/xjPbi+T8e8Hpp1mehTZGWxM1M9OA6hXPP9ixCNrqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716917806; c=relaxed/simple;
-	bh=x+oFhT456iz1kq+KKraI1EWhEpJSq79E6q3/zHTQJmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UMR4l3UtWoclI/fIpfemeXjMKSGNMI2tjFA7Ck3Elb6w2RWSyyZUbs2A4rzatBnnbyU8YkJyFLXqOb0zN+MPNSFtJYzKEDYdAvxuZzuFPpYFT0lziBULEEGkvqd0fXdLaf2bGpM57TJeRe20TymX9+ppoibe+S75GvFeKQE7I1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RXtwgXo0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SAfsCH006752;
-	Tue, 28 May 2024 17:36:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oXVyVl2a5aDHRU+CCBAA0GXXBqDn6MOFdRg8YLMIyOA=; b=RXtwgXo064HX37dQ
-	QNYL2XTA8QUOIUPe0FwBVb5fpGhal91QtUl2GMCEodXB/O2o8Y96/mRchA5N4L7Z
-	RMn4bdwkK9dUWS4kgycu6qJazmNlxUld7HTugHriS/Qu7tXs6UcudE45JWbYifUX
-	5h90KM+8GEyxAlTjL0Oyg0ha22YTwWAj+u7ESYRc0erPRRPWXny4QY23UdUyIM6R
-	I4VeZh/fAun/qsBbCSl2FaJ6LAaQOlCGYyr9U80wsla7FXs1illjm2hVA32LTefI
-	doeUYk9bkBjEoVyQa8eZlJoC/vz/E2saA0eMkKoww4UmtxF4mEdM0keO8lL0+npL
-	5g2Glg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0x6sc9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 17:36:23 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SHaLnH024183
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 17:36:21 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 10:36:21 -0700
-Message-ID: <d10e14ce-b65f-4dbd-8686-bf8c1796ba06@quicinc.com>
-Date: Tue, 28 May 2024 10:36:20 -0700
+	s=arc-20240116; t=1716917816; c=relaxed/simple;
+	bh=5jqpjWDjCYeF0iZMmfNh1F02B5hbFSGCHFwvks87kGw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jcYQxVMeEG4QJxAIABkVwo7pclp+KhlRiX1A23iiu4p6O5tWqBK0F7sr+u1I0+wm03aidNm68xzmZ7fOPSjV2e5mHYsxrOd7Nz3UjevPFFTurgw+6rJ4SknORLYqAM+IkYL82HY32Hjcdyai0oB7xK6PbUenlP8TJNvwytJzmkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F4p6t/tW; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6269ad9a6fso142246066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716917813; x=1717522613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h1nTYMe9Sz2kd146CNINlSxaoddIUqGPBCQrAMYzjnQ=;
+        b=F4p6t/tWtjSOVYylJbwcLVV6UTyM4sNrgf29x/I2qiaXmlzGuSs/libx4uluVN+nqU
+         Q1wu6ZyJ+t/J5G4TTactfmH72bg+9gQMI6XUV/JPUvIcgZPTSklK6xODqYbVvKUruZsd
+         qGcZJqKk9SLen5tkhgx7pjnVQN79mjH/J3XY5cJYmSYfwEdHgeAgZgJLCWfItyd1aUlo
+         m8SST44+ucTlAuYiprzs7++Q4aRuTHjVObQuxYwumcTSK42endimDnDiRHgNYuUyIKni
+         X0y60pnKnN3oBLyeEGWlqJk5sfZxG3gqEzLBOt9HDhyBsgJwOczZkJZdgWzCHvs7ja5e
+         tsGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716917813; x=1717522613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h1nTYMe9Sz2kd146CNINlSxaoddIUqGPBCQrAMYzjnQ=;
+        b=veB9+OfDcT6BVt5KNXdA/0O4e4Y7YeYJ5jYRPKBNIxXru9Z40kH4lQpY9lUfivlfuS
+         DtE2YSwi8Qjhbm3AKfnEJKxeZZKKeTOrfYaWASCApkeQe7G8rlUSP4sDtkfZQ7yYfs6+
+         410mFyJGrwAW+j5EYv+KfsXKxz9BhtfdywaIBdUb5srmOVCCOe8NZ7UubF/7TPwC8nqo
+         bgBRo1KbXL56k1u7BTuqdIZ3VYJmQFxQrbJ3BfRXSIoyGQPeKTeY+L3N+csRBkIm1Kvx
+         C9Anr1NDNRbvDjUaiFQLtrYPxqvidLc61X7+gMT2fHDtR++JdTEPquGuFVt3QIMAaq0W
+         HZGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuOXWWoH9YSqMinErhxRleq9O0b5ceeZYcWl2p6BP2s+QvlZFEQxsbUaNcSQBIl1RqD484us98owfXF0VLDQWAGwCRqvtb1WRc4ewG
+X-Gm-Message-State: AOJu0YzQNzxOemMlWS8LCTV4WolK64xukVgUSium9Y+u69NpBlfVxBRs
+	/J9Pi07cpxdW5DMunOC+UvKVG8v04zK4fquYmCi/dV3wrbJuRUUm0eDUuhwr8LbN1Sl5V/b2mdQ
+	0Rd2CtSSRaj2be0nXs7LI15Bf05Pk01BLbGaQ
+X-Google-Smtp-Source: AGHT+IFf32eXkuapluEvlBEyoJKJxifsmiVKQ0AvF4ow+8ygeGf1col+Xo1abUwIXzRnUJhSc+Yk6CUkl0RPaD3UYic=
+X-Received: by 2002:a17:906:3c1a:b0:a63:42b6:1976 with SMTP id
+ a640c23a62f3a-a6342b619f5mr156681366b.68.1716917812713; Tue, 28 May 2024
+ 10:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/3] drm/panel: sitronix-st7789v: fix timing for
- jt240mhqs_hwt_ek_e3 panel
-Content-Language: en-US
-To: Gerald Loacker <gerald.loacker@wolfvision.net>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-0-f8351d4a8d4b@wolfvision.net>
- <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-1-f8351d4a8d4b@wolfvision.net>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240409-bugfix-jt240mhqs_hwt_ek_e3-timing-v1-1-f8351d4a8d4b@wolfvision.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: A01wDB9_wDa67KHTNj2WjqJtDFfiRPe6
-X-Proofpoint-ORIG-GUID: A01wDB9_wDa67KHTNj2WjqJtDFfiRPe6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_12,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1011 bulkscore=0 phishscore=0
- malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2405280131
+References: <20240510232128.1105145-1-almasrymina@google.com>
+ <20240510232128.1105145-12-almasrymina@google.com> <9097e78d-0e7d-43bd-bafd-e53a4872a4d1@davidwei.uk>
+In-Reply-To: <9097e78d-0e7d-43bd-bafd-e53a4872a4d1@davidwei.uk>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 28 May 2024 10:36:40 -0700
+Message-ID: <CAHS8izOe-uYjm0ttQgHOFpvp_Tj4_oRHV6d1Y1sWJAZJdCdCBA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 11/14] tcp: RX path for devmem TCP
+To: David Wei <dw@davidwei.uk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, May 22, 2024 at 11:02=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+>
+> On 2024-05-10 16:21, Mina Almasry wrote:
+> > +/* On error, returns the -errno. On success, returns number of bytes s=
+ent to the
+> > + * user. May not consume all of @remaining_len.
+> > + */
+> > +static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *s=
+kb,
+> > +                           unsigned int offset, struct msghdr *msg,
+> > +                           int remaining_len)
+> > +{
+> > +     struct dmabuf_cmsg dmabuf_cmsg =3D { 0 };
+> > +     struct tcp_xa_pool tcp_xa_pool;
+> > +     unsigned int start;
+> > +     int i, copy, n;
+> > +     int sent =3D 0;
+> > +     int err =3D 0;
+> > +
+> > +     tcp_xa_pool.max =3D 0;
+> > +     tcp_xa_pool.idx =3D 0;
+> > +     do {
+> > +             start =3D skb_headlen(skb);
+> > +
+> > +             if (skb_frags_readable(skb)) {
+> > +                     err =3D -ENODEV;
+> > +                     goto out;
+> > +             }
+> > +
+> > +             /* Copy header. */
+> > +             copy =3D start - offset;
+> > +             if (copy > 0) {
+> > +                     copy =3D min(copy, remaining_len);
+> > +
+> > +                     n =3D copy_to_iter(skb->data + offset, copy,
+> > +                                      &msg->msg_iter);
+> > +                     if (n !=3D copy) {
+> > +                             err =3D -EFAULT;
+> > +                             goto out;
+> > +                     }
+> > +
+> > +                     offset +=3D copy;
+> > +                     remaining_len -=3D copy;
+> > +
+> > +                     /* First a dmabuf_cmsg for # bytes copied to user
+> > +                      * buffer.
+> > +                      */
+> > +                     memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
+> > +                     dmabuf_cmsg.frag_size =3D copy;
+> > +                     err =3D put_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEA=
+R,
+> > +                                    sizeof(dmabuf_cmsg), &dmabuf_cmsg)=
+;
+> > +                     if (err || msg->msg_flags & MSG_CTRUNC) {
+> > +                             msg->msg_flags &=3D ~MSG_CTRUNC;
+> > +                             if (!err)
+> > +                                     err =3D -ETOOSMALL;
+> > +                             goto out;
+> > +                     }
+> > +
+> > +                     sent +=3D copy;
+> > +
+> > +                     if (remaining_len =3D=3D 0)
+> > +                             goto out;
+> > +             }
+> > +
+> > +             /* after that, send information of dmabuf pages through a
+> > +              * sequence of cmsg
+> > +              */
+> > +             for (i =3D 0; i < skb_shinfo(skb)->nr_frags; i++) {
+> > +                     skb_frag_t *frag =3D &skb_shinfo(skb)->frags[i];
+> > +                     struct net_iov *niov;
+> > +                     u64 frag_offset;
+> > +                     int end;
+> > +
+> > +                     /* !skb_frags_readable() should indicate that ALL=
+ the
+> > +                      * frags in this skb are dmabuf net_iovs. We're c=
+hecking
+> > +                      * for that flag above, but also check individual=
+ frags
+> > +                      * here. If the tcp stack is not setting
+> > +                      * skb_frags_readable() correctly, we still don't=
+ want
+> > +                      * to crash here.
+> > +                      */
+> > +                     if (!skb_frag_net_iov(frag)) {
+> > +                             net_err_ratelimited("Found non-dmabuf skb=
+ with net_iov");
+> > +                             err =3D -ENODEV;
+> > +                             goto out;
+> > +                     }
+> > +
+> > +                     niov =3D skb_frag_net_iov(frag);
+>
+> Sorry if we've already discussed this.
+>
+> We have this additional hunk:
+>
+> + if (niov->pp->mp_ops !=3D &dmabuf_devmem_ops) {
+> +       err =3D -ENODEV;
+> +       goto out;
+> + }
+>
+> In case one of our skbs end up here, skb_frag_is_net_iov() and
+> !skb_frags_readable(). Does this even matter? And if so then is there a
+> better way to distinguish between our two types of net_iovs?
 
+Thanks for bringing this up, yes, maybe we do need a way to
+distinguish, but it's not 100% critical, no? It's mostly for debug
+checking?
 
-On 5/28/2024 1:32 AM, Gerald Loacker wrote:
-> Flickering was observed when using partial mode. Moving the vsync to the
-> same position as used by the default sitronix-st7789v timing resolves this
-> issue.
-> 
-> Signed-off-by: Gerald Loacker <gerald.loacker@wolfvision.net>
+I would say add a helper, like net_iov_is_dmabuf() or net_iov_is_io_uring()=
+.
 
-Hi Gerald,
+Checking for niov->pp->mp_ops seems a bit hacky to me, and may be
+outright broken. IIRC niov's can be disconnected from the page_pool
+via page_pool_clear_pp_info(), and niov->pp may be null. Abstractly
+speaking the niov type maybe should be a property of the niov itself,
+and not the pp the niov is attached to.
 
-Just wondering, are these new timing values taken from the panel specs? 
-If the timing in the original patch was wrong, maybe we need a fixes tag.
+It is not immediately obvious to me what the best thing to do here is,
+maybe it's best to add a flag to niov or to use niov->pp_magic for
+this.
 
-Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+I would humbly ask that your follow up patchset takes care of this
+bit, if possible. I think mine is doing quite a bit of heavy lifting
+as is (and I think may be close to ready?), when it comes to concerns
+of devmem + io_uring coexisting if you're able to take care, awesome,
+if not, I can look into squashing some fix.
 
+--=20
 Thanks,
-
-Jessica Zhang
-
-> ---
->   drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> index 88e80fe98112..32e5c0348038 100644
-> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> @@ -286,9 +286,9 @@ static const struct drm_display_mode jt240mhqs_hwt_ek_e3_mode = {
->   	.hsync_end = 240 + 28 + 10,
->   	.htotal = 240 + 28 + 10 + 10,
->   	.vdisplay = 280,
-> -	.vsync_start = 280 + 8,
-> -	.vsync_end = 280 + 8 + 4,
-> -	.vtotal = 280 + 8 + 4 + 4,
-> +	.vsync_start = 280 + 48,
-> +	.vsync_end = 280 + 48 + 4,
-> +	.vtotal = 280 + 48 + 4 + 4,
->   	.width_mm = 43,
->   	.height_mm = 37,
->   	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
-> 
-> -- 
-> 2.37.2
-> 
+Mina
 
