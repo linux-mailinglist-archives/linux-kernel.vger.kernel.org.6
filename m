@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-193003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40018D2575
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C458D257C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A3E1C26952
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:07:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA45D1C210B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4741B17839C;
-	Tue, 28 May 2024 20:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA77178CD6;
+	Tue, 28 May 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VAE1xyi7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gK8Rcx5R"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70110A3E;
-	Tue, 28 May 2024 20:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBF210A3E;
+	Tue, 28 May 2024 20:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926835; cv=none; b=sBOoeLIqXrFIU+0mSql8ePM8R9toHqAs4jJZNRNeFj12FcaPv4r0Q4cxCc7tRacXSkJ/YxwhasS4VfhdU7y5CLXY62NB1jWejX9W2EkFHHw+NW2bE2dTnYBS0rHazM8mitohfHuZx/Rurf3HYX3bbByGD4E922xsNFlldAUJ9w8=
+	t=1716926920; cv=none; b=gIAnjIMVgPqCY/B7/65vCVaLubLguN9M0RGz13ffyQ2g/MaDv5m+iToULnmZbRtjxnT9gjVhha8fnz3H2v7gp8LpNDH3RqhqwLpqEWu1LmyvhR7zz8pOD4IUh+UoosobS0z4a6IGbW2Ed6NKG/mJmpo5ryY05kRV+tndeQjgdIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926835; c=relaxed/simple;
-	bh=N6vwJeSmmvYBNdjtiWxQ1nwJbre93PhEvl+twzPPdwA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ctyvSuG67RooiM6nRuvxGVPcWw2Wcp6mu+0eSCn6Fzu3IPX8VSm1r7esFKJI9OTdrS3WVsgzDLEAF79zp1guDApwAYuJJI8n7P/sscX6pvEEfODiOvM/10ns8oQn+afKoUEk28AqszBdFP3RYPcVipVJOTuEvyxwcHkZi8/g+lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VAE1xyi7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBY0Zu007985;
-	Tue, 28 May 2024 20:06:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+A2p0eTGmhORMiKBsVfkaO
-	iYDcBr3l0hvpb+y9Zsx3I=; b=VAE1xyi7gcWrB+xUVHqHJyItlBwRJbcwNGjCqT
-	X6dnTuaVz4z21NLdzbL9jqBGUkLl5i3JLxzL696eOZU+hT2H+Pk8ltuCgPeCxKJ0
-	JvCWJE/I7no1CE+E0wf2Ck5fkFDXGQ2UAvPXXQ5K6BMEnPwjb9jlZD/XFBY3MUIp
-	V784cio0tvBZykkGWrdJCIqg+ubYhqsgQ3oZZ61uh6evPrcUZ/ZH56Y7+a299SSL
-	7Koj35tojSxbXfngsJQ/wu4uEgT8eiFxM1NApfMkv9V397c5+yyUjllaFrajFETZ
-	5Idc4vFXMQe3yHYdXBF5oSRq/FWf84u6ke3zulaGLYed2L9w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0pq47t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 20:06:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SK6jIQ022490
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 20:06:45 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 13:06:45 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 28 May 2024 13:06:44 -0700
-Subject: [PATCH] KVM: x86: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1716926920; c=relaxed/simple;
+	bh=3iCdfDLl99/CGt5OYXsgO2nuQJGe/AEnLEcBIQLsQrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iAu7iUXNvEFI+jSuYWNZFisCmndtkUwxUfktxbe6QhB6+DILzADFQ8zVf87ZtRESZCSu7QV/IbqKMG8Um/o2sSzl8bi7Gueb1FdOFWihT+yT7qjmprQMPwYrCPFSihLX1WIxXlc/gB2xpPgkGY0CI0vnuYRMPvw6DrQE7SaSe0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gK8Rcx5R; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-804e25cdd65so396564241.0;
+        Tue, 28 May 2024 13:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716926918; x=1717531718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GWan09o2cS7AEXz0ZLVPwTi2FL7CeMGhj9lxWBPJhdM=;
+        b=gK8Rcx5RSlKMr7Y7jvKLTn7CRt/5LKp5TYmlhDmJE5cuSzn/V0E8cBGU5xZ4tn15oa
+         L0K/6jURBFQm0L5rz2Z+is7QdOemgdLZh+sexKXgSVEQn7iJMlQfFvNAzzIANcq6BB79
+         aNFQExGY8ELPbEahMBJrLG3skHx+VpFcGEeZXbadrsqryWBk7F3AJ2oEwjpjeyKuOHCf
+         OCnX9S9R5GHz8UhgyzgWlfFB3PBcExXZirsG6sBqFjaKTNcGOeIOMYYTORCwlz8/u7/O
+         fY8c4Bp0f91Vres7dn0lFTd8CFw/dOgTbnZEnsokOFJn4S3wqw7ahCBwQh7OsM/sMQDk
+         CkYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716926918; x=1717531718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GWan09o2cS7AEXz0ZLVPwTi2FL7CeMGhj9lxWBPJhdM=;
+        b=Bc+UjcerZYyqvHt3MgBn7q+XCleVyBO1bW2eCx+XdBU8rWTyPPp9HJalZQRk4jjl2P
+         MestvGm7/kS9BIs27eWVofKIZgvKKn1AKBI/xsAiuJnelFiy3fRpgb22BJ8T4LSzzE+0
+         xjMPs4CFlmkMglliB4zrMFkNd1qkIKBf7BXWcHoNJO/HO6efjCrnz9a9t/bIHdYPoZ99
+         4DLodIMXCzmL1z8KAspMatEgfwPh5nEcKunZp+F2L0e/lAm9NSiOG6FU2UnDRhucwzzw
+         S5gaV3flPxNqbnakZvexTw4X3S1C6oWlpjJBUU3D0SRixOOYjMz8rTW2AeAdl+iMXr2p
+         lRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXWOD/8yyFqTGj/J+HOE2Mj/md6Yxu+Mt6eHTqKoISW6oST6kJAk//rQsWvg0PDB2Lb0QT8XqH2nI9YP1BJQ3evwjR+IwM8xgPioLXvCpEfhMmtS0nC123y7KdvkgcPq6K4YS4hwmCEXcdqI0Bx9yXLDgXtC1d5bZMF3peqHachFRS1Au8lr0h6b6NEEsSG1FdlLiNKKjTitVXxEwTOwJzwTF5HXWTNA==
+X-Gm-Message-State: AOJu0YyH8JOYncgEjWibpEpHmv4dEoh6XgJBBa1/rHnYr67isJXTifhE
+	QID5sBaMZatbn4CYupYDGQtSlTUabe7/RqlaPX8yVX2Jhsf1JVhK4WAngW2G3WQrMg0Je414Pyf
+	emdVM6vfn+hTMvmfKqbjXtwyO8FM=
+X-Google-Smtp-Source: AGHT+IFfJJ5HFZzJyQa9/CEYfyE8LWkzb4Q/29Ke4jwKfXtLTA98EbWRSp4pH5wT6KLVanMlHazgb/V1ONa8yBqFufU=
+X-Received: by 2002:a05:6122:2015:b0:4e4:e998:bf7f with SMTP id
+ 71dfb90a1353d-4e4f02d5449mr13996969e0c.11.1716926917774; Tue, 28 May 2024
+ 13:08:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240528-md-kvm-v1-1-c1b86f0f5112@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFM5VmYC/x3M0QqDMAyF4VeRXC9QO5WxVxm7SGvUsLWOZBNBf
- PdVLz/4z9nAWIUN7tUGyouYzLmgvlQQJ8ojo/TF4J1vXOtvmHp8LQmv3eBdiA21wUGJP8qDrOf
- R41kcyBiDUo7TMX9L/q2YyL6ssO9/FMiW8XcAAAA=
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini
-	<pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tC9DMFtnNQiPYPiD6BqMuqaddMurqHOP
-X-Proofpoint-GUID: tC9DMFtnNQiPYPiD6BqMuqaddMurqHOP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=566 bulkscore=0
- suspectscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 adultscore=0 phishscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280150
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240423175900.702640-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 28 May 2024 21:07:27 +0100
+Message-ID: <CA+V-a8t_6xm100n=t-u38-NAE3dOK5F6cp9Y=gZV6JcxT_+8mQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/13] pinctrl: renesas: pinctrl-rzg2l: Add support for
+ custom parameters
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix the following allmodconfig 'make W=1' warnings when building for x86:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-intel.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-amd.o
+Hi Geert,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/x86/kvm/svm/svm.c | 1 +
- arch/x86/kvm/vmx/vmx.c | 1 +
- virt/kvm/kvm_main.c    | 1 +
- 3 files changed, 3 insertions(+)
+Thank you for the review.
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index c8dc25886c16..bdd39931720c 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -53,6 +53,7 @@
- #include "svm_onhyperv.h"
- 
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("KVM SVM (AMD-V) extensions");
- MODULE_LICENSE("GPL");
- 
- #ifdef MODULE
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 6051fad5945f..956e6062f311 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -74,6 +74,7 @@
- #include "posted_intr.h"
- 
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("KVM VMX (Intel VT-x) extensions");
- MODULE_LICENSE("GPL");
- 
- #ifdef MODULE
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 14841acb8b95..b03d06ca29c4 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -74,6 +74,7 @@
- #define ITOA_MAX_LEN 12
- 
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("Kernel-based Virtual Machine driver for Linux");
- MODULE_LICENSE("GPL");
- 
- /* Architectures should define their poll value according to the halt latency */
+On Wed, May 22, 2024 at 2:21=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > In preparation for passing custom params for RZ/V2H(P) SoC assign the
+> > custom params that is being passed via struct rzg2l_pinctrl_data.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > RFC->v2
+> > - No change
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > @@ -262,6 +262,9 @@ struct rzg2l_pinctrl_data {
+> >         const struct rzg2l_hwcfg *hwcfg;
+> >         const struct rzg2l_variable_pin_cfg *variable_pin_cfg;
+> >         unsigned int n_variable_pin_cfg;
+> > +       unsigned int num_custom_params;
+> > +       const struct pinconf_generic_params *custom_params;
+> > +       const struct pin_config_item *custom_conf_items;
+>
+> Perhaps this should be protected by #ifdef CONFIG_DEBUG_FS, too?
+>
+Agreed, I'll protect custom_conf_items by #ifdef CONFIG_DEBUG_FS.
 
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240528-md-kvm-36f20bc4a5b0
-
+Cheers,
+Prabhakar
 
