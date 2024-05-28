@@ -1,204 +1,367 @@
-Return-Path: <linux-kernel+bounces-192829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3597E8D22D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:53:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA6B8D22D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5506D1C22DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14411C22EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D5B45C14;
-	Tue, 28 May 2024 17:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XH3ubCZ6"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AD945978;
+	Tue, 28 May 2024 17:54:32 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5653FB87
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335383E478
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 17:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716918785; cv=none; b=bBZFECLPX+8k9+jhUAjzDXN5ACmobcik5CCj9y5dRM3U7HZGx1X2YI6VQjaJ+AdCoe/Uo6VdildjrrKfSRfbTaDNMaEX5zF9gTWeU+O5nBRMJtopspBPRffxBftOjcAcv2D6fV1WVcF9aW4F25GphrS+6OOUI+/r5WDIXmMnA+8=
+	t=1716918871; cv=none; b=YihRDYBkkQ6FYrEsHy8a90pwV2kjAEFtIa67FYae4MqjJjqrUVFfafDtPQXC5WLwN8IwVBZk8o9jV8WMbsoRU7Xol3IsGSocQv0XF4Q25F0LUp3IgV3wyh5PDCyX3iTtzVt3KtGcQq6PXTrRASpcJYLc92LUWxi4V0DstZ2l1fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716918785; c=relaxed/simple;
-	bh=eUdSdQ9cdw8tBxu4pJAWUaOjnZMDsr/CJl22+nf6t0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pYyqLycLnEkY4UkVDAtPyD86nmMQiw+GyctpIMH8MNMb8lqXS5h9KrsR+06t5o9+IsnS8KwMXdTVd0SuaiaWRcApmPsE5AwlYGax4T/0Yj96NgW8LNiTdYhxNlaj+kx7YdeZnslZ87ZFnVG44BqKRgthL/i/m3qqVvJGgzn/K4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XH3ubCZ6; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux@armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716918780;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kIXY6m78aF06Wj1IhD21/vXPn+0spKIAiHBeBQ4dyJs=;
-	b=XH3ubCZ6cSON2X8geqtFXGpyqBmynD9m+0Dh+zIa8PyLufNGeVszFN2fi/B1QGjyhyjkA4
-	dunPHc15ZxPn4i+Hs4M1yoECffhVGEMGbijgYV7qIpJuned3ZVXdEGS4F85HlXkodi7/pU
-	wHXJbKBhgMI40tG04o2qKNs3DSelm+E=
-X-Envelope-To: alex.williams@ni.com
-X-Envelope-To: andrew@lunn.ch
-X-Envelope-To: andi.shyti@kernel.org
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: linux-i2c@vger.kernel.org
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: hkallweit1@gmail.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <ebf93967-81d0-46bc-baf5-b20f9336cfa8@linux.dev>
-Date: Tue, 28 May 2024 13:52:56 -0400
+	s=arc-20240116; t=1716918871; c=relaxed/simple;
+	bh=X+qAvp+k10bSBui+7XzzqngR+MoWm8T7/IWPURfscpw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=C9k2HIn/LmERpKaZeBA5HOTNJKy84oeJV+fMUdeGQXU43W4J1X5KIUN5r+T2qS8Yk7FiO32w/Z7GrM6USb8TeBHS4+OkD9y6u0zix6QKB4HPrAyUw9oWVtajybeYYLoG9VVgN7EhDsY/mCV4g642WVt9DP5IfF0ICKsq0ZoCZUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e92491e750so4834839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:54:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716918868; x=1717523668;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QKERntV2zTsEL7ZO+x9sl5YK70MbdqKOLJq1f+JX/rU=;
+        b=Jw/LLzSHOiPcnGrm7L+cJionDNLS9jcd3AGv1PrTy03nC59fl2vZXR40+L6/u8GVn+
+         KcyGbiDX2YGO46irYv60MeBnqgr1gOQvJB9BBgHXjOzHZnSjH8IXePx87itI7Vx+P/Ki
+         5i5oMKNONaEXKemKYSCDRMqyWmkYVxRugp65A3Q6BU0C0sduJqtdnaRe+BpyDUGTb17w
+         YQHh9VXZRMcTBx1YkMJ/aSByCUvLGrIwIvWy/PeOA420GzJl8+g25hQUaH/kCfMrHK0l
+         zOXrtYnpRoI64JPaaUU7RUn+awL/JIcQKmUApDvpyQzfn1YueIZ8/C5H72TSIzXNffmy
+         +TMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh5VzicNVXtvV108j37RAj2Qpc2yWhRr5e/DNvekTMg6nkG6lE9THKNNeBuYOdwvb5K052CoEXvl9pGCt5GPc+jyGfyOHY+d0XeXY5
+X-Gm-Message-State: AOJu0YyNo22ATz70ooJV4kl9wZT+In4HcBWYk2dLXRCOU5kHhOes8bLh
+	12ITzqvo02P1O7vIniti61Ny43fp3PGKibWEkw4KmU3hOtA8Fxj2kCNnbPlGltQf/xq/HHezdVV
+	0dxilRX4hSerVppCosVZcYJ0n9OSrmxZsx3AdTDb/+I7KDR98n6y021o=
+X-Google-Smtp-Source: AGHT+IFXTfVEjKzu/i6zR+lIuwwZ27H0r3XvVuGJdWBRAPqLZuu5OipHiz6h+dWVrjs/d38v0RQRezan560ATrOyaM9OV6fgnLbr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [BUG] SFP I2C timeout forces link down with PHY_ERROR
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Alex Williams <alex.williams@ni.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andi Shyti <andi.shyti@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- linux-i2c@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <ec7907f1-cb5a-41ab-824c-aa0b02440ada@linux.dev>
- <ZlYUNCRroM0up0xk@shell.armlinux.org.uk>
- <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
-Content-Language: en-US
-In-Reply-To: <90873b78-13ba-445e-890a-0b90a653721b@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6602:60c4:b0:7e2:2f0e:5a65 with SMTP id
+ ca18e2360f4ac-7e8c636bf0dmr75471639f.2.1716918868471; Tue, 28 May 2024
+ 10:54:28 -0700 (PDT)
+Date: Tue, 28 May 2024 10:54:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004385ec06198753f8@google.com>
+Subject: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_set_doit
+From: syzbot <syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, chuck.lever@oracle.com, jlayton@kernel.org, 
+	kolga@netapp.com, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	neilb@suse.de, syzkaller-bugs@googlegroups.com, tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
 
-(forgot to CC Alex)
+Hello,
 
-On 5/28/24 13:50, Sean Anderson wrote:
-> On 5/28/24 13:28, Russell King (Oracle) wrote:
->> First, note that phylib's policy is if it loses comms with the PHY,
->> then the link will be forced down. This is out of control of the SFP
->> or phylink code.
->> 
->> I've seen bugs with the I2C emulation on some modules resulting in
->> problems with various I2C controllers.
->> 
->> Sometimes the problem is due to a bad I2C level shifter. Some I2C
->> level shifter manufacturers will swear blind that their shifter
->> doesn't lock up, but strangely, one can prove with an osciloscope
->> that it _does_ lock up - and in a way that the only way to recover
->> was to possibly unplug the module or poewr cycle the platform.
-> 
-> Well, I haven't seen any case where the bus locks up. I've been able to
-> recover just by doing
-> 
-> 	ip link set net0 down
-> 	ip link set net0 up
-> 
-> which suggests that this is just a transient problem.
-> 
->> My advice would be to investigate the hardware in the first instance.
-> 
-> I'll try to keep this in mind, but it's pretty infrequent and I probably
-> won't be able to test anything until I can reproduce it better.
-> 
->> On Tue, May 28, 2024 at 12:57:25PM -0400, Sean Anderson wrote:
->>> Hi,
->>> 
->>> I saw the following warning [1] twice when testing 1000Base-T SFP
->>> modules:
->>> 
->>> [ 1481.682501] cdns-i2c ff030000.i2c: timeout waiting on completion
->>> [ 1481.692010] Marvell 88E1111 i2c:sfp-ge3:16: Master/Slave resolution failed
->>> [ 1481.699910] ------------[ cut here ]------------
->>> [ 1481.705459] phy_check_link_status+0x0/0xe8: returned: -67
->>> [ 1481.711448] WARNING: CPU: 2 PID: 67 at drivers/net/phy/phy.c:1233 phy_state_machine+0xac/0x2ec
->>> <snip>
->>> [ 1481.904544] macb ff0c0000.ethernet net1: Link is Down
->>> 
->>> and a second time with some other errors too:
->>> 
->>> [   64.972751] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
->>> [   64.979478] cdns-i2c ff030000.i2c: xfer_size reg rollover. xfer aborted!
->> 
->> I2C driver bug? From what I can see, this occurs when there is further
->> data to be read, and id->recv_count hits zero. The I2C controller is
->> entirely in control of how many bytes are transferred from the remote
->> device, and it should raise a NAK on the last byte before signalling a
->> STOP condition during a read.
-> 
-> Commit bbf967b223b3 ("i2c: cadence: Handle transfer_size rollover")
-> makes it seem like a hardware error. E.g. Linux thinks we're done but
-> the hardware thinks there's still more data. I've added Alex to CC;
-> maybe he can comment.
-> 
->>> I think some part of the stack should implement a retry mechanism, but
->>> I'm not sure which part. One idea could be to have mdio-i2c propagate
->>> negative errors instead of converting them to successful reads of
->>> 0xffff.
->> 
->> That would unfortunately break phylib's PHY probing.
->> 
->>> - Are I2C bus drivers supposed to be flaky like this? That is, are callers of
->>>   i2c_transfer expected to handle the occasional spurious error?
->> 
->> I2C transfers - to some extent - are supposed to have a number of
->> retries, but that's for the I2C device not responding to its address.
->> Otherwise, the bus is supposed to be reliable (there is no form of
->> error detection however - there's no CRCs or similar.)
->> 
->> The problem with merely retrying the transaction is a register read
->> from a PHY may have side-effects (such as the BMSR's LSTATUS bit
->> which is latched in link-fail state until the next read. Or a
->> register pointer could be incremented. So it's not simple to solve
->> at bus level.
-> 
-> OK...
-> 
->>> - Similarly, are MDIO bus drivers allowed to be flaky?
->> 
->> No.
->> 
->> I think the only realistic method would be for phylib to attempt to
->> reprogram the PHY, but that would need lots of changes to phylib.
-> 
-> Would it? Maybe we just need something like
-> 
-> if (err == -ENOLINK) {
-> 	phy_init_hw(phydev);
-> 	needs_aneg = true;
-> 	phydev->state = PHY_UP;
-> 	err = 0;
-> }
-> 
-> in the phy_state_machine switch statement under PHY_NOLINK and
-> PHY_RUNNING. The phy_init_hw wouldn't even be necessary for this case
-> (but would probably be a good idea in the general case where
-> master/slave resolution fails).
-> 
->> Many drivers now do not check whether the PHY accesses they are
->> performing succeeded or not, and rely on the failure being permanent.
-> 
-> Well, this driver does, which is how the error gets propagated all the
-> way up to phy_state_machine. 
-> 
->>> Of course, the best option would be to fix cdns-i2c to not be buggy, but
->>> the hardware itself is buggy in at least one of the above cases so that
->>> may not be practical.
->> 
->> Well, I don't think there's much option. If I2C drivers are flakey maybe
->> its better to use GPIOs instead of the broken "inteligent" hardware.
-> 
-> The CPU on this device is already underpowered, so I'd rather not resort
-> to bitbanging.
-> 
-> --Sean
+syzbot found the following issue on:
 
+HEAD commit:    72ece20127a3 Merge tag 'f2fs-for-6.10.rc1' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=125f397c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6be91306a8917025
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1e76d963f757db40f91
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14be4d58980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e0adb12828a5/disk-72ece201.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/08a675560ce7/vmlinux-72ece201.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b7124361f0f7/bzImage-72ece201.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com
+
+INFO: task syz-executor:6423 blocked for more than 143 seconds.
+      Not tainted 6.9.0-syzkaller-10215-g72ece20127a3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:26544 pid:6423  tgid:6423  ppid:6410   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x4a00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8e1/0xcb0 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3b90c7cee9
+RSP: 002b:00007ffc41a63068 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f3b90dabf80 RCX: 00007f3b90c7cee9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007f3b90cc949e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3b90dabf8c R14: 00007f3b90dabf80 R15: 0000000000000000
+ </TASK>
+INFO: task syz-executor.1:6455 blocked for more than 143 seconds.
+      Not tainted 6.9.0-syzkaller-10215-g72ece20127a3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.1  state:D stack:26544 pid:6455  tgid:6455  ppid:6425   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x4a00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8e1/0xcb0 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f01a5c7cee9
+RSP: 002b:00007fff7f6d4b28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f01a5dabf80 RCX: 00007f01a5c7cee9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007f01a5cc949e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f01a5dabf8c R14: 00007f01a5dabf80 R15: 0000000000000000
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/1:0/25:
+ #0: ffff8880b953e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+ #1: ffff8880b9528948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:988
+ #2: ffff8880b9529430 (krc.lock){..-.}-{2:2}, at: kvfree_rcu_bulk+0x26b/0x4e0 kernel/rcu/tree.c:3383
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+2 locks held by getty/4842:
+ #0: ffff88802f00a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+4 locks held by kworker/0:4/5197:
+ #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90003b77d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90003b77d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8f5d3fc8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+ #3: ffffffff8e3390f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:291 [inline]
+ #3: ffffffff8e3390f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:939
+2 locks held by kworker/u8:3/5328:
+2 locks held by syz-executor.2/6408:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor/6423:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.1/6455:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.4/6482:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.3/6486:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.2/6501:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor/6506:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.1/6523:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.4/6545:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.3/6560:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.2/6584:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor/6589:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.1/6611:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.4/6632:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.3/6647:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.2/6671:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor/6676:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}
+, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.1/6691:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.4/6713:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.3/6727:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.2/6751:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor/6756:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.1/6772:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+2 locks held by syz-executor.4/6793:
+ #0: ffffffff8f63a5d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8e600528 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
+1 lock held by syz-executor.3/6795:
+ #0: ffffffff8f5d3fc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8f5d3fc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x842/0x10d0 net/core/rtnetlink.c:6592
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 30 Comm: khungtaskd Not tainted 6.9.0-syzkaller-10215-g72ece20127a3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 6795 Comm: syz-executor.3 Not tainted 6.9.0-syzkaller-10215-g72ece20127a3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:__slab_alloc_node mm/slub.c:3804 [inline]
+RIP: 0010:slab_alloc_node mm/slub.c:3988 [inline]
+RIP: 0010:__do_kmalloc_node mm/slub.c:4120 [inline]
+RIP: 0010:kmalloc_node_track_caller_noprof+0x10d/0x450 mm/slub.c:4141
+Code: e4 0f 84 2b 01 00 00 85 c0 0f 85 23 01 00 00 4c 89 7c 24 10 0f 1f 44 00 00 65 48 8b 05 3c e0 14 7e 49 8b 0c 24 48 8b 54 08 08 <48> 8b 2c 08 48 85 ed 0f 84 57 01 00 00 48 8b 7c 08 10 48 85 ff 0f
+RSP: 0018:ffffc9000c0068b8 EFLAGS: 00000246
+RAX: ffff8880b9500000 RBX: 0000000000000000 RCX: 00000000000426d0
+RDX: 000000000005bc31 RSI: 0000000000000008 RDI: ffffffff8e443c60
+RBP: 0000000000000000 R08: ffffffff8fac0c6f R09: 1ffffffff1f5818d
+R10: dffffc0000000000 R11: fffffbfff1f5818e R12: ffff888015041500
+R13: 0000000000000cc0 R14: 00000000ffffffff R15: 0000000000000005
+FS:  000055556a2ec480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5c15af311c CR3: 000000005ebda000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ kvasprintf+0xdf/0x190 lib/kasprintf.c:25
+ kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
+ kobject_add_varg lib/kobject.c:368 [inline]
+ kobject_init_and_add+0xde/0x190 lib/kobject.c:457
+ rx_queue_add_kobject net/core/net-sysfs.c:1105 [inline]
+ net_rx_queue_update_kobjects+0x1cf/0x5b0 net/core/net-sysfs.c:1160
+ register_queue_kobjects net/core/net-sysfs.c:1895 [inline]
+ netdev_register_kobject+0x224/0x320 net/core/net-sysfs.c:2140
+ register_netdevice+0x11ff/0x1a10 net/core/dev.c:10374
+ veth_newlink+0x628/0xcd0 drivers/net/veth.c:1829
+ rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x158f/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x89b/0x10d0 net/core/rtnetlink.c:6595
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8e1/0xcb0 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5c15a7ebdc
+Code: 1a 51 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 60 51 02 00 48 8b
+RSP: 002b:00007ffd345dd670 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f5c166d4620 RCX: 00007f5c15a7ebdc
+RDX: 0000000000000068 RSI: 00007f5c166d4670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffd345dd6c4 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f5c166d4670 R15: 0000000000000000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
