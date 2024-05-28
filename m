@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-192685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0EF8D20AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:45:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF778D20B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2601C234B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BA0282EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2013216D4E5;
-	Tue, 28 May 2024 15:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2624317083D;
+	Tue, 28 May 2024 15:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIBPE85K"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qabe9H+l"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D6816F274
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8EC10A2A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716911117; cv=none; b=G27HdKXnXpEPrm5lal7xmNVmM/Xm/R8THWcu9dhVNFW4pPKLrqeNAuYTFQCK2IjtiV2fuqP6fUdJqGGqcKEodKRl2JPmXs16McxAzDWIpzLqNdvn85CIUCgfhs1c0yIXau5P9cjNFCnE70mTyp0ns4O3UWfDhJThzm2NDwgR7U8=
+	t=1716911154; cv=none; b=ltahXG4sDFR+fjLCX3K/3ybmvVaxCq+NPnF2EH3mTH09iGqn275f/J+1P6FBtXtsF8gatW/jgt2YlXFmIxSlfQX+fvMM4rc63UblQmkHPpFlupeuw1nCj4cPT1O+4Afe/qzpQnLeeWy2l6kxObbXEIUwDkBdXTjisKIvfxFnmKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716911117; c=relaxed/simple;
-	bh=BAqdiD54TVKMF2ArvdIVU/2qSdxUZTE4NpBmi7flC5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMx92CyBuk5mUmZMgBHIqYeW6qjTNNOmfgMa784WyWUbSEjTRtcicBbhLxBj2jC+yacwB7SKGbH+PwK8i+V5kMIFuVxpnh3ZH2/1RQ1diSeT1dkvWwGYikMDYcIiQvVNOYxMVdw3TRdTuScIFa2qE58qX46oJkgjVcVZHYVjmt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fIBPE85K; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6269885572so730008866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:45:15 -0700 (PDT)
+	s=arc-20240116; t=1716911154; c=relaxed/simple;
+	bh=q1MfIh6grn0AbMqh8NZCYzVnQZtoO53qklXU8iwv/n0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZrQwBD/Ux4CvPalxqta/t3mT00FNyaqy3tUTTAowuMcpSnECJoqzlYkHiIizLwlc2/0OXAXT6CYWZDxigx21Sw935mKItNJeyV6Bm5nuGpUGIADQ4mihcXM/m4mQS680nqvFLT6cErNS2YjPClxbvr8o9aqARSZUDiqqMYTm4h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qabe9H+l; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-529614b8c29so1698264e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716911114; x=1717515914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BAqdiD54TVKMF2ArvdIVU/2qSdxUZTE4NpBmi7flC5k=;
-        b=fIBPE85Kt0gTproB3Uc/n714X4xBQKzVCYlMa8vvt6+igkkmPm7bAlYXXFv3aMPgdP
-         th2UBj+CPhy8+bLSm56SsUiK7GbYDaNMqoFurauvoPqr8abPm0LCnTK45MMOOobT6noR
-         s6Cg5fbkyN/wwRX0zl7uePdEDZDKUqRBR984lOCPAo3KfYyTvBZubGzzxcUHBv751DFg
-         z65mX54FjGFG3VLMGN5UPDKJk8h1/mEj/oKZ+UpW7+vPXFApZ/YYqpUlKgs4mWtvEVXP
-         flZNgvevI9HFvpbMZAL3yBSjF4tdpKd5htuorXA6c4KuGePf19GeqtVaNTTCMeow6P5g
-         uQ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716911114; x=1717515914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1716911151; x=1717515951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BAqdiD54TVKMF2ArvdIVU/2qSdxUZTE4NpBmi7flC5k=;
-        b=dknZJD5As24QcejMEF0u0F0iamgtloZL4u5L7rNGtE6IoZwSEvdF3xQ8mHkSbqGvcp
-         RDG0pT+75yN7XOemYlRB5GtVh60+QCci4Y9r8C54GFCTDnGTIQqHyoaMyNkqqtH4oA/a
-         lLR5VYz2ZpxCr3DGA5kcxzuMwwU3ZcLW2w1RXrzPWTxCFf0PXJozASJAD72S2LsFUskM
-         yCQfKtUr0QFl2aarlaBT/GCaktt4x0r1BBzGchcdnIFXcuqqGzPd6347Pyu01Za4E0sX
-         i2Kr+ZejlLN7JeubXDjZCsX+x+GuUqgtE8DlpR6fZhzua1wN9WpAxYPfDXuUTVKOm+zd
-         ktIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU99aNPnZuFBFwiytKSCfvB46XzYfMGwNYkn/0zEFW1Bndo+jptYCzKjF9JzXMPyik0K3UvguBGpanc3pgNoQu53SJHGB+yvVHxRy2t
-X-Gm-Message-State: AOJu0Yz6+3U3tHrxzAkQhtnBrSabK8L46rWZWfmmlb/1KZIgp10KABAh
-	GWFy55GLq4WC7sTcetQaODzy/PeJYfY3WryW/boD5zlf+NrcO+bV
-X-Google-Smtp-Source: AGHT+IHFtIWeGvLGBGVKlslaG9Rhaz44EvKtwsAVVm17A/hYopaxtFMbiLY0nCtAu/PznGi1PKkMeg==
-X-Received: by 2002:a17:906:b20a:b0:a59:c9f3:837d with SMTP id a640c23a62f3a-a623e9d5525mr1194850066b.30.1716911114010;
-        Tue, 28 May 2024 08:45:14 -0700 (PDT)
-Received: from rex (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8e585sm621718666b.184.2024.05.28.08.45.13
+        bh=nFmMUOqq/DxjQLGDn1p9OXuxdtzNvobZTao/Pq5+Wh0=;
+        b=Qabe9H+l8FP+tY5BltxXqGX4OEKn6zVfE9UXd0vtVSdsJo7Gn7EcGL33X7xyXW1bbd
+         VeS85XjOInh8qxHBdPQQLiYhN/UnKRVYFk4FyKwzt6dMN30yj24Tn0oVYs39sffUttOn
+         ZuIfgHM9o1EkNawSkze0oUvgZeHRJrC2T/EruCUfCGab2VJ0VVGem36C4KG0uGbwOIHN
+         c4kyhLHO4+pWwTnk2nver4Mxscc1vyfQadO0cQPvvodoJvLIrYwcxaD9YVBkIJT0AcSD
+         tN33i3AZtOSoBmDYyc+pwUsbl7Xh3vFVzBantmGAPO1vxuvLIDUMydiUp0aU+qPcRa9v
+         iBAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716911151; x=1717515951;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nFmMUOqq/DxjQLGDn1p9OXuxdtzNvobZTao/Pq5+Wh0=;
+        b=ASO+cViJSXyZcro3yqgZNvfgrh82VK47KYo8jU/SC2lNSjmByf/iavKi0E/QxqR5iS
+         nEQw65DI+q/Zt1u+nRr6c1YRSBQ15gNt+Iq8EiV0SlAWJMAiVLa8c7zoJ/IbXjuXwNIj
+         +n1BeTx96maEWY8IjOiVeeqtmPiR25PvQdwVlJ9poKd3XnSszE6DFywdgYG36Zn+kEhO
+         VqTnt7ufXdnoS1eR/NvpvOi8pLfhxgC8/VMFRhyXSFeM3Ht3Qm/8jy294zrQDe2CT+xL
+         ZE+ssYd258bQSp9oEvmqEL1yTVeqUqHwQcVwncuou2Z3nwK6v50jdWNtDEDKUO7Bitn1
+         McIw==
+X-Gm-Message-State: AOJu0YzwL5gMv0YQSYrwkvJKmnZMgFJ6kCrPZF0c2oLBUyuNI2aTvGh2
+	w1xUEsKhbsxjTe05DXRMdFbV/sviMVijKYu6dNBFaE5RthGJXNacx8RWdbBCkp0=
+X-Google-Smtp-Source: AGHT+IFyd+K6kPVnJWxj/zgHmtriMwtlD95kXeyD2gmOf8sEQnrtsEeBok9X8nSc0c7CY2/uKzFc2Q==
+X-Received: by 2002:a05:6512:34c2:b0:51d:d630:365c with SMTP id 2adb3069b0e04-52965290455mr8728002e87.4.1716911150920;
+        Tue, 28 May 2024 08:45:50 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a634a082b62sm71166566b.208.2024.05.28.08.45.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 08:45:13 -0700 (PDT)
-Date: Tue, 28 May 2024 17:45:12 +0200
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kmsan: introduce test_unpoison_memory()
-Message-ID: <ZlX8CLwwtv5ry7FZ@rex>
-References: <20240524232804.1984355-1-bjohannesmeyer@gmail.com>
- <CAG_fn=U2U5j8VxrkKGHEOdbpheVXM08ExFwkqNhz4qv2EtTjWg@mail.gmail.com>
+        Tue, 28 May 2024 08:45:50 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thorsten Blum <thorsten.blum@toblux.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20240527134946.338398-2-thorsten.blum@toblux.com>
+References: <20240527134946.338398-2-thorsten.blum@toblux.com>
+Subject: Re: [PATCH v2] w1: Drop allocation error message
+Message-Id: <171691115003.217970.5074030398112131426.b4-ty@linaro.org>
+Date: Tue, 28 May 2024 17:45:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG_fn=U2U5j8VxrkKGHEOdbpheVXM08ExFwkqNhz4qv2EtTjWg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, May 28, 2024 at 12:20:15PM +0200, Alexander Potapenko wrote:
-> You are right with your analysis.
-> KMSAN stores a single origin for every aligned four-byte granule of
-> memory, so we lose some information when more than one uninitialized
-> value is combined in that granule.
-> When writing an uninitialized value to memory, a viable strategy is to
-> always update the origin. But if we partially initialize the granule
-> with a store, it is better to preserve that granule's origin to
-> prevent false negatives, so we need to check the resulting shadow slot
-> before updating the origin.
-> This is what the compiler instrumentation does, so
-> kmsan_internal_set_shadow_origin() should behave in the same way.
-> I found a similar bug in kmsan_internal_memmove_metadata() last year,
-> but missed this one.
 
-I appreciate the explanation. Makes sense.
+On Mon, 27 May 2024 15:49:47 +0200, Thorsten Blum wrote:
+> Drop the custom error message because kzalloc() already prints
+> allocation failures.
+> 
+> 
 
-> I am going to send a patch fixing this along with your test (with an
-> updated description), if you don't object.
+Applied, thanks!
 
-Yes, that's fine. Thank you.
+[1/1] w1: Drop allocation error message
+      https://git.kernel.org/krzk/linux-w1/c/26bf5fc86033162dbd2d5759094cbd724313d55b
 
--Brian
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
