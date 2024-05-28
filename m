@@ -1,472 +1,290 @@
-Return-Path: <linux-kernel+bounces-193224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA7F8D28A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3868C8D28A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 01:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DFD1F272CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:16:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12EC288E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E059A13F432;
-	Tue, 28 May 2024 23:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzdCzKHi"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9853513EFFB;
+	Tue, 28 May 2024 23:18:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA5013D88B;
-	Tue, 28 May 2024 23:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D47405F8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 23:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716938167; cv=none; b=DIQyDYBbzjI5G8sxpKALW7zPKMOa8HUrXLEEBbQW79vETOoHeavvRIMXbU49xkY8x17uR2Wwba2cd9Skl/cEFtfooLchb6EnDfc81jddEOmoBWaF3e2YaLtBdtupJ+qm1LGP/1wPgRXDryWscWSv7ixASVT5TSiHkAF11ywIi7k=
+	t=1716938285; cv=none; b=hPW5PI9jrIP98e1E2wsgf1Srl0Fy2R+v7wIlaXoTOoi+2ZwOc11d6eyrcKYWeULr189gNfT9grrfved57iSzlzBYKsRau4VZld/m6CRgirOvadJ40W2rpoA6d3CfKVdPQ5vzU4IUWxCNIZFI2Bxv5e7+1UlzOQh/tD+Dv0AIbuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716938167; c=relaxed/simple;
-	bh=NJvN2os/eSTdnSwTQAlcmvzO1kk2mWn/Kuw6bpb2T3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNGvR570pqMIcRTh7953KAa+XNzmxY8Q4st0Q7Rk/twDCkBYR5dMx9yodbufrCydle/6sDthHuJGNcU2nuD3FIHa1G6e5Rqy9KFQiSpEcQ18HCCw/dJpjI+B93Uep9WBF/wwruIvVU7qSRCZbxbTYsc2AFi5OkdXhxQbsCjJcCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzdCzKHi; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SMwJ1v003386;
-	Tue, 28 May 2024 23:15:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=bfHOSuq9lj+bRqOXKhPLNPxdtVsXTjW5tabNx0zKrT0=;
- b=rzdCzKHi2mVDoLtgBG2FbRQRDtptvs/wA5s6aJ0vhAzANa+abCVhEOCvJOWLnl0J+0m9
- 1wRyhco3233H2k9WVSFAJ22E7V5HID4ruaUeVpmSb2MoiBRROu66VcAQfzxnQJRSmzJ3
- xTFv3nqvwQzgUNTY7bxkGE5zEVg7XHCmFUoTAO6WqTESlqYhTym4KMHz1EXNWMmge+P+
- ncJzD4kaspsrk+7ZuvedAZWPpOCKX8AIYyf48wBdWn3tcsg+fKDYQS8qd1mjDtudNJGS
- 5XSOZ/blJWsQI+h9bO3hsm+rum39EbdoBmcQHcAiFIcLdkgRfiMVpGPdDaWA+zzJOp74 yw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydr2t02wq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:15:44 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SNFhV8027768;
-	Tue, 28 May 2024 23:15:43 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydr2t02wn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:15:43 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SKRp4c002364;
-	Tue, 28 May 2024 23:15:42 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpb0gna4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:15:42 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SNFdZN30081352
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 23:15:42 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D4BAE58067;
-	Tue, 28 May 2024 23:15:39 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 44FC15805B;
-	Tue, 28 May 2024 23:15:38 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 May 2024 23:15:38 +0000 (GMT)
-Message-ID: <ce1d3188-046d-42c1-b8a7-17325d791ec5@linux.ibm.com>
-Date: Tue, 28 May 2024 19:15:37 -0400
+	s=arc-20240116; t=1716938285; c=relaxed/simple;
+	bh=Aqmx7t7eJ61Ld29gZZuVG5ovtSWSDnuXvkqWTNeJpnI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kE3DYhhEyF9fBXp/OeWkc0QM4ydSLtDuqz21TwwdUzlFXE9YKcP5rK6qEwg3n6ODuSpHILM2JCKMfx9Ebs+KPjq7OOVPlar/LWB2MnCJQVqsV7TXScot0RYMRtKFrsrQZytOGY6e1nLx6FmdauV1a3bqbF4csSDazVHDC96E9nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so187402739f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716938283; x=1717543083;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DHw0Hv5DFEiICw7Ywk5qSmCz18sTHQoFeblczRwxPI=;
+        b=LdyAYjj2+lCH16oeQf1i6+uJSdWLcjQgvuW/SSKmQoOjS6sqmQT7MmLRW8UQexVyj8
+         lcWQpdpAwehXY8gC4kEmuzMvFPJJhgZjxkHJkJP02so4gNCVmAHXgu6aLYoZ69DiCmdA
+         RBHThOvPGng39r1hHi4AvcK20r47t2JkcCRBAU5Kk2D3TeP4Mxc5fV9RsnDd7MUh16ln
+         s9j/5rDwzAkN3BINC1R4viUK5kFLer4tdsnuLVhOo5iCBUtd9Kzb4mfM9YZ+/hFqQf2R
+         tA27mLDDOybU5zFiM5IYGqrV9qu1ymyEMVTEJ/RvkHLaOLQbZ7A4bdi1d0xazXgsJrg/
+         LPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiPTJKzhq9cMlRpyZZBsVvO//R3svH6qX3IrnnQft5quz91MGgB8KeNkKYjcbguEC4MAtdRd+iiSqr8cII1mJ9AMmmeU5ItLR72mAg
+X-Gm-Message-State: AOJu0YzTlAD4yvEUt+/GE2A08eD6CwHtSaAV0rKsh8LM8hBgO/zuhxqc
+	Vxyg+Ha2e7fEu5/louRjnVbKfe8DGOuM3LJoFdFn49a+HeXRRzqsfnElm2lx28On6gGrMbeYBDE
+	0FNy5PZXO7QoUcbG37zd1IoAt6+laNyLa+8addjJnIVVGkgmfAKV+AYw=
+X-Google-Smtp-Source: AGHT+IGxUamHdKJom5cAFVtBZw33OTkWa9XqwA0ryKAoChhmhWhF+jgmmj/93QXNHoJzx3a26pi31j4Dh41c+iqX1nWUEGmvKPzm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/5] keys: asymmetric: Add tpm2_key_ecdsa
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-crypto@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        David Howells
- <dhowells@redhat.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Ard Biesheuvel <ardb@kernel.org>,
-        Mario Limonciello <mario.limonciello@amd.com>
-References: <20240528210823.28798-1-jarkko@kernel.org>
- <20240528210823.28798-6-jarkko@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20240528210823.28798-6-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: KnIsXn6F84IouzTxgsW5fXZ04P0_hbkH
-X-Proofpoint-GUID: SdHgyK24q7evp5TVwNqIkF2g9_9iujvs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- phishscore=0 adultscore=0 mlxlogscore=999 clxscore=1011 lowpriorityscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405280172
+X-Received: by 2002:a02:c017:0:b0:4b1:8aa:af6b with SMTP id
+ 8926c6da1cb9f-4b108aab105mr90288173.1.1716938283390; Tue, 28 May 2024
+ 16:18:03 -0700 (PDT)
+Date: Tue, 28 May 2024 16:18:03 -0700
+In-Reply-To: <20240528225829.2818-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007ba6d806198bd825@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in chrdev_open
+
+loop0: detected capacity change from 0 to 4096
+==================================================================
+BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
+Read of size 8 at addr ffff888077a232e8 by task syz-executor.0/5460
+
+CPU: 0 PID: 5460 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
+ __list_add_valid include/linux/list.h:88 [inline]
+ __list_add include/linux/list.h:150 [inline]
+ list_add include/linux/list.h:169 [inline]
+ chrdev_open+0x2a9/0x630 fs/char_dev.c:396
+ do_dentry_open+0x98b/0x1760 fs/open.c:960
+ do_open fs/namei.c:3650 [inline]
+ path_openat+0x289f/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1411
+ do_sys_open fs/open.c:1426 [inline]
+ __do_sys_openat fs/open.c:1442 [inline]
+ __se_sys_openat fs/open.c:1437 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1437
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc31de7dea9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc31ec9f0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fc31dfabf80 RCX: 00007fc31de7dea9
+RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
+RBP: 00007fc31deca4a4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fc31dfabf80 R15: 00007ffe9eccbdd8
+ </TASK>
+
+Allocated by task 5449:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4019
+ ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
+ alloc_inode fs/inode.c:261 [inline]
+ new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
+ new_inode+0x22/0x1d0 fs/inode.c:1033
+ ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
+ ntfs_create_inode+0x5f1/0x3680 fs/ntfs3/inode.c:1347
+ ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:122
+ vfs_mknod+0x36d/0x3b0 fs/namei.c:4009
+ do_mknodat+0x3ec/0x5b0
+ __do_sys_mknodat fs/namei.c:4087 [inline]
+ __se_sys_mknodat fs/namei.c:4084 [inline]
+ __x64_sys_mknodat+0xa9/0xc0 fs/namei.c:4084
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 8:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2195 [inline]
+ slab_free mm/slub.c:4436 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4511
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ ipv6_get_lladdr+0x295/0x3d0 net/ipv6/addrconf.c:1935
+ mld_newpack+0x338/0xa90 net/ipv6/mcast.c:1754
+ add_grhead net/ipv6/mcast.c:1849 [inline]
+ add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1987
+ mld_send_cr net/ipv6/mcast.c:2113 [inline]
+ mld_ifc_work+0x68e/0xd90 net/ipv6/mcast.c:2650
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3072 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
+ shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
+ shrink_dcache_parent+0xcb/0x3b0
+ do_one_tree+0x23/0xe0 fs/dcache.c:1538
+ shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1555
+ generic_shutdown_super+0x6a/0x2d0 fs/super.c:621
+ kill_block_super+0x44/0x90 fs/super.c:1677
+ ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1798
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888077a22c40
+ which belongs to the cache ntfs_inode_cache of size 1760
+The buggy address is located 1704 bytes inside of
+ freed 1760-byte region [ffff888077a22c40, ffff888077a23320)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x77a20
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff888029d33a01
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff88801a3928c0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080110011 00000001ffffefff ffff888029d33a01
+head: 00fff00000000040 ffff88801a3928c0 dead000000000122 0000000000000000
+head: 0000000000000000 0000000080110011 00000001ffffefff ffff888029d33a01
+head: 00fff00000000003 ffffea0001de8801 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5449, tgid 5448 (syz-executor.0), ts 81273391795, free_ts 81190252679
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2264
+ allocate_slab+0x5a/0x2e0 mm/slub.c:2427
+ new_slab mm/slub.c:2480 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
+ __slab_alloc+0x58/0xa0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4019
+ ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
+ alloc_inode fs/inode.c:261 [inline]
+ iget5_locked+0xa4/0x280 fs/inode.c:1235
+ ntfs_iget5+0xd5/0x3b10 fs/ntfs3/inode.c:532
+ ntfs_fill_super+0x2619/0x4a20 fs/ntfs3/super.c:1212
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1616
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1781
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+page last free pid 45 tgid 45 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
+ discard_slab mm/slub.c:2526 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:2994
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3069
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4306
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ __do_kmalloc_node mm/slub.c:4120 [inline]
+ kmalloc_node_track_caller_noprof+0x1cd/0x440 mm/slub.c:4141
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:597
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:666
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6504
+ sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2794
+ sock_alloc_send_skb include/net/sock.h:1773 [inline]
+ mld_newpack+0x1c3/0xa90 net/ipv6/mcast.c:1746
+ add_grhead net/ipv6/mcast.c:1849 [inline]
+ add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1987
+ mld_send_cr net/ipv6/mcast.c:2113 [inline]
+ mld_ifc_work+0x68e/0xd90 net/ipv6/mcast.c:2650
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+
+Memory state around the buggy address:
+ ffff888077a23180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888077a23200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888077a23280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                          ^
+ ffff888077a23300: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888077a23380: fc fc fc fc fa fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
+Tested on:
 
-On 5/28/24 17:08, Jarkko Sakkinen wrote:
-> * Asymmetric TPM2 ECDSA key with signing and verification.
-> * Enabled with CONFIG_ASYMMETRIC_TPM2_KEY_ECDSA_SUBTYPE.
-> 
-> Cc: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
-> v7:
-> * Rewrote the signature encoder.
-> * Added the missing sha256() call to the signature verifier.
-> v6:
-> * The very first version.
-> * Stefan: any idea why the signature give -EKEYREJECTED?
-> ---
->   crypto/asymmetric_keys/Kconfig          |  15 +
->   crypto/asymmetric_keys/Makefile         |   1 +
->   crypto/asymmetric_keys/tpm2_key_ecdsa.c | 462 ++++++++++++++++++++++++
->   crypto/ecdsa.c                          |   1 -
->   drivers/char/tpm/tpm-buf.c              |   2 +-
->   include/linux/tpm.h                     |   7 +
->   6 files changed, 486 insertions(+), 2 deletions(-)
->   create mode 100644 crypto/asymmetric_keys/tpm2_key_ecdsa.c
-> 
-> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-> index 9d88c1190621..c97f11e0340c 100644
-> --- a/crypto/asymmetric_keys/Kconfig
-> +++ b/crypto/asymmetric_keys/Kconfig
-> @@ -24,6 +24,21 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
->   	  appropriate hash algorithms (such as SHA-1) must be available.
->   	  ENOPKG will be reported if the requisite algorithm is unavailable.
->   
-> +config ASYMMETRIC_TPM2_KEY_ECDSA_SUBTYPE
-> +	tristate "Asymmetric TPM2 ECDSA crypto algorithm subtype"
-> +	depends on TCG_TPM
-> +	select CRYPTO_ECDSA
-> +	select CRYPTO_SHA256
-> +	select CRYPTO_HASH_INFO
-> +	select CRYPTO_TPM2_KEY
-> +	select ASN1
-> +	select ASN1_ENCODER
-> +	help
-> +	  This option provides support for asymmetric TPM2 key type handling.
-> +	  If signature generation and/or verification are to be used,
-> +	  appropriate hash algorithms (such as SHA-256) must be available.
-> +	  ENOPKG will be reported if the requisite algorithm is unavailable.
-> +
->   config ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
->   	tristate "Asymmetric TPM2 RSA crypto algorithm subtype"
->   	depends on TCG_TPM
-> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-> index c6da84607824..0843d2268a69 100644
-> --- a/crypto/asymmetric_keys/Makefile
-> +++ b/crypto/asymmetric_keys/Makefile
-> @@ -11,6 +11,7 @@ asymmetric_keys-y := \
->   	signature.o
->   
->   obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
-> +obj-$(CONFIG_ASYMMETRIC_TPM2_KEY_ECDSA_SUBTYPE) += tpm2_key_ecdsa.o
->   obj-$(CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE) += tpm2_key_rsa.o
->   
->   #
-> diff --git a/crypto/asymmetric_keys/tpm2_key_ecdsa.c b/crypto/asymmetric_keys/tpm2_key_ecdsa.c
-> new file mode 100644
-> index 000000000000..e2f599a0ffe0
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tpm2_key_ecdsa.c
-> @@ -0,0 +1,462 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/* Asymmetric TPM2 ECDSA key subtype.
-> + *
-> + * See Documentation/crypto/asymmetric-keys.rst
-> + */
-> +
-> +#include <asm/unaligned.h>
-> +#include <crypto/internal/ecc.h>
-> +#include <crypto/akcipher.h>
-> +#include <crypto/sha2.h>
-> +#include <crypto/public_key.h>
-> +#include <crypto/tpm2_key.h>
-> +#include <keys/asymmetric-parser.h>
-> +#include <keys/asymmetric-subtype.h>
-> +#include <linux/asn1_encoder.h>
-> +#include <linux/keyctl.h>
-> +#include <linux/module.h>
-> +#include <linux/scatterlist.h>
-> +#include <linux/slab.h>
-> +#include <linux/tpm.h>
-> +
-> +#undef pr_fmt
-> +#define pr_fmt(fmt) "tpm2_key_ecdsa: "fmt
-> +
-> +struct tpm2_ecc_parms {
-> +	__be16 symmetric;
-> +	__be16 scheme;
-> +	__be16 ecc;
-> +	__be16 kdf;
-> +};
-> +
-> +static const u8 *tpm2_key_ecdsa_ecc_x(const struct tpm2_key *key)
-> +{
-> +	const off_t o = key->priv_len + 2 + sizeof(*key->desc);
-> +
-> +	return &key->data[o + sizeof(struct tpm2_ecc_parms)];
-> +}
-> +
-> +static const u8 *tpm2_key_ecdsa_ecc_y(const struct tpm2_key *key)
-> +{
-> +	const u8 *x = tpm2_key_ecdsa_ecc_x(key);
-> +	u16 x_size = get_unaligned_be16(&x[0]);
-> +
-> +	/* +2 from the size field: */
-> +	return &x[2 + x_size];
-> +}
-> +
-> +static void tpm2_key_ecdsa_describe(const struct key *asymmetric_key,
-> +				    struct seq_file *m)
-> +{
-> +	struct tpm2_key *key = asymmetric_key->payload.data[asym_crypto];
-> +
-> +	if (!key) {
-> +		pr_err("key missing");
-> +		return;
-> +	}
-> +
-> +	seq_puts(m, "TPM2/ECDSA");
-> +}
-> +
-> +static void tpm2_key_ecdsa_destroy(void *payload0, void *payload3)
-> +{
-> +	struct tpm2_key *key = payload0;
-> +
-> +	if (!key)
-> +		return;
-> +
-> +	kfree(key);
-> +}
-> +
-> +static const char *tpm2_ecc_name(u16 ecc)
-> +{
-> +	const char *name;
-> +
-> +	switch (ecc) {
-> +	case TPM2_ECC_NIST_P521:
-> +		name = "ecdsa-nist-p521";
-> +		break;
-> +	case TPM2_ECC_NIST_P384:
-> +		name = "ecdsa-nist-p384";
-> +		break;
-> +	default:
-> +		name = "ecdsa-nist-p256";
-> +		break;
-> +	}
-> +
-> +	return name;
-> +}
-> +
-> +static int tpm2_key_ecdsa_query(const struct kernel_pkey_params *params,
-> +				struct kernel_pkey_query *info)
-> +{
-> +	const struct tpm2_key *key = params->key->payload.data[asym_crypto];
-> +	const off_t o = key->priv_len + 2 + sizeof(*key->desc);
-> +	const struct tpm2_ecc_parms *p =
-> +		(const struct tpm2_ecc_parms *)&key->data[o];
-> +	u16 ecc = be16_to_cpu(p->ecc);
-> +	const char *ecc_name = tpm2_ecc_name(ecc);
-> +	const u8 *x = tpm2_key_ecdsa_ecc_x(key);
-> +	u16 x_size = get_unaligned_be16(&x[0]);
-> +	struct crypto_akcipher *tfm;
-> +	char data[256];
+commit:         e0cce98f Merge tag 'tpmdd-next-6.10-rc2' of git://git...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=101ea864980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10cba53c980000
 
-Due to NIST p521   1 + 2 * 66 = 133 should be enough.
-
-If x_size exceeeds 66 then something is wrong.
-
-> +	u8 *ptr;
-> +	int ret;
-> +
-> +	memset(data, 0, sizeof(data));
-> +
-> +	tfm = crypto_alloc_akcipher(ecc_name, 0, 0);
-> +	if (IS_ERR(tfm))
-> +		return PTR_ERR(tfm);
-> +
-> +	/* Probe for ecdsa_set_pub_key(): */
-> +	ptr = &data[0];
-> +	*ptr++ = 0x04; /* uncompressed */
-> +	memcpy(&ptr[0], &x[2], x_size);
-> +	memcpy(&ptr[x_size], &x[2 + x_size + 2], x_size);
-> +	ret = crypto_akcipher_set_pub_key(tfm, data, 2 * x_size + 1);
-> +	crypto_free_akcipher(tfm);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	info->max_sig_size = 256;
-> +	info->key_size = 256;
-> +	info->max_data_size = 256;
-> +	info->supported_ops = KEYCTL_SUPPORTS_SIGN | KEYCTL_SUPPORTS_VERIFY;
-> +	return ret;
-> +}
-> +
-> +static int tpm2_key_ecdsa_sign(struct tpm_chip *chip, struct tpm2_key *key,
-> +			       struct kernel_pkey_params *params,
-> +			       const void *in, void *out)
-> +{
-> +	u8 r[SHA256_DIGEST_SIZE], s[SHA256_DIGEST_SIZE];
-> +	u32 in_len = params->in_len;
-> +	bool r_0, s_0;
-> +	struct tpm_header *head;
-> +	struct tpm_buf buf;
-> +	u32 key_handle;
-> +	u8 *ptr = out;
-> +	off_t offset;
-> +	int ret;
-> +
-> +
-> +	/* Require explicit hash algorithm: */
-> +	if (!params->hash_algo)
-> +		return -EINVAL;
-> +
-> +	/* Currently only support SHA256: */
-> +	if (!!strcmp(params->hash_algo, "sha256"))
-> +		return -EINVAL;
-> +
-> +	ret = tpm_try_get_ops(chip);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = tpm2_start_auth_session(chip);
-> +	if (ret)
-> +		goto err_ops;
-> +
-> +	ret = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-> +	if (ret < 0) {
-> +		tpm2_end_auth_session(chip);
-> +		goto err_ops;
-> +	}
-> +
-> +	tpm_buf_append_name(chip, &buf, key->parent, NULL);
-> +	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_CONTINUE_SESSION |
-> +				    TPM2_SA_ENCRYPT, NULL, 0);
-> +	tpm_buf_append(&buf, &key->data[0], key->priv_len + key->pub_len);
-> +	if (buf.flags & TPM_BUF_OVERFLOW) {
-> +		tpm2_end_auth_session(chip);
-> +		ret = -E2BIG;
-> +		goto err_buf;
-> +	}
-> +	tpm_buf_fill_hmac_session(chip, &buf);
-> +	ret = tpm_transmit_cmd(chip, &buf, 4, "ECDSA loading");
-> +	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-> +	if (ret) {
-> +		tpm2_end_auth_session(chip);
-> +		ret = -EIO;
-> +		goto err_buf;
-> +	}
-> +
-> +	key_handle = be32_to_cpup((__be32 *)&buf.data[TPM_HEADER_SIZE]);
-> +
-> +	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_SIGN);
-> +	tpm_buf_append_name(chip, &buf, key_handle, NULL);
-> +	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT, NULL, 0);
-> +
-> +	sha256(in, in_len, r);
-> +	tpm_buf_append_u16(&buf, SHA256_DIGEST_SIZE);
-> +	tpm_buf_append(&buf, r, SHA256_DIGEST_SIZE);
-> +	tpm_buf_append_u16(&buf, TPM_ALG_ECDSA);
-> +	tpm_buf_append_u16(&buf, TPM_ALG_SHA256);
-> +
-> +	/* 10.7.2 A NULL Ticket */
-> +	tpm_buf_append_u16(&buf, TPM2_ST_HASHCHECK);
-> +	tpm_buf_append_u32(&buf, TPM2_RH_NULL);
-> +	tpm_buf_append_u16(&buf, 0);
-> +
-> +	tpm_buf_fill_hmac_session(chip, &buf);
-> +	ret = tpm_transmit_cmd(chip, &buf, 4, "ECDSA signing");
-> +	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-> +	if (ret) {
-> +		tpm2_end_auth_session(chip);
-> +		ret = -EIO;
-> +		goto err_key_handle;
-> +	}
-> +
-> +	/* Move to parameters: */
-> +	head = (struct tpm_header *)buf.data;
-> +	offset = sizeof(*head);
-> +	if (be16_to_cpu(head->tag) == TPM2_ST_SESSIONS)
-> +		offset += 4;
-> +
-> +	ret = -EIO;
-> +
-> +	/* Copy R: */
-> +	if (tpm_buf_read_u16(&buf, &offset) != TPM_ALG_ECDSA ||
-> +	    tpm_buf_read_u16(&buf, &offset) != TPM_ALG_SHA256 ||
-> +	    tpm_buf_read_u16(&buf, &offset) != SHA256_DIGEST_SIZE) {
-> +		pr_warn("offset=%u\n", offset);
-> +		goto err_key_handle;
-> +	}
-> +
-> +	tpm_buf_read(&buf, &offset, SHA256_DIGEST_SIZE, r);
-> +	r_0 = (r[0] & 0x80) != 0;
-> +	pr_info("r_0=%d\n", r_0);
-> +
-> +	/* Copy S: */
-> +	if (tpm_buf_read_u16(&buf, &offset) != SHA256_DIGEST_SIZE) {
-> +		pr_warn("offset=%u\n", offset);
-> +		goto err_key_handle;
-> +	}
-> +
-> +	tpm_buf_read(&buf, &offset, SHA256_DIGEST_SIZE, s);
-> +	s_0 = (r[0] & 0x80) != 0;
-> +	pr_info("s_0=%d\n", r_0);
-> +
-> +	/* Encode the ASN.1 signature: */
-> +#define TPM2_KEY_ECDSA_SIG_SIZE		(2 + 2 * (2 + SHA256_DIGEST_SIZE) + r_0 + s_0)
-> +	pr_info("sig_size=%d\n", TPM2_KEY_ECDSA_SIG_SIZE);
-> +	ptr[0] = 0x30; /* SEQUENCE */
-> +	ptr[1] = TPM2_KEY_ECDSA_SIG_SIZE - 2;
-> +#define TPM2_KEY_ECDSA_SIG_R_TAG	2
-> +#define TPM2_KEY_ECDSA_SIG_R_SIZE	3
-> +#define TPM2_KEY_ECDSA_SIG_R_BODY	4
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_TAG] = 0x02; /* INTEGER */
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_SIZE] = SHA256_DIGEST_SIZE + r_0;
-
-The size of the signature has nothing to do with the size of the hash. 
-SHA256_DIGEST_SIZE (32) happens to match the number of bytes of a 
-coordinate of prime256v1 / NIST p256 but should fail when you use 
-secp521r1 / NIST p521 since then r or s may then be 66 or 67 bytes (if 
-most sign. bit is set) long.
-
-> +	ptr[TPM2_KEY_ECDSA_SIG_R_BODY] = 0x00; /* maybe dummy write */
-> +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_R_BODY + r_0], r, SHA256_DIGEST_SIZE);
-> +#define TPM2_KEY_ECDSA_SIG_S_TAG	(4 + r_0 + SHA256_DIGEST_SIZE)
-> +#define TPM2_KEY_ECDSA_SIG_S_SIZE	(5 + r_0 + SHA256_DIGEST_SIZE)
-> +#define TPM2_KEY_ECDSA_SIG_S_BODY	(6 + r_0 + SHA256_DIGEST_SIZE)
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_TAG] = 0x02; /* INTEGER */
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_SIZE] = SHA256_DIGEST_SIZE + s_0;
-> +	ptr[TPM2_KEY_ECDSA_SIG_S_BODY] = 0x00; /* maybe dummy write */
-> +	memcpy(&ptr[TPM2_KEY_ECDSA_SIG_S_BODY + s_0], s, SHA256_DIGEST_SIZE);
-> +	ret = TPM2_KEY_ECDSA_SIG_SIZE;
-> +
-> +err_key_handle:
-> +	tpm2_flush_context(chip, key_handle);
-> +
-> +err_buf:
-> +	tpm_buf_destroy(&buf);
-> +
-> +err_ops:
-> +	tpm_put_ops(chip);
-> +	return ret;
-> +}
-> +
 
