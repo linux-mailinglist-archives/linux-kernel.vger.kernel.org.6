@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-192331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134A68D1B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1EF8D1B4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4354F1C21254
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:49:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21241B2A6C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0F616D335;
-	Tue, 28 May 2024 12:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED27916D4E9;
+	Tue, 28 May 2024 12:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cfWiiXfu"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="UQ9yPSY0"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC5A7316E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD1916D4E1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900575; cv=none; b=sMvY1kleL9PQr0tR5d28/2IlvNJhdLe+xyLc1RlgYLpz9kE2FcOg/c0pC/QN0mFaZDrNopGs3Fy2cIAyCnxqwbsVI0IED/Tdx8qZdVcTbydW2l3o/JqYiOxWBaeaOYdIi0FaMbxGMw9g8BC9OwVpmoylGuCEqTOHdlbsPIKZa00=
+	t=1716899349; cv=none; b=EO0T7WeKu6TPF0uQg+M2pgrbjGi5+oFOCnwrOTMZVwOHIQ1Pq89qnSgZM8RGvPs9KjrZ9UBuEzL1qxY6NoW6HR3VpYfXln3uUwtuu6LJMaKw0uqNhaax813tmCiUNxvlpyCZXtxzILHwFuPhXdESmru2XPuM/1tVAUQSQ/yuvOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900575; c=relaxed/simple;
-	bh=eskFZzuz0sBw+qow+jUURiVDJ/Ihsw3DjEQhU+Dwx+U=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=XRKaHKUV8uY74Zy/dCCzElu8l3oy+8dg7ulfViyguvYMqlIj3bhSCPd2QK35QeiLivE4A9ZhLrJcJNCO+LTx2BfDJcmSAWTxqYrFwsuYwqDYKo8E6jNb1mmC2s4UhCt8i8g44vhrAxB9feAI9yyEbraaxtweYypspOmJ+3pNLEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cfWiiXfu; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1716900563; bh=4X+71YgTs5RtTppyyiiPJcwtubGMqCcsHi1CEdzzrf8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=cfWiiXfuJZrUG7kSjdNI6tDXqDVR/kbMP1ZqWHpZs0Qlvgu/RBAA8YSE+WYkPVDum
-	 /LJ/vf691TPep20cXJ0JL3gi8UKvsF/XXkLru29jbY2wdqJ5x/2XRbr2PlSLq+UUQZ
-	 iDVDGnVDVgzz63nsoYOvOfNVa9uoxj0AYmWWp2DE=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 734BD064; Tue, 28 May 2024 20:28:52 +0800
-X-QQ-mid: xmsmtpt1716899332tz6r2oqqd
-Message-ID: <tencent_9FA58DAAA5CF0D8B9250DDB2DDF4192FCF07@qq.com>
-X-QQ-XMAILINFO: MmPNY57tR1Xn1VYbDdYGMPX+WEO97G8eisA7LlPfqrz6o2XabzF3LLjtA4cueX
-	 Ruj8yLnj+hD5WrPYxdtbvR8FZ5GWGXe2D+13/qe6gd/jsOt3zKHV8G6SnnGKwQRaqno7JQlbnAIA
-	 TA3//bFXYzkV2Tev8ToHGXMqPbrGvWaJtMyv5gh9hW79tlQxQr3hUWtCIqLS/8Z0X5DdN5fWHtsc
-	 ObP+miZ1G5xVxzTVNANPYIVxsXqJHQpV+bmadvkwmg9o93zHbrxuEH0skcAcKlDcjmS1sWCt131p
-	 A6xhzvz+qE6pY/DMBJsdw8TBeYTaQol1Ur25uo/5A0QVOTSF65VYFlPvZQ4hAex2hhrhXi/S7mYt
-	 KFJ8e9Pn8a7MXDdEDmkO8uRIdHRdksHGjpzqf1bS9a7vXxjn+x4Ldwc5yVVx6JOgw37x+FYvKxo7
-	 7TEpp5fxRi/JStwjtLyczhVdUuKTeTspKD30Vfav6Znbh+Zhc30IJ/sC6xj/ETSW6uPvPzlK3ZpC
-	 Es9D13OSU1jB+UqXC26cjQPVevIO2xRyJdEde/yS82cwIFCjxOHHq41M/2EzIMz+9G37gL+lzCt9
-	 Y/AU1f0+4n4Mp5kRVdN8r0lpAONy+74B3ogfYB/a+/lsYClF49mLmqqjsrduzu1i11k0gBpYNlja
-	 J9JxuJqhyXkPD003jPZJYrk2nsw2vjBAGS2CClYKHSUjA6kFnpo55b9EH37FrUfPdQaXvpfyqhcY
-	 4XuxkJH16C9onCNBGQc3A2PZVxzsTvWda8VcGPG8EWrqAhkvni9J49JpeLCFiUp4NfRgND7rs8kJ
-	 aI4E1rtPPIijW8UtxQ4lcgkQkHVKhwrzUw2+DPAHWs+CfYM33FT/gUWiG+ev1SmCG6Pay7YyDo3w
-	 RDwQkqB5uWDGfy+mkZcwFbYR+7O5Fj/kf8F0tZWSy7AoQSl0WAtZUg64CMIdczFtzUMUQIAHgPfo
-	 ET4gcldK0=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+07762f019fd03d01f04c@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] KMSAN: uninit-value in asus_report_fixup
-Date: Tue, 28 May 2024 20:28:53 +0800
-X-OQ-MSGID: <20240528122852.1885479-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000915d550619389e8a@google.com>
-References: <000000000000915d550619389e8a@google.com>
+	s=arc-20240116; t=1716899349; c=relaxed/simple;
+	bh=iKUhFoSSSMrh/cb1S2LQj5ELm2cHsPctZeIgLvA69wo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ICSGlATD/ftsOy0PpD96hYLaiyKRVKH2afi3s93tvpIiwxNTIscJG3uAPbrBqro29Bg/lybr8YUMqgpAZkVlMR2LctnKqyRfEBo6+v2qlOEd+9skWZPQm6qDo0RSrK2uN+viGmRyyznIPjIXEHML2fWGvukTPpER8Z8TcA4Vp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=UQ9yPSY0; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=B+JyFuDIfoWyU83fEPu16Ax2iAw7y4/ySQU7Tr5AVHs=; b=UQ9yPSY0+xZ4W22mwhQYbJvR1s
+	qCsqBrSouHS0jViyms/odzKQ20L4VqruYJtzS7RxlVxjnKgkmTHRocWRJaPoBd6HwZXrmgwtrzyJa
+	deBKI0ANan3PDDVkXZ/xU+JKvIr5X/DYSqJJumjW8Ugjcr/jZW6vX/g2tP9uTmlGNknyUnLlefAkh
+	LnB37nBF5/C6ZSfEo6kp6a3u7oP+p4T03Uf2eAZhpmyDBjgR1cUfTF/19188EsyaXQwDC/BXtSGPC
+	750TZqv5a5lOH42ZyvMNb0Bq1KoWW6lAIX5vzWZle8eqgJwTEowfcJWtPsBwVfYqCHvQ8h3j+WAVq
+	nF57NIXg==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sBvwu-000G8z-MP; Tue, 28 May 2024 14:29:04 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sBvwt-000CIK-01;
+	Tue, 28 May 2024 14:29:03 +0200
+From: Esben Haabendal <esben@geanix.com>
+Date: Tue, 28 May 2024 14:28:53 +0200
+Subject: [PATCH v2 2/2] powerpc/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240528-fsl-ifc-config-v2-2-5fd7be76650d@geanix.com>
+References: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
+In-Reply-To: <20240528-fsl-ifc-config-v2-0-5fd7be76650d@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linuxppc-dev@lists.ozlabs.org, Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716899341; l=963;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=iKUhFoSSSMrh/cb1S2LQj5ELm2cHsPctZeIgLvA69wo=;
+ b=8RQGE9EgZX/SGIcrQldXMqMU13oeIlcOwvNVNNpAutnOUf/hrhuSWlbCBqC4Wd+OISRChAkGA
+ TPZ4RMCgBSBDQ26tXtYu91XvX/Yyz7zk/0N05SBLuQpWsr4sRyG2OOd
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27289/Tue May 28 10:30:59 2024)
 
-please test uv asus_report_fixup
+With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+selected in config snippets.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 70ec81c2e2b4
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+ arch/powerpc/configs/85xx-hw.config | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 02de2bf4f790..1a92392967fc 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -1204,8 +1204,9 @@ static __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 	}
- 
- 	/* match many more n-key devices */
--	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
--		for (int i = 0; i < *rsize + 1; i++) {
-+	printk("rdesc: %c.%c.%c.%c.%c, %s\n", rdesc[0], rdesc[1], rdesc[2], rdesc[3], rdesc[4], __func__);
-+	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && *rsize > 15) {
-+		for (int i = 0; i < *rsize - 14; i++) {
- 			/* offset to the count from 0x5a report part always 14 */
- 			if (rdesc[i] == 0x85 && rdesc[i + 1] == 0x5a &&
- 			    rdesc[i + 14] == 0x95 && rdesc[i + 15] == 0x05) {
-diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
-index a90ed2ceae84..9f0e09f667b1 100644
---- a/drivers/hid/usbhid/hid-core.c
-+++ b/drivers/hid/usbhid/hid-core.c
-@@ -1029,7 +1029,7 @@ static int usbhid_parse(struct hid_device *hid)
- 		return -EINVAL;
- 	}
- 
--	rdesc = kmalloc(rsize, GFP_KERNEL);
-+	rdesc = kzalloc(rsize, GFP_KERNEL);
- 	if (!rdesc)
- 		return -ENOMEM;
- 
+diff --git a/arch/powerpc/configs/85xx-hw.config b/arch/powerpc/configs/85xx-hw.config
+index 524db76f47b7..8aff83217397 100644
+--- a/arch/powerpc/configs/85xx-hw.config
++++ b/arch/powerpc/configs/85xx-hw.config
+@@ -24,6 +24,7 @@ CONFIG_FS_ENET=y
+ CONFIG_FSL_CORENET_CF=y
+ CONFIG_FSL_DMA=y
+ CONFIG_FSL_HV_MANAGER=y
++CONFIG_FSL_IFC=y
+ CONFIG_FSL_PQ_MDIO=y
+ CONFIG_FSL_RIO=y
+ CONFIG_FSL_XGMAC_MDIO=y
+@@ -58,6 +59,7 @@ CONFIG_INPUT_FF_MEMLESS=m
+ CONFIG_MARVELL_PHY=y
+ CONFIG_MDIO_BUS_MUX_GPIO=y
+ CONFIG_MDIO_BUS_MUX_MMIOREG=y
++CONFIG_MEMORY=y
+ CONFIG_MMC_SDHCI_OF_ESDHC=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_SDHCI=y
+
+-- 
+2.45.1
 
 
