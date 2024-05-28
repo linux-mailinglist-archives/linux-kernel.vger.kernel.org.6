@@ -1,148 +1,225 @@
-Return-Path: <linux-kernel+bounces-191932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1249A8D1643
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:31:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B508E8D1645
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2745B1C22BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473821F2360E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423C06EB64;
-	Tue, 28 May 2024 08:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8B13C900;
+	Tue, 28 May 2024 08:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="A4kZU28X"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UqJUxAKv"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6E2E3E5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4080B17580
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885090; cv=none; b=JewrdwOO1hcI+jDPvxkqvfaEmzfnDDx6LJT+AL1/sv8DRLCezvmj51vLPaiRsrrxS024cbWAYl+xshmr/iL9SmVNpgdNL0+2BnYXQ/yV95OPng1MRCKGUr7+S66LUp3h+j0npivosNFZjDl6Gfxi8wmjwRYKD769lETw8cthj28=
+	t=1716885094; cv=none; b=ZPY32d1q2xFFCbJPbfX1A/5EwbbI9aoDao/3el0d7m0nBZa38W4IVhawGmNARPEMTzjZO7gomiacFnGh8fRaR8WQQ10+2cek5g0YH/6hasq02iyefhMGXweoJgTgfDbucMSxS4tspEamgzSc3SBFlzme6ai+NSICtmeCjTh7gjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885090; c=relaxed/simple;
-	bh=hRzdef8XPLYeBwzz7zJIIYKKUt4ERd3kLt9PrHJbryQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9SJGotVxMUmluMtlFfZOapzh+o+vcUkhfqN33tVCD0hZGLl7axcM1r8kEsz4CbzspgPYm2w/N5p1P8gjLFnhGuLUBPqseyj/LH48zuWU1bomNrvLCHJuC1uGYgFuvKnfAGU+ZVnH/zpbajkNlMHphHQVtEgR53H0c/r3J9KnnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=A4kZU28X; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D27ED40E01E8;
-	Tue, 28 May 2024 08:31:25 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TeMqPknJFoUL; Tue, 28 May 2024 08:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716885081; bh=GAaJd03aDIcqO1Y7rC4jWoQ69Bx1utbBKzL99Q7ytoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A4kZU28X0sDRe712qfVx/qWxWhfVPxwRHaMIZKuHLCr95DTS/o4REZfQ4KPnKIvId
-	 1PPLMPkJsPHqj4r2Asd0Z8hwf54GIUEYFc+VwCKam7HtYgVVqnq2X1KRfwDRrpScwQ
-	 tpeStrIPUdtzmF3/IK4T7EzX+UAl42+BDCY/G2Dz6pTJ5GwdWiFmtdXq2jp6PegwrK
-	 oZAVoDzYWofB975QBa93INSe5WCaAsJjXnJzmcjsZGJWNxNOuOOY/THyePywOE8IeQ
-	 y/VmZ3CLivAbSwGTDLzzFk0ID3Vau8Im1lq28fGe1rr4aVGtn6d/Yiznu71c++wR5Z
-	 UJvmMbQYJgUl6UAqHm0LHUiIrXPxbgkFC/kDl+we3GKuDLUe31/Gm+TnbNbngHwgaz
-	 8QFSD3N96JkvrB9szIF+VJgCS8Dzn/anwY0YPWALXtma0GMb2pf7nSkefaio/WL8zE
-	 spJoLJx7biuwd+33pKsK4H1uQB4WiBwlDBwyoD8GDBmGstpvMBiZ+v+pq7SBNhtpYW
-	 fe8V3MdgkC2WXlx7chJu11G2vZENn+HTl9aG+xwcRit/r6Ewg5e+uPZJsU6sTM14TB
-	 deawA+7gwX+p8PSmprv4njOFBfwYWBdRcIkEZDHVsXSBQr/OkCo4DrXJICkdxKgXXh
-	 GsmZUJB+lvApJL+765+qEXyg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B927440E016A;
-	Tue, 28 May 2024 08:31:14 +0000 (UTC)
-Date: Tue, 28 May 2024 10:31:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: kernel test robot <lkp@intel.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-next:master 6544/8170] ERROR: modpost:
- "__spi_register_driver" [drivers/iio/dac/ad9739a.ko] undefined!
-Message-ID: <20240528083113.GAZlWWUdcO_TZX3VsV@fat_crate.local>
-References: <202404250156.2PQRWmex-lkp@intel.com>
+	s=arc-20240116; t=1716885094; c=relaxed/simple;
+	bh=RwuBIHtznA/hyz21dAojIRc65YO6rBNxlBTR+bfBkPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tivV1AH0XDeeNJZoxQ/NPsKn6PrnqEtL7vWqigjyg9we28Ygnc8r88wdTkDwQA03j9SZTZVkaeeC0OSFgvh2JWAEnSjajjhptFnKU9Llf7divZvJO4u8mx8bi4eDJZF+0ZqEsXC4OZfQNQY7Du2mXnFlyu8kdhNkrmHwhCGhx+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UqJUxAKv; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-523b20e2615so621327e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716885089; x=1717489889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VFYUpzA6pM4m4rSYWLPXboECnNuEYZJwJD08pfbA3OU=;
+        b=UqJUxAKvcLc2rP0LgjEH/YAVRMqxXFE3VoI0lwJX3xnUvsGV5E4xP1lxqE+650JZFA
+         njdZHi1r8pkjB6x1khZMlxu0dp7eSmXYiSM6sC0ecaEJTMfoU+OJ3kR5y6rtFSrDG/VC
+         7amcOcsis1jcS1vYzaogAtFGdsBxWgSdpc3so=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716885089; x=1717489889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VFYUpzA6pM4m4rSYWLPXboECnNuEYZJwJD08pfbA3OU=;
+        b=PUalTN4tCy2TrRyYRX9dACxxQ+IBAVEcjphIkvSTsMttMQyG5re4e0CrGbZrBabcrX
+         2NOSsRxSEXyYIpEj+51F4LWTYGNqU1ZI/xel39WzYpM+vixKx8/SFT7F1f7b42wS/pQO
+         BG62w4itw0slz3Zayu5nOT9epqlVNLDrnJZRHFAn+YdhTG/YOl4evCnOj0HlCD8mwGfO
+         8LVHCE55RGhtgcg7LUyHhzwxmwOO28eOjDJD0Gt1yelwwuCmHSCeydmbeYNKl+bOUn10
+         qn8hbaOuxj7isQczhBsp9/kRbBrimS9m2QD9fWUGcN4UvbK8e6sh8zLb/N3tkKpL8HWI
+         cJkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaSL7bBydZ2PkKgeJQAbo0vu8c+VPmBMRR84fZcNFApXC2mBD9D0imsJaT3JJRJ90btR8krIRz6LGPwMYfYqcg2EBJnepwF7PUnEnQ
+X-Gm-Message-State: AOJu0Yy6SUBZvERIOtInMKWL2Nem8UV+1ESXw5GsXtheeBVIWU2UvDxc
+	+SWN2L98nyM+uX7JsCg4IoefIvMNW7LhRUXReWQsHmT4aGSw7i629sytJm9zfW6nzgHgHUwzPjT
+	hQCotXNAVv/xrNukF17IzI43M3tom46kadeGpzHH0ZTBDgds=
+X-Google-Smtp-Source: AGHT+IGu4tkJyfHdf+OrG6LxWgWVjFmH1sYDmdqTxRucdD+zK/9ZDLeLFIlAQWrMRdJh1zHGMDSKRxAK0yb2+LSGI4s=
+X-Received: by 2002:a19:e04b:0:b0:51e:245a:8ed3 with SMTP id
+ 2adb3069b0e04-529646de3d0mr7018224e87.28.1716885089209; Tue, 28 May 2024
+ 01:31:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202404250156.2PQRWmex-lkp@intel.com>
+References: <20240521065107.30371-1-wenst@chromium.org> <20240521065107.30371-2-wenst@chromium.org>
+ <CAFLszTgJpaWzJneZ-uReEGrE85MgGYOjJKxOL7jGCYMuVMPKUg@mail.gmail.com>
+ <CAGb2v67MQDep8gfPWgeQoew8URAZyPw6ocGEMxMnwzYYRa0PYg@mail.gmail.com>
+ <CAFLszTh5M+4Vp8oR3t-=6vsROgVJa0NU4egfJu2QuugjAfbrsw@mail.gmail.com>
+ <CAGXv+5Eajy55kAcNzyZtsp9MJhD7EnNONW-JYsoadctaTjnxgA@mail.gmail.com> <CAFLszTjeQdwEp1AgL8geK7AZFwQqDfTkdzj4V2JkYqU4F7Em4Q@mail.gmail.com>
+In-Reply-To: <CAFLszTjeQdwEp1AgL8geK7AZFwQqDfTkdzj4V2JkYqU4F7Em4Q@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 28 May 2024 16:31:18 +0800
+Message-ID: <CAGXv+5HhwBx0qGSB=V6O1gXjrTDjhwMRsWe5a4VSP6+suwwU3g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] scripts/make_fit: Drop fdt image entry compatible string
+To: Simon Glass <sjg@chromium.org>
+Cc: wens@kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+ lkml.
+On Fri, May 24, 2024 at 9:01=E2=80=AFPM Simon Glass <sjg@chromium.org> wrot=
+e:
+>
+> Hi ChenYu,
+>
+> On Fri, 24 May 2024 at 00:30, Chen-Yu Tsai <wenst@chromium.org> wrote:
+> >
+> > Hi Simon,
+> >
+> > On Fri, May 24, 2024 at 1:38=E2=80=AFAM Simon Glass <sjg@chromium.org> =
+wrote:
+> > >
+> > > Hi ChenYu,
+> > >
+> > > On Thu, 23 May 2024 at 11:30, Chen-Yu Tsai <wens@kernel.org> wrote:
+> > > >
+> > > > On Fri, May 24, 2024 at 1:19=E2=80=AFAM Simon Glass <sjg@chromium.o=
+rg> wrote:
+> > > > >
+> > > > > Hi Chen-Yu,
+> > > > >
+> > > > > On Tue, 21 May 2024 at 00:51, Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+> > > > > >
+> > > > > > According to the FIT image spec, the compatible string in the f=
+dt image
+> > > > >
+> > > > > Can you please add a link to where it says this in the spec? I ca=
+nnot
+> > > > > find it after a short search.
+> > > >
+> > > > (Quick reply from my other email before I forget.)
+> > > >
+> > > > From the FIT source file format document, found in U-boot source
+> > > > "doc/usage/fit/source_file_format.rst", or on the website:
+> > > > https://docs.u-boot.org/en/latest/usage/fit/source_file_format.html
+> > > >
+> > > > Under "'/images' node" -> "Conditionally mandatory property", the
+> > > > "compatible" property is described as "compatible method for loadin=
+g image."
+> > > >
+> > > > I'll add the reference in the next version.
+> > >
+> > > OK thank you.
+> > >
+> > > There is also a spec version at [1] - it might be worth adding mentio=
+n
+> > > of this explicitly for the fdt nodes.
+> >
+> > It seems that this is already mentioned?
+> >
+> > See https://github.com/open-source-firmware/flat-image-tree/blob/main/s=
+ource/chapter2-source-file-format.rst?plain=3D1#L343
+>
+> I see that but I am suggesting that it could explicitly mention that
+> the FDT should not have a compatible string for the model...that
+> should only be in the configuration node.
 
-On Thu, Apr 25, 2024 at 01:48:56AM +0800, kernel test robot wrote:
-> Hi Nuno,
-> 
-> First bad commit (maybe != root cause):
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> head:   5e4f84f18c4ee9b0ccdc19e39b7de41df21699dd
-> commit: e77603d5468b9093c111a998a86604e21a9e7f48 [6544/8170] iio: dac: support the ad9739a RF DAC
-> config: csky-randconfig-002-20240424 (https://download.01.org/0day-ci/archive/20240425/202404250156.2PQRWmex-lkp@intel.com/config)
-> compiler: csky-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240425/202404250156.2PQRWmex-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202404250156.2PQRWmex-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
+I sent a pull request on GitHub. The mailing list seemed very empty.
 
-..
+ChenYu
 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/ac97_bus.o
-> >> ERROR: modpost: "spi_write_then_read" [drivers/base/regmap/regmap-spi.ko] undefined!
-> >> ERROR: modpost: "spi_sync" [drivers/base/regmap/regmap-spi.ko] undefined!
-> >> ERROR: modpost: "spi_async" [drivers/base/regmap/regmap-spi.ko] undefined!
-> >> ERROR: modpost: "__spi_register_driver" [drivers/iio/dac/ad9739a.ko] undefined!
-> 
-> Kconfig warnings: (for reference only)
->    WARNING: unmet direct dependencies detected for REGMAP_SPI
->    Depends on [n]: SPI [=n]
->    Selected by [m]:
->    - AD9739A [=m] && IIO [=m] && (SPI [=n] || COMPILE_TEST [=y])
-
-this thing fires now upstream too, in my build tests:
-
-WARNING: unmet direct dependencies detected for REGMAP_SPI
-  Depends on [n]: SPI [=n]
-  Selected by [m]:
-  - AD9739A [=m] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
-
-WARNING: unmet direct dependencies detected for REGMAP_SPI
-  Depends on [n]: SPI [=n]
-  Selected by [m]:
-  - AD9739A [=m] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
-
-WARNING: unmet direct dependencies detected for REGMAP_SPI
-  Depends on [n]: SPI [=n]
-  Selected by [m]:
-  - AD9739A [=m] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
-ERROR: modpost: "spi_sync" [drivers/base/regmap/regmap-spi.ko] undefined!
-ERROR: modpost: "spi_async" [drivers/base/regmap/regmap-spi.ko] undefined!
-ERROR: modpost: "spi_write_then_read" [drivers/base/regmap/regmap-spi.ko] undefined!
-ERROR: modpost: "__spi_register_driver" [drivers/iio/dac/ad9739a.ko] undefined!
-make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-make[1]: *** [/home/amd/bpetkov/kernel/linux/Makefile:1886: modpost] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> >
+> > It looks like it was copied from U-boot directly.
+>
+> Yes mostly it is the same, but there were some changes. It has evolved
+> slowly over the years but the bones of it is stable.
+>
+> Regards,
+> Simon
+>
+> >
+> >
+> > Regards,
+> > ChenYu
+> >
+> > > Regards,
+> > > Simon
+> > >
+> > > [1] https://github.com/open-source-firmware/flat-image-tree/
+> > >
+> > > >
+> > > >
+> > > > ChenYu
+> > > >
+> > > > > I believe this patch is correct. Since the information is in the
+> > > > > configuration node it does not need to be in the FDT.
+> > > > >
+> > > > > > node or any image node specifies the method to load the image, =
+not the
+> > > > > > compatible string embedded in the FDT or used for matching.
+> > > > > >
+> > > > > > Drop the compatible string from the fdt image entry node.
+> > > > > >
+> > > > > > While at it also fix up a typo in the document section of outpu=
+t_dtb.
+> > > > > >
+> > > > > > Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+> > > > > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > > > > ---
+> > > > > >  scripts/make_fit.py | 3 +--
+> > > > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> > > > > > index 3de90c5a094b..263147df80a4 100755
+> > > > > > --- a/scripts/make_fit.py
+> > > > > > +++ b/scripts/make_fit.py
+> > > > > > @@ -190,7 +190,7 @@ def output_dtb(fsw, seq, fname, arch, compr=
+ess):
+> > > > > >      Args:
+> > > > > >          fsw (libfdt.FdtSw): Object to use for writing
+> > > > > >          seq (int): Sequence number (1 for first)
+> > > > > > -        fmame (str): Filename containing the DTB
+> > > > > > +        fname (str): Filename containing the DTB
+> > > > > >          arch: FIT architecture, e.g. 'arm64'
+> > > > > >          compress (str): Compressed algorithm, e.g. 'gzip'
+> > > > > >
+> > > > > > @@ -211,7 +211,6 @@ def output_dtb(fsw, seq, fname, arch, compr=
+ess):
+> > > > > >          fsw.property_string('type', 'flat_dt')
+> > > > > >          fsw.property_string('arch', arch)
+> > > > > >          fsw.property_string('compression', compress)
+> > > > > > -        fsw.property('compatible', bytes(compat))
+> > > > > >
+> > > > > >          with open(fname, 'rb') as inf:
+> > > > > >              compressed =3D compress_data(inf, compress)
+> > > > > > --
+> > > > > > 2.45.0.215.g3402c0e53f-goog
+> > > > > >
+> > > > >
+> > > > > Regards,
+> > > > > Simon
+> > > > >
+> > > > > _______________________________________________
+> > > > > linux-arm-kernel mailing list
+> > > > > linux-arm-kernel@lists.infradead.org
+> > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
