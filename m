@@ -1,235 +1,147 @@
-Return-Path: <linux-kernel+bounces-191534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2250E8D10C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7E28D10C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DEE280FC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:12:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 971E81C21A2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1391361;
-	Tue, 28 May 2024 00:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4410E9;
+	Tue, 28 May 2024 00:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ETclSgOB"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MrQUdse+"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876A7E6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA6338D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 00:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716855139; cv=none; b=SYHTv78WP6d+UwFgPHeekFjsFLsC6KR0hUfRuIeC9+D6w5AbHLIEe3WHyZfW5RCAgxkxSLiq42dAYnDxwLBZq6qb5NuDiGfuEvcxwz8lmw2YC1Bt3KU7C49Y7OQIecy3Opw+iEdbZGnGCfSdQYPafaghv061SnWH9eeauhTE+pI=
+	t=1716855276; cv=none; b=oMiU0qSTN7VvaRuQvaun2Pm+gDZB9WKWO2mOT3NkyzK9Lxz3TrF25nbYWUXK9SjxZIcL+WmqPQQ2xEPciJxfSrq3Qlo4fhvxqIMy0JzH5EiPNSXImIJB+AGQlu+Zw4ZRxMHlJ2ws9vOEm6fhdokRz/Vw5g8b7bantsn6uIDvNAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716855139; c=relaxed/simple;
-	bh=A8DALDHd3MMh4OXdcMx5E3c0mAWR9NDzuk63Jb+1Yfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jz8AGYfWac/DTb8Auz0CipmY13muxJ/z3XY4AaYyzNWsdT9YyXxSvvwAsadCfg/nitslFQq9z36PA/Xx6dOw5vPuL0ZSJHGpt18d21RnhCM1v82wHPKqwbk8VqZTWD78befpwGlEInJTX0xS88m/GolTFqlm98sTPO3k38537dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ETclSgOB; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: f.weber@proxmox.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716855135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gMJ0eL3rp/jBrLY+934O2yj2Yff8RteD+peA5AFBPDM=;
-	b=ETclSgOBPawhuiJFChrFz0JsNyCvbhlqdJIsq2W/x40B21KJdvsG/9P30h1qDRutJIcRzp
-	gYkYUItWeuzdccAxOnB8LnkzvrMiyFsSqN4GqcNqpIgltEtUquFn4cZ1RzhrZiSNY4NQ7z
-	Xl3iKDsQSkwD6xRt3+Uw6FzC63F/cIs=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: hch@lst.de
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-Message-ID: <87f495c2-7504-4d22-b355-608b13c456cd@linux.dev>
-Date: Tue, 28 May 2024 08:12:07 +0800
+	s=arc-20240116; t=1716855276; c=relaxed/simple;
+	bh=E/egdz2CGqojoAgfoOnzR3hlfAj67B/HxDS0QDBOeis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T3mwXiMka4OMyWGiBpQRQ35ONM3vDZKqNbOInq9buBaJQW+iZuuaMohz9yL9fNy27Ea/Cb+JPbIInGQXvNekJQaJkZkRtWq6JXOGPSIR7ZJ1IRcK5W9rbq+nnXz1aYpD1YtIbtnkyU+N57AEaq7LlZuxOOm7f3Ibepofdqqot2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MrQUdse+; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b53bb4bebaso150630eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 17:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1716855274; x=1717460074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BtU4Y/eRQ2OBmokCMjLNZWabCaVyZYO3DB4JfpF3nAY=;
+        b=MrQUdse+XQP95f2tKt9tyxCqtoWZwjkR+8CuSaGrR95CXfiYs67HQKPVWnCZ1qs1LN
+         V/e5qUMvwwzPwLe0nW8HvOBRmcA5Y0Km+33s0WC1VOdYQmPRuYm8SIC/wRkB4X/rObi6
+         CRwK9qr0P8zgrPXKv/05StKJTMU+YbAbkAvqghOiQo6jyLsQcgznNkFMuiRnHVQZi/+c
+         RdxQpKzT+kJNF4zxqOvFslEKEN/aWU0g5ti9A+5KglcwVkow+NQN73mIFfb9BRZZjkjP
+         lU0y1pVk5W60wIfCshqwHcQfmFRqecrjDWAPSarMXnxhKDBKdJ6G5gTNsmAzY6ymUEQJ
+         uKkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716855274; x=1717460074;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BtU4Y/eRQ2OBmokCMjLNZWabCaVyZYO3DB4JfpF3nAY=;
+        b=LjLWfL8qXJ9/lJjBCvYtVMLjlsRPQz9AepHh5WJ+ZxL3rfuiRohrZAyyzETWDeOORR
+         EjpAaAWgLCBlNzwRaW+uAo3cStRgqgxFXy3vmN9vgluKxw2sBvV3sZuwlDIjPxZa2XaL
+         DDuxiqrXu8TtM9J1u1sxG/7xUp4+4nCIPO2RVyplcIfC9rhIM0fd8S2zlEn9otv8JTDO
+         XgyDgI1Wu8/d+jobbOdldGpSRNT3LL2XtK/gGzVJHqY1qwCvDdKHUHPbpVW0G7P2W2t3
+         QiDho938dK26atnzlER4r0Oh2CfLyYRGEQAEm/zrzFCx7jKGYYnhemuhgKgTGPgJksrz
+         v0tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWAhtn9UyO5RVujQsY+6VkgXU3vN0MB69RtmxDGWSs7qQQGjMP0kpqi5jpK92z7X0zHYlgIlR7hMqX+Z2d3Xs4AuUGfFF4W1sMW144
+X-Gm-Message-State: AOJu0YwAYh4WXGNvdOkq10CmeYwJNRx3fWl1OrgrNRoXVRHRv6kGMADV
+	0CviFdbK65dgMppvxjGBPe/0p2vgxbTcd4xM2rk9NF2sUxRR+WZ9qmuYJVDou8Q=
+X-Google-Smtp-Source: AGHT+IGxwhLw6BTrQ2V9xcN9eZHUbmtBeH0DBK7jsO/MxRI72pCJIA3N2I2HkR6izN4ncWAVY0y9bw==
+X-Received: by 2002:a05:6358:4688:b0:192:ce79:b64 with SMTP id e5c5f4694b2df-197e50f4911mr1498831955d.9.1716855274176;
+        Mon, 27 May 2024 17:14:34 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682226fc4dcsm6536043a12.42.2024.05.27.17.14.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 17:14:33 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Russell King <linux@armlinux.org.uk>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Rob Herring <robh@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH] clk: sifive: Do not register clkdevs for PRCI clocks
+Date: Mon, 27 May 2024 17:14:12 -0700
+Message-ID: <20240528001432.1200403-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 4/4] blk-flush: reuse rq queuelist in flush state
- machine
-Content-Language: en-US
-To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
- ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20230717040058.3993930-1-chengming.zhou@linux.dev>
- <20230717040058.3993930-5-chengming.zhou@linux.dev>
- <14b89dfb-505c-49f7-aebb-01c54451db40@proxmox.com>
- <984f1f77-288c-441a-a649-5f320249b576@linux.dev>
- <4d799672-378b-42b1-896b-38df2c5e9c84@proxmox.com>
- <0783d367-4608-4b16-9b88-6eaf5d5706eb@linux.dev>
- <8b1400e6-b35e-486b-8ea0-de76270267c0@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <8b1400e6-b35e-486b-8ea0-de76270267c0@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/28 07:50, Chengming Zhou wrote:
-> On 2024/5/28 07:34, Chengming Zhou wrote:
->> On 2024/5/28 00:04, Friedrich Weber wrote:
->>> Hi Chengming,
->>>
->>> Thank you for taking a look at this!
->>>
->>> On 27/05/2024 07:09, Chengming Zhou wrote:
->>>>> I've used this reproducer for a bisect, which produced
->>>>>
->>>>>  81ada09cc25e (blk-flush: reuse rq queuelist in flush state machine)
->>>>>
->>>>> as the first commit with which I can reproduce the crashes. I'm not 100%
->>>>> sure it is this one because the reproducer is a bit flaky. But it does
->>>>> sound plausible, as the commit is included in our 6.8 kernel, and
->>>>> touches `queuelist` which is AFAICT where blk_flush_complete_seq
->>>>> dereferences the NULL pointer.
->>>>
->>>> Ok, it will be better that I can reproduce it locally, will try later.
->>>
->>> Interestingly, so far I haven't been able to reproduce the crash when
->>> generating IO on the host itself, I only got crashes when generating IO
->>> in a QEMU VM.
->>>
->>> The reproducer in more detail:
->>
->> Thanks for these details, I will try to setup and reproduce when I back to work.
->>
->>>
->>> - Compile Linux 6.9 with CONFIG_FAULT_INJECTION,
->> [...]
->>>>
->>>> BUG shows it panic on 0000000000000008, not sure what it's accessing then,
->>>> does it means rq->queuelist.next == 0 or something? Could you use add2line
->>>> to show the exact source code line that panic? I use blk_flush_complete_seq+0x296/0x2e0
->>>> and get block/blk-flush.c:190, which is "fq->flush_data_in_flight++;",
->>>> obviously fq can't be NULL. (I'm using the v6.9 kernel)
->>>
->>> Sorry for the confusion, the crash dump was from a kernel compiled at
->>> 81ada09cc25e -- with 6.9, the offset seems to be different. See [2] for
->>> a kernel 6.9 crash dump.
->>>
->>> I don't know too much about kernel debugging, but I tried to get
->>> something useful out of addr2line:
->>>
->>> # addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-debug2
->>> blk_flush_complete_seq+0x291/0x2d0
->>> __list_del
->>> /[...]./include/linux/list.h:195
->>>
->>> I tried to find the relevant portions in `objdump -SD blk-flush.o`, see
->>> [3]. If I'm not mistaken, blk_flush_complete_seq+0x291 should point to
->>>
->>> 351:   48 89 4f 08             mov    %rcx,0x8(%rdi)
->>>
->>> To me this looks like part of
->>>
->>> 	list_move_tail(&rq->queuelist, pending);
->>>
->>> What do you think?
->>
->> Yeah, it seems correct, so the rq->queuelist.next == NULL. It can't be NULL
->> if went through REQ_FSEQ_POSTFLUSH, so it must be REQ_FSEQ_PREFLUSH. It means
->> we allocated a request but its queuelist is not initialized or corrupted?
->>
->> Anyway, I will use below changes for debugging when reproduce, and you could
->> also try this to see if we could get something useful. :)
->>
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 3b4df8e5ac9e..6e3a6cd7739d 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -2989,6 +2989,8 @@ void blk_mq_submit_bio(struct bio *bio)
->>                 blk_mq_use_cached_rq(rq, plug, bio);
->>         }
->>
->> +       BUG_ON(rq->queuelist.next == NULL);
->> +
->>         trace_block_getrq(bio);
->>
->>         rq_qos_track(q, rq, bio);
->> @@ -3006,6 +3008,8 @@ void blk_mq_submit_bio(struct bio *bio)
->>         if (bio_zone_write_plugging(bio))
->>                 blk_zone_write_plug_init_request(rq);
->>
->> +       BUG_ON(rq->queuelist.next == NULL);
->> +
->>         if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
->>                 return;
->>
-> 
-> Ah, I forgot to change to your kernel version, then should be:
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index d98654869615..908fdfb62132 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -2963,6 +2963,8 @@ void blk_mq_submit_bio(struct bio *bio)
->                         return;
->         }
-> 
-> +       BUG_ON(rq->queuelist.next == NULL);
-> +
->         trace_block_getrq(bio);
-> 
->         rq_qos_track(q, rq, bio);
-> @@ -2977,6 +2979,8 @@ void blk_mq_submit_bio(struct bio *bio)
->                 return;
->         }
-> 
-> +       BUG_ON(rq->queuelist.next == NULL);
-> +
->         if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
->                 return;
-> 
+These clkdevs were unnecessary, because systems using this driver always
+look up clocks using the devicetree. And as Russell King points out[1],
+since the provided device name was truncated, lookups via clkdev would
+never match.
 
-Another possibility is that drivers may change rq->queuelist even after
-rq->end_io(). So add two more BUG_ON() to detect this:
+Recently, commit 8d532528ff6a ("clkdev: report over-sized strings when
+creating clkdev entries") caused clkdev registration to fail due to the
+truncation, and this now prevents the driver from probing. Fix the
+driver by removing the clkdev registration.
 
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index e73dc22d05c1..0eb684a468e5 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -179,7 +179,10 @@ static void blk_flush_complete_seq(struct request *rq,
+Link: https://lore.kernel.org/linux-clk/ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk/ [1]
+Fixes: 30b8e27e3b58 ("clk: sifive: add a driver for the SiFive FU540 PRCI IP block")
+Fixes: 8d532528ff6a ("clkdev: report over-sized strings when creating clkdev entries")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/linux-clk/7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net/
+Suggested-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+---
+This change fixes v6.10-rc1 boot on HiFive Unmatched.
 
-        switch (seq) {
-        case REQ_FSEQ_PREFLUSH:
-+               BUG_ON(rq->queuelist.next == NULL);
-+               fallthrough;
-        case REQ_FSEQ_POSTFLUSH:
-+               BUG_ON(rq->queuelist.next == NULL);
-                /* queue for flush */
-                if (list_empty(pending))
-                        fq->flush_pending_since = jiffies;
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index d98654869615..908fdfb62132 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2963,6 +2963,8 @@ void blk_mq_submit_bio(struct bio *bio)
-                        return;
-        }
+ drivers/clk/sifive/sifive-prci.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-+       BUG_ON(rq->queuelist.next == NULL);
-+
-        trace_block_getrq(bio);
+diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+index 25b8e1a80ddc..b32a59fe55e7 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -4,7 +4,6 @@
+  * Copyright (C) 2020 Zong Li
+  */
+ 
+-#include <linux/clkdev.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -537,13 +536,6 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd,
+ 			return r;
+ 		}
+ 
+-		r = clk_hw_register_clkdev(&pic->hw, pic->name, dev_name(dev));
+-		if (r) {
+-			dev_warn(dev, "Failed to register clkdev for %s: %d\n",
+-				 init.name, r);
+-			return r;
+-		}
+-
+ 		pd->hw_clks.hws[i] = &pic->hw;
+ 	}
+ 
+-- 
+2.44.0
 
-        rq_qos_track(q, rq, bio);
-@@ -2977,6 +2979,8 @@ void blk_mq_submit_bio(struct bio *bio)
-                return;
-        }
-
-+       BUG_ON(rq->queuelist.next == NULL);
-+
-        if (op_is_flush(bio->bi_opf) && blk_insert_flush(rq))
-                return;
 
