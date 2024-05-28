@@ -1,190 +1,200 @@
-Return-Path: <linux-kernel+bounces-191752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800348D13A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6532A8D139D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD51DB224AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885B71C222B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2DB3FB31;
-	Tue, 28 May 2024 05:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29D93F9FC;
+	Tue, 28 May 2024 05:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MQqiwmwW"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0JSsi6S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F8945024;
-	Tue, 28 May 2024 05:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1149C3D0A9;
+	Tue, 28 May 2024 05:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716872764; cv=none; b=FtiyNC4yQAMCDnC91XtZlDwSW9FmOW972qNXKRP3Ghs93MiywqV1Fw8iFfCtE/MlTP/imj5svl7RGqJxOMA3xwhgC4y5ea3Q1/gDfk7Lon+OWRlqOPh7jbpYfBHJJ8tW1yiZUr30QnchOm1zcD3aMLusknM67yoXHd99tb/NaT4=
+	t=1716872752; cv=none; b=mgFGJX8RD1u9v7N0jOLXgEoTpcKMvcvw5BOx2kVoG6vSjBVTTUTChJ/X2O4A+eEX0CAi+zFXlUxczI03Lyz7aNyC8rltalN6kv4H6oA0/p+JNBMgruX+2rep//Apdg8enC2E1ThlUYDVdbvqQNWeyXteUrmI+TojZnnCcKSuyJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716872764; c=relaxed/simple;
-	bh=QEn037aGR5cXUuVp/2L37AuO0NPPPU2+ZHA3zGxRGqo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bwaQjaG1BisG8T6NFA4Ao6UyRRTQDjoHsMzOggiDGKi4mSCYYFPXCV/RfMU/oSLHa7bmVcKjMuco7D59Lhtv1lHSHdA8u0BNQ/n+jHqju6MlwuyYBAYcH8orPabmH4X+g73E+pSDc4nzrZ7cP1Tzf9KqtUS6bSTPRjMKoz5Gu6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MQqiwmwW; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716872761;
-	bh=QEn037aGR5cXUuVp/2L37AuO0NPPPU2+ZHA3zGxRGqo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=MQqiwmwWElSXojLLiK1uxGYthfGxhuNK2QNYe7mJOdxUuRP1Fhh6UYIv/8BjlVUL1
-	 od9tPTGlQHlhaOf96UK2vGb/7sl0RLEnjIIykUKBvRp07iR5LqeWA3RnrR3E6+1EpS
-	 e0Ly9fuZ/+wGZhA84KLAxaNLFI0DiV7fCNJTbS+Ag28M34kKhwhcQ6WLO/CdZvM2J2
-	 EHCnwU5tWm+X8izwkM/au9/P3tVBVHpKl1ik8U2My+mX2u44BTT3zcEK60d3X+f5Wx
-	 96ZaHJY6yXfmX+g29xH9amndcs123dewRoHiFkQsRCGii8PDtO2rZtz1dSG9Uef4qE
-	 h/nUFUpwzs91g==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 385C13782137;
-	Tue, 28 May 2024 05:05:57 +0000 (UTC)
-Message-ID: <4fb5ad2e-cc9f-4ad6-94a5-7de9f503ab94@collabora.com>
-Date: Tue, 28 May 2024 10:05:28 +0500
+	s=arc-20240116; t=1716872752; c=relaxed/simple;
+	bh=Tovpx1FZiQz8QrAsCt+bRrI7/FqIEBYBeBt7CR34S4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTPl+RIdhDuqRwiiAwvjgUbGrhiDk9wy4nHkRhoiFSYB6d0IoPUKdRtJVR4xFxxX+0q5yLFOUoJIrb733lH6mYpl2H+Kj2XLJx7930GjlyqcIXY30TjQlxE68AYJlV36OBNoEmeVxyiNCl3nsfrJqQoeRXouPh1G3ciN0t+eQHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0JSsi6S; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716872751; x=1748408751;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tovpx1FZiQz8QrAsCt+bRrI7/FqIEBYBeBt7CR34S4s=;
+  b=P0JSsi6SKENrWuzmMJTxMm4FnWkhc9zucbwuxnLNh/RhdwXJF71c3RH4
+   MOGaqOLbYQV6eJZBF6B1ovKJcDESUKTXrpuuMQim2N3AQQQ8n4fHgJr0R
+   XGVxRUFtOhDCAn6mtSd0Vlf/aUpR42J+yg4m8qpumUIVtUOcMb2IGn/PE
+   IxS651/fWLJcNcfk2e/l1Vnu1dr3+ht1roCrW7hB5mkQmjCUCGVHv8ox/
+   8ONjXsueWIjRaifBWK0sUSlWyh0YnjKt6KXnsyqYYxJAw43LilObAzroh
+   G8/1H97jh7e5i2qeDrrOEBlYcPNY1tf6TKEP0/Vj47vv+9ouBdwV2gJzn
+   g==;
+X-CSE-ConnectionGUID: M6NfgT+nQUy0HmSSmmBj+g==
+X-CSE-MsgGUID: +IMiLqP2Rp+NxaCUxv3KIg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="23754621"
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="23754621"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 22:05:51 -0700
+X-CSE-ConnectionGUID: RvDHCeTkQayOwMhelFDzFA==
+X-CSE-MsgGUID: 56kAMEmLT5Gpex9PNJZSjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
+   d="scan'208";a="39476804"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.244.201])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 22:05:44 -0700
+Date: Tue, 28 May 2024 08:05:37 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Tony Lindgren <tony@atomide.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Johan Hovold <johan@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 1/7] printk: Save console options for
+ add_preferred_console_match()
+Message-ID: <ZlVmIcu2NQOXg9rx@tlindgre-MOBL1>
+References: <20240327110021.59793-1-tony@atomide.com>
+ <20240327110021.59793-2-tony@atomide.com>
+ <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
+ <ZlRqz2b0ZrtkxScL@tlindgre-MOBL1>
+ <ZlSOc5mtbf4DdI8O@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: tpm2: conform test to TAP output
-To: Shuah Khan <shuah@kernel.org>
-References: <20240426091435.2742024-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240426091435.2742024-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlSOc5mtbf4DdI8O@pathway.suse.cz>
 
-Kind reminder
+On Mon, May 27, 2024 at 03:45:55PM +0200, Petr Mladek wrote:
+> On Mon 2024-05-27 14:13:19, Tony Lindgren wrote:
+> > To me it seems we can fix this by keeping track of the console position
+> > in the kernel command line. I'll send a fix for this to discuss.
+> 
+> Honestly, I would prefer some alternative solution of the whole
+> problem. From my POV, the current patchset is a kind of a hack.
+> 
+>   1. It hides console=DEVNAME:X.Y options so that register_console()
+>      does not know about them.
 
-On 4/26/24 2:14 PM, Muhammad Usama Anjum wrote:
-> The python unittest is being used for executing tests. TAP output
-> cannot be added in the unittest framework. The python unittest is being
-> run from a script. Add the output TAP logs to the script. Add "#"
-> prefix to the python unittest output which will mark all output as
-> informational TAP messages. Check exit status of the python unittest to
-> decide if test passed or failed. Not sure why but python unittest
-> outputs logs in stderr. So redirect the logs to stdout and then add
-> prefix.
-> 
-> Specify the bash explicitly instead of sh to run these tests as all of
-> the kselftests are shifting towards using bash explicitly. Some
-> interpreters have different syntax and cause issues.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/tpm2/test_async.sh | 24 ++++++++++++++++------
->  tools/testing/selftests/tpm2/test_smoke.sh | 19 ++++++++++++++---
->  tools/testing/selftests/tpm2/test_space.sh | 19 ++++++++++++++---
->  3 files changed, 50 insertions(+), 12 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/tpm2/test_async.sh b/tools/testing/selftests/tpm2/test_async.sh
-> index 43bf5bd772fd4..0e6e5d9d649fb 100755
-> --- a/tools/testing/selftests/tpm2/test_async.sh
-> +++ b/tools/testing/selftests/tpm2/test_async.sh
-> @@ -1,10 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->  
-> -# Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
->  
-> -[ -e /dev/tpm0 ] || exit $ksft_skip
-> -[ -e /dev/tpmrm0 ] || exit $ksft_skip
-> +ktap_print_header
->  
-> -python3 -m unittest -v tpm2_tests.AsyncTest
-> +[ -e /dev/tpm0 ] || ktap_finished
-> +[ -e /dev/tpmrm0 ] || ktap_finished
-> +
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
-> index 58af963e5b55a..2219a180de91d 100755
-> --- a/tools/testing/selftests/tpm2/test_smoke.sh
-> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->  
->  # Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
->  
->  [ -e /dev/tpm0 ] || exit $ksft_skip
->  
-> -python3 -m unittest -v tpm2_tests.SmokeTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
-> index 04c47b13fe8ac..6a55d13d74983 100755
-> --- a/tools/testing/selftests/tpm2/test_space.sh
-> +++ b/tools/testing/selftests/tpm2/test_space.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->  
->  # Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
->  
->  [ -e /dev/tpmrm0 ] || exit $ksft_skip
->  
-> -python3 -m unittest -v tpm2_tests.SpaceTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
+OK let's make register_console() aware of the DEVNAME:X.Y options.
+I like what you're suggesting towards the end of your message for
+this.
 
--- 
-BR,
-Muhammad Usama Anjum
+>   2. But wait, register_console() might then enable any random console
+>      by default when there are not console= options. For this the 3rd patch
+>      added @console_set_on_cmdline variable which would tell
+>      register_console(): "Hey, I have hidden some user preferences.
+>      I'll tell you about them when the right time comes."
+
+That's to allow setting up a console when the driver is ready. So that 
+we don't need to rely on the hardcoded device name deciphering at
+console_setup() time. Maybe there's a better way to signal that though.
+
+>   3. When port init matches the pattern, it adds the preferred console
+>      so that the register_console() would know about it.
+> 
+>   4. But wait, the ordering of preferred consoles is important.
+>      Which would require more hacks to preserve the ordering.
+
+Preserving the ordering part is probably the smallest issue to deal with
+here :) I agree we should try to make things simpler though and there
+certainly are already lots of magic switches setting up the console.
+
+>   5. Also serial_base_add_prefcon() adds the preferred console
+>      with the generic name "ttyS" which is not specific
+>      for the matched device. It just hopes that the very next
+>      "register_console()" call will be the one related to
+>      the matching device. Is this really guaranteed on SMP system?
+
+Hmm not sure I get this issue though, when serial_base_add_prefcon() gets
+called we know the device name. The "ttyS" parts are needed to avoid
+relying on the hardcoded device name deciphering at console_setup() time.
+
+If you're thinking about the serial8250_isa_init_ports() related calls,
+the serial port mapping uses SERIAL_PORT_DFNS. And then a hardware
+specific 8250 may take over at some point :)
+ 
+> IMHO, the only solution would be to add a function which would
+> return "ttySX" for the fiven device name.
+
+Yes agreed, this will simplify things.
+
+> Honestly, I do not know the hiearachy of the structures in detail.
+> But the documentation in the 7th patch says:
+> 
+> +			The mapping of the serial ports to the tty instances
+> +			can be viewed with:
+> +
+> +			$ ls -d /sys/bus/serial-base/devices/*:*.*/tty/*
+> +			/sys/bus/serial-base/devices/00:04:0.0/tty/ttyS0
+> 
+> BTW: I get on my test system:
+> 
+> # ls -1 -d /sys/bus/serial-base/devices/*:*.*/tty/*
+> /sys/bus/serial-base/devices/00:00:0.0/tty/ttyS0
+> /sys/bus/serial-base/devices/serial8250:0.1/tty/ttyS1
+> /sys/bus/serial-base/devices/serial8250:0.2/tty/ttyS2
+> /sys/bus/serial-base/devices/serial8250:0.3/tty/ttyS3
+> ...
+
+OK
+
+> It looks like it should be possible to provide a function which would
+> return:
+> 
+>    "ttyS0" for "00:00:0.0"
+>    "ttyS1" for "serial8250:0.1"
+>    ...
+> 
+> 
+> This function might then be used in "register_console()"
+> to convert "console=DEVNAME:0.0" option to "ttyS" + "index".
+> 
+> The advantage would be that the relation between "DEVNAME:0.0"
+> and "ttyS0" will be clear. And the code would see the same hiearachy
+> as the user in /sys/bus/serial-base/devices/.
+
+OK makes sense to me.
+
+> Of course, I might be too naive. Maybe, the sysfs hieararchy is
+> created too late. Maybe, it is not easy to go throught the
+> hiearachy...
+> 
+> But still. I wonder if there is a straightforard way which would
+> allow translation between "ttySX" and "DEVNAME:0.0" naming schemes.
+
+We can do that on driver probe time no problem. The issues are mostly
+related to setting up things early on.
+
+Regards,
+
+Tony
 
