@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-192005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532B88D1723
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:20:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532868D1726
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF2F285C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:20:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CBFB25421
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497BA13FD98;
-	Tue, 28 May 2024 09:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2371113DDCE;
+	Tue, 28 May 2024 09:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xDk3Smty"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNujpjTx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10865140386;
-	Tue, 28 May 2024 09:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A902D13D2B6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716887903; cv=none; b=NyhgoBa7hkTyXSyt8SyDhCMfhGB5LyX5/qjLUxzdY8NhJuOYod6uKAO/TMIDYGu/JWHkTBNh2TJio6h6N6KcBgR8t37z7MfvKX4rCvpY+FVtXhO6es4FOR4ldpreP1SKfhZgOxrBed42Zv56tzQZAmvwF0xpR8pwISt6AwCuJfM=
+	t=1716887920; cv=none; b=VY/IaL159snS/aGi5Bk4Z2Px26A8V/kOmpdkc5FtrbG0EMm+jNBsNNvnv/GTUHcmNn73hSQdQD9ZWsmkjx58D1CaUWL3semAzbJGxx0vvUxxxRzk26Eo5keWa6tf5H8sN6UMdlcoCUg/jyGbnzGI/e905GCi4NZpz6BNq56WHpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716887903; c=relaxed/simple;
-	bh=LKu4LRyGZp0SuwvyOaS9H+olC5GTu4VF+Xc85CYC4ek=;
-	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
-	 Content-Disposition:Content-Type:Message-Id:Date; b=PLL4LxNo2VxCPdI0UQ3SkL64aB6mRVctGJ3d4SiPwh2HygcX3e5sUoQPpttfxzyaCWG8SC3RaD+nBLSeGBuDAFtSR/R55hmuON87sTVW98p0HN8mkeWDkFXFEI2qAr6e6DT0836Gngnj7OEnvNvKmrsNg9tWCDyDYUegguwlEqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xDk3Smty; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
-	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FlOsQt51ODlcWfSttNCMN/vZL8f8s6mIoZE3qIAvgdY=; b=xDk3SmtyjuJIz+pzkFgfJlAaJq
-	JdvH9tfZ/3H8bqYWRwMvRrAPoeE52mOi5iw9VYATIfsa09vhaDzpktUgvVlO15ZJTrDs1VrhzAT3Z
-	zQJFkq240k8ZjORkB+wHJpd6n/o211D4bSyoVuPyo57ahuH5BuE+0brCukMzSy+vqDCGZlW3YIXl2
-	tRVShTsTMLAtS3Txi5TgbQ9P/8h7TrGUW+5dSiJBQB3da5kkFC/NEFZUD6fu3Zy69eUygopnDOby1
-	xxE3LCjV7kchdNfCQNUZIGbRKkgviNIfZu+VQKaOR2vxvgK280j8I3hvFdP2w7iKM7HpCgPHJakV9
-	kE0jooaw==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:53394 helo=rmk-PC.armlinux.org.uk)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <rmk@armlinux.org.uk>)
-	id 1sBsyF-0004Ya-0q;
-	Tue, 28 May 2024 10:18:15 +0100
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1sBsyH-00E8w6-Vu; Tue, 28 May 2024 10:18:18 +0100
-In-Reply-To: <ZlWhH4HleGILuUtN@shell.armlinux.org.uk>
-References: <ZlWhH4HleGILuUtN@shell.armlinux.org.uk>
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	 Michael Nemanov <michael.nemanov@ti.com>,
-	 linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH wireless-next 8/8] wifi: wl18xx: allow firmwares > 8.9.0.x.58
+	s=arc-20240116; t=1716887920; c=relaxed/simple;
+	bh=2F/mo2WDzaQW6C2ZAM3/M+Fb/tJqcO0PUGS4DUgpA4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h5JQ6GZiKrT3uCP4+2dctEpeSSqmanyVSmnMa3gx2dSCWmiRtjBMky5HJSq6BbE4fv+cUMcbRwTTIRMlmoErPs0s8qLy9rt+TunpF6qBVMmgA1EW+1cLVWRx+9KR7tWBToUpSNvkbIK0guCYaUCraBIpEvkfGmf8hJe54yDBmPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNujpjTx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716887917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SF2VHywssduunP+Z6gsdQkqjFggocJO3TA5NC7P5wKE=;
+	b=dNujpjTxKXKaym7nYZ45fP1THuCd3Pw9pnXWFDwcL8roJPCIqWUdtYpzPcuPtDepek3B/L
+	JL14K8H5woOLDrx/sZ695RkDspxmo83cLwyKX+3TDZKUGc4BLz9zgTom3En2VzB1Ygz6RB
+	Fwjhqg+7CFDcTkeOrZXVDSBrXgsobpc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-s57wUi4qOM6ElkWW8y4R_w-1; Tue,
+ 28 May 2024 05:18:35 -0400
+X-MC-Unique: s57wUi4qOM6ElkWW8y4R_w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 51F4829AA382;
+	Tue, 28 May 2024 09:18:35 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.193.5])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C59032026D68;
+	Tue, 28 May 2024 09:18:32 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: yongqin.liu@linaro.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	inventor500@vivaldi.net,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set to down/up
+Date: Tue, 28 May 2024 11:18:30 +0200
+Message-ID: <20240528091831.13674-1-jtornosm@redhat.com>
+In-Reply-To: <CAMSo37UyC-JRfZjd83Vx2+W-K-WqxAN9sHJ88Jev67Fnwci_pg@mail.gmail.com>
+References: <CAMSo37UyC-JRfZjd83Vx2+W-K-WqxAN9sHJ88Jev67Fnwci_pg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1sBsyH-00E8w6-Vu@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date: Tue, 28 May 2024 10:18:17 +0100
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-wlcore firmware versions are structured thusly:
+Hello Yongqin,
 
-	chip.if-type.major.sub-type.minor
-e.g.	  8    9       0       0     58
+> When I tried the down and up operations manually from the command line,
+> it worked.
+> But it only worked after I ran the down and up operations after the boot.
+> It fails to work by default after the boot for both the fresh deployment,
+> and for the later reboot
+Ok, so it works as well for you after the initialization.
 
-With WL18xx ignoring the major firmware version, looking for a
-firmware version that conforms to:
+> One thing I noticed is that the following message was printed twice
+>     "ax88179_178a 2-3:1.0 eth0: ax88179 - Link status is: 1"
+> after I ran the up operation,
+>
+> Is that expected?
+> 
+> For details, please check the log here:
+> https://gist.github.com/liuyq/be8f5305d538067a344001f1d35f677b
+That is another thing that I am analyzing, to clean those spurious.
+But they are appearing in my case too, and I am not modifying anything at
+boot time.
 
-	chip >= 8
-	if-type >= 9
-	major (don't care)
-	sub-type (don't care)
-	minor >= 58
+> The scripts are simple, here are the two scripts for Android build:
+>    https://android.googlesource.com/device/linaro/dragonboard/+/refs/heads/main/shared/utils/ethaddr/ethaddr.rc
+>    https://android.googlesource.com/device/linaro/dragonboard/+/refs/heads/main/shared/utils/ethaddr/set_ethaddr.sh
+>
+> Is the one to run the down/change mac/up operations script.
+>
+> Not sure why the up in the script does not work, but works when run manually.
+Ok, I am not working with Android but it doesn't seem spscial, the only
+doubt is when the script is executed, if the driver initialization is
+complete, ...
+Anyway, I will try to reproduce here and analyze it.
 
-Each test is satisfied if the value read from the firmware is greater
-than the minimum, but if it is equal (or we don't care about the
-field), then the next field is checked.
-
-Thus it doesn't recognise 8.9.1.x.0 as being newer than 8.9.0.x.58
-since the major and sub-type numbers are "don't care" and the minor
-needs to be greater or equal to 58.
-
-We need to change the major version from "ignore" to "0" for this later
-firmware to be correctly detected, and allow the dual-firmware version
-support to work.
-
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- drivers/net/wireless/ti/wl18xx/wl18xx.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ti/wl18xx/wl18xx.h b/drivers/net/wireless/ti/wl18xx/wl18xx.h
-index 7fed96d71b27..de6c671c4be6 100644
---- a/drivers/net/wireless/ti/wl18xx/wl18xx.h
-+++ b/drivers/net/wireless/ti/wl18xx/wl18xx.h
-@@ -13,7 +13,7 @@
- /* minimum FW required for driver */
- #define WL18XX_CHIP_VER		8
- #define WL18XX_IFTYPE_VER	9
--#define WL18XX_MAJOR_VER	WLCORE_FW_VER_IGNORE
-+#define WL18XX_MAJOR_VER	0
- #define WL18XX_SUBTYPE_VER	WLCORE_FW_VER_IGNORE
- #define WL18XX_MINOR_VER	58
- 
--- 
-2.30.2
+Best regards
+José Ignacio
 
 
