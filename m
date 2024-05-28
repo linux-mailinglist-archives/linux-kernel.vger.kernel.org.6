@@ -1,179 +1,140 @@
-Return-Path: <linux-kernel+bounces-192103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D768D1869
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D558D186D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23373B23E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:22:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A4D1F23660
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F3016C44D;
-	Tue, 28 May 2024 10:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C6316ABD7;
+	Tue, 28 May 2024 10:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFrT9xP9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sqNnxhk5"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3D1667FE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 10:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C5C16A384;
+	Tue, 28 May 2024 10:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716891668; cv=none; b=VP2Lttuo9jOT9he2EaL53yTNN0IMCEqE8EDyO4L9OndXvLaSM0bWkUhI9VCwTLJzNohbQX5hqWNX3cyYUFj8AbJY2dk/4SGMThKm1bx33/Sf0urFiOo4LqCP7PfFbYs9h+i36JrltGo/zOuVblCnJU1zdw+NwNd5Hc3ssm6z4FA=
+	t=1716891727; cv=none; b=IE4dy0ne9HRpwpVfAQdE8cxNBYMX6hHKAn6rP/gWLQgDNvtwnLQCxzOJFQKmTkvFWVDSI9bUO4hVomxcDuvLaPzfk2SeZKJ5xsUSZAAhEiLo9HI9O1CcfzSd9SWXHFhZID8pImLWsuOzAcs+tHtr0dS6105vzhZz9gLXWuOwMrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716891668; c=relaxed/simple;
-	bh=5vFNElkdAUyolYsOKXvEn8wCDhpVG0vf+KTOYWYGHRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=arLC35wg6Z3tUQoB5Kxw3233TJQAo3UNxayA983bE59ckBb2Zzct1KK1T7GoCyLiMm/XLyglYVz+Tc8wr8LuRo7WmA3ZCubQdwsSN/oLYdCa5c14mV4fyY39WSfMIRj8nWF4i3nrM1FJubGIcXrLaSbcTpvmun6logPXei26+tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFrT9xP9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F8EC3277B;
-	Tue, 28 May 2024 10:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716891668;
-	bh=5vFNElkdAUyolYsOKXvEn8wCDhpVG0vf+KTOYWYGHRg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tFrT9xP9ODXnXrXSB8j5uw+Qrgvt8m9hlAz8Nvwcon4f/58q6ocO/keRapJLTAMCL
-	 cWTqZubo4PJXQcIBe7eo+7uN0WLw5zyct7gdM7KMdJu9S22Ogw/MqmNPXnthMSxvq4
-	 unEu1UbRq0xbl/tXNZsTpENpeMyqAgJsArdLQbG/Y8qmIA+Er9c8jqwtncXJn02cck
-	 8HZd4caZLFcduTkfQ8eJqBnalIHqXpWQbFfESn6lUbbxYCj2VUH8RvdNwbYi29t+uY
-	 TcUaKh0SFN3BJPACBUemnopxs4siptPpRgwWROftUeuXqubglRfB3HI0suJOMOGu1A
-	 2KCJu76RpOH5w==
-Message-ID: <ccdacf52-1b31-43a1-a8fd-33a252e24d51@kernel.org>
-Date: Tue, 28 May 2024 12:21:02 +0200
+	s=arc-20240116; t=1716891727; c=relaxed/simple;
+	bh=sRey+u5pmGwHMY7PBUYlpXaOnGtRIBoM3ykxb58m6ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BR2UsxsvqdOaWbpWwzgWaN0U0h7wC2IVc6TLIOjiGgu37t8tl4hHz4g/UXb7vORbGOScUsMXKB4Y/jO+UBdHr8Uc29agkB31RL3IrlLPTXAhGvJvGdg7GLldPZmKcBmXssrxP2LFBe3zR/PEGUYNHnNOh58y79ugvAxRLOWRErU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sqNnxhk5; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xKVMZlVJjByQlTcWIHcb8ICc2Adw+z+dOdz53NVlpuo=; b=sqNnxhk5J6XXakffML7EBhL0FA
+	8kDy73eLiLSXZ0NN/9oIEJaRO1aECUF1NNEnpClyaHQO1C2xxRyDBWk/ySafx5iIaduFQM8cXLiZO
+	Jr3adIdqJ0gPPUkb00oHQDK8GqXAt/APcH7lE8sn6KEtAnQnPdCd0nQd7r2wY3t/OxUB+AcC7EP72
+	Ys+VvkuY7agbOJXYLjA9KeG1hiuymXHK6yYl0Vd2It8wPBdbBjv8ZPaSUe0Lej6Gq4jiQjpH1p1Lm
+	uHp5M3Sr52QMTDb2TDJi/OjZf+M6Ur1nS90+LiP+ScF4WL+DjmeNmzsN/OfJI2Ah/yUyJ1ykb072h
+	Vfl7bTGQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41282)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBtxd-0004by-2l;
+	Tue, 28 May 2024 11:21:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBtxc-0003BF-0p; Tue, 28 May 2024 11:21:40 +0100
+Date: Tue, 28 May 2024 11:21:39 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Byungho An <bh74.an@samsung.com>,
+	Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 2/3] net: stmmac: Activate Inband/PCS flag
+ based on the selected iface
+Message-ID: <ZlWwMzMZrwb5fscN@shell.armlinux.org.uk>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+ <20240524210304.9164-1-fancer.lancer@gmail.com>
+ <20240524210304.9164-2-fancer.lancer@gmail.com>
+ <ZlNoLHoHjt3BsFde@shell.armlinux.org.uk>
+ <fvjrnunu4lriegq3z7xkefsts6ybn2vkxmve6xzi73krjgvcj6@bhf4b4xx3x72>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
-To: Esben Haabendal <esben@geanix.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
- <979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org> <87cypc38gu.fsf@geanix.com>
- <9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org> <87le3zoatn.fsf@geanix.com>
- <6c166ad5-8004-4bc4-9107-a47ba9a72161@kernel.org> <87ttijaglp.fsf@geanix.com>
- <c045f1a4-9ddf-4c53-a69b-22ceb68a1ce8@kernel.org> <87msobaes6.fsf@geanix.com>
- <87ikyzae7v.fsf@geanix.com> <e3aa72af-c824-4b71-a99d-c0b9294bfd8a@kernel.org>
- <87y17ul0cb.fsf@geanix.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <87y17ul0cb.fsf@geanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fvjrnunu4lriegq3z7xkefsts6ybn2vkxmve6xzi73krjgvcj6@bhf4b4xx3x72>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 28/05/2024 12:03, Esben Haabendal wrote:
-> Krzysztof Kozlowski <krzk@kernel.org> writes:
+On Mon, May 27, 2024 at 12:57:02AM +0300, Serge Semin wrote:
+> On Sun, May 26, 2024 at 05:49:48PM +0100, Russell King (Oracle) wrote:
+> > On Sat, May 25, 2024 at 12:02:58AM +0300, Serge Semin wrote:
+> > > The HWFEATURE.PCSSEL flag is set if the PCS block has been synthesized
+> > > into the DW GMAC controller. It's always done if the controller supports
+> > > at least one of the SGMII, TBI, RTBI PHY interfaces. If none of these
+> > > interfaces support was activated during the IP-core synthesize the PCS
+> > > block won't be activated either and the HWFEATURE.PCSSEL flag won't be
+> > > set. Based on that the RGMII in-band status detection procedure
+> > > implemented in the driver hasn't been working for the devices with the
+> > > RGMII interface support and with none of the SGMII, TBI, RTBI PHY
+> > > interfaces available in the device.
+> > > 
+> > > Fix that just by dropping the dma_cap.pcs flag check from the conditional
+> > > statement responsible for the In-band/PCS functionality activation. If the
+> > > RGMII interface is supported by the device then the in-band link status
+> > > detection will be also supported automatically (it's always embedded into
+> > > the RGMII RTL code). If the SGMII interface is supported by the device
+> > > then the PCS block will be supported too (it's unconditionally synthesized
+> > > into the controller). The later is also correct for the TBI/RTBI PHY
+> > > interfaces.
+> > > 
+> > > Note while at it drop the netdev_dbg() calls since at the moment of the
+> > > stmmac_check_pcs_mode() invocation the network device isn't registered. So
+> > > the debug prints will be for the unknown/NULL device.
+> > 
 > 
->> On 27/05/2024 09:47, Esben Haabendal wrote:
->>>
->>> Ok, I seem to still be confused as to what you want from me. If you are
->>> saying that the kernel is not supposed to care about out-of-tree DTS
->>> (and thereby any bootloader provided DTB), I would like to bring your
->>> attention to arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts in upstream:
->>>
->>> &ifc {
->>>         #address-cells = <2>;
->>>         #size-cells = <1>;
->>>         /* NOR Flash on board */
->>>         ranges = <0x0 0x0 0x0 0x60000000 0x08000000>;
->>>         status = "okay";
->>>
->>>         nor@0,0 {
->>>                 #address-cells = <1>;
->>>                 #size-cells = <1>;
->>>                 compatible = "cfi-flash";
->>>                 reg = <0x0 0x0 0x8000000>;
->>>                 big-endian;
->>>                 bank-width = <2>;
->>>                 device-width = <1>;
->>>         };
->>> };
->>>
->>
->> I don't understand why it took so many emails to answer that (my first)
->> question...
+> > Thanks. As this is a fix, shouldn't it be submitted for the net tree as
+> > it seems to be fixing a bug in the driver as it stands today?
 > 
-> Because I did not understand the question. Primarely because I was (and
-> is) surprised that out-of-tree DTS is not supported. I was convinced
-> that out-of-tree DTS was the right way for hardware which is not
-> commonly available.
+> From one point of view it could be submitted for the net tree indeed,
+> but on the second thought are you sure we should be doing that seeing
+> it will activate the RGMII-inband detection and the code with the
+> netif-carrier toggling behind the phylink back? Who knows what new
+> regressions the activated PCS-code can cause?..
 
-Even some non-GA hardware could, and IMHO should, be upstreamed, at
-least some parts of it. This gives the user/upstreamer reason to do
-changes. Otherwise you might get questions for contributions: why you
-are doing and why this is worth?
+If it's not a fix that is suitable without the remainder of the patch
+set, this should be stated in the commit description and it shouldn't
+have a Fixes: tag.
 
-Downstream or any fork is not really answer to such questions, because
-they are allowed to make whatever stupid choices they want (not saying
-it was done here, but in general), which should not be a reason to do
-anything upstream. If downstream creates wrong DTS files, shall we
-create wrong device drivers or bindings for them? No.
+The reason is because it wouldn't be stable kernel material without the
+other patches - if stable picks it up without the other patches then
+it could end up being applied without the other patches resulting in
+the situation you mention above.
 
+Shall I remove the Fixes: tag?
 
-> 
->> Sounds good, however you did not update the existing select.
->> Drivers are not supposed to select user-visible symbols (leads to
->> issues), so you need to change it to depends and update defconfigs.
-> 
-> Do you wan this split into multiple commits, or a single commit changing
-> the Kconfig to make FSL_IFC user-visible, and changing select of it to
-> DEPENDS, and updating the related defconfig(s)?
-
-One commit for Kconfigs (nand and memory), additional commits for
-defconfigs, one per each arch, because defconfigs might go via arch tree.
-
-
-Best regards,
-Krzysztof
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
