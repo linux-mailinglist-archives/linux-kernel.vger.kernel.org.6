@@ -1,234 +1,291 @@
-Return-Path: <linux-kernel+bounces-192726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0189C8D2150
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69FB8D214D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 18:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F091F243D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05F991C23256
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153D0173343;
-	Tue, 28 May 2024 16:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2D6173329;
+	Tue, 28 May 2024 16:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jL/fEJCA"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rJ71QeKW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFA417333D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABB917279B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 16:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912560; cv=none; b=kZ4D2tymGymbacovS7rb5kl0JKm/8WGPnWO2zHdcJH5YWEZwVXwxbWge+C4aIvQ1hMYgVpYEjFafqi3R4L74Ki5uSwxQcd8Q+1kNiZkREC+Cn+Xd4PdJ5iAMAcUhaINuZ1nHfSyLLtQcjx3SR90PpO7EFiwnYE92Pop8F3zTUF8=
+	t=1716912556; cv=none; b=Ftob8VYZTr+Td8vWVEgcSQFk7st48q3nvBUBigDMTin8VK77enCbz8zwMT56Jq6cI0xp39Si4hAREWMEb33BtbGl6w5qxvalxJDFWjrJIVlWTY0sYrb57ERxfPibUzvj+RsyJv9//X0W1l4kWtPufiRBOj9WzsFGBRXMSc+dGBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912560; c=relaxed/simple;
-	bh=bDYuIgQuv3MhFs8SVJuTlfnd4RnjBYwOgR5EG+5wd58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eAHnoSGHqZAuEOQVoebMFVHERI1T3mwoq/jGXxWN8ExR0C5b68IgcMGlRYlppuALwL8Js9LYIceYK/gUH9Vv1FgQGMNF0jzZhOR2WCmFVAQpfulcmrRP+B55Aqv/7/ievNcocaHo4ONh0u1xi2EwGAtYineEm/uTDmFK6eVE+Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jL/fEJCA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f44b42d1caso7921865ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 09:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716912558; x=1717517358; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/T5d6c9CKWOo6KiywfsZr/KUsXoqKTqM2ZtZzV03hwQ=;
-        b=jL/fEJCA9y8QwuXezhaL74vC091dluSPFmMW/wyC0E+2wzrIwYvkiIKbbQ+gMawnIZ
-         R6cfLCjSRIprHl/9r2NSlb8w3ltsGZ5wMuEqNKrnobiWWd1KwB5FSXZLTVKmbzIJpKo/
-         1JgNjBND4NL/DMSvfXcd9J4g+46LZN6qJpkj9dh077aWhBjHndYclw0Ac3VhiEwxNZdu
-         k+NXy70usydnvOUSSKWGrAC7Iw6RFd6vrKe0NwNfdPq94dbabL12p1/oEGMQxtPBbYJs
-         kZInVWTzj88Ix5VUq22QQWJvUhzjEH9D7URGED2ex+2iwNKLKvotWoYd4xPDrR6aOvGL
-         IEHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716912558; x=1717517358;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/T5d6c9CKWOo6KiywfsZr/KUsXoqKTqM2ZtZzV03hwQ=;
-        b=LeT+x1WtarYOQe0FRf9vPSvwb+XPdB0OYSbPZH6HdVk0Wzliu57J8EzNDLHitquiKR
-         r7XR2dQcFMjrAzjaObHJ2C6UogXU8sy7mc2aeWKbyiuEcDNcT2KWwd/B4FIMvKkmEwVy
-         9R6AK3awrL0ksebbqJiewHR3gngEJPOfDi/rUnUf2oj3FIDiHlKarp63Lsfq7m/uhEVy
-         sDsJxYZH5MLqN67lV+/KJY8Pu8oc4+GPxXf+ice4XoEB4X9eAJyhlSnu7mtnYsfzPnej
-         jElY2f0QE3xXZzAPsL1VZ1lS8li9HD+Y904E1pPfAbwmoH+/VQm3ziJBpctwajwDS2lG
-         GOxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM43zIpV0T/Uc0m8oiuCKjhYvYGShYYycVxDoHsAVR038RQmCG5isQzyIN9oBXgtNvKwfZfwR98q3W6tAtPxG3O9QGgEFhzb1BFFeT
-X-Gm-Message-State: AOJu0YzpGycZA5l0zlTwaSqslZT4BQS0A/qrlRdRR69+N7Q2oHJIhZBX
-	U7X+owJlydAUW7dskFNUJ1tv3W6LUBlY9qQXLs5znfaisuhtDsYMVWGsjhvRq3ez8FPz3tf2mxw
-	PubbXweRRAlEZifXn9QsBhDPmEHf2VrLguQfwIw==
-X-Google-Smtp-Source: AGHT+IF7Y4UTjK7B9c7gQCgmKZJrzKmO7YzaO50rJedO1tvD04WxzrFxX+TEhHVj+99gHywgOVea6bGHRNcMFkS6QhE=
-X-Received: by 2002:a17:902:d492:b0:1f4:a057:f927 with SMTP id
- d9443c01a7336-1f4a058014cmr62152365ad.45.1716912557839; Tue, 28 May 2024
- 09:09:17 -0700 (PDT)
+	s=arc-20240116; t=1716912556; c=relaxed/simple;
+	bh=4tCWBrS3xzIkrC1eYcxYTjhHPFAZtsAmGJ3EYsPysO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCId775fAL2T9wR6m5qgQRt/kGX88exLIOUwysqeXRoLqJB+VaxSPgZWRZEVhbO5qQOLJsyxWlPouCiJ5HSR1MsspYKTbBxikFU2TPsupQgB/fyDodluw/xXdDR2jQYYXbualZ+Fhl2K76X9Tlboomr07LpMyL9n6+esMAS2w1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rJ71QeKW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lLWwxjgp78dkT02X8c5Q9W7rjOAJlZLbuuIgOktWhpc=; b=rJ71QeKWOgcl5wQeOU9dEkxZGE
+	WWe8kz3vnJVFKHmyOa8gGHJvp03Ql1wrHqEzrXLyGWSSCsVrT+CV79sn9q6IOkNCvk2ZT1S4j/wo0
+	mj59LmSMpbKvJx0hX9NSMHMHJWE5Z6ATzeRFxIWrhyX3fCgNyYjfF3ZcoU2VesNqNy54GHOzupP7C
+	t4AwnygXK6BrhECeYqpK/2Us3rgxD7r9KZSLgX5Cd2B2hZYgIOotQohJl4WbjMRiEb85TjqghChoQ
+	WY6IMQc651dR4o97nJXe0Na5KZGh+UormvAaJSEYB90zJrbkjZE4jwU2cvNtYo8VZBGleyMSGFrSs
+	UQsOoPSw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBzNq-00000008o4V-1EFG;
+	Tue, 28 May 2024 16:09:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DFB5430058E; Tue, 28 May 2024 18:09:05 +0200 (CEST)
+Date: Tue, 28 May 2024 18:09:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	torvalds@linux-foundation.org, paulmck@kernel.org,
+	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
+	joel@joelfernandes.org, raghavendra.kt@amd.com,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2 07/35] sched: define *_tsk_need_resched_lazy() helpers
+Message-ID: <20240528160905.GC26599@noisy.programming.kicks-ass.net>
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <20240528003521.979836-8-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com> <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com> <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
- <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com> <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
- <omswcicgc2kqd6gp4bebd43sklfs2wqyaorhfyb2wumoeo6v74@gaay3p5m46xi> <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com>
-In-Reply-To: <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 28 May 2024 19:09:04 +0300
-Message-ID: <CAA8EJprW8fTf0tWDWq+aVVauJnK0NqBke-JNELm_GMPvoWa7vA@mail.gmail.com>
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-To: Rob Clark <robdclark@gmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Bibek Kumar Patro <quic_bibekkum@quicinc.com>, will@kernel.org, 
-	robin.murphy@arm.com, joro@8bytes.org, jsnitsel@redhat.com, 
-	quic_bjorande@quicinc.com, mani@kernel.org, quic_eberman@quicinc.com, 
-	robdclark@chromium.org, u.kleine-koenig@pengutronix.de, robh@kernel.org, 
-	vladimir.oltean@nxp.com, quic_pkondeti@quicinc.com, quic_molvera@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528003521.979836-8-ankur.a.arora@oracle.com>
 
-On Tue, 28 May 2024 at 19:08, Rob Clark <robdclark@gmail.com> wrote:
->
-> On Tue, May 28, 2024 at 6:06=E2=80=AFAM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Tue, May 28, 2024 at 02:59:51PM +0200, Konrad Dybcio wrote:
-> > >
-> > >
-> > > On 5/15/24 15:59, Bibek Kumar Patro wrote:
-> > > >
-> > > >
-> > > > On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
-> > > > > On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
-> > > > > >
-> > > > > >
-> > > > > > On 5/1/2024 12:30 AM, Rob Clark wrote:
-> > > > > > > On Tue, Jan 23, 2024 at 7:00=E2=80=AFAM Bibek Kumar Patro
-> > > > > > > <quic_bibekkum@quicinc.com> wrote:
-> > > > > > > >
-> > > > > > > > Currently in Qualcomm  SoCs the default prefetch is set to =
-1 which allows
-> > > > > > > > the TLB to fetch just the next page table. MMU-500 features=
- ACTLR
-> > > > > > > > register which is implementation defined and is used for Qu=
-alcomm SoCs
-> > > > > > > > to have a custom prefetch setting enabling TLB to prefetch =
-the next set
-> > > > > > > > of page tables accordingly allowing for faster translations=
-.
-> > > > > > > >
-> > > > > > > > ACTLR value is unique for each SMR (Stream matching registe=
-r) and stored
-> > > > > > > > in a pre-populated table. This value is set to the register=
- during
-> > > > > > > > context bank initialisation.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com=
->
-> > > > > > > > ---
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > > > +
-> > > > > > > > +               for_each_cfg_sme(cfg, fwspec, j, idx) {
-> > > > > > > > +                       smr =3D &smmu->smrs[idx];
-> > > > > > > > +                       if (smr_is_subset(smr, id, mask)) {
-> > > > > > > > +                               arm_smmu_cb_write(smmu, cbn=
-dx, ARM_SMMU_CB_ACTLR,
-> > > > > > > > +                                               actlrcfg[i]=
-actlr);
-> > > > > > >
-> > > > > > > So, this makes ACTLR look like kind of a FIFO.  But I'm looki=
-ng at
-> > > > > > > downstream kgsl's PRR thing (which we'll need to implement vu=
-lkan
-> > > > > > > sparse residency), and it appears to be wanting to set BIT(5)=
- in ACTLR
-> > > > > > > to enable PRR.
-> > > > > > >
-> > > > > > >           val =3D KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_=
-ACTLR);
-> > > > > > >           val |=3D FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1)=
-;
-> > > > > > >           KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, v=
-al);
-> > > > > > >
-> > > > > > > Any idea how this works?  And does it need to be done before =
-or after
-> > > > > > > the ACTLR programming done in this patch?
-> > > > > > >
-> > > > > > > BR,
-> > > > > > > -R
-> > > > > > >
-> > > > > >
-> > > > > > Hi Rob,
-> > > > > >
-> > > > > > Can you please help provide some more clarification on the FIFO=
- part? By FIFO are you referring to the storing of ACTLR data in the table?
-> > > > > >
-> > > > > > Thanks for pointing to the downstream implementation of kgsl dr=
-iver for
-> > > > > > the PRR bit. Since kgsl driver is already handling this PRR bit=
-'s
-> > > > > > setting, this makes setting the PRR BIT(5) by SMMU driver redun=
-dant.
-> > > > >
-> > > > > The kgsl driver is not present upstream.
-> > > > >
-> > > >
-> > > > Right kgsl is not present upstream, it would be better to avoid con=
-figuring the PRR bit and can be handled by kgsl directly in downstream.
-> > >
-> > > No! Upstream is not a dumping ground to reduce your technical debt.
-> > >
-> > > There is no kgsl driver upstream, so this ought to be handled here, i=
-n
-> > > the iommu driver (as poking at hardware A from driver B is usually no=
-t good
-> > > practice).
-> >
-> > I'd second the request here. If another driver has to control the
-> > behaviour of another driver, please add corresponding API for that.
->
-> We have adreno_smmu_priv for this purpose ;-)
+On Mon, May 27, 2024 at 05:34:53PM -0700, Ankur Arora wrote:
+> Define __{set,test}_tsk_need_resched() to test for the immediacy of the
+> need-resched.
+> 
+> The current helpers, {set,test}_tsk_need_resched(...) stay the same.
+> 
+> In scheduler code, switch to the more explicit variants,
+> __set_tsk_need_resched(...), __test_tsk_need_resched(...).
+> 
+> Note that clear_tsk_need_resched() is only used from __schedule()
+> to clear the flags before switching context. Now it clears all the
+> need-resched flags.
+> 
+> Cc: Peter Ziljstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Originally-by: Thomas Gleixner <tglx@linutronix.de>
+> Link: https://lore.kernel.org/lkml/87jzshhexi.ffs@tglx/
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> ---
+>  include/linux/sched.h   | 45 +++++++++++++++++++++++++++++++++++++----
+>  kernel/sched/core.c     |  9 +++++----
+>  kernel/sched/deadline.c |  4 ++--
+>  kernel/sched/fair.c     |  2 +-
+>  kernel/sched/rt.c       |  4 ++--
+>  5 files changed, 51 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 37a51115b691..804a76e6f3c5 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1952,19 +1952,56 @@ static inline bool test_tsk_thread_flag(struct task_struct *tsk, int flag)
+>  	return test_ti_thread_flag(task_thread_info(tsk), flag);
+>  }
+>  
+> -static inline void set_tsk_need_resched(struct task_struct *tsk)
+> +/*
+> + * With !CONFIG_PREEMPT_AUTO, tif_resched(RESCHED_LAZY) reduces to
+> + * tif_resched(RESCHED_NOW). Add a check in the helpers below to ensure
+> + * we don't touch the tif_reshed(RESCHED_NOW) bit unnecessarily.
+> + */
+> +static inline void __set_tsk_need_resched(struct task_struct *tsk, resched_t rs)
+>  {
+> -	set_tsk_thread_flag(tsk,TIF_NEED_RESCHED);
+> +	if (IS_ENABLED(CONFIG_PREEMPT_AUTO) || rs == RESCHED_NOW)
+> +		set_tsk_thread_flag(tsk, tif_resched(rs));
+> +	else
+> +		/*
+> +		 * RESCHED_LAZY is only touched under CONFIG_PREEMPT_AUTO.
+> +		 */
+> +		BUG();
+>  }
 
-Exactly
+This straight up violates coding style and would require a dose of {}.
 
->
-> BR,
-> -R
->
-> > >
-> > > >
-> > > > > > Thanks for bringing up this point.
-> > > > > > I will send v10 patch series removing this BIT(5) setting from =
-the ACTLR
-> > > > > > table.
-> > > > >
-> > > > > I think it's generally saner to configure the SMMU from the SMMU =
-driver..
-> > > >
-> > > > Yes, agree on this. But since PRR bit is not directly related to SM=
-MU
-> > > > configuration so I think it would be better to remove this PRR bit
-> > > > setting from SMMU driver based on my understanding.
-> > >
-> > > Why is it not related? We still don't know what it does.
-> > >
-> > > Konrad
-> >
-> > --
-> > With best wishes
-> > Dmitry
+	if (!IS_ENABLED(CONFIG_PREEMPT_AUTO && rs == RESCHED_LAZY)
+		BUG();
 
+	set_tsk_thread_flag(tsk, tif_resched(rs));
 
+seems much saner to me.
 
---=20
-With best wishes
-Dmitry
+>  static inline void clear_tsk_need_resched(struct task_struct *tsk)
+>  {
+> -	clear_tsk_thread_flag(tsk,TIF_NEED_RESCHED);
+> +	clear_tsk_thread_flag(tsk, tif_resched(RESCHED_NOW));
+> +
+> +	if (IS_ENABLED(CONFIG_PREEMPT_AUTO))
+> +		clear_tsk_thread_flag(tsk, tif_resched(RESCHED_LAZY));
+> +}
+> +
+> +static inline bool __test_tsk_need_resched(struct task_struct *tsk, resched_t rs)
+> +{
+> +	if (IS_ENABLED(CONFIG_PREEMPT_AUTO) || rs == RESCHED_NOW)
+> +		return unlikely(test_tsk_thread_flag(tsk, tif_resched(rs)));
+> +	else
+> +		return false;
+>  }
+
+	if (!IS_ENABLED(CONFIG_PREEMPT_AUTO) && rs == RESCHED_LAZY)
+		return false;
+
+	return unlikely(test_tsk_thread_flag(tsk, tif_resched(rs)));
+
+>  
+>  static inline bool test_tsk_need_resched(struct task_struct *tsk)
+>  {
+> -	return unlikely(test_tsk_thread_flag(tsk,TIF_NEED_RESCHED));
+> +	return __test_tsk_need_resched(tsk, RESCHED_NOW);
+> +}
+> +
+> +static inline bool test_tsk_need_resched_lazy(struct task_struct *tsk)
+> +{
+> +	return __test_tsk_need_resched(tsk, RESCHED_LAZY);
+> +}
+> +
+> +static inline void set_tsk_need_resched(struct task_struct *tsk)
+> +{
+> +	return __set_tsk_need_resched(tsk, RESCHED_NOW);
+> +}
+> +
+> +static inline void set_tsk_need_resched_lazy(struct task_struct *tsk)
+> +{
+> +	return __set_tsk_need_resched(tsk, RESCHED_LAZY);
+>  }
+>  
+>  /*
+
+So far so good, however:
+
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 7019a40457a6..d00d7b45303e 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -933,7 +933,7 @@ static bool set_nr_if_polling(struct task_struct *p)
+>  #else
+>  static inline bool set_nr_and_not_polling(struct task_struct *p)
+>  {
+> -	set_tsk_need_resched(p);
+> +	__set_tsk_need_resched(p, RESCHED_NOW);
+>  	return true;
+>  }
+>  
+> @@ -1045,13 +1045,13 @@ void resched_curr(struct rq *rq)
+>  
+>  	lockdep_assert_rq_held(rq);
+>  
+> -	if (test_tsk_need_resched(curr))
+> +	if (__test_tsk_need_resched(curr, RESCHED_NOW))
+>  		return;
+>  
+>  	cpu = cpu_of(rq);
+>  
+>  	if (cpu == smp_processor_id()) {
+> -		set_tsk_need_resched(curr);
+> +		__set_tsk_need_resched(curr, RESCHED_NOW);
+>  		set_preempt_need_resched();
+>  		return;
+>  	}
+> @@ -2245,7 +2245,8 @@ void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
+>  	 * A queue event has occurred, and we're going to schedule.  In
+>  	 * this case, we can save a useless back to back clock update.
+>  	 */
+> -	if (task_on_rq_queued(rq->curr) && test_tsk_need_resched(rq->curr))
+> +	if (task_on_rq_queued(rq->curr) &&
+> +	    __test_tsk_need_resched(rq->curr, RESCHED_NOW))
+>  		rq_clock_skip_update(rq);
+>  }
+>  
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index a04a436af8cc..d24d6bfee293 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2035,7 +2035,7 @@ static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p,
+>  	 * let us try to decide what's the best thing to do...
+>  	 */
+>  	if ((p->dl.deadline == rq->curr->dl.deadline) &&
+> -	    !test_tsk_need_resched(rq->curr))
+> +	    !__test_tsk_need_resched(rq->curr, RESCHED_NOW))
+>  		check_preempt_equal_dl(rq, p);
+>  #endif /* CONFIG_SMP */
+>  }
+> @@ -2564,7 +2564,7 @@ static void pull_dl_task(struct rq *this_rq)
+>  static void task_woken_dl(struct rq *rq, struct task_struct *p)
+>  {
+>  	if (!task_on_cpu(rq, p) &&
+> -	    !test_tsk_need_resched(rq->curr) &&
+> +	    !__test_tsk_need_resched(rq->curr, RESCHED_NOW) &&
+>  	    p->nr_cpus_allowed > 1 &&
+>  	    dl_task(rq->curr) &&
+>  	    (rq->curr->nr_cpus_allowed < 2 ||
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c62805dbd608..c5171c247466 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8316,7 +8316,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>  	 * prevents us from potentially nominating it as a false LAST_BUDDY
+>  	 * below.
+>  	 */
+> -	if (test_tsk_need_resched(curr))
+> +	if (__test_tsk_need_resched(curr, RESCHED_NOW))
+>  		return;
+>  
+>  	/* Idle tasks are by definition preempted by non-idle tasks. */
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 3261b067b67e..f0a6c9bb890b 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1680,7 +1680,7 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
+>  	 * to move current somewhere else, making room for our non-migratable
+>  	 * task.
+>  	 */
+> -	if (p->prio == rq->curr->prio && !test_tsk_need_resched(rq->curr))
+> +	if (p->prio == rq->curr->prio && !__test_tsk_need_resched(rq->curr, RESCHED_NOW))
+>  		check_preempt_equal_prio(rq, p);
+>  #endif
+>  }
+> @@ -2415,7 +2415,7 @@ static void pull_rt_task(struct rq *this_rq)
+>  static void task_woken_rt(struct rq *rq, struct task_struct *p)
+>  {
+>  	bool need_to_push = !task_on_cpu(rq, p) &&
+> -			    !test_tsk_need_resched(rq->curr) &&
+> +			    !__test_tsk_need_resched(rq->curr, RESCHED_NOW) &&
+>  			    p->nr_cpus_allowed > 1 &&
+>  			    (dl_task(rq->curr) || rt_task(rq->curr)) &&
+>  			    (rq->curr->nr_cpus_allowed < 2 ||
+
+These are all NO-OPs.... Changelog says:
+ 
+> In scheduler code, switch to the more explicit variants,
+> __set_tsk_need_resched(...), __test_tsk_need_resched(...).
+
+But leaves me wondering *WHY* ?!?
+
+I can't help but feel this patch attempts to do 2 things and fails to
+justify at least one of them.
 
