@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-192179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F306A8D1987
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E748D198B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305051C22DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8411C216AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE5716C869;
-	Tue, 28 May 2024 11:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF816D321;
+	Tue, 28 May 2024 11:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjavsE/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TmK2Z8ez"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF596CDC8;
-	Tue, 28 May 2024 11:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73216C852;
+	Tue, 28 May 2024 11:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716895851; cv=none; b=dEF5PAobZee2k1WEvFTJa9ABLev9zOJZ2yw0R+r5HziVoBtds/3FIkn4wXl00rYtbVy0znqPdb6BzKUSmoB0Q5C0ZE1rtEQn7saaITO0g/rWJgfqJN/VqXOPM0APg96pivy+dSCYpFofrjHJdN+EcEMcdNYs/O2cdM1sUkjE6t8=
+	t=1716895922; cv=none; b=JWjUL34VDloE6IFs8hKlbI6EmJJi3PuWAGhvQ8ueqEHzKkvC4VgJg+i67RWKf20ejChRvMNXwMpin2XRh3XdL8zgT4zPzpm7wFbicIqKkEYke1C0R8mnoKgg2ekBqYuh+1m/gMF4vjbWbqV0ugP6qJmAU5xeWR97Gpn22u0sABQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716895851; c=relaxed/simple;
-	bh=J2mWDdJtos/H4lrmEII8x+5AKEqMgDmRzY9/k9sRI38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWjZ3Vihit7t75ih+WM10wRIYP+xmTKdjlIK8f8YcZu5SWyIKKKBZU2RS2922Kv1h63rbD9xnL8D5GQDk0JJRcElqVQmRdf42uhxzS3Ryd5Uc6CDyKO4unFBBwVHrj9vyWMSPiHZgyD1lJxq6ht9oOSRiUhgD4rIDxDBMHOpif8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjavsE/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B148AC3277B;
-	Tue, 28 May 2024 11:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716895851;
-	bh=J2mWDdJtos/H4lrmEII8x+5AKEqMgDmRzY9/k9sRI38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fjavsE/HR1q6SqX7BknI3GNgr/s/PsVb+eMfFgjREQ7IvE0102h6PO0ItgahJRsvS
-	 O+6Ov04jlmuFGEWdk15DdtKkD0MDC5evcOFELwmk9rGCyTgKmO5GPkD18GW92lNxnK
-	 9QIBY/rKZn0Mb+UzXNUTfiNGYBDNA9aiVgQbNG/DGXbpmJv1YnqYz+W1D4KtEhsElc
-	 KnYy/XU6bYZAR/GqL9m2fPU8O8IhYbIdWxlTqpcYj2o1w8yGrnWLrmE2O2rTqz6rdv
-	 PiGFWRVYtA77wLaxY6fZhp6HX/ePoIWi9p+QC/ATgaI9PUGQNRl1yxVNV2uctFbIli
-	 7bhNLMUfB+eJA==
-Date: Tue, 28 May 2024 12:30:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andreas Schwab <schwab@linux-m68k.org>
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v1 0/2] riscv: dts: starfive: Enable Bluetooth on JH7100
- boards
-Message-ID: <20240528-outpost-subduing-2e84f77427a4@spud>
-References: <20240508111604.887466-1-emil.renner.berthing@canonical.com>
- <87wmo2nmee.fsf@linux-m68k.org>
- <CAJM55Z-F6N6ua5LoqyMFogDtLp=FaRPoDv4osXFDMjR1b8r9nw@mail.gmail.com>
- <87zfsy102h.fsf@igel.home>
+	s=arc-20240116; t=1716895922; c=relaxed/simple;
+	bh=s9zJsE3/1kg/YHUe1X0gPbq/JexKL+o52CjjXo5/REE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WYWQrJWO8Z4KcLsDTrWlTjodSxI6F8gP6SJmf4Q9mFNKWoByFmdclElDBrIbPo5eLxuKEhbOfS/+IDkTexBNVKJNyrsHQwsTRrM+1DusmjTYX+EqRyber1CngrBPq+x9NS4WwJMxolDT1Z0YqYpRwOqT9HH0CAmU4D7CGbppdmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TmK2Z8ez; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44SBVenp062222;
+	Tue, 28 May 2024 06:31:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716895900;
+	bh=VpSNru19mBz9l4/n9K1fomuoEtlk8IP8cCmAhFDqj9k=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=TmK2Z8ezSKCZDHjB/iSRmrlXraznKS7RMMA+qdqEiftotR/sCS9Vzjzc4zgo24O0s
+	 h2JSxOhqLRvw3+8fYE1FAJ2tykEIoHb9RwtN/GyjQ8jrhMhuhk0epVj+Dk/W4bbQsA
+	 ndHKMSvNYdQqNRncDgz+G+cgH4zgu1fDoe/BJOdQ=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44SBVect036639
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 28 May 2024 06:31:40 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
+ May 2024 06:31:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 28 May 2024 06:31:40 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44SBVVrb076827;
+	Tue, 28 May 2024 06:31:32 -0500
+Message-ID: <9c88bc47-35f0-86ed-2df7-dd83640d9997@ti.com>
+Date: Tue, 28 May 2024 17:01:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dcH1rd/ToVgelCkf"
-Content-Disposition: inline
-In-Reply-To: <87zfsy102h.fsf@igel.home>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v9 07/10] lib: add basic KUnit test for lib/math
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
+        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
+        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
+        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+References: <20240526175655.1093707-1-devarsht@ti.com>
+ <20240526180933.1126116-1-devarsht@ti.com>
+ <ZlTu_9orsuosNiGk@smile.fi.intel.com> <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <ZlTvLS8oTPcvZKQN@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
---dcH1rd/ToVgelCkf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Emil,
+On 28/05/24 02:08, Andy Shevchenko wrote:
+> On Mon, May 27, 2024 at 11:37:20PM +0300, Andy Shevchenko wrote:
+>> On Sun, May 26, 2024 at 11:39:33PM +0530, Devarsh Thakkar wrote:
+> 
+> ...
+> 
+>>> +MODULE_LICENSE("GPL");
+>>
+>> modpost validator won't be happy about this, i.e. missing MODULE_DESCRIPTION().
+> 
+> And obviously + module.h in the inclusion block.
+> 
 
-On Fri, May 10, 2024 at 11:35:34AM +0200, Andreas Schwab wrote:
-> On Mai 10 2024, Emil Renner Berthing wrote:
->=20
-> > You don't include any information useful for debugging this, but if it =
-get's
-> > far enough to load the firmware could you at least make sure you run the
-> > version below, so that's at least the same.
-> >
-> > https://github.com/esmil/linux/blob/visionfive/firmware/brcm/BCM43430A1=
-=2Ehcd
->=20
-> That didn't change anything (and there are no messages related to
-> firmware loading from hci_uart).
+The module.h is already included under include/kunit/test.h and that's the
+reason compiler did not give any error. But I can still include it under
+math.h for better readability as you suggested as anyway compiler will not
+re-include if already included by another header file.
 
-Looking at things to apply post -rc1, are you still looking into this
-issue?
+Also I see we were missing a dependency between math_kunit and kunit modules,
+so adding a dependency there too.
 
-Thanks,
-Conor.
-
->=20
-> [  +0.879623] Bluetooth: Core ver 2.22
-> [  +0.004843] NET: Registered PF_BLUETOOTH protocol family
-> [  +0.008787] Bluetooth: HCI device and connection manager initialized
-> [  +0.021944] Bluetooth: HCI socket layer initialized
-> [  +0.008488] Bluetooth: L2CAP socket layer initialized
-> [  +0.006333] Bluetooth: SCO socket layer initialized
-> [  +0.097478] Bluetooth: HCI UART driver ver 2.3
-> [  +0.007943] Bluetooth: HCI UART protocol H4 registered
-> [  +0.006066] Bluetooth: HCI UART protocol BCSP registered
-> [  +0.006962] Bluetooth: HCI UART protocol LL registered
-> [  +0.000015] Bluetooth: HCI UART protocol ATH3K registered
-> [  +0.000084] Bluetooth: HCI UART protocol Three-wire (H5) registered
-> [  +0.000247] Bluetooth: HCI UART protocol Intel registered
-> [  +0.000455] Bluetooth: HCI UART protocol Broadcom registered
-> [  +0.000084] Bluetooth: HCI UART protocol QCA registered
-> [  +0.000008] Bluetooth: HCI UART protocol AG6XX registered
-> [  +0.000057] Bluetooth: HCI UART protocol Marvell registered
-> [  +0.051854] hci_uart_bcm serial0-0: supply vbat not found, using dummy =
-regulator
-> [  +0.000387] hci_uart_bcm serial0-0: supply vddio not found, using dummy=
- regulator
-> [  +0.094658] hci_uart_bcm serial0-0: No reset resource, using default ba=
-ud rate
-> [  +0.990297] Bluetooth: hci0: command 0x1001 tx timeout
-> [  +0.022893] Bluetooth: hci0: BCM: Reading local version info failed (-1=
-10)
-> [  +3.306159] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> [  +0.013336] Bluetooth: BNEP filters: protocol multicast
-> [  +0.124262] Bluetooth: BNEP socket layer initialized
->=20
-> --=20
-> Andreas Schwab, schwab@linux-m68k.org
-> GPG Key fingerprint =3D 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-> "And now for something completely different."
-
---dcH1rd/ToVgelCkf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlXAZgAKCRB4tDGHoIJi
-0rRYAQCPV3NyOXggUlW5QYTcZrOknlvRNJsQPgvriNuR3R88agD/b1uTRd5yeqxu
-DGOC09v8twvgMfBK721fZgjGYgug3wQ=
-=k8pT
------END PGP SIGNATURE-----
-
---dcH1rd/ToVgelCkf--
+Regards
+Devarsh
 
