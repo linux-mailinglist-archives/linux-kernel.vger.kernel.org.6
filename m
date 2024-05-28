@@ -1,80 +1,71 @@
-Return-Path: <linux-kernel+bounces-192359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBD28D1C18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2148D1C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EA31C22E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09D391F24100
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D92516F289;
-	Tue, 28 May 2024 13:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F4916F29F;
+	Tue, 28 May 2024 13:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qisfLHyv"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6V1EhJmy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB616DEC1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 13:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881F316DEA0;
+	Tue, 28 May 2024 13:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901331; cv=none; b=FEKt+ugdJ0hlhvJSOC6rQt92q4XWSIcpO3LSJPB0pZV5qarlVXWfHxLGwUOkDKGEPyIiPdEx1xu4oQloVAN9w5fUxbuJ7Lw52rfCkhfYPvaMQG/ang9csyyh6kG6OTUbs/7Gwwb3KZC7DbRrK2ZMWrUVV46dc+uxDMd+TI6Q0yc=
+	t=1716901370; cv=none; b=KoE7mCatbBJXN9RHBHOcKXMf7nw+Kh07cbPm/OyLRE0vDpT9BXR5shT7y4Upqhnt/XCJQbQZwryBHYia1pdPRcoOapZvBu3Ho7xXQ3ajBEXckUiiapcN3mSpKz8Kp4FONWWLY+xMC71KP2JZhoX2HGQxR0EKYWgx7S5UmJsjyG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901331; c=relaxed/simple;
-	bh=nVItmHmWfZpxTvU+SARBv92bdiu9gugUMh8PvSptDCI=;
+	s=arc-20240116; t=1716901370; c=relaxed/simple;
+	bh=BlS+RNoJZf7uRqH8yZdZgXZub+cVsj79b4zET2aARhg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dq8xi48F0g8dF8OgqxxHfjJiBWog/C8XR1D+DqHJQ4XtLzYpoOCkas+WIbGIbbjOCNk4jHvsBEKuvhNqrW+/hzUbw2wEJkeNjyEVZjhqnsBN9Ll5J2IQmOBeiua5G0pYbXRjNP8MLaLlpGIatrg1GZE2DoTxcYpZLS7mxiUX+RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qisfLHyv; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5295dadce7fso1164550e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716901327; x=1717506127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYqBf8JNyTPdH+P7qD+kU/XiUFlY30r/EeoCGQISSVk=;
-        b=qisfLHyvIoGzLjsFNqwZ4GwWZ8UEaMajk29Zk/0XKYZ0M4/wmckt2S1Ss7TBpxtx1n
-         nCksrZIbrbz6xQXm+O0FNbsVrFgwCooKMwfADKH0lqrYv4nmmDfe8h6nJc6Hw94nEyvS
-         /J/PScZxLymqUUGTDlepSLJBKCHr0kZw+63Y23MOPqtRjSk+cyRy+hP0DZp4OlHmRiN2
-         G+InY1CgprB/nYTCA0W4rC20KkuHQF9FmUkfRH2wMyrjPvZW6+8PMMKCZ0aRPnnwxDSW
-         yXP4LQSokP3H9YhqHfRPKeovDian4Qo/ClKWwcYg+pkBU7EcQHCbXxIfdPrw+WIOBMDa
-         gPXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716901327; x=1717506127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYqBf8JNyTPdH+P7qD+kU/XiUFlY30r/EeoCGQISSVk=;
-        b=HA79Sw8mslYypi8vFvzkbM4/TMrgEQwzsxV7GH4m5o+ntlwP1gCw31LYzVV98cjhZx
-         08r15kDEfyXL4yvcV3MEIEnxlsaZGoaBqeohzhnCvyr/4FjGvOQuS7faer2PM5ETTJ+c
-         FuLjxddXVBhffrHNHd+t5q4ImheqMjtojcHNpCxj2df63NLUlAHSo+R18dMVj0azsik8
-         T8nYhGGcEPiK6QCDslNlRjCMbdBrXH2FmpLbCyeVFAz3fUvyUCVvUgJNIRYkC8TI+xzb
-         ezQ15+I551RzaPbGrndAKJZ6yfkc+AXJOQ9/YsARYoGsTXYh+EbFWWdi83r3Vi14iEKS
-         4q7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXIldcknvC4cPOXxLehBVPdvma6s+Y97auaT4hN8SOdfe9RADE78IGNiKI70NfWVCUh5YDMz0OALJhKnMJ2Hn99Sl4UL6q6DjsgOzmU
-X-Gm-Message-State: AOJu0Yx5vjKZvcCTCG3PNVzzIKs62x964xYy2Zx+j+mhMyIWXryeJzi2
-	s8y93sBOrbBXHeoHASJbbfiKR7OjyfI7xRkr7jqh7eNKlOVrNFCi5AjxKhOu1Qc=
-X-Google-Smtp-Source: AGHT+IEFkIFlsPs9Cg7yr+8yjlt3pDw20emYJkDUHLfcLg5/hC4dxKSdsVXshMx4QDmQoBYZ9oSW6A==
-X-Received: by 2002:a05:6512:33c3:b0:523:899f:c63d with SMTP id 2adb3069b0e04-529663e663amr9870168e87.47.1716901326475;
-        Tue, 28 May 2024 06:02:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529a77f6e55sm688940e87.118.2024.05.28.06.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 06:02:06 -0700 (PDT)
-Date: Tue, 28 May 2024 16:02:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com
-Subject: Re: [PATCH v2 7/8] misc: fastrpc: Restrict untrusted apk to spawn
-Message-ID: <w26h3ufedlbv7rxwqkjin47snx37ljpduq442lzbthrdvdhowt@o4wujbbjlssv>
-References: <20240528112956.5979-1-quic_ekangupt@quicinc.com>
- <20240528112956.5979-8-quic_ekangupt@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L63zuDOHKdshXj0GrTi93p+DJIcyUQQK+PC3BmTgZkLrPyZzDNK/Hn1TqmtEeNlngCAdCT8QwsB9ol95GKyI3D540CdoX0Ytphv7dYHxI+W/gRJZ2swiwq2NQrbEVzobBfZIZjTywPx6UBcwGgM0ZuGFSRUey4YGYiM6Nodc2bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6V1EhJmy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+woYX1uxkRDOXtBX1F1Aj3xr5QPBx2mr8y8wsI+bzIE=; b=6V1EhJmyF5HfLnX+zuf7uLpRue
+	nlyqWF2L8F2B3o2iUCjLTwVrj9Gr6/QiCMSZmIJpMa/0oaAZQ2K96tk7ylb+MYbuE+XJjAzlezgkF
+	dSa55z+3D/HDINRKUK0OZS/AsebKBWHMMOlEm+MINfSyPY+d/VuH9uqfbJJu+5xWLlNU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sBwT3-00G9k6-EI; Tue, 28 May 2024 15:02:17 +0200
+Date: Tue, 28 May 2024 15:02:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Ng, Boon Khai" <boon.khai.ng@intel.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Ang, Tien Sung" <tien.sung.ang@intel.com>,
+	"G Thomas, Rohan" <rohan.g.thomas@intel.com>,
+	"Looi, Hong Aun" <hong.aun.looi@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
+ stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
+Message-ID: <48673551-cada-4194-865f-bc04c1e19c29@lunn.ch>
+References: <20240527093339.30883-1-boon.khai.ng@intel.com>
+ <20240527093339.30883-2-boon.khai.ng@intel.com>
+ <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
+ <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,139 +74,157 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528112956.5979-8-quic_ekangupt@quicinc.com>
+In-Reply-To: <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
 
-On Tue, May 28, 2024 at 04:59:53PM +0530, Ekansh Gupta wrote:
-> Untrusted application can attach to guestOS and staticPD if it can
-> make root PD, sensors PD or audio PD attach request. This is a
-> potential security issue as the untrusted application can crash
-> rootPD or staticPD. Restrict attach to guestOS or staticPD request
-> if request is being made using non-secure device node.
+> So, for this XGMAC VLAN patch, the idea of getting the VLAN id from the descriptor is the same, but 
+> The register bit filed of getting the VLAN packet VALID is different. Thus, it need to be implemented separately. 
 
-This is obviously a fix. Please add proper Fixes tag and move it to the
-top of the patchset.
+Please wrap your emails to around 78 characters.
 
-> 
-> Also for untrusted dynamic processes, DSP HAL process opens the
-> device node on behalf of the application. Add a check to restrict
-> such untrusted applications from offloading to signed PD.
-> 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 35 +++++++++++++++++++++++++++++------
->  1 file changed, 29 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 23dd20c22f6d..7f81a18b8aea 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -332,6 +332,7 @@ struct fastrpc_user {
->  	int pd;
->  	bool is_secure_dev;
->  	enum fastrpc_userpd_type userpd_type;
-> +	bool untrusted_process;
->  	char *servloc_name;
->  	/* Lock for lists */
->  	spinlock_t lock;
-> @@ -1274,20 +1275,24 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
->  
->  static bool is_session_rejected(struct fastrpc_user *fl, bool unsigned_pd_request)
->  {
-> -	/* Check if the device node is non-secure and channel is secure*/
-> +	/* Check if the device node is non-secure and channel is secure */
+It is well know this driver is a mess. I just wanted to check you are
+not adding to be mess by simply cut/pasting rather than refactoring
+code.
 
-no unrelated cleanups, please.
+Lets look at the code. From your patch:
 
->  	if (!fl->is_secure_dev && fl->cctx->secure) {
->  		/*
->  		 * Allow untrusted applications to offload only to Unsigned PD when
->  		 * channel is configured as secure and block untrusted apps on channel
->  		 * that does not support unsigned PD offload
->  		 */
-> -		if (!fl->cctx->unsigned_support || !unsigned_pd_request) {
-> -			dev_err(&fl->cctx->rpdev->dev, "Error: Untrusted application trying to offload to signed PD\n");
-> -			return true;
-> -		}
-> +		if (!fl->cctx->unsigned_support || !unsigned_pd_request)
-> +			goto reject_session;
->  	}
-> +	/* Check if untrusted process is trying to offload to signed PD */
-> +	if (fl->untrusted_process && !unsigned_pd_request)
-> +		goto reject_session;
->  
->  	return false;
-> +reject_session:
-> +	dev_err(&fl->cctx->rpdev->dev, "Error: Untrusted application trying to offload to signed PD\n");
++static void dwxgmac2_rx_hw_vlan(struct mac_device_info *hw,
++				struct dma_desc *rx_desc, struct sk_buff *skb)
++{
++	if (hw->desc->get_rx_vlan_valid(rx_desc)) {
++		u16 vid = hw->desc->get_rx_vlan_tci(rx_desc);
++
++		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
++	}
++}
++
 
-Please drop this from dev_err. Use dev_dbg and return the error.
-Otherwise the user can easily spam kernel logs.
+and
 
-> +	return true;
->  }
->  
->  static void fastrpc_mmap_remove_pdr(struct fastrpc_static_pd *spd)
-> @@ -1376,6 +1381,11 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	} inbuf;
->  	u32 sc;
->  
-> +	if (!fl->is_secure_dev) {
-> +		dev_err(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
+static void dwmac4_rx_hw_vlan(struct mac_device_info *hw,
+                              struct dma_desc *rx_desc, struct sk_buff *skb)
+{
+        if (hw->desc->get_rx_vlan_valid(rx_desc)) {
+                u16 vid = hw->desc->get_rx_vlan_tci(rx_desc);
 
-Same thing here.
+                __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
+        }
+}
 
-> +		return -EACCES;
-> +	}
-> +
->  	args = kcalloc(FASTRPC_CREATE_STATIC_PROCESS_NARGS, sizeof(*args), GFP_KERNEL);
->  	if (!args)
->  		return -ENOMEM;
-> @@ -1531,12 +1541,20 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  		goto err;
->  	}
->  
-> +	/*
-> +	 * Third-party apps don't have permission to open the fastrpc device, so
-> +	 * it is opened on their behalf by DSP HAL. This is detected by
+Looks identical to me.
 
-There is no DSP HAL on plain Linux. Also the question of permissions
-depends on user setting up the system, so this probablye needs to be
-rethought.
+From your patch:
 
-> +	 * comparing current PID with the one stored during device open.
-> +	 */
-> +	if (current->tgid != fl->tgid)
-> +		fl->untrusted_process = true;
-> +
->  	if (init.attrs & FASTRPC_MODE_UNSIGNED_MODULE)
->  		fl->userpd_type = UNSIGNED_PD;
->  
->  
->  	if (is_session_rejected(fl, !(fl->userpd_type == SIGNED_PD))) {
-> -		err = -ECONNREFUSED;
-> +		err = -EACCES;
->  		goto err;
->  	}
->  
-> @@ -1818,6 +1836,11 @@ static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
->  	int tgid = fl->tgid;
->  	u32 sc;
->  
-> +	if (!fl->is_secure_dev) {
-> +		dev_err(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
+static void dwxgmac2_set_hw_vlan_mode(struct mac_device_info *hw)
++{
++	void __iomem *ioaddr = hw->pcsr;
++	u32 val = readl(ioaddr + XGMAC_VLAN_TAG);
++
++	val &= ~XGMAC_VLAN_TAG_CTRL_EVLS_MASK;
++
++	if (hw->hw_vlan_en)
++		/* Always strip VLAN on Receive */
++		val |= XGMAC_VLAN_TAG_STRIP_ALL;
++	else
++		/* Do not strip VLAN on Receive */
++		val |= XGMAC_VLAN_TAG_STRIP_NONE;
++
++	/* Enable outer VLAN Tag in Rx DMA descriptro */
++	val |= XGMAC_VLAN_TAG_CTRL_EVLRXS;
++	writel(val, ioaddr + XGMAC_VLAN_TAG);
++}
 
-And again dev_dbg please.
+static void dwmac4_set_hw_vlan_mode(struct mac_device_info *hw)
+{
+        void __iomem *ioaddr = hw->pcsr;
+        u32 value = readl(ioaddr + GMAC_VLAN_TAG);
 
-> +		return -EACCES;
-> +	}
-> +
->  	args[0].ptr = (u64)(uintptr_t) &tgid;
->  	args[0].length = sizeof(tgid);
->  	args[0].fd = -1;
-> -- 
-> 2.43.0
-> 
+        value &= ~GMAC_VLAN_TAG_CTRL_EVLS_MASK;
 
--- 
-With best wishes
-Dmitry
+        if (hw->hw_vlan_en)
+                /* Always strip VLAN on Receive */
+                value |= GMAC_VLAN_TAG_STRIP_ALL;
+        else
+                /* Do not strip VLAN on Receive */
+                value |= GMAC_VLAN_TAG_STRIP_NONE;
+
+        /* Enable outer VLAN Tag in Rx DMA descriptor */
+        value |= GMAC_VLAN_TAG_CTRL_EVLRXS;
+        writel(value, ioaddr + GMAC_VLAN_TAG);
+}
+
+The basic flow is the same. Lets look at the #defines:
+
+#define XGMAC_VLAN_TAG			0x00000050
+#define GMAC_VLAN_TAG			0x00000050
+
+#define GMAC_VLAN_TAG_CTRL_EVLS_MASK	GENMASK(22, 21)
+#define GMAC_VLAN_TAG_CTRL_EVLS_SHIFT	21
++#define XGMAC_VLAN_TAG_CTRL_EVLS_MASK	GENMASK(22, 21)
++#define XGMAC_VLAN_TAG_CTRL_EVLS_SHIFT	21
+
++#define XGMAC_VLAN_TAG_STRIP_NONE	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x0)
++#define XGMAC_VLAN_TAG_STRIP_PASS	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x1)
++#define XGMAC_VLAN_TAG_STRIP_FAIL	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x2)
++#define XGMAC_VLAN_TAG_STRIP_ALL	FIELD_PREP(XGMAC_VLAN_TAG_CTRL_EVLS_MASK, 0x3)
+#define GMAC_VLAN_TAG_STRIP_NONE        (0x0 << GMAC_VLAN_TAG_CTRL_EVLS_SHIFT)
+#define GMAC_VLAN_TAG_STRIP_PASS        (0x1 << GMAC_VLAN_TAG_CTRL_EVLS_SHIFT)
+#define GMAC_VLAN_TAG_STRIP_FAIL        (0x2 << GMAC_VLAN_TAG_CTRL_EVLS_SHIFT)
+#define GMAC_VLAN_TAG_STRIP_ALL         (0x3 << GMAC_VLAN_TAG_CTRL_EVLS_SHIFT)
+
+This is less obvious a straight cut/paste, but they are in fact
+identical.
+
+#define GMAC_VLAN_TAG_CTRL_EVLRXS       BIT(24)
+#define XGMAC_VLAN_TAG_CTRL_EVLRXS	BIT(24)
+
+So this also looks identical to me, but maybe i'm missing something
+subtle.
+
++static inline u16 dwxgmac2_wrback_get_rx_vlan_tci(struct dma_desc *p)
++{
++	return le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK;
++}
++
+
+static u16 dwmac4_wrback_get_rx_vlan_tci(struct dma_desc *p)
+{
+        return (le32_to_cpu(p->des0) & RDES0_VLAN_TAG_MASK);
+}
+
+#define RDES0_VLAN_TAG_MASK		GENMASK(15, 0)
+#define XGMAC_RDES0_VLAN_TAG_MASK	GENMASK(15, 0)
+
+More identical code.
+
++static inline bool dwxgmac2_wrback_get_rx_vlan_valid(struct dma_desc *p)
++{
++	u32 et_lt;
++
++	et_lt = FIELD_GET(XGMAC_RDES3_ET_LT, le32_to_cpu(p->des3));
++
++	return et_lt >= XGMAC_ET_LT_VLAN_STAG &&
++	       et_lt <= XGMAC_ET_LT_DVLAN_STAG_CTAG;
++}
+
+static bool dwmac4_wrback_get_rx_vlan_valid(struct dma_desc *p)
+{
+        return ((le32_to_cpu(p->des3) & RDES3_LAST_DESCRIPTOR) &&
+                (le32_to_cpu(p->des3) & RDES3_RDES0_VALID));
+}
+
+#define RDES3_RDES0_VALID		BIT(25)
+#define RDES3_LAST_DESCRIPTOR		BIT(28)
+
+#define XGMAC_RDES3_ET_LT		GENMASK(19, 16)
++#define XGMAC_ET_LT_VLAN_STAG		8
++#define XGMAC_ET_LT_VLAN_CTAG		9
++#define XGMAC_ET_LT_DVLAN_CTAG_CTAG	10
+
+This does actually look different.
+
+Please take a step back and see if you can help clean up some of the
+mess in this driver by refactoring bits of identical code, rather than
+copy/pasting it.
+
+	Andrew
 
