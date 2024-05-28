@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-192514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395CF8D1E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFA48D1E5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1411C23099
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:19:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA9E1F2324E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE1116F84D;
-	Tue, 28 May 2024 14:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E306D16F84F;
+	Tue, 28 May 2024 14:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7vgjl/V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RX+0u/Yo"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5F16E895
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 14:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C0A6A8A3;
+	Tue, 28 May 2024 14:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716905958; cv=none; b=r985iDd5Xg04D7ScRR6QRm28ICvuqYIxbSgGE899lCreyMdB6l31PBEX2oObadTF/oOasF7YPrMgdJ9r4OkQBwH/mSf4q2c1/Bp8S3ad87120han9IzT7ZxZ5kSoGA/wh9zD/8p79kW2kW+k6WLHQHRJLbxkkz7vNRiuMPiqtgE=
+	t=1716906007; cv=none; b=aFsW1mqh842custE3iw7a2z22wMsbXf7JXep/DDGmWYX43jtbGCJlGsMX9qFlzw0q/WI8mNS4vdVLtGULCS+FGmyf+cPnzD6/3poizGhsQkt4raiLdqRer2HouFVDjpWLSQqJrBZmQf1txPjS+E9/M2tyjVB/ScfqsP4ax5KtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716905958; c=relaxed/simple;
-	bh=yuPDGgUn+VpqJiWJHL5pFexMSMO0h7DglLbUSyFNJ5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kNgTugJqAleSiPD/txaQhYMem040GMZbLAHAx/RBxRuDugDjl/Ytudhp8CMluCs69Mkd69Fb/iutLQylV3mSN8QXUNYTEMNRym666duUT6SPE+APg5ZGPDs7U2NTxnd0rLUx3dD3q/YmwNNLkfva2W0NPdQJhEYk0ROWfzpUC74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7vgjl/V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 415C7C3277B;
-	Tue, 28 May 2024 14:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716905958;
-	bh=yuPDGgUn+VpqJiWJHL5pFexMSMO0h7DglLbUSyFNJ5Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E7vgjl/Vztm2dNd7g3fcwJZSC9bQIl/dDnx7qD4i9yL3YYEYfUFzGVIb4T0QZLi7z
-	 Vx9xUR7HGlRrdvVzyMrEPer5QIPqvdkKi9dE301/IWlqSdpQnmW424JRVgM7kEMX8Y
-	 TNvyBdnw0f+nA7QbJ5SIf34APGwvIYDlCtwcHugeNe3sJlInHH6YTzvXKUeAdCwi/C
-	 igx906FH1Nkgt+wKfaYxXdCicVg3vkdjqYMA1t7ZZRU5dvZAuyBaprkmHLS5LKCZkL
-	 qFVRMmiVYo+BwZkDbq9dVHaUWRO5OJW5FWHKFB5Rd4ydnnFTBTzDLrbzKiauxIYqvR
-	 Nnv6nB3VpWq8Q==
-Message-ID: <3f4c0d70-8689-40a9-b051-13d013c4f09c@kernel.org>
-Date: Tue, 28 May 2024 16:19:14 +0200
+	s=arc-20240116; t=1716906007; c=relaxed/simple;
+	bh=bpQn0hcSQW6hPE3NrOFr46vQiIynNIQoCqQvX6ZahE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bLAemgpyEm6t287UtZSVBhggWil5UNwU3REkiRLxZIzcEDzp9CPDdw03jlf8pNW7hIYzfwwrx3cgZ9IfgTkd5PrFILX8VGse6FRMpwo3eBpIY6AHZtJ5qM5nWRu+1BHIlwXzBiNNE/ajEhn3LW++zFMsrpJBTNW0gFdWFEbVR+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RX+0u/Yo; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d1d11cb556so293626b6e.2;
+        Tue, 28 May 2024 07:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716906005; x=1717510805; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmcnOFfWuLtl64aa9TIaj9hn63sQ/KKgzde61ukyY2Y=;
+        b=RX+0u/Yo7mvsQNthUTkAgUO2nhkiDF0RZRpGf9lF4ymFXuVn61O6HR/aM6HRJ0JIWS
+         OWkBdi/VdUeXyR16nL9Pp/clv+/8JKAjJsqx0EsFl10kldtoLbxpYHIsxAxEZHuJwkLX
+         G+c4k4DvrqywiwgpW0hftdAunRhOEWktbNwix/OWdsenQmgqFdNWqB3wSCNtOb6ntDHr
+         Woq9l0zjnZI+xe8nBupULbnjpABpRKkP5tteo0TTIUlXYr5aT8mqp3Qyy5xYG9pKnUGS
+         SlJIj8QajNBcgOwtKeXlQF/qsbCRav6BRPiLaqMoQZIn3xuk4o4pTMnDLPm7ZNq8ae2V
+         e6Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716906005; x=1717510805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tmcnOFfWuLtl64aa9TIaj9hn63sQ/KKgzde61ukyY2Y=;
+        b=HhQcYnJ5gPzexm4bRIcziWhDQPOFd4YsRrIPdxvWXfnsjwRwaTUZJCyNEGlRWQE7KG
+         KF0cmMNSP5F7fyB1jzuUYZ49doCSqWPLNEo3fwfu2jd40Wzmc82+j0be1bQVRA/4E90Y
+         mOVdZhKFcF2+c7GT+iMPG2JO3rcyVzxgd3rE9eWArsxjySCJiTQGVsubJM6uor/YpS5m
+         BcFQapYPiNhcHQwaEhtiaDmmQriGxetTkGS7MDfRmkvHowF00uFtt3mHR/zEUXtlhfOA
+         2yRk54XRspL0wDPklxa2FgRYO5wAvnSYgCGkQemA3hCRXtQjdOBwXkTEMLxlUJ8a4M+C
+         kGzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPmwvsO/HHH69uBmRizx5ldjQbPCJFquOjrSZpv1Qg/N5BvvdCl/VeGXXAwIjWaZ/paimpbz3MYj8wbLt0hoQAiQPUt2Kg3R0ady/7/MJ0dJ+QKG+/Ko8Q2dEMrjGkGYAA9hRtk1ZaJCJWX0X/r2PdJLO1CdS36WtnlUDh2LWkXpjoPlM=
+X-Gm-Message-State: AOJu0YyXW33Dwjy2tYI5MDObrmrOnQomDQzqUIPmR9dp+Bwr3gck31fG
+	4UfCwg94bxqH6s6lfeiHb5HKR5K9apnY6izsy6fakOcJGFeHaTbulYJ4HcR9676H990SA+CqVi/
+	Z/yOf5j1QzSBJWBeHb9EsMtDp7Qc1AQ==
+X-Google-Smtp-Source: AGHT+IFf/tGif+N88k+BsDHerrioFJmSg7BKXYE2WrzeXw7pJ6A8L5MSkqM1O+Gw60tDphcpECwn0p6PAbc7rdEiELA=
+X-Received: by 2002:a05:6808:1a01:b0:3c9:c4a3:41a0 with SMTP id
+ 5614622812f47-3d1d0ccc89cmr2138642b6e.33.1716906004937; Tue, 28 May 2024
+ 07:20:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] memcg: Remove the lockdep assert from
- __mod_objcg_mlstate().
-Content-Language: en-US
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-References: <20240528121928.i-Gu7Jvg@linutronix.de>
- <09e085bb-f09e-4901-a2dd-a0b789bb8a4d@kernel.org>
- <20240528134027.OxDASsS3@linutronix.de>
- <c84d6962-34fa-42e5-899c-925579cbfb26@kernel.org>
- <20240528141341.rz_rytN_@linutronix.de>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240528141341.rz_rytN_@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240527022036.31985-1-user@blabla> <CACRpkdY99LACAUsg_S4ww4U7-KU_EtkLZ+c8dsa0M85i9eJZbA@mail.gmail.com>
+In-Reply-To: <CACRpkdY99LACAUsg_S4ww4U7-KU_EtkLZ+c8dsa0M85i9eJZbA@mail.gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 28 May 2024 16:19:53 +0200
+Message-ID: <CAMhs-H-3yM3sLvgtOn1KWPF-Ch52hqZZXbFPe2YP=xgFjZLDug@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ralink: mt76x8: fix pinmux function
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: liweihao <cn.liweihao@gmail.com>, arinc.unal@arinc9.com, sean.wang@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/28/24 4:13 PM, Sebastian Andrzej Siewior wrote:
-> The assert was introduced in the commit cited below as an insurance that
-> the semantic is the same after the local_irq_save() has been removed and
-> the function has been made static.
-> 
-> The original requirement to disable interrupt was due the modification
-> of per-CPU counters which require interrupts to be disabled because the
-> counter update operation is not atomic and some of the counters are
-> updated from interrupt context.
-> 
-> All callers of __mod_objcg_mlstate() acquire a lock
-> (memcg_stock.stock_lock) which disables interrupts on !PREEMPT_RT and
-> the lockdep assert is satisfied. On PREEMPT_RT the interrupts are not
-> disabled and the assert triggers.
-> 
-> The safety of the counter update is already ensured by
-> VM_WARN_ON_IRQS_ENABLED() which is part of __mod_memcg_lruvec_state() and
-> does not require yet another check.
-> 
-> Remove the lockdep assert from __mod_objcg_mlstate().
-> 
-> Fixes: 91882c1617c15 ("memcg: simple cleanup of stats update functions")
-> Link: https://lore.kernel.org/r/20240528121928.i-Gu7Jvg@linutronix.de
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Tue, May 28, 2024 at 3:54=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+org> wrote:
+>
+> On Mon, May 27, 2024 at 4:21=E2=80=AFAM liweihao <cn.liweihao@gmail.com> =
+wrote:
+>
+> > From: Weihao Li <cn.liweihao@gmail.com>
+> >
+> > The current version of the pinctrl driver has some issues:
+> >
+> > 1. Duplicated "gpio" pmx function
+> >
+> > The common code will add a "gpio" pmx functon to every pin group, so
+> > it's not necessary to define a separate "gpio" pmx function in pin
+> > groups.
+> >
+> > 2. Duplicated pmx function name
+> >
+> > There are some same function name in different pin groups, which will
+> > cause some problems. For example, when we want to use PAD_GPIO0 as
+> > refclk output function, the common clk framework code will search the
+> > entire pin function lists, then return the first one matched, in this
+> > case the matched function list only include the PAD_CO_CLKO pin group
+> > because there are three "refclk" pin function, which is added by
+> > refclk_grp, spi_cs1_grp and gpio_grp.
+> >
+> > To solve this problem, a simple way is just add a pingrp refix to
+> > function name like mt7620 pinctrl driver does.
+> >
+> > 3. Useless "-" or "rsvd" functon
+> >
+> > It's really unnecessary to add a reserved pin mux function to the
+> > function lists, because we never use it.
+> >
+> > Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
+>
+> The patch looks good to me and Sergio: patch applied so
+> it gets some testing in linux-next.
+>
+> If Arinc has issues with it or something else occurs I can
+> always drop it again.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Thanks, Linus :)
 
-mm-hotfixes as it's a rc1 regression
-
-> ---
-> On 2024-05-28 15:44:51 [+0200], Vlastimil Babka (SUSE) wrote:
->> I think just s/memcg_stats_lock()/__mod_memcg_lruvec_state()/ in your
->> phrasing, since we are removing the lockdep assert from path that calls
->> __mod_memcg_lruvec_state() and not memcg_stats_lock()?
->> Or am I missing something?
-> 
-> Yeah, makes sense.
-> 
->  mm/memcontrol.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3147,8 +3147,6 @@ static inline void __mod_objcg_mlstate(s
->  	struct mem_cgroup *memcg;
->  	struct lruvec *lruvec;
->  
-> -	lockdep_assert_irqs_disabled();
-> -
->  	rcu_read_lock();
->  	memcg = obj_cgroup_memcg(objcg);
->  	lruvec = mem_cgroup_lruvec(memcg, pgdat);
-
+Best regards,
+    Sergio Paracuellos
 
