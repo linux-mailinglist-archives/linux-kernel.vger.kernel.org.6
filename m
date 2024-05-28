@@ -1,70 +1,86 @@
-Return-Path: <linux-kernel+bounces-192176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177BA8D1981
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB89D8D1985
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74F7283859
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB4E1F23C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9352E16D9B8;
-	Tue, 28 May 2024 11:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DB016DEB7;
+	Tue, 28 May 2024 11:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FcQ8iV/l"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmWifDXG"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3426A16D4D8;
-	Tue, 28 May 2024 11:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D95516DEB2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716895834; cv=none; b=ojc6R0DEHnmYTCj+PB8gnxWNSFjDnVLAUrg+d6e68JtXfyk5KLdcYxtROh5MexL5ta+5VwV87SQK/mInQZwTMyAZVWIX8OPtsfM1Jci1S9jhLIzNb/klUxzIbbDfWOP6Dnf/NeHZnpKuLMSgGlG/bTIJdBkS+SNFLcbtAAgaLB4=
+	t=1716895842; cv=none; b=NzMVrO7LabgRjMh6IRmdLLhUbIDalyaA7AXwFmhgvqtPu2eKKJqICfNMPjBMWYNsaJbh2DsgdpFwy4iZPqsyXjOjCEMCqZxsZWLZCTfGSYw/y+FQmiOvDpa57iUUufGyxTVJSrQQcTUKEcNiwQH/6e73fXG/NIodrvxDM+z0C1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716895834; c=relaxed/simple;
-	bh=ItLh038yTXkpBO2JVPmLDXhnSPBcMqCuu4HfftVx0pc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q+MJdJ7JLYwacsfIF/bnbcomizeBk+eiMOsefIa6VAipvkR72r+8Y4HRhZxgH4pUQmHuHggAqmqtzbef812NEsLmNCAS+8M9BaBuU2uAN+MXhEKGwV+NYJzJ+8NPFqMV8mLRAFq5KTnwNo/3mdeEtvXQBEg29RE/0GaGmzz+748=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FcQ8iV/l; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SAXhWa021501;
-	Tue, 28 May 2024 11:30:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7FQ8GTcx+lE1HArNnPtx3PNwM1Jn9g53NbtM9+mUJoE=; b=FcQ8iV/lgjHnyoZk
-	nWAbQ8itxT7dYo/95TpjM4PV7/acyycN34ObVBweQeI17ivrh1Pj6MbSu7hZvU5+
-	mIGr0HbH5KLgsJXLnVyDV87wHWKQJogAqNYSPmPMW1nOTfmE8T2G8TIp2BrbhEgr
-	ncA30G1X9sBiqzWQ999BHB/32mUp/rgIQfu9+GaF5WRTm5EpvqFK6Veo0CNsohvk
-	OkbLckTdXCtwEYHhfbiO/3UCaDSxe7x8G6WA9fzYWJo2z2TAh5ZMeT1mkULe1J6H
-	hIlU6/W7BXiorQy5jxBw2QltqP3iLhR6VEfmgvLPpjdElKd/zemsNYH6w/nn9RYT
-	8eiJqQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0pnud1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 11:30:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SBUSf8002254
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 11:30:28 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 28 May 2024 04:30:25 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>
-Subject: [PATCH v2 8/8] misc: fastrpc: Add system unsigned PD support
-Date: Tue, 28 May 2024 16:59:54 +0530
-Message-ID: <20240528112956.5979-9-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240528112956.5979-1-quic_ekangupt@quicinc.com>
-References: <20240528112956.5979-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1716895842; c=relaxed/simple;
+	bh=FQ6F4fqrwNmUU0r3k7M2vAGNVs/druX0mE/06+nXt4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rbMxAr8t7i3Ldb7EFtpdUJ4Jucs6GKwkrqWPTF876piwQi03g81gjjgxNSvXlVLCy4//Ke40wfstArm0nGkr6H+KV1PH5JcSNh4UpbRaDCdZdKGn4iuiyYfKsykjuiGugfp59MK+9sXbWqLSjdr4ytaq16/KsFm9coGx6bljPjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmWifDXG; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f47784a2adso5282285ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 04:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716895840; x=1717500640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FQ6F4fqrwNmUU0r3k7M2vAGNVs/druX0mE/06+nXt4s=;
+        b=lmWifDXGZ1DfYCIQPFWPW64sn79154cuGPH/2OTJ8+VVQyDjUi83xW5vb0H/wR6JBu
+         nqeCtoPLsBUNUXqIdpc7l8GK+OIuZWPZgPpq4n1YNGVqEQEKj0qTdD6VXVjpR/ikA8Yj
+         RY5s0PxfroNrNUzlVtwfUMypXTDBOtqqLdK1YMeGvk1QbcmYjjSGd6xn2zrdxkDna3On
+         e0qn6QOG1gtgelhhb0OZeybB7kiStlKgSwhP/I1WnGhlpEQRfauJLFfNjyNsktAXGJPf
+         sjSDjd8vkjzN+n40MmaVc+MR6BIbezyF3hmV0SVmnQ2zyO56m8e+29qpL3eBfxAmMufs
+         r0+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716895840; x=1717500640;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FQ6F4fqrwNmUU0r3k7M2vAGNVs/druX0mE/06+nXt4s=;
+        b=lkKXG3p9iKCOvgRaK0C2JZ1SHx+s1FAArDwi/OaxyPlKWhdB6RwcGn2QrGdDfhxAPl
+         X5feXpxAa38o6JUJZTfahiF3XlTtr9MGC5NzaOZqYuiaya8t0pxNSd84EQH3M5D4STv/
+         AewMidzeUeJUc/qEvVN9PwxbTL6F2kxtrnWQP7vkS0l+dsVZfZPk7Jcpq/mBvBargfHP
+         3cUxv4apJd2BtmqB+Nu2b9LpsjCcyIJ/7fvkP23hupk1VxVcQVGdrJ9L+lEPSdHHQtE+
+         IUkAZUSWYdcHOwkDlqUVZcFA5JpMVco1E5uocGOzFoGgHYhmRNnicaTcVKuE6OYwaLnO
+         G9dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2ZeP7i3+iNvrZgVTBjZVEKxuzwLDdcEyk9beQTmh74f4dTSDfiDg/mxcavA60SZbgZ9linWEnrUXJ7hbf43Vv7eU2JB4iGEiSBYpU
+X-Gm-Message-State: AOJu0YypefJwnHckfbkFpbCpgnT0akOYA5nrWXVh8+hEcblbCyWDk57D
+	QCatqmcyTNamJg0rYA8BFrITv8Ivp5JpymWj2GcMemc8kmsTLsycta54nuoIO+4BEA==
+X-Google-Smtp-Source: AGHT+IHXps3nZ90T8WGg063fYN8QVMVV3g6nA7o5SquGS/z6Qy9jDzJGBr2bfLxeOECbLQ9CIXVaAg==
+X-Received: by 2002:a17:903:2b05:b0:1f4:6252:dbb3 with SMTP id d9443c01a7336-1f46252defdmr108101395ad.26.1716895840365;
+        Tue, 28 May 2024 04:30:40 -0700 (PDT)
+Received: from localhost.localdomain ([47.238.252.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9711bdsm80298395ad.145.2024.05.28.04.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 04:30:40 -0700 (PDT)
+From: lei lu <llfamsec@gmail.com>
+To: joseph.qi@linux.alibaba.com
+Cc: akpm@linux-foundation.org,
+	jlbec@evilplan.org,
+	linux-kernel@vger.kernel.org,
+	llfamsec@gmail.com,
+	mark@fasheh.com,
+	mengferry@linux.alibaba.com,
+	ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] ocfs2: strict bound check before memcmp in ocfs2_xattr_find_entry()
+Date: Tue, 28 May 2024 19:30:14 +0800
+Message-Id: <20240528113014.15257-1-llfamsec@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <784b6bcc-067a-4a27-93e9-60e96da2befb@linux.alibaba.com>
+References: <784b6bcc-067a-4a27-93e9-60e96da2befb@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,87 +88,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pGNstejnuWe-R7xw3aKQgXzHi7T7UM3u
-X-Proofpoint-GUID: pGNstejnuWe-R7xw3aKQgXzHi7T7UM3u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 adultscore=0 phishscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280087
 
-Trusted CPU applications currently offload to signed PDs on CDSP to
-gain some additional services provided by root PD. Unsigned PDs have
-access to limited root PD services that may not be sufficient for
-all use-cases. Signed PDs have a higher dynamic loading latency
-which impacts the performance of applications. Limited root PD
-services could be opened up for unsigned PDs but that should be
-restricted for untrusted processes. For this requirement, System
-unsigned PD is introduced which will be same as Unsigned PD for
-most part but will have access to more root PD services. Add
-changes to offload trusted applications to System unsigned PD
-when unsigned offload is requested.
+Hi,
 
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c      | 9 +++++++++
- include/uapi/misc/fastrpc.h | 2 ++
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 7f81a18b8aea..ebe20915392f 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -122,6 +122,7 @@
- enum fastrpc_userpd_type {
- 	SIGNED_PD			= 1,
- 	UNSIGNED_PD			= 2,
-+	SYSTEM_UNSIGNED_PD	= 3,
- };
- 
- static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
-@@ -1552,12 +1553,20 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 	if (init.attrs & FASTRPC_MODE_UNSIGNED_MODULE)
- 		fl->userpd_type = UNSIGNED_PD;
- 
-+	/* Disregard any system unsigned PD attribute from userspace */
-+	init.attrs &= (~FASTRPC_MODE_SYSTEM_UNSIGNED_PD);
- 
- 	if (is_session_rejected(fl, !(fl->userpd_type == SIGNED_PD))) {
- 		err = -EACCES;
- 		goto err;
- 	}
- 
-+	/* Trusted apps will be launched as system unsigned PDs */
-+	if (!fl->untrusted_process && (fl->userpd_type != SIGNED_PD)) {
-+		fl->userpd_type = SYSTEM_UNSIGNED_PD;
-+		init.attrs |= FASTRPC_MODE_SYSTEM_UNSIGNED_PD;
-+	}
-+
- 	if (init.filelen > INIT_FILELEN_MAX) {
- 		err = -EINVAL;
- 		goto err;
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index f33d914d8f46..3b3279bb2cf9 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -62,6 +62,8 @@ enum fastrpc_proc_attr {
- 	FASTRPC_MODE_SYSTEM_PROCESS	= (1 << 5),
- 	/* Macro for Prvileged Process */
- 	FASTRPC_MODE_PRIVILEGED		= (1 << 6),
-+	/* Macro for system unsigned PD */
-+	FASTRPC_MODE_SYSTEM_UNSIGNED_PD	= (1 << 17),
- };
- 
- /* Fastrpc attribute for memory protection of buffers */
--- 
-2.43.0
-
+Maybe we should add the same check for ocfs2_xattr_list_entries.
 
