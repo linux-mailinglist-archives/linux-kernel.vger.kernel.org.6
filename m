@@ -1,89 +1,113 @@
-Return-Path: <linux-kernel+bounces-191711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66298D12F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B04E8D12F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41892B23403
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27BC1F22EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3414290E;
-	Tue, 28 May 2024 03:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVnESjZq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1B51411EE;
-	Tue, 28 May 2024 03:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751BA18037;
+	Tue, 28 May 2024 03:45:50 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7186417E8E4;
+	Tue, 28 May 2024 03:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716867196; cv=none; b=mjoQcpIbzLML+rOuRkg2wm8N7x3LIiK4gES1vPez7p0hFqQZEauNgpXrpimXbblCzHUfTqzD3QieWfIidiTc5rpuNQg9DX3qSWN02SpGQjS54UaMm9hdO8rer9jFkALfgO2h+HmqDP6zDNQ22Y77DnWYOH9lra6EXY5khYe+VvQ=
+	t=1716867950; cv=none; b=K3L0sKEMpRBdCQhFKHhjwE7V4t3mlXJPzO+0UsFcyN6YfvYmP/EGXsWmFDHXdlb2NuStt0yU9YnGnmwwGLIoNcHHK718cMaWK6fXGB/bHvltsKInp5G6qRCSKZLagFk5dWNiv7YIkES86v2n38QXq0zTk2M8sdEUDuvAtffRHeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716867196; c=relaxed/simple;
-	bh=ePolhgu5YoE8VC+tgwK1GBDAtJFQCMUH13dsPkQNicA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NJQrVxAcmly6vy7VqYhybyAfSukagtsj8UPvTjJPIXjtCro9K0LcKiWJs/3jEsAAYUuwyeHOPOVGC21Ft4xsGrJqaEs5ocJy4pDz/R6SAfUevqhbQPksPAIdlxgKqg6kADTCAefWtTkQiChPYipa0GRE3bgXZ32S/rFTVsNiWGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVnESjZq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 684BEC32782;
-	Tue, 28 May 2024 03:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716867196;
-	bh=ePolhgu5YoE8VC+tgwK1GBDAtJFQCMUH13dsPkQNicA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bVnESjZq5kKpQGW0UD/44OL6keNLrYU/4xNMGGz6LuGn0IHaoyPlzCtu+Y2NsI6C+
-	 qDZY5Lw8Kjlwdz58ApVycu8M2kZYAEEpZ7AIbM3S5jLc6/VKUcscSJNAfKHGnR9a4d
-	 PHJmEpDTaFgx6GUHdsRaSY72HavZ6X7W2KMMR4vC+yfPVo728CauvjvbZkQR8TN710
-	 V96vtzUp9FP1iJvriuttBfFay4kGyJOGUbzjX2TfJ+7VBYfhFlbh45MKso77W1SOTz
-	 BOzKkfuj7m4JdSBDUNCCZRVwdZTIBZYZGv0ImZ1qD5X9SYwuimXUHOxQ6vzVy9RHXr
-	 qHtCmoT/3Bt3w==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	patches@lists.linux.dev,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] soc: qcom: rpmh-rsc: Ensure irqs aren't disabled by rpmh_rsc_send_data() callers
-Date: Mon, 27 May 2024 22:32:35 -0500
-Message-ID: <171686715159.523693.11051218263082972635.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240509184129.3924422-1-swboyd@chromium.org>
-References: <20240509184129.3924422-1-swboyd@chromium.org>
+	s=arc-20240116; t=1716867950; c=relaxed/simple;
+	bh=8Wbp2Csk20jRbXt47bxwNrTOIr9WdTkbi2J4gtJqvXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EOwNrpOAt3MWhfwaELGqL1jYY7XzzXk4XpNhcmt4XMPWHTcMMabTD2K1BIDxkEznGKiZwhkcStu7EZON/Kg8GHEJ7oFuko9lc89S66t4NPwqegE0QD6/2kZ4vKGq5viKBHYsEpwtW3hoSCZKWgVy7E7mLLHkqawJXRhWJ/rcsSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 186DC205DB9A;
+	Tue, 28 May 2024 12:39:29 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-3) with ESMTPS id 44S3dRkS081341
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:39:28 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-3) with ESMTPS id 44S3dRBl828125
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:39:27 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 44S3dRPC828124;
+	Tue, 28 May 2024 12:39:27 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro
+ <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] fs: fat: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com> (Jeff
+	Johnson's message of "Mon, 27 May 2024 11:00:40 -0700")
+References: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
+Date: Tue, 28 May 2024 12:39:27 +0900
+Message-ID: <87v82yzjtc.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-On Thu, 09 May 2024 11:41:28 -0700, Stephen Boyd wrote:
-> Dan pointed out that Smatch is concerned about this code because it uses
-> spin_lock_irqsave() and then calls wait_event_lock_irq() which enables
-> irqs before going to sleep. The comment above the function says it
-> should be called with interrupts enabled, but we simply hope that's true
-> without really confirming that. Let's add a might_sleep() here to
-> confirm that interrupts and preemption aren't disabled. Once we do that,
-> we can change the lock to be non-saving, spin_lock_irq(), to clarify
-> that we don't expect irqs to be disabled. If irqs are disabled by
-> callers they're going to be enabled anyway in the wait_event_lock_irq()
-> call which would be bad.
-> 
-> [...]
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Applied, thanks!
+Looks good.
 
-[1/1] soc: qcom: rpmh-rsc: Ensure irqs aren't disabled by rpmh_rsc_send_data() callers
-      commit: e43111f52b9ec5c2d700f89a1d61c8d10dc2d9e9
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Best regards,
+Thanks.
+
+> ---
+>  fs/fat/fat_test.c | 1 +
+>  fs/fat/inode.c    | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/fs/fat/fat_test.c b/fs/fat/fat_test.c
+> index 2dab4ca1d0d8..1f0062659067 100644
+> --- a/fs/fat/fat_test.c
+> +++ b/fs/fat/fat_test.c
+> @@ -193,4 +193,5 @@ static struct kunit_suite fat_test_suite = {
+>  
+>  kunit_test_suites(&fat_test_suite);
+>  
+> +MODULE_DESCRIPTION("KUnit tests for FAT filesystems");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+> index d9e6fbb6f246..3027d275dbf1 100644
+> --- a/fs/fat/inode.c
+> +++ b/fs/fat/inode.c
+> @@ -1978,4 +1978,5 @@ static void __exit exit_fat_fs(void)
+>  module_init(init_fat_fs)
+>  module_exit(exit_fat_fs)
+>  
+> +MODULE_DESCRIPTION("Core FAT filesystem support");
+>  MODULE_LICENSE("GPL");
+>
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-fat-bea9424c9303
+>
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
