@@ -1,434 +1,156 @@
-Return-Path: <linux-kernel+bounces-191712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50F28D12F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:42:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871CB8D12FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F091C208BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D862845CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 03:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C26179A7;
-	Tue, 28 May 2024 03:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591E117C68;
+	Tue, 28 May 2024 03:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3wns/OA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwEjQoXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785AE18037
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 03:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E80C17E8E4;
+	Tue, 28 May 2024 03:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716867722; cv=none; b=XC7F3qPjNL7TTGeVA1V/QaxyGp5JRa1CsIbSpFZ8JyLWJ5/7sMq9UMAMmVTqNkZWkHA0p5Qs3DzfYcE3yqZTn/E0j7gTWUp0LYm1DTVYVUFAr7cC8FlPQK1I/dZajtWUqwIBIrCtJvRqiyarG+z94lv4ynLyUhV1G3xUYTcwe9o=
+	t=1716868305; cv=none; b=RyMSzroET6fzmTcA/V4XATst7ojoB+XlrtQ1cr1xHsvnZux/4u9QtoohmG72XgIJm2s0qkLDc7V//lBSvjXzthdzKRC4TQMiL3W8AUQzsgzMod2iGHmfpVMaS2qdnw0VLyfM/cu80Eo5oGBkYMxD8q11HAH4puUzQGeKU6W+XtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716867722; c=relaxed/simple;
-	bh=us8xFwoozp/UcF3X7wHuMwysYp4SptqFQwqUhgRMI8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m/qpoqR4Kqbc5ILqmeF5gDt28eAHSvBNzYXetoL2aVXtzEVYSVaiBqQO5K7LCTDpsqe4MxsjwTLDajd0P8XqyyjAiALbhdB+0lPJ14XRHaUOZdKUhY4JuL/7Cv2KK0DDZ8kI7AmLq4XpOy1iyohkVP0K03EMWvJ//mKmxqAdh3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3wns/OA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716867721; x=1748403721;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=us8xFwoozp/UcF3X7wHuMwysYp4SptqFQwqUhgRMI8w=;
-  b=B3wns/OASzrPtDyiXUlRZtOs7s760kHSEZoND9b2RcmGr9VK5dtPkdJP
-   kLOFUTPPOJS+/Xq33hgH9MR7KvQu+tdwk475kqhbXI9UZGs42oIhyos64
-   Uihn3SF0mROpmi0hYdA77hwy/nvLrrAv6N/AviMGLiPNBTBiL4kPdKsFY
-   OvBs6y2YqGr+u3cG3kEqRkO+5J5dlfHqL8luBV77b4qSRPcVnoY5NGDLM
-   MXlstKgfS0GbDLQuqv1mpU/C8H0RX+PF/FwBCP8qdUOIFtisow0OhONRC
-   tyqD5BZ+NucIyw+MXEdv/ZAnjIR+8FW5Peuv8IL/owOxUcPiSmIWkCgkH
-   w==;
-X-CSE-ConnectionGUID: 0vG9WqQ7TGWgx5Ia7Gh13A==
-X-CSE-MsgGUID: FAJOafMPRx2i+wKK0V/Ieg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24317500"
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="24317500"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 20:42:00 -0700
-X-CSE-ConnectionGUID: W1lZTSXnTCmxvNAv6osnTg==
-X-CSE-MsgGUID: 1u5DbkDoQyGD7hzanK7g4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,194,1712646000"; 
-   d="scan'208";a="35401842"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 27 May 2024 20:41:58 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sBnil-000BRH-1Q;
-	Tue, 28 May 2024 03:41:55 +0000
-Date: Tue, 28 May 2024 11:41:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>
-Subject: drivers/gpu/drm/radeon/pptable.h:442:5: error: 'counted_by' should
- not be applied to an array with element of unknown size because
- 'ATOM_PPLIB_STATE_V2' (aka 'struct _ATOM_PPLIB_STATE_V2') is a struct type
- with a flexible array member. This will be an err...
-Message-ID: <202405281143.67sAJGgH-lkp@intel.com>
+	s=arc-20240116; t=1716868305; c=relaxed/simple;
+	bh=+iPQMa+6kqA2ZUh+VMv82Bt86ZQQJcbmF1UL0D12zgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FkO1wzhnIOdMWOIj9uhnXnR85bcABIIwyyC7FNkeSmMKk3uSoPCt8SQdgeOVCtUHL4/HbCq/u6Ao3/8TSetua3wEhHBlW8reHrq+2PkGx+H/3zHqRMOey9S8G+w/HXuLqTZs4B0kGKAVB2x9RkUwgLd9UKQlw2G+t96L4/xv6+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwEjQoXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B02C32782;
+	Tue, 28 May 2024 03:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716868305;
+	bh=+iPQMa+6kqA2ZUh+VMv82Bt86ZQQJcbmF1UL0D12zgU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OwEjQoXw8tUNKXnC6ZHQXCqX15EaRAtYAcoyxmOHwE+25AQxtLCGQ/b2GmgrUPG29
+	 C48jRJw3bNve++wTLpFcP56mLnhBAxHp30Zaq7dben+j9+x/WGHSDRRImd4lOpk/CZ
+	 kDHnOpkzjbFubaLMTAxQEUDjaHdwx9vJ64mVcx8N+NRJmee93eveQJ2jkm0MI2Nykb
+	 +++vmfkmJpuyTjjy2RjIP290suV7aY7UMaB9aWOFH+DzQTcitQkam8jD4lM6cO0X2L
+	 c4BPb+ba+MEiRWD+Xyzyxk7y5SLk/ETzu0xIRaneb4Dr4Do4XgmP4nqHKOcAlsf+rH
+	 HsMhf1/mwMNuQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-crypto@vger.kernel.org,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v6 0/6] KEYS: asymmetric: tpm2_key_{rsa,ecdsa}
+Date: Tue, 28 May 2024 06:51:15 +0300
+Message-ID: <20240528035136.11464-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-commit: 377b5b397d073c0aae36b833a5bcac0e6f349243 Merge tag 'amd-drm-next-6.10-2024-04-19' of https://gitlab.freedesktop.org/agd5f/linux into drm-next
-date:   5 weeks ago
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240528/202405281143.67sAJGgH-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240528/202405281143.67sAJGgH-lkp@intel.com/reproduce)
+Testing
+=======
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405281143.67sAJGgH-lkp@intel.com/
+RSA
+---
 
-All errors (new ones prefixed by >>):
+tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+tpm2_getcap handles-persistent
+openssl genrsa -out private.pem 2048
+tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+serial=`cat key.priv.der | keyctl padd asymmetric tpm @u`
+echo "abcdefg" > plaintext.txt
+keyctl pkey_encrypt $serial 0 plaintext.txt enc=pkcs1 > encrypted.dat
+keyctl pkey_decrypt $serial 0 encrypted.dat enc=pkcs1 > decrypted.dat
+keyctl pkey_sign $serial 0 plaintext.txt enc=pkcs1 hash=sha256 > signed.dat
+keyctl pkey_verify $serial 0 plaintext.txt signed.dat enc=pkcs1 hash=sha256
 
-   In file included from drivers/gpu/drm/radeon/radeon_device.c:30:
-   In file included from include/linux/efi.h:20:
-   In file included from include/linux/rtc.h:18:
-   In file included from include/linux/nvmem-provider.h:12:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:508:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     509 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:515:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     516 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:522:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:527:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     528 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:536:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     537 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/radeon/radeon_device.c:31:
-   In file included from include/linux/pci.h:39:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/radeon_device.c:31:
-   In file included from include/linux/pci.h:39:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/radeon_device.c:31:
-   In file included from include/linux/pci.h:39:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/radeon/radeon_device.c:48:
-   In file included from drivers/gpu/drm/radeon/atom.h:165:
-   In file included from drivers/gpu/drm/radeon/atombios.h:7980:
->> drivers/gpu/drm/radeon/pptable.h:442:5: error: 'counted_by' should not be applied to an array with element of unknown size because 'ATOM_PPLIB_STATE_V2' (aka 'struct _ATOM_PPLIB_STATE_V2') is a struct type with a flexible array member. This will be an error in a future compiler version [-Werror,-Wbounds-safety-counted-by-elt-type-unknown-size]
-     442 |     ATOM_PPLIB_STATE_V2 states[] __counted_by(ucNumEntries);
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   18 errors generated.
---
-   In file included from drivers/gpu/drm/radeon/atom.c:25:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:508:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     509 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:515:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     516 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:522:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:527:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     528 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:536:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     537 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/radeon/atom.c:37:
-   In file included from drivers/gpu/drm/radeon/atom.h:165:
-   In file included from drivers/gpu/drm/radeon/atombios.h:7980:
->> drivers/gpu/drm/radeon/pptable.h:442:5: error: 'counted_by' should not be applied to an array with element of unknown size because 'ATOM_PPLIB_STATE_V2' (aka 'struct _ATOM_PPLIB_STATE_V2') is a struct type with a flexible array member. This will be an error in a future compiler version [-Werror,-Wbounds-safety-counted-by-elt-type-unknown-size]
-     442 |     ATOM_PPLIB_STATE_V2 states[] __counted_by(ucNumEntries);
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/radeon/atom.c:40:
-   In file included from drivers/gpu/drm/radeon/radeon.h:76:
-   In file included from include/drm/ttm/ttm_bo.h:39:
-   In file included from include/drm/ttm/ttm_device.h:30:
-   In file included from include/drm/ttm/ttm_resource.h:31:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/atom.c:40:
-   In file included from drivers/gpu/drm/radeon/radeon.h:76:
-   In file included from include/drm/ttm/ttm_bo.h:39:
-   In file included from include/drm/ttm/ttm_device.h:30:
-   In file included from include/drm/ttm/ttm_resource.h:31:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/atom.c:40:
-   In file included from drivers/gpu/drm/radeon/radeon.h:76:
-   In file included from include/drm/ttm/ttm_bo.h:39:
-   In file included from include/drm/ttm/ttm_device.h:30:
-   In file included from include/drm/ttm/ttm_resource.h:31:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   18 errors generated.
---
-   In file included from drivers/gpu/drm/radeon/rs600.c:39:
-   In file included from include/linux/io-64-nonatomic-lo-hi.h:5:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/rs600.c:39:
-   In file included from include/linux/io-64-nonatomic-lo-hi.h:5:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/gpu/drm/radeon/rs600.c:39:
-   In file included from include/linux/io-64-nonatomic-lo-hi.h:5:
-   In file included from include/linux/io.h:13:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: error: performing pointer arithmetic on a null pointer has undefined behavior [-Werror,-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/radeon/rs600.c:40:
-   In file included from include/linux/pci.h:37:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:508:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     509 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:515:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     516 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:522:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:527:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     528 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:536:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
-     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     537 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/radeon/rs600.c:47:
-   In file included from drivers/gpu/drm/radeon/atom.h:165:
-   In file included from drivers/gpu/drm/radeon/atombios.h:7980:
->> drivers/gpu/drm/radeon/pptable.h:442:5: error: 'counted_by' should not be applied to an array with element of unknown size because 'ATOM_PPLIB_STATE_V2' (aka 'struct _ATOM_PPLIB_STATE_V2') is a struct type with a flexible array member. This will be an error in a future compiler version [-Werror,-Wbounds-safety-counted-by-elt-type-unknown-size]
-     442 |     ATOM_PPLIB_STATE_V2 states[] __counted_by(ucNumEntries);
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   18 errors generated.
-.
+ECDSA
+-----
 
+tpm2_createprimary --hierarchy o -G ecc -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+openssl ecparam -name prime256v1 -genkey -noout -out private.pem
+tpm2_import -C 0x81000001 -G ecc -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+serial=`cat key.priv.der | keyctl padd asymmetric tpm @u`
+echo "abcdefg" > plaintext.txt
+keyctl pkey_sign $serial 0 plaintext.txt hash=sha256 > signed.dat
+keyctl pkey_verify $serial 0 plaintext.txt signed.dat hash=sha256
 
-vim +442 drivers/gpu/drm/radeon/pptable.h
+Open Issues
+===========
 
-f7466e6ca084e3 Alex Deucher 2013-04-19  437  
-f7466e6ca084e3 Alex Deucher 2013-04-19  438  typedef struct _StateArray{
-f7466e6ca084e3 Alex Deucher 2013-04-19  439      //how many states we have 
-f7466e6ca084e3 Alex Deucher 2013-04-19  440      UCHAR ucNumEntries;
-f7466e6ca084e3 Alex Deucher 2013-04-19  441      
-efade6fe50e746 Alex Deucher 2024-04-08 @442      ATOM_PPLIB_STATE_V2 states[] __counted_by(ucNumEntries);
-f7466e6ca084e3 Alex Deucher 2013-04-19  443  }StateArray;
-f7466e6ca084e3 Alex Deucher 2013-04-19  444  
-f7466e6ca084e3 Alex Deucher 2013-04-19  445  
+* When verifying ECDSA signature, _ecdsa_verify() returns -EKEYREJECTED.
 
-:::::: The code at line 442 was first introduced by commit
-:::::: efade6fe50e746164587b01cc33eee71390799b5 drm/radeon: silence UBSAN warning (v3)
+References
+==========
 
-:::::: TO: Alex Deucher <alexander.deucher@amd.com>
-:::::: CC: Alex Deucher <alexander.deucher@amd.com>
+* v5: https://lore.kernel.org/linux-integrity/20240523212515.4875-1-jarkko@kernel.org/
+* v4: https://lore.kernel.org/linux-integrity/20240522005252.17841-1-jarkko@kernel.org/
+* v3: https://lore.kernel.org/linux-integrity/20240521152659.26438-1-jarkko@kernel.org/
+* v2: https://lore.kernel.org/linux-integrity/336755.1716327854@warthog.procyon.org.uk/
+* v1: https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+* Derived from https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+
+Jarkko Sakkinen (6):
+  tpm: Open code tpm_buf_parameters()
+  crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+  KEYS: trusted: Change -EINVAL to -E2BIG
+  crypto: tpm2_key: Introduce a TPM2 key type
+  keys: asymmetric: Add tpm2_key_rsa
+  keys: asymmetric: Add tpm2_key_ecdsa
+
+ crypto/Kconfig                            |   7 +
+ crypto/Makefile                           |   6 +
+ crypto/asymmetric_keys/Kconfig            |  30 +
+ crypto/asymmetric_keys/Makefile           |   2 +
+ crypto/asymmetric_keys/tpm2_key_ecdsa.c   | 441 ++++++++++++++
+ crypto/asymmetric_keys/tpm2_key_rsa.c     | 678 ++++++++++++++++++++++
+ crypto/ecdsa.c                            |   1 -
+ crypto/rsa-pkcs1pad.c                     |  16 +-
+ crypto/tpm2_key.asn1                      |  11 +
+ crypto/tpm2_key.c                         | 134 +++++
+ drivers/char/tpm/tpm-buf.c                |  26 -
+ drivers/char/tpm/tpm2-cmd.c               |  10 +-
+ include/crypto/rsa-pkcs1pad.h             |  20 +
+ include/crypto/tpm2_key.h                 |  46 ++
+ include/linux/tpm.h                       |  10 +-
+ security/keys/trusted-keys/Kconfig        |   2 +-
+ security/keys/trusted-keys/Makefile       |   2 -
+ security/keys/trusted-keys/tpm2key.asn1   |  11 -
+ security/keys/trusted-keys/trusted_tpm2.c | 141 +----
+ 19 files changed, 1433 insertions(+), 161 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/tpm2_key_ecdsa.c
+ create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+ create mode 100644 crypto/tpm2_key.asn1
+ create mode 100644 crypto/tpm2_key.c
+ create mode 100644 include/crypto/rsa-pkcs1pad.h
+ create mode 100644 include/crypto/tpm2_key.h
+ delete mode 100644 security/keys/trusted-keys/tpm2key.asn1
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.1
+
 
