@@ -1,117 +1,320 @@
-Return-Path: <linux-kernel+bounces-193072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2CF8D2684
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCFC8D268A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01F31C20C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:50:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF581F21D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 20:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F014716F85C;
-	Tue, 28 May 2024 20:50:36 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8D4179658;
+	Tue, 28 May 2024 20:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dCzOL2PX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E94A1C6A5;
-	Tue, 28 May 2024 20:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3616481DD;
+	Tue, 28 May 2024 20:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716929436; cv=none; b=dlzNNq5zfNnUB8Lw3KZyFsz4QQn9rolxyRV5mxwQhGzFz5L/wiM3DbitQ69N9+XUGsHybWoPap2nqd0heQaVimEZj7rimrW4XeyAok/3q2XrNJt7alFOSsPDZX0tsOqP4hvOXc6kS0R4cxIIg5rr+x06q6qj4sqEUg29YNrKtgE=
+	t=1716929512; cv=none; b=gIiMcnkUXK2uiU3gv9220+v5qssfq6wf0T2zXRnbzfNDYlQSsVBQClfhsNGsOpedcgdGcHuoAty8tftd6nNdl8A6feagduGb0I8spRnvgp7M+o+TreJK8gKgDX4KwTBx471wqQPO90lH9GNCjYnczlbQfBSYU+97Qsf9pbWyfiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716929436; c=relaxed/simple;
-	bh=C2TO8Qx3rZMZBxfN+j6VufMLMOzKG4ce2Xdl91MmJsg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=L/DZeOxh0crW0SoobzoYBbf8VQLulwkk/YNdq28bMj2kX7kaU3S/6M+N2IYOVl/FKhLu0HSSQqXRfRyGu0FdFs7w0gIk0i+OzIFskeyUVNCG8C07rjWPkwb4na6gtBnitL16ZkFPiBwAK0f2HunMINQXYuBm97n5wG0GBks0t34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.78.2) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 28 May
- 2024 23:50:21 +0300
-Subject: Re: [net-next PATCH v4 3/7] net: ravb: Refactor RX ring refill
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-4-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <883d4e03-4686-e4dd-01c4-b1f71b661d86@omp.ru>
-Date: Tue, 28 May 2024 23:50:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1716929512; c=relaxed/simple;
+	bh=+XtZbmFm/9qpAQm9bjk8oTbgFHePs2/ksS+L5FmUWvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osWfedhhqbuMFgtPL3VTQ7QdBPYl/Vh1X6TiHuhageAKtQEI4fWYWU82hJZ5Xhz3CxJjPngm/ei0RtCxrAVdJrZX2vKLAZC+gNG2XCNa23z6ZHwXiaNU9KEfy3eYlsOkFYS3SwZRm+RMGOEob8L/OvIE5wxhomHM53q6EUjs+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=dCzOL2PX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41AF6C3277B;
+	Tue, 28 May 2024 20:51:51 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dCzOL2PX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1716929508;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5sKo0Qz4P1MxZlIb11XiSxTVLstjJRE2ssmaR7sJujw=;
+	b=dCzOL2PXpSs1E/MGhQs1d+e3fEeXGOLLJtifVZs6kbXWA1uLyuMYkhqgTiGSZWLhsDK3qK
+	OTQSIA9T5AuhXG2IQ7WsodRqz/P4hV8liDnuaDHvrS790d6o33nrPPBtcdJyJSwzS4AsZW
+	hefiEvSaUYIottlbiSrPJc0QmTIYReM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 503ec70d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 28 May 2024 20:51:47 +0000 (UTC)
+Date: Tue, 28 May 2024 22:51:33 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Frank van der Linden <fvdl@google.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v16 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZlZD1YryQzoLRjE-@zx2c4.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-2-Jason@zx2c4.com>
+ <CAPTztWbDvrrCQH49q0GTk54--Hzh1V_A7KRw4-z38eGQupPKJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240528150339.6791-4-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/28/2024 20:41:33
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185560 [May 28 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.2 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.2 in (user) dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.2
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/28/2024 20:46:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/28/2024 6:54:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPTztWbDvrrCQH49q0GTk54--Hzh1V_A7KRw4-z38eGQupPKJg@mail.gmail.com>
 
-On 5/28/24 6:03 PM, Paul Barker wrote:
-
-> To reduce code duplication, we add a new RX ring refill function which
-> can handle both the initial RX ring population (which was split between
-> ravb_ring_init() and ravb_ring_format()) and the RX ring refill after
-> polling (in ravb_rx()).
+On Tue, May 28, 2024 at 01:41:50PM -0700, Frank van der Linden wrote:
+> On Tue, May 28, 2024 at 5:24 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > The vDSO getrandom() implementation works with a buffer allocated with a
+> > new system call that has certain requirements:
+> >
+> > - It shouldn't be written to core dumps.
+> >   * Easy: VM_DONTDUMP.
+> > - It should be zeroed on fork.
+> >   * Easy: VM_WIPEONFORK.
+> >
+> > - It shouldn't be written to swap.
+> >   * Uh-oh: mlock is rlimited.
+> >   * Uh-oh: mlock isn't inherited by forks.
+> >
+> > - It shouldn't reserve actual memory, but it also shouldn't crash when
+> >   page faulting in memory if none is available
+> >   * Uh-oh: MAP_NORESERVE respects vm.overcommit_memory=2.
+> >   * Uh-oh: VM_NORESERVE means segfaults.
+> >
+> > It turns out that the vDSO getrandom() function has three really nice
+> > characteristics that we can exploit to solve this problem:
+> >
+> > 1) Due to being wiped during fork(), the vDSO code is already robust to
+> >    having the contents of the pages it reads zeroed out midway through
+> >    the function's execution.
+> >
+> > 2) In the absolute worst case of whatever contingency we're coding for,
+> >    we have the option to fallback to the getrandom() syscall, and
+> >    everything is fine.
+> >
+> > 3) The buffers the function uses are only ever useful for a maximum of
+> >    60 seconds -- a sort of cache, rather than a long term allocation.
+> >
+> > These characteristics mean that we can introduce VM_DROPPABLE, which
+> > has the following semantics:
+> >
+> > a) It never is written out to swap.
+> > b) Under memory pressure, mm can just drop the pages (so that they're
+> >    zero when read back again).
+> > c) If there's not enough memory to service a page fault, it's not fatal.
+> > d) It is inherited by fork.
+> > e) It doesn't count against the mlock budget, since nothing is locked.
+> >
+> > This is fairly simple to implement, with the one snag that we have to
+> > use 64-bit VM_* flags, but this shouldn't be a problem, since the only
+> > consumers will probably be 64-bit anyway.
+> >
+> > This way, allocations used by vDSO getrandom() can use:
+> >
+> >     VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
+> >
+> > And there will be no problem with OOMing, crashing on overcommitment,
+> > using memory when not in use, not wiping on fork(), coredumps, or
+> > writing out to swap.
+> >
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> > ---
+> >  fs/proc/task_mmu.c             | 3 +++
+> >  include/linux/mm.h             | 8 ++++++++
+> >  include/trace/events/mmflags.h | 7 +++++++
+> >  mm/Kconfig                     | 3 +++
+> >  mm/memory.c                    | 4 ++++
+> >  mm/mempolicy.c                 | 3 +++
+> >  mm/mprotect.c                  | 2 +-
+> >  mm/rmap.c                      | 8 +++++---
+> >  8 files changed, 34 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index e5a5f015ff03..b5a59e57bde1 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -706,6 +706,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+> >  #ifdef CONFIG_X86_USER_SHADOW_STACK
+> >                 [ilog2(VM_SHADOW_STACK)] = "ss",
+> > +#endif
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +               [ilog2(VM_DROPPABLE)]   = "dp",
+> >  #endif
+> >         };
+> >         size_t i;
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 9849dfda44d4..5978cb4cc21c 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -321,12 +321,14 @@ extern unsigned int kobjsize(const void *objp);
+> >  #define VM_HIGH_ARCH_BIT_3     35      /* bit only usable on 64-bit architectures */
+> >  #define VM_HIGH_ARCH_BIT_4     36      /* bit only usable on 64-bit architectures */
+> >  #define VM_HIGH_ARCH_BIT_5     37      /* bit only usable on 64-bit architectures */
+> > +#define VM_HIGH_ARCH_BIT_6     38      /* bit only usable on 64-bit architectures */
+> >  #define VM_HIGH_ARCH_0 BIT(VM_HIGH_ARCH_BIT_0)
+> >  #define VM_HIGH_ARCH_1 BIT(VM_HIGH_ARCH_BIT_1)
+> >  #define VM_HIGH_ARCH_2 BIT(VM_HIGH_ARCH_BIT_2)
+> >  #define VM_HIGH_ARCH_3 BIT(VM_HIGH_ARCH_BIT_3)
+> >  #define VM_HIGH_ARCH_4 BIT(VM_HIGH_ARCH_BIT_4)
+> >  #define VM_HIGH_ARCH_5 BIT(VM_HIGH_ARCH_BIT_5)
+> > +#define VM_HIGH_ARCH_6 BIT(VM_HIGH_ARCH_BIT_6)
+> >  #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+> >
+> >  #ifdef CONFIG_ARCH_HAS_PKEYS
+> > @@ -357,6 +359,12 @@ extern unsigned int kobjsize(const void *objp);
+> >  # define VM_SHADOW_STACK       VM_NONE
+> >  #endif
+> >
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +# define VM_DROPPABLE          VM_HIGH_ARCH_6
+> > +#else
+> > +# define VM_DROPPABLE          VM_NONE
+> > +#endif
+> > +
+> >  #if defined(CONFIG_X86)
+> >  # define VM_PAT                VM_ARCH_1       /* PAT reserves whole VMA at once (x86) */
+> >  #elif defined(CONFIG_PPC)
+> > diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> > index e46d6e82765e..fab7848df50a 100644
+> > --- a/include/trace/events/mmflags.h
+> > +++ b/include/trace/events/mmflags.h
+> > @@ -165,6 +165,12 @@ IF_HAVE_PG_ARCH_X(arch_3)
+> >  # define IF_HAVE_UFFD_MINOR(flag, name)
+> >  #endif
+> >
+> > +#ifdef CONFIG_NEED_VM_DROPPABLE
+> > +# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+> > +#else
+> > +# define IF_HAVE_VM_DROPPABLE(flag, name)
+> > +#endif
+> > +
+> >  #define __def_vmaflag_names                                            \
+> >         {VM_READ,                       "read"          },              \
+> >         {VM_WRITE,                      "write"         },              \
+> > @@ -197,6 +203,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )               \
+> >         {VM_MIXEDMAP,                   "mixedmap"      },              \
+> >         {VM_HUGEPAGE,                   "hugepage"      },              \
+> >         {VM_NOHUGEPAGE,                 "nohugepage"    },              \
+> > +IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,     "droppable"     )               \
+> >         {VM_MERGEABLE,                  "mergeable"     }               \
+> >
+> >  #define show_vma_flags(flags)                                          \
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index b4cb45255a54..6cd65ea4b3ad 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -1056,6 +1056,9 @@ config ARCH_USES_HIGH_VMA_FLAGS
+> >         bool
+> >  config ARCH_HAS_PKEYS
+> >         bool
+> > +config NEED_VM_DROPPABLE
+> > +       select ARCH_USES_HIGH_VMA_FLAGS
+> > +       bool
+> >
+> >  config ARCH_USES_PG_ARCH_X
+> >         bool
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index b5453b86ec4b..57b03fc73159 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -5689,6 +5689,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+> >
+> >         lru_gen_exit_fault();
+> >
+> > +       /* If the mapping is droppable, then errors due to OOM aren't fatal. */
+> > +       if (vma->vm_flags & VM_DROPPABLE)
+> > +               ret &= ~VM_FAULT_OOM;
+> > +
+> >         if (flags & FAULT_FLAG_USER) {
+> >                 mem_cgroup_exit_user_fault();
+> >                 /*
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index aec756ae5637..a66289f1d931 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -2300,6 +2300,9 @@ struct folio *vma_alloc_folio_noprof(gfp_t gfp, int order, struct vm_area_struct
+> >         pgoff_t ilx;
+> >         struct page *page;
+> >
+> > +       if (vma->vm_flags & VM_DROPPABLE)
+> > +               gfp |= __GFP_NOWARN | __GFP_NORETRY;
+> > +
+> >         pol = get_vma_policy(vma, addr, order, &ilx);
+> >         page = alloc_pages_mpol_noprof(gfp | __GFP_COMP, order,
+> >                                        pol, ilx, numa_node_id());
+> > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > index 94878c39ee32..88ff3ecc08a1 100644
+> > --- a/mm/mprotect.c
+> > +++ b/mm/mprotect.c
+> > @@ -622,7 +622,7 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
+> >                                 may_expand_vm(mm, oldflags, nrpages))
+> >                         return -ENOMEM;
+> >                 if (!(oldflags & (VM_ACCOUNT|VM_WRITE|VM_HUGETLB|
+> > -                                               VM_SHARED|VM_NORESERVE))) {
+> > +                                 VM_SHARED|VM_NORESERVE|VM_DROPPABLE))) {
+> >                         charged = nrpages;
+> >                         if (security_vm_enough_memory_mm(mm, charged))
+> >                                 return -ENOMEM;
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index e8fc5ecb59b2..d873a3f06506 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1397,7 +1397,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+> >         VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+> >         VM_BUG_ON_VMA(address < vma->vm_start ||
+> >                         address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+> > -       __folio_set_swapbacked(folio);
+> > +       if (!(vma->vm_flags & VM_DROPPABLE))
+> > +               __folio_set_swapbacked(folio);
+> >         __folio_set_anon(folio, vma, address, true);
+> >
+> >         if (likely(!folio_test_large(folio))) {
+> > @@ -1841,7 +1842,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+> >                                  * plus the rmap(s) (dropped by discard:).
+> >                                  */
+> >                                 if (ref_count == 1 + map_count &&
+> > -                                   !folio_test_dirty(folio)) {
+> > +                                   (!folio_test_dirty(folio) || (vma->vm_flags & VM_DROPPABLE))) {
+> >                                         dec_mm_counter(mm, MM_ANONPAGES);
+> >                                         goto discard;
+> >                                 }
+> > @@ -1851,7 +1852,8 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+> >                                  * discarded. Remap the page to page table.
+> >                                  */
+> >                                 set_pte_at(mm, address, pvmw.pte, pteval);
+> > -                               folio_set_swapbacked(folio);
+> > +                               if (!(vma->vm_flags & VM_DROPPABLE))
+> > +                                       folio_set_swapbacked(folio);
+> >                                 ret = false;
+> >                                 page_vma_mapped_walk_done(&pvmw);
+> >                                 break;
+> > --
+> > 2.44.0
+> >
+> >
 > 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> This seems like an obvious question, but I can't seem to find a
+> message asking this in the long history of this patchset: VM_DROPPABLE
+> seems very close to MADV_FREE lazyfree memory.
 
-   Looks sane...
+Very different semantics and use case. For example, with MADV_FREE, if
+you redirty the page by writing to it, the flag is cleared.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
-[...]
-
-MBR, Sergey
+Jason
 
