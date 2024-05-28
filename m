@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-191943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD208D1666
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF898D1674
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF9D283F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12C71F22389
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A7B13C83C;
-	Tue, 28 May 2024 08:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7741913D509;
+	Tue, 28 May 2024 08:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9UlsoCF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEzPG9hm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7499B6EB64;
-	Tue, 28 May 2024 08:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E436EB64;
+	Tue, 28 May 2024 08:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716885516; cv=none; b=fK1678+SB27ckdZY6lLcaZQLALnn/iU5budP8Qpe02HPcUQBuhGIA7biAXClTjJq/8KQ7/VZ8B74WvqUAIzoG2KFddg5HQzyq9jQZk0KUTcrIDNB/nYd7nQaSJprs528QOOE/urBbhdqbwHguOGXuH9F5ziz9v7duq+NpeL7Yz4=
+	t=1716885572; cv=none; b=tuRjwl9GOPYA3JFCR1Uxt4pWo46ltOc37XLBm+fYwPIwYrb1dHn6fFDQ2SK0H9GskF+/ApM5ly6+887mcG/SRSqJGWT5qJdkvEUvdaqxm4hb6akRu3Ffn5PQM5ga1E0+c1TbFvaF6iiXTooCzfg6kK4vX/yHxdE44edMq9ed1qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716885516; c=relaxed/simple;
-	bh=Pp1h9rKnlXC+BzTr3QzZgGdZk7UnGky0ZpYWvwodtdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFgFncxxHy5gdSBPzLu5ZhXc5vdk5jYITCfYt0MXbGK/i9cPa8CNWax4UhqejMwNDSAiyhxK9SXzaqAKEAXZZ2xNnN9TvT24e/svGP4yD8AU6uJ2xcF+7HHmzm/xq+nGNSgJQwimGmNyUb9B4lObU4B4ZwyiYbE0hizqXkYYMvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9UlsoCF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E79C32781;
-	Tue, 28 May 2024 08:38:34 +0000 (UTC)
+	s=arc-20240116; t=1716885572; c=relaxed/simple;
+	bh=bfGDc5/xHmz//Yt7VOOfRU/PyB095+4Sl6kUXfSweuI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YxCvj1goVoZ+RElRPrgKu6o8v6LSJYFGmoAvvBtbkIfbueg52X9NlYmwoZQd1FoQuQJyJlsCPA11jTIHefmbIgmS1lsRj9Z/zhE+9Fcj+NNM8i9I3uJK/36yUsTjmwrSWG2edlrRlaxZRh0MhMRnMTHREkcyf/HECpQv9j6RPxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEzPG9hm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 37E53C32781;
+	Tue, 28 May 2024 08:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716885515;
-	bh=Pp1h9rKnlXC+BzTr3QzZgGdZk7UnGky0ZpYWvwodtdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J9UlsoCFveDXOijNN7ysl3SGOeVuvAmdhwmZ590h1U4JzkLrD1hXQK9F7g0i/9K/h
-	 zWldbRoimxOPTKDupJ8fI71QoLUJKTmpk+hI3ooGNs1eknT2xgmwh9LRatComsjVe3
-	 48K5vKpBGZKn84GvBjKs4QHZ/JXy0JesDITJecj51ZGlgeCrxbpvD4fqBA0UZrXR9Q
-	 wYCvNYhm6UOD7a99xeGfWTD+3qiBfepeCmZkagNlHYSUJ/D3dJbN1tKn3GJH8oU5U1
-	 543HYmApBJGRZK+XvOyjQoEY2UulgaCOE/p7OBpoNcw7ANc8XECxoMNANXE7N9osYz
-	 RhyM5wlJVXBpA==
-Date: Tue, 28 May 2024 10:38:31 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, winters.zc@antgroup.com
-Subject: Re: [RFC 0/2] fuse: introduce fuse server recovery mechanism
-Message-ID: <20240528-jucken-inkonsequent-60b0a15d7ede@brauner>
-References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+	s=k20201202; t=1716885572;
+	bh=bfGDc5/xHmz//Yt7VOOfRU/PyB095+4Sl6kUXfSweuI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=VEzPG9hm9TDJBx/sr/BqWeQaq8j0nJ6tfgTwk8q9BOFX42wZeunWRD5D/PyFTbzuR
+	 5a9QCa7bJ0E2hX60hjdrFVKUFvKPtXOUtVFckIRGUQ6S2xgwH3rzjf6L9N4rWyAuU6
+	 nBZ/iJ7E97lhhjJiov1RWbQy2PafWME3tfw/wL21cAspM6rWLLM2edcfrvSg1gp5/o
+	 7/tVOyKikA0gSBwV94Ro3S0xoDgbo0gK9IPxIuCJdXoTmCdWMfmxOTWBgIqVM96ejd
+	 1lWCLrHj5SUIdxl1x0PzTvUvIcb/W7lLqxR9EIZ5bN/xmMt0RYxPt4dg6k0ZmrjX6B
+	 QETqQoMWxt+JQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22624C25B78;
+	Tue, 28 May 2024 08:39:32 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/3] Power: A4: add power domain driver
+Date: Tue, 28 May 2024 16:39:27 +0800
+Message-Id: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAECYVWYC/x3MQQqAIBBA0avErBMm06iuEhFmU80iDYUKwrsnL
+ d/i/xciBaYIffFCoIsje5dRlQXY3biNBC/ZIFEq1LIVRk2R7OlvCos/DDuhaUbUjWq7GiF3Z6C
+ Vn/85jCl9vNEVQmMAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716885570; l=885;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=bfGDc5/xHmz//Yt7VOOfRU/PyB095+4Sl6kUXfSweuI=;
+ b=zXzrrh7KUaH5eZOcybvVChgnCMLz6xll9cNsTL81pYUzbiwrYghjd8a/+Z1vCUYKHlv6pZ50p
+ kY6IenT6z00DVwq3DTG04hEuWYeuz6PWUcz8Sfdvaw16xH2bdz1h3SS
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Fri, May 24, 2024 at 02:40:28PM +0800, Jingbo Xu wrote:
-> Background
-> ==========
-> The fd of '/dev/fuse' serves as a message transmission channel between
-> FUSE filesystem (kernel space) and fuse server (user space). Once the
-> fd gets closed (intentionally or unintentionally), the FUSE filesystem
-> gets aborted, and any attempt of filesystem access gets -ECONNABORTED
-> error until the FUSE filesystem finally umounted.
-> 
-> It is one of the requisites in production environment to provide
-> uninterruptible filesystem service.  The most straightforward way, and
-> maybe the most widely used way, is that make another dedicated user
-> daemon (similar to systemd fdstore) keep the device fd open.  When the
-> fuse daemon recovers from a crash, it can retrieve the device fd from the
-> fdstore daemon through socket takeover (Unix domain socket) method [1]
-> or pidfd_getfd() syscall [2].  In this way, as long as the fdstore
-> daemon doesn't exit, the FUSE filesystem won't get aborted once the fuse
-> daemon crashes, though the filesystem service may hang there for a while
-> when the fuse daemon gets restarted and has not been completely
-> recovered yet.
-> 
-> This picture indeed works and has been deployed in our internal
-> production environment until the following issues are encountered:
-> 
-> 1. The fdstore daemon may be killed by mistake, in which case the FUSE
-> filesystem gets aborted and irrecoverable.
+Add power controller driver support for Amlogic A4 SoC.
 
-That's only a problem if you use the fdstore of the per-user instance.
-The main fdstore is part of PID 1 and you can't kill that. So really,
-systemd needs to hand the fds from the per-user instance to the main
-fdstore.
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Xianwei Zhao (3):
+      dt-bindings: power: add Amlogic A4 power domains
+      pmdomain: amlogic: Add support for A4 power domains controller
+      arm64: dts: amlogic: a4: add power domain controller node
 
-> 2. In scenarios of containerized deployment, the fuse daemon is deployed
-> in a container POD, and a dedicated fdstore daemon needs to be deployed
-> for each fuse daemon.  The fdstore daemon could consume a amount of
-> resources (e.g. memory footprint), which is not conducive to the dense
-> container deployment.
-> 
-> 3. Each fuse daemon implementation needs to implement its own fdstore
-> daemon.  If we implement the fuse recovery mechanism on the kernel side,
-> all fuse daemon implementations could reuse this mechanism.
+ .../bindings/power/amlogic,meson-sec-pwrc.yaml     |  1 +
+ arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi |  4 ++++
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  5 ++++
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c       | 28 ++++++++++++++++++++++
+ include/dt-bindings/power/amlogic,a4-pwrc.h        | 21 ++++++++++++++++
+ 5 files changed, 59 insertions(+)
+---
+base-commit: 456f4f5e6e6d3a2228501068a37ce13fe0b333d4
+change-id: 20240528-a4_secpowerdomain-5eb005648930
 
-You can just the global fdstore. That is a design limitation not an
-inherent limitation.
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
