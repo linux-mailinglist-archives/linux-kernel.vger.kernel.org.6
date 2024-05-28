@@ -1,126 +1,178 @@
-Return-Path: <linux-kernel+bounces-192221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1778D1A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E348D1A45
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4DE1F2429B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:51:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52444B216F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 11:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E534B16C455;
-	Tue, 28 May 2024 11:51:04 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852516C855;
+	Tue, 28 May 2024 11:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PM4154Sc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957EC16C698;
-	Tue, 28 May 2024 11:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B379816ABC1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 11:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716897064; cv=none; b=ZXVKwC3PDlJ8vA8eEx3pNZl0Koq5e+fNKyRW9xOaRMTWt4d7ahN0xbKpnIGP+enFFDnZV75zoSlIPATio9scNCL/npsZ0uMn21tS6pA4AGy4IC+L2c9Xv2WWRr25zNW8coWMwbBPgnV0BfGCkExUyHolZQ+3o7M5aAq+A3NJLlM=
+	t=1716897114; cv=none; b=tX0RBg/9WG8xEGvtlXUnNlPDBPw/QxZyf1XjDPaB5LrvDqKaiBzm3OCkbf23Hutupt76IaAS2Gb+6EEonckwlj9gxpf9QMgr7ZZTaGXXxBW6me5JH5qv2hx88SdgASqFcVOULWmCBEzMRbpfiPH2ANcYDa4gNLcGmvjsNrf7eYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716897064; c=relaxed/simple;
-	bh=yehhiHIToAVv3gt1y4tVCU3+l1dEF5DFy/gq9nyFbfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=th0Z2/V0I0seOb4/VcbOMK9AmkbvcOPTxyH9nGs2nRxXzccbe0whCzvXZSSoewmSel3EPoGFMGZADdOKBgkM7nWuUqeoHYrm8RcP5wFnNZEmevevKhhZcKk0UXLuiLGH7XxF9b0sZteIE+KOI6EdGshv/XQjS5YbRGjsTy4tN34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86193d.versanet.de ([94.134.25.61] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sBvLv-0003En-4k; Tue, 28 May 2024 13:50:51 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, Dmitry Yashin <dmt.yashin@gmail.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Dmitry Yashin <dmt.yashin@gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: rockchip: update rk3308 iomux routes
-Date: Tue, 28 May 2024 13:50:50 +0200
-Message-ID: <6026727.alqRGMn8q6@diego>
-In-Reply-To: <20240515121634.23945-2-dmt.yashin@gmail.com>
-References:
- <20240515121634.23945-1-dmt.yashin@gmail.com>
- <20240515121634.23945-2-dmt.yashin@gmail.com>
+	s=arc-20240116; t=1716897114; c=relaxed/simple;
+	bh=5NTIA7k2l4qgufvS8T9jRq7tI4lxqaiQZj3NqXl42Bw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hP0Fy5+xbGaaF5bNU/lU4o/G2DD+TUT8XQHIc6+4fKF+4LI7icT+XiLAcwIO6aKi/GYfL2O7tu4gxm64ufoXhGh5PNH2PYiTDcnt2GRLW2XCYztp3oOfKw9WZOF70bpacxzb9vpj+8pRJrT5vq9s95AMe3Iy3QiYErxz9qSmpgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PM4154Sc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDBE5C32781;
+	Tue, 28 May 2024 11:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716897114;
+	bh=5NTIA7k2l4qgufvS8T9jRq7tI4lxqaiQZj3NqXl42Bw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PM4154ScBp2VJySWZgugutkPSdoLk0zA8wSptyJubDi8N1WOpmGZfnt3Ef9qRvnKk
+	 /NRhcgP0sXS27+5SWf7AWBbdEQE6iUuhQ1C1iHm/9o/M/FkEAMRbX7ncct4p4tvVCH
+	 hd2KWNfpiD70Anjirnn24Gls/SL/DTmMcWQZAhI26F9C8Tb2xfrpLyXe7nLbDLlpRK
+	 yh3xAi5hdSEADjlncmcAyPUJdcvNoUXOsvAbnRL9G13td6XiUh8ckdiEQrT24uSE0r
+	 c/ELf+mu/pZLiYJj26C4APSHndOPtj+3V+HaBhScA53ADOlSYoFYprMIwNzuYjnvWk
+	 Wzxh7UfFQJ2mg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Wenjing Liu <wenjing.liu@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Jun Lei <jun.lei@amd.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	Qingqing Zhuo <Qingqing.Zhuo@amd.com>,
+	Roman Li <roman.li@amd.com>,
+	Aric Cyr <aric.cyr@amd.com>,
+	Joshua Aberback <joshua.aberback@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] [RESEND] drm/amd/display: dynamically allocate dml2_configuration_options structures
+Date: Tue, 28 May 2024 13:51:18 +0200
+Message-Id: <20240528115146.2870032-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Am Mittwoch, 15. Mai 2024, 14:16:32 CEST schrieb Dmitry Yashin:
-> Some of the rk3308 iomux routes in rk3308_mux_route_data belong to
-> the rk3308b SoC. Remove them and correct i2c3 routes.
-> 
-> Fixes: 7825aeb7b208 ("pinctrl: rockchip: add rk3308 SoC support")
-> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 17 ++---------------
->  1 file changed, 2 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 3bedf36a0019..cc647db76927 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -870,9 +870,8 @@ static struct rockchip_mux_route_data rk3308_mux_route_data[] = {
->  	RK_MUXROUTE_SAME(0, RK_PC3, 1, 0x314, BIT(16 + 0) | BIT(0)), /* rtc_clk */
->  	RK_MUXROUTE_SAME(1, RK_PC6, 2, 0x314, BIT(16 + 2) | BIT(16 + 3)), /* uart2_rxm0 */
->  	RK_MUXROUTE_SAME(4, RK_PD2, 2, 0x314, BIT(16 + 2) | BIT(16 + 3) | BIT(2)), /* uart2_rxm1 */
-> -	RK_MUXROUTE_SAME(0, RK_PB7, 2, 0x608, BIT(16 + 8) | BIT(16 + 9)), /* i2c3_sdam0 */
-> -	RK_MUXROUTE_SAME(3, RK_PB4, 2, 0x608, BIT(16 + 8) | BIT(16 + 9) | BIT(8)), /* i2c3_sdam1 */
-> -	RK_MUXROUTE_SAME(2, RK_PA0, 3, 0x608, BIT(16 + 8) | BIT(16 + 9) | BIT(9)), /* i2c3_sdam2 */
-> +	RK_MUXROUTE_SAME(0, RK_PB7, 2, 0x314, BIT(16 + 4)), /* i2c3_sdam0 */
-> +	RK_MUXROUTE_SAME(3, RK_PB4, 2, 0x314, BIT(16 + 4) | BIT(4)), /* i2c3_sdam1 */
+From: Arnd Bergmann <arnd@arndb.de>
 
-checked against TRM and no devicetree in the kernel currently enables i2c3 at all.
+This structure is too large to fit on a stack, as shown by the
+newly introduced warnings from a recent code change:
 
->  	RK_MUXROUTE_SAME(1, RK_PA3, 2, 0x308, BIT(16 + 3)), /* i2s-8ch-1-sclktxm0 */
->  	RK_MUXROUTE_SAME(1, RK_PA4, 2, 0x308, BIT(16 + 3)), /* i2s-8ch-1-sclkrxm0 */
->  	RK_MUXROUTE_SAME(1, RK_PB5, 2, 0x308, BIT(16 + 3) | BIT(3)), /* i2s-8ch-1-sclktxm1 */
-> @@ -881,18 +880,6 @@ static struct rockchip_mux_route_data rk3308_mux_route_data[] = {
->  	RK_MUXROUTE_SAME(1, RK_PB6, 4, 0x308, BIT(16 + 12) | BIT(16 + 13) | BIT(12)), /* pdm-clkm1 */
->  	RK_MUXROUTE_SAME(2, RK_PA6, 2, 0x308, BIT(16 + 12) | BIT(16 + 13) | BIT(13)), /* pdm-clkm2 */
->  	RK_MUXROUTE_SAME(2, RK_PA4, 3, 0x600, BIT(16 + 2) | BIT(2)), /* pdm-clkm-m2 */
-> -	RK_MUXROUTE_SAME(3, RK_PB2, 3, 0x314, BIT(16 + 9)), /* spi1_miso */
-> -	RK_MUXROUTE_SAME(2, RK_PA4, 2, 0x314, BIT(16 + 9) | BIT(9)), /* spi1_miso_m1 */
-> -	RK_MUXROUTE_SAME(0, RK_PB3, 3, 0x314, BIT(16 + 10) | BIT(16 + 11)), /* owire_m0 */
-> -	RK_MUXROUTE_SAME(1, RK_PC6, 7, 0x314, BIT(16 + 10) | BIT(16 + 11) | BIT(10)), /* owire_m1 */
-> -	RK_MUXROUTE_SAME(2, RK_PA2, 5, 0x314, BIT(16 + 10) | BIT(16 + 11) | BIT(11)), /* owire_m2 */
-> -	RK_MUXROUTE_SAME(0, RK_PB3, 2, 0x314, BIT(16 + 12) | BIT(16 + 13)), /* can_rxd_m0 */
-> -	RK_MUXROUTE_SAME(1, RK_PC6, 5, 0x314, BIT(16 + 12) | BIT(16 + 13) | BIT(12)), /* can_rxd_m1 */
-> -	RK_MUXROUTE_SAME(2, RK_PA2, 4, 0x314, BIT(16 + 12) | BIT(16 + 13) | BIT(13)), /* can_rxd_m2 */
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn32/dcn32_resource.c: In function 'dcn32_update_bw_bounding_box':
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn32/dcn32_resource.c:2019:1: error: the frame size of 1180 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn321/dcn321_resource.c: In function 'dcn321_update_bw_bounding_box':
+drivers/gpu/drm/amd/amdgpu/../display/dc/resource/dcn321/dcn321_resource.c:1597:1: error: the frame size of 1180 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_state.c: In function 'dc_state_create':
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_state.c:219:1: error: the frame size of 1184 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-> -	RK_MUXROUTE_SAME(1, RK_PC4, 3, 0x314, BIT(16 + 14)), /* mac_rxd0_m0 */
-> -	RK_MUXROUTE_SAME(4, RK_PA2, 2, 0x314, BIT(16 + 14) | BIT(14)), /* mac_rxd0_m1 */
+Instead of open-coding the assignment of a large structure to a stack
+variable, use an explicit kmemdup() in each case to move it off the stack.
 
-> -	RK_MUXROUTE_SAME(3, RK_PB4, 4, 0x314, BIT(16 + 15)), /* uart3_rx */
-> -	RK_MUXROUTE_SAME(0, RK_PC1, 3, 0x314, BIT(16 + 15) | BIT(15)), /* uart3_rx_m1 */
+Fixes: e779f4587f61 ("drm/amd/display: Add handling for DC power mode")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Originally sent as https://lore.kernel.org/all/20240418083421.3956461-1-arnd@kernel.org/
+---
+ .../display/dc/resource/dcn32/dcn32_resource.c   | 16 +++++++++++-----
+ .../display/dc/resource/dcn321/dcn321_resource.c | 16 +++++++++++-----
+ 2 files changed, 22 insertions(+), 10 deletions(-)
 
-checked against the TRM too.
-And as far as usage:
-- spi1: not used at all
-- owire: not used at all
-- can: not used at all
-- mac_rxd0: all boards use the (default) m0 variant
-- uart3: not currently enabled anywhere
-
-
-And I guess the rk3308 is niche enough that people either use the vendor-kernel
-or have the dts in mainline, so we should have a ok grasp on not causing breakage
-by some accidental rk3308b somewhere.
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+index 022d320be1d5..0f11d7c8791c 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+@@ -2007,21 +2007,27 @@ void dcn32_calculate_wm_and_dlg(struct dc *dc, struct dc_state *context,
+ 
+ static void dcn32_update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_params)
+ {
+-	struct dml2_configuration_options dml2_opt = dc->dml2_options;
++	struct dml2_configuration_options *dml2_opt;
++
++	dml2_opt = kmemdup(&dc->dml2_options, sizeof(dc->dml2_options), GFP_KERNEL);
++	if (!dml2_opt)
++		return;
+ 
+ 	DC_FP_START();
+ 
+ 	dcn32_update_bw_bounding_box_fpu(dc, bw_params);
+ 
+-	dml2_opt.use_clock_dc_limits = false;
++	dml2_opt->use_clock_dc_limits = false;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2);
+ 
+-	dml2_opt.use_clock_dc_limits = true;
++	dml2_opt->use_clock_dc_limits = true;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2_dc_power_source)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
+ 
+ 	DC_FP_END();
++
++	kfree(dml2_opt);
+ }
+ 
+ static struct resource_funcs dcn32_res_pool_funcs = {
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+index e4b360d89b3b..07ca6f58447d 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+@@ -1581,21 +1581,27 @@ static struct dc_cap_funcs cap_funcs = {
+ 
+ static void dcn321_update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_params)
+ {
+-	struct dml2_configuration_options dml2_opt = dc->dml2_options;
++	struct dml2_configuration_options *dml2_opt;
++
++	dml2_opt = kmemdup(&dc->dml2_options, sizeof(dc->dml2_options), GFP_KERNEL);
++	if (!dml2_opt)
++		return;
+ 
+ 	DC_FP_START();
+ 
+ 	dcn321_update_bw_bounding_box_fpu(dc, bw_params);
+ 
+-	dml2_opt.use_clock_dc_limits = false;
++	dml2_opt->use_clock_dc_limits = false;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2);
+ 
+-	dml2_opt.use_clock_dc_limits = true;
++	dml2_opt->use_clock_dc_limits = true;
+ 	if (dc->debug.using_dml2 && dc->current_state && dc->current_state->bw_ctx.dml2_dc_power_source)
+-		dml2_reinit(dc, &dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
++		dml2_reinit(dc, dml2_opt, &dc->current_state->bw_ctx.dml2_dc_power_source);
+ 
+ 	DC_FP_END();
++
++	kfree(dml2_opt);
+ }
+ 
+ static struct resource_funcs dcn321_res_pool_funcs = {
+-- 
+2.39.2
 
 
