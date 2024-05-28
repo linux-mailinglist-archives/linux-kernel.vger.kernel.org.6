@@ -1,109 +1,184 @@
-Return-Path: <linux-kernel+bounces-192310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E57F8D1B5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:35:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CDD8D1B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5CE282E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:35:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0CBB21BA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 12:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97FB16D4F0;
-	Tue, 28 May 2024 12:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D57E16D4F6;
+	Tue, 28 May 2024 12:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQJNdWDD"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pk+PGCP2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CD073447
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF9F16727D;
+	Tue, 28 May 2024 12:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716899733; cv=none; b=hMdz8D+/OIcpOHSNOHWO2Od6G+NGnX/bN9gHVzdHtgZTJdJqxKGb53+5WGBLry6KBP9nx+cLK+JRyFgp5pAuSXXVCp3EvDeBjVnaFL68WlF+7u+XP+Pa801oMwKhpAJYPvaHxLJ0Mf4q7qmQ17Z2J4tGzfuoHnn41XTWNcAyhPY=
+	t=1716899870; cv=none; b=MjtVBWPxBJFx9/ro4ctt3MIko9ptVxBuOw17S647mXQGRZv4kWP6omrQ+m+RbL08FJqKv32twkFaaaGnQwviW1bmN7xXPW+ROWootv2S0ma3vf8jt7jpMb8dnlLDj1FcGDnps3KYaVW5gzLBn2DCwFRpfv7K3Shq8ASK2eHTflM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716899733; c=relaxed/simple;
-	bh=3v1uBBjooEdyYDyoX1l+q9hwfK+UTKUfPSA7u5ofWpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eaRrBumxfJwRw1UHZClQBIJE/93QQqg0aTXs/spOawx2aXNMIz2JJZijeHcxTQhgXdAWrntTOZsqVgQAYAXMXNejFsKy1USwAx1kz3Wqa6VuY9ZefzPYmq4TaiEBmupp1tGe2wn9N093gxvITnF+u3CSgrRNaf8zMUTACfXgASU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQJNdWDD; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e974862b00so7939311fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 05:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716899729; x=1717504529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4yeI+hiJZtf8nSaCr8pjgpkOFaZnhw+Y9CcAkyaECY=;
-        b=YQJNdWDD0eAi1zv0uYXjwyCVFc+OQ7bqFbvcf/y38BY36qTZ8M8xpYuEG4OnTjBUh6
-         zonGG2n5h0UIfEI9K/VYYqrCYZSvGBUHhzEdoWJbXXkcQ0AHxIJe/tOMlNnHrDPEXkX+
-         1AkxRGqliQ6bCSnOX2gwhbb0vdiOpAMWc/rftUTmia59a/6zz1A2ysCXuMz/xIdcckkW
-         xjthFq0INPd79U0fHWwY0yp1QvpR+AtXP2RyKE9w7HVftIprijvR2iKo26wfMEjLHnI6
-         IetnWmXSe7vo9eLnEvhw0aAKpX8VeeOEbCgXeC9BUOhPek7sAdSZ60hl+jD7jh/7qWsw
-         +w3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716899729; x=1717504529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4yeI+hiJZtf8nSaCr8pjgpkOFaZnhw+Y9CcAkyaECY=;
-        b=DI7tVy2q6Y6gp+1/vWT7CKllICeTTNlxtcfWfT0k8ZgmroEQYILkwG8rdsq7+7ho7W
-         lq5rd1IqVeJxneRCbpQ23eAkFGxTZu6WIjCTc++3hMUAGQizJBK1k6Vr7GlvPnRbx/4m
-         falxtsT+ujAyrG0Qxx/ATiu07+JMXPm9CZGUpI/2hTErbY502caaU8n5RWINXUQZ+bK4
-         uk56qlJdIwP5rxjwBvYYnhhdRQvvUyKeYay8QY83w267cqPSiSjqCXe5zS47v8ZdKbE7
-         wH0l0XasJHSW9WAPulzEVM+2UBSkUSPH3kjSYwxEqiFGGlsUQ8WVOAmoFP1MbxW+P1SY
-         mBCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzQF84MZ5MpMQH8LCnYYlv53r+UG+f1w/dSPhvnU3mgt3HwpsFOwLBTZyryTn3CHo/VFBEESwxEb3CA0y7N928E58lqHP7vm1IWvYz
-X-Gm-Message-State: AOJu0YwwPmF2zcxlDrXK5ocHCNBOnR3Aimfz1/ThxXhtdmiwWb6tBnwm
-	4GZrlbQMK3AlXmHvS8FdNl3gDiP6DuuEiKkfFokUNB9b9pwh22GgVjwVt0GaLOc=
-X-Google-Smtp-Source: AGHT+IGZLrg+HKp0k86HZKCf/NS5ffJjw/FyxYg3/CBLQoLNaKl3qjUbz3O0CChbdOjdbfdldpprBw==
-X-Received: by 2002:a2e:88c9:0:b0:2e9:5689:6fde with SMTP id 38308e7fff4ca-2e95b099be2mr74576741fa.14.1716899728811;
-        Tue, 28 May 2024 05:35:28 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bf276f9sm22565901fa.138.2024.05.28.05.35.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 05:35:28 -0700 (PDT)
-Date: Tue, 28 May 2024 15:35:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com
-Subject: Re: [PATCH v2 5/8] misc: fastrpc: Redesign remote heap management
-Message-ID: <wfyiq6ova27t46cjvfgp6unxxo4xnlvsqwfg2z46r3k6y6ab2j@cpi73aresacu>
-References: <20240528112956.5979-1-quic_ekangupt@quicinc.com>
- <20240528112956.5979-6-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1716899870; c=relaxed/simple;
+	bh=hd9Ak4slR6v9infr9CoTSeDmxLojFf7x+Z23XzbdJ7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tYTHfu8KGNgmuU63vSJXotNiUMFLT9m5Bhul2+DKc8WzQhpBIhlcYGUOpQbeiTSx+ueZCk+5g1l+LVF7xiyZcOmjsOTx0WxNOigzU7GiKkXbcm5Lkj0x4lIQVday4FoMcS8AvfCIgCr2yHs4hwoexH5TyplUHVpMjTkzx0iMooA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pk+PGCP2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SCWO2l011133;
+	Tue, 28 May 2024 12:37:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=PvOf0uIMxDxLmNDeH9tJ2VfYkeNXKpQfJFPurb0OLqI=;
+ b=pk+PGCP2d4s/F4c9UavntZmGt/deyvRXU2gfPHz2oiQZ84kVh2uKIcwvomo1PQ8GXjMV
+ 79eGUtWol/1Kw3oaP2FGRLGy+7bQa1p1wrEYDPzfSss6fVAC5bQKHrnrwt0rtIx8modG
+ nXHPRZzpvPx+INMlKEH4cJfXF2AmRLeFAMGp38jFniYqWgC3iRIUhd5QmZ5GDrEPjNw0
+ DRzF1SDNixow7p6AG8vOMpEY3FzXEwRXSm2qpErUpb3Nhh9Hm5KlInnWbTl+xZBFWp6a
+ RVytdKiamaLZkZB+LETgcz6WNRaAyX5lE8+ixVJ4DIh3ICQGue4JEazmgyivh48lbdR+ mw== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydfc480by-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:37:41 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SBlWXA006716;
+	Tue, 28 May 2024 12:37:40 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ybtatf342-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 12:37:40 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SCbcRx47317360
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 May 2024 12:37:40 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25B885805B;
+	Tue, 28 May 2024 12:37:38 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8DEBA58055;
+	Tue, 28 May 2024 12:37:37 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 May 2024 12:37:37 +0000 (GMT)
+Message-ID: <b5ff9003-065f-437f-bf6b-7f1ae0a0364a@linux.ibm.com>
+Date: Tue, 28 May 2024 08:37:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528112956.5979-6-quic_ekangupt@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: ecdsa: Fix the public key format description
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20240527202840.4818-1-jarkko@kernel.org>
+ <D1KQDPOZRWCW.1763CCYF1B84X@kernel.org>
+ <D1KRILI1KRQ8.2CNPU7PFES0VI@kernel.org>
+ <D1KRXI87G4S0.1ROKTQENIZHT7@kernel.org>
+ <D1KS7LCALKD4.1J13QGYGZ6LBW@kernel.org>
+ <D1KSLKGUWGFO.21T4OBXQQ88D@kernel.org> <D1KSSWD7FA94.5705Z3J7LKZA@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <D1KSSWD7FA94.5705Z3J7LKZA@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8l5eGJnZtAtglmTQ42pXHNf36TkcJNfu
+X-Proofpoint-ORIG-GUID: 8l5eGJnZtAtglmTQ42pXHNf36TkcJNfu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_09,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 mlxlogscore=892
+ priorityscore=1501 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405280095
 
-On Tue, May 28, 2024 at 04:59:51PM +0530, Ekansh Gupta wrote:
-> Current remote heap design comes with problems where all types
-> of buffers are getting added to interrupted list and also user
-> unmap request is not handled properly. Add changes to maintain
-> list in a way that it can be properly managed and used at different
-> audio PD specific scenarios.
 
-This description doesn't tell me what was wrong. "not handled properly"
-doesn't describe the problem. "properly managed" also isn't a great
-description.
+
+On 5/27/24 18:59, Jarkko Sakkinen wrote:
+> On Tue May 28, 2024 at 1:49 AM EEST, Jarkko Sakkinen wrote:
+>> On Tue May 28, 2024 at 1:31 AM EEST, Jarkko Sakkinen wrote:
+>>>>          ret = crypto_akcipher_set_pub_key(tfm, data, 3 * x_size + 1);
+>>
+>> Noticed this mistake i.e. fixed it with "2 * x_size + 1"
+>>
+>> This is results earlier failure:
+>>
+>> ecdsa: (tpm2_key_ecdsa_query+0x10d/0x170 <- ecdsa_set_pub_key) arg1=0xffffffea
+>>
+>> Totally lost with the expected input format after trying out various
+>> options.
+> 
+> OK got it working with:
+> 
+>          ptr = &data[0];
+>          *ptr++ = 0x04; /* uncompressed */
+>          memcpy(&ptr[0], &x[2], x_size);
+>          memcpy(&ptr[x_size], &x[2 + x_size + 2], x_size);
+>          ret = crypto_akcipher_set_pub_key(tfm, data, 2 * x_size + 1);
+>          crypto_free_akcipher(tfm);
+> 
+> Had still a few "off-bys".
+> 
+> Makes me wonder why this is not in ASN.1.
+> E.g. TPM2 stuff and for instance RSA code takes ASN.1.
+> 
+> This all and the required prefix byte really should be explained in
+> the documentation of this function. I.e. follows the RFC in the sense
+> that number is big-endian and has the prefix byte, but it does not
+> follow it in the sense that x and y are not in input octect strings.
+> 
+> Why is that? Does not feel right intuitively.
+
+You found the appropriate documentation -- thanks.
+The old function documentation stated that it takes 'raw uncompressed 
+key data from an x509 certificate'. So, one should take the data from 
+the x509 certificate starting with 0x04 as shown here.
+
+         Subject Public Key Info:
+             Public Key Algorithm: id-ecPublicKey
+                 Public-Key: (256 bit)
+                 pub:
+                     04:c0:55:b4:68:7a:80:bc:0e:ba:b3:66:40:5f:07:
+                     aa:27:d4:da:b4:79:2e:4d:a4:f4:f4:33:b1:22:6a:
+                     6c:e9:8c:30:8d:6c:df:ac:65:f0:93:d9:7a:70:7a:
+                     05:dc:7a:7d:b3:91:18:22:9a:5c:86:9a:87:72:3b:
+                     32:1a:92:81:1d
+                 ASN1 OID: prime256v1
+                 NIST CURVE: P-256
+
+
+These are two concatenated x & y coordinates with a leading 0x4. The 
+numbers are not ints in ASN.1 format but 'plain' integers.
+
+A *signature*, however, is in ASN.1:
+
+     Signature Value:
+         30:45:02:21:00:d9:d7:64:ba:5d:03:07:ee:20:a0:12:16:46:
+         31:e6:8e:66:0c:17:0d:74:07:87:58:5a:13:fc:14:62:98:9a:
+         99:02:20:59:ff:29:9c:52:b9:0a:35:3c:4b:03:bb:47:0e:c8:
+         3e:2d:cb:3e:1c:d3:51:88:91:b1:40:e3:03:86:1b:2a:e8
+
+30:45 => sequence containing 69 bytes
+   02:21: => first coordinate with 0x21 bytes
+     00:d9 => 0x21 bytes of ASN.1 integer with leading 0 to make the 
+following 0x20-byte integer a positive number (its most significant bit 
+is set).
+   02:20: => int with 0x20 bytes
+    ...
+
+
 
 > 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 221 ++++++++++++++++++++++++++++++++---------
->  1 file changed, 175 insertions(+), 46 deletions(-)
-
-
--- 
-With best wishes
-Dmitry
+> BR, Jarkko
 
