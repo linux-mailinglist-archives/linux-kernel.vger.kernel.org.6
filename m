@@ -1,153 +1,85 @@
-Return-Path: <linux-kernel+bounces-191772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50D78D13E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D586B8D13E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2274A1C21A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:29:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F681C2193A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 05:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C054D59F;
-	Tue, 28 May 2024 05:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JTEx46+Z"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BA24D13F;
+	Tue, 28 May 2024 05:29:00 +0000 (UTC)
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1886A4CB2B;
-	Tue, 28 May 2024 05:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66B34CB2B;
+	Tue, 28 May 2024 05:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716874170; cv=none; b=K7MgQ+uEl2A9IX0vDstQRS+X6R6ZRGnWPQ6BaSbGCgfLLuau4pat6t19YU30siruorSO6VsK6ZIoFr5UCfAoN8hwHSUdKGnQdrL/FrXPDzB3UpKHpN7olr30e+2GhoJ5uv/VaMe0w3EHHs31n2pw9OAsb4IICbVKHTm6Gr9Ltjs=
+	t=1716874140; cv=none; b=bIa9qHzP2D7DnFWQ4aScvUSMO1XD0WmAu2bN7u6e+bBAHBg8U1WBKLcmYmAqVYXNeh/WvgQ8xClYXvBA/DgWDjfXtPg4TmsDeLxLGaIEUpxdsHFfUebIzzGMZa09TNmHHHvNZ30yVeskHUsRrjoPl+973oD86puHFszV0mt7l48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716874170; c=relaxed/simple;
-	bh=XFd0stmfvih21xWWcU4aTX2RVyZ1rCmh9kUw8IaXCU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IkBSahhw/cndFk8rrWqWzqsCJlehLsbOmZudQtG+8jRfggkg2GXwE9ezFIAlUhdQU5dGWuZqhI1QSlqvZ/sCE/z1TVeAYnQN7N9pGfvmapFrnTAS9uBPMBMIS1DZq/mG0AE7fNWg+5/zPo+NDUzZ6YnKga4+5OR6xUEixrjr0rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JTEx46+Z; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44S5SiMX080021;
-	Tue, 28 May 2024 00:28:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716874124;
-	bh=Au+V2jHmMZS62BTdB/hRuB16oG3domx+bjJTJ69vBIk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=JTEx46+ZULOZHGGJ5blYxkdyCxjO4aEs3hO+5MFDw4uRuFCOFEZ2h5H36f4gLm52K
-	 IqmMhU4N1kSsZRZ0YW9lp16HALh+6ZCSSuSFnqmUAX2gjxrvJ7kQJEIpwcE/EP8ayY
-	 SIMqg9pVeBmd1x4TXpZus4UPiC/FQ+PcI0pB/5UI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44S5SiGN018043
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 28 May 2024 00:28:44 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
- May 2024 00:28:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 28 May 2024 00:28:43 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44S5Sa7o030705;
-	Tue, 28 May 2024 00:28:37 -0500
-Message-ID: <a8af43e2-09e9-46ac-86f0-baa48d810fa4@ti.com>
-Date: Tue, 28 May 2024 10:58:35 +0530
+	s=arc-20240116; t=1716874140; c=relaxed/simple;
+	bh=CLuvCiQHX/FFvOvielNOZvHNT3ZOiWDDKU/lbAwRp9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6n9tcCWSaN59dd4D1PzLSva9zS/kdcm0JeVz6e4JtgkSTYam05e1Zc57KPHyD7RrBpWRCz6aPx7u/Bgwi8Ma/qWE2vxLLFWD46ls+dCMcmgPfZclQNyEcDjKCWZzrdP+62NRd0ECI9PomA/g32IpVJdrZn7OmrzX9HLPA9RZHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b97a071c92so240317eaf.1;
+        Mon, 27 May 2024 22:28:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716874138; x=1717478938;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=klaVH2ivgMXOV5dASJZrrHq1usXyfBuaw8Xvo5RoF/Y=;
+        b=qlLC6JeuzVzFFWtpRIdtIpa1Jie3kknKoXTyrHs858/CNPPwAnlntwTn9D4A0lvJ1C
+         80v+NPAPBY49v+mbHRI5z+LEv5ZwKfpqfGD2GD4aevufTgg4tqRKbeyITQoEylBkWw7G
+         b1l64oVlmwElYB39ADVjCtXN/Bhq8TWUMgPniWSTJFvek366LFUAV0yQlhO08a9BguYj
+         Aw4urKO6saKW56oFHRSVX8I36raO5CE/cqTH4D1imwGqZqUOtx/dZJMiG3hSrL0oDJan
+         7y70vPDtf1Vihd56U1rQIiRJlpuVzfADl5PnhIBYvu9A+f/5RXpCRzTqQ4WWbnOyt6N3
+         2n4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUka84oqYDIVtsdkMR5KjOQHkSXNWabnmSRddYbDmAcfeDbJfzif+9RbDivNjEpgOXW/V+OJs/DLgQXSUORRqA+5K/Ina2C94x1cxSdyszIyA+c/IEIozZbLcRixBdJFqhtXp4bIVpRfmFI3I8Hgx99njRqWY9msu1LVVj6gxaVh9GA4VEf
+X-Gm-Message-State: AOJu0YywSw6hL/yCQDPcSi56a6GS7SK4YTxOfl9Hz9dp/9IDsegPMtYy
+	FadTugXsxdv+Ca2/Wn41X0om7hBwqshynyYI8cxoMH32FuAodrgUpTyXMg==
+X-Google-Smtp-Source: AGHT+IHc/NM9LZnLrPnOHgvf7ewqZ+si8nHZU2X6yykjnbEUsYp1NiqJ6b0ieIxBP8Q41vngXWjMEQ==
+X-Received: by 2002:a05:6358:c115:b0:186:119d:8c16 with SMTP id e5c5f4694b2df-197e546657cmr1022970455d.23.1716874137877;
+        Mon, 27 May 2024 22:28:57 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682227f1d6esm5824813a12.49.2024.05.27.22.28.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 22:28:57 -0700 (PDT)
+Date: Tue, 28 May 2024 05:28:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: mhklinux@outlook.com
+Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	kys@microsoft.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] Documentation: hyperv: Update spelling and fix
+ typo
+Message-ID: <ZlVrmJ26FR8_MMiJ@liuwe-devbox-debian-v2>
+References: <20240511133818.19649-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 3/3] net: ti: icssg-prueth: Add support for
- ICSSG switch firmware
-Content-Language: en-US
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
-        Vladimir Oltean
-	<vladimir.oltean@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
-        Roger Quadros <rogerq@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240527052738.152821-1-danishanwar@ti.com>
- <20240527052738.152821-4-danishanwar@ti.com>
- <4f5a6d1b-e209-45b1-acec-ce84ca1c856f@lunn.ch>
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <4f5a6d1b-e209-45b1-acec-ce84ca1c856f@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511133818.19649-1-mhklinux@outlook.com>
 
-
-
-On 28/05/24 3:44 am, Andrew Lunn wrote:
-> On Mon, May 27, 2024 at 10:57:38AM +0530, MD Danish Anwar wrote:
->> Add support for ICSSG switch firmware using existing Dual EMAC driver
->> with switchdev.
->>
->> Limitations:
->> VLAN offloading is limited to 0-256 IDs.
->> MDB/FDB static entries are limited to 511 entries and different FDBs can
->> hash to same bucket and thus may not completely offloaded
->>
->> Example assuming ETH1 and ETH2 as ICSSG2 interfaces:
->>
->> Switch to ICSSG Switch mode:
->>  ip link add name br0 type bridge
->>  ip link set dev eth1 master br0
->>  ip link set dev eth2 master br0
->>  ip link set dev br0 up
->>  bridge vlan add dev br0 vid 1 pvid untagged self
->>
->> Going back to Dual EMAC mode:
->>
->>  ip link set dev br0 down
->>  ip link set dev eth1 nomaster
->>  ip link set dev eth2 nomaster
->>  ip link del name br0 type bridge
->>
->> By default, Dual EMAC firmware is loaded, and can be changed to switch
->> mode by above steps
->>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>  static int prueth_emac_buffer_setup(struct prueth_emac *emac)
->>  {
->>  	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
->> @@ -321,25 +401,63 @@ static void icssg_init_emac_mode(struct prueth *prueth)
->>  	/* When the device is configured as a bridge and it is being brought
->>  	 * back to the emac mode, the host mac address has to be set as 0.
->>  	 */
->> +	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
->> +	int i;
->>  	u8 mac[ETH_ALEN] = { 0 };
+On Sat, May 11, 2024 at 06:38:17AM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
 > 
-> nitpick: Reverse Christmas tree
+> Update spelling from "VMbus" to "VMBus" to match Hyper-V product
+> documentation. Also correct typo: "SNP-SEV" should be "SEV-SNP".
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-Thanks for the review. I will change this to "Reverse Christmas tree"
-and send next revision.
-
-> 
->     Andrew
-
--- 
-Thanks and Regards,
-Danish
+Applied. Thanks.
 
