@@ -1,96 +1,163 @@
-Return-Path: <linux-kernel+bounces-192369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03838D1C37
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702D98D1C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E8C1F233BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BA4282B01
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 13:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A7F16E86B;
-	Tue, 28 May 2024 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86ED16E86A;
+	Tue, 28 May 2024 13:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ca+HStlR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GU5hEJzp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5DC16415;
-	Tue, 28 May 2024 13:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29DD16415;
+	Tue, 28 May 2024 13:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716901849; cv=none; b=X8EIAVs9/M9+g6KSlubeoKs9Kp8cxX1rjrJbuDLHuP93RBOX51/EYhO8MloSPql+ck8IhkLtwl6X4OBnoJIE7PFOMbokBG0DsU7NuGAFdvFA2wgE4xg6odPMuZ3Ymol80EwB3X4HC9Q+TKvp0JbfZEERXgdDEJ/y0oDKHlXtHXk=
+	t=1716901859; cv=none; b=QCIjSOlLjLId95WfndmSOzSqbaL+wxdxyeGvfUD+rxlsYqTE90WrUCHwgEuGVF6yRQiMYB8uRVwEB2yz010OHro/i6hk9ZJd4DsH43H3BlxoMyEVuoqk/5t7Prv48k7cqR4pu95bjruV2iYuJgOX9OGSkMv9n6grY060dkehX3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716901849; c=relaxed/simple;
-	bh=8Zq2RcssUire8FNZPbzS6Z1ssADbP43yabaipLHX7n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXJWE07GNDrsY/wuH4xpZ3vCA1a7xfexhFW6Cs62XX+jc1Hd4xJ+9oDET/PnxLsaN2v5/BtW2Cz6kLkzaWbS9LluxjlKmVEPUelgxvK/2KERRiqMf7e1dg/YXbGNg5YyQ+jXtvcYJYvrRqh5OT30s/g/GN+qoAOOKRIpmyIqW/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Ca+HStlR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D40C3277B;
-	Tue, 28 May 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ca+HStlR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1716901845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f1YmB/+mC3B7Uuv+X6AR4Yo5wO3pP9OqlModzWLX8Ec=;
-	b=Ca+HStlRm1V/6JFjcxqxf6bYbVhsd5cv0gkUathbm3uAT9w+S/HCjHGuwe89z2LVikwECZ
-	4crpA5IEWHg00ei99Z5ScF3jV814MiBIxJ9LpFyZf25hzhnc6jT6UifWLrjs1ZtoaNUKFF
-	dDPuXV8DMWW5WQQUwBXIiN81T3n5Pn8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0beb4979 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 28 May 2024 13:10:44 +0000 (UTC)
-Date: Tue, 28 May 2024 15:10:41 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v16 3/5] arch: allocate vgetrandom_alloc() syscall number
-Message-ID: <ZlXX0cFl5RANHNOQ@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
- <20240528122352.2485958-4-Jason@zx2c4.com>
- <CAMuHMdVJ8KpaqnWeHCMbJdf-Am6uY0N+uFM+OVxWTZH37TQvxw@mail.gmail.com>
+	s=arc-20240116; t=1716901859; c=relaxed/simple;
+	bh=y2U0inHLJFQsjFYdDnuZ/Pyh6sqhoML60UpW/fbBVD8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=aNpSXQMhEkw82jqzK+iArF/FqnJjFutCyXaRwy5L4N26HeVhT+WRNc1QCRIA9qTdVO2TXU7n/AAuWJvnNv1HH6U02VbvQJ5UqcGsnwUvm8eflQ/NmjFn47R3Ac3QthE1oi+wRlk7INKAabOfjmUkT3nNH/6G50cBOdEgR6w50Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GU5hEJzp; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716901857; x=1748437857;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=y2U0inHLJFQsjFYdDnuZ/Pyh6sqhoML60UpW/fbBVD8=;
+  b=GU5hEJzpkwC4wTVKhz/CJMluY1haKzxG2DkxcL9TgbDq4t5uzYbYjf+8
+   kVc85NecnLZW6b+hJUuw3TlCnSpMSSiFvs0+pHlREO3TNT9MCqg+sXkpz
+   iCsyQVcyt0BSpIV86AB1GSEbzfFEe7zC3LtiuZSV4I7K+EBuPAqrSiC9H
+   oZfdBc5hEaNQb4Dfte7C9lRRhjI1HA5Ez+WRQukSzPEsaPql9X6oCeIkH
+   RvD0jQE6JxI43BmyceBEN1M+SjWFhc6Hj6XI0WBtEATsP/8nUpfQxD0Rt
+   mZHm4/U4KoWDiJ28nRYggKmPdBRJT+2OrOU5zdkJkKfzF1n+pmsmF3tG9
+   w==;
+X-CSE-ConnectionGUID: 1FIEn3J5R92jjN6+nP9jOg==
+X-CSE-MsgGUID: VhSrSl4vQZaQ6PiZg7ixSQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="16193950"
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="16193950"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 06:10:57 -0700
+X-CSE-ConnectionGUID: J1JoFGxjRIq98SGInm9S3Q==
+X-CSE-MsgGUID: YhbmgSIuRTOqX7FDWsDQnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
+   d="scan'208";a="72497555"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 06:10:53 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 28 May 2024 16:10:48 +0300 (EEST)
+To: Bjorn Helgaas <bhelgaas@google.com>
+cc: linux-pci@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+    Rob Herring <robh@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Igor Mammedov <imammedo@redhat.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Andy Shevchenko <andriy.shevchenko@intel.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] PCI: Solve two bridge window sizing issues
+In-Reply-To: <20240507102523.57320-1-ilpo.jarvinen@linux.intel.com>
+Message-ID: <253622e9-378c-4699-886e-2240216eef59@linux.intel.com>
+References: <20240507102523.57320-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVJ8KpaqnWeHCMbJdf-Am6uY0N+uFM+OVxWTZH37TQvxw@mail.gmail.com>
+Content-Type: multipart/mixed; boundary="8323328-471983526-1716901848=:5869"
 
-On Tue, May 28, 2024 at 03:08:00PM +0200, Geert Uytterhoeven wrote:
-> Hi Jason,
-> 
-> On Tue, May 28, 2024 at 2:24 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > Add vgetrandom_alloc() as syscall 462 (or 572 on alpha) by adding it to
-> > all of the various syscall.tbl and unistd.h files.
-> >
-> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> 
-> As of commit ff388fe5c481d39c ("mseal: wire up mseal syscall") in
-> v6.10-rc1, 462 is already taken.
-> 
-> v17 ++ ;-)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Oy! Thanks. I should have thought to rebase on rc1 anyway before posting
-this.
+--8323328-471983526-1716901848=:5869
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Jason
+On Tue, 7 May 2024, Ilpo J=C3=A4rvinen wrote:
+
+> Hi all,
+>=20
+> Here's a series that contains two fixes to PCI bridge window sizing
+> algorithm. Together, they should enable remove & rescan cycle to work
+> for a PCI bus that has PCI devices with optional resources and/or
+> disparity in BAR sizes.
+>=20
+> For the second fix, I chose to expose find_resource_space() from
+> kernel/resource.c because it should increase accuracy of the cannot-fit
+> decision (currently that function is called find_resource()). In order
+> to do that sensibly, a few improvements seemed in order to make its
+> interface and name of the function sane before exposing it. Thus, the
+> few extra patches on resource side.
+>=20
+> v3:
+
+Hi Bjorn,
+
+It's a bit unclear to me what is your view about the status of this=20
+series? I see you placed these first into some wip branches and then into=
+=20
+resource branch but the state of the patches in patchwork is still marked=
+=20
+as "New" nor have you sent any notice they'd have been "applied".
+
+I'm thinking this from the perspective of whether I should send v4 with=20
+those minor comments from Andy addressed or not? I could also send those
+minor things as separate patches on top of the series if that's=20
+easier/better for you.
+
+--=20
+ i.
+
+> - Removed "slot" wording
+>         - Renamed find_empty_resource_slot() -> find_resource_space()
+> - find_resource_space() returns bool instead of int
+> - Added patch to convert literal 20 related to bridge win minimum
+>   alignment to __ffs(SZ_1M)
+> - Fixed kerneldoc missing "struct"
+> - Tweaked prints (one dbg -> info, added new dbg one for success case)
+> - Changelog tweaks
+>         - Take account largest >> 1 (in alignment calc)
+>         - Adjust to minor changes made into calculate_memsize()
+>         - Take logs from more recent kernel to get rid of reg 0xXX
+>=20
+> v2:
+> - Add "typedef" to kerneldoc to get correct formatting
+> - Use RESOURCE_SIZE_MAX instead of literal
+> - Remove unnecessary checks for io{port/mem}_resource
+> - Apply a few style tweaks from Andy
+>=20
+> Ilpo J=C3=A4rvinen (8):
+>   PCI: Fix resource double counting on remove & rescan
+>   resource: Rename find_resource() to find_resource_space()
+>   resource: Document find_resource_space() and resource_constraint
+>   resource: Use typedef for alignf callback
+>   resource: Handle simple alignment inside __find_resource_space()
+>   resource: Export find_resource_space()
+>   PCI: Make minimum bridge window alignment reference more obvious
+>   PCI: Relax bridge window tail sizing rules
+>=20
+>  drivers/pci/bus.c       | 10 +----
+>  drivers/pci/setup-bus.c | 91 +++++++++++++++++++++++++++++++++++++----
+>  include/linux/ioport.h  | 44 ++++++++++++++++++--
+>  include/linux/pci.h     |  5 +--
+>  kernel/resource.c       | 68 ++++++++++++++----------------
+>  5 files changed, 157 insertions(+), 61 deletions(-)
+>=20
+>=20
+--8323328-471983526-1716901848=:5869--
 
