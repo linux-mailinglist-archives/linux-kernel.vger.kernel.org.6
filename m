@@ -1,82 +1,158 @@
-Return-Path: <linux-kernel+bounces-193200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5C18D2834
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF818D2839
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC07F1F254FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D363F1F2755E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC74113E057;
-	Tue, 28 May 2024 22:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20D013E883;
+	Tue, 28 May 2024 22:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hL2s/v1t"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hnMf/AG8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D714F17E8F3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB98517E8F3;
+	Tue, 28 May 2024 22:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936483; cv=none; b=NSexVuaTB/19CPxmLW37Fv3kjWzvkddmUstqQLHKVoBJuSuTz/Zu5VJnqfKkX4vJgkH6VhBQlGpuZSjXCkBpYZ1m73j1ZZZqnSK2Fn/NrgnSldkyjYTj1mrJ/XzevxB9bo6zwZuDHNVaEDBjxOjZsKF84OzIg/62e/+sF9GLg78=
+	t=1716936601; cv=none; b=hYuJCgDlRoCRpVWaiManOuDIyeRKc7cEFkDdRB5ZG3noake4aQOqB8LenFYcyWvOHyGExYStPv/MD1PYVrOGDrUWHNrgw1UI2jtR8Bq5aTPBZXnSEUMBzs9hdmLKRBPeVPtsynmU45Cxlc3gbC3WsxbgTry6NEkWFSsnVk3rNuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936483; c=relaxed/simple;
-	bh=axSEsC+gneSz5MfgJHsNfBxzzcGCPFR2XD6onipT1Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUkH8pk9zCVw/Gn/ucs9V8AkYh+oui973KBG/eZh3b5c2vO3lYMKMtbN0QAROzU15vbRU4SqE4+hldbPkMHHgq+3hCYnYoRhXc3sarO8xVjcNF81ZBvFOG/7jgWvsjacfsHX+01sBV4wNIoL5m/6CBj4fmn9eJZOhT3phyYUd9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hL2s/v1t; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Arg3zNJfo7OaVad4zVHjBNkJznEpcaVhGh3Yi10lCXA=; b=hL2s/v1tfAtUEo1XUaMmMp9B5B
-	+CWhw1le8tj+XzUWpvv95xY8vyT0m7liz182rkXpnU2U38ulXRMmxaCQVc0roZn1GFBZfmG+A3qlg
-	NuKYpuWn3MoYpjoUdfpXpZnVHNs/MJYz7m3h6+PAPjg8kzCxbLkILxrpy4xjLjwiQn8RA52L+Y683
-	g4BrnNv5hpAZ2esQhL7jEhcjiYTRlW+NmGXyIgItfuEuTo8usymFyeCLK9xBRBuYcB+r4IIE7Wmp8
-	kZXmE3HAKkfwg4ocJkKw5LmVfZyDpEq5JVUGlLnVrjveP0VXCnC3eK3C6CBJyz8rMgTqgSBY1HJRM
-	U9M4KUCQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sC5bo-000000099bN-22l4;
-	Tue, 28 May 2024 22:47:56 +0000
-Date: Tue, 28 May 2024 23:47:56 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	akpm@linux-foundation.org, vishal.moola@oracle.com,
-	muchun.song@linux.dev, david@redhat.com, osalvador@suse.de
-Subject: Re: [PATCH] mm/hugetlb: mm/memory_hotplug: use a folio in
- scan_movable_pages()
-Message-ID: <ZlZfHNkWHxtpcXhO@casper.infradead.org>
-References: <20240528220321.144535-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1716936601; c=relaxed/simple;
+	bh=HVjwQji1/JSYOgzcTRTitZ6Txsm6oHkimP7gpL4FetY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HOydRwh8QHu7foCcTNJftdB0ekeG9PJ6CrZJPoA0yiD5OfZqd/JOfBXhITZu0iT/eFMgn2c0uwQjEdVLhDs9urD1WS2rfXQffic8tsYCMXPuBznCxXC9M66olZ4OB6isDCzgMnZLTfl0TdswRwcFYL2ESf32P6pti/umstcxEF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hnMf/AG8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SMZorS023663;
+	Tue, 28 May 2024 22:49:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=NsdqQeT1UR+7rNbM816y0Mg+ijPLk+fw56v
+	3sT9xdZ4=; b=hnMf/AG8fdQqIiE9JuRjHJipfkgbFdFoFmkWAxAYYzgQkBSG5kO
+	RoUAIZrH01bcAMak22hdoIwjsNeG6GJNAGvtvpy3II3Ee690t4icCVYGX02zGgsj
+	XzbLH4vpF6MJQE/Ojl6iDFbL5A8HK/5fDmUMBkNoSVcQDnxKvaVmjmukTkY/Wxtu
+	pSHNthfwiSfg3QbX4njNepyoHKIOcZszPKsbPHbOIun8EAPwlBNn68W32IzMadKQ
+	3zXFYtnibH1ml3bE6f22zONcGNPwK7GzaqkUoNWK42TKmEXwf1nlZ3wEf0XnO8Ep
+	u3sGtBNRUdGK8M5lOYfsI9hVXZXg2Yuge1w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pqhcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:49:38 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44SMnbRn028559;
+	Tue, 28 May 2024 22:49:37 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3ydm24snq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:49:37 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SMnb5J028552;
+	Tue, 28 May 2024 22:49:37 GMT
+Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 44SMnaHL028547
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 22:49:37 +0000
+Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
+	id 9E1AC220EE; Tue, 28 May 2024 15:49:35 -0700 (PDT)
+From: Abhishek Chauhan <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Martin KaFai Lau <martin.lau@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>
+Cc: kernel@quicinc.com, syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com,
+        syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+Subject: [PATCH net] net: validate SO_TXTIME clockid coming from  userspace
+Date: Tue, 28 May 2024 15:49:35 -0700
+Message-Id: <20240528224935.1020828-1-quic_abchauha@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528220321.144535-1-sidhartha.kumar@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EGWJLU9TFkbIRV3A3z9Zb-IzLC_f9TYE
+X-Proofpoint-ORIG-GUID: EGWJLU9TFkbIRV3A3z9Zb-IzLC_f9TYE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280169
 
-On Tue, May 28, 2024 at 03:03:21PM -0700, Sidhartha Kumar wrote:
-> @@ -1761,9 +1762,9 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
->  		 * cases false positives and negatives are possible.  Calling
->  		 * code must deal with these scenarios.
->  		 */
-> -		if (HPageMigratable(head))
-> +		if (folio_test_hugetlb_migratable(folio))
->  			goto found;
-> -		skip = compound_nr(head) - (pfn - page_to_pfn(head));
-> +		skip = folio_nr_pages(folio) - folio_page_idx(folio, page);
->  		pfn += skip - 1;
+Currently there are no strict checks while setting SO_TXTIME
+from userspace. With the recent development in skb->tstamp_type
+clockid with unsupported clocks results in warn_on_once, which causes
+unnecessary aborts in some systems which enables panic on warns.
 
-Isn't this an unnecessarily complicated way of writing:
+Add validation in setsockopt to support only CLOCK_REALTIME,
+CLOCK_MONOTONIC and CLOCK_TAI to be set from userspace.
 
-		pfn |= folio_nr_pages(folio) - 1;
-?
+Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+Link: https://lore.kernel.org/lkml/20240509211834.3235191-1-quic_abchauha@quicinc.com/
+Fixes: 1693c5db6ab8 ("net: Add additional bit to support clockid_t timestamp type")
+Reported-by: syzbot+d7b227731ec589e7f4f0@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d7b227731ec589e7f4f0
+Reported-by: syzbot+30a35a2e9c5067cc43fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=30a35a2e9c5067cc43fa
+Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+---
+ net/core/sock.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8629f9aecf91..f8374be9d8c9 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1083,6 +1083,17 @@ bool sockopt_capable(int cap)
+ }
+ EXPORT_SYMBOL(sockopt_capable);
+ 
++static int sockopt_validate_clockid(int value)
++{
++	switch (value) {
++	case CLOCK_REALTIME:
++	case CLOCK_MONOTONIC:
++	case CLOCK_TAI:
++		return 0;
++	}
++	return -EINVAL;
++}
++
+ /*
+  *	This is meant for all protocols to use and covers goings on
+  *	at the socket level. Everything here is generic.
+@@ -1497,6 +1508,11 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 			ret = -EPERM;
+ 			break;
+ 		}
++
++		ret = sockopt_validate_clockid(sk_txtime.clockid);
++		if (ret)
++			break;
++
+ 		sock_valbool_flag(sk, SOCK_TXTIME, true);
+ 		sk->sk_clockid = sk_txtime.clockid;
+ 		sk->sk_txtime_deadline_mode =
+-- 
+2.25.1
+
 
