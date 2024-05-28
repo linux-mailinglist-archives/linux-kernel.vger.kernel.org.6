@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-192914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855508D2443
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAC98D2446
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152461F281B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEEB1F281B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 19:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84358181319;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B37187323;
 	Tue, 28 May 2024 19:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R38BqZDh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LT2tnmYU"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6086180A80
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3274181308
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 19:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716923051; cv=none; b=ass8Bq8I9dGmsWfEJciIeUQrc96A22gA9UPcT7pt0U1pDoMPtNKRq+iLF4B4IThaU0qvy00oYSUseR0ZdsoozwZmAJcELZ+iMkYeN2cea0fEIWZJk90yTEyu5h05sUIiM3/3VxluzCXTyXRqfV8qdmtzIXx+GsFLUi33Gh4ZJyw=
+	t=1716923051; cv=none; b=GqrRuiBZodMaTkBI9G07COIuVLGkVEDil5o7hPb+2kJisEUUAOdehhgqRj5hQxr1/5wqzjZngS4B0rm8jaHATq7SsttA5M1JjQ/18Gt5gCKTQfAp7LowZFTmwWBzzOM4HcuKEIvMMNd81/AaFBwH14zHVjCkx/iHudg7L+H3mFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716923051; c=relaxed/simple;
-	bh=oGqCjZoMtSrCwf8xbipdg0QeegidLEYbNGeloSkNMkY=;
+	bh=Ktt2chxHVmf/NT6RXlWvzdDGnqCPL5KmvxHVj506Psw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G24gO6HISLJi5LI4p9VuV7o1wVpLEjqiaBjfW+mZNsHe29YYSssO78ZHLiPxGgyDZBZ6AEFtNmyCJun/rg4CGici1GnIRNdgctvHIMEsKHWfheSS7PBTHX8Py2nvyo+SK3G0T3LARtCClA3DUXvX8z0kqENiqdLmyxgmB7LOJIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R38BqZDh; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:To:Cc; b=nOeYIVLCYWUKjfwNZtndPrYM7giiyt/K1BfoW0kjW3Di+VQNAD1gdlL+Fptvlk2gZ/Wyqf4uYwRNv6wNeuB/nDcBsZkAG/erdiqqU0WmhJP/rMBHHNoTBIcOuLSZDTD2BeoUyRMY/qmFmnLB/EAQ9xUVlpV5FwjcMJWEpk1qGBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LT2tnmYU; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-420180b59b7so10227305e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:04:05 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4211249fdf4so10758475e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 12:04:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716923044; x=1717527844; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716923045; x=1717527845; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gFU0fFDLXBVTpEVhQ1putOMYxJzP0S29Lv1LacuJjZ8=;
-        b=R38BqZDhYNvR2rKNSmV0hLmvuMnuSYa1+tsiCVZyA63IxmjdJzuvLuqQuFtzLNn+XE
-         wEcngCulIRJz1lVeu0uMvJFkv0qngFax3d9huS2AsegvZ9yuPjYKvhUzNtK2jNWv1aCh
-         Tm35LZsDIce8vGMRm6JyYZjD0YQRk48MeqgQuX+eEe02UlrEwt+oMMfuTNc5VL9KlfX0
-         xoIFM/zUreqABkUuMexDadEtMHymoD8YleZ7VmyOo0CDl5GXG8c3UDouIBbqAylMdrwd
-         8Iv47hoF7h+whHEwp+CqNie1vidWQoWhgG0vSYEPiiuD6NWtDGchZMkaQ7PCpar4HP2o
-         FkPQ==
+        bh=pOio7KxeuelYGQGCOPUzhDxltxXo0iSvEqTPnlEwle4=;
+        b=LT2tnmYU1LjtbLLv3LhJ6SFo7GIzIlndHf/MbMlmv/nGD50FKiK5AeyKzy6/2Qrn6D
+         FIKgdHQGOvmTLK3t7mHOAFRqI63X9Ud37VkflWpJuosYWEK4s5A9avriOEFF+bD3K5/A
+         TZZq1W9Tf83a2Y7OeWeUqQzfbtCChjbbSBkkt1h16psY6HcsJnzoVBqV4/YtqFVQzveu
+         uCBdYiZR8sOs1Y/sh8GvSdnhqcMYB3XS0ahDEcNxny76PnOAAljleOqWFHX/vV+uj6UY
+         Wetf3agv4/qKLZC8BwW0fLwL5LwNTY3CFA59zORfkecpV6+wqqUtmDaiRGMUV4/SCUml
+         kgEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716923044; x=1717527844;
+        d=1e100.net; s=20230601; t=1716923045; x=1717527845;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gFU0fFDLXBVTpEVhQ1putOMYxJzP0S29Lv1LacuJjZ8=;
-        b=Xpi/RpbYpggwyE5QGtRNsT3AVzyhfurcjmFl/SPttYqBflOfnRvMVFiZbIc2qJ2i/t
-         ndU88oUi6U5P0FgwuP93spBsbir/9uNsQHGGMejh9JddsMud2Zw4Om0chc5pRvDZXx3I
-         mUBT2GehLiN25uMkz10eh8JFg/D9M22wv7LrT3UgAsFKK3lE9thSnogxHEKmE0lPAEw3
-         t4c7E4uL6Cr5+mLqQ/fj6weMyTn1AC6xo4JI0YBg+9sUjZu+CA39mw72ZumEe5GvufHl
-         1hei7ncPSIS+7Vm81KnwNjz5GsTFun6klWei+OP5pn3TYRwmU9wUvMhIJzjtKh2J5x0B
-         BY/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJlLgD2ecsCqwPWByHRoD5VD8uuEaQYtbeFl+cxwTr7EYPTJRk4fwrl0BVV/6gO+EG8boiFLLmAr00OoweBfbxLVxrblYkSdLjc6rr
-X-Gm-Message-State: AOJu0YyFB7XdXLYfy3aYGov/xszwhs7Cb3SYA7xNn6Xbc3pNLzWNddB8
-	MyZb301gUr/byaXdsmYTGetVUJRkGkuXudkKU1b6eL9/xD4MN2ScecsV3nGCKtacVCLN0B583sU
-	I
-X-Google-Smtp-Source: AGHT+IG6B6kXReUvfOK7G13iUYw63mXLE+oQ5Xs7Zu/A92odTJ2Gt2f1pgs9Npx0RVH6n2yeZy3ueQ==
-X-Received: by 2002:a05:600c:5719:b0:420:173f:e1e9 with SMTP id 5b1f17b1804b1-421089e97bcmr91269195e9.21.1716923044209;
-        Tue, 28 May 2024 12:04:04 -0700 (PDT)
+        bh=pOio7KxeuelYGQGCOPUzhDxltxXo0iSvEqTPnlEwle4=;
+        b=Zvgjqr4RV18qy1MgBjjuXiTTidKejh3PgdgP5kLcbDxQmftB7J++TlVGo7jD4EdMAh
+         tZjxJW+5hm9bpQiNBpMQRBgapJOIpReR8iCCnQnlKVVHSnUQRIw5gqGeS1LPFIWRYLT6
+         /ht16RrvbHqv9aZwzNWQAeiSWihmbeBMb8e7DYdDujRi+h3bl89Adu3Re/ASJxuBfXy8
+         yKrpvvnDIb3NVTrKNbtlpa50e11NkmO2gb3Clrru1C2VLrNXtKpt8yYHh8c44gnhN3pQ
+         +NqmEeaFPegeAOBJNGvWyM6QQHHt6Ho/7KSIf6STDItGlxpZZ8QQVpQXEBT+fAGteBxS
+         BdsA==
+X-Forwarded-Encrypted: i=1; AJvYcCV92SxW60MtfehivkpOjoWOQow34P1ota103c26X/+lZj5bj84Mr8CV7VN2i4TRSAoIBafbVUEw76B5H/9G5QN72BZR7DKZXZMuzv0t
+X-Gm-Message-State: AOJu0YynnBLsHzrDUk9brwJNWM9xB4iQHZh0pmR1s98Mb3l5SWm7IuhZ
+	3uuLos3U3zG8d7MYejeY1hjDv0UOGDpXN1LkDnArBoYHK6Z4Y5k3fTe89uJfYUg=
+X-Google-Smtp-Source: AGHT+IFmkQU5z/NjNRbTvi69k9x+UO9H7tI5buIPv2H3GZSdzyYURPFjsjVaBq0Uz646z00KIwuhFA==
+X-Received: by 2002:a05:600c:63d5:b0:417:fbc2:caf8 with SMTP id 5b1f17b1804b1-42108a7a3c0mr101292595e9.23.1716923045541;
+        Tue, 28 May 2024 12:04:05 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:93eb:927a:e851:8a2f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm183895415e9.4.2024.05.28.12.04.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee954bsm183895415e9.4.2024.05.28.12.04.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 12:04:03 -0700 (PDT)
+        Tue, 28 May 2024 12:04:05 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 28 May 2024 21:03:20 +0200
-Subject: [PATCH v8 12/17] PCI: hold the rescan mutex when scanning for the
- first time
+Date: Tue, 28 May 2024 21:03:21 +0200
+Subject: [PATCH v8 13/17] PCI/pwrctl: reuse the OF node for power
+ controlled devices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-pwrseq-v8-12-d354d52b763c@linaro.org>
+Message-Id: <20240528-pwrseq-v8-13-d354d52b763c@linaro.org>
 References: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org>
 In-Reply-To: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -108,51 +107,84 @@ Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
  Amit Pundir <amit.pundir@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=914;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1806;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=kuyJTCA9fdYhUGDXvoePXqDSaNb9NruStgSbf5wa/1E=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmViqP/eY7rIuS/eQw4O3UlON8rwdGRoMGUP7rz
- yzNVdBe65WJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlYqjwAKCRARpy6gFHHX
- cvKjD/9WKJ6xrPFHjBRP7ktzwHOQmaTfICHaHJtV3PV0foF3NVt3xBjv/3MfTIoDHxKL/27sUbX
- AX0c1HDDrhyg+xUEwP3Ldeoi+bmJKHTPpBgTuLU0F9ax8+nQsFBoHyOQwaIFebtMFB0f8GE+xA0
- jsxo/VePbSMksuxs1v066MNDPpVjKPx/BS6ZmdWbZU/Fhw/PA83vcPyKHyS+gSwR+/a6naEoIDG
- /r4rQ1fIQMD+/LMFzTJYgTkk5dh96SRuGfQ0HgYSfbWr42EdZUbFyMDhgUiqQceMOBwexPlqd0J
- BOASeFIGFOYM7lyG+0RBjDGGbtg9P3D8EF5EbrI5IMHMJGEPlOdEEHydvZ3irbtN/FdyTQcps60
- W3h5F7J/GEci3w5eTef3u2+nLFBD7+v/IzE/U+e/ISniyUz+HOqEMZ2cfKGAqvzBXOFxzAONnzI
- GUn45522td18GWGJ2IQq6PWkohJhco7ANiMaK/pwgGkemTt34e2f56iqSkaw2hhTnzrI1oaIP7K
- SsLgff5wn0FMZqpU/xOqN1gUJ6dCL9fQiFa32Acmjqlhp9qs/MVZY6ri19ncKXCEPITAp6Qv/Rm
- AK96m/GOCFcx5h2BnodJx318PL5gOmyFiDLn7oaEdmqmPq2rpC9akype843qdeE5gZ0F8jt0z/I
- Tu7x3hngIac7MMA==
+ bh=Y7OeFprz/Vcrv+LqGfLVY2kADqOCusmg0pTxdfuWyrw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmViqQlowqris4OXk74HDsTXkEu2fb7ceXtIZ3t
+ /1F4SawtlqJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlYqkAAKCRARpy6gFHHX
+ ciu+D/9gNcUh7shLnVNjWY/dgJjWjWqDorXUw/wX6sJBNrxubSO/gyKc9jr+AWug2lgBqlQOp+k
+ CdVkl6SrVCko/z9s5SrcQrVFUBVrWq1hC8w/GWKtZSHuzDKHab8s3sdzs3Y5pnLrak0kn25osA9
+ D1JYD3NDkY803OYw0RHiGx+GCXTuPj9I7Ld2/eYTJXL8rfJxhX5Yo7Iectb5BNvRaMhrveN0kJx
+ 52sOrp6To2YqkPkRo5zcBVdcs0gt2d2/yL7LcFe0z7hSzDDgYlae6zUPC4eDqPEoSdWimDfp5pe
+ kA9A5ci2MG7VwRP86OiKpcO8jcMX4+1Fz610EvQ8M7Z2adXIvzF1xrN9Qk0Cp+sQuD+w7WxWheC
+ lY0eFf9MpFqLS+lJIDGAvclGtlhP1fCT69UwRrY/Qo7ijTsj/R0eMwHWnKOxaLwtgvplTWT16sX
+ nZ3/83iFmyg4unCn8iYVrq650oBohZgiKMp8JePv/KInST3DHQ6HiCfgBcodc3GbX9P+Ja8OCVp
+ 8fM829/xJlqWbti0o9rRzYslm7y/ZvEH0VH0MxaN7giPt1WAxcMtSifoKQwdzcyNxuvHi3Btsim
+ e66eK6rvw6UD6V/avQlxkr+wgJ/DLZhAi0Zofr+BPGpvxgz9AEEMCZm5KQaxZj6S3mbgMlMBIl+
+ h5eAPbGFHqC6OQw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-With the introduction of PCI device power control drivers that will be
-able to trigger the port rescan when probing, we need to hold the rescan
-mutex during the initial pci_host_probe() too or the two could get in
-each other's way.
+With PCI power control we deal with two struct device objects bound to
+two different drivers but consuming the same OF node. We must not bind
+the pinctrl twice. To that end: before setting the OF node of the newly
+instantiated PCI device, check if a platform device consuming the same
+OF node doesn't already exist on the platform bus and - if so - mark the
+PCI device as reusing the OF node.
 
 Tested-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pci/probe.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/of.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 8e696e547565..604fc96b1098 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -3072,7 +3072,9 @@ int pci_host_probe(struct pci_host_bridge *bridge)
- 	struct pci_bus *bus, *child;
- 	int ret;
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 51e3dd0ea5ab..b908fe1ae951 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -6,6 +6,7 @@
+  */
+ #define pr_fmt(fmt)	"PCI: OF: " fmt
  
-+	pci_lock_rescan_remove();
- 	ret = pci_scan_root_bus_bridge(bridge);
-+	pci_unlock_rescan_remove();
- 	if (ret < 0) {
- 		dev_err(bridge->dev.parent, "Scanning root bridge failed");
- 		return ret;
++#include <linux/cleanup.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+ #include <linux/pci.h>
+@@ -13,6 +14,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
++#include <linux/platform_device.h>
+ #include "pci.h"
+ 
+ #ifdef CONFIG_PCI
+@@ -25,16 +27,20 @@
+  */
+ int pci_set_of_node(struct pci_dev *dev)
+ {
+-	struct device_node *node;
+-
+ 	if (!dev->bus->dev.of_node)
+ 		return 0;
+ 
+-	node = of_pci_find_child_device(dev->bus->dev.of_node, dev->devfn);
++	struct device_node *node __free(device_node) =
++		of_pci_find_child_device(dev->bus->dev.of_node, dev->devfn);
+ 	if (!node)
+ 		return 0;
+ 
+-	device_set_node(&dev->dev, of_fwnode_handle(node));
++	struct device *pdev __free(put_device) =
++		bus_find_device_by_of_node(&platform_bus_type, node);
++	if (pdev)
++		dev->bus->dev.of_node_reused = true;
++
++	device_set_node(&dev->dev, of_fwnode_handle(no_free_ptr(node)));
+ 	return 0;
+ }
+ 
 
 -- 
 2.43.0
