@@ -1,54 +1,68 @@
-Return-Path: <linux-kernel+bounces-191813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142D78D1488
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:37:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A82D8D148B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71DE2B224CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FAC283F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D9E6A33B;
-	Tue, 28 May 2024 06:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B94E6A33B;
+	Tue, 28 May 2024 06:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0zM3SW/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fv+XcrYn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80B643AA0;
-	Tue, 28 May 2024 06:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EF061FD7;
+	Tue, 28 May 2024 06:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716878220; cv=none; b=OfvS3bqbpUhHUlRZqC7E3j2AoTmHafu8WdlqeBx6m8iPBr04vH4R/YNaoFiAivvcvgioI7mOvJ7JZS7teciHNlEBVhKwZ76s+zeBOUhRdbIGbYxMCW1eCNtgYd6ZWTP6DSVsyJz+8zS3EGOiM56kCuGa8iFOqA1Cm0OD/B4sQfQ=
+	t=1716878258; cv=none; b=mDlT6VEp8Z1+rF4zz3iHehqUhRmLsRbmYgtOZgG8gW/pq4Yug1u1rm4azfgCKUX+G9kMJG07uQARh6Z1yrJ3yx02S8jPov5OBOx1kFfbxaMQa1rp/PDoFwxqjal9WeoY34kJTpo5PNRbjzv32MpoIpEtYu2jgNrqBv6i3Z/emD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716878220; c=relaxed/simple;
-	bh=bicEORD8zXtsreO4EZpzHbdRKrlU/zXeZoYv6iHJDIc=;
+	s=arc-20240116; t=1716878258; c=relaxed/simple;
+	bh=jyDL4zz5q8jj+/c7ouLHGKNSvOKvSPQog+4PVAaGQ/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dg3irYTafD5yYNpBUJ7roLuGC/8YetdZVrEGu4XEHqZIT+MGUMVe0Jcu/ybXUtnmN9muagfCIYUiQJGieYmG81fRbxTe8MmRbXHHH/Ybft20YLV59ZAz7kTzOdK0lFe/EAS0Mp4j78x5D7KEzWNg6dx8xyt5dDpiKOWN0nm8ZuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0zM3SW/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 761AAC3277B;
-	Tue, 28 May 2024 06:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716878220;
-	bh=bicEORD8zXtsreO4EZpzHbdRKrlU/zXeZoYv6iHJDIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0zM3SW/5CEmLKb5SBCgVAikZ8HEbbaMNz0nBhrlFqXtFCuJX8iwBcHCTSN4+Tcel
-	 /tOW0SsD88iUyIQJAwFfuGWao/amGCg13dA+Gh9BcrWunbEGADa2kTyF6yV1k+6lKI
-	 8Xby6njj26AchHlaQcRGuYchlq/M/RfbE8T0cWpbKHy8ocbZql6QaFNnld6rhtr7mB
-	 o59rrkjNF/063coLsi2sFWVXULwEG1s4T2l41n2DXaXIGZUZwxZERQ+cF9I7YQ672U
-	 xLGvBg6z6wYaO9xfImQEFNV90FeLDaIAGHo5FR0WKq6YC+rZA3QUbfwU1lEIfSQp0F
-	 Q9u0PAyfrnwGw==
-Date: Tue, 28 May 2024 08:36:55 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: linux@treblig.org
-Cc: lpieralisi@kernel.org, robh@kernel.org, thierry.reding@gmail.com,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: remove unused struct 'tegra_pcie_soc'
-Message-ID: <ZlV7h8PbvD_bChfY@ryzen.lan>
-References: <20240527160118.37069-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKnKst110mU1GhX3YoOdzzYBAYkAHxMUTQ/UmLd3rgn9o2gF5UmeZ6o5udukJoyX+U8qj7xe5kpEpx5TyFNQ7DQbmK35LLYJmnizfXdgPPYFxmLUx/1IVey+wtjtgmajp7oc4WLPFaY4nYVw/WHQG/Kf1F/ydkMbOg4gUvSbTgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Fv+XcrYn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=87n+7vGposB3DHFhm3eVtYVHQH6pkIsF9l1YK27pW5Q=; b=Fv+XcrYnhndpCI1RvGWvylRtyZ
+	CPYNqlFqK4cynFTdXwsuIGbcxDBee8vCmtDj0T6/jph2iCLI5YrLVEshUfmXIPsDrALT5llwbDnJc
+	lO8+SOb64g4LEHowumn8D2W4mbS+A8trU2NHZ/IAhh38UWUkVs4mq+BRWNzIRxHA+Khxb15Q78c6A
+	M7k6SLsoC5LtvheJJ5jVqi5IGT7y/unfSZy0qQ/36qLYHkxv3ctNov0kV8J+nXsp4HmrCn0Ohsyeg
+	uHa2Myzb1RuK9nmV5e8MkBtVEHRMuIohHuNaqazKXsS6Y8XA/q7TtwbOoDF8daCPd//Q4s9ZjtqeT
+	y6zWMqXw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sBqSk-0000000HDpm-1ovw;
+	Tue, 28 May 2024 06:37:34 +0000
+Date: Mon, 27 May 2024 23:37:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Yan Zhao <yan.y.zhao@intel.com>,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	alex.williamson@redhat.com, kevin.tian@intel.com,
+	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 3/5] x86/mm: Introduce and export interface
+ arch_clean_nonsnoop_dma()
+Message-ID: <ZlV7rlmWdU7dJZKo@infradead.org>
+References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+ <20240507062044.20399-1-yan.y.zhao@intel.com>
+ <ZktZDmcNnsHhp4Tm@infradead.org>
+ <20240521154939.GH20229@nvidia.com>
+ <20240521160016.GA2513156@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,39 +71,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240527160118.37069-1-linux@treblig.org>
+In-Reply-To: <20240521160016.GA2513156@nvidia.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, May 27, 2024 at 05:01:18PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Tue, May 21, 2024 at 01:00:16PM -0300, Jason Gunthorpe wrote:
+> > > Err, no.  There should really be no exported cache manipulation macros,
+> > > as drivers are almost guaranteed to get this wrong.  I've added
+> > > Russell to the Cc list who has been extremtly vocal about this at least
+> > > for arm.
+> > 
+> > We could possibly move this under some IOMMU core API (ie flush and
+> > map, unmap and flush), the iommu APIs are non-modular so this could
+> > avoid the exported symbol.
 > 
-> 'tegra_pcie_soc' has been unused since the initial
-> commit 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 93f5433c5c55..076f040ccc34 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -308,10 +308,6 @@ static inline u32 appl_readl(struct tegra_pcie_dw *pcie, const u32 reg)
->  	return readl_relaxed(pcie->appl_base + reg);
->  }
->  
-> -struct tegra_pcie_soc {
-> -	enum dw_pcie_device_mode mode;
-> -};
-> -
->  static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
->  {
->  	struct dw_pcie *pci = &pcie->pci;
-> -- 
-> 2.45.1
-> 
+> Though this would be pretty difficult for unmap as we don't have the
+> pfns in the core code to flush. I don't think we have alot of good
+> options but to make iommufd & VFIO handle this directly as they have
+> the list of pages to flush on the unmap side. Use a namespace?
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Just have a unmap version that also takes a list of PFNs that you'd
+need for non-coherent mappings?
+
 
