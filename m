@@ -1,174 +1,77 @@
-Return-Path: <linux-kernel+bounces-193110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B466C8D26F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:18:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2389D8D26F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 23:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D76671C24F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D294F28289B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 21:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B2517B4E6;
-	Tue, 28 May 2024 21:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1DD17B439;
+	Tue, 28 May 2024 21:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uipdfcm4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Za29AP1S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D5B224D1;
-	Tue, 28 May 2024 21:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF6A224D1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 21:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716931079; cv=none; b=UrGCOw2OGoIgpg4Kdu2VZsacGIqCrEDvS7+rRAhfT5JkFG5q5Q+C+7f8BzzmZ0qU2UBVw6+xZ1jU1MLhpxrfUVw6Zi08tzCgFPi97kFlTPtShuonMyh/7LDQq7GLr7dO699XkH3JW7vLd6FhRQav7RyqjNeZJV9RB15oDKIqtj4=
+	t=1716931171; cv=none; b=AN+hpxymQbEtUoJ0MvpZMHq2BnbIO8r5YZOUr7h0wLYOGPDQQ077H0WgpZAWx73aJeac+m285S99AmliWjyLOqxBW5gKSvjG1p/vhcoIGq5sGhT5OrMN/6kyHerI9pyDWhBfpIuHJO1D8s/ek7fBatne1g+MZnNrfQgeaHINudQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716931079; c=relaxed/simple;
-	bh=df6P1xfVcWeYr0Prst7JHR/lRDenSZqOcvbQYQ8TnsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgMAYQBkjUFfwn5PPJp3b0aBLQOE911GGGRQnbpsW1YWY3CW5QUyHN3YPmq3CJOH089+vwRCCwavB76ukKkJ3CMIJlWa5YrUyvdBzWxV3lKYjcROimOoUBxH3OlUVXEf3/XjbELJKJGn1PAPp6s6lHoPhuElIazUA8wMsvzRhwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uipdfcm4; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716931077; x=1748467077;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=df6P1xfVcWeYr0Prst7JHR/lRDenSZqOcvbQYQ8TnsY=;
-  b=Uipdfcm4a1vElnrAjN/KJJzM1laW0j9c+ZiN+KQHP44g+n2/+0A8/uOr
-   rRBVgKA8aThU/0oIm1xHcaG12cciawjMoFVzXYHdS9I+P3o59BLJuU+tv
-   hKiFA6IUUD9G8GqUKL/hsiAcH0HRdLA5qsqbyVmMAyS2LH3K2v5XMOw1b
-   raYH1CWB0E3NfEYRW6B474L7p8pZZmj/UHtM8skNGL92mBpsLeXAGOqVP
-   o19xr2dC2shZy/dR9gACj3J/S+4Nq1UYy7ABY9JI6d6LwQDDgG/3SqO3G
-   KCYt6G8hBly5t37e87aCQ7iosGz8SyCHpc13URLyTDdge5Fy1/G96GBGX
-   Q==;
-X-CSE-ConnectionGUID: mwC8VMBXQu6DsDRXqOAqfA==
-X-CSE-MsgGUID: 4bLoXLVUQDOBo2NWaeYgKg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24433713"
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="24433713"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 14:17:57 -0700
-X-CSE-ConnectionGUID: 52dP+MQSTjGafcuMc8lliw==
-X-CSE-MsgGUID: 9ajn04XiQ+KcTDxH1ciLeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,196,1712646000"; 
-   d="scan'208";a="40196234"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 28 May 2024 14:17:54 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sC4Cd-000Clf-1k;
-	Tue, 28 May 2024 21:17:51 +0000
-Date: Wed, 29 May 2024 05:17:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Zhang Lixu <lixu.zhang@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Arnd Bergmann <arnd@arndb.de>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
-Message-ID: <202405290447.n14W21hZ-lkp@intel.com>
-References: <20240528115802.3122955-2-arnd@kernel.org>
+	s=arc-20240116; t=1716931171; c=relaxed/simple;
+	bh=nCPQZUaiGU8yooptwQKJbLWLOSOPw8tw5d5i6lCZR5Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GoCYWAErrcj9Sr6VrQqdF6wfPJqbVbczFlOMgIEM642BPv5BuhtIQuwah9LpWxOB6nxxox3x6k43jtK2Br5GZhdP9bqLqi/8tzSGl6MGiqMvxFaeNfJOdR7gKdZCykhQwpmOunuUkQi/qeTRi/C7Mik1uIA7yYojE1sym45xVVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Za29AP1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7221CC3277B;
+	Tue, 28 May 2024 21:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716931170;
+	bh=nCPQZUaiGU8yooptwQKJbLWLOSOPw8tw5d5i6lCZR5Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Za29AP1S9bUjtNk7kMjcS3LvKc7td6j6CIq2V1pdqN0TwCVVptBkNlGnbhnRbab76
+	 xEPnIZwJH9eIFUBKwr4I8vZbt3qrkr+8Ot7LBV6TzI9iKGZl+gdq6HJxXqiPdMEn/g
+	 YWvI+MSCEVQkT4kxDhoYBMYn1dh6WmvMv2Upsijk=
+Date: Tue, 28 May 2024 14:19:29 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dennis Zhou <dennis@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, tj@kernel.org, hughd@google.com,
+ vbabka@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4] percpu_counter: add a cmpxchg-based _add_batch
+ variant
+Message-Id: <20240528141929.ba7e59e4cae89eec01631306@linux-foundation.org>
+In-Reply-To: <ZlZFGmBiBE1VGQIt@snowbird>
+References: <20240528204257.434817-1-mjguzik@gmail.com>
+	<ZlZFGmBiBE1VGQIt@snowbird>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528115802.3122955-2-arnd@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Arnd,
+On Tue, 28 May 2024 13:56:58 -0700 Dennis Zhou <dennis@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> >  EXPORT_SYMBOL(percpu_counter_add_batch);
+> >  
+> >  /*
+> > -- 
+> > 2.39.2
+> > 
+> 
+> Andrew you picked up the __this_cpu_try_cmpxchg() patches. At this point
+> you might as well pick up this too. The cpumask clean ups are likely
+> going to give me trouble later this week when I rebase so I'll probably
+> have to base my percpuh hotplug branch on your mm-unstable now.
 
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on next-20240528]
-[cannot apply to linus/master v6.10-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnd-Bergmann/HID-intel-ish-hid-fix-endian-conversion/20240528-200100
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240528115802.3122955-2-arnd%40kernel.org
-patch subject: [PATCH 2/2] HID: intel-ish-hid: fix endian-conversion
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240529/202405290447.n14W21hZ-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240529/202405290447.n14W21hZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405290447.n14W21hZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/hid/intel-ish-hid/ishtp/loader.c:178:9: error: use of undeclared identifier 'dma'
-     178 |                                                  &dma, GFP_KERNEL);
-         |                                                   ^
-   drivers/hid/intel-ish-hid/ishtp/loader.c:186:52: error: use of undeclared identifier 'dma'
-     186 |                 fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma);
-         |                                                                  ^
-   include/linux/byteorder/generic.h:86:21: note: expanded from macro 'cpu_to_le64'
-      86 | #define cpu_to_le64 __cpu_to_le64
-         |                     ^
-   2 errors generated.
-
-
-vim +/dma +178 drivers/hid/intel-ish-hid/ishtp/loader.c
-
-   154	
-   155	/**
-   156	 * prepare_dma_bufs() - Prepare the DMA buffer for transferring firmware fragments
-   157	 * @dev: The ISHTP device
-   158	 * @ish_fw: The ISH firmware
-   159	 * @fragment: The ISHTP firmware fragment descriptor
-   160	 * @dma_bufs: The array of DMA fragment buffers
-   161	 * @fragment_size: The size of a single DMA fragment
-   162	 *
-   163	 * Return: 0 on success, negative error code on failure
-   164	 */
-   165	static int prepare_dma_bufs(struct ishtp_device *dev,
-   166				    const struct firmware *ish_fw,
-   167				    struct loader_xfer_dma_fragment *fragment,
-   168				    void **dma_bufs, u32 fragment_size, u32 fragment_count)
-   169	{
-   170		dma_addr_t dma_addr;
-   171		u32 offset = 0;
-   172		u32 length;
-   173		int i;
-   174	
-   175		for (i = 0; i < fragment->fragment_cnt && offset < ish_fw->size; i++) {
-   176			dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size, &dma_addr, GFP_KERNEL);
-   177			dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size,
- > 178							 &dma, GFP_KERNEL);
-   179			if (!dma_bufs[i])
-   180				return -ENOMEM;
-   181	
-   182			fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma_addr);
-   183	
-   184			memcpy(dma_bufs[i], ish_fw->data + offset, le32_to_cpu(fragment->fragment_tbl[i].length));
-   185			dma_wmb();
-   186			fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma);
-   187			length = clamp(ish_fw->size - offset, 0, fragment_size);
-   188			fragment->fragment_tbl[i].length = cpu_to_le32(length);
-   189			fragment->fragment_tbl[i].fw_off = cpu_to_le32(offset);
-   190	
-   191			offset += length;
-   192		}
-   193	
-   194		return 0;
-   195	}
-   196	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Well, if it makes more sense to carry these in a different tree, let's
+do that.
 
