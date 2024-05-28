@@ -1,217 +1,374 @@
-Return-Path: <linux-kernel+bounces-193149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEE08D27C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABFB8D27CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1371F2384F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02ACC1C24268
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E0513DDA9;
-	Tue, 28 May 2024 22:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5462313DDCD;
+	Tue, 28 May 2024 22:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="10EpJ6hN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YNfAxC6G"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uhrsXZxN"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78A913DDA1;
-	Tue, 28 May 2024 22:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9F928DC7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 22:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716934368; cv=none; b=d6krU/cLQRfbqsnAYUSIQ2QMXa3iWMmic/HQRgPcfLVmm+p0FhltNJYO99KW0F3+3xFsI+W5pK5kbKqUuNZ208WdVRDG194Syn979uqJTI12AEEkGDD+hzgrgtQOCtG7C5lVmUqnP8MbGIn8ZYAjl4Dcktskpc0FffGp8TW5AFk=
+	t=1716934633; cv=none; b=XA0E5fHdhIFEB8Ar47d9SYjS0lNeKEUKk/crEKtCGG5nhuqe+RVVT3jxjCbiTetScIv4gyQi/CCQNpcrewbdoDSi32SspKMF6Eo3ey4aFkCY2JZ0eDnJTsaicoKwUtxJDSoHtw07P6OPrnsdi8NT7zK9yUd+z+pqJTvl0sGZ9/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716934368; c=relaxed/simple;
-	bh=1hLjs6HYpgIThhhT9gGLIDRvVYnA1jimJtxl/FXjhzA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Lh29IKxvkF9yG6EGNTPToN2I+szaKEmquXXXbO/macn/TiIKvnCjzw6+XDuAJ9M27LvOzYVYKmyWjsMO+IIqHtkn3jPNelJ6934TO+iuOCFM5g+/Gc9QuVsAZ9LddZ7edu/NgTqHARrfFtdca40ygQG3RE53upUXefNGCXg7brM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=10EpJ6hN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YNfAxC6G; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716934363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GZub3AKGtf3m0WqaMw01L0KFTwsMRo2LAh+Cg+JRsv0=;
-	b=10EpJ6hNlROGnXgv687DoZ4wgrzIzfraguXluq2TvrA53ZzXTtjgzsRZ2ntZiDyk/sEXUR
-	Nry6KMgOAzHcXuIvuzVYZcK2ArTMU644G4vdAqqpMa7EGFNWM2+ykO/VkE0EUGG+baruFQ
-	uARHLnUAFKHBRj9jbK+VoQMcupN5KkiEtvvBoEv8ucRCCaVzBClfoAllvSCUD624cvx3WL
-	sYSpqCgfwZ0p/Wa2yVukWBPO8bTtq1QQYE6d7jaCm9Yw/QDsmUFZaX8zF5nzOnxkDInZD3
-	lwyfDDNg6YQpvUUtQYdcs4tpGO9dpGHdzYj+FURtGK+em5+saXBYVYImnLD1Sg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716934363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GZub3AKGtf3m0WqaMw01L0KFTwsMRo2LAh+Cg+JRsv0=;
-	b=YNfAxC6G+tEJE6ZRI9e2UBKdG84tVoH4nusCdtPdZV2AGpGAdsn5bo+qXBR8qrsZa1LCZY
-	AFQ1L/bahS1cvKDg==
-To: Dave Hansen <dave.hansen@intel.com>, Tony W Wang-oc
- <TonyWWang-oc@zhaoxin.com>, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
- mat.jonczyk@o2.pl, rdunlap@infradead.org, alexandre.belloni@bootlin.com,
- mario.limonciello@amd.com, yaolu@kylinos.cn, bhelgaas@google.com,
- justinstitt@google.com, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Cc: CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, LeoLiu-oc@zhaoxin.com, Linus
- Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-In-Reply-To: <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com>
-References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
- <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com>
-Date: Wed, 29 May 2024 00:12:43 +0200
-Message-ID: <87wmnda8mc.ffs@tglx>
+	s=arc-20240116; t=1716934633; c=relaxed/simple;
+	bh=KgxKy3B9/bvHCk1XIcrOxAdTViZHUFvaiD1OLQpr4sE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vD4dMs1W9wY4X45RuJBbGuxY565f5AWpytRUnbfqilNyApIT2Dydt6ZKWp2itNf/GyFIDQz3Pdx56LJZaDkbnhYt2yVhjo76R1MDuLauRclfY6HVgZvz386B5q3w/4f/cN3elYekMpK9BCkOdCl1+npuwvPCVn7z+OZcP92rEDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uhrsXZxN; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43dfe020675so193621cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 15:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716934630; x=1717539430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KKsx1Wjb37gHKeRHMU40MydeR/ELp98IEnmlde48+So=;
+        b=uhrsXZxNa3RFXafIfe+U2Ltq6bS7DneRc5jPRc37O1O6XONs2lgWFsmXVbBVcs7nBY
+         6KHhcxVxXuy3I/1T3dyC/xBPnI/HO0m/4/a8/D6hTRsIScprEPKYxeAqqMzgPm6B1Xge
+         jMak/ihiTv0r1wooaj8+tY4XaVUG2umuTGuVtPXDVqBAn4J8g9gGz9AYRNXGzDMTjIqV
+         XX+T0kJ0euoLcy+n5GuOPYrw4UM263StVinX0ot4LwxcDK6Ji6fw6UCf7NTh0Lm8/25S
+         Uh2wYXocCrXpSFT5PoEtTb2K0BBr+EOfPKFU37wgUdjhUt2TeWf3eajjqB4xGz1Gcqdq
+         oGEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716934630; x=1717539430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KKsx1Wjb37gHKeRHMU40MydeR/ELp98IEnmlde48+So=;
+        b=cKDPCA9BxIH2V5McesLj0YmUmzYvyxCUzQ9/krBqv9F9NkSPNPLtLM8relUHUr5TDT
+         SsDMZvayE5vNHqmGeogBJ2ZAHFFgkhbOaZ2EfWMVdNWTACBbuDwkg6lof/19TeG/zA7L
+         kx8SmyU3VtFpLn27ZZBNyKBfWhhmc8MwpcoGZxMuToV22lz+fuojns9nRcT/8eFLoeSN
+         rNG6ul9JyhUOUd6QRMJfLUw5KjEH8YlRdDVeX8Vz7weWSsg+AW0OTXM85B75Gh1YLfy5
+         OoDFVW8Ylm5bgQwArEeDLhyUKjHDCawtXJ+x6EzALbO3T6zwieN7IlrYq5ecnjqvf68T
+         HHqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjI4C8i2cv8Mm1wAY9aQm+ahrqEtzFXLcEkzm1/8o5+LOHyGF3TS+YEJdOIPFS4EDMTP/UbcMnyMtZmUJulYRIKU0KHlGfpML+5loC
+X-Gm-Message-State: AOJu0YzHYsCc3Ew85gXBD4svwcXQAccsdWd8oH+gb0Qib+QfroquLyEd
+	EviE00/5pUeZ1/IMFf/3bAilR52Hfo2bH4tVqm+LlHe+qA5jD4PmhKUywEFZmSXsoYKtZs5ejsx
+	3bee8wofq5XJoQhevIjfxmmb1dXr7ZOyEAtJ1
+X-Google-Smtp-Source: AGHT+IETo0a4r5DWLWDwEytiMN9zQ17SSn1T3aVosvBNctOg0AmLMUGYAh9Ft4CGHNsTPvElc6EcRlu9Gn2L3/Z3Xr8=
+X-Received: by 2002:a05:622a:4819:b0:43f:bb44:bbb7 with SMTP id
+ d75a77b69052e-43fe0f4cefamr851191cf.8.1716934630467; Tue, 28 May 2024
+ 15:17:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240521173952.3397644-1-weilin.wang@intel.com>
+ <20240521173952.3397644-5-weilin.wang@intel.com> <CAM9d7cjob_tfgN+rMRrh=0SV56+z32CmP34BRY1eoFv48RVocg@mail.gmail.com>
+ <CO6PR11MB563589ED3FC7126A6B27EB22EEF52@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <CAM9d7cjz0P=vrSr8yU=xMYhQ5XFT9A+K-WG9E+LyNzYWC-JhwA@mail.gmail.com>
+In-Reply-To: <CAM9d7cjz0P=vrSr8yU=xMYhQ5XFT9A+K-WG9E+LyNzYWC-JhwA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 28 May 2024 15:16:58 -0700
+Message-ID: <CAP-5=fV0Xoe9HAcpvSFBF=vGhTaHAJdDCPEmwZSRk3VXL9S+1A@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value from
+ sampled data to evsel
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Wang, Weilin" <weilin.wang@intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"Hunter, Adrian" <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>, 
+	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb" <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28 2024 at 07:18, Dave Hansen wrote:
-> On 5/27/24 23:38, Tony W Wang-oc wrote:
-> ...> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
->> index c96ae8fee95e..ecadd0698d6a 100644
->> --- a/arch/x86/kernel/hpet.c
->> +++ b/arch/x86/kernel/hpet.c
->> @@ -804,6 +804,12 @@ static u64 read_hpet(struct clocksource *cs)
->>  	if (in_nmi())
->>  		return (u64)hpet_readl(HPET_COUNTER);
->>  
->> +	/*
->> +	 * Read HPET directly if panic in progress.
->> +	 */
->> +	if (unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID))
->> +		return (u64)hpet_readl(HPET_COUNTER);
->> +
+On Sun, May 26, 2024 at 11:01=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> There is literally one other piece of the code in the kernel doing
-> something similar: the printk() implementation.  There's no other
-> clocksource or timekeeping code that does this on any architecture.
+> On Fri, May 24, 2024 at 4:52=E2=80=AFPM Wang, Weilin <weilin.wang@intel.c=
+om> wrote:
+> >
+> >
+> >
+> > > -----Original Message-----
+> > > From: Namhyung Kim <namhyung@kernel.org>
+> > > Sent: Friday, May 24, 2024 4:17 PM
+> > > To: Wang, Weilin <weilin.wang@intel.com>
+> > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > > <mingo@redhat.com>; Alexander Shishkin
+> > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; H=
+unter,
+> > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.co=
+m>;
+> > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylo=
+r, Perry
+> > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Big=
+gers,
+> > > Caleb <caleb.biggers@intel.com>
+> > > Subject: Re: [RFC PATCH v9 4/7] perf stat: Plugin retire_lat value fr=
+om sampled
+> > > data to evsel
+> > >
+> > > On Tue, May 21, 2024 at 10:40=E2=80=AFAM <weilin.wang@intel.com> wrot=
+e:
+> > > >
+> > > > From: Weilin Wang <weilin.wang@intel.com>
+> > > >
+> > > > In current :R parsing implementation, the parser would recognize ev=
+ents
+> > > with
+> > > > retire_latency modifier and insert them into the evlist like a norm=
+al event.
+> > > > Ideally, we need to avoid counting these events.
+> > > >
+> > > > In this commit, at the time when a retire_latency evsel is read, se=
+t the retire
+> > > > latency value processed from the sampled data to count value. This =
+sampled
+> > > > retire latency value will be used for metric calculation and final =
+event count
+> > > > print out.
+> > >
+> > > I'm confused.  Do you mean you don't count the event with 'R' modifie=
+r
+> > > (w/ perf stat) and just print the (average) retire latency (from perf=
+ record)?
+> >
+> > In metric formulas, event without 'R' modifier is included as a normal =
+event already.
+> > So we don't need to count the event that with 'R' modifier. They only n=
+eed to be
+> > sampled.
 >
-> Why doesn't this problem apply to any other clock sources?
+> Oh, you have the event in the metric expression twice.  I thought of one.
+> Then IIUC the metric looks something like this.
+>
+>   myevent1 + (myevent2 * myevent1:R)
+>
+> I think you'll have 2 myevent1 in perf stat and 1 in perf record, right?
+> But the second one in perf stat is never used and the value is updated
+> from perf record.
+>
+> Then we can simply remove the event from the evlist (or replace it with
+> a dummy) to reduce the overheads (of open and read).
+>
+> >
+> > >
+> > > >
+> > > > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> > > > ---
+> > > >  tools/perf/arch/x86/util/evlist.c |  6 +++++
+> > > >  tools/perf/util/evsel.c           | 44 +++++++++++++++++++++++++++=
+++++
+> > > >  tools/perf/util/evsel.h           |  5 ++++
+> > > >  3 files changed, 55 insertions(+)
+> > > >
+> > > > diff --git a/tools/perf/arch/x86/util/evlist.c
+> > > b/tools/perf/arch/x86/util/evlist.c
+> > > > index b1ce0c52d88d..cebdd483149e 100644
+> > > > --- a/tools/perf/arch/x86/util/evlist.c
+> > > > +++ b/tools/perf/arch/x86/util/evlist.c
+> > > > @@ -89,6 +89,12 @@ int arch_evlist__cmp(const struct evsel *lhs, co=
+nst
+> > > struct evsel *rhs)
+> > > >                         return 1;
+> > > >         }
+> > > >
+> > > > +       /* Retire latency event should not be group leader*/
+> > >
+> > > Hmm.. why?
+> > Because we don't want to count them. Make them the group leader would n=
+ot work.
+>
+> I don't understand.  You'll read the event regardless of being a
+> leader or not.
+>
+> >
+> > >
+> > > > +       if (lhs->retire_lat && !rhs->retire_lat)
+> > > > +               return 1;
+> > > > +       if (!lhs->retire_lat && rhs->retire_lat)
+> > > > +               return -1;
+> > > > +
+> > > >         /* Default ordering by insertion index. */
+> > > >         return lhs->core.idx - rhs->core.idx;
+> > > >  }
+> > > > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > > > index a0a8aee7d6b9..4d700338fc99 100644
+> > > > --- a/tools/perf/util/evsel.c
+> > > > +++ b/tools/perf/util/evsel.c
+> > > > @@ -58,6 +58,7 @@
+> > > >  #include <internal/xyarray.h>
+> > > >  #include <internal/lib.h>
+> > > >  #include <internal/threadmap.h>
+> > > > +#include "util/intel-tpebs.h"
+> > > >
+> > > >  #include <linux/ctype.h>
+> > > >
+> > > > @@ -1523,6 +1524,40 @@ static int evsel__read_one(struct evsel *evs=
+el,
+> > > int cpu_map_idx, int thread)
+> > > >         return perf_evsel__read(&evsel->core, cpu_map_idx, thread, =
+count);
+> > > >  }
+> > > >
+> > > > +static int evsel__set_retire_lat(struct evsel *evsel, int cpu_map_=
+idx, int
+> > > thread)
+> > > > +{
+> > > > +       struct perf_counts_values *count;
+> > > > +       struct tpebs_retire_lat *t;
+> > > > +       bool found =3D false;
+> > > > +       __u64 val;
+> > > > +
+> > > > +       count =3D perf_counts(evsel->counts, cpu_map_idx, thread);
+> > > > +
+> > > > +       list_for_each_entry(t, &tpebs_results, nd) {
+> > > > +               if (!strcmp(t->tpebs_name, evsel->name)) {
+> > > > +                       found =3D true;
+> > > > +                       break;
+> > > > +               }
+> > > > +       }
+> > > > +
+> > > > +       if (!found)
+> > > > +               return -1;
+> > > > +
+> > > > +       /*
+> > > > +        * Only set retire_latency value to the first CPU and threa=
+d.
+> > > > +        */
+> > > > +       if (cpu_map_idx =3D=3D 0 && thread =3D=3D 0)
+> > > > +               val =3D t->val;
+> > > > +       else
+> > > > +               val =3D 0;
+> > > > +
+> > > > +       count->val =3D val;
+> > > > +       /* Set ena and run to non-zero */
+> > > > +       count->ena =3D count->run =3D 1;
+> > > > +       count->lost =3D 0;
+> > >
+> > > So here it seems you discard the actual count of the events
+> > > and replace it with the retire latency.  That means you don't
+> > > need to open the event in perf stat, and probably just have a
+> > > placeholder, right?
+> > >
+> > > Btw, I think it's better to move this logic to intel-tpebs.c file and
+> > > rename to tpebs_set_retire_lat().
+> >
+> > Ian wants this to be here and also suggested me to rename this function=
+ to
+> > evsel__read_retire_lat(). I'm ok with either way.
+>
+> I think it's better to have the tpebs logic together.
 
-I principle it applies to any clocksource which needs a spinlock to
-serialize access. HPET is not the only insanity here.
+I think the tpebs functions can be in a tpebs file. I'd rather have
+the retirement latency events (from the metric) be evsels for a few
+reasons:
 
-Think about i8253 :)
+1) I'd rather everything in a metric be evsels, so things like
+"num_cpus_online" should really be a tool event rather than a special
+literal kind of thing. I'd like to reduce special cases over time, in
+part as it should help with portability. For example, if only Intel
+x86 can parse :R then someone trying to parse an Intel x86 metric on
+ARM may get parser errors.
 
-Most real clocksources, like TSC and the majority of the preferred clock
-sources on other architectures are perfectly fine. They just read and be
-done.
-
-> Why should the problem be fixed in the clock sources themselves?  Why
-> doesn't printk() deadlock on systems using the HPET?
-
-Because regular printk()s are deferred to irq work when in NMI and
-similar contexts, but that obviously does not apply to panic
-situations. Also NMI is treated special even in the HPET code. See
-below.
-
-> In other words, I think we should fix pstore to be more like printk
-> rather than hacking around this in each clock source.
-
-pstore is perfectly fine. It uses a NMI safe time accessor function
-which is then tripping over the HPET lock. That's really a HPET specific
-problem.
-
-Though what I read out of the changelog is that the MCE hits the same
-CPU 'x' which holds the lock. But that's fairy tale material as you can
-see in the patch above:
-
-  	if (in_nmi())
-  		return (u64)hpet_readl(HPET_COUNTER);
-
-For that particular case the dead lock, which would actually be a live
-lock, cannot happen because in kernel MCEs are NMI class exceptions and
-therefore in_nmi() evaluates to true and that new voodoo can't be
-reached at all.
-
-Now there are two other scenarios which really can make that happen:
-
- 1) A non-NMI class exception within the lock held region
-
-    CPU A
-    acquire(hpet_lock);
-    ...                 <- #PF, #GP, #DE, ... -> panic()
-
-    If any of that happens within that lock held section then the live
-    lock on the hpet_lock is the least of your worries. Seriously, I
-    don't care about this at all.
-
- 2) The actual scenario is:
-
-    CPU A                       CPU B
-    lock(hpet_lock)
-                                MCE hits user space
-                                ...
-                                exc_machine_check_user()
-                                  irqentry_enter_from_user_mode(regs);
-
-    irqentry_enter_from_user_mode() obviously does not mark the
-    exception as NMI class, so in_nmi() evaluates to false. That would
-    actually dead lock if CPU A is not making progress and releases
-    hpet_lock.
-
-    Sounds unlikely to happen, right? But in reality it can because of
-    MCE broadcast. Assume that both CPUs go into MCE:
-
-    CPU A                       CPU B
-    lock(hpet_lock)
-                                exc_machine_check_user()
-                                  irqentry_enter_from_user_mode();
-    exc_machine_check_kernel()    do_machine_check()
-      irqentry_nmi_enter();         mce_panic()
-      do_machine_check()            if (atomic_inc_return(&mce_panicked) > 1)
-        mce_panic()                     wait_for_panic(); <- Not taken
-
-        if (atomic_inc_return(&mce_panicked) > 1)
-            wait_for_panic(); <- Taken
-
-                                    ....
-                                    hpet_read()
-
-    -> Dead lock because in_nmi() evaluates to false on CPU B and CPU A
-       obviously can't release the lock.
-
-So the proposed patch makes sense to some extent. But it only cures the
-symptom. The real underlying questions are:
-
-  1) Should we provide a panic mode read callback for clocksources which
-     are affected by this?
-
-  2) Is it correct to claim that a MCE which hits user space and ends up in
-     mce_panic() is still just a regular exception or should we upgrade to
-     NMI class context when we enter mce_panic() or even go as far to
-     upgrade to NMI class context for any panic() invocation?
-
-#1 Solves it at the clocksource level. It still needs HPET specific
-   changes.
-
-#2 Solves a whole class of issues
-
-   ... while potentially introducing new ones :)
-
-   To me upgrading any panic() invocation to NMI class context makes a
-   lot of sense because in that case all bets are off.
-
-   in_nmi() is used in quite some places to avoid such problems. IOW,
-   that would kill a whole class of issues instead of "curing" the HPET
-   problem locally for the price of an extra conditional. Not that the
-   extra conditional matters much if HPET is the clocksource as that's
-   awfully slow anyway and I really don't care about that.
-
-   But I very much care about avoiding to sprinkle panic_cpu checks all
-   over the place.
+2) When we change from forking perf record to directly opening a
+sampling ring buffer then it makes sense that we use/update the
+evsel/evlist logic.
 
 Thanks,
+Ian
 
-        tglx
+> Thanks,
+> Namhyung
+>
+> >
+> > >
+> > >
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > >  static void evsel__set_count(struct evsel *counter, int cpu_map_id=
+x, int
+> > > thread,
+> > > >                              u64 val, u64 ena, u64 run, u64 lost)
+> > > >  {
+> > > > @@ -1530,6 +1565,12 @@ static void evsel__set_count(struct evsel
+> > > *counter, int cpu_map_idx, int thread,
+> > > >
+> > > >         count =3D perf_counts(counter->counts, cpu_map_idx, thread)=
+;
+> > > >
+> > > > +       if (counter->retire_lat) {
+> > >
+> > > if (evsel__is_retire_lat(counter)) ?
+> > >
+> > >
+> > > > +               evsel__set_retire_lat(counter, cpu_map_idx, thread)=
+;
+> > > > +               perf_counts__set_loaded(counter->counts, cpu_map_id=
+x, thread,
+> > > true);
+> > > > +               return;
+> > > > +       }
+> > > > +
+> > > >         count->val    =3D val;
+> > > >         count->ena    =3D ena;
+> > > >         count->run    =3D run;
+> > > > @@ -1778,6 +1819,9 @@ int evsel__read_counter(struct evsel *evsel, =
+int
+> > > cpu_map_idx, int thread)
+> > > >         if (evsel__is_tool(evsel))
+> > > >                 return evsel__read_tool(evsel, cpu_map_idx, thread)=
+;
+> > > >
+> > > > +       if (evsel__is_retire_lat(evsel))
+> > > > +               return evsel__set_retire_lat(evsel, cpu_map_idx, th=
+read);
+> > > > +
+> > >
+> > > I'm not sure if it works well with group event.  Probably that's
+> > > why you wanted to prevent group leaders.  But I guess you
+> > > can just check this after the PERF_FORMAT_GROUP, no?
+> > >
+> > > Thanks,
+> > > Namhyung
+> > >
+> > >
+> > > >         if (evsel->core.attr.read_format & PERF_FORMAT_GROUP)
+> > > >                 return evsel__read_group(evsel, cpu_map_idx, thread=
+);
+> > > >
+> > > > diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> > > > index bd8e84954e34..aaf572317e92 100644
+> > > > --- a/tools/perf/util/evsel.h
+> > > > +++ b/tools/perf/util/evsel.h
+> > > > @@ -303,6 +303,11 @@ static inline bool evsel__is_tool(const struct=
+ evsel
+> > > *evsel)
+> > > >         return evsel->tool_event !=3D PERF_TOOL_NONE;
+> > > >  }
+> > > >
+> > > > +static inline bool evsel__is_retire_lat(const struct evsel *evsel)
+> > > > +{
+> > > > +       return evsel->retire_lat;
+> > > > +}
+> > > > +
+> > > >  const char *evsel__group_name(struct evsel *evsel);
+> > > >  int evsel__group_desc(struct evsel *evsel, char *buf, size_t size)=
+;
+> > > >
+> > > > --
+> > > > 2.43.0
+> > > >
 
