@@ -1,172 +1,162 @@
-Return-Path: <linux-kernel+bounces-191959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E9B8D169B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933148D16A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 10:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20AE01C22A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66D01C2271A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D5D13C81B;
-	Tue, 28 May 2024 08:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FECB13C3F4;
+	Tue, 28 May 2024 08:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KlLyq18D"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="yNdi1PKY"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F9917579
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 08:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141517E8FC;
+	Tue, 28 May 2024 08:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716886011; cv=none; b=JSS1Q54fp+MzxEVyHMLLC51Hjly6me61bGc9JzQ463jDsGpA/oVaheOePpXk29UkRWt7RlUDaY0vz9R2qNHGeu4Y50vmcY+GQe0OqULsCHnSP8IH9qkoPb2swQNLHpW8YoziFnjcHTNwy3sf+TPmEC8zGYNbtxP1EueE1Oh6n/U=
+	t=1716886238; cv=none; b=VTY3VX8bOmPhwcGRfESyTLJ12B1BesM08I72cbjHEGugbQP/caN/fE/VWZqLcuEbFGMZWuRoiXLf8CfpV12D5T/zjJuZlfjb5y1YgnVxSu1YnLvLwFV+7W0J11c6WJnjiIQRA/S6mMUwT971ThZdDrQ4HXp0VMT8eXiDk6Im7AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716886011; c=relaxed/simple;
-	bh=n9JXDO9d89lLOoX/3AcBwiNztvp10tx+ANINuhLeIvA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g8g9H1urlS3rrDhTYYwKWrBw/vU6x97xxW22EUOic95uBrrzOJkZc85qNpCUJogZJAsK6X/+StxMtkg6ZygfN0PBBeYLlxTKQYEgT5YuAMezvrZBx9aNeE1qyLvz0gSaVEthl5gH1IMguGmiFOgR4cgYwhc/WbmEeDFk7ZjCZCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KlLyq18D; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35b6467754cso169142f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 01:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716886008; x=1717490808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uoPTkSstfWYikQCW+JvBw9OJ4aACkIS7xPQ45I1/spU=;
-        b=KlLyq18DPloVMghbfiA8n0g8MyCj9+FtcCu+h9+v+leaAPN9jBoqnGlETChQtVGHHE
-         PgLdkEYg4amSdcnZ5jP5tbkJgK8FW/xjVAUMGzz8kwZvcxMYkTYT0LEs2ThXwC1ZIa8g
-         K+0EJBQh8ITZBrpOgj7Z5ge3MmjPK+9DpHbGmH3yblqr2dzj1pjDbxi82kfctppdtrye
-         3hcqVzU5Fr4r/L84HG96E6Qly1GXqDU8JdmMnR3UK7H4JSi7M2GNM2RXSUMdHNVsW79e
-         ptEE1RXdDSTvCl7DfbbfZrFAtY0DuPxPC+tXNcAwlfHPIFDOW6y30qFc12fgb69Gjfoz
-         3/mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716886008; x=1717490808;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uoPTkSstfWYikQCW+JvBw9OJ4aACkIS7xPQ45I1/spU=;
-        b=TRCyESzDhBslprTCJ86bnpzVz2Ue4bolFUkhlS4FRfvMc5Xq/XSPdaqsq8powwz6qH
-         D6CjJ63IBBcNuQslxnilTodm6e05SSOul2aTHlCJ5w8lA/UmYVqAjTVC4G2nR3LqdXYj
-         TMNUyYGQbomSYHTJ1cMLDtSPDooRCKl3a8+KuZABt7Muy8HvCvxg9AXcxQmOwE+hSZ8z
-         bgrduoOQe9btphJbUH3yaFMOqNfpJS1DbD6B3aUGrEOlUSZuq1sfYkSM6nbtnB7MidWv
-         SSLThMgMOmt472KjiC/cmrppBd3lzGOI/fPexWsAQx8N6Jziq3WbSRZwsBN7ft7EPbqg
-         x92A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8BBF9X9n1Tkru+QpMobDGXvWQd/syVVeg0fdaQOi0yqDy9DG97VHYvYMp0wUmQy3jsK1HT294YAMjvl2zWF7aDrl8FxPNAC3dXcId
-X-Gm-Message-State: AOJu0YzLFP0+y3JZRm2ruVPONt6ox++r7Q6kt+yVR0gO1r8SIgODM+n/
-	LuxMKJw+hBfhnnbD3RXcArRI6RF/jEhsHygLKina2Y2uNxm94q3ZbxSO7dQF8E4=
-X-Google-Smtp-Source: AGHT+IHeh7vF7KnRorjGCeQhv0h5uhIs1a7fiuao8jvp6p4jUUN7Bs3ltOy//i/SKrOI4IqXAveejQ==
-X-Received: by 2002:adf:f909:0:b0:352:e4d5:5e12 with SMTP id ffacd0b85a97d-35526c2b7c6mr7551225f8f.20.1716886007402;
-        Tue, 28 May 2024 01:46:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8f19:f965:3f93:6385? ([2a01:e0a:982:cbb0:8f19:f965:3f93:6385])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35607bcdf26sm10980087f8f.99.2024.05.28.01.46.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 01:46:47 -0700 (PDT)
-Message-ID: <c97b12bb-8b56-4129-a292-588226a0ec42@linaro.org>
-Date: Tue, 28 May 2024 10:46:46 +0200
+	s=arc-20240116; t=1716886238; c=relaxed/simple;
+	bh=BblAZuAEPd+Twh5i+qyTAhKdPmRL/pgrlP0i6GJFcKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDiR5A+mCPROc3yhZsAJik0cd9DAsuvN7AJvIne9ZyHvPYzxQofAUkpqATjxkMP9Wk+y8YFL1ker52K5Pqxh0R2yZ1pxzw3HX7RWxKFemC/CkjrPEyljRYhYNzzYZQhX2+tVLVDuVd8OGkvz1JKDf+NxULoM0jqiC5D+ts0bFIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=yNdi1PKY; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9Zc40UHqT1754C4pJY6oNIU+MZfNpaKujrXSA577kL8=; b=yNdi1PKYWNcTFuoSzspqPk5xNq
+	x4NK2sflqhRY1Tv/Js1Id2NALZtTG8aZXD4OqA93Sg/NigEU6RXToSVRAuPfbTcY6hVHvBvLbvIY+
+	yHI+hL53VfUVetEystcnlWb9L+5rVdTKIzy7nfOX/KmhW+srYxaCoYV84ItPX4NB4iwrv57O1IPKt
+	pqfzojbmNC4KfMufsmcOP8HB9hihCtg1NNwfE9J7k4pYnlUuU+ilH4I93GrDJcMHKnJJ+MqW4mje6
+	VpV+sHY+qEXh4PssDJSMubUn8XUkr3V/6RHxzdbziF0Jwcrr+dlrjehSzJ5JRxwTB9FkX2hw5E+W5
+	g+KnwOzw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50462)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBsXJ-0004Ui-0J;
+	Tue, 28 May 2024 09:50:25 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBsXJ-000389-K4; Tue, 28 May 2024 09:50:25 +0100
+Date: Tue, 28 May 2024 09:50:25 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Michael Nemanov <michael.nemanov@ti.com>,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH wireless] wifi: wlcore: fix wlcore AP mode
+Message-ID: <ZlWa0dJ7eIvcpU9c@shell.armlinux.org.uk>
+References: <E1sBsK3-00E8Uo-Ab@rmk-PC.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: a4: add power domain controller
- node
-To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240528-a4_secpowerdomain-v1-0-2a9d7df9b128@amlogic.com>
- <20240528-a4_secpowerdomain-v1-3-2a9d7df9b128@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240528-a4_secpowerdomain-v1-3-2a9d7df9b128@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E1sBsK3-00E8Uo-Ab@rmk-PC.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 28/05/2024 10:39, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On Tue, May 28, 2024 at 09:36:43AM +0100, Russell King wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
 > 
-> Add power domain controller node for Amlogic A4 SoC
+> Using wl183x devices in AP mode with various firmwares is not stable.
 > 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi | 4 ++++
->   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        | 5 +++++
->   2 files changed, 9 insertions(+)
+> The driver currently adds a station to firmware with basic rates when it
+> is first known to the stack using the CMD_ADD_PEER command. Once the
+> station has finished authorising, another CMD_ADD_PEER command is issued
+> to update the firmware with the rates the station can use.
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> index b6106ad4a072..eebde77ae5b4 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> @@ -27,6 +27,10 @@ xtal: xtal-clk {
->   		#clock-cells = <0>;
->   	};
->   
-> +	sm: secure-monitor {
-> +		compatible = "amlogic,meson-gxbb-sm";
-> +	};
-> +
->   	soc {
->   		compatible = "simple-bus";
->   		#address-cells = <2>;
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> index 73ca1d7eed81..917c05219b9c 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> @@ -37,4 +37,9 @@ cpu3: cpu@3 {
->   			enable-method = "psci";
->   		};
->   	};
-> +
-> +	pwrc: power-controller {
-> +		compatible = "amlogic,a4-pwrc";
-> +		#power-domain-cells = <1>;
-> +	};
-
-pwrc is supposed to be a child of secure-monitor.
-
-Neil
-
->   };
+> However, after a random amount of time, the firmware ignores the power
+> management nullfunc frames from the station, and tries to send packets
+> while the station is asleep, resulting in lots of retries dropping down
+> in rate due to no response. This restricts the available bandwidth.
 > 
+> With this happening with several stations, the user visible effect is
+> the latency of interactive connections increases significantly, packets
+> get dropped, and in general the WiFi connections become unreliable and
+> unstable.
+> 
+> Eventually, the firmware transmit queue appears to get stuck - with
+> packets and blocks allocated that never clear.
+> 
+> TI have a couple of patches that address this, but they touch the
+> mac80211 core to disable NL80211_FEATURE_FULL_AP_CLIENT_STATE for *all*
+> wireless drivers, which has the effect of not adding the station to the
+> stack until later when the rates are known. This is a sledge hammer
+> approach to solving the problem.
+> 
+> The solution implemented here has the same effect, but without
+> impacting all drivers.
+> 
+> We delay adding the station to firmware until it has been authorised
+> in the driver, and correspondingly remove the station when unwinding
+> from authorised state. Adding the station to firmware allocates a hlid,
+> which will now happen later than the driver expects. Therefore, we need
+> to track when this happens so that we transmit using the correct hlid.
+> 
+> This patch is an equivalent fix to these two patches in TI's
+> wilink8-wlan repository:
+> 
+> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0004-mac80211-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
+> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0005-wlcore-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
+> 
+> Reported-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Co-developed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>"
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
+Please note that this patch fixes just one of the issues with the
+driver. There remains other firmware bugs that make AP mode
+unreliable. For example:
+
+When a station, e.g. a phone, moves out of range of the AP, and the
+station is in power saving mode, packets become stuck in the transmit
+queue. With additional debugging added to the driver:
+
+Unable to flush all frames for station xx:xx:xx:ee:11:fe for hlid 3
+FW time: 1675524181
+ Frame 0: expires 1394140264 MAC xx:xx:xx:ee:11:fe FC 17032
+ Frame 1: expires 1394264633 MAC xx:xx:xx:ee:11:fe FC 17032
+
+These packets get removed by the firmware when the peer is removed.
+However, if the broadcast hlid was in power saving at the time, then
+it appears the broadcast hlid gets similarly stuck, leading to the
+entire network eventually falling over due to the AP effectively
+blocking broadcasted ARP requests.
+
+I can find no way around this - and I suspect there is some kind of
+refcounting bug in the firmware when told to remove a peer which has
+queued packets.
+
+My best workaround for this at the moment is to monitor the state of
+the driver via debugfs, and when this problem presents, to take the
+AP down and bring it back up, restarting the firmware (but has the
+effect of kicking all connected devices off the network.)
+
+Another workaround for is to turn wifi off on the phone before moving
+it out of range!
+
+I will attempt to get captures of the network at some point - both
+from the packets at the AP network interface, but also the radio
+side as well.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
