@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-191585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592AC8D1124
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:49:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D998D1127
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148A1282777
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499261C21340
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041ED8828;
-	Tue, 28 May 2024 00:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5F679F6;
+	Tue, 28 May 2024 00:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tv63kLm7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jY1WPWFT"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEF31C2E;
-	Tue, 28 May 2024 00:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C673E567D;
+	Tue, 28 May 2024 00:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716857359; cv=none; b=GNV3ijDBsb3eaPlPaSLqxGposSqjV7Sb9Dz0V9d83aIOekX3EDYY2qng+ucsAAC8fzo1S3LKHsznZ/li6iyKlElz/8GH5Kz6nvMMPNkp5BMnyT6bN8zFZ2y5IQiknPFar+9ONXsGOcyv2W5ZMI2sCotLGBIj5T1SBKbxgb5y8qs=
+	t=1716857537; cv=none; b=V14CsFVqId/FTAh2yxVDQQFDmtrQv/zopHtMg6VAnmz4l2ClMrcX5tIHP0BQHLflKrc7aNb6eLBcWItbNcZSI4IvmGR1JyT/5SqwIcl5WdC5Hu6Qep/uqGeSOAdDkxUtolWeaAZjfyWEKFwGJGOhtroTgZHQFC+6YC0vAN7rjYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716857359; c=relaxed/simple;
-	bh=RJxU6eHHxNfxsfX4TpJxNQ/F7FNVq59gHNT9ZrGbZRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UGku8KeMFFNOn363oJT7EA5fzj3cFu1jlvrG5JSML0Fik8JeUUAXwYidF5+f6FltYgsi6/hAOGa+ByjXyh4yPDv8poXjC1CEVLsaOF2UouXunTh1MDjCpHEpAun7bkH9GJVhjEl8RGw+0XfzZnylEWiWNV2lb5QkKJn+FmOJXOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tv63kLm7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716857350;
-	bh=7JzxRW3lXmOQKK3X3eV3YKtEAHCRxG2SCnhpUK14RWc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Tv63kLm7SynllbTZ2rBXZ4/j7bfk2MQqy5wfOiO/1SfnZixSV2dgEIm/FoKiQ3IVV
-	 kfAQtWqEVBdjOXM3uTgzitnl+hBVbds3IB+EX7KXjAUyYMgZCaDbPxAr4jULS54YkV
-	 X40rHEQ8t/Yl6tAMGzCc2T0ZKKBAJLUYRLsBNLgC8sbj/6BGyZ561K7RBMPY0YScUw
-	 A9pn6wugaphQqIMOqNSxJl+YDCUlFtwoMP/MZaE08QTWh2lPhK7aj9m6OLfjKY1czs
-	 Y9fAOZLbSFxGdy08FB60WHJ6YaZSc6xV/TuWTKxSo3M3fTyVELpH1HBpBJ1xerOzdr
-	 mSgSjOAzhLr9Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VpDRS4jCBz4wcq;
-	Tue, 28 May 2024 10:49:07 +1000 (AEST)
-Date: Tue, 28 May 2024 10:49:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christian =?UTF-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>, Arnd
- Bergmann <arnd@arndb.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20240528104905.58195cbe@canb.auug.org.au>
+	s=arc-20240116; t=1716857537; c=relaxed/simple;
+	bh=9+qOsB9FSNnYMqlHWCWdG4w7SSawX6wzhQpUTixM48c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QArYZ+X0Csu3ZbGTXlFqTIGZHzt1BusllswUx7LJrSB8C7Bmgyk6uu83r3vXAhZn9AXG0mgfW/q+M6ZCqonz1ybn8yantRFVkB4wQE5vYxfViilaaWJwt/lIg/1kg/ia4Cf5gqxonmkXuEnyzl10OK0fzchgaJa+6RUwQMOzMeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jY1WPWFT; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f8edff35a0so203117b3a.2;
+        Mon, 27 May 2024 17:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716857535; x=1717462335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKtUwdzLUJXl8/4cripzbl/ic6G89sQMgX/ixX4R4Js=;
+        b=jY1WPWFTBqfNEY05HR6thIXHSdRjfxS+tAJBn3dKeX/BH8K2HnZYdm5VjoIZqEXK2+
+         mY/1N9L5EZEsXm7lCCJFSFHjlEPvpkLfj+sFDfV+e19FNvEIJL7AiAQO+Hito39+3qmI
+         S7VWwaM0+uuuYzXnOd9umQGvBgeXCuk1jAKtuUsHLcHerFXVfHeA2eM5o8nXaxmUln6F
+         Gm8btTnM/as1v39T9o3fB8pEH2pmSSHpFvJks0p2pX40+jUEQlThih0vUhkLhaTHckmV
+         59zgQW1sDb7H1RsXvdq09KEr+Yp4JwhnHj6TpUh3LdHmtAD+cF7y/X3+rfV30PyuwJQW
+         Db6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716857535; x=1717462335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xKtUwdzLUJXl8/4cripzbl/ic6G89sQMgX/ixX4R4Js=;
+        b=bBIzfk4GZM38hjr1Xb4XfZfdTr9HJBWUoO6LqT9mp8lkjqi2F3z7Eff7AwEQ1MNewu
+         cAEWj8LkuPfThAR2OsAIJ0JxptXmKg44rtzTB/s/ilgcFfqSQKHp7Lqp+XRO+LTtxUF7
+         PEpl3mCRPWFyo25PWDCgXezBZpydjeOtgaNoEMLYss6IUC3Lq19bMfjgTLaO1e8Q4NxA
+         iyLJHM26++5RHGSfEVDDwiMfZIOMhZw89QPF9VqKy6MyosdQrZY03nEdSUcnhEqKM9vn
+         tcJ/HszU2w4B23vaHb1jF3lnNK15hIXd8/EchQMLFoEsLsIalbuXd7OjpDJUuz//Zix6
+         q/Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWdkLG5XaZeOj//0dSUd8vsBX78+PKL2pky/GArKgValQr84cYl6TQbAY2sBGKhnb/scjKGeknhd/hBBOK7OYTRCLPiPsF7GAnISFdZn/ixMTlQLGIY4+xJvdGYVfMRDbKmz2WJze2iWlNvGqsQvJg
+X-Gm-Message-State: AOJu0YygCwYtS9BbCx/pnrP0uiPdfBQ7KXTuYisDeUitByfuTqMsFfYv
+	cMjTSzcxrXMpcd3oO0xX9CIXi5qLE+FtPHgmZY6eGN6SR938Bq6e
+X-Google-Smtp-Source: AGHT+IE4E7rd5wzO8Nd1wpUKWwCoxuJHSFGEyVVAh+SKJOMa1mdo0uTscwPpsuXucDX/Z+DNaqACQA==
+X-Received: by 2002:a05:6a00:f09:b0:6ed:41f3:cd06 with SMTP id d2e1a72fcca58-6f8f2a49069mr9672232b3a.7.1716857535009;
+        Mon, 27 May 2024 17:52:15 -0700 (PDT)
+Received: from mari.. ([2804:431:cfd2:68a4:aa72:2951:3a48:ba9b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcfe64e0sm5401775b3a.160.2024.05.27.17.52.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 17:52:14 -0700 (PDT)
+From: MarileneGarcia <marilene.agarcia@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: MarileneGarcia <marilene.agarcia@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] ftrace: adding the missing parameter descriptions of unregister_ftrace_direct
+Date: Mon, 27 May 2024 21:50:46 -0300
+Message-Id: <20240528005046.3778431-1-marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/G5Ibqwo+HeN8=QY6npCBU.g";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/G5Ibqwo+HeN8=QY6npCBU.g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Adding the description of the parameters addr and free_filters
+of the function unregister_ftrace_direct.
 
-Hi all,
+Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
+---
+Hello, 
+These changes fix the following compiler warnings of the function
+unregister_ftrace_direct.
 
-After merging the vfs-brauner tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+The warnings happen using GCC compiler, enabling the ftrace related 
+configs and using the command 'make W=1'.
 
-fs/xattr.c: In function '__do_sys_setxattrat':
-fs/xattr.c:709:61: warning: cast to pointer from integer of different size =
-[-Wint-to-pointer-cast]
-  709 |         return do_setxattrat(dfd, pathname, at_flags, name, (const =
-void __user *)args.value,
-      |                                                             ^
-fs/xattr.c: In function '__do_sys_getxattrat':
-fs/xattr.c:855:61: warning: cast to pointer from integer of different size =
-[-Wint-to-pointer-cast]
-  855 |         return do_getxattrat(dfd, pathname, at_flags, name, (void _=
-_user *)args.value, args.size);
-      |                                                             ^
+kernel/trace/ftrace.c:5489: warning: Function parameter or struct member
+'addr' not described in 'unregister_ftrace_direct'
 
-Introduced by commit
+kernel/trace/ftrace.c:5489: warning: Function parameter or struct member 
+'free_filters' not described in 'unregister_ftrace_direct'
 
-  89345b0ac5ac ("fs/xattr: add *at family syscalls")
+ kernel/trace/ftrace.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 65208d3b5ed9..6062e4ce1957 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5475,6 +5475,8 @@ EXPORT_SYMBOL_GPL(register_ftrace_direct);
+  * unregister_ftrace_direct - Remove calls to custom trampoline
+  * previously registered by register_ftrace_direct for @ops object.
+  * @ops: The address of the struct ftrace_ops object
++ * @addr: The address of the trampoline to call at @ops functions
++ * @free_filters: non zero to remove all filters for the ftrace_ops
+  *
+  * This is used to remove a direct calls to @addr from the nop locations
+  * of the functions registered in @ops (with by ftrace_set_filter_ip
+-- 
+2.34.1
 
---Sig_/G5Ibqwo+HeN8=QY6npCBU.g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZVKgEACgkQAVBC80lX
-0GxHSQgAk6kBCv1ymdgyTV1MXOrrosPlW+LK/dlJjmefEN/eTYvJdwDTRGGjWFzX
-6cl4lSBgIzlFJcYHm91I9iWI0nIpffy/zQBXK7uqLVoL9H/s86FD2NDWzvzLVuxj
-KJpKfexlO9ax5JAtq+GNmwYkLJFU6I7o4ES9gbKFdZOY51KK2R2NLWZ7gEqIJbca
-rs+iNQt5lqAMPu3T6g8vXvTG5B0eGWK52CfA8D6GcouwFySGyhv/yIGYqeHB4cf3
-Fo//7Xc7miWqWBdcprZ22aF3B7NyKVcTga+a9HzG707W909XJmlziXQjBZigqi1r
-7+3QZxniYzuuVT9kWxr3RD4sk8cbpQ==
-=tfRp
------END PGP SIGNATURE-----
-
---Sig_/G5Ibqwo+HeN8=QY6npCBU.g--
 
