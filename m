@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-193182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-193183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FBD8D2807
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7158D280B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2024 00:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B071F263DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322781F26411
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 22:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6123713E034;
-	Tue, 28 May 2024 22:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AA913E055;
+	Tue, 28 May 2024 22:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yppp7EZj"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVCvnonH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567AB8F49;
-	Tue, 28 May 2024 22:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671B98F49;
+	Tue, 28 May 2024 22:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716935422; cv=none; b=kGaAVfcuiPNMZtvjGPtwBknmD3R9n+X0YUlkGgQZ5rF7Y90JysoIJ0ebkck4Sz6KAepRtcgf3aYOMeMe8Mq/NGA/jbbo962oU+vasHafW1FeVUHdZ9q1MJ7VCpy7ka9iCZIanXIn5izLmeTmaFpEJEA8KAEfpqPtiy9MpF79dSQ=
+	t=1716935508; cv=none; b=DNXhhLpt5AJ4utqp8xjUfeGAFgpEjLF6VpVVOdHA6ng7QpRMsbCQDwK+eccgnkTOct770i9otctkb1iqeBq4yaE7JIWCbGjS83C32DtVoAyYuPOaxXi1C4RGJ3esZPvUA0fEIMrYL3UbK1C7786KtbxFG2sjeDIsa6Wdr0pt3f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716935422; c=relaxed/simple;
-	bh=woIZt6yvU8XlK4yGOl4xSfL72qMsG85XvTU6W0oFtAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQ3/nFrAI3XsrpHsfOVpbjBHfC1hJMoZVU5YMAPLG9/RLJ8fTiv2JuQqaGZfT4QYbV1TULrhKMlc/jjCTQmS+F+ESVX7cJmKaT0Ms8UbHw/7YE3802m58vJ0Bhs61i8PtQzzaNtvK9u3BUyOkjlB7OCANWaFyE/vWKgsmPZt294=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yppp7EZj; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f8e819cf60so1159400b3a.0;
-        Tue, 28 May 2024 15:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716935420; x=1717540220; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eNV0OLj7JMDhtZ28BPp3v4YifVkqJBF8MadCRS/sAeM=;
-        b=Yppp7EZjmfZEcEq5fEOrh+IX9/LSRoWFBBKCIQ1ZUkyS9WxW+rsC9V7o78fY7Kbbqj
-         y7+01ZA7TVXD2LvG8w8xC2HpTzgxgrWIsXrB+0lPHx+4sAjEqBof43fYX7+y/0nCGIxv
-         XYNjameK+hRsLamuLYBN+D1o7oa3hykR0Qt1ivF1lqahFJ97t02H2Tgfvh4CPrwDmkCO
-         mDcl5bR0RgBUPrEucG6gaqamzFU3slX+6Ms/YDVOvVyUo9fyfX4DN8Ed4L6yTTYtDgY4
-         69jOF3gfZIa5NmwPgCTl8XpfDzWIFU+kdZdziyih4625WnwqQA2gHu76aWjukjdRcq42
-         d71w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716935420; x=1717540220;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNV0OLj7JMDhtZ28BPp3v4YifVkqJBF8MadCRS/sAeM=;
-        b=AOc9wEg7o6cewTFzxg1Zc88xc0erg94PVDZkZLvtJQ1kzTKvA9vYFAYF7i+q9cqn+d
-         gvVSxKw6Buc5q5PFvOkkOGBay80u5i8eMW++4H1cQzpFp1xBBkSvlGggjS5XeQt7OGyI
-         JSD88z7vATXZsXZAEYhbRFxAJmyUy9LtgLWYT3LCA7ruv71OYhdW5k9Hgbw9/+SkdWm5
-         4yG5uhCB1MjhSOuUGcn6tzz/RnJLvw9tYoHzlPDSCeApIPbMPBpza+5AY/TuBj/HWj0o
-         msfM4lfCJ5ghSDX5e7zQP0Lf1cNEA9HkKZOhMPxXUCjbauyZqZ7MR4NIyXh1HakwQAhN
-         ZDEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpLDqfLgNdmHbBlJ40/jKDjpaqEkaNBiPgwguZe/XIJaS2GH3JFt9N0keD1KwezVqNCHmxSR/Pt5wONZZnUbcluxW2vF4eAYhaXw0VqYLCTVg6BF4Z97YVvtjM9HAXIzx8e7LyXQ==
-X-Gm-Message-State: AOJu0YzRrXFvrOZonAwYXcxzSj39eeRQ5/SOes64S1ncI+UQy2nzULjM
-	yuelTxEsdNBzqUQYbI8ZOdPWQLezAhG5P+r8qA2z3AkPnoeHL92d
-X-Google-Smtp-Source: AGHT+IGyKTwgMik12f9X37/YFrx4KXHd9pkJBGV7UOCb0Hews4T6Aw8W7TJqsJKM5lWGGl0lUiMMbg==
-X-Received: by 2002:a05:6a00:3698:b0:6ea:e2d2:5e68 with SMTP id d2e1a72fcca58-6f8f3d706demr20349846b3a.27.1716935420518;
-        Tue, 28 May 2024 15:30:20 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc15b169sm6923006b3a.75.2024.05.28.15.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 15:30:20 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 28 May 2024 12:30:18 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: "T.J. Mercier" <tjmercier@google.com>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cgroup: Fix /proc/cgroups count for v2
-Message-ID: <ZlZa-j3Q8UqL84Zh@slm.duckdns.org>
-References: <20240528163713.2024887-1-tjmercier@google.com>
- <ZlYzzFYd0KgUnlso@slm.duckdns.org>
- <zrvsmkowongdaqcy3yqb6abh76utimen5ejrnkczd4uq3etesl@jv3xb4uso4yk>
+	s=arc-20240116; t=1716935508; c=relaxed/simple;
+	bh=2tvp4ALV98F8ntrfFbB0RTWjKg+x73NToh4KDsv8yLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QFank3dqxALTi8EHP7wW+swOiEQNZ+bEP41KPyaimQAZombbWyO1BPUVlzqZkNck06VDF68abAUx/tVefgLtjCrEZBmIM4mWLnvcDOz5//YPm3pH3Tk86HXqlhaAdeKoaRFcRYw4giAg6TBJbMUGuEMchysovdG8RG+DmMzQQHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVCvnonH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDAFC3277B;
+	Tue, 28 May 2024 22:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716935507;
+	bh=2tvp4ALV98F8ntrfFbB0RTWjKg+x73NToh4KDsv8yLI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RVCvnonHvbTAKaQ3IOfXjIFrz98p6w31jApG/4vdbHP6eixh96BKMqSdMMttdqKMn
+	 TvmixPInKMfHEnGgzJhMZjHWImkjt+W91oeXHB+MujcM60zzkF2GNeK+PLxCLNb7oW
+	 r3g2uG3sdG+FZ8IbuseE4s3wewY8/RriRfqN1R7ue/SbYh+kIXSS73aTJhUj1IgACS
+	 pWC+IK3+jLefQlmU6DSTBFPdenHK7dpG0cX9DGAVpjmiMRt2of1SRsDoehMgNs2ylT
+	 F501bB/f6f20CVd4ZakfMDoDBuvM9Yu/9VNvbdTp1szh3pCDXfBZLXpIKAGI3lWrkl
+	 q7UHGCzkdIbrg==
+Date: Tue, 28 May 2024 17:31:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 00/12] PCI: imx6: Fix\rename\clean up and add lut
+ information for imx95
+Message-ID: <20240528223136.GA473846@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <zrvsmkowongdaqcy3yqb6abh76utimen5ejrnkczd4uq3etesl@jv3xb4uso4yk>
+In-Reply-To: <20240528-pci2_upstream-v5-0-750aa7edb8e2@nxp.com>
 
-Hello,
-
-On Tue, May 28, 2024 at 11:42:13PM +0200, Michal Koutný wrote:
-> On Tue, May 28, 2024 at 09:43:08AM GMT, Tejun Heo <tj@kernel.org> wrote:
-> > I agree that this can be a useful metric but am not sure /proc/cgroups is
-> > the right place to put it. Its use of v1 controller names, listing of
-> > controllers that don't exist in v2 and the unnecessary column are rather
-> > ugly and unnecessary.
+On Tue, May 28, 2024 at 03:39:13PM -0400, Frank Li wrote:
+> Fixed 8mp EP mode problem.
 > 
-> At the same time, the info provided currently is incorrect or at least
-> misleading (when only v2 hierarchy is mounted, it mixes the counts) --
-> that's what T.J.'s patch attempts to rectify in my understanding.
+> imx6 actaully for all imx chips (imx6*, imx7*, imx8*, imx9*). To avoid     
+> confuse, rename all imx6_* to imx_*, IMX6_* to IMX_*. pci-imx6.c to        
+> pci-imx.c to avoid confuse.                                                
+> 
+> Using callback to reduce switch case for core reset and refclk.            
+> 
+> Add imx95 iommux and its stream id information.                            
+> 
+> Base on linux-pci/controller/imx
 
-Yeah, I was hoping to phase out that file once folks are all on v2.
+This applies cleanly to the pci/controller/gpio branch, which has some
+minor rework in pci-imx6.c.
 
-Thanks.
+When we apply this, I think we should do it on a a pci/controller/imx6
+branch that is based on "main" (v6.10-rc1).
 
--- 
-tejun
+I can resolve the conflicts with pci/controller/gpio when building
+pci/next.
+
+Bjorn
 
