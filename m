@@ -1,54 +1,49 @@
-Return-Path: <linux-kernel+bounces-191524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CA68D10AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 01:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B918B8D10B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 02:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498E01C21965
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2024 23:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DDB281273
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 00:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8A8139D11;
-	Mon, 27 May 2024 23:57:42 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D448813D29B;
+	Tue, 28 May 2024 00:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1loUf65"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9341817E912
-	for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1293713C807;
+	Tue, 28 May 2024 00:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716854261; cv=none; b=L0J04w5DXepgBfXtDTMIRoh4aYh6Dzexf8n3KAOeHSvLcInjvDzlnIgFUSX4DMvtSgSmew8wyhcTqXAncdr8RorfKLeQApfDkFCJDDDqAVtfJF2Jmo2GNvGzjhT/UHmQ7OaR7Rx8dMHnNZRBXfO5gZf1DHf1EydDdF2OYYx0inE=
+	t=1716854431; cv=none; b=bNYxJYzvRDvoNmZw378haFGNzjV0u95GHENu3ng5ZxtZhRPvK455y+k6n2ywqjv4WF3GFV0Tuz3Ywa5OafXxKCgB6f5ElMeKFjq9f7w0TJnwjiZZL0CT8Wn8CWMtg6r6HUsVuyWOWf+7+WCQgImXgCY4j6aQyD5canPsMmTuGH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716854261; c=relaxed/simple;
-	bh=eBy7/C2nvx6ptlpgjMKipDZUULm3tHFWinQpj/iOXzs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mFJCx/pic6rOhCrDNvoQwEpvEuKFRaEFa53uB7/f6esunqhWDFTfqf09VXQ0rJy1IvTwNdXFTlqI1luM5H+EBHUo53Ng5nPMsVa2U+qcBVHsGDFjYXPomeFm04fj6u4G0/zeGvfeCQBmrRQGT7i6zytC8T0B2O/MlztgurNxah4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.66.255])
-	by sina.com (172.16.235.24) with ESMTP
-	id 66551DEA000074B0; Mon, 28 May 2024 07:57:33 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 12261845089259
-X-SMAIL-UIID: 3EDD15FBE5E74D039590144CA24D506A-20240528-075733-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-Date: Tue, 28 May 2024 07:57:21 +0800
-Message-Id: <20240527235721.2643-1-hdanton@sina.com>
-In-Reply-To: <000000000000f386f90616fea5ef@google.com>
-References: 
+	s=arc-20240116; t=1716854431; c=relaxed/simple;
+	bh=KnOCp2qhtwB51yC8a+Iale1moRumwnl3EQ9O+oTkxCM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ejSmpyC0ci+1Stvmswg2c7CAl78wKgqDj6sOJAfIepU9r1O3O176+BUJYuDuQBJi5wiNnZFbl00LJc7kjOidBy5A93AriGGwClokgQNGD1Kly5X9DppEj2FutxVCu3fjIdpuYPIfDDpbbG/QWJhp9FKLrS1ExSZQyoq6dy0589w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1loUf65; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 57F70C32789;
+	Tue, 28 May 2024 00:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716854430;
+	bh=KnOCp2qhtwB51yC8a+Iale1moRumwnl3EQ9O+oTkxCM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=j1loUf655B/12OXxmz6XPk1DzVfz+SJQkxtzId1vXSOuCaGKIj2udpntUcyywQc3E
+	 NpqrQEfcE3rCVGqHE/mWnUeXUWuyModqdUSEA7JYsAs89XnMMjcm+0koEuMYDKRNcY
+	 oofkqkWTsJS5LFtMZOaHCBa+iv7ZWvPIcfJptNU/3twSW8cqDLJzN6zEaVmNJ9b2XI
+	 bwyFW7AWZuhbJAT5N/7cwjg18bLpjy03WgPpeh/NmFsuPffmWYe1nSgZ1ZjUgasPyo
+	 3AZKaqkVwnt9wv31KK36JyjVOIMCp+DE3jCY1GxFxPuw19uywQddfBCUEFiVFXGQM5
+	 75uT42PW+voVQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 41836D40196;
+	Tue, 28 May 2024 00:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,34 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] dt-bindings: net: pse-pd: ti,tps23881: Fix missing
+ "additionalProperties" constraints
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171685443026.27081.17116209068347534643.git-patchwork-notify@kernel.org>
+Date: Tue, 28 May 2024 00:00:30 +0000
+References: <20240523171750.2837331-1-robh@kernel.org>
+In-Reply-To: <20240523171750.2837331-1-robh@kernel.org>
+To: Rob Herring (Arm) <robh@kernel.org>
+Cc: o.rempel@pengutronix.de, kory.maincent@bootlin.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+Hello:
 
---- x/fs/open.c
-+++ y/fs/open.c
-@@ -907,6 +907,7 @@ static int do_dentry_open(struct file *f
- 	static const struct file_operations empty_fops = {};
- 	struct inode *inode = f->f_path.dentry->d_inode;
- 	int error;
-+	struct super_block *sb = inode->i_sb;
- 
- 	path_get(&f->f_path);
- 	f->f_inode = inode;
-@@ -929,6 +930,7 @@ static int do_dentry_open(struct file *f
- 		f->f_mode |= FMODE_WRITER;
- 	}
- 
-+	down_read(&sb->s_umount);
- 	/* POSIX.1-2008/SUSv4 Section XSI 2.9.7 */
- 	if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))
- 		f->f_mode |= FMODE_ATOMIC_POS;
-@@ -956,6 +958,7 @@ static int do_dentry_open(struct file *f
- 		if (error)
- 			goto cleanup_all;
- 	}
-+	up_read(&sb->s_umount);
- 	f->f_mode |= FMODE_OPENED;
- 	if ((f->f_mode & FMODE_READ) &&
- 	     likely(f->f_op->read || f->f_op->read_iter))
---
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 23 May 2024 12:17:50 -0500 you wrote:
+> The child nodes are missing "additionalProperties" constraints which
+> means any undocumented properties or child nodes are allowed. Add the
+> constraints and all the undocumented properties exposed by the fix.
+> 
+> Fixes: f562202fedad ("dt-bindings: net: pse-pd: Add bindings for TPS23881 PSE controller")
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] dt-bindings: net: pse-pd: ti,tps23881: Fix missing "additionalProperties" constraints
+    https://git.kernel.org/netdev/net/c/12f86b9af96a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
