@@ -1,187 +1,120 @@
-Return-Path: <linux-kernel+bounces-192648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABABA8D2024
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C918D202A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53861C20887
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78BF3B233F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B99172BDD;
-	Tue, 28 May 2024 15:16:34 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD24171677;
+	Tue, 28 May 2024 15:17:18 +0000 (UTC)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9942171080;
-	Tue, 28 May 2024 15:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE11316FF4F;
+	Tue, 28 May 2024 15:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909393; cv=none; b=QM/aE4IaU0MeYEcZZE04xMsKE2CIgfDn4QVSQPNYYVhtouzZuoD9/ScsH9BZAvOFhnwotYtDlpfn80XMTL4rHavYFZSkGJjsj1Hf55uHQPOaawK+8/Xg1TJh8XRX9iglgYthOvbei+Fim7AabbXG6jc1EqN7lOOZhoPj9mfgm5g=
+	t=1716909437; cv=none; b=uolQf8lcPvcxYbyqyU+IFMShmyFg18HqlCXMMPIeOlxyajUAGzDY6Z2en1S0uIRoJiDH13NvpV7oipgrVjj+/5XlHjIGyDvqxSdlygNbSQeb1lzH1O+sVW+Vhi5JLhfSo+5xQjaHvPScm7YjzuyBO8vwlw5SUR9SLJOpTWSvdVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909393; c=relaxed/simple;
-	bh=KQUl1FxTa7R52d6jouTH3YkHig0GUioUMVAcrGm63HM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fL7Gh+3DKdAp6E8odfYPWluU7y5Tz5u+8FZUaAMc6snkwbclhE3kGVVdENPTbiwjc3uK2QG0RMYeAJ21/O4VZUTBOhO4CKWAbon6tg2ZLP07R7hmIM1j/Djy6QVrqwpWDIJ/7fKMqletq7xflT7Alzwosq70vD/9Gs5Thk7FOxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [213.70.33.226] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sByYn-0004ud-Ul; Tue, 28 May 2024 17:16:22 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Alexey Charkov <alchark@gmail.com>,
- Quentin Schulz <quentin.schulz@cherry.de>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>,
- Diederik de Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] RK3588 and Rock 5B dts additions: thermal,
- OPP and fan
-Date: Tue, 28 May 2024 17:16:20 +0200
-Message-ID: <6230150.aeNJFYEL58@phil>
-In-Reply-To: <8727e1c29bd6f562a7fc3de0ddac62cf@manjaro.org>
-References:
- <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <5122636.irdbgypaU6@phil> <8727e1c29bd6f562a7fc3de0ddac62cf@manjaro.org>
+	s=arc-20240116; t=1716909437; c=relaxed/simple;
+	bh=IJfXyghJCx3n9bOFggphQjk/yccvY0Ys2u/43WwXOVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Si2Eyfk4JvwljpD2zl/roWKv3RXzEF6vVzXNEVG5uDgGOg7HsPBELaGmLSCME1M+WZ7fndnEVGDtvtciRD2C5/PpsfiA5ps/hFA8NQIp07HX7IrxbocfONz7MEvmU6aCOd7kXRyWcjT1Wgdxtu+NEbIXNs7Y9fLd1J0sphzDxG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-df7607785e9so893214276.2;
+        Tue, 28 May 2024 08:17:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716909434; x=1717514234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rNi8/BhZqnIF83VuvAuQW5ywgzli2KEyZ1LygFSKuFY=;
+        b=SJvAVu+mYkcWCnH/5GxVVlTp5nePPtgQCS1/WafifvpwrActLbRbhihMBfrKShd5L3
+         ozJ+6FalWrNH8HUD+DXvbOc/JVG8szTPh8VuezlLk6LGn28F4sTk7MhKmI0jm7zmatN4
+         DzcjeUDyEhm6Ci1w4jmyvZORFPgg3PAS4BVPG1crw/8JXoKZZ8eEndiqUtdm93baPoye
+         tnq3hUt5+YDjbwwthqcWZupZZtjPD9zyIM8PgTLlMNKCqN2p3wyBbk2UoTVKh8sbBNH8
+         Z7pxRHwmSScMlB6nujnoNXwT2j9B+Gx5K/hoC1vA3yIpDaU7rrRLBw16Ozna3oUnAoSn
+         TmVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIL2YkhovvkN7PbkDDaz5Lw+47FDz+or6lI0pS25r0N+G5Rs+NMS/xc5pLgueUx8wijsGc7XaRv0vXISzNYLL7edB4XI1WzHbTUhm8TJZE8BKT58LcYYraZi7bQatkfrWsSx/C5mdBSX67zcr/1TSo7vUPIhBXRXyNJz1BQAoC1s+e61YneOUYMIiY
+X-Gm-Message-State: AOJu0YyGAcN7pABsZlIetS6jsZksh1gj+a+cVcxzeMEviHEglH29S0AR
+	Zu3IqsyXifj/sz4AHgeu2+6m1qVh5a8wEnfiZkrhRRYveppuP+68XUMuITQM7vo=
+X-Google-Smtp-Source: AGHT+IEaNBcEZJtY8k4slGLDYE0OiYxufw2MZ0bZhq6I+vZrnGksYpVwo6N0nVkcLDeulh63poxoNw==
+X-Received: by 2002:a25:81c7:0:b0:df4:ab38:64eb with SMTP id 3f1490d57ef6-df77221c33emr12131997276.40.1716909434392;
+        Tue, 28 May 2024 08:17:14 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df774741defsm1062636276.54.2024.05.28.08.17.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 May 2024 08:17:14 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df4e40a3cb6so1024282276.0;
+        Tue, 28 May 2024 08:17:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVqALxVhAz4x5iY2wzfqN5tbsqnrlBeFF0RIvJgtSX/5wF3oZS4KgCDDtJOlYF10OgkAsw9kgRrB+yiTsFpt7k66GMH9QMAX4YFn4xbGti96Pup1xBc/QzaeJbygcTRCTTa79q4yZL45D/nG54ltUjVJlhs5lq/7Tp8XbLU01P9zyXn4T6wlNqZ3B69
+X-Received: by 2002:a5b:ecb:0:b0:dcc:d694:b4a6 with SMTP id
+ 3f1490d57ef6-df772185be3mr11329083276.15.1716909434046; Tue, 28 May 2024
+ 08:17:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
+ <202405191921.C218169@keescook> <CAMuHMdUUTy7G6fUa7+P+ZionsiYag-ni_K4smcp6j=gFb9RJJg@mail.gmail.com>
+ <uetvuew5tmhjeipqlemyuocqtx2yn2t5gkuew4vmxh4tbny7kx@4g2qkhfpwbmg>
+In-Reply-To: <uetvuew5tmhjeipqlemyuocqtx2yn2t5gkuew4vmxh4tbny7kx@4g2qkhfpwbmg>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 May 2024 17:17:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUd6mz+PhC17zNbacY2iYGdG8Q4UzXuaZvcQ5qHo=mmBw@mail.gmail.com>
+Message-ID: <CAMuHMdUd6mz+PhC17zNbacY2iYGdG8Q4UzXuaZvcQ5qHo=mmBw@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Kees Cook <keescook@chromium.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, 28. Mai 2024, 17:01:48 CEST schrieb Dragan Simic:
-> On 2024-05-28 16:34, Heiko Stuebner wrote:
-> > Am Dienstag, 28. Mai 2024, 16:05:04 CEST schrieb Dragan Simic:
-> >> On 2024-05-28 11:49, Alexey Charkov wrote:
-> >> > On Mon, May 6, 2024 at 1:37=E2=80=AFPM Alexey Charkov <alchark@gmail=
-=2Ecom>
-> >> > wrote:
-> >> >>
-> >> >> This enables thermal monitoring and CPU DVFS on RK3588(s), as well =
-as
-> >> >> active cooling on Radxa Rock 5B via the provided PWM fan.
-> >> >>
-> >> >> Some RK3588 boards use separate regulators to supply CPUs and their
-> >> >> respective memory interfaces, so this is handled by coupling those
-> >> >> regulators in affected boards' device trees to ensure that their
-> >> >> voltage is adjusted in step.
-> >> >>
-> >> >> This also enables the built-in thermal sensor (TSADC) for all boards
-> >> >> that don't currently have it enabled, using the default CRU based
-> >> >> emergency thermal reset. This default configuration only uses on-SoC
-> >> >> devices and doesn't rely on any external wiring, thus it should work
-> >> >> for all devices (tested only on Rock 5B though).
-> >> >>
-> >> >> The boards that have TSADC_SHUT signal wired to the PMIC reset line
-> >> >> can choose to override the default reset logic in favour of GPIO
-> >> >> driven (PMIC assisted) reset, but in my testing it didn't work on
-> >> >> Radxa Rock 5B - maybe I'm reading the schematic wrong and it doesn't
-> >> >> support PMIC assisted reset after all.
-> >> >>
-> >> >> Fan control on Rock 5B has been split into two intervals: let it sp=
-in
-> >> >> at the minimum cooling state between 55C and 65C, and then accelera=
-te
-> >> >> if the system crosses the 65C mark - thanks to Dragan for suggestin=
-g.
-> >> >> This lets some cooling setups with beefier heatsinks and/or larger
-> >> >> fan fins to stay in the quietest non-zero fan state while still
-> >> >> gaining potential benefits from the airflow it generates, and
-> >> >> possibly avoiding noisy speeds altogether for some workloads.
-> >> >>
-> >> >> OPPs help actually scale CPU frequencies up and down for both cooli=
-ng
-> >> >> and performance - tested on Rock 5B under varied loads. I've dropped
-> >> >> those OPPs that cause frequency reductions without accompanying
-> >> >> decrease
-> >> >> in CPU voltage, as they don't seem to be adding much benefit in day=
- to
-> >> >> day use, while the kernel log gets a number of "OPP is inefficient"
-> >> >> lines.
-> >> >>
-> >> >> Note that this submission doesn't touch the SRAM read margin updates
-> >> >> or
-> >> >> the OPP calibration based on silicon quality which the downstream
-> >> >> driver
-> >> >> does and which were mentioned in [1]. It works as it is (also
-> >> >> confirmed by
-> >> >> Sebastian in his follow-up message [2]), and it is stable in my
-> >> >> testing on
-> >> >> Rock 5B, so it sounds better to merge a simple version first and th=
-en
-> >> >> extend when/if required.
-> >> >>
-> >> >> [1]
-> >> >> https://lore.kernel.org/linux-rockchip/CABjd4YzTL=3D5S7cS8ACNAYVa73=
-0WA3iGd5L_wP1Vn9=3Df83RCORA@mail.gmail.com/
-> >> >> [2]
-> >> >> https://lore.kernel.org/linux-rockchip/pkyne4g2cln27dcdu3jm7bqdqpmd=
-2kwkbguiolmozntjuiajrb@gvq4nupzna4o/
-> >> >>
-> >> >> Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> >> >> ---
-> >> >
-> >> > Hi Heiko,
-> >> >
-> >> > Do you think this can be merged for 6.11? Looks like there hasn't be=
-en
-> >> > any new feedback in a while, and it would be good to have frequency
-> >> > scaling in place for RK3588.
-> >> >
-> >> > Please let me know if you have any reservations or if we need any
-> >> > broader discussion.
-> >=20
-> > not really reservations, more like there was still discussion going on
-> > around the OPPs. Meanwhile we had more discussions regarding the whole
-> > speed binning Rockchip seems to do for rk3588 variants.
-> >=20
-> > And waiting for the testing Dragan wanted to do ;-) .
->=20
-> I'm sorry for the delays.
+Hi Kent,
 
-Was definitly _not_ meant as blame ;-) .
+On Tue, May 28, 2024 at 4:57=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> On Tue, May 28, 2024 at 09:18:24AM +0200, Geert Uytterhoeven wrote:
+> > These are caused by commit 1d34085cde461893 ("bcachefs:
+> > Plumb bkey into __btree_err()"), which is nowhere to be found on
+> > any public mailing list archived by lore.
+> >
+> > +               prt_printf(out, " bset byte offset %zu",
+> > +                          (unsigned long)(void *)k -
+> > +                          ((unsigned long)(void *)i & ~511UL));
+> >
+> > Please stop committing private unreviewed patches to linux-next,
+> > as I have asked before [4].
+> > Thank you!
+>
+> You seem to be complaining about test infrastructur eissues - you don't
+> seriously expect code review to be catching 32 bit build isues, do you?
 
-The series has just too many discussions threads to unravel on half
-an afternoon.
+I do expect code review to catch (a) wrong printf format specifiers
+(especially when lots of casts are involved), (b) hardcoded constants,
+and (c) opportunities for introducing helper macros,
 
+Gr{oetje,eeting}s,
 
-> > So this should definitly make it into 6.11 though, as there is still
-> > a lot of time.
-> >=20
-> >> As I promised earlier, I was going to test this patch series in=20
-> >> detail.
-> >> Alas, I haven't managed to do that yet, :/ due to many reasons, but
-> >> I still remain firmly committed to doing that.
-> >>=20
-> >> Is -rc4 the cutoff for 6.11?  If so, there's still time and I'll do my
-> >> best to test and review these patches as soon as possible.
-> >=20
-> > As early as possible, the hard cutoff would be -rc6 though.
-> > I guess I'll just start picking the easy patches from the series.
->=20
-> I'll do my best to have the patches tested and reviewed in detail ASAP.
-> As a suggestion, perhaps it would be better to take the series as a=20
-> whole,
-> so we don't bring partial merging into the mix.
+                        Geert
 
-Patches need to work individually anyway (in correct order of course),
-so like starting at the top with the general thermal stuff should not
-create issues ;-)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
 
-
-Heiko
-
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
