@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-191881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5D48D1580
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D9E8D1585
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 09:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F36EB226A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1F261C217C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 07:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07EF7350C;
-	Tue, 28 May 2024 07:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B00774405;
+	Tue, 28 May 2024 07:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lpn/7Lgi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAaKkP0v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A8E73455;
-	Tue, 28 May 2024 07:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F204F5FB;
+	Tue, 28 May 2024 07:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716882552; cv=none; b=N5WiQc7NU0HYJazfl3rXjtZByIHJOkdXza+XFNRk322bMbXTc14KaAQ2UHG9Nt9wi8oo+r5ei/VmwnN4uCsRX/dEsKH4cHohE3l6nEIStPeACnrPWFUesweOHdm9UlyFsQtOSoMFaG4y8QzXYY1/700DwYfhpxq7vAr4Xl/UcWA=
+	t=1716882643; cv=none; b=Z+pVy2MzShPuLIpPOOlnBZyByf/RspdfPc5guIPFj97gZCIbqJPWpszeg5a34jmDY1rC06tcS53NgiG8V+2GOkcGci2vFTMkCAer+aPVxFzCv4GEUInqcE2l06sCI1Gaq7FzGat7iBZiSmYkymIlA9yUdJ5C9J/BURLnLL8vNog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716882552; c=relaxed/simple;
-	bh=HxfdERO5vTDXcQIfLVpmkRnhLmBxrrIHebBSRP2CH1Q=;
+	s=arc-20240116; t=1716882643; c=relaxed/simple;
+	bh=jF4aSCUFm7fgNYF2gFc13ETFxIzLDpZl4Lg3xWTEBWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u35QODX2MMNXOsQ5wVGs2gEzYmA89B2LXoTy+MXjWp8IpwJxzkNKvAEC7g5ULajpMR4p3cYypAu8eXrFvxXl8WMqmhQZe5YpiXtURLzs7byD2BQmZlSxFMRXanZhwucq02IDc9dbNpNh0MFQUn3Z+mxVOx96Ba1rSXncFSkGRBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lpn/7Lgi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 649FEC3277B;
-	Tue, 28 May 2024 07:49:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=WLg6tv/wySaPTyV8ICWcumc0siJnQhvc/yZJtMVMu+xH966+Rpvp16bDTb+JG2aqK7OxsLSSJEI4fxionWZ2nk2fQKVqrQTbcf7H5+q+6V8cQ9Br3q0Ae0yBBDhjXcxqAubh0b6tU/henWKfQPxc65ydVyuhyYKs3mJ8oW1VZp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAaKkP0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19CE5C3277B;
+	Tue, 28 May 2024 07:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716882551;
-	bh=HxfdERO5vTDXcQIfLVpmkRnhLmBxrrIHebBSRP2CH1Q=;
+	s=k20201202; t=1716882643;
+	bh=jF4aSCUFm7fgNYF2gFc13ETFxIzLDpZl4Lg3xWTEBWM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Lpn/7LgiEWQgIYjlMiqvfjOM9Rqq7VvLeXqYH7zDz10ONXkeFgI/ffPb9/DdS578c
-	 0DvNwIIDOVe7dlc24chRW24RqHriivwHwUDyiNxhalEwX8B5WqbVzgHpGrkhJxM1pg
-	 9ISBl7vb6pp3nwjyDAUCgnZJCZ7WspsDCI9NtfbgX4LZjxhA1Y9bThihgraNPKMNiQ
-	 R2kjboDefw2+gUAz9ZTpWBzAWut+WsdeaIDOsIr7BJF+a+C1ZIHD2q3XEQfiD9fYOu
-	 fPcDniwL72n02Eyzm8KHGtm5HGF4aUQqzwYpnyWT8YhQGqn23emz4Dp3DRdfgF0QKY
-	 YZ3RRmiIP/0gw==
-Message-ID: <23be345b-1c5b-4c34-aa08-e81897c90ebf@kernel.org>
-Date: Tue, 28 May 2024 09:49:04 +0200
+	b=CAaKkP0vHjqUUgJQQDKhs274/srfoqPIz9VvWZeZ9EkQ5Xc030fDr2O24IusjsXVD
+	 65yoHtx3oc/Xjg97VrOYm6W7toYPNK7ed7r15nEz4yCOK2EVSOl7S47iK0lKb4Cb/K
+	 kmUON8ZhD3QgCO/VGdz8SBkZLShaL3TEVRxgpzH8HRnXELXsVJoREowmh5HaQAqGFk
+	 Ewgh1ulw2TsVqpZ9nvr0xsYGvQb+tizixvxoGEgCyzqRD30SNpgc7eeSS5P1vUty81
+	 wVT6BcoHBXAIldx5qsJnbNtl8wO7bre+tzbhekHBcL2XMSrx27aG1rCdKnx6lTlC9c
+	 7hJAp3v0fHLgQ==
+Message-ID: <d7c4a4bf-d569-4052-8909-2a27caed6ff8@kernel.org>
+Date: Tue, 28 May 2024 09:50:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: i2c: gpio: Add 'transition-delay-ms'
- property
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Peter Korsgaard <peter.korsgaard@barco.com>, Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, herve.codina@bootlin.com,
- christophercordahi@nanometrics.ca
-References: <20240527113908.127893-1-bastien.curutchet@bootlin.com>
- <20240527113908.127893-2-bastien.curutchet@bootlin.com>
- <4f4db483-6042-4f85-9c64-8d3ad9290506@kernel.org>
- <1cfef2c3-3b24-469d-b55a-377f2d42756b@bootlin.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: qcom,sa8775p-pas:
+ Document the SA8775p ADSP, CDSP and GPDSP
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tengfei Fan <quic_tengfan@quicinc.com>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Alex Elder <elder@kernel.org>
+References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+ <20240527-topic-lemans-iot-remoteproc-v2-1-8d24e3409daf@linaro.org>
+ <ae768bb2-cb96-4a05-8752-66bc6bfdab1b@kernel.org>
+ <CAMRc=Me9B3H9NM2VKrVSSce0-o=ZZuC2TQxt7eYLD5aWEKy+SA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,26 +113,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1cfef2c3-3b24-469d-b55a-377f2d42756b@bootlin.com>
+In-Reply-To: <CAMRc=Me9B3H9NM2VKrVSSce0-o=ZZuC2TQxt7eYLD5aWEKy+SA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 28/05/2024 08:59, Bastien Curutchet wrote:
-> 
->> So just like RC binding, that's not a property of I2C mux. Maybe this
->> fits usage of GPIO RC / delay binding.
+On 28/05/2024 09:26, Bartosz Golaszewski wrote:
+> On Mon, May 27, 2024 at 10:56 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 27/05/2024 10:43, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>
+>>> Document the components used to boot the ADSP, CDSP0, CDSP1, GPDSP0 and
+>>> GPDSP1 on the SA8775p SoC.
+>>>
+>>> Co-developed-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>
+>> Missing SoB.
 >>
 > 
-> IMHO that’s more of a MUX property than an RC binding because every MUX 
-> needs some time to switch from one bus to another. It’s just that for 
-> the vast majority of MUXes, this time is so small that it doesn’t need 
-> to be described.
+> Does it though? The patch never passed through Tengfei's hands, I just
+> wanted to give him credit for the work modifying the sm8550-pas
+> bindings.
 
-
-Hm, true, it's fine then.
-
-However this probably should be microseconds not milliseconds to allow
-greater granularity, just like gpio-delay.
+Then what was co-developed by Tengfei? If nothing, then indeed no SoB
+but also no Co-developed-by. Docs are clear here: every Co-developed-by
+*must* be followed by SoB.
 
 Best regards,
 Krzysztof
