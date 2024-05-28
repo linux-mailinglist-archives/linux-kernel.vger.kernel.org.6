@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-191806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-191807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38F78D145C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A828D145E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 08:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113ED1C21AC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7F11C21C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 06:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C2A58AB4;
-	Tue, 28 May 2024 06:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735E853368;
+	Tue, 28 May 2024 06:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rIxuLzCv"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WVfCCit5"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE1D23C9
-	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0195B23C9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 May 2024 06:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716877402; cv=none; b=PUeDdyFROBim6aO8TrrstevLG3bxn6Ukrwgg6mC6iHfuHqiQgXiOiInxGTDHad+W09wi1Kll3vQ3+IqeRRfcApI8e30mEUNqZk7qgO9MUc5W51emnRL4uuJnYEvvTIrSi5ZT6HXkxzTr0zq6V2UT0XtdbfBiVMFvBcu9t5g7Ai8=
+	t=1716877636; cv=none; b=PrdRA52Hw13HlCOktNJF5TOa57XbEdtREEn0yNnIqvyfi0XC8YsrHR/PKRY3zx+BReH+MUXA00IY8+BuEuE1VqvZPyv2qxrhrUXSsgwoyxRpW646gko8ZlakR1GBNqdhH01gsRh1Dk0G+yOBjZ1xxew4KqISrqRVMNWEd0T8GII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716877402; c=relaxed/simple;
-	bh=l2mgolt80XQ34VwyWw4JN/6mQSIjqbSCPqROaNf+67s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2+s7WgIe9uUrI+cYzTpXz831f/W018z78U5VICmu1Z9Wf/718fuGfI1J15e0kPBGkJCrTltQgrZAnrM6wHXCehSlZ1TDp/Z58trbKjNEnI8IoNCbZY/pKerRSP5hUVEh88vEsBui9Gad6XHtxT9bWndQn9sza4UCYr4zWf1+mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rIxuLzCv; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f4a5344ec7so3486875ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 23:23:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716877400; x=1717482200; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HOntPxGeo1PZeEVE8urr6q5OxtnYy9l167prLlGp+oQ=;
-        b=rIxuLzCvqyrsqBC8CU2g4B2zvfhTyVaIOgQDkWmpIj8iIBjpAbPpMY8qOfyMNMzhk4
-         KLR0+A8gyfU5+9ApsE84HK974zNSvcBxT+ii9vsPq/HnvtbLpPuzUAlKBUu/Pm8v3aUz
-         VHop2NdOGQP+zwyl6DwgtaVWRilg6oWSmlZrHDPCVAydHNTkiICom2i02mE6DEX8ObCr
-         dkoo/2NOKcF0yDWn4NYgBSNGAn+FRUyQ9mAQTaaqi+qiCmAdDR2rVxPALD1UKRBcVqkL
-         0cMs2IWsAsvCguvkKn8F7UvOR1vwTZK5enPzxZ7yiT4F51I9qA5HzjvmJM62x3+azLwj
-         6Gig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716877400; x=1717482200;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOntPxGeo1PZeEVE8urr6q5OxtnYy9l167prLlGp+oQ=;
-        b=phkuzJVYl5zVoz9kKHXiqs+6R9endFiy+a74f32RI70eYWf49LOPwKZbVNpKLH1ceO
-         AWcTss5qEKZsTP49pwwzDNNqqz0RpnYumhcQTurvzvkJ6jIQaQ9TfOLFlirCILYGen1L
-         qHy43g1TWmbjvt19YRRonieyEzZM3PUmV5zMll5kl60gOyEA6FLQAblB/Fw9yNI07rCC
-         sZ5Xgjsj0BbCnMeU6KK7mn+/fcMANGh+OJ4qqhN6heOgAmbT1pKdSt7FNSW8VGIpTNjO
-         TNvwytt1Rxsm639MEHWe2tw116L/leQNkEyaBuS+C6qb74igW1kRfMw5aez8F9CVx7IL
-         ur3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWVXC0fQxFbvyUiXM1lqGRG7/b2SjFFBH7omTldXywv6C8WuYi5oeRsnqKcp0ykvdYnBdE78RAQDpUzrI0ndKiNX7NCI9qJRlxep3tz
-X-Gm-Message-State: AOJu0YxdZDkYoIMNrV4YYTJ0B0GlG0FVX69SzOO6Ps3QahdzqDpzsaoB
-	nBbpks3ozPaqddGu7HaBYxTc3f3zFc/oF2NV7r5rbA4c1sCxMJLilzQiVSFVTXY=
-X-Google-Smtp-Source: AGHT+IEJMNUgcL6rFt3SJav0KVtu5LxxIl6wP+NnalHpbXPujSIaphnZ3eM0r8/VbNkMDE7EgGudmw==
-X-Received: by 2002:a17:902:f650:b0:1f4:8500:9f6f with SMTP id d9443c01a7336-1f48500a077mr83350605ad.11.1716877400467;
-        Mon, 27 May 2024 23:23:20 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f471f127c2sm52061275ad.13.2024.05.27.23.23.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 23:23:20 -0700 (PDT)
-Date: Tue, 28 May 2024 11:53:17 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pm@vger.kernel.org, lkp@intel.com, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Viresh Kumar <vireshk@kernel.org>
-Subject: Re: [PATCH] OPP: Fix missing cleanup on error in _opp_attach_genpd()
-Message-ID: <20240528062317.hfxxbiphaop5u5ag@vireshk-i7>
-References: <b1378c474427edae9c17a6e84b628c1f1cc59d6c.1716874256.git.viresh.kumar@linaro.org>
- <9842d369-0031-49d8-85da-c60dc39d22c3@web.de>
+	s=arc-20240116; t=1716877636; c=relaxed/simple;
+	bh=8yBizgjhi7tMgvv88i2HXEOGylN57byouvG8pAjwiYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tQiqqv+0qgEXGa5rIw6cwb4HiT2IDWcXwZPGEOC+kvJVXXraziKWbnSjDoB0k90bGhL6Cv6v41HOTVoR8Xs/Eo4eAMErIH6QZHDDDnyvfsM1xPTiEuNf9V+jbSrv3jKygNOnevP8B4q3jM07aPogR7tRwN0ouU1+Id6g5+yIddg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WVfCCit5; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44S6QYlv080677;
+	Tue, 28 May 2024 01:26:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716877594;
+	bh=LV9HHwQZOyg/pyJVAFZSMcYDcxaKD8j2pH6IA8DC24s=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=WVfCCit5fS8o9XQ3VU9t+ZW87oj2OZYDya4m/3DcobE86oCv9d6oNbUnrOQpJvYIj
+	 WeCwmYHZWZnsIPWYvTWue2sa8nyaJ3pk8TDKsO66M5GORlC4lrtuAzeTb2W1AqQJuJ
+	 x12EY+yheb8pXGGOLm7TDr25DgWRlRNcucZnDiAs=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44S6QYcb053292
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 28 May 2024 01:26:34 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 28
+ May 2024 01:26:34 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 28 May 2024 01:26:34 -0500
+Received: from [10.24.68.216] (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44S6QT0H124268;
+	Tue, 28 May 2024 01:26:29 -0500
+Message-ID: <9170a555-7cd3-4888-bad3-01b71c6f445e@ti.com>
+Date: Tue, 28 May 2024 11:56:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9842d369-0031-49d8-85da-c60dc39d22c3@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Modify number of usable 8250 uart ports
+To: Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Udit Kumar <u-kumar1@ti.com>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
+	<nfraprado@collabora.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Biju
+ Das <biju.das.jz@bp.renesas.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>
+References: <20240516095733.276807-1-b-kapoor@ti.com>
+ <1d1c92f3-1692-40a1-aeb9-ef3e342e9bf6@app.fastmail.com>
+Content-Language: en-US
+From: Bhavya Kapoor <b-kapoor@ti.com>
+In-Reply-To: <1d1c92f3-1692-40a1-aeb9-ef3e342e9bf6@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 28-05-24, 08:20, Markus Elfring wrote:
-> > The commit 2a56c462fe5a updated the code mistakenly …
-> 
-> Is there a need to reconsider data for such a commit reference?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc1#n99
+Hi Arnd, our most boards have 6 uarts that can be used in the runtime
 
-I didn't add it as it was already there as part of Fixes thing. I will
-just drop the commit id from subject while applying to avoid the
-duplication.
+but overall our SoC has 12 uarts. And some of our customers have this
 
--- 
-viresh
+requirements that on their custom boards they use more than 8 uarts on their
+
+boards. Thus, we need to enable this to 12 uarts.
+
+Regards
+
+~B-Kapoor
+
+On 17/05/24 12:19 pm, Arnd Bergmann wrote:
+> On Thu, May 16, 2024, at 09:57, Bhavya Kapoor wrote:
+>> Jacinto SoCs have a total of 12 serial uart ports. But only 8 out
+>> of these 12 uarts can be used at a time.
+>>
+>> Thus, Modify maximum number of 8250 serial uart ports which can be
+>> supported as well as modify how many 8250 serial uart ports which
+>> we can use in the runtime to 12 for all the SoCs.
+>>
+>> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+> I forget what we had already discussed here. To clarify from my
+> side: it's ok to raise the limit if there are any known boards that
+> connect more than 8 8250 style uarts to external devices or
+> populated connectors.
+>
+> On the other hand, I don't see any dts file at the moment that
+> has more than the maximum of 8 in k3-am642-tqma64xxl-mbax4xxl.dts.
+>
+> If you are adding another board that has more, it helps to
+> clarify in the patch description that this is indeed a board
+> requirement, and not just done because the chip has additional
+> unused uarts.
+>
+>       Arnd
 
