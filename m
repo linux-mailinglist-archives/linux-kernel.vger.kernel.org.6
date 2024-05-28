@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-192543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CE38D1EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4875C8D1EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A45283ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB18B1F23ED5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B916F82F;
-	Tue, 28 May 2024 14:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7EA16FF4B;
+	Tue, 28 May 2024 14:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mUGXXBLk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bpRwgVbJ"
-Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IObycwvI"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51CC1DFDE;
-	Tue, 28 May 2024 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB0D16F267;
+	Tue, 28 May 2024 14:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716906735; cv=none; b=o+2TW5lqxvZiI4KRi0i2V7K03ZxaID0Sb7t5l1kuodWFR/eYWmFtcQ+/8FPyoSPMCH56qwHMwlSmqGdTZpd0q/9FURv764OkPI4OnpCtb6bhSP2UmOtTrsr90RnBWhDbxC/xxDaIj2+6ojt+//a23/kyHYYMmPSclnVkaYpYOe0=
+	t=1716906892; cv=none; b=Bne3vTyD8Uj2pvMLS4Ujdimy6Xz356pT0n/MfZPxkxghsyRnUJf6VLZofQNqbxaLiE3oVB0bYt9KAsnt6zN2jy1QCl9H4Tzcw43ftr2HJD5fv54HKXzGiJKT60rXq3VCsylQ1T3vSYEa+UooKVLuKO+w85iK//7l+bKedVzWCuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716906735; c=relaxed/simple;
-	bh=E0twsAQJp0cxsMgxYktc9tQCh6ugKHehv97qng9KsZI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=GVa76KvDyHXT7Z60NS7umgmT0py8Qvr40ATsszQULYIKMG2ke83sKTiv1b8pxuwDUIsK/HvsbnrAwkrXd+tN7R0N5e6P7ZB/6ndEBVdg5+KE97V2MQJsu5pW0vnbai6cakcTToaFnMIgMkNSq6UZxIvUjTIrQ1sp6bUdfnqfslQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mUGXXBLk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bpRwgVbJ; arc=none smtp.client-ip=64.147.123.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id A549D18000E9;
-	Tue, 28 May 2024 10:32:12 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 28 May 2024 10:32:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1716906732;
-	 x=1716993132; bh=GkVpBdu2u/m4Dx1VMyzxVy0HTZ7tx3XoPoYCq0553jo=; b=
-	mUGXXBLkuIo2GMHF/8Wjuji5S0T+SwcCjPC6Y/t8okus5g5P5Ytg9L9ABI+oTP2S
-	w15ecJMQ8txN9TQYxYfZ81iDPa/tk8YNsJQ7n9xUOOc6/PNlo79I+/S2vViHOwGF
-	ingBjfO7ZOjCVTRA6/MebPtZ1oPxRBPLHp81WKMsC/0jzlOrbX2KKKGJ2XFT+Gxi
-	BTeR5Cf/6BmGnUP1pUZ7t7+hiUywVJFUsuDgZVqgQ6oqmIl3vhGyLxrQ5lFEWnRW
-	6SqQ3qznT78wKGEvdwNCQU8yXb6YPw6xJUOBFz1gBaRqra/ffRi9/juFSC12Pj8R
-	MpLtziQ5u/De7FC0dtwH9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716906732; x=
-	1716993132; bh=GkVpBdu2u/m4Dx1VMyzxVy0HTZ7tx3XoPoYCq0553jo=; b=b
-	pRwgVbJRWzHY/6JbV1MbwXFdlRTnV/kbCz1Bq5V34L6sRlD7INXw3b2J84rDNa+s
-	27V2VDXem5tqa0H4wzGWzQLhFcA9hfKJHjKm9iy8WvweJ2OP9RUMwf7YXgW88sJl
-	efWuAZ5TY/wtE7/2EjjvFxe9a+k+C21ImbR/CqJOc+B3eSnhQd5zBBpeP3lz63yx
-	7bmelkjPjC47zbJ7/lK7pRsMyxRipD007hFRpO/3rTfwGWUswizWSkjuDPnYNckP
-	hcRXY5i4jr4FqSq/REIwiILrGb8ydm5jHa8WIHfRw4Uvl1Fkz9w/duAhLIbWO5nn
-	/9ymi1llhl5wFA5s6Gk+Q==
-X-ME-Sender: <xms:6-pVZjx9Ej-TnDdWZvrPhfgL_CpQSv9iHDzHhMsFwT4RCdHV5UVBIQ>
-    <xme:6-pVZrRWqTodgLtqEjNkyQCD5yHVfNdfaPgv8PM6oB4jsswUKjxp3gpilR0MHVQHi
-    thuUK9D0DRG_Obiyww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejkedghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:6-pVZtX6TxtsDTv_MTgnGnLg4bMsinjkYpY0E2hAmdSf0PxDOmv_Dw>
-    <xmx:6-pVZtiWqLN-ZC1dUO4cErPzhyjW8iM4DBwkwta1SD0CrRcz8lf_nA>
-    <xmx:6-pVZlAOspG1OQhL87AxSBA5Rfso90uOaZdJQVhZ4MXE3bUHbvE14g>
-    <xmx:6-pVZmKUUhTP88RB8P1-RQ06W2rrG158dmzjmf2OL9szF6iW_1xd1Q>
-    <xmx:7OpVZo7Qq5YyLR4-OjzWXxg_bpvPJmgJu_M9FMc5qy5GE96zmMHlO6wz>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 8E16A36A0074; Tue, 28 May 2024 10:32:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	s=arc-20240116; t=1716906892; c=relaxed/simple;
+	bh=X0Q0HI1b9rH+fVZzvv90qJ//IfIjQBFp/0Kqy1oPHIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6aoU6ZNVAG/EH65QrWXwITYvcDpcoOE2F32U7pAUYrEK3naXBEQyjPUef/mP8rG0gTAhnAo/cnqXmR7aLnRuRJVCHywGn1ammMmXeG2e9kk5mVJfW24D55YPSltkWZeEh7cv3DbNGXYrMizSNjGtZlDGKs5Q56CstAEQWIZfz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IObycwvI; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35507fc2600so824751f8f.0;
+        Tue, 28 May 2024 07:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716906888; x=1717511688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SuPdbyOGZB4+HwsptiUUcZmfTuqcWmYMtI45ENp1tfE=;
+        b=IObycwvIdw+sa8X0Y3GELugl4NzQIC3Ma1fRw7isNtX01qMMf8+4nl47b8R/hPmiQA
+         ZO0HZnUBWKTpeeZ3mlbkeGQ2xf/rgruZ8SWzZeHEbcghxMKqGiJblAKrrsFd5tuiI786
+         CdJX1fFrZPVTIVnv4vTzscr16WrUQFRfQJGJkoDaMPWwObkgTBtV2hu6LndnXb6yVQsy
+         yelNaiFv1XoC/GWWvl6j/GQo8M2Rk0+vUDEU+KlLVpST2W68p5a39YnK7wmFSVPWmY8m
+         JjG/RX9vQ7P5sRN6D0vjHFBEbsvqEUqBJHfrL78WidJD7W1jq9HQ/3cc16tLx1K4GsYT
+         1xXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716906888; x=1717511688;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SuPdbyOGZB4+HwsptiUUcZmfTuqcWmYMtI45ENp1tfE=;
+        b=mp/mua+6dep2KCJHX3IVfSw/Tr3AVF9ZUHToH11tDJxvlz+3nquhDW/shP4Im04WP/
+         tm9riNxTRHZ5lVMWDrFi5krbcnMWi5Hth7ERJQ2nDKkC8x4te2dru2W69ydXlKDkQ6zb
+         OIswklZenlAPAQ/9/+jznMDbfi5A8YR0Q5//EyPlSIG8L5jX/w+48ovXCTi1GbtHkpui
+         fioMVWMP9bJnALnGmmhMwuiRhPyGslwnPmP1k1yRpjZmR03C62YCUlmDIoghId6/MRnQ
+         1ogztp7+8WmFEyoej0mAkMZ+wGkShvivo5thxA9/qSUIyBWRA48X+3RrtumJkCPMH/f0
+         1dgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU91Ws+E3tgW4L8St+hyBjltKe/omX4Yi4rjbm4pYMc2wNBApl/DTpKNvj42DcpuEd5EefxzDVpj9jM0eRKsNBm/5Kw2g8BaO4NVkwPebRNIi1R3WpjwJMHiI5D1nGXBX1bKHMXzZPYyoHqDPaXHvOU
+X-Gm-Message-State: AOJu0YzQwxiQRfrMYteFFu9/inXao31XsdPvaGk+/aeNaGc6J+4gg3ei
+	NYHOKmbBzr6X1j9mMfd72+fPAYYvTsuKmpZpYkW8Snw9xaLLPy1D
+X-Google-Smtp-Source: AGHT+IEvUe4Wyv5qEfelwlQENg4haCJlvDmuMJE1WNUxZ38maU8EjKZVfla4YQZqm+uzgYwJW3s/iA==
+X-Received: by 2002:adf:e547:0:b0:354:fd11:2fa4 with SMTP id ffacd0b85a97d-35526c39f65mr9236960f8f.10.1716906887953;
+        Tue, 28 May 2024 07:34:47 -0700 (PDT)
+Received: from tal-dev.lan ([2a0d:6fc2:40d0:6100:3b6d:a8fe:60ea:3a2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf08basm12193233f8f.108.2024.05.28.07.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 07:34:47 -0700 (PDT)
+From: Tal Yacobi <talycb8@gmail.com>
+To: jk@codeconstruct.com.au,
+	matt@codeconstruct.com.au,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	talycb8@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] mctp i2c: Add rx trace
+Date: Tue, 28 May 2024 17:34:20 +0300
+Message-ID: <20240528143420.742611-1-talycb8@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <558b1d58-08a5-410d-97b8-e77def7c1cf8@app.fastmail.com>
-In-Reply-To: <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
-References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
- <87sey3b6de.ffs@tglx> <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
-Date: Tue, 28 May 2024 15:31:52 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for MIPS/Loongson64
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+mctp-i2c rx implementation doesn't call
+__i2c_transfer which calls the i2c reply trace function.
 
+Add an mctp_reply trace function that will be used instead.
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:32=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:51=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
->> Jiaxun!
->>
-> Hi Thomas,
-> [...]
->>
->> What's this indirection for? Why dont you update=20
-> [...]
->>
->>> +static struct clocksource nodecnt_clocksource =3D {
->>> +	.name	=3D "nodecnt",
->>> +	.read	=3D nodecnt_clocksource_read,
->>
->> the read function pointer here and spare the indirection?
-> Smart! sched_clock takes slightly different function pointer argument =
-type
-> but as we don't use the argument anyway, it should be safe to relax th=
-is
-> indirection.
+Signed-off-by: Tal Yacobi <talycb8@gmail.com>
+---
+ drivers/net/mctp/mctp-i2c.c |  3 +++
+ include/trace/events/mctp.h | 16 ++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-Sadly, I'm unable to remove it with force type catsing :-/
+diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
+index b37a9e4bade4..22754f4e4a8d 100644
+--- a/drivers/net/mctp/mctp-i2c.c
++++ b/drivers/net/mctp/mctp-i2c.c
+@@ -24,6 +24,7 @@
+ #include <linux/if_arp.h>
+ #include <net/mctp.h>
+ #include <net/mctpdevice.h>
++#include <trace/events/mctp.h>
+ 
+ /* byte_count is limited to u8 */
+ #define MCTP_I2C_MAXBLOCK 255
+@@ -312,6 +313,8 @@ static int mctp_i2c_recv(struct mctp_i2c_dev *midev)
+ 		return -ENOMEM;
+ 	}
+ 
++	trace_mctp_reply(midev->rx_buffer, recvlen);
++
+ 	skb->protocol = htons(ETH_P_MCTP);
+ 	skb_put_data(skb, midev->rx_buffer, recvlen);
+ 	skb_reset_mac_header(skb);
+diff --git a/include/trace/events/mctp.h b/include/trace/events/mctp.h
+index 165cf25f77a7..d115c353dff9 100644
+--- a/include/trace/events/mctp.h
++++ b/include/trace/events/mctp.h
+@@ -73,6 +73,22 @@ TRACE_EVENT(mctp_key_release,
+ 	)
+ );
+ 
++TRACE_EVENT(mctp_reply,
++	TP_PROTO(const u8 *rx_buffer, const size_t recvlen),
++	TP_ARGS(rx_buffer, recvlen),
++	TP_STRUCT__entry(
++		__field(__u16, len)
++		__dynamic_array(__u8, buf, recvlen)),
++	TP_fast_assign(
++		__entry->len = (__u16) recvlen;
++		memcpy(__get_dynamic_array(buf), rx_buffer, recvlen);
++	),
++	TP_printk("l=%u [%*phD]",
++		__entry->len,
++		__entry->len, __get_dynamic_array(buf)
++	)
++);
++
+ #endif
+ 
+ #include <trace/define_trace.h>
+-- 
+2.43.0
 
-drivers/clocksource/loongson-nodecnt.c: In function =E2=80=98nodecnt_clo=
-cksource_init=E2=80=99:
-drivers/clocksource/loongson-nodecnt.c:89:36: warning: cast between inco=
-mpatible function types from =E2=80=98u64 (*)(void)=E2=80=99 {aka =E2=80=
-=98long long unsigned int (*)(void)=E2=80=99} to =E2=80=98u64 (*)(struct=
- clocksource *)=E2=80=99 {aka =E2=80=98long long unsigned int (*)(struct=
- clocksource *)=E2=80=99} [-Wcast-function-type]
-   89 |         nodecnt_clocksource.read =3D (u64 (*)(struct clocksource=
- *))nodecnt_read_fn;
-
-I'll leave it here.
-
-Thanks
->
-> Will fix in v3.
->
-> Thanks
->>
->> Thanks
->>
->>         tglx
->
-> --=20
-> - Jiaxun
-
---=20
-- Jiaxun
 
