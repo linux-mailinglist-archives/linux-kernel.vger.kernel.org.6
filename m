@@ -1,195 +1,311 @@
-Return-Path: <linux-kernel+bounces-192631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-192632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BBE8D1FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:13:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B36A8D1FF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 17:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F961C22584
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62871F2272D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2024 15:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA95B17165A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC0717165D;
 	Tue, 28 May 2024 15:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sjjr/4EZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJJUawnP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0386C16FF49;
-	Tue, 28 May 2024 15:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49CA17083A;
+	Tue, 28 May 2024 15:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716909172; cv=none; b=NJcLRCtKUrpVSiHtnLFgrlehsYxaih+j7E+DMU4GuvKZtYruT/J0vmdwMGSBBksEUYo2OV6J5/TM7hF4nOUVTkwv7Faxt1YEKr2Dq6/HjF9dZH69g196//9hLGr0KqG7nUL2KtvswgPYrBFXxlTBXiFnG51XzBn7XHojQ4wltn8=
+	t=1716909173; cv=none; b=bOY/f21fyzOtPSbM6i91VNU4l+YpG3Wy75ibtF/skkP5dPkICUnAmzauZmWq5DWJX/M+gKzVMlpQhBOmcMwScofRuHhG7CQqh3kr+I9Mco8XmMExIm58ZUQ0PN23t6nZscChA0ZVKpwZh9IlXK1gcpxM+9b9piuzL+2QU8b0aoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716909172; c=relaxed/simple;
-	bh=ZPIImFIraLp3J7osqLQEK2/AKvhd3h5ez5jWDqYDwEw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gluhM3NV162evssDhvZlPqtvSRMAg/QI2uVkGMCKij1W5dZAwnDCI/juzTre3J2vqsoBwDhy+ci08tuTfLVd3PTpCWsQdRuZPKi9g/ysydYr5Sz5BLM0pg3U9ZksvC3jP/JP9ev8lCB5xt/9G/++K9IZKCw34JR4gXSKQr5saTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sjjr/4EZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44SEvim0016874;
-	Tue, 28 May 2024 15:12:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=L65wxXa88Y1VErxbM93gr5rCuL1KxI7pMI+WhDkTZwU=;
- b=Sjjr/4EZMCEYSp+a1D1rmtJPFBMrf3vigsrp1nDP0OrtpV3j2pVCjlqu3L4pI3bWs6oR
- it32xu9maaF/SzGdv+dwMKCVwDNDaDrItEFY/WUaj4nNkgU0DHooi8Q/HbRTy18U9sic
- MulX5Mbws2GeLDxK8Cbs5JggkbQdZ1IBtUsERZRyIm7rwYWQQ79tLwG9YEtHbAJjH2ki
- 7J71mvKV/GnzndRUHioNU2ZEdG3+77AUu1W6SafCn1EakE2SQYvzw/aRCd6jAnnYdTeQ
- L8PWZn5DecSdRhGI/yucvwYLbjIbV5Xz1jDxN6DPoIkMEwYDo2NWzz0kZaYQEQNMZc1A aQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydhg0r1ne-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:12:45 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44SF9OvH008551;
-	Tue, 28 May 2024 15:12:45 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ydhg0r1nc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:12:45 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44SDodDQ032160;
-	Tue, 28 May 2024 15:12:44 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ybutm7aw8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:12:44 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44SFCeh944171798
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 May 2024 15:12:42 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CACC75805A;
-	Tue, 28 May 2024 15:12:40 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BB7DA58056;
-	Tue, 28 May 2024 15:12:38 +0000 (GMT)
-Received: from [9.171.0.133] (unknown [9.171.0.133])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 May 2024 15:12:38 +0000 (GMT)
-Message-ID: <0da9689ec3bf72919114a7350584624860c49495.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/3] s390/pci: Fix s390_mmio_read/write syscall page
- fault handling
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alex
- Williamson <alex.williamson@redhat.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Date: Tue, 28 May 2024 17:12:38 +0200
-In-Reply-To: <20240523-vfio_pci_mmap-v2-1-0dc6c139a4f1@linux.ibm.com>
-References: <20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com>
-	 <20240523-vfio_pci_mmap-v2-1-0dc6c139a4f1@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1716909173; c=relaxed/simple;
+	bh=+9UMt6ZwFql+6FM2z13BFGcx4BThAb8uyyg74D4j+RA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9LB2pMof8NCCdcV3uteV+sLDmhdddLTm4v1LslSbhmTCuPVsx2mDK7OLdxhvERDBKLXKqjB8V/F88Sw8nycceCUSVN8P6Th3rQb8ZB+HdWWiYf0y0j4AcdwvIjaQFMJUBTJ1muWpKJkDPw+bR2ytcHkOxF90G548vz3bUq6B3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJJUawnP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A8DC3277B;
+	Tue, 28 May 2024 15:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716909172;
+	bh=+9UMt6ZwFql+6FM2z13BFGcx4BThAb8uyyg74D4j+RA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JJJUawnPnKVoRjtsgXIkf4X1GwBExoQdWjZvgBhgBBgsBpd8mMHD/LE8qh5h1pXS/
+	 yWiqzP44TSUjIS5Y3ciOAvrBMLt8gqGOqPfYYv6gj7v+jqv06LxntpmibVUSUatoJp
+	 NbuuDP97JWVsxxm7cst6gQd26rqtqTUFOGse/xclEPF/inkVhy9OsZ5KjiG/6pwHmn
+	 k3qxhMttRpfEuXPkOfGyCYRTIp45U8Ry5t6DwoE4o1YF9EREEZPAenoFbLrKRgXb9B
+	 ci0KJ3bTe6vcZijUMO99+Vt2hwNfJ6UAJF25kmNjonzhmOKu6gEkTzn/fny0XeZGo4
+	 NVdrlhqiK/CmA==
+Date: Tue, 28 May 2024 10:12:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Alexandru Ardelean <alexandru.ardelean@analog.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, Saravana Kannan <saravanak@google.com>
+Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
+ ADP5585
+Message-ID: <20240528151251.GA155664-robh@kernel.org>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
+ <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+ <20240521194309.GA8863@pendragon.ideasonboard.com>
+ <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+ <20240522072224.GC8863@pendragon.ideasonboard.com>
+ <92e85dff-ad02-4673-a625-2248b249c262@kernel.org>
+ <20240523231641.GJ6640@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dcLgBmrWO-wZuq0PEtJqrLTmL2r_gwco
-X-Proofpoint-ORIG-GUID: mE84ih2hWxKz1V9sAGt2V-rWqC3AvqON
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_11,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405280113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523231641.GJ6640@pendragon.ideasonboard.com>
 
-On Thu, 2024-05-23 at 13:10 +0200, Niklas Schnelle wrote:
-> The s390 MMIO syscalls when using the classic PCI instructions do not
-> cause a page fault when follow_pte() fails due to the page not being
-> present. Besides being a general deficiency this breaks vfio-pci's mmap()
-> handling once VFIO_PCI_MMAP gets enabled as this lazily maps on first
-> access. Fix this by following a failed follow_pte() with
-> fixup_user_page() and retrying the follow_pte().
->=20
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  arch/s390/pci/pci_mmio.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->=20
-> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
-> index a90499c087f0..217defbcb4f1 100644
-> --- a/arch/s390/pci/pci_mmio.c
-> +++ b/arch/s390/pci/pci_mmio.c
-> @@ -170,8 +170,12 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, =
-mmio_addr,
->  		goto out_unlock_mmap;
-> =20
->  	ret =3D follow_pte(vma->vm_mm, mmio_addr, &ptep, &ptl);
+On Fri, May 24, 2024 at 02:16:41AM +0300, Laurent Pinchart wrote:
+> Hi Krzysztof,
+> 
+> (There's a question for the GPIO and PWM maintainers below)
+> 
+> On Wed, May 22, 2024 at 09:40:02AM +0200, Krzysztof Kozlowski wrote:
+> > On 22/05/2024 09:22, Laurent Pinchart wrote:
+> > > On Wed, May 22, 2024 at 08:57:56AM +0200, Krzysztof Kozlowski wrote:
+> > >> On 21/05/2024 21:43, Laurent Pinchart wrote:
+> > >>> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
+> > >>>> On 20/05/2024 21:59, Laurent Pinchart wrote:
+> > >>>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > >>>>> matrix decoder, programmable logic, reset generator, and PWM generator.
+> > >>>>> These bindings model the device as an MFD, and support the GPIO expander
+> > >>>>> and PWM functions.
+> > >>>>>
+> > >>>>> These bindings support the GPIO and PWM functions.
+> > >>>>>
+> > >>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >>>>> ---
+> > >>>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
+> > >>>>> implement and test the rest of the features the chip supports.
+> > >>>>> ---
+> > >>>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
+> > >>>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
+> > >>>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
+> > >>>>>  MAINTAINERS                                   |   7 ++
+> > >>>>>  4 files changed, 195 insertions(+)
+> > >>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > >>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> > >>>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+> > >>>>>
+> > >>>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > >>>>> new file mode 100644
+> > >>>>> index 000000000000..210e4d53e764
+> > >>>>> --- /dev/null
+> > >>>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > >>>>> @@ -0,0 +1,36 @@
+> > >>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > >>>>> +%YAML 1.2
+> > >>>>> +---
+> > >>>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
+> > >>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >>>>> +
+> > >>>>> +title: Analog Devices ADP5585 GPIO Expander
+> > >>>>> +
+> > >>>>> +maintainers:
+> > >>>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >>>>> +
+> > >>>>> +description: |
+> > >>>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
+> > >>>>> +  node of the parent MFD device. See
+> > >>>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
+> > >>>>> +  well as an example.
+> > >>>>> +
+> > >>>>> +properties:
+> > >>>>> +  compatible:
+> > >>>>> +    const: adi,adp5585-gpio
+> > >>>>> +
+> > >>>>> +  gpio-controller: true
+> > >>>>> +
+> > >>>>> +  '#gpio-cells':
+> > >>>>> +    const: 2
+> > >>>>> +
+> > >>>>> +  gpio-reserved-ranges: true
+> > >>>>
+> > >>>> There are no resources here, so new compatible is not really warranted.
+> > >>>> Squash the node into parent.
+> > >>>
+> > >>> Child nodes seem (to me) to be the standard way to model functions in
+> > >>> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
+> > >>> function iterates over child nodes. I don't mind going a different
+> > >>
+> > >> Only to assign of node, which could be skipped as well.
+> > > 
+> > > It has to be assigned somehow, otherwise the GPIO and PWM lookups won't
+> > > work. That doesn't have to be done in mfd_add_device() though, it can
+> > > also be done manually by the driver. Looking at the example you gave,
+> > > cs42l43_pin_probe() handles that assignment. I would have considered
+> > > that a bit of a hack, but if that's your preferred approach, I'm fine
+> > > with it. Could you confirm you're OK with that ?
+> > 
+> > I am fine with the drivers doing that. It's not a hack, for all
+> > sub-devices (e.g. also auxiliary bus) you won't have automatic of_node
+> > assignment.
+> 
+> I gave this a try, and here's what I came up with to drop the compatible
+> string. Please ignore for a moment the fact that the child nodes are
+> still there, that's an orthogonal question which I can address
+> separately. What I would like is feedback on how the OF nodes are
+> handled.
+> 
+> diff --git a/drivers/gpio/gpio-adp5585.c b/drivers/gpio/gpio-adp5585.c
+> index 9696a4cdcfc1..8480ceef05ce 100644
+> --- a/drivers/gpio/gpio-adp5585.c
+> +++ b/drivers/gpio/gpio-adp5585.c
+> @@ -174,6 +174,7 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+>  	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
+>  	struct adp5585_gpio_dev *adp5585_gpio;
+>  	struct device *dev = &pdev->dev;
+> +	struct device_node *node;
+>  	struct gpio_chip *gc;
+>  	int ret;
+> 
+> @@ -187,6 +188,13 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+> 
+>  	mutex_init(&adp5585_gpio->lock);
+> 
+> +	node = of_get_child_by_name(dev->parent->of_node, "gpio");
+> +	if (!node)
+> +		return dev_err_probe(dev, -ENXIO, "'gpio' child node not found\n");
+> +
+> +	dev->of_node = node;
+> +	dev->fwnode = &node->fwnode;
+
+Use device_set_of_node_from_dev().
+
+> +
+>  	gc = &adp5585_gpio->gpio_chip;
+>  	gc->parent = dev;
+>  	gc->direction_input = adp5585_gpio_direction_input;
+> @@ -204,6 +212,9 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
+>  	ret = devm_gpiochip_add_data(&pdev->dev, &adp5585_gpio->gpio_chip,
+>  				     adp5585_gpio);
+>  	if (ret) {
+> +		of_node_put(dev->of_node);
+> +		dev->of_node = NULL;
+> +		dev->fwnode = NULL;
+>  		mutex_destroy(&adp5585_gpio->lock);
+>  		return dev_err_probe(&pdev->dev, ret, "failed to add GPIO chip\n");
+>  	}
+> @@ -215,6 +226,10 @@ static void adp5585_gpio_remove(struct platform_device *pdev)
+>  {
+>  	struct adp5585_gpio_dev *adp5585_gpio = platform_get_drvdata(pdev);
+> 
+> +	of_node_put(pdev->dev.of_node);
+> +	pdev->dev.of_node = NULL;
+> +	pdev->dev.fwnode = NULL;
+> +
+>  	mutex_destroy(&adp5585_gpio->lock);
+>  }
+> 
+> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> index e39a6ea5f794..3b190567ea0b 100644
+> --- a/drivers/pwm/pwm-adp5585.c
+> +++ b/drivers/pwm/pwm-adp5585.c
+> @@ -146,6 +146,8 @@ static const struct pwm_ops adp5585_pwm_ops = {
+>  static int adp5585_pwm_probe(struct platform_device *pdev)
+>  {
+>  	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node;
+>  	struct pwm_chip *chip;
+>  	int ret;
+> 
+> @@ -153,16 +155,34 @@ static int adp5585_pwm_probe(struct platform_device *pdev)
+>  	if (IS_ERR(chip))
+>  		return PTR_ERR(chip);
+> 
+> +	node = of_get_child_by_name(dev->parent->of_node, "pwm");
+> +	if (!node)
+> +		return dev_err_probe(dev, -ENXIO, "'pwm' child node not found\n");
+> +
+> +	dev->of_node = node;
+> +	dev->fwnode = &node->fwnode;
+> +
+>  	pwmchip_set_drvdata(chip, adp5585->regmap);
+>  	chip->ops = &adp5585_pwm_ops;
+> 
+>  	ret = devm_pwmchip_add(&pdev->dev, chip);
 > -	if (ret)
-> -		goto out_unlock_mmap;
 > +	if (ret) {
-> +		fixup_user_fault(vma->vm_mm, mmio_addr, FAULT_FLAG_WRITE, NULL);
-> +		ret =3D follow_pte(vma->vm_mm, mmio_addr, &ptep, &ptl);
-
-This needs a slight adjustment in v6.10-rc1 due to a change in
-follow_pte()'s signature. The above should take "vma" directly. We
-could then also use current->mm in fixup_user_fault() as seems more
-common. I've already pushed this to my kernel.org repository and will
-send a v3 rebased on v6.10-rc1 with just this as I'm not tracking any
-other feedback.
-
-> +		if (ret)
-> +			goto out_unlock_mmap;
+> +		of_node_put(dev->of_node);
+> +		dev->of_node = NULL;
+> +		dev->fwnode = NULL;
+>  		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
 > +	}
-> =20
->  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
->  			(mmio_addr & ~PAGE_MASK));
-> @@ -305,12 +309,16 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, =
-mmio_addr,
->  	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
->  		goto out_unlock_mmap;
->  	ret =3D -EACCES;
-> -	if (!(vma->vm_flags & VM_WRITE))
-> +	if (!(vma->vm_flags & VM_READ))
->  		goto out_unlock_mmap;
-> =20
->  	ret =3D follow_pte(vma->vm_mm, mmio_addr, &ptep, &ptl);
-> -	if (ret)
-> -		goto out_unlock_mmap;
-> +	if (ret) {
-> +		fixup_user_fault(vma->vm_mm, mmio_addr, 0, NULL);
-> +		ret =3D follow_pte(vma->vm_mm, mmio_addr, &ptep, &ptl);
+> 
+>  	return 0;
+>  }
+> 
+> +static void adp5585_pwm_remove(struct platform_device *pdev)
+> +{
+> +	of_node_put(pdev->dev.of_node);
 
-Here as well
+Wouldn't the driver core do this already? It's not going to know how or 
+when of_node was set, so should be doing a put regardless.
 
-> +		if (ret)
-> +			goto out_unlock_mmap;
-> +	}
-> =20
->  	io_addr =3D (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
->  			(mmio_addr & ~PAGE_MASK));
->=20
+> +	pdev->dev.of_node = NULL;
+> +	pdev->dev.fwnode = NULL;
+> +}
+> +
+>  static struct platform_driver adp5585_pwm_driver = {
+>  	.driver	= {
+>  		.name = "adp5585-pwm",
+> 
+> Is this acceptable ? I'm a bit concerned about poking the internals of
+> struct device directly from drivers.
+> 
+> I have also refrained from setting fnode->dev to point back to the
+> device as fone by cs42l43_pin_probe(), as a comment in struct
+> fwnode_handle indicates that the dev field is for device links only and
+> shouldn't be touched by anything else. I'm not sure if I should set it.
 
+I think no, but best for Saravana to comment.
+
+> 
+> > >>> routes, could you indicate what you have in mind, perhaps pointing to an
+> > >>> existing driver as an example ?
+> > >>
+> > >> Most of them? OK, let's take the last added driver in MFD directory:
+> > >> cirrus,cs42l43
+> > >> It has three children and only two nodes, because only these two devices
+> > >> actually need/use/benefit the subnodes.
+> > > 
+> > > Still trying to understand what bothers you here, is it the child nodes,
+> > > or the fact that they have a compatible string and are documented in a
+> > > separate binding ? Looking at the cirrus,cs42l43 bindings and the
+> > 
+> > What bothers me (and as expressed in many reviews by us) is representing
+> > driver structure directly in DT. People model DT based how their Linux
+> > drivers are represented. I don't care about driver stuff here, but DT/DTS.
+> 
+> DT models the hardware as seen from a software point of view. 
+
+True, but it's for all software's PoV, not some specific s/w.
+
+> It
+> shouldn't reflect the structure of Linux drivers, but it has to be
+> usable by drivers.
+
+Either way is usable.
+
+Rob
 
